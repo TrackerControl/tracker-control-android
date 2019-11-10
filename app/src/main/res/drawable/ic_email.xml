@@ -1,0 +1,41 @@
+<!--
+  ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
+  ~
+  ~ Tracker Control is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tracker Control is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tracker Control. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportHeight="64"
+        android:viewportWidth="64">
+    <path
+        android:fillColor="#e0f7fa"
+        android:pathData="m51,16v26h-38v-26c0,-1.1 0.9,-2 2,-2h34c1.1,0 2,0.9 2,2zM42,34v-12c0,-0.55 -0.45,-1 -1,-1h-18c-0.55,0 -1,0.45 -1,1v12c0,0.55 0.45,1 1,1h18c0.55,0 1,-0.45 1,-1z"/>
+    <path
+        android:fillColor="#ff7043"
+        android:pathData="m54,42v6c0,1.1 -0.9,2 -2,2h-40c-1.1,0 -2,-0.9 -2,-2v-6h3,38z"/>
+    <path
+        android:fillColor="#4dd0e1"
+        android:pathData="m42,22v12c0,0.55 -0.45,1 -1,1h-18c-0.55,0 -1,-0.45 -1,-1v-12l7.13,4.99c1.72,1.21 4.02,1.21 5.74,0z"/>
+    <path
+        android:fillColor="#4dd0e1"
+        android:pathData="m42,22 l-7.13,4.99c-1.72,1.21 -4.02,1.21 -5.74,0l-7.13,-4.99c0,-0.55 0.45,-1 1,-1h18c0.55,0 1,0.45 1,1z"/>
+    <path
+        android:fillColor="#012e52"
+        android:pathData="m54,40h-1v-24c0,-2.206 -1.794,-4 -4,-4h-34c-2.206,0 -4,1.794 -4,4v24h-1c-1.104,0 -2,0.896 -2,2v6c0,2.206 1.794,4 4,4h40c2.206,0 4,-1.794 4,-4v-6c0,-1.104 -0.896,-2 -2,-2zM15,16h34v24h-34zM52,48h-40v-4h40z"/>
+    <path
+        android:fillColor="#012e52"
+        android:pathData="m43.998,21.983c-0.001,-0.092 -0.014,-0.184 -0.028,-0.276 -0.15,-1.515 -1.416,-2.707 -2.97,-2.707h-18c-1.549,0 -2.812,1.184 -2.969,2.692 -0.015,0.097 -0.029,0.194 -0.029,0.292 0,0.006 -0.002,0.011 -0.002,0.016v12c0,1.654 1.346,3 3,3h18c1.654,0 3,-1.346 3,-3v-12c0,-0.006 -0.002,-0.011 -0.002,-0.017zM37.084,23 L33.72,25.354c-1.028,0.724 -2.41,0.724 -3.443,-0.003l-3.36,-2.351zM24,33v-7.159l3.979,2.785c1.203,0.847 2.613,1.27 4.022,1.27 1.408,0 2.816,-0.423 4.015,-1.267l3.984,-2.788v7.159z"/>
+</vector>

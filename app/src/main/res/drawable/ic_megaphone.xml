@@ -1,0 +1,38 @@
+<!--
+  ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
+  ~
+  ~ Tracker Control is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tracker Control is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tracker Control. If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="24dp"
+        android:height="24dp"
+        android:viewportHeight="64"
+        android:viewportWidth="64">
+    <path
+        android:fillColor="#ff7043"
+        android:pathData="m52.83,25.17c0.72,0.73 1.17,1.73 1.17,2.83 0,2.21 -1.79,4 -4,4h-3v-8h3c1.1,0 2.1,0.45 2.83,1.17z"/>
+    <path
+        android:fillColor="#4dd0e1"
+        android:pathData="m47,32v8c0,1.36 -1.34,2.33 -2.63,1.9l-21.37,-5.9v-16l21.37,-5.9c1.29,-0.43 2.63,0.54 2.63,1.9v8z"/>
+    <path
+        android:fillColor="#4dd0e1"
+        android:pathData="m23.65,45.69c0.1,0.33 0.15,0.67 0.15,1 0,1.77 -1.43,3.31 -3.32,3.31 -1.47,0 -2.77,-0.97 -3.18,-2.38l-3.42,-11.63c0.04,0.01 0.08,0.01 0.12,0.01h6.62z"/>
+    <path
+        android:fillColor="#ff7043"
+        android:pathData="m23,20v16h-2.38,-6.62c-0.04,0 -0.08,0 -0.12,-0.01 -2.15,-0.06 -3.88,-1.82 -3.88,-3.99v-8c0,-2.21 1.79,-4 4,-4z"/>
+    <path
+        android:fillColor="#012e52"
+        android:pathData="m50,22h-1v-6c0,-1.281 -0.622,-2.495 -1.664,-3.246 -1.024,-0.738 -2.345,-0.95 -3.54,-0.571l-21.067,5.817h-8.729c-3.309,0 -6,2.691 -6,6v8c0,2.741 1.804,5.029 4.312,5.75l3.067,10.429c0.655,2.25 2.753,3.821 5.101,3.821 2.933,0 5.319,-2.382 5.319,-5.31 0,-0.531 -0.079,-1.062 -0.24,-1.597l-2.16,-6.908 20.397,5.631c0.392,0.124 0.795,0.184 1.197,0.184 0.83,0 1.653,-0.258 2.343,-0.755 1.042,-0.75 1.664,-1.964 1.664,-3.245v-6h1c3.309,0 6,-2.691 6,-6 0,-1.589 -0.62,-3.092 -1.767,-4.255 -1.141,-1.125 -2.645,-1.745 -4.233,-1.745zM12,24c0,-1.103 0.897,-2 2,-2h7v12h-6.923c-0.047,-0.005 -0.094,-0.008 -0.142,-0.009 -1.084,-0.031 -1.935,-0.905 -1.935,-1.991zM20.48,48c-0.581,0 -1.1,-0.386 -1.262,-0.944l-2.662,-9.056h2.594l2.586,8.268c0.042,0.139 0.064,0.285 0.064,0.422 0,0.63 -0.505,1.31 -1.32,1.31zM44.902,39.972 L25,34.478v-12.956l19.902,-5.495c0.035,-0.008 0.065,-0.016 0.098,-0.027l0.001,7.99c0,0.004 -0.001,0.007 -0.001,0.01s0.001,0.006 0.001,0.01l0.001,7.971c0,0.006 -0.002,0.012 -0.002,0.019s0.002,0.013 0.002,0.019l0.001,7.983c-0.033,-0.01 -0.066,-0.021 -0.101,-0.03zM50,30h-1v-4h1c0.53,0 1.037,0.211 1.406,0.574 0.383,0.389 0.594,0.895 0.594,1.426 0,1.103 -0.897,2 -2,2z"/>
+</vector>
