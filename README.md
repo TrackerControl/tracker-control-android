@@ -1,12 +1,14 @@
 # Tracker Control
 
+**If you're missing features or find bugs, use the issue tracker or contact me at tc@kollnig.net.**
+
 *This project is highly work-in-progress. Android 10 is currently not supported.*
 
 Tracker Control allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 <p align="center">
-  <img alt="Tracker Control Logo" src="images/app_logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
+  <img alt="Tracker Control Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
 </p>
 
 To visualise this tracking, a compehensive database of
@@ -31,6 +33,12 @@ Tracker Control was developed by Konrad Kollnig, as part of his MSc thesis
 in Computer Science at the University of Oxford, under the supervision
 of Professor Max van Kleek.
 
+## Installation / Download
+
+The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
+
+Alternatively, there exists a [repository for F-Droid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol).
+
 ## Key Highlights
 Tracker Control provides
 - *real-time monitoring* of app tracking,
@@ -39,7 +47,9 @@ Tracker Control provides
 - *one-click data requests* as granted under EU Data Protection Legislation (to be added soon).
 
 <p align="center">
-    <img alt="Screenshot of main screen" src="images/screenshot.png" style="display: block; margin: 0 auto;" height="100%" width="33%" >
+    <img alt="Screenshot of main screen" src="images/main.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of trackers screen" src="images/trackers.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of actions screen" src="images/actions.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
 </p>
 
 Contrary to similar solutions, this application does not intercept SSL
