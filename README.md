@@ -33,7 +33,7 @@ of Professor Max van Kleek.
 
 ## Installation / Download
 
-* Supported Android versions: 5.1 to 9. Android 10 is not supported. *
+*Supported Android versions: 5.1 to 9. Android 10 is not supported.*
 
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
