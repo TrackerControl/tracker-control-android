@@ -1,14 +1,14 @@
-# Tracker Control
+# TrackerControl
 
 **If you're missing features or find bugs, use the issue tracker or contact me at tc@kollnig.net.**
 
 *This project is highly work-in-progress. Android 10 is currently not supported.*
 
-Tracker Control allows users to monitor and control the widespread,
+TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 <p align="center">
-  <img alt="Tracker Control Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
+  <img alt="TrackerControl Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
 </p>
 
 To visualise this tracking, a compehensive database of
@@ -21,15 +21,15 @@ and to allow users to **block tracking selectively**.
 The app further aims to educate users about their **legal rights** under
 current EU Data Protection Law (i.e. GDPR and the ePrivacy Directive)
 
-Under the hood, Tracker Control uses Android's VPN functionality,
+Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
 This is accomplished through a local VPN server, through which all network communications
-are passed, to enable the analysis by Tracker Control.
+are passed, to enable the analysis by TrackerControl.
 In other words,
 no external VPN server is used, and hence
 no network data leaves the user's device for the purposes of tracker analysis.
 
-Tracker Control was developed by Konrad Kollnig, as part of his MSc thesis
+TrackerControl was developed by Konrad Kollnig, as part of his MSc thesis
 in Computer Science at the University of Oxford, under the supervision
 of Professor Max van Kleek.
 
@@ -40,7 +40,7 @@ The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-an
 Alternatively, there exists a [repository for F-Droid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol).
 
 ## Key Highlights
-Tracker Control provides
+TrackerControl provides
 - *real-time monitoring* of app tracking,
 - *granular blocking* of app tracking,
 - access to apps' *privacy policy websites without trackers* (which they often contain), and
@@ -74,22 +74,22 @@ to `tracker-control-android/app/libs/`.
 
 ## Privacy notice
 
-Tracker Control allows users to monitor the network communications on their
+TrackerControl allows users to monitor the network communications on their
 Android device.
 This network data qualifies as personal data, but is only processed
 locally on the user's device.
 
-If the user consents, Tracker Control contacts the Google Play Store
+If the user consents, TrackerControl contacts the Google Play Store
 to retrieve further information about the users' apps.
 No personal data is shared with Google, other than what is strictly
 necessary for network communications (e.g. IP address).
 
-Tracker Control saves two pieces of information on the user's device:
+TrackerControl saves two pieces of information on the user's device:
 
 1. a database of network communications, and
 2. user settings.
 
-This data is necessary for the functioning of Tracker Control.
+This data is necessary for the functioning of TrackerControl.
 
 This information is kept on the user's device until app data is
 removed manually by the user (e.g. by uninstalling).
@@ -98,7 +98,7 @@ removed manually by the user (e.g. by uninstalling).
 The underlying network analysis tool is provided by the [AntMonitor
 Library](https://github.com/UCI-Networking-Group/AntMonitor). 
 
-Tracker Control builds upon the tracker database by Reuben Binns, Ulrik Lyngs,
+TrackerControl builds upon the tracker database by Reuben Binns, Ulrik Lyngs,
 Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray).
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).

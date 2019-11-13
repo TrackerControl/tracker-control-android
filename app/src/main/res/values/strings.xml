@@ -1,33 +1,33 @@
 <!--
   ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
   ~
-  ~ Tracker Control is free software: you can redistribute it and/or modify
+  ~ TrackerControl is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 2 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ Tracker Control is distributed in the hope that it will be useful,
+  ~ TrackerControl is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with Tracker Control. If not, see <http://www.gnu.org/licenses/>.
+  ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
   -->
 
 <resources>
-    <string name="app_name">Tracker Control</string>
+    <string name="app_name">TrackerControl</string>
 
     <!-- VPN Control -->
     <string name="switch_mission">Enable Analysis</string>
     <string name="switch_mission_explanation">Enables analysis of app tracking by third-party companies.</string>
-    <string name="notification_title_vpnservice">Tracker Control status</string>
+    <string name="notification_title_vpnservice">TrackerControl status</string>
     <string name="notification_channel_name">Status</string>
     <string name="notification_detail_text_vpnservice_disconnected">Not checking trackers</string>
     <string name="notification_detail_text_vpnservice_connecting">Starting&#8230;</string>
     <string name="notification_detail_text_vpnservice_connected">Checking trackers</string>
     <string name="notification_detail_text_vpnservice_scheduled_connect">Automatic restart scheduled</string>
-    <string name="vpn_rights_needed">Please give VPN permissions for Tracker Control to work.</string>
+    <string name="vpn_rights_needed">Please give VPN permissions for TrackerControl to work.</string>
 
     <!-- App Overview -->
     <string name="tracked_app_name">Application Name</string>
@@ -88,7 +88,7 @@
 
     <!-- Actions -->
     <string name="block_tracking">Block trackers</string>
-    <string name="block_tracking_description">Many apps send data to third-parties, so-called trackers. Tracker Control allows to block these network transmissions selectively. Yet, use this wisely, since app developers rely on these services, notably advertising.</string>
+    <string name="block_tracking_description">Many apps send data to third-parties, so-called trackers. TrackerControl allows to block these network transmissions selectively. Yet, use this wisely, since app developers rely on these services, notably advertising.</string>
     <string name="personalised_ads">Limit Personalisation</string>
     <string name="personalised_ads_description">As an alternative to complete blocking, Android offers a setting to limit the usage of personal data for analytics and advertising purposes. However, personal data may still be transmitted and therefore requires trust in the data-receiving companies.</string>
     <string name="data_managment">Manage Data</string>
