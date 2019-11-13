@@ -134,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 			dialog.setCanceledOnTouchOutside(false);
 			dialog.show();
 		}
+
+		//throw new RuntimeException("Dying on purpose"); // to test crash reporting
 	}
 
 	/**

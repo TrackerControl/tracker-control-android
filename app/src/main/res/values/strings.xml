@@ -145,4 +145,7 @@ Please provide your response through secure means by email. I look forward to re
 Sincerely,]]></string>
     <string name="packet_statistics">Data flows</string>
     <string name="no_trackers">No trackers found.</string>
+
+    <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
+    <string name="crash_dialog_comment">Any comments?</string>
 </resources>

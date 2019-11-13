@@ -18,11 +18,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        release {
-            storeFile file('/home/konrad/Documents/Android/trackercontrol.jks')
-        }
-    }
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
 
@@ -32,7 +27,6 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0.0-alpha2"
-        //multiDexEnabled true
     }
 
     buildTypes {
@@ -67,9 +61,10 @@ android {
     lintOptions {
         abortOnError false
     }
+
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -103,4 +98,8 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'net.dankito.readability4j:readability4j:1.0.3'
     implementation 'com.opencsv:opencsv:4.6'
+
+    def acraVersion = '5.4.0'
+    implementation "ch.acra:acra-mail:$acraVersion"
+    implementation "ch.acra:acra-dialog:$acraVersion"
 }

@@ -1,8 +1,6 @@
-# TrackerControl
+# TrackerControl (work-in-progress)
 
 **If you're missing features or find bugs, use the issue tracker or contact me at tc@kollnig.net.**
-
-*This project is highly work-in-progress. Android 10 is currently not supported.*
 
 TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -34,6 +32,8 @@ in Computer Science at the University of Oxford, under the supervision
 of Professor Max van Kleek.
 
 ## Installation / Download
+
+* Supported Android versions: 5.1 to 9. Android 10 is not supported. *
 
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
