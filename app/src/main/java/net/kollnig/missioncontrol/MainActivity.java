@@ -19,7 +19,6 @@ package net.kollnig.missioncontrol;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -41,6 +40,7 @@ import android.widget.Toast;
 
 import net.kollnig.missioncontrol.main.AppBlocklistController;
 import net.kollnig.missioncontrol.main.AppsFragment;
+import net.kollnig.missioncontrol.main.SettingsActivity;
 import net.kollnig.missioncontrol.vpn.InConsumer;
 import net.kollnig.missioncontrol.vpn.OutConsumer;
 import net.kollnig.missioncontrol.vpn.OutFilter;
@@ -53,10 +53,10 @@ import edu.uci.calit2.antmonitor.lib.vpn.VpnState;
 public class MainActivity extends AppCompatActivity implements AntMonitorActivity,
 		View.OnClickListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
-	private final String APPS_FRAG_TAG = "appsFragTag";
-	public static String CONSENT_PREF = "consent";
+	public static String FIRST_START = "first-start";
 	public static String CONSENT_YES = "yes";
 	public static String CONSENT_NO = "no";
+	private final String APPS_FRAG_TAG = "appsFragTag";
 	SwitchCompat mSwitchMonitoring;
 	Toolbar mToolbar;
 	FragmentManager fm;
@@ -88,16 +88,20 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 
 		// Use click events only, for simplicity, disable swipe
 		mSwitchMonitoring.setOnClickListener(this);
-		mSwitchMonitoring.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch (View v, MotionEvent event) {
-				return event.getActionMasked() == MotionEvent.ACTION_MOVE;
-			}
-		});
+		mSwitchMonitoring.setOnTouchListener((v, event) -> event.getActionMasked() == MotionEvent.ACTION_MOVE);
 
 		// Initialise VPN controller
 		mVpnController = VpnController.getInstance(this);
 		VpnController.setDnsCacheEnabled(true);
+
+		// Initialise default settings (only first app start)
+		android.support.v7.preference.PreferenceManager
+				.setDefaultValues(this, R.xml.preferences, false);
+		final SharedPreferences settingsPref =
+				android.support.v7.preference.PreferenceManager
+						.getDefaultSharedPreferences(this);
+		Boolean showSystemApps = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 
 		// Set up the bottom bottomNavigation
 		fm = getSupportFragmentManager();
@@ -105,29 +109,28 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 		if (fApps != null) {
 			fm.beginTransaction().show(fApps).commit();
 		} else {
-			fm.beginTransaction().add(R.id.main_container, AppsFragment.newInstance(), APPS_FRAG_TAG).commit();
+			fm.beginTransaction().add
+					(R.id.main_container, AppsFragment.newInstance(showSystemApps), APPS_FRAG_TAG)
+					.commit();
 		}
 
 		// Ask for consent to contact Google and other servers
-		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		final String consent = sharedPref.getString(CONSENT_PREF, null);
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		final Boolean firstStart = sharedPref.getBoolean(FIRST_START, true);
 
-		if (consent == null) {
+		if (firstStart) {
+			sharedPref.edit().putBoolean(FIRST_START, false).apply();
+
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.confirm_google_info)
 					.setTitle(R.string.external_servers);
-			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-				public void onClick (DialogInterface dialog, int id) {
-					sharedPref.edit().putString(CONSENT_PREF, CONSENT_YES).apply();
-					dialog.dismiss();
-				}
+			builder.setPositiveButton(R.string.yes, (dialog, id) -> {
+				settingsPref.edit().putBoolean
+						(SettingsActivity.KEY_PREF_GOOGLEPLAY_SWITCH, true).apply();
+				dialog.dismiss();
 			});
-			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick (DialogInterface dialog, int i) {
-					sharedPref.edit().putString(CONSENT_PREF, CONSENT_NO).apply();
-					dialog.dismiss();
-				}
+			builder.setNegativeButton(R.string.no, (dialog, id) -> {
+				dialog.dismiss();
 			});
 			AlertDialog dialog = builder.create();
 			dialog.setCancelable(false); // avoid back button
@@ -143,12 +146,12 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 	 */
 	private void startMonitoring () {
 		// Check if we are connected to the internet
-		if (!mVpnController.isConnectedToInternet()) {
+		/*if (!mVpnController.isConnectedToInternet()) {
 			Toast.makeText(MainActivity.this, R.string.no_service,
 					Toast.LENGTH_LONG).show();
 			updateMonitoringSwitch(true, false);
 			return;
-		}
+		}*/
 
 		// Check if we have VPN rights from the user
 		Intent intent = android.net.VpnService.prepare(MainActivity.this);
@@ -178,6 +181,8 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 
 				// Connect - triggers onVpnStateChanged
 				mVpnController.connect(null, outFilter, inConsumer, outConsumer);
+
+				Toast.makeText(this, R.string.instructions_monitoring, Toast.LENGTH_SHORT).show();
 			} else {
 				// enable the switch again so user can try again
 				mSwitchMonitoring.setEnabled(true);
@@ -196,10 +201,14 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 	@Override
 	public boolean onOptionsItemSelected (MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_option_about:
+			case R.id.action_about:
 				Uri aboutUri = Uri.parse(getString(R.string.about_url));
 				Intent browserIntent = new Intent(Intent.ACTION_VIEW, aboutUri);
 				startActivity(browserIntent);
+				return true;
+			case R.id.action_settings:
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
 				return true;
 		}
 		return super.onOptionsItemSelected(item);

@@ -23,7 +23,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -44,9 +43,9 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
 	private static final int TYPE_HEADER = 0;
 	private static final int TYPE_ITEM = 1;
+	public static int openedApp = -1;
 	private Switch switchBlockAll;
 	private List<App> mAppList = new ArrayList<>();
-	public static int openedApp = -1;
 	private Fragment mFragment;
 
 
@@ -97,19 +96,20 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 			final VHItem holder = (VHItem) h;
 
-			holder.getAppName().setText(app.name);
+			if (app.systemApp) {
+				holder.getAppName().setText(app.name + " (System)");
+			} else {
+				holder.getAppName().setText(app.name);
+			}
 			holder.getAppDetails().setText(mFragment.getResources().getQuantityString(
 					R.plurals.n_trackers_found, app.trackerCount, app.trackerCount));
 			holder.getAppIcon().setImageDrawable(app.icon);
 
-			holder.itemView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick (View view) {
-					Intent intent = new Intent(mFragment.getContext(), DetailsActivity.class);
-					intent.putExtra(INTENT_EXTRA_APP_ID, app.id);
-					intent.putExtra(INTENT_EXTRA_APP_NAME, app.name);
-					mFragment.startActivity(intent);
-				}
+			holder.itemView.setOnClickListener(view -> {
+				Intent intent = new Intent(mFragment.getContext(), DetailsActivity.class);
+				intent.putExtra(INTENT_EXTRA_APP_ID, app.id);
+				intent.putExtra(INTENT_EXTRA_APP_NAME, app.name);
+				mFragment.startActivity(intent);
 			});
 
 			if (BuildConfig.FLAVOR.equals("play")) {
@@ -118,17 +118,14 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 			}
 
 			holder.getSwitch().setChecked(w.blockedApp(app.id));
-			holder.getSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged (CompoundButton buttonView, boolean isChecked) {
-					if (isChecked) {
-						w.addToBlocklist(app.id);
-					} else {
-						w.removeFromBlocklist(app.id);
-					}
-
-					switchBlockAll.setChecked(w.getBlockedCount() == mAppList.size());
+			holder.getSwitch().setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (isChecked) {
+					w.addToBlocklist(app.id);
+				} else {
+					w.removeFromBlocklist(app.id);
 				}
+
+				switchBlockAll.setChecked(w.getBlockedCount() == mAppList.size());
 			});
 		} else {
 			final VHHeader holder = (VHHeader) h;
@@ -141,25 +138,22 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 			}
 
 			holder.getSwitch().setChecked(w.getBlockedCount() == mAppList.size());
-			holder.getSwitch().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-				@Override
-				public void onCheckedChanged (CompoundButton buttonView, boolean isChecked) {
-					if (isChecked) {
-						BlockingConfirmDialog bd =
-								new BlockingConfirmDialog(mFragment.getContext(), w, switchBlockAll) {
-									@Override
-									void blockAll () {
-										for (App app : mAppList) {
-											w.addToBlocklist(app.id);
-										}
-										notifyDataSetChanged();
+			holder.getSwitch().setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (isChecked) {
+					BlockingConfirmDialog bd =
+							new BlockingConfirmDialog(mFragment.getContext(), w, switchBlockAll) {
+								@Override
+								void blockAll () {
+									for (App app : mAppList) {
+										w.addToBlocklist(app.id);
 									}
-								};
-						bd.confirmBlocking();
-					} else {
-						w.clear();
-						notifyDataSetChanged();
-					}
+									notifyDataSetChanged();
+								}
+							};
+					bd.confirmBlocking();
+				} else {
+					w.clear();
+					notifyDataSetChanged();
 				}
 			});
 		}

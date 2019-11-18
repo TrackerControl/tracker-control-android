@@ -36,11 +36,9 @@ public class InConsumer extends PacketConsumer {
 	}
 
 	/**
-	 * Logs packets of apps, if:
-	 * - TCP packet
-	 * - no system app
+	 * Logs incoming packets of apps.
 	 *
-	 * @param packetDumpInfo The outgoing packet.
+	 * @param packetDumpInfo The incoming packet.
 	 */
 	@Override
 	protected void consumePacket (PacketDumpInfo packetDumpInfo) {

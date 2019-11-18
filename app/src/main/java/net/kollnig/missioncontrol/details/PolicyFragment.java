@@ -100,17 +100,14 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 		pbPolicy = v.findViewById(R.id.pbPolicy);
 
 		fab = v.findViewById(R.id.fab);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick (View v) {
-				if (policyUrl == null) {
-					Snackbar.make(v, getString(R.string.policy_loading_error), Snackbar.LENGTH_LONG)
-							.show();
-				} else {
-					// Get URL
-					Intent browserIntent = Common.browse(policyUrl);
-					startActivity(browserIntent);
-				}
+		fab.setOnClickListener(v1 -> {
+			if (policyUrl == null) {
+				Snackbar.make(v1, getString(R.string.policy_loading_error), Snackbar.LENGTH_LONG)
+						.show();
+			} else {
+				// Get URL
+				Intent browserIntent = Common.browse(policyUrl);
+				startActivity(browserIntent);
 			}
 		});
 		fab.setVisibility(View.GONE);

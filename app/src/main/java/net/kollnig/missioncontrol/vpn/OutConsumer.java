@@ -49,9 +49,7 @@ public class OutConsumer extends PacketConsumer {
 	}
 
 	/**
-	 * Logs packets of apps, if:
-	 * - TCP packet
-	 * - no system app
+	 * Logs outgoing packets of apps.
 	 *
 	 * @param packetDumpInfo The outgoing packet.
 	 */
@@ -61,7 +59,8 @@ public class OutConsumer extends PacketConsumer {
 		ConnectionValue cv = mapPacketToApp(packetDumpInfo);
 		String appname = cv.getAppName();
 		if (appname.startsWith(ConnectionValue.MappingErrors.PREFIX)
-				|| (appBlocklist.systemApps.contains(cv.getAppName())))
+			//		|| (appBlocklist.systemApps.contains(cv.getAppName()))
+		)
 			return;
 
 		// Parse IP packet

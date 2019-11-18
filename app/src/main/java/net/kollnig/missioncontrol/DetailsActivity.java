@@ -59,13 +59,13 @@ import static net.kollnig.missioncontrol.main.AppsFragment.savePrefs;
 public class DetailsActivity extends AppCompatActivity {
 	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 	public static PlayStore.AppInfo app = null;
+	public static String consent;
 	private final String TAG = DetailsActivity.class.getSimpleName();
 	Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
 			Environment.getExternalStorageDirectory(), "mission_control");
 	private String appId;
 	private String appName;
-	public static String consent;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -79,7 +79,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 		// Check if consent to contact external servers
 		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		consent = sharedPref.getString(MainActivity.CONSENT_PREF, MainActivity.CONSENT_NO);
+		consent = sharedPref.getString(MainActivity.FIRST_START, MainActivity.CONSENT_NO);
 
 		// Set up paging
 		DetailsPagesAdapter detailsPagesAdapter =
@@ -105,12 +105,9 @@ public class DetailsActivity extends AppCompatActivity {
 				@Override
 				public void run () {
 					app = PlayStore.getInfo(appId);
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run () {
-							for (OnAppInfoLoadedListener listener : listeners) {
-								listener.appInfoLoaded();
-							}
+					runOnUiThread(() -> {
+						for (OnAppInfoLoadedListener listener : listeners) {
+							listener.appInfoLoaded();
 						}
 					});
 				}
@@ -131,7 +128,7 @@ public class DetailsActivity extends AppCompatActivity {
 			case android.R.id.home:
 				NavUtils.navigateUpFromSameTask(this);
 				return true;
-			case R.id.menu_option_export_csv:
+			case R.id.action_export_csv:
 				if (hasPermissions()) {
 					exportCsv();
 				}
@@ -274,12 +271,7 @@ public class DetailsActivity extends AppCompatActivity {
 			// Export successul, ask user to further share file!
 			View v = findViewById(R.id.view_pager);
 			Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
-			s.setAction(R.string.share_csv, new View.OnClickListener() {
-				@Override
-				public void onClick (View v) {
-					shareExport();
-				}
-			});
+			s.setAction(R.string.share_csv, v1 -> shareExport());
 			s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
 			s.show();
 		}

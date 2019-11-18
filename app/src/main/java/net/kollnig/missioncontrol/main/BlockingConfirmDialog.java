@@ -18,7 +18,6 @@
 package net.kollnig.missioncontrol.main;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.widget.Switch;
@@ -53,20 +52,15 @@ abstract class BlockingConfirmDialog {
 		AlertDialog.Builder builder = new AlertDialog.Builder(c);
 		builder.setMessage(message)
 				.setTitle(R.string.confirm_blocking_title);
-		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-			public void onClick (DialogInterface dialog, int id) {
-				if (hasAdSettings) {
-					c.startActivity(adIntent);
-				}
-				switchBlockAll.setChecked(false);
+		builder.setPositiveButton(R.string.yes, (dialog, id) -> {
+			if (hasAdSettings) {
+				c.startActivity(adIntent);
 			}
+			switchBlockAll.setChecked(false);
 		});
-		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick (DialogInterface dialog, int i) {
-				blockAll();
-				switchBlockAll.setChecked(true);
-			}
+		builder.setNegativeButton(R.string.no, (dialog, i) -> {
+			blockAll();
+			switchBlockAll.setChecked(true);
 		});
 		AlertDialog dialog = builder.create();
 		dialog.show();

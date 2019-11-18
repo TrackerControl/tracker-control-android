@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
   ~
   ~ TrackerControl is free software: you can redistribute it and/or modify
@@ -16,22 +15,17 @@
   ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_reset_monitoring"
-        android:orderInCategory="10"
-        android:title="@string/menu_reset"
-        android:visible="false"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_about"
-        android:orderInCategory="10"
-        android:title="@string/menu_about"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="10"
-        android:title="@string/menu_settings"
-        app:showAsAction="never" />
-</menu>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="googleplay_switch"
+        android:summary="@string/google_play_data_explanation"
+        android:title="@string/google_play_data_title" />
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="systemapps_switch"
+        android:summary="@string/show_system_apps_explanation"
+        android:title="@string/show_system_apps_title" />
+
+</PreferenceScreen>

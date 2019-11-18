@@ -17,6 +17,7 @@
 package net.kollnig.missioncontrol.main;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
@@ -40,7 +41,13 @@ public class AppBlocklistController extends BlocklistController {
 		pm = c.getPackageManager();
 		ownPackageName = c.getApplicationContext().getPackageName();
 
-		load();
+		SharedPreferences settingsPref =
+				android.support.v7.preference.PreferenceManager
+						.getDefaultSharedPreferences(c);
+		boolean showSystemApps = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
+
+		load(showSystemApps);
 	}
 
 	/**
@@ -58,7 +65,7 @@ public class AppBlocklistController extends BlocklistController {
 		return instance;
 	}
 
-	public List<App> load () {
+	public List<App> load (boolean showSystemApps) {
 		boolean initialisation = (systemApps.size() == 0);
 		List<App> installedApps = new ArrayList<>();
 
@@ -69,11 +76,15 @@ public class AppBlocklistController extends BlocklistController {
 				if (initialisation) {
 					systemApps.add(appInfo.packageName);
 				}
-			} else {
+			}
+
+			if (showSystemApps || !systemApps.contains(appInfo.packageName)) {
 				App app = new App();
+
 				app.id = appInfo.packageName;
 				app.icon = appInfo.loadIcon(pm);
 				app.name = appInfo.loadLabel(pm).toString();
+				app.systemApp = systemApps.contains(appInfo.packageName);
 
 				installedApps.add(app);
 			}

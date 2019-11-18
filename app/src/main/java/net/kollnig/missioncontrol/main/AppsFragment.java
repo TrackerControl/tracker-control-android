@@ -17,7 +17,6 @@
 package net.kollnig.missioncontrol.main;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,60 +58,19 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	Database database;
 	SwipeRefreshLayout mSwipeRefreshLayout;
 	ProgressBar pbApps;
+	private static final String ARG_SYSTEMAPPS = "system-apps";
+	Boolean mShowSystemApps;
 
 	public AppsFragment () {
 		// Required empty public constructor
 	}
 
-	public static AppsFragment newInstance () {
+	public static AppsFragment newInstance (Boolean showSystemApps) {
 		AppsFragment fragment = new AppsFragment();
+		Bundle args = new Bundle();
+		args.putBoolean(ARG_SYSTEMAPPS, showSystemApps);
+		fragment.setArguments(args);
 		return fragment;
-	}
-
-	@Override
-	public void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
-	}
-
-	@Override
-	public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		//inflater.inflate(R.menu.menu_main, menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.menu_option_reset_monitoring:
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(R.string.confirm_reset)
-						.setTitle(R.string.are_you_sure);
-				builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-					public void onClick (DialogInterface dialog, int id) {
-						Database database = Database.getInstance(getActivity());
-						database.clearLeaksHistory();
-						dialog.dismiss();
-					}
-				});
-				builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick (DialogInterface dialog, int i) {
-						dialog.dismiss();
-					}
-				});
-				AlertDialog dialog = builder.create();
-				dialog.show();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container,
-	                          Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_apps, container, false);
 	}
 
 	public static void savePrefs (Context c) {
@@ -132,6 +90,46 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	}
 
 	@Override
+	public void onCreate (Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
+		mShowSystemApps = getArguments().getBoolean(ARG_SYSTEMAPPS);
+	}
+
+	@Override
+	public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		//inflater.inflate(R.menu.menu_main, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected (MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_reset_monitoring:
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setMessage(R.string.confirm_reset)
+						.setTitle(R.string.are_you_sure);
+				builder.setPositiveButton(R.string.ok, (dialog, id) -> {
+					Database database = Database.getInstance(getActivity());
+					database.clearLeaksHistory();
+					dialog.dismiss();
+				});
+				builder.setNegativeButton(android.R.string.cancel, (dialog, i) -> dialog.dismiss());
+				AlertDialog dialog = builder.create();
+				dialog.show();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public View onCreateView (LayoutInflater inflater, ViewGroup container,
+	                          Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_apps, container, false);
+	}
+
+	@Override
 	public void onViewCreated (View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
@@ -148,7 +146,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		database = Database.getInstance(getContext());
 		database.addListener(this);
 
-		(new AppsRefreshTask(this)).execute();
+		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
 	@Override
@@ -160,7 +158,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	@Override
 	public void onResume () {
 		super.onResume();
-		(new AppsRefreshTask(this)).execute();
+		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
 	@Override
@@ -181,11 +179,11 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 	@Override
 	public void onRefresh () {
-		(new AppsRefreshTask(this)).execute();
+		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
 	public void onDatabaseClear () {
-		(new AppsRefreshTask(this)).execute();
+		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
 	static class AppsRefreshTask extends AsyncTask<Void, Void, Boolean> {
@@ -193,16 +191,19 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		Database database;
 		List<App> installedApps;
 		AppBlocklistController appBlocklistController;
+		Boolean mShowSystemApps;
 
-		AppsRefreshTask (AppsFragment f) {
+		AppsRefreshTask (AppsFragment f, Boolean showSystemApps) {
 			database = Database.getInstance(f.getContext());
 			weakFragment = new WeakReference<>(f);
 			appBlocklistController = AppBlocklistController.getInstance(f.getContext());
+			mShowSystemApps = showSystemApps;
 		}
 
 		@Override
 		protected Boolean doInBackground (Void... voids) {
-			installedApps = appBlocklistController.load();
+
+			installedApps = appBlocklistController.load(mShowSystemApps);
 			Map<String, Integer> trackerCounts = database.getApps();
 
 			for (App app : installedApps) {

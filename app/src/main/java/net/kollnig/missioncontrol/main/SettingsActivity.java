@@ -15,18 +15,23 @@
  * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.kollnig.missioncontrol.data;
+package net.kollnig.missioncontrol.main;
 
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-public class App implements Comparable<App> {
-	public String name;
-	public String id;
-	public Boolean systemApp;
-	public Integer trackerCount = 0;
-	public Drawable icon;
+public class SettingsActivity extends AppCompatActivity {
+	public static final String
+			KEY_PREF_GOOGLEPLAY_SWITCH = "googleplay_switch";
+	public static final String
+			KEY_PREF_SYSTEMAPPS_SWITCH = "systemapps_switch";
 
-	public int compareTo (App o) {
-		return o.trackerCount.compareTo(trackerCount);
+	@Override
+	protected void onCreate (Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		getSupportFragmentManager().beginTransaction()
+				.replace(android.R.id.content, new SettingsFragment())
+				.commit();
 	}
 }

@@ -24,7 +24,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -43,8 +42,8 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 
 	private final List<Tracker> mValues;
 	private final RecyclerView recyclerView;
-	private Context mContext;
 	private final String mAppId;
+	private Context mContext;
 
 	public TransmissionsListAdapter (List<Tracker> items,
 	                                 Context c,
@@ -88,30 +87,22 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 		holder.mSwitch.setChecked(
 				w.blockedTracker(mAppId, tracker.name)
 		);
-		holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged (CompoundButton v, boolean isChecked) {
-				if (isChecked) {
-					if (!w.blockedApp(mAppId)) {
-						w.addToBlocklist(mAppId);
-						for (Tracker tracker1 : mValues) {
-							w.removeFromBlocklist(mAppId, tracker1.name);
-						}
+		holder.mSwitch.setOnCheckedChangeListener((v, isChecked) -> {
+			if (isChecked) {
+				if (!w.blockedApp(mAppId)) {
+					w.addToBlocklist(mAppId);
+					for (Tracker tracker1 : mValues) {
+						w.removeFromBlocklist(mAppId, tracker1.name);
 					}
-					w.addToBlocklist(mAppId, tracker.name);
-				} else {
-					if (!w.blockedApp(mAppId))
-						return;
-					w.removeFromBlocklist(mAppId, tracker.name);
 				}
+				w.addToBlocklist(mAppId, tracker.name);
+			} else {
+				if (!w.blockedApp(mAppId))
+					return;
+				w.removeFromBlocklist(mAppId, tracker.name);
 			}
 		});
-		holder.mView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick (View v) {
-				holder.mSwitch.toggle();
-			}
-		});
+		holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
 	}
 
 	@Override

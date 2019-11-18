@@ -15,18 +15,25 @@
  * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.kollnig.missioncontrol.data;
+package net.kollnig.missioncontrol.main;
 
-import android.graphics.drawable.Drawable;
 
-public class App implements Comparable<App> {
-	public String name;
-	public String id;
-	public Boolean systemApp;
-	public Integer trackerCount = 0;
-	public Drawable icon;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
-	public int compareTo (App o) {
-		return o.trackerCount.compareTo(trackerCount);
+import net.kollnig.missioncontrol.R;
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class SettingsFragment extends PreferenceFragmentCompat {
+	public SettingsFragment () {
+		// Required empty public constructor
+	}
+
+	@Override
+	public void onCreatePreferences (Bundle savedInstanceState, String rootKey) {
+		setPreferencesFromResource(R.xml.preferences, rootKey);
 	}
 }

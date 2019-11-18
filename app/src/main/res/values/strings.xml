@@ -61,7 +61,7 @@
     <string name="no">No</string>
 
     <string name="menu_about">About / Privacy Policy</string>
-    <string name="about_url">https://github.com/OxfordHCC/tracker-control-android</string>
+    <string name="about_url">https://github.com/kasnder/privacy-control#privacy-notice</string>
 
     <string name="menu_csv">Export as CSV</string>
     <string name="exporting">Exporting..</string>
@@ -148,4 +148,11 @@ Sincerely,]]></string>
 
     <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
+    <string name="show_system_apps_title">Show system apps</string>
+    <string name="show_system_apps_explanation">Restart of TrackerControl required</string>
+    <string name="google_play_data_title">Load data from Google Play</string>
+    <string name="google_play_data_explanation">No personal data is shared</string>
+    <string name="menu_settings">Settings</string>
+
+    <string name="instructions_monitoring">"Interact with your apps to detect some trackers."</string>
 </resources>
