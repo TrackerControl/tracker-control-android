@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -109,7 +110,7 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 				startActivity(browserIntent);
 			}
 		});
-		fab.setVisibility(View.GONE);
+		fab.hide();
 
 		((DetailsActivity) getActivity()).addListener(this);
 
@@ -146,7 +147,7 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 	public void loadingFinished () {
 		txtPolicy.setVisibility(View.VISIBLE);
 		pbPolicy.setVisibility(View.GONE);
-		fab.setVisibility(View.VISIBLE);
+		fab.show();
 	}
 
 	@Override
@@ -156,16 +157,17 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 
 	private class PolicyLoader implements Runnable {
 		private void onError (final String url) {
-			getActivity().runOnUiThread(new Runnable() {
-				public void run () {
-					if (url != null) {
-						html = getString(R.string.parse_error, Html.escapeHtml(url));
-						displayHtml(html);
-					} else {
-						txtPolicy.setText(getString(R.string.policy_loading_error));
-					}
-					loadingFinished();
+			FragmentActivity a = getActivity();
+			if (a == null) return;
+
+			a.runOnUiThread(() -> {
+				if (url != null) {
+					html = getString(R.string.parse_error, Html.escapeHtml(url));
+					displayHtml(html);
+				} else {
+					txtPolicy.setText(getString(R.string.policy_loading_error));
 				}
+				loadingFinished();
 			});
 		}
 
@@ -201,11 +203,11 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 			html = "<h1>" + Html.escapeHtml(title) + "</h1>" + content;
 
 			// Display in UI
-			getActivity().runOnUiThread(new Runnable() {
-				public void run () {
-					displayHtml(html);
-					loadingFinished();
-				}
+			FragmentActivity a = getActivity();
+			if (a == null) return;
+			a.runOnUiThread(() -> {
+				displayHtml(html);
+				loadingFinished();
 			});
 		}
 	}
