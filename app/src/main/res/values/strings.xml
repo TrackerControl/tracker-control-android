@@ -155,7 +155,4 @@ Sincerely,]]></string>
     <string name="menu_settings">Settings</string>
 
     <string name="instructions_monitoring">"Interact with your apps to detect some trackers."</string>
-
-    <string name="android_10_unsupported_title">Android 10 unsupported</string>
-    <string name="android_10_unsupported_explanation">Support will be added soon. Monitoring or blocking of trackers does not work in this version.</string>
 </resources>

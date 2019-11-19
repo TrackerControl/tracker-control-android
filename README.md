@@ -32,9 +32,6 @@ in Computer Science at the University of Oxford, under the supervision
 of Professor Max van Kleek.
 
 ## Installation / Download
-
-*Supported Android versions: 5.1 to 9. Android 10 is not supported.*
-
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
 Alternatively, there exists a [repository for F-Droid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol).
@@ -105,6 +102,8 @@ This database was released as part of their 2018 paper on
 The original data can be retrieved [here](https://osf.io/4nu9e/).
 
 The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/).
+
+For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 
 ## License
 This project is licensed under

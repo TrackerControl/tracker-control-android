@@ -87,15 +87,14 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation(name: 'antmonitorlib', ext: 'aar')
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.preference:preference:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
 
     implementation 'com.google.guava:guava:28.0-android'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'

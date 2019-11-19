@@ -182,10 +182,14 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 				return;
 			}
 
-			String privacyHtml;
+			boolean fetchError = false;
+			String privacyHtml = null;
 			try {
 				privacyHtml = fetch(policyUrl);
 			} catch (Exception e) {
+				fetchError = true;
+			}
+			if (fetchError || privacyHtml == null) {
 				Log.d(TAG, "Fetching of policy from url failed.");
 				onError(policyUrl);
 				return;

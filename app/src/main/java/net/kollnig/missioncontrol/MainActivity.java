@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -110,39 +109,29 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 		}
 
 		// Ask for consent to contact Google and other servers
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean firstStart = sharedPref.getBoolean(FIRST_START, true);
 
-		final SharedPreferences settingsPref = PreferenceManager
-						.getDefaultSharedPreferences(this);
-
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		if (firstStart && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+		if (firstStart) {
 			sharedPref.edit().putBoolean(FIRST_START, false).apply();
 
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.confirm_google_info)
 					.setTitle(R.string.external_servers);
 			builder.setPositiveButton(R.string.yes, (dialog, id) -> {
-				settingsPref.edit().putBoolean
+				sharedPref.edit().putBoolean
 						(SettingsActivity.KEY_PREF_GOOGLEPLAY_SWITCH, true).apply();
 				dialog.dismiss();
 			});
 			builder.setNegativeButton(R.string.no, (dialog, id) -> {
 				dialog.dismiss();
 			});
-		} else {
-			builder.setMessage(R.string.android_10_unsupported_explanation)
-					.setTitle(R.string.android_10_unsupported_title);
-			builder.setPositiveButton(R.string.ok, (dialog, id) -> {
-				dialog.dismiss();
-			});
-		}
-		AlertDialog dialog = builder.create();
-		dialog.setCancelable(false); // avoid back button
-		dialog.setCanceledOnTouchOutside(false);
-		dialog.show();
 
-		//throw new RuntimeException("Dying on purpose"); // to test crash reporting
+			AlertDialog dialog = builder.create();
+			dialog.setCancelable(false); // avoid back button
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.show();
+		}
 	}
 
 	/**
