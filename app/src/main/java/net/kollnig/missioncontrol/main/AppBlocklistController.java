@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import androidx.preference.PreferenceManager;
+
 public class AppBlocklistController extends BlocklistController {
 	private static final String SHARED_PREFS_BLOCKLIST_APPS_KEY = "APPS_BLOCKLIST_APPS_KEY";
 	private static AppBlocklistController instance;
@@ -41,9 +43,7 @@ public class AppBlocklistController extends BlocklistController {
 		pm = c.getPackageManager();
 		ownPackageName = c.getApplicationContext().getPackageName();
 
-		SharedPreferences settingsPref =
-				android.support.v7.preference.PreferenceManager
-						.getDefaultSharedPreferences(c);
+		SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(c);
 		boolean showSystemApps = settingsPref.getBoolean
 				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 

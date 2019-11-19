@@ -19,14 +19,11 @@ package net.kollnig.missioncontrol.main;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.preference.PreferenceFragmentCompat;
 
 import net.kollnig.missioncontrol.R;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+import androidx.preference.PreferenceFragmentCompat;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
 	public SettingsFragment () {
 		// Required empty public constructor

@@ -20,10 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,6 +37,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import static net.kollnig.missioncontrol.main.BlocklistController.PREF_BLOCKLIST;
 
@@ -91,8 +93,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 
-		settingsPref =
-				android.support.v7.preference.PreferenceManager
+		settingsPref = PreferenceManager
 						.getDefaultSharedPreferences(getContext());
 	}
 
@@ -110,8 +111,17 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 				builder.setMessage(R.string.confirm_reset)
 						.setTitle(R.string.are_you_sure);
 				builder.setPositiveButton(R.string.ok, (dialog, id) -> {
+					// Reset apps
+					AppBlocklistController.getInstance(getContext()).clear();
+					savePrefs(getContext());
+
+					// Clear history
 					Database database = Database.getInstance(getActivity());
-					database.clearLeaksHistory();
+					database.clearHistory();
+
+					// Reload apps
+					refreshApps();
+
 					dialog.dismiss();
 				});
 				builder.setNegativeButton(android.R.string.cancel, (dialog, i) -> dialog.dismiss());
@@ -146,9 +156,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		database = Database.getInstance(getContext());
 		database.addListener(this);
 
-		boolean mShowSystemApps = settingsPref.getBoolean
-				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
-		(new AppsRefreshTask(this, mShowSystemApps)).execute();
+		refreshApps();
 	}
 
 	@Override
@@ -160,9 +168,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	@Override
 	public void onResume () {
 		super.onResume();
-		boolean mShowSystemApps = settingsPref.getBoolean
-				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
-		(new AppsRefreshTask(this, mShowSystemApps)).execute();
+		refreshApps();
 	}
 
 	@Override
@@ -181,17 +187,19 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		pbApps.setVisibility(View.GONE);
 	}
 
-	@Override
-	public void onRefresh () {
+	void refreshApps () {
 		boolean mShowSystemApps = settingsPref.getBoolean
 				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
+	@Override
+	public void onRefresh () {
+		refreshApps();
+	}
+
 	public void onDatabaseClear () {
-		boolean mShowSystemApps = settingsPref.getBoolean
-				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
-		(new AppsRefreshTask(this, mShowSystemApps)).execute();
+		refreshApps();
 	}
 
 	static class AppsRefreshTask extends AsyncTask<Void, Void, Boolean> {

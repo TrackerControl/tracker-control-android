@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -45,6 +44,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import androidx.collection.ArrayMap;
 
 public class Database {
 	/* ****** COLUMN NAMES PERTAINING TO {@link #TABLE_HISTORY} ****** */
@@ -406,11 +407,11 @@ public class Database {
 	}
 
 	/**
-	 * Clears {@link #TABLE_HISTORY}, thus clearing away any history of past leaks
+	 * Clears {@link #TABLE_HISTORY}.
 	 */
-	public synchronized void clearLeaksHistory () {
-		// Clear all entries in table
-		getDatabase().execSQL("delete from " + TABLE_HISTORY);
+	public synchronized void clearHistory () {
+		String query = "DELETE FROM " + TABLE_HISTORY;
+		getDatabase().execSQL(query);
 
 		for (OnDatabaseClearListener l : clearListeners) {
 			try {

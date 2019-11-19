@@ -19,13 +19,13 @@ package net.kollnig.missioncontrol.details;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
@@ -33,6 +33,8 @@ import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 
 import javax.annotation.Nullable;
+
+import androidx.fragment.app.Fragment;
 
 import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTransmissionsPosition;
 
@@ -90,6 +92,9 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 		v.findViewById(R.id.btnContactDev).setOnClickListener(this);
 		v.findViewById(R.id.btnContactGoogle).setOnClickListener(this);
 		v.findViewById(R.id.btnContactOfficials).setOnClickListener(this);
+
+		if (!Common.hasAdSettings(getContext()))
+			v.findViewById(R.id.adsettings_card).setVisibility(View.GONE);
 
 		if (BuildConfig.FLAVOR.equals("play")) {
 			v.findViewById(R.id.tracker_card).setVisibility(View.GONE);

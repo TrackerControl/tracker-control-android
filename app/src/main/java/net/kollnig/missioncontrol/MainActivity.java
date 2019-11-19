@@ -22,21 +22,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import net.kollnig.missioncontrol.main.AppBlocklistController;
 import net.kollnig.missioncontrol.main.AppsFragment;
@@ -45,6 +40,13 @@ import net.kollnig.missioncontrol.vpn.InConsumer;
 import net.kollnig.missioncontrol.vpn.OutConsumer;
 import net.kollnig.missioncontrol.vpn.OutFilter;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.PreferenceManager;
 import edu.uci.calit2.antmonitor.lib.AntMonitorActivity;
 import edu.uci.calit2.antmonitor.lib.logging.PacketProcessor.TrafficType;
 import edu.uci.calit2.antmonitor.lib.vpn.VpnController;
@@ -93,8 +95,8 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 		VpnController.setDnsCacheEnabled(true);
 
 		// Initialise default settings (only first app start)
-		android.support.v7.preference.PreferenceManager
-				.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues
+				(this, R.xml.preferences, false);
 
 		// Set up the bottom bottomNavigation
 		fm = getSupportFragmentManager();
@@ -111,14 +113,13 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean firstStart = sharedPref.getBoolean(FIRST_START, true);
 
-		final SharedPreferences settingsPref =
-				android.support.v7.preference.PreferenceManager
+		final SharedPreferences settingsPref = PreferenceManager
 						.getDefaultSharedPreferences(this);
 
-		if (firstStart) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		if (firstStart && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
 			sharedPref.edit().putBoolean(FIRST_START, false).apply();
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.confirm_google_info)
 					.setTitle(R.string.external_servers);
 			builder.setPositiveButton(R.string.yes, (dialog, id) -> {
@@ -129,11 +130,17 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 			builder.setNegativeButton(R.string.no, (dialog, id) -> {
 				dialog.dismiss();
 			});
-			AlertDialog dialog = builder.create();
-			dialog.setCancelable(false); // avoid back button
-			dialog.setCanceledOnTouchOutside(false);
-			dialog.show();
+		} else {
+			builder.setMessage(R.string.android_10_unsupported_explanation)
+					.setTitle(R.string.android_10_unsupported_title);
+			builder.setPositiveButton(R.string.ok, (dialog, id) -> {
+				dialog.dismiss();
+			});
 		}
+		AlertDialog dialog = builder.create();
+		dialog.setCancelable(false); // avoid back button
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.show();
 
 		//throw new RuntimeException("Dying on purpose"); // to test crash reporting
 	}
@@ -164,6 +171,8 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 
 	@Override
 	protected void onActivityResult (int request, int result, Intent data) {
+		super.onActivityResult(request, result, data);
+
 		if (request == VpnController.REQUEST_VPN_RIGHTS) {
 			// Check if the user granted us rights to VPN
 			if (result == Activity.RESULT_OK) {

@@ -19,7 +19,6 @@ package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
@@ -47,6 +46,8 @@ import net.kollnig.missioncontrol.data.Tracker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * A simple {@link Fragment} subclass.

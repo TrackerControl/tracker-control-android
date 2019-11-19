@@ -33,13 +33,13 @@
     <string name="tracked_app_name">Application Name</string>
     <string name="tracker_count">40</string>
     <plurals name="n_trackers_found">
-        <item quantity="one">%d tracker found:</item>
-        <item quantity="other">%d trackers found:</item>
+        <item quantity="one">%d tracker found</item>
+        <item quantity="other">%d trackers found</item>
     </plurals>
     <string name="title_apps">Apps</string>
     <string name="title_trackers">Trackers</string>
-    <string name="menu_reset">Reset Monitoring</string>
-    <string name="confirm_reset">Are you sure you want to reset the monitoring?</string>
+    <string name="menu_reset">Reset monitoring</string>
+    <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
     <string name="confirm_blocking_title">NOT block all trackers?</string>
     <string name="external_servers">Contact external servers?</string>
     <string name="confirm_google_info">Shall this app contact external servers, notably Google, to retrieve the developer email and the privacy policy of an app?</string>
@@ -60,7 +60,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="menu_about">About / Privacy Policy</string>
+    <string name="menu_about">Privacy Policy</string>
     <string name="about_url">https://github.com/kasnder/privacy-control#privacy-notice</string>
 
     <string name="menu_csv">Export as CSV</string>
@@ -95,7 +95,7 @@
     <string name="data_management_description">The EU General Data Protection Regulation (GDPR) allows users from the EU to manage any data related to them. This app provides email templates to reach out to the developer. The developer has to answer within one month.</string>
     <string name="contacts">Contact </string>
     <string name="contacts_description">If you think an application violates data protection principles, you may want to contact the responsible entities directly.</string>
-    <string name="play_services_required">Google Play Services required for this action.</string>
+    <string name="play_services_required">This is a setting of the Google Play Services, which were not found on yourr device.</string>
     <string name="no_dev_mail">Developer mail address not yet fetched. Check internet connection.</string>
     <string name="no_mail_service">Please install an email client.</string>
     <string name="blocking_settings">Select trackers</string>
@@ -155,4 +155,7 @@ Sincerely,]]></string>
     <string name="menu_settings">Settings</string>
 
     <string name="instructions_monitoring">"Interact with your apps to detect some trackers."</string>
+
+    <string name="android_10_unsupported_title">Android 10 unsupported</string>
+    <string name="android_10_unsupported_explanation">Support will be added soon. Monitoring or blocking of trackers does not work in this version.</string>
 </resources>

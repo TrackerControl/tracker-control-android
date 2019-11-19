@@ -30,14 +30,14 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"/>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/main_swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -46,5 +46,5 @@
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/list_apps_item"
             />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

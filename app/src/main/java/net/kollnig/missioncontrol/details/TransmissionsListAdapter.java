@@ -18,8 +18,6 @@
 package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +32,9 @@ import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.main.AppBlocklistController;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Tracker}.
@@ -74,7 +75,8 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 		// Add data to view
 		holder.mTrackerName.setText(tracker.name);
 		holder.mTotalTrackers.setText(mContext.getResources().getQuantityString(
-				R.plurals.n_trackers_found, tracker.children.size(), tracker.children.size()));
+				R.plurals.n_trackers_found, tracker.children.size(), tracker.children.size())
+				+ ":");
 		holder.mTrackerDetails.setText(
 				"• " + TextUtils.join("\n• ", tracker.children));
 

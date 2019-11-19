@@ -19,11 +19,12 @@ package net.kollnig.missioncontrol.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.widget.Switch;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+
+import androidx.appcompat.app.AlertDialog;
 
 abstract class BlockingConfirmDialog {
 	private Context c;

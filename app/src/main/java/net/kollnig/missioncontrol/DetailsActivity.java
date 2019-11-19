@@ -27,20 +27,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.data.Database;
@@ -53,6 +46,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.preference.PreferenceManager;
+import androidx.viewpager.widget.ViewPager;
 
 import static net.kollnig.missioncontrol.main.AppsFragment.savePrefs;
 
@@ -78,9 +80,7 @@ public class DetailsActivity extends AppCompatActivity {
 		appName = intent.getStringExtra(AppsListAdapter.INTENT_EXTRA_APP_NAME);
 
 		// Check if consent to contact external servers
-		SharedPreferences settingsPref =
-				android.support.v7.preference.PreferenceManager
-						.getDefaultSharedPreferences(this);
+		SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
 		contactGoogle = settingsPref.getBoolean
 				(SettingsActivity.KEY_PREF_GOOGLEPLAY_SWITCH, false);
 

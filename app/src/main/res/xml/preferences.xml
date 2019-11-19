@@ -17,12 +17,12 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="googleplay_switch"
         android:summary="@string/google_play_data_explanation"
         android:title="@string/google_play_data_title" />
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="systemapps_switch"
         android:summary="@string/show_system_apps_explanation"

@@ -19,15 +19,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_reset_monitoring"
-        android:orderInCategory="10"
-        android:title="@string/menu_reset"
-        android:visible="false"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_about"
         android:orderInCategory="10"
         android:title="@string/menu_about"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_reset_monitoring"
+        android:orderInCategory="10"
+        android:title="@string/menu_reset"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
