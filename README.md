@@ -44,7 +44,7 @@ TrackerControl provides
 - *real-time monitoring* of app tracking,
 - *granular blocking* of app tracking,
 - access to apps' *privacy policy websites without trackers* (which they often contain), and
-- *one-click data requests* as granted under EU Data Protection Legislation (to be added soon).
+- *one-click data requests* as granted under EU Data Protection Legislation.
 
 <p align="center">
     <img alt="Screenshot of main screen" src="images/main.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >

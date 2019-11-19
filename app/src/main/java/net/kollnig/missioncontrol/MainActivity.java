@@ -97,11 +97,6 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 		// Initialise default settings (only first app start)
 		android.support.v7.preference.PreferenceManager
 				.setDefaultValues(this, R.xml.preferences, false);
-		final SharedPreferences settingsPref =
-				android.support.v7.preference.PreferenceManager
-						.getDefaultSharedPreferences(this);
-		Boolean showSystemApps = settingsPref.getBoolean
-				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 
 		// Set up the bottom bottomNavigation
 		fm = getSupportFragmentManager();
@@ -110,13 +105,17 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 			fm.beginTransaction().show(fApps).commit();
 		} else {
 			fm.beginTransaction().add
-					(R.id.main_container, AppsFragment.newInstance(showSystemApps), APPS_FRAG_TAG)
+					(R.id.main_container, AppsFragment.newInstance(), APPS_FRAG_TAG)
 					.commit();
 		}
 
 		// Ask for consent to contact Google and other servers
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		final Boolean firstStart = sharedPref.getBoolean(FIRST_START, true);
+		boolean firstStart = sharedPref.getBoolean(FIRST_START, true);
+
+		final SharedPreferences settingsPref =
+				android.support.v7.preference.PreferenceManager
+						.getDefaultSharedPreferences(this);
 
 		if (firstStart) {
 			sharedPref.edit().putBoolean(FIRST_START, false).apply();

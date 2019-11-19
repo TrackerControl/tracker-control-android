@@ -58,18 +58,13 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	Database database;
 	SwipeRefreshLayout mSwipeRefreshLayout;
 	ProgressBar pbApps;
-	private static final String ARG_SYSTEMAPPS = "system-apps";
-	Boolean mShowSystemApps;
 
 	public AppsFragment () {
 		// Required empty public constructor
 	}
 
-	public static AppsFragment newInstance (Boolean showSystemApps) {
+	public static AppsFragment newInstance () {
 		AppsFragment fragment = new AppsFragment();
-		Bundle args = new Bundle();
-		args.putBoolean(ARG_SYSTEMAPPS, showSystemApps);
-		fragment.setArguments(args);
 		return fragment;
 	}
 
@@ -89,11 +84,16 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		editor.apply();
 	}
 
+	SharedPreferences settingsPref;
+
 	@Override
 	public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
-		mShowSystemApps = getArguments().getBoolean(ARG_SYSTEMAPPS);
+
+		settingsPref =
+				android.support.v7.preference.PreferenceManager
+						.getDefaultSharedPreferences(getContext());
 	}
 
 	@Override
@@ -146,6 +146,8 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		database = Database.getInstance(getContext());
 		database.addListener(this);
 
+		boolean mShowSystemApps = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
@@ -158,6 +160,8 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	@Override
 	public void onResume () {
 		super.onResume();
+		boolean mShowSystemApps = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
@@ -179,10 +183,14 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 	@Override
 	public void onRefresh () {
+		boolean mShowSystemApps = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
 	public void onDatabaseClear () {
+		boolean mShowSystemApps = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 		(new AppsRefreshTask(this, mShowSystemApps)).execute();
 	}
 
