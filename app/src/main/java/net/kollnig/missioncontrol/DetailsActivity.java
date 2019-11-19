@@ -27,7 +27,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -47,6 +46,7 @@ import com.opencsv.CSVWriter;
 import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.data.PlayStore;
 import net.kollnig.missioncontrol.main.AppsListAdapter;
+import net.kollnig.missioncontrol.main.SettingsActivity;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -59,13 +59,13 @@ import static net.kollnig.missioncontrol.main.AppsFragment.savePrefs;
 public class DetailsActivity extends AppCompatActivity {
 	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 	public static PlayStore.AppInfo app = null;
-	public static String consent;
 	private final String TAG = DetailsActivity.class.getSimpleName();
 	Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
 			Environment.getExternalStorageDirectory(), "mission_control");
 	private String appId;
 	private String appName;
+	public static Boolean contactGoogle;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -78,8 +78,11 @@ public class DetailsActivity extends AppCompatActivity {
 		appName = intent.getStringExtra(AppsListAdapter.INTENT_EXTRA_APP_NAME);
 
 		// Check if consent to contact external servers
-		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		consent = sharedPref.getString(MainActivity.FIRST_START, MainActivity.CONSENT_NO);
+		SharedPreferences settingsPref =
+				android.support.v7.preference.PreferenceManager
+						.getDefaultSharedPreferences(this);
+		contactGoogle = settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_GOOGLEPLAY_SWITCH, false);
 
 		// Set up paging
 		DetailsPagesAdapter detailsPagesAdapter =
@@ -100,17 +103,14 @@ public class DetailsActivity extends AppCompatActivity {
 		toolbar.setSubtitle(appName);
 
 		// Load PlayStore Data if consent
-		if (consent.equals(MainActivity.CONSENT_YES)) {
-			new Thread(new Runnable() {
-				@Override
-				public void run () {
-					app = PlayStore.getInfo(appId);
-					runOnUiThread(() -> {
-						for (OnAppInfoLoadedListener listener : listeners) {
-							listener.appInfoLoaded();
-						}
-					});
-				}
+		if (contactGoogle) {
+			new Thread(() -> {
+				app = PlayStore.getInfo(appId);
+				runOnUiThread(() -> {
+					for (OnAppInfoLoadedListener listener : listeners) {
+						listener.appInfoLoaded();
+					}
+				});
 			}).start();
 		}
 	}

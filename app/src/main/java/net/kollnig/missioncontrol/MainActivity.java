@@ -54,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 		View.OnClickListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
 	public static String FIRST_START = "first-start";
-	public static String CONSENT_YES = "yes";
-	public static String CONSENT_NO = "no";
 	private final String APPS_FRAG_TAG = "appsFragTag";
 	SwitchCompat mSwitchMonitoring;
 	Toolbar mToolbar;

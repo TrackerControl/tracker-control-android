@@ -25,13 +25,14 @@ android {
         applicationId 'net.kollnig.missioncontrol'
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 4
+        versionCode 5
         versionName "1.0.0-alpha4"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
+            //minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {

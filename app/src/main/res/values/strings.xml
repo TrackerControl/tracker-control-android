@@ -43,7 +43,7 @@
     <string name="confirm_blocking_title">NOT block all trackers?</string>
     <string name="external_servers">Contact external servers?</string>
     <string name="confirm_google_info">Shall this app contact external servers, notably Google, to retrieve the developer email and the privacy policy of an app?</string>
-    <string name="no_external_servers">No permission given to retrieve policy from external server. Reinstall app to change.</string>
+    <string name="no_external_servers">No permission given to retrieve policy from external server. Change in app settings.</string>
     <string name="blocking_apps">Block all trackers</string>
     <string name="blocking_trackers">Block all trackers</string>
     <string name="blocking_warning">Use this wisely, since developers rely on it!</string>

@@ -36,7 +36,6 @@ import net.dankito.readability4j.Article;
 import net.dankito.readability4j.Readability4J;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
-import net.kollnig.missioncontrol.MainActivity;
 import net.kollnig.missioncontrol.R;
 
 import static net.kollnig.missioncontrol.Common.fetch;
@@ -117,7 +116,7 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 		if (savedInstanceState != null)
 			html = savedInstanceState.getString(POLICY_HTML);
 
-		if (DetailsActivity.consent.equals(MainActivity.CONSENT_NO))
+		if (!DetailsActivity.contactGoogle)
 			html = getString(R.string.no_external_servers);
 
 		if (html != null) {
