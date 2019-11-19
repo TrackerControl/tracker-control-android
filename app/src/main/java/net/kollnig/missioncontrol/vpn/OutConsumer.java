@@ -38,12 +38,11 @@ import static android.system.OsConstants.IPPROTO_TCP;
 import static android.system.OsConstants.IPPROTO_UDP;
 
 public class OutConsumer extends PacketConsumer {
-	private final String TAG = OutConsumer.class.getSimpleName();
+	static PackageManager pm;
 	private final Context mContext;
 	private final Database database;
-	private final PackageManager pm;
-
-	ConnectivityManager connectivityManager;
+	static ConnectivityManager connectivityManager;
+	private static String TAG = OutConsumer.class.getSimpleName();
 
 	public OutConsumer (Context c, TrafficType trafficType) {
 		super(c, trafficType, null);
@@ -57,6 +56,7 @@ public class OutConsumer extends PacketConsumer {
 	static String getHostname (String remoteIp) {
 		return VpnController.retrieveHostname(remoteIp);
 	}
+
 
 	/**
 	 * Logs outgoing packets of apps.
@@ -121,7 +121,7 @@ public class OutConsumer extends PacketConsumer {
 	 * @return the name of the package of the app with the given uid, or "Unknown" if
 	 * no name could be found for the uid.
 	 */
-	public String getAppName (int uid) {
+	static String getAppName (int uid) {
 		/* IMPORTANT NOTE:
 		 * From https://source.android.com/devices/tech/security/ : "The Android
 		 * system assigns a unique user ID (UID) to each Android application and

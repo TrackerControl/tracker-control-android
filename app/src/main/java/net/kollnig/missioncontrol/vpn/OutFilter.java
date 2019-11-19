@@ -24,12 +24,20 @@ import net.kollnig.missioncontrol.data.Company;
 import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.main.AppBlocklistController;
 
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import edu.uci.calit2.antmonitor.lib.logging.ConnectionValue;
 import edu.uci.calit2.antmonitor.lib.logging.PacketAnnotation;
 import edu.uci.calit2.antmonitor.lib.util.IpDatagram;
 import edu.uci.calit2.antmonitor.lib.vpn.OutPacketFilter;
+
+import static android.os.Process.INVALID_UID;
+import static android.system.OsConstants.IPPROTO_TCP;
+import static android.system.OsConstants.IPPROTO_UDP;
+import static net.kollnig.missioncontrol.vpn.OutConsumer.connectivityManager;
+import static net.kollnig.missioncontrol.vpn.OutConsumer.getAppName;
 
 public class OutFilter extends OutPacketFilter {
 	private final String TAG = OutFilter.class.getSimpleName();
@@ -63,17 +71,43 @@ public class OutFilter extends OutPacketFilter {
 		if (tracker == null)
 			return ALLOW;
 
-		ConnectionValue v = mapDatagramToApp(packet);
-		String appId = v.getAppName();
-		if (appId == null)
+		String appname;
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+			// Only UDP and TCP are supported
+			short protocol = IpDatagram.readProtocol(packet);
+			if (protocol != IpDatagram.UDP && protocol != IpDatagram.TCP)
+				return ALLOW;
+
+			int lookupProtocol = (protocol == IpDatagram.TCP) ? IPPROTO_TCP : IPPROTO_UDP;
+
+			InetSocketAddress local, remote;
+			try {
+				local = new InetSocketAddress
+						(IpDatagram.readSourceIP(packet), IpDatagram.readSourcePort(packet));
+				remote = new InetSocketAddress
+						(IpDatagram.readDestinationIP(packet), IpDatagram.readDestinationPort(packet));
+			} catch (UnknownHostException e) {
+				return ALLOW;
+			}
+
+			int uid = connectivityManager.getConnectionOwnerUid(lookupProtocol, local, remote);
+			if (uid == INVALID_UID)
+				return ALLOW;
+
+			appname = getAppName(uid);
+		} else {
+			ConnectionValue cv = mapDatagramToApp(packet);
+			appname = cv.getAppName();
+		}
+		if (appname == null)
 			return ALLOW;
 
-		if (appBlocklist.blockedApp(appId)
-				&& appBlocklist.blockedTracker(appId, tracker.getRoot())
+		if (appBlocklist.blockedApp(appname)
+				&& appBlocklist.blockedTracker(appname, tracker.getRoot())
 		)
 			return BLOCK;
 
-		// DATABASE.logPacketAsyncTask(mContext, appId, remoteIp, hostname);
+		// DATABASE.logPacketAsyncTask(mContext, appname, remoteIp, hostname);
 		return ALLOW;
 	}
 }

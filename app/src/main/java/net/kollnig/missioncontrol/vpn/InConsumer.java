@@ -17,13 +17,9 @@
 package net.kollnig.missioncontrol.vpn;
 
 import android.content.Context;
-import android.util.Log;
-
-import java.nio.ByteBuffer;
 
 import edu.uci.calit2.antmonitor.lib.logging.PacketConsumer;
 import edu.uci.calit2.antmonitor.lib.logging.PacketProcessor.TrafficType;
-import edu.uci.calit2.antmonitor.lib.util.IpDatagram;
 import edu.uci.calit2.antmonitor.lib.util.PacketDumpInfo;
 
 public class InConsumer extends PacketConsumer {
@@ -43,13 +39,6 @@ public class InConsumer extends PacketConsumer {
 	@Override
 	protected void consumePacket (PacketDumpInfo packetDumpInfo) {
 		// Parse IP packet
-		byte[] packet = packetDumpInfo.getDump();
-		IpDatagram ipDatagram = new IpDatagram(ByteBuffer.wrap(packet));
-		String remoteIp = ipDatagram.getSourceIP().getHostAddress();
-
-		if (remoteIp.equals("8.8.8.8")) {
-			Log.d(TAG, remoteIp);
-		}
 	}
 
 	/**
