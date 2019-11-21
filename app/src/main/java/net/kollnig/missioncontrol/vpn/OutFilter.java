@@ -20,12 +20,11 @@ package net.kollnig.missioncontrol.vpn;
 import android.content.Context;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.data.Company;
 import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.main.AppBlocklistController;
 
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import edu.uci.calit2.antmonitor.lib.logging.ConnectionValue;
@@ -33,11 +32,9 @@ import edu.uci.calit2.antmonitor.lib.logging.PacketAnnotation;
 import edu.uci.calit2.antmonitor.lib.util.IpDatagram;
 import edu.uci.calit2.antmonitor.lib.vpn.OutPacketFilter;
 
-import static android.os.Process.INVALID_UID;
-import static android.system.OsConstants.IPPROTO_TCP;
-import static android.system.OsConstants.IPPROTO_UDP;
 import static net.kollnig.missioncontrol.vpn.OutConsumer.connectivityManager;
-import static net.kollnig.missioncontrol.vpn.OutConsumer.getAppName;
+import static net.kollnig.missioncontrol.vpn.OutConsumer.database;
+import static net.kollnig.missioncontrol.vpn.OutConsumer.pm;
 
 public class OutFilter extends OutPacketFilter {
 	private final String TAG = OutFilter.class.getSimpleName();
@@ -63,7 +60,7 @@ public class OutFilter extends OutPacketFilter {
 			return ALLOW;
 
 		String remoteIp = IpDatagram.readDestinationIP(packet);
-		String hostname = OutConsumer.getHostname(remoteIp);
+		String hostname = OutConsumer.lookupHostname(remoteIp);
 		if (hostname == null)
 			return ALLOW;
 
@@ -71,43 +68,24 @@ public class OutFilter extends OutPacketFilter {
 		if (tracker == null)
 			return ALLOW;
 
+		// Identify sending app
 		String appname;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-			// Only UDP and TCP are supported
-			short protocol = IpDatagram.readProtocol(packet);
-			if (protocol != IpDatagram.UDP && protocol != IpDatagram.TCP)
-				return ALLOW;
-
-			int lookupProtocol = (protocol == IpDatagram.TCP) ? IPPROTO_TCP : IPPROTO_UDP;
-
-			InetSocketAddress local, remote;
-			try {
-				local = new InetSocketAddress
-						(IpDatagram.readSourceIP(packet), IpDatagram.readSourcePort(packet));
-				remote = new InetSocketAddress
-						(IpDatagram.readDestinationIP(packet), IpDatagram.readDestinationPort(packet));
-			} catch (UnknownHostException e) {
-				return ALLOW;
-			}
-
-			int uid = connectivityManager.getConnectionOwnerUid(lookupProtocol, local, remote);
-			if (uid == INVALID_UID)
-				return ALLOW;
-
-			appname = getAppName(uid);
+			appname = Common.getAppNameQ(packet, connectivityManager, pm);
 		} else {
 			ConnectionValue cv = mapDatagramToApp(packet);
 			appname = cv.getAppName();
 		}
-		if (appname == null)
+		if (appname == null || appname.startsWith(ConnectionValue.MappingErrors.PREFIX))
 			return ALLOW;
 
 		if (appBlocklist.blockedApp(appname)
 				&& appBlocklist.blockedTracker(appname, tracker.getRoot())
-		)
+		) {
+			database.logPacketAsyncTask(mContext, appname, remoteIp, hostname);
 			return BLOCK;
+		}
 
-		// DATABASE.logPacketAsyncTask(mContext, appname, remoteIp, hostname);
 		return ALLOW;
 	}
 }
