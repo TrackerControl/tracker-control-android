@@ -338,7 +338,8 @@
     ],
     "owner_name": "Akamai",
     "root_parent": null,
-    "parent": null
+    "parent": null,
+    "necessary": true
   },
   {
     "country": "us",
@@ -461,7 +462,8 @@
     ],
     "owner_name": "Amazon Web Services",
     "root_parent": "Amazon",
-    "parent": "Amazon"
+    "parent": "Amazon",
+    "necessary": true
   },
   {
     "country": "us",

@@ -69,6 +69,7 @@ public class Database {
 	private static final String COLUMN_TIME = "timestampt";
 	private static final int DATABASE_VERSION = 3;
 	public static Map<String, Company> hostnameToCompany = new ArrayMap<>();
+	public static Set<String> necessaryCompanies = new HashSet<>();
 	private static Database instance;
 	private final SQLHandler sqlHandler;
 	private Set<OnDatabaseClearListener> clearListeners = new HashSet<>();
@@ -468,6 +469,7 @@ public class Database {
 		task.execute();
 	}
 
+
 	public void loadTrackerDomains (Context context) {
 		try {
 			// Read domain list
@@ -489,7 +491,14 @@ public class Database {
 				if (!jsonCompany.isNull("root_parent")) {
 					parent = jsonCompany.getString("root_parent");
 				}
-				company = new Company(country, name, parent);
+				Boolean necessary;
+				if (jsonCompany.has("necessary")) {
+					necessary = jsonCompany.getBoolean("necessary");
+					necessaryCompanies.add(name);
+				} else {
+					necessary = false;
+				}
+				company = new Company(country, name, parent, necessary);
 
 				JSONArray domains = jsonCompany.getJSONArray("doms");
 				for (int j = 0; j < domains.length(); j++) {

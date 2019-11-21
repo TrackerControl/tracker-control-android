@@ -18,10 +18,8 @@
 package net.kollnig.missioncontrol.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.widget.Switch;
 
-import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 
 import androidx.appcompat.app.AlertDialog;
@@ -38,30 +36,19 @@ abstract class BlockingConfirmDialog {
 	}
 
 	void confirmBlocking () {
-		// Check if user has ad settings
-		final boolean hasAdSettings = Common.hasAdSettings(c);
-		final Intent adIntent = Common.adSettings();
-
 		String message;
-		if (hasAdSettings) {
-			message = c.getString(R.string.confirm_blocking_has_playservices);
-		} else {
-			message = c.getString(R.string.confirm_blocking_no_playservices);
-		}
+		message = c.getString(R.string.confirm_blocking);
 
 		// Show dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(c);
 		builder.setMessage(message)
 				.setTitle(R.string.confirm_blocking_title);
 		builder.setPositiveButton(R.string.yes, (dialog, id) -> {
-			if (hasAdSettings) {
-				c.startActivity(adIntent);
-			}
-			switchBlockAll.setChecked(false);
-		});
-		builder.setNegativeButton(R.string.no, (dialog, i) -> {
 			blockAll();
 			switchBlockAll.setChecked(true);
+		});
+		builder.setNegativeButton(R.string.no, (dialog, i) -> {
+			switchBlockAll.setChecked(false);
 		});
 		AlertDialog dialog = builder.create();
 		dialog.show();

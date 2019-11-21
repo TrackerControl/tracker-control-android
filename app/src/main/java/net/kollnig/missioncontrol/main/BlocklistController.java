@@ -27,8 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BlocklistController {
 	final static String PREF_BLOCKLIST = "blocklist";
-	// Concurrent HashSet
-	//Set<String> blocklist = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
 	/**
 	 * Whilst blockmap is a list of apps to block, the set is a set of trackers not to block.

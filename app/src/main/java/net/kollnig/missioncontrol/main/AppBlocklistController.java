@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 
 import net.kollnig.missioncontrol.data.App;
 
@@ -30,18 +31,22 @@ import java.util.Set;
 
 import androidx.preference.PreferenceManager;
 
+import static net.kollnig.missioncontrol.Common.isSystemPackage;
+
 public class AppBlocklistController extends BlocklistController {
 	private static final String SHARED_PREFS_BLOCKLIST_APPS_KEY = "APPS_BLOCKLIST_APPS_KEY";
 	private static AppBlocklistController instance;
-	final PackageManager pm;
+	private final PackageManager pm;
 	private final String ownPackageName;
-	public Set<String> systemApps = new HashSet<>();
+	private final Set<String> systemApps = new HashSet<>();
+	private final Drawable defaultIcon;
 
 	private AppBlocklistController (Context c) {
 		super(c);
 
 		pm = c.getPackageManager();
 		ownPackageName = c.getApplicationContext().getPackageName();
+		defaultIcon = c.getDrawable(android.R.drawable.sym_def_app_icon);
 
 		SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(c);
 		boolean showSystemApps = settingsPref.getBoolean
@@ -72,7 +77,8 @@ public class AppBlocklistController extends BlocklistController {
 		List<ApplicationInfo> appInfos = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 		for (ApplicationInfo appInfo : appInfos) {
 			if (//!BuildConfig.DEBUG &&
-					(isSystemPackage(appInfo) || appInfo.packageName.equals(ownPackageName))) {
+					(isSystemPackage(appInfo)
+							|| appInfo.packageName.equals(ownPackageName))) {
 				if (initialisation) {
 					systemApps.add(appInfo.packageName);
 				}
@@ -82,7 +88,7 @@ public class AppBlocklistController extends BlocklistController {
 				App app = new App();
 
 				app.id = appInfo.packageName;
-				app.icon = appInfo.loadIcon(pm);
+				app.icon = (appInfo.icon != 0) ? appInfo.loadIcon(pm) : defaultIcon;
 				app.name = appInfo.loadLabel(pm).toString();
 				app.systemApp = systemApps.contains(appInfo.packageName);
 
@@ -104,16 +110,5 @@ public class AppBlocklistController extends BlocklistController {
 
 	public String getPrefKey () {
 		return SHARED_PREFS_BLOCKLIST_APPS_KEY;
-	}
-
-	/**
-	 * Check if the {@code FLAG_SYSTEM} or {@code FLAG_UPDATED_SYSTEM_APP} is set for the application.
-	 *
-	 * @param applicationInfo The application to check.
-	 * @return true if the {@code applicationInfo} belongs to a system or updated system application.
-	 */
-	public boolean isSystemPackage (ApplicationInfo applicationInfo) {
-		return (((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
-				|| (applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0);
 	}
 }

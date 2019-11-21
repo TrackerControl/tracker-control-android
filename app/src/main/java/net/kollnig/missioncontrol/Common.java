@@ -21,6 +21,7 @@ import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
@@ -147,5 +148,17 @@ public class Common {
 			return ConnectionValue.MappingErrors.PREFIX + "INVALID_UID in ConnectivityManager.";
 
 		return getAppName(pm, uid);
+	}
+
+
+	/**
+	 * Check if the {@code FLAG_SYSTEM} or {@code FLAG_UPDATED_SYSTEM_APP} is set for the application.
+	 *
+	 * @param applicationInfo The application to check.
+	 * @return true if the {@code applicationInfo} belongs to a system or updated system application.
+	 */
+	public static boolean isSystemPackage (ApplicationInfo applicationInfo) {
+		return (((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
+				|| (applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0);
 	}
 }

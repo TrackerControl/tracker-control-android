@@ -21,11 +21,13 @@ public class Company {
 	public final String country;
 	public final String name;
 	public final String owner;
+	public final Boolean necessary;
 
-	public Company (String country, String name, String owner) {
+	public Company (String country, String name, String owner, Boolean necessary) {
 		this.country = country;
 		this.name = name;
 		this.owner = owner;
+		this.necessary = necessary;
 	}
 
 	public String getOwner () {

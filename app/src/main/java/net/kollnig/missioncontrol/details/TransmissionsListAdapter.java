@@ -40,7 +40,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
  * {@link RecyclerView.Adapter} that can display a {@link Tracker}.
  */
 public class TransmissionsListAdapter extends RecyclerView.Adapter<TransmissionsListAdapter.ViewHolder> {
-
+	private final String TAG = TransmissionsListAdapter.class.getSimpleName();
 	private final List<Tracker> mValues;
 	private final RecyclerView recyclerView;
 	private final String mAppId;
@@ -89,7 +89,9 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 		holder.mSwitch.setChecked(
 				w.blockedTracker(mAppId, tracker.name)
 		);
-		holder.mSwitch.setOnCheckedChangeListener((v, isChecked) -> {
+		holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			if (!buttonView.isPressed()) return;
+
 			if (isChecked) {
 				if (!w.blockedApp(mAppId)) {
 					w.addToBlocklist(mAppId);

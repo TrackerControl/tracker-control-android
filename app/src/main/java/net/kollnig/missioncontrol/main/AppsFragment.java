@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
@@ -55,11 +56,11 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		Database.OnDatabaseClearListener {
 
 	private static final String TAG = AppsFragment.class.getSimpleName();
-	AppsListAdapter mAppsListAdapter;
-	RecyclerView mRecyclerView;
-	Database database;
-	SwipeRefreshLayout mSwipeRefreshLayout;
-	ProgressBar pbApps;
+	private AppsListAdapter mAppsListAdapter;
+	private RecyclerView mRecyclerView;
+	private Database database;
+	private SwipeRefreshLayout mSwipeRefreshLayout;
+	private ProgressBar pbApps;
 
 	public AppsFragment () {
 		// Required empty public constructor
@@ -86,7 +87,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		editor.apply();
 	}
 
-	SharedPreferences settingsPref;
+	private SharedPreferences settingsPref;
 
 	@Override
 	public void onCreate (Bundle savedInstanceState) {
@@ -98,7 +99,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	}
 
 	@Override
-	public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
+	public void onCreateOptionsMenu (@NonNull Menu menu, @NonNull MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		//inflater.inflate(R.menu.menu_main, menu);
 	}
@@ -140,7 +141,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	}
 
 	@Override
-	public void onViewCreated (View view, Bundle savedInstanceState) {
+	public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
 		mAppsListAdapter = new AppsListAdapter(this);
@@ -177,7 +178,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		database.removeListener(this);
 	}
 
-	public void updateUI (List<App> installedApps) {
+	private void updateUI (List<App> installedApps) {
 		mAppsListAdapter.setAppsList(installedApps);
 		mAppsListAdapter.notifyDataSetChanged();
 		mRecyclerView.scrollToPosition(0);
@@ -187,7 +188,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		pbApps.setVisibility(View.GONE);
 	}
 
-	void refreshApps () {
+	private void refreshApps () {
 		boolean mShowSystemApps = settingsPref.getBoolean
 				(SettingsActivity.KEY_PREF_SYSTEMAPPS_SWITCH, false);
 		(new AppsRefreshTask(this, mShowSystemApps)).execute();
@@ -218,7 +219,6 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
 		@Override
 		protected Boolean doInBackground (Void... voids) {
-
 			installedApps = appBlocklistController.load(mShowSystemApps);
 			Map<String, Integer> trackerCounts = database.getApps();
 

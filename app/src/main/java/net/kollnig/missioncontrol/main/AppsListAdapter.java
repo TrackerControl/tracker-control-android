@@ -120,6 +120,8 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 			holder.getSwitch().setChecked(w.blockedApp(app.id));
 			holder.getSwitch().setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (!buttonView.isPressed()) return;
+
 				if (isChecked) {
 					w.addToBlocklist(app.id);
 				} else {
@@ -140,6 +142,8 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 			holder.getSwitch().setChecked(w.getBlockedCount() == mAppList.size());
 			holder.getSwitch().setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (!buttonView.isPressed()) return;
+
 				if (isChecked) {
 					BlockingConfirmDialog bd =
 							new BlockingConfirmDialog(mFragment.getContext(), w, switchBlockAll) {

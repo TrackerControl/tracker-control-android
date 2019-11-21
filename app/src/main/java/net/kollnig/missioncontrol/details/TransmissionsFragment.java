@@ -61,7 +61,7 @@ public class TransmissionsFragment extends Fragment {
 	public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle bundle = getArguments();
-		mAppId = getArguments().getString(ARG_APP_ID);
+		mAppId = bundle.getString(ARG_APP_ID);
 	}
 
 	@Override

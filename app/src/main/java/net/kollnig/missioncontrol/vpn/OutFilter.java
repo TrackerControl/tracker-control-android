@@ -65,7 +65,7 @@ public class OutFilter extends OutPacketFilter {
 			return ALLOW;
 
 		Company tracker = Database.getCompany(hostname);
-		if (tracker == null)
+		if (tracker == null || tracker.necessary)
 			return ALLOW;
 
 		// Identify sending app
@@ -80,9 +80,8 @@ public class OutFilter extends OutPacketFilter {
 			return ALLOW;
 
 		if (appBlocklist.blockedApp(appname)
-				&& appBlocklist.blockedTracker(appname, tracker.getRoot())
-		) {
-			database.logPacketAsyncTask(mContext, appname, remoteIp, hostname);
+				&& appBlocklist.blockedTracker(appname, tracker.getRoot())) {
+			database.logPacketAsyncTask(mContext, appname, remoteIp, hostname); // log despite blocking
 			return BLOCK;
 		}
 
