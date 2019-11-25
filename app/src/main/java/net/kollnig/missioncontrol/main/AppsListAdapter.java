@@ -125,6 +125,9 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 				holder.itemView.setEnabled(false);
 				holder.getSwitch().setEnabled(false);
 				holder.getAppDetails().setText("Monitoring disabled");
+			} else {
+				holder.itemView.setEnabled(true);
+				holder.getSwitch().setEnabled(true);
 			}
 
 			holder.itemView.setOnClickListener(view -> {
