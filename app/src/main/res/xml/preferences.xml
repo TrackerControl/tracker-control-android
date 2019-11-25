@@ -27,5 +27,10 @@
         android:key="systemapps_switch"
         android:summary="@string/show_system_apps_explanation"
         android:title="@string/show_system_apps_title" />
+    <androidx.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="email_switch"
+        android:summary="@string/include_mail_apps_explanation"
+        android:title="@string/include_mail_apps_title" />
 
 </PreferenceScreen>

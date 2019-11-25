@@ -42,6 +42,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -140,6 +141,8 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		return inflater.inflate(R.layout.fragment_apps, container, false);
 	}
 
+	private static int scrollPosition;
+
 	@Override
 	public void onViewCreated (@NonNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
@@ -147,7 +150,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 		mAppsListAdapter = new AppsListAdapter(this);
 		mRecyclerView = view.findViewById(R.id.list_main);
 		mRecyclerView.setHasFixedSize(true);
-		mRecyclerView.scrollToPosition(0);
+		mRecyclerView.scrollToPosition(scrollPosition);
 		mRecyclerView.setAdapter(mAppsListAdapter);
 
 		mSwipeRefreshLayout = view.findViewById(R.id.main_swipe_refresh);
@@ -164,6 +167,9 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	public void onPause () {
 		super.onPause();
 		savePrefs(getContext());
+		scrollPosition =
+				((LinearLayoutManager) mRecyclerView.getLayoutManager()).
+						findFirstCompletelyVisibleItemPosition();
 	}
 
 	@Override
@@ -181,7 +187,7 @@ public class AppsFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 	private void updateUI (List<App> installedApps) {
 		mAppsListAdapter.setAppsList(installedApps);
 		mAppsListAdapter.notifyDataSetChanged();
-		mRecyclerView.scrollToPosition(0);
+		mRecyclerView.scrollToPosition(scrollPosition);
 
 		mSwipeRefreshLayout.setRefreshing(false);
 		mSwipeRefreshLayout.setVisibility(View.VISIBLE);

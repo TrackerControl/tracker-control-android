@@ -26,6 +26,8 @@ public class SettingsActivity extends AppCompatActivity {
 			KEY_PREF_GOOGLEPLAY_SWITCH = "googleplay_switch";
 	public static final String
 			KEY_PREF_SYSTEMAPPS_SWITCH = "systemapps_switch";
+	public static final String
+			KEY_PREF_EMAIL_SWITCH = "email_switch";
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {

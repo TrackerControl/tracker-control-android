@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -31,11 +32,12 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
+import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.main.AppBlocklistController;
 import net.kollnig.missioncontrol.main.AppsFragment;
 import net.kollnig.missioncontrol.main.SettingsActivity;
-import net.kollnig.missioncontrol.vpn.InConsumer;
 import net.kollnig.missioncontrol.vpn.OutConsumer;
 import net.kollnig.missioncontrol.vpn.OutFilter;
 
@@ -43,6 +45,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
@@ -108,18 +111,26 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 					.commit();
 		}
 
+		// Bypass VPN for emails?
+		final SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
+		if (!settingsPref.getBoolean
+				(SettingsActivity.KEY_PREF_EMAIL_SWITCH, false)) {
+			VpnController.setExcludedApps(Common.getEmailApps(this));
+		} else {
+			VpnController.clearExcludedApps();
+		}
+
 		// Ask for consent to contact Google and other servers
-		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean firstStart = sharedPref.getBoolean(FIRST_START, true);
+		boolean firstStart = settingsPref.getBoolean(FIRST_START, true);
 
 		if (firstStart) {
-			sharedPref.edit().putBoolean(FIRST_START, false).apply();
+			settingsPref.edit().putBoolean(FIRST_START, false).apply();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(R.string.confirm_google_info)
 					.setTitle(R.string.external_servers);
 			builder.setPositiveButton(R.string.yes, (dialog, id) -> {
-				sharedPref.edit().putBoolean
+				settingsPref.edit().putBoolean
 						(SettingsActivity.KEY_PREF_GOOGLEPLAY_SWITCH, true).apply();
 				dialog.dismiss();
 			});
@@ -131,6 +142,21 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 			dialog.setCancelable(false); // avoid back button
 			dialog.setCanceledOnTouchOutside(false);
 			dialog.show();
+		}
+
+		// Show instructions
+		Database db = Database.getInstance(this);
+		if (db.count() <= 0) {
+			int instructionsString =
+					(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
+							R.string.instructions_monitoring_private_dns :
+							R.string.instructions_monitoring;
+
+			View v = findViewById(R.id.main_container);
+			Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
+			s.setAction(R.string.ok, v1 -> s.dismiss());
+			s.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+			s.show();
 		}
 	}
 
@@ -170,14 +196,13 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 				// Prepare packet consumers (off-line packet processing)
 				OutConsumer outConsumer =
 						new OutConsumer(this, TrafficType.OUTGOING_PACKETS);
-				InConsumer inConsumer =
-						new InConsumer(this, TrafficType.INCOMING_PACKETS);
+				/*InConsumer inConsumer =
+						new InConsumer(this, TrafficType.INCOMING_PACKETS);*/
 				OutFilter outFilter = new OutFilter(this);
 
 				// Connect - triggers onVpnStateChanged
-				mVpnController.connect(null, outFilter, inConsumer, outConsumer);
-
-				Toast.makeText(this, R.string.instructions_monitoring, Toast.LENGTH_SHORT).show();
+				mVpnController.connect(null, outFilter, null, outConsumer);
+				//mVpnController.connect(null, null, null, null);
 			} else {
 				// enable the switch again so user can try again
 				mSwitchMonitoring.setEnabled(true);

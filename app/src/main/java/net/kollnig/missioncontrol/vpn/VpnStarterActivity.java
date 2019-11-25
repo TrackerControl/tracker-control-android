@@ -18,9 +18,14 @@ package net.kollnig.missioncontrol.vpn;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
+import net.kollnig.missioncontrol.Common;
+import net.kollnig.missioncontrol.main.SettingsActivity;
+
+import androidx.preference.PreferenceManager;
 import edu.uci.calit2.antmonitor.lib.logging.PacketProcessor;
 import edu.uci.calit2.antmonitor.lib.vpn.VpnClient;
 import edu.uci.calit2.antmonitor.lib.vpn.VpnController;
@@ -38,7 +43,7 @@ import edu.uci.calit2.antmonitor.lib.vpn.VpnController;
  * <li>
  * Second, if the user consents to set up VPN connection, this {@code Activity} starts
  * the {@link VpnClient} service with an {@code Intent} that has
- * the {@link VpnClient#EXTRA_CONNECT_ON_STARTUP} extra set to
+ * the {@link VpnClient EXTRA_CONNECT_ON_STARTUP} extra set to
  * {@code true} (in order to immediately connect to the VPN server).
  * </li>
  * </ol>
@@ -85,15 +90,25 @@ public class VpnStarterActivity extends Activity {
 			// VPN rights granted.
 			Log.d(mClassTag, "VPN rights granted");
 
+			// Bypass VPN for emails?
+			SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
+			if (!settingsPref.getBoolean
+					(SettingsActivity.KEY_PREF_EMAIL_SWITCH, false)) {
+				VpnController.setExcludedApps(Common.getEmailApps(this));
+			} else {
+				VpnController.clearExcludedApps();
+			}
+
 			OutConsumer outConsumer =
 					new OutConsumer(this, PacketProcessor.TrafficType.OUTGOING_PACKETS);
-			InConsumer inConsumer =
-					new InConsumer(this, PacketProcessor.TrafficType.INCOMING_PACKETS);
+			/*InConsumer inConsumer =
+					new InConsumer(this, PacketProcessor.TrafficType.INCOMING_PACKETS);*/
 			OutFilter outFilter = new OutFilter(this);
 
 			VpnController.setDnsCacheEnabled(true);
 			VpnController.connectInBackground(this,
-					null, outFilter, inConsumer, outConsumer);
+					//		null, null, null, null);
+					null, outFilter, null, outConsumer);
 
 			Log.d(mClassTag, "called startService for VpnClient");
 		} else {

@@ -36,6 +36,7 @@ import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -48,6 +49,26 @@ import static android.system.OsConstants.IPPROTO_TCP;
 import static android.system.OsConstants.IPPROTO_UDP;
 
 public class Common {
+	public static List<String> getEmailApps (Context context) {
+		List<String> emailApps = new ArrayList<>();
+		try {
+			Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:example@example.com"));
+			PackageManager pm = context.getPackageManager();
+			List<ResolveInfo> foundEmailApps;
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+				foundEmailApps = pm.queryIntentActivities(intent, PackageManager.MATCH_ALL);
+			} else {
+				foundEmailApps = pm.queryIntentActivities(intent, 0);
+			}
+			for (ResolveInfo info : foundEmailApps) {
+				emailApps.add(info.activityInfo.packageName);
+			}
+		} catch (Exception e) {
+			// Nothing
+		}
+		return emailApps;
+	}
+
 	@Nullable
 	public static String fetch (String url) {
 		try {

@@ -17,7 +17,9 @@
 
 package net.kollnig.missioncontrol.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +28,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.App;
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -49,9 +53,20 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	private List<App> mAppList = new ArrayList<>();
 	private Fragment mFragment;
 
+	private List<String> emailApps = new ArrayList<>();
+	private boolean emailsEnabled;
 
 	public AppsListAdapter (Fragment fragment) {
 		this.mFragment = fragment;
+		Context c = fragment.getContext();
+
+		if (c != null) {
+			this.emailApps = Common.getEmailApps(c);
+			SharedPreferences settingsPref =
+					PreferenceManager.getDefaultSharedPreferences(c);
+			emailsEnabled = settingsPref.getBoolean
+					(SettingsActivity.KEY_PREF_EMAIL_SWITCH, false);
+		}
 	}
 
 	@Override
@@ -105,6 +120,12 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 			holder.getAppDetails().setText(mFragment.getResources().getQuantityString(
 					R.plurals.n_trackers_found, app.trackerCount, app.trackerCount));
 			holder.getAppIcon().setImageDrawable(app.icon);
+
+			if (!emailsEnabled && emailApps.contains(app.id)) {
+				holder.itemView.setEnabled(false);
+				holder.getSwitch().setEnabled(false);
+				holder.getAppDetails().setText("Monitoring disabled");
+			}
 
 			holder.itemView.setOnClickListener(view -> {
 				Intent intent = new Intent(mFragment.getContext(), DetailsActivity.class);
