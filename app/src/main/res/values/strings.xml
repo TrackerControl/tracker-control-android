@@ -157,4 +157,7 @@ Sincerely,]]></string>
     <string name="instructions_monitoring">Toggle the switch and interact with some other apps.</string>
 
     <string name="afterboot_notification">Restart notification</string>
+    <string name="disclaimer">Pre-release version of TrackerControl. Shown information may be incorrect. Not all tracking will be blocked.</string>
+
+    <string name="restart_notification">Click to start app</string>
 </resources>

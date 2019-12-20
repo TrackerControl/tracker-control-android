@@ -63,6 +63,11 @@ public class OutConsumer extends PacketConsumer {
 		// Parse IP packet
 		ByteBuffer packet = ByteBuffer.wrap(packetDumpInfo.getDump());
 
+		// Only monitor UDP and TCP -- only these are supported on Android 10
+		/*if (IpDatagram.readDestinationPort(packet) != IpDatagram.UDP
+				&& 	IpDatagram.readDestinationPort(packet) != IpDatagram.TCP)
+			return;*/
+
 		// Identify sending app
 		String appname;
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {

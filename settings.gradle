@@ -16,4 +16,4 @@
  */
 
 include ':app'
-rootProject.name = "missioncontrol"
+rootProject.name = "trackercontrol"

@@ -59,6 +59,11 @@ public class OutFilter extends OutPacketFilter {
 		if (BuildConfig.FLAVOR.equals("play"))
 			return ALLOW;
 
+		// Only monitor UDP and TCP -- only these are supported on Android 10
+		/*if (IpDatagram.readDestinationPort(packet) != IpDatagram.UDP
+				&& 	IpDatagram.readDestinationPort(packet) != IpDatagram.TCP)
+			return ALLOW;*/
+
 		String remoteIp = IpDatagram.readDestinationIP(packet);
 		String hostname = OutConsumer.lookupHostname(remoteIp);
 		if (hostname == null)

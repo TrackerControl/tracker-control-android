@@ -64,7 +64,7 @@ public class DetailsActivity extends AppCompatActivity {
 	private final String TAG = DetailsActivity.class.getSimpleName();
 	Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
-			Environment.getExternalStorageDirectory(), "mission_control");
+			Environment.getExternalStorageDirectory(), "trackercontrol");
 	private String appId;
 	private String appName;
 	public static Boolean contactGoogle;

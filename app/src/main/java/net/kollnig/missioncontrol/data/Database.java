@@ -241,7 +241,7 @@ public class Database {
 
 	public Cursor getAppInfo (String appId) {
 		return getDatabase().rawQuery(
-				"SELECT * FROM " + TABLE_HISTORY, null);
+				"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
 	}
 
 	public String getCompanies (String appId) {

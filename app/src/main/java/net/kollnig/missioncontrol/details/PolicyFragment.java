@@ -175,12 +175,13 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 
 		@Override
 		public void run () {
-			policyUrl = DetailsActivity.app.policyUrl;
-			if (policyUrl == null) {
+			if (DetailsActivity.app == null
+					|| DetailsActivity.app.policyUrl == null) {
 				Log.d(TAG, "Fetching of policy url failed.");
 				onError(null);
 				return;
 			}
+			policyUrl = DetailsActivity.app.policyUrl;
 
 			boolean fetchError = false;
 			String privacyHtml = null;

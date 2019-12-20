@@ -73,7 +73,7 @@ public class DeviceBootListener extends BroadcastReceiver {
 				NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
 						.setSmallIcon(edu.uci.calit2.antmonitor.lib.R.mipmap.shield)
 						.setContentTitle(context.getResources().getString(edu.uci.calit2.antmonitor.lib.R.string.app_name))
-						.setContentText("Open to restart")
+						.setContentText(context.getResources().getString(R.string.restart_notification))
 						.setPriority(NotificationCompat.PRIORITY_DEFAULT)
 						.setContentIntent(pendingIntent)
 						.setAutoCancel(true)

@@ -123,11 +123,11 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 			if (!emailsEnabled && emailApps.contains(app.id)) {
 				holder.itemView.setEnabled(false);
-				holder.getSwitch().setEnabled(false);
+				holder.getSwitch().setVisibility(View.INVISIBLE);
 				holder.getAppDetails().setText("Monitoring disabled");
 			} else {
 				holder.itemView.setEnabled(true);
-				holder.getSwitch().setEnabled(true);
+				holder.getSwitch().setVisibility(View.VISIBLE);
 			}
 
 			holder.itemView.setOnClickListener(view -> {
@@ -152,7 +152,8 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 					w.removeFromBlocklist(app.id);
 				}
 
-				switchBlockAll.setChecked(w.getBlockedCount() == mAppList.size());
+				if (switchBlockAll != null)
+					switchBlockAll.setChecked(w.getBlockedCount() == countEnabledApps());
 			});
 		} else {
 			final VHHeader holder = (VHHeader) h;
@@ -164,8 +165,8 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 				return;
 			}
 
-			holder.getSwitch().setChecked(w.getBlockedCount() == mAppList.size());
-			holder.getSwitch().setOnCheckedChangeListener((buttonView, isChecked) -> {
+			switchBlockAll.setChecked(w.getBlockedCount() == countEnabledApps());
+			switchBlockAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
 				if (!buttonView.isPressed()) return;
 
 				if (isChecked) {
@@ -174,7 +175,8 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 								@Override
 								void blockAll () {
 									for (App app : mAppList) {
-										w.addToBlocklist(app.id);
+										if (emailsEnabled || !emailApps.contains(app.id))
+											w.addToBlocklist(app.id);
 									}
 									notifyDataSetChanged();
 								}
@@ -191,6 +193,15 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	@Override
 	public int getItemCount () {
 		return mAppList.size() + 1;
+	}
+
+	private int countEnabledApps () {
+		int count = 0;
+		for (App app : mAppList) {
+			if (emailsEnabled || !emailApps.contains(app.id))
+				count++;
+		}
+		return count;
 	}
 
 	public void setAppsList (List<App> apps) {
@@ -232,16 +243,10 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 	}
 
 	class VHHeader extends RecyclerView.ViewHolder {
-		private final Switch mSwitch;
-
 		public VHHeader (View v) {
 			super(v);
 
-			mSwitch = v.findViewById(R.id.block_all_apps);
-		}
-
-		public Switch getSwitch () {
-			return mSwitch;
+			switchBlockAll = v.findViewById(R.id.block_all_apps);
 		}
 	}
 }

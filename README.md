@@ -1,6 +1,6 @@
 # TrackerControl (work-in-progress)
 
-**If you're missing features or find bugs, use the issue tracker or contact me at tc@kollnig.net.**
+**If you're missing features or find bugs, use the issue tracker or contact Konrad directly (tc@kollnig.net).**
 
 TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -31,10 +31,13 @@ TrackerControl was developed by Konrad Kollnig, as part of his MSc thesis
 in Computer Science at the University of Oxford, under the supervision
 of Professor Max van Kleek.
 
-## Installation / Download
-The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
+## Installation
+Disclaimer: The app is **very experimental** and should not be used on
+your regular phone.
 
-Alternatively, there exists a [repository for F-Droid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol).
+1. Install the [F-Droid](https://f-droid.org/) app store.
+2. Start F-Droid, open its settings, and add the new repository: https://apt.izzysoft.de/fdroid/repo
+3. Search for "TrackerControl" from the main screen of F-Droid and install.
 
 ## Key Highlights
 TrackerControl provides
