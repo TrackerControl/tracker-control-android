@@ -708,7 +708,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                             Version available = new Version(version);
                             if (current.compareTo(available) < 0) {
                                 Log.i(TAG, "Update available from " + current + " to " + available);
-                                showUpdateNotification(version, url);
+                                showUpdateNotification(name, url);
                             } else
                                 Log.i(TAG, "Up-to-date current version " + current);
                         }

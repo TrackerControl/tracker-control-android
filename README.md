@@ -109,4 +109,4 @@ For the GDPR requests, the templates from the website [My Data Done Right](https
 
 ## License
 This project is licensed under
-[GPLv2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+[GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
