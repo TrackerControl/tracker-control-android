@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * TrackerControl is distributed in the hope that it will be useful,
@@ -12,7 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol.details;
@@ -22,19 +22,20 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import net.kollnig.missioncontrol.BuildConfig;
-import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Tracker;
-import net.kollnig.missioncontrol.main.AppBlocklistController;
 
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+import eu.faircode.netguard.R;
+import eu.faircode.netguard.Util;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Tracker}.
@@ -81,7 +82,7 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 				"• " + TextUtils.join("\n• ", tracker.children));
 
 
-		if (BuildConfig.FLAVOR.equals("play")) {
+		if (Util.isPlayStoreInstall(mContext)) {
 			holder.mSwitch.setVisibility(View.GONE);
 			return;
 		}
@@ -89,24 +90,24 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 		holder.mSwitch.setChecked(
 				w.blockedTracker(mAppId, tracker.name)
 		);
-		holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-			if (!buttonView.isPressed()) return;
+		holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged (CompoundButton buttonView, boolean isChecked) {
+				if (!buttonView.isPressed()) return;
 
-			if (isChecked) {
-				if (!w.blockedApp(mAppId)) {
-					w.addToBlocklist(mAppId);
-					for (Tracker tracker1 : mValues) {
-						w.removeFromBlocklist(mAppId, tracker1.name);
-					}
+				if (isChecked) {
+					w.block(mAppId, tracker.name);
+				} else {
+					w.unblock(mAppId, tracker.name);
 				}
-				w.addToBlocklist(mAppId, tracker.name);
-			} else {
-				if (!w.blockedApp(mAppId))
-					return;
-				w.removeFromBlocklist(mAppId, tracker.name);
 			}
 		});
-		holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
+		holder.mView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick (View v) {
+				holder.mSwitch.toggle();
+			}
+		});
 	}
 
 	@Override

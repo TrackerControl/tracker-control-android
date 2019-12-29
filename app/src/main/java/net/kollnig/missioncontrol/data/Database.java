@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -12,7 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol.data;
@@ -104,7 +104,7 @@ public class Database {
 		return instance;
 	}
 
-	public static Company getCompany (String hostname) {
+	public Company getCompany (String hostname) {
 		Company company = null;
 
 		if (hostnameToCompany.containsKey(hostname)) {
@@ -570,7 +570,7 @@ public class Database {
 		protected Boolean doInBackground (Void... voids) {
 			Database db = Database.getInstance(mContext);
 
-			Company company = getCompany(hostname);
+			Company company = db.getCompany(hostname);
 			if (company == null) {
 				db.logPacket(this.packageName, this.remoteIp, this.hostname, null, null);
 			} else {

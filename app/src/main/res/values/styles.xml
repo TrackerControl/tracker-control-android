@@ -1,43 +1,32 @@
-<!--
-  ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
-  ~
-  ~ TrackerControl is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ TrackerControl is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <resources>
-    <!-- Base application theme. -->
+    <attr name="colorOn" format="reference" />
+    <attr name="colorOff" format="reference" />
+    <attr name="expander" format="reference" />
+    <attr name="iconQueue" format="reference" />
+    <attr name="iconMetered" format="reference" />
+    <attr name="iconSettings" format="reference" />
+    <attr name="iconDatasaver" format="reference" />
+    <attr name="iconLaunch" format="reference" />
+    <attr name="iconDelete" format="reference" />
+    <attr name="iconPlay" format="reference" />
+    <attr name="iconPause" format="reference" />
+
+    <style name="AppDialog" parent="Theme.AppCompat.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
-
-    <!-- Rocket Switch -->
-    <style name="SwitchCompatStyle">
-        <item name="android:thumb">@drawable/switch_rocket</item>
-        <item name="trackTint">@color/switch_rocket_color</item>
-    </style>
 
     <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
         <item name="android:buttonStyle">
@@ -45,10 +34,144 @@
         </item>
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
-
     <style name="PrimaryButton" parent="Theme.AppCompat">
         <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
-</resources>
 
+    <style name="BaseThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="expander">@drawable/expander_black</item>
+        <item name="iconQueue">@drawable/ic_hourglass_empty_black_24dp</item>
+        <item name="iconMetered">@drawable/ic_attach_money_black_24dp</item>
+        <item name="iconSettings">@drawable/ic_settings_black_24dp</item>
+        <item name="iconDatasaver">@drawable/ic_perm_data_setting_black_24dp</item>
+        <item name="iconLaunch">@drawable/ic_launch_black_24dp</item>
+        <item name="iconDelete">@drawable/ic_delete_black_24dp</item>
+        <item name="iconPlay">@drawable/ic_play_arrow_black_24dp</item>
+        <item name="iconPause">@drawable/ic_pause_black_24dp</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <style name="BaseThemeLight" parent="Theme.AppCompat">
+        <item name="expander">@drawable/expander_white</item>
+        <item name="iconQueue">@drawable/ic_hourglass_empty_white_24dp</item>
+        <item name="iconMetered">@drawable/ic_attach_money_white_24dp</item>
+        <item name="iconSettings">@drawable/ic_settings_white_24dp</item>
+        <item name="iconDatasaver">@drawable/ic_perm_data_setting_white_24dp</item>
+        <item name="iconLaunch">@drawable/ic_launch_white_24dp</item>
+        <item name="iconDelete">@drawable/ic_delete_white_24dp</item>
+        <item name="iconPlay">@drawable/ic_play_arrow_white_24dp</item>
+        <item name="iconPause">@drawable/ic_pause_white_24dp</item>
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
+    <style name="AppThemeRed" parent="BaseThemeDark">
+        <item name="colorPrimary">@color/colorRedPrimary</item>
+        <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
+        <item name="colorAccent">@color/colorRedAccent</item>
+        <item name="colorOn">@color/colorRedOn</item>
+        <item name="colorOff">@color/colorRedOff</item>
+    </style>
+
+    <style name="AppThemeTeal" parent="AppThemeRed"> <!-- Was: BaseThemeDark -->
+        <!--<item name="colorPrimary">@color/colorTealPrimary</item>
+        <item name="colorPrimaryDark">@color/colorTealPrimaryDark</item>
+        <item name="colorAccent">@color/colorTealAccent</item>
+        <item name="colorOn">@color/colorTealOn</item>
+        <item name="colorOff">@color/colorTealOff</item>-->
+    </style>
+
+    <style name="AppThemeTealDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorTealPrimary</item>
+        <item name="colorPrimaryDark">@color/colorTealPrimaryDark</item>
+        <item name="colorAccent">@color/colorTealAccent</item>
+        <item name="colorOn">@color/colorTealOn</item>
+        <item name="colorOff">@color/colorTealOff</item>
+    </style>
+
+    <style name="AppThemeBlue" parent="BaseThemeDark">
+        <item name="colorPrimary">@color/colorBluePrimary</item>
+        <item name="colorPrimaryDark">@color/colorBluePrimaryDark</item>
+        <item name="colorAccent">@color/colorBlueAccent</item>
+        <item name="colorOn">@color/colorBlueOn</item>
+        <item name="colorOff">@color/colorBlueOff</item>
+    </style>
+
+    <style name="AppThemeBlueDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorBluePrimary</item>
+        <item name="colorPrimaryDark">@color/colorBluePrimaryDark</item>
+        <item name="colorAccent">@color/colorBlueAccent</item>
+        <item name="colorOn">@color/colorBlueOn</item>
+        <item name="colorOff">@color/colorBlueOff</item>
+    </style>
+
+    <style name="AppThemePurple" parent="BaseThemeDark">
+        <item name="colorPrimary">@color/colorPurplePrimary</item>
+        <item name="colorPrimaryDark">@color/colorPurplePrimaryDark</item>
+        <item name="colorAccent">@color/colorPurpleAccent</item>
+        <item name="colorOn">@color/colorPurpleOn</item>
+        <item name="colorOff">@color/colorPurpleOff</item>
+    </style>
+
+    <style name="AppThemePurpleDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorPurplePrimary</item>
+        <item name="colorPrimaryDark">@color/colorPurplePrimaryDark</item>
+        <item name="colorAccent">@color/colorPurpleAccent</item>
+        <item name="colorOn">@color/colorPurpleOn</item>
+        <item name="colorOff">@color/colorPurpleOff</item>
+    </style>
+
+    <style name="AppThemeAmber" parent="BaseThemeDark">
+        <item name="colorPrimary">@color/colorAmberPrimary</item>
+        <item name="colorPrimaryDark">@color/colorAmberPrimaryDark</item>
+        <item name="colorAccent">@color/colorAmberAccent</item>
+        <item name="colorOn">@color/colorAmberOn</item>
+        <item name="colorOff">@color/colorAmberOff</item>
+    </style>
+
+    <style name="AppThemeAmberDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorAmberPrimary</item>
+        <item name="colorPrimaryDark">@color/colorAmberPrimaryDark</item>
+        <item name="colorAccent">@color/colorAmberAccent</item>
+        <item name="colorOn">@color/colorAmberOn</item>
+        <item name="colorOff">@color/colorAmberOff</item>
+    </style>
+
+    <style name="AppThemeOrange" parent="BaseThemeDark">
+        <item name="colorPrimary">@color/colorOrangePrimary</item>
+        <item name="colorPrimaryDark">@color/colorOrangePrimaryDark</item>
+        <item name="colorAccent">@color/colorOrangeAccent</item>
+        <item name="colorOn">@color/colorOrangeOn</item>
+        <item name="colorOff">@color/colorOrangeOff</item>
+    </style>
+
+    <style name="AppThemeOrangeDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorOrangePrimary</item>
+        <item name="colorPrimaryDark">@color/colorOrangePrimaryDark</item>
+        <item name="colorAccent">@color/colorOrangeAccent</item>
+        <item name="colorOn">@color/colorOrangeOn</item>
+        <item name="colorOff">@color/colorOrangeOff</item>
+    </style>
+
+    <style name="AppThemeGreen" parent="BaseThemeDark">
+        <item name="colorPrimary">@color/colorGreenPrimary</item>
+        <item name="colorPrimaryDark">@color/colorGreenPrimaryDark</item>
+        <item name="colorAccent">@color/colorGreenAccent</item>
+        <item name="colorOn">@color/colorGreenOn</item>
+        <item name="colorOff">@color/colorGreenOff</item>
+    </style>
+
+    <style name="AppThemeGreenDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorGreenPrimary</item>
+        <item name="colorPrimaryDark">@color/colorGreenPrimaryDark</item>
+        <item name="colorAccent">@color/colorGreenAccent</item>
+        <item name="colorOn">@color/colorGreenOn</item>
+        <item name="colorOff">@color/colorGreenOff</item>
+    </style>
+
+    <!-- Rocket Switch -->
+    <style name="RocketSwitch">
+        <item name="android:thumb">@drawable/switch_rocket</item>
+        <item name="trackTint">@color/switch_rocket_color</item>
+    </style>
+</resources>

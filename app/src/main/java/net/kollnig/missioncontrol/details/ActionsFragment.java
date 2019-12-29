@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * TrackerControl is distributed in the hope that it will be useful,
@@ -12,7 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol.details;
@@ -27,14 +27,14 @@ import android.view.ViewGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
-import net.kollnig.missioncontrol.R;
 
 import javax.annotation.Nullable;
 
 import androidx.fragment.app.Fragment;
+import eu.faircode.netguard.R;
+import eu.faircode.netguard.Util;
 
 import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTransmissionsPosition;
 
@@ -96,53 +96,46 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 		if (!Common.hasAdSettings(getContext()))
 			v.findViewById(R.id.adsettings_card).setVisibility(View.GONE);
 
-		if (BuildConfig.FLAVOR.equals("play")) {
+		if (Util.isPlayStoreInstall(getContext())) {
 			v.findViewById(R.id.tracker_card).setVisibility(View.GONE);
 		}
 	}
 
 	@Override
 	public void onClick (View v) {
-		switch (v.getId()) {
-			case R.id.btnTrackers:
-				TabLayout tabs = getActivity().findViewById(R.id.tabs);
-				tabs.getTabAt(tabTransmissionsPosition).select();
-				break;
-			case R.id.btnAdSettings:
-				if (Common.hasAdSettings(getContext())) {
-					startActivity(Common.adSettings());
-				} else {
-					Snackbar.make(getView(), R.string.play_services_required, Snackbar.LENGTH_LONG).show();
-				}
-				break;
-			case R.id.btnReqData:
-			case R.id.btnReqDeletion:
-			case R.id.btnContactDev:
-				String mail = null;
+		int id = v.getId();
+		if (id == R.id.btnTrackers) {
+			TabLayout tabs = getActivity().findViewById(R.id.tabs);
+			tabs.getTabAt(tabTransmissionsPosition).select();
+		} else if (id == R.id.btnAdSettings) {
+			if (Common.hasAdSettings(getContext())) {
+				startActivity(Common.adSettings());
+			} else {
+				Snackbar.make(getView(), R.string.play_services_required, Snackbar.LENGTH_LONG).show();
+			}
+		} else if (id == R.id.btnReqData || id == R.id.btnReqDeletion || id == R.id.btnContactDev) {
+			String mail = null;
 
-				if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null)
-					mail = DetailsActivity.app.developerMail;
+			if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null)
+				mail = DetailsActivity.app.developerMail;
 
-				String subject = null, body = null;
-				if (v.getId() == R.id.btnReqData) {
-					subject = getString(R.string.subject_request_data);
-					body = getString(R.string.body_request_data, appName, appId);
-				}
+			String subject = null, body = null;
+			if (v.getId() == R.id.btnReqData) {
+				subject = getString(R.string.subject_request_data);
+				body = getString(R.string.body_request_data, appName, appId);
+			}
 
-				if (v.getId() == R.id.btnReqDeletion) {
-					subject = getString(R.string.subject_request_data);
-					body = getString(R.string.body_request_data, appName, appId);
-				}
+			if (v.getId() == R.id.btnReqDeletion) {
+				subject = getString(R.string.subject_request_data);
+				body = getString(R.string.body_request_data, appName, appId);
+			}
 
-				sendEmail(mail, subject, body);
-				break;
-			case R.id.btnContactGoogle:
-				sendEmail(getString(R.string.google_dpo_mail), null, null);
-				break;
-			case R.id.btnContactOfficials:
-				Intent browserIntent = Common.browse(getString(R.string.dpas_overview_url));
-				startActivity(browserIntent);
-				break;
+			sendEmail(mail, subject, body);
+		} else if (id == R.id.btnContactGoogle) {
+			sendEmail(getString(R.string.google_dpo_mail), null, null);
+		} else if (id == R.id.btnContactOfficials) {
+			Intent browserIntent = Common.browse(getString(R.string.dpas_overview_url));
+			startActivity(browserIntent);
 		}
 	}
 

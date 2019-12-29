@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:visible="false"
+        android:id="@+id/menu_host"
+        android:enabled="false"
+        android:title="">
+        <menu />
+    </item>
+    <item
+        android:visible="false"
+        android:id="@+id/menu_whois"
+        android:title="" />
+    <item
+        android:visible="false"
+        android:id="@+id/menu_port"
+        android:title="" />
+    <item
+        android:id="@+id/menu_allow"
+        android:title="@string/title_allow" />
+    <item
+        android:id="@+id/menu_block"
+        android:title="@string/title_block" />
+    <item
+        android:id="@+id/menu_reset"
+        android:title="@string/menu_reset" />
+    <item
+        android:visible="false"
+        android:id="@+id/menu_copy"
+        android:title="@string/title_log_copy" />
+    <item
+        android:visible="false"
+        android:id="@+id/menu_time"
+        android:enabled="false"
+        android:title="" />
+</menu>

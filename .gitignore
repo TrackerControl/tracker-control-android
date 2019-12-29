@@ -1,7 +1,14 @@
-app/libs/
+/app/full
+/app/play
 
-app/full/
-app/play/
+/app/release
+/app/play
+
+/.idea
+/tools/config.sh
+keystore.properties
+
+.cxx/
 
 # Built application files
 *.apk

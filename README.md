@@ -1,4 +1,4 @@
-# TrackerControl (work-in-progress)
+# TrackerControl (experimental)
 
 **If you're missing features or find bugs, use the issue tracker or contact Konrad directly (tc@kollnig.net).**
 
@@ -32,19 +32,18 @@ in Computer Science at the University of Oxford, under the supervision
 of Professor Max van Kleek.
 
 ## Installation
-Disclaimer: The app is **very experimental** and should not be used on
+Disclaimer: The app is **experimental** and should not be used on
 your regular phone.
 
-1. Install the [F-Droid](https://f-droid.org/) app store.
-2. Start F-Droid, open its settings, and add the new repository: https://apt.izzysoft.de/fdroid/repo
-3. Search for "TrackerControl" from the main screen of F-Droid and install.
+The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
 ## Key Highlights
 TrackerControl provides
 - *real-time monitoring* of app tracking,
 - *granular blocking* of app tracking,
 - access to apps' *privacy policy websites without trackers* (which they often contain), and
-- *one-click data requests* as granted under EU Data Protection Legislation.
+- *one-click data requests* as granted under EU Data Protection Legislation,
+- [ad-blocking](ADBLOCKING.md) using widely available host files.
 
 <p align="center">
     <img alt="Screenshot of main screen" src="images/main.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
@@ -95,8 +94,8 @@ This information is kept on the user's device until app data is
 removed manually by the user (e.g. by uninstalling).
 
 ## Credits
-The underlying network analysis tool is provided by the [AntMonitor
-Library](https://github.com/UCI-Networking-Group/AntMonitor). 
+The underlying network analysis functionality is provided by the [NetGuard
+Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
 TrackerControl builds upon the tracker database by Reuben Binns, Ulrik Lyngs,
 Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray).
@@ -104,7 +103,7 @@ This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
 The original data can be retrieved [here](https://osf.io/4nu9e/).
 
-The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/).
+The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/), and a [rocket icon](https://www.iconfinder.com/icons/1608817/rocket_icon) by Dave Gandy under the SIL Open Font License
 
 For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 

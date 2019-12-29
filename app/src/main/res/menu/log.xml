@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_application"
+        android:title="" />
+    <item
+        android:id="@+id/menu_protocol"
+        android:enabled="false"
+        android:title="" />
+    <item
+        android:id="@+id/menu_whois"
+        android:title="" />
+    <item
+        android:id="@+id/menu_port"
+        android:title="" />
+    <item
+        android:id="@+id/menu_allow"
+        android:title="@string/title_allow" />
+    <item
+        android:id="@+id/menu_block"
+        android:title="@string/title_block" />
+    <item
+        android:id="@+id/menu_copy"
+        android:title="@string/title_log_copy" />
+    <item
+        android:id="@+id/menu_time"
+        android:enabled="false"
+        android:title="" />
+</menu>

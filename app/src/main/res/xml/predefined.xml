@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<predefined>
+    <wifi
+        blocked="false"
+        package="root" />
+    <other
+        blocked="false"
+        package="root"
+        roaming="false" />
+
+    <wifi
+        blocked="false"
+        package="eu.faircode.netguard" />
+    <other
+        blocked="false"
+        package="eu.faircode.netguard"
+        roaming="false" />
+
+    <wifi
+        blocked="false"
+        package="com.google.android.apps.adm" />
+    <other
+        blocked="false"
+        package="com.google.android.apps.adm"
+        roaming="false" />
+
+    <wifi
+        blocked="false"
+        package="com.google.android.backuptransport" />
+    <other
+        blocked="false"
+        package="com.google.android.backuptransport" />
+
+    <wifi
+        blocked="false"
+        package="com.google.android.gms" />
+    <other
+        blocked="false"
+        package="com.google.android.gms" />
+
+    <wifi
+        blocked="false"
+        package="com.google.android.apps.gcs" />
+    <other
+        blocked="false"
+        package="com.google.android.apps.gcs"
+        roaming="false" />
+
+    <relation
+        package="com.android.vending"
+        related="com.google.android.gms,com.android.providers.downloads" />
+    <relation
+        package="com.android.chrome"
+        related="com.android.providers.downloads" />
+
+    <type
+        package="com.android.chrome"
+        system="false" />
+    <type
+        package="com.facebook.katana"
+        system="false" />
+    <type
+        package="com.facebook.orca"
+        system="false" />
+    <type
+        package="com.google.android.youtube"
+        system="false" />
+    <type
+        package="com.skype.raider"
+        system="false" />
+    <type
+        package="com.twitter.android"
+        system="false" />
+    <type
+        package="com.whatsapp"
+        system="false" />
+    <type
+        package="com.instagram.android"
+        system="false" />
+    <type
+        package="com.facebook.orca"
+        system="false" />
+    <type
+        package="com.google.android.youtube"
+        system="false" />
+</predefined>

@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * TrackerControl is distributed in the hope that it will be useful,
@@ -12,7 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol.details;
@@ -38,7 +38,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.data.Host;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -48,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.fragment.app.Fragment;
+import eu.faircode.netguard.R;
 
 /**
  * A simple {@link Fragment} subclass.

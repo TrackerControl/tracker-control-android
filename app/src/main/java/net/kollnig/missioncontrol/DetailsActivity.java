@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * TrackerControl is distributed in the hope that it will be useful,
@@ -12,13 +10,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,10 +38,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.opencsv.CSVWriter;
 
+import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.data.PlayStore;
-import net.kollnig.missioncontrol.main.AppsListAdapter;
-import net.kollnig.missioncontrol.main.SettingsActivity;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,21 +54,46 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
+import eu.faircode.netguard.R;
 
-import static net.kollnig.missioncontrol.main.AppsFragment.savePrefs;
+import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
+import static net.kollnig.missioncontrol.data.AppBlocklistController.SHARED_PREFS_BLOCKLIST_APPS_KEY;
 
 public class DetailsActivity extends AppCompatActivity {
+	public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
+	public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
+	public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
+
+	public static final String
+			KEY_PREF_GOOGLEPLAY_SWITCH = "googleplay_switch";
+
 	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 	public static PlayStore.AppInfo app = null;
 	private final String TAG = DetailsActivity.class.getSimpleName();
 	Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
 			Environment.getExternalStorageDirectory(), "trackercontrol");
-	private String appId;
+	private Integer appUid;
+	private String appPackageName;
 	private String appName;
 	public static Boolean contactGoogle;
+
+	public static void savePrefs (Context c) {
+		// Save currently Selected Apps to Shared Prefs
+		AppBlocklistController controller = AppBlocklistController.getInstance(c);
+		Set<String> appSet = controller.getBlocklist();
+		String prefKey = SHARED_PREFS_BLOCKLIST_APPS_KEY;
+		SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.clear();
+		editor.putStringSet(prefKey, appSet);
+		for (String id : appSet) {
+			Set<String> subset = controller.getSubset(id);
+			editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, subset);
+		}
+		editor.apply();
+	}
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -76,17 +102,21 @@ public class DetailsActivity extends AppCompatActivity {
 
 		// Receive about details
 		Intent intent = getIntent();
-		appId = intent.getStringExtra(AppsListAdapter.INTENT_EXTRA_APP_ID);
-		appName = intent.getStringExtra(AppsListAdapter.INTENT_EXTRA_APP_NAME);
+		appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
+		appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
+		appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
 		// Check if consent to contact external servers
 		SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
 		contactGoogle = settingsPref.getBoolean
-				(SettingsActivity.KEY_PREF_GOOGLEPLAY_SWITCH, false);
+				(KEY_PREF_GOOGLEPLAY_SWITCH, false);
 
 		// Set up paging
 		DetailsPagesAdapter detailsPagesAdapter =
-				new DetailsPagesAdapter(this, getSupportFragmentManager(), appId, appName);
+				new DetailsPagesAdapter(this,
+						getSupportFragmentManager(),
+						Common.getAppName(getPackageManager(), appUid),
+						appName);
 		ViewPager viewPager = findViewById(R.id.view_pager);
 		viewPager.setAdapter(detailsPagesAdapter);
 		TabLayout tabs = findViewById(R.id.tabs);
@@ -104,13 +134,19 @@ public class DetailsActivity extends AppCompatActivity {
 
 		// Load PlayStore Data if consent
 		if (contactGoogle) {
-			new Thread(() -> {
-				app = PlayStore.getInfo(appId);
-				runOnUiThread(() -> {
-					for (OnAppInfoLoadedListener listener : listeners) {
-						listener.appInfoLoaded();
-					}
-				});
+			new Thread(new Runnable() {
+				@Override
+				public void run () {
+					app = PlayStore.getInfo(appPackageName);
+					DetailsActivity.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run () {
+							for (OnAppInfoLoadedListener listener : listeners) {
+								listener.appInfoLoaded();
+							}
+						}
+					});
+				}
 			}).start();
 		}
 	}
@@ -123,16 +159,15 @@ public class DetailsActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onOptionsItemSelected (MenuItem item) {
-		switch (item.getItemId()) {
-			// Respond to the action bar's Up/Home button
-			case android.R.id.home:
-				NavUtils.navigateUpFromSameTask(this);
-				return true;
-			case R.id.action_export_csv:
-				if (hasPermissions()) {
-					exportCsv();
-				}
-				return true;
+		int itemId = item.getItemId();// Respond to the action bar's Up/Home button
+		if (itemId == android.R.id.home) {
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		} else if (itemId == R.id.action_export_csv) {
+			if (hasPermissions()) {
+				exportCsv();
+			}
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -180,22 +215,18 @@ public class DetailsActivity extends AppCompatActivity {
 	@Override
 	public void onRequestPermissionsResult (int requestCode,
 	                                        String[] permissions, int[] grantResults) {
-		switch (requestCode) {
-			case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
-				// If request is cancelled, the result arrays are empty.
-				if (grantResults.length > 0
-						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-					exportCsv();
-				} else {
-					Toast.makeText(this, "Access to files required..", Toast.LENGTH_SHORT).show();
-				}
-				return;
+		if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {// If request is cancelled, the result arrays are empty.
+			if (grantResults.length > 0
+					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				exportCsv();
+			} else {
+				Toast.makeText(this, "Access to files required..", Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
 
 	private void shareExport () {
-		String fileName = appId + ".csv";
+		String fileName = appPackageName + ".csv";
 		File sharingFile = new File(exportDir, fileName);
 		Uri uri = FileProvider.getUriForFile(DetailsActivity.this,
 				getApplicationContext().getPackageName() + ".fileprovider",
@@ -229,7 +260,7 @@ public class DetailsActivity extends AppCompatActivity {
 		protected Boolean doInBackground (final String... args) {
 			if (exportDir == null) return false;
 
-			File file = new File(exportDir, appId + ".csv");
+			File file = new File(exportDir, appPackageName + ".csv");
 			try {
 				file.createNewFile();
 				CSVWriter csv = new CSVWriter(new FileWriter(file),
@@ -238,7 +269,7 @@ public class DetailsActivity extends AppCompatActivity {
 						CSVWriter.DEFAULT_ESCAPE_CHARACTER,
 						CSVWriter.RFC4180_LINE_END);
 
-				Cursor data = database.getAppInfo(appId);
+				Cursor data = database.getAppInfo(Common.getAppName(getPackageManager(), appUid));
 				if (data == null) return false;
 
 				csv.writeNext(data.getColumnNames());
@@ -271,7 +302,12 @@ public class DetailsActivity extends AppCompatActivity {
 			// Export successul, ask user to further share file!
 			View v = findViewById(R.id.view_pager);
 			Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
-			s.setAction(R.string.share_csv, v1 -> shareExport());
+			s.setAction(R.string.share_csv, new View.OnClickListener() {
+				@Override
+				public void onClick (View v1) {
+					shareExport();
+				}
+			});
 			s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
 			s.show();
 		}

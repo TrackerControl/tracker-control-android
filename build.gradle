@@ -1,15 +1,14 @@
-ext {
-    var = '3.5.2'
-}
-
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
     dependencies {
+        // http://tools.android.com/tech-docs/new-build-system/gradle-experimental
+        // https://bintray.com/android/android-tools/com.android.tools.build.gradle-experimental/view
+        // https://bintray.com/android/android-tools/com.google.gms.google-services/view
         classpath 'com.android.tools.build:gradle:3.5.3'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -19,8 +18,25 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
         jcenter()
+        mavenCentral()
+        maven {
+            url 'https://maven.google.com'
+        }
+        maven { // for MPAndroidChart
+            url 'https://jitpack.io'
+        }
+    }
+}
+
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.android.support'
+                    && !details.requested.name.contains('multidex')) {
+                details.useVersion "27.1.1"
+            }
+        }
     }
 }
 

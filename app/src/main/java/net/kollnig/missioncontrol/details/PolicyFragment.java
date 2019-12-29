@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * TrackerControl is distributed in the hope that it will be useful,
@@ -12,7 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol.details;
@@ -36,10 +36,10 @@ import net.dankito.readability4j.Article;
 import net.dankito.readability4j.Readability4J;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
-import net.kollnig.missioncontrol.R;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import eu.faircode.netguard.R;
 
 import static net.kollnig.missioncontrol.Common.fetch;
 
@@ -102,14 +102,17 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 		pbPolicy = v.findViewById(R.id.pbPolicy);
 
 		fab = v.findViewById(R.id.fab);
-		fab.setOnClickListener(v1 -> {
-			if (policyUrl == null) {
-				Snackbar.make(v1, getString(R.string.policy_loading_error), Snackbar.LENGTH_LONG)
-						.show();
-			} else {
-				// Get URL
-				Intent browserIntent = Common.browse(policyUrl);
-				startActivity(browserIntent);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick (View v1) {
+				if (policyUrl == null) {
+					Snackbar.make(v1, PolicyFragment.this.getString(R.string.policy_loading_error), Snackbar.LENGTH_LONG)
+							.show();
+				} else {
+					// Get URL
+					Intent browserIntent = Common.browse(policyUrl);
+					PolicyFragment.this.startActivity(browserIntent);
+				}
 			}
 		});
 		fab.hide();
@@ -162,14 +165,17 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 			FragmentActivity a = getActivity();
 			if (a == null) return;
 
-			a.runOnUiThread(() -> {
-				if (url != null) {
-					html = getString(R.string.parse_error, Html.escapeHtml(url));
-					displayHtml(html);
-				} else {
-					txtPolicy.setText(getString(R.string.policy_loading_error));
+			a.runOnUiThread(new Runnable() {
+				@Override
+				public void run () {
+					if (url != null) {
+						html = getString(R.string.parse_error, Html.escapeHtml(url));
+						displayHtml(html);
+					} else {
+						txtPolicy.setText(getString(R.string.policy_loading_error));
+					}
+					loadingFinished();
 				}
-				loadingFinished();
 			});
 		}
 
@@ -212,9 +218,12 @@ public class PolicyFragment extends Fragment implements DetailsActivity.OnAppInf
 			// Display in UI
 			FragmentActivity a = getActivity();
 			if (a == null) return;
-			a.runOnUiThread(() -> {
-				displayHtml(html);
-				loadingFinished();
+			a.runOnUiThread(new Runnable() {
+				@Override
+				public void run () {
+					displayHtml(html);
+					loadingFinished();
+				}
 			});
 		}
 	}

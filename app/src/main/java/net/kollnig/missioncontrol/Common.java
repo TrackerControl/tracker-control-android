@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
  * TrackerControl is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * TrackerControl is distributed in the hope that it will be useful,
@@ -12,63 +10,30 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2019 Konrad Kollnig, University of Oxford
  */
 
 package net.kollnig.missioncontrol;
 
-import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.os.Build;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
-import edu.uci.calit2.antmonitor.lib.logging.ConnectionValue;
-import edu.uci.calit2.antmonitor.lib.util.IpDatagram;
-
-import static android.os.Process.INVALID_UID;
-import static android.system.OsConstants.IPPROTO_TCP;
-import static android.system.OsConstants.IPPROTO_UDP;
+import androidx.annotation.Nullable;
 
 public class Common {
-	public static List<String> getEmailApps (Context context) {
-		List<String> emailApps = new ArrayList<>();
-		try {
-			Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:example@example.com"));
-			PackageManager pm = context.getPackageManager();
-			List<ResolveInfo> foundEmailApps;
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-				foundEmailApps = pm.queryIntentActivities(intent, PackageManager.MATCH_ALL);
-			} else {
-				foundEmailApps = pm.queryIntentActivities(intent, 0);
-			}
-			for (ResolveInfo info : foundEmailApps) {
-				emailApps.add(info.activityInfo.packageName);
-			}
-		} catch (Exception e) {
-			// Nothing
-		}
-		return emailApps;
-	}
-
 	@Nullable
 	public static String fetch (String url) {
 		try {
@@ -119,7 +84,7 @@ public class Common {
 	 * @return the name of the package of the app with the given uid, or "Unknown" if
 	 * no name could be found for the uid.
 	 */
-	static String getAppName (PackageManager pm, int uid) {
+	public static String getAppName (PackageManager pm, int uid) {
 		/* IMPORTANT NOTE:
 		 * From https://source.android.com/devices/tech/security/ : "The Android
 		 * system assigns a unique user ID (UID) to each Android application and
@@ -141,45 +106,5 @@ public class Common {
 			return packages[0];
 
 		return "Unknown";
-	}
-
-	@TargetApi(Build.VERSION_CODES.Q)
-	public static String getAppNameQ (final ByteBuffer packet,
-	                                  ConnectivityManager connectivityManager,
-	                                  PackageManager pm) {
-		// Only UDP and TCP are supported
-		short protocol = IpDatagram.readProtocol(packet);
-		if (protocol != IpDatagram.UDP && protocol != IpDatagram.TCP)
-			return ConnectionValue.MappingErrors.PREFIX + "Unsupported protocol.";
-
-		int lookupProtocol = (protocol == IpDatagram.TCP) ? IPPROTO_TCP : IPPROTO_UDP;
-
-		InetSocketAddress local, remote;
-		try {
-			local = new InetSocketAddress
-					(IpDatagram.readSourceIP(packet), IpDatagram.readSourcePort(packet));
-			remote = new InetSocketAddress
-					(IpDatagram.readDestinationIP(packet), IpDatagram.readDestinationPort(packet));
-		} catch (UnknownHostException e) {
-			return ConnectionValue.MappingErrors.PREFIX + "Resolving host failed.";
-		}
-
-		int uid = connectivityManager.getConnectionOwnerUid(lookupProtocol, local, remote);
-		if (uid == INVALID_UID)
-			return ConnectionValue.MappingErrors.PREFIX + "INVALID_UID in ConnectivityManager.";
-
-		return getAppName(pm, uid);
-	}
-
-
-	/**
-	 * Check if the {@code FLAG_SYSTEM} or {@code FLAG_UPDATED_SYSTEM_APP} is set for the application.
-	 *
-	 * @param applicationInfo The application to check.
-	 * @return true if the {@code applicationInfo} belongs to a system or updated system application.
-	 */
-	public static boolean isSystemPackage (ApplicationInfo applicationInfo) {
-		return (((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0)
-				|| (applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0);
 	}
 }

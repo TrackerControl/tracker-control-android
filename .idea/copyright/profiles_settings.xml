@@ -1,7 +1,7 @@
 <component name="CopyrightManager">
-  <settings default="Kollnig - Oxford - GPL">
+  <settings default="KK GPLv3">
     <module2copyright>
-      <element module="All" copyright="Kollnig - Oxford - GPL" />
+      <element module="All" copyright="KK GPLv3" />
     </module2copyright>
   </settings>
 </component>

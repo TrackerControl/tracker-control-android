@@ -1,107 +1,99 @@
-/*
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
- *
- * TrackerControl is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * (at your option) any later version.
- *
- * TrackerControl is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
- */
-
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.1"
+    compileSdkVersion = 29
+    buildToolsVersion = '29.0.1'
 
     defaultConfig {
-        applicationId 'net.kollnig.missioncontrol'
+        applicationId = "net.kollnig.missioncontrol"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 10
-        versionName "1.0.0-alpha9"
+        versionCode 11
+        versionName "v1.0-alpha10"
+        archivesBaseName = "TrackerControl-$versionName" // name of apk
+
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+                arguments "-DANDROID_PLATFORM=android-22"
+                // https://developer.android.com/ndk/guides/cmake.html
+            }
+        }
+
+        ndk {
+            // https://developer.android.com/ndk/guides/abis.html#sa
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+        }
+    }
+
+    lintOptions {
+        disable 'MissingTranslation'
+        quiet false
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
     }
 
     buildTypes {
         release {
-            //minifyEnabled true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //minifyEnabled = true
+            //proguardFiles.add(file('proguard-rules.pro'))
+            buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"http://www.netguard.me/hosts\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
+        }
+        play {
+            //minifyEnabled = true
+            //proguardFiles.add(file('proguard-rules.pro'))
+            buildConfigField "boolean", "PLAY_STORE_RELEASE", "true"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"\""
         }
         debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            applicationIdSuffix ".debug"
+            //minifyEnabled = true
+            //proguardFiles.add(file('proguard-rules.pro'))
+            buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"http://www.netguard.me/hosts\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
         }
     }
-
-    // Play version comes without blocking
-    flavorDimensions "version"
-    productFlavors {
-        play {
-            dimension "version"
-            applicationIdSuffix ".play"
-            versionNameSuffix "-play"
-        }
-        full {
-            dimension "version"
-        }
-    }
-
-    dexOptions {
-        javaMaxHeapSize "2g"
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
-}
-
-allprojects {
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-        }
-    }
-}
-
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation(name: 'antmonitorlib', ext: 'aar')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    // https://developer.android.com/jetpack/androidx/releases/
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.preference:preference:1.1.0'
+    annotationProcessor 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.google.android.material:material:1.0.0'
+
+    // https://bumptech.github.io/glide/
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'com.google.guava:guava:28.0-android'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'net.dankito.readability4j:readability4j:1.0.3'
     implementation 'com.opencsv:opencsv:4.6'
 
-    def acraVersion = '5.4.0'
+    // Crash reporting
+    def acraVersion = '5.5.0'
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"
+}
+
+// Fix lint error on release builds
+configurations {
+    all {
+        exclude module: 'commons-logging'
+    }
 }

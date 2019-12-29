@@ -1,79 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.kollnig.missioncontrol">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="eu.faircode.netguard">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> <!-- VPN Service -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- http://developer.android.com/guide/topics/security/permissions.html#normal-dangerous -->
+
+    <permission
+        android:name="eu.faircode.netguard.permission.ADMIN"
+        android:description="@string/app_description"
+        android:label="@string/app_name"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="eu.faircode.netguard.permission.ADMIN" />
+
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.app_widgets"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
 
     <application
-        android:name=".AppWithCrashReporting"
+        android:name="ApplicationEx"
+        android:allowBackup="false"
+        android:appCategory="productivity"
+        android:description="@string/app_description"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppThemeTeal"
+        tools:ignore="ManifestResource">
+
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
+
         <activity
-            android:name=".main.SettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".MainActivity"
+            android:name=".ActivityMain"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:resizeableActivity="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:name="edu.uci.calit2.anteater.ACTION.NOTIFICATION" />
-
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <intent-filter>
+            <!-- intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.netguard.me"
+                    android:pathPrefix="/"
+                    android:scheme="https" />
+            </intent-filter-->
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
+
         <activity
-            android:name=".DetailsActivity"
+            android:name=".ActivitySettings"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/menu_settings"
+            android:parentActivityName=".ActivityMain">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain" />
+        </activity>
+
+        <!--<activity
+            android:name=".ActivityLog"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/menu_log"
+            android:parentActivityName=".ActivityMain">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain" />
+        </activity>
+
+        <activity
+            android:name=".ActivityPro"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_pro"
+            android:parentActivityName=".ActivityMain">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain" />
+        </activity>-->
+
+        <activity
+            android:name=".ActivityDns"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/setting_show_resolved"
+            android:parentActivityName=".ActivitySettings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivitySettings" />
+        </activity>
+
+        <activity
+            android:name="net.kollnig.missioncontrol.DetailsActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ActivityMain"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.kollnig.missioncontrol.MainActivity" />
+                android:value="eu.faircode.netguard.ActivityMain" />
         </activity>
-        <!--
-        No UI activity that requests VPN rights.
-        If VPN rights can be obtained, the activity initiates a connection attempt
-        -->
-        <activity
-            android:name=".vpn.VpnStarterActivity"
-            android:excludeFromRecents="true"
-            android:launchMode="singleTask"
-            android:theme="@android:style/Theme.NoDisplay" />
 
-        <receiver android:name=".vpn.DeviceBootListener">
+        <service
+            android:name=".ServiceSinkhole"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_VPN_SERVICE">
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
 
-            <!-- Attempts to reestablish VPN on reboot -->
+        <service
+            android:name=".ServiceExternal"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="eu.faircode.netguard.DOWNLOAD_HOSTS_FILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".ServiceTileMain"
+            android:icon="@drawable/ic_security_white_24dp"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".ReceiverAutostart"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
 
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-    </application>
+        <receiver android:name=".ReceiverPackageRemoved">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
 
+        <receiver
+            android:name=".WidgetMain"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widgetmain" />
+        </receiver>
+
+        <!--<receiver
+            android:name=".WidgetLockdown"
+            android:label="@string/setting_lockdown">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widgetlockdown" />
+        </receiver>-->
+
+        <receiver
+            android:name=".WidgetAdmin"
+            android:label="@string/app_name"
+            android:permission="eu.faircode.netguard.permission.ADMIN">
+            <intent-filter>
+                <action android:name="eu.faircode.netguard.ON" />
+                <action android:name="eu.faircode.netguard.OFF" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>
