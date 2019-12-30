@@ -41,8 +41,8 @@ The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-an
 TrackerControl provides
 - *real-time monitoring* of app tracking,
 - *granular blocking* of app tracking,
-- access to apps' *privacy policy websites without trackers* (which they often contain), and
-- *one-click data requests* as granted under EU Data Protection Legislation,
+- access to apps' *privacy policy websites without trackers* (which they often contain),
+- *one-click data requests* as granted under EU Data Protection Legislation, and
 - [ad-blocking](ADBLOCKING.md) using widely available host files.
 
 <p align="center">
@@ -57,20 +57,6 @@ unrooted Android devices.
 Only the meta data about network communications is logged, and displayed
 to the users.
 
-## Build instructions
-
-This project can be built using [Android Studio](https://developer.android.com/studio).
-
-It includes a modified version of the [AntMonitor
-Library](https://github.com/UCI-Networking-Group/AntMonitor),
-whose source code
-can be found at [https://github.com/OxfordHCC/AntMonitor](https://github.com/OxfordHCC/AntMonitor).
-This library can be built manually, by cloning the repository and building the
-project `antmonitorlib`.
-After successful compilation,
-copy the compiled library from `AntMonitor/antmonitorlib/build/outputs/aar`
-to `tracker-control-android/app/libs/`.
-
 ## Privacy notice
 
 TrackerControl allows users to monitor the network communications on their
@@ -80,7 +66,9 @@ locally on the user's device.
 
 If the user consents, TrackerControl contacts the Google Play Store
 to retrieve further information about the users' apps.
-No personal data is shared with Google, other than what is strictly
+The app automatically contacts GitHub to check for updates,
+which can be disabled from the app settings.
+No personal data is ever shared, other than what is strictly
 necessary for network communications (e.g. IP address).
 
 TrackerControl saves two pieces of information on the user's device:
