@@ -18,6 +18,7 @@
 package net.kollnig.missioncontrol.vpn;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
@@ -39,6 +40,7 @@ import static net.kollnig.missioncontrol.vpn.OutConsumer.pm;
 public class OutFilter extends OutPacketFilter {
 	private final String TAG = OutFilter.class.getSimpleName();
 	private final AppBlocklistController appBlocklist;
+	private final Database database;
 
 	private final PacketAnnotation ALLOW = new PacketAnnotation(true);
 	private final PacketAnnotation BLOCK = new PacketAnnotation(false);
@@ -47,6 +49,7 @@ public class OutFilter extends OutPacketFilter {
 		super(c);
 
 		appBlocklist = AppBlocklistController.getInstance(c);
+		database = Database.getInstance(c);
 	}
 
 	/**
@@ -69,7 +72,7 @@ public class OutFilter extends OutPacketFilter {
 		if (hostname == null)
 			return ALLOW;
 
-		Company tracker = Database.getCompany(hostname);
+		Company tracker = database.getCompany(hostname);
 		if (tracker == null || tracker.necessary)
 			return ALLOW;
 

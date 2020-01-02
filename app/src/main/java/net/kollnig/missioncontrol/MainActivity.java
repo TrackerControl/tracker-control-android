@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements AntMonitorActivit
 	@Override
 	public boolean onOptionsItemSelected (MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.action_about:
+			case R.id.action_privacy_policy:
 				Uri aboutUri = Uri.parse(getString(R.string.about_url));
 				Intent browserIntent = new Intent(Intent.ACTION_VIEW, aboutUri);
 				startActivity(browserIntent);

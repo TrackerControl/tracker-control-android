@@ -40,12 +40,13 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
+
 /**
  * Provide views to RecyclerView with the directory entries.
  */
 public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-	public static final String INTENT_EXTRA_APP_ID = "INTENT_APP_ID";
-	public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
 	private static final int TYPE_HEADER = 0;
 	private static final int TYPE_ITEM = 1;
 	public static int openedApp = -1;
@@ -132,7 +133,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 			holder.itemView.setOnClickListener(view -> {
 				Intent intent = new Intent(mFragment.getContext(), DetailsActivity.class);
-				intent.putExtra(INTENT_EXTRA_APP_ID, app.id);
+				intent.putExtra(INTENT_EXTRA_APP_PACKAGENAME, app.id);
 				intent.putExtra(INTENT_EXTRA_APP_NAME, app.name);
 				mFragment.startActivity(intent);
 			});
@@ -147,9 +148,9 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 				if (!buttonView.isPressed()) return;
 
 				if (isChecked) {
-					w.addToBlocklist(app.id);
+					w.block(app.id);
 				} else {
-					w.removeFromBlocklist(app.id);
+					w.unblock(app.id);
 				}
 
 				if (switchBlockAll != null)
@@ -176,7 +177,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 								void blockAll () {
 									for (App app : mAppList) {
 										if (emailsEnabled || !emailApps.contains(app.id))
-											w.addToBlocklist(app.id);
+											w.block(app.id);
 									}
 									notifyDataSetChanged();
 								}

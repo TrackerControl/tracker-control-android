@@ -101,7 +101,8 @@ dependencies {
     implementation 'net.dankito.readability4j:readability4j:1.0.3'
     implementation 'com.opencsv:opencsv:4.6'
 
-    def acraVersion = '5.4.0'
+    // Crash reporting
+    def acraVersion = '5.5.0'
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"
 }

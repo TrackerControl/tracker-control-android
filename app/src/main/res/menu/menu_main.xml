@@ -19,14 +19,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_about"
+        android:id="@+id/action_privacy_policy"
         android:orderInCategory="10"
-        android:title="@string/menu_about"
+        android:title="@string/menu_privacy_policy"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_reset_monitoring"
         android:orderInCategory="10"
-        android:title="@string/menu_reset"
+        android:title="@string/menu_reset_monitoring"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"

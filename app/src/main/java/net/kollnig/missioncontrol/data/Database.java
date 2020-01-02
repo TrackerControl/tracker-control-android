@@ -104,7 +104,7 @@ public class Database {
 		return instance;
 	}
 
-	public static Company getCompany (String hostname) {
+	public Company getCompany (String hostname) {
 		Company company = null;
 
 		if (hostnameToCompany.containsKey(hostname)) {
@@ -570,7 +570,7 @@ public class Database {
 		protected Boolean doInBackground (Void... voids) {
 			Database db = Database.getInstance(mContext);
 
-			Company company = getCompany(hostname);
+			Company company = db.getCompany(hostname);
 			if (company == null) {
 				db.logPacket(this.packageName, this.remoteIp, this.hostname, null, null);
 			} else {

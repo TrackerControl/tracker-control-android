@@ -85,7 +85,7 @@ public abstract class BlocklistController {
 		blockmap.clear();
 	}
 
-	public synchronized Set<String> addToBlocklist (String id) {
+	public synchronized Set<String> block (String id) {
 		Set<String> app = blockmap.get(id);
 		if (app != null)
 			return app;
@@ -95,17 +95,17 @@ public abstract class BlocklistController {
 		return app;
 	}
 
-	public synchronized void addToBlocklist (String id, String tracker) {
+	public synchronized void block (String id, String tracker) {
 		Set<String> app = blockmap.get(id);
 		app.remove(tracker);
 	}
 
-	public synchronized void removeFromBlocklist (String id, String tracker) {
+	public synchronized void unblock (String id, String tracker) {
 		Set<String> app = blockmap.get(id);
 		app.add(tracker);
 	}
 
-	public synchronized void removeFromBlocklist (String id) {
+	public synchronized void unblock (String id) {
 		blockmap.remove(id);
 	}
 

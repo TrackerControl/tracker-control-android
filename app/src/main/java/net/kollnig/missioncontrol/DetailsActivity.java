@@ -59,13 +59,17 @@ import androidx.viewpager.widget.ViewPager;
 import static net.kollnig.missioncontrol.main.AppsFragment.savePrefs;
 
 public class DetailsActivity extends AppCompatActivity {
+	public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
+	public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
+	public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
 	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 	public static PlayStore.AppInfo app = null;
 	private final String TAG = DetailsActivity.class.getSimpleName();
 	Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
 			Environment.getExternalStorageDirectory(), "trackercontrol");
-	private String appId;
+	private Integer appUid;
+	private String appPackageName;
 	private String appName;
 	public static Boolean contactGoogle;
 
@@ -76,8 +80,9 @@ public class DetailsActivity extends AppCompatActivity {
 
 		// Receive about details
 		Intent intent = getIntent();
-		appId = intent.getStringExtra(AppsListAdapter.INTENT_EXTRA_APP_ID);
-		appName = intent.getStringExtra(AppsListAdapter.INTENT_EXTRA_APP_NAME);
+		appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
+		appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
+		appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
 		// Check if consent to contact external servers
 		SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -86,7 +91,10 @@ public class DetailsActivity extends AppCompatActivity {
 
 		// Set up paging
 		DetailsPagesAdapter detailsPagesAdapter =
-				new DetailsPagesAdapter(this, getSupportFragmentManager(), appId, appName);
+				new DetailsPagesAdapter(this,
+						getSupportFragmentManager(),
+						appPackageName, // Common.getAppName(getPackageManager(), appUid)
+						appName);
 		ViewPager viewPager = findViewById(R.id.view_pager);
 		viewPager.setAdapter(detailsPagesAdapter);
 		TabLayout tabs = findViewById(R.id.tabs);
@@ -105,7 +113,7 @@ public class DetailsActivity extends AppCompatActivity {
 		// Load PlayStore Data if consent
 		if (contactGoogle) {
 			new Thread(() -> {
-				app = PlayStore.getInfo(appId);
+				app = PlayStore.getInfo(appPackageName);
 				runOnUiThread(() -> {
 					for (OnAppInfoLoadedListener listener : listeners) {
 						listener.appInfoLoaded();
@@ -195,7 +203,7 @@ public class DetailsActivity extends AppCompatActivity {
 	}
 
 	private void shareExport () {
-		String fileName = appId + ".csv";
+		String fileName = appPackageName + ".csv";
 		File sharingFile = new File(exportDir, fileName);
 		Uri uri = FileProvider.getUriForFile(DetailsActivity.this,
 				getApplicationContext().getPackageName() + ".fileprovider",
@@ -229,7 +237,7 @@ public class DetailsActivity extends AppCompatActivity {
 		protected Boolean doInBackground (final String... args) {
 			if (exportDir == null) return false;
 
-			File file = new File(exportDir, appId + ".csv");
+			File file = new File(exportDir, appPackageName + ".csv");
 			try {
 				file.createNewFile();
 				CSVWriter csv = new CSVWriter(new FileWriter(file),
@@ -238,7 +246,7 @@ public class DetailsActivity extends AppCompatActivity {
 						CSVWriter.DEFAULT_ESCAPE_CHARACTER,
 						CSVWriter.RFC4180_LINE_END);
 
-				Cursor data = database.getAppInfo(appId);
+				Cursor data = database.getAppInfo(appPackageName); // Common.getAppName(getPackageManager(), appUid)
 				if (data == null) return false;
 
 				csv.writeNext(data.getColumnNames());

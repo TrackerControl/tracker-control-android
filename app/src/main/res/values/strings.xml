@@ -23,6 +23,7 @@
     <string name="switch_mission_explanation">Enables analysis of app tracking by third-party companies.</string>
     <string name="notification_title_vpnservice">TrackerControl status</string>
     <string name="notification_channel_name">Status</string>
+    <string name="restart_notification">Not checking trackers</string>
     <string name="notification_detail_text_vpnservice_disconnected">Not checking trackers</string>
     <string name="notification_detail_text_vpnservice_connecting">Starting&#8230;</string>
     <string name="notification_detail_text_vpnservice_connected">Checking trackers</string>
@@ -38,7 +39,7 @@
     </plurals>
     <string name="title_apps">Apps</string>
     <string name="title_trackers">Trackers</string>
-    <string name="menu_reset">Reset monitoring</string>
+    <string name="menu_reset_monitoring">Reset monitoring</string>
     <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
     <string name="confirm_blocking_title">Block all trackers?</string>
     <string name="external_servers">Contact external servers?</string>
@@ -57,8 +58,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
-    <string name="menu_about">Privacy Policy</string>
-    <string name="about_url">https://github.com/kasnder/privacy-control#privacy-notice</string>
+    <string name="menu_privacy_policy">Privacy Policy</string>
+    <string name="about_url">https://github.com/OxfordHCC/tracker-control-android#privacy-notice</string>
 
     <string name="menu_csv">Export as CSV</string>
     <string name="exporting">Exporting..</string>
@@ -159,5 +160,4 @@ Sincerely,]]></string>
     <string name="afterboot_notification">Restart notification</string>
     <string name="disclaimer">Pre-release version of TrackerControl. Shown information may be incorrect. Not all tracking will be blocked.</string>
 
-    <string name="restart_notification">Click to start app</string>
 </resources>

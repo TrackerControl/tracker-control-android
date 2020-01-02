@@ -94,16 +94,16 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 
 			if (isChecked) {
 				if (!w.blockedApp(mAppId)) {
-					w.addToBlocklist(mAppId);
+					w.block(mAppId);
 					for (Tracker tracker1 : mValues) {
-						w.removeFromBlocklist(mAppId, tracker1.name);
+						w.unblock(mAppId, tracker1.name);
 					}
 				}
-				w.addToBlocklist(mAppId, tracker.name);
+				w.block(mAppId, tracker.name);
 			} else {
 				if (!w.blockedApp(mAppId))
 					return;
-				w.removeFromBlocklist(mAppId, tracker.name);
+				w.unblock(mAppId, tracker.name);
 			}
 		});
 		holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
