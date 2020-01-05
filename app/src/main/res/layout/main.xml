@@ -17,6 +17,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:gravity="center_horizontal"
             android:id="@+id/tvDisabled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,8 +28,6 @@
             android:textAppearance="@style/TextMedium"
             android:textColor="?attr/colorOff"
             android:visibility="gone" />
-
-        <include layout="@layout/disclaimer" />
 
         <LinearLayout
             android:visibility="gone"

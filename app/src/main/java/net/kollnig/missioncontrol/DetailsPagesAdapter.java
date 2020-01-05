@@ -20,9 +20,7 @@ package net.kollnig.missioncontrol;
 import android.content.Context;
 
 import net.kollnig.missioncontrol.details.ActionsFragment;
-import net.kollnig.missioncontrol.details.InfoFragment;
-import net.kollnig.missioncontrol.details.PolicyFragment;
-import net.kollnig.missioncontrol.details.TransmissionsFragment;
+import net.kollnig.missioncontrol.details.TrackersFragment;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -38,29 +36,26 @@ import eu.faircode.netguard.R;
 public class DetailsPagesAdapter extends FragmentPagerAdapter {
 	@StringRes
 	private static final int[] TAB_TITLES = new int[]{
+			R.string.tab_trackers,
+			//R.string.tab_transmissions,
 			R.string.tab_actions,
-			R.string.tab_transmissions,
-			R.string.tab_policy,
-			R.string.tab_info,
 	};
-	public static int tabTransmissionsPosition = 1;
+	public static int tabTrackersPosition = 0;
 
 	private final String TAG = DetailsPagesAdapter.class.getSimpleName();
 	private final Context mContext;
 
-	private Fragment fInfo;
-	private Fragment fTransmission;
+	private Fragment fTrackers;
 	private Fragment fActions;
-	private Fragment fPolicy;
+	//private Fragment fTransmissions;
 
 	public DetailsPagesAdapter (final Context context, FragmentManager fm, String appId, String appName) {
 		super(fm);
 
 		mContext = context;
 
-		fInfo = InfoFragment.newInstance(appId);
-		fTransmission = TransmissionsFragment.newInstance(appId);
-		fPolicy = PolicyFragment.newInstance(appId);
+		fTrackers = TrackersFragment.newInstance(appId);
+		//fTransmissions = TransmissionsFragment.newInstance(appId);
 		fActions = ActionsFragment.newInstance(appId, appName);
 	}
 
@@ -68,13 +63,11 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
 	public Fragment getItem (int position) {
 		switch (position) {
 			case 0:
-				return fActions;
+				return fTrackers;
+			/*case 1:
+				return fTransmissions;*/
 			case 1:
-				return fTransmission;
-			case 2:
-				return fPolicy;
-			case 3:
-				return fInfo;
+				return fActions;
 		}
 		return null;
 	}

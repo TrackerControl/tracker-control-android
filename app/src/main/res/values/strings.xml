@@ -180,7 +180,7 @@
     <string name="msg_packages">%1$d URLs allowed, %2$d blocked</string>
     <string name="msg_hosts">%1$d URLs allowed, %2$d blocked, %3$d hosts</string>
     <string name="msg_waiting">Waiting for event</string>
-    <string name="msg_disabled">TrackerControl is disabled, use the switch above to enable TrackerControl</string>
+    <string name="msg_disabled">Use the switch above to enable TrackerControl.</string>
     <string name="msg_revoked">TrackerControl has been disabled, likely by using another VPN based app</string>
     <string name="msg_installed">\'%1$s\' installed</string>
     <string name="msg_installed_n">Has been installed</string>
@@ -374,8 +374,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tracked_app_name">Application Name</string>
     <string name="tracker_count">40</string>
     <plurals name="n_trackers_found">
-        <item quantity="one">%d tracker found</item>
-        <item quantity="other">%d trackers found</item>
+        <item quantity="one">%d tracker observed</item>
+        <item quantity="other">%d trackers observed</item>
     </plurals>
     <string name="title_apps">Apps</string>
     <string name="title_trackers">Trackers</string>
@@ -383,7 +383,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
     <string name="confirm_blocking_title">Block all trackers?</string>
     <string name="external_servers">Contact external servers?</string>
-    <string name="confirm_google_info">Shall this app contact external servers, notably Google, to retrieve the developer email and the privacy policy of an app?</string>
+    <string name="confirm_google_info">Shall this app contact external servers, notably Google, to retrieve the developer email of an app?</string>
     <string name="no_external_servers">No permission given to retrieve policy from external server. Change in app settings.</string>
     <string name="blocking_apps">Block all trackers</string>
     <string name="blocking_trackers">Block all trackers</string>
@@ -409,15 +409,12 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
     <!-- App Details -->
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="tab_info">Network</string>
-    <string name="tab_transmissions">Trackers</string>
-    <string name="tab_actions">Actions</string>
-    <string name="tab_policy">Policy</string>
-    <string name="policy_loading_error">Loading of policy failed.</string>
-    <string name="parse_error"><![CDATA[Could not parse their <a href="%s">privacy policy</a>.]]></string>
+    <string name="tab_transmissions">Transmissions</string>
+    <string name="tab_trackers">Trackers</string>
+    <string name="tab_actions">My Data</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
-    <string name="app_info">App Info</string>
+    <string name="app_info">Manage App</string>
 
     <!-- Tranmission Details -->
     <string name="company_unknown">Unknown</string>
@@ -482,7 +479,7 @@ Please provide your response through secure means by email. I look forward to re
 
 Sincerely,]]></string>
     <string name="packet_statistics">Data flows</string>
-    <string name="no_trackers">No trackers found.</string>
+    <string name="no_trackers">No trackers observed. TrackerControl only reports trackers that been observed to collect your data.\n\nTry using the app and check again..</string>
 
     <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
@@ -491,14 +488,18 @@ Sincerely,]]></string>
     <string name="include_mail_apps_title">Monitor email apps</string>
     <string name="include_mail_apps_explanation">Email apps may stop functioning when enabled (app restart required).</string>
     <string name="google_play_data_title">Load data from Google Play</string>
-    <string name="google_play_data_explanation">To retrieve privacy policy and developer mail. No personal data is shared.</string>
+    <string name="google_play_data_explanation">To retrieve the developer mail. No personal data is shared.</string>
 
     <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some other apps. Private DNS must be disabled.</string>
     <string name="instructions_monitoring">Toggle the switch and interact with some other apps.</string>
 
     <string name="afterboot_notification">Restart notification</string>
-    <string name="disclaimer">Pre-release version of TrackerControl. Shown information may be incorrect. Not all tracking will be blocked.</string>
+    <string name="disclaimer">Pre-release version of TrackerControl. Shown information may be incorrect. Not all trackers will be found.</string>
 
     <string name="device_not_supported_title">Device not supported</string>
     <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>
+
+    <string name="monitor">Monitor</string>
+
+    <string name="launch_app">Launch app</string>
 </resources>

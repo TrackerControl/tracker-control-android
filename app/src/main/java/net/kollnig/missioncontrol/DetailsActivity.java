@@ -71,7 +71,7 @@ public class DetailsActivity extends AppCompatActivity {
 	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 	public static PlayStore.AppInfo app = null;
 	private final String TAG = DetailsActivity.class.getSimpleName();
-	Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
+	static Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
 			Environment.getExternalStorageDirectory(), "trackercontrol");
 	private Integer appUid;
@@ -134,19 +134,13 @@ public class DetailsActivity extends AppCompatActivity {
 
 		// Load PlayStore Data if consent
 		if (contactGoogle) {
-			new Thread(new Runnable() {
-				@Override
-				public void run () {
-					app = PlayStore.getInfo(appPackageName);
-					DetailsActivity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run () {
-							for (OnAppInfoLoadedListener listener : listeners) {
-								listener.appInfoLoaded();
-							}
-						}
-					});
-				}
+			new Thread(() -> {
+				app = PlayStore.getInfo(appPackageName);
+				runOnUiThread(() -> {
+					for (OnAppInfoLoadedListener listener : listeners) {
+						listener.appInfoLoaded();
+					}
+				});
 			}).start();
 		}
 	}
@@ -302,12 +296,7 @@ public class DetailsActivity extends AppCompatActivity {
 			// Export successul, ask user to further share file!
 			View v = findViewById(R.id.view_pager);
 			Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
-			s.setAction(R.string.share_csv, new View.OnClickListener() {
-				@Override
-				public void onClick (View v1) {
-					shareExport();
-				}
-			});
+			s.setAction(R.string.share_csv, v1 -> shareExport());
 			s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
 			s.show();
 		}

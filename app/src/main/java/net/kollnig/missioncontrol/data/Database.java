@@ -25,10 +25,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.text.TextUtils;
 import android.util.Log;
-
-import com.google.common.net.InternetDomainName;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,7 +69,6 @@ public class Database {
 	public static Set<String> necessaryCompanies = new HashSet<>();
 	private static Database instance;
 	private final SQLHandler sqlHandler;
-	private Set<OnDatabaseClearListener> clearListeners = new HashSet<>();
 	private SQLiteDatabase _database;
 	private AssetManager assetManager;
 
@@ -109,33 +104,17 @@ public class Database {
 
 		if (hostnameToCompany.containsKey(hostname)) {
 			company = hostnameToCompany.get(hostname);
-		} else {
-			// one level below public suffix
-			try {
-				InternetDomainName parsedDomain = InternetDomainName.from(hostname);
-				String topDomain = parsedDomain.topPrivateDomain().toString();
-				if (hostnameToCompany.containsKey(topDomain)) {
-					company = hostnameToCompany.get(topDomain);
-				} else {
-					String topDomainUnderRegistrySuffix = parsedDomain.topDomainUnderRegistrySuffix().toString();
-					if (hostnameToCompany.containsKey(topDomainUnderRegistrySuffix)) {
-						company = hostnameToCompany.get(topDomainUnderRegistrySuffix);
-					}
+		} else { // check subdomains
+			for (int i = 0; i < hostname.length(); i++){
+				if (hostname.charAt(i) == '.') {
+					company = hostnameToCompany.get(hostname.substring(i+1));
+					if (company != null)
+						break;
 				}
-			} catch (Exception e) {
-
 			}
 		}
 
 		return company;
-	}
-
-	public void addListener (OnDatabaseClearListener l) {
-		clearListeners.add(l);
-	}
-
-	public void removeListener (OnDatabaseClearListener l) {
-		clearListeners.remove(l);
 	}
 
 	/**
@@ -179,116 +158,15 @@ public class Database {
 		return _database;
 	}
 
-	public synchronized String[] printTable (String table) {
-		Cursor c = getDatabase().rawQuery("SELECT * FROM " + table, null);
-		if (c.getCount() <= 0) {
-			c.close();
-			Log.d(TAG, "null");
-			return null;
-		}
-
-		String[] names = new String[c.getCount()];
-		Log.d(TAG, Arrays.toString(c.getColumnNames()));
-
-		int i = 0;
-		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-
-			String toPrint = "";
-			for (int j = 0; j < c.getColumnCount(); j++)
-				toPrint += c.getString(j) + ", ";
-			Log.d(TAG, toPrint);
-			names[i] = c.getString(0);
-			i++;
-		}
-		c.close();
-		return names;
-	}
-
 	public long count () {
 		long count = DatabaseUtils.queryNumEntries(getDatabase(), TABLE_HISTORY);
 
 		return count;
 	}
 
-	public String[] printLeaks () {
-		Cursor c = getDatabase().query(TABLE_HISTORY, new String[]{
-						COLUMN_ID, COLUMN_APPID, COLUMN_HOSTNAME},
-				null, null, null, null,
-				COLUMN_TIME + " DESC");
-		if (c.getCount() <= 0) {
-			c.close();
-			Log.d(TAG, "null");
-			return null;
-		}
-
-		String[] leaks = new String[c.getCount()];
-		Log.d(TAG, Arrays.toString(c.getColumnNames()));
-
-		int i = 0;
-		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-
-			String toPrint = "";
-			for (int j = 0; j < c.getColumnCount(); j++)
-				toPrint += c.getString(j) + ", ";
-			//Log.d(TAG, toPrint);
-
-			leaks[i] = toPrint;
-			i++;
-		}
-		c.close();
-		return leaks;
-	}
-
 	public Cursor getAppInfo (String appId) {
 		return getDatabase().rawQuery(
 				"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
-	}
-
-	public String getCompanies (String appId) {
-		Cursor c = getDatabase().query(TABLE_HISTORY, new String[]{
-						COLUMN_COMPANYNAME, "COUNT ( * )"},
-				COLUMN_APPID + " = ? AND " + COLUMN_COMPANYNAME + " IS NOT NULL",
-				new String[]{appId}, COLUMN_COMPANYNAME, null,
-				null);
-		if (c.getCount() <= 0) {
-			c.close();
-			return null;
-		}
-
-		String[] leaks = new String[c.getCount()];
-
-		int i = 0;
-		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-			leaks[i] = c.getString(0) + ": " + c.getString(1);
-			i++;
-		}
-		c.close();
-
-		return TextUtils.join("\n", leaks);
-	}
-
-	/**
-	 * Retrieves information for all apps and how many leaks there were based on sort type
-	 *
-	 * @return A cursor pointing to the data. Caller must close the cursor.
-	 * Cursor should have app name and leak summation based on a sort type
-	 */
-	public synchronized Cursor getPrivacyLeaksReport () {
-		String[] columns = new String[]{COLUMN_ID, COLUMN_APPID,
-				"COUNT( DISTINCT " + COLUMN_COMPANYNAME + " ) AS " +
-						COLUMN_COUNT};
-
-		return getDatabase().query(TABLE_HISTORY,
-				columns,
-				COLUMN_COMPANYNAME + " IS NOT NULL", null,
-				COLUMN_APPID, // groupBy
-				null,
-				COLUMN_COUNT + " DESC");
-	}
-
-
-	public synchronized List<Tracker> getTrackers () {
-		return getTrackers(null);
 	}
 
 	/**
@@ -302,23 +180,13 @@ public class Database {
 		String[] columns = new String[]{COLUMN_COMPANYOWNER, COLUMN_COMPANYNAME,
 				"COUNT( * ) AS " + COLUMN_COUNT};
 
-		Cursor cursor;
-		if (mAppId == null) {
-			cursor = getDatabase().query(TABLE_HISTORY,
-					columns,
-					COLUMN_COMPANYNAME + " IS NOT NULL", null,
-					COLUMN_COMPANYOWNER + "," + COLUMN_COMPANYNAME, // groupBy
-					null,
-					null);
-		} else {
-			cursor = getDatabase().query(TABLE_HISTORY,
-					columns,
-					COLUMN_COMPANYNAME + " IS NOT NULL AND " + COLUMN_APPID + " = ?",
-					new String[]{mAppId},
-					COLUMN_COMPANYOWNER + "," + COLUMN_COMPANYNAME, // groupBy
-					null,
-					COLUMN_COMPANYNAME + " ASC");
-		}
+		Cursor cursor = getDatabase().query(TABLE_HISTORY,
+				columns,
+				COLUMN_COMPANYNAME + " IS NOT NULL AND " + COLUMN_APPID + " = ?",
+				new String[]{mAppId},
+				COLUMN_COMPANYOWNER + "," + COLUMN_COMPANYNAME, // groupBy
+				null,
+				COLUMN_COMPANYNAME + " ASC");
 
 		if (cursor.moveToFirst()) {
 			do {
@@ -347,6 +215,7 @@ public class Database {
 		}
 
 		List<Tracker> trackerList = new ArrayList<>(ownerToCompany.values());
+		Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
 
 		return trackerList;
 	}
@@ -415,29 +284,6 @@ public class Database {
 	}
 
 	/**
-	 * Clears {@link #TABLE_HISTORY}.
-	 */
-	public synchronized void clearHistory () {
-		String query = "DELETE FROM " + TABLE_HISTORY;
-		getDatabase().execSQL(query);
-
-		for (OnDatabaseClearListener l : clearListeners) {
-			try {
-				l.onDatabaseClear();
-			} catch (Exception e) {
-				Log.d(TAG, "Notification of change failed.");
-			}
-		}
-	}
-
-	/**
-	 * Deletes all entries in the database
-	 */
-	public synchronized void clearDatabase () {
-		getDatabase().delete(TABLE_HISTORY, null, null);
-	}
-
-	/**
 	 * Close the database
 	 */
 	public synchronized void close () {
@@ -458,6 +304,13 @@ public class Database {
 	 * @return the row ID of the updated row, or -1 if an error occurred
 	 */
 	private synchronized long logPacket (String appName, String remoteIp, String hostname, String companyName, String companyOwner) {
+		SQLiteDatabase db = getDatabase();
+
+		long count = DatabaseUtils.queryNumEntries(db, TABLE_HISTORY,
+				COLUMN_HOSTNAME + " = ?", new String[] {hostname});
+		if (count > 0)
+			return 0;
+
 		// Add leak to history
 		ContentValues cv = new ContentValues();
 		cv.put(COLUMN_APPID, appName);
@@ -467,7 +320,7 @@ public class Database {
 		cv.put(COLUMN_TIME, System.currentTimeMillis());
 		cv.put(COLUMN_REMOTE_IP, remoteIp);
 
-		return getDatabase().insert(TABLE_HISTORY, null, cv);
+		return db.insert(TABLE_HISTORY, null, cv);
 	}
 
 	public void logPacketAsyncTask (Context context,
@@ -517,10 +370,6 @@ public class Database {
 		}
 	}
 
-	public interface OnDatabaseClearListener {
-		void onDatabaseClear ();
-	}
-
 	private static class SQLHandler extends SQLiteOpenHelper {
 
 		SQLHandler (Context context) {
@@ -540,6 +389,7 @@ public class Database {
 					+ COLUMN_COMPANYNAME + " TEXT, "
 					+ COLUMN_COMPANYOWNER + " TEXT, "
 					+ COLUMN_TIME + " INTEGER DEFAULT 0);");
+			db.execSQL("CREATE INDEX idx_history_hostname ON " + TABLE_HISTORY + "(" + COLUMN_HOSTNAME + ")");
 		}
 
 		/**

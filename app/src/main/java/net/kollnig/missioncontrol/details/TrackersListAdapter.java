@@ -22,8 +22,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -40,17 +38,17 @@ import eu.faircode.netguard.Util;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Tracker}.
  */
-public class TransmissionsListAdapter extends RecyclerView.Adapter<TransmissionsListAdapter.ViewHolder> {
-	private final String TAG = TransmissionsListAdapter.class.getSimpleName();
+public class TrackersListAdapter extends RecyclerView.Adapter<TrackersListAdapter.ViewHolder> {
+	private final String TAG = TrackersListAdapter.class.getSimpleName();
 	private final List<Tracker> mValues;
 	private final RecyclerView recyclerView;
 	private final String mAppId;
 	private Context mContext;
 
-	public TransmissionsListAdapter (List<Tracker> items,
-	                                 Context c,
-	                                 RecyclerView root,
-	                                 String appId) {
+	public TrackersListAdapter (List<Tracker> items,
+	                            Context c,
+	                            RecyclerView root,
+	                            String appId) {
 		mValues = items;
 		recyclerView = root;
 		mContext = c;
@@ -63,7 +61,7 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 	@Override
 	public ViewHolder onCreateViewHolder (ViewGroup parent, int viewType) {
 		View view = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.list_item_transmissions, parent, false);
+				.inflate(R.layout.list_item_trackers, parent, false);
 		return new ViewHolder(view);
 	}
 
@@ -90,24 +88,16 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 		holder.mSwitch.setChecked(
 				w.blockedTracker(mAppId, tracker.name)
 		);
-		holder.mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged (CompoundButton buttonView, boolean isChecked) {
-				if (!buttonView.isPressed()) return;
+		holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+			if (!buttonView.isPressed()) return;
 
-				if (isChecked) {
-					w.block(mAppId, tracker.name);
-				} else {
-					w.unblock(mAppId, tracker.name);
-				}
+			if (isChecked) {
+				w.block(mAppId, tracker.name);
+			} else {
+				w.unblock(mAppId, tracker.name);
 			}
 		});
-		holder.mView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick (View v) {
-				holder.mSwitch.toggle();
-			}
-		});
+		holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
 	}
 
 	@Override
@@ -120,7 +110,6 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 		final TextView mTrackerDetails;
 		final TextView mTrackerName;
 		final TextView mTotalTrackers;
-		final ImageView mImageArrow;
 		final Switch mSwitch;
 		Tracker mTracker;
 
@@ -131,7 +120,6 @@ public class TransmissionsListAdapter extends RecyclerView.Adapter<Transmissions
 			mTrackerName = view.findViewById(R.id.root_name);
 			mTotalTrackers = view.findViewById(R.id.total_trackers);
 			mSwitch = view.findViewById(R.id.switch_tracker);
-			mImageArrow = view.findViewById(R.id.imArrow);
 		}
 	}
 }

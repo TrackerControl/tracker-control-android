@@ -502,7 +502,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View view) {
-                context.startActivity(settings);
+                if (holder.cbApply.isChecked())
+                    context.startActivity(settings);
             }
         });
 

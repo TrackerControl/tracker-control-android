@@ -213,7 +213,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             pref_reload_onconnectivity.setEnabled(false);
         }
 
-        boolean can = Util.canFilter(this);
+        /*boolean can = Util.canFilter(this);
         TwoStatePreference pref_log_app = (TwoStatePreference) screen.findPreference("log_app");
         TwoStatePreference pref_filter = (TwoStatePreference) screen.findPreference("filter");
         pref_log_app.setEnabled(can);
@@ -221,7 +221,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (!can) {
             pref_log_app.setSummary(R.string.msg_unavailable);
             pref_filter.setSummary(R.string.msg_unavailable);
-        }
+        }*/
 
         // VPN parameters
         screen.findPreference("vpn4").setTitle(getString(R.string.setting_vpn4, prefs.getString("vpn4", "10.1.10.1")));
@@ -420,6 +420,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         cat_network.removePreference(screen.findPreference("lockdown_wifi"));
         cat_network.removePreference(screen.findPreference("lockdown_other"));
         cat_network.removePreference(screen.findPreference("reload_onconnectivity"));
+
+        cat_advanced.removePreference(screen.findPreference("log_app"));
     }
 
     @Override

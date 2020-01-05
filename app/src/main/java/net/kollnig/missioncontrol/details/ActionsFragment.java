@@ -30,13 +30,12 @@ import com.google.android.material.tabs.TabLayout;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 
-import javax.annotation.Nullable;
-
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import eu.faircode.netguard.R;
 import eu.faircode.netguard.Util;
 
-import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTransmissionsPosition;
+import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTrackersPosition;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -106,7 +105,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 		int id = v.getId();
 		if (id == R.id.btnTrackers) {
 			TabLayout tabs = getActivity().findViewById(R.id.tabs);
-			tabs.getTabAt(tabTransmissionsPosition).select();
+			tabs.getTabAt(tabTrackersPosition).select();
 		} else if (id == R.id.btnAdSettings) {
 			if (Common.hasAdSettings(getContext())) {
 				startActivity(Common.adSettings());

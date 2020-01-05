@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/ivIcon"
-        android:layout_width="?android:attr/listPreferredItemHeightSmall"
-        android:layout_height="?android:attr/listPreferredItemHeightSmall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_rocket" />
@@ -54,6 +54,7 @@
     </LinearLayout>
 
     <Switch
+        android:text="@string/title_block"
         android:id="@+id/cbApply"
         android:layout_width="wrap_content"
         android:layout_height="72dp"

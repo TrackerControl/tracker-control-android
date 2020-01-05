@@ -41,7 +41,6 @@ The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-an
 TrackerControl provides
 - *real-time monitoring* of app tracking,
 - *granular blocking* of app tracking,
-- access to apps' *privacy policy websites without trackers* (which they often contain),
 - *one-click data requests* as granted under EU Data Protection Legislation, and
 - [ad-blocking](ADBLOCKING.md) using widely available host files.
 

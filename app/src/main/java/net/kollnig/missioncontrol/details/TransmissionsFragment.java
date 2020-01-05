@@ -19,34 +19,50 @@ package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
+import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import net.kollnig.missioncontrol.data.Database;
+import net.kollnig.missioncontrol.data.Host;
 import net.kollnig.missioncontrol.data.Tracker;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import eu.faircode.netguard.R;
 
 /**
- * A fragment representing a list of Items.
+ * A simple {@link Fragment} subclass.
+ * Use the {@link TransmissionsFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
 public class TransmissionsFragment extends Fragment {
 	private static final String ARG_APP_ID = "app-id";
-	Database database;
-	private String mAppId;
+	private final String TAG = TransmissionsFragment.class.getSimpleName();
+	Map<String, DataItem> packetsPerCompany;
 
-	/**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
 	public TransmissionsFragment () {
+		// Required empty public constructor
 	}
 
 	public static TransmissionsFragment newInstance (String appId) {
@@ -58,39 +74,132 @@ public class TransmissionsFragment extends Fragment {
 	}
 
 	@Override
-	public void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Bundle bundle = getArguments();
-		mAppId = bundle.getString(ARG_APP_ID);
+	public View onCreateView (LayoutInflater inflater, ViewGroup container,
+	                          Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_transmissions, container, false);
 	}
 
 	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container,
-	                          Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_transmissions, container, false);
+	public void onViewCreated (View v, Bundle savedInstanceState) {
+		super.onViewCreated(v, savedInstanceState);
 
-		// Set the adapter
-		Context context = v.getContext();
+		// Load arguments
+		Bundle arguments = getArguments();
+		String appId = arguments.getString(ARG_APP_ID);
 
 		// Load data
-		database = Database.getInstance(context);
-		List<Tracker> details = database.getTrackers(mAppId);
+		Context context = v.getContext();
+		Database database = Database.getInstance(context);
+		List<Tracker> details = database.getAppDetails(appId);
 
-		// Load in RecyclerView
-		RecyclerView recyclerView = v.findViewById(R.id.transmissions_list);
-		TextView emptyView = v.findViewById(R.id.no_items);
-		if (details.size() == 0) {
-			emptyView.setVisibility(View.VISIBLE);
-			recyclerView.setVisibility(View.GONE);
-		} else {
-			emptyView.setVisibility(View.GONE);
-			recyclerView.setVisibility(View.VISIBLE);
+		int totalPackets = 0;
+		packetsPerCompany = new ArrayMap<>();
+		for (Tracker t : details) {
+			String name = t.getRoot();
+			if (name == null)
+				name = getString(R.string.company_unknown);
 
-			recyclerView.setLayoutManager(new LinearLayoutManager(context));
-			recyclerView.setAdapter(
-					new TransmissionsListAdapter(details, getContext(), recyclerView, mAppId));
+			DataItem item = packetsPerCompany.get(name);
+			if (item != null) {
+				item.packetCount += t.packetCount;
+				for (Host h: t.hosts) {
+					item.hosts.add(h.hostname);
+				}
+			} else {
+				Set<String> hosts = new HashSet<>();
+				for (Host h: t.hosts) {
+					hosts.add(h.hostname);
+				}
+				packetsPerCompany.put(name, new DataItem(t.packetCount, hosts));
+			}
+			totalPackets += t.packetCount;
 		}
 
-		return v;
+		if (totalPackets > 0)
+			loadChart(v);
+	}
+
+	private void loadChart (View v) {
+		PieChart companyChart = v.findViewById(R.id.company_chart);
+		List<PieEntry> yvalues = new ArrayList<>();
+		for (Map.Entry<String, DataItem> entry : packetsPerCompany.entrySet()) {
+			yvalues.add(
+					new PieEntry(entry.getValue().packetCount, entry.getKey(), entry.getValue()));
+		}
+		setChart(companyChart, yvalues, "Data packets\nper company");
+	}
+
+	/**
+	 * Collect many colours
+	 *
+	 * @return
+	 */
+	private List<Integer> getColours () {
+		List<Integer> colors = new ArrayList<>();
+		for (int c : ColorTemplate.MATERIAL_COLORS)
+			colors.add(c);
+		for (int c : ColorTemplate.VORDIPLOM_COLORS)
+			colors.add(c);
+		for (int c : ColorTemplate.JOYFUL_COLORS)
+			colors.add(c);
+		for (int c : ColorTemplate.COLORFUL_COLORS)
+			colors.add(c);
+		for (int c : ColorTemplate.LIBERTY_COLORS)
+			colors.add(c);
+		for (int c : ColorTemplate.PASTEL_COLORS)
+			colors.add(c);
+		colors.add(ColorTemplate.getHoloBlue());
+
+		return colors;
+	}
+
+	private void setChart (PieChart chart, List<PieEntry> yvalues, String caption) {
+		// Prepare data
+		PieDataSet dataSet = new PieDataSet(yvalues, null);
+		PieData data = new PieData(dataSet);
+		data.setValueFormatter(new LargeValueFormatter());
+		data.setValueTextSize(16f);
+		dataSet.setColors(getColours());
+
+		// Prepare caption
+		SpannableString centerText = new SpannableString(caption);
+		centerText.setSpan(new RelativeSizeSpan(1.5f), 0, centerText.length(), 0);
+
+		// Set chart
+		chart.getDescription().setEnabled(false);
+		chart.setData(data);
+		chart.setRotationEnabled(false);
+		chart.setHighlightPerTapEnabled(true);
+		chart.setHoleRadius(58f);
+		chart.setTransparentCircleRadius(58f);
+		//chart.setUsePercentValues(true);
+		chart.setCenterText(centerText);
+
+
+		chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+			@Override
+			public void onNothingSelected () {
+
+			}
+
+			@Override
+			public void onValueSelected (Entry e, Highlight h) {
+				String message = "Found hosts:\n• "
+						+ TextUtils.join("\n• ", ((DataItem) e.getData()).hosts);
+				Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+			}
+		});
+
+		chart.getLegend().setEnabled(false);
+	}
+
+	class DataItem {
+		Integer packetCount;
+		Set<String> hosts;
+
+		DataItem (Integer packetCount, Set<String> hosts) {
+			this.packetCount = packetCount;
+			this.hosts = hosts;
+		}
 	}
 }

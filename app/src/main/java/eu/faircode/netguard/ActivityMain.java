@@ -527,9 +527,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (resultCode == RESULT_OK) {
                 ServiceSinkhole.start("prepared", this);
 
-                Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on, Toast.LENGTH_LONG);
+                /*Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on, Toast.LENGTH_LONG);
                 on.setGravity(Gravity.CENTER, 0, 0);
-                on.show();
+                on.show();*/
 
                 checkDoze();
             } else if (resultCode == RESULT_CANCELED)

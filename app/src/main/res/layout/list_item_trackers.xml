@@ -74,22 +74,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/total_trackers"/>
 
-        <ImageView
-            android:id="@+id/imArrow"
-            android:layout_width="24sp"
-            android:layout_height="24sp"
-            android:tint="?android:textColorPrimary"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/total_trackers"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/total_trackers"
-            app:srcCompat="@drawable/ic_expand"/>
-
         <Switch
             android:id="@+id/switch_tracker"
             android:layout_width="wrap_content"
             android:layout_height="21dp"
-            android:text="Block"
+            android:text="@string/title_block"
             android:textColor="?android:textColorPrimary"
             app:layout_constraintBottom_toBottomOf="@+id/root_name"
             app:layout_constraintEnd_toEndOf="parent"
