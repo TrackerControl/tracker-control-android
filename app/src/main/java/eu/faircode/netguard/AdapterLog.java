@@ -28,7 +28,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -39,13 +38,14 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.preference.PreferenceManager;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.core.view.ViewCompat;
 
 public class AdapterLog extends CursorAdapter {
     private static String TAG = "NetGuard.Log";

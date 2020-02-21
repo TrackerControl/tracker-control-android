@@ -33,6 +33,8 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;
@@ -41,8 +43,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 public class ActivityDns extends AppCompatActivity {
     private static final String TAG = "NetGuard.DNS";
@@ -150,6 +150,7 @@ public class ActivityDns extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok=" + (resultCode == RESULT_OK));
         if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null)

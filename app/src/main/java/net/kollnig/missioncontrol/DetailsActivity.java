@@ -28,11 +28,19 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.preference.PreferenceManager;
+import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -48,13 +56,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NavUtils;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.viewpager.widget.ViewPager;
 import eu.faircode.netguard.R;
 
 import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;

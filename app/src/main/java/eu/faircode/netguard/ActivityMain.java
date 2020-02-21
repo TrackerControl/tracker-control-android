@@ -34,7 +34,6 @@ import android.net.VpnService;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -57,12 +56,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
-
-import net.kollnig.missioncontrol.data.Database;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -71,9 +64,16 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import net.kollnig.missioncontrol.data.Database;
+
+import java.util.List;
 
 import static net.kollnig.missioncontrol.DetailsActivity.KEY_PREF_GOOGLEPLAY_SWITCH;
 
@@ -734,7 +734,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (!IAB.isPurchasedAny(this))
             markPro(menu.findItem(R.id.menu_pro), null);
 
-        if (!Util.hasValidFingerprint(this) || getIntentInvite(this).resolveActivity(pm) == null)
+        if (getIntentInvite(this).resolveActivity(pm) == null)
             menu.removeItem(R.id.menu_invite);
 
         if (getIntentSupport().resolveActivity(getPackageManager()) == null)
@@ -1198,7 +1198,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name));
-        intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.msg_try) + "\n\nhttps://www.netguard.me/\n\n");
+        intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.msg_try) + "\n\nhttps://github.com/OxfordHCC/tracker-control-android\n\n");
         return intent;
     }
 

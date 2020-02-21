@@ -47,7 +47,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -56,6 +55,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.net.ConnectivityManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -84,9 +87,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.net.ConnectivityManagerCompat;
 
 public class Util {
     private static final String TAG = "NetGuard.Util";

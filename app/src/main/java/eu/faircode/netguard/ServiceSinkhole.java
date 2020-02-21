@@ -57,7 +57,6 @@ import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.Spannable;
@@ -69,6 +68,12 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
@@ -109,11 +114,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class ServiceSinkhole extends VpnService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Service";
@@ -2521,10 +2521,13 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 // Make sure the right DNS servers are being used
                 List<InetAddress> dns = linkProperties.getDnsServers();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                if (prefs.getBoolean("reload_onconnectivity", false) ||
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) && !same(last_dns, dns)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                        ? !same(last_dns, dns)
+                        : prefs.getBoolean("reload_onconnectivity", false)) {
+                    Log.i(TAG, "Changed link properties=" + linkProperties +
+                            "DNS cur=" + TextUtils.join(",", dns) +
+                            "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)));
                     last_dns = dns;
-                    Log.i(TAG, "Changed link properties=" + linkProperties);
                     reload("link properties changed", ServiceSinkhole.this, false);
                 }
             }
