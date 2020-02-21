@@ -25,44 +25,57 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:mContext="net.kollnig.missioncontrol.details.TrackersFragment">
 
-    <include layout="@layout/disclaimer" />
-
-    <TextView
-        android:id="@+id/no_items"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:padding="1dp"
-        android:paddingStart="?listPreferredItemPaddingLeft"
-        android:paddingEnd="?listPreferredItemPaddingRight"
-        android:text="@string/no_trackers"
-        android:textColor="?android:textColorSecondary"
-        android:textStyle="italic" />
-
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/empty"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_width="match_parent"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnLaunch"
-            android:drawableStart="@drawable/ic_launch_white_24dp"
-            android:theme="@style/PrimaryButton"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/launch_app"/>
+            android:layout_marginTop="8dp"
+            android:padding="1dp"
+            android:paddingStart="?listPreferredItemPaddingLeft"
+            android:paddingEnd="?listPreferredItemPaddingRight"
+            android:text="@string/no_trackers"
+            android:textColor="?android:textColorSecondary"
+            android:textStyle="italic" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnLaunch"
+                android:drawableStart="@drawable/ic_launch_white_24dp"
+                android:theme="@style/PrimaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/launch_app"/>
+        </LinearLayout>
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transmissions_list"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="16dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/list_item_trackers"/>
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transmissions_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            android:clipToPadding="false"
+            android:padding="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/list_item_trackers"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>
 

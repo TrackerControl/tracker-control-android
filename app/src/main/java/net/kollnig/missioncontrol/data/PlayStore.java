@@ -17,13 +17,13 @@
 
 package net.kollnig.missioncontrol.data;
 
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import androidx.annotation.Nullable;
 
 import static net.kollnig.missioncontrol.Common.fetch;
 

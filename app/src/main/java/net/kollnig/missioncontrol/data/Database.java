@@ -27,6 +27,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.collection.ArrayMap;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +43,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import androidx.collection.ArrayMap;
 
 public class Database {
 	/* ****** COLUMN NAMES PERTAINING TO {@link #TABLE_HISTORY} ****** */

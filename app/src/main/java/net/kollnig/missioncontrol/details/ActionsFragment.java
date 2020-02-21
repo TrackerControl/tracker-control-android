@@ -24,14 +24,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import eu.faircode.netguard.R;
 import eu.faircode.netguard.Util;
 

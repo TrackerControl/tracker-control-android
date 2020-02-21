@@ -25,31 +25,39 @@ import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Tracker;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import eu.faircode.netguard.R;
 import eu.faircode.netguard.Util;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Tracker}.
  */
-public class TrackersListAdapter extends RecyclerView.Adapter<TrackersListAdapter.ViewHolder> {
+public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+	private static final int TYPE_HEADER = 0;
+	private static final int TYPE_ITEM = 1;
+
 	private final String TAG = TrackersListAdapter.class.getSimpleName();
-	private final List<Tracker> mValues;
+	private List<Tracker> mValues = new ArrayList<>();
 	private final RecyclerView recyclerView;
 	private final String mAppId;
 	private Context mContext;
 
-	public TrackersListAdapter (List<Tracker> items,
-	                            Context c,
-	                            RecyclerView root,
-	                            String appId) {
+	public void set(List<Tracker> items) {
 		mValues = items;
+		notifyDataSetChanged();
+	}
+
+	public TrackersListAdapter (Context c,
+								RecyclerView root,
+								String appId) {
 		recyclerView = root;
 		mContext = c;
 		mAppId = appId;
@@ -59,53 +67,85 @@ public class TrackersListAdapter extends RecyclerView.Adapter<TrackersListAdapte
 	}
 
 	@Override
-	public ViewHolder onCreateViewHolder (ViewGroup parent, int viewType) {
-		View view = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.list_item_trackers, parent, false);
-		return new ViewHolder(view);
-	}
-
-	@Override
-	public void onBindViewHolder (final ViewHolder holder, final int position) {
-		// Load data item
-		final Tracker tracker = mValues.get(position);
-		holder.mTracker = tracker;
-
-		// Add data to view
-		holder.mTrackerName.setText(tracker.name);
-		holder.mTotalTrackers.setText(mContext.getResources().getQuantityString(
-				R.plurals.n_trackers_found, tracker.children.size(), tracker.children.size())
-				+ ":");
-		holder.mTrackerDetails.setText(
-				"• " + TextUtils.join("\n• ", tracker.children));
-
-
-		if (Util.isPlayStoreInstall(mContext)) {
-			holder.mSwitch.setVisibility(View.GONE);
-			return;
+	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		if (viewType == TYPE_ITEM) {
+			View view = LayoutInflater.from(parent.getContext())
+					.inflate(R.layout.list_item_trackers, parent, false);
+			return new VHItem(view);
+		} else if (viewType == TYPE_HEADER) {
+			View view = LayoutInflater.from(parent.getContext())
+					.inflate(R.layout.disclaimer, parent, false);
+			return new VHHeader(view);
 		}
-		final AppBlocklistController w = AppBlocklistController.getInstance(mContext);
-		holder.mSwitch.setChecked(
-				w.blockedTracker(mAppId, tracker.name)
-		);
-		holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-			if (!buttonView.isPressed()) return;
 
-			if (isChecked) {
-				w.block(mAppId, tracker.name);
-			} else {
-				w.unblock(mAppId, tracker.name);
-			}
-		});
-		holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
+		throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
 	}
 
 	@Override
-	public int getItemCount () {
-		return mValues.size();
+	public void onBindViewHolder(RecyclerView.ViewHolder _holder, int position) {
+		if (_holder instanceof VHItem) {
+			VHItem holder = (VHItem) _holder;
+
+			// Load data item
+			final Tracker tracker = getItem(position);
+			holder.mTracker = tracker;
+
+			// Add data to view
+			holder.mTrackerName.setText(tracker.name);
+			holder.mTotalTrackers.setText(mContext.getResources().getQuantityString(
+					R.plurals.n_trackers_found, tracker.children.size(), tracker.children.size())
+					+ ":");
+			holder.mTrackerDetails.setText(
+					"• " + TextUtils.join("\n• ", tracker.children));
+
+
+			if (Util.isPlayStoreInstall(mContext)) {
+				holder.mSwitch.setVisibility(View.GONE);
+				return;
+			}
+			final AppBlocklistController w = AppBlocklistController.getInstance(mContext);
+			holder.mSwitch.setChecked(
+					w.blockedTracker(mAppId, tracker.name)
+			);
+			holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+				if (!buttonView.isPressed()) return;
+
+				if (isChecked) {
+					w.block(mAppId, tracker.name);
+				} else {
+					w.unblock(mAppId, tracker.name);
+				}
+			});
+			holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
+
+			//cast holder to VHItem and set data
+		} else if (_holder instanceof VHHeader) {
+			//cast holder to VHHeader and set data for header.
+		}
 	}
 
-	class ViewHolder extends RecyclerView.ViewHolder {
+	@Override
+	public int getItemCount() {
+		return mValues.size() + 1;
+	}
+
+	@Override
+	public int getItemViewType(int position) {
+		if (isPositionHeader(position))
+			return TYPE_HEADER;
+
+		return TYPE_ITEM;
+	}
+
+	private boolean isPositionHeader(int position) {
+		return position == 0;
+	}
+
+	private Tracker getItem(int position) {
+		return mValues.get(position - 1);
+	}
+
+	class VHItem extends RecyclerView.ViewHolder {
 		final View mView;
 		final TextView mTrackerDetails;
 		final TextView mTrackerName;
@@ -113,13 +153,19 @@ public class TrackersListAdapter extends RecyclerView.Adapter<TrackersListAdapte
 		final Switch mSwitch;
 		Tracker mTracker;
 
-		ViewHolder (View view) {
+		VHItem (View view) {
 			super(view);
 			mView = view;
 			mTrackerDetails = view.findViewById(R.id.tracker_details);
 			mTrackerName = view.findViewById(R.id.root_name);
 			mTotalTrackers = view.findViewById(R.id.total_trackers);
 			mSwitch = view.findViewById(R.id.switch_tracker);
+		}
+	}
+
+	class VHHeader extends RecyclerView.ViewHolder {
+		VHHeader(View view) {
+			super(view);
 		}
 	}
 }
