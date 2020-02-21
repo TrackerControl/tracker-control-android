@@ -39,7 +39,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -53,7 +52,6 @@ import net.kollnig.missioncontrol.data.PlayStore;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 import eu.faircode.netguard.R;
@@ -66,19 +64,14 @@ public class DetailsActivity extends AppCompatActivity {
 	public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
 	public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
 
-	public static final String
-			KEY_PREF_GOOGLEPLAY_SWITCH = "googleplay_switch";
-
 	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
 	public static PlayStore.AppInfo app = null;
 	private final String TAG = DetailsActivity.class.getSimpleName();
-	static Set<OnAppInfoLoadedListener> listeners = new HashSet<>();
 	File exportDir = new File(
 			Environment.getExternalStorageDirectory(), "trackercontrol");
 	private Integer appUid;
 	private String appPackageName;
 	private String appName;
-	public static Boolean contactGoogle;
 
 	public static void savePrefs (Context c) {
 		// Save currently Selected Apps to Shared Prefs
@@ -107,11 +100,6 @@ public class DetailsActivity extends AppCompatActivity {
 		appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
 		appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
-		// Check if consent to contact external servers
-		SharedPreferences settingsPref = PreferenceManager.getDefaultSharedPreferences(this);
-		contactGoogle = settingsPref.getBoolean
-				(KEY_PREF_GOOGLEPLAY_SWITCH, false);
-
 		// Set up paging
 		DetailsPagesAdapter detailsPagesAdapter =
 				new DetailsPagesAdapter(this,
@@ -132,18 +120,6 @@ public class DetailsActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
 		toolbar.setTitle(getString(R.string.app_info));
 		toolbar.setSubtitle(appName);
-
-		// Load PlayStore Data if consent
-		if (contactGoogle) {
-			new Thread(() -> {
-				app = PlayStore.getInfo(appPackageName);
-				runOnUiThread(() -> {
-					for (OnAppInfoLoadedListener listener : listeners) {
-						listener.appInfoLoaded();
-					}
-				});
-			}).start();
-		}
 	}
 
 	@Override
@@ -165,14 +141,6 @@ public class DetailsActivity extends AppCompatActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	public void addListener (OnAppInfoLoadedListener l) {
-		listeners.add(l);
-	}
-
-	public void removeListener (OnAppInfoLoadedListener l) {
-		listeners.remove(l);
 	}
 
 	@Override
@@ -234,13 +202,6 @@ public class DetailsActivity extends AppCompatActivity {
 		startActivity(Intent.createChooser(shareIntent, "Share CSV"));
 	}
 
-	/**
-	 * Communicate with fragments through interface.
-	 */
-	public interface OnAppInfoLoadedListener {
-		void appInfoLoaded ();
-	}
-
 	class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
 		private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
 		Database database;
@@ -294,12 +255,18 @@ public class DetailsActivity extends AppCompatActivity {
 				return;
 			}
 
-			// Export successul, ask user to further share file!
+			// Export successful, ask user to further share file!
 			View v = findViewById(R.id.view_pager);
 			Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
 			s.setAction(R.string.share_csv, v1 -> shareExport());
 			s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
 			s.show();
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		app = null;
 	}
 }

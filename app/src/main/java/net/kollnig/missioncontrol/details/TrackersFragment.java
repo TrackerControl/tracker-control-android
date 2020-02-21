@@ -73,13 +73,6 @@ public class TrackersFragment extends Fragment {
 	}
 
 	@Override
-	public void onResume() {
-		super.onResume();
-
-		updateTrackerList();
-	}
-
-	@Override
 	public void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Bundle bundle = getArguments();
@@ -120,6 +113,13 @@ public class TrackersFragment extends Fragment {
 		}
 
 		return v;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		updateTrackerList();
 	}
 
 	private void updateTrackerList() {

@@ -75,8 +75,6 @@ import net.kollnig.missioncontrol.data.Database;
 
 import java.util.List;
 
-import static net.kollnig.missioncontrol.DetailsActivity.KEY_PREF_GOOGLEPLAY_SWITCH;
-
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Main";
 
@@ -382,21 +380,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Custom code -- First use
         if (!initialized) {
             prefs.edit().putBoolean("initialized", true).apply();
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                    .setTitle(R.string.external_servers)
-                    .setMessage(R.string.confirm_google_info)
-                    .setPositiveButton(R.string.yes, (dialog, id) -> {
-                        prefs.edit().putBoolean
-                                (KEY_PREF_GOOGLEPLAY_SWITCH, true).apply();
-                        dialog.dismiss();
-                    })
-                    .setNegativeButton(R.string.no, (dialog, id) -> dialog.dismiss());
-
-            AlertDialog dialog = builder.create();
-            dialog.setCancelable(false); // avoid back button
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
         }
 
         // Show instructions

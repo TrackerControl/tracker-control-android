@@ -383,7 +383,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
     <string name="confirm_blocking_title">Block all trackers?</string>
     <string name="external_servers">Contact external servers?</string>
-    <string name="confirm_google_info">Shall this app contact external servers, notably Google, to retrieve the developer email of an app?</string>
+    <string name="confirm_google_info">Shall this app contact Google to retrieve the developer email of the app?</string>
     <string name="no_external_servers">No permission given to retrieve policy from external server. Change in app settings.</string>
     <string name="blocking_apps">Block all trackers</string>
     <string name="blocking_trackers">Block all trackers</string>
@@ -483,12 +483,6 @@ Sincerely,]]></string>
 
     <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
-    <string name="show_system_apps_title">Show system apps</string>
-    <string name="show_system_apps_explanation">Show all apps on the device</string>
-    <string name="include_mail_apps_title">Monitor email apps</string>
-    <string name="include_mail_apps_explanation">Email apps may stop functioning when enabled (app restart required).</string>
-    <string name="google_play_data_title">Load data from Google Play</string>
-    <string name="google_play_data_explanation">To retrieve the developer mail. No personal data is shared.</string>
 
     <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some other apps. Private DNS must be disabled.</string>
     <string name="instructions_monitoring">Toggle the switch and interact with some other apps.</string>

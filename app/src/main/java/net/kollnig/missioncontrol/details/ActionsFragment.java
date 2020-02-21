@@ -17,6 +17,7 @@
 
 package net.kollnig.missioncontrol.details;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -32,6 +34,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
+import net.kollnig.missioncontrol.data.PlayStore;
 
 import eu.faircode.netguard.R;
 import eu.faircode.netguard.Util;
@@ -114,23 +117,44 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 				Snackbar.make(getView(), R.string.play_services_required, Snackbar.LENGTH_LONG).show();
 			}
 		} else if (id == R.id.btnReqData || id == R.id.btnReqDeletion || id == R.id.btnContactDev) {
-			String mail = null;
-
-			if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null)
-				mail = DetailsActivity.app.developerMail;
-
-			String subject = null, body = null;
-			if (v.getId() == R.id.btnReqData) {
-				subject = getString(R.string.subject_request_data);
-				body = getString(R.string.body_request_data, appName, appId);
+			if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null) {
+				String mail = DetailsActivity.app.developerMail;
+				contactDeveloper(v, mail);
+				return;
 			}
 
-			if (v.getId() == R.id.btnReqDeletion) {
-				subject = getString(R.string.subject_request_data);
-				body = getString(R.string.body_request_data, appName, appId);
-			}
+			AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+					.setTitle(R.string.external_servers)
+					.setMessage(R.string.confirm_google_info)
+					.setPositiveButton(R.string.yes, (dialog, id2) -> {
+						new Thread(() -> {
+							DetailsActivity.app = PlayStore.getInfo(appId);
 
-			sendEmail(mail, subject, body);
+							Activity a =  getActivity();
+							if (a == null)
+								return;
+
+							a.runOnUiThread(() -> {
+								if (isAdded()) {
+									String mail = null;
+
+									if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null)
+										mail = DetailsActivity.app.developerMail;
+
+									contactDeveloper(v,  mail);
+								}
+							});
+						}).start();
+						dialog.dismiss();
+					})
+					.setNegativeButton(R.string.no, (dialog, id2) -> {
+						contactDeveloper(v, null);
+						dialog.dismiss();
+					});
+			AlertDialog dialog = builder.create();
+			dialog.setCancelable(false); // avoid back button
+			dialog.setCanceledOnTouchOutside(false);
+			dialog.show();
 		} else if (id == R.id.btnContactGoogle) {
 			sendEmail(getString(R.string.google_dpo_mail), null, null);
 		} else if (id == R.id.btnContactOfficials) {
@@ -153,5 +177,20 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 		} catch (android.content.ActivityNotFoundException ex) {
 			Snackbar.make(getView(), R.string.no_mail_service, Snackbar.LENGTH_LONG).show();
 		}
+	}
+
+	private void contactDeveloper(View v, String mail) {
+		String subject = null, body = null;
+		if (v.getId() == R.id.btnReqData) {
+			subject = getString(R.string.subject_request_data);
+			body = getString(R.string.body_request_data, appName, appId);
+		}
+
+		if (v.getId() == R.id.btnReqDeletion) {
+			subject = getString(R.string.subject_request_data);
+			body = getString(R.string.body_request_data, appName, appId);
+		}
+
+		sendEmail(mail, subject, body);
 	}
 }
