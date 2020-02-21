@@ -382,8 +382,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="menu_reset_monitoring">Reset monitoring</string>
     <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
     <string name="confirm_blocking_title">Block all trackers?</string>
-    <string name="external_servers">Contact external servers?</string>
-    <string name="confirm_google_info">Shall this app contact Google to retrieve the developer email of the app?</string>
+    <string name="external_servers">Get developer email automatically?</string>
+    <string name="confirm_google_info">This app can automatically get the email of the app developer from the Google Play Store for you.</string>
     <string name="no_external_servers">No permission given to retrieve policy from external server. Change in app settings.</string>
     <string name="blocking_apps">Block all trackers</string>
     <string name="blocking_trackers">Block all trackers</string>
