@@ -11,8 +11,8 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
 
 To detect tracking, TrackeControl checks all network traffic against the Disconnect blocklist.
 This is the same list, that is used by the Firefox browser.
-This list **reveals the companies behind tracking** to users
-and to allow users to **block tracking selectively**.
+This **reveals the companies behind tracking** to users
+and allows users to **block tracking selectively**.
 This blocklist also allows to expose the **purpose of tracking**, such as analytics or advertising.
 
 The app further aims to educate users about their **legal rights** under
@@ -27,7 +27,7 @@ no external VPN server is used, and hence
 no network data leaves the user's device for the purposes of tracker analysis.
 
 ## Installation
-Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.
+*Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
@@ -78,7 +78,7 @@ removed manually by the user (e.g. by uninstalling).
 The underlying network analysis functionality is provided by the [NetGuard
 Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
-TrackerControl integrates the [Disconnect tracker list](https://github.com/mozilla-services/shavar-prod-lists),
+TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
 
 TrackerControl also uses the tracker database by Reuben Binns, Ulrik Lyngs,
