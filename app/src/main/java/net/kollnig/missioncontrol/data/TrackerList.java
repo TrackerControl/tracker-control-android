@@ -213,9 +213,8 @@ public class TrackerList {
 				Company company;
 				String country = jsonCompany.getString("country");
 				String name = jsonCompany.getString("owner_name");
-				String parent = null;
 				if (!jsonCompany.isNull("root_parent")) {
-					parent = jsonCompany.getString("root_parent");
+					name = jsonCompany.getString("root_parent");
 				}
 				boolean necessary;
 				if (jsonCompany.has("necessary")) {
@@ -225,10 +224,10 @@ public class TrackerList {
 					necessary = false;
 				}
 
-				company = companies.get(parent);
+				company = companies.get(name);
 				if (company == null) {
-					company = new Company(country, parent, "Uncategorised", necessary);
-					companies.put(parent, company);
+					company = new Company(country, name, "Uncategorised", necessary);
+					companies.put(name, company);
 				}
 
 				JSONArray domains = jsonCompany.getJSONArray("doms");
