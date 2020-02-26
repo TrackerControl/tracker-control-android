@@ -9,7 +9,7 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
   <img alt="TrackerControl Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
 </p>
 
-To detect tracking, TrackeControl checks all network traffic against the Disconnect blocklist.
+To detect tracking, TrackerControl checks all network traffic against the Disconnect blocklist.
 This is the same list, that is used by the Firefox browser.
 This **reveals the companies behind tracking** to users
 and allows users to **block tracking selectively**.
