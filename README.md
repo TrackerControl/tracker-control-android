@@ -1,4 +1,4 @@
-# TrackerControl (experimental)
+# TrackerControl
 
 **If you're missing features or find bugs, use the issue tracker or contact Konrad directly (tc@kollnig.net).**
 
@@ -9,12 +9,11 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
   <img alt="TrackerControl Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
 </p>
 
-To visualise this tracking, a compehensive database of
-tracker companies from the X-Ray project,
-developed by Professor Max Van Kleek (University of Oxford)
-and others,
-is used to **reveal the companies behind tracking** to users
+To detect tracking, TrackeControl checks all network traffic against the Disconnect blocklist.
+This is the same list, that is used by the Firefox browser.
+This list **reveals the companies behind tracking** to users
 and to allow users to **block tracking selectively**.
+This blocklist also allows to expose the **purpose of tracking**, such as analytics or advertising.
 
 The app further aims to educate users about their **legal rights** under
 current EU Data Protection Law (i.e. GDPR and the ePrivacy Directive)
@@ -27,13 +26,8 @@ In other words,
 no external VPN server is used, and hence
 no network data leaves the user's device for the purposes of tracker analysis.
 
-TrackerControl was developed by Konrad Kollnig, as part of his MSc thesis
-in Computer Science at the University of Oxford, under the supervision
-of Professor Max van Kleek.
-
 ## Installation
-Disclaimer: The app is **experimental** and should not be used on
-your regular phone.
+Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.
 
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
@@ -84,7 +78,10 @@ removed manually by the user (e.g. by uninstalling).
 The underlying network analysis functionality is provided by the [NetGuard
 Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
-TrackerControl builds upon the tracker database by Reuben Binns, Ulrik Lyngs,
+TrackerControl integrates the [Disconnect tracker list](https://github.com/mozilla-services/shavar-prod-lists),
+that is distributed with the Firefox browser.
+
+TrackerControl also uses the tracker database by Reuben Binns, Ulrik Lyngs,
 Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray).
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
