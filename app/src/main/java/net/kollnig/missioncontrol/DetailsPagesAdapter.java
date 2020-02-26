@@ -50,12 +50,12 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
 	private Fragment fActions;
 	//private Fragment fTransmissions;
 
-	public DetailsPagesAdapter (final Context context, FragmentManager fm, String appId, String appName) {
+	public DetailsPagesAdapter (final Context context, FragmentManager fm, String appId, String appName, int uid) {
 		super(fm);
 
 		mContext = context;
 
-		fTrackers = TrackersFragment.newInstance(appId);
+		fTrackers = TrackersFragment.newInstance(appId, uid);
 		//fTransmissions = TransmissionsFragment.newInstance(appId);
 		fActions = ActionsFragment.newInstance(appId, appName);
 	}

@@ -45,8 +45,10 @@ public class TrackersFragment extends Fragment {
 	private final String TAG = TrackersFragment.class.getSimpleName();
 
 	private static final String ARG_APP_ID = "app-id";
+	private static final String ARG_APP_UID = "app-uid";
 	private Database database;
 	private String mAppId;
+	private int mAppUid;
 
 	private SwipeRefreshLayout swipeRefresh;
 	private TrackersListAdapter adapter;
@@ -64,10 +66,11 @@ public class TrackersFragment extends Fragment {
 	public TrackersFragment () {
 	}
 
-	public static TrackersFragment newInstance (String appId) {
+	public static TrackersFragment newInstance (String appId, int uid) {
 		TrackersFragment fragment = new TrackersFragment();
 		Bundle args = new Bundle();
 		args.putString(ARG_APP_ID, appId);
+		args.putInt(ARG_APP_UID, uid);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -77,6 +80,7 @@ public class TrackersFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		Bundle bundle = getArguments();
 		mAppId = bundle.getString(ARG_APP_ID);
+		mAppUid = bundle.getInt(ARG_APP_UID);
 	}
 
 	@Override

@@ -105,7 +105,8 @@ public class DetailsActivity extends AppCompatActivity {
 				new DetailsPagesAdapter(this,
 						getSupportFragmentManager(),
 						Common.getAppName(getPackageManager(), appUid),
-						appName);
+						appName,
+						appUid);
 		ViewPager viewPager = findViewById(R.id.view_pager);
 		viewPager.setAdapter(detailsPagesAdapter);
 		TabLayout tabs = findViewById(R.id.tabs);

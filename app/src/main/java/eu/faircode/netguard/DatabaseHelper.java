@@ -44,6 +44,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    public Cursor getHosts(int uid) {
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            // There is a segmented index on uid
+            // There is an index on block
+            return db.query(true, "access", new String[]{"daddr"}, "uid = ?", new String[]{Integer.toString(uid)}, null, null, "uid", null);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    public Cursor getHosts() {
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            // There is a segmented index on uid
+            // There is an index on block
+            return db.query(true, "access", new String[]{"uid", "daddr"}, null, null, null, null, "uid", null);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
     private static final String TAG = "NetGuard.Database";
 
     private static final String DB_NAME = "Netguard";

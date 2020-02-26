@@ -19,7 +19,6 @@ package net.kollnig.missioncontrol.data;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,20 +37,135 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class Database {
+	/**
+	 * Retrieves information for all apps
+	 *
+	 * @return A cursor pointing to the data. Caller must close the cursor.
+	 * Cursor should have app name and leak summation based on a sort type
+	 */
+	public synchronized Map<String, Integer> getApps () {
+		Map<String, Set<Company>> trackers = new ArrayMap<>();
+
+		String[] columns = new String[]{COLUMN_APPID, COLUMN_HOSTNAME};
+		Cursor cursor = getDatabase().query(true, TABLE_HISTORY, columns,
+				null, null,
+				null, null,
+				null, null);
+
+		if (cursor.moveToFirst()) {
+			do {
+				String appId = cursor.getString(cursor.getColumnIndex(COLUMN_APPID));
+				Set<Company> companies = trackers.get(appId);
+				if (companies == null) {
+					companies = new HashSet<>();
+					trackers.put(appId, companies);
+				}
+
+				// Add company
+				String hostname = cursor.getString(cursor.getColumnIndex(COLUMN_HOSTNAME));
+				Company company = getCompany(hostname);
+				if (company != null)
+					companies.add(company);
+			} while (cursor.moveToNext());
+		}
+		cursor.close();
+
+		// Reduce to counts
+		Map<String, Integer> trackerCounts = new ArrayMap<>();
+		for (Map.Entry<String, Set<Company>> entry : trackers.entrySet()) {
+			trackerCounts.put(entry.getKey(), entry.getValue().size());
+		}
+
+		return trackerCounts;
+	}
+
+	/**
+	 * Retrieve info for CSV export
+	 * @param appId The id of the app to be dumped
+	 * @return All found trackers
+	 */
+	public Cursor getAppInfo (String appId) {
+		return getDatabase().rawQuery(
+				"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
+	}
+
+	/**
+	 * Retrieves information about all seen trackers
+	 *
+	 * @return A list of seen trackers
+	 */
+	public synchronized List<Tracker> getTrackers (String mAppId) {
+		Map<String, Tracker> ownerToCompany = new ArrayMap<>();
+
+		String[] columns = new String[]{COLUMN_HOSTNAME};
+
+		Cursor cursor = getDatabase().query(true, TABLE_HISTORY,
+				columns,
+				COLUMN_APPID + " = ?",
+				new String[]{mAppId},
+				null, // groupBy
+				null,
+				null, null);
+
+		if (cursor.moveToFirst()) {
+			outer: do {
+				String hostname = cursor.getString(cursor.getColumnIndex(COLUMN_HOSTNAME));
+				Company company = getCompany(hostname);
+				if (company == null)
+					continue;
+
+				String owner = company.owner;
+				String name = company.name;
+				if (owner == null || owner.equals("null")) owner = name;
+
+				Tracker ownerCompany = ownerToCompany.get(owner);
+				if (ownerCompany == null) {
+					ownerCompany = new Tracker();
+					ownerCompany.name = owner;
+					ownerCompany.children = new ArrayList<>();
+					ownerToCompany.put(owner, ownerCompany);
+				}
+
+				// avoid children duplicates
+				for (Tracker child: ownerCompany.children) {
+					if (child.name.equals(name))
+						continue outer;
+				}
+
+				Tracker child = new Tracker();
+				child.name = name;
+				child.owner = owner;
+				ownerCompany.children.add(child);
+			} while (cursor.moveToNext());
+		}
+
+		cursor.close();
+
+		// map to list
+		List<Tracker> trackerList = new ArrayList<>(ownerToCompany.values());
+
+		// sort lists
+		Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
+		for (Tracker child: trackerList) {
+			Collections.sort(child.children, (o1, o2) -> o1.name.compareTo(o2.name));
+		}
+
+		return trackerList;
+	}
+
 	/* ****** COLUMN NAMES PERTAINING TO {@link #TABLE_HISTORY} ****** */
-	public static final String COLUMN_APPID = "appname";
-	public static final String COLUMN_REMOTE_IP = "remoteIp";
-	public static final String COLUMN_HOSTNAME = "hostname";
-	public static final String COLUMN_COMPANYNAME = "companyName";
-	public static final String COLUMN_COMPANYOWNER = "companyOwner";
-	public static final String COLUMN_COUNT = "count";
+	private static final String COLUMN_APPID = "appname";
+	private static final String COLUMN_REMOTE_IP = "remoteIp";
+	private static final String COLUMN_HOSTNAME = "hostname";
+	private static final String COLUMN_COMPANYNAME = "companyName";
+	private static final String COLUMN_COMPANYOWNER = "companyOwner";
+	private static final String COLUMN_COUNT = "count";
 	private static final String TAG = Database.class.getSimpleName();
 	private static final String DATABASE_NAME = "trackers.db";
 	/**
@@ -65,19 +179,17 @@ public class Database {
 	 */
 	private static final String COLUMN_TIME = "timestampt";
 	private static final int DATABASE_VERSION = 3;
-	public static Map<String, Company> hostnameToCompany = new ArrayMap<>();
-	public static Set<String> necessaryCompanies = new HashSet<>();
+	private static Map<String, Company> hostnameToCompany = new ArrayMap<>();
+	static Set<String> necessaryCompanies = new HashSet<>();
 	private static Database instance;
 	private final SQLHandler sqlHandler;
 	private SQLiteDatabase _database;
-	private AssetManager assetManager;
 
 	/**
 	 * Database constructor
 	 */
 	private Database (Context c) {
 		sqlHandler = new SQLHandler(c);
-		assetManager = c.getAssets();
 		loadTrackerDomains(c);
 	}
 
@@ -117,40 +229,6 @@ public class Database {
 		return company;
 	}
 
-	/**
-	 * Retrieves information for all apps
-	 *
-	 * @return A cursor pointing to the data. Caller must close the cursor.
-	 * Cursor should have app name and leak summation based on a sort type
-	 */
-	public synchronized Map<String, Integer> getApps () {
-		Map<String, Integer> trackerCounts = new ArrayMap<>();
-
-		String[] columns = new String[]{COLUMN_APPID,
-				"COUNT( DISTINCT " + COLUMN_COMPANYNAME + " ) AS " +
-						COLUMN_COUNT};
-
-		Cursor cursor = getDatabase().query(TABLE_HISTORY,
-				columns,
-				COLUMN_COMPANYNAME + " IS NOT NULL", null,
-				COLUMN_APPID, // groupBy
-				null,
-				COLUMN_COUNT + " DESC");
-
-		if (cursor.moveToFirst()) {
-			do {
-				String appId = cursor.getString(cursor.getColumnIndex(COLUMN_APPID));
-				int trackerCount = cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
-
-				trackerCounts.put(appId, trackerCount);
-			} while (cursor.moveToNext());
-		}
-
-		cursor.close();
-
-		return trackerCounts;
-	}
-
 	private SQLiteDatabase getDatabase () {
 		if (this.isClose()) {
 			_database = sqlHandler.getWritableDatabase();
@@ -162,125 +240,6 @@ public class Database {
 		long count = DatabaseUtils.queryNumEntries(getDatabase(), TABLE_HISTORY);
 
 		return count;
-	}
-
-	public Cursor getAppInfo (String appId) {
-		return getDatabase().rawQuery(
-				"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
-	}
-
-	/**
-	 * Retrieves information about all seen trackers
-	 *
-	 * @return A list of seen trackers
-	 */
-	public synchronized List<Tracker> getTrackers (String mAppId) {
-		Map<String, Tracker> ownerToCompany = new ArrayMap<>();
-
-		String[] columns = new String[]{COLUMN_COMPANYOWNER, COLUMN_COMPANYNAME,
-				"COUNT( * ) AS " + COLUMN_COUNT};
-
-		Cursor cursor = getDatabase().query(TABLE_HISTORY,
-				columns,
-				COLUMN_COMPANYNAME + " IS NOT NULL AND " + COLUMN_APPID + " = ?",
-				new String[]{mAppId},
-				COLUMN_COMPANYOWNER + "," + COLUMN_COMPANYNAME, // groupBy
-				null,
-				COLUMN_COMPANYNAME + " ASC");
-
-		if (cursor.moveToFirst()) {
-			do {
-				String owner = cursor.getString(cursor.getColumnIndex(COLUMN_COMPANYOWNER));
-				String name = cursor.getString(cursor.getColumnIndex(COLUMN_COMPANYNAME));
-				int packetCount = cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
-				if (owner == null || owner.equals("null")) owner = name;
-
-				Tracker ownerCompany = ownerToCompany.get(owner);
-				if (ownerCompany == null) {
-					ownerCompany = new Tracker();
-					ownerCompany.name = owner;
-					ownerCompany.packetCount = packetCount;
-					ownerCompany.children = new ArrayList<>();
-					ownerToCompany.put(owner, ownerCompany);
-				} else {
-					ownerCompany.packetCount += packetCount;
-				}
-
-				Tracker child = new Tracker();
-				child.name = name;
-				child.owner = owner;
-				child.packetCount = packetCount;
-				ownerCompany.children.add(child);
-			} while (cursor.moveToNext());
-		}
-
-		List<Tracker> trackerList = new ArrayList<>(ownerToCompany.values());
-		Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
-
-		return trackerList;
-	}
-
-	/**
-	 * Retrieves information for one app
-	 *
-	 * @return A list with tracker details
-	 */
-	public synchronized List<Tracker> getAppDetails (String appId) {
-		Map<String, Tracker> trackerMap = new HashMap<>();
-
-		String[] columns = new String[]{COLUMN_COMPANYNAME, COLUMN_COMPANYOWNER, COLUMN_REMOTE_IP, COLUMN_HOSTNAME,
-				"COUNT( * ) AS " +
-						COLUMN_COUNT};
-
-		Cursor cursor = getDatabase().query(TABLE_HISTORY,
-				columns,
-				COLUMN_APPID + " = ?", new String[]{appId},
-				COLUMN_COMPANYNAME + "," + COLUMN_COMPANYOWNER + "," + COLUMN_REMOTE_IP + "," + COLUMN_HOSTNAME,
-				null,
-				null);
-
-		// Read data
-		if (cursor.moveToFirst()) {
-			do {
-				String name = cursor.getString(cursor.getColumnIndex(COLUMN_COMPANYNAME));
-				String owner = cursor.getString(cursor.getColumnIndex(COLUMN_COMPANYOWNER));
-				String hostname = cursor.getString(cursor.getColumnIndex(COLUMN_HOSTNAME));
-				String ip = cursor.getString(cursor.getColumnIndex(COLUMN_REMOTE_IP));
-				int count = cursor.getInt(cursor.getColumnIndex(COLUMN_COUNT));
-
-				// First, prepare tracker entry
-				Tracker tracker = trackerMap.get(name);
-				if (tracker == null) {
-					tracker = new Tracker();
-					tracker.packetCount = count;
-					tracker.name = name;
-					tracker.owner = owner;
-					tracker.hosts = new ArrayList<>();
-					trackerMap.put(name, tracker);
-				} else {
-					tracker.packetCount += count;
-				}
-
-				// Now, add details about host
-				Host host = new Host();
-				host.hostname = hostname;
-				host.packetCount = count;
-
-				// Add everything to list
-				tracker.hosts.add(host);
-			} while (cursor.moveToNext());
-		}
-
-		// Sort items descending
-		List<Tracker> trackerList = new ArrayList<>(trackerMap.values());
-		Collections.sort(trackerList);
-		for (Tracker tracker : trackerList) {
-			Collections.sort(tracker.hosts);
-		}
-
-		cursor.close();
-
-		return trackerList;
 	}
 
 	/**
