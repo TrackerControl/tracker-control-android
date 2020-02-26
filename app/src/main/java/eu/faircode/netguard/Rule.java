@@ -32,7 +32,7 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import net.kollnig.missioncontrol.data.Database;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -203,10 +203,10 @@ public class Rule {
     }
 
     // Custom code: tracker counts
-    private static Map<String, Integer> trackerCounts;
+    private static Map<Integer, Integer> trackerCounts;
 
     public int getTrackerCount() {
-        Integer trackerCount = trackerCounts.get(packageName);
+        Integer trackerCount = trackerCounts.get(uid);
         if (trackerCount == null)
             trackerCount = 0;
 
@@ -406,8 +406,8 @@ public class Rule {
                 }
 
             // Custom code: Load tracking counts
-            Database database = Database.getInstance(context);
-            trackerCounts = database.getApps();
+            TrackerList trackerList = TrackerList.getInstance(context);
+            trackerCounts = trackerList.getTrackerCounts();
 
             // Sort rule list
             final Collator collator = Collator.getInstance(Locale.getDefault());

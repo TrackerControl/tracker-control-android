@@ -46,8 +46,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.data.AppBlocklistController;
-import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.data.PlayStore;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -205,13 +205,13 @@ public class DetailsActivity extends AppCompatActivity {
 
 	class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
 		private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
-		Database database;
+		TrackerList trackerList;
 
 		@Override
 		protected void onPreExecute () {
 			this.dialog.setMessage(getString(R.string.exporting));
 			this.dialog.show();
-			database = Database.getInstance(DetailsActivity.this);
+			trackerList = TrackerList.getInstance(DetailsActivity.this);
 		}
 
 		protected Boolean doInBackground (final String... args) {
@@ -226,7 +226,7 @@ public class DetailsActivity extends AppCompatActivity {
 						CSVWriter.DEFAULT_ESCAPE_CHARACTER,
 						CSVWriter.RFC4180_LINE_END);
 
-				Cursor data = database.getAppInfo(Common.getAppName(getPackageManager(), appUid));
+				Cursor data = trackerList.getAppInfo(Common.getAppName(getPackageManager(), appUid));
 				if (data == null) return false;
 
 				csv.writeNext(data.getColumnNames());

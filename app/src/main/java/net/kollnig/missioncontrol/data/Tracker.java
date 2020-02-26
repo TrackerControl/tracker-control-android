@@ -32,7 +32,7 @@ public class Tracker implements Comparable<Tracker> {
 
 	@Override
 	public String toString () {
-		if (Database.necessaryCompanies.contains(name))
+		if (TrackerList.necessaryCompanies.contains(name))
 			return name + " (Unblocked)";
 		else {
 			return name;

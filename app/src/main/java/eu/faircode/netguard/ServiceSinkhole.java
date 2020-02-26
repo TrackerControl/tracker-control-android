@@ -78,7 +78,7 @@ import androidx.preference.PreferenceManager;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Company;
-import net.kollnig.missioncontrol.data.Database;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -816,15 +816,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                     !(packet.uid == 0 && (packet.protocol == 6 || packet.protocol == 17) && packet.dport == 53)) {
                 if (!(packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */))
                     packet.dport = 0;
-
-                // Custom code
-                if (dname != null) {
-                    Database db = Database.getInstance(ServiceSinkhole.this);
-                    db.logPacketAsyncTask(ServiceSinkhole.this,
-                            Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid),
-                            packet.daddr,
-                            dname);
-                }
 
                 // Custom code - Block trackers by default
                 int block = -1;
@@ -1958,7 +1949,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 	            if (!filtered) {
 	                DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
 	                String dname = dh.getQName(packet.uid, packet.daddr);
-	                Database db = Database.getInstance(ServiceSinkhole.this);
+	                TrackerList db = TrackerList.getInstance(ServiceSinkhole.this);
 	                AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
 	                String packageName = Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid);
 

@@ -61,17 +61,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import net.kollnig.missioncontrol.data.Database;
 
 import java.util.List;
 
@@ -383,7 +378,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         // Show instructions
-        Database db = Database.getInstance(this);
+        /*TrackerList db = TrackerList.getInstance(this);
         if (db.count() <= 0) {
             int instructionsString =
                     (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
@@ -395,7 +390,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             s.setAction(R.string.ok, v1 -> s.dismiss());
             s.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
             s.show();
-        }
+        }*/
 
         // Fill application list
         updateApplicationList(getIntent().getStringExtra(EXTRA_SEARCH));

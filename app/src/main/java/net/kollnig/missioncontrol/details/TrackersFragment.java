@@ -31,8 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import net.kollnig.missioncontrol.data.Database;
 import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class TrackersFragment extends Fragment {
 
 	private static final String ARG_APP_ID = "app-id";
 	private static final String ARG_APP_UID = "app-uid";
-	private Database database;
+	private TrackerList trackerList;
 	private String mAppId;
 	private int mAppUid;
 
@@ -91,7 +91,7 @@ public class TrackersFragment extends Fragment {
 		running = true;
 
 		Context context = v.getContext();
-		database = Database.getInstance(context);
+		trackerList = TrackerList.getInstance(context);
 		recyclerView = v.findViewById(R.id.transmissions_list);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 		adapter = new TrackersListAdapter(getContext(), recyclerView, mAppId);
@@ -140,7 +140,7 @@ public class TrackersFragment extends Fragment {
 
 			@Override
 			protected List<Tracker> doInBackground(Object... arg) {
-				return database.getTrackers(mAppId);
+				return trackerList.getAppTrackers(mAppUid);
 			}
 
 			@Override

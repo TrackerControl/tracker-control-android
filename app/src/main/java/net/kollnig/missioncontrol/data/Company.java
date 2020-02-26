@@ -30,6 +30,13 @@ public class Company {
 		this.necessary = necessary;
 	}
 
+	public Company(String name, String owner) {
+		this.name = name;
+		this.owner = owner;
+		this.necessary = true;
+		this.country = "?";
+	}
+
 	public String getOwner () {
 		if (owner == null || owner.equals("null")) return null;
 		return owner;
