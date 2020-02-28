@@ -31,7 +31,7 @@ no network data leaves the user's device for the purposes of tracker analysis.
 
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
-## Key Highlights
+## Highlights
 TrackerControl provides
 - *real-time monitoring* of app tracking,
 - *granular blocking* of app tracking,
