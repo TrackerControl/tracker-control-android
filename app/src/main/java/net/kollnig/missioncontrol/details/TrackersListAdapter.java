@@ -93,10 +93,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 			// Add data to view
 			holder.mTrackerName.setText(tracker.name);
 			holder.mTotalTrackers.setText(mContext.getResources().getQuantityString(
-					R.plurals.n_trackers_found, tracker.children.size(), tracker.children.size())
+					R.plurals.n_trackers_found, tracker.getChildren().size(), tracker.getChildren().size())
 					+ ":");
 			holder.mTrackerDetails.setText(
-					"• " + TextUtils.join("\n• ", tracker.children));
+					"• " + TextUtils.join("\n• ", tracker.getChildren()));
 
 
 			if (Util.isPlayStoreInstall(mContext)) {

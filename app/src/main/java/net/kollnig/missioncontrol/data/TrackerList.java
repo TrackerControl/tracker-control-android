@@ -43,8 +43,8 @@ import eu.faircode.netguard.DatabaseHelper;
 
 public class TrackerList {
 	private static final String TAG = TrackerList.class.getSimpleName();
-	static Set<String> necessaryCompanies = new HashSet<>();
-	private static Map<String, Company> hostnameToCompany = new ArrayMap<>();
+	static Set<String> necessaryTrackers = new HashSet<>();
+	private static Map<String, Tracker> hostnameToTracker = new ArrayMap<>();
 	private static TrackerList instance;
 	private DatabaseHelper databaseHelper;
 
@@ -78,31 +78,31 @@ public class TrackerList {
 	 * Cursor should have app name and leak summation based on a sort type
 	 */
 	public synchronized Map<Integer, Integer> getTrackerCounts() {
-		Map<Integer, Set<Company>> trackers = new ArrayMap<>();
+		Map<Integer, Set<Tracker>> trackers = new ArrayMap<>();
 
 		Cursor cursor = databaseHelper.getHosts();
 
 		if (cursor.moveToFirst()) {
 			do {
 				int uid = cursor.getInt(cursor.getColumnIndex("uid"));
-				Set<Company> companies = trackers.get(uid);
-				if (companies == null) {
-					companies = new HashSet<>();
-					trackers.put(uid, companies);
+				Set<Tracker> observed = trackers.get(uid);
+				if (observed == null) {
+					observed = new HashSet<>();
+					trackers.put(uid, observed);
 				}
 
-				// Add company
+				// Add tracker
 				String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-				Company company = getCompany(hostname);
-				if (company != null)
-					companies.add(company);
+				Tracker tracker = findTracker(hostname);
+				if (tracker != null)
+					observed.add(tracker);
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
 
 		// Reduce to counts
 		Map<Integer, Integer> trackerCounts = new ArrayMap<>();
-		for (Map.Entry<Integer, Set<Company>> entry : trackers.entrySet()) {
+		for (Map.Entry<Integer, Set<Tracker>> entry : trackers.entrySet()) {
 			trackerCounts.put(entry.getKey(), entry.getValue().size());
 		}
 
@@ -126,76 +126,75 @@ public class TrackerList {
 	 * @return A list of seen trackers
 	 */
 	public synchronized List<Tracker> getAppTrackers(int uid) {
-		Map<String, Tracker> ownerToCompany = new ArrayMap<>();
+		Map<String, Tracker> categoryToCompany = new ArrayMap<>();
 
 		Cursor cursor = databaseHelper.getHosts(uid);
 
 		if (cursor.moveToFirst()) {
 			outer: do {
 				String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-				Company company = getCompany(hostname);
-				if (company == null)
+				Tracker tracker = findTracker(hostname);
+				if (tracker == null)
 					continue;
 
-				String owner = company.owner;
-				String name = company.name;
-				if (owner == null || owner.equals("null")) owner = name;
+				String category = tracker.category;
+				String name = tracker.name;
+				if (category == null || category.equals("null"))
+					category = name;
 
-				Tracker ownerCompany = ownerToCompany.get(owner);
-				if (ownerCompany == null) {
-					ownerCompany = new Tracker();
-					ownerCompany.name = owner;
-					ownerCompany.children = new ArrayList<>();
-					ownerToCompany.put(owner, ownerCompany);
+				Tracker categoryCompany = categoryToCompany.get(category);
+				if (categoryCompany == null) {
+					categoryCompany = new Tracker(category);
+					categoryToCompany.put(category, categoryCompany);
 				}
 
 				// avoid children duplicates
-				for (Tracker child: ownerCompany.children) {
-					if (child.name.equals(name))
+				for (Tracker child: categoryCompany.getChildren()) {
+					if (child.name != null
+							&& child.name.equals(name))
 						continue outer;
 				}
 
-				Tracker child = new Tracker();
-				child.name = name;
-				child.owner = owner;
-				ownerCompany.children.add(child);
+				Tracker child = new Tracker(name);
+				child.category = category;
+				categoryCompany.getChildren().add(child);
 			} while (cursor.moveToNext());
 		}
 
 		cursor.close();
 
 		// map to list
-		List<Tracker> trackerList = new ArrayList<>(ownerToCompany.values());
+		List<Tracker> trackerList = new ArrayList<>(categoryToCompany.values());
 
 		// sort lists
 		Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
 		for (Tracker child: trackerList) {
-			Collections.sort(child.children, (o1, o2) -> o1.name.compareTo(o2.name));
+			Collections.sort(child.getChildren(), (o1, o2) -> o1.name.compareTo(o2.name));
 		}
 
 		return trackerList;
 	}
 
-	public Company getCompany (String hostname) {
-		Company company = null;
+	public Tracker findTracker(String hostname) {
+		Tracker tracker = null;
 
-		if (hostnameToCompany.containsKey(hostname)) {
-			company = hostnameToCompany.get(hostname);
+		if (hostnameToTracker.containsKey(hostname)) {
+			tracker = hostnameToTracker.get(hostname);
 		} else { // check subdomains
 			for (int i = 0; i < hostname.length(); i++){
 				if (hostname.charAt(i) == '.') {
-					company = hostnameToCompany.get(hostname.substring(i+1));
-					if (company != null)
+					tracker = hostnameToTracker.get(hostname.substring(i+1));
+					if (tracker != null)
 						break;
 				}
 			}
 		}
 
-		return company;
+		return tracker;
 	}
 
 	private void loadXrayTrackerDomains (Context context) {
-		Map<String, Company> companies = new HashMap<>();
+		Map<String, Tracker> companies = new HashMap<>();
 
 		try {
 			// Read domain list
@@ -210,7 +209,7 @@ public class TrackerList {
 			for (int i = 0; i < jsonCompanies.length(); i++) {
 				JSONObject jsonCompany = jsonCompanies.getJSONObject(i);
 
-				Company company;
+				Tracker tracker;
 				String country = jsonCompany.getString("country");
 				String name = jsonCompany.getString("owner_name");
 				if (!jsonCompany.isNull("root_parent")) {
@@ -219,24 +218,24 @@ public class TrackerList {
 				boolean necessary;
 				if (jsonCompany.has("necessary")) {
 					necessary = jsonCompany.getBoolean("necessary");
-					necessaryCompanies.add(name);
+					necessaryTrackers.add(name);
 				} else {
 					necessary = false;
 				}
 
-				company = companies.get(name);
-				if (company == null) {
-					company = new Company(country, name, "Uncategorised", necessary);
-					companies.put(name, company);
+				tracker = companies.get(name);
+				if (tracker == null) {
+					tracker = new Tracker(name, "Uncategorised", necessary);
+					companies.put(name, tracker);
 				}
 
 				JSONArray domains = jsonCompany.getJSONArray("doms");
 				for (int j = 0; j < domains.length(); j++) {
-					hostnameToCompany.put(domains.getString(j), company);
+					hostnameToTracker.put(domains.getString(j), tracker);
 				}
 			}
 		} catch (IOException | JSONException e) {
-			Log.d(TAG, "Loading companies failed.. ", e);
+			Log.e(TAG, "Loading xray list failed.. ", e);
 		}
 	}
 
@@ -256,12 +255,12 @@ public class TrackerList {
 				String categoryName = it.next();
 				JSONArray category = (JSONArray) categories.get(categoryName);
 				for (int i = 0; i < category.length(); i++) {
-					JSONObject tracker = category.getJSONObject(i);
-					String trackerName = tracker.keys().next();
+					JSONObject jsonTracker = category.getJSONObject(i);
+					String trackerName = jsonTracker.keys().next();
 
-					Company company = new Company(trackerName, categoryName);
+					Tracker tracker = new Tracker(trackerName, categoryName, false);
 
-					JSONObject trackerHomeUrls = (JSONObject) tracker.get(trackerName);
+					JSONObject trackerHomeUrls = (JSONObject) jsonTracker.get(trackerName);
 					for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext(); ) {
 						String trackerHomeUrl = iter.next();
 						if (!(trackerHomeUrls.get(trackerHomeUrl) instanceof  JSONArray))
@@ -270,13 +269,13 @@ public class TrackerList {
 						JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
 
 						for (int j = 0; j < urls.length(); j++) {
-							hostnameToCompany.put(urls.getString(j), company);
+							hostnameToTracker.put(urls.getString(j), tracker);
 						}
 					}
 				}
 			}
 		} catch (IOException | JSONException e) {
-			Log.d(TAG, "Loading companies failed.. ", e);
+			Log.e(TAG, "Loading disconnect list failed.. ", e);
 		}
 	}
 }

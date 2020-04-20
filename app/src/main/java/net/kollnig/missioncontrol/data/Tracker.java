@@ -17,35 +17,50 @@
 
 package net.kollnig.missioncontrol.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Tracker implements Comparable<Tracker> {
+public class Tracker {
 	public String name;
-	public String owner;
-	public Integer packetCount;
-	public List<net.kollnig.missioncontrol.data.Host> hosts;
+	public String category;
 	public List<Tracker> children;
+	public Boolean necessary;
 
-	public int compareTo (Tracker o) {
-		return o.packetCount.compareTo(packetCount);
+	public Tracker(String name) {
+		this.name = name;
+	}
+
+	public Tracker(String name, String category, Boolean necessary) {
+		this.name = name;
+		this.category = category;
+		this.necessary = necessary;
 	}
 
 	@Override
 	public String toString () {
-		if (TrackerList.necessaryCompanies.contains(name))
+		if (TrackerList.necessaryTrackers.contains(name))
 			return name + " (Unblocked)";
 		else {
 			return name;
 		}
 	}
 
-	public String getOwner () {
-		if (owner == null || owner.equals("null")) return null;
-		return owner;
+	public String getCategory() {
+		if (category == null || category.equals("null")) return null;
+		return category;
 	}
 
 	public String getRoot () {
-		if (getOwner() != null) return getOwner();
+		if (getCategory() != null) return getCategory();
 		return name;
+	}
+
+	public List<Tracker> getChildren() {
+		if (this.children == null) {
+			this.children = new ArrayList<>();
+			return this.children;
+		} else {
+			return this.children;
+		}
 	}
 }

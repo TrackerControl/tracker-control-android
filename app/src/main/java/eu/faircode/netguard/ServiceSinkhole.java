@@ -77,7 +77,7 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
-import net.kollnig.missioncontrol.data.Company;
+import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.json.JSONArray;
@@ -1954,7 +1954,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 	                String packageName = Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid);
 
 	                if (dname != null) {
-		                Company tracker = db.getCompany(dname);
+		                Tracker tracker = db.findTracker(dname);
 		                if (tracker != null
                                 && !tracker.necessary
 				                && appBlocklist.blockedTracker(packageName, tracker.getRoot())) {

@@ -416,11 +416,6 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tracker_name">Tracker Name</string>
     <string name="app_info">Manage App</string>
 
-    <!-- Tranmission Details -->
-    <string name="company_unknown">Unknown</string>
-    <string name="owner_known">(%s)</string>
-    <string name="owner_unknown">No known parent</string>
-
     <!-- Actions -->
     <string name="block_tracking">Block trackers</string>
     <string name="block_tracking_description">Many apps send data to third-parties, so-called trackers. TrackerControl allows to block these network transmissions selectively. Yet, use this wisely, since app developers rely on these services, notably advertising.</string>
