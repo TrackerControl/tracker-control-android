@@ -9,7 +9,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         //noinspection HighAppVersionCode
-        versionCode 2020042001
+        versionCode 2020042002
         versionName "2020.04.20"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
