@@ -1,4 +1,4 @@
-# TrackerControl
+# TrackerControl (pre-release version)
 
 **If you're missing features or find bugs, use the issue tracker or contact Konrad directly (tc@kollnig.net).**
 
