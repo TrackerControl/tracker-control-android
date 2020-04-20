@@ -9,7 +9,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 14
-        versionName "v1.0-alpha13"
+        versionName "2020.04.20"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
         externalNativeBuild {

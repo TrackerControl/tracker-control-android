@@ -2319,7 +2319,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             TypedValue tv = new TypedValue();
             getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
-            builder.setSmallIcon(R.drawable.ic_security_white_24dp)
+            builder.setSmallIcon(R.drawable.ic_rocket_white)
                     .setContentIntent(pi)
                     .setColor(tv.data)
                     .setAutoCancel(true);
@@ -2798,7 +2798,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
-        builder.setSmallIcon(isLockedDown(last_metered) ? R.drawable.ic_lock_outline_white_24dp : R.drawable.ic_security_white_24dp)
+        builder.setSmallIcon(isLockedDown(last_metered) ? R.drawable.ic_lock_outline_white_24dp : R.drawable.ic_rocket_white)
                 .setContentIntent(pi)
                 .setColor(tv.data)
                 .setOngoing(true)
@@ -2862,7 +2862,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
-        builder.setSmallIcon(R.drawable.ic_security_white_24dp)
+        builder.setSmallIcon(R.drawable.ic_rocket_white)
                 .setContentIntent(pi)
                 .setColor(tv.data)
                 .setOngoing(true)
@@ -3051,7 +3051,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
-        builder.setSmallIcon(R.drawable.ic_security_white_24dp)
+        builder.setSmallIcon(R.drawable.ic_rocket_white)
                 .setContentTitle(name)
                 .setContentText(getString(R.string.msg_update))
                 .setContentIntent(pi)

@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_security_color_24dp"/>
+            android:src="@drawable/ic_rocket_colour"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
                     android:background="?attr/colorPrimary"
-                    android:src="@drawable/ic_security_white_24dp_60"/>
+                    android:src="@drawable/ic_rocket_white_60"/>
 
                 <TextView
                     android:layout_width="wrap_content"
