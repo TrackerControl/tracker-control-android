@@ -9,7 +9,7 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         //noinspection HighAppVersionCode
-        versionCode 2020042002
+        versionCode 2020042003
         versionName "2020.04.20"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
@@ -21,7 +21,7 @@ android {
             }
         }
 
-        ndkVersion "20.0.5594570"
+        ndkVersion "20.1.5948944"
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
