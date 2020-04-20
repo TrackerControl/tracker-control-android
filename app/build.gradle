@@ -8,7 +8,8 @@ android {
         applicationId = "net.kollnig.missioncontrol"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 14
+        //noinspection HighAppVersionCode
+        versionCode 2020042001
         versionName "2020.04.20"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
@@ -42,6 +43,7 @@ android {
             //minifyEnabled = true
             //proguardFiles.add(file('proguard-rules.pro'))
             buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
+            buildConfigField "boolean", "FDROID_RELEASE", "false"
             buildConfigField "String", "HOSTS_FILE_URI", "\"http://www.netguard.me/hosts\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
         }
@@ -49,6 +51,15 @@ android {
             //minifyEnabled = true
             //proguardFiles.add(file('proguard-rules.pro'))
             buildConfigField "boolean", "PLAY_STORE_RELEASE", "true"
+            buildConfigField "boolean", "FDROID_RELEASE", "false"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"\""
+        }
+        play {
+            //minifyEnabled = true
+            //proguardFiles.add(file('proguard-rules.pro'))
+            buildConfigField "boolean", "PLAY_STORE_RELEASE", "true"
+            buildConfigField "boolean", "FDROID_RELEASE", "true"
             buildConfigField "String", "HOSTS_FILE_URI", "\"\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"\""
         }
@@ -56,6 +67,7 @@ android {
             //minifyEnabled = true
             //proguardFiles.add(file('proguard-rules.pro'))
             buildConfigField "boolean", "PLAY_STORE_RELEASE", "false"
+            buildConfigField "boolean", "FDROID_RELEASE", "false"
             buildConfigField "String", "HOSTS_FILE_URI", "\"http://www.netguard.me/hosts\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
         }
