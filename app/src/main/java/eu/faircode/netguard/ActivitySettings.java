@@ -293,7 +293,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
 
-        if (BuildConfig.FDROID_RELEASE) {
+        if (Util.isFDroidInstall()) {
             Log.i(TAG, "F-Droid install");
             cat_options.removePreference(screen.findPreference("update_check"));
         }
@@ -410,7 +410,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Custom code
         cat_options.removePreference(screen.findPreference("theme"));
-        cat_options.removePreference(screen.findPreference("dark_theme"));
+        //cat_options.removePreference(screen.findPreference("dark_theme"));
         cat_options.removePreference(screen.findPreference("install"));
         cat_options.removePreference(screen.findPreference("auto_enable"));
         cat_options.removePreference(screen.findPreference("screen_delay"));

@@ -70,7 +70,7 @@
 
     <string name="setting_options">Options</string>
     <string name="setting_theme">Theme: %1$s</string>
-    <string name="setting_dark">Use dark theme</string>
+    <string name="setting_dark">Dark theme (in development)</string>
     <string name="setting_install">Notify on new install</string>
     <string name="setting_screen_on">Apply \'when screen on\' rules</string>
     <string name="setting_auto">Auto enable after %1$s minutes</string>

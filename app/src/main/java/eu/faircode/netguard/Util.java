@@ -426,8 +426,12 @@ public class Util {
         return ((context.getApplicationContext().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
     }
 
+    public static boolean isFDroidInstall() {
+        return BuildConfig.FLAVOR.equals("fdroid");
+    }
+
     public static boolean isPlayStoreInstall(Context context) {
-        if (BuildConfig.PLAY_STORE_RELEASE)
+        if (BuildConfig.FLAVOR.equals("play"))
             return true;
         try {
             return "com.android.vending".equals(context.getPackageManager().getInstallerPackageName(context.getPackageName()));
