@@ -20,7 +20,6 @@ package net.kollnig.missioncontrol.details;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,7 @@ import net.kollnig.missioncontrol.data.PlayStore;
 
 import eu.faircode.netguard.Util;
 
+import static net.kollnig.missioncontrol.Common.emailIntent;
 import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTrackersPosition;
 
 /**
@@ -163,22 +163,6 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void sendEmail(@Nullable String email, String subject, String body) {
-        Log.d(TAG, "Email: " + email + " Subject: " + subject);
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("message/rfc822");
-        if (email != null) {
-            i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
-        }
-        i.putExtra(Intent.EXTRA_SUBJECT, subject);
-        i.putExtra(Intent.EXTRA_TEXT, body);
-        try {
-            startActivity(Intent.createChooser(i, "Send email via..."));
-        } catch (android.content.ActivityNotFoundException ex) {
-            Snackbar.make(getView(), R.string.no_mail_service, Snackbar.LENGTH_LONG).show();
-        }
-    }
-
     private void contactDeveloper(View v, String mail) {
         String subject = null, body = null;
         if (v.getId() == R.id.btnReqData) {
@@ -192,5 +176,14 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         }
 
         sendEmail(mail, subject, body);
+    }
+
+    public void sendEmail(@Nullable String email, String subject, String body) {
+        Intent i  = emailIntent(email, subject, body);
+        try {
+            startActivity(Intent.createChooser(i, "Send email via..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Snackbar.make(getView(), R.string.no_mail_service, Snackbar.LENGTH_LONG).show();
+        }
     }
 }

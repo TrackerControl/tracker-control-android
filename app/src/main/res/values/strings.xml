@@ -30,7 +30,7 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_invite">Invite</string>
     <string name="menu_legend">Legend</string>
-    <string name="menu_support">Support</string>
+    <string name="menu_support">Write email</string>
     <string name="menu_about">About</string>
     <string name="menu_apps">Other apps</string>
 
@@ -439,40 +439,40 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
     <string name="subject_delete_data">GDPR Deletion Request</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:
-
-
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:
-
-• a copy of my personal data;
-• the purposes of the processing;
-• the categories of personal data concerned;
-• the recipients you disclose my personal data to and the safeguards you provide;
-• the retention period for storing my personal data or the criteria used for determining this period;
-• information about the source of my personal data; and
-• the existence of automated decision-making (including profiling), and if so:
-    - the logic involved in the decision-making process;
-    - the significance and the envisaged consequences for me;
-    - the steps you have taken to prevent errors, bias and discrimination; and
-    - explain how I can express my point of view and challenge a decision.
-
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.
-
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.
-
-Sincerely,]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:
-
-
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:
-• All data.
-
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.
-
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.
-
-Sincerely,]]></string>
+    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
+\n
+\n
+I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
+If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
+\n
+• a copy of my personal data;\n
+• the purposes of the processing;\n
+• the categories of personal data concerned;\n
+• the recipients you disclose my personal data to and the safeguards you provide;\n
+• the retention period for storing my personal data or the criteria used for determining this period;\n
+• information about the source of my personal data; and\n
+• the existence of automated decision-making (including profiling), and if so:\n
+    - the logic involved in the decision-making process;\n
+    - the significance and the envisaged consequences for me;\n
+    - the steps you have taken to prevent errors, bias and discrimination; and\n
+    - explain how I can express my point of view and challenge a decision.\n
+\n
+This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+\n
+Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+\n
+Sincerely,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
+\n
+\n
+I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
+• All data.\n
+\n
+The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+\n
+Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+\n
+Sincerely,\n\n]]></string>
     <string name="packet_statistics">Data flows</string>
     <string name="no_trackers">No trackers observed. Only trackers that were observed to collect your data are shown.\n\nTry using the app and check again..</string>
 
@@ -483,7 +483,7 @@ Sincerely,]]></string>
     <string name="instructions_monitoring">Toggle the switch and interact with some other apps.</string>
 
     <string name="afterboot_notification">Restart notification</string>
-    <string name="disclaimer">Shown information may be incomplete or incorrect.\n\nIf the app stops to work, disable blocking.</string>
+    <string name="disclaimer">Shown information may be incomplete or incorrect.\n\nIf an app stops to work, disable blocking.</string>
 
     <string name="device_not_supported_title">Device not supported</string>
     <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>

@@ -78,8 +78,7 @@
         android:visible="false"/>
     <item
         android:id="@+id/menu_support"
-        android:title="@string/menu_support"
-        android:visible="false" />
+        android:title="@string/menu_support" />
     <item
         android:id="@+id/menu_about"
         android:title="@string/menu_about"/>

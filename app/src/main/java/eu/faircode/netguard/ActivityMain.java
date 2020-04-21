@@ -68,6 +68,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 
 import java.util.List;
@@ -1194,9 +1195,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     private static Intent getIntentSupport() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://github.com/M66B/NetGuard/blob/master/FAQ.md"));
-        return intent;
+        return Common.emailIntent("tc@kollnig.net", "About TrackerControl", "Hello,\n\n\n\nBest wishes,\n");
     }
 
     private Intent getIntentLogcat() {

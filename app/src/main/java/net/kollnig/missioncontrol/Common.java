@@ -71,6 +71,17 @@ public class Common {
         return isCallable(c, adSettings());
     }
 
+    public static Intent emailIntent(@Nullable String email, String subject, String body) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        if (email != null) {
+            i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        }
+        i.putExtra(Intent.EXTRA_SUBJECT, subject);
+        i.putExtra(Intent.EXTRA_TEXT, body);
+        return i;
+    }
+
     public static boolean isCallable(Context c, Intent intent) {
         List<ResolveInfo> list = c.getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
