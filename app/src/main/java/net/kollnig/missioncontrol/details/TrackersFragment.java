@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerCategory;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.List;
@@ -126,7 +126,7 @@ public class TrackersFragment extends Fragment {
     }
 
     private void updateTrackerList() {
-        new AsyncTask<Object, Object, List<Tracker>>() {
+        new AsyncTask<Object, Object, List<TrackerCategory>>() {
             private boolean refreshing = true;
 
             @Override
@@ -138,12 +138,12 @@ public class TrackersFragment extends Fragment {
             }
 
             @Override
-            protected List<Tracker> doInBackground(Object... arg) {
+            protected List<TrackerCategory> doInBackground(Object... arg) {
                 return trackerList.getAppTrackers(mAppUid);
             }
 
             @Override
-            protected void onPostExecute(List<Tracker> result) {
+            protected void onPostExecute(List<TrackerCategory> result) {
                 if (running) {
                     if (adapter != null) {
                         adapter.set(result);

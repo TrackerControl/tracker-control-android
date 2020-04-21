@@ -126,8 +126,8 @@ public class TrackerList {
      *
      * @return A list of seen trackers
      */
-    public synchronized List<Tracker> getAppTrackers(int uid) {
-        Map<String, Tracker> categoryToCompany = new ArrayMap<>();
+    public synchronized List<TrackerCategory> getAppTrackers(int uid) {
+        Map<String, TrackerCategory> categoryToTracker = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts(uid);
 
@@ -144,10 +144,10 @@ public class TrackerList {
                 if (category == null || category.equals("null"))
                     category = name;
 
-                Tracker categoryCompany = categoryToCompany.get(category);
+                TrackerCategory categoryCompany = categoryToTracker.get(category);
                 if (categoryCompany == null) {
-                    categoryCompany = new Tracker(category);
-                    categoryToCompany.put(category, categoryCompany);
+                    categoryCompany = new TrackerCategory(category);
+                    categoryToTracker.put(category, categoryCompany);
                 }
 
                 // avoid children duplicates
@@ -157,8 +157,7 @@ public class TrackerList {
                         continue outer;
                 }
 
-                Tracker child = new Tracker(name);
-                child.category = category;
+                Tracker child = new Tracker(name, category);
                 categoryCompany.getChildren().add(child);
             } while (cursor.moveToNext());
         }
@@ -166,11 +165,11 @@ public class TrackerList {
         cursor.close();
 
         // map to list
-        List<Tracker> trackerList = new ArrayList<>(categoryToCompany.values());
+        List<TrackerCategory> trackerList = new ArrayList<>(categoryToTracker.values());
 
         // sort lists
         Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
-        for (Tracker child : trackerList) {
+        for (TrackerCategory child : trackerList) {
             Collections.sort(child.getChildren(), (o1, o2) -> o1.name.compareTo(o2.name));
         }
 

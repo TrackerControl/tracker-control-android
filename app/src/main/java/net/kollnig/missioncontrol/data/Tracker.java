@@ -17,17 +17,17 @@
 
 package net.kollnig.missioncontrol.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.annotation.NonNull;
 
 public class Tracker {
     public String name;
     public String category;
-    public List<Tracker> children;
     public Boolean necessary;
 
-    public Tracker(String name) {
+    public Tracker(String name, String category) {
         this.name = name;
+        this.category = category;
+        this.necessary = false;
     }
 
     public Tracker(String name, String category, Boolean necessary) {
@@ -37,6 +37,7 @@ public class Tracker {
     }
 
     @Override
+    @NonNull
     public String toString() {
         if (TrackerList.necessaryTrackers.contains(name))
             return name + " (Unblocked)";
@@ -53,14 +54,5 @@ public class Tracker {
     public String getRoot() {
         if (getCategory() != null) return getCategory();
         return name;
-    }
-
-    public List<Tracker> getChildren() {
-        if (this.children == null) {
-            this.children = new ArrayList<>();
-            return this.children;
-        } else {
-            return this.children;
-        }
     }
 }

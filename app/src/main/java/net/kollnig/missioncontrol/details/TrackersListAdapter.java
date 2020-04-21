@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerCategory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final String TAG = TrackersListAdapter.class.getSimpleName();
     private final RecyclerView recyclerView;
     private final String mAppId;
-    private List<Tracker> mValues = new ArrayList<>();
+    private List<TrackerCategory> mValues = new ArrayList<>();
     private Context mContext;
 
     public TrackersListAdapter(Context c,
@@ -61,7 +62,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
-    public void set(List<Tracker> items) {
+    public void set(List<TrackerCategory> items) {
         mValues = items;
         notifyDataSetChanged();
     }
@@ -87,7 +88,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             VHItem holder = (VHItem) _holder;
 
             // Load data item
-            final Tracker tracker = getItem(position);
+            final TrackerCategory tracker = getItem(position);
             holder.mTracker = tracker;
 
             // Add data to view
@@ -141,7 +142,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return position == 0;
     }
 
-    private Tracker getItem(int position) {
+    private TrackerCategory getItem(int position) {
         return mValues.get(position - 1);
     }
 
@@ -151,7 +152,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mTrackerName;
         final TextView mTotalTrackers;
         final Switch mSwitch;
-        Tracker mTracker;
+        TrackerCategory mTracker;
 
         VHItem(View view) {
             super(view);
