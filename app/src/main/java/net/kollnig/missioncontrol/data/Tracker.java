@@ -21,46 +21,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tracker {
-	public String name;
-	public String category;
-	public List<Tracker> children;
-	public Boolean necessary;
+    public String name;
+    public String category;
+    public List<Tracker> children;
+    public Boolean necessary;
 
-	public Tracker(String name) {
-		this.name = name;
-	}
+    public Tracker(String name) {
+        this.name = name;
+    }
 
-	public Tracker(String name, String category, Boolean necessary) {
-		this.name = name;
-		this.category = category;
-		this.necessary = necessary;
-	}
+    public Tracker(String name, String category, Boolean necessary) {
+        this.name = name;
+        this.category = category;
+        this.necessary = necessary;
+    }
 
-	@Override
-	public String toString () {
-		if (TrackerList.necessaryTrackers.contains(name))
-			return name + " (Unblocked)";
-		else {
-			return name;
-		}
-	}
+    @Override
+    public String toString() {
+        if (TrackerList.necessaryTrackers.contains(name))
+            return name + " (Unblocked)";
+        else {
+            return name;
+        }
+    }
 
-	public String getCategory() {
-		if (category == null || category.equals("null")) return null;
-		return category;
-	}
+    public String getCategory() {
+        if (category == null || category.equals("null")) return null;
+        return category;
+    }
 
-	public String getRoot () {
-		if (getCategory() != null) return getCategory();
-		return name;
-	}
+    public String getRoot() {
+        if (getCategory() != null) return getCategory();
+        return name;
+    }
 
-	public List<Tracker> getChildren() {
-		if (this.children == null) {
-			this.children = new ArrayList<>();
-			return this.children;
-		} else {
-			return this.children;
-		}
-	}
+    public List<Tracker> getChildren() {
+        if (this.children == null) {
+            this.children = new ArrayList<>();
+            return this.children;
+        } else {
+            return this.children;
+        }
+    }
 }

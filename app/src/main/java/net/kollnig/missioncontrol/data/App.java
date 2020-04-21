@@ -20,13 +20,13 @@ package net.kollnig.missioncontrol.data;
 import android.graphics.drawable.Drawable;
 
 public class App implements Comparable<App> {
-	public String name;
-	public String id;
-	public Boolean systemApp;
-	public Integer trackerCount = 0;
-	public Drawable icon;
+    public String name;
+    public String id;
+    public Boolean systemApp;
+    public Integer trackerCount = 0;
+    public Drawable icon;
 
-	public int compareTo (App o) {
-		return o.trackerCount.compareTo(trackerCount);
-	}
+    public int compareTo(App o) {
+        return o.trackerCount.compareTo(trackerCount);
+    }
 }

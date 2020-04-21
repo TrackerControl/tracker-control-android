@@ -42,135 +42,134 @@ import java.util.List;
  * A fragment representing a list of Items.
  */
 public class TrackersFragment extends Fragment {
-	private final String TAG = TrackersFragment.class.getSimpleName();
+    private static final String ARG_APP_ID = "app-id";
+    private static final String ARG_APP_UID = "app-uid";
+    private final String TAG = TrackersFragment.class.getSimpleName();
+    private TrackerList trackerList;
+    private String mAppId;
+    private int mAppUid;
 
-	private static final String ARG_APP_ID = "app-id";
-	private static final String ARG_APP_UID = "app-uid";
-	private TrackerList trackerList;
-	private String mAppId;
-	private int mAppUid;
+    private SwipeRefreshLayout swipeRefresh;
+    private TrackersListAdapter adapter;
 
-	private SwipeRefreshLayout swipeRefresh;
-	private TrackersListAdapter adapter;
+    private RecyclerView recyclerView;
+    private View emptyView;
+    private Button btnLaunch;
 
-	private RecyclerView recyclerView;
-	private View emptyView;
-	private Button btnLaunch;
+    private boolean running = false;
 
-	private boolean running = false;
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public TrackersFragment() {
+    }
 
-	/**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
-	public TrackersFragment () {
-	}
+    public static TrackersFragment newInstance(String appId, int uid) {
+        TrackersFragment fragment = new TrackersFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_APP_ID, appId);
+        args.putInt(ARG_APP_UID, uid);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-	public static TrackersFragment newInstance (String appId, int uid) {
-		TrackersFragment fragment = new TrackersFragment();
-		Bundle args = new Bundle();
-		args.putString(ARG_APP_ID, appId);
-		args.putInt(ARG_APP_UID, uid);
-		fragment.setArguments(args);
-		return fragment;
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        mAppId = bundle.getString(ARG_APP_ID);
+        mAppUid = bundle.getInt(ARG_APP_UID);
+    }
 
-	@Override
-	public void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Bundle bundle = getArguments();
-		mAppId = bundle.getString(ARG_APP_ID);
-		mAppUid = bundle.getInt(ARG_APP_UID);
-	}
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_trackers, container, false);
 
-	@Override
-	public View onCreateView (LayoutInflater inflater, ViewGroup container,
-	                          Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_trackers, container, false);
+        running = true;
 
-		running = true;
+        Context context = v.getContext();
+        trackerList = TrackerList.getInstance(context);
+        recyclerView = v.findViewById(R.id.transmissions_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        adapter = new TrackersListAdapter(getContext(), recyclerView, mAppId);
+        recyclerView.setAdapter(adapter);
 
-		Context context = v.getContext();
-		trackerList = TrackerList.getInstance(context);
-		recyclerView = v.findViewById(R.id.transmissions_list);
-		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-		adapter = new TrackersListAdapter(getContext(), recyclerView, mAppId);
-		recyclerView.setAdapter(adapter);
+        swipeRefresh = v.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setOnRefreshListener(this::updateTrackerList);
 
-		swipeRefresh = v.findViewById(R.id.swipeRefresh);
-		swipeRefresh.setOnRefreshListener(this::updateTrackerList);
+        emptyView = v.findViewById(R.id.empty);
+        btnLaunch = v.findViewById(R.id.btnLaunch);
+        Context c = getContext();
+        if (c != null) {
+            Intent intent = c.getPackageManager().getLaunchIntentForPackage(mAppId);
 
-		emptyView = v.findViewById(R.id.empty);
-		btnLaunch = v.findViewById(R.id.btnLaunch);
-		Context c = getContext();
-		if (c != null) {
-			Intent intent = c.getPackageManager().getLaunchIntentForPackage(mAppId);
+            final Intent launch = (intent == null ||
+                    intent.resolveActivity(c.getPackageManager()) == null ? null : intent);
 
-			final Intent launch = (intent == null ||
-					intent.resolveActivity(c.getPackageManager()) == null ? null : intent);
+            if (launch == null) {
+                btnLaunch.setVisibility(View.GONE);
+            } else {
+                btnLaunch.setOnClickListener(view -> c.startActivity(launch));
+            }
+        }
 
-			if (launch == null) {
-				btnLaunch.setVisibility(View.GONE);
-			} else {
-				btnLaunch.setOnClickListener(view -> c.startActivity(launch));
-			}
-		}
+        return v;
+    }
 
-		return v;
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
 
-	@Override
-	public void onResume() {
-		super.onResume();
+        updateTrackerList();
+    }
 
-		updateTrackerList();
-	}
+    private void updateTrackerList() {
+        new AsyncTask<Object, Object, List<Tracker>>() {
+            private boolean refreshing = true;
 
-	private void updateTrackerList() {
-		new AsyncTask<Object, Object, List<Tracker>>() {
-			private boolean refreshing = true;
+            @Override
+            protected void onPreExecute() {
+                swipeRefresh.post(() -> {
+                    if (refreshing)
+                        swipeRefresh.setRefreshing(true);
+                });
+            }
 
-			@Override
-			protected void onPreExecute() {
-				swipeRefresh.post(() -> {
-					if (refreshing)
-						swipeRefresh.setRefreshing(true);
-				});
-			}
+            @Override
+            protected List<Tracker> doInBackground(Object... arg) {
+                return trackerList.getAppTrackers(mAppUid);
+            }
 
-			@Override
-			protected List<Tracker> doInBackground(Object... arg) {
-				return trackerList.getAppTrackers(mAppUid);
-			}
+            @Override
+            protected void onPostExecute(List<Tracker> result) {
+                if (running) {
+                    if (adapter != null) {
+                        adapter.set(result);
 
-			@Override
-			protected void onPostExecute(List<Tracker> result) {
-				if (running) {
-					if (adapter != null) {
-						adapter.set(result);
+                        if (result.size() == 0) {
+                            emptyView.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        } else {
+                            emptyView.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                        }
+                    }
 
-						if (result.size() == 0) {
-							emptyView.setVisibility(View.VISIBLE);
-							recyclerView.setVisibility(View.GONE);
-						} else {
-							emptyView.setVisibility(View.GONE);
-							recyclerView.setVisibility(View.VISIBLE);
-						}
-					}
+                    if (swipeRefresh != null) {
+                        refreshing = false;
+                        swipeRefresh.setRefreshing(false);
+                    }
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 
-					if (swipeRefresh != null) {
-						refreshing = false;
-						swipeRefresh.setRefreshing(false);
-					}
-				}
-			}
-		}.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-	}
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-
-		running = false;
-	}
+        running = false;
+    }
 }

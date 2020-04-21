@@ -58,214 +58,214 @@ import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKL
 import static net.kollnig.missioncontrol.data.AppBlocklistController.SHARED_PREFS_BLOCKLIST_APPS_KEY;
 
 public class DetailsActivity extends AppCompatActivity {
-	public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
-	public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
-	public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
+    public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
+    public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
+    public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
 
-	public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-	public static PlayStore.AppInfo app = null;
-	private final String TAG = DetailsActivity.class.getSimpleName();
-	File exportDir = new File(
-			Environment.getExternalStorageDirectory(), "trackercontrol");
-	private Integer appUid;
-	private String appPackageName;
-	private String appName;
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    public static PlayStore.AppInfo app = null;
+    private final String TAG = DetailsActivity.class.getSimpleName();
+    File exportDir = new File(
+            Environment.getExternalStorageDirectory(), "trackercontrol");
+    private Integer appUid;
+    private String appPackageName;
+    private String appName;
 
-	public static void savePrefs (Context c) {
-		// Save currently Selected Apps to Shared Prefs
-		AppBlocklistController controller = AppBlocklistController.getInstance(c);
-		Set<String> appSet = controller.getBlocklist();
-		String prefKey = SHARED_PREFS_BLOCKLIST_APPS_KEY;
-		SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.clear();
-		editor.putStringSet(prefKey, appSet);
-		for (String id : appSet) {
-			Set<String> subset = controller.getSubset(id);
-			editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, subset);
-		}
-		editor.apply();
-	}
+    public static void savePrefs(Context c) {
+        // Save currently Selected Apps to Shared Prefs
+        AppBlocklistController controller = AppBlocklistController.getInstance(c);
+        Set<String> appSet = controller.getBlocklist();
+        String prefKey = SHARED_PREFS_BLOCKLIST_APPS_KEY;
+        SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.putStringSet(prefKey, appSet);
+        for (String id : appSet) {
+            Set<String> subset = controller.getSubset(id);
+            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, subset);
+        }
+        editor.apply();
+    }
 
-	@Override
-	protected void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_details);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_details);
 
-		// Receive about details
-		Intent intent = getIntent();
-		appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
-		appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
-		appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
+        // Receive about details
+        Intent intent = getIntent();
+        appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
+        appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
+        appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
-		// Set up paging
-		DetailsPagesAdapter detailsPagesAdapter =
-				new DetailsPagesAdapter(this,
-						getSupportFragmentManager(),
-						Common.getAppName(getPackageManager(), appUid),
-						appName,
-						appUid);
-		ViewPager viewPager = findViewById(R.id.view_pager);
-		viewPager.setAdapter(detailsPagesAdapter);
-		TabLayout tabs = findViewById(R.id.tabs);
-		tabs.setupWithViewPager(viewPager);
+        // Set up paging
+        DetailsPagesAdapter detailsPagesAdapter =
+                new DetailsPagesAdapter(this,
+                        getSupportFragmentManager(),
+                        Common.getAppName(getPackageManager(), appUid),
+                        appName,
+                        appUid);
+        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setAdapter(detailsPagesAdapter);
+        TabLayout tabs = findViewById(R.id.tabs);
+        tabs.setupWithViewPager(viewPager);
 
-		// set toolbar and back arrow
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // set toolbar and back arrow
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// Set title
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		toolbar.setTitle(getString(R.string.app_info));
-		toolbar.setSubtitle(appName);
-	}
+        // Set title
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.setTitle(getString(R.string.app_info));
+        toolbar.setSubtitle(appName);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu (Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_details, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_details, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected (MenuItem item) {
-		int itemId = item.getItemId();// Respond to the action bar's Up/Home button
-		if (itemId == android.R.id.home) {
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		} else if (itemId == R.id.action_export_csv) {
-			if (hasPermissions()) {
-				exportCsv();
-			}
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();// Respond to the action bar's Up/Home button
+        if (itemId == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        } else if (itemId == R.id.action_export_csv) {
+            if (hasPermissions()) {
+                exportCsv();
+            }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	@Override
-	public void onPause () {
-		super.onPause();
-		savePrefs(this);
-	}
+    @Override
+    public void onPause() {
+        super.onPause();
+        savePrefs(this);
+    }
 
-	public boolean hasPermissions () {
-		if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-				== PackageManager.PERMISSION_GRANTED)
-			return true;
+    public boolean hasPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED)
+            return true;
 
-		ActivityCompat.requestPermissions(this,
-				new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-				MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-		return false;
-	}
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        return false;
+    }
 
-	public void exportCsv () {
-		if (!exportDir.exists()) {
-			try {
-				if (!exportDir.mkdir())
-					Toast.makeText(this, R.string.export_failed, Toast.LENGTH_SHORT).show();
-				return;
-			} catch (SecurityException ecp) {
-				Toast.makeText(this, R.string.export_failed, Toast.LENGTH_SHORT).show();
-				return;
-			}
-		}
+    public void exportCsv() {
+        if (!exportDir.exists()) {
+            try {
+                if (!exportDir.mkdir())
+                    Toast.makeText(this, R.string.export_failed, Toast.LENGTH_SHORT).show();
+                return;
+            } catch (SecurityException ecp) {
+                Toast.makeText(this, R.string.export_failed, Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
 
-		new ExportDatabaseCSVTask().execute();
-	}
+        new ExportDatabaseCSVTask().execute();
+    }
 
-	@Override
-	public void onRequestPermissionsResult (int requestCode,
-	                                        String[] permissions, int[] grantResults) {
-		if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {// If request is cancelled, the result arrays are empty.
-			if (grantResults.length > 0
-					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-				exportCsv();
-			} else {
-				Toast.makeText(this, "Access to files required..", Toast.LENGTH_SHORT).show();
-			}
-		}
-	}
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {// If request is cancelled, the result arrays are empty.
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportCsv();
+            } else {
+                Toast.makeText(this, "Access to files required..", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
-	private void shareExport () {
-		String fileName = appPackageName + ".csv";
-		File sharingFile = new File(exportDir, fileName);
-		Uri uri = FileProvider.getUriForFile(DetailsActivity.this,
-				getApplicationContext().getPackageName() + ".fileprovider",
-				sharingFile);
+    private void shareExport() {
+        String fileName = appPackageName + ".csv";
+        File sharingFile = new File(exportDir, fileName);
+        Uri uri = FileProvider.getUriForFile(DetailsActivity.this,
+                getApplicationContext().getPackageName() + ".fileprovider",
+                sharingFile);
 
-		Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-		shareIntent.setType("application/csv");
-		shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-		shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		startActivity(Intent.createChooser(shareIntent, "Share CSV"));
-	}
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("application/csv");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(shareIntent, "Share CSV"));
+    }
 
-	class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
-		private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
-		TrackerList trackerList;
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        app = null;
+    }
 
-		@Override
-		protected void onPreExecute () {
-			this.dialog.setMessage(getString(R.string.exporting));
-			this.dialog.show();
-			trackerList = TrackerList.getInstance(DetailsActivity.this);
-		}
+    class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
+        private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
+        TrackerList trackerList;
 
-		protected Boolean doInBackground (final String... args) {
-			if (exportDir == null) return false;
+        @Override
+        protected void onPreExecute() {
+            this.dialog.setMessage(getString(R.string.exporting));
+            this.dialog.show();
+            trackerList = TrackerList.getInstance(DetailsActivity.this);
+        }
 
-			File file = new File(exportDir, appPackageName + ".csv");
-			try {
-				file.createNewFile();
-				CSVWriter csv = new CSVWriter(new FileWriter(file),
-						CSVWriter.DEFAULT_SEPARATOR,
-						CSVWriter.DEFAULT_QUOTE_CHARACTER,
-						CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-						CSVWriter.RFC4180_LINE_END);
+        protected Boolean doInBackground(final String... args) {
+            if (exportDir == null) return false;
 
-				Cursor data = trackerList.getAppInfo(Common.getAppName(getPackageManager(), appUid));
-				if (data == null) return false;
+            File file = new File(exportDir, appPackageName + ".csv");
+            try {
+                file.createNewFile();
+                CSVWriter csv = new CSVWriter(new FileWriter(file),
+                        CSVWriter.DEFAULT_SEPARATOR,
+                        CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                        CSVWriter.RFC4180_LINE_END);
 
-				csv.writeNext(data.getColumnNames());
-				while (data.moveToNext()) {
-					String[] row = new String[data.getColumnNames().length];
-					for (int i = 0; i < data.getColumnNames().length; i++) {
-						row[i] = data.getString(i);
-					}
-					csv.writeNext(row);
-				}
-				csv.close();
-				data.close();
-			} catch (IOException e) {
-				return false;
-			}
+                Cursor data = trackerList.getAppInfo(Common.getAppName(getPackageManager(), appUid));
+                if (data == null) return false;
 
-			return true;
-		}
+                csv.writeNext(data.getColumnNames());
+                while (data.moveToNext()) {
+                    String[] row = new String[data.getColumnNames().length];
+                    for (int i = 0; i < data.getColumnNames().length; i++) {
+                        row[i] = data.getString(i);
+                    }
+                    csv.writeNext(row);
+                }
+                csv.close();
+                data.close();
+            } catch (IOException e) {
+                return false;
+            }
 
-		protected void onPostExecute (final Boolean success) {
-			if (this.dialog.isShowing()) {
-				this.dialog.dismiss();
-			}
+            return true;
+        }
 
-			if (!success) {
-				Toast.makeText(DetailsActivity.this, R.string.export_failed, Toast.LENGTH_SHORT).show();
-				return;
-			}
+        protected void onPostExecute(final Boolean success) {
+            if (this.dialog.isShowing()) {
+                this.dialog.dismiss();
+            }
 
-			// Export successful, ask user to further share file!
-			View v = findViewById(R.id.view_pager);
-			Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
-			s.setAction(R.string.share_csv, v1 -> shareExport());
-			s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
-			s.show();
-		}
-	}
+            if (!success) {
+                Toast.makeText(DetailsActivity.this, R.string.export_failed, Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		app = null;
-	}
+            // Export successful, ask user to further share file!
+            View v = findViewById(R.id.view_pager);
+            Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
+            s.setAction(R.string.share_csv, v1 -> shareExport());
+            s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
+            s.show();
+        }
+    }
 }

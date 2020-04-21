@@ -34,77 +34,77 @@ import java.net.URL;
 import java.util.List;
 
 public class Common {
-	@Nullable
-	public static String fetch (String url) {
-		try {
-			StringBuilder html = new StringBuilder();
+    @Nullable
+    public static String fetch(String url) {
+        try {
+            StringBuilder html = new StringBuilder();
 
-			HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
-			conn.setConnectTimeout(5000);
-			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
+            conn.setConnectTimeout(5000);
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-			String str;
-			while ((str = in.readLine()) != null)
-				html.append(str);
+            String str;
+            while ((str = in.readLine()) != null)
+                html.append(str);
 
-			in.close();
+            in.close();
 
-			return html.toString();
-		} catch (IOException e) {
-			return null;
-		}
-	}
+            return html.toString();
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-	public static Intent adSettings () {
-		Intent intent = new Intent();
-		return intent.setComponent(new ComponentName("com.google.android.gms", "com.google.android.gms.ads.settings.AdsSettingsActivity"));
-	}
+    public static Intent adSettings() {
+        Intent intent = new Intent();
+        return intent.setComponent(new ComponentName("com.google.android.gms", "com.google.android.gms.ads.settings.AdsSettingsActivity"));
+    }
 
-	public static Intent browse (String url) {
-		if (!url.startsWith("http://") && !url.startsWith("https://"))
-			url = "http://" + url;
+    public static Intent browse(String url) {
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://" + url;
 
-		return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-	}
+        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    }
 
-	public static boolean hasAdSettings (Context c) {
-		return isCallable(c, adSettings());
-	}
+    public static boolean hasAdSettings(Context c) {
+        return isCallable(c, adSettings());
+    }
 
-	public static boolean isCallable (Context c, Intent intent) {
-		List<ResolveInfo> list = c.getPackageManager().queryIntentActivities(intent,
-				PackageManager.MATCH_DEFAULT_ONLY);
-		return list.size() > 0;
-	}
+    public static boolean isCallable(Context c, Intent intent) {
+        List<ResolveInfo> list = c.getPackageManager().queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
+    }
 
-	/**
-	 * Retrieves the name of the app based on the given uid
-	 *
-	 * @param uid - of the app
-	 * @return the name of the package of the app with the given uid, or "Unknown" if
-	 * no name could be found for the uid.
-	 */
-	public static String getAppName (PackageManager pm, int uid) {
-		/* IMPORTANT NOTE:
-		 * From https://source.android.com/devices/tech/security/ : "The Android
-		 * system assigns a unique user ID (UID) to each Android application and
-		 * runs it as that user in a separate process"
-		 *
-		 * However, there is an exception: "A closer relationship with a shared
-		 * Application Sandbox is allowed via the shared UID feature where two
-		 * or more applications signed with same developer key can declare a
-		 * shared UID in their manifest."
-		 */
+    /**
+     * Retrieves the name of the app based on the given uid
+     *
+     * @param uid - of the app
+     * @return the name of the package of the app with the given uid, or "Unknown" if
+     * no name could be found for the uid.
+     */
+    public static String getAppName(PackageManager pm, int uid) {
+        /* IMPORTANT NOTE:
+         * From https://source.android.com/devices/tech/security/ : "The Android
+         * system assigns a unique user ID (UID) to each Android application and
+         * runs it as that user in a separate process"
+         *
+         * However, there is an exception: "A closer relationship with a shared
+         * Application Sandbox is allowed via the shared UID feature where two
+         * or more applications signed with same developer key can declare a
+         * shared UID in their manifest."
+         */
 
-		// See if this is root
-		if (uid == 0)
-			return "System";
+        // See if this is root
+        if (uid == 0)
+            return "System";
 
-		// If we can't find a running app, just get a list of packages that map to the uid
-		String[] packages = pm.getPackagesForUid(uid);
-		if (packages != null && packages.length > 0)
-			return packages[0];
+        // If we can't find a running app, just get a list of packages that map to the uid
+        String[] packages = pm.getPackagesForUid(uid);
+        if (packages != null && packages.length > 0)
+            return packages[0];
 
-		return "Unknown";
-	}
+        return "Unknown";
+    }
 }

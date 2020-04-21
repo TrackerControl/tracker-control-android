@@ -42,240 +42,242 @@ import java.util.Set;
 import eu.faircode.netguard.DatabaseHelper;
 
 public class TrackerList {
-	private static final String TAG = TrackerList.class.getSimpleName();
-	static Set<String> necessaryTrackers = new HashSet<>();
-	private static Map<String, Tracker> hostnameToTracker = new ArrayMap<>();
-	private static TrackerList instance;
-	private DatabaseHelper databaseHelper;
+    private static final String TAG = TrackerList.class.getSimpleName();
+    static Set<String> necessaryTrackers = new HashSet<>();
+    private static Map<String, Tracker> hostnameToTracker = new ArrayMap<>();
+    private static TrackerList instance;
+    private DatabaseHelper databaseHelper;
 
-	/**
-	 * Database constructor
-	 */
-	private TrackerList(Context c) {
-		databaseHelper = DatabaseHelper.getInstance(c);
-		loadXrayTrackerDomains(c);
-		loadTrackerDomains(c);
-	}
+    /**
+     * Database constructor
+     */
+    private TrackerList(Context c) {
+        databaseHelper = DatabaseHelper.getInstance(c);
+        loadXrayTrackerDomains(c);
+        loadTrackerDomains(c);
+    }
 
-	/**
-	 * Singleton getter.
-	 *
-	 * @param c context used to open the database
-	 * @return The current instance of PrivacyDB, if none, a new instance is created.
-	 * After calling this method, the database is open for writing.
-	 */
-	public static TrackerList getInstance (Context c) {
-		if (instance == null)
-			instance = new TrackerList(c);
+    /**
+     * Singleton getter.
+     *
+     * @param c context used to open the database
+     * @return The current instance of PrivacyDB, if none, a new instance is created.
+     * After calling this method, the database is open for writing.
+     */
+    public static TrackerList getInstance(Context c) {
+        if (instance == null)
+            instance = new TrackerList(c);
 
-		return instance;
-	}
+        return instance;
+    }
 
-	/**
-	 * Retrieves information for all apps
-	 *
-	 * @return A cursor pointing to the data. Caller must close the cursor.
-	 * Cursor should have app name and leak summation based on a sort type
-	 */
-	public synchronized Map<Integer, Integer> getTrackerCounts() {
-		Map<Integer, Set<Tracker>> trackers = new ArrayMap<>();
+    /**
+     * Retrieves information for all apps
+     *
+     * @return A cursor pointing to the data. Caller must close the cursor.
+     * Cursor should have app name and leak summation based on a sort type
+     */
+    public synchronized Map<Integer, Integer> getTrackerCounts() {
+        Map<Integer, Set<Tracker>> trackers = new ArrayMap<>();
 
-		Cursor cursor = databaseHelper.getHosts();
+        Cursor cursor = databaseHelper.getHosts();
 
-		if (cursor.moveToFirst()) {
-			do {
-				int uid = cursor.getInt(cursor.getColumnIndex("uid"));
-				Set<Tracker> observed = trackers.get(uid);
-				if (observed == null) {
-					observed = new HashSet<>();
-					trackers.put(uid, observed);
-				}
+        if (cursor.moveToFirst()) {
+            do {
+                int uid = cursor.getInt(cursor.getColumnIndex("uid"));
+                Set<Tracker> observed = trackers.get(uid);
+                if (observed == null) {
+                    observed = new HashSet<>();
+                    trackers.put(uid, observed);
+                }
 
-				// Add tracker
-				String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-				Tracker tracker = findTracker(hostname);
-				if (tracker != null)
-					observed.add(tracker);
-			} while (cursor.moveToNext());
-		}
-		cursor.close();
+                // Add tracker
+                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
+                Tracker tracker = findTracker(hostname);
+                if (tracker != null)
+                    observed.add(tracker);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
 
-		// Reduce to counts
-		Map<Integer, Integer> trackerCounts = new ArrayMap<>();
-		for (Map.Entry<Integer, Set<Tracker>> entry : trackers.entrySet()) {
-			trackerCounts.put(entry.getKey(), entry.getValue().size());
-		}
+        // Reduce to counts
+        Map<Integer, Integer> trackerCounts = new ArrayMap<>();
+        for (Map.Entry<Integer, Set<Tracker>> entry : trackers.entrySet()) {
+            trackerCounts.put(entry.getKey(), entry.getValue().size());
+        }
 
-		return trackerCounts;
-	}
+        return trackerCounts;
+    }
 
-	/**
-	 * Retrieve info for CSV export
-	 * @param appId The id of the app to be dumped
-	 * @return All found trackers
-	 */
-	public Cursor getAppInfo (String appId) {
-		//return getDatabase().rawQuery(
-		//		"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
-		return null;
-	}
+    /**
+     * Retrieve info for CSV export
+     *
+     * @param appId The id of the app to be dumped
+     * @return All found trackers
+     */
+    public Cursor getAppInfo(String appId) {
+        //return getDatabase().rawQuery(
+        //		"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
+        return null;
+    }
 
-	/**
-	 * Retrieves information about all seen trackers
-	 *
-	 * @return A list of seen trackers
-	 */
-	public synchronized List<Tracker> getAppTrackers(int uid) {
-		Map<String, Tracker> categoryToCompany = new ArrayMap<>();
+    /**
+     * Retrieves information about all seen trackers
+     *
+     * @return A list of seen trackers
+     */
+    public synchronized List<Tracker> getAppTrackers(int uid) {
+        Map<String, Tracker> categoryToCompany = new ArrayMap<>();
 
-		Cursor cursor = databaseHelper.getHosts(uid);
+        Cursor cursor = databaseHelper.getHosts(uid);
 
-		if (cursor.moveToFirst()) {
-			outer: do {
-				String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-				Tracker tracker = findTracker(hostname);
-				if (tracker == null)
-					continue;
+        if (cursor.moveToFirst()) {
+            outer:
+            do {
+                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
+                Tracker tracker = findTracker(hostname);
+                if (tracker == null)
+                    continue;
 
-				String category = tracker.category;
-				String name = tracker.name;
-				if (category == null || category.equals("null"))
-					category = name;
+                String category = tracker.category;
+                String name = tracker.name;
+                if (category == null || category.equals("null"))
+                    category = name;
 
-				Tracker categoryCompany = categoryToCompany.get(category);
-				if (categoryCompany == null) {
-					categoryCompany = new Tracker(category);
-					categoryToCompany.put(category, categoryCompany);
-				}
+                Tracker categoryCompany = categoryToCompany.get(category);
+                if (categoryCompany == null) {
+                    categoryCompany = new Tracker(category);
+                    categoryToCompany.put(category, categoryCompany);
+                }
 
-				// avoid children duplicates
-				for (Tracker child: categoryCompany.getChildren()) {
-					if (child.name != null
-							&& child.name.equals(name))
-						continue outer;
-				}
+                // avoid children duplicates
+                for (Tracker child : categoryCompany.getChildren()) {
+                    if (child.name != null
+                            && child.name.equals(name))
+                        continue outer;
+                }
 
-				Tracker child = new Tracker(name);
-				child.category = category;
-				categoryCompany.getChildren().add(child);
-			} while (cursor.moveToNext());
-		}
+                Tracker child = new Tracker(name);
+                child.category = category;
+                categoryCompany.getChildren().add(child);
+            } while (cursor.moveToNext());
+        }
 
-		cursor.close();
+        cursor.close();
 
-		// map to list
-		List<Tracker> trackerList = new ArrayList<>(categoryToCompany.values());
+        // map to list
+        List<Tracker> trackerList = new ArrayList<>(categoryToCompany.values());
 
-		// sort lists
-		Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
-		for (Tracker child: trackerList) {
-			Collections.sort(child.getChildren(), (o1, o2) -> o1.name.compareTo(o2.name));
-		}
+        // sort lists
+        Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
+        for (Tracker child : trackerList) {
+            Collections.sort(child.getChildren(), (o1, o2) -> o1.name.compareTo(o2.name));
+        }
 
-		return trackerList;
-	}
+        return trackerList;
+    }
 
-	public Tracker findTracker(String hostname) {
-		Tracker tracker = null;
+    public Tracker findTracker(String hostname) {
+        Tracker tracker = null;
 
-		if (hostnameToTracker.containsKey(hostname)) {
-			tracker = hostnameToTracker.get(hostname);
-		} else { // check subdomains
-			for (int i = 0; i < hostname.length(); i++){
-				if (hostname.charAt(i) == '.') {
-					tracker = hostnameToTracker.get(hostname.substring(i+1));
-					if (tracker != null)
-						break;
-				}
-			}
-		}
+        if (hostnameToTracker.containsKey(hostname)) {
+            tracker = hostnameToTracker.get(hostname);
+        } else { // check subdomains
+            for (int i = 0; i < hostname.length(); i++) {
+                if (hostname.charAt(i) == '.') {
+                    tracker = hostnameToTracker.get(hostname.substring(i + 1));
+                    if (tracker != null)
+                        break;
+                }
+            }
+        }
 
-		return tracker;
-	}
+        return tracker;
+    }
 
-	private void loadXrayTrackerDomains (Context context) {
-		Map<String, Tracker> companies = new HashMap<>();
+    private void loadXrayTrackerDomains(Context context) {
+        Map<String, Tracker> companies = new HashMap<>();
 
-		try {
-			// Read domain list
-			InputStream is = context.getAssets().open("companyDomains.json");
-			int size = is.available();
-			byte[] buffer = new byte[size];
-			is.read(buffer);
-			is.close();
-			String json = new String(buffer, StandardCharsets.UTF_8);
+        try {
+            // Read domain list
+            InputStream is = context.getAssets().open("companyDomains.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, StandardCharsets.UTF_8);
 
-			JSONArray jsonCompanies = new JSONArray(json);
-			for (int i = 0; i < jsonCompanies.length(); i++) {
-				JSONObject jsonCompany = jsonCompanies.getJSONObject(i);
+            JSONArray jsonCompanies = new JSONArray(json);
+            for (int i = 0; i < jsonCompanies.length(); i++) {
+                JSONObject jsonCompany = jsonCompanies.getJSONObject(i);
 
-				Tracker tracker;
-				String country = jsonCompany.getString("country");
-				String name = jsonCompany.getString("owner_name");
-				if (!jsonCompany.isNull("root_parent")) {
-					name = jsonCompany.getString("root_parent");
-				}
-				boolean necessary;
-				if (jsonCompany.has("necessary")) {
-					necessary = jsonCompany.getBoolean("necessary");
-					necessaryTrackers.add(name);
-				} else {
-					necessary = false;
-				}
+                Tracker tracker;
+                String country = jsonCompany.getString("country");
+                String name = jsonCompany.getString("owner_name");
+                if (!jsonCompany.isNull("root_parent")) {
+                    name = jsonCompany.getString("root_parent");
+                }
+                boolean necessary;
+                if (jsonCompany.has("necessary")) {
+                    necessary = jsonCompany.getBoolean("necessary");
+                    necessaryTrackers.add(name);
+                } else {
+                    necessary = false;
+                }
 
-				tracker = companies.get(name);
-				if (tracker == null) {
-					tracker = new Tracker(name, "Uncategorised", necessary);
-					companies.put(name, tracker);
-				}
+                tracker = companies.get(name);
+                if (tracker == null) {
+                    tracker = new Tracker(name, "Uncategorised", necessary);
+                    companies.put(name, tracker);
+                }
 
-				JSONArray domains = jsonCompany.getJSONArray("doms");
-				for (int j = 0; j < domains.length(); j++) {
-					hostnameToTracker.put(domains.getString(j), tracker);
-				}
-			}
-		} catch (IOException | JSONException e) {
-			Log.e(TAG, "Loading xray list failed.. ", e);
-		}
-	}
+                JSONArray domains = jsonCompany.getJSONArray("doms");
+                for (int j = 0; j < domains.length(); j++) {
+                    hostnameToTracker.put(domains.getString(j), tracker);
+                }
+            }
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "Loading xray list failed.. ", e);
+        }
+    }
 
-	private void loadTrackerDomains (Context context) {
-		try {
-			// Read domain list
-			InputStream is = context.getAssets().open("disconnect-blacklist.json");
-			int size = is.available();
-			byte[] buffer = new byte[size];
-			is.read(buffer);
-			is.close();
-			String json = new String(buffer, StandardCharsets.UTF_8);
+    private void loadTrackerDomains(Context context) {
+        try {
+            // Read domain list
+            InputStream is = context.getAssets().open("disconnect-blacklist.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, StandardCharsets.UTF_8);
 
-			JSONObject disconnect = new JSONObject(json);
-			JSONObject categories = (JSONObject) disconnect.get("categories");
-			for (Iterator<String> it = categories.keys(); it.hasNext(); ) {
-				String categoryName = it.next();
-				JSONArray category = (JSONArray) categories.get(categoryName);
-				for (int i = 0; i < category.length(); i++) {
-					JSONObject jsonTracker = category.getJSONObject(i);
-					String trackerName = jsonTracker.keys().next();
+            JSONObject disconnect = new JSONObject(json);
+            JSONObject categories = (JSONObject) disconnect.get("categories");
+            for (Iterator<String> it = categories.keys(); it.hasNext(); ) {
+                String categoryName = it.next();
+                JSONArray category = (JSONArray) categories.get(categoryName);
+                for (int i = 0; i < category.length(); i++) {
+                    JSONObject jsonTracker = category.getJSONObject(i);
+                    String trackerName = jsonTracker.keys().next();
 
-					Tracker tracker = new Tracker(trackerName, categoryName, false);
+                    Tracker tracker = new Tracker(trackerName, categoryName, false);
 
-					JSONObject trackerHomeUrls = (JSONObject) jsonTracker.get(trackerName);
-					for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext(); ) {
-						String trackerHomeUrl = iter.next();
-						if (!(trackerHomeUrls.get(trackerHomeUrl) instanceof  JSONArray))
-							continue; // some have further, non-array fields
+                    JSONObject trackerHomeUrls = (JSONObject) jsonTracker.get(trackerName);
+                    for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext(); ) {
+                        String trackerHomeUrl = iter.next();
+                        if (!(trackerHomeUrls.get(trackerHomeUrl) instanceof JSONArray))
+                            continue; // some have further, non-array fields
 
-						JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
+                        JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
 
-						for (int j = 0; j < urls.length(); j++) {
-							hostnameToTracker.put(urls.getString(j), tracker);
-						}
-					}
-				}
-			}
-		} catch (IOException | JSONException e) {
-			Log.e(TAG, "Loading disconnect list failed.. ", e);
-		}
-	}
+                        for (int j = 0; j < urls.length(); j++) {
+                            hostnameToTracker.put(urls.getString(j), tracker);
+                        }
+                    }
+                }
+            }
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "Loading disconnect list failed.. ", e);
+        }
+    }
 }
