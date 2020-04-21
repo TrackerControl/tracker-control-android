@@ -75,7 +75,9 @@ import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
+import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -1265,6 +1267,9 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Builder builder = new Builder();
         builder.setSession(getString(R.string.app_name));
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            builder.setMetered(Util.isMeteredNetwork(this));
+
         // VPN address
         String vpn4 = prefs.getString("vpn4", "10.1.10.1");
         Log.i(TAG, "Using VPN4=" + vpn4);
@@ -1665,8 +1670,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                             if (version == 6 && !(iname instanceof Inet6Address))
                                 continue;
 
-                            //if (dname != null)
-                            Log.i(TAG, "Set filter " + key + " " + daddr + "/" + dresource + "=" + block);
+                            if (dname != null)
+                                Log.i(TAG, "Set filter " + key + " " + daddr + "/" + dresource + "=" + block);
 
                             boolean exists = mapUidIPFilters.get(key).containsKey(iname);
                             if (!exists || !mapUidIPFilters.get(key).get(iname).isBlocked()) {
@@ -1676,7 +1681,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                                     Log.w(TAG, "Address conflict " + key + " " + daddr + "/" + dresource);
                             } else if (exists) {
                                 mapUidIPFilters.get(key).get(iname).updateExpires(time + ttl);
-                                Log.w(TAG, "Address updated " + key + " " + daddr + "/" + dresource);
+                                if (dname != null)
+                                    Log.w(TAG, "Address updated " + key + " " + daddr + "/" + dresource);
                             }
                         } else
                             Log.w(TAG, "Address not numeric " + name);

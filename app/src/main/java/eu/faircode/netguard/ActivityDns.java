@@ -35,6 +35,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.kollnig.missioncontrol.R;
+
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.IOException;

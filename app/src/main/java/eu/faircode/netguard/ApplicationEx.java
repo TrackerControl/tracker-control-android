@@ -28,6 +28,9 @@ import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
+import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.R;
+
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.AcraCore;
@@ -72,15 +75,15 @@ public class ApplicationEx extends Application {
     private void createNotificationChannels() {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel foreground = new NotificationChannel("foreground", getString(eu.faircode.netguard.R.string.channel_foreground), NotificationManager.IMPORTANCE_MIN);
+        NotificationChannel foreground = new NotificationChannel("foreground", getString(R.string.channel_foreground), NotificationManager.IMPORTANCE_MIN);
         foreground.setSound(null, Notification.AUDIO_ATTRIBUTES_DEFAULT);
         nm.createNotificationChannel(foreground);
 
-        NotificationChannel notify = new NotificationChannel("notify", getString(eu.faircode.netguard.R.string.channel_notify), NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel notify = new NotificationChannel("notify", getString(R.string.channel_notify), NotificationManager.IMPORTANCE_DEFAULT);
         notify.setSound(null, Notification.AUDIO_ATTRIBUTES_DEFAULT);
         nm.createNotificationChannel(notify);
 
-        NotificationChannel access = new NotificationChannel("access", getString(eu.faircode.netguard.R.string.channel_access), NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel access = new NotificationChannel("access", getString(R.string.channel_access), NotificationManager.IMPORTANCE_DEFAULT);
         access.setSound(null, Notification.AUDIO_ATTRIBUTES_DEFAULT);
         nm.createNotificationChannel(access);
     }

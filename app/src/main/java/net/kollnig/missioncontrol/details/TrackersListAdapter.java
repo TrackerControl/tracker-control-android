@@ -28,13 +28,13 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Tracker;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.faircode.netguard.R;
 import eu.faircode.netguard.Util;
 
 /**

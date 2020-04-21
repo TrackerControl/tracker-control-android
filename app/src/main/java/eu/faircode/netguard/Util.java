@@ -60,6 +60,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.net.ConnectivityManagerCompat;
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.R;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

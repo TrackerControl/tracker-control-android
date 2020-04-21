@@ -28,7 +28,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import net.kollnig.missioncontrol.details.ActionsFragment;
 import net.kollnig.missioncontrol.details.TrackersFragment;
 
-import eu.faircode.netguard.R;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to

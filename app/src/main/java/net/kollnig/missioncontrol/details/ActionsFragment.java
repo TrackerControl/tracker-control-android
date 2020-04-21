@@ -34,9 +34,9 @@ import com.google.android.material.tabs.TabLayout;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
+import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.PlayStore;
 
-import eu.faircode.netguard.R;
 import eu.faircode.netguard.Util;
 
 import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTrackersPosition;

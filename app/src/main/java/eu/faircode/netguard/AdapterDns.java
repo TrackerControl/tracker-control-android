@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

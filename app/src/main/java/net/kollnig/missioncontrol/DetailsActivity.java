@@ -54,8 +54,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Set;
 
-import eu.faircode.netguard.R;
-
 import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
 import static net.kollnig.missioncontrol.data.AppBlocklistController.SHARED_PREFS_BLOCKLIST_APPS_KEY;
 

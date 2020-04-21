@@ -65,6 +65,9 @@ import androidx.core.util.PatternsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.R;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

@@ -49,6 +49,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.NavUtils;
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.R;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

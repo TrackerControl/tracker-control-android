@@ -34,6 +34,8 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.R;
+
 import java.util.Date;
 
 @TargetApi(Build.VERSION_CODES.N)

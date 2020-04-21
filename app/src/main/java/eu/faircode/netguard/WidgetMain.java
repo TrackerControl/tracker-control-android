@@ -31,6 +31,8 @@ import android.widget.RemoteViews;
 
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.R;
+
 public class WidgetMain extends AppWidgetProvider {
     private static final String TAG = "NetGuard.Widget";
 

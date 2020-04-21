@@ -39,6 +39,8 @@ import android.widget.TextView;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 
+import net.kollnig.missioncontrol.R;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;

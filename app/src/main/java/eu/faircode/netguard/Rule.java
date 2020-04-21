@@ -32,6 +32,7 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.xmlpull.v1.XmlPullParser;

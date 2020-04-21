@@ -74,6 +74,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
 
 import net.kollnig.missioncontrol.DetailsActivity;
+import net.kollnig.missioncontrol.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

@@ -31,12 +31,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.List;
 
-import eu.faircode.netguard.R;
 
 /**
  * A fragment representing a list of Items.
