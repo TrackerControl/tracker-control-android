@@ -16,7 +16,7 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -26,7 +26,7 @@
         <item name="windowNoTitle">true</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight"/>
 
     <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
         <item name="android:buttonStyle">
@@ -73,7 +73,15 @@
         <item name="colorOff">@color/colorRedOff</item>
     </style>
 
-    <style name="AppThemeTeal" parent="AppThemeRed"> <!-- Was: BaseThemeDark -->
+    <style name="AppThemeRedDark" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorRedPrimary</item>
+        <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
+        <item name="colorAccent">@color/colorRedAccent</item>
+        <item name="colorOn">@color/colorRedOn</item>
+        <item name="colorOff">@color/colorRedOff</item>
+    </style>
+
+    <style name="AppThemeTeal" parent="AppThemeRed"> <!-- Was: BaseThemeLight -->
         <!--<item name="colorPrimary">@color/colorTealPrimary</item>
         <item name="colorPrimaryDark">@color/colorTealPrimaryDark</item>
         <item name="colorAccent">@color/colorTealAccent</item>
@@ -81,12 +89,12 @@
         <item name="colorOff">@color/colorTealOff</item>-->
     </style>
 
-    <style name="AppThemeTealDark" parent="BaseThemeLight">
-        <item name="colorPrimary">@color/colorTealPrimary</item>
+    <style name="AppThemeTealDark" parent="AppThemeRedDark"> <!-- Was: BaseThemeDark -->
+        <!--<item name="colorPrimary">@color/colorTealPrimary</item>
         <item name="colorPrimaryDark">@color/colorTealPrimaryDark</item>
         <item name="colorAccent">@color/colorTealAccent</item>
         <item name="colorOn">@color/colorTealOn</item>
-        <item name="colorOff">@color/colorTealOff</item>
+        <item name="colorOff">@color/colorTealOff</item>-->
     </style>
 
     <style name="AppThemeBlue" parent="BaseThemeDark">
