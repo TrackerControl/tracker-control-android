@@ -1,6 +1,6 @@
-# TrackerControl (pre-release version)
+# TrackerControl
 
-**If you're missing features or find bugs, use the issue tracker or contact Konrad directly (tc@kollnig.net).**
+**If you're missing features or find bugs, use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net).**
 
 TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -75,21 +75,28 @@ This information is kept on the user's device until app data is
 removed manually by the user (e.g. by uninstalling).
 
 ## Credits
-The underlying network analysis functionality is provided by the [NetGuard
+
+The majority of the development was carried out by Konrad Kollnig (University of Oxford).
+
+Yet, the development of this app would not have been possible without the help of many outstandings minds, including Max van Kleek, Katherine Fletcher, George Chalhoub, Sir Nigel Shadbolt and numerous app testers and friends.
+
+Further, the app itself builds upon a range of publicly available tools, the foundation of this work.
+
+- *VPN Functionality:* The underlying network analysis functionality is provided by the [NetGuard
 Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
-TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
+- *Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
 
-TrackerControl also uses the tracker database by Reuben Binns, Ulrik Lyngs,
+- *X-Ray Tracker List:* TrackerControl also uses the tracker database by Reuben Binns, Ulrik Lyngs,
 Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray).
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
 The original data can be retrieved [here](https://osf.io/4nu9e/).
 
-The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/), and a [rocket icon](https://www.iconfinder.com/icons/1608817/rocket_icon) by Dave Gandy under the SIL Open Font License
+- *Icons:* The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/), and a [rocket icon](https://www.iconfinder.com/icons/1608817/rocket_icon) by Dave Gandy under the SIL Open Font License
 
-For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
+- *GDPR Requests:* For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 
 ## License
 This project is licensed under
