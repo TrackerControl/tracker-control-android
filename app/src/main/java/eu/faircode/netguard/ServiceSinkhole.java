@@ -702,13 +702,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                     if (jassets.length() > 0) {
                         JSONObject jasset = jassets.getJSONObject(0);
                         if (jasset.has("name")) {
-                            String version = jroot.getString("tag_name");
+                            long available = jroot.getLong("tag_name");
                             String name = jasset.getString("name");
-                            Log.i(TAG, "Tag " + version + " name " + name + " url " + url);
+                            Log.i(TAG, "Tag " + available + " name " + name + " url " + url);
 
-                            Version current = new Version(Util.getSelfVersionName(ServiceSinkhole.this));
-                            Version available = new Version(version);
-                            if (current.compareTo(available) < 0) {
+                            long current = Util.getSelfVersionCode(ServiceSinkhole.this);
+                            if (current < available) {
                                 Log.i(TAG, "Update available from " + current + " to " + available);
                                 showUpdateNotification(name, url);
                             } else
