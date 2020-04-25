@@ -1,1 +1,1 @@
-Fix problem with updater in GitHub version
+- Fix problem with updater in GitHub version

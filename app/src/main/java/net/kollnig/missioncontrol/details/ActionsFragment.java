@@ -123,6 +123,11 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
+            if (Util.isFDroidInstall()) {
+                contactDeveloper(v, null);
+                return;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                     .setTitle(R.string.external_servers)
                     .setMessage(R.string.confirm_google_info)
