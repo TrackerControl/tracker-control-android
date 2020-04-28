@@ -1,6 +1,6 @@
 # TrackerControl
 
-**If you're missing features or find bugs, use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net).**
+**If you're missing features or find bugs, discuss these on [Matrix or Telegram](#installation), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net).**
 
 TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -30,6 +30,11 @@ no network data leaves the user's device for the purposes of tracker analysis.
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
 The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
+
+## Communities
+
+1. Telegram: https://t.me/TrackerControl
+2. Matrix: https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org
 
 ## Highlights
 TrackerControl provides
