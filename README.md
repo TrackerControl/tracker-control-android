@@ -33,8 +33,9 @@ The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-an
 
 ## Communities
 
-1. Telegram: https://t.me/TrackerControl
-2. Matrix: https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org
+1. Telegram Discussion Group: https://t.me/TrackerControl
+2. Telegram News Channel: https://t.me/TrackerControlChannel 
+3. Matrix: https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org
 
 ## Highlights
 TrackerControl provides
