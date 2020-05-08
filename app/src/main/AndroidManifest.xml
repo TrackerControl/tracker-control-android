@@ -16,12 +16,12 @@
     <!-- http://developer.android.com/guide/topics/security/permissions.html#normal-dangerous -->
 
     <permission
-        android:name="eu.faircode.netguard.permission.ADMIN"
+        android:name="net.kollnig.missioncontrol.permission.ADMIN"
         android:description="@string/app_description"
         android:label="@string/app_name"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="eu.faircode.netguard.permission.ADMIN" />
+    <uses-permission android:name="net.kollnig.missioncontrol.permission.ADMIN" />
 
     <uses-feature
         android:name="android.hardware.wifi"
@@ -143,7 +143,7 @@
             android:name="eu.faircode.netguard.ServiceExternal"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="eu.faircode.netguard.DOWNLOAD_HOSTS_FILE" />
+                <action android:name="net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE" />
             </intent-filter>
         </service>
 
@@ -198,10 +198,10 @@
         <receiver
             android:name="eu.faircode.netguard.WidgetAdmin"
             android:label="@string/app_name"
-            android:permission="eu.faircode.netguard.permission.ADMIN">
+            android:permission="net.kollnig.missioncontrol.permission.ADMIN">
             <intent-filter>
-                <action android:name="eu.faircode.netguard.ON" />
-                <action android:name="eu.faircode.netguard.OFF" />
+                <action android:name="net.kollnig.missioncontrol.ON" />
+                <action android:name="net.kollnig.missioncontrol.OFF" />
             </intent-filter>
         </receiver>
     </application>

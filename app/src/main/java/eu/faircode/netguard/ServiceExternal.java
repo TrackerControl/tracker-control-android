@@ -44,9 +44,9 @@ import java.util.Date;
 
 public class ServiceExternal extends IntentService {
     private static final String TAG = "NetGuard.External";
-    private static final String ACTION_DOWNLOAD_HOSTS_FILE = "eu.faircode.netguard.DOWNLOAD_HOSTS_FILE";
+    private static final String ACTION_DOWNLOAD_HOSTS_FILE = "net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE";
 
-    // am startservice -a eu.faircode.netguard.DOWNLOAD_HOSTS_FILE
+    // am startservice -a net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE
 
     public ServiceExternal() {
         super(TAG);

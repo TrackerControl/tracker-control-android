@@ -8,8 +8,8 @@ android {
         applicationId = "net.kollnig.missioncontrol"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 2020042502
-        versionName "2020.04.25"
+        versionCode 2020050801
+        versionName "2020.05.08"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
         externalNativeBuild {
