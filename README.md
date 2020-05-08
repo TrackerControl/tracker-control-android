@@ -95,21 +95,21 @@ Yet, the development of this app would not have been possible without the help o
 
 Further, the app itself builds upon a range of publicly available tools, the foundation of this work.
 
-- *VPN Functionality:* The underlying network analysis functionality is provided by the [NetGuard
+*VPN Functionality:* The underlying network analysis functionality is provided by the [NetGuard
 Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
-- *Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
+*Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
 
-- *X-Ray Tracker List:* TrackerControl also uses the tracker blocklist by Reuben Binns, Ulrik Lyngs,
+*X-Ray Tracker List:* TrackerControl also uses the tracker blocklist by Reuben Binns, Ulrik Lyngs,
 Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray), created *from analysing ~1&nbsp;000&nbsp;000 apps*!
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
 The original data can be retrieved [here](https://osf.io/4nu9e/).
 
-- *Icons:* The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/), and a [rocket icon](https://www.iconfinder.com/icons/1608817/rocket_icon) by Dave Gandy under the SIL Open Font License
+*Icons:* The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/), and a [rocket icon](https://www.iconfinder.com/icons/1608817/rocket_icon) by Dave Gandy under the SIL Open Font License
 
-- *GDPR Requests:* For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
+*GDPR Requests:* For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 
 ## License
 This project is licensed under
