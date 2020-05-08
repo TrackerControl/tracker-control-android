@@ -134,8 +134,8 @@ public class TrackerList {
         if (cursor.moveToFirst()) {
             outer:
             do {
-                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-                Tracker tracker = findTracker(hostname);
+                String host = cursor.getString(cursor.getColumnIndex("daddr"));
+                Tracker tracker = findTracker(host);
                 if (tracker == null)
                     continue;
 
@@ -150,14 +150,17 @@ public class TrackerList {
                     categoryToTracker.put(category, categoryCompany);
                 }
 
-                // avoid children duplicates
+                // check if tracker has already been added
                 for (Tracker child : categoryCompany.getChildren()) {
                     if (child.name != null
-                            && child.name.equals(name))
+                            && child.name.equals(name)){
+                        child.addHost(host);
                         continue outer;
+                    }
                 }
 
                 Tracker child = new Tracker(name, category);
+                child.addHost(host);
                 categoryCompany.getChildren().add(child);
             } while (cursor.moveToNext());
         }

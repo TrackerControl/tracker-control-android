@@ -97,7 +97,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     R.plurals.n_trackers_found, tracker.getChildren().size(), tracker.getChildren().size())
                     + ":");
             holder.mTrackerDetails.setText(
-                    "• " + TextUtils.join("\n• ", tracker.getChildren()));
+                    TextUtils.join("\n\n", tracker.getChildren()));
 
 
             if (Util.isPlayStoreInstall(mContext)) {

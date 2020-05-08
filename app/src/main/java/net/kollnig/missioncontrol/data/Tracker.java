@@ -17,12 +17,20 @@
 
 package net.kollnig.missioncontrol.data;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Tracker {
     public String name;
     public String category;
     public Boolean necessary;
+    private Set<String> hosts = new HashSet<>();
 
     public Tracker(String name, String category) {
         this.name = name;
@@ -39,10 +47,13 @@ public class Tracker {
     @Override
     @NonNull
     public String toString() {
+        List sortedHosts = getSortedHosts();
+        String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
+
         if (TrackerList.necessaryTrackers.contains(name))
-            return name + " (Unblocked)";
+            return name + " (Unblocked)" + hosts;
         else {
-            return name;
+            return name + hosts;
         }
     }
 
@@ -54,5 +65,15 @@ public class Tracker {
     public String getRoot() {
         if (getCategory() != null) return getCategory();
         return name;
+    }
+
+    void addHost(String host) {
+        this.hosts.add(host);
+    }
+
+    private List<String> getSortedHosts() {
+        List<String> list = new ArrayList<>(hosts);
+        java.util.Collections.sort(list);
+        return list;
     }
 }
