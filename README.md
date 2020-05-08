@@ -1,6 +1,6 @@
 # TrackerControl
 
-**If you're missing features or find bugs, discuss these on [Matrix or Telegram](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net).**
+**Have missing features or bugs? Join our [dicussion group](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net)!**
 
 TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -9,27 +9,33 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
   <img alt="TrackerControl Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
 </p>
 
-To detect tracking, TrackerControl checks all network traffic against the Disconnect blocklist.
-This is the same list, that is used by the Firefox browser.
-This **reveals the companies behind tracking** to users
-and allows users to **block tracking selectively**.
-This blocklist also allows to expose the **purpose of tracking**, such as analytics or advertising.
+To detect tracking, TrackerControl checks all network traffic against the *Disconnect blocklist*, 
+used and trusted by the Mozilla Firefox browser.
 
-The app further aims to educate users about their **legal rights** under
-current EU Data Protection Law (i.e. GDPR and the ePrivacy Directive)
+Additionally, our in-house blocklist is used, created *from analysing ~1&nbsp;000&nbsp;000 apps*!
+
+This approach *reveals the companies behind tracking*
+and allows to *block tracking selectively*.
+Our approach also exposes the *purposes of tracking*, such as analytics or advertising.
+
+The app also aims to educate about *user rights* under EU Data Protection Law, the GDPR.
 
 Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
-This is accomplished through a local VPN server, through which all network communications
-are passed, to enable the analysis by TrackerControl.
-In other words,
-no external VPN server is used, and hence
-no network data leaves the user's device for the purposes of tracker analysis.
+This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
+
+No external VPN server is used, to keep your data safe!
 
 ## Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
-The app can be [downloaded here](https://github.com/OxfordHCC/tracker-control-android/releases).
+TrackerControl is available on the open-source Android app store F-Droid:
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+    alt="Get it on F-Droid"
+    height="80">](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid)
+
+Alternatively, the app can be downloaded [directly from GitHub](https://github.com/OxfordHCC/tracker-control-android/releases), including automatic checks for updates.
 
 ## Communities
 
@@ -94,8 +100,8 @@ Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 - *Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
 
-- *X-Ray Tracker List:* TrackerControl also uses the tracker database by Reuben Binns, Ulrik Lyngs,
-Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray).
+- *X-Ray Tracker List:* TrackerControl also uses the tracker blocklist by Reuben Binns, Ulrik Lyngs,
+Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray), created *from analysing ~1&nbsp;000&nbsp;000 apps*!
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
 The original data can be retrieved [here](https://osf.io/4nu9e/).
