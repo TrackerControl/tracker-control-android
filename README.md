@@ -30,7 +30,7 @@ No external VPN server is used, to keep your data safe!
 ## Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
-TrackerControl is available on the open-source Android app store F-Droid:
+TrackerControl is available on F-Droid, the most popular open-source Android app store:
 
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
     alt="Get it on F-Droid"
