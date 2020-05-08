@@ -102,7 +102,7 @@ Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 that is distributed with the Firefox browser.
 
 *X-Ray Tracker List:* TrackerControl also uses the tracker blocklist by Reuben Binns, Ulrik Lyngs,
-Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray), created *from analysing ~1&nbsp;000&nbsp;000 apps*!
+Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray), created *from analysing ~1&nbsp;000&nbsp;000 apps*.
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
 The original data can be retrieved [here](https://osf.io/4nu9e/).
