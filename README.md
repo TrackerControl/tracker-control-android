@@ -27,7 +27,7 @@ This is accomplished through a local VPN server, to enable network traffic analy
 
 No external VPN server is used, to keep your data safe!
 
-## Installation
+## Download / Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
 TrackerControl is available on F-Droid, the most popular open-source Android app store:
