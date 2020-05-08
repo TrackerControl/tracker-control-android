@@ -14,11 +14,12 @@ used and trusted by the Mozilla Firefox browser.
 
 Additionally, our in-house blocklist is used, created *from analysing ~1&nbsp;000&nbsp;000 apps*!
 
-This approach *reveals the companies behind tracking*
-and allows to *block tracking selectively*.
-Our approach also exposes the *purposes of tracking*, such as analytics or advertising.
+This approach
+- reveals the companies behind tracking,
+- allows to block tracking selectively, and
+- exposes the purposes of tracking, such as analytics or advertising.
 
-The app also aims to educate about *user rights* under EU Data Protection Law, the GDPR.
+The app also aims to educate about *your rights* under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
 
 Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
