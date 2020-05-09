@@ -95,7 +95,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:4.6'
 
     // Crash reporting
-    def acraVersion = '5.5.0'
+    def acraVersion = '5.5.1'
     implementation "ch.acra:acra-mail:$acraVersion"
     implementation "ch.acra:acra-dialog:$acraVersion"
 }
