@@ -169,7 +169,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             List<WifiConfiguration> configs = wm.getConfiguredNetworks();
             if (configs != null)
                 for (WifiConfiguration config : configs)
-                    listSSID.add(config.SSID == null ? "NO_DNAME" : config.SSID);
+                    listSSID.add(config.SSID == null ? "NULL" : config.SSID);
             for (String ssid : ssids)
                 if (!listSSID.contains(ssid))
                     listSSID.add(ssid);
