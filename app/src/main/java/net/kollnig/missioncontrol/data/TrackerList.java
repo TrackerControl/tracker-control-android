@@ -112,13 +112,10 @@ public class TrackerList {
     /**
      * Retrieve info for CSV export
      *
-     * @param appId The id of the app to be dumped
-     * @return All found trackers
+     * @return All logged communications about app
      */
-    public Cursor getAppInfo(String appId) {
-        //return getDatabase().rawQuery(
-        //		"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
-        return null;
+    public Cursor getAppInfo(int uid) {
+        return databaseHelper.getHosts(uid);
     }
 
     /**
@@ -179,7 +176,7 @@ public class TrackerList {
         return trackerList;
     }
 
-    public Tracker findTracker(String hostname) {
+    public static Tracker findTracker(String hostname) {
         Tracker tracker = null;
 
         if (hostnameToTracker.containsKey(hostname)) {

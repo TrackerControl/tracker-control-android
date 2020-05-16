@@ -22,6 +22,5 @@
         android:id="@+id/action_export_csv"
         android:orderInCategory="10"
         android:title="@string/menu_csv"
-        android:visible="false"
         app:showAsAction="never" />
 </menu>

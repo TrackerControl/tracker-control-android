@@ -52,10 +52,11 @@ TrackerControl provides
 - [ad-blocking](ADBLOCKING.md) using widely available host files.
 
 <p align="center">
-    <img alt="Screenshot of main screen" src="images/main.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
-    <img alt="Screenshot of trackers screen" src="images/trackers.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
-    <img alt="Screenshot of actions screen" src="images/actions.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of main screen" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of trackers screen" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of actions screen" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
 </p>
+
 
 Contrary to similar solutions, this application does not intercept SSL
 connections, minimising privacy risks and allowing for usage on

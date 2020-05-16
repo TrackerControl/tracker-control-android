@@ -4,6 +4,7 @@
     package="net.kollnig.missioncontrol"
     android:installLocation="internalOnly">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -45,7 +46,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppThemeTeal"
-        tools:ignore="ManifestResource">
+        tools:ignore="ManifestResource"
+        android:requestLegacyExternalStorage="true">
 
         <meta-data
             android:name="android.max_aspect"
@@ -201,8 +203,19 @@
             android:permission="net.kollnig.missioncontrol.permission.ADMIN">
             <intent-filter>
                 <action android:name="net.kollnig.missioncontrol.ON" />
+                <action android:name="net.kollnig.missioncontrol.PAUSE" />
                 <action android:name="net.kollnig.missioncontrol.OFF" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 </manifest>

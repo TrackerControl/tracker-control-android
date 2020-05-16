@@ -111,11 +111,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
 public class ServiceSinkhole extends VpnService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Service";
@@ -727,6 +730,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         }
     }
 
+    static HashMap<Integer, Set<String>> seenAppHosts = new HashMap<>();
+
     private final class LogHandler extends Handler {
         public int queue = 0;
 
@@ -806,11 +811,31 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
 
             // Get real name
-            String dname = dh.getQName(packet.uid, packet.daddr);
+            String dname = ipToHost.get(packet.daddr);
+            if (dname == null) {
+                dname = dh.getQName(packet.uid, packet.daddr);
+                if (dname != null) {
+                    ipToHost.put(packet.daddr, dname);
+                } else {
+                    ipToHost.put(packet.daddr, NO_DNAME);
+                }
+            }
+            if (dname == NO_DNAME)
+                dname = null;
 
             // Traffic log
-            if (log)
-                dh.insertLog(packet, dname, connection, interactive);
+            if (log) {
+                // custom code
+                Set<String> hosts = seenAppHosts.get(packet.uid);
+                if (hosts == null) {
+                    hosts = new HashSet<>();
+                    seenAppHosts.put(packet.uid, hosts);
+                }
+                if (!hosts.contains(packet.daddr)) {
+                    hosts.add(packet.daddr);
+                    dh.insertLog(packet, dname, connection, interactive);
+                }
+            }
 
             // Application log
             if (log_app && packet.uid >= 0 &&
@@ -1901,6 +1926,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 protocol == 17 /* UDP */);
     }
 
+    static ConcurrentHashMap<String, String> ipToHost = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<String, Tracker> ipToTracker = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
+    static String NO_DNAME = "NO_DNAME";
+    static Tracker NO_TRACKER = new Tracker(null, null);
+
     // Called from native code
     private Allowed isAddressAllowed(Packet packet) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1930,7 +1961,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 Log.w(TAG, "Allowing self " + packet);
             } else {
                 boolean filtered = false;
-                IPKey key = new IPKey(packet.version, packet.protocol, packet.dport, packet.uid);
+                /*IPKey key = new IPKey(packet.version, packet.protocol, packet.dport, packet.uid);
                 if (mapUidIPFilters.containsKey(key))
                     try {
                         InetAddress iaddr = InetAddress.getByName(packet.daddr);
@@ -1948,25 +1979,53 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                         }
                     } catch (UnknownHostException ex) {
                         Log.w(TAG, "Allowed " + ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }
+                    }*/
 
 	            // Custom code - Block trackers
 	            if (!filtered) {
-	                DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-	                String dname = dh.getQName(packet.uid, packet.daddr);
-	                TrackerList db = TrackerList.getInstance(ServiceSinkhole.this);
-	                AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
-	                String packageName = Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid);
+	                // Check if tracker known
+	                Tracker tracker = ipToTracker.get(packet.daddr);
+	                if (tracker == null) {
+	                    // Check if IP known
+                        String dname = ipToHost.get(packet.daddr);
+                        if (dname == null) {
+                            // Retrieve dname from DB
+                            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+                            dname = dh.getQName(packet.uid, packet.daddr);
 
-	                if (dname != null) {
-		                Tracker tracker = db.findTracker(dname);
-		                if (tracker != null
+                            // Check dname for tracker
+                            if (dname == null) {
+                                dname = NO_DNAME;
+                                tracker = NO_TRACKER;
+                            } else {
+                                tracker = TrackerList.findTracker(dname);
+                                if (tracker == null)
+                                    tracker = NO_TRACKER;
+                            }
+
+                            // Save dname and tracker
+                            ipToHost.put(packet.daddr, dname);
+                            ipToTracker.put(packet.daddr, tracker);
+                        }
+                    }
+
+	                if (tracker != NO_TRACKER) {
+	                    // Retrieve package name
+                        String packageName = uidToApp.get(packet.uid);
+                        if (packageName == null){
+                            packageName = Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid);
+                            uidToApp.put(packet.uid, packageName);
+                        }
+
+                        // Block tracker if necessary
+                        AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
+                        if (tracker != null
                                 && !tracker.necessary
-				                && appBlocklist.blockedTracker(packageName, tracker.getRoot())) {
-		                	filtered = true;
-			                packet.allowed = false;
-		                }
-	                }
+                                && appBlocklist.blockedTracker(packageName, tracker.getRoot())) {
+                            filtered = true;
+                            packet.allowed = false;
+                        }
+                    }
                 }
 
 	            if (!filtered)
@@ -1978,18 +2037,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         }
 
         Allowed allowed = null;
-        if (packet.allowed) {
-            if (mapForward.containsKey(packet.dport)) {
-                Forward fwd = mapForward.get(packet.dport);
-                if (fwd.ruid == packet.uid) {
-                    allowed = new Allowed();
-                } else {
-                    allowed = new Allowed(fwd.raddr, fwd.rport);
-                    packet.data = "> " + fwd.raddr + "/" + fwd.rport;
-                }
-            } else
-                allowed = new Allowed();
-        }
+        if (packet.allowed)
+            allowed = new Allowed();
 
         lock.readLock().unlock();
 
@@ -2800,6 +2849,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent i = new Intent(INTENT_PAUSE);
+        i.setPackage(this.getPackageName());
+        PendingIntent pause = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
@@ -2807,7 +2860,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 .setContentIntent(pi)
                 .setColor(tv.data)
                 .setOngoing(true)
-                .setAutoCancel(false);
+                .setAutoCancel(false)
+                .addAction(R.drawable.ic_pause_white_24dp, getString(R.string.pause), pause);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setContentTitle(getString(R.string.msg_started));

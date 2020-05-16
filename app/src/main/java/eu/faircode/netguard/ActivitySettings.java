@@ -130,6 +130,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         PreferenceGroup cat_advanced = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_advanced_options")).findPreference("category_advanced_options");
         PreferenceGroup cat_backup = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_backup")).findPreference("category_backup");
 
+        // Handle pause
+        Preference pref_pause = screen.findPreference("pause");
+        pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "1")));
+
         // Handle auto enable
         Preference pref_auto_enable = screen.findPreference("auto_enable");
         pref_auto_enable.setTitle(getString(R.string.setting_auto, prefs.getString("auto_enable", "0")));
@@ -165,7 +169,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             List<WifiConfiguration> configs = wm.getConfiguredNetworks();
             if (configs != null)
                 for (WifiConfiguration config : configs)
-                    listSSID.add(config.SSID == null ? "NULL" : config.SSID);
+                    listSSID.add(config.SSID == null ? "NO_DNAME" : config.SSID);
             for (String ssid : ssids)
                 if (!listSSID.contains(ssid))
                     listSSID.add(ssid);
@@ -509,6 +513,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("whitelist_roaming".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
+
+        else if ("pause".equals(name))
+            getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_pause, prefs.getString(name, "0")));
 
         else if ("auto_enable".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_auto, prefs.getString(name, "0")));

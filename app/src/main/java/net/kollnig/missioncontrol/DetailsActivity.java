@@ -47,11 +47,16 @@ import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.PlayStore;
+import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
@@ -188,11 +193,9 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void shareExport() {
-        String fileName = appPackageName + ".csv";
-        File sharingFile = new File(exportDir, fileName);
-        Uri uri = FileProvider.getUriForFile(DetailsActivity.this,
-                getApplicationContext().getPackageName() + ".fileprovider",
-                sharingFile);
+        File sharingFile = new File(exportDir, appPackageName + ".csv");
+        Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
+                BuildConfig.APPLICATION_ID + ".provider", sharingFile);
 
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("application/csv");
@@ -230,15 +233,31 @@ public class DetailsActivity extends AppCompatActivity {
                         CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                         CSVWriter.RFC4180_LINE_END);
 
-                Cursor data = trackerList.getAppInfo(Common.getAppName(getPackageManager(), appUid));
+                Cursor data = trackerList.getAppInfo(appUid);
                 if (data == null) return false;
 
-                csv.writeNext(data.getColumnNames());
+                List<String> columnNames = new ArrayList<>();
+                Collections.addAll(columnNames, data.getColumnNames());
+                columnNames.add("Tracker Name");
+                columnNames.add("Tracker Category");
+
+                csv.writeNext(columnNames.toArray(new String[0]));
                 while (data.moveToNext()) {
-                    String[] row = new String[data.getColumnNames().length];
+                    String[] row = new String[data.getColumnNames().length + 2];
                     for (int i = 0; i < data.getColumnNames().length; i++) {
                         row[i] = data.getString(i);
                     }
+
+                    String hostname = data.getString(data.getColumnIndex("daddr"));
+                    Tracker tracker = TrackerList.findTracker(hostname);
+                    if (tracker != null) {
+                        row[data.getColumnNames().length] = tracker.name;
+                        row[data.getColumnNames().length + 1] = tracker.category;
+                    } else {
+                        row[data.getColumnNames().length] = "";
+                        row[data.getColumnNames().length + 1] = "";
+                    }
+
                     csv.writeNext(row);
                 }
                 csv.close();

@@ -37,6 +37,7 @@ public class WidgetAdmin extends ReceiverAutostart {
     private static final String TAG = "NetGuard.Widget";
 
     public static final String INTENT_ON = "net.kollnig.missioncontrol.ON";
+    public static final String INTENT_PAUSE = "net.kollnig.missioncontrol.PAUSE";
     public static final String INTENT_OFF = "net.kollnig.missioncontrol.OFF";
 
     @Override
@@ -53,7 +54,9 @@ public class WidgetAdmin extends ReceiverAutostart {
         Intent i = new Intent(INTENT_ON);
         i.setPackage(context.getPackageName());
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        if (INTENT_ON.equals(intent.getAction()) || INTENT_OFF.equals(intent.getAction()))
+        if (INTENT_ON.equals(intent.getAction())
+                || INTENT_OFF.equals(intent.getAction())
+                || INTENT_PAUSE.equals(intent.getAction()))
             am.cancel(pi);
 
         // Vibrate
@@ -65,7 +68,9 @@ public class WidgetAdmin extends ReceiverAutostart {
                 vs.vibrate(50);
 
         try {
-            if (INTENT_ON.equals(intent.getAction()) || INTENT_OFF.equals(intent.getAction())) {
+            if (INTENT_ON.equals(intent.getAction())
+                    || INTENT_OFF.equals(intent.getAction())
+                    || INTENT_PAUSE.equals(intent.getAction())) {
                 boolean enabled = INTENT_ON.equals(intent.getAction());
                 prefs.edit().putBoolean("enabled", enabled).apply();
                 if (enabled)
@@ -75,6 +80,11 @@ public class WidgetAdmin extends ReceiverAutostart {
 
                 // Auto enable
                 int auto = Integer.parseInt(prefs.getString("auto_enable", "0"));
+
+                // Pause
+                if (INTENT_PAUSE.equals(intent.getAction()))
+                    auto = Integer.parseInt(prefs.getString("pause", "1"));
+
                 if (!enabled && auto > 0) {
                     Log.i(TAG, "Scheduling enabled after minutes=" + auto);
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)

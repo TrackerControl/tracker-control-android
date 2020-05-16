@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -387,7 +386,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Log
-
     public void insertLog(Packet packet, String dname, int connection, boolean interactive) {
         lock.writeLock().lock();
         try {
@@ -806,9 +804,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // DNS
 
     public boolean insertDns(ResourceRecord rr) {
-        // Custom code
-        mapIpToHost.put(rr.Resource, rr.QName);
-
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -887,16 +882,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Custom code
     private SQLiteDatabase readableDb;
-    ConcurrentHashMap<String, String> mapIpToHost = new ConcurrentHashMap<>();
 
     public String getQName(int uid, String ip) {
-        // Custom code
-        String host = mapIpToHost.get(ip);
-        if (host != null)
-            return host;
-
         lock.readLock().lock();
         try {
             // Custom code
