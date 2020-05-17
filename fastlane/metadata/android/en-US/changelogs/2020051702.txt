@@ -1,0 +1,6 @@
+- Significantly improved battery use
+- Add pausing of blocking
+- Fix blocking issues
+- Add CSV export
+- Add "launch app" menu entry
+- Exclude browsers and email by default
