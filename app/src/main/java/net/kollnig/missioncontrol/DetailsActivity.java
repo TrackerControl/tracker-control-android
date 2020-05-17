@@ -150,6 +150,13 @@ public class DetailsActivity extends AppCompatActivity {
                 exportCsv();
             }
             return true;
+        } else if (itemId == R.id.action_launch) {
+            PackageManager pm = getPackageManager();
+            Intent intent = pm.getLaunchIntentForPackage(appPackageName);
+            final Intent launch = (intent == null ||
+                    intent.resolveActivity(pm) == null ? null : intent);
+            if (launch != null)
+                startActivity(launch);
         }
         return super.onOptionsItemSelected(item);
     }

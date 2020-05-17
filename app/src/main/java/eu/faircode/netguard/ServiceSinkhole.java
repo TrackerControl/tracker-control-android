@@ -120,7 +120,7 @@ import javax.net.ssl.HttpsURLConnection;
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
 public class ServiceSinkhole extends VpnService implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "NetGuard.Service";
+    private static final String TAG = "TrackerControl.VPN";
 
     private boolean registeredUser = false;
     private boolean registeredIdleState = false;
@@ -650,12 +650,17 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             }
         }
 
+        // Called every 12 hours
         private void householding(Intent intent) {
             // Keep log records for three days
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupLog(new Date().getTime() - 3 * 24 * 3600 * 1000L);
 
             // Clear expired DNS records
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
+
+            // Keep IP mappings clean
+            ipToHost.clear();
+            ipToTracker.clear();
 
             // Check for update
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
