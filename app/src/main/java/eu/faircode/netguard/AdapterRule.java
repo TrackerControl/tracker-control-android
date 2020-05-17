@@ -930,10 +930,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         else
             other.edit().putBoolean(rule.packageName, rule.other_blocked).apply();
 
-        if (rule.apply)
-            apply.edit().remove(rule.packageName).apply();
-        else
-            apply.edit().putBoolean(rule.packageName, rule.apply).apply();
+        apply.edit().putBoolean(rule.packageName, rule.apply).apply();
 
         if (rule.screen_wifi == rule.screen_wifi_default)
             screen_wifi.edit().remove(rule.packageName).apply();
