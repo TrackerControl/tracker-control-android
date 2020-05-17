@@ -132,7 +132,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Handle pause
         Preference pref_pause = screen.findPreference("pause");
-        pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "1")));
+        pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "10")));
 
         // Handle auto enable
         Preference pref_auto_enable = screen.findPreference("auto_enable");
@@ -515,7 +515,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("pause".equals(name))
-            getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_pause, prefs.getString(name, "0")));
+            getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
 
         else if ("auto_enable".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_auto, prefs.getString(name, "0")));

@@ -47,16 +47,16 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private final String TAG = TrackersListAdapter.class.getSimpleName();
     private final RecyclerView recyclerView;
-    private final String mAppId;
+    private final Integer mAppUid;
     private List<TrackerCategory> mValues = new ArrayList<>();
     private Context mContext;
 
     public TrackersListAdapter(Context c,
                                RecyclerView root,
-                               String appId) {
+                               Integer appUid) {
         recyclerView = root;
         mContext = c;
-        mAppId = appId;
+        mAppUid = appUid;
 
         // Removes blinks
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -106,15 +106,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             final AppBlocklistController w = AppBlocklistController.getInstance(mContext);
             holder.mSwitch.setChecked(
-                    w.blockedTracker(mAppId, tracker.name)
+                    w.blockedTracker(mAppUid, tracker.name)
             );
             holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed()) return;
 
                 if (isChecked) {
-                    w.block(mAppId, tracker.name);
+                    w.block(mAppUid, tracker.name);
                 } else {
-                    w.unblock(mAppId, tracker.name);
+                    w.unblock(mAppUid, tracker.name);
                 }
             });
             holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());

@@ -78,7 +78,10 @@
     <string name="setting_delay">Delay screen off %1$s minutes</string>
     <string name="setting_update">Check for updates</string>
 
-    <string name="pause">Pause for 1 min</string>
+    <plurals name="pause">
+        <item quantity="one">Pause for %d min</item>
+        <item quantity="other">Pause for %d mins</item>
+    </plurals>
 
     <string name="setting_network_options">Network options</string>
     <string name="setting_subnet">Subnet routing</string>
@@ -147,7 +150,7 @@
 
     <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
     <string name="summary_auto">After disabling using the widget, automatically enable TrackerControl again after the selected number of minutes (enter zero to disable this option)</string>
-    <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter zero to disable this option).</string>
+    <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
     <string name="summary_delay">After turning the screen off, keep screen on rules active for the selected number of minutes (enter zero to disable this option)</string>
     <string name="summary_update">Check for new releases on GitHub twice daily</string>
 

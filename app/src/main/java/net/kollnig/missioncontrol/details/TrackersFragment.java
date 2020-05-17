@@ -78,8 +78,10 @@ public class TrackersFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
-        mAppId = bundle.getString(ARG_APP_ID);
-        mAppUid = bundle.getInt(ARG_APP_UID);
+        if (bundle != null) {
+            mAppId = bundle.getString(ARG_APP_ID);
+            mAppUid = bundle.getInt(ARG_APP_UID);
+        }
     }
 
     @Override
@@ -93,7 +95,7 @@ public class TrackersFragment extends Fragment {
         trackerList = TrackerList.getInstance(context);
         recyclerView = v.findViewById(R.id.transmissions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new TrackersListAdapter(getContext(), recyclerView, mAppId);
+        adapter = new TrackersListAdapter(getContext(), recyclerView, mAppUid);
         recyclerView.setAdapter(adapter);
 
         swipeRefresh = v.findViewById(R.id.swipeRefresh);

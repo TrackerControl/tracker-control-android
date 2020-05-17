@@ -83,7 +83,7 @@ public class WidgetAdmin extends ReceiverAutostart {
 
                 // Pause
                 if (INTENT_PAUSE.equals(intent.getAction()))
-                    auto = Integer.parseInt(prefs.getString("pause", "1"));
+                    auto = Integer.parseInt(prefs.getString("pause", "10"));
 
                 if (!enabled && auto > 0) {
                     Log.i(TAG, "Scheduling enabled after minutes=" + auto);

@@ -376,9 +376,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         registerReceiver(packageChangedReceiver, intentFilter);
 
         // Custom code -- First use
-        if (!initialized) {
+        if (!initialized)
             prefs.edit().putBoolean("initialized", true).apply();
-        }
 
         // Show instructions
         /*TrackerList db = TrackerList.getInstance(this);

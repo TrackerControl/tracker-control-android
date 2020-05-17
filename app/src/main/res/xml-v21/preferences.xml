@@ -21,7 +21,7 @@
                 android:summary="@string/summary_install"
                 android:title="@string/setting_install" />
             <EditTextPreference
-                android:defaultValue="1"
+                android:defaultValue="10"
                 android:inputType="number"
                 android:key="pause"
                 android:summary="@string/summary_pause" />

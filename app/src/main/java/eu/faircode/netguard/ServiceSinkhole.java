@@ -76,7 +76,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
-import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.AppBlocklistController;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -1928,7 +1927,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
     static ConcurrentHashMap<String, String> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Tracker> ipToTracker = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     static String NO_DNAME = "NO_DNAME";
     static Tracker NO_TRACKER = new Tracker(null, null);
 
@@ -2010,18 +2008,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                     }
 
 	                if (tracker != NO_TRACKER) {
-	                    // Retrieve package name
-                        String packageName = uidToApp.get(packet.uid);
-                        if (packageName == null){
-                            packageName = Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid);
-                            uidToApp.put(packet.uid, packageName);
-                        }
-
                         // Block tracker if necessary
                         AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
                         if (tracker != null
                                 && !tracker.necessary
-                                && appBlocklist.blockedTracker(packageName, tracker.getRoot())) {
+                                && appBlocklist.blockedTracker(packet.uid, tracker.getRoot())) {
                             filtered = true;
                             packet.allowed = false;
                         }
@@ -2851,7 +2842,9 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
         Intent i = new Intent(INTENT_PAUSE);
         i.setPackage(this.getPackageName());
-        PendingIntent pause = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+        int pause = Integer.parseInt(prefs.getString("pause", "10"));
 
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
@@ -2861,7 +2854,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 .setColor(tv.data)
                 .setOngoing(true)
                 .setAutoCancel(false)
-                .addAction(R.drawable.ic_pause_white_24dp, getString(R.string.pause), pause);
+                .addAction(R.drawable.ic_pause_white_24dp, getResources().getQuantityString(
+                        R.plurals.pause, pause, pause), pauseIntent);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setContentTitle(getString(R.string.msg_started));

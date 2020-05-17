@@ -55,6 +55,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -79,15 +80,21 @@ public class DetailsActivity extends AppCompatActivity {
     public static void savePrefs(Context c) {
         // Save currently Selected Apps to Shared Prefs
         AppBlocklistController controller = AppBlocklistController.getInstance(c);
-        Set<String> appSet = controller.getBlocklist();
-        String prefKey = SHARED_PREFS_BLOCKLIST_APPS_KEY;
+        Set<Integer> appIntSet = controller.getBlocklist();
+
+        // Convert to String array, required by Android for saving
+        Set<String> appSet = new HashSet<>();
+        for (Integer uid: appIntSet) {
+            appSet.add(String.valueOf(uid));
+        }
+
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
-        editor.putStringSet(prefKey, appSet);
-        for (String id : appSet) {
-            Set<String> subset = controller.getSubset(id);
-            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, subset);
+        editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, appSet);
+        for (Integer uid : appIntSet) {
+            Set<String> subset = controller.getSubset(uid);
+            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, subset);
         }
         editor.apply();
     }

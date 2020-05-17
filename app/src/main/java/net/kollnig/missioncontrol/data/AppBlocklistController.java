@@ -18,6 +18,9 @@ package net.kollnig.missioncontrol.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -31,9 +34,9 @@ public class AppBlocklistController {
     /**
      * Whilst blockmap is a list of apps to block, the set is a set of trackers not to block.
      */
-    Map<String, Set<String>> blockmap = new ConcurrentHashMap<>();
+    private Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
 
-    AppBlocklistController(Context c) {
+    private AppBlocklistController(Context c) {
         // Private because of singleton
         Context mContext = c;
 
@@ -41,6 +44,7 @@ public class AppBlocklistController {
         if (mContext != null) {
             SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
             Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
+
             if (set != null) {
                 blockmap.clear();
                 for (String id : set) {
@@ -49,7 +53,22 @@ public class AppBlocklistController {
                     if (subset == null) {
                         subset = new HashSet<>();
                     }
-                    blockmap.put(id, subset);
+
+                    // Retrieve uid
+                    int uid = -1;
+                    if (StringUtils.isNumeric(id)) {
+                        uid = Integer.parseInt(id);
+                    } else {
+                        // Convert from old TrackerControl version
+                        try {
+                            uid = c.getPackageManager().getApplicationInfo(id, 0).uid;
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (uid >= 0)
+                        blockmap.put(uid, subset);
                 }
             }
         }
@@ -70,46 +89,38 @@ public class AppBlocklistController {
         return instance;
     }
 
-    public Set<String> getBlocklist() {
+    public Set<Integer> getBlocklist() {
         return blockmap.keySet();
     }
 
-    public Set<String> getSubset(String id) {
-        return blockmap.get(id);
-    }
-
-    public boolean containsTracker(String appId, String tracker) {
-        Set<String> app = blockmap.get(appId);
-        if (app == null)
-            return true;
-
-        return app.contains(tracker);
+    public Set<String> getSubset(int uid) {
+        return blockmap.get(uid);
     }
 
     public void clear() {
         blockmap.clear();
     }
 
-    public synchronized void block(String id, String tracker) {
-        Set<String> app = blockmap.get(id);
+    public synchronized void block(int uid, String tracker) {
+        Set<String> app = blockmap.get(uid);
         if (app == null)
             return;
         app.remove(tracker);
     }
 
-    public synchronized void unblock(String id, String tracker) {
-        Set<String> app = blockmap.get(id);
+    public synchronized void unblock(int uid, String tracker) {
+        Set<String> app = blockmap.get(uid);
 
         if (app == null) {
             app = new HashSet<>();
-            blockmap.put(id, app);
+            blockmap.put(uid, app);
         }
 
         app.add(tracker);
     }
 
-    public boolean blockedTracker(String appId, String tracker) {
-        Set<String> trackers = this.getSubset(appId);
+    public boolean blockedTracker(int uid, String tracker) {
+        Set<String> trackers = this.getSubset(uid);
         if (trackers == null) {
             return true;
         }
