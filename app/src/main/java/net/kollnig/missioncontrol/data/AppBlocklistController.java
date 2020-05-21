@@ -37,39 +37,40 @@ public class AppBlocklistController {
     private Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
 
     private AppBlocklistController(Context c) {
-        // Private because of singleton
-        Context mContext = c;
-
         // Initialize Concurrent Set using values from shared preferences if possible.
-        if (mContext != null) {
-            SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
-            Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
+        if (c != null) {
+            loadSettings(c);
+        }
+    }
 
-            if (set != null) {
-                blockmap.clear();
-                for (String id : set) {
-                    Set<String> subset = prefs.getStringSet
-                            (SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, null);
-                    if (subset == null) {
-                        subset = new HashSet<>();
-                    }
+    public void loadSettings(Context c) {
+        SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
+        Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
 
-                    // Retrieve uid
-                    int uid = -1;
-                    if (StringUtils.isNumeric(id)) {
-                        uid = Integer.parseInt(id);
-                    } else {
-                        // Convert from old TrackerControl version
-                        try {
-                            uid = c.getPackageManager().getApplicationInfo(id, 0).uid;
-                        } catch (PackageManager.NameNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (uid >= 0)
-                        blockmap.put(uid, subset);
+        if (set != null) {
+            blockmap.clear();
+            for (String id : set) {
+                Set<String> subset = prefs.getStringSet
+                        (SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, null);
+                if (subset == null) {
+                    subset = new HashSet<>();
                 }
+
+                // Retrieve uid
+                int uid = -1;
+                if (StringUtils.isNumeric(id)) {
+                    uid = Integer.parseInt(id);
+                } else {
+                    // Convert from old TrackerControl version
+                    try {
+                        uid = c.getPackageManager().getApplicationInfo(id, 0).uid;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (uid >= 0)
+                    blockmap.put(uid, subset);
             }
         }
     }

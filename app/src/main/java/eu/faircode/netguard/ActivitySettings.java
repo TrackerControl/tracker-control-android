@@ -63,6 +63,7 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.AppBlocklistController;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -91,6 +92,8 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+
+import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
 
 public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Settings";
@@ -863,19 +866,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private Intent getIntentCreateExport() {
         Intent intent;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
-                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
-            }
-        } else {
-            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*"); // text/xml
-            intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
-        }
+        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*"); // text/xml
+        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
         return intent;
     }
 
@@ -909,7 +903,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 try {
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                        target = Uri.parse(target + "/netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
+                        target = Uri.parse(target + "/trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
                     Log.i(TAG, "Writing URI=" + target);
                     out = getContentResolver().openOutputStream(target);
                     xmlExport(out);
@@ -1053,7 +1047,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         serializer.setOutput(out, "UTF-8");
         serializer.startDocument(null, true);
         serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
-        serializer.startTag(null, "netguard");
+        serializer.startTag(null, "trackercontrol");
 
         serializer.startTag(null, "application");
         xmlExport(PreferenceManager.getDefaultSharedPreferences(this), serializer);
@@ -1099,7 +1093,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         forwardExport(serializer);
         serializer.endTag(null, "forward");
 
-        serializer.endTag(null, "netguard");
+        serializer.startTag(null, "blocklist");
+        xmlExport(getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE), serializer);
+        serializer.endTag(null, "blocklist");
+
+        serializer.endTag(null, "trackercontrol");
         serializer.endDocument();
         serializer.flush();
     }
@@ -1226,6 +1224,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.lockdown, getSharedPreferences("lockdown", Context.MODE_PRIVATE));
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
+        xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
+
+        // Reload blocklist
+        AppBlocklistController.getInstance(this).loadSettings(this);
 
         // Upgrade imported settings
         ReceiverAutostart.upgrade(true, this);
@@ -1275,6 +1277,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> lockdown = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
+        public Map<String, Object> blocklist = new HashMap<>();
         private Map<String, Object> current = null;
 
         public XmlImportHandler(Context context) {
@@ -1283,7 +1286,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            if (qName.equals("netguard"))
+            if (qName.equals("netguard")
+                    || qName.equals("trackercontrol"))
                 ; // Ignore
 
             else if (qName.equals("application"))
@@ -1323,7 +1327,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 Log.i(TAG, "Clearing forwards");
                 DatabaseHelper.getInstance(context).deleteForward();
 
-            } else if (qName.equals("setting")) {
+            } else if (qName.equals("blocklist"))
+                    current = blocklist;
+
+            else if (qName.equals("setting")) {
                 String key = attributes.getValue("key");
                 String type = attributes.getValue("type");
                 String value = attributes.getValue("value");
