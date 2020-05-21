@@ -1,4 +1,6 @@
-# TrackerControl (no root required)
+# TrackerControl
+
+No root required, but other VPNs or Private DNS not supported.
 
 **Have missing features or bugs? Join our [dicussion group](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net)!**
 
