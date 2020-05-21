@@ -1984,51 +1984,49 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                         Log.w(TAG, "Allowed " + ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }*/
 
-	            // Custom code - Block trackers
-	            if (!filtered) {
-	                // Check if tracker known
-	                Tracker tracker = ipToTracker.get(packet.daddr);
-	                if (tracker == null) {
-	                    // Check if IP known
-                        String dname = ipToHost.get(packet.daddr);
+                // Check if tracker known
+                Tracker tracker = ipToTracker.get(packet.daddr);
+                if (tracker == null) {
+                    // Check if IP known
+                    String dname = ipToHost.get(packet.daddr);
+                    if (dname == null) {
+                        // Retrieve dname from DB
+                        DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+                        dname = dh.getQName(packet.uid, packet.daddr);
+
+                        // Check dname for tracker
                         if (dname == null) {
-                            // Retrieve dname from DB
-                            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                            dname = dh.getQName(packet.uid, packet.daddr);
-
-                            // Check dname for tracker
-                            if (dname == null) {
-                                dname = NO_DNAME;
+                            dname = NO_DNAME;
+                            tracker = NO_TRACKER;
+                        } else {
+                            tracker = TrackerList.findTracker(dname);
+                            if (tracker == null)
                                 tracker = NO_TRACKER;
-                            } else {
-                                tracker = TrackerList.findTracker(dname);
-                                if (tracker == null)
-                                    tracker = NO_TRACKER;
-                            }
-
-                            // Save dname and tracker
-                            ipToHost.put(packet.daddr, dname);
-                            ipToTracker.put(packet.daddr, tracker);
                         }
+
+                        // Save dname and tracker
+                        ipToHost.put(packet.daddr, dname);
+                        ipToTracker.put(packet.daddr, tracker);
                     }
+                }
 
-	                if (tracker != NO_TRACKER) {
-                        // Block tracker if necessary
-                        AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
-                        if (tracker != null
-                                && !tracker.necessary
-                                && appBlocklist.blockedTracker(packet.uid, tracker.getRoot())) {
-                            filtered = true;
-                            packet.allowed = false;
-                        }
+                if (tracker != NO_TRACKER) {
+                    // Block tracker if necessary
+                    AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
+                    if (tracker != null
+                            && !tracker.necessary
+                            && appBlocklist.blockedTracker(packet.uid, tracker.getRoot())) {
+                        filtered = true;
+                        packet.allowed = false;
                     }
                 }
 
 	            if (!filtered)
-		            if (mapUidAllowed.containsKey(packet.uid))
+                    packet.allowed = true;
+		            /*if (mapUidAllowed.containsKey(packet.uid))
 			            packet.allowed = mapUidAllowed.get(packet.uid);
 		            else
-			            Log.w(TAG, "No rules for " + packet);
+			            Log.w(TAG, "No rules for " + packet);*/
             }
         }
 
