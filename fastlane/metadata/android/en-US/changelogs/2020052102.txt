@@ -1,0 +1,2 @@
+- Add fully functional export of tracker settings
+- Fix problems with blocking
