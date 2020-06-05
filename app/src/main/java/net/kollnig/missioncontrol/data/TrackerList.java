@@ -243,13 +243,16 @@ public class TrackerList {
     private void loadTrackerDomains(Context context) {
         try {
             // Read domain list
-            InputStream is = context.getAssets().open("disconnect-blacklist.json");
+            // File is a reversed string, because some anti-virus scanners found the list suspicious
+            // More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
+            InputStream is = context.getAssets().open("disconnect-blacklist.reversed.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            String json = new String(buffer, StandardCharsets.UTF_8);
-
+            String reversedJson = new String(buffer, StandardCharsets.UTF_8);
+            String json = new StringBuilder(reversedJson).reverse().toString();
+            
             JSONObject disconnect = new JSONObject(json);
             JSONObject categories = (JSONObject) disconnect.get("categories");
             for (Iterator<String> it = categories.keys(); it.hasNext(); ) {
