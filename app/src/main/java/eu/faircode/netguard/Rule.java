@@ -28,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Process;
 import android.util.Log;
@@ -385,7 +384,7 @@ public class Rule {
                         rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
-                        rule.apply = apply.getBoolean(info.packageName, allowByDefault(context, info.packageName));
+                        rule.apply = apply.getBoolean(info.packageName, true);
                         rule.notify = notify.getBoolean(info.packageName, true);
 
                         // Related packages
@@ -474,31 +473,6 @@ public class Rule {
             packagesList.add(info.activityInfo.packageName);
 
         return packagesList;
-    }
-
-    private static List<String> browsers;
-    private static List<String> emailPrograms;
-
-    private static boolean allowByDefault(Context context, String packageName) {
-        PackageManager pm = context.getPackageManager();
-
-        // Get list of browsers
-        if (browsers == null) {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-            browserIntent.setData(Uri.parse("http://www.google.com"));
-            browsers = getHandlingPackages(pm, browserIntent);
-        }
-
-        // Get list of email programs
-        if (emailPrograms == null) {
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("message/rfc822");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"tc@kollnig.net"});
-            emailPrograms = getHandlingPackages(pm, emailIntent);
-        }
-
-        return !emailPrograms.contains(packageName)
-                && !browsers.contains(packageName);
     }
 
     private void updateChanged(boolean default_wifi, boolean default_other, boolean default_roaming) {
