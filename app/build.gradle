@@ -94,6 +94,9 @@ dependencies {
 
     implementation 'com.opencsv:opencsv:4.6'
 
+    compileOnly "com.google.auto.service:auto-service-annotations:1.0-rc6"
+    annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
+
     // Crash reporting
     def acraVersion = '5.5.1'
     implementation "ch.acra:acra-mail:$acraVersion"
