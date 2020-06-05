@@ -3314,11 +3314,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         intent.putExtra(EXTRA_COMMAND, Command.run);
         intent.putExtra(EXTRA_REASON, reason);
 
-        try {
-            ContextCompat.startForegroundService(context, intent);
-        } catch (Exception ex) {
-            //
-        }
+        ContextCompat.startForegroundService(context, intent);
     }
 
     public static void start(String reason, Context context) {
