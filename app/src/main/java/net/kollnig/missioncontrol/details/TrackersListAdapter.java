@@ -109,7 +109,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     w.blockedTracker(mAppUid, tracker.name)
             );
             holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (!buttonView.isPressed()) return;
+                if (!buttonView.isPressed()) return; // to fix errors
 
                 if (isChecked) {
                     w.block(mAppUid, tracker.name);
@@ -117,7 +117,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     w.unblock(mAppUid, tracker.name);
                 }
             });
-            holder.mView.setOnClickListener(v -> holder.mSwitch.toggle());
+            holder.mView.setOnClickListener(v -> {
+                if (holder.mSwitch.isChecked()) {
+                    w.block(mAppUid, tracker.name);
+                } else {
+                    w.unblock(mAppUid, tracker.name);
+                }
+
+                holder.mSwitch.toggle();
+            });
 
             //cast holder to VHItem and set data
         } else if (_holder instanceof VHHeader) {
