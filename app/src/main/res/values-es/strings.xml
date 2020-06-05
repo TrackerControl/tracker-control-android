@@ -237,12 +237,12 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_metered_disabled">Las reglas de medición no se aplican</string>
     <string name="title_host_allowed">La dirección está permitida</string>
     <string name="title_host_blocked">La dirección está bloqueada</string>
-    <string name="title_interactive_allowed">Permitir cuando la pantalla está encendida</cadena>
+    <string name="title_interactive_allowed">Permitir cuando la pantalla está encendida</string>
     <string name="title_roaming_blocked">Bloquear cuando está en itinerancia</string>
     <string name="title_metered">Por defecto una conexión Wi-Fi se considera no medida y una conexión móvil se considera medida</string>
 
     <string name="title_internet">no tiene permiso de internet</string>
-    <string name="title_disabled">está desactivado</cadena>
+    <string name="title_disabled">está desactivado</string>
     <string name="title_messaging">Los mensajes entrantes son recibidos por los servicios de Google Play y no por esta aplicación y por lo tanto no pueden ser bloqueados por el aplicativo de bloqueo</string>
     <string name="title_download">Las descargas son realizadas por el gestor de descargas y no por esta aplicación y por lo tanto no pueden ser bloqueadas por el aplicativo de bloqueo</string>
     <string name="title_apply">Aplicar reglas y condiciones</string>
@@ -350,10 +350,10 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="menu_privacy_policy">Política de privacidad</string>
 
     <string name="menu_csv">Exportar como CSV</string>
-    <string name="exporting">Exportando...</string>
-    <string name="share_csv">Compartir</cuerda>
+    <string name="exporting">Exportando…</string>
+    <string name="share_csv">Compartir</string>
     <string name="export_failed">Exportación fallida</string>
-    <string name="exportado">¡Exportado al almacenamiento! Accede al almacenamiento del teléfono desde el ordenador o compártelo con otra aplicación.</string>
+    <string name="exported">¡Exportado al almacenamiento! Accede al almacenamiento del teléfono desde el ordenador o compártelo con otra aplicación.</string>
 
     <!-- App Details -->
     <string name="title_activity_detail">DetailActivity</string>
@@ -374,7 +374,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="contacts">Contacto </string>
     <string name="contacts_description">Si cree que una aplicación viola los principios de protección de datos, puede contactar directamente con las entidades responsables.</string>
     <string name="play_services_required">Esta es una configuración de los Servicios de Google Play, que no se encontraron en su dispositivo.</string>
-    <string name="no_dev_mail" >La dirección de correo del desarrollador aún no se ha obtenido. Compruebe la conexión a Internet.
+    <string name="no_dev_mail">La dirección de correo del desarrollador aún no se ha obtenido. Compruebe la conexión a Internet.</string>
     <string name="no_mail_service">Por favor, instale un cliente de correo electrónico.</string>
     <string name="blocking_settings">Seleccionar rastreadores</string>
     <string name="ad_settings">Cambiar ahora</string>
