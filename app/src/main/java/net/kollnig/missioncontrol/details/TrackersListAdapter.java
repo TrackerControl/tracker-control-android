@@ -119,9 +119,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
             holder.mView.setOnClickListener(v -> {
                 if (holder.mSwitch.isChecked()) {
-                    w.block(mAppUid, tracker.name);
-                } else {
                     w.unblock(mAppUid, tracker.name);
+                } else {
+                    w.block(mAppUid, tracker.name);
                 }
 
                 holder.mSwitch.toggle();
