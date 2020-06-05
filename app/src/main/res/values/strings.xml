@@ -180,7 +180,7 @@
 
     <string name="summary_stats">Show network speed graph in status bar notification</string>
 
-    <string-array name="default_wifi_home"></string-array>
+    <string-array name="default_wifi_home" translatable="false"></string-array>
 
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_started">Checking trackers</string>
@@ -203,12 +203,12 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_try">Try TrackerControl</string>
     <string name="msg_dimming">If you cannot press OK in the next dialog, another (screen dimming) app is likely manipulating the screen.</string>
     <string name="msg_mbday">&#177; %1$.3f&#9650; %2$.3f&#9660; MB/day</string>
-    <string name="msg_kbsec">%7.3f KB/s</string>
-    <string name="msg_mbsec">%7.3f MB/s</string>
-    <string name="msg_kb">%1$7.3f&#9650; %2$7.3f&#9660; KB</string>
-    <string name="msg_mb">%1$7.3f&#9650; %2$7.3f&#9660; MB</string>
-    <string name="msg_gb">%1$7.3f&#9650; %2$7.3f&#9660; GB</string>
-    <string name="msg_count">%dx</string>
+    <string name="msg_kbsec" translatable="false">%7.3f KB/s</string>
+    <string name="msg_mbsec" translatable="false">%7.3f MB/s</string>
+    <string name="msg_kb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; KB</string>
+    <string name="msg_mb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; MB</string>
+    <string name="msg_gb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; GB</string>
+    <string name="msg_count" translatable="false">%dx</string>
     <string name="msg_doze">For consistent results, the Android battery optimizations should be disabled for TrackerControl.
 \n\nIn the next dialog, select \"All apps\" at the top, tap on TrackerControl in the list and select and confirm \"Don\'t optimize\".</string>
     <string name="msg_datasaving">For consistent results, the Android data saving options should be disabled for TrackerControl
@@ -262,7 +262,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_conditions">Conditions</string>
     <string name="title_screen_wifi">Allow Wi-Fi when screen is on</string>
     <string name="title_screen_other">Allow mobile when screen is on</string>
-    <string name="title_roaming_symbol">R</string>
+    <string name="title_roaming_symbol" translatable="false">R</string>
     <string name="title_roaming">Block when roaming</string>
     <string name="title_lockdown">Allow in lockdown mode</string>
     <string name="title_related">Filter related</string>
@@ -289,8 +289,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_block_wifi">Block Wi-Fi</string>
     <string name="title_allow_other">Allow mobile</string>
     <string name="title_block_other">Block mobile</string>
-    <string name="title_root">root</string>
-    <string name="title_mediaserver">mediaserver</string>
+    <string name="title_root" translatable="false">root</string>
+    <string name="title_mediaserver" translatable="false">mediaserver</string>
     <string name="title_gpsdaemon" translatable="false">GPS daemon</string>
     <string name="title_dnsdaemon" translatable="false">DNS daemon</string>
     <string name="title_nobody">nobody</string>
@@ -351,7 +351,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item>6</item>
     </string-array>
 
-    <string-array name="protocolNames">
+    <string-array name="protocolNames" translatable="false">
         <item>UDP</item>
         <item>TCP</item>
     </string-array>
@@ -379,7 +379,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
     <!-- App Overview -->
     <string name="tracked_app_name">Application Name</string>
-    <string name="tracker_count">40</string>
+    <string name="tracker_count" translatable="false">40</string>
     <plurals name="n_trackers_found">
         <item quantity="one">%d tracker observed</item>
         <item quantity="other">%d trackers observed</item>
@@ -406,7 +406,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="no">No</string>
 
     <string name="menu_privacy_policy">Privacy Policy</string>
-    <string name="about_url">https://github.com/OxfordHCC/tracker-control-android#privacy-notice</string>
+    <string name="about_url" translatable="false">https://github.com/OxfordHCC/tracker-control-android#privacy-notice</string>
 
     <string name="menu_csv">Export as CSV</string>
     <string name="exporting">Exporting..</string>
