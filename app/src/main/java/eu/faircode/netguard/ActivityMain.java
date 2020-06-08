@@ -379,21 +379,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (!initialized)
             prefs.edit().putBoolean("initialized", true).apply();
 
-        // Show instructions
-        /*TrackerList db = TrackerList.getInstance(this);
-        if (db.count() <= 0) {
-            int instructionsString =
-                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
-                            R.string.instructions_monitoring_private_dns :
-                            R.string.instructions_monitoring;
-
-            View v = this.getWindow().getDecorView().findViewById(android.R.id.content);
-            Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
-            s.setAction(R.string.ok, v1 -> s.dismiss());
-            s.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            s.show();
-        }*/
-
         // Fill application list
         updateApplicationList(getIntent().getStringExtra(EXTRA_SEARCH));
 

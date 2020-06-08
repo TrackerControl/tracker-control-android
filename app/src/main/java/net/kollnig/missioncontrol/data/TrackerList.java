@@ -77,7 +77,7 @@ public class TrackerList {
      * @return A cursor pointing to the data. Caller must close the cursor.
      * Cursor should have app name and leak summation based on a sort type
      */
-    public synchronized Map<Integer, Integer> getTrackerCounts() {
+    public synchronized Pair<Map<Integer, Integer>, Integer> getTrackerCountsAndTotal() {
         Map<Integer, Set<Tracker>> trackers = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts();
@@ -101,12 +101,14 @@ public class TrackerList {
         cursor.close();
 
         // Reduce to counts
+        Integer totalTracker = 0;
         Map<Integer, Integer> trackerCounts = new ArrayMap<>();
         for (Map.Entry<Integer, Set<Tracker>> entry : trackers.entrySet()) {
             trackerCounts.put(entry.getKey(), entry.getValue().size());
+            totalTracker += entry.getValue().size();
         }
 
-        return trackerCounts;
+        return new Pair<>(trackerCounts, totalTracker);
     }
 
     /**

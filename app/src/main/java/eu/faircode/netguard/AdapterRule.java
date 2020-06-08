@@ -557,8 +557,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Custom code: show tracker count
         int trackerCount = rule.getTrackerCount();
-        holder.tvDetails.setText(context.getResources().getQuantityString(
-                R.plurals.n_trackers_found, trackerCount, trackerCount));
+        if (trackerCount > 0) {
+            holder.tvDetails.setVisibility(View.VISIBLE);
+            holder.tvDetails.setText(context.getResources().getQuantityString(
+                    R.plurals.n_trackers_found, trackerCount, trackerCount));
+        } else {
+            holder.tvDetails.setVisibility(View.GONE);
+        }
 
         // Show Wi-Fi screen on condition
         holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);

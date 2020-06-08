@@ -19,6 +19,7 @@ package eu.faircode.netguard;
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,10 +32,15 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Process;
 import android.util.Log;
+import android.view.View;
 
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.Pair;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -410,7 +416,23 @@ public class Rule {
 
             // Custom code: Load tracking counts
             TrackerList trackerList = TrackerList.getInstance(context);
-            trackerCounts = trackerList.getTrackerCounts();
+            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal();
+            trackerCounts = trackerCountsAndTotal.first();
+            int trackerTotal = trackerCountsAndTotal.second();
+
+            if (trackerTotal <= 0
+                && context instanceof Activity) {
+                int instructionsString =
+                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
+                                R.string.instructions_monitoring_private_dns :
+                                R.string.instructions_monitoring;
+
+                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+                Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
+                s.setAction(R.string.ok, v1 -> s.dismiss());
+                s.setActionTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                s.show();
+            }
 
             // Sort rule list
             final Collator collator = Collator.getInstance(Locale.getDefault());

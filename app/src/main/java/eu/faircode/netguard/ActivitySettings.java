@@ -308,10 +308,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             Log.i(TAG, "Play store install");
             cat_advanced.removePreference(pref_block_domains);
             cat_advanced.removePreference(pref_rcode);
-            cat_backup.removePreference(pref_hosts_import);
-            cat_backup.removePreference(pref_hosts_import_append);
-            cat_backup.removePreference(pref_hosts_url);
-            cat_backup.removePreference(pref_hosts_download);
+            cat_advanced.removePreference(pref_hosts_import);
+            cat_advanced.removePreference(pref_hosts_import_append);
+            cat_advanced.removePreference(pref_hosts_url);
+            cat_advanced.removePreference(pref_hosts_download);
 
         } else {
             String last_import = prefs.getString("hosts_last_import", null);

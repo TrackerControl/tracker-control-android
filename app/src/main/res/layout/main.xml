@@ -16,18 +16,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:gravity="center_horizontal"
-            android:id="@+id/tvDisabled"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:paddingStart="?listPreferredItemPaddingLeft"
-            android:paddingEnd="?listPreferredItemPaddingRight"
-            android:text="@string/msg_disabled"
-            android:textAppearance="@style/TextMedium"
-            android:textColor="?attr/colorOff"
-            android:visibility="gone" />
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+            <TextView
+                android:gravity="center_horizontal"
+                android:id="@+id/tvDisabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:paddingStart="?listPreferredItemPaddingLeft"
+                android:paddingEnd="?listPreferredItemPaddingRight"
+                android:text="@string/msg_disabled"
+                android:textAppearance="@style/TextMedium"
+                android:textColor="?attr/colorOff"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <LinearLayout
             android:visibility="gone"

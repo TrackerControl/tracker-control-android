@@ -131,6 +131,32 @@
                 android:key="manage_system"
                 android:summary="@string/summary_system"
                 android:title="@string/setting_system" />
+            <Preference
+                android:key="hosts_import"
+                android:title="@string/setting_hosts" />
+            <Preference
+                android:key="hosts_import_append"
+                android:title="@string/setting_hosts_append" />
+            <EditTextPreference
+                android:defaultValue="https://www.netguard.me/hosts"
+                android:hint="https://www.netguard.me/hosts"
+                android:key="hosts_url"
+                android:title="@string/setting_hosts_url" />
+            <Preference
+                android:dependency="hosts_url"
+                android:key="hosts_download"
+                android:title="@string/setting_hosts_download" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
+                android:dependency="filter"
+                android:key="use_hosts"
+                android:summary="@string/summary_block_domains"
+                android:title="@string/setting_block_domains" />
+            <EditTextPreference
+                android:dependency="filter"
+                android:inputType="number"
+                android:key="rcode"
+                android:summary="@string/summary_rcode" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="true"
                 android:key="log_app"
@@ -162,17 +188,6 @@
                 android:enabled="false"
                 android:key="reset_usage"
                 android:title="@string/setting_reset_usage" />
-            <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="true"
-                android:dependency="filter"
-                android:key="use_hosts"
-                android:summary="@string/summary_block_domains"
-                android:title="@string/setting_block_domains" />
-            <EditTextPreference
-                android:dependency="filter"
-                android:inputType="number"
-                android:key="rcode"
-                android:summary="@string/summary_rcode" />
             <EditTextPreference
                 inputType="phone"
                 android:hint="10.1.10.1"
@@ -254,21 +269,6 @@
             <Preference
                 android:key="import"
                 android:title="@string/setting_import" />
-            <Preference
-                android:key="hosts_import"
-                android:title="@string/setting_hosts" />
-            <Preference
-                android:key="hosts_import_append"
-                android:title="@string/setting_hosts_append" />
-            <EditTextPreference
-                android:defaultValue="https://www.netguard.me/hosts"
-                android:hint="https://www.netguard.me/hosts"
-                android:key="hosts_url"
-                android:title="@string/setting_hosts_url" />
-            <Preference
-                android:dependency="hosts_url"
-                android:key="hosts_download"
-                android:title="@string/setting_hosts_download" />
         </PreferenceCategory>
     </PreferenceScreen>
 
