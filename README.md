@@ -80,12 +80,15 @@ which can be disabled from the app settings.
 No personal data is ever shared, other than what is strictly
 necessary for network communications (e.g. IP address).
 
-TrackerControl saves two pieces of information on the user's device:
+## Cookie policy
+
+TrackerControl does not use cookies of any kind.
+
+The only information saved on the user's device is non-identifying
+and strictly necessary for the operation of TrackerControl:
 
 1. a database of network communications, and
 2. user settings.
-
-This data is necessary for the functioning of TrackerControl.
 
 This information is kept on the user's device until app data is
 removed manually by the user (e.g. by uninstalling).
