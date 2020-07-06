@@ -115,15 +115,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         w.unblock(mAppUid, tracker.name);
                     }
                 });
-                holder.mView.setOnClickListener(v -> {
-                    if (holder.mSwitch.isChecked()) {
-                        w.unblock(mAppUid, tracker.name);
-                    } else {
-                        w.block(mAppUid, tracker.name);
-                    }
-
-                    holder.mSwitch.toggle();
-                });
             }
 
             //cast holder to VHItem and set data
