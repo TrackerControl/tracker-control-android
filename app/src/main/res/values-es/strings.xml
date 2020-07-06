@@ -422,7 +422,6 @@ Please provide your response through secure means by email. I look forward to re
 \n
 Sincerely,\n\n]]></string>
     <string name="packet_statistics">Tráfico de datos</string>
-    <string name="no_trackers">No se observaron rastreadores. Solo los rastreadores que fueron observados para recoletar sus datos serán mostrados.\n\nIntenta usar la app y revise de nuevo.</string>
 
     <string name="crash_dialog_text">Lo sentimos. TrackerControl dejó de funcionar. ¿Podrías enviar un correo describiendo su funcionamiento?</string>
     <string name="crash_dialog_comment">¿Algún comentario?</string>
@@ -431,7 +430,6 @@ Sincerely,\n\n]]></string>
     <string name="instructions_monitoring">Conmuta el interruptor e interactúa con otras aplicaciones.</string>
 
     <string name="afterboot_notification">El sistema operativo de su dispositivo no permite monitorear y filtrar las comunicaciones de la red. Esto es necesario para el TrackerControl.</string>
-    <string name="disclaimer">La información podría estar incompleta o imprecisa.\n\nSi la aplicación no responde, por favor desactiva el bloqueo.</string>
 
     <string name="device_not_supported_title">Dispositivo no soportado</string>
     <string name="device_not_supported_msg">El sistema operativo de su dispositivo on opermite monitorizar o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>

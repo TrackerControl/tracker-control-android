@@ -18,10 +18,12 @@
 package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -49,15 +51,23 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final String TAG = TrackersListAdapter.class.getSimpleName();
     private final RecyclerView recyclerView;
     private final Integer mAppUid;
+    private final String mAppId;
     private List<TrackerCategory> mValues = new ArrayList<>();
-    private Context mContext;
+    private final Context mContext;
+    private Intent launch;
 
     public TrackersListAdapter(Context c,
                                RecyclerView root,
-                               Integer appUid) {
+                               Integer appUid,
+                               String appId) {
         recyclerView = root;
         mContext = c;
         mAppUid = appUid;
+        mAppId = appId;
+
+        Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(mAppId);
+        launch = (intent == null ||
+                intent.resolveActivity(mContext.getPackageManager()) == null ? null : intent);
 
         // Removes blinks
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -122,6 +132,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
+            if (launch == null) {
+                holder.mLaunch.setVisibility(View.GONE);
+            } else {
+                holder.mLaunch.setOnClickListener(view -> mContext.startActivity(launch));
+            }
+
             final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
             holder.mSwitch.setChecked(
                     w.blockedInternet(mAppUid)
@@ -181,11 +197,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHHeader extends RecyclerView.ViewHolder {
         final View mView;
         final Switch mSwitch;
+        final Button mLaunch;
 
         VHHeader(View view) {
             super(view);
             mView = view;
             mSwitch = view.findViewById(R.id.switch_internet);
+            mLaunch = view.findViewById(R.id.btnLaunch);
         }
     }
 }

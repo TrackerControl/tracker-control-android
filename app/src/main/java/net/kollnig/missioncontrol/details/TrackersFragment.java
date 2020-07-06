@@ -18,13 +18,11 @@
 package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,8 +51,6 @@ public class TrackersFragment extends Fragment {
     private TrackersListAdapter adapter;
 
     private RecyclerView recyclerView;
-    private View emptyView;
-    private Button btnLaunch;
 
     private boolean running = false;
 
@@ -95,27 +91,11 @@ public class TrackersFragment extends Fragment {
         trackerList = TrackerList.getInstance(context);
         recyclerView = v.findViewById(R.id.transmissions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new TrackersListAdapter(getContext(), recyclerView, mAppUid);
+        adapter = new TrackersListAdapter(getContext(), recyclerView, mAppUid, mAppId);
         recyclerView.setAdapter(adapter);
 
         swipeRefresh = v.findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this::updateTrackerList);
-
-        emptyView = v.findViewById(R.id.empty);
-        btnLaunch = v.findViewById(R.id.btnLaunch);
-        Context c = getContext();
-        if (c != null) {
-            Intent intent = c.getPackageManager().getLaunchIntentForPackage(mAppId);
-
-            final Intent launch = (intent == null ||
-                    intent.resolveActivity(c.getPackageManager()) == null ? null : intent);
-
-            if (launch == null) {
-                btnLaunch.setVisibility(View.GONE);
-            } else {
-                btnLaunch.setOnClickListener(view -> c.startActivity(launch));
-            }
-        }
 
         return v;
     }
@@ -149,14 +129,6 @@ public class TrackersFragment extends Fragment {
                 if (running) {
                     if (adapter != null) {
                         adapter.set(result);
-
-                        if (result.size() == 0) {
-                            emptyView.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
-                        } else {
-                            emptyView.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                        }
                     }
 
                     if (swipeRefresh != null) {

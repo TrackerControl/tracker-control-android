@@ -25,40 +25,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:mContext="net.kollnig.missioncontrol.details.TrackersFragment">
 
-    <LinearLayout
-        android:id="@+id/empty"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="1dp"
-            android:paddingStart="?listPreferredItemPaddingLeft"
-            android:paddingEnd="?listPreferredItemPaddingRight"
-            android:text="@string/no_trackers"
-            android:textColor="?android:textColorSecondary"
-            android:textStyle="italic" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/btnLaunch"
-                android:drawableStart="@drawable/ic_launch_white_24dp"
-                android:theme="@style/PrimaryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/launch_app"/>
-        </LinearLayout>
-    </LinearLayout>
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"

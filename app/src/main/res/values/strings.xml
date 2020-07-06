@@ -482,7 +482,6 @@ Please provide your response through secure means by email. I look forward to re
 \n
 Sincerely,\n\n]]></string>
     <string name="packet_statistics">Data flows</string>
-    <string name="no_trackers">No trackers observed. Only trackers that were observed to collect your data are shown.\n\nTry using the app and check again..</string>
 
     <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
@@ -491,12 +490,11 @@ Sincerely,\n\n]]></string>
     <string name="instructions_monitoring">Toggle the switch and interact with some apps.</string>
 
     <string name="afterboot_notification">Restart notification</string>
-    <string name="disclaimer">Shown information may be incomplete or incorrect.\n\nIf an app stops to work, disable blocking.</string>
 
     <string name="device_not_supported_title">Device not supported</string>
     <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>
 
     <string name="monitor">Monitor</string>
 
-    <string name="launch_app">Launch app</string>
+    <string name="launch_app">Launch &amp; Find trackers</string>
 </resources>
