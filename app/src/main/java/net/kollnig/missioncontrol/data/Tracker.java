@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import eu.faircode.netguard.Util;
+
 public class Tracker {
     public String name;
     public String category;
@@ -50,7 +52,8 @@ public class Tracker {
         List sortedHosts = getSortedHosts();
         String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
 
-        if (TrackerList.necessaryTrackers.contains(name))
+        if (TrackerList.necessaryTrackers.contains(name)
+                && !Util.isPlayStoreInstall())
             return name + " (Unblocked)" + hosts;
         else {
             return name + hosts;

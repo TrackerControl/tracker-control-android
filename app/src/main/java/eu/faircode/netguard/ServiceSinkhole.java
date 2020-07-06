@@ -1903,6 +1903,9 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
     // Called from native code
     private boolean isDomainBlocked(String name) {
+        if (Util.isPlayStoreInstall())
+            return false;
+
         lock.readLock().lock();
         boolean blocked = (mapHostsBlocked.containsKey(name) && mapHostsBlocked.get(name));
         lock.readLock().unlock();
@@ -2036,7 +2039,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         }
 
         Allowed allowed = null;
-        if (packet.allowed)
+        if (Util.isPlayStoreInstall()
+                || packet.allowed)
             allowed = new Allowed();
 
         lock.readLock().unlock();

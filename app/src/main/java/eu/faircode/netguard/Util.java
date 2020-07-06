@@ -435,14 +435,11 @@ public class Util {
     }
 
     public static boolean isPlayStoreInstall(Context context) {
-        if (BuildConfig.FLAVOR.equals("play"))
-            return true;
-        try {
-            return "com.android.vending".equals(context.getPackageManager().getInstallerPackageName(context.getPackageName()));
-        } catch (Throwable ex) {
-            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            return false;
-        }
+        return isPlayStoreInstall();
+    }
+
+    public static boolean isPlayStoreInstall() {
+        return BuildConfig.FLAVOR.equals("play");
     }
 
     public static boolean hasXposed(Context context) {

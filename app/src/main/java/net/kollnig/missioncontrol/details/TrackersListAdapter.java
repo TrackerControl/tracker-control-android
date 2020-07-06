@@ -99,33 +99,32 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mTrackerDetails.setText(
                     TextUtils.join("\n\n", tracker.getChildren()));
 
-
             if (Util.isPlayStoreInstall(mContext)) {
                 holder.mSwitch.setVisibility(View.GONE);
-                return;
+            } else {
+                final AppBlocklistController w = AppBlocklistController.getInstance(mContext);
+                holder.mSwitch.setChecked(
+                        w.blockedTracker(mAppUid, tracker.name)
+                );
+                holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (!buttonView.isPressed()) return; // to fix errors
+
+                    if (isChecked) {
+                        w.block(mAppUid, tracker.name);
+                    } else {
+                        w.unblock(mAppUid, tracker.name);
+                    }
+                });
+                holder.mView.setOnClickListener(v -> {
+                    if (holder.mSwitch.isChecked()) {
+                        w.unblock(mAppUid, tracker.name);
+                    } else {
+                        w.block(mAppUid, tracker.name);
+                    }
+
+                    holder.mSwitch.toggle();
+                });
             }
-            final AppBlocklistController w = AppBlocklistController.getInstance(mContext);
-            holder.mSwitch.setChecked(
-                    w.blockedTracker(mAppUid, tracker.name)
-            );
-            holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (!buttonView.isPressed()) return; // to fix errors
-
-                if (isChecked) {
-                    w.block(mAppUid, tracker.name);
-                } else {
-                    w.unblock(mAppUid, tracker.name);
-                }
-            });
-            holder.mView.setOnClickListener(v -> {
-                if (holder.mSwitch.isChecked()) {
-                    w.unblock(mAppUid, tracker.name);
-                } else {
-                    w.block(mAppUid, tracker.name);
-                }
-
-                holder.mSwitch.toggle();
-            });
 
             //cast holder to VHItem and set data
         } else if (_holder instanceof VHHeader) {

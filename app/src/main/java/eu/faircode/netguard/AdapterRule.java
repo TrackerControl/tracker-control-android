@@ -555,6 +555,9 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
+        if (Util.isPlayStoreInstall())
+            holder.cbApply.setVisibility(View.GONE);
+
         // Custom code: show tracker count
         int trackerCount = rule.getTrackerCount();
         if (trackerCount > 0) {
