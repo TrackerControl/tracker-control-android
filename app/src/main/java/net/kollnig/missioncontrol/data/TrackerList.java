@@ -215,15 +215,16 @@ public class TrackerList {
                 Tracker tracker;
                 String country = jsonCompany.getString("country");
                 String name = jsonCompany.getString("owner_name");
-                if (!jsonCompany.isNull("root_parent")) {
-                    name = jsonCompany.getString("root_parent");
-                }
                 boolean necessary;
                 if (jsonCompany.has("necessary")) {
                     necessary = jsonCompany.getBoolean("necessary");
                     necessaryTrackers.add(name);
                 } else {
                     necessary = false;
+                }
+                if (!jsonCompany.isNull("root_parent")
+                        && !necessary) { // necessary tracker are identified at lowest level
+                    name = jsonCompany.getString("root_parent");
                 }
 
                 tracker = companies.get(name);
