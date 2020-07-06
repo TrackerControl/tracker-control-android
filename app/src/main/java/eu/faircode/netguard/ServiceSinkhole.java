@@ -77,8 +77,9 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.AppBlocklistController;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.json.JSONArray;
@@ -1993,40 +1994,48 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                     }*/
 
                 // Check if tracker known
-                Tracker tracker = ipToTracker.get(packet.daddr);
-                if (tracker == null) {
-                    // Check if IP known
-                    String dname = ipToHost.get(packet.daddr);
-                    if (dname == null) {
-                        // Retrieve dname from DB
-                        DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                        dname = dh.getQName(packet.uid, packet.daddr);
-
-                        // Check dname for tracker
+                if (!Util.isPlayStoreInstall()) {
+                    Tracker tracker = ipToTracker.get(packet.daddr);
+                    if (tracker == null) {
+                        // Check if IP known
+                        String dname = ipToHost.get(packet.daddr);
                         if (dname == null) {
-                            dname = NO_DNAME;
-                            tracker = NO_TRACKER;
-                        } else {
-                            tracker = TrackerList.findTracker(dname);
-                            if (tracker == null)
-                                tracker = NO_TRACKER;
-                        }
+                            // Retrieve dname from DB
+                            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+                            dname = dh.getQName(packet.uid, packet.daddr);
 
-                        // Save dname and tracker
-                        ipToHost.put(packet.daddr, dname);
-                        ipToTracker.put(packet.daddr, tracker);
+                            // Check dname for tracker
+                            if (dname == null) {
+                                dname = NO_DNAME;
+                                tracker = NO_TRACKER;
+                            } else {
+                                tracker = TrackerList.findTracker(dname);
+                                if (tracker == null)
+                                    tracker = NO_TRACKER;
+                            }
+
+                            // Save dname and tracker
+                            ipToHost.put(packet.daddr, dname);
+                            ipToTracker.put(packet.daddr, tracker);
+                        }
+                    }
+
+                    if (tracker != NO_TRACKER) {
+                        // Block tracker if necessary
+                        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                        if (tracker != null
+                                && !tracker.necessary
+                                && trackerBlocklist.blockedTracker(packet.uid, tracker.getRoot())) {
+                            filtered = true;
+                            packet.allowed = false;
+                        }
                     }
                 }
 
-                if (tracker != NO_TRACKER) {
-                    // Block tracker if necessary
-                    AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
-                    if (tracker != null
-                            && !tracker.necessary
-                            && appBlocklist.blockedTracker(packet.uid, tracker.getRoot())) {
-                        filtered = true;
-                        packet.allowed = false;
-                    }
+                InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
+                if (internetBlocklist.blockedInternet(packet.uid)) {
+                    filtered = true;
+                    packet.allowed = false;
                 }
 
 	            if (!filtered)
@@ -2039,8 +2048,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         }
 
         Allowed allowed = null;
-        if (Util.isPlayStoreInstall()
-                || packet.allowed)
+        if (packet.allowed)
             allowed = new Allowed();
 
         lock.readLock().unlock();

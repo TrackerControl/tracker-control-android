@@ -45,9 +45,10 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.opencsv.CSVWriter;
 
-import net.kollnig.missioncontrol.data.AppBlocklistController;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.PlayStore;
 import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.io.File;
@@ -60,8 +61,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
-import static net.kollnig.missioncontrol.data.AppBlocklistController.SHARED_PREFS_BLOCKLIST_APPS_KEY;
+import static net.kollnig.missioncontrol.data.InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
 
 public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
@@ -77,25 +79,37 @@ public class DetailsActivity extends AppCompatActivity {
     private String appPackageName;
     private String appName;
 
-    public static void savePrefs(Context c) {
-        // Save currently Selected Apps to Shared Prefs
-        AppBlocklistController controller = AppBlocklistController.getInstance(c);
-        Set<Integer> appIntSet = controller.getBlocklist();
+    private static Set<String> intToStringSet(Set<Integer> ints) {
+        Set<String> strings = new HashSet<>();
 
-        // Convert to String array, required by Android for saving
-        Set<String> appSet = new HashSet<>();
-        for (Integer uid: appIntSet) {
-            appSet.add(String.valueOf(uid));
+
+        for (Integer _int: ints) {
+            strings.add(String.valueOf(_int));
         }
 
+        return strings;
+    }
+
+    public static void savePrefs(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
-        editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, appSet);
-        for (Integer uid : appIntSet) {
-            Set<String> subset = controller.getSubset(uid);
+
+        // Tracker settings
+        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(c);
+        Set<Integer> trackerIntSet = trackerBlocklist.getBlocklist();
+        Set<String> trackerSet = intToStringSet(trackerIntSet);
+        editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
+        for (Integer uid : trackerIntSet) {
+            Set<String> subset = trackerBlocklist.getSubset(uid);
             editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, subset);
         }
+
+        // Internet settings
+        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(c);
+        Set<String> internetSet = intToStringSet(internetBlocklist.getBlocklist());
+        editor.putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, internetSet);
+
         editor.apply();
     }
 

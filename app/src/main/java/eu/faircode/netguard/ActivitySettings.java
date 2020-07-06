@@ -63,7 +63,8 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.AppBlocklistController;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -93,7 +94,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Settings";
@@ -1225,7 +1226,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
 
         // Reload blocklist
-        AppBlocklistController.getInstance(this).loadSettings(this);
+        TrackerBlocklist.getInstance(this).loadSettings(this);
+        InternetBlocklist.getInstance(this).loadSettings(this);
 
         // Upgrade imported settings
         ReceiverAutostart.upgrade(true, this);

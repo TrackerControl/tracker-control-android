@@ -29,8 +29,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.AppBlocklistController;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return new VHItem(view);
         } else if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.disclaimer, parent, false);
+                    .inflate(R.layout.list_item_trackers_header, parent, false);
             return new VHHeader(view);
         }
 
@@ -102,7 +103,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (Util.isPlayStoreInstall(mContext)) {
                 holder.mSwitch.setVisibility(View.GONE);
             } else {
-                final AppBlocklistController w = AppBlocklistController.getInstance(mContext);
+                final TrackerBlocklist w = TrackerBlocklist.getInstance(mContext);
                 holder.mSwitch.setChecked(
                         w.blockedTracker(mAppUid, tracker.name)
                 );
@@ -119,7 +120,22 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             //cast holder to VHItem and set data
         } else if (_holder instanceof VHHeader) {
-            //cast holder to VHHeader and set data for header.
+            VHHeader holder = (VHHeader) _holder;
+
+            final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
+            holder.mSwitch.setChecked(
+                    w.blockedInternet(mAppUid)
+            );
+
+            holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (!buttonView.isPressed()) return; // to fix errors
+
+                if (isChecked) {
+                    w.block(mAppUid);
+                } else {
+                    w.unblock(mAppUid);
+                }
+            });
         }
     }
 
@@ -144,7 +160,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mValues.get(position - 1);
     }
 
-    class VHItem extends RecyclerView.ViewHolder {
+    static class VHItem extends RecyclerView.ViewHolder {
         final View mView;
         final TextView mTrackerDetails;
         final TextView mTrackerName;
@@ -162,9 +178,14 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    class VHHeader extends RecyclerView.ViewHolder {
+    static class VHHeader extends RecyclerView.ViewHolder {
+        final View mView;
+        final Switch mSwitch;
+
         VHHeader(View view) {
             super(view);
+            mView = view;
+            mSwitch = view.findViewById(R.id.switch_internet);
         }
     }
 }

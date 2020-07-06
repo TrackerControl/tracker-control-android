@@ -27,16 +27,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AppBlocklistController {
+public class TrackerBlocklist {
     public static final String SHARED_PREFS_BLOCKLIST_APPS_KEY = "APPS_BLOCKLIST_APPS_KEY";
     final public static String PREF_BLOCKLIST = "blocklist";
-    private static AppBlocklistController instance;
+    private static TrackerBlocklist instance;
     /**
      * Whilst blockmap is a list of apps to block, the set is a set of trackers not to block.
      */
     private Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
 
-    private AppBlocklistController(Context c) {
+    private TrackerBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
         if (c != null) {
             loadSettings(c);
@@ -79,12 +79,12 @@ public class AppBlocklistController {
      * Singleton getter.
      *
      * @param c context used to access shared preferences from.
-     * @return The current instance of the AppBlocklistController, if none, a new instance is created.
+     * @return The current instance of the TrackerBlocklist, if none, a new instance is created.
      */
-    public static AppBlocklistController getInstance(Context c) {
+    public static TrackerBlocklist getInstance(Context c) {
         if (instance == null) {
             // Create the instance
-            instance = new AppBlocklistController(c);
+            instance = new TrackerBlocklist(c);
         }
         // Return the instance
         return instance;

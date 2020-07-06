@@ -421,6 +421,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tab_actions">My Data</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
+    <string name="internet_access">Internet Access</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
