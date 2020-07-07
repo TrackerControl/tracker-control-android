@@ -39,6 +39,7 @@ import net.kollnig.missioncontrol.data.TrackerCategory;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 /**
@@ -125,6 +126,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         w.unblock(mAppUid, tracker.name);
                     }
+
+                    ServiceSinkhole.reload("trackers changed", mContext, false);
                 });
             }
 
@@ -151,6 +154,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 } else {
                     w.unblock(mAppUid);
                 }
+
+                ServiceSinkhole.reload("internet access changed", mContext, false);
             });
         }
     }
