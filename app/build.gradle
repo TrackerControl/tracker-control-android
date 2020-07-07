@@ -8,7 +8,7 @@ android {
         applicationId = "net.kollnig.missioncontrol"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 2020070701
+        versionCode 2020070702
         versionName "2020.07.07"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
