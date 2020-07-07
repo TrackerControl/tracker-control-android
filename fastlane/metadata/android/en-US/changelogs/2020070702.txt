@@ -1,0 +1,5 @@
+- Add app-wise blocking of ALL internet traffic
+- Clarify blocking UI
+- Fix necessary trackers (enables updater in GitHub variant)
+- Add cookie policy (to underline that this app would never use cookies)
+- Add feature-reduced, but PlayStore-compatible variant
