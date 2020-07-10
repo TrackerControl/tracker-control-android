@@ -23,9 +23,11 @@ import java.util.List;
 public class TrackerCategory {
     public String name;
     private List<Tracker> children;
+    public long lastSeen;
 
-    TrackerCategory(String name) {
+    TrackerCategory(String name, long lastSeen) {
         this.name = name;
+        this.lastSeen = lastSeen;
     }
 
     public List<Tracker> getChildren() {
@@ -35,5 +37,9 @@ public class TrackerCategory {
         } else {
             return this.children;
         }
+    }
+
+    public long getLastSeen() {
+        return lastSeen;
     }
 }

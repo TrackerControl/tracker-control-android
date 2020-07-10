@@ -33,11 +33,17 @@ public class Tracker {
     public String category;
     public Boolean necessary;
     private Set<String> hosts = new HashSet<>();
+    public long lastSeen;
 
-    public Tracker(String name, String category) {
+    public long getLastSeen() {
+        return lastSeen;
+    }
+
+    public Tracker(String name, String category, long lastSeen) {
         this.name = name;
         this.category = category;
         this.necessary = false;
+        this.lastSeen = lastSeen;
     }
 
     public Tracker(String name, String category, Boolean necessary) {
@@ -52,11 +58,18 @@ public class Tracker {
         List sortedHosts = getSortedHosts();
         String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
 
+        String title;
+        if (lastSeen != 0) {
+            title = name + "  (" + Util.relativeTime(lastSeen) + ")";
+        } else {
+            title = name;
+        }
+
         if (TrackerList.necessaryTrackers.contains(name)
                 && !Util.isPlayStoreInstall())
-            return name + " (Unblocked)" + hosts;
+            return title + " (Unblocked)" + hosts;
         else {
-            return name + hosts;
+            return title + hosts;
         }
     }
 

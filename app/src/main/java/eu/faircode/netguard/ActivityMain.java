@@ -787,15 +787,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (itemId == R.id.menu_lockdown) {
             menu_lockdown(item);
             return true;
-        } else if (itemId == R.id.menu_log) {
-            if (Util.canFilter(this))
-                if (IAB.isPurchased(ActivityPro.SKU_LOG, this))
-                    startActivity(new Intent(this, ActivityLog.class));
-                else
-                    startActivity(new Intent(this, ActivityPro.class));
-            else
-                Toast.makeText(this, R.string.msg_unavailable, Toast.LENGTH_SHORT).show();
-            return true;
         } else if (itemId == R.id.menu_settings) {
             startActivity(new Intent(this, ActivitySettings.class));
             return true;
