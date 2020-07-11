@@ -1670,9 +1670,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                             if (version == 6 && !(iname instanceof Inet6Address))
                                 continue;
 
-                            if (dname != null)
-                                Log.i(TAG, "Set filter " + key + " " + daddr + "/" + dresource + "=" + block);
-
                             boolean exists = mapUidIPFilters.get(key).containsKey(iname);
                             if (!exists || !mapUidIPFilters.get(key).get(iname).isBlocked()) {
                                 IPRule rule = new IPRule(key, name + "/" + iname, block, time + ttl);
@@ -1681,8 +1678,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                                     Log.w(TAG, "Address conflict " + key + " " + daddr + "/" + dresource);
                             } else if (exists) {
                                 mapUidIPFilters.get(key).get(iname).updateExpires(time + ttl);
-                                if (dname != null)
+                                if (dname != null && ttl > 60 * 1000L)
                                     Log.w(TAG, "Address updated " + key + " " + daddr + "/" + dresource);
+                            } else {
+                                if (dname != null)
+                                    Log.i(TAG, "Ignored " + key + " " + daddr + "/" + dresource + "=" + block);
                             }
                         } else
                             Log.w(TAG, "Address not numeric " + name);
@@ -2516,6 +2516,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         builder.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
 
         ConnectivityManager.NetworkCallback nc = new ConnectivityManager.NetworkCallback() {
+            private Boolean last_connected = null;
             private Boolean last_unmetered = null;
             private String last_generation = null;
             private List<InetAddress> last_dns = null;
@@ -2523,6 +2524,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             @Override
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
+                last_connected = Util.isConnected(ServiceSinkhole.this);
                 reload("network available", ServiceSinkhole.this, false);
             }
 
@@ -2545,6 +2547,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                 Log.i(TAG, "Changed capabilities=" + network);
+
+                boolean connected = Util.isConnected(ServiceSinkhole.this);
+                if (connected && (last_connected == null || !last_connected)) {
+                    last_connected = connected;
+                    reload("Connected state changed", ServiceSinkhole.this, false);
+                }
 
                 boolean unmetered = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
                 String generation = Util.getNetworkGeneration(ServiceSinkhole.this);
@@ -2575,6 +2583,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             @Override
             public void onLost(Network network) {
                 Log.i(TAG, "Lost network=" + network);
+                last_connected = Util.isConnected(ServiceSinkhole.this);
                 reload("network lost", ServiceSinkhole.this, false);
             }
 
