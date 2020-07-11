@@ -71,6 +71,9 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+    packagingOptions { // required after adding geoip2
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
@@ -93,6 +96,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
     implementation 'com.opencsv:opencsv:4.6'
+
+    implementation 'com.maxmind.geoip2:geoip2:2.14.0'
 
     compileOnly "com.google.auto.service:auto-service-annotations:1.0-rc6"
     annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"

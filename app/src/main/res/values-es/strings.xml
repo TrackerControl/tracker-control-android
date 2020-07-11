@@ -357,8 +357,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
 
     <!-- App Details -->
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="tab_transmissions">Transmisiones</string>
     <string name="tab_trackers">Rastreadores</string>
+    <string name="tab_countries">Países</string>
     <string name="tab_actions">Mi datos</string>
     <string name="summary_loading_error">No se obtuvo la descripción de la aplicación.</string>
     <string name="tracker_name">Nombre del rastreador</string>

@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import net.kollnig.missioncontrol.details.ActionsFragment;
+import net.kollnig.missioncontrol.details.CountriesFragment;
 import net.kollnig.missioncontrol.details.TrackersFragment;
 
 
@@ -37,7 +38,7 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
     @StringRes
     private static final int[] TAB_TITLES = new int[]{
             R.string.tab_trackers,
-            //R.string.tab_transmissions,
+            R.string.tab_countries,
             R.string.tab_actions,
     };
     public static int tabTrackersPosition = 0;
@@ -46,8 +47,8 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
     private final Context mContext;
 
     private Fragment fTrackers;
+    private Fragment fCountries;
     private Fragment fActions;
-    //private Fragment fTransmissions;
 
     public DetailsPagesAdapter(final Context context, FragmentManager fm, String appId, String appName, int uid) {
         super(fm);
@@ -55,7 +56,7 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
         mContext = context;
 
         fTrackers = TrackersFragment.newInstance(appId, uid);
-        //fTransmissions = TransmissionsFragment.newInstance(appId);
+        fCountries = CountriesFragment.newInstance(uid);
         fActions = ActionsFragment.newInstance(appId, appName);
     }
 
@@ -64,9 +65,9 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
                 return fTrackers;
-			/*case 1:
-				return fTransmissions;*/
-            case 1:
+			case 1:
+				return fCountries;
+            case 2:
                 return fActions;
         }
         return null;

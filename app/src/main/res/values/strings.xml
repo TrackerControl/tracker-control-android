@@ -416,8 +416,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
     <!-- App Details -->
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="tab_transmissions">Transmissions</string>
     <string name="tab_trackers">Trackers</string>
+    <string name="tab_countries">Countries</string>
     <string name="tab_actions">My Data</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
@@ -497,4 +497,7 @@ Sincerely,\n\n]]></string>
     <string name="monitor">Monitor</string>
 
     <string name="launch_app">Launch &amp; Find trackers</string>
+    <string name="load_countries">Show Countries (Uses Google Maps)</string>
+    <string name="countries">Destination Countries</string>
+    <string name="countries_explanation">Tracking is a global business. Personal is sent worldwide. You can visualise the destinations of your data, and the number of IP belonging to a country, by clicking below.</string>
 </resources>
