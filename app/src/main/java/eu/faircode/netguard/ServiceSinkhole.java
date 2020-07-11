@@ -1893,7 +1893,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 protocol == 17 /* UDP */);
     }
 
-    static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, String> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Tracker> ipToTracker = new ConcurrentHashMap<>();
     static String NO_DNAME = "NO_DNAME";

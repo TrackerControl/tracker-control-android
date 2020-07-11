@@ -23,7 +23,7 @@ import java.util.List;
 public class TrackerCategory {
     public String name;
     private List<Tracker> children;
-    public long lastSeen;
+    public Long lastSeen;
 
     TrackerCategory(String name, long lastSeen) {
         this.name = name;

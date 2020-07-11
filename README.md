@@ -117,6 +117,8 @@ The original data can be retrieved [here](https://osf.io/4nu9e/).
 
 *GDPR Requests:* For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 
+*Country Visualisation*:TrackerControl offers to visualise the countries to which trackers sent data. The code stems from the [KOALA Project](https://github.com/OxfordHCC/xray-koala-hero/) at the University of Oxford.
+
 ## License
 This project is licensed under
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).

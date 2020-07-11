@@ -181,7 +181,7 @@ public class TrackerList {
         // sort lists
         Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
         for (TrackerCategory child : trackerList) {
-            Collections.sort(child.getChildren(), (o1, o2) -> o1.name.compareTo(o2.name));
+            Collections.sort(child.getChildren(), (o1, o2) -> o2.lastSeen.compareTo(o1.lastSeen));
         }
 
         return trackerList;

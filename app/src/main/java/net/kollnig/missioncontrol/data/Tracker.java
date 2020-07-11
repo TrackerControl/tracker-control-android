@@ -33,7 +33,7 @@ public class Tracker {
     public String category;
     public Boolean necessary;
     private Set<String> hosts = new HashSet<>();
-    public long lastSeen;
+    public Long lastSeen;
 
     public long getLastSeen() {
         return lastSeen;
