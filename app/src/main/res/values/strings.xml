@@ -499,5 +499,5 @@ Sincerely,\n\n]]></string>
     <string name="launch_app">Launch &amp; Find trackers</string>
     <string name="load_countries">Show Countries (Uses Google Maps)</string>
     <string name="countries">Destination Countries</string>
-    <string name="countries_explanation">Tracking is a global business. Personal is sent worldwide. You can visualise the destinations of your data, and the number of IP belonging to a country, by clicking below.</string>
+    <string name="countries_explanation">Tracking is a global business. Personal data is sent worldwide. You can visualise the destinations of your data, including the number of IPs, by clicking below.</string>
 </resources>

@@ -437,4 +437,7 @@ Sincerely,\n\n]]></string>
     <string name="monitor">Monitor</string>
 
     <string name="launch_app">Lanzar el aplicativo</string>
+    <string name="load_countries">Show Countries (Uses Google Maps)</string>
+    <string name="countries">Destination Countries</string>
+    <string name="countries_explanation">Tracking is a global business. Personal data is sent worldwide. You can visualise the destinations of your data, including the number of IPs, by clicking below.</string>
 </resources>
