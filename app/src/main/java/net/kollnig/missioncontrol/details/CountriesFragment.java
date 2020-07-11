@@ -136,6 +136,7 @@ public class CountriesFragment extends Fragment {
         WebView wv = v.findViewById(R.id.web_view);
 
         btnLoad.setOnClickListener(v1 -> {
+            btnLoad.setEnabled(false);
             pbLoading.setVisibility(View.VISIBLE);
 
             Handler mHandler = new Handler();
@@ -180,7 +181,6 @@ public class CountriesFragment extends Fragment {
 
                     wv.setVisibility(View.VISIBLE);
                     pbLoading.setVisibility(View.GONE);
-                    btnLoad.setVisibility(View.GONE);
                 });
             }).start();
         });
