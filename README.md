@@ -46,6 +46,12 @@ A feature-reduced version is also available on [Google Play](https://play.google
 4. /e/ Community: https://community.e.foundation/t/trackercontrol-a-way-to-neutralize-in-app-trackers/
 5. XDA Developers: https://forum.xda-developers.com/android/apps-games/app-trackercontrol-claim-mobile-privacy-t4130023/
 
+## Translation
+
+If you're missing a translation, feel free to contribute here: <https://crowdin.com/project/trackercontrol>.
+
+Contact me at tc@kollnig.net, if you're missing a language.
+
 ## Highlights
 TrackerControl provides
 - *real-time monitoring* of app tracking,
@@ -95,14 +101,11 @@ removed manually by the user (e.g. by uninstalling).
 
 ## Credits
 
-The majority of the development was carried out by Konrad Kollnig (University of Oxford).
+The development of TrackerControl was led by Konrad Kollnig (University of Oxford). The underlying network analysis functionality is provided by the [NetGuard Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
-Yet, the development of this app would not have been possible without the help of many outstandings minds, including Max van Kleek, Katherine Fletcher, George Chalhoub, Sir Nigel Shadbolt and numerous app testers and friends.
+TrackerControl would not have been possible without the help of many outstandings minds, including Max Van Kleek, Katherine Fletcher, George Chalhoub, Sir Nigel Shadbolt and numerous app testers and friends.
 
-Further, the app itself builds upon a range of publicly available tools, the foundation of this work.
-
-*VPN Functionality:* The underlying network analysis functionality is provided by the [NetGuard
-Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
+The app builds upon a range of publicly available ressources:
 
 *Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
