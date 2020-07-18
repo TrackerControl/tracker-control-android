@@ -67,5 +67,5 @@
         android:title="@string/menu_clear" />
     <item
         android:id="@+id/menu_log_support"
-        android:title="@string/menu_support" />
+        android:title="@string/menu_log_support" />
 </menu>

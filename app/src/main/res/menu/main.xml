@@ -58,7 +58,6 @@
         android:title="@string/setting_lockdown"/>
     <item
         android:id="@+id/menu_log"
-        android:visible="false"
         android:title="@string/menu_log"/>
     <item
         android:id="@+id/menu_settings"

@@ -788,6 +788,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (itemId == R.id.menu_lockdown) {
             menu_lockdown(item);
             return true;
+        } else if (itemId == R.id.menu_log) {
+            if (Util.canFilter(this))
+                startActivity(new Intent(this, ActivityLog.class));
+            else
+                Toast.makeText(this, R.string.msg_unavailable, Toast.LENGTH_SHORT).show();
+            return true;
         } else if (itemId == R.id.menu_settings) {
             startActivity(new Intent(this, ActivitySettings.class));
             return true;
@@ -1139,16 +1145,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void menu_apps() {
         startActivity(getIntentApps(this));
-    }
-
-    private static Intent getIntentPro(Context context) {
-        if (Util.isPlayStoreInstall(context))
-            return new Intent(context, ActivityPro.class);
-        else {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://contact.faircode.eu/?product=netguardstandalone"));
-            return intent;
-        }
     }
 
     private static Intent getIntentInvite(Context context) {

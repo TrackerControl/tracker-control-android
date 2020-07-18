@@ -808,6 +808,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         private void log(Packet packet, int connection, boolean interactive) {
             // Get settings
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+            boolean log = prefs.getBoolean("log", false);
             boolean log_app = prefs.getBoolean("log_app", true);
 
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
@@ -824,6 +825,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             }
             if (dname == NO_DNAME)
                 dname = null;
+
+            // Traffic log
+            if (log)
+                dh.insertLog(packet, dname, connection, interactive);
 
             // Application log
             if (log_app && packet.uid >= 0 &&
