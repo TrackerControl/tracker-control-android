@@ -93,7 +93,7 @@ It's open-source, and could be used to collect crash reports automatically
 to a server–TrackerControl DOES NOT do this. Instead, the user must app report crashes
 manually, via e-mail. ACRA shows a dialog to do this in TrackerControl.
 
-TrackerControl itself never sends any data off your device. 
+TrackerControl itself never sends any personal data off your device. 
 
 ## Cookie policy
 
