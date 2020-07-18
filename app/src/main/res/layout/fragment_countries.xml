@@ -1,27 +1,10 @@
-<!--
-  ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
-  ~
-  ~ TrackerControl is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ TrackerControl is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:mContext="net.kollnig.missioncontrol.details.CountriesFragment"
+    tools:mContext=".details.CountriesFragment"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout

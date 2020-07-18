@@ -1,7 +1,9 @@
 <component name="CopyrightManager">
-  <settings default="KK GPLv3">
+  <settings>
     <module2copyright>
-      <element module="All" copyright="KK GPLv3" />
+      <element module="NetGuard" copyright="KK - NetGuard GPLv3" />
+      <element module="Resources" copyright="Empty" />
+      <element module="Project Source Files" copyright="KK GPLv3" />
     </module2copyright>
   </settings>
 </component>

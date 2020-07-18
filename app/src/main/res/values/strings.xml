@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">TrackerControl</string>
     <string name="app_description">TrackerControl provides simple and advanced ways to block access to the internet - no root required. Apps and addresses can individually be allowed or denied access to your Wi-Fi and/or mobile connection.</string>
-    <string name="app_copyright" translatable="false">Copyright \u00A9 2019-2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)</string>
+    <string name="app_copyright" translatable="false">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requires Android 5.1 or later</string>
     <string name="app_xposed">Xposed causes too many crashes, which might result in TrackerControl being removed from the Google Play Store, therefore TrackerControl isn\'t supported while Xposed is installed</string>
     <string name="app_eula" translatable="false">The usage of this app is at your own risk. No app can offer 100% protection against tracking.</string>
