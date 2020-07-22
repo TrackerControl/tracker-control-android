@@ -1,17 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl ofrece formas simples y avanzadas de bloquear el acceso a Internet - no se requiere de root. Las aplicaciones y las direcciones pueden ser permitidas o denegadas individualmente para el acceso a su conexión Wi-Fi y/o móvil.</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
     <string name="app_xposed">Xposed genera demasiados problemas de funcionamiento, lo que podría ser el motivo del retiro de TrackerControl de la tienda de Google Play, por lo tanto TrackerControl no está admitida mientras Xposed esté instalado.</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Política de privacidad</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Política de cookies</a></string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Política de privacidad</a></string>
     <string name="app_first">Se ha tenido mucho cuidado en desarrollar y probar TrackerControl, sin embargo es imposible garantizar que el TrackerControl funcione correctamente en todos los dispositivos.</string>
     <string name="app_agree">Estoy de acuerdo</string>
     <string name="app_disagree">No acepto</string>
     <string name="app_support">TrackerControl necesita tu ayuda. Pulse para comprar características profesionales para mantener el proyecto en marcha.</string>
-
     <string name="channel_foreground">Servicios de ejecución</string>
     <string name="channel_notify">Notificaciones generales</string>
     <string name="channel_access">Notificaciones de acceso</string>
-
     <string name="menu_search">Búsqueda de la aplicación</string>
     <string name="menu_filter">Filtro de aplicaciones</string>
     <string name="menu_app_user">Muestra las aplicaciones del usuario</string>
@@ -30,7 +29,6 @@
     <string name="menu_support">Escribir correo electrónico</string>
     <string name="menu_about">Acerca de</string>
     <string name="menu_apps">Otras aplicaciones</string>
-
     <string name="menu_protocol_other">Otro</string>
     <string name="menu_traffic_allowed">Permitido</string>
     <string name="menu_traffic_blocked">Bloqueado</string>
@@ -43,26 +41,21 @@
     <string name="menu_clear">Limpiar</string>
     <string name="menu_export">Exportar</string>
     <string name="menu_reset">Reiniciar</string>
-
     <string name="menu_add">Añadir</string>
     <string name="menu_delete">Borrar</string>
-
     <string name="menu_cleanup">Limpieza</string>
-
     <string name="title_protocol">Protocolo</string>
     <string name="title_dport">Puerto de origen</string>
     <string name="title_raddr">Dirección de destino</string>
     <string name="title_rport">Puerto de destino</string>
     <string name="title_ruid">Aplicación de destino</string>
     <string name="title_external">Para un servidor externo selecciona \'nadie\'.</string>
-
     <string name="setting_defaults">Predeterminado (lista blanca/negra)</string>
     <string name="setting_whitelist_wifi">Bloquear Wi-Fi</string>
     <string name="setting_whitelist_other">Bloquear datos móviles</string>
     <string name="setting_screen_wifi">Permitir Wi-Fi cuando la pantalla está encendida</string>
     <string name="setting_screen_other">Permitir datos móviles cuando la pantalla está encendida</string>
     <string name="setting_whitelist_roaming">Bloquear itinerancia</string>
-
     <string name="setting_options">Opciones</string>
     <string name="setting_theme">Tema: %1$s</string>
     <string name="setting_dark">Tema oscuro (en desarrollo)</string>
@@ -72,12 +65,10 @@
     <string name="setting_pause">Autoactivar después de 1$s minutos</string>
     <string name="setting_delay">Prolongar apagado por %1$s minutos</string>
     <string name="setting_update">Comprobar actualizaciones</string>
-
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
         <item quantity="other">Pausar por %d mins</item>
     </plurals>
-
     <string name="setting_network_options">Opciones de red</string>
     <string name="setting_subnet">Enrutamiento de subredes</string>
     <string name="setting_tethering">Permitir anclaje de red</string>
@@ -94,7 +85,6 @@
     <string name="setting_lockdown_wifi">Apagar Wi-Fi</string>
     <string name="setting_lockdown_other">Apagar móvil</string>
     <string name="setting_reload_onconnectivity">Actualizar por cada cambio de conectividad</string>
-    
     <string name="setting_advanced_options">Opciones avanzadas</string>
     <string name="setting_system">Gestionar aplicaciones de sistema</string>
     <string name="setting_log_app">Acceso a Internet</string>
@@ -123,13 +113,11 @@
     <string name="setting_pcap_record_size">Tamaño de registro PCAP: %s B</string>
     <string name="setting_pcap_file_size">Tamaño máximo del archivo PCAP: %s MB</string>
     <string name="setting_watchdog">Watchdog: cada %s minutos</string>
-
     <string name="setting_stats_category">Notificación de velocidad</string>
     <string name="setting_stats">Mostrar notificación de velocidad </string>
     <string name="setting_stats_top">Mostrar las primeras aplicaciones</string>
     <string name="setting_stats_frequency">Intervalo de muestra: %s ms</string>
     <string name="setting_stats_samples">Número de muestras: %s s</string>
-
     <string name="setting_backup">Respaldo</string>
     <string name="setting_export">Ajustes de exportación</string>
     <string name="setting_import">Ajustes de importación</string>
@@ -137,18 +125,15 @@
     <string name="setting_hosts_append">Importar archivo de hosts (append)</string>
     <string name="setting_hosts_url">URL del archivo de descarga del anfitrión</string>
     <string name="setting_hosts_download">Descargar archivo de hosts</string>
-
     <string name="setting_technical">Información técnica</string>
     <string name="setting_technical_general">General</string>
     <string name="setting_technical_networks">Redes</string>
     <string name="setting_technical_subscription">Suscripciones</string>
-
     <string name="summary_install">Muestra la notificación de la barra de estado para configurar directamente las aplicaciones recién instaladas (función pro)</string>
     <string name="summary_auto">Después de desactivar el uso del widget, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca cero para desactivar esta opción)</string>
     <string name="summary_pause">Después de pausar la notificación, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca 0 para desactivar esta opción)</string>
     <string name="summary_delay">Después de apagar la pantalla, mantendrá la regla de activar pantalla durante cierto número de minutos (ingrese cero para deshabilitar esta opción)</string>
     <string name="summary_update">Comprueba los nuevos lanzamientos en GitHub dos veces al día</string>
-
     <string name="summary_tethering">Dependiendo de la versión de Android, el tethering podría o no funcionar. El tráfico atado no puede ser filtrado.</string>
     <string name="summary_subnet">Activa de enrutamiento de subred; esto activaría las llamadas Wi-Fi, pero también podría ocasionar errores en Android y aumentar el consumo de la batería</string>
     <string name="summary_lan">Permite que las aplicaciones se conecten a las direcciones de la red de área local, como 10.0.0.0/8, 172.16.0.0/12 y 192.168.0.0/16</string>
@@ -161,10 +146,9 @@
     <string name="summary_national_roaming">Evita aplicar las reglas de roaming si el SIM y el país de la red móvil son el mismo</string>
     <string name="summary_eu_roaming">Evita aplicar las reglas de roaming si el SIM y el país de la red móvil están dentro de la UE (roaming como en casa)</string>
     <string name="summary_call">Desactiva el control de rastreo en la llamada telefónica entrante o saliente. Esto puede ser usado para solucionar problemas de llamadas IP/Wi-Fi</string>
-    
     <string name="summary_system">Define reglas para aplicaciones de sistema (para experimentados)</string>
     <string name="summary_log_app">Registra los intentos de acceso a Internet para aplicaciones. Esto podría aumentar el consumo de la batería</string>
-    <string name="summary_access">Muestra una notificación de la barra de estado cuando una aplicación intenta acceder a una nueva dirección de Internet (si el filtro está desactivado, sólo se muestran los intentos de acceso a Internet bloqueados)</string>    
+    <string name="summary_access">Muestra una notificación de la barra de estado cuando una aplicación intenta acceder a una nueva dirección de Internet (si el filtro está desactivado, sólo se muestran los intentos de acceso a Internet bloqueados)</string>
     <string name="summary_filter">Filtra paquetes IP que salen del túnel VPN. Esto podría aumentar el consumo de la batería</string>
     <string name="summary_track_usage">Rastrea el número de bytes enviados y recibidos por cada aplicación y dirección. Esto podría aumentar el consumo de la batería</string>
     <string name="summary_block_domains">Replica con el código de respuesta DNS configurado para los nombres de dominio bloqueados. Este conmutador se desactiva cuando no hay ningún archivo de host disponible.</string>
@@ -172,9 +156,7 @@
     <string name="summary_validate">Nombre del dominio utilizado para validar la conexión a Internet en el puerto 443 (https).</string>
     <string name="summary_socks5_enabled">Sólo el tráfico TCP será enviado al servidor proxy</string>
     <string name="summary_watchdog">Comprobar periódicamente si TrackerControl sigue funcionando (introducir cero para desactivar esta opción). Esto podría aumentar el consumo de la batería.</string>
-
     <string name="summary_stats">Muestra el gráfico de velocidad de la red en la notificación de la barra de estado</string>
-
     <string name="msg_sure">¿Estás seguro?</string>
     <string name="msg_started">Comprobando los rastreadores</string>
     <string name="msg_packages">%1$d URLs permitidas, %2$d bloqueadas</string>
@@ -225,9 +207,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_on">Si apaga el dispositivo con el TrackerControl activado, éste se iniciará automáticamente al encenderlo</string>
     <string name="msg_unavailable">Esta característica no está disponible en esta versión de Android</string>
     <string name="msg_always_on">Otra VPN se establece como una VPN siempre activa</string>
-    <string name="msg_always_on_lockdown">Desactive "Bloquear conexiones sin VPN" en la configuración de VPN de Android para usar TrackerControl en modo de filtrado</string>
-    <string name="msg_private_dns">Desactiva el "DNS privado" en la configuración de la red de Android para usar el TrackerControl en modo de filtrado</string>
-
+    <string name="msg_always_on_lockdown">Desactive \"Bloquear conexiones sin VPN\" en la configuración de VPN de Android para usar TrackerControl en modo de filtrado</string>
+    <string name="msg_private_dns">Desactiva el \"DNS privado\" en la configuración de la red de Android para usar el TrackerControl en modo de filtrado</string>
     <string name="title_lockdown_enabled">El tráfico está bloqueado</string>
     <string name="title_unmetered_allowed">Se permite el tráfico no medido</string>
     <string name="title_unmetered_blocked">El tráfico no medido está bloqueado</string>
@@ -240,7 +221,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_interactive_allowed">Permitir cuando la pantalla está encendida</string>
     <string name="title_roaming_blocked">Bloquear cuando está en itinerancia</string>
     <string name="title_metered">Por defecto una conexión Wi-Fi se considera no medida y una conexión móvil se considera medida</string>
-
     <string name="title_internet">no tiene permiso de internet</string>
     <string name="title_disabled">está desactivado</string>
     <string name="title_messaging">Los mensajes entrantes son recibidos por los servicios de Google Play y no por esta aplicación y por lo tanto no pueden ser bloqueados por el aplicativo de bloqueo</string>
@@ -256,32 +236,27 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_precedence">Las reglas de acceso tienen prioridad sobre otras reglas</string>
     <string name="title_options">Opciones</string>
     <string name="title_notify">Notificar intentos de acceso a Internet</string>
-
     <string name="title_logging_disabled">El registro o filtrado no está activado</string>
     <string name="title_logging_enabled">El registro y el filtrado están habilitados</string>
     <string name="title_logging_configure">Configurar</string>
-
     <string name="title_enable_logging">Habilitar sólo el registro de direcciones bloqueadas</string>
     <string name="title_enable_filtering">Habilitar el filtrado para registrar también las direcciones permitidas</string>
     <string name="title_enable_notify">Habilitar las notificaciones de acceso para las direcciones recién registradas</string>
     <string name="title_enable_help0">Estos ajustes son globales y se aplican a todas las aplicaciones</string>
     <string name="title_enable_help1">El filtrado también es necesario para permitir o bloquear direcciones individuales</string>
     <string name="title_enable_help2">Habilitar el registro (menor) o el filtrado (mayor) podría aumentar el uso de la batería y afectar a la velocidad de la red</string>
-
     <string name="title_rate">Calificar</string>
     <string name="title_allow">Permitir</string>
     <string name="title_block">Bloquear</string>
-    <string name="title_allow_wifi" >Permitir Wi-Fi</string>
+    <string name="title_allow_wifi">Permitir Wi-Fi</string>
     <string name="title_block_wifi">Bloquear Wi-Fi</string>
-    <string name="title_allow_other" >Permitir móvil</string>
-    <string name="title_block_other" >Bloquear móvil</string>
+    <string name="title_allow_other">Permitir móvil</string>
+    <string name="title_block_other">Bloquear móvil</string>
     <string name="title_nobody">nadie</string>
     <string name="title_dontask">No volver a preguntar</string>
-
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Copiar</string>
-
     <string name="title_pro">Características pro</string>
     <string name="title_pro_description">Las siguientes características pro están disponibles:</string>
     <string name="title_pro_log">Ver el registro de tráfico bloqueado</string>
@@ -298,7 +273,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_pro_challenge">Competir</string>
     <string name="title_pro_reponse">Responder</string>
     <string name="title_pro_feature">Este es una característica pro</string>
-
     <string-array name="themeNames">
         <item>cerceta/naranja</item>
         <item>azul/naranja</item>
@@ -307,7 +281,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
         <item>naranja/gris</item>
         <item>verde</item>
     </string-array>
-
     <!-- VPN Control -->
     <string name="switch_mission">Habilitar Análisis</string>
     <string name="switch_mission_explanation">Permite el análisis del rastreamiento de aplicaciones por parte de terceras empresas.</string>
@@ -319,7 +292,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="notification_detail_text_vpnservice_connected">Comprobando rastreadores</string>
     <string name="notification_detail_text_vpnservice_scheduled_connect">Reinicio automático programado</string>
     <string name="vpn_rights_needed">Por favor, dé los permisos VPN para que funcione el TrackerControl.</string>
-
     <!-- App Overview -->
     <string name="tracked_app_name">Nombre de la aplicación</string>
     <plurals name="n_trackers_found">
@@ -346,28 +318,23 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="cancel">Cancelar</string>
     <string name="yes">Sí</string>
     <string name="no">No</string>
-
     <string name="menu_privacy_policy">Política de privacidad</string>
-
     <string name="menu_csv">Exportar como CSV</string>
     <string name="exporting">Exportando…</string>
     <string name="share_csv">Compartir</string>
     <string name="export_failed">Exportación fallida</string>
     <string name="exported">¡Exportado al almacenamiento! Accede al almacenamiento del teléfono desde el ordenador o compártelo con otra aplicación.</string>
-
     <!-- App Details -->
     <string name="title_activity_detail">DetailActivity</string>
     <string name="tab_trackers">Rastreadores</string>
-    <string name="tab_countries">Países</string>
     <string name="tab_actions">Mi datos</string>
     <string name="summary_loading_error">No se obtuvo la descripción de la aplicación.</string>
     <string name="tracker_name">Nombre del rastreador</string>
     <string name="app_info">Gestionar App</string>
-
     <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
     <string name="block_tracking_description">Muchas aplicaciones envían datos a terceros, son llamados rastreadores. TrackerControl permite bloquear estas transmisiones de red de forma selectiva. Sin embargo, use esto con prudencia, ya que los desarrolladores de aplicaciones dependen de estos servicios, en particular la publicidad.</string>
-    <string name="personalised_ads" >Limitar la personalización</string>
+    <string name="personalised_ads">Limitar la personalización</string>
     <string name="personalised_ads_description">Como alternativa al bloqueo completo, Android ofrece una configuración para limitar el uso de datos personales con fines analíticos y publicitarios. Sin embargo, los datos personales pueden seguir siendo transmitidos y por lo tanto requieren de la confianza de las empresas que reciben los datos.</string>
     <string name="data_managment">Gestión de datos</string>
     <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (GDPR) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
@@ -422,22 +389,13 @@ Please provide your response through secure means by email. I look forward to re
 \n
 Sincerely,\n\n]]></string>
     <string name="packet_statistics">Tráfico de datos</string>
-
     <string name="crash_dialog_text">Lo sentimos. TrackerControl dejó de funcionar. ¿Podrías enviar un correo describiendo su funcionamiento?</string>
     <string name="crash_dialog_comment">¿Algún comentario?</string>
-
     <string name="instructions_monitoring_private_dns">Conmuta el interruptor e interactúa con otras aplicaciones. El DNS privado debe estar desactivado.</string>
     <string name="instructions_monitoring">Conmuta el interruptor e interactúa con otras aplicaciones.</string>
-
     <string name="afterboot_notification">El sistema operativo de su dispositivo no permite monitorear y filtrar las comunicaciones de la red. Esto es necesario para el TrackerControl.</string>
-
     <string name="device_not_supported_title">Dispositivo no soportado</string>
     <string name="device_not_supported_msg">El sistema operativo de su dispositivo on opermite monitorizar o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>
-
     <string name="monitor">Monitor</string>
-
     <string name="launch_app">Lanzar el aplicativo</string>
-    <string name="load_countries">Show Countries (Uses Google Maps)</string>
-    <string name="countries">Destination Countries</string>
-    <string name="countries_explanation">Tracking is a global business. Personal data is sent worldwide. You can visualise the number of tracker IPs per country, by clicking below.</string>
 </resources>

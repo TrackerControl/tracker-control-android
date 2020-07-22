@@ -49,33 +49,19 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/btnLoad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/load_countries"
-            android:theme="@style/PrimaryButton" />
-    </LinearLayout>
-
     <ProgressBar
-        android:visibility="gone"
         android:id="@+id/pbLoading"
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:indeterminate="true"/>
 
-    <WebView
-        android:id="@+id/web_view"
+    <jp.gr.java_conf.androtaku.geomap.GeoMapView
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:id="@+id/map_view"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:visibility="invisible"/>
 
 </LinearLayout>

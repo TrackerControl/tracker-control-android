@@ -55,7 +55,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeTeal"
         tools:ignore="ManifestResource"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        tools:replace="android:allowBackup,android:theme">
 
         <meta-data
             android:name="android.max_aspect"

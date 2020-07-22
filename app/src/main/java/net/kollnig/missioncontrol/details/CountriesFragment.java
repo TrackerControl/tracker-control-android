@@ -23,8 +23,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.ProgressBar;
 
 import androidx.collection.ArrayMap;
@@ -40,11 +38,10 @@ import net.kollnig.missioncontrol.R;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import eu.faircode.netguard.DatabaseHelper;
+import jp.gr.java_conf.androtaku.geomap.GeoMapView;
 
 import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
 
@@ -127,100 +124,26 @@ public class CountriesFragment extends Fragment {
     public void onViewCreated(final View v, Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
-        // Load arguments
         Bundle arguments = getArguments();
         mAppUid = arguments.getInt(ARG_APP_UID);
 
         ProgressBar pbLoading = v.findViewById(R.id.pbLoading);
-        Button btnLoad = v.findViewById(R.id.btnLoad);
-        WebView wv = v.findViewById(R.id.web_view);
+        GeoMapView mv = v.findViewById(R.id.map_view);
 
-        btnLoad.setOnClickListener(v1 -> {
-            btnLoad.setVisibility(View.GONE);
-            pbLoading.setVisibility(View.VISIBLE);
-
+        mv.setOnInitializedListener(geoMapView1 -> {
             Handler mHandler = new Handler();
             new Thread(() -> {
                 final Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
-
                 // run on UI
                 mHandler.post(() -> {
-                    CountryCodeConverter ccC = new CountryCodeConverter();
-
-                    String rows = "";
-                    int n = 0;
                     for (String code : hostCountriesCount.keySet()) {
-                        if (n > 0)
-                            rows += ",";
-                        rows += "['" + ccC.iso2CountryCodeToName(code) + "'," + hostCountriesCount.get(code) + "]";
-                        n++;
+                        mv.setCountryColor(code, "#B71C1C");
                     }
-
-                    String html = "<html>" +
-                            "<head>" +
-                            "<script type='text/javascript' src='https://www.google.com/jsapi'></script>" +
-                            "<script type='text/javascript'>" +
-                            "google.load('visualization', '1', {'packages': ['geochart']});" +
-                            "google.setOnLoadCallback(drawRegionsMap);" +
-                            "function drawRegionsMap() {" +
-                            "var data = new google.visualization.DataTable();" +
-                            "data.addColumn('string', 'Country');" +
-                            "data.addColumn('number', 'Number of Hosts');" +
-                            "data.addRows([" + rows + "]);" +
-                            "var options = {colorAxis: {colors: ['#398239', '#ca0300']}};" +
-                            "var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));" +
-                            "chart.draw(data, options); };" +
-                            "</script>" +
-                            "</head>" +
-                            "<body style='padding: 10px 0;'>" +
-                            "<div id='chart_div' style='width: 100%;'></div>" +
-                            "</body>" +
-                            "</html> ";
-                    wv.getSettings().setJavaScriptEnabled(true);
-                    wv.loadDataWithBaseURL("", html, "text/html", "UTF-8", "");
-
-                    wv.setVisibility(View.VISIBLE);
+                    mv.refresh();
+                    mv.setVisibility(View.VISIBLE);
                     pbLoading.setVisibility(View.GONE);
                 });
             }).start();
         });
-    }
-
-    // Taken From.
-    // https://blog.oio.de/2010/12/31/mapping-iso2-and-iso3-country-codes-with-java/
-    private static class CountryCodeConverter {
-
-        private Map<String, Locale> localeMap;
-
-        public CountryCodeConverter() {
-            initCountryCodeMapping();
-        }
-
-        private void initCountryCodeMapping() {
-            String[] countries = Locale.getISOCountries();
-            localeMap = new HashMap<>(countries.length);
-            for (String country : countries) {
-                Locale locale = new Locale("", country);
-                localeMap.put(locale.getISO3Country().toUpperCase(), locale);
-            }
-        }
-
-        public String iso3CountryCodeToIso2CountryCode(String iso3CountryCode) {
-            Locale code = localeMap.get(iso3CountryCode);
-            if (code == null) {
-                return "";
-            }
-            return code.getCountry();
-        }
-
-        public String iso2CountryCodeToIso3CountryCode(String iso2CountryCode) {
-            Locale locale = new Locale("", iso2CountryCode);
-            return locale.getISO3Country();
-        }
-
-        public String iso2CountryCodeToName(String iso2CountryCode) {
-            Locale locale = new Locale("", iso2CountryCode);
-            return locale.getDisplayName();
-        }
     }
 }

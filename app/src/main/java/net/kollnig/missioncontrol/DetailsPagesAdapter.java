@@ -18,6 +18,7 @@
 package net.kollnig.missioncontrol;
 
 import android.content.Context;
+import android.os.Build;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -36,7 +37,7 @@ import net.kollnig.missioncontrol.details.TrackersFragment;
  */
 public class DetailsPagesAdapter extends FragmentPagerAdapter {
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{
+    private static int[] TAB_TITLES = new int[]{
             R.string.tab_trackers,
             R.string.tab_countries,
             R.string.tab_actions,
@@ -55,21 +56,46 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
 
         mContext = context;
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            TAB_TITLES = new int[]{
+                    R.string.tab_trackers,
+                    R.string.tab_actions,
+            };
+        } else {
+            TAB_TITLES = new int[]{
+                    R.string.tab_trackers,
+                    R.string.tab_countries,
+                    R.string.tab_actions,
+            };
+
+            fCountries = CountriesFragment.newInstance(uid);
+        }
+
         fTrackers = TrackersFragment.newInstance(appId, uid);
-        fCountries = CountriesFragment.newInstance(uid);
         fActions = ActionsFragment.newInstance(appId, appName);
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return fTrackers;
-			case 1:
-				return fCountries;
-            case 2:
-                return fActions;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            switch (position) {
+                case 0:
+                    return fTrackers;
+                case 1:
+                    return fActions;
+            }
+        } else {
+            switch (position) {
+                case 0:
+                    return fTrackers;
+                case 1:
+                    return fCountries;
+                case 2:
+                    return fActions;
+            }
         }
+
+
         return null;
     }
 
