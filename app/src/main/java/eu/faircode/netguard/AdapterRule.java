@@ -76,6 +76,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -125,6 +126,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         public LinearLayout llApplication;
         public ImageView ivIcon;
+        public ImageView ivConnection;
         public ImageView ivExpander;
         public TextView tvName;
 
@@ -188,6 +190,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             llApplication = itemView.findViewById(R.id.llApplication);
             ivIcon = itemView.findViewById(R.id.ivIcon);
+            ivConnection = itemView.findViewById(R.id.ivConnection);
+
             ivExpander = itemView.findViewById(R.id.ivExpander);
             tvName = itemView.findViewById(R.id.tvName);
 
@@ -555,6 +559,16 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 updateRule(context, rule, true, listAll);
             }
         });
+
+        // Show if Internet access blocked
+        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+        if (rule.apply &&
+                internetBlocklist.blockedInternet(rule.uid)) {
+            holder.ivConnection.setVisibility(View.VISIBLE);
+            holder.ivConnection.setImageResource(R.drawable.other_off);
+        } else {
+            holder.ivConnection.setVisibility(View.INVISIBLE);
+        }
 
         if (Util.isPlayStoreInstall())
             holder.cbApply.setVisibility(View.GONE);
