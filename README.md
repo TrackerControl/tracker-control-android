@@ -74,6 +74,8 @@ to the users.
 
 ## Privacy notice
 
+TrackerControl does not send any personal data off your device.
+
 TrackerControl allows users to monitor the network communications on their
 Android device.
 This network data qualifies as personal data, but is only processed
@@ -85,6 +87,13 @@ The app automatically contacts GitHub to check for updates,
 which can be disabled from the app settings.
 No personal data is ever shared, other than what is strictly
 necessary for network communications (e.g. IP address).
+
+TrackerControl uses the ACRA plugin. This is considered to be a 'good' tracker.
+It's open-source, and could be used to collect crash reports automatically
+to a server–TrackerControl DOES NOT do this. Instead, the user must app report crashes
+manually, via e-mail. ACRA shows a dialog to do this in TrackerControl.
+
+TrackerControl itself never sends any personal data off your device. 
 
 ## Cookie policy
 
