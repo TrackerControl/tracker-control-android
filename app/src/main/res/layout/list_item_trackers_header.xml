@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -19,44 +18,51 @@
             android:theme="@style/PrimaryButton" />
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
+    <RelativeLayout
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="@dimen/z_card">
+        android:minHeight="72dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/ivIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/other_off" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp">
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_toStartOf="@+id/switch_internet"
+            android:layout_toEndOf="@+id/ivIcon"
+            android:gravity="bottom"
+            android:minHeight="46dp"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/root_name"
+                android:id="@+id/tvName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="bottom"
+                android:minHeight="32dp"
+                android:singleLine="true"
                 android:text="@string/internet_access"
                 android:textColor="?android:textColorPrimary"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:textSize="16sp" />
+        </LinearLayout>
 
-            <Switch
-                android:id="@+id/switch_internet"
-                android:layout_width="wrap_content"
-                android:layout_height="21dp"
-                android:text="@string/title_block"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintBottom_toBottomOf="@+id/root_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
+        <Switch
+            android:id="@+id/switch_internet"
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:gravity="center" />
+    </RelativeLayout>
 </LinearLayout>

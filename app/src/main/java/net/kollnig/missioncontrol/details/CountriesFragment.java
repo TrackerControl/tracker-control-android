@@ -17,6 +17,7 @@
 
 package net.kollnig.missioncontrol.details;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -83,7 +84,11 @@ public class CountriesFragment extends Fragment {
         Map<String, Integer> countryToCount = new ArrayMap<>();
 
         try {
-            InputStream database = getContext().getAssets().open("GeoLite2-Country.mmdb");
+            Context context = getContext();
+            if (context == null)
+                return countryToCount;
+
+            InputStream database = context.getAssets().open("GeoLite2-Country.mmdb");
             DatabaseReader reader = new DatabaseReader.Builder(database).build();
 
             DatabaseHelper dh = DatabaseHelper.getInstance(getContext());

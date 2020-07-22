@@ -71,7 +71,7 @@
 
     <string name="setting_options">Options</string>
     <string name="setting_theme">Theme: %1$s</string>
-    <string name="setting_dark">Dark theme (in development)</string>
+    <string name="setting_dark">Dark theme</string>
     <string name="setting_install">Notify on new install</string>
     <string name="setting_screen_on">Apply \'when screen on\' rules</string>
     <string name="setting_auto">Auto enable after %1$s minutes</string>
@@ -422,7 +422,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tab_actions">My Data</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
-    <string name="internet_access">Internet Access</string>
+    <string name="internet_access">Block Internet Access</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
@@ -499,5 +499,5 @@ Sincerely,\n\n]]></string>
 
     <string name="launch_app">Launch &amp; Find trackers</string>
     <string name="countries">Destination Countries</string>
-    <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on IP information, and might be inaccurate.</string>
+    <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
 </resources>

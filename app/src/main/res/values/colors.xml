@@ -10,7 +10,7 @@
     <color name="colorRedOff">@color/colorRedAccent</color>
 
     <color name="switchTrackDisable">#999</color>
-    <color name="switchTrackActive">#39796b</color>
+    <color name="switchTrackActive">@color/colorAccent</color>
     <color name="switchTrackNormal">#888</color>
 
     <!-- https://www.materialpalette.com/teal/deep-orange -->

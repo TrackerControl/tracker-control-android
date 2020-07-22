@@ -9,6 +9,8 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.util.AttributeSet;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
      */
     private void initialize(){
         defaultPaint = new Paint();
-        defaultPaint.setColor(Color.BLACK);
+        defaultPaint.setColor(ContextCompat.getColor(context, R.color.countryStroke));
         defaultPaint.setStyle(Paint.Style.STROKE);
         defaultPaint.setAntiAlias(true);
 
