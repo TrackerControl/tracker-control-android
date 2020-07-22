@@ -76,8 +76,6 @@
         android:id="@+id/web_view"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-
-    </WebView>
+        android:visibility="gone" />
 
 </LinearLayout>
