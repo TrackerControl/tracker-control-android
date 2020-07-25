@@ -177,7 +177,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 
         if (v.getId() == R.id.btnReqDeletion) {
             subject = getString(R.string.subject_request_data);
-            body = getString(R.string.body_request_data, appName, appId);
+            body = getString(R.string.body_delete_data, appName, appId);
         }
 
         sendEmail(mail, subject, body);
