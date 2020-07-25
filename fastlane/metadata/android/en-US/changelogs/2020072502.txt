@@ -5,4 +5,5 @@
 - add Chinese (Simplified) and German translation
 - highlight apps without Internet access
 - update dependencies
+- fix bugs
 - attribute NetGuard better (which TrackerControl is based upon)
