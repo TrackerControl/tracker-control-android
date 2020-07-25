@@ -570,8 +570,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             holder.ivConnection.setVisibility(View.INVISIBLE);
         }
 
-        if (Util.isPlayStoreInstall())
-            holder.cbApply.setVisibility(View.GONE);
+        if (Util.isPlayStoreInstall()) {
+            holder.cbApply.setVisibility(View.INVISIBLE);
+            holder.cbApply.setWidth(0);
+        }
 
         // Custom code: show tracker count
         int trackerCount = rule.getTrackerCount();
