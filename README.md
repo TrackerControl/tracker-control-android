@@ -131,7 +131,7 @@ The original data can be retrieved [here](https://osf.io/4nu9e/).
 
 *GDPR Requests:* For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 
-*Country Visualisation*: TrackerControl offers to visualise the countries to which trackers sent data. The code stems from the [KOALA Project](https://github.com/OxfordHCC/xray-koala-hero/) at the University of Oxford.  
+*Country Visualisation*: TrackerControl offers to visualise the countries to which trackers sent data. The code was kindly offerd by [Takuma Seno](https://github.com/takuseno/GeoMap).  
 To map IP addresses to countries, TrackerControl includes GeoLite2 data created by MaxMind, available from <https://www.maxmind.com>.
 
 ## License
