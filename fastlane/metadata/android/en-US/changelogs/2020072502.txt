@@ -1,5 +1,6 @@
 - FEATURE: add 'Traffic Log' (access from app menu)
 - FEATURE: add map of tracking destination countries
+- FEATURE: add working dark mode
 - significantly improve tracker detection
 - expose time of last tracking attempt (see app details)
 - add Chinese (Simplified) and German translation

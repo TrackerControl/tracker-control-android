@@ -1,5 +1,7 @@
 # TrackerControl
 
+[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
+
 No root required, but other VPNs or Private DNS not supported.
 
 **Have missing features or bugs? Join our [dicussion group](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net)!**
@@ -35,6 +37,7 @@ No external VPN server is used, to keep your data safe!
 TrackerControl can be downloaded [directly from GitHub](https://github.com/OxfordHCC/tracker-control-android/releases), including automatic checks for updates.
 
 Alternatively, the app is available on [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), the most popular open-source Android app store.
+It is also available on the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
 A feature-reduced version is also available on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
 
@@ -129,8 +132,7 @@ The original data can be retrieved [here](https://osf.io/4nu9e/).
 
 *GDPR Requests:* For the GDPR requests, the templates from the website [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO "Bits of Freedom" were adopted.
 
-*Country Visualisation*: TrackerControl offers to visualise the countries to which trackers sent data. The code stems from the [KOALA Project](https://github.com/OxfordHCC/xray-koala-hero/) at the University of Oxford.  
-To map IP addresses to countries, TrackerControl includes GeoLite2 data created by MaxMind, available from <https://www.maxmind.com>.
+*Country Visualisation*: TrackerControl offers to visualise the countries to which trackers sent data. The code was kindly offered by [Takuma Seno](https://github.com/takuseno/GeoMap). To map IP addresses to countries, TrackerControl includes the GeoLite2 database, created by MaxMind, available from <https://www.maxmind.com>.
 
 ## License
 This project is licensed under
