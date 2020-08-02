@@ -53,16 +53,19 @@ android {
                 versionNameSuffix "-play"
                 buildConfigField "String", "HOSTS_FILE_URI", "\"\""
                 buildConfigField "String", "GITHUB_LATEST_API", "\"\""
+                resValue "string", "app_name", "TC Slim"
             }
             fdroid {
                 applicationIdSuffix ".fdroid"
                 versionNameSuffix "-fdroid"
                 buildConfigField "String", "HOSTS_FILE_URI", "\"https://www.netguard.me/hosts\""
                 buildConfigField "String", "GITHUB_LATEST_API", "\"\""
+                resValue "string", "app_name", "TrackerControl"
             }
             github {
                 buildConfigField "String", "HOSTS_FILE_URI", "\"https://www.netguard.me/hosts\""
                 buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
+                resValue "string", "app_name", "TrackerControl"
             }
         }
     }
