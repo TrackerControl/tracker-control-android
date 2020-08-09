@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl provides simple and advanced ways to block access to the internet - no root required. Apps and addresses can individually be allowed or denied access to your Wi-Fi and/or mobile connection.</string>
+    <string name="app_description">TrackerControl提供了简单和先进的方式来阻止访问互联网-无需获取根权限。应用程序和地址可以单独被允许或拒绝访问你的Wi-Fi和/或移动连接。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">隐私政策</a></string>
-    <string name="app_first">Great care has been taken to develop and test TrackerControl, however it is impossible to guarantee TrackerControl will work correctly on every device.</string>
-    <string name="app_agree">同意</string>
-    <string name="app_disagree">不同意</string>
-    <string name="app_support">TrackerControl needs your help. Tap to purchase pro features to keep the project going.</string>
+    <string name="app_first">我们花了很大力气开发和测试TrackerControl，但不可能保证TrackerControl在每个设备上正确工作。</string>
+    <string name="app_agree">我同意</string>
+    <string name="app_disagree">我反对</string>
     <string name="channel_foreground">正在运行的服务</string>
     <string name="channel_notify">一般通知</string>
     <string name="channel_access">读取通知</string>
@@ -22,10 +20,9 @@
     <string name="menu_sort_uid">按 UID 排序</string>
     <string name="menu_sort_trackers">按跟踪器排序</string>
     <string name="menu_sort_data">按数据使用量排序</string>
-    <string name="menu_log">显示日志</string>
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
-    <string name="menu_legend">Legend</string>
+    <string name="menu_legend">图例</string>
     <string name="menu_support">写邮件</string>
     <string name="menu_about">关于</string>
     <string name="menu_apps">其他应用</string>
@@ -43,61 +40,60 @@
     <string name="menu_reset">重置</string>
     <string name="menu_add">添加</string>
     <string name="menu_delete">删除</string>
-    <string name="menu_cleanup">Cleanup</string>
+    <string name="menu_cleanup">清理</string>
     <string name="title_protocol">协议</string>
     <string name="title_dport">源端口</string>
     <string name="title_raddr">目标地址</string>
     <string name="title_rport">目标端口</string>
     <string name="title_ruid">目标应用</string>
     <string name="title_external">对于一个外部服务器选择\"nobody\"</string>
-    <string name="setting_defaults">Defaults (white/blacklist)</string>
-    <string name="setting_whitelist_wifi">Block Wi-Fi</string>
-    <string name="setting_whitelist_other">Block mobile</string>
-    <string name="setting_screen_wifi">Allow Wi-Fi when screen on</string>
-    <string name="setting_screen_other">Allow mobile when screen on</string>
-    <string name="setting_whitelist_roaming">Block roaming</string>
-    <string name="setting_options">Options</string>
-    <string name="setting_theme">Theme: %1$s</string>
-    <string name="setting_dark">Dark theme (in development)</string>
-    <string name="setting_install">Notify on new install</string>
-    <string name="setting_screen_on">Apply \'when screen on\' rules</string>
-    <string name="setting_auto">Auto enable after %1$s minutes</string>
-    <string name="setting_pause">Auto enable after %1$s minutes</string>
-    <string name="setting_delay">Delay screen off %1$s minutes</string>
-    <string name="setting_update">Check for updates</string>
+    <string name="setting_defaults">默认(白/黑名单)</string>
+    <string name="setting_whitelist_wifi">屏蔽Wi-Fi</string>
+    <string name="setting_whitelist_other">屏蔽移动网络</string>
+    <string name="setting_screen_wifi">亮屏时允许Wi-Fi网络</string>
+    <string name="setting_screen_other">亮屏时允许移动网络</string>
+    <string name="setting_whitelist_roaming">阻止漫游</string>
+    <string name="setting_options">选项</string>
+    <string name="setting_theme">主题: %1$s</string>
+    <string name="setting_install">有新软件安装时通知我</string>
+    <string name="setting_screen_on">应用 \'亮屏\' 规则</string>
+    <string name="setting_auto">%1$s 分钟后自动启用</string>
+    <string name="setting_pause">%1$s 分钟后自动启用</string>
+    <string name="setting_delay">延迟屏幕关闭 %1$s 分钟</string>
+    <string name="setting_update">检查更新</string>
     <plurals name="pause">
-        <item quantity="other">Pause for %d mins</item>
+        <item quantity="other">暂停 %d 分钟</item>
     </plurals>
-    <string name="setting_network_options">Network options</string>
-    <string name="setting_subnet">Subnet routing</string>
-    <string name="setting_tethering">Allow tethering</string>
-    <string name="setting_lan">Allow LAN access</string>
-    <string name="setting_ip6">Enable IPv6 traffic</string>
-    <string name="setting_wifi_home">Wi-Fi home networks: %1$s</string>
-    <string name="setting_metered">Handle metered Wi-Fi networks</string>
-    <string name="setting_metered_2g">Consider 2G unmetered</string>
-    <string name="setting_metered_3g">Consider 3G unmetered</string>
-    <string name="setting_metered_4g">Consider LTE unmetered</string>
-    <string name="setting_national_roaming">Ignore national roaming</string>
-    <string name="setting_eu_roaming">Ignore EU roaming</string>
-    <string name="setting_call">Disable on call</string>
-    <string name="setting_lockdown_wifi">Lockdown Wi-Fi</string>
-    <string name="setting_lockdown_other">Lockdown mobile</string>
-    <string name="setting_reload_onconnectivity">Reload on every connectivity change</string>
-    <string name="setting_advanced_options">Advanced options</string>
-    <string name="setting_system">Manage system apps</string>
-    <string name="setting_log_app">Log internet access</string>
-    <string name="setting_access">Notify on internet access</string>
-    <string name="setting_filter">Filter traffic</string>
-    <string name="setting_filter_udp">Filter UDP traffic</string>
-    <string name="setting_handover">Seamless VPN handover on reload</string>
-    <string name="setting_clear_onreload">Close connections on reload</string>
-    <string name="setting_lockdown">Lockdown traffic</string>
-    <string name="setting_track_usage">Track network usage</string>
-    <string name="setting_reset_usage">Reset network usage</string>
-    <string name="setting_show_resolved">Show resolved domain names</string>
-    <string name="setting_block_domains">Enable hosts file</string>
-    <string name="setting_rcode">Hosts blocking response: %s</string>
+    <string name="setting_network_options">网络选项</string>
+    <string name="setting_subnet">子网路由</string>
+    <string name="setting_tethering">允许网络共享</string>
+    <string name="setting_lan">允许局域网访问</string>
+    <string name="setting_ip6">允许 IPv6 流量</string>
+    <string name="setting_wifi_home">Wi-Fi家庭网络: %1$s</string>
+    <string name="setting_metered">处理按流量计费Wi-Fi网络</string>
+    <string name="setting_metered_2g">将2G网络视为未计量</string>
+    <string name="setting_metered_3g">将3G网络视为未计量</string>
+    <string name="setting_metered_4g">将LTE网络视为未计量</string>
+    <string name="setting_national_roaming">忽略国内漫游</string>
+    <string name="setting_eu_roaming">忽略欧盟漫游</string>
+    <string name="setting_call">在通话期间禁用</string>
+    <string name="setting_lockdown_wifi">锁定Wi-Fi</string>
+    <string name="setting_lockdown_other">锁定移动网络</string>
+    <string name="setting_reload_onconnectivity">在每次连接更改时重新加载</string>
+    <string name="setting_advanced_options">高级选项</string>
+    <string name="setting_system">管理系统应用</string>
+    <string name="setting_log_app">记录网络连接</string>
+    <string name="setting_access">互联网访问通知</string>
+    <string name="setting_filter">过滤流量</string>
+    <string name="setting_filter_udp">过滤 UDP 流量</string>
+    <string name="setting_handover">重新加载时无缝切换 VPN</string>
+    <string name="setting_clear_onreload">重新加载时关闭连接</string>
+    <string name="setting_lockdown">锁定流量</string>
+    <string name="setting_track_usage">追踪网络使用情况</string>
+    <string name="setting_reset_usage">重置网络使用量</string>
+    <string name="setting_show_resolved">显示已解析的域名</string>
+    <string name="setting_block_domains">启用 hosts 文件</string>
+    <string name="setting_rcode">主机拦截响应： %s</string>
     <string name="setting_forwarding">端口转发</string>
     <string name="setting_vpn4">VPN IPv4地址: %s</string>
     <string name="setting_vpn6">VPN IPv6地址: %s</string>
@@ -109,15 +105,15 @@
     <string name="setting_socks5_port">SOCKS5 端口: %s</string>
     <string name="setting_socks5_username">SOCKS5 用户名: %s</string>
     <string name="setting_socks5_password">SOCKS5 密码: %s</string>
-    <string name="setting_pcap_record_size">PCAP record size: %s B</string>
-    <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
+    <string name="setting_pcap_record_size">PCAP 记录大小: %s B</string>
+    <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
-    <string name="setting_stats_category">Speed notification</string>
-    <string name="setting_stats">Show speed notification</string>
-    <string name="setting_stats_top">Show top apps</string>
-    <string name="setting_stats_frequency">Sample interval: %s ms</string>
-    <string name="setting_stats_samples">Number of samples: %s s</string>
-    <string name="setting_backup">Backup</string>
+    <string name="setting_stats_category">网速通知</string>
+    <string name="setting_stats">显示网速通知</string>
+    <string name="setting_stats_top">显示顶级应用</string>
+    <string name="setting_stats_frequency">采样间隔： %s 毫秒</string>
+    <string name="setting_stats_samples">样本数: %s s</string>
+    <string name="setting_backup">备份</string>
     <string name="setting_export">导出设定 (不适用于设备重置)</string>
     <string name="setting_import">导入设定</string>
     <string name="setting_hosts">导入 hosts 文件</string>
@@ -127,273 +123,271 @@
     <string name="setting_technical">技术信息</string>
     <string name="setting_technical_general">常规</string>
     <string name="setting_technical_networks">网络</string>
-    <string name="setting_technical_subscription">Subscriptions</string>
-    <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
-    <string name="summary_auto">After disabling using the widget, automatically enable TrackerControl again after the selected number of minutes (enter zero to disable this option)</string>
-    <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
-    <string name="summary_delay">After turning the screen off, keep screen on rules active for the selected number of minutes (enter zero to disable this option)</string>
-    <string name="summary_update">Check for new releases on GitHub twice daily</string>
-    <string name="summary_tethering">Depending on the Android version, tethering may work or may not work. Tethered traffic cannot be filtered.</string>
+    <string name="setting_technical_subscription">订阅</string>
+    <string name="summary_install">显示状态栏通知直接对新安装的软件进行设置 (专业版功能)</string>
+    <string name="summary_auto">禁用小部件后，在选定的分钟数之后再次自动启用TrackerControl(输入0禁用此选项)</string>
+    <string name="summary_pause">从通知栏暂停软件运作后，在选定的分钟数后重新自动启用TrackerControl(输入0禁用此选项)。</string>
+    <string name="summary_delay">关闭屏幕后，在选定的分钟数内保持屏幕上的规则活动(输入0禁用此选项)</string>
+    <string name="summary_update">每日两次检查 GitHub 上的新版本</string>
+    <string name="summary_tethering">根据 Android 版本不同, 网络共享可能工作也可能无法正常工作. 共享网络流量无法被过滤.</string>
     <string name="summary_subnet">启用子网路由; 可能有助于开启 Wi-fi 通话, 但也可能触发系统 bug 或增加电量消耗</string>
     <string name="summary_lan">允许应用连接至局域网，比如 10.0.0.0/8，172.16.0.0/12和 192.168.0.0/16</string>
-    <string name="summary_ip6">Route IP version 6 traffic to TrackerControl so it can selectively be allowed or blocked</string>
-    <string name="summary_wifi_home">Apply Wi-Fi network rules for selected network only (apply mobile network rules for other Wi-Fi networks)</string>
-    <string name="summary_metered">Apply mobile network rules to metered (paid, tethered) Wi-Fi networks</string>
-    <string name="summary_metered_2g">Apply Wi-Fi network rules for 2G data connections</string>
-    <string name="summary_metered_3g">Apply Wi-Fi network rules for 3G data connections</string>
-    <string name="summary_metered_4g">Apply Wi-Fi network rules for LTE data connections</string>
-    <string name="summary_national_roaming">Do not apply roaming rules when the SIM and mobile network country are the same</string>
-    <string name="summary_eu_roaming">Do not apply roaming rules when the SIM and mobile network country are within the EU (roam like at home)</string>
-    <string name="summary_call">Disable TrackerControl on incoming or outgoing telephone call. This can be used to work around IP/Wi-Fi calling problems.</string>
-    <string name="summary_system">Define rules for system apps (for experts)</string>
-    <string name="summary_log_app">Log attempts to access the internet for apps. This might result in extra battery usage.</string>
-    <string name="summary_access">Show a status bar notification when an app attempts to access a new internet address (when filtering is disabled, only blocked internet access attempts will be notified)</string>
-    <string name="summary_filter">Filter IP packets going out of the VPN tunnel. This might result in extra battery usage.</string>
-    <string name="summary_track_usage">Track the number of bytes sent and received for each app and address. This might result in extra battery usage.</string>
-    <string name="summary_block_domains">WARNING: Blocked hosts are not shown in UI.</string>
-    <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>
-    <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
-    <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
-    <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
-    <string name="summary_stats">Show network speed graph in status bar notification</string>
-    <string name="msg_sure">Are you sure?</string>
-    <string name="msg_started">Checking trackers</string>
-    <string name="msg_packages">%1$d URLs allowed, %2$d blocked</string>
-    <string name="msg_hosts">%1$d URLs allowed, %2$d blocked, %3$d hosts</string>
-    <string name="msg_waiting">Waiting for event</string>
-    <string name="msg_disabled">Use the switch above to enable TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl has been disabled, likely by using another VPN based app</string>
-    <string name="msg_installed">\'%1$s\' installed</string>
-    <string name="msg_installed_n">Has been installed</string>
-    <string name="msg_access">%1$s attempted internet access</string>
-    <string name="msg_access_n">Attempted internet access</string>
-    <string name="msg_completed">Action completed</string>
-    <string name="msg_vpn">TrackerControl uses a local VPN to filter internet traffic.
-For this reason, please allow a VPN connection in the next dialog.
-Your internet traffic is not being sent to a remote VPN server.</string>
-    <string name="msg_autostart">TrackerControl could not start automatically. This is likely because of a bug in your Android version.</string>
-    <string name="msg_error">An unexpected error has occurred: \'%s\'</string>
-    <string name="msg_start_failed">Android refused to start the VPN service at this moment. This is likely because of a bug in your Android version.</string>
-    <string name="msg_try">Try TrackerControl</string>
-    <string name="msg_dimming">If you cannot press OK in the next dialog, another (screen dimming) app is likely manipulating the screen.</string>
-    <string name="msg_mbday">&#177; %1$.3f&#9650; %2$.3f&#9660; MB/day</string>
-    <string name="msg_doze">For consistent results, the Android battery optimizations should be disabled for TrackerControl.
-\n\nIn the next dialog, select \"All apps\" at the top, tap on TrackerControl in the list and select and confirm \"Don\'t optimize\".</string>
-    <string name="msg_datasaving">For consistent results, the Android data saving options should be disabled for TrackerControl
-\n\nIn the next dialog, enable the options \"Background data\" and \"Unrestricted data usage\"</string>
-    <string name="msg_filter">Using filtering will cause Android to attribute data and power usage to TrackerControl - Android assumes the data and power are being used by TrackerControl, rather than the original apps</string>
-    <string name="msg_filter4">Android 4 requires filtering to be enabled</string>
-    <string name="msg_log_disabled">Traffic logging is disabled, use the switch above to enable logging. Traffic logging might result in extra battery usage.</string>
-    <string name="msg_clear_rules">This will reset the rules and conditions to their default values</string>
-    <string name="msg_reset_access">This will delete access attempt log lines without allow/block rules</string>
-    <string name="msg_import_last">Last import: %s</string>
-    <string name="msg_downloading">Downloading\n%1s</string>
-    <string name="msg_downloaded">Hosts file downloaded</string>
-    <string name="msg_download_last">Last download: %s</string>
-    <string name="msg_start_forward">Start forwarding from %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
-    <string name="msg_stop_forward">Stop forwarding of %1$s port %2$d?</string>
-    <string name="msg_metered">Network is metered</string>
-    <string name="msg_inactive">No active internet connection</string>
-    <string name="msg_queue">TrackerControl is busy</string>
-    <string name="msg_update">Update available, tap to download</string>
-    <string name="msg_usage">You can allow (greenish) or deny (reddish) Wi-Fi or mobile internet access by tapping on the icons next to an app</string>
-    <string name="msg_fairemail">If you installed TrackerControl to protect your privacy, you might be interested in <a href="https://email.faircode.eu/">FairEmail</a>, an open source, privacy friendly email app, too</string>
-    <string name="msg_whitelist">Internet access is allowed by default (blacklist mode), this can be changed in the settings</string>
-    <string name="msg_push">Incoming (push) messages are mostly handled by the system component Play services, which is allowed internet access by default</string>
-    <string name="msg_system">Managing all (system) apps can be enabled in the settings</string>
-    <string name="msg_issue">Please describe the problem and indicate the time of the problem:</string>
-    <string name="msg_vpn_cancelled">VPN connection cancelled\nDid you configure another VPN to be an always-on VPN?</string>
-    <string name="msg_on">Powering down your device with TrackerControl enabled, will automatically start TrackerControl on powering up your device</string>
-    <string name="msg_unavailable">This feature is not available on this Android version</string>
-    <string name="msg_always_on">Another VPN is set as Always-on VPN</string>
-    <string name="msg_always_on_lockdown">Turn off \"Block connections without VPN\" in Android VPN settings to use TrackerControl in filtering mode</string>
-    <string name="msg_private_dns">Turn off \"Private DNS\" in Android network settings to use TrackerControl in filtering mode</string>
-    <string name="title_lockdown_enabled">Traffic is locked down</string>
-    <string name="title_unmetered_allowed">Unmetered traffic is allowed</string>
-    <string name="title_unmetered_blocked">Unmetered traffic is blocked</string>
-    <string name="title_unmetered_disabled">Unmetered rules are not applied</string>
-    <string name="title_metered_allowed">Metered traffic is allowed</string>
-    <string name="title_metered_blocked">Metered traffic is blocked</string>
-    <string name="title_metered_disabled">Metered rules are not applied</string>
-    <string name="title_host_allowed">Address is allowed</string>
-    <string name="title_host_blocked">Address is blocked</string>
-    <string name="title_interactive_allowed">Allow when screen is on</string>
-    <string name="title_roaming_blocked">Block when roaming</string>
-    <string name="title_metered">By default a Wi-Fi connection is considered to be unmetered and a mobile connection to be metered</string>
-    <string name="title_internet">has no internet permission</string>
-    <string name="title_disabled">is disabled</string>
-    <string name="title_messaging">Incoming messages are received by Google Play services and not by this app and can therefore not be blocked by blocking this app</string>
-    <string name="title_download">Downloads are performed by the download manager and not by this app and can therefore not be blocked by blocking this app</string>
-    <string name="title_apply">Apply rules and conditions</string>
-    <string name="title_conditions">Conditions</string>
-    <string name="title_screen_wifi">Allow Wi-Fi when screen is on</string>
-    <string name="title_screen_other">Allow mobile when screen is on</string>
-    <string name="title_roaming">Block when roaming</string>
-    <string name="title_lockdown">Allow in lockdown mode</string>
-    <string name="title_related">Filter related</string>
-    <string name="title_access">Access attempts</string>
-    <string name="title_precedence">Access rules take precedence over other rules</string>
-    <string name="title_options">Options</string>
-    <string name="title_notify">Notify internet access attempts</string>
-    <string name="title_logging_disabled">Logging or filtering is not enabled</string>
-    <string name="title_logging_enabled">Logging and filtering are enabled</string>
-    <string name="title_logging_configure">Configure</string>
-    <string name="title_enable_logging">Enable logging of blocked addresses only</string>
-    <string name="title_enable_filtering">Enable filtering to log allowed addresses too</string>
-    <string name="title_enable_notify">Enable access notifications for newly logged addresses</string>
-    <string name="title_enable_help0">These settings are global settings that apply to all apps</string>
-    <string name="title_enable_help1">Filtering is also required to allow or block individual addresses</string>
-    <string name="title_enable_help2">Enabling logging (less) or filtering (more) might increase battery usage and might affect network speed</string>
-    <string name="title_rate">Rate</string>
-    <string name="title_allow">Allow</string>
-    <string name="title_block">Block</string>
-    <string name="title_allow_wifi">Allow Wi-Fi</string>
-    <string name="title_block_wifi">Block Wi-Fi</string>
-    <string name="title_allow_other">Allow mobile</string>
-    <string name="title_block_other">Block mobile</string>
-    <string name="title_nobody">nobody</string>
-    <string name="title_dontask">Don\'t ask again</string>
+    <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或阻止</string>
+    <string name="summary_wifi_home">仅将Wi-Fi网络规则应用于所选定的网络 (将移动网络规则应用于其他Wi-Fi网络)</string>
+    <string name="summary_metered">将移动网络规则应用于按流量计费的 (付费, 共享) Wi-Fi网络</string>
+    <string name="summary_metered_2g">将Wi-Fi网络规则应用于2G数据连接</string>
+    <string name="summary_metered_3g">将Wi-Fi网络规则应用于3G数据连接</string>
+    <string name="summary_metered_4g">将 Wi-Fi 网络规则应用于 LTE 数据连接</string>
+    <string name="summary_national_roaming">SIM卡与移动网络为相同国家时不使用漫游规则</string>
+    <string name="summary_eu_roaming">在 SIM 卡与移动网络国家处于欧盟境内时请勿应用漫游规则 (像在国内漫游一样)</string>
+    <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
+    <string name="summary_system">定义系统应用的规则 (专家用户)</string>
+    <string name="summary_log_app">记录应用程序访问互联网的尝试。这可能会导致额外的电池使用。</string>
+    <string name="summary_access">当一个应用程序试图访问一个新的互联网地址时，显示一个状态栏通知(当过滤被禁用时，只有被阻止的互联网访问尝试才会被通知)</string>
+    <string name="summary_filter">过滤从VPN隧道流出的IP包。这可能会导致额外的电池使用。</string>
+    <string name="summary_track_usage">跟踪每个应用程序和地址发送和接收的字节数。这可能会导致额外的电池使用。</string>
+    <string name="summary_block_domains">警告: 被阻止的主机未在用户界面中显示。</string>
+    <string name="summary_rcode">默认值是3 (NXDOMAIN)，这意味着“不存在的域名”。</string>
+    <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
+    <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
+    <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
+    <string name="summary_stats">在状态栏通知中显示网络速度图</string>
+    <string name="msg_sure">你确定吗？</string>
+    <string name="msg_started">正在检查跟踪器</string>
+    <string name="msg_packages">已允许 %1$d 条URL， 已阻止%2$d条URL</string>
+    <string name="msg_hosts">已允许 %1$d 条URL，已屏蔽%2$d， %3$d 主机名</string>
+    <string name="msg_waiting">等待事件</string>
+    <string name="msg_disabled">使用上面的开关来启用TrackerControl</string>
+    <string name="msg_revoked">TrackerControl已被禁用，可能是通过使用另一个基于VPN的应用程序</string>
+    <string name="msg_installed">\'%1$s\' 已安装</string>
+    <string name="msg_installed_n">已被安装</string>
+    <string name="msg_access">%1$s 尝试访问互联网</string>
+    <string name="msg_access_n">尝试互联网访问</string>
+    <string name="msg_completed">操作已完成</string>
+    <string name="msg_vpn">TrackerControl使用一个本地VPN来过滤互联网流量。
+因此，请在下一个对话框中允许VPN连接。
+您的互联网流量没有被发送到远程VPN服务器。</string>
+    <string name="msg_autostart">TrackerControl 无法自动启动。这可能是由于您 Android 版本中的一个错误。</string>
+    <string name="msg_error">发生一个未知错误: \'%s\'</string>
+    <string name="msg_start_failed">Android此时拒绝启动VPN服务。这可能你的Android版本中的一个bug造成的。</string>
+    <string name="msg_try">尝试TrackerControl</string>
+    <string name="msg_dimming">如果您在下一个对话框中无法点击确定, 可能是另一个应用正在控制屏幕(如屏幕亮度调节软件).</string>
+    <string name="msg_mbday">&#177;%1$.3f&#9650;%2$.3f&#9660;MB/天</string>
+    <string name="msg_doze">为了获得一致的结果，应该禁用对TrackerControl的Android电池优化。
+\n\n在下一个对话框中，选择顶部的“全部应用”，点击列表中的TrackerControl，选择并确认“不优化”。</string>
+    <string name="msg_datasaving">为了得到一致的结果，对TrackerControl的Android数据节省选项应该被禁用
+\n\n在下一个对话框中，启用“后台数据”和“不受限制的数据使用”选项</string>
+    <string name="msg_filter">使用过滤会使Android把数据和电量使用归于TrackerControl——Android假设数据和电量是由TrackerControl使用的，而不是原来的应用程序</string>
+    <string name="msg_filter4">Android 4需要启用过滤功能</string>
+    <string name="msg_log_disabled">流量日志已禁用，请使用上面的开关启用日志记录。流量记录可能会导致额外的电池使用。</string>
+    <string name="msg_clear_rules">这将把规则和条件重置为它们的默认值</string>
+    <string name="msg_reset_access">这将删除没有允许/拦截规则的访问尝试日志行</string>
+    <string name="msg_import_last">上次导入： %s</string>
+    <string name="msg_downloading">正在下载\n%1s</string>
+    <string name="msg_downloaded">已下载主机文件</string>
+    <string name="msg_download_last">上次下载： %s</string>
+    <string name="msg_start_forward">开始从 %1$s 端口 %2$d 转发至 \'%5$s\' 的 %3$s:%4$d?</string>
+    <string name="msg_stop_forward">停止转发 %1$s 端口 %2$d?</string>
+    <string name="msg_metered">网络是计量的</string>
+    <string name="msg_inactive">无活跃网络连接</string>
+    <string name="msg_queue">TrackerControl 正忙</string>
+    <string name="msg_update">可用更新，点击下载</string>
+    <string name="msg_usage">你可以通过点击应用程序旁边的图标来允许(绿色) 或拒绝(红色) Wi-Fi或移动互联网接入</string>
+    <string name="msg_fairemail">如果你安装了TrackerControl来保护你的隐私，你或许会对<a href="https://email.faircode.eu/">FairEmail</a>感兴趣。它是一款开放源码，隐私友好的电子邮件应用程序</string>
+    <string name="msg_whitelist">默认情况下允许互联网连接(黑名单模式)，这可以在设置中更改</string>
+    <string name="msg_push">传入(推送) 消息大多由系统组件Play服务处理，默认情况下允许其访问互联网</string>
+    <string name="msg_system">可以在设置中启用所有(系统) 应用</string>
+    <string name="msg_issue">请描述问题并指出问题发生的时间:</string>
+    <string name="msg_vpn_cancelled">VPN 连接已取消\n您是否对另一个 VPN 设置了始终启用?</string>
+    <string name="msg_on">若关机时TrackerControl处于启用状态，TrackerControl 会在下次开机后自动启动</string>
+    <string name="msg_unavailable">该特性在这个Android版本中不可用</string>
+    <string name="msg_always_on">已将另一个 VPN 设置为始终启用</string>
+    <string name="msg_always_on_lockdown">要在过滤模式下使用TrackerControl，请在Android VPN设置中关闭“阻塞无VPN连接”，</string>
+    <string name="msg_private_dns">要在过滤模式下使用TrackerControl，请在Android网络设置中关闭“私人DNS”，</string>
+    <string name="title_lockdown_enabled">流量已被锁定</string>
+    <string name="title_unmetered_allowed">已允许非按流量计费的网络数据</string>
+    <string name="title_unmetered_blocked">已阻止非按流量计费的网络数据</string>
+    <string name="title_unmetered_disabled">未应用不按流量计费网络的规则</string>
+    <string name="title_metered_allowed">已允许按流量计费的网络数据</string>
+    <string name="title_metered_blocked">已阻止按流量计费的网络数据</string>
+    <string name="title_metered_disabled">未应用按流量计费网络的规则</string>
+    <string name="title_host_allowed">已允许网络地址</string>
+    <string name="title_host_blocked">已阻止网络地址</string>
+    <string name="title_interactive_allowed">亮屏时允许</string>
+    <string name="title_roaming_blocked">漫游时阻止</string>
+    <string name="title_metered">默认情况下，Wi-Fi连接被认为是不按流量计费的，移动连接按流量计费</string>
+    <string name="title_internet">无网络访问权限</string>
+    <string name="title_disabled">被禁用</string>
+    <string name="title_messaging">接收消息是由 Google Play 服务接收而非此应用，因此不能通过屏蔽此应用来阻止接收消息</string>
+    <string name="title_download">下载是通过下载管理器而非此应用执行的，因此不能通过屏蔽此应用来阻止下载</string>
+    <string name="title_apply">应用规则和条件</string>
+    <string name="title_conditions">条件</string>
+    <string name="title_screen_wifi">亮屏时允许Wi-Fi网络</string>
+    <string name="title_screen_other">亮屏时允许移动网络</string>
+    <string name="title_roaming">漫游时阻止</string>
+    <string name="title_lockdown">锁定模式中允许</string>
+    <string name="title_related">相关筛选器</string>
+    <string name="title_access">访问尝试</string>
+    <string name="title_precedence">访问规则优先于其他规则</string>
+    <string name="title_options">选项</string>
+    <string name="title_notify">通知互联网访问尝试</string>
+    <string name="title_logging_disabled">未启用日志记录或过滤</string>
+    <string name="title_logging_enabled">已启用日志记录和过滤</string>
+    <string name="title_logging_configure">配置</string>
+    <string name="title_enable_logging">只记录拦截的网址</string>
+    <string name="title_enable_filtering">启用过滤来记录允许的地址</string>
+    <string name="title_enable_notify">对新记录到的地址启用访问通知</string>
+    <string name="title_enable_help0">这些设置是适用于所有应用程序的全局设置</string>
+    <string name="title_enable_help1">同样需要启用筛选才能允许或屏蔽单独地址</string>
+    <string name="title_enable_help2">启用日志记录(更少) 或过滤(更多) 可能会增加电池使用量，并可能影响网络速度</string>
+    <string name="title_rate">速率</string>
+    <string name="title_allow">允许</string>
+    <string name="title_block">阻止</string>
+    <string name="title_allow_wifi">允许 Wi-Fi</string>
+    <string name="title_block_wifi">阻止Wi-Fi</string>
+    <string name="title_allow_other">允许移动网络</string>
+    <string name="title_block_other">阻止移动数据</string>
+    <string name="title_nobody">没有人</string>
+    <string name="title_dontask">不要再次询问</string>
     <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
-    <string name="title_log_copy">Copy</string>
-    <string name="title_pro">Pro features</string>
-    <string name="title_pro_description">The following pro features are available:</string>
-    <string name="title_pro_log">View blocked traffic log</string>
-    <string name="title_pro_filter">Filter network traffic</string>
-    <string name="title_pro_notify">New app notifications</string>
-    <string name="title_pro_speed">Network speed graph notification</string>
-    <string name="title_pro_theme">Appearance (theme, colors)</string>
-    <string name="title_pro_all">All above pro features</string>
-    <string name="title_pro_dev">Support development</string>
-    <string name="title_pro_buy">Buy</string>
-    <string name="title_pro_bought">Enabled</string>
-    <string name="title_pro_unavailable">Unavailable</string>
-    <string name="title_pro_details">Tap on a title for more information</string>
-    <string name="title_pro_challenge">Challenge</string>
-    <string name="title_pro_reponse">Response</string>
-    <string name="title_pro_feature">This is a pro feature</string>
+    <string name="title_log_port">端口 %1$d</string>
+    <string name="title_log_copy">复制</string>
+    <string name="title_pro">专业版功能</string>
+    <string name="title_pro_description">专业版可使用下列功能：</string>
+    <string name="title_pro_log">查看被阻止的流量日志</string>
+    <string name="title_pro_filter">过滤网络流量</string>
+    <string name="title_pro_notify">新应用通知</string>
+    <string name="title_pro_speed">网络速度图通知</string>
+    <string name="title_pro_theme">外观 (主题、 颜色)</string>
+    <string name="title_pro_all">以上所有专业版功能</string>
+    <string name="title_pro_dev">支持开发</string>
+    <string name="title_pro_buy">购买</string>
+    <string name="title_pro_bought">已启用</string>
+    <string name="title_pro_unavailable">不可用</string>
+    <string name="title_pro_details">点击标题查看更多信息</string>
+    <string name="title_pro_challenge">挑战</string>
+    <string name="title_pro_reponse">响应</string>
+    <string name="title_pro_feature">这是专业版的功能</string>
     <string-array name="themeNames">
-        <item>teal/orange</item>
-        <item>blue/orange</item>
-        <item>purple/red</item>
-        <item>amber/blue</item>
-        <item>orange/grey</item>
-        <item>green</item>
+        <item>蓝绿色/橙色</item>
+        <item>蓝色/橙色</item>
+        <item>紫色/红色</item>
+        <item>琥珀色/蓝色</item>
+        <item>橙色/灰色</item>
+        <item>绿色</item>
     </string-array>
     <!-- VPN Control -->
-    <string name="switch_mission">Enable Analysis</string>
-    <string name="switch_mission_explanation">Enables analysis of app tracking by third-party companies.</string>
-    <string name="notification_title_vpnservice">TrackerControl status</string>
-    <string name="notification_channel_name">Status</string>
-    <string name="restart_notification">Not checking trackers</string>
-    <string name="notification_detail_text_vpnservice_disconnected">Not checking trackers</string>
-    <string name="notification_detail_text_vpnservice_connecting">Starting&#8230;</string>
-    <string name="notification_detail_text_vpnservice_connected">Checking trackers</string>
-    <string name="notification_detail_text_vpnservice_scheduled_connect">Automatic restart scheduled</string>
-    <string name="vpn_rights_needed">Please give VPN permissions for TrackerControl to work.</string>
+    <string name="switch_mission">启用分析</string>
+    <string name="switch_mission_explanation">启用对第三方公司应用跟踪的分析</string>
+    <string name="notification_title_vpnservice">TrackerControl状态</string>
+    <string name="notification_channel_name">状态</string>
+    <string name="restart_notification">没有在检查跟踪器</string>
+    <string name="notification_detail_text_vpnservice_disconnected">没有在检查跟踪器</string>
+    <string name="notification_detail_text_vpnservice_connecting">正在启动&#8230;</string>
+    <string name="notification_detail_text_vpnservice_connected">正在检查跟踪器</string>
+    <string name="notification_detail_text_vpnservice_scheduled_connect">自动重启计划</string>
+    <string name="vpn_rights_needed">请授予TrackerControl VPN权限以使其正常工作</string>
     <!-- App Overview -->
-    <string name="tracked_app_name">Application Name</string>
+    <string name="tracked_app_name">应用程序名称</string>
     <plurals name="n_trackers_found">
-        <item quantity="other">%d trackers observed</item>
+        <item quantity="other">观察到%d 个追踪器</item>
     </plurals>
-    <string name="title_apps">Apps</string>
-    <string name="title_trackers">Trackers</string>
-    <string name="menu_reset_monitoring">Reset monitoring</string>
-    <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
-    <string name="confirm_blocking_title">Block all trackers?</string>
-    <string name="external_servers">Get developer email automatically?</string>
-    <string name="confirm_google_info">This app can automatically get the email of the app developer from the Google Play Store for you.</string>
-    <string name="no_external_servers">No permission given to retrieve policy from external server. Change in app settings.</string>
-    <string name="blocking_apps">Block all trackers</string>
-    <string name="blocking_trackers">Block all trackers</string>
-    <string name="blocking_warning">Use this wisely, since developers rely on it!</string>
-    <string name="confirm_blocking">This action blocks advertising,
-        upon which many developers rely.
-        Continue?</string>
-    <string name="are_you_sure">Confirm</string>
-    <string name="ok">OK</string>
-    <string name="close">Close</string>
-    <string name="cancel">Cancel</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="menu_privacy_policy">Privacy Policy</string>
-    <string name="menu_csv">Export as CSV</string>
-    <string name="exporting">Exporting..</string>
-    <string name="share_csv">Share</string>
-    <string name="export_failed">Export failed</string>
-    <string name="exported">Exported to storage! Access phone storage from computer or share with other app.</string>
+    <string name="title_apps">应用程序</string>
+    <string name="title_trackers">跟踪器</string>
+    <string name="menu_reset_monitoring">重置监测</string>
+    <string name="confirm_reset">删除您的跟踪器历史记录和跟踪器选择？</string>
+    <string name="confirm_blocking_title">屏蔽所有追踪器？</string>
+    <string name="external_servers">自动获取开发者电子邮件？</string>
+    <string name="confirm_google_info">本应用可以自动为您从谷歌Play Store获取应用开发者的邮件。</string>
+    <string name="no_external_servers">没有授予从外部服务器检索策略的权限。更改应用程序设置。</string>
+    <string name="blocking_apps">屏蔽所有追踪器</string>
+    <string name="blocking_trackers">屏蔽所有追踪器</string>
+    <string name="blocking_warning">明智地使用它，因为开发人员依赖它!</string>
+    <string name="confirm_blocking">此操作会阻止广告，
+        许多开发者依赖广告收入生存
+        要继续吗？</string>
+    <string name="are_you_sure">确认</string>
+    <string name="ok">好</string>
+    <string name="close">关闭</string>
+    <string name="cancel">取消</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="menu_privacy_policy">隐私政策</string>
+    <string name="menu_csv">导出为CSV</string>
+    <string name="exporting">正在导出...</string>
+    <string name="share_csv">分享</string>
+    <string name="export_failed">导出失败</string>
+    <string name="exported">导出到存储! 从计算机访问手机存储或与其他应用共享。</string>
     <!-- App Details -->
-    <string name="title_activity_detail">DetailActivity</string>
-    <string name="tab_trackers">Trackers</string>
-    <string name="tab_actions">My Data</string>
-    <string name="summary_loading_error">Could not fetch app description.</string>
-    <string name="tracker_name">Tracker Name</string>
-    <string name="app_info">Manage App</string>
+    <string name="title_activity_detail">详细活动</string>
+    <string name="tab_trackers">跟踪器</string>
+    <string name="tab_actions">我的数据</string>
+    <string name="summary_loading_error">无法获取应用描述。</string>
+    <string name="tracker_name">追踪器名称</string>
+    <string name="app_info">管理应用</string>
     <!-- Actions -->
-    <string name="block_tracking">Block trackers</string>
-    <string name="block_tracking_description">Many apps send data to third-parties, so-called trackers. TrackerControl allows to block these network transmissions selectively. Yet, use this wisely, since app developers rely on these services, notably advertising.</string>
-    <string name="personalised_ads">Limit Personalisation</string>
-    <string name="personalised_ads_description">As an alternative to complete blocking, Android offers a setting to limit the usage of personal data for analytics and advertising purposes. However, personal data may still be transmitted and therefore requires trust in the data-receiving companies.</string>
-    <string name="data_managment">Manage Data</string>
-    <string name="data_management_description">The EU General Data Protection Regulation (GDPR) allows users from the EU to manage any data related to them. This app provides email templates to reach out to the developer. The developer has to answer within one month.</string>
-    <string name="contacts">Contact </string>
-    <string name="contacts_description">If you think an application violates data protection principles, you may want to contact the responsible entities directly.</string>
-    <string name="play_services_required">This is a setting of the Google Play Services, which were not found on yourr device.</string>
-    <string name="no_dev_mail">Developer mail address not yet fetched. Check internet connection.</string>
-    <string name="no_mail_service">Please install an email client.</string>
-    <string name="blocking_settings">Select trackers</string>
-    <string name="ad_settings">Change now</string>
-    <string name="request_data">Request data</string>
-    <string name="request_deletion">Request deletion</string>
-    <string name="contact_developer">Developer</string>
+    <string name="block_tracking">屏蔽追踪器</string>
+    <string name="block_tracking_description">许多应用程序将数据发送给第三方，也就是所谓的追踪器。TrackerControl允许有选择地阻止这些网络传输。然而，要明智地使用它，因为应用程序开发者依赖于这些服务，尤其是广告。</string>
+    <string name="personalised_ads">限制个性化</string>
+    <string name="personalised_ads_description">作为完全屏蔽的替代方案，Android提供了一个设置来限制个人数据用于分析和广告目的的使用。然而，个人资料仍可能被传送，因此需要信任数据接收公司</string>
+    <string name="data_managment">管理数据</string>
+    <string name="data_management_description">欧盟通用数据保护条例(GDPR) 允许来自欧盟的用户管理任何与他们相关的数据。这个应用程序提供电子邮件模板，以联系到开发商。开发商必须在一个月内答复。</string>
+    <string name="contacts">联系方式 </string>
+    <string name="contacts_description">如果您认为某个应用程序违反了数据保护原则，您可能希望直接联系相关实体。</string>
+    <string name="play_services_required">这是Google Play服务中的一个设置，在你的设备上没有找到。</string>
+    <string name="no_dev_mail">开发者邮件地址尚未获取。请检查网络连接。</string>
+    <string name="no_mail_service">请安装一个电子邮件客户端。</string>
+    <string name="blocking_settings">选择跟踪器</string>
+    <string name="ad_settings">现在更改</string>
+    <string name="request_data">请求数据</string>
+    <string name="request_deletion">请求删除</string>
+    <string name="contact_developer">开发者</string>
     <string name="contact_playstore">Google</string>
-    <string name="contact_officials">EU Officials</string>
+    <string name="contact_officials">欧盟官员</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">GDPR Subject Access Request</string>
-    <string name="subject_delete_data">GDPR Deletion Request</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
+    <string name="subject_request_data">GDPR 主题访问请求</string>
+    <string name="subject_delete_data">GDPR 删除请求</string>
+    <string name="body_request_data"><![CDATA[致有关人士：\n
 \n
 \n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
+我请求你方作为安卓应用%s (ID:%s) 数据的控制者确认它是否正处理任何有关我的个人资料。\n
+如有，请向我提供《欧盟通用资料保护规例》第15条所规定的所有必须信息，它们包括：\n
 \n
-• a copy of my personal data;\n
-• the purposes of the processing;\n
-• the categories of personal data concerned;\n
-• the recipients you disclose my personal data to and the safeguards you provide;\n
-• the retention period for storing my personal data or the criteria used for determining this period;\n
-• information about the source of my personal data; and\n
-• the existence of automated decision-making (including profiling), and if so:\n
-    - the logic involved in the decision-making process;\n
-    - the significance and the envisaged consequences for me;\n
-    - the steps you have taken to prevent errors, bias and discrimination; and\n
-    - explain how I can express my point of view and challenge a decision.\n
+•我个人数据的一份拷贝；\n
+•处理的目的；\n
+•有关的个人资料类别；\n
+•你方将我的个人资料披露给谁，以及你方提供的保障措施；\n
+•储存个人资料的保留期或用以确定保留期间的标准；\n
+•关于我的个人资料来源的信息；和\n
+•是否存在自动化决策(包括用户建模)，如果有的话：\n
+    -决策过程中涉及的逻辑；\n
+    -对我的意义和设想的后果；\n
+    -你方为防止错误、偏见和歧视所采取的措施；和\n
+    -解释我如何表达我的观点和挑战一个决定；\n
 \n
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+此请求涉及你方对我个人资料的任何处理，包括代表你方处理个人资料的任何处理者。\n
 \n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+请通过安全方式通过电子邮件提供您的回复。我期待你方在收到我的请求后一个月内进行答复。\n
 \n
-Sincerely,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
+此致，\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[致有关人士：\n
+\n\n
+我援引欧盟通用数据保护条例(GDPR) 第17条规定的我的数据檫除权，请求你作为安卓应用%s (ID:%s) 数据的控制方及时删除此应用程序处理的关于我的以下个人数据：\n
+• 全部数据\n
 \n
+我提出删除个人资料要求的原因是我撤回或已撤回我对处理个人资料的同意。此要求涉及你方对本人个人资料的任何处理，包括代表你方处理个人资料的任何处理者。\n
 \n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
-• All data.\n
+请通过安全方式通过电子邮件提供您的回复。我期待在你方收到我的请求后一个月进行答复。\n
 \n
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
-    <string name="packet_statistics">Data flows</string>
-    <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
-    <string name="crash_dialog_comment">Any comments?</string>
-    <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some apps. Private DNS must be disabled.</string>
-    <string name="instructions_monitoring">Toggle the switch and interact with some apps.</string>
-    <string name="afterboot_notification">Restart notification</string>
-    <string name="device_not_supported_title">Device not supported</string>
-    <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>
-    <string name="monitor">Monitor</string>
-    <string name="launch_app">Launch app</string>
+此致，\n\n]]></string>
+    <string name="packet_statistics">数据流</string>
+    <string name="crash_dialog_text">对不起。TrackerControl崩溃了.. 您介意把详细情况发邮件给我们吗?</string>
+    <string name="crash_dialog_comment">是否有任何评论？</string>
+    <string name="instructions_monitoring_private_dns">切换开关并与一些应用程序进行交互。必须禁用私有DNS。</string>
+    <string name="instructions_monitoring">切换开关并与某些应用交互。</string>
+    <string name="afterboot_notification">重启通知</string>
+    <string name="device_not_supported_title">不支持此设备</string>
+    <string name="device_not_supported_msg">您设备的操作系统不允许监视和过滤网络通信。这是TrackerControl正常运作所需要的。</string>
+    <string name="monitor">监视器</string>
 </resources>
