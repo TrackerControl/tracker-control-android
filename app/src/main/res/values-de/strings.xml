@@ -3,6 +3,7 @@
     <string name="app_description">TrackerControl bietet einfache und erweiterte Möglichkeiten, um Zugriffe auf das Internet zu blockieren - keine Root-Rechte erforderlich! Anwendungen und Adressen kann der Zugriff auf die WLAN- und/oder mobile Datenverbindung einzeln erlaubt oder verweigert werden.</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Datenschutzerklärung</a></string>
     <string name="app_first">Die Entwicklung und das Testen von TrackerControl wurden mit großer Sorgfalt durchgeführt, jedoch kann nicht garantiert werden, dass TrackerControl auf jedem Gerät korrekt funktioniert.</string>
     <string name="app_agree">Ich stimme zu</string>
     <string name="app_disagree">Ich stimme nicht zu</string>
@@ -20,6 +21,7 @@
     <string name="menu_sort_uid">Nach UID sortieren</string>
     <string name="menu_sort_trackers">Nach Trackern sortieren</string>
     <string name="menu_sort_data">Nach Datennutzung sortieren</string>
+    <string name="menu_log">Protokoll anzeigen</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
     <string name="menu_legend">Legende</string>
@@ -55,6 +57,7 @@
     <string name="setting_whitelist_roaming">Roaming blockieren</string>
     <string name="setting_options">Optionen</string>
     <string name="setting_theme">Theme: %1$s</string>
+    <string name="setting_dark">Dunkles Theme (in der Entwicklung)</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
     <string name="setting_screen_on">\'Wenn Bildschirm an\' Regeln anwenden</string>
     <string name="setting_auto">Automatisch nach %1$s Minuten aktivieren</string>
@@ -318,6 +321,7 @@
     <string name="exported">In den Speicher exportiert! Auf den Telefonspeicher vom Computer aus zugreifen oder mit anderer App teilen.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Details</string>
+    <string name="tab_transmissions">Übertragungen</string>
     <string name="tab_trackers">Tracker</string>
     <string name="tab_actions">Meine Daten</string>
     <string name="summary_loading_error">App-Beschreibung konnte nicht geladen werden.</string>
@@ -381,12 +385,15 @@ Please provide your response through secure means by email. I look forward to re
 \n
 Sincerely,\n\n]]></string>
     <string name="packet_statistics">Datenfluss</string>
+    <string name="no_trackers">Keine Tracker gefunden. Es werden nur Tracker angezeigt, die Ihre Daten sammeln.\n\nVersuchen Sie die App zu verwenden und überprüfen Sie es erneut..</string>
     <string name="crash_dialog_text">Entschuldigung. TrackerControl ist abgestürzt... Wir wären sehr dankbar dafür, wenn Sie uns eine E-Mail mit Details schicken.</string>
     <string name="crash_dialog_comment">Bemerkungen?</string>
     <string name="instructions_monitoring_private_dns">Betätigen Sie den Schalter und nutzen Sie einige Apps. Private DNS muss deaktiviert werden.</string>
     <string name="instructions_monitoring">Betätigen Sie den Schalter und nutzen Sie einige Apps.</string>
     <string name="afterboot_notification">Benachrichtigung neustarten</string>
+    <string name="disclaimer">Angezeigte Informationen können unvollständig oder falsch sein.\n\nWenn eine App nicht mehr funktioniert, deaktivieren Sie das Blockieren.</string>
     <string name="device_not_supported_title">Gerät wird nicht unterstützt</string>
     <string name="device_not_supported_msg">Das Betriebssystem Ihres Geräts erlaubt keine Überwachung und Filterung der Netzwerkkommunikation. Dies wird für TrackerControl benötigt.</string>
     <string name="monitor">Überwachen</string>
+    <string name="launch_app">App öffnen</string>
 </resources>
