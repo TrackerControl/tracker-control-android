@@ -397,4 +397,5 @@ Sincerely,\n\n]]></string>
     <string name="monitor">Überwachen</string>
     <string name="launch_app">Starten &amp; Tracker finden</string>
     <string name="countries">Zielländer</string>
+    <string name="countries_explanation">Herausfinden, wohin Ihr Telefon Tracking-Daten sendet.\n\nInformationen basieren auf DNS-Abfragen und IP-Informationen und können ungenau sein.</string>
 </resources>
