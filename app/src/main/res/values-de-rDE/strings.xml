@@ -3,6 +3,7 @@
     <string name="app_description">TrackerControl bietet einfache und erweiterte Möglichkeiten, um Zugriffe auf das Internet zu blockieren - keine Root-Rechte erforderlich! Anwendungen und Adressen kann der Zugriff auf die WLAN- und/oder mobile Datenverbindung einzeln erlaubt oder verweigert werden.</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Datenschutzerklärung</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie-Richtlinien</a></string>
     <string name="app_first">Die Entwicklung und das Testen von TrackerControl wurden mit großer Sorgfalt durchgeführt, jedoch kann nicht garantiert werden, dass TrackerControl auf jedem Gerät korrekt funktioniert.</string>
     <string name="app_agree">Ich stimme zu</string>
     <string name="app_disagree">Ich stimme nicht zu</string>
@@ -20,10 +21,12 @@
     <string name="menu_sort_uid">Nach UID sortieren</string>
     <string name="menu_sort_trackers">Nach Trackern sortieren</string>
     <string name="menu_sort_data">Nach Datennutzung sortieren</string>
+    <string name="menu_log">Traffic-Log</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
     <string name="menu_legend">Legende</string>
     <string name="menu_support">E-Mail schreiben</string>
+    <string name="menu_log_support">Erläuterungen</string>
     <string name="menu_about">Über</string>
     <string name="menu_apps">Andere Apps</string>
     <string name="menu_protocol_other">Anderes</string>
@@ -55,6 +58,7 @@
     <string name="setting_whitelist_roaming">Roaming blockieren</string>
     <string name="setting_options">Optionen</string>
     <string name="setting_theme">Theme: %1$s</string>
+    <string name="setting_dark">Dunkles Design</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
     <string name="setting_screen_on">\'Wenn Bildschirm an\' Regeln anwenden</string>
     <string name="setting_auto">Automatisch nach %1$s Minuten aktivieren</string>
@@ -319,9 +323,11 @@
     <!-- App Details -->
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Tracker</string>
+    <string name="tab_countries">Länder</string>
     <string name="tab_actions">Meine Daten</string>
     <string name="summary_loading_error">App-Beschreibung konnte nicht geladen werden.</string>
     <string name="tracker_name">Trackername</string>
+    <string name="internet_access">Internetzugriff blockieren</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
@@ -389,4 +395,6 @@ Sincerely,\n\n]]></string>
     <string name="device_not_supported_title">Gerät wird nicht unterstützt</string>
     <string name="device_not_supported_msg">Das Betriebssystem Ihres Geräts erlaubt keine Überwachung und Filterung der Netzwerkkommunikation. Dies wird für TrackerControl benötigt.</string>
     <string name="monitor">Überwachen</string>
+    <string name="launch_app">Starten &amp; Tracker finden</string>
+    <string name="countries">Zielländer</string>
 </resources>
