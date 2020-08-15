@@ -3,6 +3,7 @@
     <string name="app_description">TrackerControl提供了简单和先进的方式来阻止访问互联网-无需获取根权限。应用程序和地址可以单独被允许或拒绝访问你的Wi-Fi和/或移动连接。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">隐私政策</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie 政策</a></string>
     <string name="app_first">我们花了很大力气开发和测试TrackerControl，但不可能保证TrackerControl在每个设备上正确工作。</string>
     <string name="app_agree">我同意</string>
     <string name="app_disagree">我反对</string>
@@ -20,10 +21,12 @@
     <string name="menu_sort_uid">按 UID 排序</string>
     <string name="menu_sort_trackers">按跟踪器排序</string>
     <string name="menu_sort_data">按数据使用量排序</string>
+    <string name="menu_log">流量日志</string>
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
     <string name="menu_legend">图例</string>
     <string name="menu_support">写邮件</string>
+    <string name="menu_log_support">解释</string>
     <string name="menu_about">关于</string>
     <string name="menu_apps">其他应用</string>
     <string name="menu_protocol_other">其他</string>
@@ -55,6 +58,7 @@
     <string name="setting_whitelist_roaming">阻止漫游</string>
     <string name="setting_options">选项</string>
     <string name="setting_theme">主题: %1$s</string>
+    <string name="setting_dark">深色主题</string>
     <string name="setting_install">有新软件安装时通知我</string>
     <string name="setting_screen_on">应用 \'亮屏\' 规则</string>
     <string name="setting_auto">%1$s 分钟后自动启用</string>
@@ -321,9 +325,11 @@
     <!-- App Details -->
     <string name="title_activity_detail">详细活动</string>
     <string name="tab_trackers">跟踪器</string>
+    <string name="tab_countries">国家</string>
     <string name="tab_actions">我的数据</string>
     <string name="summary_loading_error">无法获取应用描述。</string>
     <string name="tracker_name">追踪器名称</string>
+    <string name="internet_access">阻止互联网访问</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
     <string name="block_tracking">屏蔽追踪器</string>
@@ -390,4 +396,7 @@
     <string name="device_not_supported_title">不支持此设备</string>
     <string name="device_not_supported_msg">您设备的操作系统不允许监视和过滤网络通信。这是TrackerControl正常运作所需要的。</string>
     <string name="monitor">监视器</string>
+    <string name="launch_app">启动 &amp; 查找追踪器</string>
+    <string name="countries">目的地国家</string>
+    <string name="countries_explanation">找出你的手机把跟踪数据发到哪去了。\n\n信息基于DNS查找和IP信息，可能不准确。</string>
 </resources>
