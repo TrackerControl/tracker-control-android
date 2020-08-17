@@ -16,7 +16,7 @@ public class SVGParser {
     public static float xMax = 0;
     public static float yMax = 0;
 
-    public static List<CountrySection> getCountrySections(Context context){
+    public static List<CountrySection> getCountries(Context context){
         InputStream inputStream = context.getResources().openRawResource(R.raw.world);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         List<CountrySection> countySections = new ArrayList<>();

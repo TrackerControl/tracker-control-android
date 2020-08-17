@@ -14,77 +14,64 @@ import androidx.core.content.ContextCompat;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.graphics.Bitmap.Config.ARGB_8888;
+
 /**
  * Created by takuma on 2015/07/18.
+ * Updated by Konrad Kollnig on 17 August 2020
  */
 public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
-    private List<CountrySection> countrySections;
-    private Context context;
-    private Paint defaultPaint;
-    private Thread prepareThread = null;
-    private Thread thread = null;
-    private HashMap<String, Paint> countryPaints;
-    private OnInitializedListener listener;
+    private List<CountrySection> _countries;
+    private Context _context;
+    private Paint _paint;
+    private HashMap<String, Paint> _countryColours = new HashMap<>();
+    private OnShownListener listener;
 
-    public GeoMapView(Context context){
+    public GeoMapView(Context context) {
         super(context);
-        this.context = context;
-        countryPaints = new HashMap<>();
-        initialize();
-    }
-    public GeoMapView(Context context, AttributeSet attributeSet){
-        super(context, attributeSet);
-        this.context = context;
-        countryPaints = new HashMap<>();
-        initialize();
+        this._context = context;
     }
 
-    /**
-     * initialize GeoMapView from world.svg on other thread
-     */
-    private void initialize(){
-        defaultPaint = new Paint();
-        defaultPaint.setColor(ContextCompat.getColor(context, R.color.countryStroke));
-        defaultPaint.setStyle(Paint.Style.STROKE);
-        defaultPaint.setAntiAlias(true);
+    public GeoMapView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        this._context = context;
+    }
+
+    public void show() {
+        _paint = new Paint();
+        _paint.setColor(ContextCompat.getColor(_context, R.color.countryStroke));
+        _paint.setStyle(Paint.Style.STROKE);
+        _paint.setAntiAlias(true);
 
         final Handler handler = new Handler();
+        new Thread(() -> {
+            _countries = SVGParser.getCountries(_context);
 
-        prepareThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //parse world.svg
-                countrySections = SVGParser.getCountrySections(context);
+            final Bitmap bitmap = Bitmap.createBitmap(
+                    getWidth(),
+                    getHeight(),
+                    ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawMap(canvas);
 
-                //create bitmap
-                final Bitmap bitmap = Bitmap.createBitmap(GeoMapView.this.getWidth(),
-                        GeoMapView.this.getHeight(), Bitmap.Config.ARGB_8888);
-                //draw map on bitmap
-                Canvas canvas = new Canvas(bitmap);
-                drawMap(canvas);
-                //run on main thread
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        GeoMapView.this.setImageBitmap(bitmap);
-
-                        if (listener != null)
-                            listener.onInitialized(GeoMapView.this);
-                    }
-                });
-            }
-        });
-        prepareThread.start();
+            // run on UI
+            handler.post(() -> {
+                GeoMapView.this.setImageBitmap(bitmap);
+                if (listener != null)
+                    listener.onShown(GeoMapView.this);
+            });
+        }).start();
     }
 
     /**
      * draw map on canvas
+     *
      * @param canvas target canvas
      */
-    private void drawMap(Canvas canvas){
-        float ratio = (float)canvas.getWidth() / SVGParser.xMax;
+    private void drawMap(Canvas canvas) {
+        float ratio = (float) canvas.getWidth() / SVGParser.xMax;
 
-        for(CountrySection countrySection : countrySections){
+        for (CountrySection countrySection : _countries) {
             List<List<Float>> xPathList = countrySection.getXPathList();
             List<List<Float>> yPathList = countrySection.getYPathList();
             int numList = xPathList.size();
@@ -95,101 +82,30 @@ public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
                 for (int j = 1; j < numPoint; ++j) {
                     path.lineTo(xPathList.get(i).get(j) * ratio, yPathList.get(i).get(j) * ratio);
                 }
-                Paint paint = countryPaints.get(countrySection.getCountryCode());
-                if(paint != null){
+                Paint paint = _countryColours.get(countrySection.getCountryCode());
+                if (paint != null) {
                     canvas.drawPath(path, paint);
                 }
-                canvas.drawPath(path, defaultPaint);
+                canvas.drawPath(path, this._paint);
             }
         }
     }
 
     /**
      * set filling color
+     *
      * @param countryCode target country code
-     * @param color filling color
+     * @param color       filling color
      */
-    public void setCountryColor(String countryCode, String color){
+    public void highlightCountry(String countryCode, String color) {
         Paint paint = new Paint();
         paint.setColor(Color.parseColor(color));
         paint.setStyle(Paint.Style.FILL);
         paint.setAntiAlias(true);
-        countryPaints.put(countryCode, paint);
+        _countryColours.put(countryCode, paint);
     }
 
-    /**
-     * set filling color
-     * @param countryCode target country code
-     * @param red 0 to 255
-     * @param green 0 to 255
-     * @param blue 0 to 255
-     */
-    public void setCountryColor(String countryCode, int red, int green, int blue){
-        Paint paint = new Paint();
-        paint.setColor(Color.rgb(red, green, blue));
-        paint.setStyle(Paint.Style.FILL);
-        paint.setAntiAlias(true);
-        countryPaints.put(countryCode, paint);
-    }
-
-    /**
-     * remove filling color
-     * @param countryCode target country code
-     */
-    public void removeCountryColor(String countryCode){
-        countryPaints.remove(countryCode);
-    }
-
-    /**
-     * clear all filling color
-     */
-    public void clearCountryColor(){
-        countryPaints = new HashMap<>();
-    }
-
-    /**
-     * refresh GeoMapView
-     * you need call this method after initialized
-     */
-    public void refresh(){
-        final Handler handler = new Handler();
-        thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final Bitmap bitmap = Bitmap.createBitmap(GeoMapView.this.getWidth(),
-                        GeoMapView.this.getHeight(), Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-                drawMap(canvas);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        GeoMapView.this.setImageBitmap(bitmap);
-                    }
-                });
-            }
-        });
-        thread.start();
-    }
-
-    /**
-     * stop all threads
-     */
-    public void destroy(){
-        if(prepareThread != null) {
-            prepareThread.interrupt();
-            prepareThread = null;
-        }
-        if(thread != null) {
-            thread.interrupt();
-            thread = null;
-        }
-    }
-
-    /**
-     * set OnInitializedListener
-     * @param listener
-     */
-    public void setOnInitializedListener(OnInitializedListener listener){
+    public void setOnShownListener(OnShownListener listener){
         this.listener = listener;
     }
 }

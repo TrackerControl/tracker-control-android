@@ -20,7 +20,6 @@ package net.kollnig.missioncontrol.details;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,21 +133,20 @@ public class CountriesFragment extends Fragment {
 
         ProgressBar pbLoading = v.findViewById(R.id.pbLoading);
         GeoMapView mv = v.findViewById(R.id.map_view);
-
-        mv.setOnInitializedListener(geoMapView1 -> {
-            Handler mHandler = new Handler();
-            new Thread(() -> {
-                final Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
-                // run on UI
-                mHandler.post(() -> {
-                    for (String code : hostCountriesCount.keySet()) {
-                        mv.setCountryColor(code, "#B71C1C");
-                    }
-                    mv.refresh();
-                    mv.setVisibility(View.VISIBLE);
-                    pbLoading.setVisibility(View.GONE);
-                });
-            }).start();
+        mv.setOnShownListener(geoMapView -> {
+            mv.setVisibility(View.VISIBLE);
+            pbLoading.setVisibility(View.GONE);
         });
+
+        new Thread(() -> {
+            final Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
+
+            // run on UI, when mv initialised
+            mv.post(() -> {
+                for (String code : hostCountriesCount.keySet())
+                    mv.highlightCountry(code, "#B71C1C");
+                mv.show();
+            });
+        }).start();
     }
 }
