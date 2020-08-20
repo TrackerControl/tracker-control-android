@@ -115,11 +115,9 @@ public class CountriesFragment extends Fragment {
                     }
                 } while (cursor.moveToNext());
             }
-
-            cursor.close();
-        } catch (IOException | GeoIp2Exception e) {
+        } catch (IOException | GeoIp2Exception e)
             e.printStackTrace();
-        }
+        cursor.close();
 
         return countryToCount;
     }
