@@ -425,7 +425,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="data_management_description">The EU General Data Protection Regulation (GDPR) allows users from the EU to manage any data related to them. This app provides email templates to reach out to the developer. The developer has to answer within one month.</string>
     <string name="contacts">Contact </string>
     <string name="contacts_description">If you think an application violates data protection principles, you may want to contact the responsible entities directly.</string>
-    <string name="play_services_required">This is a setting of the Google Play Services, which were not found on yourr device.</string>
+    <string name="play_services_required">This is a setting of the Google Play Services, which were not found on your device.</string>
     <string name="no_dev_mail">Developer mail address not yet fetched. Check internet connection.</string>
     <string name="no_mail_service">Please install an email client.</string>
     <string name="blocking_settings">Select trackers</string>
@@ -476,11 +476,9 @@ Sincerely,\n\n]]></string>
     <string name="packet_statistics">Data flows</string>
     <string name="no_trackers">No trackers observed. Only trackers that were observed to collect your data are shown.\n\nTry using the app and check again..</string>
 
-    <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
+    <string name="crash_dialog_text">TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
-
-    <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some other apps. Private DNS must be disabled.</string>
-    <string name="instructions_monitoring">Toggle the switch and interact with some other apps.</string>
+    <string name="crash_body">Hi dev,\n\nI noticed a crash in TrackerControl.\n\nThese details might help you:\n</string>
 
     <string name="afterboot_notification">Restart notification</string>
     <string name="disclaimer">Shown information may be incomplete or incorrect.\n\nIf an app stops to work, disable blocking.</string>

@@ -37,18 +37,23 @@ import org.acra.annotation.AcraCore;
 import org.acra.annotation.AcraDialog;
 import org.acra.annotation.AcraMailSender;
 
+import static org.acra.data.StringFormat.KEY_VALUE_LIST;
+
 @AcraCore(buildConfigClass = BuildConfig.class,
         reportContent = { // limit collected data
+                ReportField.USER_COMMENT,
                 ReportField.REPORT_ID,
+                ReportField.USER_APP_START_DATE,
+                ReportField.USER_CRASH_DATE,
                 ReportField.ANDROID_VERSION,
                 ReportField.BUILD_CONFIG,
-                ReportField.STACK_TRACE,
-                ReportField.USER_COMMENT,
-                ReportField.USER_EMAIL,
-                ReportField.USER_APP_START_DATE,
-                ReportField.USER_CRASH_DATE
-        })
-@AcraMailSender(mailTo = "tc@kollnig.net")
+                ReportField.STACK_TRACE
+        },
+        reportFormat = KEY_VALUE_LIST)
+@AcraMailSender(mailTo = "tc@kollnig.net",
+        resBody = R.string.crash_body,
+        reportAsFile = false,
+        reportFileName = "tracker-control-crash.json")
 @AcraDialog(resText = R.string.crash_dialog_text,
         resCommentPrompt = R.string.crash_dialog_comment)
 public class ApplicationEx extends Application {
