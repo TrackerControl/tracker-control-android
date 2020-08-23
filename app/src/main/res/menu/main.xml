@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:netguard="http://schemas.android.com/apk/res-auto">
     <item
@@ -59,7 +58,6 @@
         android:title="@string/setting_lockdown"/>
     <item
         android:id="@+id/menu_log"
-        android:visible="false"
         android:title="@string/menu_log"/>
     <item
         android:id="@+id/menu_settings"

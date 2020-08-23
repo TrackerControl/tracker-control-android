@@ -69,16 +69,16 @@
         <item name="colorPrimary">@color/colorRedPrimary</item>
         <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
         <item name="colorAccent">@color/colorRedAccent</item>
-        <item name="colorOn">@color/colorRedOn</item>
-        <item name="colorOff">@color/colorRedOff</item>
+        <item name="colorOn">@color/colorRedOff</item>
+        <item name="colorOff">@color/colorRedOn</item>
     </style>
 
     <style name="AppThemeRedDark" parent="BaseThemeLight">
         <item name="colorPrimary">@color/colorRedPrimary</item>
         <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
         <item name="colorAccent">@color/colorRedAccent</item>
-        <item name="colorOn">@color/colorRedOn</item>
-        <item name="colorOff">@color/colorRedOff</item>
+        <item name="colorOn">@color/colorRedOff</item>
+        <item name="colorOff">@color/colorRedOn</item>
     </style>
 
     <style name="AppThemeTeal" parent="AppThemeRed"> <!-- Was: BaseThemeLight -->
@@ -182,4 +182,9 @@
         <item name="android:thumb">@drawable/switch_rocket</item>
         <item name="trackTint">@color/switch_rocket_color</item>
     </style>
+
+    <style name="TextLarge" parent="@android:style/TextAppearance.Material.Large" />
+    <style name="TextMedium" parent="@android:style/TextAppearance.Material.Medium" />
+    <style name="TextSmall" parent="@android:style/TextAppearance.Material.Small" />
+    <style name="TextTitle" parent="@android:style/TextAppearance.Material.Title" />
 </resources>

@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -376,24 +377,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         registerReceiver(packageChangedReceiver, intentFilter);
 
         // Custom code -- First use
-        if (!initialized) {
+        if (!initialized)
             prefs.edit().putBoolean("initialized", true).apply();
-        }
-
-        // Show instructions
-        /*TrackerList db = TrackerList.getInstance(this);
-        if (db.count() <= 0) {
-            int instructionsString =
-                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
-                            R.string.instructions_monitoring_private_dns :
-                            R.string.instructions_monitoring;
-
-            View v = this.getWindow().getDecorView().findViewById(android.R.id.content);
-            Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
-            s.setAction(R.string.ok, v1 -> s.dismiss());
-            s.setActionTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
-            s.show();
-        }*/
 
         // Fill application list
         updateApplicationList(getIntent().getStringExtra(EXTRA_SEARCH));
@@ -805,10 +790,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             return true;
         } else if (itemId == R.id.menu_log) {
             if (Util.canFilter(this))
-                if (IAB.isPurchased(ActivityPro.SKU_LOG, this))
-                    startActivity(new Intent(this, ActivityLog.class));
-                else
-                    startActivity(new Intent(this, ActivityPro.class));
+                startActivity(new Intent(this, ActivityLog.class));
             else
                 Toast.makeText(this, R.string.msg_unavailable, Toast.LENGTH_SHORT).show();
             return true;
@@ -1163,16 +1145,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void menu_apps() {
         startActivity(getIntentApps(this));
-    }
-
-    private static Intent getIntentPro(Context context) {
-        if (Util.isPlayStoreInstall(context))
-            return new Intent(context, ActivityPro.class);
-        else {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://contact.faircode.eu/?product=netguardstandalone"));
-            return intent;
-        }
     }
 
     private static Intent getIntentInvite(Context context) {

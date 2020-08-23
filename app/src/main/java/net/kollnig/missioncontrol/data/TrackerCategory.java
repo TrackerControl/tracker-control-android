@@ -10,9 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2020 Konrad Kollnig, University of Oxford
+ * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
  */
 
 package net.kollnig.missioncontrol.data;
@@ -23,9 +23,11 @@ import java.util.List;
 public class TrackerCategory {
     public String name;
     private List<Tracker> children;
+    public Long lastSeen;
 
-    TrackerCategory(String name) {
+    TrackerCategory(String name, long lastSeen) {
         this.name = name;
+        this.lastSeen = lastSeen;
     }
 
     public List<Tracker> getChildren() {
@@ -35,5 +37,9 @@ public class TrackerCategory {
         } else {
             return this.children;
         }
+    }
+
+    public long getLastSeen() {
+        return lastSeen;
     }
 }

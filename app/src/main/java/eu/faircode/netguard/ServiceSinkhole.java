@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -38,7 +39,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
@@ -59,11 +59,7 @@ import android.os.Process;
 import android.os.SystemClock;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
@@ -76,10 +72,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
-import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.AppBlocklistController;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.json.JSONArray;
@@ -99,8 +95,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -111,14 +105,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
+
 public class ServiceSinkhole extends VpnService implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "NetGuard.Service";
+    private static final String TAG = "TrackerControl.VPN";
 
     private boolean registeredUser = false;
     private boolean registeredIdleState = false;
@@ -154,7 +151,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
     private Map<Integer, Forward> mapForward = new HashMap<>();
-    private Map<Integer, Boolean> mapNotify = new HashMap<>();
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     private volatile Looper commandLooper;
@@ -643,17 +639,27 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                     Log.d(TAG, "Start foreground state=" + state.toString());
                 } else {
                     state = State.none;
-                    stopSelf();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        stopForeground(true);
+                    } else {
+                        stopSelf();
+                    }
                 }
             }
         }
 
+        // Called every 12 hours
         private void householding(Intent intent) {
             // Keep log records for three days
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupLog(new Date().getTime() - 3 * 24 * 3600 * 1000L);
 
             // Clear expired DNS records
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
+
+            // Keep IP mappings clean
+            ipToHost.clear();
+            ipToTracker.clear();
 
             // Check for update
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
@@ -726,6 +732,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             }
         }
     }
+
+    static HashMap<Integer, Set<String>> seenAppHosts = new HashMap<>();
 
     private final class LogHandler extends Handler {
         public int queue = 0;
@@ -806,7 +814,17 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
 
             // Get real name
-            String dname = dh.getQName(packet.uid, packet.daddr);
+            String dname = ipToHost.get(packet.daddr);
+            if (dname == null) {
+                dname = dh.getQName(packet.uid, packet.daddr);
+                if (dname != null) {
+                    ipToHost.put(packet.daddr, dname);
+                } else {
+                    ipToHost.put(packet.daddr, NO_DNAME);
+                }
+            }
+            if (dname == NO_DNAME)
+                dname = null;
 
             // Traffic log
             if (log)
@@ -818,20 +836,18 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 if (!(packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */))
                     packet.dport = 0;
 
-                // Custom code - Block trackers by default
-                int block = -1;
-                /*if (!packet.allowed
-                        && dname != null
-                        && db.getCompany(dname) != null)
-                    block = 1;*/
-
-                if (dh.updateAccess(packet, dname, block)) {
-                    lock.readLock().lock();
-                    if (!mapNotify.containsKey(packet.uid) || mapNotify.get(packet.uid))
-                        showAccessNotification(packet.uid);
-                    lock.readLock().unlock();
-                }
+                dh.updateAccess(packet, dname, -1);
             }
+
+            /*// custom code
+            Set<String> hosts = seenAppHosts.get(packet.uid);
+            if (hosts == null) {
+                hosts = new HashSet<>();
+                seenAppHosts.put(packet.uid, hosts);
+            }
+            if (!hosts.contains(packet.daddr)) {
+                hosts.add(packet.daddr);
+            }*/
         }
 
         private void usage(Usage usage) {
@@ -1214,11 +1230,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         // Always set DNS servers
         if (listDns.size() == 0 || listDns.size() < count)
             try {
-                listDns.add(InetAddress.getByName("8.8.8.8"));
-                listDns.add(InetAddress.getByName("8.8.4.4"));
+                listDns.add(InetAddress.getByName("1.1.1.1"));
+                listDns.add(InetAddress.getByName("1.0.0.1"));
                 if (ip6) {
-                    listDns.add(InetAddress.getByName("2001:4860:4860::8888"));
-                    listDns.add(InetAddress.getByName("2001:4860:4860::8844"));
+                    listDns.add(InetAddress.getByName("2606:4700:4700::1111"));
+                    listDns.add(InetAddress.getByName("2606:4700:4700::1001"));
                 }
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
@@ -1461,14 +1477,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             lock.writeLock().unlock();
         }
 
-        if (log_app)
-            prepareNotify(listRule);
-        else {
-            lock.writeLock().lock();
-            mapNotify.clear();
-            lock.writeLock().unlock();
-        }
-
         if (log || log_app || filter) {
             int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
             final int rcode = Integer.parseInt(prefs.getString("rcode", "3"));
@@ -1535,7 +1543,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         mapHostsBlocked.clear();
         mapUidIPFilters.clear();
         mapForward.clear();
-        mapNotify.clear();
         lock.writeLock().unlock();
     }
 
@@ -1669,9 +1676,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                             if (version == 6 && !(iname instanceof Inet6Address))
                                 continue;
 
-                            if (dname != null)
-                                Log.i(TAG, "Set filter " + key + " " + daddr + "/" + dresource + "=" + block);
-
                             boolean exists = mapUidIPFilters.get(key).containsKey(iname);
                             if (!exists || !mapUidIPFilters.get(key).get(iname).isBlocked()) {
                                 IPRule rule = new IPRule(key, name + "/" + iname, block, time + ttl);
@@ -1680,8 +1684,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                                     Log.w(TAG, "Address conflict " + key + " " + daddr + "/" + dresource);
                             } else if (exists) {
                                 mapUidIPFilters.get(key).get(iname).updateExpires(time + ttl);
-                                if (dname != null)
+                                if (dname != null && ttl > 60 * 1000L)
                                     Log.w(TAG, "Address updated " + key + " " + daddr + "/" + dresource);
+                            } else {
+                                if (dname != null)
+                                    Log.i(TAG, "Ignored " + key + " " + daddr + "/" + dresource + "=" + block);
                             }
                         } else
                             Log.w(TAG, "Address not numeric " + name);
@@ -1720,18 +1727,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 }
             }
         }
-        lock.writeLock().unlock();
-    }
-
-    private void prepareNotify(List<Rule> listRule) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean notify = prefs.getBoolean("notify_access", false);
-        boolean system = prefs.getBoolean("manage_system", false);
-
-        lock.writeLock().lock();
-        mapNotify.clear();
-        for (Rule rule : listRule)
-            mapNotify.put(rule.uid, notify && rule.notify && (system || !rule.system));
         lock.writeLock().unlock();
     }
 
@@ -1869,6 +1864,9 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
     // Called from native code
     private boolean isDomainBlocked(String name) {
+        if (Util.isPlayStoreInstall())
+            return false;
+
         lock.readLock().lock();
         boolean blocked = (mapHostsBlocked.containsKey(name) && mapHostsBlocked.get(name));
         lock.readLock().unlock();
@@ -1901,6 +1899,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 protocol == 17 /* UDP */);
     }
 
+    static ConcurrentHashMap<String, String> ipToHost = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<String, Tracker> ipToTracker = new ConcurrentHashMap<>();
+    static String NO_DNAME = "NO_DNAME";
+    static Tracker NO_TRACKER = new Tracker(null, null, 0);
+
     // Called from native code
     private Allowed isAddressAllowed(Packet packet) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1930,7 +1933,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 Log.w(TAG, "Allowing self " + packet);
             } else {
                 boolean filtered = false;
-                IPKey key = new IPKey(packet.version, packet.protocol, packet.dport, packet.uid);
+                /*IPKey key = new IPKey(packet.version, packet.protocol, packet.dport, packet.uid);
                 if (mapUidIPFilters.containsKey(key))
                     try {
                         InetAddress iaddr = InetAddress.getByName(packet.daddr);
@@ -1948,48 +1951,65 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                         }
                     } catch (UnknownHostException ex) {
                         Log.w(TAG, "Allowed " + ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    }*/
+
+                // Check if tracker known
+                if (!Util.isPlayStoreInstall()) {
+                    Tracker tracker = ipToTracker.get(packet.daddr);
+                    if (tracker == null) {
+                        // Check if IP known
+                        String dname = ipToHost.get(packet.daddr);
+                        if (dname == null) {
+                            // Retrieve dname from DB
+                            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+                            dname = dh.getQName(packet.uid, packet.daddr);
+
+                            // Check dname for tracker
+                            if (dname == null) {
+                                dname = NO_DNAME;
+                                tracker = NO_TRACKER;
+                            } else {
+                                tracker = TrackerList.findTracker(dname);
+                                if (tracker == null)
+                                    tracker = NO_TRACKER;
+                            }
+
+                            // Save dname and tracker
+                            ipToHost.put(packet.daddr, dname);
+                            ipToTracker.put(packet.daddr, tracker);
+                        }
                     }
 
-	            // Custom code - Block trackers
-	            if (!filtered) {
-	                DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-	                String dname = dh.getQName(packet.uid, packet.daddr);
-	                TrackerList db = TrackerList.getInstance(ServiceSinkhole.this);
-	                AppBlocklistController appBlocklist = AppBlocklistController.getInstance(ServiceSinkhole.this);
-	                String packageName = Common.getAppName(ServiceSinkhole.this.getPackageManager(), packet.uid);
-
-	                if (dname != null) {
-		                Tracker tracker = db.findTracker(dname);
-		                if (tracker != null
+                    if (tracker != NO_TRACKER) {
+                        // Block tracker if necessary
+                        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                        if (tracker != null
                                 && !tracker.necessary
-				                && appBlocklist.blockedTracker(packageName, tracker.getRoot())) {
-		                	filtered = true;
-			                packet.allowed = false;
-		                }
-	                }
+                                && trackerBlocklist.blockedTracker(packet.uid, tracker.getRoot())) {
+                            filtered = true;
+                            packet.allowed = false;
+                        }
+                    }
+                }
+
+                InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
+                if (internetBlocklist.blockedInternet(packet.uid)) {
+                    filtered = true;
+                    packet.allowed = false;
                 }
 
 	            if (!filtered)
-		            if (mapUidAllowed.containsKey(packet.uid))
+                    packet.allowed = true;
+		            /*if (mapUidAllowed.containsKey(packet.uid))
 			            packet.allowed = mapUidAllowed.get(packet.uid);
 		            else
-			            Log.w(TAG, "No rules for " + packet);
+			            Log.w(TAG, "No rules for " + packet);*/
             }
         }
 
         Allowed allowed = null;
-        if (packet.allowed) {
-            if (mapForward.containsKey(packet.dport)) {
-                Forward fwd = mapForward.get(packet.dport);
-                if (fwd.ruid == packet.uid) {
-                    allowed = new Allowed();
-                } else {
-                    allowed = new Allowed(fwd.raddr, fwd.rport);
-                    packet.data = "> " + fwd.raddr + "/" + fwd.rport;
-                }
-            } else
-                allowed = new Allowed();
-        }
+        if (packet.allowed)
+            allowed = new Allowed();
 
         lock.readLock().unlock();
 
@@ -2502,6 +2522,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         builder.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
 
         ConnectivityManager.NetworkCallback nc = new ConnectivityManager.NetworkCallback() {
+            private Boolean last_connected = null;
             private Boolean last_unmetered = null;
             private String last_generation = null;
             private List<InetAddress> last_dns = null;
@@ -2509,6 +2530,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             @Override
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
+                last_connected = Util.isConnected(ServiceSinkhole.this);
                 reload("network available", ServiceSinkhole.this, false);
             }
 
@@ -2531,6 +2553,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                 Log.i(TAG, "Changed capabilities=" + network);
+
+                boolean connected = Util.isConnected(ServiceSinkhole.this);
+                if (connected && (last_connected == null || !last_connected)) {
+                    last_connected = connected;
+                    reload("Connected state changed", ServiceSinkhole.this, false);
+                }
 
                 boolean unmetered = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
                 String generation = Util.getNetworkGeneration(ServiceSinkhole.this);
@@ -2561,6 +2589,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             @Override
             public void onLost(Network network) {
                 Log.i(TAG, "Lost network=" + network);
+                last_connected = Util.isConnected(ServiceSinkhole.this);
                 reload("network lost", ServiceSinkhole.this, false);
             }
 
@@ -2800,6 +2829,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        Intent i = new Intent(INTENT_PAUSE);
+        i.setPackage(this.getPackageName());
+        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+        int pause = Integer.parseInt(prefs.getString("pause", "10"));
+
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
@@ -2807,7 +2842,9 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 .setContentIntent(pi)
                 .setColor(tv.data)
                 .setOngoing(true)
-                .setAutoCancel(false);
+                .setAutoCancel(false)
+                .addAction(R.drawable.ic_pause_white_24dp, getResources().getQuantityString(
+                        R.plurals.pause, pause, pause), pauseIntent);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             builder.setContentTitle(getString(R.string.msg_started));
@@ -2878,11 +2915,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         else
             builder.setContentTitle(getString(R.string.app_name))
                     .setContentText(getString(R.string.msg_waiting));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-                    .setPriority(NotificationCompat.PRIORITY_MIN);
 
         return builder.build();
     }
@@ -2962,91 +2994,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         notification.setSummaryText(message);
 
         NotificationManagerCompat.from(this).notify(NOTIFY_ERROR, notification.build());
-    }
-
-    private void showAccessNotification(int uid) {
-        String name = TextUtils.join(", ", Util.getApplicationNames(uid, ServiceSinkhole.this));
-
-        Intent main = new Intent(ServiceSinkhole.this, ActivityMain.class);
-        main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-        PendingIntent pi = PendingIntent.getActivity(ServiceSinkhole.this, uid + 10000, main, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorOn, tv, true);
-        int colorOn = tv.data;
-        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
-        int colorOff = tv.data;
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "access");
-        builder.setSmallIcon(R.drawable.ic_cloud_upload_white_24dp)
-                .setGroup("AccessAttempt")
-                .setContentIntent(pi)
-                .setColor(colorOff)
-                .setOngoing(false)
-                .setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            builder.setContentTitle(name)
-                    .setContentText(getString(R.string.msg_access_n));
-        else
-            builder.setContentTitle(getString(R.string.app_name))
-                    .setContentText(getString(R.string.msg_access, name));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
-
-        DateFormat df = new SimpleDateFormat("dd HH:mm");
-
-        NotificationCompat.InboxStyle notification = new NotificationCompat.InboxStyle(builder);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            notification.addLine(getString(R.string.msg_access_n));
-        else {
-            String sname = getString(R.string.msg_access, name);
-            int pos = sname.indexOf(name);
-            Spannable sp = new SpannableString(sname);
-            sp.setSpan(new StyleSpan(Typeface.BOLD), pos, pos + name.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            notification.addLine(sp);
-        }
-
-        long since = 0;
-        PackageManager pm = getPackageManager();
-        String[] packages = pm.getPackagesForUid(uid);
-        if (packages != null && packages.length > 0)
-            try {
-                since = pm.getPackageInfo(packages[0], 0).firstInstallTime;
-            } catch (PackageManager.NameNotFoundException ignored) {
-            }
-
-        try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getAccessUnset(uid, 7, since)) {
-            int colDAddr = cursor.getColumnIndex("daddr");
-            int colTime = cursor.getColumnIndex("time");
-            int colAllowed = cursor.getColumnIndex("allowed");
-            while (cursor.moveToNext()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(df.format(cursor.getLong(colTime))).append(' ');
-
-                String daddr = cursor.getString(colDAddr);
-                if (Util.isNumericAddress(daddr))
-                    try {
-                        daddr = InetAddress.getByName(daddr).getHostName();
-                    } catch (UnknownHostException ignored) {
-                    }
-                sb.append(daddr);
-
-                int allowed = cursor.getInt(colAllowed);
-                if (allowed >= 0) {
-                    int pos = sb.indexOf(daddr);
-                    Spannable sp = new SpannableString(sb);
-                    ForegroundColorSpan fgsp = new ForegroundColorSpan(allowed > 0 ? colorOn : colorOff);
-                    sp.setSpan(fgsp, pos, pos + daddr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    notification.addLine(sp);
-                } else
-                    notification.addLine(sb);
-            }
-        }
-
-        NotificationManagerCompat.from(this).notify(uid + 10000, notification.build());
     }
 
     private void showUpdateNotification(String name, String url) {
@@ -3262,6 +3209,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent intent = new Intent(context, ServiceSinkhole.class);
         intent.putExtra(EXTRA_COMMAND, Command.run);
         intent.putExtra(EXTRA_REASON, reason);
+
         ContextCompat.startForegroundService(context, intent);
     }
 

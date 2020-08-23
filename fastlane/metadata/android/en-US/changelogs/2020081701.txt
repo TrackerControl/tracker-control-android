@@ -1,0 +1,3 @@
+- updated translations
+- fixed crash in countries display
+- faster tracker details opening by delaying layout initialisation

@@ -10,9 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
+ * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
  */
 
 package net.kollnig.missioncontrol;
@@ -45,17 +45,25 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.opencsv.CSVWriter;
 
-import net.kollnig.missioncontrol.data.AppBlocklistController;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.PlayStore;
+import net.kollnig.missioncontrol.data.Tracker;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import static net.kollnig.missioncontrol.data.AppBlocklistController.PREF_BLOCKLIST;
-import static net.kollnig.missioncontrol.data.AppBlocklistController.SHARED_PREFS_BLOCKLIST_APPS_KEY;
+import static net.kollnig.missioncontrol.data.InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
 
 public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
@@ -71,19 +79,37 @@ public class DetailsActivity extends AppCompatActivity {
     private String appPackageName;
     private String appName;
 
+    private static Set<String> intToStringSet(Set<Integer> ints) {
+        Set<String> strings = new HashSet<>();
+
+
+        for (Integer _int: ints) {
+            strings.add(String.valueOf(_int));
+        }
+
+        return strings;
+    }
+
     public static void savePrefs(Context c) {
-        // Save currently Selected Apps to Shared Prefs
-        AppBlocklistController controller = AppBlocklistController.getInstance(c);
-        Set<String> appSet = controller.getBlocklist();
-        String prefKey = SHARED_PREFS_BLOCKLIST_APPS_KEY;
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
-        editor.putStringSet(prefKey, appSet);
-        for (String id : appSet) {
-            Set<String> subset = controller.getSubset(id);
-            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, subset);
+
+        // Tracker settings
+        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(c);
+        Set<Integer> trackerIntSet = trackerBlocklist.getBlocklist();
+        Set<String> trackerSet = intToStringSet(trackerIntSet);
+        editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
+        for (Integer uid : trackerIntSet) {
+            Set<String> subset = trackerBlocklist.getSubset(uid);
+            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, subset);
         }
+
+        // Internet settings
+        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(c);
+        Set<String> internetSet = intToStringSet(internetBlocklist.getBlocklist());
+        editor.putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, internetSet);
+
         editor.apply();
     }
 
@@ -138,6 +164,13 @@ public class DetailsActivity extends AppCompatActivity {
                 exportCsv();
             }
             return true;
+        } else if (itemId == R.id.action_launch) {
+            PackageManager pm = getPackageManager();
+            Intent intent = pm.getLaunchIntentForPackage(appPackageName);
+            final Intent launch = (intent == null ||
+                    intent.resolveActivity(pm) == null ? null : intent);
+            if (launch != null)
+                startActivity(launch);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -188,11 +221,9 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void shareExport() {
-        String fileName = appPackageName + ".csv";
-        File sharingFile = new File(exportDir, fileName);
-        Uri uri = FileProvider.getUriForFile(DetailsActivity.this,
-                getApplicationContext().getPackageName() + ".fileprovider",
-                sharingFile);
+        File sharingFile = new File(exportDir, appPackageName + ".csv");
+        Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
+                BuildConfig.APPLICATION_ID + ".provider", sharingFile);
 
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("application/csv");
@@ -230,15 +261,31 @@ public class DetailsActivity extends AppCompatActivity {
                         CSVWriter.DEFAULT_ESCAPE_CHARACTER,
                         CSVWriter.RFC4180_LINE_END);
 
-                Cursor data = trackerList.getAppInfo(Common.getAppName(getPackageManager(), appUid));
+                Cursor data = trackerList.getAppInfo(appUid);
                 if (data == null) return false;
 
-                csv.writeNext(data.getColumnNames());
+                List<String> columnNames = new ArrayList<>();
+                Collections.addAll(columnNames, data.getColumnNames());
+                columnNames.add("Tracker Name");
+                columnNames.add("Tracker Category");
+
+                csv.writeNext(columnNames.toArray(new String[0]));
                 while (data.moveToNext()) {
-                    String[] row = new String[data.getColumnNames().length];
+                    String[] row = new String[data.getColumnNames().length + 2];
                     for (int i = 0; i < data.getColumnNames().length; i++) {
                         row[i] = data.getString(i);
                     }
+
+                    String hostname = data.getString(data.getColumnIndex("daddr"));
+                    Tracker tracker = TrackerList.findTracker(hostname);
+                    if (tracker != null) {
+                        row[data.getColumnNames().length] = tracker.name;
+                        row[data.getColumnNames().length + 1] = tracker.category;
+                    } else {
+                        row[data.getColumnNames().length] = "";
+                        row[data.getColumnNames().length + 1] = "";
+                    }
+
                     csv.writeNext(row);
                 }
                 csv.close();

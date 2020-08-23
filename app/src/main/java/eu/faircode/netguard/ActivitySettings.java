@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -39,17 +40,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceScreen;
 import android.preference.TwoStatePreference;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.Xml;
 import android.view.LayoutInflater;
@@ -67,6 +64,8 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -95,6 +94,8 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "NetGuard.Settings";
@@ -133,6 +134,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         PreferenceGroup cat_network = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_network_options")).findPreference("category_network_options");
         PreferenceGroup cat_advanced = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_advanced_options")).findPreference("category_advanced_options");
         PreferenceGroup cat_backup = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_backup")).findPreference("category_backup");
+
+        // Handle pause
+        Preference pref_pause = screen.findPreference("pause");
+        pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "10")));
 
         // Handle auto enable
         Preference pref_auto_enable = screen.findPreference("auto_enable");
@@ -296,21 +301,19 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
 
-        if (Util.isFDroidInstall()) {
-            Log.i(TAG, "F-Droid install");
+        if (Util.isFDroidInstall()
+                || Util.isPlayStoreInstall(this)) {
             cat_options.removePreference(screen.findPreference("update_check"));
         }
 
-
         if (Util.isPlayStoreInstall(this)) {
             Log.i(TAG, "Play store install");
-            cat_options.removePreference(screen.findPreference("update_check"));
             cat_advanced.removePreference(pref_block_domains);
             cat_advanced.removePreference(pref_rcode);
-            cat_backup.removePreference(pref_hosts_import);
-            cat_backup.removePreference(pref_hosts_import_append);
-            cat_backup.removePreference(pref_hosts_url);
-            cat_backup.removePreference(pref_hosts_download);
+            cat_advanced.removePreference(pref_hosts_import);
+            cat_advanced.removePreference(pref_hosts_import_append);
+            cat_advanced.removePreference(pref_hosts_url);
+            cat_advanced.removePreference(pref_hosts_download);
 
         } else {
             String last_import = prefs.getString("hosts_last_import", null);
@@ -491,27 +494,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     @Override
     @TargetApi(Build.VERSION_CODES.M)
     public void onSharedPreferenceChanged(SharedPreferences prefs, String name) {
-        // Pro features
-        if ("theme".equals(name)) {
-            if (!"teal".equals(prefs.getString(name, "teal")) && !IAB.isPurchased(ActivityPro.SKU_THEME, this)) {
-                prefs.edit().putString(name, "teal").apply();
-                ((ListPreference) getPreferenceScreen().findPreference(name)).setValue("teal");
-                startActivity(new Intent(this, ActivityPro.class));
-                return;
-            }
-        } else if ("install".equals(name)) {
-            if (prefs.getBoolean(name, false) && !IAB.isPurchased(ActivityPro.SKU_NOTIFY, this)) {
-                prefs.edit().putBoolean(name, false).apply();
-                ((TwoStatePreference) getPreferenceScreen().findPreference(name)).setChecked(false);
-                startActivity(new Intent(this, ActivityPro.class));
-                return;
-            }
-        } else if ("show_stats".equals(name)) {
-            if (prefs.getBoolean(name, false) && !IAB.isPurchased(ActivityPro.SKU_SPEED, this)) {
-                prefs.edit().putBoolean(name, false).apply();
-                startActivity(new Intent(this, ActivityPro.class));
-                return;
-            }
+        if ("show_stats".equals(name)) {
             ((TwoStatePreference) getPreferenceScreen().findPreference(name)).setChecked(prefs.getBoolean(name, false));
         }
 
@@ -533,6 +516,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("whitelist_roaming".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
+
+        else if ("pause".equals(name))
+            getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
 
         else if ("auto_enable".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_auto, prefs.getString(name, "0")));
@@ -844,16 +830,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
     };
 
-    private void markPro(Preference pref, String sku) {
-        if (sku == null || !IAB.isPurchased(sku, this)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            boolean dark = prefs.getBoolean("dark_theme", false);
-            SpannableStringBuilder ssb = new SpannableStringBuilder("  " + pref.getTitle());
-            ssb.setSpan(new ImageSpan(this, dark ? R.drawable.ic_shopping_cart_white_24dp : R.drawable.ic_shopping_cart_black_24dp), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            pref.setTitle(ssb);
-        }
-    }
-
     private void updateTechnicalInfo() {
         PreferenceScreen screen = getPreferenceScreen();
         Preference pref_technical_info = screen.findPreference("technical_info");
@@ -890,19 +866,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private Intent getIntentCreateExport() {
         Intent intent;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
-                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
-            }
-        } else {
-            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*"); // text/xml
-            intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
-        }
+        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*"); // text/xml
+        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
         return intent;
     }
 
@@ -936,7 +903,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 try {
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                        target = Uri.parse(target + "/netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
+                        target = Uri.parse(target + "/trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
                     Log.i(TAG, "Writing URI=" + target);
                     out = getContentResolver().openOutputStream(target);
                     xmlExport(out);
@@ -1080,7 +1047,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         serializer.setOutput(out, "UTF-8");
         serializer.startDocument(null, true);
         serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
-        serializer.startTag(null, "netguard");
+        serializer.startTag(null, "trackercontrol");
 
         serializer.startTag(null, "application");
         xmlExport(PreferenceManager.getDefaultSharedPreferences(this), serializer);
@@ -1126,7 +1093,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         forwardExport(serializer);
         serializer.endTag(null, "forward");
 
-        serializer.endTag(null, "netguard");
+        serializer.startTag(null, "blocklist");
+        xmlExport(getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE), serializer);
+        serializer.endTag(null, "blocklist");
+
+        serializer.endTag(null, "trackercontrol");
         serializer.endDocument();
         serializer.flush();
     }
@@ -1253,6 +1224,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.lockdown, getSharedPreferences("lockdown", Context.MODE_PRIVATE));
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
+        xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
+
+        // Reload blocklist
+        TrackerBlocklist.getInstance(this).loadSettings(this);
+        InternetBlocklist.getInstance(this).loadSettings(this);
 
         // Upgrade imported settings
         ReceiverAutostart.upgrade(true, this);
@@ -1302,6 +1278,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> lockdown = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
+        public Map<String, Object> blocklist = new HashMap<>();
         private Map<String, Object> current = null;
 
         public XmlImportHandler(Context context) {
@@ -1310,7 +1287,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            if (qName.equals("netguard"))
+            if (qName.equals("netguard")
+                    || qName.equals("trackercontrol"))
                 ; // Ignore
 
             else if (qName.equals("application"))
@@ -1350,7 +1328,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 Log.i(TAG, "Clearing forwards");
                 DatabaseHelper.getInstance(context).deleteForward();
 
-            } else if (qName.equals("setting")) {
+            } else if (qName.equals("blocklist"))
+                    current = blocklist;
+
+            else if (qName.equals("setting")) {
                 String key = attributes.getValue("key");
                 String type = attributes.getValue("type");
                 String value = attributes.getValue("value");

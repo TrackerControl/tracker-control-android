@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.annotation.TargetApi;
 import android.content.ClipData;
@@ -75,6 +76,7 @@ import com.bumptech.glide.request.RequestOptions;
 
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,6 +126,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         public LinearLayout llApplication;
         public ImageView ivIcon;
+        public ImageView ivConnection;
         public ImageView ivExpander;
         public TextView tvName;
 
@@ -187,6 +190,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             llApplication = itemView.findViewById(R.id.llApplication);
             ivIcon = itemView.findViewById(R.id.ivIcon);
+            ivConnection = itemView.findViewById(R.id.ivConnection);
+
             ivExpander = itemView.findViewById(R.id.ivExpander);
             tvName = itemView.findViewById(R.id.tvName);
 
@@ -555,10 +560,30 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
+        // Show if Internet access blocked
+        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+        if (rule.apply &&
+                internetBlocklist.blockedInternet(rule.uid)) {
+            holder.ivConnection.setVisibility(View.VISIBLE);
+            holder.ivConnection.setImageResource(R.drawable.other_off);
+        } else {
+            holder.ivConnection.setVisibility(View.INVISIBLE);
+        }
+
+        if (Util.isPlayStoreInstall()) {
+            holder.cbApply.setVisibility(View.INVISIBLE);
+            holder.cbApply.setWidth(0);
+        }
+
         // Custom code: show tracker count
         int trackerCount = rule.getTrackerCount();
-        holder.tvDetails.setText(context.getResources().getQuantityString(
-                R.plurals.n_trackers_found, trackerCount, trackerCount));
+        if (trackerCount > 0) {
+            holder.tvDetails.setVisibility(View.VISIBLE);
+            holder.tvDetails.setText(context.getResources().getQuantityString(
+                    R.plurals.n_trackers_found, trackerCount, trackerCount));
+        } else {
+            holder.tvDetails.setVisibility(View.GONE);
+        }
 
         // Show Wi-Fi screen on condition
         holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);
@@ -930,10 +955,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         else
             other.edit().putBoolean(rule.packageName, rule.other_blocked).apply();
 
-        if (rule.apply)
-            apply.edit().remove(rule.packageName).apply();
-        else
-            apply.edit().putBoolean(rule.packageName, rule.apply).apply();
+        apply.edit().putBoolean(rule.packageName, rule.apply).apply();
 
         if (rule.screen_wifi == rule.screen_wifi_default)
             screen_wifi.edit().remove(rule.packageName).apply();

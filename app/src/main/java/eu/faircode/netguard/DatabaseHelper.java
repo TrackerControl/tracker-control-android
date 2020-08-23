@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,7 +41,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -50,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            return db.query(true, "access", new String[]{"daddr"}, "uid = ?", new String[]{Integer.toString(uid)}, null, null, null, null);
+            return db.query(true, "access", new String[]{"daddr", "time"}, "uid = ?", new String[]{Integer.toString(uid)}, null, null, null, null);
         } finally {
             lock.readLock().unlock();
         }
@@ -62,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            return db.query(true, "access", new String[]{"uid", "daddr"}, null, null, null, null, null, null);
+            return db.query(true, "access", new String[]{"uid", "daddr", "time"}, null, null, null, null, null, null);
         } finally {
             lock.readLock().unlock();
         }
@@ -387,7 +387,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Log
-
     public void insertLog(Packet packet, String dname, int connection, boolean interactive) {
         lock.writeLock().lock();
         try {
@@ -806,9 +805,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // DNS
 
     public boolean insertDns(ResourceRecord rr) {
-        // Custom code
-        mapIpToHost.put(rr.Resource, rr.QName);
-
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -887,16 +883,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Custom code
     private SQLiteDatabase readableDb;
-    ConcurrentHashMap<String, String> mapIpToHost = new ConcurrentHashMap<>();
 
     public String getQName(int uid, String ip) {
-        // Custom code
-        String host = mapIpToHost.get(ip);
-        if (host != null)
-            return host;
-
         lock.readLock().lock();
         try {
             // Custom code

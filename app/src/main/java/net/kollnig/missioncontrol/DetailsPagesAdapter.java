@@ -10,14 +10,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
+ * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
  */
 
 package net.kollnig.missioncontrol;
 
 import android.content.Context;
+import android.os.Build;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -26,6 +27,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import net.kollnig.missioncontrol.details.ActionsFragment;
+import net.kollnig.missioncontrol.details.CountriesFragment;
 import net.kollnig.missioncontrol.details.TrackersFragment;
 
 
@@ -35,40 +37,66 @@ import net.kollnig.missioncontrol.details.TrackersFragment;
  */
 public class DetailsPagesAdapter extends FragmentPagerAdapter {
     @StringRes
-    private static final int[] TAB_TITLES = new int[]{
+    private static int[] TAB_TITLES = new int[]{
             R.string.tab_trackers,
-            //R.string.tab_transmissions,
+            R.string.tab_countries,
             R.string.tab_actions,
     };
     public static int tabTrackersPosition = 0;
 
     private final String TAG = DetailsPagesAdapter.class.getSimpleName();
     private final Context mContext;
+    private int mUid;
 
     private Fragment fTrackers;
+    private Fragment fCountries;
     private Fragment fActions;
-    //private Fragment fTransmissions;
 
     public DetailsPagesAdapter(final Context context, FragmentManager fm, String appId, String appName, int uid) {
         super(fm);
 
         mContext = context;
+        mUid = uid;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            TAB_TITLES = new int[]{
+                    R.string.tab_trackers,
+                    R.string.tab_actions,
+            };
+        } else {
+            TAB_TITLES = new int[]{
+                    R.string.tab_trackers,
+                    R.string.tab_countries,
+                    R.string.tab_actions,
+            };
+        }
 
         fTrackers = TrackersFragment.newInstance(appId, uid);
-        //fTransmissions = TransmissionsFragment.newInstance(appId);
         fActions = ActionsFragment.newInstance(appId, appName);
     }
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return fTrackers;
-			/*case 1:
-				return fTransmissions;*/
-            case 1:
-                return fActions;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            switch (position) {
+                case 0:
+                    return fTrackers;
+                case 1:
+                    return fActions;
+            }
+        } else {
+            switch (position) {
+                case 0:
+                    return fTrackers;
+                case 1:
+                    if (fCountries == null)
+                        fCountries = CountriesFragment.newInstance(mUid);
+                    return fCountries;
+                case 2:
+                    return fActions;
+            }
         }
+
         return null;
     }
 

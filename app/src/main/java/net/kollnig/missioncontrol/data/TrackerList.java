@@ -10,9 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
+ * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
  */
 
 package net.kollnig.missioncontrol.data;
@@ -77,7 +77,7 @@ public class TrackerList {
      * @return A cursor pointing to the data. Caller must close the cursor.
      * Cursor should have app name and leak summation based on a sort type
      */
-    public synchronized Map<Integer, Integer> getTrackerCounts() {
+    public synchronized Pair<Map<Integer, Integer>, Integer> getTrackerCountsAndTotal() {
         Map<Integer, Set<Tracker>> trackers = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts();
@@ -101,24 +101,23 @@ public class TrackerList {
         cursor.close();
 
         // Reduce to counts
+        Integer totalTracker = 0;
         Map<Integer, Integer> trackerCounts = new ArrayMap<>();
         for (Map.Entry<Integer, Set<Tracker>> entry : trackers.entrySet()) {
             trackerCounts.put(entry.getKey(), entry.getValue().size());
+            totalTracker += entry.getValue().size();
         }
 
-        return trackerCounts;
+        return new Pair<>(trackerCounts, totalTracker);
     }
 
     /**
      * Retrieve info for CSV export
      *
-     * @param appId The id of the app to be dumped
-     * @return All found trackers
+     * @return All logged communications about app
      */
-    public Cursor getAppInfo(String appId) {
-        //return getDatabase().rawQuery(
-        //		"SELECT * FROM " + TABLE_HISTORY + " WHERE " + COLUMN_APPID + " = ?", new String[]{appId});
-        return null;
+    public Cursor getAppInfo(int uid) {
+        return databaseHelper.getHosts(uid);
     }
 
     /**
@@ -134,8 +133,10 @@ public class TrackerList {
         if (cursor.moveToFirst()) {
             outer:
             do {
-                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-                Tracker tracker = findTracker(hostname);
+                String host = cursor.getString(cursor.getColumnIndex("daddr"));
+                long lastSeen = cursor.getLong(cursor.getColumnIndex("time"));
+
+                Tracker tracker = findTracker(host);
                 if (tracker == null)
                     continue;
 
@@ -146,18 +147,28 @@ public class TrackerList {
 
                 TrackerCategory categoryCompany = categoryToTracker.get(category);
                 if (categoryCompany == null) {
-                    categoryCompany = new TrackerCategory(category);
+                    categoryCompany = new TrackerCategory(category, lastSeen);
                     categoryToTracker.put(category, categoryCompany);
+                } else {
+                    if (categoryCompany.lastSeen < lastSeen)
+                        categoryCompany.lastSeen = lastSeen;
                 }
 
-                // avoid children duplicates
+                // check if tracker has already been added
                 for (Tracker child : categoryCompany.getChildren()) {
                     if (child.name != null
-                            && child.name.equals(name))
+                            && child.name.equals(name)){
+                        child.addHost(host);
+
+                        if (child.lastSeen < lastSeen)
+                            child.lastSeen = lastSeen;
+
                         continue outer;
+                    }
                 }
 
-                Tracker child = new Tracker(name, category);
+                Tracker child = new Tracker(name, category, lastSeen);
+                child.addHost(host);
                 categoryCompany.getChildren().add(child);
             } while (cursor.moveToNext());
         }
@@ -170,13 +181,13 @@ public class TrackerList {
         // sort lists
         Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
         for (TrackerCategory child : trackerList) {
-            Collections.sort(child.getChildren(), (o1, o2) -> o1.name.compareTo(o2.name));
+            Collections.sort(child.getChildren(), (o1, o2) -> o2.lastSeen.compareTo(o1.lastSeen));
         }
 
         return trackerList;
     }
 
-    public Tracker findTracker(String hostname) {
+    public static Tracker findTracker(String hostname) {
         Tracker tracker = null;
 
         if (hostnameToTracker.containsKey(hostname)) {
@@ -213,15 +224,16 @@ public class TrackerList {
                 Tracker tracker;
                 String country = jsonCompany.getString("country");
                 String name = jsonCompany.getString("owner_name");
-                if (!jsonCompany.isNull("root_parent")) {
-                    name = jsonCompany.getString("root_parent");
-                }
                 boolean necessary;
                 if (jsonCompany.has("necessary")) {
                     necessary = jsonCompany.getBoolean("necessary");
                     necessaryTrackers.add(name);
                 } else {
                     necessary = false;
+                }
+                if (!jsonCompany.isNull("root_parent")
+                        && !necessary) { // necessary tracker are identified at lowest level
+                    name = jsonCompany.getString("root_parent");
                 }
 
                 tracker = companies.get(name);
@@ -243,13 +255,16 @@ public class TrackerList {
     private void loadTrackerDomains(Context context) {
         try {
             // Read domain list
-            InputStream is = context.getAssets().open("disconnect-blacklist.json");
+            // File is a reversed string, because some anti-virus scanners found the list suspicious
+            // More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
+            InputStream is = context.getAssets().open("disconnect-blacklist.reversed.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            String json = new String(buffer, StandardCharsets.UTF_8);
-
+            String reversedJson = new String(buffer, StandardCharsets.UTF_8);
+            String json = new StringBuilder(reversedJson).reverse().toString();
+            
             JSONObject disconnect = new JSONObject(json);
             JSONObject categories = (JSONObject) disconnect.get("categories");
             for (Iterator<String> it = categories.keys(); it.hasNext(); ) {

@@ -1,0 +1,2 @@
+- Show trackers and their domains in UI
+- Update Disconnect tracker list

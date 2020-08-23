@@ -1,11 +1,10 @@
 <resources>
-    <string name="app_name" translatable="false">TrackerControl</string>
     <string name="app_description">TrackerControl provides simple and advanced ways to block access to the internet - no root required. Apps and addresses can individually be allowed or denied access to your Wi-Fi and/or mobile connection.</string>
-    <string name="app_copyright" translatable="false">Copyright \u00A9 2019 Konrad Kollnig</string>
+    <string name="app_copyright" translatable="false">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requires Android 5.1 or later</string>
     <string name="app_xposed">Xposed causes too many crashes, which might result in TrackerControl being removed from the Google Play Store, therefore TrackerControl isn\'t supported while Xposed is installed</string>
-    <string name="app_eula" translatable="false">THIS SOFTWARE IS PROVIDED BY THE AUTHOR \'\'AS IS\'\' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Privacy Policy</a></string>
+    <string name="app_eula" translatable="false">The usage of this app is at your own risk. No app can offer 100% protection against tracking.</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie Policy</a></string>
     <string name="app_first">Great care has been taken to develop and test TrackerControl, however it is impossible to guarantee TrackerControl will work correctly on every device.</string>
     <string name="app_agree">I agree</string>
     <string name="app_disagree">I disagree</string>
@@ -26,11 +25,12 @@
     <string name="menu_sort_uid">Sort on uid</string>
     <string name="menu_sort_trackers">Sort on trackers</string>
     <string name="menu_sort_data">Sort on data usage</string>
-    <string name="menu_log">Show log</string>
+    <string name="menu_log">Traffic log</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_invite">Invite</string>
     <string name="menu_legend">Legend</string>
     <string name="menu_support">Write email</string>
+    <string name="menu_log_support">Explanation</string>
     <string name="menu_about">About</string>
     <string name="menu_apps">Other apps</string>
 
@@ -70,12 +70,18 @@
 
     <string name="setting_options">Options</string>
     <string name="setting_theme">Theme: %1$s</string>
-    <string name="setting_dark">Dark theme (in development)</string>
+    <string name="setting_dark">Dark theme</string>
     <string name="setting_install">Notify on new install</string>
     <string name="setting_screen_on">Apply \'when screen on\' rules</string>
     <string name="setting_auto">Auto enable after %1$s minutes</string>
+    <string name="setting_pause">Auto enable after %1$s minutes</string>
     <string name="setting_delay">Delay screen off %1$s minutes</string>
     <string name="setting_update">Check for updates</string>
+
+    <plurals name="pause">
+        <item quantity="one">Pause for %d min</item>
+        <item quantity="other">Pause for %d mins</item>
+    </plurals>
 
     <string name="setting_network_options">Network options</string>
     <string name="setting_subnet">Subnet routing</string>
@@ -106,8 +112,8 @@
     <string name="setting_track_usage">Track network usage</string>
     <string name="setting_reset_usage">Reset network usage</string>
     <string name="setting_show_resolved">Show resolved domain names</string>
-    <string name="setting_block_domains">Block domain names</string>
-    <string name="setting_rcode">DNS response code: %s</string>
+    <string name="setting_block_domains">Enable hosts file</string>
+    <string name="setting_rcode">Hosts blocking response: %s</string>
     <string name="setting_forwarding">Port forwarding</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
@@ -130,7 +136,7 @@
     <string name="setting_stats_samples">Number of samples: %s s</string>
 
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Export settings</string>
+    <string name="setting_export">Export settings (not for device reset)</string>
     <string name="setting_import">Import settings</string>
     <string name="setting_hosts">Import hosts file</string>
     <string name="setting_hosts_append">Import hosts file (append)</string>
@@ -144,6 +150,7 @@
 
     <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
     <string name="summary_auto">After disabling using the widget, automatically enable TrackerControl again after the selected number of minutes (enter zero to disable this option)</string>
+    <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
     <string name="summary_delay">After turning the screen off, keep screen on rules active for the selected number of minutes (enter zero to disable this option)</string>
     <string name="summary_update">Check for new releases on GitHub twice daily</string>
 
@@ -165,7 +172,7 @@
     <string name="summary_access">Show a status bar notification when an app attempts to access a new internet address (when filtering is disabled, only blocked internet access attempts will be notified)</string>
     <string name="summary_filter">Filter IP packets going out of the VPN tunnel. This might result in extra battery usage.</string>
     <string name="summary_track_usage">Track the number of bytes sent and received for each app and address. This might result in extra battery usage.</string>
-    <string name="summary_block_domains">Respond with the configured DNS response code for blocked domain names. This switch is disabled when no hosts file is available.</string>
+    <string name="summary_block_domains">WARNING: Blocked hosts are not shown in UI.</string>
     <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
@@ -173,7 +180,7 @@
 
     <string name="summary_stats">Show network speed graph in status bar notification</string>
 
-    <string-array name="default_wifi_home"></string-array>
+    <string-array name="default_wifi_home" translatable="false"></string-array>
 
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_started">Checking trackers</string>
@@ -196,12 +203,12 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_try">Try TrackerControl</string>
     <string name="msg_dimming">If you cannot press OK in the next dialog, another (screen dimming) app is likely manipulating the screen.</string>
     <string name="msg_mbday">&#177; %1$.3f&#9650; %2$.3f&#9660; MB/day</string>
-    <string name="msg_kbsec">%7.3f KB/s</string>
-    <string name="msg_mbsec">%7.3f MB/s</string>
-    <string name="msg_kb">%1$7.3f&#9650; %2$7.3f&#9660; KB</string>
-    <string name="msg_mb">%1$7.3f&#9650; %2$7.3f&#9660; MB</string>
-    <string name="msg_gb">%1$7.3f&#9650; %2$7.3f&#9660; GB</string>
-    <string name="msg_count">%dx</string>
+    <string name="msg_kbsec" translatable="false">%7.3f KB/s</string>
+    <string name="msg_mbsec" translatable="false">%7.3f MB/s</string>
+    <string name="msg_kb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; KB</string>
+    <string name="msg_mb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; MB</string>
+    <string name="msg_gb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; GB</string>
+    <string name="msg_count" translatable="false">%dx</string>
     <string name="msg_doze">For consistent results, the Android battery optimizations should be disabled for TrackerControl.
 \n\nIn the next dialog, select \"All apps\" at the top, tap on TrackerControl in the list and select and confirm \"Don\'t optimize\".</string>
     <string name="msg_datasaving">For consistent results, the Android data saving options should be disabled for TrackerControl
@@ -255,7 +262,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_conditions">Conditions</string>
     <string name="title_screen_wifi">Allow Wi-Fi when screen is on</string>
     <string name="title_screen_other">Allow mobile when screen is on</string>
-    <string name="title_roaming_symbol">R</string>
+    <string name="title_roaming_symbol" translatable="false">R</string>
     <string name="title_roaming">Block when roaming</string>
     <string name="title_lockdown">Allow in lockdown mode</string>
     <string name="title_related">Filter related</string>
@@ -282,8 +289,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_block_wifi">Block Wi-Fi</string>
     <string name="title_allow_other">Allow mobile</string>
     <string name="title_block_other">Block mobile</string>
-    <string name="title_root">root</string>
-    <string name="title_mediaserver">mediaserver</string>
+    <string name="title_root" translatable="false">root</string>
+    <string name="title_mediaserver" translatable="false">mediaserver</string>
     <string name="title_gpsdaemon" translatable="false">GPS daemon</string>
     <string name="title_dnsdaemon" translatable="false">DNS daemon</string>
     <string name="title_nobody">nobody</string>
@@ -344,7 +351,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item>6</item>
     </string-array>
 
-    <string-array name="protocolNames">
+    <string-array name="protocolNames" translatable="false">
         <item>UDP</item>
         <item>TCP</item>
     </string-array>
@@ -372,7 +379,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
     <!-- App Overview -->
     <string name="tracked_app_name">Application Name</string>
-    <string name="tracker_count">40</string>
+    <string name="tracker_count" translatable="false">40</string>
     <plurals name="n_trackers_found">
         <item quantity="one">%d tracker observed</item>
         <item quantity="other">%d trackers observed</item>
@@ -399,7 +406,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="no">No</string>
 
     <string name="menu_privacy_policy">Privacy Policy</string>
-    <string name="about_url">https://github.com/OxfordHCC/tracker-control-android#privacy-notice</string>
+    <string name="about_url" translatable="false">https://github.com/OxfordHCC/tracker-control-android#privacy-notice</string>
 
     <string name="menu_csv">Export as CSV</string>
     <string name="exporting">Exporting..</string>
@@ -409,11 +416,12 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
     <!-- App Details -->
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="tab_transmissions">Transmissions</string>
     <string name="tab_trackers">Trackers</string>
+    <string name="tab_countries">Countries</string>
     <string name="tab_actions">My Data</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
+    <string name="internet_access">Block Internet Access</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
@@ -425,7 +433,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="data_management_description">The EU General Data Protection Regulation (GDPR) allows users from the EU to manage any data related to them. This app provides email templates to reach out to the developer. The developer has to answer within one month.</string>
     <string name="contacts">Contact </string>
     <string name="contacts_description">If you think an application violates data protection principles, you may want to contact the responsible entities directly.</string>
-    <string name="play_services_required">This is a setting of the Google Play Services, which were not found on your device.</string>
+    <string name="play_services_required">This is a setting of the Google Play Services, which were not found on yourr device.</string>
     <string name="no_dev_mail">Developer mail address not yet fetched. Check internet connection.</string>
     <string name="no_mail_service">Please install an email client.</string>
     <string name="blocking_settings">Select trackers</string>
@@ -474,19 +482,21 @@ Please provide your response through secure means by email. I look forward to re
 \n
 Sincerely,\n\n]]></string>
     <string name="packet_statistics">Data flows</string>
-    <string name="no_trackers">No trackers observed. Only trackers that were observed to collect your data are shown.\n\nTry using the app and check again..</string>
 
-    <string name="crash_dialog_text">TrackerControl just crashed.. Would you mind sending us an email with details?</string>
+    <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
-    <string name="crash_body">Hi dev,\n\nI noticed a crash in TrackerControl.\n\nThese details might help you:\n</string>
+
+    <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some apps. Private DNS must be disabled.</string>
+    <string name="instructions_monitoring">Toggle the switch and interact with some apps.</string>
 
     <string name="afterboot_notification">Restart notification</string>
-    <string name="disclaimer">Shown information may be incomplete or incorrect.\n\nIf an app stops to work, disable blocking.</string>
 
     <string name="device_not_supported_title">Device not supported</string>
     <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>
 
     <string name="monitor">Monitor</string>
 
-    <string name="launch_app">Launch app</string>
+    <string name="launch_app">Launch &amp; Find trackers</string>
+    <string name="countries">Destination Countries</string>
+    <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
 </resources>

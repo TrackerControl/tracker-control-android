@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -27,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,9 +35,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.CompoundButton;
-import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -76,17 +73,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
     private static final int REQUEST_PCAP = 1;
 
-    private DatabaseHelper.LogChangedListener listener = new DatabaseHelper.LogChangedListener() {
-        @Override
-        public void onChanged() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateAdapter();
-                }
-            });
-        }
-    };
+    private DatabaseHelper.LogChangedListener listener = () -> runOnUiThread(this::updateAdapter);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,11 +109,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
         // Set enabled switch
         swEnabled.setChecked(log);
-        swEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                prefs.edit().putBoolean("log", isChecked).apply();
-            }
-        });
+        swEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> prefs.edit().putBoolean("log", isChecked).apply());
 
         // Listen for preference changes
         prefs.registerOnSharedPreferenceChangeListener(this);
@@ -140,11 +123,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         boolean blocked = prefs.getBoolean("traffic_blocked", true);
 
         adapter = new AdapterLog(this, DatabaseHelper.getInstance(this).getLog(udp, tcp, other, allowed, blocked), resolve, organization);
-        adapter.setFilterQueryProvider(new FilterQueryProvider() {
-            public Cursor runQuery(CharSequence constraint) {
-                return DatabaseHelper.getInstance(ActivityLog.this).searchLog(constraint.toString());
-            }
-        });
+        adapter.setFilterQueryProvider(constraint -> DatabaseHelper.getInstance(ActivityLog.this).searchLog(constraint.toString()));
 
         lvLog.setAdapter(adapter);
 
@@ -155,138 +134,112 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
 
-        lvLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PackageManager pm = getPackageManager();
-                Cursor cursor = (Cursor) adapter.getItem(position);
-                long time = cursor.getLong(cursor.getColumnIndex("time"));
-                int version = cursor.getInt(cursor.getColumnIndex("version"));
-                int protocol = cursor.getInt(cursor.getColumnIndex("protocol"));
-                final String saddr = cursor.getString(cursor.getColumnIndex("saddr"));
-                final int sport = (cursor.isNull(cursor.getColumnIndex("sport")) ? -1 : cursor.getInt(cursor.getColumnIndex("sport")));
-                final String daddr = cursor.getString(cursor.getColumnIndex("daddr"));
-                final int dport = (cursor.isNull(cursor.getColumnIndex("dport")) ? -1 : cursor.getInt(cursor.getColumnIndex("dport")));
-                final String dname = cursor.getString(cursor.getColumnIndex("dname"));
-                final int uid = (cursor.isNull(cursor.getColumnIndex("uid")) ? -1 : cursor.getInt(cursor.getColumnIndex("uid")));
-                int allowed = (cursor.isNull(cursor.getColumnIndex("allowed")) ? -1 : cursor.getInt(cursor.getColumnIndex("allowed")));
+        lvLog.setOnItemClickListener((parent, view, position, id) -> {
+            PackageManager pm = getPackageManager();
+            Cursor cursor = (Cursor) adapter.getItem(position);
+            long time = cursor.getLong(cursor.getColumnIndex("time"));
+            int version = cursor.getInt(cursor.getColumnIndex("version"));
+            int protocol = cursor.getInt(cursor.getColumnIndex("protocol"));
+            final String saddr = cursor.getString(cursor.getColumnIndex("saddr"));
+            final int sport = (cursor.isNull(cursor.getColumnIndex("sport")) ? -1 : cursor.getInt(cursor.getColumnIndex("sport")));
+            final String daddr = cursor.getString(cursor.getColumnIndex("daddr"));
+            final int dport = (cursor.isNull(cursor.getColumnIndex("dport")) ? -1 : cursor.getInt(cursor.getColumnIndex("dport")));
+            final String dname = cursor.getString(cursor.getColumnIndex("dname"));
+            final int uid = (cursor.isNull(cursor.getColumnIndex("uid")) ? -1 : cursor.getInt(cursor.getColumnIndex("uid")));
+            int allowed1 = (cursor.isNull(cursor.getColumnIndex("allowed")) ? -1 : cursor.getInt(cursor.getColumnIndex("allowed")));
 
-                // Get external address
-                InetAddress addr = null;
-                try {
-                    addr = InetAddress.getByName(daddr);
-                } catch (UnknownHostException ex) {
-                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                }
+            // Get external address
+            InetAddress addr = null;
+            try {
+                addr = InetAddress.getByName(daddr);
+            } catch (UnknownHostException ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
 
-                String ip;
-                int port;
-                if (addr.equals(vpn4) || addr.equals(vpn6)) {
-                    ip = saddr;
-                    port = sport;
-                } else {
-                    ip = daddr;
-                    port = dport;
-                }
+            String ip;
+            int port;
+            if (addr.equals(vpn4) || addr.equals(vpn6)) {
+                ip = saddr;
+                port = sport;
+            } else {
+                ip = daddr;
+                port = dport;
+            }
 
-                // Build popup menu
-                PopupMenu popup = new PopupMenu(ActivityLog.this, findViewById(R.id.vwPopupAnchor));
-                popup.inflate(R.menu.log);
+            // Build popup menu
+            PopupMenu popup = new PopupMenu(ActivityLog.this, findViewById(R.id.vwPopupAnchor));
+            popup.inflate(R.menu.log);
 
-                // Application name
-                if (uid >= 0)
-                    popup.getMenu().findItem(R.id.menu_application).setTitle(TextUtils.join(", ", Util.getApplicationNames(uid, ActivityLog.this)));
-                else
-                    popup.getMenu().removeItem(R.id.menu_application);
+            // Application name
+            if (uid >= 0)
+                popup.getMenu().findItem(R.id.menu_application).setTitle(TextUtils.join(", ", Util.getApplicationNames(uid, ActivityLog.this)));
+            else
+                popup.getMenu().removeItem(R.id.menu_application);
 
-                // Destination IP
-                popup.getMenu().findItem(R.id.menu_protocol).setTitle(Util.getProtocolName(protocol, version, false));
+            // Destination IP
+            popup.getMenu().findItem(R.id.menu_protocol).setTitle(Util.getProtocolName(protocol, version, false));
 
-                // Whois
-                final Intent lookupIP = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dnslytics.com/whois-lookup/" + ip));
-                if (pm.resolveActivity(lookupIP, 0) == null)
-                    popup.getMenu().removeItem(R.id.menu_whois);
-                else
-                    popup.getMenu().findItem(R.id.menu_whois).setTitle(getString(R.string.title_log_whois, ip));
+            // Whois
+            final Intent lookupIP = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dnslytics.com/whois-lookup/" + ip));
+            if (pm.resolveActivity(lookupIP, 0) == null)
+                popup.getMenu().removeItem(R.id.menu_whois);
+            else
+                popup.getMenu().findItem(R.id.menu_whois).setTitle(getString(R.string.title_log_whois, ip));
 
-                // Lookup port
-                final Intent lookupPort = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.speedguide.net/port.php?port=" + port));
-                if (port <= 0 || pm.resolveActivity(lookupPort, 0) == null)
-                    popup.getMenu().removeItem(R.id.menu_port);
-                else
-                    popup.getMenu().findItem(R.id.menu_port).setTitle(getString(R.string.title_log_port, port));
+            // Lookup port
+            final Intent lookupPort = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.speedguide.net/port.php?port=" + port));
+            if (port <= 0 || pm.resolveActivity(lookupPort, 0) == null)
+                popup.getMenu().removeItem(R.id.menu_port);
+            else
+                popup.getMenu().findItem(R.id.menu_port).setTitle(getString(R.string.title_log_port, port));
 
-                if (prefs.getBoolean("filter", true)) {
-                    if (uid <= 0) {
-                        popup.getMenu().removeItem(R.id.menu_allow);
-                        popup.getMenu().removeItem(R.id.menu_block);
-                    }
-                } else {
+            if (prefs.getBoolean("filter", true)) {
+                if (uid <= 0) {
                     popup.getMenu().removeItem(R.id.menu_allow);
                     popup.getMenu().removeItem(R.id.menu_block);
                 }
-
-                final Packet packet = new Packet();
-                packet.version = version;
-                packet.protocol = protocol;
-                packet.daddr = daddr;
-                packet.dport = dport;
-                packet.time = time;
-                packet.uid = uid;
-                packet.allowed = (allowed > 0);
-
-                // Time
-                popup.getMenu().findItem(R.id.menu_time).setTitle(SimpleDateFormat.getDateTimeInstance().format(time));
-
-                // Handle click
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        int itemId = menuItem.getItemId();
-                        if (itemId == R.id.menu_application) {
-                            Intent main = new Intent(ActivityLog.this, ActivityMain.class);
-                            main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-                            startActivity(main);
-                            return true;
-                        } else if (itemId == R.id.menu_whois) {
-                            startActivity(lookupIP);
-                            return true;
-                        } else if (itemId == R.id.menu_port) {
-                            startActivity(lookupPort);
-                            return true;
-                        } else if (itemId == R.id.menu_allow) {
-                            if (IAB.isPurchased(ActivityPro.SKU_FILTER, ActivityLog.this)) {
-                                DatabaseHelper.getInstance(ActivityLog.this).updateAccess(packet, dname, 0);
-                                ServiceSinkhole.reload("allow host", ActivityLog.this, false);
-                                Intent main = new Intent(ActivityLog.this, ActivityMain.class);
-                                main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-                                startActivity(main);
-                            } else
-                                startActivity(new Intent(ActivityLog.this, ActivityPro.class));
-                            return true;
-                        } else if (itemId == R.id.menu_block) {
-                            if (IAB.isPurchased(ActivityPro.SKU_FILTER, ActivityLog.this)) {
-                                DatabaseHelper.getInstance(ActivityLog.this).updateAccess(packet, dname, 1);
-                                ServiceSinkhole.reload("block host", ActivityLog.this, false);
-                                Intent main = new Intent(ActivityLog.this, ActivityMain.class);
-                                main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-                                startActivity(main);
-                            } else
-                                startActivity(new Intent(ActivityLog.this, ActivityPro.class));
-                            return true;
-                        } else if (itemId == R.id.menu_copy) {
-                            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("netguard", dname == null ? daddr : dname);
-                            clipboard.setPrimaryClip(clip);
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
-                // Show
-                popup.show();
+            } else {
+                popup.getMenu().removeItem(R.id.menu_allow);
+                popup.getMenu().removeItem(R.id.menu_block);
             }
+
+            final Packet packet = new Packet();
+            packet.version = version;
+            packet.protocol = protocol;
+            packet.daddr = daddr;
+            packet.dport = dport;
+            packet.time = time;
+            packet.uid = uid;
+            packet.allowed = (allowed1 > 0);
+
+            // Time
+            popup.getMenu().findItem(R.id.menu_time).setTitle(SimpleDateFormat.getDateTimeInstance().format(time));
+
+            // Handle click
+            popup.setOnMenuItemClickListener(menuItem -> {
+                int itemId = menuItem.getItemId();
+                if (itemId == R.id.menu_application) {
+                    Intent main = new Intent(ActivityLog.this, ActivityMain.class);
+                    main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
+                    startActivity(main);
+                    return true;
+                } else if (itemId == R.id.menu_whois) {
+                    startActivity(lookupIP);
+                    return true;
+                } else if (itemId == R.id.menu_port) {
+                    startActivity(lookupPort);
+                    return true;
+                } else if (itemId == R.id.menu_copy) {
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("netguard", dname == null ? daddr : dname);
+                    clipboard.setPrimaryClip(clip);
+                    return true;
+                }
+                return false;
+            });
+
+            // Show
+            popup.show();
         });
 
         live = true;
@@ -358,13 +311,10 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                 return true;
             }
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                if (adapter != null)
-                    adapter.getFilter().filter(null);
-                return true;
-            }
+        searchView.setOnCloseListener(() -> {
+            if (adapter != null)
+                adapter.getFilter().filter(null);
+            return true;
         });
 
         return true;
@@ -527,19 +477,10 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
     private Intent getIntentPCAPDocument() {
         Intent intent;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
-                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
-            }
-        } else {
-            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("application/octet-stream");
-            intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
-        }
+        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/octet-stream");
+        intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
         return intent;
     }
 

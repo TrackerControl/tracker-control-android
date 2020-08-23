@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!-- Layout for the individual entries for apps in the main screen -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -22,9 +21,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
+        android:layout_toStartOf="@+id/ivConnection"
         android:layout_toEndOf="@+id/ivIcon"
-        android:layout_toStartOf="@+id/cbApply"
         android:gravity="bottom"
+        android:minHeight="46dp"
         android:orientation="vertical">
 
         <TextView
@@ -37,30 +37,42 @@
             android:singleLine="true"
             android:text="@string/tracked_app_name"
             android:textColor="?android:textColorPrimary"
-            android:textSize="16sp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/app_details"
-            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:gravity="bottom"
             android:minHeight="20dp"
             android:singleLine="true"
+            android:text="@string/tracked_app_name"
             android:textColor="?android:textColorTertiary"
-            android:text="@string/tracked_app_name"/>
+            android:textSize="14sp"
+            android:visibility="gone" />
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/ivConnection"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_toStartOf="@+id/cbApply"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_rocket" />
+
     <Switch
-        android:text="@string/title_block"
         android:id="@+id/cbApply"
         android:layout_width="wrap_content"
         android:layout_height="72dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:text="@string/title_block" />
 
     <LinearLayout
         android:visibility="gone"

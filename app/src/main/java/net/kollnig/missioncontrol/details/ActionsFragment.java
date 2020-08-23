@@ -10,9 +10,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with TrackerControl.  If not, see <http://www.gnu.org/licenses/>.
+ * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2019 Konrad Kollnig, University of Oxford
+ * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
  */
 
 package net.kollnig.missioncontrol.details;
@@ -123,6 +123,11 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
+            if (Util.isFDroidInstall()) {
+                contactDeveloper(v, null);
+                return;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
                     .setTitle(R.string.external_servers)
                     .setMessage(R.string.confirm_google_info)
@@ -172,7 +177,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
 
         if (v.getId() == R.id.btnReqDeletion) {
             subject = getString(R.string.subject_request_data);
-            body = getString(R.string.body_request_data, appName, appId);
+            body = getString(R.string.body_delete_data, appName, appId);
         }
 
         sendEmail(mail, subject, body);

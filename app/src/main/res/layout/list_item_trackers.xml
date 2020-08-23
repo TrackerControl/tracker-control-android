@@ -1,40 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (C) 2019 Konrad Kollnig, University of Oxford
-  ~
-  ~ TrackerControl is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 2 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ TrackerControl is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                                     xmlns:app="http://schemas.android.com/apk/res-auto"
                                     android:layout_marginBottom="8dp"
-                                    android:foreground="?android:attr/selectableItemBackground"
-                                    android:stateListAnimator="@animator/transmission_selection"
-                                    android:clickable="true"
-                                    android:focusable="true"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:clipToPadding="false"
                                     app:cardCornerRadius="4dp"
                                     app:cardElevation="1dp"
                                     app:cardMaxElevation="@dimen/z_card">
-
-    <!--
-
-                                    app:cardBackgroundColor="@color/transmissions_card_color"
-
-    -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -62,17 +34,20 @@
             android:padding="1dp"
             android:text="@string/title_trackers"
             android:textColor="?android:textColorSecondary"
+            android:textStyle="italic"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/root_name"/>
+            app:layout_constraintTop_toBottomOf="@+id/root_name" />
 
         <TextView
             android:id="@+id/tracker_details"
+            android:textColor="?android:textColorSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:padding="1dp"
             android:text="Details"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/total_trackers"/>
+            app:layout_constraintTop_toBottomOf="@+id/total_trackers" />
 
         <Switch
             android:id="@+id/switch_tracker"

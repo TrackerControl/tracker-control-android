@@ -1,23 +1,24 @@
-package eu.faircode.netguard;
-
 /*
-    This file is part of NetGuard.
+ * This file is from NetGuard.
+ *
+ * NetGuard is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * NetGuard is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
+ * Kollnig (University of Oxford)
+ */
 
-    NetGuard is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    NetGuard is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
-
-    Copyright 2015-2019 by Marcel Bokhorst (M66B)
-*/
+package eu.faircode.netguard;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -36,11 +37,9 @@ import java.util.Date;
 public class WidgetAdmin extends ReceiverAutostart {
     private static final String TAG = "NetGuard.Widget";
 
-    public static final String INTENT_ON = "eu.faircode.netguard.ON";
-    public static final String INTENT_OFF = "eu.faircode.netguard.OFF";
-
-    public static final String INTENT_LOCKDOWN_ON = "eu.faircode.netguard.LOCKDOWN_ON";
-    public static final String INTENT_LOCKDOWN_OFF = "eu.faircode.netguard.LOCKDOWN_OFF";
+    public static final String INTENT_ON = "net.kollnig.missioncontrol.ON";
+    public static final String INTENT_PAUSE = "net.kollnig.missioncontrol.PAUSE";
+    public static final String INTENT_OFF = "net.kollnig.missioncontrol.OFF";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -56,7 +55,9 @@ public class WidgetAdmin extends ReceiverAutostart {
         Intent i = new Intent(INTENT_ON);
         i.setPackage(context.getPackageName());
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-        if (INTENT_ON.equals(intent.getAction()) || INTENT_OFF.equals(intent.getAction()))
+        if (INTENT_ON.equals(intent.getAction())
+                || INTENT_OFF.equals(intent.getAction())
+                || INTENT_PAUSE.equals(intent.getAction()))
             am.cancel(pi);
 
         // Vibrate
@@ -68,7 +69,9 @@ public class WidgetAdmin extends ReceiverAutostart {
                 vs.vibrate(50);
 
         try {
-            if (INTENT_ON.equals(intent.getAction()) || INTENT_OFF.equals(intent.getAction())) {
+            if (INTENT_ON.equals(intent.getAction())
+                    || INTENT_OFF.equals(intent.getAction())
+                    || INTENT_PAUSE.equals(intent.getAction())) {
                 boolean enabled = INTENT_ON.equals(intent.getAction());
                 prefs.edit().putBoolean("enabled", enabled).apply();
                 if (enabled)
@@ -78,6 +81,11 @@ public class WidgetAdmin extends ReceiverAutostart {
 
                 // Auto enable
                 int auto = Integer.parseInt(prefs.getString("auto_enable", "0"));
+
+                // Pause
+                if (INTENT_PAUSE.equals(intent.getAction()))
+                    auto = Integer.parseInt(prefs.getString("pause", "10"));
+
                 if (!enabled && auto > 0) {
                     Log.i(TAG, "Scheduling enabled after minutes=" + auto);
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)

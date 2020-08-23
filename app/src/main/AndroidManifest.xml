@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.kollnig.missioncontrol"
     android:installLocation="internalOnly">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -15,13 +15,22 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- http://developer.android.com/guide/topics/security/permissions.html#normal-dangerous -->
 
+    <!-- https://developer.android.com/preview/privacy/package-visibility -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!--queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries-->
+
     <permission
-        android:name="eu.faircode.netguard.permission.ADMIN"
+        android:name="net.kollnig.missioncontrol.permission.ADMIN"
         android:description="@string/app_description"
         android:label="@string/app_name"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="eu.faircode.netguard.permission.ADMIN" />
+    <uses-permission android:name="net.kollnig.missioncontrol.permission.ADMIN" />
 
     <uses-feature
         android:name="android.hardware.wifi"
@@ -45,7 +54,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppThemeTeal"
-        tools:ignore="ManifestResource">
+        tools:ignore="ManifestResource"
+        android:requestLegacyExternalStorage="true"
+        tools:replace="android:allowBackup,android:theme">
 
         <meta-data
             android:name="android.max_aspect"
@@ -76,10 +87,6 @@
                     android:pathPrefix="/"
                     android:scheme="https" />
             </intent-filter-->
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
         </activity>
 
         <activity
@@ -100,7 +107,7 @@
                 android:value="eu.faircode.netguard.ActivityMain" />
         </activity>
 
-        <!--<activity
+        <activity
             android:name="eu.faircode.netguard.ActivityLog"
             android:configChanges="orientation|screenSize"
             android:label="@string/menu_log"
@@ -108,7 +115,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.faircode.netguard.ActivityMain" />
-        </activity>-->
+        </activity>
 
         <activity
             android:name="eu.faircode.netguard.ActivityDns"
@@ -143,7 +150,7 @@
             android:name="eu.faircode.netguard.ServiceExternal"
             android:label="@string/app_name">
             <intent-filter>
-                <action android:name="eu.faircode.netguard.DOWNLOAD_HOSTS_FILE" />
+                <action android:name="net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE" />
             </intent-filter>
         </service>
 
@@ -198,11 +205,22 @@
         <receiver
             android:name="eu.faircode.netguard.WidgetAdmin"
             android:label="@string/app_name"
-            android:permission="eu.faircode.netguard.permission.ADMIN">
+            android:permission="net.kollnig.missioncontrol.permission.ADMIN">
             <intent-filter>
-                <action android:name="eu.faircode.netguard.ON" />
-                <action android:name="eu.faircode.netguard.OFF" />
+                <action android:name="net.kollnig.missioncontrol.ON" />
+                <action android:name="net.kollnig.missioncontrol.PAUSE" />
+                <action android:name="net.kollnig.missioncontrol.OFF" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 </manifest>
