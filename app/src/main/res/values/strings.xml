@@ -485,6 +485,7 @@ Sincerely,\n\n]]></string>
 
     <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
+    <string name="crash_body">Hi dev,\n\nI noticed a crash in TrackerControl.\n\nThese details might help you:\n</string>
 
     <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some apps. Private DNS must be disabled.</string>
     <string name="instructions_monitoring">Toggle the switch and interact with some apps.</string>
