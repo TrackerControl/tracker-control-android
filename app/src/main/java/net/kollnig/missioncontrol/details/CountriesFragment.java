@@ -82,6 +82,7 @@ public class CountriesFragment extends Fragment {
     public synchronized Map<String, Integer> getHostCountriesCount(int uid) {
         Map<String, Integer> countryToCount = new ArrayMap<>();
 
+        Cursor cursor = null;
         try {
             Context context = getContext();
             if (context == null)
@@ -91,7 +92,7 @@ public class CountriesFragment extends Fragment {
             DatabaseReader reader = new DatabaseReader.Builder(database).build();
 
             DatabaseHelper dh = DatabaseHelper.getInstance(getContext());
-            Cursor cursor = dh.getHosts(uid);
+            cursor = dh.getHosts(uid);
 
             if (cursor.moveToFirst()) {
                 do {
@@ -115,10 +116,12 @@ public class CountriesFragment extends Fragment {
                     }
                 } while (cursor.moveToNext());
             }
-        } catch (IOException | GeoIp2Exception e)
+        } catch (IOException | GeoIp2Exception e) {
             e.printStackTrace();
-        cursor.close();
-
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
         return countryToCount;
     }
 

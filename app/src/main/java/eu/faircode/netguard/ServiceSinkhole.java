@@ -688,6 +688,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 String line;
                 while ((line = br.readLine()) != null)
                     json.append(line);
+                br.close();
 
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
