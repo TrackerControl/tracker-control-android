@@ -68,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private static final String TAG = "NetGuard.Database";
+    private static final String TAG = "TrackerControl.Database";
 
     private static final String DB_NAME = "Netguard";
     private static final int DB_VERSION = 21;

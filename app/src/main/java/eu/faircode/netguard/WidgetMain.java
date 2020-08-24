@@ -35,7 +35,7 @@ import androidx.preference.PreferenceManager;
 import net.kollnig.missioncontrol.R;
 
 public class WidgetMain extends AppWidgetProvider {
-    private static final String TAG = "NetGuard.Widget";
+    private static final String TAG = "TrackerControl.Widget";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

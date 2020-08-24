@@ -88,7 +88,7 @@ import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAG
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
 
 public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> implements Filterable {
-    private static final String TAG = "NetGuard.Adapter";
+    private static final String TAG = "TrackerControl.Adapter";
 
     private View anchor;
     private LayoutInflater inflater;

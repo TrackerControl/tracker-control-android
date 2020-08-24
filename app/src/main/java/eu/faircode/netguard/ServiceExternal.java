@@ -44,7 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ServiceExternal extends IntentService {
-    private static final String TAG = "NetGuard.External";
+    private static final String TAG = "TrackerControl.External";
     private static final String ACTION_DOWNLOAD_HOSTS_FILE = "net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE";
 
     // am startservice -a net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE

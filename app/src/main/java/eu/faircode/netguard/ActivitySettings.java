@@ -98,7 +98,7 @@ import javax.xml.parsers.SAXParserFactory;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "NetGuard.Settings";
+    private static final String TAG = "TrackerControl.Settings";
 
     private boolean running = false;
 

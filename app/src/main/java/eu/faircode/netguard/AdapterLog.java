@@ -51,7 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class AdapterLog extends CursorAdapter {
-    private static String TAG = "NetGuard.Log";
+    private static String TAG = "TrackerControl.Log";
 
     private boolean resolve;
     private boolean organization;

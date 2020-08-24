@@ -58,7 +58,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ActivityLog extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "NetGuard.Log";
+    private static final String TAG = "TrackerControl.Log";
 
     private boolean running = false;
     private ListView lvLog;

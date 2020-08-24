@@ -95,7 +95,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Util {
-    private static final String TAG = "NetGuard.Util";
+    private static final String TAG = "TrackerControl.Util";
 
     // Roam like at home
     private static final List<String> listEU = Arrays.asList(

@@ -23,7 +23,7 @@ package eu.faircode.netguard;
 import android.content.Context;
 
 public class IAB {
-    private static final String TAG = "NetGuard.IAB";
+    private static final String TAG = "TrackerControl.IAB";
 
 
     public static boolean isPurchased(String sku, Context context) {

@@ -2143,7 +2143,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     };
 
     ConnectivityManager.NetworkCallback networkMonitorCallback = new ConnectivityManager.NetworkCallback() {
-        private String TAG = "NetGuard.Monitor";
+        private String TAG = "TrackerControl.Monitor";
 
         private Map<Network, Long> validated = new HashMap<>();
 

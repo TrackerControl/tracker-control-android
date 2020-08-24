@@ -75,7 +75,7 @@ import net.kollnig.missioncontrol.R;
 import java.util.List;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "NetGuard.Main";
+    private static final String TAG = "TrackerControl.Main";
 
     private boolean running = false;
     private ImageView ivIcon;

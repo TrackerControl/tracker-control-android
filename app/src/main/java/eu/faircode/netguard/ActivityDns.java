@@ -48,7 +48,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class ActivityDns extends AppCompatActivity {
-    private static final String TAG = "NetGuard.DNS";
+    private static final String TAG = "TrackerControl.DNS";
 
     private static final int REQUEST_EXPORT = 1;
 

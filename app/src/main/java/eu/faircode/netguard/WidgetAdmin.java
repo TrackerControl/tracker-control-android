@@ -35,7 +35,7 @@ import androidx.preference.PreferenceManager;
 import java.util.Date;
 
 public class WidgetAdmin extends ReceiverAutostart {
-    private static final String TAG = "NetGuard.Widget";
+    private static final String TAG = "TrackerControl.Widget";
 
     public static final String INTENT_ON = "net.kollnig.missioncontrol.ON";
     public static final String INTENT_PAUSE = "net.kollnig.missioncontrol.PAUSE";
