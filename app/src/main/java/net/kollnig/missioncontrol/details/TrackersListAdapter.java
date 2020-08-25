@@ -188,7 +188,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class VHItem extends RecyclerView.ViewHolder {
-        final View mView;
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
         final Switch mSwitch;
@@ -196,7 +195,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         VHItem(View view) {
             super(view);
-            mView = view;
             mTrackerCategoryName = view.findViewById(R.id.root_name);
             mCompaniesList = view.findViewById(R.id.details_list);
             mSwitch = view.findViewById(R.id.switch_tracker);
@@ -204,13 +202,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class VHHeader extends RecyclerView.ViewHolder {
-        final View mView;
         final Switch mSwitch;
         final Button mLaunch;
 
         VHHeader(View view) {
             super(view);
-            mView = view;
             mSwitch = view.findViewById(R.id.switch_internet);
             mLaunch = view.findViewById(R.id.btnLaunch);
         }
