@@ -184,7 +184,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
     }
 
     public void sendEmail(@Nullable String email, String subject, String body) {
-        Intent i  = emailIntent(email, subject, body);
+        Intent i = emailIntent(email, subject, body);
         try {
             startActivity(Intent.createChooser(i, "Send email via..."));
         } catch (android.content.ActivityNotFoundException ex) {

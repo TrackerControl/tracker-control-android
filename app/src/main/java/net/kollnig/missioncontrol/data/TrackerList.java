@@ -71,6 +71,24 @@ public class TrackerList {
         return instance;
     }
 
+    public static Tracker findTracker(String hostname) {
+        Tracker tracker = null;
+
+        if (hostnameToTracker.containsKey(hostname)) {
+            tracker = hostnameToTracker.get(hostname);
+        } else { // check subdomains
+            for (int i = 0; i < hostname.length(); i++) {
+                if (hostname.charAt(i) == '.') {
+                    tracker = hostnameToTracker.get(hostname.substring(i + 1));
+                    if (tracker != null)
+                        break;
+                }
+            }
+        }
+
+        return tracker;
+    }
+
     /**
      * Retrieves information for all apps
      *
@@ -157,7 +175,7 @@ public class TrackerList {
                 // check if tracker has already been added
                 for (Tracker child : categoryCompany.getChildren()) {
                     if (child.name != null
-                            && child.name.equals(name)){
+                            && child.name.equals(name)) {
                         child.addHost(host);
 
                         if (child.lastSeen < lastSeen)
@@ -185,24 +203,6 @@ public class TrackerList {
         }
 
         return trackerList;
-    }
-
-    public static Tracker findTracker(String hostname) {
-        Tracker tracker = null;
-
-        if (hostnameToTracker.containsKey(hostname)) {
-            tracker = hostnameToTracker.get(hostname);
-        } else { // check subdomains
-            for (int i = 0; i < hostname.length(); i++) {
-                if (hostname.charAt(i) == '.') {
-                    tracker = hostnameToTracker.get(hostname.substring(i + 1));
-                    if (tracker != null)
-                        break;
-                }
-            }
-        }
-
-        return tracker;
     }
 
     private void loadXrayTrackerDomains(Context context) {

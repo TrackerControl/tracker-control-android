@@ -36,14 +36,13 @@ import net.kollnig.missioncontrol.details.TrackersFragment;
  * one of the sections/tabs/pages.
  */
 public class DetailsPagesAdapter extends FragmentPagerAdapter {
+    public static int tabTrackersPosition = 0;
     @StringRes
     private static int[] TAB_TITLES = new int[]{
             R.string.tab_trackers,
             R.string.tab_countries,
             R.string.tab_actions,
     };
-    public static int tabTrackersPosition = 0;
-
     private final String TAG = DetailsPagesAdapter.class.getSimpleName();
     private final Context mContext;
     private int mUid;

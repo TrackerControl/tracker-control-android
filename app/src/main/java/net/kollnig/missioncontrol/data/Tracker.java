@@ -32,12 +32,8 @@ public class Tracker {
     public String name;
     public String category;
     public Boolean necessary;
-    private Set<String> hosts = new HashSet<>();
     public Long lastSeen;
-
-    public long getLastSeen() {
-        return lastSeen;
-    }
+    private Set<String> hosts = new HashSet<>();
 
     public Tracker(String name, String category, long lastSeen) {
         this.name = name;

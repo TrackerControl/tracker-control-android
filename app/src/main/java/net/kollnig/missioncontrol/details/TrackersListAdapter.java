@@ -55,8 +55,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final RecyclerView recyclerView;
     private final Integer mAppUid;
     private final String mAppId;
-    private List<TrackerCategory> mValues = new ArrayList<>();
     private final Context mContext;
+    private List<TrackerCategory> mValues = new ArrayList<>();
     private Intent launch;
 
     public TrackersListAdapter(Context c,

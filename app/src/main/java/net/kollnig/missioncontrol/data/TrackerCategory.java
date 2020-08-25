@@ -22,8 +22,8 @@ import java.util.List;
 
 public class TrackerCategory {
     public String name;
-    private List<Tracker> children;
     public Long lastSeen;
+    private List<Tracker> children;
 
     TrackerCategory(String name, long lastSeen) {
         this.name = name;

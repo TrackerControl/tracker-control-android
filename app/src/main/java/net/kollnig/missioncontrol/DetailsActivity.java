@@ -83,7 +83,7 @@ public class DetailsActivity extends AppCompatActivity {
         Set<String> strings = new HashSet<>();
 
 
-        for (Integer _int: ints) {
+        for (Integer _int : ints) {
             strings.add(String.valueOf(_int));
         }
 

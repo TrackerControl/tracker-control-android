@@ -43,6 +43,21 @@ public class TrackerBlocklist {
         }
     }
 
+    /**
+     * Singleton getter.
+     *
+     * @param c context used to access shared preferences from.
+     * @return The current instance of the TrackerBlocklist, if none, a new instance is created.
+     */
+    public static TrackerBlocklist getInstance(Context c) {
+        if (instance == null) {
+            // Create the instance
+            instance = new TrackerBlocklist(c);
+        }
+        // Return the instance
+        return instance;
+    }
+
     public void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
@@ -73,21 +88,6 @@ public class TrackerBlocklist {
                     blockmap.put(uid, subset);
             }
         }
-    }
-
-    /**
-     * Singleton getter.
-     *
-     * @param c context used to access shared preferences from.
-     * @return The current instance of the TrackerBlocklist, if none, a new instance is created.
-     */
-    public static TrackerBlocklist getInstance(Context c) {
-        if (instance == null) {
-            // Create the instance
-            instance = new TrackerBlocklist(c);
-        }
-        // Return the instance
-        return instance;
     }
 
     public Set<Integer> getBlocklist() {

@@ -36,19 +36,6 @@ public class InternetBlocklist {
         }
     }
 
-    public void loadSettings(Context c) {
-        SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
-        Set<String> set = prefs.getStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, null);
-
-        if (set != null) {
-            blockmap.clear();
-            for (String id : set) {
-                int uid = Integer.parseInt(id);
-                blockmap.add(uid);
-            }
-        }
-    }
-
     /**
      * Singleton getter.
      *
@@ -62,6 +49,19 @@ public class InternetBlocklist {
         }
         // Return the instance
         return instance;
+    }
+
+    public void loadSettings(Context c) {
+        SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
+        Set<String> set = prefs.getStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, null);
+
+        if (set != null) {
+            blockmap.clear();
+            for (String id : set) {
+                int uid = Integer.parseInt(id);
+                blockmap.add(uid);
+            }
+        }
     }
 
     public Set<Integer> getBlocklist() {
