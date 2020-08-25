@@ -279,8 +279,8 @@ public class DetailsActivity extends AppCompatActivity {
                     String hostname = data.getString(data.getColumnIndex("daddr"));
                     Tracker tracker = TrackerList.findTracker(hostname);
                     if (tracker != null) {
-                        row[data.getColumnNames().length] = tracker.name;
-                        row[data.getColumnNames().length + 1] = tracker.category;
+                        row[data.getColumnNames().length] = tracker.getName();
+                        row[data.getColumnNames().length + 1] = tracker.getCategory();
                     } else {
                         row[data.getColumnNames().length] = "";
                         row[data.getColumnNames().length + 1] = "";

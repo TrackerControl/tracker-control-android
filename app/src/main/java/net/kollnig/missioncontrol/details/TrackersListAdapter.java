@@ -19,14 +19,16 @@ package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -43,7 +45,7 @@ import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Tracker}.
+ * {@link RecyclerView.Adapter} that can display a {@link TrackerCategory}.
  */
 public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
@@ -80,7 +82,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item_trackers, parent, false);
@@ -100,31 +103,34 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             VHItem holder = (VHItem) _holder;
 
             // Load data item
-            final TrackerCategory tracker = getItem(position);
-            holder.mTracker = tracker;
+            final TrackerCategory trackerCategory = getItem(position);
+            holder.mTrackerCategory = trackerCategory;
 
             // Add data to view
-            holder.mTrackerName.setText(tracker.name);
-            holder.mTotalTrackers.setText(mContext.getResources().getQuantityString(
-                    R.plurals.n_trackers_found, tracker.getChildren().size(), tracker.getChildren().size())
-                    + ":");
-            holder.mTrackerDetails.setText(
-                    TextUtils.join("\n\n", tracker.getChildren()));
+            holder.mTrackerCategoryName.setText(trackerCategory.name);
+            final ArrayAdapter<Tracker> trackersAdapter =
+                    new ArrayAdapter<>(mContext, R.layout.list_item_trackers_details, trackerCategory.getChildren());
+            holder.mCompaniesList.setAdapter(trackersAdapter);
+            holder.mCompaniesList.setOnItemLongClickListener((adapterView, view, i, l) -> {
+                Tracker t = trackersAdapter.getItem(i);
+                //Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
+                return true;
+            });
 
             if (Util.isPlayStoreInstall(mContext)) {
                 holder.mSwitch.setVisibility(View.GONE);
             } else {
                 final TrackerBlocklist w = TrackerBlocklist.getInstance(mContext);
                 holder.mSwitch.setChecked(
-                        w.blockedTracker(mAppUid, tracker.name)
+                        w.blockedTracker(mAppUid, trackerCategory.name)
                 );
                 holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
                     if (isChecked) {
-                        w.block(mAppUid, tracker.name);
+                        w.block(mAppUid, trackerCategory.name);
                     } else {
-                        w.unblock(mAppUid, tracker.name);
+                        w.unblock(mAppUid, trackerCategory.name);
                     }
 
                     ServiceSinkhole.reload("trackers changed", mContext, false);
@@ -183,18 +189,16 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class VHItem extends RecyclerView.ViewHolder {
         final View mView;
-        final TextView mTrackerDetails;
-        final TextView mTrackerName;
-        final TextView mTotalTrackers;
+        final TextView mTrackerCategoryName;
+        final ListView mCompaniesList;
         final Switch mSwitch;
-        TrackerCategory mTracker;
+        TrackerCategory mTrackerCategory;
 
         VHItem(View view) {
             super(view);
             mView = view;
-            mTrackerDetails = view.findViewById(R.id.tracker_details);
-            mTrackerName = view.findViewById(R.id.root_name);
-            mTotalTrackers = view.findViewById(R.id.total_trackers);
+            mTrackerCategoryName = view.findViewById(R.id.root_name);
+            mCompaniesList = view.findViewById(R.id.details_list);
             mSwitch = view.findViewById(R.id.switch_tracker);
         }
     }

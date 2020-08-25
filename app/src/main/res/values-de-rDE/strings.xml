@@ -295,7 +295,6 @@
         <item quantity="other">%d Tracker gefunden</item>
     </plurals>
     <string name="title_apps">Apps</string>
-    <string name="title_trackers">Tracker</string>
     <string name="menu_reset_monitoring">Überwachung zurücksetzen</string>
     <string name="confirm_reset">LÖSCHEN Ihres Tracker-Verlaufs UND Ihrer Tracker-Einstellungen?</string>
     <string name="confirm_blocking_title">Alle Tracker blockieren?</string>

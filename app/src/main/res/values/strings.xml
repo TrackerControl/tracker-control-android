@@ -384,8 +384,11 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item quantity="one">%d tracker observed</item>
         <item quantity="other">%d trackers observed</item>
     </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">%d company observed</item>
+        <item quantity="other">%d companies observed</item>
+    </plurals>
     <string name="title_apps">Apps</string>
-    <string name="title_trackers">Trackers</string>
     <string name="menu_reset_monitoring">Reset monitoring</string>
     <string name="confirm_reset">DELETE your tracker history AND your tracker choices?</string>
     <string name="confirm_blocking_title">Block all trackers?</string>

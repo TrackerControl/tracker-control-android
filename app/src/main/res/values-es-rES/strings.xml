@@ -293,7 +293,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
         <item quantity="other">%d rastreadores observados</item>
     </plurals>
     <string name="title_apps">Aplicativos</string>
-    <string name="title_trackers">Rastreadores</string>
     <string name="menu_reset_monitoring">Restablecer monitoreo</string>
     <string name="confirm_reset">¿Deseas BORRAR su historial y elecciones de los trastreadores?</string>
     <string name="confirm_blocking_title">¿Bloquear todos los rastreadores?</string>

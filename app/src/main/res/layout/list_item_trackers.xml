@@ -26,28 +26,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <TextView
-            android:id="@+id/total_trackers"
-            android:layout_width="wrap_content"
+        <net.kollnig.missioncontrol.details.FullHeightListView
+            android:id="@+id/details_list"
+            android:divider="@null"
+            android:dividerHeight="2dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:padding="1dp"
-            android:text="@string/title_trackers"
-            android:textColor="?android:textColorSecondary"
-            android:textStyle="italic"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/root_name" />
-
-        <TextView
-            android:id="@+id/tracker_details"
-            android:textColor="?android:textColorSecondary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="1dp"
-            android:text="Details"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/total_trackers" />
 
         <Switch
             android:id="@+id/switch_tracker"

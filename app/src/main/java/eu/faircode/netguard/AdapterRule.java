@@ -580,7 +580,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         if (trackerCount > 0) {
             holder.tvDetails.setVisibility(View.VISIBLE);
             holder.tvDetails.setText(context.getResources().getQuantityString(
-                    R.plurals.n_trackers_found, trackerCount, trackerCount));
+                    R.plurals.n_companies_found, trackerCount, trackerCount));
         } else {
             holder.tvDetails.setVisibility(View.GONE);
         }

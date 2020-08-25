@@ -297,7 +297,6 @@
         <item quantity="other">观察到%d 个追踪器</item>
     </plurals>
     <string name="title_apps">应用程序</string>
-    <string name="title_trackers">跟踪器</string>
     <string name="menu_reset_monitoring">重置监测</string>
     <string name="confirm_reset">删除您的跟踪器历史记录和跟踪器选择？</string>
     <string name="confirm_blocking_title">屏蔽所有追踪器？</string>

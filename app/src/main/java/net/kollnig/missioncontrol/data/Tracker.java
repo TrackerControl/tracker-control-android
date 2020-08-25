@@ -55,7 +55,7 @@ public class Tracker {
     @Override
     @NonNull
     public String toString() {
-        List sortedHosts = getSortedHosts();
+        List<String> sortedHosts = getSortedHosts();
         String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
 
         String title;
@@ -73,14 +73,13 @@ public class Tracker {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String getCategory() {
         if (category == null || category.equals("null")) return null;
         return category;
-    }
-
-    public String getRoot() {
-        if (getCategory() != null) return getCategory();
-        return name;
     }
 
     void addHost(String host) {

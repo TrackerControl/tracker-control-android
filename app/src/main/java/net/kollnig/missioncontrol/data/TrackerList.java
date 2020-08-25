@@ -78,32 +78,32 @@ public class TrackerList {
      * Cursor should have app name and leak summation based on a sort type
      */
     public synchronized Pair<Map<Integer, Integer>, Integer> getTrackerCountsAndTotal() {
-        Map<Integer, Set<Tracker>> trackers = new ArrayMap<>();
+        Map<Integer, Set<String>> trackers = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts();
 
         if (cursor.moveToFirst()) {
             do {
                 int uid = cursor.getInt(cursor.getColumnIndex("uid"));
-                Set<Tracker> observed = trackers.get(uid);
-                if (observed == null) {
-                    observed = new HashSet<>();
-                    trackers.put(uid, observed);
+                Set<String> observedTrackers = trackers.get(uid);
+                if (observedTrackers == null) {
+                    observedTrackers = new HashSet<>();
+                    trackers.put(uid, observedTrackers);
                 }
 
                 // Add tracker
                 String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
                 Tracker tracker = findTracker(hostname);
                 if (tracker != null)
-                    observed.add(tracker);
+                    observedTrackers.add(tracker.getName());
             } while (cursor.moveToNext());
         }
         cursor.close();
 
         // Reduce to counts
-        Integer totalTracker = 0;
+        int totalTracker = 0;
         Map<Integer, Integer> trackerCounts = new ArrayMap<>();
-        for (Map.Entry<Integer, Set<Tracker>> entry : trackers.entrySet()) {
+        for (Map.Entry<Integer, Set<String>> entry : trackers.entrySet()) {
             trackerCounts.put(entry.getKey(), entry.getValue().size());
             totalTracker += entry.getValue().size();
         }
@@ -264,7 +264,7 @@ public class TrackerList {
             is.close();
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();
-            
+
             JSONObject disconnect = new JSONObject(json);
             JSONObject categories = (JSONObject) disconnect.get("categories");
             for (Iterator<String> it = categories.keys(); it.hasNext(); ) {
