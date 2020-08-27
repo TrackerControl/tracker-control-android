@@ -24,6 +24,7 @@
     <string name="menu_sort_name">Sort on name</string>
     <string name="menu_sort_uid">Sort on uid</string>
     <string name="menu_sort_trackers">Sort on trackers</string>
+    <string name="menu_sort_companies">Sort on companies</string>
     <string name="menu_sort_data">Sort on data usage</string>
     <string name="menu_log">Traffic log</string>
     <string name="menu_settings">Settings</string>

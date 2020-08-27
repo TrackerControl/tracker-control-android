@@ -40,7 +40,7 @@
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/menu_sort_trackers"
-                    android:title="@string/menu_sort_trackers"/>
+                    android:title="@string/menu_sort_companies"/>
                 <item
                     android:id="@+id/menu_sort_name"
                     android:title="@string/menu_sort_name"/>
