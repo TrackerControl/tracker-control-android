@@ -17,12 +17,12 @@
             android:id="@+id/transmissions_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarStyle="insideOverlay"
-            android:scrollbars="vertical"
             android:clipToPadding="false"
             android:padding="16dp"
+            android:scrollbarStyle="outsideOverlay"
+            android:scrollbars="vertical"
             app:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/list_item_trackers"/>
+            tools:listitem="@layout/list_item_trackers" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>
