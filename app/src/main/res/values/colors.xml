@@ -1,4 +1,6 @@
 <resources>
+    <color name="colorTrackerControl">#B71C1C</color>
+
     <color name="colorPrimary">#B71C1C</color>
     <color name="colorPrimaryDark">#7f0000</color>
     <color name="colorAccent">#004D40</color>
@@ -12,44 +14,6 @@
     <color name="switchTrackDisable">#999</color>
     <color name="switchTrackActive">@color/colorAccent</color>
     <color name="switchTrackNormal">#888</color>
-
-    <!-- https://www.materialpalette.com/teal/deep-orange -->
-
-    <color name="colorTealPrimary">#009688</color>
-    <color name="colorTealPrimaryDark">#00796B</color>
-    <color name="colorTealAccent">#FF5722</color>
-    <color name="colorTealOn">#009688</color>
-    <color name="colorTealOff">#FF5722</color>
-
-    <color name="colorBluePrimary">#2196F3</color>
-    <color name="colorBluePrimaryDark">#1976D2</color>
-    <color name="colorBlueAccent">#FF5722</color>
-    <color name="colorBlueOn">#2196F3</color>
-    <color name="colorBlueOff">#FF5722</color>
-
-    <color name="colorPurplePrimary">#9C27B0</color>
-    <color name="colorPurplePrimaryDark">#7B1FA2</color>
-    <color name="colorPurpleAccent">#FF5252</color>
-    <color name="colorPurpleOn">#9C27B0</color>
-    <color name="colorPurpleOff">#FF5252</color>
-
-    <color name="colorAmberPrimary">#FFC107</color>
-    <color name="colorAmberPrimaryDark">#FFA000</color>
-    <color name="colorAmberAccent">#448AFF</color>
-    <color name="colorAmberOn">#448AFF</color>
-    <color name="colorAmberOff">#FFC107</color>
-
-    <color name="colorOrangePrimary">#FF5722</color>
-    <color name="colorOrangePrimaryDark">#E64A19</color>
-    <color name="colorOrangeAccent">#607D8B</color>
-    <color name="colorOrangeOn">#607D8B</color>
-    <color name="colorOrangeOff">#FF5722</color>
-
-    <color name="colorGreenPrimary">#4CAF50</color>
-    <color name="colorGreenPrimaryDark">#388E3C</color>
-    <color name="colorGreenAccent">#8BC34A</color>
-    <color name="colorGreenOn">#8BC34A</color>
-    <color name="colorGreenOff">#F44336</color>
 
     <color name="colorSend">#FF0000</color>
     <color name="colorReceive">#0000FF</color>

@@ -22,8 +22,6 @@ package eu.faircode.netguard;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,7 +51,6 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -507,19 +504,7 @@ public class Util {
     public static void setTheme(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean dark = prefs.getBoolean("dark_theme", false);
-        String theme = prefs.getString("theme", "teal");
-        if (theme.equals("teal"))
-            context.setTheme(dark ? R.style.AppThemeTealDark : R.style.AppThemeTeal);
-        else if (theme.equals("blue"))
-            context.setTheme(dark ? R.style.AppThemeBlueDark : R.style.AppThemeBlue);
-        else if (theme.equals("purple"))
-            context.setTheme(dark ? R.style.AppThemePurpleDark : R.style.AppThemePurple);
-        else if (theme.equals("amber"))
-            context.setTheme(dark ? R.style.AppThemeAmberDark : R.style.AppThemeAmber);
-        else if (theme.equals("orange"))
-            context.setTheme(dark ? R.style.AppThemeOrangeDark : R.style.AppThemeOrange);
-        else if (theme.equals("green"))
-            context.setTheme(dark ? R.style.AppThemeGreenDark : R.style.AppThemeGreen);
+        context.setTheme(dark ? R.style.AppThemeRedDark : R.style.AppThemeRed);
 
         if (dark) {
             AppCompatDelegate.setDefaultNightMode(
@@ -528,16 +513,6 @@ public class Util {
             AppCompatDelegate.setDefaultNightMode(
                     AppCompatDelegate.MODE_NIGHT_NO);
         }
-
-        if (context instanceof Activity && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            setTaskColor(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void setTaskColor(Context context) {
-        TypedValue tv = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
-        ((Activity) context).setTaskDescription(new ActivityManager.TaskDescription(null, null, tv.data));
     }
 
     public static int dips2pixels(int dips, Context context) {

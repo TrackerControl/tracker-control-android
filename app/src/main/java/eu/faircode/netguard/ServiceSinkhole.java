@@ -62,7 +62,6 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
@@ -1123,14 +1122,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             Intent main = new Intent(ServiceSinkhole.this, ActivityMain.class);
             PendingIntent pi = PendingIntent.getActivity(ServiceSinkhole.this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            TypedValue tv = new TypedValue();
-            getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(ServiceSinkhole.this, "notify");
             builder.setWhen(when)
                     .setSmallIcon(R.drawable.ic_equalizer_white_24dp)
                     .setContent(remoteViews)
                     .setContentIntent(pi)
-                    .setColor(tv.data)
+                    .setColor(getResources().getColor(R.color.colorTrackerControl))
                     .setOngoing(true)
                     .setAutoCancel(false);
 
@@ -2342,12 +2339,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
             PendingIntent pi = PendingIntent.getActivity(this, uid, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            TypedValue tv = new TypedValue();
-            getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
             builder.setSmallIcon(R.drawable.ic_rocket_white)
                     .setContentIntent(pi)
-                    .setColor(tv.data)
+                    .setColor(getResources().getColor(R.color.colorTrackerControl))
                     .setAutoCancel(true);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -2836,12 +2831,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         int pause = Integer.parseInt(prefs.getString("pause", "10"));
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
         builder.setSmallIcon(isLockedDown(last_metered) ? R.drawable.ic_lock_outline_white_24dp : R.drawable.ic_rocket_white)
                 .setContentIntent(pi)
-                .setColor(tv.data)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .addAction(R.drawable.ic_pause_white_24dp, getResources().getQuantityString(
@@ -2902,12 +2895,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
         builder.setSmallIcon(R.drawable.ic_rocket_white)
                 .setContentIntent(pi)
-                .setColor(tv.data)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(true)
                 .setAutoCancel(false);
 
@@ -2924,14 +2915,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.msg_revoked))
                 .setContentIntent(pi)
-                .setColor(tv.data)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(false)
                 .setAutoCancel(true);
 
@@ -2950,14 +2939,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         main.putExtra(ActivityMain.EXTRA_APPROVE, true);
         PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_AUTOSTART, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.msg_autostart))
                 .setContentIntent(pi)
-                .setColor(tv.data)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(false)
                 .setAutoCancel(true);
 
@@ -2975,14 +2962,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.msg_error, message))
                 .setContentIntent(pi)
-                .setColor(tv.data)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(false)
                 .setAutoCancel(true);
 
@@ -3001,14 +2986,12 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Intent download = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         PendingIntent pi = PendingIntent.getActivity(this, 0, download, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_rocket_white)
                 .setContentTitle(name)
                 .setContentText(getString(R.string.msg_update))
                 .setContentIntent(pi)
-                .setColor(tv.data)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(false)
                 .setAutoCancel(true);
 

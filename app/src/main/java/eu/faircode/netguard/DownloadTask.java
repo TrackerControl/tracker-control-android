@@ -28,7 +28,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -162,15 +161,13 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
         Intent main = new Intent(context, ActivitySettings.class);
         PendingIntent pi = PendingIntent.getActivity(context, ServiceSinkhole.NOTIFY_DOWNLOAD, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        context.getTheme().resolveAttribute(R.attr.colorOff, tv, true);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notify");
         builder.setSmallIcon(R.drawable.ic_file_download_white_24dp)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setContentText(context.getString(R.string.msg_downloading, url.toString()))
                 .setContentIntent(pi)
                 .setProgress(100, progress, false)
-                .setColor(tv.data)
+                .setColor(context.getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(true)
                 .setAutoCancel(false);
 
