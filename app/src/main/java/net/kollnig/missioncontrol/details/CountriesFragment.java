@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.collection.ArrayMap;
 import androidx.fragment.app.Fragment;
@@ -134,8 +135,14 @@ public class CountriesFragment extends Fragment {
 
         ProgressBar pbLoading = v.findViewById(R.id.pbLoading);
         GeoMapView mv = v.findViewById(R.id.map_view);
-        mv.setOnShownListener(geoMapView -> {
-            mv.setVisibility(View.VISIBLE);
+        TextView txtFailure = v.findViewById(R.id.txtFailure);
+        mv.setOnShownListener(success -> {
+            if (success) {
+                mv.setVisibility(View.VISIBLE);
+            } else {
+                mv.setVisibility(View.GONE);
+                txtFailure.setVisibility(View.VISIBLE);
+            }
             pbLoading.setVisibility(View.GONE);
         });
 

@@ -503,4 +503,5 @@ Sincerely,\n\n]]></string>
     <string name="launch_app">Launch &amp; Find trackers</string>
     <string name="countries">Destination Countries</string>
     <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
+    <string name="countries_loading_failed">Oops.. The country map failed to load. Please tell tc@kollnig.net how this happened.</string>
 </resources>

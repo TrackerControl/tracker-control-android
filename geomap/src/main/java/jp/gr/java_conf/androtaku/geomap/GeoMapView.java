@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -21,6 +22,7 @@ import static android.graphics.Bitmap.Config.ARGB_8888;
  * Updated by Konrad Kollnig on 17 August 2020
  */
 public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
+    private String TAG = GeoMapView.class.getSimpleName();
     private List<CountrySection> _countries;
     private Context _context;
     private Paint _paint;
@@ -47,9 +49,18 @@ public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
         new Thread(() -> {
             _countries = SVGParser.getCountries(_context);
 
+            int width = getWidth();
+            int height = getHeight();
+
+            if (width == 0 || height == 0) {
+                Log.e(TAG, "Loading failed. Width or height equals zero.");
+                handler.post(() -> shown(false));
+                return;
+            }
+
             final Bitmap bitmap = Bitmap.createBitmap(
-                    getWidth(),
-                    getHeight(),
+                    width,
+                    height,
                     ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             drawMap(canvas);
@@ -57,10 +68,14 @@ public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
             // run on UI
             handler.post(() -> {
                 GeoMapView.this.setImageBitmap(bitmap);
-                if (listener != null)
-                    listener.onShown(GeoMapView.this);
+                shown(true);
             });
         }).start();
+    }
+
+    private void shown(boolean success) {
+        if (listener != null)
+            listener.onShown(success);
     }
 
     /**

@@ -57,12 +57,25 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"/>
 
-    <jp.gr.java_conf.androtaku.geomap.GeoMapView
+    <TextView
+        android:id="@+id/txtFailure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingEnd="8dp"
+        android:text="@string/countries_loading_failed"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <jp.gr.java_conf.androtaku.geomap.GeoMapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:visibility="invisible" />
 
 </LinearLayout>

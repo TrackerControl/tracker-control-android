@@ -40,16 +40,16 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
     @StringRes
     private static int[] TAB_TITLES = new int[]{
             R.string.tab_trackers,
-            R.string.tab_countries,
             R.string.tab_actions,
+            R.string.tab_countries,
     };
     private final String TAG = DetailsPagesAdapter.class.getSimpleName();
     private final Context mContext;
     private int mUid;
 
     private Fragment fTrackers;
-    private Fragment fCountries;
     private Fragment fActions;
+    private Fragment fCountries;
 
     public DetailsPagesAdapter(final Context context, FragmentManager fm, String appId, String appName, int uid) {
         super(fm);
@@ -65,8 +65,8 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
         } else {
             TAB_TITLES = new int[]{
                     R.string.tab_trackers,
-                    R.string.tab_countries,
                     R.string.tab_actions,
+                    R.string.tab_countries,
             };
         }
 
@@ -88,11 +88,11 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
                 case 0:
                     return fTrackers;
                 case 1:
+                    return fActions;
+                case 2:
                     if (fCountries == null)
                         fCountries = CountriesFragment.newInstance(mUid);
                     return fCountries;
-                case 2:
-                    return fActions;
             }
         }
 
