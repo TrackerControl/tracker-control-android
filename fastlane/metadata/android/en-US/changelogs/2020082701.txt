@@ -1,0 +1,6 @@
+- Prepare UI for more granular tracker blocking
+- Improve tracker display
+- Fix a few crashes
+- Add some more trackers
+- Make email crash reporting clearer
+- Fix colour for blocking Internet access
