@@ -39,7 +39,7 @@ public class TrackerCategory {
         }
     }
 
-    public long getLastSeen() {
-        return lastSeen;
+    public String getName() {
+        return name;
     }
 }

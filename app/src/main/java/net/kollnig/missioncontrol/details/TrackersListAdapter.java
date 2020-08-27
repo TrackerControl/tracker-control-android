@@ -27,8 +27,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -102,38 +104,66 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (_holder instanceof VHItem) {
             VHItem holder = (VHItem) _holder;
 
-            // Load data item
+            // Load data
+            final TrackerBlocklist w = TrackerBlocklist.getInstance(mContext);
             final TrackerCategory trackerCategory = getItem(position);
-            holder.mTrackerCategory = trackerCategory;
+            final String trackerCategoryName = trackerCategory.name;
 
             // Add data to view
-            holder.mTrackerCategoryName.setText(trackerCategory.name);
+            holder.mTrackerCategoryName.setText(trackerCategoryName);
             final ArrayAdapter<Tracker> trackersAdapter =
-                    new ArrayAdapter<>(mContext, R.layout.list_item_trackers_details, trackerCategory.getChildren());
+                    new ArrayAdapter<Tracker>(mContext, R.layout.list_item_trackers_details, trackerCategory.getChildren()){
+                        @Override
+                        public @NonNull View getView(int pos, @Nullable View convertView,
+                                                     @NonNull ViewGroup parent) {
+                            View v = super.getView(pos, convertView, parent);
+                            updateText(pos, (TextView) v);
+                            return v;
+                        }
+
+                        private void updateText(int pos, TextView tv) {
+                            Tracker t = getItem(pos);
+                            if (t == null) return;
+                            if (!w.blocked(mAppUid, TrackerBlocklist.getBlockingKey(t)))
+                                tv.setText(t.toString(true));
+                        }
+                    };
             holder.mCompaniesList.setAdapter(trackersAdapter);
-            holder.mCompaniesList.setOnItemLongClickListener((adapterView, view, i, l) -> {
-                Tracker t = trackersAdapter.getItem(i);
-                //Toast.makeText(mContext, t.toString(), Toast.LENGTH_SHORT).show();
-                return true;
-            });
 
             if (Util.isPlayStoreInstall(mContext)) {
                 holder.mSwitch.setVisibility(View.GONE);
             } else {
-                final TrackerBlocklist w = TrackerBlocklist.getInstance(mContext);
                 holder.mSwitch.setChecked(
-                        w.blockedTracker(mAppUid, trackerCategory.name)
+                        w.blocked(mAppUid, trackerCategoryName)
                 );
-                holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                holder.mSwitch.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
-                    if (isChecked) {
-                        w.block(mAppUid, trackerCategory.name);
+                    if (hasBecomeChecked) {
+                        w.block(mAppUid, trackerCategoryName);
                     } else {
-                        w.unblock(mAppUid, trackerCategory.name);
+                        w.unblock(mAppUid, trackerCategoryName);
                     }
 
                     ServiceSinkhole.reload("trackers changed", mContext, false);
+                });
+                holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
+                    Tracker t = trackersAdapter.getItem(i);
+                    if (t == null) return;
+
+                    final boolean blockedTrackerCategory = w.blocked(mAppUid, t.category);
+                    if (!blockedTrackerCategory) {
+                        Toast.makeText(mContext, "Need to block category", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    boolean blockedTracker = w.blockedTracker(mAppUid, t);
+                    if (blockedTracker)
+                        w.unblock(mAppUid, t);
+                    else
+                        w.block(mAppUid, t);
+
+                    trackersAdapter.notifyDataSetChanged();
                 });
             }
 
@@ -141,11 +171,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
-            if (launch == null) {
+            if (launch == null)
                 holder.mLaunch.setVisibility(View.GONE);
-            } else {
+            else
                 holder.mLaunch.setOnClickListener(view -> mContext.startActivity(launch));
-            }
 
             final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
             holder.mSwitch.setChecked(
@@ -191,7 +220,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
         final Switch mSwitch;
-        TrackerCategory mTrackerCategory;
 
         VHItem(View view) {
             super(view);

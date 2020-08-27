@@ -72,21 +72,21 @@ public class TrackerList {
     }
 
     public static Tracker findTracker(String hostname) {
-        Tracker tracker = null;
+        Tracker t = null;
 
         if (hostnameToTracker.containsKey(hostname)) {
-            tracker = hostnameToTracker.get(hostname);
+            t = hostnameToTracker.get(hostname);
         } else { // check subdomains
             for (int i = 0; i < hostname.length(); i++) {
                 if (hostname.charAt(i) == '.') {
-                    tracker = hostnameToTracker.get(hostname.substring(i + 1));
-                    if (tracker != null)
+                    t = hostnameToTracker.get(hostname.substring(i + 1));
+                    if (t != null)
                         break;
                 }
             }
         }
 
-        return tracker;
+        return t;
     }
 
     /**

@@ -51,6 +51,10 @@ public class Tracker {
     @Override
     @NonNull
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean unblocked) {
         List<String> sortedHosts = getSortedHosts();
         String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
 
@@ -61,8 +65,9 @@ public class Tracker {
             title = name;
         }
 
-        if (TrackerList.necessaryTrackers.contains(name)
-                && !Util.isPlayStoreInstall())
+        if ((TrackerList.necessaryTrackers.contains(name)
+                && !Util.isPlayStoreInstall()) ||
+                unblocked)
             return title + " (Unblocked)" + hosts;
         else {
             return title + hosts;

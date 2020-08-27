@@ -58,6 +58,10 @@ public class TrackerBlocklist {
         return instance;
     }
 
+    public static String getBlockingKey(Tracker t) {
+        return t.category + " | " + t.getName();
+    }
+
     public void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
@@ -102,14 +106,14 @@ public class TrackerBlocklist {
         blockmap.clear();
     }
 
-    public synchronized void block(int uid, String tracker) {
+    public synchronized void block(int uid, String t) {
         Set<String> app = blockmap.get(uid);
         if (app == null)
             return;
-        app.remove(tracker);
+        app.remove(t);
     }
 
-    public synchronized void unblock(int uid, String tracker) {
+    public synchronized void unblock(int uid, String t) {
         Set<String> app = blockmap.get(uid);
 
         if (app == null) {
@@ -117,15 +121,28 @@ public class TrackerBlocklist {
             blockmap.put(uid, app);
         }
 
-        app.add(tracker);
+        app.add(t);
     }
 
-    public boolean blockedTracker(int uid, String tracker) {
+    public synchronized void block(int uid, Tracker t) {
+        block(uid, getBlockingKey(t));
+    }
+
+    public synchronized void unblock(int uid, Tracker t) {
+        unblock(uid, getBlockingKey(t));
+    }
+
+    public boolean blocked(int uid, String key) {
         Set<String> trackers = this.getSubset(uid);
         if (trackers == null) {
             return true;
         }
 
-        return !trackers.contains(tracker); // negate since it's a whitelist
+        return !trackers.contains(key); // negate since it's a whitelist
+    }
+
+    public boolean blockedTracker(int uid, Tracker t) {
+        return blocked(uid, t.category)
+                && blocked(uid, getBlockingKey(t));
     }
 }
