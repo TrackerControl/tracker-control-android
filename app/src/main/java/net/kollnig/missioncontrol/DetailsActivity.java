@@ -61,6 +61,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import eu.faircode.netguard.DatabaseHelper;
+
 import static net.kollnig.missioncontrol.data.InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
@@ -113,6 +115,8 @@ public class DetailsActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    private DetailsPagesAdapter detailsPagesAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +129,7 @@ public class DetailsActivity extends AppCompatActivity {
         appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
         // Set up paging
-        DetailsPagesAdapter detailsPagesAdapter =
+        detailsPagesAdapter =
                 new DetailsPagesAdapter(this,
                         getSupportFragmentManager(),
                         Common.getAppName(getPackageManager(), appUid),
@@ -164,13 +168,11 @@ public class DetailsActivity extends AppCompatActivity {
                 exportCsv();
             }
             return true;
-        } else if (itemId == R.id.action_launch) {
-            PackageManager pm = getPackageManager();
-            Intent intent = pm.getLaunchIntentForPackage(appPackageName);
-            final Intent launch = (intent == null ||
-                    intent.resolveActivity(pm) == null ? null : intent);
-            if (launch != null)
-                startActivity(launch);
+        } else if (itemId == R.id.action_clear) {
+            DatabaseHelper dh = DatabaseHelper.getInstance(this);
+            dh.clearAccess(appUid, false);
+            detailsPagesAdapter.updateTrackerLists();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

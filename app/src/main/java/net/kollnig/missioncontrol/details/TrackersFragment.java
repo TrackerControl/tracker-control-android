@@ -107,7 +107,7 @@ public class TrackersFragment extends Fragment {
         updateTrackerList();
     }
 
-    private void updateTrackerList() {
+    public void updateTrackerList() {
         new AsyncTask<Object, Object, List<TrackerCategory>>() {
             private boolean refreshing = true;
 

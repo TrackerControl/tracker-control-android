@@ -47,9 +47,9 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
     private final Context mContext;
     private int mUid;
 
-    private Fragment fTrackers;
-    private Fragment fActions;
-    private Fragment fCountries;
+    private TrackersFragment fTrackers;
+    private ActionsFragment fActions;
+    private CountriesFragment fCountries;
 
     public DetailsPagesAdapter(final Context context, FragmentManager fm, String appId, String appName, int uid) {
         super(fm);
@@ -108,5 +108,11 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return TAB_TITLES.length;
+    }
+
+
+    void updateTrackerLists() {
+        if (fTrackers != null)
+            fTrackers.updateTrackerList();
     }
 }
