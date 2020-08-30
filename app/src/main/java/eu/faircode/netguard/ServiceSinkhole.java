@@ -2007,7 +2007,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                         // Block tracker if necessary
                         TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(ServiceSinkhole.this);
                         if (tracker != null
-                                && !tracker.necessary
                                 && trackerBlocklist.blockedTracker(packet.uid, tracker)) {
                             filtered = true;
                             packet.allowed = false;

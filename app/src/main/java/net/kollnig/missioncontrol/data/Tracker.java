@@ -25,21 +25,18 @@ import java.util.Set;
 public class Tracker {
     public String name;
     public String category;
-    public Boolean necessary;
     public Long lastSeen;
     private Set<String> hosts = new HashSet<>();
 
     public Tracker(String name, String category, long lastSeen) {
         this.name = name;
         this.category = category;
-        this.necessary = false;
         this.lastSeen = lastSeen;
     }
 
-    public Tracker(String name, String category, Boolean necessary) {
+    public Tracker(String name, String category) {
         this.name = name;
         this.category = category;
-        this.necessary = necessary;
     }
 
     @Override

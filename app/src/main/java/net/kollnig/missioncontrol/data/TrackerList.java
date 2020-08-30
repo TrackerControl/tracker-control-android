@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 
 import org.json.JSONArray;
@@ -44,31 +45,16 @@ import eu.faircode.netguard.DatabaseHelper;
 
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
-    private static Set<String> necessaryTrackers = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private static Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     private static TrackerList instance;
     private DatabaseHelper databaseHelper;
 
-    public static Set<String> getNecessaryTrackers() {
-        return necessaryTrackers;
-    }
-
-    /**
-     * Database constructor
-     */
     private TrackerList(Context c) {
         databaseHelper = DatabaseHelper.getInstance(c);
-        loadXrayTrackerDomains(c);
-        loadTrackerDomains(c);
+        loadXrayTrackers(c);
+        loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
     }
 
-    /**
-     * Singleton getter.
-     *
-     * @param c context used to open the database
-     * @return The current instance of PrivacyDB, if none, a new instance is created.
-     * After calling this method, the database is open for writing.
-     */
     public static TrackerList getInstance(Context c) {
         if (instance == null)
             instance = new TrackerList(c);
@@ -76,7 +62,13 @@ public class TrackerList {
         return instance;
     }
 
-    public static Tracker findTracker(String hostname) {
+    /**
+     * Identifies tracker hosts
+     *
+     * @param hostname A hostname of interest
+     * @return A {@link Tracker} object, if host is null, null otherwise
+     */
+    public static Tracker findTracker(@NonNull String hostname) {
         Tracker t = null;
 
         if (hostnameToTracker.containsKey(hostname)) {
@@ -210,93 +202,106 @@ public class TrackerList {
         return trackerCategoryList;
     }
 
-    private void loadXrayTrackerDomains(Context context) {
-        Map<String, Tracker> companies = new HashMap<>();
+    /**
+     * Loads X-Ray tracker list
+     *
+     * @param context
+     */
+    private void loadXrayTrackers(Context context) {
+        // Keep track of parent companies
+        Map<String, Tracker> rootParents = new HashMap<>();
 
         try {
-            // Read domain list
-            InputStream is = context.getAssets().open("companyDomains.json");
+            // Read JSON
+            InputStream is = context.getAssets().open("xray-blacklist.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
             String json = new String(buffer, StandardCharsets.UTF_8);
 
+            // Each JSON array entry contains tracker company with domains
             JSONArray jsonCompanies = new JSONArray(json);
             for (int i = 0; i < jsonCompanies.length(); i++) {
                 JSONObject jsonCompany = jsonCompanies.getJSONObject(i);
 
                 Tracker tracker;
-                String country = jsonCompany.getString("country");
                 String name = jsonCompany.getString("owner_name");
-                boolean necessary;
-                if (jsonCompany.has("necessary")) {
-                    necessary = jsonCompany.getBoolean("necessary");
-                    necessaryTrackers.add(name);
-                } else {
-                    necessary = false;
-                }
+                boolean necessary = jsonCompany.has("necessary")
+                        && jsonCompany.getBoolean("necessary");
+
+                // Necessary tracker are identified at lowest company level
                 if (!jsonCompany.isNull("root_parent")
-                        && !necessary) { // necessary tracker are identified at lowest level
+                        && !necessary)
                     name = jsonCompany.getString("root_parent");
-                }
 
-                tracker = companies.get(name);
+                // Check if we've seen a tracker from the same root company
+                tracker = rootParents.get(name);
                 if (tracker == null) {
-                    tracker = new Tracker(name, "Uncategorised", necessary);
-                    companies.put(name, tracker);
+                    String category = necessary ? "Content" : "Uncategorised";
+                    tracker = new Tracker(name, category);
+                    rootParents.put(name, tracker);
                 }
 
+                // Add domains to tracker map
                 JSONArray domains = jsonCompany.getJSONArray("doms");
-                for (int j = 0; j < domains.length(); j++) {
+                for (int j = 0; j < domains.length(); j++)
                     hostnameToTracker.put(domains.getString(j), tracker);
-                }
             }
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "Loading xray list failed.. ", e);
+            Log.e(TAG, "Loading X-Ray list failed.. ", e);
         }
     }
 
-    private void loadTrackerDomains(Context context) {
+    /**
+     * Load Disconnect.me tracker list
+     *
+     * @param context
+     */
+    private void loadDisconnectTrackers(Context context) {
         try {
-            // Read domain list
-            // File is a reversed string, because some anti-virus scanners found the list suspicious
-            // More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
+            /* Read domain list:
+             *
+             * File is a reversed string, because some anti-virus scanners found the list suspicious
+             * More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
+             */
             InputStream is = context.getAssets().open("disconnect-blacklist.reversed.json");
             int size = is.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
+            int bytes_read = is.read(buffer);
             is.close();
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();
 
+            // Parse Disconnect.me list
             JSONObject disconnect = new JSONObject(json);
             JSONObject categories = (JSONObject) disconnect.get("categories");
             for (Iterator<String> it = categories.keys(); it.hasNext(); ) {
                 String categoryName = it.next();
                 JSONArray category = (JSONArray) categories.get(categoryName);
                 for (int i = 0; i < category.length(); i++) {
+                    // Found tracker, now add to list
                     JSONObject jsonTracker = category.getJSONObject(i);
                     String trackerName = jsonTracker.keys().next();
+                    Tracker tracker = new Tracker(trackerName, categoryName);
 
-                    Tracker tracker = new Tracker(trackerName, categoryName, false);
-
+                    // Parse tracker domains
                     JSONObject trackerHomeUrls = (JSONObject) jsonTracker.get(trackerName);
                     for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext(); ) {
                         String trackerHomeUrl = iter.next();
+
+                        // Skip non-domains fields
                         if (!(trackerHomeUrls.get(trackerHomeUrl) instanceof JSONArray))
-                            continue; // some have further, non-array fields
+                            continue;
 
                         JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
-
-                        for (int j = 0; j < urls.length(); j++) {
+                        for (int j = 0; j < urls.length(); j++)
                             hostnameToTracker.put(urls.getString(j), tracker);
-                        }
                     }
                 }
             }
         } catch (IOException | JSONException e) {
-            Log.e(TAG, "Loading disconnect list failed.. ", e);
+            Log.e(TAG, "Loading Disconnect.me list failed.. ", e);
         }
     }
 }

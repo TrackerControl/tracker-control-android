@@ -40,7 +40,6 @@ import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
-import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,13 +89,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             title = t.name;
         }
 
-        if ((TrackerList.getNecessaryTrackers().contains(t.name)
-                && !Util.isPlayStoreInstall()) ||
-                !blocked)
-            return title + " (Unblocked)" + hosts;
-        else {
-            return title + hosts;
-        }
+        return blocked ? title + hosts : title + " (Unblocked)" + hosts;
     }
 
     public void set(List<TrackerCategory> items) {
