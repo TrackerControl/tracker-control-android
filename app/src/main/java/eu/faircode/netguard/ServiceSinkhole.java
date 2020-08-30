@@ -2903,10 +2903,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 .setAutoCancel(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            builder.setContentTitle(getString(R.string.msg_waiting));
+            builder.setContentTitle(getString(R.string.msg_starting));
         else
             builder.setContentTitle(getString(R.string.app_name))
-                    .setContentText(getString(R.string.msg_waiting));
+                    .setContentText(getString(R.string.msg_starting));
 
         return builder.build();
     }
