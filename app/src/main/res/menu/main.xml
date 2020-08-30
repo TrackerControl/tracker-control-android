@@ -10,6 +10,7 @@
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
         android:title="@string/menu_filter"
+        android:visible="false"
         netguard:showAsAction="always|collapseActionView">
         <menu>
             <item
@@ -24,11 +25,6 @@
                 android:id="@+id/menu_app_nointernet"
                 android:checkable="true"
                 android:title="@string/menu_app_nointernet"/>
-            <item
-                android:id="@+id/menu_app_disabled"
-                android:checkable="true"
-                android:visible="false"
-                android:title="@string/menu_app_disabled"/>
         </menu>
     </item>
     <item
