@@ -38,13 +38,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import eu.faircode.netguard.DatabaseHelper;
 
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
-    private static Set<String> necessaryTrackers = new HashSet<>();
-    private static Map<String, Tracker> hostnameToTracker = new ArrayMap<>();
+    private static Set<String> necessaryTrackers = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     private static TrackerList instance;
     private DatabaseHelper databaseHelper;
 
