@@ -119,7 +119,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             VHItem holder = (VHItem) _holder;
 
             // Load data
-            final TrackerBlocklist w = TrackerBlocklist.getInstance(mContext);
+            final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
             final TrackerCategory trackerCategory = getItem(position);
             final String trackerCategoryName = trackerCategory.getCategoryName();
 
@@ -135,7 +135,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             Tracker t = getItem(pos);
                             if (t != null) {
-                                boolean blocked = w.blocked(mAppUid,
+                                boolean blocked = b.blocked(mAppUid,
                                         TrackerBlocklist.getBlockingKey(t));
                                 tv.setText(renderDetails(t, blocked));
                             }
@@ -150,15 +150,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.mSwitch.setVisibility(View.GONE);
             } else {
                 holder.mSwitch.setChecked(
-                        w.blocked(mAppUid, trackerCategoryName)
+                        b.blocked(mAppUid, trackerCategoryName)
                 );
                 holder.mSwitch.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
                     if (hasBecomeChecked) {
-                        w.block(mAppUid, trackerCategoryName);
+                        b.block(mAppUid, trackerCategoryName);
                     } else {
-                        w.unblock(mAppUid, trackerCategoryName);
+                        b.unblock(mAppUid, trackerCategoryName);
                     }
 
                     ServiceSinkhole.reload("trackers changed", mContext, false);
@@ -167,17 +167,17 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     Tracker t = trackersAdapter.getItem(i);
                     if (t == null) return;
 
-                    final boolean blockedTrackerCategory = w.blocked(mAppUid, t.category);
+                    final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
                     if (!blockedTrackerCategory) {
                         Toast.makeText(mContext, "Need to block category", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    boolean blockedTracker = w.blockedTracker(mAppUid, t);
+                    boolean blockedTracker = b.blockedTracker(mAppUid, t);
                     if (blockedTracker)
-                        w.unblock(mAppUid, t);
+                        b.unblock(mAppUid, t);
                     else
-                        w.block(mAppUid, t);
+                        b.block(mAppUid, t);
 
                     trackersAdapter.notifyDataSetChanged();
                 });

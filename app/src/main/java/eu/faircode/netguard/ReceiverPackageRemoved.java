@@ -27,6 +27,8 @@ import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
 
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
+
 public class ReceiverPackageRemoved extends BroadcastReceiver {
     private static final String TAG = "TrackerControl.Receiver";
 
@@ -42,6 +44,9 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
                 DatabaseHelper dh = DatabaseHelper.getInstance(context);
                 dh.clearLog(uid);
                 dh.clearAccess(uid, false);
+
+                TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+                b.clear(uid);
 
                 NotificationManagerCompat.from(context).cancel(uid); // installed notification
                 NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification

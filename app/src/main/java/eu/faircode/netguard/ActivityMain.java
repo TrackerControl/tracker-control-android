@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -35,6 +36,7 @@ import android.net.VpnService;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -71,8 +73,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 
 import java.util.List;
+
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
@@ -153,7 +158,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean enabled = prefs.getBoolean("enabled", false);
-        boolean initialized = prefs.getBoolean("initialized", false);
+        final boolean initialized = prefs.getBoolean("initialized", false);
 
         // Upgrade
         ReceiverAutostart.upgrade(initialized, this);
@@ -239,7 +244,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         } else {
                             // Show dialog
                             LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
-                            View view = inflater.inflate(R.layout.vpn, null, false);
+                            final View view = inflater.inflate(R.layout.vpn, null, false);
+                            final SwitchCompat swStrictMode = view.findViewById(R.id.swStrictBlocking);
+                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode", false);
+                            if (initializedStrictMode) {
+                                swStrictMode.setVisibility(View.GONE);
+                                view.findViewById(R.id.tvStrictBlocking).setVisibility(View.GONE);
+                            }
+
                             dialogVpn = new AlertDialog.Builder(ActivityMain.this)
                                     .setView(view)
                                     .setCancelable(false)
@@ -247,6 +259,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (running) {
+                                                if (!initializedStrictMode)
+                                                    initiliaseStrictMode(swStrictMode.isChecked());
+
                                                 Log.i(TAG, "Start intent=" + prepare);
                                                 try {
                                                     // com.android.vpndialogs.ConfirmDialog required
@@ -385,6 +400,29 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Handle intent
         checkExtras(getIntent());
+    }
+
+    private void initiliaseStrictMode(boolean strictMode) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putBoolean("initialized_strict_mode", true).apply();
+        prefs.edit().putBoolean("strict_mode", strictMode).apply();
+
+        if (!strictMode) {
+            new Thread(() -> {
+                TrackerBlocklist b = TrackerBlocklist.getInstance(this);
+                for (PackageInfo info : Rule.getPackages(this))
+                    try {
+                        // Skip self and system apps
+                        if (info.applicationInfo.uid == Process.myUid()
+                                || Rule.isSystem(info.applicationInfo.packageName, this))
+                            continue;
+
+                        b.unblock(info.applicationInfo.uid, NECESSARY_CATEGORY);
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    }
+            }).start();
+        }
     }
 
     @Override
@@ -633,6 +671,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
             updateApplicationList(null);
+
+            String action = (intent == null ? null : intent.getAction());
+            if (Intent.ACTION_PACKAGE_ADDED.equals(action)) {
+                int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
+                if (uid > 0) {
+                    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+                    if (!prefs.getBoolean("strict_blocking", true))
+                        b.unblock(uid, NECESSARY_CATEGORY);
+                }
+            }
         }
     };
 

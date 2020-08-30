@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TrackerBlocklist {
     public static final String SHARED_PREFS_BLOCKLIST_APPS_KEY = "APPS_BLOCKLIST_APPS_KEY";
     final public static String PREF_BLOCKLIST = "blocklist";
+    public static String NECESSARY_CATEGORY = "Content";
     private static TrackerBlocklist instance;
     /**
      * Whilst blockmap is a list of apps to block, the set is a set of trackers not to block.
@@ -104,6 +105,10 @@ public class TrackerBlocklist {
 
     public void clear() {
         blockmap.clear();
+    }
+
+    public void clear(int uid) {
+        blockmap.remove(uid);
     }
 
     public synchronized void block(int uid, String t) {

@@ -98,12 +98,12 @@ public class DetailsActivity extends AppCompatActivity {
         editor.clear();
 
         // Tracker settings
-        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(c);
-        Set<Integer> trackerIntSet = trackerBlocklist.getBlocklist();
+        TrackerBlocklist b = TrackerBlocklist.getInstance(c);
+        Set<Integer> trackerIntSet = b.getBlocklist();
         Set<String> trackerSet = intToStringSet(trackerIntSet);
         editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
         for (Integer uid : trackerIntSet) {
-            Set<String> subset = trackerBlocklist.getSubset(uid);
+            Set<String> subset = b.getSubset(uid);
             editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, subset);
         }
 

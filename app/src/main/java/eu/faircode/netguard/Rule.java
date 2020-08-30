@@ -99,7 +99,7 @@ public class Rule {
     private static Map<String, Boolean> cacheInternet = new HashMap<>();
     private static Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
 
-    private static List<PackageInfo> getPackages(Context context) {
+    static List<PackageInfo> getPackages(Context context) {
         if (cachePackageInfo == null) {
             PackageManager pm = context.getPackageManager();
             cachePackageInfo = pm.getInstalledPackages(0);
@@ -115,7 +115,7 @@ public class Rule {
         return cacheLabel.get(info);
     }
 
-    private static boolean isSystem(String packageName, Context context) {
+    static boolean isSystem(String packageName, Context context) {
         if (!cacheSystem.containsKey(packageName))
             cacheSystem.put(packageName, Util.isSystem(packageName, context));
         return cacheSystem.get(packageName);
