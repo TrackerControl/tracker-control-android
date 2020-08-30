@@ -650,8 +650,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
         // Called every 12 hours
         private void householding(Intent intent) {
-            // Keep log records for three days
-            DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupLog(new Date().getTime() - 3 * 24 * 3600 * 1000L);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+
+            // Keep log records for three days, only wipe if logging on
+            if (prefs.getBoolean("log", false))
+                DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupLog(new Date().getTime() - 3 * 24 * 3600 * 1000L);
 
             // Clear expired DNS records
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
@@ -661,7 +664,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             ipToTracker.clear();
 
             // Check for update
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
             if (!Util.isPlayStoreInstall(ServiceSinkhole.this) && !Util.isFDroidInstall() && prefs.getBoolean("update_check", true))
                 checkUpdate();
         }
