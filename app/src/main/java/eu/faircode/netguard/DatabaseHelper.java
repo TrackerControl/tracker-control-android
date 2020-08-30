@@ -888,7 +888,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String getQName(int uid, String ip) {
         lock.readLock().lock();
         try {
-            // Custom code
             if (readableDb == null)
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
@@ -911,7 +910,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getQAName(int uid, String ip) {
         lock.readLock().lock();
         try {
-            // Custom code
             if (readableDb == null)
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
@@ -921,11 +919,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " WHERE d.resource = '" + ip.replace("'", "''") + "'";
             query += " ORDER BY d.qname";
             query += " LIMIT 1";
-            // There is no way to known for sure which domain name an app used, so just pick the first one
             return db.rawQuery(query, new String[]{});
-        } catch (SQLiteDoneException ignored) {
-            // Not found
-            return null;
         } finally {
             lock.readLock().unlock();
         }

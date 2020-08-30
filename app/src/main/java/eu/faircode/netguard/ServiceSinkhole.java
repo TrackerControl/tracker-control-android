@@ -1964,12 +1964,16 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                             Cursor lookup = dh.getQAName(packet.uid, packet.daddr);
                             String aname = null;
-                            if (lookup.moveToNext()) {
+
+                            // Pick first entry of database lookup -- no way to be sure
+                            if (lookup != null && lookup.moveToNext()) {
                                 dname = lookup.getString(lookup.getColumnIndex("qname"));
                                 aname = lookup.getString(lookup.getColumnIndex("aname"));
                             } else
                                 dname = null;
-                            lookup.close();
+
+                            if (lookup != null)
+                                lookup.close();
 
                             // Check dname for tracker
                             if (dname == null) {
@@ -1977,9 +1981,11 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                                 tracker = NO_TRACKER;
                             } else {
                                 tracker = TrackerList.findTracker(dname);
+
+                                // DNS Uncloaking
                                 if (tracker == null
                                         && aname != null) {
-                                    tracker = TrackerList.findTracker(aname); // DNS Cloaking
+                                    tracker = TrackerList.findTracker(aname);
 
                                     if (tracker != null) {
                                         dname = aname;
