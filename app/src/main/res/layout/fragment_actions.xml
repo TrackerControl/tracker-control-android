@@ -55,7 +55,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:text="@string/personalised_ads_description"
+                        android:text="@string/personalised_ads_description_2"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/img"
                         app:layout_constraintStart_toStartOf="parent"

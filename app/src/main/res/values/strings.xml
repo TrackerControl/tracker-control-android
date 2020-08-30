@@ -433,7 +433,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="block_tracking">Block trackers</string>
     <string name="block_tracking_description">Many apps send data to third-parties, so-called trackers. TrackerControl allows to block these network transmissions selectively. Yet, use this wisely, since app developers rely on these services, notably advertising.</string>
     <string name="personalised_ads">Limit Personalisation</string>
-    <string name="personalised_ads_description">As an alternative to complete blocking, Android offers a setting to limit the usage of personal data for analytics and advertising purposes. However, personal data may still be transmitted and therefore requires trust in the data-receiving companies.</string>
+    <string name="personalised_ads_description_2">Android offers to limit apps\' access to the Google Advertising ID of your device. However, apps can potentially ignore this setting, and still use this ID. They can also continue to collect this ID for analytics purposes, according to Google\'s policies.</string>
     <string name="data_managment">Manage Data</string>
     <string name="data_management_description">The EU General Data Protection Regulation (GDPR) allows users from the EU to manage any data related to them. This app provides email templates to reach out to the developer. The developer has to answer within one month.</string>
     <string name="contacts">Contact </string>
