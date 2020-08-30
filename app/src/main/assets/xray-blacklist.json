@@ -4536,7 +4536,8 @@
     ],
     "owner_name": "Fastly",
     "root_parent": null,
-    "parent": null
+    "parent": null,
+    "necessary": true
   },
   {
     "country": "us",

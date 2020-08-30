@@ -144,7 +144,6 @@ public class TrackerList {
         Map<String, TrackerCategory> categoryToTracker = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts(uid);
-
         if (cursor.moveToFirst()) {
             outer:
             do {
