@@ -121,7 +121,7 @@ public class TrackersFragment extends Fragment {
 
             @Override
             protected List<TrackerCategory> doInBackground(Object... arg) {
-                return trackerList.getAppTrackers(mAppUid);
+                return trackerList.getAppTrackers(getContext(), mAppUid);
             }
 
             @Override

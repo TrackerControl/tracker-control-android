@@ -17,17 +17,40 @@
 
 package net.kollnig.missioncontrol.data;
 
+import android.content.Context;
+
+import net.kollnig.missioncontrol.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrackerCategory {
-    public String name;
+    public String category;
     public Long lastSeen;
     private List<Tracker> children;
 
-    TrackerCategory(String name, long lastSeen) {
-        this.name = name;
+    TrackerCategory(String category, long lastSeen) {
+        this.category = category;
         this.lastSeen = lastSeen;
+    }
+
+    public String getDisplayName(Context c) {
+        switch (category) {
+            case "Advertising":
+                return c.getString(R.string.tracker_advertising);
+            case "Analytics":
+                return c.getString(R.string.tracker_analytics);
+            case "Content":
+                return c.getString(R.string.tracker_content);
+            case "Cryptomining":
+                return c.getString(R.string.tracker_cryptomining);
+            case "Fingerprinting":
+                return c.getString(R.string.tracker_fingerprinting);
+            case "Social":
+                return c.getString(R.string.tracker_social);
+            default:
+                return c.getString(R.string.tracker_uncategorised);
+        }
     }
 
     public List<Tracker> getChildren() {
@@ -39,7 +62,7 @@ public class TrackerCategory {
         }
     }
 
-    public String getName() {
-        return name;
+    public String getCategoryName() {
+        return category;
     }
 }

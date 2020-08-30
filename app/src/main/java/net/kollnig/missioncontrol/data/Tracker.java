@@ -17,16 +17,10 @@
 
 package net.kollnig.missioncontrol.data;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-
-import eu.faircode.netguard.Util;
 
 public class Tracker {
     public String name;
@@ -51,27 +45,7 @@ public class Tracker {
     @Override
     @NonNull
     public String toString() {
-        return toString(false);
-    }
-
-    public String toString(boolean unblocked) {
-        List<String> sortedHosts = getSortedHosts();
-        String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
-
-        String title;
-        if (lastSeen != 0) {
-            title = name + "  (" + Util.relativeTime(lastSeen) + ")";
-        } else {
-            title = name;
-        }
-
-        if ((TrackerList.necessaryTrackers.contains(name)
-                && !Util.isPlayStoreInstall()) ||
-                unblocked)
-            return title + " (Unblocked)" + hosts;
-        else {
-            return title + hosts;
-        }
+        return getName();
     }
 
     public String getName() {
@@ -87,9 +61,7 @@ public class Tracker {
         this.hosts.add(host);
     }
 
-    private List<String> getSortedHosts() {
-        List<String> list = new ArrayList<>(hosts);
-        java.util.Collections.sort(list);
-        return list;
+    public Set<String> getHosts() {
+        return hosts;
     }
 }

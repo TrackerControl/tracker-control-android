@@ -43,10 +43,14 @@ import eu.faircode.netguard.DatabaseHelper;
 
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
-    static Set<String> necessaryTrackers = new HashSet<>();
+    private static Set<String> necessaryTrackers = new HashSet<>();
     private static Map<String, Tracker> hostnameToTracker = new ArrayMap<>();
     private static TrackerList instance;
     private DatabaseHelper databaseHelper;
+
+    public static Set<String> getNecessaryTrackers() {
+        return necessaryTrackers;
+    }
 
     /**
      * Database constructor
@@ -143,7 +147,7 @@ public class TrackerList {
      *
      * @return A list of seen trackers
      */
-    public synchronized List<TrackerCategory> getAppTrackers(int uid) {
+    public synchronized List<TrackerCategory> getAppTrackers(Context c, int uid) {
         Map<String, TrackerCategory> categoryToTracker = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts(uid);
@@ -194,15 +198,15 @@ public class TrackerList {
         cursor.close();
 
         // map to list
-        List<TrackerCategory> trackerList = new ArrayList<>(categoryToTracker.values());
+        List<TrackerCategory> trackerCategoryList = new ArrayList<>(categoryToTracker.values());
 
         // sort lists
-        Collections.sort(trackerList, (o1, o2) -> o1.name.compareTo(o2.name));
-        for (TrackerCategory child : trackerList) {
+        Collections.sort(trackerCategoryList, (o1, o2) -> o1.getDisplayName(c).compareTo(o2.getDisplayName(c)));
+        for (TrackerCategory child : trackerCategoryList) {
             Collections.sort(child.getChildren(), (o1, o2) -> o2.lastSeen.compareTo(o1.lastSeen));
         }
 
-        return trackerList;
+        return trackerCategoryList;
     }
 
     private void loadXrayTrackerDomains(Context context) {

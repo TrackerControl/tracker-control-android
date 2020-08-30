@@ -505,4 +505,12 @@ Sincerely,\n\n]]></string>
     <string name="countries">Destination Countries</string>
     <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
     <string name="countries_loading_failed">Oops.. The country map failed to load. Please tell tc@kollnig.net how this happened.</string>
+
+    <string name="tracker_advertising">Advertising</string>
+    <string name="tracker_analytics">Analytics</string>
+    <string name="tracker_content">Often Necessary</string>
+    <string name="tracker_cryptomining">Cryptomining</string>
+    <string name="tracker_fingerprinting">Fingerprinting</string>
+    <string name="tracker_social">Social</string>
+    <string name="tracker_uncategorised">Uncategorised</string>
 </resources>

@@ -19,6 +19,7 @@ package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_ITEM = 1;
 
     private final String TAG = TrackersListAdapter.class.getSimpleName();
-    private final RecyclerView recyclerView;
     private final Integer mAppUid;
     private final String mAppId;
     private final Context mContext;
@@ -62,10 +63,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Intent launch;
 
     public TrackersListAdapter(Context c,
-                               RecyclerView root,
+                               RecyclerView v,
                                Integer appUid,
                                String appId) {
-        recyclerView = root;
         mContext = c;
         mAppUid = appUid;
         mAppId = appId;
@@ -75,7 +75,28 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.resolveActivity(mContext.getPackageManager()) == null ? null : intent);
 
         // Removes blinks
-        ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) v.getItemAnimator()).setSupportsChangeAnimations(false);
+    }
+
+    public static String renderDetails(Tracker t, boolean blocked) {
+        List<String> sortedHosts = new ArrayList<>(t.getHosts());
+        java.util.Collections.sort(sortedHosts);
+        String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
+
+        String title;
+        if (t.lastSeen != 0) {
+            title = t.name + " (" + Util.relativeTime(t.lastSeen) + ")";
+        } else {
+            title = t.name;
+        }
+
+        if ((TrackerList.getNecessaryTrackers().contains(t.name)
+                && !Util.isPlayStoreInstall()) ||
+                !blocked)
+            return title + " (Unblocked)" + hosts;
+        else {
+            return title + hosts;
+        }
     }
 
     public void set(List<TrackerCategory> items) {
@@ -107,26 +128,28 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // Load data
             final TrackerBlocklist w = TrackerBlocklist.getInstance(mContext);
             final TrackerCategory trackerCategory = getItem(position);
-            final String trackerCategoryName = trackerCategory.name;
+            final String trackerCategoryName = trackerCategory.getCategoryName();
 
             // Add data to view
-            holder.mTrackerCategoryName.setText(trackerCategoryName);
+            holder.mTrackerCategoryName.setText(trackerCategory.getDisplayName(mContext));
             final ArrayAdapter<Tracker> trackersAdapter =
-                    new ArrayAdapter<Tracker>(mContext, R.layout.list_item_trackers_details, trackerCategory.getChildren()){
+                    new ArrayAdapter<Tracker>(mContext, R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
                         @Override
-                        public @NonNull View getView(int pos, @Nullable View convertView,
-                                                     @NonNull ViewGroup parent) {
-                            View v = super.getView(pos, convertView, parent);
-                            updateText(pos, (TextView) v);
-                            return v;
+                        public @NonNull
+                        View getView(int pos, @Nullable View convertView,
+                                     @NonNull ViewGroup parent) {
+                            TextView tv = (TextView) super.getView(pos, convertView, parent);
+
+                            Tracker t = getItem(pos);
+                            if (t != null) {
+                                boolean blocked = w.blocked(mAppUid,
+                                        TrackerBlocklist.getBlockingKey(t));
+                                tv.setText(renderDetails(t, blocked));
+                            }
+
+                            return tv;
                         }
 
-                        private void updateText(int pos, TextView tv) {
-                            Tracker t = getItem(pos);
-                            if (t == null) return;
-                            if (!w.blocked(mAppUid, TrackerBlocklist.getBlockingKey(t)))
-                                tv.setText(t.toString(true));
-                        }
                     };
             holder.mCompaniesList.setAdapter(trackersAdapter);
 
