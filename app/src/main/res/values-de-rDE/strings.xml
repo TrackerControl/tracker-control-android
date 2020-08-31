@@ -326,7 +326,7 @@
     <string name="tab_actions">Meine Daten</string>
     <string name="summary_loading_error">App-Beschreibung konnte nicht geladen werden.</string>
     <string name="tracker_name">Trackername</string>
-    <string name="internet_access">Internetzugriff blockieren</string>
+    <string name="internet_access">Internetzugriff</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>

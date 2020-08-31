@@ -387,8 +387,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item quantity="other">%d trackers observed</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">%d company observed</item>
-        <item quantity="other">%d companies observed</item>
+        <item quantity="one">tried contacting at least %d company</item>
+        <item quantity="other">tried contacting at least %d companies</item>
     </plurals>
     <string name="title_apps">Apps</string>
     <string name="menu_reset_monitoring">Reset monitoring</string>
@@ -426,7 +426,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tab_actions">My Data</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
-    <string name="internet_access">Block Internet Access</string>
+    <string name="internet_access">Internet Access</string>
+    <string name="internet_access_explanation">Can also be blocked by tapping the app icon in the main screen.</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
@@ -518,4 +519,16 @@ Sincerely,\n\n]]></string>
 
     <string name="setting_strict_blocking">Strict Blocking</string>
     <string name="summary_strict_blocking">Block potentially necessary trackers. More apps will break.</string>
+    <string name="strict_blocking_explanation">Strict Blocking will prevent more trackers, but likely break some apps.</string>
+
+    <string name="exclude_vpn" translatable="false">TrackerControl</string>
+    <string name="exclude_vpn_explanation">If you run into issues, you can exclude the app\'s Internet communications from TrackerControl\'s VPN.</string>
+    <string name="exclude_vpn_enable">Enable</string>
+
+    <string name="uninstall">Uninstall</string>
+
+    <string name="no_trackers_found_message">Enable switch above, then launch app to find trackers.</string>
+    <string name="no_trackers_found_action">Launch</string>
+    <string name="no_internet_message">"This app has no Internet access. It might still track you by exchanging data with other apps."</string>
+    <string name="no_internet">No Internet access</string>
 </resources>

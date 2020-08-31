@@ -18,13 +18,12 @@
 package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -44,7 +43,6 @@ import net.kollnig.missioncontrol.data.TrackerCategory;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 /**
@@ -59,7 +57,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final String mAppId;
     private final Context mContext;
     private List<TrackerCategory> mValues = new ArrayList<>();
-    private Intent launch;
+    private final SharedPreferences apply;
 
     public TrackersListAdapter(Context c,
                                RecyclerView v,
@@ -69,9 +67,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mAppUid = appUid;
         mAppId = appId;
 
-        Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(mAppId);
-        launch = (intent == null ||
-                intent.resolveActivity(mContext.getPackageManager()) == null ? null : intent);
+        apply = mContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
 
         // Removes blinks
         ((SimpleItemAnimator) v.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -147,12 +143,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mCompaniesList.setAdapter(trackersAdapter);
 
             if (Util.isPlayStoreInstall(mContext)) {
-                holder.mSwitch.setVisibility(View.GONE);
+                holder.mSwitchTracker.setVisibility(View.GONE);
             } else {
-                holder.mSwitch.setChecked(
+                holder.mSwitchTracker.setEnabled(apply.getBoolean(mAppId, true));
+                holder.mSwitchTracker.setChecked(
                         b.blocked(mAppUid, trackerCategoryName)
                 );
-                holder.mSwitch.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
+                holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
                     if (hasBecomeChecked) {
@@ -160,8 +157,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         b.unblock(mAppUid, trackerCategoryName);
                     }
-
-                    ServiceSinkhole.reload("trackers changed", mContext, false);
                 });
                 holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
                     Tracker t = trackersAdapter.getItem(i);
@@ -187,17 +182,21 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
-            if (launch == null)
-                holder.mLaunch.setVisibility(View.GONE);
-            else
-                holder.mLaunch.setOnClickListener(view -> mContext.startActivity(launch));
+            // Exclusion from VPN
+            holder.mSwitchVPN.setChecked(apply.getBoolean(mAppId, true));
+            holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (!buttonView.isPressed()) return; // to fix errors
+                apply.edit().putBoolean(mAppId, isChecked).apply();
+                notifyDataSetChanged();
+            });
 
+            // Blocking of Internet
             final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
-            holder.mSwitch.setChecked(
+            holder.mSwitchInternet.setEnabled(apply.getBoolean(mAppId, true));
+            holder.mSwitchInternet.setChecked(
                     w.blockedInternet(mAppUid)
             );
-
-            holder.mSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            holder.mSwitchInternet.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed()) return; // to fix errors
 
                 if (isChecked) {
@@ -205,8 +204,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 } else {
                     w.unblock(mAppUid);
                 }
-
-                ServiceSinkhole.reload("internet access changed", mContext, false);
             });
         }
     }
@@ -235,24 +232,24 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHItem extends RecyclerView.ViewHolder {
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
-        final Switch mSwitch;
+        final Switch mSwitchTracker;
 
         VHItem(View view) {
             super(view);
             mTrackerCategoryName = view.findViewById(R.id.root_name);
             mCompaniesList = view.findViewById(R.id.details_list);
-            mSwitch = view.findViewById(R.id.switch_tracker);
+            mSwitchTracker = view.findViewById(R.id.switch_tracker);
         }
     }
 
     static class VHHeader extends RecyclerView.ViewHolder {
-        final Switch mSwitch;
-        final Button mLaunch;
+        final Switch mSwitchInternet;
+        final Switch mSwitchVPN;
 
         VHHeader(View view) {
             super(view);
-            mSwitch = view.findViewById(R.id.switch_internet);
-            mLaunch = view.findViewById(R.id.btnLaunch);
+            mSwitchInternet = view.findViewById(R.id.switch_internet);
+            mSwitchVPN = view.findViewById(R.id.switch_vpn);
         }
     }
 }

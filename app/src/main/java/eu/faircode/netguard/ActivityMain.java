@@ -99,6 +99,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final int REQUEST_INVITE = 2;
     private static final int REQUEST_LOGCAT = 3;
     public static final int REQUEST_ROAMING = 4;
+    public static final int REQUEST_DETAILS_UPDATED = 5;
 
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
 
@@ -246,7 +247,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
                             final View view = inflater.inflate(R.layout.vpn, null, false);
                             final SwitchCompat swStrictMode = view.findViewById(R.id.swStrictBlocking);
-                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode", false);
+                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode", Util.isPlayStoreInstall());
                             if (initializedStrictMode) {
                                 swStrictMode.setVisibility(View.GONE);
                                 view.findViewById(R.id.tvStrictBlocking).setVisibility(View.GONE);
@@ -314,7 +315,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
-        getSupportActionBar().setTitle(getString(R.string.app_name_short));
 
         // Disabled warning
         TextView tvDisabled = findViewById(R.id.tvDisabled);
@@ -552,7 +552,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Log.i(TAG, "Export URI=" + target);
                 Util.sendLogcat(target, this);
             }
-
+        } else if (requestCode == REQUEST_DETAILS_UPDATED) {
+            Rule.clearCache(ActivityMain.this);
+            ServiceSinkhole.reload("details closed", ActivityMain.this, false);
+            updateApplicationList(null);
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);

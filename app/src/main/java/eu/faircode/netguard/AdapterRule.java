@@ -21,6 +21,7 @@
 package eu.faircode.netguard;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -29,6 +30,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -61,6 +64,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
@@ -72,6 +76,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.snackbar.Snackbar;
 
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
@@ -82,6 +87,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static eu.faircode.netguard.ActivityMain.REQUEST_DETAILS_UPDATED;
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
@@ -124,7 +130,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         public LinearLayout llApplication;
         public ImageView ivIcon;
-        public ImageView ivConnection;
         public ImageView ivExpander;
         public TextView tvName;
 
@@ -188,7 +193,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             llApplication = itemView.findViewById(R.id.llApplication);
             ivIcon = itemView.findViewById(R.id.ivIcon);
-            ivConnection = itemView.findViewById(R.id.ivConnection);
 
             ivExpander = itemView.findViewById(R.id.ivExpander);
             tvName = itemView.findViewById(R.id.tvName);
@@ -485,38 +489,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
-        final Intent settings = new Intent(context, DetailsActivity.class);
-        settings.putExtra(INTENT_EXTRA_APP_NAME, rule.name);
-        settings.putExtra(INTENT_EXTRA_APP_PACKAGENAME, rule.packageName);
-        settings.putExtra(INTENT_EXTRA_APP_UID, rule.uid);
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View view) {
-                if (holder.cbApply.isChecked())
-                    context.startActivity(settings);
-            }
-        });
-
-        // Launch application settings
-        if (rule.expanded) {
-            // Custom code
-            /*Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            intent.setData(Uri.parse("package:" + rule.packageName));
-            final Intent settings = (intent.resolveActivity(context.getPackageManager()) == null ? null : intent);
-
-            holder.ibSettings.setVisibility(settings == null ? View.GONE : View.VISIBLE);*/
-
-            holder.ibSettings.setVisibility(View.VISIBLE);
-            holder.ibSettings.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    context.startActivity(settings);
-                }
-            });
-        } else
-            holder.ibSettings.setVisibility(View.GONE);
-
         // Launch application
         if (rule.expanded) {
             Intent intent = context.getPackageManager().getLaunchIntentForPackage(rule.packageName);
@@ -546,29 +518,74 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         });
 
         // Show if Internet access blocked
+        final ImageView iv = holder.ivIcon;
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
-        if (rule.apply &&
-                internetBlocklist.blockedInternet(rule.uid)) {
-            holder.ivConnection.setVisibility(View.VISIBLE);
-            holder.ivConnection.setImageResource(R.drawable.other_off);
-        } else {
-            holder.ivConnection.setVisibility(View.INVISIBLE);
-        }
+        if (!rule.internet ||
+                (rule.apply && internetBlocklist.blockedInternet(rule.uid)))
+            ivGreyscaleOn(iv);
+        else
+            ivGreyscaleOff(iv);
+
+        if (rule.internet)
+            holder.ivIcon.setOnClickListener(view -> {
+                if (rule.apply) {
+                    if (internetBlocklist.blockedInternet(rule.uid)) {
+                        internetBlocklist.unblock(rule.uid);
+                        ivGreyscaleOff(iv);
+                    } else {
+                        internetBlocklist.block(rule.uid);
+                        ivGreyscaleOn(iv);
+                    }
+                }
+            });
+        else
+            holder.ivIcon.setOnClickListener(null);
 
         if (Util.isPlayStoreInstall()) {
             holder.cbApply.setVisibility(View.INVISIBLE);
             holder.cbApply.setWidth(0);
         }
 
-        // Custom code: show tracker count
-        int trackerCount = rule.getTrackerCount();
+        final int trackerCount = rule.getTrackerCount();
         if (trackerCount > 0) {
             holder.tvDetails.setVisibility(View.VISIBLE);
             holder.tvDetails.setText(context.getResources().getQuantityString(
                     R.plurals.n_companies_found, trackerCount, trackerCount));
-        } else {
-            holder.tvDetails.setVisibility(View.GONE);
+        } else if (!rule.internet) {
+            holder.tvDetails.setVisibility(View.VISIBLE);
+            holder.tvDetails.setText(R.string.no_internet);
         }
+        else
+            holder.tvDetails.setVisibility(View.GONE);
+
+        holder.itemView.setOnClickListener(view -> {
+            if (trackerCount > 0){
+                final Intent settings = new Intent(context, DetailsActivity.class);
+                settings.putExtra(INTENT_EXTRA_APP_NAME, rule.name);
+                settings.putExtra(INTENT_EXTRA_APP_PACKAGENAME, rule.packageName);
+                settings.putExtra(INTENT_EXTRA_APP_UID, rule.uid);
+
+                if (context instanceof Activity)
+                    ((Activity) context).startActivityForResult(settings, REQUEST_DETAILS_UPDATED);
+                else
+                    Toast.makeText(context, "Oops. Cannot open details. Contact the developer at tc@kollnig.net", Toast.LENGTH_LONG).show();
+            } else if (rule.internet) {
+                Intent intent = context.getPackageManager().getLaunchIntentForPackage(rule.packageName);
+                final Intent launch = (intent == null ||
+                        intent.resolveActivity(context.getPackageManager()) == null ? null : intent);
+                if (launch != null) {
+                    View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+                    Snackbar s = Snackbar.make(v, R.string.no_trackers_found_message, Snackbar.LENGTH_LONG);
+                    s.setAction(R.string.no_trackers_found_action, v1 -> context.startActivity(launch));
+                    s.setActionTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                    s.show();
+                }
+            } else {
+                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+                Snackbar s = Snackbar.make(v, R.string.no_internet_message, Snackbar.LENGTH_LONG);
+                s.show();
+            }
+        });
 
         // Show Wi-Fi screen on condition
         holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);
@@ -893,6 +910,30 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 updateRule(context, rule, true, listAll);
             }
         });
+    }
+
+    /**
+     * Apply greyscale colour filter
+     * @param iv
+     */
+    private void ivGreyscaleOn(ImageView iv) {
+        // grey scale, transparent app icon
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);  //0 means grayscale
+        ColorMatrixColorFilter cf = new ColorMatrixColorFilter(matrix);
+        iv.setColorFilter(cf);
+        iv.setImageAlpha(128);   // 128 = 0.5
+        iv.setAlpha((float) .75);
+    }
+
+    /**
+     * Resets greyscale colour filter
+     * @param iv
+     */
+    private void ivGreyscaleOff(ImageView iv) {
+        iv.setColorFilter(null);
+        iv.setImageAlpha(255);
+        iv.setAlpha((float) 1.0);
     }
 
     @Override

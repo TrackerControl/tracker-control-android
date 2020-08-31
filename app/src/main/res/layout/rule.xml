@@ -21,8 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_toStartOf="@+id/ivConnection"
+        android:layout_toStartOf="@+id/cbApply"
         android:layout_toEndOf="@+id/ivIcon"
+        android:layout_marginEnd="8dp"
         android:gravity="bottom"
         android:minHeight="46dp"
         android:orientation="vertical">
@@ -54,18 +55,8 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/ivConnection"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_toStartOf="@+id/cbApply"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_rocket" />
-
     <Switch
+        android:visibility="gone"
         android:id="@+id/cbApply"
         android:layout_width="wrap_content"
         android:layout_height="72dp"
