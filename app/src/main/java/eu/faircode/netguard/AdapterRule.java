@@ -519,26 +519,25 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         // Show if Internet access blocked
         final ImageView iv = holder.ivIcon;
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
-        if (!rule.internet ||
-                (rule.apply && internetBlocklist.blockedInternet(rule.uid)))
-            ivGreyscaleOn(iv);
-        else
-            ivGreyscaleOff(iv);
+        setGreyscale(iv, rule.internet && rule.apply && internetBlocklist.blockedInternet(rule.uid));
+        holder.ivIcon.setOnClickListener(view -> {
+            if (!rule.internet)
+                return;
 
-        if (rule.internet)
-            holder.ivIcon.setOnClickListener(view -> {
-                if (rule.apply) {
-                    if (internetBlocklist.blockedInternet(rule.uid)) {
-                        internetBlocklist.unblock(rule.uid);
-                        ivGreyscaleOff(iv);
-                    } else {
-                        internetBlocklist.block(rule.uid);
-                        ivGreyscaleOn(iv);
-                    }
-                }
-            });
-        else
-            holder.ivIcon.setOnClickListener(null);
+            if (!rule.apply) {
+                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+                Snackbar s = Snackbar.make(v, R.string.bypass_vpn_error, Snackbar.LENGTH_LONG);
+                s.show();
+                return;
+            }
+
+            boolean wasBlocked = internetBlocklist.blockedInternet(rule.uid);
+            if (wasBlocked)
+                internetBlocklist.unblock(rule.uid);
+            else
+                internetBlocklist.block(rule.uid);
+            setGreyscale(iv, !wasBlocked);
+        });
 
         if (Util.isPlayStoreInstall()) {
             holder.cbApply.setVisibility(View.INVISIBLE);
@@ -898,28 +897,17 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         });
     }
 
-    /**
-     * Apply greyscale colour filter
-     * @param iv
-     */
-    private void ivGreyscaleOn(ImageView iv) {
-        // grey scale, transparent app icon
-        ColorMatrix matrix = new ColorMatrix();
-        matrix.setSaturation(0);  //0 means grayscale
-        ColorMatrixColorFilter cf = new ColorMatrixColorFilter(matrix);
-        iv.setColorFilter(cf);
-        iv.setImageAlpha(128);   // 128 = 0.5
-        iv.setAlpha((float) .75);
-    }
-
-    /**
-     * Resets greyscale colour filter
-     * @param iv
-     */
-    private void ivGreyscaleOff(ImageView iv) {
-        iv.setColorFilter(null);
-        iv.setImageAlpha(255);
-        iv.setAlpha((float) 1.0);
+    private void setGreyscale(ImageView iv, boolean on){
+        if (on) {
+            ColorMatrix matrix = new ColorMatrix();
+            matrix.setSaturation(0);  //0 means grayscale
+            ColorMatrixColorFilter cf = new ColorMatrixColorFilter(matrix);
+            iv.setColorFilter(cf);
+            iv.setImageAlpha(128);   // 128 = 0.5
+        } else {
+            iv.setColorFilter(null);
+            iv.setImageAlpha(255);
+        }
     }
 
     @Override
