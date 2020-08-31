@@ -314,7 +314,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
-        getSupportActionBar().setTitle("TC");
+        getSupportActionBar().setTitle(getString(R.string.app_name_short));
 
         // Disabled warning
         TextView tvDisabled = findViewById(R.id.tvDisabled);

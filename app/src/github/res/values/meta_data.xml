@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">TrackerControl</string>
+    <string name="app_name_short" translatable="false">TC</string>
+</resources>

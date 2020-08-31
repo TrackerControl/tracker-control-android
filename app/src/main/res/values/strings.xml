@@ -420,7 +420,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="exported">Exported to storage! Access phone storage from computer or share with other app.</string>
 
     <!-- App Details -->
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Trackers</string>
     <string name="tab_countries">Countries</string>
     <string name="tab_actions">My Data</string>
