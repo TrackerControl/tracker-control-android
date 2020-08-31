@@ -65,17 +65,18 @@
         android:title="@string/title_pro"/>
     <item
         android:id="@+id/menu_invite"
+        android:visible="false"
         android:title="@string/menu_invite"/>
     <item
         android:id="@+id/menu_legend"
         android:title="@string/menu_legend"
         android:visible="false"/>
     <item
-        android:id="@+id/menu_support"
-        android:title="@string/menu_support" />
-    <item
         android:id="@+id/menu_about"
         android:title="@string/menu_about"/>
+    <item
+        android:id="@+id/menu_support"
+        android:title="@string/menu_support" />
     <item
         android:id="@+id/menu_apps"
         android:title="@string/menu_apps"
