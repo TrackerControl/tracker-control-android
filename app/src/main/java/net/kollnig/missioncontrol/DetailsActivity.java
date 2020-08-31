@@ -173,6 +173,19 @@ public class DetailsActivity extends AppCompatActivity {
             dh.clearAccess(appUid, false);
             detailsPagesAdapter.updateTrackerLists();
             return true;
+        } else if (itemId == R.id.action_launch) {
+            PackageManager pm = getPackageManager();
+            Intent intent = pm.getLaunchIntentForPackage(appPackageName);
+            final Intent launch = (intent == null ||
+                    intent.resolveActivity(pm) == null ? null : intent);
+            if (launch != null)
+                startActivity(launch);
+            return true;
+        } else if (itemId == R.id.action_uninstall) {
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.parse("package:" + appPackageName));
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
