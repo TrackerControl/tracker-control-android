@@ -302,9 +302,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
 
         if (Util.isFDroidInstall()
-                || Util.isPlayStoreInstall(this)) {
+                || Util.isPlayStoreInstall(this))
             cat_options.removePreference(screen.findPreference("update_check"));
-        }
+
+        if (Util.isPlayStoreInstall())
+            cat_options.removePreference(screen.findPreference("strict_blocking"));
 
         if (Util.isPlayStoreInstall(this)) {
             Log.i(TAG, "Play store install");
