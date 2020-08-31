@@ -161,6 +161,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                 });
                 holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
+                    if (w.blockedInternet(mAppUid))
+                        return;
+
                     Tracker t = trackersAdapter.getItem(i);
                     if (t == null) return;
 
