@@ -64,7 +64,6 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
@@ -554,36 +553,23 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         } else if (!rule.internet) {
             holder.tvDetails.setVisibility(View.VISIBLE);
             holder.tvDetails.setText(R.string.no_internet);
-        }
-        else
+        /*} else if (!rule.apply) {
+            holder.tvDetails.setVisibility(View.VISIBLE);
+            holder.tvDetails.setText(R.string.bypass_vpn);*/
+        } else
             holder.tvDetails.setVisibility(View.GONE);
 
         holder.itemView.setOnClickListener(view -> {
-            if (trackerCount > 0){
+            if (!rule.internet) {
+                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+                Snackbar s = Snackbar.make(v, R.string.no_internet_message, Snackbar.LENGTH_LONG);
+                s.show();
+            } else {
                 final Intent settings = new Intent(context, DetailsActivity.class);
                 settings.putExtra(INTENT_EXTRA_APP_NAME, rule.name);
                 settings.putExtra(INTENT_EXTRA_APP_PACKAGENAME, rule.packageName);
                 settings.putExtra(INTENT_EXTRA_APP_UID, rule.uid);
-
-                if (context instanceof Activity)
-                    ((Activity) context).startActivityForResult(settings, REQUEST_DETAILS_UPDATED);
-                else
-                    Toast.makeText(context, "Oops. Cannot open details. Contact the developer at tc@kollnig.net", Toast.LENGTH_LONG).show();
-            } else if (rule.internet) {
-                Intent intent = context.getPackageManager().getLaunchIntentForPackage(rule.packageName);
-                final Intent launch = (intent == null ||
-                        intent.resolveActivity(context.getPackageManager()) == null ? null : intent);
-                if (launch != null) {
-                    View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                    Snackbar s = Snackbar.make(v, R.string.no_trackers_found_message, Snackbar.LENGTH_LONG);
-                    s.setAction(R.string.no_trackers_found_action, v1 -> context.startActivity(launch));
-                    s.setActionTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                    s.show();
-                }
-            } else {
-                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                Snackbar s = Snackbar.make(v, R.string.no_internet_message, Snackbar.LENGTH_LONG);
-                s.show();
+                ((Activity) context).startActivityForResult(settings, REQUEST_DETAILS_UPDATED);
             }
         });
 

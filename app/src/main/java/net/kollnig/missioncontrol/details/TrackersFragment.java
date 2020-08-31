@@ -17,17 +17,24 @@
 
 package net.kollnig.missioncontrol.details;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.TrackerCategory;
@@ -103,7 +110,6 @@ public class TrackersFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         updateTrackerList();
     }
 
@@ -135,15 +141,46 @@ public class TrackersFragment extends Fragment {
                         refreshing = false;
                         swipeRefresh.setRefreshing(false);
                     }
+
+                    // no trackers yet found
+                    if (result != null &&
+                            result.size() == 0) {
+                        suggestLaunchingApp();
+                    }
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    private void suggestLaunchingApp() {
+        Activity activity = getActivity();
+        if (activity == null)
+            return;
+
+        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(mAppId);
+        final Intent launch = (intent == null ||
+                intent.resolveActivity(activity.getPackageManager()) == null ? null : intent);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (launch != null) {
+            View v = ((Activity) activity).getWindow().getDecorView().findViewById(android.R.id.content);
+            final boolean enabled = prefs.getBoolean("enabled", false);
+            Snackbar s = Snackbar.make(v,
+                    enabled ? R.string.no_trackers_found_message: R.string.no_trackers_found_message_disabled,
+                    Snackbar.LENGTH_LONG);
+            s.setAction(enabled ? R.string.no_trackers_found_action: R.string.back, v1 -> {
+                if (enabled)
+                    activity.startActivity(launch);
+                else
+                    activity.finish();
+            });
+            s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
+            s.show();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         running = false;
     }
 }

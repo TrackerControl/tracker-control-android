@@ -527,8 +527,12 @@ Sincerely,\n\n]]></string>
 
     <string name="uninstall">Uninstall</string>
 
-    <string name="no_trackers_found_message">Enable switch above, then launch app to find trackers.</string>
+    <string name="no_trackers_found_message_disabled">Enable switch in main screen, then launch app to find trackers.</string>
+    <string name="no_trackers_found_message">Launch app to find trackers.</string>
     <string name="no_trackers_found_action">Launch</string>
     <string name="no_internet_message">"This app has no Internet access. It might still track you by exchanging data with other apps."</string>
     <string name="no_internet">No Internet access</string>
+    <string name="bypass_vpn">VPN disabled</string>
+
+    <string name="back">Back</string>
 </resources>
