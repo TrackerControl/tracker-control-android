@@ -521,8 +521,8 @@ Sincerely,\n\n]]></string>
     <string name="summary_strict_blocking">Block potentially necessary trackers. More apps will break.</string>
     <string name="strict_blocking_explanation">Strict Blocking will prevent more trackers, but likely break some apps.</string>
 
-    <string name="exclude_vpn" translatable="false">TrackerControl</string>
-    <string name="exclude_vpn_explanation">If TrackerControl is enabled for an app, it monitors the app\'s Internet communications for trackers. This is necessary for TrackerControl to work.</string>
+    <string name="exclude_vpn" translatable="false">Monitoring</string>
+    <string name="exclude_vpn_explanation">Monitoring of app\'s Internet communications is necessary for TrackerControl to work. Disable this if you run into issues.</string>
     <string name="exclude_vpn_enable">Enable</string>
 
     <string name="uninstall">Uninstall</string>

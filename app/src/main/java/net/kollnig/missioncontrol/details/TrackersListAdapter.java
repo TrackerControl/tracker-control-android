@@ -111,6 +111,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder _holder, int position) {
+        final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
+
         if (_holder instanceof VHItem) {
             VHItem holder = (VHItem) _holder;
 
@@ -145,7 +147,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (Util.isPlayStoreInstall(mContext)) {
                 holder.mSwitchTracker.setVisibility(View.GONE);
             } else {
-                holder.mSwitchTracker.setEnabled(apply.getBoolean(mAppId, true));
+                holder.mSwitchTracker.setEnabled(apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid));
                 holder.mSwitchTracker.setChecked(
                         b.blocked(mAppUid, trackerCategoryName)
                 );
@@ -191,7 +193,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
 
             // Blocking of Internet
-            final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
             holder.mSwitchInternet.setEnabled(apply.getBoolean(mAppId, true));
             holder.mSwitchInternet.setChecked(
                     w.blockedInternet(mAppUid)
@@ -199,11 +200,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mSwitchInternet.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed()) return; // to fix errors
 
-                if (isChecked) {
+                if (isChecked)
                     w.block(mAppUid);
-                } else {
+                else
                     w.unblock(mAppUid);
-                }
+
+                notifyDataSetChanged();
             });
         }
     }
