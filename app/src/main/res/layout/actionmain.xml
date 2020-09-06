@@ -32,10 +32,11 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.SwitchCompat
-        style="@style/RocketSwitch"
         android:id="@+id/swEnabled"
+        style="@style/RocketSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:saveEnabled="false" />
 
     <androidx.appcompat.widget.AppCompatTextView
