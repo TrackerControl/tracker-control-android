@@ -33,13 +33,12 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Process;
 import android.util.Log;
-import android.view.View;
 
-import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Pair;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -427,11 +426,9 @@ public class Rule {
                                 R.string.instructions_monitoring_private_dns :
                                 R.string.instructions_monitoring;
 
-                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                if (v != null) {
-                    Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
+                Snackbar s = Common.getSnackbar((Activity) context, instructionsString);
+                if (s != null) {
                     s.setAction(R.string.ok, v1 -> s.dismiss());
-                    s.setActionTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     s.show();
                 }
             }

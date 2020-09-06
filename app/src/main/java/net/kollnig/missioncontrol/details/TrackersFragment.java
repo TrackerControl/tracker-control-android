@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,7 +35,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
 import net.kollnig.missioncontrol.data.TrackerList;
 
@@ -157,24 +158,29 @@ public class TrackersFragment extends Fragment {
         if (activity == null)
             return;
 
-        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(mAppId);
-        final Intent launch = (intent == null ||
-                intent.resolveActivity(activity.getPackageManager()) == null ? null : intent);
+        // only suggest launching app if monitoring and internet access enabled
+        SharedPreferences apply = activity.getSharedPreferences("apply", Context.MODE_PRIVATE);
+        InternetBlocklist w = InternetBlocklist.getInstance(activity);
+        if (!apply.getBoolean(mAppId, true)
+                || w.blockedInternet(mAppUid))
+            return;
+
+        // retrieve app intent
+        final Intent launch = Common.getLaunchIntent(activity, mAppId);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (launch != null) {
-            View v = ((Activity) activity).getWindow().getDecorView().findViewById(android.R.id.content);
             final boolean enabled = prefs.getBoolean("enabled", false);
-            Snackbar s = Snackbar.make(v,
-                    enabled ? R.string.no_trackers_found_message: R.string.no_trackers_found_message_disabled,
-                    Snackbar.LENGTH_LONG);
-            s.setAction(enabled ? R.string.no_trackers_found_action: R.string.back, v1 -> {
+            int msg = enabled ? R.string.no_trackers_found_message: R.string.no_trackers_found_message_disabled;
+            Snackbar s = Common.getSnackbar(activity, msg);
+            if (s == null)
+                return;
+
+            s.setAction(enabled ? R.string.no_trackers_found_action: R.string.back, v -> {
                 if (enabled)
                     activity.startActivity(launch);
                 else
                     activity.finish();
-            });
-            s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
-            s.show();
+            }).show();
         }
     }
 

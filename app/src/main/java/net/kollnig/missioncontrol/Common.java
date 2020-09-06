@@ -17,14 +17,19 @@
 
 package net.kollnig.missioncontrol;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -117,5 +122,23 @@ public class Common {
             return packages[0];
 
         return "Unknown";
+    }
+
+    public static Intent getLaunchIntent(Activity activity, String appId) {
+        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(appId);
+        return intent == null ||
+                intent.resolveActivity(activity.getPackageManager()) == null ? null : intent;
+    }
+
+    @Nullable
+    public static Snackbar getSnackbar(Activity activity, int msg) {
+        View v = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+        if (v == null)
+            return null;
+        Snackbar s = Snackbar.make(v,
+                msg,
+                Snackbar.LENGTH_LONG);
+        s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
+        return s;
     }
 }

@@ -174,10 +174,7 @@ public class DetailsActivity extends AppCompatActivity {
             detailsPagesAdapter.updateTrackerLists();
             return true;
         } else if (itemId == R.id.action_launch) {
-            PackageManager pm = getPackageManager();
-            Intent intent = pm.getLaunchIntentForPackage(appPackageName);
-            final Intent launch = (intent == null ||
-                    intent.resolveActivity(pm) == null ? null : intent);
+            Intent launch = Common.getLaunchIntent(this, appPackageName);
             if (launch != null)
                 startActivity(launch);
             return true;

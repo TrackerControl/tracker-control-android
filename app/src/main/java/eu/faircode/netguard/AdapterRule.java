@@ -78,6 +78,7 @@ import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.snackbar.Snackbar;
 
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
@@ -537,9 +538,9 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 return;
 
             if (!rule.apply) {
-                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                Snackbar s = Snackbar.make(v, R.string.bypass_vpn_error, Snackbar.LENGTH_LONG);
-                s.show();
+                Snackbar s = Common.getSnackbar((Activity) context, R.string.bypass_vpn_error);
+                if (s != null)
+                    s.show();
                 return;
             }
 
@@ -572,10 +573,11 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         holder.itemView.setOnClickListener(view -> {
             if (!rule.internet) {
-                View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                Snackbar s = Snackbar.make(v, R.string.no_internet_message, Snackbar.LENGTH_LONG);
-                s.show();
-            } else {
+                Snackbar s = Common.getSnackbar((Activity) context, R.string.no_internet_message);
+                if (s != null)
+                    s.show();
+            }
+            else {
                 final Intent settings = new Intent(context, DetailsActivity.class);
                 settings.putExtra(INTENT_EXTRA_APP_NAME, rule.name);
                 settings.putExtra(INTENT_EXTRA_APP_PACKAGENAME, rule.packageName);
