@@ -534,4 +534,7 @@ Sincerely,\n\n]]></string>
     <string name="bypass_vpn_error">"Cannot block Internet. App is excluded from TrackerControl."</string>
 
     <string name="back">Back</string>
+
+    <string name="forever_free">Forever Free</string>
+    <string name="your_privacy">Your Privacy</string>
 </resources>

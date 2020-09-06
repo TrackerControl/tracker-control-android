@@ -40,6 +40,7 @@
         android:saveEnabled="false" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvTitle"
         style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"

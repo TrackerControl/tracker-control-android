@@ -82,8 +82,16 @@ import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGOR
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
 
+    private static int[] TITLES = new int[]{
+            R.string.app_name,
+            R.string.control_trackers,
+            R.string.forever_free,
+            R.string.your_privacy,
+    };
+
     private boolean running = false;
     private ImageView ivIcon;
+    private TextView tvTitle;
     private ImageView ivQueue;
     private SwitchCompat swEnabled;
     private ImageView ivMetered;
@@ -173,10 +181,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Action bar
         final View actionView = getLayoutInflater().inflate(R.layout.actionmain, null, false);
+        tvTitle = actionView.findViewById(R.id.tvTitle);
         ivIcon = actionView.findViewById(R.id.ivIcon);
         ivQueue = actionView.findViewById(R.id.ivQueue);
         swEnabled = actionView.findViewById(R.id.swEnabled);
         ivMetered = actionView.findViewById(R.id.ivMetered);
+
+        // Get daily changing title
+        if (!Util.isPlayStoreInstall())
+            tvTitle.setText(TITLES[(int) (Common.todayInMillis() % TITLES.length)]);
 
         // Icon
         ivIcon.setOnLongClickListener(new View.OnLongClickListener() {

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.List;
 
 public class Common {
@@ -140,5 +141,15 @@ public class Common {
                 Snackbar.LENGTH_LONG);
         s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
         return s;
+    }
+
+    public static long todayInMillis() {
+        Calendar cal = Calendar.getInstance();
+        int year  = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date  = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        return cal.getTimeInMillis();
     }
 }
