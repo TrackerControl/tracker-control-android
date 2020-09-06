@@ -414,13 +414,13 @@ public class Rule {
                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                 }
 
-            // Custom code: Load tracking counts
+            // Load tracking counts
             TrackerList trackerList = TrackerList.getInstance(context);
             Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal();
             trackerCounts = trackerCountsAndTotal.first();
             int trackerTotal = trackerCountsAndTotal.second();
 
-            if (trackerTotal <= 0
+            if (trackerTotal == 0
                 && context instanceof Activity) {
                 int instructionsString =
                         (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
@@ -428,10 +428,12 @@ public class Rule {
                                 R.string.instructions_monitoring;
 
                 View v = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
-                Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
-                s.setAction(R.string.ok, v1 -> s.dismiss());
-                s.setActionTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-                s.show();
+                if (v != null) {
+                    Snackbar s = Snackbar.make(v, instructionsString, Snackbar.LENGTH_INDEFINITE);
+                    s.setAction(R.string.ok, v1 -> s.dismiss());
+                    s.setActionTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                    s.show();
+                }
             }
 
             // Sort rule list
