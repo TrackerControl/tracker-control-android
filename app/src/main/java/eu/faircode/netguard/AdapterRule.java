@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Rect;
@@ -98,6 +99,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private LayoutInflater inflater;
     private RecyclerView rv;
     private int colorText;
+    private int colorChanged;
     private int colorOn;
     private int colorOff;
     private int colorGrayed;
@@ -277,8 +279,15 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     }
 
     public AdapterRule(Context context, View anchor) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
         this.anchor = anchor;
         this.inflater = LayoutInflater.from(context);
+
+        if (prefs.getBoolean("dark_theme", false))
+            colorChanged = Color.argb(128, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY));
+        else
+            colorChanged = Color.argb(128, 230, 230, 230);
 
         TypedArray ta = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.textColorPrimary});
         try {
@@ -364,6 +373,9 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 notifyItemChanged(holder.getAdapterPosition());
             }
         });
+
+        // Show if non default rules
+        holder.itemView.setBackgroundColor(rule.changed ? colorChanged : Color.TRANSPARENT);
 
         // Show expand/collapse indicator
         holder.ivExpander.setImageLevel(rule.expanded ? 1 : 0);
