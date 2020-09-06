@@ -147,40 +147,43 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (Util.isPlayStoreInstall(mContext)) {
                 holder.mSwitchTracker.setVisibility(View.GONE);
             } else {
-                holder.mSwitchTracker.setEnabled(apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid));
+                boolean enabled = apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid);
+                holder.mSwitchTracker.setEnabled(enabled);
                 holder.mSwitchTracker.setChecked(
-                        b.blocked(mAppUid, trackerCategoryName)
+                        !b.blocked(mAppUid, trackerCategoryName)
                 );
                 holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
-                    if (hasBecomeChecked) {
-                        b.block(mAppUid, trackerCategoryName);
-                    } else {
+                    if (hasBecomeChecked)
                         b.unblock(mAppUid, trackerCategoryName);
-                    }
-                });
-                holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
-                    if (w.blockedInternet(mAppUid))
-                        return;
-
-                    Tracker t = trackersAdapter.getItem(i);
-                    if (t == null) return;
-
-                    final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
-                    if (!blockedTrackerCategory) {
-                        Toast.makeText(mContext, "Need to block category", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    boolean blockedTracker = b.blockedTracker(mAppUid, t);
-                    if (blockedTracker)
-                        b.unblock(mAppUid, t);
                     else
-                        b.block(mAppUid, t);
-
-                    trackersAdapter.notifyDataSetChanged();
+                        b.block(mAppUid, trackerCategoryName);
                 });
+                if (enabled)
+                    holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
+                        if (w.blockedInternet(mAppUid))
+                            return;
+
+                        Tracker t = trackersAdapter.getItem(i);
+                        if (t == null) return;
+
+                        final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
+                        if (!blockedTrackerCategory) {
+                            Toast.makeText(mContext, "Need to block category", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        boolean blockedTracker = b.blockedTracker(mAppUid, t);
+                        if (blockedTracker)
+                            b.unblock(mAppUid, t);
+                        else
+                            b.block(mAppUid, t);
+
+                        trackersAdapter.notifyDataSetChanged();
+                    });
+                else
+                    holder.mCompaniesList.setOnItemClickListener(null);
             }
 
             //cast holder to VHItem and set data
@@ -198,15 +201,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // Blocking of Internet
             holder.mSwitchInternet.setEnabled(apply.getBoolean(mAppId, true));
             holder.mSwitchInternet.setChecked(
-                    w.blockedInternet(mAppUid)
+                    !w.blockedInternet(mAppUid)
             );
-            holder.mSwitchInternet.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            holder.mSwitchInternet.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                 if (!buttonView.isPressed()) return; // to fix errors
 
-                if (isChecked)
-                    w.block(mAppUid);
-                else
+                if (hasBecomeChecked)
                     w.unblock(mAppUid);
+                else
+                    w.block(mAppUid);
 
                 notifyDataSetChanged();
             });
