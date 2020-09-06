@@ -522,13 +522,12 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">Strict Blocking will prevent more trackers, but likely break some apps.</string>
 
     <string name="exclude_vpn" translatable="false">Monitoring</string>
-    <string name="exclude_vpn_explanation">Monitoring of app\'s Internet communications is necessary for TrackerControl to work. Disable this if you run into issues.</string>
-    <string name="exclude_vpn_enable">Enable</string>
+    <string name="exclude_vpn_explanation">Must be on to detect and block trackers. Disable if you run into issues.</string>
 
     <string name="uninstall">Uninstall</string>
 
-    <string name="no_trackers_found_message_disabled">Enable switch in main screen, then launch app to find trackers.</string>
-    <string name="no_trackers_found_message">Launch app to find trackers.</string>
+    <string name="no_trackers_found_message_disabled">Enable switch in main screen, then launch app to find trackers</string>
+    <string name="no_trackers_found_message">Launch app to find trackers</string>
     <string name="no_trackers_found_action">Launch</string>
     <string name="no_internet_message">"This app has no Internet access. It might still track you by exchanging data with other apps."</string>
     <string name="no_internet">No Internet access</string>
