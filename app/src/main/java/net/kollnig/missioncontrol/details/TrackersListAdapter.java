@@ -47,6 +47,8 @@ import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
+import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
+
 /**
  * {@link RecyclerView.Adapter} that can display a {@link TrackerCategory}.
  */
@@ -75,19 +77,23 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ((SimpleItemAnimator) v.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
-    public static String renderDetails(Tracker t, boolean blocked) {
+    public static String renderDetails(Context c, Tracker t, boolean blocked) {
         List<String> sortedHosts = new ArrayList<>(t.getHosts());
         java.util.Collections.sort(sortedHosts);
         String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
 
+        String name = t.name;
+        if (name.equals(TRACKER_HOSTLIST))
+            name = c.getString(R.string.tracker_hostlist);
+
         String title;
         if (t.lastSeen != 0) {
-            title = t.name + " (" + Util.relativeTime(t.lastSeen) + ")";
+            title = name + " (" + Util.relativeTime(t.lastSeen) + ")";
         } else {
-            title = t.name;
+            title = name;
         }
 
-        return blocked ? title + hosts : title + " (Unblocked)" + hosts;
+        return blocked ? title + hosts : title + " (" + c.getString(R.string.unblocked) + ")" + hosts;
     }
 
     public void set(List<TrackerCategory> items) {
@@ -137,7 +143,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             if (t != null) {
                                 boolean blocked = b.blocked(mAppUid,
                                         TrackerBlocklist.getBlockingKey(t));
-                                tv.setText(renderDetails(t, blocked));
+                                tv.setText(renderDetails(getContext(), t, blocked));
                             }
 
                             return tv;

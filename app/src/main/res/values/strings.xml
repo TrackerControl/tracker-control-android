@@ -538,4 +538,5 @@ Sincerely,\n\n]]></string>
     <string name="your_privacy">Your Privacy</string>
 
     <string name="tracker_hostlist">User-Defined Hosts</string>
+    <string name="unblocked">Unblocked</string>
 </resources>
