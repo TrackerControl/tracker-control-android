@@ -98,7 +98,6 @@
 
             <Switch
                 android:id="@+id/switch_internet"
-                android:text="@string/title_allow"
                 android:layout_width="wrap_content"
                 android:layout_height="21dp"
                 android:textColor="?android:textColorPrimary"

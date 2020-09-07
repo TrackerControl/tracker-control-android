@@ -150,15 +150,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 boolean enabled = apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid);
                 holder.mSwitchTracker.setEnabled(enabled);
                 holder.mSwitchTracker.setChecked(
-                        !b.blocked(mAppUid, trackerCategoryName)
+                        b.blocked(mAppUid, trackerCategoryName)
                 );
                 holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
                     if (hasBecomeChecked)
-                        b.unblock(mAppUid, trackerCategoryName);
-                    else
                         b.block(mAppUid, trackerCategoryName);
+                    else
+                        b.unblock(mAppUid, trackerCategoryName);
                 });
                 if (enabled)
                     holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
