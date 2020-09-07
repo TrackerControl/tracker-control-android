@@ -143,13 +143,8 @@ public class Common {
         return s;
     }
 
-    public static long todayInMillis() {
-        Calendar cal = Calendar.getInstance();
-        int year  = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int date  = cal.get(Calendar.DATE);
-        cal.clear();
-        cal.set(year, month, date);
-        return cal.getTimeInMillis();
+    public static int dayOfYear() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.DAY_OF_YEAR);
     }
 }

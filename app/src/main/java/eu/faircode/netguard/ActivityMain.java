@@ -189,7 +189,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Get daily changing title
         if (!Util.isPlayStoreInstall())
-            tvTitle.setText(TITLES[(int) (Common.todayInMillis() % TITLES.length)]);
+            tvTitle.setText(TITLES[Common.dayOfYear() % TITLES.length]);
 
         // Icon
         ivIcon.setOnLongClickListener(new View.OnLongClickListener() {
