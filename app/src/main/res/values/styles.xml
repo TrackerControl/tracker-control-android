@@ -11,11 +11,6 @@
     <attr name="iconPlay" format="reference" />
     <attr name="iconPause" format="reference" />
 
-    <style name="AppDialog" parent="Theme.AppCompat.Dialog">
-        <item name="windowActionBar">false</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -26,17 +21,12 @@
         <item name="windowNoTitle">true</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight"/>
 
     <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
         <item name="android:buttonStyle">
             @style/Widget.AppCompat.Button.Borderless.Colored
         </item>
         <item name="colorAccent">@color/colorPrimary</item>
-    </style>
-    <style name="PrimaryButton" parent="Theme.AppCompat">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
-        <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
     <style name="BaseThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">

@@ -760,8 +760,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         markPro(menu.findItem(R.id.menu_log), ActivityPro.SKU_LOG);
-        if (!IAB.isPurchasedAny(this))
-            markPro(menu.findItem(R.id.menu_pro), null);
 
         if (getIntentInvite(this).resolveActivity(pm) == null)
             menu.removeItem(R.id.menu_invite);
@@ -854,9 +852,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             return true;
         } else if (itemId == R.id.menu_settings) {
             startActivity(new Intent(this, ActivitySettings.class));
-            return true;
-        } else if (itemId == R.id.menu_pro) {
-            startActivity(new Intent(ActivityMain.this, ActivityPro.class));
             return true;
         } else if (itemId == R.id.menu_invite) {
             startActivityForResult(getIntentInvite(this), REQUEST_INVITE);

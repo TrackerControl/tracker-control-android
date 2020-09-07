@@ -28,7 +28,6 @@
         </menu>
     </item>
     <item
-        android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort_white_24dp"
         android:title="@string/menu_sort"
         netguard:showAsAction="always|collapseActionView">
@@ -59,10 +58,6 @@
         android:id="@+id/menu_settings"
         android:visible="true"
         android:title="@string/menu_settings"/>
-    <item
-        android:id="@+id/menu_pro"
-        android:visible="false"
-        android:title="@string/title_pro"/>
     <item
         android:id="@+id/menu_invite"
         android:visible="false"

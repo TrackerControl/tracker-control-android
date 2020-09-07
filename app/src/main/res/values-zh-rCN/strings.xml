@@ -4,9 +4,6 @@
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">隐私政策</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie 政策</a></string>
-    <string name="app_first">我们花了很大力气开发和测试TrackerControl，但不可能保证TrackerControl在每个设备上正确工作。</string>
-    <string name="app_agree">我同意</string>
-    <string name="app_disagree">我反对</string>
     <string name="channel_foreground">正在运行的服务</string>
     <string name="channel_notify">一般通知</string>
     <string name="channel_access">读取通知</string>
@@ -15,13 +12,10 @@
     <string name="menu_app_user">显示用户应用</string>
     <string name="menu_app_system">显示系统应用</string>
     <string name="menu_app_nointernet">显示非联网应用</string>
-    <string name="menu_app_disabled">显示已停用的应用</string>
     <string name="menu_sort">排序应用</string>
     <string name="menu_sort_name">按名称排序</string>
     <string name="menu_sort_uid">按 UID 排序</string>
-    <string name="menu_sort_trackers">按跟踪器排序</string>
     <string name="menu_sort_companies">按公司排序</string>
-    <string name="menu_sort_data">按数据使用量排序</string>
     <string name="menu_log">流量日志</string>
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
@@ -41,26 +35,11 @@
     <string name="menu_clear">清除</string>
     <string name="menu_export">导出</string>
     <string name="menu_reset">重置</string>
-    <string name="menu_add">添加</string>
-    <string name="menu_delete">删除</string>
     <string name="menu_cleanup">清理</string>
-    <string name="title_protocol">协议</string>
-    <string name="title_dport">源端口</string>
-    <string name="title_raddr">目标地址</string>
-    <string name="title_rport">目标端口</string>
-    <string name="title_ruid">目标应用</string>
-    <string name="title_external">对于一个外部服务器选择\"nobody\"</string>
-    <string name="setting_defaults">默认(白/黑名单)</string>
-    <string name="setting_whitelist_wifi">屏蔽Wi-Fi</string>
-    <string name="setting_whitelist_other">屏蔽移动网络</string>
-    <string name="setting_screen_wifi">亮屏时允许Wi-Fi网络</string>
-    <string name="setting_screen_other">亮屏时允许移动网络</string>
-    <string name="setting_whitelist_roaming">阻止漫游</string>
     <string name="setting_options">选项</string>
     <string name="setting_theme">主题: %1$s</string>
     <string name="setting_dark">深色主题</string>
     <string name="setting_install">有新软件安装时通知我</string>
-    <string name="setting_screen_on">应用 \'亮屏\' 规则</string>
     <string name="setting_auto">%1$s 分钟后自动启用</string>
     <string name="setting_pause">%1$s 分钟后自动启用</string>
     <string name="setting_delay">延迟屏幕关闭 %1$s 分钟</string>
@@ -87,18 +66,15 @@
     <string name="setting_advanced_options">高级选项</string>
     <string name="setting_system">管理系统应用</string>
     <string name="setting_log_app">记录网络连接</string>
-    <string name="setting_access">互联网访问通知</string>
     <string name="setting_filter">过滤流量</string>
     <string name="setting_filter_udp">过滤 UDP 流量</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
-    <string name="setting_clear_onreload">重新加载时关闭连接</string>
     <string name="setting_lockdown">锁定流量</string>
     <string name="setting_track_usage">追踪网络使用情况</string>
     <string name="setting_reset_usage">重置网络使用量</string>
     <string name="setting_show_resolved">显示已解析的域名</string>
     <string name="setting_block_domains">启用 hosts 文件</string>
     <string name="setting_rcode">主机拦截响应： %s</string>
-    <string name="setting_forwarding">端口转发</string>
     <string name="setting_vpn4">VPN IPv4地址: %s</string>
     <string name="setting_vpn6">VPN IPv6地址: %s</string>
     <string name="setting_dns">VPN DNS地址: %s</string>
@@ -112,9 +88,6 @@
     <string name="setting_pcap_record_size">PCAP 记录大小: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
-    <string name="setting_stats_category">网速通知</string>
-    <string name="setting_stats">显示网速通知</string>
-    <string name="setting_stats_top">显示顶级应用</string>
     <string name="setting_stats_frequency">采样间隔： %s 毫秒</string>
     <string name="setting_stats_samples">样本数: %s s</string>
     <string name="setting_backup">备份</string>
@@ -127,7 +100,6 @@
     <string name="setting_technical">技术信息</string>
     <string name="setting_technical_general">常规</string>
     <string name="setting_technical_networks">网络</string>
-    <string name="setting_technical_subscription">订阅</string>
     <string name="summary_install">显示状态栏通知直接对新安装的软件进行设置 (专业版功能)</string>
     <string name="summary_auto">禁用小部件后，在选定的分钟数之后再次自动启用TrackerControl(输入0禁用此选项)</string>
     <string name="summary_pause">从通知栏暂停软件运作后，在选定的分钟数后重新自动启用TrackerControl(输入0禁用此选项)。</string>
@@ -147,7 +119,6 @@
     <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
     <string name="summary_system">定义系统应用的规则 (专家用户)</string>
     <string name="summary_log_app">记录应用程序访问互联网的尝试。这可能会导致额外的电池使用。</string>
-    <string name="summary_access">当一个应用程序试图访问一个新的互联网地址时，显示一个状态栏通知(当过滤被禁用时，只有被阻止的互联网访问尝试才会被通知)</string>
     <string name="summary_filter">过滤从VPN隧道流出的IP包。这可能会导致额外的电池使用。</string>
     <string name="summary_track_usage">跟踪每个应用程序和地址发送和接收的字节数。这可能会导致额外的电池使用。</string>
     <string name="summary_block_domains">警告: 被阻止的主机未在用户界面中显示。</string>
@@ -155,18 +126,13 @@
     <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
-    <string name="summary_stats">在状态栏通知中显示网络速度图</string>
     <string name="msg_sure">你确定吗？</string>
     <string name="msg_started">正在检查跟踪器</string>
-    <string name="msg_packages">已允许 %1$d 条URL， 已阻止%2$d条URL</string>
-    <string name="msg_hosts">已允许 %1$d 条URL，已屏蔽%2$d， %3$d 主机名</string>
     <string name="msg_waiting">等待事件</string>
     <string name="msg_disabled">使用上面的开关来启用TrackerControl</string>
     <string name="msg_revoked">TrackerControl已被禁用，可能是通过使用另一个基于VPN的应用程序</string>
     <string name="msg_installed">\'%1$s\' 已安装</string>
     <string name="msg_installed_n">已被安装</string>
-    <string name="msg_access">%1$s 尝试访问互联网</string>
-    <string name="msg_access_n">尝试互联网访问</string>
     <string name="msg_completed">操作已完成</string>
     <string name="msg_vpn">TrackerControl使用一个本地VPN来过滤互联网流量。
 因此，请在下一个对话框中允许VPN连接。
@@ -175,8 +141,6 @@
     <string name="msg_error">发生一个未知错误: \'%s\'</string>
     <string name="msg_start_failed">Android此时拒绝启动VPN服务。这可能你的Android版本中的一个bug造成的。</string>
     <string name="msg_try">尝试TrackerControl</string>
-    <string name="msg_dimming">如果您在下一个对话框中无法点击确定, 可能是另一个应用正在控制屏幕(如屏幕亮度调节软件).</string>
-    <string name="msg_mbday">&#177;%1$.3f&#9650;%2$.3f&#9660;MB/天</string>
     <string name="msg_doze">为了获得一致的结果，应该禁用对TrackerControl的Android电池优化。
 \n\n在下一个对话框中，选择顶部的“全部应用”，点击列表中的TrackerControl，选择并确认“不优化”。</string>
     <string name="msg_datasaving">为了得到一致的结果，对TrackerControl的Android数据节省选项应该被禁用
@@ -190,8 +154,6 @@
     <string name="msg_downloading">正在下载\n%1s</string>
     <string name="msg_downloaded">已下载主机文件</string>
     <string name="msg_download_last">上次下载： %s</string>
-    <string name="msg_start_forward">开始从 %1$s 端口 %2$d 转发至 \'%5$s\' 的 %3$s:%4$d?</string>
-    <string name="msg_stop_forward">停止转发 %1$s 端口 %2$d?</string>
     <string name="msg_metered">网络是计量的</string>
     <string name="msg_inactive">无活跃网络连接</string>
     <string name="msg_queue">TrackerControl 正忙</string>
@@ -203,7 +165,6 @@
     <string name="msg_system">可以在设置中启用所有(系统) 应用</string>
     <string name="msg_issue">请描述问题并指出问题发生的时间:</string>
     <string name="msg_vpn_cancelled">VPN 连接已取消\n您是否对另一个 VPN 设置了始终启用?</string>
-    <string name="msg_on">若关机时TrackerControl处于启用状态，TrackerControl 会在下次开机后自动启动</string>
     <string name="msg_unavailable">该特性在这个Android版本中不可用</string>
     <string name="msg_always_on">已将另一个 VPN 设置为始终启用</string>
     <string name="msg_always_on_lockdown">要在过滤模式下使用TrackerControl，请在Android VPN设置中关闭“阻塞无VPN连接”，</string>
@@ -224,7 +185,6 @@
     <string name="title_disabled">被禁用</string>
     <string name="title_messaging">接收消息是由 Google Play 服务接收而非此应用，因此不能通过屏蔽此应用来阻止接收消息</string>
     <string name="title_download">下载是通过下载管理器而非此应用执行的，因此不能通过屏蔽此应用来阻止下载</string>
-    <string name="title_apply">应用规则和条件</string>
     <string name="title_conditions">条件</string>
     <string name="title_screen_wifi">亮屏时允许Wi-Fi网络</string>
     <string name="title_screen_other">亮屏时允许移动网络</string>
@@ -256,22 +216,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">端口 %1$d</string>
     <string name="title_log_copy">复制</string>
-    <string name="title_pro">专业版功能</string>
-    <string name="title_pro_description">专业版可使用下列功能：</string>
-    <string name="title_pro_log">查看被阻止的流量日志</string>
-    <string name="title_pro_filter">过滤网络流量</string>
-    <string name="title_pro_notify">新应用通知</string>
-    <string name="title_pro_speed">网络速度图通知</string>
-    <string name="title_pro_theme">外观 (主题、 颜色)</string>
-    <string name="title_pro_all">以上所有专业版功能</string>
-    <string name="title_pro_dev">支持开发</string>
-    <string name="title_pro_buy">购买</string>
-    <string name="title_pro_bought">已启用</string>
-    <string name="title_pro_unavailable">不可用</string>
-    <string name="title_pro_details">点击标题查看更多信息</string>
-    <string name="title_pro_challenge">挑战</string>
-    <string name="title_pro_reponse">响应</string>
-    <string name="title_pro_feature">这是专业版的功能</string>
     <string-array name="themeNames">
         <item>蓝绿色/橙色</item>
         <item>蓝色/橙色</item>
@@ -281,41 +225,13 @@
         <item>绿色</item>
     </string-array>
     <!-- VPN Control -->
-    <string name="switch_mission">启用分析</string>
-    <string name="switch_mission_explanation">启用对第三方公司应用跟踪的分析</string>
-    <string name="notification_title_vpnservice">TrackerControl状态</string>
-    <string name="notification_channel_name">状态</string>
-    <string name="restart_notification">没有在检查跟踪器</string>
-    <string name="notification_detail_text_vpnservice_disconnected">没有在检查跟踪器</string>
-    <string name="notification_detail_text_vpnservice_connecting">正在启动&#8230;</string>
-    <string name="notification_detail_text_vpnservice_connected">正在检查跟踪器</string>
-    <string name="notification_detail_text_vpnservice_scheduled_connect">自动重启计划</string>
-    <string name="vpn_rights_needed">请授予TrackerControl VPN权限以使其正常工作</string>
     <!-- App Overview -->
     <string name="tracked_app_name">应用程序名称</string>
-    <plurals name="n_trackers_found">
-        <item quantity="other">观察到%d 个追踪器</item>
-    </plurals>
-    <string name="title_apps">应用程序</string>
-    <string name="menu_reset_monitoring">重置监测</string>
-    <string name="confirm_reset">删除您的跟踪器历史记录和跟踪器选择？</string>
-    <string name="confirm_blocking_title">屏蔽所有追踪器？</string>
     <string name="external_servers">自动获取开发者电子邮件？</string>
     <string name="confirm_google_info">本应用可以自动为您从谷歌Play Store获取应用开发者的邮件。</string>
-    <string name="no_external_servers">没有授予从外部服务器检索策略的权限。更改应用程序设置。</string>
-    <string name="blocking_apps">屏蔽所有追踪器</string>
-    <string name="blocking_trackers">屏蔽所有追踪器</string>
-    <string name="blocking_warning">明智地使用它，因为开发人员依赖它!</string>
-    <string name="confirm_blocking">此操作会阻止广告，
-        许多开发者依赖广告收入生存
-        要继续吗？</string>
-    <string name="are_you_sure">确认</string>
     <string name="ok">好</string>
-    <string name="close">关闭</string>
-    <string name="cancel">取消</string>
     <string name="yes">是</string>
     <string name="no">否</string>
-    <string name="menu_privacy_policy">隐私政策</string>
     <string name="menu_csv">导出为CSV</string>
     <string name="exporting">正在导出...</string>
     <string name="share_csv">分享</string>
@@ -325,7 +241,6 @@
     <string name="tab_trackers">跟踪器</string>
     <string name="tab_countries">国家</string>
     <string name="tab_actions">我的数据</string>
-    <string name="summary_loading_error">无法获取应用描述。</string>
     <string name="tracker_name">追踪器名称</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
@@ -338,7 +253,6 @@
     <string name="contacts">联系方式 </string>
     <string name="contacts_description">如果您认为某个应用程序违反了数据保护原则，您可能希望直接联系相关实体。</string>
     <string name="play_services_required">这是Google Play服务中的一个设置，在你的设备上没有找到。</string>
-    <string name="no_dev_mail">开发者邮件地址尚未获取。请检查网络连接。</string>
     <string name="no_mail_service">请安装一个电子邮件客户端。</string>
     <string name="blocking_settings">选择跟踪器</string>
     <string name="ad_settings">现在更改</string>
@@ -350,7 +264,6 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR 主题访问请求</string>
-    <string name="subject_delete_data">GDPR 删除请求</string>
     <string name="body_request_data"><![CDATA[致有关人士：\n
 \n
 \n
@@ -384,15 +297,12 @@
 请通过安全方式通过电子邮件提供您的回复。我期待在你方收到我的请求后一个月进行答复。\n
 \n
 此致，\n\n]]></string>
-    <string name="packet_statistics">数据流</string>
     <string name="crash_dialog_text">对不起。TrackerControl崩溃了.. 您介意把详细情况发邮件给我们吗?</string>
     <string name="crash_dialog_comment">是否有任何评论？</string>
     <string name="instructions_monitoring_private_dns">切换开关并与一些应用程序进行交互。必须禁用私有DNS。</string>
     <string name="instructions_monitoring">切换开关并与某些应用交互。</string>
-    <string name="afterboot_notification">重启通知</string>
     <string name="device_not_supported_title">不支持此设备</string>
     <string name="device_not_supported_msg">您设备的操作系统不允许监视和过滤网络通信。这是TrackerControl正常运作所需要的。</string>
-    <string name="monitor">监视器</string>
     <string name="launch_app">启动 &amp; 查找追踪器</string>
     <string name="countries">目的地国家</string>
     <string name="countries_explanation">找出你的手机把跟踪数据发到哪去了。\n\n信息基于DNS查找和IP信息，可能不准确。</string>

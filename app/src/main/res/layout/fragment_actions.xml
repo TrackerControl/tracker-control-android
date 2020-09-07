@@ -51,11 +51,10 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView4">
 
                     <TextView
-                        android:id="@+id/textView9"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:text="@string/personalised_ads_description_2"
+                        android:text="@string/personalised_ads_description"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/img"
                         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +85,6 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/gdpr_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -124,7 +122,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView7">
 
                     <TextView
-                        android:id="@+id/textView10"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
@@ -179,7 +176,6 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/contacts_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
@@ -219,7 +215,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView3">
 
                     <TextView
-                        android:id="@+id/textView11"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
@@ -320,7 +315,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView12">
 
                     <TextView
-                        android:id="@+id/textView13"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"

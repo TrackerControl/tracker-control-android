@@ -4,9 +4,6 @@
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Datenschutzerklärung</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie-Richtlinien</a></string>
-    <string name="app_first">Die Entwicklung und das Testen von TrackerControl wurden mit großer Sorgfalt durchgeführt, jedoch kann nicht garantiert werden, dass TrackerControl auf jedem Gerät korrekt funktioniert.</string>
-    <string name="app_agree">Ich stimme zu</string>
-    <string name="app_disagree">Ich stimme nicht zu</string>
     <string name="channel_foreground">Aktive Dienste</string>
     <string name="channel_notify">Allgemeine Benachrichtigungen</string>
     <string name="channel_access">Zugriffsbenachrichtigungen</string>
@@ -15,13 +12,10 @@
     <string name="menu_app_user">Benutzer-Apps anzeigen</string>
     <string name="menu_app_system">System-Apps anzeigen</string>
     <string name="menu_app_nointernet">Anwendungen ohne Internet anzeigen</string>
-    <string name="menu_app_disabled">Deaktivierte Apps anzeigen</string>
     <string name="menu_sort">Apps sortieren</string>
     <string name="menu_sort_name">Nach Name sortieren</string>
     <string name="menu_sort_uid">Nach UID sortieren</string>
-    <string name="menu_sort_trackers">Nach Trackern sortieren</string>
     <string name="menu_sort_companies">Nach Firmen sortieren</string>
-    <string name="menu_sort_data">Nach Datennutzung sortieren</string>
     <string name="menu_log">Traffic-Log</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
@@ -41,26 +35,11 @@
     <string name="menu_clear">Leeren</string>
     <string name="menu_export">Export</string>
     <string name="menu_reset">Zurücksetzen</string>
-    <string name="menu_add">Hinzufügen</string>
-    <string name="menu_delete">Löschen</string>
     <string name="menu_cleanup">Bereinigen</string>
-    <string name="title_protocol">Protokoll</string>
-    <string name="title_dport">Quell-Port</string>
-    <string name="title_raddr">Zieladresse</string>
-    <string name="title_rport">Zielport</string>
-    <string name="title_ruid">Ziel-App</string>
-    <string name="title_external">Für einen externen Server wählen Sie \'Keiner\' aus</string>
-    <string name="setting_defaults">Standardwerte (White-/Blacklist)</string>
-    <string name="setting_whitelist_wifi">WLAN blockieren</string>
-    <string name="setting_whitelist_other">Mobile Daten blockieren</string>
-    <string name="setting_screen_wifi">WLAN erlauben, wenn Bildschirm eingeschaltet ist</string>
-    <string name="setting_screen_other">Mobilfunk erlauben, wenn Bildschirm eingeschaltet ist</string>
-    <string name="setting_whitelist_roaming">Roaming blockieren</string>
     <string name="setting_options">Optionen</string>
     <string name="setting_theme">Theme: %1$s</string>
     <string name="setting_dark">Dunkles Design</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
-    <string name="setting_screen_on">\'Wenn Bildschirm an\' Regeln anwenden</string>
     <string name="setting_auto">Automatisch nach %1$s Minuten aktivieren</string>
     <string name="setting_pause">Automatisch nach %1$s Minuten aktivieren</string>
     <string name="setting_delay">Bildschirmabschaltung um %1$s Minuten verzögern</string>
@@ -88,18 +67,15 @@
     <string name="setting_advanced_options">Erweiterte Einstellungen</string>
     <string name="setting_system">Systemanwendungen verwalten</string>
     <string name="setting_log_app">Internetzugriff protokollieren</string>
-    <string name="setting_access">Bei Internetzugriff benachrichtigen</string>
     <string name="setting_filter">Datenverkehr filtern</string>
     <string name="setting_filter_udp">UDP-Datenverkehr filtern</string>
     <string name="setting_handover">Nahtlose VPN-Übergabe beim Neuladen</string>
-    <string name="setting_clear_onreload">Die Verbindungen beim Neuladen trennen</string>
     <string name="setting_lockdown">Datenverkehr-Zugriffsbeschränkung</string>
     <string name="setting_track_usage">Netzwerknutzung verfolgen</string>
     <string name="setting_reset_usage">Netzwerknutzung zurücksetzen</string>
     <string name="setting_show_resolved">Aufgelöste Domainnamen anzeigen</string>
     <string name="setting_block_domains">Hosts-Datei aktivieren</string>
     <string name="setting_rcode">Host-Blockierung Antwort: %s</string>
-    <string name="setting_forwarding">Portweiterleitung</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -113,9 +89,6 @@
     <string name="setting_pcap_record_size">PCAP Aufnahmegröße: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. Dateigröße: %s MB</string>
     <string name="setting_watchdog">Watchdog: alle %s Minuten</string>
-    <string name="setting_stats_category">Geschwindigkeitsbenachrichtigung</string>
-    <string name="setting_stats">Geschwindigkeitsbenachrichtigung anzeigen</string>
-    <string name="setting_stats_top">Top Apps anzeigen</string>
     <string name="setting_stats_frequency">Abtastfrequenz: %s ms</string>
     <string name="setting_stats_samples">Anzahl Samples: %s s</string>
     <string name="setting_backup">Sicherung</string>
@@ -128,7 +101,6 @@
     <string name="setting_technical">Technische Information</string>
     <string name="setting_technical_general">Allgemein</string>
     <string name="setting_technical_networks">Netzwerke</string>
-    <string name="setting_technical_subscription">Abonnements</string>
     <string name="summary_install">Statusleisten-Benachrichtigung anzeigen, um neu installierte Apps direkt zu konfigurieren (Pro-Funktion)</string>
     <string name="summary_auto">Nach dem Deaktivieren über das Widget TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option)</string>
     <string name="summary_pause">Nach dem Deaktivieren über die Benachrichtigung TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option).</string>
@@ -148,7 +120,6 @@
     <string name="summary_call">TrackerControl bei eingehenden oder ausgehenden Anrufen deaktivieren. Dadurch können Probleme mit IP/WLAN-Telefonie gelöst werden.</string>
     <string name="summary_system">Regeln für System-Apps festlegen (für Experten)</string>
     <string name="summary_log_app">Internetnutzung von Apps protokollieren. Dies kann in höherem Batterieverbrauch resultieren.</string>
-    <string name="summary_access">Zeige eine Benachrichtigung in der Statusleiste, wenn eine App versucht, auf eine neue Internetadresse zuzugreifen (wenn die Filterung deaktiviert ist, werden nur blockierte Internet-Zugriffsversuche angezeigt)</string>
     <string name="summary_filter">IP-Pakete filtern, die den VPN-Tunnel verlassen, dadurch kann ein erhöhter Batterieverbrauch entstehen.</string>
     <string name="summary_track_usage">Verfolgen Sie die Anzahl der gesendeten und empfangenen Bytes für jede App und Adresse. Dies kann zu einem erhöhten Akkuverbrauch führen.</string>
     <string name="summary_block_domains">WARNUNG: Blockierte Hosts werden nicht in der Benutzeroberfläche angezeigt.</string>
@@ -156,26 +127,19 @@
     <string name="summary_validate">Domain-Name, der verwendet wird, um die Internetverbindung unter Port 443 (https) zu validieren.</string>
     <string name="summary_socks5_enabled">Nur TCP-Datenverkehr wird an den Proxyserver gesendet</string>
     <string name="summary_watchdog">In regelmäßigen Abständen überprüfen, ob TrackerControl noch läuft (geben Sie Null ein, um diese Option zu deaktivieren). Kann zu erhöhtem Akkuverbrauch führen.</string>
-    <string name="summary_stats">Netzwerkgeschwindigkeitskurve in Statusleiste anzeigen</string>
     <string name="msg_sure">Sind Sie sicher?</string>
     <string name="msg_started">Tracker werden überprüft</string>
-    <string name="msg_packages">%1$d URLs erlaubt, %2$d gesperrt</string>
-    <string name="msg_hosts">%1$d URLs erlaubt, %2$d blockiert, %3$d Hosts</string>
     <string name="msg_waiting">Warte auf Ereignis</string>
     <string name="msg_disabled">Verwenden Sie den obigen Schalter um TrackerControl zu aktivieren.</string>
     <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
     <string name="msg_installed">\'%1$s\' installiert</string>
     <string name="msg_installed_n">Wurde installiert</string>
-    <string name="msg_access">%1$s versuchte auf das Internet zuzugreifen</string>
-    <string name="msg_access_n">Versuchter Internetzugriff</string>
     <string name="msg_completed">Aktion abgeschlossen</string>
     <string name="msg_vpn">TrackerControl verwendet ein lokales VPN, um den Internetverkehr zu filtern. Gestatten Sie aus diesem Grund eine VPN-Verbindung im nächsten Dialogfenster. Ihr Internetverkehr wird nicht an einen VPN-Server gesendet.</string>
     <string name="msg_autostart">TrackerControl konnte nicht automatisch gestartet werden. Ursache ist wahrscheinlich ein Fehler in Ihrer Android-Version.</string>
     <string name="msg_error">Unerwarteter Fehler ist aufgetreten: \'%s\'</string>
     <string name="msg_start_failed">Android hat es momentan abgelehnt, den VPN-Dienst zu starten. Ursache ist wahrscheinlich ein Fehler in Ihrer Android-Version.</string>
     <string name="msg_try">TrackerControl ausprobieren</string>
-    <string name="msg_dimming">Wenn Sie im nächsten Dialog nicht OK drücken können, wird wahrscheinlich eine andere (bildschirmhelligkeitsverändernde) Anwendung den Bildschirm manipulieren.</string>
-    <string name="msg_mbday">&#177; %1$.3f&#9650; %2$.3f&#9660; MB/Tag</string>
     <string name="msg_doze">Für konsistente Ergebnisse sollte für TrackerControl die Android-Batterie-Optimierungen deaktiviert werden.\n\nIm nächsten Dialogfenster wählen Sie ganz oben \"Alle Apps\", tippen auf TrackerControl in der Liste und wählen und bestätigen \"Nicht optimieren\".</string>
     <string name="msg_datasaving">Für konsistente Ergebnisse sollte die Android-Option \"Datensparen\" für TrackerControl deaktiviert werden\n\nIm nächsten Fenster aktivieren Sie die Optionen \"Hintergrunddaten\" und \"Uneingeschränkte Datennutzung\"</string>
     <string name="msg_filter">Bei Verwendung von Filterung werden Daten- und Energiewerte erfasst und Android nimmt an, dass Daten und Energie von TrackerControl statt von der ursprünglichen Anwendungen verbraucht werden</string>
@@ -187,8 +151,6 @@
     <string name="msg_downloading">Lade\n%1s herunter</string>
     <string name="msg_downloaded">Hosts-Datei heruntergeladen</string>
     <string name="msg_download_last">Letzter Download: %s</string>
-    <string name="msg_start_forward">Weiterleitung von %1$s Port %2$d nach %3$s:%4$d von \'%5$s\' starten?</string>
-    <string name="msg_stop_forward">Weiterleitung von %1$s Port %2$d stoppen?</string>
     <string name="msg_metered">Volumenbeschränktes Netzwerk</string>
     <string name="msg_inactive">Keine aktive Internetverbindung</string>
     <string name="msg_queue">TrackerControl ist beschäftigt</string>
@@ -200,7 +162,6 @@
     <string name="msg_system">Verwalten aller (System-) Apps kann in den Einstellungen aktiviert werden</string>
     <string name="msg_issue">Bitte beschreiben Sie das Problem und zu welchem Zeitpunkt es aufgetreten ist:</string>
     <string name="msg_vpn_cancelled">VPN-Verbindung abgebrochen\nHaben Sie ein anderes VPN als \'immer eingeschaltet\' konfiguriert?</string>
-    <string name="msg_on">Wenn TrackerControl beim Ausschalten aktiv war startet TrackerControl beim Einschalten automatisch</string>
     <string name="msg_unavailable">Diese Funktion ist in dieser Android-Version nicht verfügbar</string>
     <string name="msg_always_on">Ein anderes VPN ist als \'immer eingeschaltet\' konfiguriert</string>
     <string name="msg_always_on_lockdown">Um TrackerControl im Filtermodus benutzen zu können in den Android VPN-Einstellungen \"Verbindungen ohne VPN blockieren\" deaktivieren</string>
@@ -221,7 +182,6 @@
     <string name="title_disabled">ist deaktiviert</string>
     <string name="title_messaging">Eingehende Nachrichten werden von den Google Play-Diensten empfangen und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
     <string name="title_download">Downloads werden vom Download-Manager durchgeführt und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
-    <string name="title_apply">Regeln und Bedingungen anwenden</string>
     <string name="title_conditions">Bedingungen</string>
     <string name="title_screen_wifi">WLAN erlauben, wenn Bildschirm eingeschaltet ist</string>
     <string name="title_screen_other">Mobilfunk erlauben, wenn Bildschirm eingeschaltet ist</string>
@@ -253,22 +213,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopieren</string>
-    <string name="title_pro">Pro-Funktionen</string>
-    <string name="title_pro_description">Die folgenden Pro-Funktionen sind verfügbar:</string>
-    <string name="title_pro_log">Protokoll des blockierten Verkehrs anzeigen</string>
-    <string name="title_pro_filter">Netzwerkverkehr filtern</string>
-    <string name="title_pro_notify">Benachrichtigung bei neuer App</string>
-    <string name="title_pro_speed">Benachrichtigung mit Netzwerkgeschwindigkeits-Graph</string>
-    <string name="title_pro_theme">Aussehen (Theme, Farben)</string>
-    <string name="title_pro_all">Alle oben stehenden Pro-Funktionen</string>
-    <string name="title_pro_dev">Unterstütze die Entwicklung</string>
-    <string name="title_pro_buy">Kaufen</string>
-    <string name="title_pro_bought">Aktiviert</string>
-    <string name="title_pro_unavailable">Nicht verfügbar</string>
-    <string name="title_pro_details">Für mehr Informationen auf Titel tippen</string>
-    <string name="title_pro_challenge">Herausforderung</string>
-    <string name="title_pro_reponse">Antwort</string>
-    <string name="title_pro_feature">Das ist eine Pro-Funktion</string>
     <string-array name="themeNames">
         <item>türkis/Orange</item>
         <item>blau/orange</item>
@@ -278,42 +222,13 @@
         <item>grün</item>
     </string-array>
     <!-- VPN Control -->
-    <string name="switch_mission">Analyse aktivieren</string>
-    <string name="switch_mission_explanation">Aktiviere die Analyse von App-Tracking durch Drittanbieter.</string>
-    <string name="notification_title_vpnservice">TrackerControl Status</string>
-    <string name="notification_channel_name">Status</string>
-    <string name="restart_notification">Tracker werden nicht überprüft</string>
-    <string name="notification_detail_text_vpnservice_disconnected">Tracker werden nicht überprüft</string>
-    <string name="notification_detail_text_vpnservice_connecting">Starte&#8230;</string>
-    <string name="notification_detail_text_vpnservice_connected">Tracker werden überprüft</string>
-    <string name="notification_detail_text_vpnservice_scheduled_connect">Automatischer Neustart geplant</string>
-    <string name="vpn_rights_needed">Bitte erteilen Sie VPN-Berechtigungen damit TrackerControl funktioniert.</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Name der App</string>
-    <plurals name="n_trackers_found">
-        <item quantity="one">%d Tracker gefunden</item>
-        <item quantity="other">%d Tracker gefunden</item>
-    </plurals>
-    <string name="title_apps">Apps</string>
-    <string name="menu_reset_monitoring">Überwachung zurücksetzen</string>
-    <string name="confirm_reset">LÖSCHEN Ihres Tracker-Verlaufs UND Ihrer Tracker-Einstellungen?</string>
-    <string name="confirm_blocking_title">Alle Tracker blockieren?</string>
     <string name="external_servers">Entwickler E-Mails automatisch erhalten?</string>
     <string name="confirm_google_info">Diese App kann automatisch die E-Mail des App-Entwicklers aus dem Google Play Store abrufen.</string>
-    <string name="no_external_servers">Keine Berechtigung zum Abrufen von Richtlinien vom externen Server. Bitte in App-Einstellungen ändern.</string>
-    <string name="blocking_apps">Alle Tracker blockieren</string>
-    <string name="blocking_trackers">Alle Tracker blockieren</string>
-    <string name="blocking_warning">Benutzen Sie dies mit Bedacht, da Entwickler darauf angewiesen sind!</string>
-    <string name="confirm_blocking">Diese Aktion blockiert Werbung,
-         welche für viele Entwickler wichtig ist.
-        Fortfahren?</string>
-    <string name="are_you_sure">Bestätigen</string>
     <string name="ok">Ok</string>
-    <string name="close">Schließen</string>
-    <string name="cancel">Abbrechen</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
-    <string name="menu_privacy_policy">Datenschutzerklärung</string>
     <string name="menu_csv">Als CSV-Datei exportieren</string>
     <string name="exporting">Exportiere...</string>
     <string name="share_csv">Teilen</string>
@@ -323,7 +238,6 @@
     <string name="tab_trackers">Tracker</string>
     <string name="tab_countries">Länder</string>
     <string name="tab_actions">Meine Daten</string>
-    <string name="summary_loading_error">App-Beschreibung konnte nicht geladen werden.</string>
     <string name="tracker_name">Trackername</string>
     <string name="internet_access">Internetzugriff</string>
     <string name="app_info">App verwalten</string>
@@ -337,7 +251,6 @@
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Wenn Sie der Meinung sind, dass eine App gegen Datenschutzprinzipien verstößt, können Sie sich direkt an die zuständigen Instanzen wenden.</string>
     <string name="play_services_required">Dies ist eine Einstellung der Google Play-Dienste, die nicht auf Ihrem Gerät gefunden wurden.</string>
-    <string name="no_dev_mail">Die E-Mail-Adresse des Entwicklers konnte noch nicht abgerufen werden. Überprüfen Sie ihre Internetverbindung.</string>
     <string name="no_mail_service">Bitte installieren Sie einen E-Mail-Client.</string>
     <string name="blocking_settings">Tracker auswählen</string>
     <string name="ad_settings">Jetzt ändern</string>
@@ -349,7 +262,6 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
-    <string name="subject_delete_data">GDPR Deletion Request</string>
     <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
@@ -384,15 +296,12 @@ The reason for my removal request is that I withdraw or have withdrawn my consen
 Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
 \n
 Sincerely,\n\n]]></string>
-    <string name="packet_statistics">Datenfluss</string>
     <string name="crash_dialog_text">Entschuldigung. TrackerControl ist abgestürzt... Wir wären sehr dankbar dafür, wenn Sie uns eine E-Mail mit Details schicken.</string>
     <string name="crash_dialog_comment">Bemerkungen?</string>
     <string name="instructions_monitoring_private_dns">Betätigen Sie den Schalter und nutzen Sie einige Apps. Private DNS muss deaktiviert werden.</string>
     <string name="instructions_monitoring">Betätigen Sie den Schalter und nutzen Sie einige Apps.</string>
-    <string name="afterboot_notification">Benachrichtigung neustarten</string>
     <string name="device_not_supported_title">Gerät wird nicht unterstützt</string>
     <string name="device_not_supported_msg">Das Betriebssystem Ihres Geräts erlaubt keine Überwachung und Filterung der Netzwerkkommunikation. Dies wird für TrackerControl benötigt.</string>
-    <string name="monitor">Überwachen</string>
     <string name="launch_app">Starten &amp; Tracker finden</string>
     <string name="countries">Zielländer</string>
     <string name="countries_explanation">Herausfinden, wohin Ihr Telefon Tracking-Daten sendet.\n\nInformationen basieren auf DNS-Abfragen und IP-Informationen und können ungenau sein.</string>

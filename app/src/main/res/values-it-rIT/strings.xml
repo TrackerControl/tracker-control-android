@@ -4,9 +4,6 @@
     <string name="app_android">TrackerControl richiede Android 5.1 o versioni successive</string>
     <string name="app_xposed">Xposed causa troppi crash del sistema, il che potrebbe portare alla rimozione di TrackerControl dal Google Play Store, per tanto TrackerControl non è supportato quando Xposed è installato</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie Policy</a></string>
-    <string name="app_first">Nonostante la cura e l\'attenzione riposta nello sviluppo e nel testing di TrackerControl, è impossible garantire il funzionamento dell\'app in ciascun dispositivo.</string>
-    <string name="app_agree">Accetto</string>
-    <string name="app_disagree">Rifiuto</string>
     <string name="channel_foreground">Servizi in esecuzione</string>
     <string name="channel_notify">Notifiche Generali</string>
     <string name="channel_access">Accesso alle notifiche</string>
@@ -15,13 +12,10 @@
     <string name="menu_app_user">Mostra le app utente</string>
     <string name="menu_app_system">Mostra le app di sistema</string>
     <string name="menu_app_nointernet">Mostra le app senza accesso ad Internet</string>
-    <string name="menu_app_disabled">Mostra le app disabilitate</string>
     <string name="menu_sort">Ordina app</string>
     <string name="menu_sort_name">Ordina per Nome</string>
     <string name="menu_sort_uid">Ordina per Uid</string>
-    <string name="menu_sort_trackers">Ordina per Trackers</string>
     <string name="menu_sort_companies">Ordina per Azienda</string>
-    <string name="menu_sort_data">Ordina per Utilizzo Dati</string>
     <string name="menu_log">Log traffico</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_invite">Invita</string>
@@ -41,25 +35,10 @@
     <string name="menu_clear">Elimina tutto</string>
     <string name="menu_export">Esporta</string>
     <string name="menu_reset">Ripristina</string>
-    <string name="menu_add">Aggiungi</string>
-    <string name="menu_delete">Elimina</string>
-    <string name="title_protocol">Protocollo</string>
-    <string name="title_dport">Porta sorgente</string>
-    <string name="title_raddr">Indirizzo Destinazione</string>
-    <string name="title_rport">Porta destinazione</string>
-    <string name="title_ruid">App destinazione</string>
-    <string name="title_external">Per un server esterno selezionare \'nobody\'</string>
-    <string name="setting_defaults">Predefiniti (white/blacklist)</string>
-    <string name="setting_whitelist_wifi">Blocca Wi-Fi</string>
-    <string name="setting_whitelist_other">Blocca rete mobile</string>
-    <string name="setting_screen_wifi">Permetti il Wi-Fi quando lo schermo è acceso</string>
-    <string name="setting_screen_other">Permetti le reti dati quando lo schermo è acceso</string>
-    <string name="setting_whitelist_roaming">Blocca il roaming</string>
     <string name="setting_options">Opzioni</string>
     <string name="setting_theme">Tema: %1$s</string>
     <string name="setting_dark">Tema dark</string>
     <string name="setting_install">Notifica all\'installazione di nuove applicazioni</string>
-    <string name="setting_screen_on">Applica le regole \"a schermo acceso\"</string>
     <string name="setting_auto">Attiva automaticamente dopo %1$s minuti</string>
     <string name="setting_pause">Attiva automaticamente dopo %1$s minuti</string>
     <string name="setting_delay">Ritarda spegnimento schermo di %1$s minuti</string>
@@ -87,17 +66,14 @@
     <string name="setting_advanced_options">Opzioni avanzate</string>
     <string name="setting_system">Gestisci app di sistema</string>
     <string name="setting_log_app">Registra log di accesso ad internet</string>
-    <string name="setting_access">Notifica ad accesso ad internet</string>
     <string name="setting_filter">Filtra traffico</string>
     <string name="setting_filter_udp">Filtra traffico UDP</string>
-    <string name="setting_clear_onreload">Chiudi le connessioni al ricaricamento</string>
     <string name="setting_lockdown">Blocca traffico</string>
     <string name="setting_track_usage">Traccia l\'utilizzo della rete</string>
     <string name="setting_reset_usage">Reset utilizzo rete</string>
     <string name="setting_show_resolved">Mostra il nome dei domini risolti</string>
     <string name="setting_block_domains">Abilita il file degli host</string>
     <string name="setting_rcode">Risposta blocco host: %s</string>
-    <string name="setting_forwarding">Port forwarding</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -117,7 +93,6 @@
     <string name="summary_update">Cerca nuove versioni su GitHub due volte al giorno</string>
     <string name="summary_tethering">A seconda della versione di Android, il tethering potrebbe non funzionare. Non è possibile filtrare il traffico in tethering.</string>
     <string name="summary_subnet">Attiva Subnet Routing: potrebbe abilitare le chiamate Wi-Fi, ma potrebbe anche causare dei bug in Android ed incrementare il consumo di batteria</string>
-    <string name="msg_access_n">Tentativo di accesso ad internet</string>
     <string name="msg_completed">Azione completata</string>
     <string name="msg_vpn">TrackerControl utilizza una VPN locale per filtrare il traffico di rete. 
 Per questa ragione è necessario consentire la connessione VPN.
@@ -126,8 +101,6 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <string name="msg_error">Si è verificato un errore imprevisto: \'%s\'</string>
     <string name="msg_start_failed">Android ha impedito l\'avvio del servizio VPN. Questo è probabilmente causato da un bug nella tua versione di Android.</string>
     <string name="msg_try">Prova TrackerControl</string>
-    <string name="msg_dimming">Se non riesci a cliccare OK nella prossima schermata, è probabile che un\'altra applicazione (app per oscuramento dello schermo) stia manipolando lo schermo.</string>
-    <string name="msg_mbday">&#177; %1$.3f&#9650; %2$.3f&#9660; MB/giorno</string>
     <string name="msg_doze">Per ottenere risultati attendibili, l\'ottimizzazione batteria dovrebbe essere disabilitata per TrackerControl.
 \n\nNella prossima schermata, selezionare \"Tutte le app\" in alto, quindi scegliereTrackerControl nella lista e selezionare \"Non ottimizzare\".</string>
     <string name="msg_datasaving">Per ottenere risultati attendibili, l\'opzione di risparmio dati di Android dovrebbe essere disabilitata per TrackerControl
