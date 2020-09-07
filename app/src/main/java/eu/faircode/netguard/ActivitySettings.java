@@ -34,13 +34,10 @@ import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
@@ -84,11 +81,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -146,30 +141,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Handle screen delay
         Preference pref_screen_delay = screen.findPreference("screen_delay");
         pref_screen_delay.setTitle(getString(R.string.setting_delay, prefs.getString("screen_delay", "0")));
-
-        // Wi-Fi home
-        MultiSelectListPreference pref_wifi_homes = (MultiSelectListPreference) screen.findPreference("wifi_homes");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
-            cat_network.removePreference(pref_wifi_homes);
-        else {
-            Set<String> ssids = prefs.getStringSet("wifi_homes", new HashSet<String>());
-            if (ssids.size() > 0)
-                pref_wifi_homes.setTitle(getString(R.string.setting_wifi_home, TextUtils.join(", ", ssids)));
-            else
-                pref_wifi_homes.setTitle(getString(R.string.setting_wifi_home, "-"));
-
-            WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            List<CharSequence> listSSID = new ArrayList<>();
-            List<WifiConfiguration> configs = wm.getConfiguredNetworks();
-            if (configs != null)
-                for (WifiConfiguration config : configs)
-                    listSSID.add(config.SSID == null ? "NULL" : config.SSID);
-            for (String ssid : ssids)
-                if (!listSSID.contains(ssid))
-                    listSSID.add(ssid);
-            pref_wifi_homes.setEntries(listSSID.toArray(new CharSequence[0]));
-            pref_wifi_homes.setEntryValues(listSSID.toArray(new CharSequence[0]));
-        }
 
         Preference pref_reset_usage = screen.findPreference("reset_usage");
         pref_reset_usage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -409,8 +380,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         cat_options.removePreference(screen.findPreference("auto_enable"));
         cat_options.removePreference(screen.findPreference("screen_delay"));
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1)
-            cat_network.removePreference(screen.findPreference("wifi_homes"));
         cat_network.removePreference(screen.findPreference("use_metered"));
         cat_network.removePreference(screen.findPreference("unmetered_2g"));
         cat_network.removePreference(screen.findPreference("unmetered_3g"));
@@ -529,16 +498,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("ip6".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("wifi_homes".equals(name)) {
-            MultiSelectListPreference pref_wifi_homes = (MultiSelectListPreference) getPreferenceScreen().findPreference(name);
-            Set<String> ssid = prefs.getStringSet(name, new HashSet<String>());
-            if (ssid.size() > 0)
-                pref_wifi_homes.setTitle(getString(R.string.setting_wifi_home, TextUtils.join(", ", ssid)));
-            else
-                pref_wifi_homes.setTitle(getString(R.string.setting_wifi_home, "-"));
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        } else if ("use_metered".equals(name))
+        else if ("use_metered".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("unmetered_2g".equals(name) ||

@@ -52,7 +52,6 @@
     <string name="setting_tethering">Permetti il tethering</string>
     <string name="setting_lan">Permetti l\'accesso LAN</string>
     <string name="setting_ip6">Abilita il traffico IPv6</string>
-    <string name="setting_wifi_home">Reti Wi-Fi domestiche: %1$s</string>
     <string name="setting_metered">Gestisci reti Wi-Fi a consumo</string>
     <string name="setting_metered_2g">Considera il 2G non a consumo</string>
     <string name="setting_metered_3g">Considera il 3G non a consumo</string>
@@ -87,7 +86,6 @@
     <string name="setting_pcap_record_size">Dimensioni record PCAP: %s B</string>
     <string name="setting_pcap_file_size">Dimensione max. file PCAP: %s MB</string>
     <string name="setting_watchdog">Watchdog: ogni %s minuti</string>
-    <string name="setting_stats_top">Mostra le app più usate</string>
     <string name="setting_stats_frequency">Intervallo di campionamento: %s ms</string>
     <string name="setting_stats_samples">Numero di campioni: %s s</string>
     <string name="setting_backup">Backup</string>
@@ -100,7 +98,6 @@
     <string name="setting_technical">Informazioni tecniche</string>
     <string name="setting_technical_general">Generali</string>
     <string name="setting_technical_networks">Reti</string>
-    <string name="setting_technical_subscription">Sottoscrizioni</string>
     <string name="summary_install">Visualizza una notifica nella barra di stato per configurare le applicazioni appena installate (funzionalità PRO)</string>
     <string name="summary_auto">Dopo aver disabilitato TrackerContro attraverso il widget, riabilitalo automaticamente dopo il numero di minuti specificato (Inserire 0 per disabilitare questa opzione)</string>
     <string name="summary_pause">Dopo aver messo in pausa TrackerControl dalla notifica, riabilitalo automaticamente dopo il numero di minuti specificato (Inserire 0 per disabilitare questa opzione).</string>
@@ -110,7 +107,6 @@
     <string name="summary_subnet">Attiva Subnet Routing: potrebbe abilitare le chiamate Wi-Fi, ma potrebbe anche causare dei bug in Android ed incrementare il consumo di batteria</string>
     <string name="summary_lan">Permetti alle applicazioni di connettersi ad indirizzi della rete locale, come, ad esempio, 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16</string>
     <string name="summary_ip6">Instrada il traffico IP versione 6 a TrackerControl così da permetterlo o bloccarlo in modo selettivo</string>
-    <string name="summary_wifi_home">Applica le regole Wi-Fi solo a reti selezionate (applica le regole per rete mobile alle altre reti Wi-Fi)</string>
     <string name="summary_metered">Applica le regole per rete mobile anche alle reti Wi-Fi a consumo (a pagamento, condivise)</string>
     <string name="summary_metered_2g">Applica le regole per il Wi-Fi alle connessioni 2G</string>
     <string name="summary_metered_3g">Applica le regole per il Wi-Fi alle connessioni 3G</string>
@@ -120,7 +116,6 @@
     <string name="summary_call">Disattiva TrackerControl durante le chiamate telefoniche. Può essere utile in caso di problemi con le chiamate via IP/Wi-Fi.</string>
     <string name="summary_system">Definisci regole per le applicazioni di sistema (utenti esperti)</string>
     <string name="summary_log_app">Registra log per i tentativi di accesso ad internet delle app. Potrebbe causare un maggior utilizzo della batteria.</string>
-    <string name="summary_access">Mostra una notifica nella barra di stato quando una applicazione prova ad accedere ad un nuovo indirizzo internet (quando il filtro del traffico è disabiltato, solo i tentativi bloccati verranno notificati)</string>
     <string name="summary_filter">Filtra i pacchetti IP in uscita dal tunnel VPN. Potrebbe comportare un maggior utilizzo della batteria.</string>
     <string name="summary_track_usage">Traccia il numero di byte inviati e ricevuti per ciascuna applicazione ed indirizzo. Può comportare un maggior utilizzo di batteria.</string>
     <string name="summary_block_domains">WARNING: Gli host bloccati non sono mostrati nella interfaccia utente.</string>
@@ -128,18 +123,13 @@
     <string name="summary_validate">Nome dominio utilizzato per convalidare la connessione ad internet sulla porta 443 (https).</string>
     <string name="summary_socks5_enabled">Solo il traffico TCP verrà inviato al server proxy</string>
     <string name="summary_watchdog">Controlla periodicamente se TrackerControl è ancora in esecuzione (inserisci zero per disabilitare). Può comportare un maggior utilizzo di batteria.</string>
-    <string name="summary_stats">Visualizza il grafico della velocità di rete nelle notifiche</string>
     <string name="msg_sure">Sei sicuro?</string>
     <string name="msg_started">Controllo trackers</string>
-    <string name="msg_packages">%1$d URL consentiti, %2$d bloccati</string>
-    <string name="msg_hosts">%1$d URL consentiti, %2$d bloccati, %3$d host</string>
     <string name="msg_waiting">In attesa di eventi</string>
     <string name="msg_disabled">Utilizzare l\'interruttore in alto per abilitare TrackerControl.</string>
     <string name="msg_revoked">TrackerControl è stato disattivato, probabilmente a causa dell\'utilizzo di un altro servizio VPN</string>
     <string name="msg_installed">\'%1$s\' installata</string>
     <string name="msg_installed_n">È stata installata</string>
-    <string name="msg_access">%1$s tentativi di accesso internet</string>
-    <string name="msg_access_n">Tentativo di accesso ad internet</string>
     <string name="msg_completed">Azione completata</string>
     <string name="msg_vpn">TrackerControl utilizza una VPN locale per filtrare il traffico di rete. 
 Per questa ragione è necessario consentire la connessione VPN.
@@ -161,8 +151,6 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <string name="msg_downloading">Scaricamento\n%1s</string>
     <string name="msg_downloaded">File hosts scaricato</string>
     <string name="msg_download_last">Ultimo download: %s</string>
-    <string name="msg_start_forward">Inizia ad inoltrare da %1$s porta %2$d a %3$s:%4$d di \'%5$s\'?</string>
-    <string name="msg_stop_forward">Interrompere l\'inoltro di %1$s porta %2$d?</string>
     <string name="msg_metered">La rete è a consumo</string>
     <string name="msg_inactive">Nessuna connessione internet attiva</string>
     <string name="msg_queue">TrackerControl è occupato</string>

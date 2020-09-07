@@ -7,11 +7,9 @@
     <string name="menu_app_user">Näytä käyttäjän sovellukset</string>
     <string name="menu_app_system">Näytä järjestelmäsovellukset</string>
     <string name="menu_app_nointernet">Näytä sovellukset ilman internetyhteyttä</string>
-    <string name="menu_app_disabled">Näytä käytöstä poistetut sovellukset</string>
     <string name="menu_sort">Järjestä sovellukset</string>
     <string name="menu_sort_name">Järjestä nimen mukaan</string>
     <string name="menu_sort_uid">Järjestä uid:n mukaan</string>
-    <string name="menu_sort_data">Järjestä datan käytön mukaan</string>
     <string name="menu_log">Liikenneloki</string>
     <string name="menu_settings">Asetukset</string>
     <string name="menu_invite">Kutsu</string>
@@ -28,14 +26,7 @@
     <string name="menu_clear">Tyhjennä</string>
     <string name="menu_export">Vie</string>
     <string name="menu_reset">Nollaa</string>
-    <string name="menu_add">Lisää</string>
-    <string name="menu_delete">Poista</string>
     <string name="menu_cleanup">Siivoa</string>
-    <string name="title_protocol">Protokolla</string>
-    <string name="title_dport">Lähdeportti</string>
-    <string name="title_raddr">Kohdeosoite</string>
-    <string name="title_rport">Kohdeportti</string>
-    <string name="title_ruid">Kohdesovellus</string>
     <string name="setting_filter_udp">Suodata UDP-liikenne</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>

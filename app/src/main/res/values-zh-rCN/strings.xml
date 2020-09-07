@@ -51,7 +51,6 @@
     <string name="setting_tethering">允许网络共享</string>
     <string name="setting_lan">允许局域网访问</string>
     <string name="setting_ip6">允许 IPv6 流量</string>
-    <string name="setting_wifi_home">Wi-Fi家庭网络: %1$s</string>
     <string name="setting_metered">处理按流量计费Wi-Fi网络</string>
     <string name="setting_metered_2g">将2G网络视为未计量</string>
     <string name="setting_metered_3g">将3G网络视为未计量</string>
@@ -108,7 +107,6 @@
     <string name="summary_subnet">启用子网路由; 可能有助于开启 Wi-fi 通话, 但也可能触发系统 bug 或增加电量消耗</string>
     <string name="summary_lan">允许应用连接至局域网，比如 10.0.0.0/8，172.16.0.0/12和 192.168.0.0/16</string>
     <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或阻止</string>
-    <string name="summary_wifi_home">仅将Wi-Fi网络规则应用于所选定的网络 (将移动网络规则应用于其他Wi-Fi网络)</string>
     <string name="summary_metered">将移动网络规则应用于按流量计费的 (付费, 共享) Wi-Fi网络</string>
     <string name="summary_metered_2g">将Wi-Fi网络规则应用于2G数据连接</string>
     <string name="summary_metered_3g">将Wi-Fi网络规则应用于3G数据连接</string>

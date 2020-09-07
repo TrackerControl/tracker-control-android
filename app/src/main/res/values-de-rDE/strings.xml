@@ -52,7 +52,6 @@
     <string name="setting_tethering">Tethering erlauben</string>
     <string name="setting_lan">LAN-Zugriff erlauben</string>
     <string name="setting_ip6">IPv6-Datenverkehr aktivieren</string>
-    <string name="setting_wifi_home">WLAN-Heimnetzwerke: %1$s</string>
     <string name="setting_metered">Getaktete WLAN-Netzwerke verwalten</string>
     <string name="setting_metered_2g">2G als ungetaktet behandeln</string>
     <string name="setting_metered_3g">3G als ungetaktet behandeln</string>
@@ -109,7 +108,6 @@
     <string name="summary_subnet">Subnet-Routing aktivieren; ermöglicht möglicherweise das Telefonieren über WLAN, kann aber auch Fehler in Android verursachen und lässt den Batterieverbrauch steigen</string>
     <string name="summary_lan">Apps den Zugriff auf lokale Netzwerkadressen wie 10.0.0.0/8, 172.16.0.0/12 und 192.168.0.0/16 erlauben</string>
     <string name="summary_ip6">IP6-Datenverkehr an TrackerControl weiterleiten, so dass er selektiv zugelassen oder blockiert werden kann</string>
-    <string name="summary_wifi_home">WLAN-Regeln nur für ausgewähltes Netzwerk anwenden (Mobilfunknetz-Regeln für andere WLAN-Netzwerke anwenden)</string>
     <string name="summary_metered">Mobilfunk-Regeln auf volumenbeschränkte (bezahlte, tethering) WLAN-Netzwerke anwenden</string>
     <string name="summary_metered_2g">WLAN-Regeln für 2G-Datenverbindungen anwenden</string>
     <string name="summary_metered_3g">WLAN-Regeln für 3G-Datenverbindungen anwenden</string>

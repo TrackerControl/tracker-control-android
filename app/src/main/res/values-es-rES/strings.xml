@@ -34,8 +34,8 @@
     <string name="menu_cleanup">Limpieza</string>
     <string name="setting_options">Opciones</string>
     <string name="setting_install">Notificar nuevas instalación</string>
-    <string name="setting_auto">Autoactivar después de 1$s minutos</string>
-    <string name="setting_pause">Autoactivar después de 1$s minutos</string>
+    <string name="setting_auto">Autoactivar después de %1$s minutos</string>
+    <string name="setting_pause">Autoactivar después de %1$s minutos</string>
     <string name="setting_delay">Prolongar apagado por %1$s minutos</string>
     <string name="setting_update">Comprobar actualizaciones</string>
     <plurals name="pause">
@@ -47,7 +47,6 @@
     <string name="setting_tethering">Permitir anclaje de red</string>
     <string name="setting_lan">Permitir el acceso a la LAN</string>
     <string name="setting_ip6">Habilitar el tráfico IPv6</string>
-    <string name="setting_wifi_home">Red Wi-Fi doméstica: %1$s</string>
     <string name="setting_metered">Manejar redes Wi-Fi medidas</string>
     <string name="setting_metered_2g">Considerar 2G no medible</string>
     <string name="setting_metered_3g">Considerar 3G no medible</string>
@@ -103,7 +102,6 @@
     <string name="summary_subnet">Activa de enrutamiento de subred; esto activaría las llamadas Wi-Fi, pero también podría ocasionar errores en Android y aumentar el consumo de la batería</string>
     <string name="summary_lan">Permite que las aplicaciones se conecten a las direcciones de la red de área local, como 10.0.0.0/8, 172.16.0.0/12 y 192.168.0.0/16</string>
     <string name="summary_ip6">Rutea el tráfico de la versión 6 de la IP al TrackerControl para que pueda ser permitido o bloqueado selectivamente</string>
-    <string name="summary_wifi_home">Aplica las reglas de la red Wi-Fi sólo para la red seleccionada (para otras redes Wi-Fi se recurre a las reglas de datos móviles)</string>
     <string name="summary_metered">Aplica las reglas de la red móvil a las redes Wi-Fi medidas (pagadas o atadas)</string>
     <string name="summary_metered_2g">Aplica las reglas de la red Wi-Fi para conexiones de datos 2G</string>
     <string name="summary_metered_3g">Aplica las reglas de la red Wi-Fi para conexiones de datos 3G</string>

@@ -63,7 +63,6 @@
     <string name="setting_tethering">Allow tethering</string>
     <string name="setting_lan">Allow LAN access</string>
     <string name="setting_ip6">Enable IPv6 traffic</string>
-    <string name="setting_wifi_home">Wi-Fi home networks: %1$s</string>
     <string name="setting_metered">Handle metered Wi-Fi networks</string>
     <string name="setting_metered_2g">Consider 2G unmetered</string>
     <string name="setting_metered_3g">Consider 3G unmetered</string>
@@ -126,7 +125,6 @@
     <string name="summary_subnet">Enable subnet routing; might enable Wi-Fi calling, but might also trigger bugs in Android and increase battery usage</string>
     <string name="summary_lan">Allow apps to connect to local area network addresses, like 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16</string>
     <string name="summary_ip6">Route IP version 6 traffic to TrackerControl so it can selectively be allowed or blocked</string>
-    <string name="summary_wifi_home">Apply Wi-Fi network rules for selected network only (apply mobile network rules for other Wi-Fi networks)</string>
     <string name="summary_metered">Apply mobile network rules to metered (paid, tethered) Wi-Fi networks</string>
     <string name="summary_metered_2g">Apply Wi-Fi network rules for 2G data connections</string>
     <string name="summary_metered_3g">Apply Wi-Fi network rules for 3G data connections</string>
@@ -144,8 +142,6 @@
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
-
-    <string-array name="default_wifi_home" translatable="false"></string-array>
 
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_started">Checking trackers</string>
