@@ -229,7 +229,6 @@
     <string name="tab_countries">Länder</string>
     <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
-    <string name="internet_access">Internetzugriff</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
