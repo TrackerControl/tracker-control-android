@@ -38,9 +38,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -796,9 +793,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     }
                     popup.getMenu().findItem(R.id.menu_host).setEnabled(multiple);
 
-                    markPro(context, popup.getMenu().findItem(R.id.menu_allow), ActivityPro.SKU_FILTER);
-                    markPro(context, popup.getMenu().findItem(R.id.menu_block), ActivityPro.SKU_FILTER);
-
                     // Whois
                     final Intent lookupIP = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dnslytics.com/whois-lookup/" + daddr));
                     if (pm.resolveActivity(lookupIP, 0) == null)
@@ -828,18 +822,12 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                                 context.startActivity(lookupPort);
                                 result = true;
                             } else if (menu == R.id.menu_allow) {
-                                if (IAB.isPurchased(ActivityPro.SKU_FILTER, context)) {
-                                    DatabaseHelper.getInstance(context).setAccess(id, 0);
-                                    ServiceSinkhole.reload("allow host", context, false);
-                                } else
-                                    context.startActivity(new Intent(context, ActivityPro.class));
+                                DatabaseHelper.getInstance(context).setAccess(id, 0);
+                                ServiceSinkhole.reload("allow host", context, false);
                                 result = true;
                             } else if (menu == R.id.menu_block) {
-                                if (IAB.isPurchased(ActivityPro.SKU_FILTER, context)) {
-                                    DatabaseHelper.getInstance(context).setAccess(id, 1);
-                                    ServiceSinkhole.reload("block host", context, false);
-                                } else
-                                    context.startActivity(new Intent(context, ActivityPro.class));
+                                DatabaseHelper.getInstance(context).setAccess(id, 1);
+                                ServiceSinkhole.reload("block host", context, false);
                                 result = true;
                             } else if (menu == R.id.menu_reset) {
                                 DatabaseHelper.getInstance(context).setAccess(id, -1);
@@ -940,16 +928,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             Log.i(TAG, "Closing access cursor");
             adapter.changeCursor(null);
             holder.lvAccess.setAdapter(null);
-        }
-    }
-
-    private void markPro(Context context, MenuItem menu, String sku) {
-        if (sku == null || !IAB.isPurchased(sku, context)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            boolean dark = prefs.getBoolean("dark_theme", false);
-            SpannableStringBuilder ssb = new SpannableStringBuilder("  " + menu.getTitle());
-            ssb.setSpan(new ImageSpan(context, dark ? R.drawable.ic_shopping_cart_white_24dp : R.drawable.ic_shopping_cart_black_24dp), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            menu.setTitle(ssb);
         }
     }
 

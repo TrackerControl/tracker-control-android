@@ -26,10 +26,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <net.kollnig.missioncontrol.details.FullHeightListView
+        <eu.faircode.netguard.ExpandedListView
             android:id="@+id/details_list"
             android:divider="@null"
-            android:dividerHeight="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

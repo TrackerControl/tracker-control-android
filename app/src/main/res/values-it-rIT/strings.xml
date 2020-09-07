@@ -36,7 +36,6 @@
     <string name="menu_export">Esporta</string>
     <string name="menu_reset">Ripristina</string>
     <string name="setting_options">Opzioni</string>
-    <string name="setting_theme">Tema: %1$s</string>
     <string name="setting_dark">Tema dark</string>
     <string name="setting_install">Notifica all\'installazione di nuove applicazioni</string>
     <string name="setting_auto">Attiva automaticamente dopo %1$s minuti</string>

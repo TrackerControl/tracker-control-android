@@ -33,7 +33,6 @@
     <string name="menu_reset">Reiniciar</string>
     <string name="menu_cleanup">Limpieza</string>
     <string name="setting_options">Opciones</string>
-    <string name="setting_theme">Tema: %1$s</string>
     <string name="setting_install">Notificar nuevas instalación</string>
     <string name="setting_auto">Autoactivar después de 1$s minutos</string>
     <string name="setting_pause">Autoactivar después de 1$s minutos</string>
@@ -154,7 +153,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Actualización disponible, toque para descargar</string>
     <string name="msg_usage">Puedes permitir (verdoso) o denegar (rojizo) el acceso a Wi-Fi o Internet móvil tocando los iconos junto a una aplicación</string>
-    <string name="msg_fairemail">Si instaló TrackerControl para proteger su privacidad, puede que le interese <a href="https://email.faircode.eu/">FairEmail</a>, un aplicativo de correo electrónico también privado y de código abierto</string>
     <string name="msg_whitelist">El acceso a Internet está permitido por defecto (modo lista negra), esto se puede cambiar en los ajustes</string>
     <string name="msg_push">Mensajes entrantes (push) son manejados en su mayoría por el componente del sistema Servicios de Google Play, al que se le permite el acceso a Internet por defecto</string>
     <string name="msg_system">La gestión de todas las aplicaciones (del sistema) puede activarse en la configuración</string>
@@ -209,14 +207,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_nobody">nadie</string>
     <string name="title_dontask">No volver a preguntar</string>
     <string name="title_log_copy">Copiar</string>
-    <string-array name="themeNames">
-        <item>cerceta/naranja</item>
-        <item>azul/naranja</item>
-        <item>púrpura/rojo</item>
-        <item>ámber/azul</item>
-        <item>naranja/gris</item>
-        <item>verde</item>
-    </string-array>
     <!-- VPN Control -->
     <!-- App Overview -->
     <string name="tracked_app_name">Nombre de la aplicación</string>

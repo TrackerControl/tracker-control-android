@@ -147,17 +147,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         Preference pref_screen_delay = screen.findPreference("screen_delay");
         pref_screen_delay.setTitle(getString(R.string.setting_delay, prefs.getString("screen_delay", "0")));
 
-        // Handle theme
-        Preference pref_screen_theme = screen.findPreference("theme");
-        String theme = prefs.getString("theme", "teal");
-        String[] themeNames = getResources().getStringArray(R.array.themeNames);
-        String[] themeValues = getResources().getStringArray(R.array.themeValues);
-        for (int i = 0; i < themeNames.length; i++)
-            if (theme.equals(themeValues[i])) {
-                pref_screen_theme.setTitle(getString(R.string.setting_theme, themeNames[i]));
-                break;
-            }
-
         // Wi-Fi home
         MultiSelectListPreference pref_wifi_homes = (MultiSelectListPreference) screen.findPreference("wifi_homes");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
@@ -416,9 +405,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         pref_technical_network.setOnPreferenceClickListener(listener);
         updateTechnicalInfo();
 
-        // Custom code
-        cat_options.removePreference(screen.findPreference("theme"));
-        //cat_options.removePreference(screen.findPreference("dark_theme"));
         cat_options.removePreference(screen.findPreference("install"));
         cat_options.removePreference(screen.findPreference("auto_enable"));
         cat_options.removePreference(screen.findPreference("screen_delay"));
@@ -528,7 +514,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("screen_delay".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_delay, prefs.getString(name, "0")));
 
-        else if ("theme".equals(name) || "dark_theme".equals(name))
+        else if ("dark_theme".equals(name))
             recreate();
 
         else if ("subnet".equals(name))
@@ -1345,18 +1331,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                         enabled = Boolean.parseBoolean(value);
                     else {
                         if (current == application) {
-                            // Pro features
-                            if ("log".equals(key)) {
-                                if (!IAB.isPurchased(ActivityPro.SKU_LOG, context))
-                                    return;
-                            } else if ("theme".equals(key)) {
-                                if (!IAB.isPurchased(ActivityPro.SKU_THEME, context))
-                                    return;
-                            } else if ("show_stats".equals(key)) {
-                                if (!IAB.isPurchased(ActivityPro.SKU_SPEED, context))
-                                    return;
-                            }
-
                             if ("hosts_last_import".equals(key) || "hosts_last_download".equals(key))
                                 return;
                         }

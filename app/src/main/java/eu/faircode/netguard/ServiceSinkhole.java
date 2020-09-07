@@ -113,7 +113,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
-public class ServiceSinkhole extends VpnService implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class ServiceSinkhole extends VpnService {
     private static final String TAG = "TrackerControl.VPN";
 
     private boolean registeredUser = false;
@@ -1625,13 +1625,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
         lock.writeLock().lock();
 
-        if (dname == null) { // reset mechanism, called from startNative()
+        if (dname == null) // reset mechanism, called from startNative()
             mapUidIPFilters.clear();
-            if (!IAB.isPurchased(ActivityPro.SKU_FILTER, ServiceSinkhole.this)) {
-                lock.writeLock().unlock();
-                return;
-            }
-        }
 
         try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getAccessDns(dname)) {
             int colUid = cursor.getColumnIndex("uid");
@@ -2293,7 +2288,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                     if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                         // Show notification
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                        if (IAB.isPurchased(ActivityPro.SKU_NOTIFY, context) && prefs.getBoolean("install", false)) {
+                        if (prefs.getBoolean("install", false)) {
                             int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
                             notifyNewApplication(uid);
                         }
@@ -2452,8 +2447,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         Log.i(TAG, "Created context=" + jni_context);
         boolean pcap = prefs.getBoolean("pcap", false);
         setPcap(pcap, this);
-
-        prefs.registerOnSharedPreferenceChangeListener(this);
 
         Util.setTheme(this);
         super.onCreate();
@@ -2644,23 +2637,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String name) {
-        if ("theme".equals(name)) {
-            Log.i(TAG, "Theme changed");
-            Util.setTheme(this);
-            if (state != State.none) {
-                Log.d(TAG, "Stop foreground state=" + state.toString());
-                stopForeground(true);
-            }
-            if (state == State.enforcing)
-                startForeground(NOTIFY_ENFORCING, getEnforcingNotification(-1, -1, -1));
-            else if (state != State.none)
-                startForeground(NOTIFY_WAITING, getWaitingNotification());
-            Log.d(TAG, "Start foreground state=" + state.toString());
-        }
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (state == State.enforcing)
             startForeground(NOTIFY_ENFORCING, getEnforcingNotification(-1, -1, -1));
@@ -2827,9 +2803,6 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 jni_done(jni_context);
                 jni_context = 0;
             }
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.unregisterOnSharedPreferenceChangeListener(this);
         }
 
         super.onDestroy();

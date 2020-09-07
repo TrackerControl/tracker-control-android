@@ -477,30 +477,6 @@ public class Util {
         return false;
     }
 
-    public static String getFingerprint(Context context) {
-        try {
-            PackageManager pm = context.getPackageManager();
-            String pkg = context.getPackageName();
-            PackageInfo info = pm.getPackageInfo(pkg, PackageManager.GET_SIGNATURES);
-            byte[] cert = info.signatures[0].toByteArray();
-            MessageDigest digest = MessageDigest.getInstance("SHA1");
-            byte[] bytes = digest.digest(cert);
-            StringBuilder sb = new StringBuilder();
-            for (byte b : bytes)
-                sb.append(Integer.toString(b & 0xff, 16).toLowerCase());
-            return sb.toString();
-        } catch (Throwable ex) {
-            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            return null;
-        }
-    }
-
-    public static boolean hasValidFingerprint(Context context) {
-        String calculated = getFingerprint(context);
-        String expected = context.getString(R.string.fingerprint);
-        return (calculated != null && calculated.equals(expected));
-    }
-
     public static void setTheme(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean dark = prefs.getBoolean("dark_theme", false);
@@ -857,7 +833,6 @@ public class Util {
                 sb.append(String.format("Host: %s\r\n", Build.HOST));
                 sb.append(String.format("Display: %s\r\n", Build.DISPLAY));
                 sb.append(String.format("Id: %s\r\n", Build.ID));
-                sb.append(String.format("Fingerprint: %B\r\n", hasValidFingerprint(context)));
 
                 String abi;
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)

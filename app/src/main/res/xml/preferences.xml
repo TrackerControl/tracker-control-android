@@ -5,11 +5,6 @@
         <PreferenceCategory
             android:key="category_options"
             android:title="@string/setting_options">
-            <ListPreference
-                android:defaultValue="teal"
-                android:entries="@array/themeNames"
-                android:entryValues="@array/themeValues"
-                android:key="theme" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="true"
                 android:key="strict_blocking"

@@ -29,7 +29,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.net.VpnService;
@@ -38,11 +37,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
 import android.provider.Settings;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ImageSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -371,20 +367,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         });
 
-        final LinearLayout llFairEmail = findViewById(R.id.llFairEmail);
-        TextView tvFairEmail = findViewById(R.id.tvFairEmail);
-        tvFairEmail.setMovementMethod(LinkMovementMethod.getInstance());
-        Button btnFairEmail = findViewById(R.id.btnFairEmail);
-        boolean hintFairEmail = prefs.getBoolean("hint_fairemail", true);
-        llFairEmail.setVisibility(hintFairEmail ? View.VISIBLE : View.GONE);
-        btnFairEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefs.edit().putBoolean("hint_fairemail", false).apply();
-                llFairEmail.setVisibility(View.GONE);
-            }
-        });
-
         showHints();
 
         // Listen for preference changes
@@ -625,7 +607,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             boolean hint = prefs.getBoolean("hint_system", true);
             llSystem.setVisibility(!system && hint ? View.VISIBLE : View.GONE);
 
-        } else if ("theme".equals(name) || "dark_theme".equals(name))
+        } else if ("dark_theme".equals(name))
             recreate();
     }
 
@@ -759,8 +741,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             searchView.setQuery(search, true);
         }
 
-        markPro(menu.findItem(R.id.menu_log), ActivityPro.SKU_LOG);
-
         if (getIntentInvite(this).resolveActivity(pm) == null)
             menu.removeItem(R.id.menu_invite);
 
@@ -770,16 +750,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         menu.findItem(R.id.menu_apps).setEnabled(getIntentApps(this).resolveActivity(pm) != null);
 
         return true;
-    }
-
-    private void markPro(MenuItem menu, String sku) {
-        if (sku == null || !IAB.isPurchased(sku, this)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            boolean dark = prefs.getBoolean("dark_theme", false);
-            SpannableStringBuilder ssb = new SpannableStringBuilder("  " + menu.getTitle());
-            ssb.setSpan(new ImageSpan(this, dark ? R.drawable.ic_shopping_cart_white_24dp : R.drawable.ic_shopping_cart_black_24dp), 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            menu.setTitle(ssb);
-        }
     }
 
     @Override
@@ -1142,8 +1112,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Show version
         tvVersionName.setText(Util.getSelfVersionName(this));
-        if (!Util.hasValidFingerprint(this))
-            tvVersionName.setTextColor(Color.GRAY);
         tvVersionCode.setText(Integer.toString(Util.getSelfVersionCode(this)));
 
         // Handle license

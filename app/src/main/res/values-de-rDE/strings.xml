@@ -37,7 +37,6 @@
     <string name="menu_reset">Zurücksetzen</string>
     <string name="menu_cleanup">Bereinigen</string>
     <string name="setting_options">Optionen</string>
-    <string name="setting_theme">Theme: %1$s</string>
     <string name="setting_dark">Dunkles Design</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
     <string name="setting_auto">Automatisch nach %1$s Minuten aktivieren</string>
@@ -156,7 +155,6 @@
     <string name="msg_queue">TrackerControl ist beschäftigt</string>
     <string name="msg_update">Neue Version verfügbar, tippen zum Herunterladen</string>
     <string name="msg_usage">Sie können den Wi-Fi oder mobilen Internet-Zugang zulassen (grünlich) oder verweigern (rötlich), indem Sie auf die Symbole neben einer Anwendung tippen</string>
-    <string name="msg_fairemail">Wenn Sie TrackerControl installiert haben, um Ihre Privatsphäre zu schützen, sind Sie vielleicht auch an <a href="https://email.faircode.eu/">FairEmail</a>interessiert, einer Open-Source Privatsphäre-freundlichen E-Mail-App</string>
     <string name="msg_whitelist">Internet-Zugang ist standardmäßig erlaubt (Blacklist-Modus). Das kann in den Einstellungen geändert werden.</string>
     <string name="msg_push">Eingehende Push-Nachrichten werden normalerweise durch die Systemkomponente Play-Dienste gesteuert, dieser ist standardmäßig der Internetzugang erlaubt</string>
     <string name="msg_system">Verwalten aller (System-) Apps kann in den Einstellungen aktiviert werden</string>
@@ -213,14 +211,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopieren</string>
-    <string-array name="themeNames">
-        <item>türkis/Orange</item>
-        <item>blau/orange</item>
-        <item>lila/rot</item>
-        <item>amber/blau</item>
-        <item>orange/grau</item>
-        <item>grün</item>
-    </string-array>
     <!-- VPN Control -->
     <!-- App Overview -->
     <string name="tracked_app_name">Name der App</string>
