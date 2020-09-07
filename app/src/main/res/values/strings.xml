@@ -509,15 +509,15 @@ Sincerely,\n\n]]></string>
 
     <string name="tracker_advertising">Advertising</string>
     <string name="tracker_analytics">Analytics</string>
-    <string name="tracker_content">Often Necessary</string>
+    <string name="tracker_content">Essential</string>
     <string name="tracker_cryptomining">Cryptomining</string>
     <string name="tracker_fingerprinting">Fingerprinting</string>
     <string name="tracker_social">Social</string>
     <string name="tracker_uncategorised">Uncategorised</string>
 
-    <string name="setting_strict_blocking">Strict Blocking</string>
+    <string name="setting_strict_blocking">Strict Blocking (Beta)</string>
     <string name="summary_strict_blocking">Block potentially necessary trackers. More apps will break.</string>
-    <string name="strict_blocking_explanation">Strict Blocking will prevent more trackers, but likely break some apps.</string>
+    <string name="strict_blocking_explanation">By default, TrackerControl blocks all trackers. This might break apps. Non-strict mode (in development) allows some essential trackers.</string>
 
     <string name="exclude_vpn" translatable="false">Monitoring</string>
     <string name="exclude_vpn_explanation">Must be on to detect and block trackers. Disable if you run into issues.</string>
