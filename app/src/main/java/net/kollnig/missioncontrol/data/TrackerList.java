@@ -42,6 +42,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import eu.faircode.netguard.DatabaseHelper;
+import eu.faircode.netguard.ServiceSinkhole;
 
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
@@ -61,6 +62,8 @@ public class TrackerList {
 
         return instance;
     }
+
+    private static Tracker hostlistTracker = new Tracker("Uncategorised", "Uncategorised");
 
     /**
      * Identifies tracker hosts
@@ -82,6 +85,10 @@ public class TrackerList {
                 }
             }
         }
+
+        if (t == null
+                && ServiceSinkhole.mapHostsBlocked.containsKey(hostname))
+            return hostlistTracker;
 
         return t;
     }
@@ -204,15 +211,15 @@ public class TrackerList {
     /**
      * Loads X-Ray tracker list
      *
-     * @param context
+     * @param c
      */
-    private void loadXrayTrackers(Context context) {
+    private void loadXrayTrackers(Context c) {
         // Keep track of parent companies
         Map<String, Tracker> rootParents = new HashMap<>();
 
         try {
             // Read JSON
-            InputStream is = context.getAssets().open("xray-blacklist.json");
+            InputStream is = c.getAssets().open("xray-blacklist.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);

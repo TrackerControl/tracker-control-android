@@ -142,12 +142,12 @@
                 android:key="hosts_import_append"
                 android:title="@string/setting_hosts_append" />
             <EditTextPreference
-                android:defaultValue="https://www.netguard.me/hosts"
-                android:hint="https://www.netguard.me/hosts"
-                android:key="hosts_url"
+                android:defaultValue="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+                android:hint="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+                android:key="hosts_url_new"
                 android:title="@string/setting_hosts_url" />
             <Preference
-                android:dependency="hosts_url"
+                android:dependency="hosts_url_new"
                 android:key="hosts_download"
                 android:title="@string/setting_hosts_download" />
             <eu.faircode.netguard.SwitchPreference

@@ -115,18 +115,20 @@ removed manually by the user (e.g. by uninstalling).
 
 The development of TrackerControl was led by Konrad Kollnig (University of Oxford). The underlying network analysis functionality is provided by the [NetGuard Firewall](https://github.com/M66B/NetGuard), developed by Marcel Bokhorst.
 
-TrackerControl would not have been possible without the help of many outstandings minds, including Max Van Kleek, Katherine Fletcher, George Chalhoub, Sir Nigel Shadbolt and numerous app testers and friends.
+TrackerControl would not have been possible without the help of many outstanding minds, including Max Van Kleek, Katherine Fletcher, George Chalhoub, Sir Nigel Shadbolt and numerous app testers and friends.
 
-The app builds upon a range of publicly available ressources:
-
-*Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
-that is distributed with the Firefox browser.
+The app builds upon a range of publicly available resources:
 
 *X-Ray Tracker List:* TrackerControl also uses the tracker blocklist by Reuben Binns, Ulrik Lyngs,
 Max Van Kleek, Jun Zhao, Timothy Libert, and Nigel Shadbolt from the [X-Ray project](https://www.sociam.org/mobile-app-x-ray), created *from analysing ~1&nbsp;000&nbsp;000 apps*.
 This database was released as part of their 2018 paper on
 [Third Party Tracking in the Mobile Ecosystem](https://doi.org/10.1145/3201064.3201089).
 The original data can be retrieved [here](https://osf.io/4nu9e/).
+
+*Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
+that is distributed with the Firefox browser.
+
+*Steven Black's Blocklist*: A state-of-the-art blocklist. This is used as fallback, if no company information is known from the other tracker lists. More [here](https://github.com/StevenBlack/hosts).
 
 *Icons:* The app uses icons made by [bqlqn](https://www.flaticon.com/authors/bqlqn) from [www.flaticon.com](https://www.flaticon.com/), and a [rocket icon](https://www.iconfinder.com/icons/1608817/rocket_icon) by Dave Gandy under the SIL Open Font License.
 

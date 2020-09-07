@@ -64,7 +64,7 @@ public class ServiceExternal extends IntentService {
             if (ACTION_DOWNLOAD_HOSTS_FILE.equals(intent.getAction())) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-                String hosts_url = prefs.getString("hosts_url", null);
+                String hosts_url = prefs.getString("hosts_url_new", null);
                 File tmp = new File(getFilesDir(), "hosts.tmp");
                 File hosts = new File(getFilesDir(), "hosts.txt");
 

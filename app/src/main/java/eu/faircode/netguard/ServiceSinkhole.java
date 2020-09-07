@@ -144,13 +144,13 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
     private ParcelFileDescriptor vpn = null;
     private boolean temporarilyStopped = false;
 
-    private long last_hosts_modified = 0;
-    private Map<String, Boolean> mapHostsBlocked = new HashMap<>();
+    private static long last_hosts_modified = 0;
+    public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
     private Map<Integer, Forward> mapForward = new HashMap<>();
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+    public static ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     private volatile Looper commandLooper;
     private volatile Looper logLooper;
@@ -1198,8 +1198,10 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         // Remove local DNS servers when not routing LAN
         int count = listDns.size();
         boolean lan = prefs.getBoolean("lan", false);
-        boolean use_hosts = prefs.getBoolean("use_hosts", false);
-        if (lan && use_hosts && filter)
+        //boolean use_hosts = prefs.getBoolean("use_hosts", false);
+        if (lan
+                //&& use_hosts
+                && filter)
             try {
                 List<Pair<InetAddress, Integer>> subnets = new ArrayList<>();
                 subnets.add(new Pair<>(InetAddress.getByName("10.0.0.0"), 8));
@@ -1464,7 +1466,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         // Prepare rules
         if (filter) {
             prepareUidAllowed(listAllowed, listRule);
-            prepareHostsBlocked();
+            prepareHostsBlocked(ServiceSinkhole.this);
             prepareUidIPFilters(null);
             prepareForwarding();
         } else {
@@ -1560,33 +1562,33 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
         lock.writeLock().unlock();
     }
 
-    private void prepareHostsBlocked() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-        boolean use_hosts = prefs.getBoolean("filter", true) && prefs.getBoolean("use_hosts", false);
-        File hosts = new File(getFilesDir(), "hosts.txt");
-        if (!use_hosts || !hosts.exists() || !hosts.canRead()) {
-            Log.i(TAG, "Hosts file use=" + use_hosts + " exists=" + hosts.exists());
+    public static void prepareHostsBlocked(Context c) {
+        BufferedReader br = null;
+        InputStreamReader is;
+        File hosts = new File(c.getFilesDir(), "hosts.txt");
+
+        try {
+            if (!hosts.exists() || !hosts.canRead()) {
+                if (mapHostsBlocked.size() > 0) {
+                    Log.i(TAG, "Hosts file unchanged");
+                    return;
+                }
+                is = new InputStreamReader(c.getAssets().open("hosts.txt"));
+            } else {
+                boolean changed = (hosts.lastModified() != last_hosts_modified);
+                if (!changed && mapHostsBlocked.size() > 0) {
+                    Log.i(TAG, "Hosts file unchanged");
+                    return;
+                }
+                last_hosts_modified = hosts.lastModified();
+                is = new FileReader(hosts);
+            }
+
             lock.writeLock().lock();
             mapHostsBlocked.clear();
-            lock.writeLock().unlock();
-            return;
-        }
 
-        boolean changed = (hosts.lastModified() != last_hosts_modified);
-        if (!changed && mapHostsBlocked.size() > 0) {
-            Log.i(TAG, "Hosts file unchanged");
-            return;
-        }
-        last_hosts_modified = hosts.lastModified();
-
-        lock.writeLock().lock();
-
-        mapHostsBlocked.clear();
-
-        int count = 0;
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(hosts));
+            int count = 0;
+            br = new BufferedReader(is);
             String line;
             while ((line = br.readLine()) != null) {
                 int hash = line.indexOf('#');
@@ -1864,13 +1866,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
 
     // Called from native code
     private boolean isDomainBlocked(String name) {
-        if (Util.isPlayStoreInstall())
-            return false;
-
-        lock.readLock().lock();
-        boolean blocked = (mapHostsBlocked.containsKey(name) && mapHostsBlocked.get(name));
-        lock.readLock().unlock();
-        return blocked;
+        return false;
     }
 
     // Called from native code

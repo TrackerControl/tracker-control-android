@@ -292,11 +292,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         });
 
         // Hosts file settings
-        Preference pref_block_domains = screen.findPreference("use_hosts");
+        cat_advanced.removePreference(screen.findPreference("use_hosts"));
         EditTextPreference pref_rcode = (EditTextPreference) screen.findPreference("rcode");
         Preference pref_hosts_import = screen.findPreference("hosts_import");
         Preference pref_hosts_import_append = screen.findPreference("hosts_import_append");
-        EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url");
+        EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url_new");
         final Preference pref_hosts_download = screen.findPreference("hosts_download");
 
         pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
@@ -310,7 +310,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         if (Util.isPlayStoreInstall(this)) {
             Log.i(TAG, "Play store install");
-            cat_advanced.removePreference(pref_block_domains);
             cat_advanced.removePreference(pref_rcode);
             cat_advanced.removePreference(pref_hosts_import);
             cat_advanced.removePreference(pref_hosts_import_append);
@@ -351,7 +350,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 public boolean onPreferenceClick(Preference preference) {
                     final File tmp = new File(getFilesDir(), "hosts.tmp");
                     final File hosts = new File(getFilesDir(), "hosts.txt");
-                    EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url");
+                    EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url_new");
                     try {
                         new DownloadTask(ActivitySettings.this, new URL(pref_hosts_url.getText()), tmp, new DownloadTask.Listener() {
                             @Override
@@ -748,7 +747,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("stats_samples".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_stats_samples, prefs.getString(name, "90")));
 
-        else if ("hosts_url".equals(name))
+        else if ("hosts_url_new".equals(name))
             getPreferenceScreen().findPreference(name).setSummary(prefs.getString(name, BuildConfig.HOSTS_FILE_URI));
 
         else if ("loglevel".equals(name))
