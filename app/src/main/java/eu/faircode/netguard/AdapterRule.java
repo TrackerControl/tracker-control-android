@@ -65,6 +65,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
@@ -545,10 +546,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
 
             boolean wasBlocked = internetBlocklist.blockedInternet(rule.uid);
-            if (wasBlocked)
+            if (wasBlocked) {
                 internetBlocklist.unblock(rule.uid);
-            else
+                Toast.makeText(context, R.string.internet_unblocked, Toast.LENGTH_SHORT).show();
+            } else {
                 internetBlocklist.block(rule.uid);
+                Toast.makeText(context, R.string.internet_blocked, Toast.LENGTH_SHORT).show();
+            }
             setGreyscale(iv, !wasBlocked);
         });
 

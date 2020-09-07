@@ -540,4 +540,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_hostlist">User-Defined Hosts</string>
     <string name="unblocked">Unblocked</string>
     <string name="enable">Enable</string>
+
+    <string name="internet_blocked">Internet access blocked</string>
+    <string name="internet_unblocked">Internet access unblocked</string>
 </resources>
