@@ -517,7 +517,7 @@ Sincerely,\n\n]]></string>
 
     <string name="setting_strict_blocking">Strict Blocking (Beta)</string>
     <string name="summary_strict_blocking">Block potentially necessary trackers. More apps will break.</string>
-    <string name="strict_blocking_explanation">By default, TrackerControl blocks all trackers. This might break apps. Non-strict mode (in development) allows some essential trackers.</string>
+    <string name="strict_blocking_explanation">By default, TrackerControl blocks all found trackers. This might break apps. Non-strict mode (in development) allows some essential trackers.</string>
 
     <string name="exclude_vpn" translatable="false">Monitoring</string>
     <string name="exclude_vpn_explanation">Must be on to detect and block trackers. Disable if you run into issues.</string>
