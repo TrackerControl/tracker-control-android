@@ -24,11 +24,6 @@
                 android:inputType="number"
                 android:key="pause"
                 android:summary="@string/summary_pause" />
-            <EditTextPreference
-                android:defaultValue="0"
-                android:inputType="number"
-                android:key="auto_enable"
-                android:summary="@string/summary_auto" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="true"
                 android:key="update_check"

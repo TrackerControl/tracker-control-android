@@ -34,7 +34,6 @@
     <string name="menu_cleanup">Limpieza</string>
     <string name="setting_options">Opciones</string>
     <string name="setting_install">Notificar nuevas instalación</string>
-    <string name="setting_auto">Autoactivar después de %1$s minutos</string>
     <string name="setting_pause">Autoactivar después de %1$s minutos</string>
     <string name="setting_update">Comprobar actualizaciones</string>
     <plurals name="pause">
@@ -82,7 +81,6 @@
     <string name="setting_hosts_url">URL del archivo de descarga del anfitrión</string>
     <string name="setting_hosts_download">Descargar archivo de hosts</string>
     <string name="summary_install">Muestra la notificación de la barra de estado para configurar directamente las aplicaciones recién instaladas (función pro)</string>
-    <string name="summary_auto">Después de desactivar el uso del widget, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca cero para desactivar esta opción)</string>
     <string name="summary_pause">Después de pausar la notificación, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca 0 para desactivar esta opción)</string>
     <string name="summary_update">Comprueba los nuevos lanzamientos en GitHub dos veces al día</string>
     <string name="summary_tethering">Dependiendo de la versión de Android, el tethering podría o no funcionar. El tráfico atado no puede ser filtrado.</string>

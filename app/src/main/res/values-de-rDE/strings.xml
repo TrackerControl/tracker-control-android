@@ -39,7 +39,6 @@
     <string name="setting_options">Optionen</string>
     <string name="setting_dark">Dunkles Design</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
-    <string name="setting_auto">Automatisch nach %1$s Minuten aktivieren</string>
     <string name="setting_pause">Automatisch nach %1$s Minuten aktivieren</string>
     <string name="setting_update">Nach Updates suchen</string>
     <plurals name="pause">
@@ -87,7 +86,6 @@
     <string name="setting_hosts_url">Hosts-Datei Download-URL</string>
     <string name="setting_hosts_download">Hosts-Datei herunterladen</string>
     <string name="summary_install">Statusleisten-Benachrichtigung anzeigen, um neu installierte Apps direkt zu konfigurieren (Pro-Funktion)</string>
-    <string name="summary_auto">Nach dem Deaktivieren über das Widget TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option)</string>
     <string name="summary_pause">Nach dem Deaktivieren über die Benachrichtigung TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option).</string>
     <string name="summary_update">Überprüfe zweimal täglich nach neuen Versionen auf GitHub</string>
     <string name="summary_tethering">Abhängig von der Android Version kann Tethering funktionieren. Dieser Verkehr kann nicht gefiltert werden.</string>

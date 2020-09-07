@@ -39,7 +39,6 @@
     <string name="setting_options">Opzioni</string>
     <string name="setting_dark">Tema dark</string>
     <string name="setting_install">Notifica all\'installazione di nuove applicazioni</string>
-    <string name="setting_auto">Attiva automaticamente dopo %1$s minuti</string>
     <string name="setting_pause">Attiva automaticamente dopo %1$s minuti</string>
     <string name="setting_update">Cerca nuovi aggiornamenti</string>
     <plurals name="pause">
@@ -86,7 +85,6 @@
     <string name="setting_hosts_url">URL download file host</string>
     <string name="setting_hosts_download">Scarica file hosts</string>
     <string name="summary_install">Visualizza una notifica nella barra di stato per configurare le applicazioni appena installate (funzionalità PRO)</string>
-    <string name="summary_auto">Dopo aver disabilitato TrackerContro attraverso il widget, riabilitalo automaticamente dopo il numero di minuti specificato (Inserire 0 per disabilitare questa opzione)</string>
     <string name="summary_pause">Dopo aver messo in pausa TrackerControl dalla notifica, riabilitalo automaticamente dopo il numero di minuti specificato (Inserire 0 per disabilitare questa opzione).</string>
     <string name="summary_update">Cerca nuove versioni su GitHub due volte al giorno</string>
     <string name="summary_tethering">A seconda della versione di Android, il tethering potrebbe non funzionare. Non è possibile filtrare il traffico in tethering.</string>

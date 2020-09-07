@@ -36,8 +36,6 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.R;
 
-import java.util.Date;
-
 @TargetApi(Build.VERSION_CODES.N)
 public class ServiceTileMain extends TileService implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.TileMain";
@@ -88,18 +86,7 @@ public class ServiceTileMain extends TileService implements SharedPreferences.On
         prefs.edit().putBoolean("enabled", enabled).apply();
         if (enabled)
             ServiceSinkhole.start("tile", this);
-        else {
+        else
             ServiceSinkhole.stop("tile", this, false);
-
-            // Auto enable
-            int auto = Integer.parseInt(prefs.getString("auto_enable", "0"));
-            if (auto > 0) {
-                Log.i(TAG, "Scheduling enabled after minutes=" + auto);
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                    am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + auto * 60 * 1000L, pi);
-                else
-                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + auto * 60 * 1000L, pi);
-            }
-        }
     }
 }

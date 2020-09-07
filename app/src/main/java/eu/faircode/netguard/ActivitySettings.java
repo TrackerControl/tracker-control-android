@@ -130,10 +130,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         Preference pref_pause = screen.findPreference("pause");
         pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "10")));
 
-        // Handle auto enable
-        Preference pref_auto_enable = screen.findPreference("auto_enable");
-        pref_auto_enable.setTitle(getString(R.string.setting_auto, prefs.getString("auto_enable", "0")));
-
         Preference pref_reset_usage = screen.findPreference("reset_usage");
         pref_reset_usage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -422,9 +418,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("pause".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
-
-        else if ("auto_enable".equals(name))
-            getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_auto, prefs.getString(name, "0")));
 
         else if ("dark_theme".equals(name))
             recreate();

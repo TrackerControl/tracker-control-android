@@ -39,7 +39,6 @@
     <string name="setting_options">选项</string>
     <string name="setting_dark">深色主题</string>
     <string name="setting_install">有新软件安装时通知我</string>
-    <string name="setting_auto">%1$s 分钟后自动启用</string>
     <string name="setting_pause">%1$s 分钟后自动启用</string>
     <string name="setting_update">检查更新</string>
     <plurals name="pause">
@@ -86,7 +85,6 @@
     <string name="setting_hosts_url">hosts 文件下载地址</string>
     <string name="setting_hosts_download">下载 hosts 文件</string>
     <string name="summary_install">显示状态栏通知直接对新安装的软件进行设置 (专业版功能)</string>
-    <string name="summary_auto">禁用小部件后，在选定的分钟数之后再次自动启用TrackerControl(输入0禁用此选项)</string>
     <string name="summary_pause">从通知栏暂停软件运作后，在选定的分钟数后重新自动启用TrackerControl(输入0禁用此选项)。</string>
     <string name="summary_update">每日两次检查 GitHub 上的新版本</string>
     <string name="summary_tethering">根据 Android 版本不同, 网络共享可能工作也可能无法正常工作. 共享网络流量无法被过滤.</string>

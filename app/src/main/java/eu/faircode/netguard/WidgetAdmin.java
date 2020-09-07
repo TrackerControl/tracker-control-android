@@ -80,13 +80,8 @@ public class WidgetAdmin extends ReceiverAutostart {
                     ServiceSinkhole.stop("widget", context, false);
 
                 // Auto enable
-                int auto = Integer.parseInt(prefs.getString("auto_enable", "0"));
-
-                // Pause
-                if (INTENT_PAUSE.equals(intent.getAction()))
-                    auto = Integer.parseInt(prefs.getString("pause", "10"));
-
-                if (!enabled && auto > 0) {
+                int auto = Integer.parseInt(prefs.getString("pause", "10"));
+                if (!enabled && auto > 0 && INTENT_PAUSE.equals(intent.getAction())) {
                     Log.i(TAG, "Scheduling enabled after minutes=" + auto);
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
                         am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + auto * 60 * 1000L, pi);
