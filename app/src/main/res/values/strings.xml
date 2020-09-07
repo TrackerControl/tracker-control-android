@@ -8,7 +8,6 @@
     <string name="app_first">Great care has been taken to develop and test TrackerControl, however it is impossible to guarantee TrackerControl will work correctly on every device.</string>
     <string name="app_agree">I agree</string>
     <string name="app_disagree">I disagree</string>
-    <string name="app_support">TrackerControl needs your help. Tap to purchase pro features to keep the project going.</string>
 
     <string name="channel_foreground">Running services</string>
     <string name="channel_notify">General notifications</string>
