@@ -20,12 +20,12 @@
     <string name="menu_sort_name">按名称排序</string>
     <string name="menu_sort_uid">按 UID 排序</string>
     <string name="menu_sort_trackers">按跟踪器排序</string>
+    <string name="menu_sort_companies">按公司排序</string>
     <string name="menu_sort_data">按数据使用量排序</string>
     <string name="menu_log">流量日志</string>
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
     <string name="menu_legend">图例</string>
-    <string name="menu_support">写邮件</string>
     <string name="menu_log_support">解释</string>
     <string name="menu_about">关于</string>
     <string name="menu_apps">其他应用</string>
@@ -322,13 +322,11 @@
     <string name="export_failed">导出失败</string>
     <string name="exported">导出到存储! 从计算机访问手机存储或与其他应用共享。</string>
     <!-- App Details -->
-    <string name="title_activity_detail">详细活动</string>
     <string name="tab_trackers">跟踪器</string>
     <string name="tab_countries">国家</string>
     <string name="tab_actions">我的数据</string>
     <string name="summary_loading_error">无法获取应用描述。</string>
     <string name="tracker_name">追踪器名称</string>
-    <string name="internet_access">阻止互联网访问</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
     <string name="block_tracking">屏蔽追踪器</string>
@@ -398,4 +396,5 @@
     <string name="launch_app">启动 &amp; 查找追踪器</string>
     <string name="countries">目的地国家</string>
     <string name="countries_explanation">找出你的手机把跟踪数据发到哪去了。\n\n信息基于DNS查找和IP信息，可能不准确。</string>
+    <string name="countries_loading_failed">糟糕，国家/地区地图无法加载。 请告诉tc@kollnig.net这是怎么发生的。</string>
 </resources>

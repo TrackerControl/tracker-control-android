@@ -6,7 +6,6 @@
     <string name="app_first">Se ha tenido mucho cuidado en desarrollar y probar TrackerControl, sin embargo es imposible garantizar que el TrackerControl funcione correctamente en todos los dispositivos.</string>
     <string name="app_agree">Estoy de acuerdo</string>
     <string name="app_disagree">No acepto</string>
-    <string name="app_support">TrackerControl necesita tu ayuda. Pulse para comprar características profesionales para mantener el proyecto en marcha.</string>
     <string name="channel_foreground">Servicios de ejecución</string>
     <string name="channel_notify">Notificaciones generales</string>
     <string name="channel_access">Notificaciones de acceso</string>
@@ -24,7 +23,6 @@
     <string name="menu_settings">Ajustes</string>
     <string name="menu_invite">Invitar</string>
     <string name="menu_legend">Leyenda</string>
-    <string name="menu_support">Escribir correo electrónico</string>
     <string name="menu_about">Acerca de</string>
     <string name="menu_apps">Otras aplicaciones</string>
     <string name="menu_protocol_other">Otro</string>
