@@ -43,6 +43,8 @@ import net.kollnig.missioncontrol.data.TrackerCategory;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.faircode.netguard.Rule;
+import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 /**
@@ -195,6 +197,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed()) return; // to fix errors
                 apply.edit().putBoolean(mAppId, isChecked).apply();
+
+                Rule.clearCache(mContext);
+                ServiceSinkhole.reload("app blocking changed", mContext, false);
+
                 notifyDataSetChanged();
             });
 

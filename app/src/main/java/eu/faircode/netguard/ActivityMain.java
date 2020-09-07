@@ -566,8 +566,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Util.sendLogcat(target, this);
             }
         } else if (requestCode == REQUEST_DETAILS_UPDATED) {
-            Rule.clearCache(ActivityMain.this);
-            ServiceSinkhole.reload("details closed", ActivityMain.this, false);
             updateApplicationList(null);
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
