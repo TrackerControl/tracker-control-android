@@ -95,9 +95,6 @@
     <string name="setting_hosts_append">Importa file host (aggiungi)</string>
     <string name="setting_hosts_url">URL download file host</string>
     <string name="setting_hosts_download">Scarica file hosts</string>
-    <string name="setting_technical">Informazioni tecniche</string>
-    <string name="setting_technical_general">Generali</string>
-    <string name="setting_technical_networks">Reti</string>
     <string name="summary_install">Visualizza una notifica nella barra di stato per configurare le applicazioni appena installate (funzionalità PRO)</string>
     <string name="summary_auto">Dopo aver disabilitato TrackerContro attraverso il widget, riabilitalo automaticamente dopo il numero di minuti specificato (Inserire 0 per disabilitare questa opzione)</string>
     <string name="summary_pause">Dopo aver messo in pausa TrackerControl dalla notifica, riabilitalo automaticamente dopo il numero di minuti specificato (Inserire 0 per disabilitare questa opzione).</string>

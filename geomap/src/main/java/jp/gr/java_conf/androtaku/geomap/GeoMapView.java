@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -45,7 +46,7 @@ public class GeoMapView extends androidx.appcompat.widget.AppCompatImageView {
         _paint.setStyle(Paint.Style.STROKE);
         _paint.setAntiAlias(true);
 
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(Looper.getMainLooper());
         new Thread(() -> {
             _countries = SVGParser.getCountries(_context);
 

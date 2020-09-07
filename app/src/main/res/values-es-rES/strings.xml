@@ -91,8 +91,6 @@
     <string name="setting_hosts_append">Importar archivo de hosts (append)</string>
     <string name="setting_hosts_url">URL del archivo de descarga del anfitrión</string>
     <string name="setting_hosts_download">Descargar archivo de hosts</string>
-    <string name="setting_technical">Información técnica</string>
-    <string name="setting_technical_networks">Redes</string>
     <string name="summary_install">Muestra la notificación de la barra de estado para configurar directamente las aplicaciones recién instaladas (función pro)</string>
     <string name="summary_auto">Después de desactivar el uso del widget, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca cero para desactivar esta opción)</string>
     <string name="summary_pause">Después de pausar la notificación, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca 0 para desactivar esta opción)</string>

@@ -96,9 +96,6 @@
     <string name="setting_hosts_append">Hosts-Datei importieren (anhängen)</string>
     <string name="setting_hosts_url">Hosts-Datei Download-URL</string>
     <string name="setting_hosts_download">Hosts-Datei herunterladen</string>
-    <string name="setting_technical">Technische Information</string>
-    <string name="setting_technical_general">Allgemein</string>
-    <string name="setting_technical_networks">Netzwerke</string>
     <string name="summary_install">Statusleisten-Benachrichtigung anzeigen, um neu installierte Apps direkt zu konfigurieren (Pro-Funktion)</string>
     <string name="summary_auto">Nach dem Deaktivieren über das Widget TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option)</string>
     <string name="summary_pause">Nach dem Deaktivieren über die Benachrichtigung TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option).</string>

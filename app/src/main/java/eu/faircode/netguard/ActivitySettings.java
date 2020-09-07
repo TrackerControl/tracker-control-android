@@ -22,17 +22,14 @@ package eu.faircode.netguard;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -358,24 +355,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (!Util.isDebuggable(this))
             screen.removePreference(screen.findPreference("screen_development"));
 
-        // Handle technical info
-        Preference.OnPreferenceClickListener listener = new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                updateTechnicalInfo();
-                return true;
-            }
-        };
-
-        // Technical info
-        Preference pref_technical_info = screen.findPreference("technical_info");
-        Preference pref_technical_network = screen.findPreference("technical_network");
-        pref_technical_info.setEnabled(INTENT_VPN_SETTINGS.resolveActivity(this.getPackageManager()) != null);
-        pref_technical_info.setIntent(INTENT_VPN_SETTINGS);
-        pref_technical_info.setOnPreferenceClickListener(listener);
-        pref_technical_network.setOnPreferenceClickListener(listener);
-        updateTechnicalInfo();
-
         cat_options.removePreference(screen.findPreference("install"));
         cat_options.removePreference(screen.findPreference("auto_enable"));
         cat_options.removePreference(screen.findPreference("screen_delay"));
@@ -402,17 +381,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Listen for preference changes
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
-
-        // Listen for interactive state changes
-        IntentFilter ifInteractive = new IntentFilter();
-        ifInteractive.addAction(Intent.ACTION_SCREEN_ON);
-        ifInteractive.addAction(Intent.ACTION_SCREEN_OFF);
-        registerReceiver(interactiveStateReceiver, ifInteractive);
-
-        // Listen for connectivity updates
-        IntentFilter ifConnectivity = new IntentFilter();
-        ifConnectivity.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(connectivityChangedReceiver, ifConnectivity);
     }
 
     @Override
@@ -421,9 +389,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.unregisterOnSharedPreferenceChangeListener(this);
-
-        unregisterReceiver(interactiveStateReceiver);
-        unregisterReceiver(connectivityChangedReceiver);
     }
 
     @Override
@@ -760,31 +725,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             throw new IllegalArgumentException("Bad address");
         if (!PatternsCompat.DOMAIN_NAME.matcher(address).matches())
             throw new IllegalArgumentException("Bad address");
-    }
-
-    private BroadcastReceiver interactiveStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Util.logExtras(intent);
-            updateTechnicalInfo();
-        }
-    };
-
-    private BroadcastReceiver connectivityChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Util.logExtras(intent);
-            updateTechnicalInfo();
-        }
-    };
-
-    private void updateTechnicalInfo() {
-        PreferenceScreen screen = getPreferenceScreen();
-        Preference pref_technical_info = screen.findPreference("technical_info");
-        Preference pref_technical_network = screen.findPreference("technical_network");
-
-        pref_technical_info.setSummary(Util.getGeneralInfo(this));
-        pref_technical_network.setSummary(Util.getNetworkInfo(this));
     }
 
     @Override

@@ -111,10 +111,6 @@
     <string name="setting_hosts_url">Hosts file download URL</string>
     <string name="setting_hosts_download">Download hosts file</string>
 
-    <string name="setting_technical">Technical information</string>
-    <string name="setting_technical_general">General</string>
-    <string name="setting_technical_networks">Networks</string>
-
     <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
     <string name="summary_auto">After disabling using the widget, automatically enable TrackerControl again after the selected number of minutes (enter zero to disable this option)</string>
     <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
