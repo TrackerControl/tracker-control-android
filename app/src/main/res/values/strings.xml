@@ -537,5 +537,5 @@ Sincerely,\n\n]]></string>
     <string name="forever_free">Forever Free</string>
     <string name="your_privacy">Your Privacy</string>
 
-    <string name="tracker_hostlist">User-Defined Host</string>
+    <string name="tracker_hostlist">User-Defined Hosts</string>
 </resources>
