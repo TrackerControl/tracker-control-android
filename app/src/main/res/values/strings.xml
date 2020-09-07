@@ -425,7 +425,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="summary_loading_error">Could not fetch app description.</string>
     <string name="tracker_name">Tracker Name</string>
     <string name="internet_access">Internet Access</string>
-    <string name="internet_access_explanation">Internet can also be blocked by tapping the app icon in the main screen.</string>
+    <string name="internet_access_explanation">Must be on for Internet access.\n\nTip: You can also tap the app icon in the main screen.</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
@@ -520,7 +520,7 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">By default, TrackerControl blocks all found trackers. This might break apps. Non-strict mode (in development) allows some essential trackers.</string>
 
     <string name="exclude_vpn" translatable="false">Monitoring</string>
-    <string name="exclude_vpn_explanation">Must be on to detect and block trackers. Disable if you run into issues.</string>
+    <string name="exclude_vpn_explanation">Must be on to detect or block trackers.\n\nTip: Disable if you run into issues.</string>
 
     <string name="uninstall">Uninstall</string>
 
@@ -539,4 +539,5 @@ Sincerely,\n\n]]></string>
 
     <string name="tracker_hostlist">User-Defined Hosts</string>
     <string name="unblocked">Unblocked</string>
+    <string name="enable">Enable</string>
 </resources>
