@@ -54,12 +54,10 @@ public class TrackerCategory {
     }
 
     public List<Tracker> getChildren() {
-        if (this.children == null) {
+        if (this.children == null)
             this.children = new ArrayList<>();
-            return this.children;
-        } else {
-            return this.children;
-        }
+
+        return this.children;
     }
 
     public String getCategoryName() {

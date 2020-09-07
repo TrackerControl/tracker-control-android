@@ -18,6 +18,7 @@
 package net.kollnig.missioncontrol.details;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -108,13 +109,18 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btnTrackers) {
-            TabLayout tabs = getActivity().findViewById(R.id.tabs);
+            Activity a = getActivity();
+            if (a == null)
+                return;
+            TabLayout tabs = a.findViewById(R.id.tabs);
             tabs.getTabAt(tabTrackersPosition).select();
         } else if (id == R.id.btnAdSettings) {
             if (Common.hasAdSettings(getContext())) {
                 startActivity(Common.adSettings());
             } else {
-                Snackbar.make(getView(), R.string.play_services_required, Snackbar.LENGTH_LONG).show();
+                View vx = getView();
+                if (vx != null)
+                    Snackbar.make(vx, R.string.play_services_required, Snackbar.LENGTH_LONG).show();
             }
         } else if (id == R.id.btnReqData || id == R.id.btnReqDeletion || id == R.id.btnContactDev) {
             if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null) {
@@ -128,7 +134,10 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
                 return;
             }
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+            Context c = getContext();
+            if (c == null)
+                return;
+            AlertDialog.Builder builder = new AlertDialog.Builder(c)
                     .setTitle(R.string.external_servers)
                     .setMessage(R.string.confirm_google_info)
                     .setPositiveButton(R.string.yes, (dialog, id2) -> {
@@ -188,7 +197,9 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         try {
             startActivity(Intent.createChooser(i, "Send email via..."));
         } catch (android.content.ActivityNotFoundException ex) {
-            Snackbar.make(getView(), R.string.no_mail_service, Snackbar.LENGTH_LONG).show();
+            View v = getView();
+            if (v != null)
+                Snackbar.make(v, R.string.no_mail_service, Snackbar.LENGTH_LONG).show();
         }
     }
 }

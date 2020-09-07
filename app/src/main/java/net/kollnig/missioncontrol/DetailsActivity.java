@@ -75,11 +75,10 @@ public class DetailsActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     public static PlayStore.AppInfo app = null;
     private final String TAG = DetailsActivity.class.getSimpleName();
-    File exportDir = new File(
+    final File exportDir = new File(
             Environment.getExternalStorageDirectory(), "trackercontrol");
     private Integer appUid;
     private String appPackageName;
-    private String appName;
 
     private static Set<String> intToStringSet(Set<Integer> ints) {
         Set<String> strings = new HashSet<>();
@@ -126,7 +125,7 @@ public class DetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
         appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
-        appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
+        String appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
         // Set up paging
         detailsPagesAdapter =

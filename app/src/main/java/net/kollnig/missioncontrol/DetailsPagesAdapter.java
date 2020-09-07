@@ -45,7 +45,7 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
     };
     private final String TAG = DetailsPagesAdapter.class.getSimpleName();
     private final Context mContext;
-    private int mUid;
+    private final int mUid;
 
     private TrackersFragment fTrackers;
     private ActionsFragment fActions;
@@ -96,7 +96,7 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
             }
         }
 
-        return null;
+        return fTrackers;
     }
 
     @Nullable

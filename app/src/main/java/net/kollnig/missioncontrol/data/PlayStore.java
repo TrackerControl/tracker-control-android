@@ -61,7 +61,8 @@ public class PlayStore {
                 String key = keyMatcher.group(1);
 
                 // Key taken from source above
-                if (key.equals("ds:5")) {
+                if (key != null &&
+                        key.equals("ds:5")) {
                     String json = valueMatcher.group(1);
 
                     JSONArray data;

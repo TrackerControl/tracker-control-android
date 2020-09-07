@@ -212,7 +212,7 @@ public class TrackerList {
     /**
      * Loads X-Ray tracker list
      *
-     * @param c
+     * @param c Context
      */
     private void loadXrayTrackers(Context c) {
         // Keep track of parent companies
@@ -263,16 +263,16 @@ public class TrackerList {
     /**
      * Load Disconnect.me tracker list
      *
-     * @param context
+     * @param c Context
      */
-    private void loadDisconnectTrackers(Context context) {
+    private void loadDisconnectTrackers(Context c) {
         try {
             /* Read domain list:
              *
              * File is a reversed string, because some anti-virus scanners found the list suspicious
              * More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
              */
-            InputStream is = context.getAssets().open("disconnect-blacklist.reversed.json");
+            InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             int bytes_read = is.read(buffer);

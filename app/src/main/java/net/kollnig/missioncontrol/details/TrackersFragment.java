@@ -58,8 +58,6 @@ public class TrackersFragment extends Fragment {
     private SwipeRefreshLayout swipeRefresh;
     private TrackersListAdapter adapter;
 
-    private RecyclerView recyclerView;
-
     private boolean running = false;
 
     /**
@@ -97,7 +95,7 @@ public class TrackersFragment extends Fragment {
 
         Context context = v.getContext();
         trackerList = TrackerList.getInstance(context);
-        recyclerView = v.findViewById(R.id.transmissions_list);
+        RecyclerView recyclerView = v.findViewById(R.id.transmissions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         adapter = new TrackersListAdapter(getContext(), recyclerView, mAppUid, mAppId);
         recyclerView.setAdapter(adapter);
