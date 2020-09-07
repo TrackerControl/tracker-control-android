@@ -300,6 +300,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         final Preference pref_hosts_download = screen.findPreference("hosts_download");
 
         pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
+        cat_advanced.removePreference(pref_rcode);
 
         if (Util.isFDroidInstall()
                 || Util.isPlayStoreInstall(this))

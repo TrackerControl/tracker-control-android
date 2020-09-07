@@ -24,6 +24,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 
+import net.kollnig.missioncontrol.R;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +65,8 @@ public class TrackerList {
         return instance;
     }
 
-    private static Tracker hostlistTracker = new Tracker("Uncategorised", "Uncategorised");
+    private static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
+    private static Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, "Uncategorised");
 
     /**
      * Identifies tracker hosts
@@ -187,6 +190,9 @@ public class TrackerList {
                         continue outer;
                     }
                 }
+
+                if (name.equals(TRACKER_HOSTLIST))
+                    name = c.getString(R.string.tracker_hostlist);
 
                 Tracker child = new Tracker(name, category, lastSeen);
                 child.addHost(host);
