@@ -53,7 +53,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.util.PatternsCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -135,10 +134,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         Preference pref_auto_enable = screen.findPreference("auto_enable");
         pref_auto_enable.setTitle(getString(R.string.setting_auto, prefs.getString("auto_enable", "0")));
 
-        // Handle screen delay
-        Preference pref_screen_delay = screen.findPreference("screen_delay");
-        pref_screen_delay.setTitle(getString(R.string.setting_delay, prefs.getString("screen_delay", "0")));
-
         Preference pref_reset_usage = screen.findPreference("reset_usage");
         pref_reset_usage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -178,16 +173,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             pref_reload_onconnectivity.setEnabled(false);
         }
 
-        /*boolean can = Util.canFilter(this);
-        TwoStatePreference pref_log_app = (TwoStatePreference) screen.findPreference("log_app");
-        TwoStatePreference pref_filter = (TwoStatePreference) screen.findPreference("filter");
-        pref_log_app.setEnabled(can);
-        pref_filter.setEnabled(can);
-        if (!can) {
-            pref_log_app.setSummary(R.string.msg_unavailable);
-            pref_filter.setSummary(R.string.msg_unavailable);
-        }*/
-
         // VPN parameters
         screen.findPreference("vpn4").setTitle(getString(R.string.setting_vpn4, prefs.getString("vpn4", "10.1.10.1")));
         screen.findPreference("vpn6").setTitle(getString(R.string.setting_vpn6, prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1")));
@@ -207,8 +192,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         screen.findPreference("socks5_password").setTitle(getString(R.string.setting_socks5_password, TextUtils.isEmpty(prefs.getString("socks5_username", "")) ? "-" : "*****"));
 
         // PCAP parameters
-        //screen.findPreference("pcap_record_size").setTitle(getString(R.string.setting_pcap_record_size, prefs.getString("pcap_record_size", "64")));
-        //screen.findPreference("pcap_file_size").setTitle(getString(R.string.setting_pcap_file_size, prefs.getString("pcap_file_size", "2")));
+        screen.findPreference("pcap_record_size").setTitle(getString(R.string.setting_pcap_record_size, prefs.getString("pcap_record_size", "64")));
+        screen.findPreference("pcap_file_size").setTitle(getString(R.string.setting_pcap_file_size, prefs.getString("pcap_file_size", "2")));
 
         // Watchdog
         screen.findPreference("watchdog").setTitle(getString(R.string.setting_watchdog, prefs.getString("watchdog", "0")));
@@ -356,10 +341,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             screen.removePreference(screen.findPreference("screen_development"));
 
         cat_options.removePreference(screen.findPreference("install"));
-        cat_options.removePreference(screen.findPreference("auto_enable"));
-        cat_options.removePreference(screen.findPreference("screen_delay"));
 
-        cat_network.removePreference(screen.findPreference("use_metered"));
+        /*cat_network.removePreference(screen.findPreference("use_metered"));
         cat_network.removePreference(screen.findPreference("unmetered_2g"));
         cat_network.removePreference(screen.findPreference("unmetered_3g"));
         cat_network.removePreference(screen.findPreference("unmetered_4g"));
@@ -367,9 +350,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         cat_network.removePreference(screen.findPreference("eu_roaming"));
         cat_network.removePreference(screen.findPreference("lockdown_wifi"));
         cat_network.removePreference(screen.findPreference("lockdown_other"));
-        cat_network.removePreference(screen.findPreference("reload_onconnectivity"));
-
-        cat_advanced.removePreference(screen.findPreference("log_app"));
+        cat_network.removePreference(screen.findPreference("reload_onconnectivity"));*/
     }
 
     @Override
@@ -445,9 +426,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("auto_enable".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_auto, prefs.getString(name, "0")));
 
-        else if ("screen_delay".equals(name))
-            getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_delay, prefs.getString(name, "0")));
-
         else if ("dark_theme".equals(name))
             recreate();
 
@@ -493,10 +471,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 prefs.edit().putBoolean("show_user", true).apply();
             prefs.edit().putBoolean("show_system", manage).apply();
             ServiceSinkhole.reload("changed " + name, this, false);
-
-        } else if ("log_app".equals(name)) {
-            Intent ruleset = new Intent(ActivityMain.ACTION_RULES_CHANGED);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(ruleset);
 
         } else if ("filter".equals(name)) {
             // Show dialog

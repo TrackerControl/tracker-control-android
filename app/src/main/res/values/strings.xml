@@ -50,7 +50,6 @@
     <string name="setting_install">Notify on new install</string>
     <string name="setting_auto">Auto enable after %1$s minutes</string>
     <string name="setting_pause">Auto enable after %1$s minutes</string>
-    <string name="setting_delay">Delay screen off %1$s minutes</string>
     <string name="setting_update">Check for updates</string>
 
     <plurals name="pause">
@@ -63,20 +62,11 @@
     <string name="setting_tethering">Allow tethering</string>
     <string name="setting_lan">Allow LAN access</string>
     <string name="setting_ip6">Enable IPv6 traffic</string>
-    <string name="setting_metered">Handle metered Wi-Fi networks</string>
-    <string name="setting_metered_2g">Consider 2G unmetered</string>
-    <string name="setting_metered_3g">Consider 3G unmetered</string>
-    <string name="setting_metered_4g">Consider LTE unmetered</string>
-    <string name="setting_national_roaming">Ignore national roaming</string>
-    <string name="setting_eu_roaming">Ignore EU roaming</string>
     <string name="setting_call">Disable on call</string>
-    <string name="setting_lockdown_wifi">Lockdown Wi-Fi</string>
-    <string name="setting_lockdown_other">Lockdown mobile</string>
     <string name="setting_reload_onconnectivity">Reload on every connectivity change</string>
 
     <string name="setting_advanced_options">Advanced options</string>
     <string name="setting_system">Manage system apps</string>
-    <string name="setting_log_app">Log internet access</string>
     <string name="setting_filter">Filter traffic</string>
     <string name="setting_filter_udp">Filter UDP traffic</string>
     <string name="setting_handover">Seamless VPN handover on reload</string>
@@ -114,23 +104,15 @@
     <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
     <string name="summary_auto">After disabling using the widget, automatically enable TrackerControl again after the selected number of minutes (enter zero to disable this option)</string>
     <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
-    <string name="summary_delay">After turning the screen off, keep screen on rules active for the selected number of minutes (enter zero to disable this option)</string>
     <string name="summary_update">Check for new releases on GitHub twice daily</string>
 
     <string name="summary_tethering">Depending on the Android version, tethering may work or may not work. Tethered traffic cannot be filtered.</string>
     <string name="summary_subnet">Enable subnet routing; might enable Wi-Fi calling, but might also trigger bugs in Android and increase battery usage</string>
     <string name="summary_lan">Allow apps to connect to local area network addresses, like 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16</string>
     <string name="summary_ip6">Route IP version 6 traffic to TrackerControl so it can selectively be allowed or blocked</string>
-    <string name="summary_metered">Apply mobile network rules to metered (paid, tethered) Wi-Fi networks</string>
-    <string name="summary_metered_2g">Apply Wi-Fi network rules for 2G data connections</string>
-    <string name="summary_metered_3g">Apply Wi-Fi network rules for 3G data connections</string>
-    <string name="summary_metered_4g">Apply Wi-Fi network rules for LTE data connections</string>
-    <string name="summary_national_roaming">Do not apply roaming rules when the SIM and mobile network country are the same</string>
-    <string name="summary_eu_roaming">Do not apply roaming rules when the SIM and mobile network country are within the EU (roam like at home)</string>
     <string name="summary_call">Disable TrackerControl on incoming or outgoing telephone call. This can be used to work around IP/Wi-Fi calling problems.</string>
 
     <string name="summary_system">Define rules for system apps (for experts)</string>
-    <string name="summary_log_app">Log attempts to access the internet for apps. This might result in extra battery usage.</string>
     <string name="summary_filter">Filter IP packets going out of the VPN tunnel. This might result in extra battery usage.</string>
     <string name="summary_track_usage">Track the number of bytes sent and received for each app and address. This might result in extra battery usage.</string>
     <string name="summary_block_domains">WARNING: Blocked hosts are not shown in UI.</string>

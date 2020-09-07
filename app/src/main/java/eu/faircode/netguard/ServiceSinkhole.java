@@ -2043,29 +2043,8 @@ public class ServiceSinkhole extends VpnService {
                     am.cancel(pi);
 
                     try {
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                        int delay;
-                        try {
-                            delay = Integer.parseInt(prefs.getString("screen_delay", "0"));
-                        } catch (NumberFormatException ignored) {
-                            delay = 0;
-                        }
-                        boolean interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-
-                        if (interactive || delay == 0) {
-                            last_interactive = interactive;
-                            reload("interactive state changed", ServiceSinkhole.this, true);
-                        } else {
-                            if (ACTION_SCREEN_OFF_DELAYED.equals(intent.getAction())) {
-                                last_interactive = interactive;
-                                reload("interactive state changed", ServiceSinkhole.this, true);
-                            } else {
-                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                                    am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + delay * 60 * 1000L, pi);
-                                else
-                                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + delay * 60 * 1000L, pi);
-                            }
-                        }
+                        last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
+                        reload("interactive state changed", ServiceSinkhole.this, true);
 
                         // Start/stop stats
                         statsHandler.sendEmptyMessage(
