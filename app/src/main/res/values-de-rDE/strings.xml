@@ -20,6 +20,7 @@
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
     <string name="menu_legend">Legende</string>
+    <string name="menu_support">Du liebst diese App?</string>
     <string name="menu_log_support">Erläuterungen</string>
     <string name="menu_about">Über</string>
     <string name="menu_apps">Andere Apps</string>
@@ -186,7 +187,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopieren</string>
-    <!-- VPN Control -->
     <!-- App Overview -->
     <string name="tracked_app_name">Name der App</string>
     <string name="external_servers">Entwickler E-Mails automatisch erhalten?</string>
@@ -209,7 +209,6 @@
     <string name="block_tracking">Tracker blockieren</string>
     <string name="block_tracking_description">Viele Apps senden Daten an Dritte, sogenannte Tracker. TrackerControl erlaubt es, diese Netzwerkaktivitäten selektiv zu blockieren. Aber nutzen Sie dies mit Bedacht, da viele App-Entwickler von diesen Diensten, vor allem von Werbung, abhängig sind.</string>
     <string name="personalised_ads">Personalisierung beschränken</string>
-    <string name="personalised_ads_description">Als Alternative zur vollständigen Blockierung bietet Android eine Einstellung zur Begrenzung der Nutzung personenbezogener Daten für Analyse- und Werbezwecke an. Persönliche Daten können jedoch weiterhin übermittelt werden und bedürfen daher des Vertrauens in die Unternehmen, die unsere Daten empfangen.</string>
     <string name="data_managment">Daten verwalten</string>
     <string name="data_management_description">Die Allgemeine Datenschutzverordnung der EU (GDPR) ermöglicht es Nutzern aus der EU, alle mit ihnen zusammenhängenden Daten zu verwalten. Diese App bietet E-Mail-Vorlagen an, um den Entwickler zu kontaktieren. Der Entwickler ist dazu verpflichtet, innerhalb eines Monats zu antworten.</string>
     <string name="contacts">Kontakt </string>
