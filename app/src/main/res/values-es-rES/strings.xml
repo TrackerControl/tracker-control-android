@@ -183,7 +183,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_nobody">nadie</string>
     <string name="title_dontask">No volver a preguntar</string>
     <string name="title_log_copy">Copiar</string>
-    <!-- VPN Control -->
     <!-- App Overview -->
     <string name="tracked_app_name">Nombre de la aplicación</string>
     <string name="external_servers">¿Obtener el correo electrónico del desarrollador automáticamente?</string>
@@ -204,7 +203,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="block_tracking">Bloquear rastreadores</string>
     <string name="block_tracking_description">Muchas aplicaciones envían datos a terceros, son llamados rastreadores. TrackerControl permite bloquear estas transmisiones de red de forma selectiva. Sin embargo, use esto con prudencia, ya que los desarrolladores de aplicaciones dependen de estos servicios, en particular la publicidad.</string>
     <string name="personalised_ads">Limitar la personalización</string>
-    <string name="personalised_ads_description">Como alternativa al bloqueo completo, Android ofrece una configuración para limitar el uso de datos personales con fines analíticos y publicitarios. Sin embargo, los datos personales pueden seguir siendo transmitidos y por lo tanto requieren de la confianza de las empresas que reciben los datos.</string>
     <string name="data_managment">Gestión de datos</string>
     <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (GDPR) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
     <string name="contacts">Contacto </string>

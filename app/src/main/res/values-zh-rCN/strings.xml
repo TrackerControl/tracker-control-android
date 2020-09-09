@@ -189,7 +189,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">端口 %1$d</string>
     <string name="title_log_copy">复制</string>
-    <!-- VPN Control -->
     <!-- App Overview -->
     <string name="tracked_app_name">应用程序名称</string>
     <string name="external_servers">自动获取开发者电子邮件？</string>
@@ -212,7 +211,6 @@
     <string name="block_tracking">屏蔽追踪器</string>
     <string name="block_tracking_description">许多应用程序将数据发送给第三方，也就是所谓的追踪器。TrackerControl允许有选择地阻止这些网络传输。然而，要明智地使用它，因为应用程序开发者依赖于这些服务，尤其是广告。</string>
     <string name="personalised_ads">限制个性化</string>
-    <string name="personalised_ads_description">作为完全屏蔽的替代方案，Android提供了一个设置来限制个人数据用于分析和广告目的的使用。然而，个人资料仍可能被传送，因此需要信任数据接收公司</string>
     <string name="data_managment">管理数据</string>
     <string name="data_management_description">欧盟通用数据保护条例(GDPR) 允许来自欧盟的用户管理任何与他们相关的数据。这个应用程序提供电子邮件模板，以联系到开发商。开发商必须在一个月内答复。</string>
     <string name="contacts">联系方式 </string>
