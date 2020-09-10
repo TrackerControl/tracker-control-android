@@ -13,10 +13,9 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
   <img alt="TrackerControl Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
 </p>
 
-To detect tracking, TrackerControl checks all network traffic against the *Disconnect blocklist*, 
-used and trusted by the Mozilla Firefox browser.
-
-Additionally, our in-house blocklist is used, created *from analysing ~1&nbsp;000&nbsp;000 apps*!
+To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
+used by Firefox, and our in-house blocklist is used, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
+Additionally, TrackerControl supports custom blocklists.
 
 This approach
 - reveals the companies behind tracking,
@@ -29,7 +28,10 @@ Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
 This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-No external VPN server is used, to keep your data safe!
+No external VPN server is used, to keep your data safe! TrackerControl even protects you
+against *DNS cloaking*, a popular technique to hide trackers in websites and apps.
+
+TrackerControl will always be free and open source.
 
 ## Download / Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
