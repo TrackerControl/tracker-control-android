@@ -15,7 +15,7 @@
     <string name="menu_sort">Ordina app</string>
     <string name="menu_sort_name">Ordina per Nome</string>
     <string name="menu_sort_uid">Ordina per Uid</string>
-    <string name="menu_sort_companies">Ordina per Azienda</string>
+    <string name="menu_sort_companies">Ordina per società contattate</string>
     <string name="menu_log">Log traffico</string>
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_invite">Invita</string>
@@ -37,7 +37,7 @@
     <string name="menu_export">Esporta</string>
     <string name="menu_reset">Ripristina</string>
     <string name="menu_cleanup">Ripulisci</string>
-    <string name="setting_options">Opzioni</string>
+    <string name="setting_options">Generale</string>
     <string name="setting_dark">Tema dark</string>
     <string name="setting_install">Notifica all\'installazione di nuove applicazioni</string>
     <string name="setting_pause">Attiva automaticamente dopo %1$s minuti</string>
@@ -46,14 +46,14 @@
         <item quantity="one">Sospendi per %d minuti</item>
         <item quantity="other">Sospendi per %d minuti</item>
     </plurals>
-    <string name="setting_network_options">Opzioni di rete</string>
+    <string name="setting_network_options">Rete</string>
     <string name="setting_subnet">Subnet routing</string>
     <string name="setting_tethering">Permetti il tethering</string>
     <string name="setting_lan">Permetti l\'accesso LAN</string>
     <string name="setting_ip6">Abilita il traffico IPv6</string>
     <string name="setting_call">Disabilita durante le chiamate</string>
     <string name="setting_reload_onconnectivity">Ricarica ad ogni cambio di connessione</string>
-    <string name="setting_advanced_options">Opzioni avanzate</string>
+    <string name="setting_advanced_options">Avanzate</string>
     <string name="setting_system">Gestisci app di sistema</string>
     <string name="setting_filter">Filtra traffico</string>
     <string name="setting_filter_udp">Filtra traffico UDP</string>
@@ -66,7 +66,7 @@
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
-    <string name="setting_validate">Validare su: %s</string>
+    <string name="setting_validate">Convalida su: %s</string>
     <string name="setting_ttl">DNS TTL minimo: %s s</string>
     <string name="setting_socks5_enabled">Utilizza SOCKS5 proxy</string>
     <string name="setting_socks5_addr">Indirizzo SOCKS5: %s</string>
@@ -79,7 +79,7 @@
     <string name="setting_stats_frequency">Intervallo di campionamento: %s ms</string>
     <string name="setting_stats_samples">Numero di campioni: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Esporta impostazioni (non per il ripristino del dispositivo)</string>
+    <string name="setting_export">Esporta impostazioni (non utilizzabile in caso di ripristino del dispositivo)</string>
     <string name="setting_import">Importa impostazioni</string>
     <string name="setting_hosts">Importa file hosts</string>
     <string name="setting_hosts_append">Importa file host (aggiungi)</string>
@@ -98,7 +98,7 @@
     <string name="summary_track_usage">Traccia il numero di byte inviati e ricevuti per ciascuna applicazione ed indirizzo. Può comportare un maggior utilizzo di batteria.</string>
     <string name="summary_block_domains">WARNING: Gli host bloccati non sono mostrati nella interfaccia utente.</string>
     <string name="summary_rcode">Il valore predefinito è 3 (NXDOMAIN), equivalente a \'dominio inesistente\'.</string>
-    <string name="summary_validate">Nome dominio utilizzato per convalidare la connessione ad internet sulla porta 443 (https).</string>
+    <string name="summary_validate">Nome dominio utilizzato per verificare la connessione ad internet impiegando la porta 443 (https).</string>
     <string name="summary_socks5_enabled">Solo il traffico TCP verrà inviato al server proxy</string>
     <string name="summary_watchdog">Controlla periodicamente se TrackerControl è ancora in esecuzione (inserisci zero per disabilitare). Può comportare un maggior utilizzo di batteria.</string>
     <string name="msg_sure">Sei sicuro?</string>
@@ -167,7 +167,7 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <string name="title_related">Filtro correlato</string>
     <string name="title_access">Tentativi di accesso</string>
     <string name="title_precedence">Le regole di accesso hanno la precedenza sulle altre regole</string>
-    <string name="title_options">Opzioni</string>
+    <string name="title_options">Generale</string>
     <string name="title_notify">Notifica tentativi di accesso internet</string>
     <string name="title_logging_disabled">La registrazione dei log o il filtraggio non sono abilitati</string>
     <string name="title_logging_enabled">La registrazione dei log e il filtraggio sono abilitati</string>
@@ -193,8 +193,8 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <!-- App Overview -->
     <string name="tracked_app_name">Nome Applicazione</string>
     <plurals name="n_companies_found">
-        <item quantity="one">provato a contattare almeno %d azienda</item>
-        <item quantity="other">provato a contattare almeno %d aziende</item>
+        <item quantity="one">ha provato a comunicare con almeno %d azienda</item>
+        <item quantity="other">ha provato a comunicare con almeno %d aziende</item>
     </plurals>
     <string name="external_servers">Ottenere automaticamente l\'email dello sviluppatore?</string>
     <string name="confirm_google_info">Questa app può ottenere automaticamente l\'email dello sviluppatore dell\'app dal Google Play Store per te.</string>
@@ -213,7 +213,7 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <string name="tab_actions">I miei dati</string>
     <string name="tracker_name">Nome del tracker</string>
     <string name="internet_access">Accesso ad internet</string>
-    <string name="internet_access_explanation">Deve essere attivo per avere accesso ad Internet.\n\nSuggerimento: Puoi anche selezionare l\'icona dell\'app nella schermata principale.</string>
+    <string name="internet_access_explanation">Deve essere attivo per avere accesso ad Internet.\n\nSuggerimento: Puoi gestirlo anche toccando l\'icona dell\'app nella schermata principale.</string>
     <string name="app_info">Gestisci App</string>
     <!-- Actions -->
     <string name="block_tracking">Blocca i tracker</string>
@@ -244,7 +244,7 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <string name="device_not_supported_msg">Il sistema operativo del dispositivo non permette il monitoraggio ed il filtraggio delle comunicazioni di rete. Questo è necessario per il funzinamento di TrackerControl.</string>
     <string name="launch_app">Avvia &amp; Trova tracker</string>
     <string name="countries">Paesi di destinazione</string>
-    <string name="countries_explanation">Scopri dove il tuo telefono invia i dati di tracciamento.\n\nLe informazioni si basano su DNS lookups e informazioni IP, per tanto potrebbero essere imprecise.</string>
+    <string name="countries_explanation">Scopri dove il tuo telefono invia i dati di tracciamento.\n\nLe informazioni si basano su DNS lookups e informazioni relative all\'IP, per tanto potrebbero essere imprecise.</string>
     <string name="countries_loading_failed">Oops.. La mappa del paese non è stata caricata. Per favore scrivi a tc@kollnig.net come è successo.</string>
     <string name="tracker_advertising">Pubblicità</string>
     <string name="tracker_analytics">Analytics</string>
@@ -254,7 +254,7 @@ Il tuo traffico di rete non è inoltrato ad un server remoto, ma viene gestito s
     <string name="tracker_social">Social</string>
     <string name="tracker_uncategorised">Senza categoria</string>
     <string name="setting_strict_blocking">Blocco Rigido (Beta)</string>
-    <string name="summary_strict_blocking">Blocca i tracker potenzialmente necessari. Alcune applicazioni non funzioneranno.</string>
+    <string name="summary_strict_blocking">Blocca i tracker potenzialmente necessari. Alcune applicazioni potrebbero non funzionare.</string>
     <string name="strict_blocking_explanation">Per impostazione predefinita, TrackerControl blocca tutti i tracker trovati. Questo potrebbe impedire ad alcune app di funzionare. La modalità non rigorosa (in sviluppo) consente alcuni tracker essenziali.</string>
     <string name="exclude_vpn_explanation">Deve essere attivo per rilevare o bloccare i tracker.\n\nSuggerimento: disabilitare se si verificano problemi.</string>
     <string name="uninstall">Disinstalla</string>
