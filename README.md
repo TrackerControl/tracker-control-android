@@ -59,10 +59,10 @@ Contact me at tc@kollnig.net, if you're missing a language.
 
 ## Highlights
 TrackerControl provides
-- *real-time monitoring* of app tracking,
+- *real-time monitoring* of app tracking, including destination companies and countries,
 - *granular blocking* of app tracking,
 - *one-click data requests* as granted under EU Data Protection Legislation, and
-- [ad-blocking](ADBLOCKING.md) using widely available host files.
+- *ad-blocking* using widely available host files.
 
 <p align="center">
     <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
