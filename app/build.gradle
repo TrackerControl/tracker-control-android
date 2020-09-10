@@ -8,8 +8,8 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         //noinspection HighAppVersionCode
-        versionCode 2020090901
-        versionName "2020.09.09"
+        versionCode 2020091001
+        versionName "2020.09.10"
         archivesBaseName = "TrackerControl-$versionName" // name of apk
 
         externalNativeBuild {
