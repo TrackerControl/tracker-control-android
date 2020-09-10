@@ -1,0 +1,15 @@
+1st anniversary edition
+- MAJOR CHANGE: Redesign of app
+- FEATURE: add ad-blocking, support custom host lists, allow disabling per-app
+- FEATURE: add blocking by company
+- FEATURE: find trackers that hide using DNS cloaking
+- FEATURE: add optional non-strict mode to reduce app breakage (beta)
+- FEATURE: allow blocking of Internet from main screen
+- FEATURE: add 'clear' menu button to remove seen trackers
+- FEATURE: add 'uninstall' menu button
+- Fix crashes and bugs, including F-Droid incompatibility with Android 11
+- Update block lists, disclose some tracker as 'essential'
+- Add Italian, update translations, and allow more localisation
+- Only automatically wipe logs, if logging is on
+- Cleanup better after uninstalled apps
+- Update libraries
