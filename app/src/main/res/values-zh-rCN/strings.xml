@@ -20,6 +20,7 @@
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
     <string name="menu_legend">图例</string>
+    <string name="menu_support">喜欢这个应用？</string>
     <string name="menu_log_support">解释</string>
     <string name="menu_about">关于</string>
     <string name="menu_apps">其他应用</string>
@@ -191,6 +192,9 @@
     <string name="title_log_copy">复制</string>
     <!-- App Overview -->
     <string name="tracked_app_name">应用程序名称</string>
+    <plurals name="n_companies_found">
+        <item quantity="other">尝试联系至少%d家公司</item>
+    </plurals>
     <string name="external_servers">自动获取开发者电子邮件？</string>
     <string name="confirm_google_info">本应用可以自动为您从谷歌Play Store获取应用开发者的邮件。</string>
     <string name="ok">好</string>
@@ -202,15 +206,19 @@
     <string name="export_failed">导出失败</string>
     <string name="exported">导出到存储! 从计算机访问手机存储或与其他应用共享。</string>
     <!-- App Details -->
+    <string name="title_activity_detail">详情</string>
     <string name="tab_trackers">跟踪器</string>
     <string name="tab_countries">国家</string>
     <string name="tab_actions">我的数据</string>
     <string name="tracker_name">追踪器名称</string>
+    <string name="internet_access">互联网访问</string>
+    <string name="internet_access_explanation">必须打开才能访问互联网。\n\n提示：你也可以点击主屏幕上的应用图标</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
     <string name="block_tracking">屏蔽追踪器</string>
     <string name="block_tracking_description">许多应用程序将数据发送给第三方，也就是所谓的追踪器。TrackerControl允许有选择地阻止这些网络传输。然而，要明智地使用它，因为应用程序开发者依赖于这些服务，尤其是广告。</string>
     <string name="personalised_ads">限制个性化</string>
+    <string name="personalised_ads_description">Android提供了限制应用程序访问你设备的谷歌广告ID的功能。然而，应用程序可能忽略这个设置，仍然使用这个ID。根据谷歌的政策，他们也可以继续收集这个ID用于分析目的。你需要信任谷歌和数据收集公司。</string>
     <string name="data_managment">管理数据</string>
     <string name="data_management_description">欧盟通用数据保护条例(GDPR) 允许来自欧盟的用户管理任何与他们相关的数据。这个应用程序提供电子邮件模板，以联系到开发商。开发商必须在一个月内答复。</string>
     <string name="contacts">联系方式 </string>
@@ -270,4 +278,30 @@
     <string name="countries">目的地国家</string>
     <string name="countries_explanation">找出你的手机把跟踪数据发到哪去了。\n\n信息基于DNS查找和IP信息，可能不准确。</string>
     <string name="countries_loading_failed">糟糕，国家/地区地图无法加载。 请告诉tc@kollnig.net这是怎么发生的。</string>
+    <string name="tracker_advertising">广告</string>
+    <string name="tracker_analytics">数据分析</string>
+    <string name="tracker_content">必需的</string>
+    <string name="tracker_cryptomining">挖矿</string>
+    <string name="tracker_fingerprinting">指纹识别</string>
+    <string name="tracker_social">社交</string>
+    <string name="tracker_uncategorised">未分类</string>
+    <string name="setting_strict_blocking">严格屏蔽(测试版)</string>
+    <string name="summary_strict_blocking">拦截可能是必需的跟踪器。更多的应用程序会崩溃。</string>
+    <string name="strict_blocking_explanation">默认情况下，TrackerControl会拦截所有找到的跟踪器。这可能会破坏应用程序。非严格模式(在开发中) 允许一些基本的跟踪器。</string>
+    <string name="exclude_vpn_explanation">必须开启以检测或拦截跟踪器。\n\n提示：如果遇到问题就禁用它。</string>
+    <string name="uninstall">卸载</string>
+    <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
+    <string name="no_trackers_found_message">启动应用来查找追踪器</string>
+    <string name="no_trackers_found_action">启动</string>
+    <string name="no_internet_message">"这个应用程序不能联网，但它可能会通过与其他应用程序交换数据来跟踪你。"</string>
+    <string name="no_internet">无联网权限</string>
+    <string name="bypass_vpn_error">"不能阻止互联网。应用程序被排除在TrackerControl之外。"</string>
+    <string name="back">返回</string>
+    <string name="forever_free">永远免费</string>
+    <string name="your_privacy">您的隐私</string>
+    <string name="tracker_hostlist">用户定义的主机</string>
+    <string name="unblocked">解除屏蔽</string>
+    <string name="enable">启用</string>
+    <string name="internet_blocked">互联网访问被阻止</string>
+    <string name="internet_unblocked">已解除联网限制</string>
 </resources>
