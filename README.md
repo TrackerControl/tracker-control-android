@@ -49,7 +49,7 @@ A feature-reduced version is also available on [Google Play](https://play.google
 2. Telegram News Channel: https://t.me/TrackerControlChannel 
 3. Matrix: https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org
 4. /e/ Community: https://community.e.foundation/t/trackercontrol-a-way-to-neutralize-in-app-trackers/
-5. XDA Developers: https://forum.xda-developers.com/android/apps-games/app-trackercontrol-claim-mobile-privacy-t4130023/
+5. XDA Developers: https://forum.xda-developers.com/android/apps-games/control-trackers-ads-t4161821
 
 ## Translation
 
