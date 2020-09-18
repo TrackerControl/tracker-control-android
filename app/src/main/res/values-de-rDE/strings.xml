@@ -189,6 +189,10 @@
     <string name="title_log_copy">Kopieren</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Name der App</string>
+    <plurals name="n_companies_found">
+        <item quantity="one">versucht, mindestens %d Unternehmen zu kontaktieren</item>
+        <item quantity="other">versucht, mindestens %d Unternehmen zu kontaktieren</item>
+    </plurals>
     <string name="external_servers">Entwickler E-Mails automatisch erhalten?</string>
     <string name="confirm_google_info">Diese App kann automatisch die E-Mail des App-Entwicklers aus dem Google Play Store abrufen.</string>
     <string name="ok">Ok</string>
@@ -200,15 +204,19 @@
     <string name="export_failed">Export fehlgeschlagen</string>
     <string name="exported">In den Speicher exportiert! Auf den Telefonspeicher vom Computer aus zugreifen oder mit anderer App teilen.</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Tracker</string>
     <string name="tab_countries">Länder</string>
     <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
+    <string name="internet_access">Internetzugang</string>
+    <string name="internet_access_explanation">Muss für den Internetzugang eingeschaltet sein. \n\n Tipp: Sie können auch auf das App-Symbol im Hauptbildschirm tippen.</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
     <string name="block_tracking_description">Viele Apps senden Daten an Dritte, sogenannte Tracker. TrackerControl erlaubt es, diese Netzwerkaktivitäten selektiv zu blockieren. Aber nutzen Sie dies mit Bedacht, da viele App-Entwickler von diesen Diensten, vor allem von Werbung, abhängig sind.</string>
     <string name="personalised_ads">Personalisierung beschränken</string>
+    <string name="personalised_ads_description">Android bietet an, den Zugriff von Apps auf die Google-Werbe-ID Ihres Geräts einzuschränken. Apps können diese Einstellung jedoch möglicherweise ignorieren und weiterhin diese ID verwenden. Sie können diese ID gemäß den Richtlinien von Google auch weiterhin zu Analysezwecken erfassen. Sie benötigen Vertrauen in Google und das datenerhebende Unternehmen.</string>
     <string name="data_managment">Daten verwalten</string>
     <string name="data_management_description">Die Allgemeine Datenschutzverordnung der EU (GDPR) ermöglicht es Nutzern aus der EU, alle mit ihnen zusammenhängenden Daten zu verwalten. Diese App bietet E-Mail-Vorlagen an, um den Entwickler zu kontaktieren. Der Entwickler ist dazu verpflichtet, innerhalb eines Monats zu antworten.</string>
     <string name="contacts">Kontakt </string>
@@ -269,4 +277,30 @@ Sincerely,\n\n]]></string>
     <string name="countries">Zielländer</string>
     <string name="countries_explanation">Herausfinden, wohin Ihr Telefon Tracking-Daten sendet.\n\nInformationen basieren auf DNS-Abfragen und IP-Informationen und können ungenau sein.</string>
     <string name="countries_loading_failed">Hoppla.. Die Karte konnte nicht geladen werden. Bitte an tc@kollnig.net wenden.</string>
+    <string name="tracker_advertising">Werbung</string>
+    <string name="tracker_analytics">Analyse</string>
+    <string name="tracker_content">Notwendig</string>
+    <string name="tracker_cryptomining">Verschlüsselung</string>
+    <string name="tracker_fingerprinting">Fingerabdruck</string>
+    <string name="tracker_social">Sozial</string>
+    <string name="tracker_uncategorised">Unkategorisiert</string>
+    <string name="setting_strict_blocking">Strenge Blockierung (Beta)</string>
+    <string name="summary_strict_blocking">Blockieren Sie potenziell notwendige Tracker. Weitere Apps werden unterbrochen.</string>
+    <string name="strict_blocking_explanation">Standardmäßig blockiert TrackerControl alle gefundenen Tracker. Dadurch können Apps beschädigt werden. Der nicht-strenge Modus (in Entwicklung) erlaubt einige wesentliche Tracker.</string>
+    <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stossen.</string>
+    <string name="uninstall">Deinstallieren</string>
+    <string name="no_trackers_found_message_disabled">Aktiviere den Hauptbildschirm und starte die App um Tracker zu finden</string>
+    <string name="no_trackers_found_message">Starte App um Tracker zu finden</string>
+    <string name="no_trackers_found_action">Starten</string>
+    <string name="no_internet_message">"Diese App hat keinen Internetzugang. Sie kann Sie trotzdem verfolgen, indem sie Daten mit anderen Anwendungen austauscht."</string>
+    <string name="no_internet">Kein Internetzugang</string>
+    <string name="bypass_vpn_error">"Internet kann nicht blockiert werden. App ist von TrackerControl ausgeschlossen."</string>
+    <string name="back">Zurück</string>
+    <string name="forever_free">Für immer kostenlos</string>
+    <string name="your_privacy">Deine Privatsphäre</string>
+    <string name="tracker_hostlist">Benutzerdefinierte Hosts</string>
+    <string name="unblocked">Nicht blockiert</string>
+    <string name="enable">Aktivieren</string>
+    <string name="internet_blocked">Internetzugang blockiert</string>
+    <string name="internet_unblocked">Internetzugang freigegeben</string>
 </resources>
