@@ -57,6 +57,7 @@
     <string name="setting_system">Gestisci app di sistema</string>
     <string name="setting_filter">Filtra traffico</string>
     <string name="setting_filter_udp">Filtra traffico UDP</string>
+    <string name="setting_handover">Passaggio VPN senza soluzione di continuità in fase di ricarica</string>
     <string name="setting_lockdown">Blocca traffico</string>
     <string name="setting_track_usage">Traccia l\'utilizzo della rete</string>
     <string name="setting_reset_usage">Reset utilizzo rete</string>
