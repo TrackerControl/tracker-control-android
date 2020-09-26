@@ -1,7 +1,5 @@
 # TrackerControl
 
-[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
-
 **Download [here](https://github.com/OxfordHCC/tracker-control-android/releases).**
 
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (tc@kollnig.net)!*
@@ -54,6 +52,8 @@ A feature-reduced version is also available on [Google Play](https://play.google
 
 ## Translation
 
+[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
+
 If you're missing a translation, feel free to contribute here: <https://crowdin.com/project/trackercontrol>.
 
 Contact me at tc@kollnig.net, if you're missing a language.
@@ -71,12 +71,13 @@ TrackerControl provides
     <img alt="Screenshot of receiving countries" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
 </p>
 
-
 Contrary to similar solutions, this application does not intercept SSL
 connections, minimising privacy risks and allowing for usage on
 unrooted Android devices.
 Only the meta data about network communications is logged, and displayed
 to the users.
+
+Download [here](https://github.com/OxfordHCC/tracker-control-android/releases).
 
 ## Privacy notice
 
