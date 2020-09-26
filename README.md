@@ -1,6 +1,6 @@
 # TrackerControl
 
-**Download [here](https://github.com/OxfordHCC/tracker-control-android/releases).**
+**Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases), and be first to get the latest updates.**
 
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (tc@kollnig.net)!*
 
