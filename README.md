@@ -2,9 +2,7 @@
 
 [![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
 
-No root required, but other VPNs or Private DNS not supported.
-
-**Have missing features or bugs? Join our [dicussion group](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues) or contact Konrad directly (tc@kollnig.net)!**
+**Download [here](https://github.com/OxfordHCC/tracker-control-android/releases). If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (tc@kollnig.net)!**
 
 TrackerControl allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -28,15 +26,16 @@ Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
 This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
+No root is required, other VPNs or Private DNS are not supported.
 No external VPN server is used, to keep your data safe! TrackerControl even protects you
 against *DNS cloaking*, a popular technique to hide trackers in websites and apps.
 
-TrackerControl will always be free and open source.
+TrackerControl will always be free and open source, being a research project.
 
 ## Download / Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
-TrackerControl can be downloaded [directly from GitHub](https://github.com/OxfordHCC/tracker-control-android/releases), including automatic checks for updates.
+TrackerControl can be downloaded [here](https://github.com/OxfordHCC/tracker-control-android/releases), directly from GitHub.
 
 Alternatively, the app is available on [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), the most popular open-source Android app store.
 It is also available on the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
