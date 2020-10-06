@@ -10,7 +10,6 @@ android {
         //noinspection HighAppVersionCode
         versionCode 2020100601
         versionName "2020.10.06"
-        archivesBaseName = "TrackerControl-$versionName" // name of apk
 
         externalNativeBuild {
             cmake {
@@ -65,6 +64,19 @@ android {
                 buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
                 buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
 
+            }
+        }
+        applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                def appId = variant.applicationId // com.exampleFree.app OR com.examplePaid.app
+                def versionName = variant.versionName
+                def versionCode = variant.versionCode // e.g 1.0
+                def flavorName = variant.flavorName // e. g. Free
+                def buildType = variant.buildType.name // e. g. debug
+                def variantName = variant.name // e. g. FreeDebug
+
+                // customize your app name by using variables
+                outputFileName = "TrackerControl-${variantName}-latest.apk"
             }
         }
     }
