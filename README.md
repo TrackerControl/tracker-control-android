@@ -1,6 +1,8 @@
 # TrackerControl
 
-**Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), and be first to get the latest updates.**
+[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
+
+**Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), or from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid)**
 
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (tc@kollnig.net)!*
 
@@ -52,8 +54,6 @@ A feature-reduced version is also available on [Google Play](https://play.google
 
 ## Translation
 
-[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
-
 If you're missing a translation, feel free to contribute here: <https://crowdin.com/project/trackercontrol>.
 
 Contact me at tc@kollnig.net, if you're missing a language.
@@ -77,7 +77,7 @@ unrooted Android devices.
 Only the meta data about network communications is logged, and displayed
 to the users.
 
-Download [here](https://github.com/OxfordHCC/tracker-control-android/releases).
+Download [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
 
 ## Privacy notice
 
