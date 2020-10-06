@@ -1,6 +1,6 @@
 # TrackerControl
 
-**Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases), and be first to get the latest updates.**
+**Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), and be first to get the latest updates.**
 
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (tc@kollnig.net)!*
 
@@ -35,7 +35,7 @@ TrackerControl will always be free and open source, being a research project.
 ## Download / Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
 
-TrackerControl can be downloaded [here](https://github.com/OxfordHCC/tracker-control-android/releases), directly from GitHub.
+TrackerControl can be downloaded [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
 
 Alternatively, the app is available on [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), the most popular open-source Android app store.
 It is also available on the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
