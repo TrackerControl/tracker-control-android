@@ -1,6 +1,6 @@
 # TrackerControl
 
-[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
+[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol).
 
 **Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), or from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid)**
 
