@@ -638,6 +638,7 @@ public class Util {
 
     private static final Map<String, String> mapIPOrganization = new HashMap<>();
 
+
     public static String getOrganization(String ip) throws Exception {
         synchronized (mapIPOrganization) {
             if (mapIPOrganization.containsKey(ip))
@@ -647,10 +648,16 @@ public class Util {
         try {
             URL url = new URL("https://ipinfo.io/" + ip + "/org");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.setRequestMethod("GET");
             connection.setReadTimeout(15 * 1000);
             connection.connect();
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            BufferedReader reader = null;
+            if ("gzip".equals(connection.getContentEncoding())) {
+                reader = reader;
+            } else {
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            };
             String organization = reader.readLine();
             if ("undefined".equals(organization))
                 organization = null;

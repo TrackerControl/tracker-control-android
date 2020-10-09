@@ -32,16 +32,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 public class Common {
+
     @Nullable
     public static String fetch(String url) {
         try {
             StringBuilder html = new StringBuilder();
 
             HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
+            conn.setRequestProperty("Accept-Encoding", "gzip");
             conn.setConnectTimeout(5000);
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader in = null;
+            if ("gzip".equals(conn.getContentEncoding())) {
+                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(conn.getInputStream())));
+            } else {
+                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            }
 
             String str;
             while ((str = in.readLine()) != null)

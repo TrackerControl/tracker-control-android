@@ -87,6 +87,7 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
         URLConnection connection = null;
         try {
             connection = url.openConnection();
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.connect();
 
             if (connection instanceof HttpURLConnection) {
@@ -97,7 +98,12 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
 
             int contentLength = connection.getContentLength();
             Log.i(TAG, "Content length=" + contentLength);
-            in = connection.getInputStream();
+            InputStream in = null;
+            if ("gzip".equals(connection.getContentEncoding())) {
+                in = in;
+            } else {
+                in = connection.getInputStream();
+            };
             out = new FileOutputStream(file);
 
             long size = 0;
