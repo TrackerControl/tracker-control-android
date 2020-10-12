@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class Common {
-
+    
     @Nullable
     public static String fetch(String url) {
         try {
@@ -44,7 +44,7 @@ public class Common {
             HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
             conn.setRequestProperty("Accept-Encoding", "gzip");
             conn.setConnectTimeout(5000);
-            BufferedReader in = null;
+            BufferedReader in;
             if ("gzip".equals(conn.getContentEncoding())) {
                 in = new BufferedReader(new InputStreamReader(new GZIPInputStream(conn.getInputStream())));
             } else {

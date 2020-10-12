@@ -44,6 +44,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.GZIPInputStream;
 
 public class DownloadTask extends AsyncTask<Object, Integer, Object> {
     private static final String TAG = "NetGuard.Download";
@@ -78,6 +79,12 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
         Toast.makeText(context, context.getString(R.string.msg_downloading, url.toString()), Toast.LENGTH_SHORT).show();
     }
 
+    /*
+     * EcoAndroid: REDUCE SIZE ENERGY PATTERN APPLIED
+     * The goal is to use gzip compression before receiving data
+     * Application changed java file "DownloadTask.java"
+     */
+
     @Override
     protected Object doInBackground(Object... args) {
         Log.i(TAG, "Downloading " + url + " into " + file);
@@ -98,12 +105,11 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
 
             int contentLength = connection.getContentLength();
             Log.i(TAG, "Content length=" + contentLength);
-            InputStream in = null;
             if ("gzip".equals(connection.getContentEncoding())) {
-                in = in;
+                in = new GZIPInputStream(connection.getInputStream());
             } else {
                 in = connection.getInputStream();
-            };
+            }
             out = new FileOutputStream(file);
 
             long size = 0;

@@ -93,6 +93,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 public class Util {
     private static final String TAG = "NetGuard.Util";
@@ -652,12 +653,11 @@ public class Util {
             connection.setRequestMethod("GET");
             connection.setReadTimeout(15 * 1000);
             connection.connect();
-            BufferedReader reader = null;
             if ("gzip".equals(connection.getContentEncoding())) {
-                reader = reader;
+                reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream())));
             } else {
                 reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            };
+            }
             String organization = reader.readLine();
             if ("undefined".equals(organization))
                 organization = null;

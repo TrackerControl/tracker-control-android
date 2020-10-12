@@ -685,8 +685,8 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
                 URL url = new URL(BuildConfig.GITHUB_LATEST_API);
                 urlConnection = (HttpsURLConnection) url.openConnection();
                 urlConnection.setRequestProperty("Accept-Encoding", "gzip");
-                BufferedReader br = null;
-                if ("gzip".equals(conn.getContentEncoding())) {
+                BufferedReader br;
+                if ("gzip".equals(urlConnection.getContentEncoding())) {
                     br = new BufferedReader(new InputStreamReader(new GZIPInputStream(urlConnection.getInputStream())));
                 } else {
                     br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
