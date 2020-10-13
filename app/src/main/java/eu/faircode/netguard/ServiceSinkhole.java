@@ -547,7 +547,7 @@ public class ServiceSinkhole extends VpnService implements SharedPreferences.OnS
             }
 
             List<Rule> listAllowed = getAllowedRules(listRule);
-            Builder builder = getBuilder(listAllowed, listRule);
+            ServiceSinkhole.Builder builder = getBuilder(listAllowed, listRule);
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
                 last_builder = builder;

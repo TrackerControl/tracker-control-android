@@ -638,7 +638,7 @@ public class Util {
     }
 
     private static final Map<String, String> mapIPOrganization = new HashMap<>();
-    
+
     public static String getOrganization(String ip) throws Exception {
         synchronized (mapIPOrganization) {
             if (mapIPOrganization.containsKey(ip))
