@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
 title: TrackerControl
 description: Monitor and control trackers and ads.
-show_downloads: true
-logo: /images/logo.png
+show_downloads: false
+logo: 
