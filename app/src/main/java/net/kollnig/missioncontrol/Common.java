@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class Common {
-    
     @Nullable
     public static String fetch(String url) {
         try {

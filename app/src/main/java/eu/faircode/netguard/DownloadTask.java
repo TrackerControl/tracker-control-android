@@ -79,7 +79,6 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
         Toast.makeText(context, context.getString(R.string.msg_downloading, url.toString()), Toast.LENGTH_SHORT).show();
     }
 
-
     @Override
     protected Object doInBackground(Object... args) {
         Log.i(TAG, "Downloading " + url + " into " + file);
