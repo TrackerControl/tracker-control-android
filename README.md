@@ -46,11 +46,11 @@ A feature-reduced version is also available on [Google Play](https://play.google
 
 ## Communities
 
-1. Telegram Discussion Group: https://t.me/TrackerControl
-2. Telegram News Channel: https://t.me/TrackerControlChannel 
-3. Matrix: https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org
-4. /e/ Community: https://community.e.foundation/t/trackercontrol-a-way-to-neutralize-in-app-trackers/
-5. XDA Developers: https://forum.xda-developers.com/android/apps-games/control-trackers-ads-t4161821
+1. Telegram Discussion Group: <https://t.me/TrackerControl>
+2. Telegram News Channel: <https://t.me/TrackerControlChannel>
+3. Matrix Community: <https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org>
+4. /e/ Community: <https://community.e.foundation/t/trackercontrol-a-way-to-neutralize-in-app-trackers/>
+5. XDA Developers: <https://forum.xda-developers.com/android/apps-games/control-trackers-ads-t4161821>
 
 ## Translation
 
@@ -66,9 +66,9 @@ TrackerControl provides
 - *ad-blocking* using widely available host files.
 
 <p align="center">
-    <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
-    <img alt="Screenshot of trackers details" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
-    <img alt="Screenshot of receiving countries" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" style="display: block; margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of trackers details" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" style="margin: 0 auto;" height="100%" width="25%" >
+    <img alt="Screenshot of receiving countries" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" style="margin: 0 auto;" height="100%" width="25%" >
 </p>
 
 Contrary to similar solutions, this application does not intercept SSL
