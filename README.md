@@ -56,7 +56,7 @@ A feature-reduced version is also available on [Google Play](https://play.google
 
 If you're missing a translation, feel free to contribute here: <https://crowdin.com/project/trackercontrol>.
 
-Contact me at tc@kollnig.net, if you're missing a language.
+Contact me at hello@trackercontrol.org, if you're missing a language.
 
 ## Highlights
 TrackerControl provides
