@@ -1,4 +1,4 @@
-# TrackerControl
+# About TrackerControl
 
 [![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
 
