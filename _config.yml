@@ -5,4 +5,4 @@ show_downloads: true
 apk_url: https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk
 fdroid_url: https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid
 gplay_url: https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play
-logo: 
+logo: fastlane/metadata/android/en-US/images/phoneScreenshots/1.png
