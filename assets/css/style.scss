@@ -20,3 +20,12 @@ h1, h2, h3, h4, h5, h6, body {
 a small, a:hover small {
     color: black;
 }
+
+header ul a:hover, header ul a:focus {
+    color: #676767;
+    font-weight: inherit;
+}
+
+header li:hover, header li:focus {
+    background: #dbdbdb;
+}
