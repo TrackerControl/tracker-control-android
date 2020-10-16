@@ -1,0 +1,22 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+a {
+    color: #2E98E3;
+}
+
+a:hover,
+a:focus {
+    color: #015895;
+    font-weight: inherit;
+}
+
+h1, h2, h3, h4, h5, h6, body {
+    color: black;
+}
+
+a small, a:hover small {
+    color: black;
+}

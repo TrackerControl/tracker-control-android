@@ -1,5 +1,8 @@
 theme: jekyll-theme-minimal
 title: TrackerControl
 description: Monitor and control trackers and ads.
-show_downloads: false
+show_downloads: true
+apk_url: https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk
+fdroid_url: https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid
+gplay_url: https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play
 logo: 
