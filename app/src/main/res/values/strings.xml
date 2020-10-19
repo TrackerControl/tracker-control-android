@@ -111,7 +111,8 @@
     <string name="summary_call">Disable TrackerControl on incoming or outgoing telephone call. This can be used to work around IP/Wi-Fi calling problems.</string>
 
     <string name="summary_system">Define rules for system apps (for experts)</string>
-    <string name="summary_filter">Filter IP packets going out of the VPN tunnel. This might result in extra battery usage.</string>
+    <string name="summary_log_app">Search for new trackers. Disable to decrease battery usage. New trackers will still be blocked, but not shown.</string>
+    <string name="summary_filter">Block trackers. This might result in extra battery usage.</string>
     <string name="summary_track_usage">Track the number of bytes sent and received for each app and address. This might result in extra battery usage.</string>
     <string name="summary_block_domains">WARNING: Blocked hosts are not shown in UI.</string>
     <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>

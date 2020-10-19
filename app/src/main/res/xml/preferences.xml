@@ -78,6 +78,11 @@
                 android:key="manage_system"
                 android:summary="@string/summary_system"
                 android:title="@string/setting_system" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="true"
+                android:key="log_app"
+                android:summary="@string/summary_log_app"
+                android:title="@string/setting_log_app" />
             <Preference
                 android:key="hosts_import"
                 android:title="@string/setting_hosts" />

@@ -53,6 +53,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.util.PatternsCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -464,6 +465,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 prefs.edit().putBoolean("show_user", true).apply();
             prefs.edit().putBoolean("show_system", manage).apply();
             ServiceSinkhole.reload("changed " + name, this, false);
+
+        } else if ("log_app".equals(name)) {
+            Intent ruleset = new Intent(ActivityMain.ACTION_RULES_CHANGED);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(ruleset);
 
         } else if ("filter".equals(name)) {
             // Show dialog
