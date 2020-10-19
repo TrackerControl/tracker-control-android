@@ -90,6 +90,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 public class Util {
     private static final String TAG = "TrackerControl.Util";
@@ -588,10 +589,14 @@ public class Util {
         try {
             URL url = new URL("https://ipinfo.io/" + ip + "/org");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.setRequestMethod("GET");
             connection.setReadTimeout(15 * 1000);
             connection.connect();
-            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            if ("gzip".equals(connection.getContentEncoding()))
+                reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(connection.getInputStream())));
+            else
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String organization = reader.readLine();
             if ("undefined".equals(organization))
                 organization = null;

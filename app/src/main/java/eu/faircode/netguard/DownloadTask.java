@@ -43,6 +43,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.GZIPInputStream;
 
 public class DownloadTask extends AsyncTask<Object, Integer, Object> {
     private static final String TAG = "TrackerControl.Download";
@@ -86,6 +87,7 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
         URLConnection connection = null;
         try {
             connection = url.openConnection();
+            connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.connect();
 
             if (connection instanceof HttpURLConnection) {
@@ -96,7 +98,10 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
 
             int contentLength = connection.getContentLength();
             Log.i(TAG, "Content length=" + contentLength);
-            in = connection.getInputStream();
+            if ("gzip".equals(connection.getContentEncoding()))
+                in = new GZIPInputStream(connection.getInputStream());
+            else
+                in = connection.getInputStream();
             out = new FileOutputStream(file);
 
             long size = 0;

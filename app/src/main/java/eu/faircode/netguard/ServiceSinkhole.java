@@ -107,6 +107,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -683,7 +684,12 @@ public class ServiceSinkhole extends VpnService {
             try {
                 URL url = new URL(BuildConfig.GITHUB_LATEST_API);
                 urlConnection = (HttpsURLConnection) url.openConnection();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                urlConnection.setRequestProperty("Accept-Encoding", "gzip");
+                BufferedReader br;
+                if ("gzip".equals(urlConnection.getContentEncoding()))
+                    br = new BufferedReader(new InputStreamReader(new GZIPInputStream(urlConnection.getInputStream())));
+                else
+                    br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 
                 String line;
                 while ((line = br.readLine()) != null)
