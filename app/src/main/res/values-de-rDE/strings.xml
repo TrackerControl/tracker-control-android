@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl bietet einfache und erweiterte Möglichkeiten, um Zugriffe auf das Internet zu blockieren - keine Root-Rechte erforderlich! Anwendungen und Adressen kann der Zugriff auf die WLAN- und/oder mobile Datenverbindung einzeln erlaubt oder verweigert werden.</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Datenschutzerklärung</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie-Richtlinien</a></string>
@@ -95,7 +94,6 @@
     <string name="summary_ip6">IP6-Datenverkehr an TrackerControl weiterleiten, so dass er selektiv zugelassen oder blockiert werden kann</string>
     <string name="summary_call">TrackerControl bei eingehenden oder ausgehenden Anrufen deaktivieren. Dadurch können Probleme mit IP/WLAN-Telefonie gelöst werden.</string>
     <string name="summary_system">Regeln für System-Apps festlegen (für Experten)</string>
-    <string name="summary_filter">IP-Pakete filtern, die den VPN-Tunnel verlassen, dadurch kann ein erhöhter Batterieverbrauch entstehen.</string>
     <string name="summary_track_usage">Verfolgen Sie die Anzahl der gesendeten und empfangenen Bytes für jede App und Adresse. Dies kann zu einem erhöhten Akkuverbrauch führen.</string>
     <string name="summary_block_domains">WARNUNG: Blockierte Hosts werden nicht in der Benutzeroberfläche angezeigt.</string>
     <string name="summary_rcode">Der Standardwert ist 3 (NXDOMAIN), was \'nicht existierende Domain\' bedeutet.</string>

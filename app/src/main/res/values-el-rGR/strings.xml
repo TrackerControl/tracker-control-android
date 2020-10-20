@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">Το TrackerControl παρέχει απλούς αλλά και σύνθετους τρόπους για να εμποδίσετε την πρόσβαση στο διαδίκτυο χωρίς να απαιτείται root. Μπορείτε να εμποδίσετε ή να επιτρέψετε μεμονωμένα την πρόσβαση στο WiFI ή/και τη σύνδεση δεδομένων για εφαρμογές και διευθύνσεις που εσείς επιλέγετε.</string>
     <string name="app_android">Το TrackerControl απαιτεί Android 5.1 ή κάποια νεότερη έκδοση</string>
     <string name="app_xposed">Το Xposed προκαλεί πάρα πολλά σφάλματα, τα οποία ενδέχεται να έχουν ως αποτέλεσμα την κατάργηση του TrackerControl από το Google Play Store, επομένως το TrackerControl δεν υποστηρίζεται κατά την εγκατάσταση του Xposed</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Πολιτική Απορρήτου</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Πολιτική Cookie</a></string>
@@ -95,7 +94,6 @@
     <string name="summary_ip6">Δρομολογήστε την κυκλοφορία IP έκδοσης 6 στο TrackerControl έτσι ώστε να επιτρέπεται ή να αποκλείεται επιλεκτικά</string>
     <string name="summary_call">Απενεργοποιήστε το TrackerControl σε εισερχόμενες ή εξερχόμενες τηλεφωνικές κλήσεις. Αυτό μπορεί να χρησιμοποιηθεί για την αντιμετώπιση προβλημάτων κλήσεων IP / Wi-Fi.</string>
     <string name="summary_system">Ορίστε κανόνες για εφαρμογές συστήματος (για ειδικούς)</string>
-    <string name="summary_filter">Φιλτράρισμα πακέτων IP που κινούνται εκτός της δρομολόγησης VPN. Αυτό μπορεί να οδηγήσει σε περισσότερη κατανάλωση μπαταρίας.</string>
     <string name="summary_track_usage">Παρακολουθείστε τον αριθμό των bytes που αποστέλλονται και λαμβάνονται για κάθε εφαρμογή και κάθε διεύθυνση. Αυτό μπορεί να οδηγήσει σε περισσότερη κατανάλωση μπαταρίας.</string>
     <string name="summary_block_domains">ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Οι αποκλεισμένοι hosts δεν εμφανίζονται στη διεπαφή χρήστη.</string>
     <string name="summary_rcode">Η προεπιλεγμένη τιμή είναι 3 (NXDOMAIN), που σημαίνει «ανύπαρκτος τομέας».</string>
