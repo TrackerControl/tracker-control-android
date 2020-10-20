@@ -95,7 +95,6 @@
     <string name="summary_ip6">Reititä IP-version 6 liikenne TrackerControliin, jotta se voidaan valikoivasti sallia tai estää</string>
     <string name="summary_call">Poista TrackerControl käytöstä saapuvassa tai lähtevässä puhelussa. Tätä voidaan käyttää IP / Wi-Fi-puheluiden ongelmien kiertämiseen.</string>
     <string name="summary_system">Määritä säännöt järjestelmäsovelluksille (asiantuntijoille)</string>
-    <string name="summary_filter">Suodata VPN-tunnelista lähtevät IP-paketit. Tämä voi johtaa ylimääräiseen akun käyttöön.</string>
     <string name="summary_track_usage">Mukana lähetettyjen ja vastaanotettujen tavujen asettamiseksi kustakin sovelluksesta ja osoitteesta. Tämä voi johtaa ylimääräiseen akun käyttöön.</string>
     <string name="summary_block_domains">VAROITUS: Estettyjä isäntiä ei näytetä käyttöliittymässä.</string>
     <string name="summary_rcode">Oletusarvo on 3 (NXDOMAIN), mikä tarkoittaa \'olematonta verkkotunnusta\'.</string>

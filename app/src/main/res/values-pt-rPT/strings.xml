@@ -95,7 +95,6 @@
     <string name="summary_ip6">Rota IP versão 6 tráfego para TrackerControl para que possa ser seletivamente permitido ou bloqueado</string>
     <string name="summary_call">Desativar o TrackerControl na entrada ou saída de chamadas telefônicas. Isto pode ser usado para contornar problemas de chamadas IP/Wi-Fi.</string>
     <string name="summary_system">Definir regras para aplicações do sistema (para especialistas)</string>
-    <string name="summary_filter">Filtrar pacotes IP saindo do túnel VPN. Isto pode resultar no uso de bateria extra.</string>
     <string name="summary_track_usage">Rastrear o número de bytes enviados e recebidos para cada aplicativo e endereço. Isto pode resultar no uso de bateria extra.</string>
     <string name="summary_block_domains">AVISO: Hospedeiros bloqueados não são mostrados na UI.</string>
     <string name="summary_rcode">O valor padrão é 3 (NXDOMAIN), o que significa \"domínio inexistente\".</string>

@@ -97,7 +97,6 @@
     <string name="summary_ip6">Kieruj ruch IP w wersji 6 do TrackerControl, aby mógł być selektywnie dopuszczony lub zablokowany</string>
     <string name="summary_call">Wyłączenie TrackerControl przy przychodzącym lub wychodzącym połączeniu telefonicznym. Można go używać do rozwiązywania problemów z połączeniami IP/Wi-Fi.</string>
     <string name="summary_system">Określanie zasad dotyczących aplikacji systemowych (dla ekspertów)</string>
-    <string name="summary_filter">Filtrować pakiety IP wychodzące z tunelu VPN. Może to skutkować dodatkowym zużyciem baterii.</string>
     <string name="summary_track_usage">Śledzenie liczby bajtów wysłanych i otrzymanych dla każdej aplikacji i adresu. Może to skutkować dodatkowym zużyciem baterii.</string>
     <string name="summary_block_domains">OSTRZEŻENIE: Zablokowane hosty nie są wyświetlane w UI.</string>
     <string name="summary_rcode">Domyślną wartością jest 3 (NXDOMAIN), co oznacza \"nieistniejąca domena\".</string>

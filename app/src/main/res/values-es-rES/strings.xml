@@ -95,7 +95,6 @@
     <string name="summary_ip6">Rutea el tráfico de la versión 6 de la IP al TrackerControl para que pueda ser permitido o bloqueado selectivamente</string>
     <string name="summary_call">Desactiva el control de rastreo en la llamada telefónica entrante o saliente. Esto puede ser usado para solucionar problemas de llamadas IP/Wi-Fi</string>
     <string name="summary_system">Define reglas para aplicaciones de sistema (para experimentados)</string>
-    <string name="summary_filter">Filtra paquetes IP que salen del túnel VPN. Esto podría aumentar el consumo de la batería</string>
     <string name="summary_track_usage">Rastrea el número de bytes enviados y recibidos por cada aplicación y dirección. Esto podría aumentar el consumo de la batería</string>
     <string name="summary_block_domains">Replica con el código de respuesta DNS configurado para los nombres de dominio bloqueados. Este conmutador se desactiva cuando no hay ningún archivo de host disponible.</string>
     <string name="summary_rcode">El valor por defecto es 3 (NXDOMAIN), que significa \'dominio inexistente\'.</string>

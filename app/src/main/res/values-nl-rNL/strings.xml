@@ -95,7 +95,6 @@
     <string name="summary_ip6">Routeer IP versie 6 verkeer naar TrackerControl zodat het selectief kan worden toegestaan of geblokkeerd</string>
     <string name="summary_call">Schakel TrackerControl uit bij een inkomend of een uitgaand telefoongesprek. Dit kan gebruikt worden om IP/Wi-Fi belproblemen te omzeilen.</string>
     <string name="summary_system">Definieer regels voor systeemapplicaties (voor deskundigen)</string>
-    <string name="summary_filter">Filter IP-pakketten die uit de VPN-tunnel gaan. Dit kan resulteren in extra batterijverbruik.</string>
     <string name="summary_track_usage">Volg het aantal verzonden en ontvangen bytes voor elke app en elk adres. Dit kan resulteren in extra batterijverbruik.</string>
     <string name="summary_block_domains">WAARSCHUWING: Geblokkeerde hosts worden niet getoond in de UI.</string>
     <string name="summary_rcode">De standaardwaarde is 3 (NXDOMAIN), wat \'niet-bestaand domein\' betekent.</string>

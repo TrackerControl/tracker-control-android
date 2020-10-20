@@ -95,7 +95,6 @@
     <string name="summary_ip6">IP6-Datenverkehr an TrackerControl weiterleiten, so dass er selektiv zugelassen oder blockiert werden kann</string>
     <string name="summary_call">TrackerControl bei eingehenden oder ausgehenden Anrufen deaktivieren. Dadurch können Probleme mit IP/WLAN-Telefonie gelöst werden.</string>
     <string name="summary_system">Regeln für System-Apps festlegen (für Experten)</string>
-    <string name="summary_filter">IP-Pakete filtern, die den VPN-Tunnel verlassen, dadurch kann ein erhöhter Batterieverbrauch entstehen.</string>
     <string name="summary_track_usage">Verfolgen Sie die Anzahl der gesendeten und empfangenen Bytes für jede App und Adresse. Dies kann zu einem erhöhten Akkuverbrauch führen.</string>
     <string name="summary_block_domains">WARNUNG: Blockierte Hosts werden nicht in der Benutzeroberfläche angezeigt.</string>
     <string name="summary_rcode">Der Standardwert ist 3 (NXDOMAIN), was \'nicht existierende Domain\' bedeutet.</string>

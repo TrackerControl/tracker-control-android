@@ -95,7 +95,6 @@
     <string name="summary_ip6">Diriger le trafic IP version 6 vers TrackerControl pour qu\'il puisse être autorisé ou bloqué sélectivement</string>
     <string name="summary_call">Désactivez TrackerControl sur les appels téléphoniques entrants ou sortants. Cela peut être utilisé pour contourner les problèmes d\'appel IP/Wi-Fi.</string>
     <string name="summary_system">Définir des règles pour les applications système (pour les experts)</string>
-    <string name="summary_filter">Filtrer les paquets IP sortant du tunnel VPN. Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_track_usage">Surveiller le nombre d\'octets envoyés et reçus pour chaque application et adresse. Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_block_domains">AVERTISSEMENT : Les hôtes bloqués ne sont pas affichés dans l\'interface utilisateur.</string>
     <string name="summary_rcode">La valeur par défaut est 3 (NXDOMAIN), ce qui signifie \"domaine inexistant\".</string>

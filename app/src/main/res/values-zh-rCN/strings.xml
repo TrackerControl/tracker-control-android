@@ -94,7 +94,6 @@
     <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或阻止</string>
     <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
     <string name="summary_system">定义系统应用的规则 (专家用户)</string>
-    <string name="summary_filter">过滤从VPN隧道流出的IP包。这可能会导致额外的电池使用。</string>
     <string name="summary_track_usage">跟踪每个应用程序和地址发送和接收的字节数。这可能会导致额外的电池使用。</string>
     <string name="summary_block_domains">警告: 被阻止的主机未在用户界面中显示。</string>
     <string name="summary_rcode">默认值是3 (NXDOMAIN)，这意味着“不存在的域名”。</string>
