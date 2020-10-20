@@ -66,8 +66,9 @@
 
     <string name="setting_advanced_options">Advanced options</string>
     <string name="setting_system">Manage system apps</string>
-    <string name="setting_filter">Filter traffic</string>
-    <string name="setting_filter_udp">Filter UDP traffic</string>
+    <string name="setting_log_app">Search new trackers</string>
+    <string name="setting_filter">Block trackers</string>
+    <string name="setting_filter_udp">Block trackers on UDP</string>
     <string name="setting_handover">Seamless VPN handover on reload</string>
     <string name="setting_lockdown">Lockdown traffic</string>
     <string name="setting_track_usage">Track network usage</string>
@@ -111,8 +112,7 @@
     <string name="summary_call">Disable TrackerControl on incoming or outgoing telephone call. This can be used to work around IP/Wi-Fi calling problems.</string>
 
     <string name="summary_system">Define rules for system apps (for experts)</string>
-    <string name="summary_log_app">Search for new trackers. Disable to decrease battery usage. New trackers will still be blocked, but not shown.</string>
-    <string name="summary_filter">Block trackers. This might result in extra battery usage.</string>
+    <string name="summary_log_app">Disable to decrease battery usage. New trackers will still be blocked, but not shown.</string>
     <string name="summary_track_usage">Track the number of bytes sent and received for each app and address. This might result in extra battery usage.</string>
     <string name="summary_block_domains">WARNING: Blocked hosts are not shown in UI.</string>
     <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>
@@ -329,7 +329,7 @@ Sincerely,\n\n]]></string>
 
     <string name="crash_dialog_text">Sorry. TrackerControl just crashed.. Would you mind sending us an email with details?</string>
     <string name="crash_dialog_comment">Any comments?</string>
-    <string name="crash_body" translatable="false">Hi dev,\n\nUnfortunately, I noticed a crash in TrackerControl.\n\nThese details might help you:\n</string>
+    <string name="crash_body" translatable="false">Hi dev,\n\nUnfortunately, I noticed a crash in TrackerControl.\n\nThe attached details might help you:\n</string>
 
     <string name="instructions_monitoring_private_dns">Toggle the switch and interact with some apps. Private DNS must be disabled.</string>
     <string name="instructions_monitoring">Toggle the switch and interact with some apps.</string>
@@ -377,4 +377,9 @@ Sincerely,\n\n]]></string>
 
     <string name="internet_blocked">Internet access blocked</string>
     <string name="internet_unblocked">Internet access unblocked</string>
+
+    <string name="category_blocked">Trackers in category blocked</string>
+    <string name="category_unblocked">Trackers in category unblocked</string>
+    <string name="category_unblocked_warning">Need to block category</string>
+
 </resources>
