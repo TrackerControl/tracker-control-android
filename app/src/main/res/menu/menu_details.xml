@@ -10,7 +10,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_uninstall"
-        android:title="@string/uninstall"
+        android:title="@string/settings_uninstall"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_clear"
