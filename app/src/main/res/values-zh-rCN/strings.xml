@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl提供了简单和先进的方式来阻止访问互联网-无需获取根权限。应用程序和地址可以单独被允许或拒绝访问你的Wi-Fi和/或移动连接。</string>
+    <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">隐私政策</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie 政策</a></string>
@@ -94,6 +94,8 @@
     <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或阻止</string>
     <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
     <string name="summary_system">定义系统应用的规则 (专家用户)</string>
+    <string name="summary_log_app">搜索新的跟踪器。 禁用以减少电池使用量。 新的跟踪器仍将被阻止，但不会显示。</string>
+    <string name="summary_filter">屏蔽跟踪器。这可能会导致额外的电池消耗。</string>
     <string name="summary_track_usage">跟踪每个应用程序和地址发送和接收的字节数。这可能会导致额外的电池使用。</string>
     <string name="summary_block_domains">警告: 被阻止的主机未在用户界面中显示。</string>
     <string name="summary_rcode">默认值是3 (NXDOMAIN)，这意味着“不存在的域名”。</string>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl tarjoaa yksinkertaisia ja edistyneitä tapoja estää pääsy Internetiin - juuria ei tarvita. Sovelluksille ja osoitteille voidaan erikseen sallia tai estää pääsy Wi-Fi- ja / tai matkapuhelinyhteyteen.</string>
     <string name="app_android">TrackerControl edellyttää vähintään Androidin versiota 5.1</string>
     <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play Kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice"> Tietosuojakäytäntö </a> <a href = "https://github.com/OxfordHCC/tracker-control -android # cookie-policy "> evästekäytäntö </a></string>

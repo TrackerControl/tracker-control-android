@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">Το TrackerControl παρέχει απλούς αλλά και σύνθετους τρόπους για να εμποδίσετε την πρόσβαση στο διαδίκτυο χωρίς να απαιτείται root. Μπορείτε να εμποδίσετε ή να επιτρέψετε μεμονωμένα την πρόσβαση στο WiFI ή/και τη σύνδεση δεδομένων για εφαρμογές και διευθύνσεις που εσείς επιλέγετε.</string>
     <string name="app_android">Το TrackerControl απαιτεί Android 5.1 ή κάποια νεότερη έκδοση</string>
     <string name="app_xposed">Το Xposed προκαλεί πάρα πολλά σφάλματα, τα οποία ενδέχεται να έχουν ως αποτέλεσμα την κατάργηση του TrackerControl από το Google Play Store, επομένως το TrackerControl δεν υποστηρίζεται κατά την εγκατάσταση του Xposed</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Πολιτική Απορρήτου</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Πολιτική Cookie</a></string>

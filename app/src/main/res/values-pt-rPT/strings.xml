@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl fornece maneiras simples e avançadas para bloquear o acesso à internet - sem necessidade de root. Apps e endereços podem ter acessos permitidos ou negados ao seu Wi-Fi e/ou conexão móvel.</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa muitos erros, que podem resultar na remoção do TrackerControl da Google Play Store, portanto, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Política de privacidade</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Política de Cookie</a></string>
