@@ -51,7 +51,7 @@ import static org.acra.data.StringFormat.KEY_VALUE_LIST;
                 ReportField.STACK_TRACE
         },
         reportFormat = KEY_VALUE_LIST)
-@AcraMailSender(mailTo = "tc@kollnig.net",
+@AcraMailSender(mailTo = "crash@trackercontrol.org",
         resBody = R.string.crash_body,
         reportAsFile = false,
         reportFileName = "tracker-control-crash.json")

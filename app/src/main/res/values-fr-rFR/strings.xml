@@ -94,7 +94,7 @@
     <string name="summary_lan">Autoriser les applications à se connecter à des adresses de réseau local, comme 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16</string>
     <string name="summary_ip6">Diriger le trafic IP version 6 vers TrackerControl pour qu\'il puisse être autorisé ou bloqué sélectivement</string>
     <string name="summary_call">Désactivez TrackerControl sur les appels téléphoniques entrants ou sortants. Cela peut être utilisé pour contourner les problèmes d\'appel IP/Wi-Fi.</string>
-    <string name="summary_system">Définir des règles pour les applications système (pour experts)</string>
+    <string name="summary_system">Définir des règles pour les applications système (pour les experts)</string>
     <string name="summary_log_app">Rechercher de nouveaux traqueurs. Désactiver pour diminuer la consommation de la batterie. Les nouveaux traqueurs seront toujours bloqués, mais ne seront pas affichés.</string>
     <string name="summary_filter">Bloquer les traqueurs. Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_track_usage">Surveiller le nombre d\'octets envoyés et reçus pour chaque application et adresse. Cela peut entraîner une surconsommation de la batterie.</string>
