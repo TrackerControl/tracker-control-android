@@ -1188,7 +1188,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     private static Intent getIntentSupport() {
-        return Common.emailIntent("tc@kollnig.net", "About TrackerControl", "Hello,\n\n\n\nBest wishes,\n");
+        return Common.emailIntent("app@trackercontrol.org", "About TrackerControl", "Hello,\n\n\n\nBest wishes,\n");
     }
 
     private Intent getIntentLogcat() {
