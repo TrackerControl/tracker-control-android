@@ -163,10 +163,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
-                    if (hasBecomeChecked)
+                    if (hasBecomeChecked) {
                         b.block(mAppUid, trackerCategoryName);
-                    else
+                        Toast.makeText(mContext, R.string.category_blocked, Toast.LENGTH_SHORT).show();
+                    } else {
                         b.unblock(mAppUid, trackerCategoryName);
+                        Toast.makeText(mContext, R.string.category_unblocked, Toast.LENGTH_SHORT).show();
+                    }
                 });
                 if (enabled)
                     holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
@@ -178,7 +181,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                         final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
                         if (!blockedTrackerCategory) {
-                            Toast.makeText(mContext, "Need to block category", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, R.string.category_unblocked_warning, Toast.LENGTH_SHORT).show();
                             return;
                         }
 
