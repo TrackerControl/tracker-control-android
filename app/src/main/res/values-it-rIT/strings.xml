@@ -241,8 +241,8 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="body_request_data"><![CDATA[Alla persona responsabile:\n
 \n
 \n
-In qualità di titolare del trattamento dei dati dell'applicazione Android %s (ID: %s), le chiedo di confermare se sta trattando dati personali che mi riguardano.\n
-In caso affermativo, vi prego di fornirmi tutte le informazioni richieste dall'articolo 15 del regolamento generale dell'UE sulla protezione dei dati (GDPR), tra cui:\n
+In qualità di titolare del trattamento dei dati dell\'applicazione Android %s (ID: %s), le chiedo di confermare se sta trattando dati personali che mi riguardano.\n
+In caso affermativo, vi prego di fornirmi tutte le informazioni richieste dall\'articolo 15 del regolamento generale dell\'UE sulla protezione dei dati (GDPR), tra cui:\n
 \n
 - una copia dei miei dati personali;\n
 - le finalità del trattamento;\n
@@ -250,7 +250,7 @@ In caso affermativo, vi prego di fornirmi tutte le informazioni richieste dall'a
 - i destinatari a cui divulgate i miei dati personali e le garanzie da voi fornite;\n
 - il periodo di conservazione dei miei dati personali o i criteri utilizzati per determinare tale periodo;\n
 - informazioni sulla fonte dei miei dati personali;\n
-- l'esistenza di un processo decisionale automatizzato (inclusa la profilazione) e, in caso affermativo:\n
+- l\'esistenza di un processo decisionale automatizzato (inclusa la profilazione) e, in caso affermativo:\n
     - la logica coinvolta nel processo decisionale;\n
     - il significato e le conseguenze previste per me;\n
     - le misure adottate per prevenire errori, pregiudizi e discriminazioni;\n
@@ -264,7 +264,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Alla persona responsabile:\n
 \n
 \n
-Invoco il mio diritto alla cancellazione come specificato nell'articolo 17 del regolamento generale dell'UE sulla protezione dei dati (GDPR). In qualità di titolare del trattamento dei dati dell'applicazione Android %s (ID: %s), le chiedo di cancellare senza indugio i seguenti dati personali da lei trattati che mi riguardano:\n
+Invoco il mio diritto alla cancellazione come specificato nell\'articolo 17 del regolamento generale dell\'UE sulla protezione dei dati (GDPR). In qualità di titolare del trattamento dei dati dell\'applicazione Android %s (ID: %s), le chiedo di cancellare senza indugio i seguenti dati personali da lei trattati che mi riguardano:\n
 - Tutti i dati:\n
 \n
 Il motivo della mia richiesta di rimozione è che ritiro o ho ritirato il mio consenso al trattamento dei dati personali. Questa richiesta si riferisce a qualsiasi trattamento dei miei dati personali da parte vostra, compresi eventuali incaricati del trattamento dei dati personali per vostro conto.\n
