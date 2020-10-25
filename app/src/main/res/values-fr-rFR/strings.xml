@@ -51,12 +51,13 @@
     <string name="setting_tethering">Permettre le partage de connexion</string>
     <string name="setting_lan">Autoriser l\'accès au réseau local</string>
     <string name="setting_ip6">Activer le trafic IPv6</string>
-    <string name="setting_call">Désactiver lors d\'un appel</string>
+    <string name="setting_call">Désactiver lors des appels</string>
     <string name="setting_reload_onconnectivity">Recharger à chaque changement de type de connexion</string>
     <string name="setting_advanced_options">Paramètres avancés</string>
     <string name="setting_system">Gérer les applications système</string>
-    <string name="setting_filter">Filtrer le trafic</string>
-    <string name="setting_filter_udp">Filtrer le trafic UDP</string>
+    <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
+    <string name="setting_filter">Bloquer les traqueurs</string>
+    <string name="setting_filter_udp">Bloquer les traqueurs sur UDP</string>
     <string name="setting_handover">Passage au VPN sans interruption lors du rechargement</string>
     <string name="setting_lockdown">Verrouiller le trafic</string>
     <string name="setting_track_usage">Surveiller l\'utilisation du réseau</string>
@@ -94,9 +95,8 @@
     <string name="summary_lan">Autoriser les applications à se connecter à des adresses de réseau local, comme 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16</string>
     <string name="summary_ip6">Diriger le trafic IP version 6 vers TrackerControl pour qu\'il puisse être autorisé ou bloqué sélectivement</string>
     <string name="summary_call">Désactivez TrackerControl sur les appels téléphoniques entrants ou sortants. Cela peut être utilisé pour contourner les problèmes d\'appel IP/Wi-Fi.</string>
-    <string name="summary_system">Définir des règles pour les applications système (pour les experts)</string>
-    <string name="summary_log_app">Rechercher de nouveaux traqueurs. Désactiver pour diminuer la consommation de la batterie. Les nouveaux traqueurs seront toujours bloqués, mais ne seront pas affichés.</string>
-    <string name="summary_filter">Bloquer les traqueurs. Cela peut entraîner une surconsommation de la batterie.</string>
+    <string name="summary_system">Définir des règles pour les applications système (pour experts)</string>
+    <string name="summary_log_app">Désactiver pour diminuer la consommation de la batterie. Les nouveaux traqueurs seront toujours bloqués, mais ne seront pas affichés.</string>
     <string name="summary_track_usage">Surveiller le nombre d\'octets envoyés et reçus pour chaque application et adresse. Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_block_domains">AVERTISSEMENT : Les hôtes bloqués ne sont pas affichés dans l\'interface utilisateur.</string>
     <string name="summary_rcode">La valeur par défaut est 3 (NXDOMAIN), ce qui signifie « domaine inexistant ».</string>
@@ -118,9 +118,9 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_error">Une erreur inattendue s\'est produite: \'%s\'</string>
     <string name="msg_start_failed">Android vient refuser de démarrer le VPN. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_try">Essayez TrackerControl</string>
-    <string name="msg_doze">Pour des résultats cohérents, les optimisations Android de la batterie doivent être désactivées pour TrackerControl.\n\nDans la fenêtre suivante, sélectionnez « Toutes les applications » en haut, appuyez sur TrackerControl dans la liste, puis sélectionnez et confirmez « Ne pas optimiser ».</string>
-    <string name="msg_datasaving">Pour des résultats cohérents, les options de limitation de données d\'Android doivent être désactivées pour TrackerControl \n\nDans la fenêtre suivante, activez les options « Données en arrière-plan » et « Utilisation de données sans restriction »</string>
-    <string name="msg_filter">L\'utilisation du filtrage fera qu\'Android attribuera de la consommation de données et de batterie à TrackerControl - Android suppose que les données et la batterie sont utilisées par TrackerControl, plutôt que par les applications d\'origine</string>
+    <string name="msg_doze">Pour des résultats fiables, les optimisations Android de la batterie doivent être désactivées pour TrackerControl.\n\nDans la fenêtre suivante, sélectionnez « Toutes les applications » en haut, appuyez sur TrackerControl dans la liste, puis sélectionnez et confirmez « Ne pas optimiser ».</string>
+    <string name="msg_datasaving">Pour des résultats fiables, les options de limitation de données d\'Android doivent être désactivées pour TrackerControl \n\nDans la fenêtre suivante, activez les options « Données en arrière-plan » et « Utilisation de données sans restriction »</string>
+    <string name="msg_filter">L\'utilisation du filtrage fera qu\'Android attribuera l\'usage des données et la consommation de la batterie à TrackerControl - Android suppose que les données et la batterie sont utilisées par TrackerControl, plutôt que par chaque application</string>
     <string name="msg_filter4">Android 4 nécessite que le filtrage soit activé</string>
     <string name="msg_log_disabled">La journalisation du trafic est désactivée, utilisez l\'interrupteur ci-dessus pour activer la journalisation. La journalisation du trafic peut entraîner une surconsommation de la batterie.</string>
     <string name="msg_clear_rules">Cela réinitialisera les règles et conditions à leurs valeurs par défaut</string>
@@ -138,9 +138,9 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_push">Les messages entrants (push) sont principalement gérés par le composant système Google Play Services, qui est autorisé à accéder à Internet par défaut</string>
     <string name="msg_system">La gestion de toutes les applications (système) peut être activée dans les paramètres</string>
     <string name="msg_issue">Veuillez décrire le problème et indiquer l\'heure à laquelle il est survenu :</string>
-    <string name="msg_vpn_cancelled">La connexion VPN a été arrêtée\nAvez-vous configuré un autre VPN destiné à être un VPN toujours actif ?</string>
+    <string name="msg_vpn_cancelled">La connexion VPN a été arrêtée\nAvez-vous configuré un autre VPN pour qu\'il soit toujours actif ?</string>
     <string name="msg_unavailable">Cette fonctionnalité n’est pas disponible sur cette version d’Android</string>
-    <string name="msg_always_on">Un autre VPN est défini comme VPN toujours actif</string>
+    <string name="msg_always_on">Un autre VPN est défini comme toujours actif</string>
     <string name="msg_always_on_lockdown">Désactiver \"Bloquer les connexions sans VPN\" dans les paramètres VPN d\'Android pour utiliser TrackerControl en mode filtrage</string>
     <string name="msg_private_dns">Désactivez l’option « DNS privé » dans les paramètres réseau Android pour utiliser TrackerControl en mode filtrage</string>
     <string name="title_lockdown_enabled">Le trafic est verrouillé</string>
@@ -156,7 +156,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_roaming_blocked">Bloquer lors de l\'itinérance</string>
     <string name="title_metered">Par défaut, une connexion Wi-Fi est considérée comme illimitée et une connexion mobile limitée</string>
     <string name="title_internet">n\'a pas d\'autorisation d\'accès à internet</string>
-    <string name="title_disabled">est désactivé</string>
+    <string name="title_disabled">est désactivée</string>
     <string name="title_messaging">Les messages entrants sont reçus par les services Google Play et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
     <string name="title_download">Les téléchargements sont effectués par le gestionnaire de téléchargement et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
     <string name="title_conditions">Conditions</string>
@@ -176,7 +176,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_enable_filtering">Activer le filtrage pour enregistrer aussi les adresses autorisées</string>
     <string name="title_enable_notify">Activer les notifications d\'accès pour les adresses nouvellement enregistrées</string>
     <string name="title_enable_help0">Ces paramètres sont des paramètres globaux qui s\'appliquent à toutes les applications</string>
-    <string name="title_enable_help1">Le filtrage est également nécessaire pour permettre ou bloquer les adresses individuelles</string>
+    <string name="title_enable_help1">Le filtrage est également nécessaire pour permettre ou bloquer les adresses individuellement</string>
     <string name="title_enable_help2">Activer la journalisation (moins) ou le filtrage (plus) peut entraîner une surconsommation de la batterie et peut affecter la vitesse du réseau</string>
     <string name="title_rate">Noter</string>
     <string name="title_allow">Autoriser</string>
@@ -217,11 +217,11 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="app_info">Gérer l\'application</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquer les traqueurs</string>
-    <string name="block_tracking_description">De nombreuses applications envoient des données à des tiers, ce qu\'on appelle des « traqueurs ». TrackerControl permet de bloquer ces transmissions réseau de manière sélective. Cependant, utilisez cet outil de manière judicieuse, puisque les développeurs d\'applications se fient à ces services, notamment pour la publicité.</string>
-    <string name="personalised_ads">Limiter le profilage</string>
+    <string name="block_tracking_description">De nombreuses applications envoient des données à des tiers, ce qu\'on appelle des « traqueurs ». TrackerControl permet de bloquer ces transmissions réseau de manière sélective. Cependant, utilisez cet outil judicieusement, puisque les développeurs d\'applications se fient à ces services, notamment pour la publicité.</string>
+    <string name="personalised_ads">Limiter la personnalisation</string>
     <string name="personalised_ads_description">Android propose de limiter l\'accès des applications à l\'identifiant publicitaire Google de votre appareil. Cependant, les applications peuvent potentiellement ignorer ce paramètre, et toujours utiliser cet identifiant. Elles peuvent également continuer à collecter cet identifiant à des fins d\'analyse, conformément aux politiques de Google. Vous ne pouvez que faire confiance à Google et à la société de collecte de données.</string>
     <string name="data_managment">Gérer les données</string>
-    <string name="data_management_description">Le Règlement général sur la protection des données (RGPD) de l\'UE permet aux utilisateurs de l\'UE de gérer toutes les données qui leur sont liées. Cette application fournit des modèles de courriel pour contacter le développeur. Le développeur a pour obligation légale de répondre dans un délai d\'un mois.</string>
+    <string name="data_management_description">Le Règlement général sur la protection des données (RGPD) de l\'UE permet aux utilisateurs de l\'UE de gérer toutes les données qui leur sont liées. Cette application fournit des modèles de courriel pour contacter le développeur. Le développeur a pour obligation de répondre dans un délai d\'un mois.</string>
     <string name="contacts">Contacter </string>
     <string name="contacts_description">Si vous pensez qu\'une application enfreint les principes de protection des données, vous pouvez contacter directement les entités responsables.</string>
     <string name="play_services_required">Ceci est un paramètre des services Google Play, qui n\'a pas été trouvé sur votre appareil.</string>
@@ -284,7 +284,7 @@ Cordialement,\n\n]]></string>
     <string name="tracker_analytics">Statistiques d\'audience</string>
     <string name="tracker_content">Essentiels</string>
     <string name="tracker_cryptomining">Cryptominage</string>
-    <string name="tracker_fingerprinting">Prise d\'empreintes digitales</string>
+    <string name="tracker_fingerprinting">Empreintes numériques (fingerprinting)</string>
     <string name="tracker_social">Réseaux sociaux</string>
     <string name="tracker_uncategorised">Non catégorisé</string>
     <string name="setting_strict_blocking">Blocage strict (Beta)</string>
@@ -292,6 +292,7 @@ Cordialement,\n\n]]></string>
     <string name="strict_blocking_explanation">Par défaut, TrackerControl bloque tous les traqueurs trouvés. Cela peut empêcher des applications de fonctionner. Le mode non strict (en cours de développement) autorise certains traqueurs considérés essentiels.</string>
     <string name="exclude_vpn_explanation">Doit être activé pour détecter ou bloquer les traqueurs.\n\nAstuce: Désactiver si vous rencontrez des problèmes.</string>
     <string name="uninstall">Désinstaller</string>
+    <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>
     <string name="no_trackers_found_message">Démarrer une application pour trouver des traqueurs</string>
     <string name="no_trackers_found_action">Démarrer</string>
@@ -306,4 +307,7 @@ Cordialement,\n\n]]></string>
     <string name="enable">Activer</string>
     <string name="internet_blocked">Accès à Internet bloqué</string>
     <string name="internet_unblocked">Accès à Internet débloqué</string>
+    <string name="category_blocked">Traqueurs dans la catégorie bloqués</string>
+    <string name="category_unblocked">Traqueurs dans la catégorie débloqués</string>
+    <string name="category_unblocked_warning">Nécessite de bloquer la catégorie</string>
 </resources>

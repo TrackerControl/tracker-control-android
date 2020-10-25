@@ -54,8 +54,6 @@
     <string name="setting_reload_onconnectivity">Lataa jokainen yhteysmuutos uudelleen</string>
     <string name="setting_advanced_options">Edistyneet asetukset</string>
     <string name="setting_system">Hallitse järjestelmäsovelluksia</string>
-    <string name="setting_filter">Suodata liikenne</string>
-    <string name="setting_filter_udp">Suodata UDP-liikenne</string>
     <string name="setting_handover">Saumaton VPN-kanavanvaihto ladattaessa</string>
     <string name="setting_lockdown">Lukituksen liikenne</string>
     <string name="setting_track_usage">Seuraa verkon käyttöä</string>

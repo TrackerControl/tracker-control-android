@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl giver brugerne mulighed for at overvåge og kontrollere den udbredte, løbende, skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
+    <string name="app_android">TrackerControl kræver Android 5.1 eller en nyere version</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->

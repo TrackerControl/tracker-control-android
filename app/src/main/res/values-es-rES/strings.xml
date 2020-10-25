@@ -54,8 +54,6 @@
     <string name="setting_reload_onconnectivity">Actualizar por cada cambio de conectividad</string>
     <string name="setting_advanced_options">Opciones avanzadas</string>
     <string name="setting_system">Gestionar aplicaciones de sistema</string>
-    <string name="setting_filter">Filtrar tráfico</string>
-    <string name="setting_filter_udp">Filtrar tráfico UDP</string>
     <string name="setting_handover">Transferencia VPN estricta al actualizar</string>
     <string name="setting_lockdown">Bloquear tráfico</string>
     <string name="setting_track_usage">Monitorizar uso de datos</string>

@@ -54,8 +54,6 @@
     <string name="setting_reload_onconnectivity">Recarregar em cada mudança de conectividade</string>
     <string name="setting_advanced_options">Opções avançadas</string>
     <string name="setting_system">Gerenciar aplicações de sistemas</string>
-    <string name="setting_filter">Filtrar o tráfego</string>
-    <string name="setting_filter_udp">Filtrar o tráfego UDP</string>
     <string name="setting_handover">Entrega de VPN sem emendas na recarga</string>
     <string name="setting_lockdown">Bloqueio do tráfego</string>
     <string name="setting_track_usage">Rastrear a utilização da rede</string>

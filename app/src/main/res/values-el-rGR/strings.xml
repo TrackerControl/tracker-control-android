@@ -54,8 +54,6 @@
     <string name="setting_reload_onconnectivity">Φορτώστε ξανά σε κάθε αλλαγή συνδεσιμότητας</string>
     <string name="setting_advanced_options">Προηγμένες επιλογές</string>
     <string name="setting_system">Διαχείριση εφαρμογών του συστήματος</string>
-    <string name="setting_filter">Φιλτράρισμα κυκλοφορίας</string>
-    <string name="setting_filter_udp">Φιλτράρισμα κυκλοφορίας UDP</string>
     <string name="setting_handover">Απρόσκοπτη παράδοση VPN κατά την επαναφόρτωση</string>
     <string name="setting_lockdown">Κλείδωμα της κυκλοφορίας</string>
     <string name="setting_track_usage">Παρακολουθήστε τη χρήση δικτύου</string>
