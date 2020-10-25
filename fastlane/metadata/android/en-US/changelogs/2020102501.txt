@@ -1,6 +1,6 @@
+- Now available in 12 languages!
 - Add setting to disable looking for new trackers (saves battery and keeps on blocking new trackers)
 - Some data and battery saving in downloading host files
-- Add Greek translation and improve French one
 - Fix bug with downloading developer email addresses
 - Clarify how to (un)block trackers
 - Clarify how to stop blocking, but keep detecting trackers
