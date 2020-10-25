@@ -56,8 +56,6 @@
     <string name="setting_reload_onconnectivity">Przeładowanie przy każdej zmianie łączności</string>
     <string name="setting_advanced_options">Opcje zaawansowane</string>
     <string name="setting_system">Zarządzanie aplikacjami systemowymi</string>
-    <string name="setting_filter">Ruch filtrujący</string>
-    <string name="setting_filter_udp">Filtr ruchu UDP</string>
     <string name="setting_handover">Bezszwowe przekazanie VPN przy przeładowaniu</string>
     <string name="setting_lockdown">Blokada ruchu</string>
     <string name="setting_track_usage">Wykorzystanie sieci trakcyjnej</string>

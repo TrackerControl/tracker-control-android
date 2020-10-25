@@ -54,8 +54,6 @@
     <string name="setting_reload_onconnectivity">Herladen bij elke verandering in de connectiviteit</string>
     <string name="setting_advanced_options">Geavanceerde opties</string>
     <string name="setting_system">Beheer systeem apps</string>
-    <string name="setting_filter">Filter verkeer</string>
-    <string name="setting_filter_udp">Filter UDP-verkeer</string>
     <string name="setting_handover">Naadloze VPN-overdracht bij herlading</string>
     <string name="setting_lockdown">Verkeersafsluiting</string>
     <string name="setting_track_usage">Traceer het netwerkgebruik</string>
