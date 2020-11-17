@@ -44,7 +44,8 @@ public class TrackerCategory {
                 return c.getString(R.string.tracker_content);
             case "Cryptomining":
                 return c.getString(R.string.tracker_cryptomining);
-            case "Fingerprinting":
+            case "FingerprintingGeneral":
+            case "FingerprintingInvasive":
                 return c.getString(R.string.tracker_fingerprinting);
             case "Social":
                 return c.getString(R.string.tracker_social);
