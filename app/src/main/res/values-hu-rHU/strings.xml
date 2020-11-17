@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">A TrackerControl lehetővé teszi a felhasználók számára, hogy figyelemmel kísérjék és ellenőrizzék a mobilalkalmazásokban a felhasználói viselkedéssel kapcsolatos széles körű, folyamatos, rejtett adatgyűjtést (\"tracking\").</string>
+    <string name="app_android">TrackerControl igényel Android 5.1 vagy újabb</string>
     <!-- App Overview -->
     <!-- App Details -->
+    <string name="tab_actions">Saját Adatok</string>
     <!-- Actions -->
+    <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
+    <string name="no_trackers_found_message">Indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
+    <string name="no_trackers_found_action">Indítás</string>
+    <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik Internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
+    <string name="no_internet">Nincs Internet-hozzáférés</string>
+    <string name="bypass_vpn_error">"Nem lehet blokkolni az internetet. App kizárt TrackerControl."</string>
+    <string name="back">Vissza</string>
+    <string name="forever_free">Örökre Ingyenes</string>
+    <string name="your_privacy">Az Ön Személyes Adatai</string>
+    <string name="tracker_hostlist">Felhasználó Által Definiált Gazdagépek</string>
+    <string name="unblocked">User-Defined Hosts</string>
+    <string name="internet_blocked">Internet-hozzáférés blokkolva</string>
+    <string name="internet_unblocked">Internet-hozzáférés feloldva</string>
+    <string name="category_blocked">Blokkolt kategóriába tartozó nyomkövetők</string>
+    <string name="category_unblocked">Trackers kategóriában feloldva</string>
+    <string name="category_unblocked_warning">Kell blokkolni kategória</string>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">Το TrackerControl επιτρέπει στους χρήστες να παρακολουθούν και να ελέγχουν την ευρεία, συνεχιζόμενη, κρυφή συλλογή δεδομένων, σε εφαρμογές για κινητά, που αφορούν την συμπεριφορά των χρηστών (\'tracking\').</string>
     <string name="app_android">Το TrackerControl απαιτεί Android 5.1 ή κάποια νεότερη έκδοση</string>
     <string name="app_xposed">Το Xposed προκαλεί πάρα πολλά σφάλματα, τα οποία ενδέχεται να έχουν ως αποτέλεσμα την κατάργηση του TrackerControl από το Google Play Store, επομένως το TrackerControl δεν υποστηρίζεται κατά την εγκατάσταση του Xposed</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Πολιτική Απορρήτου</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Πολιτική Cookie</a></string>
@@ -54,6 +55,9 @@
     <string name="setting_reload_onconnectivity">Φορτώστε ξανά σε κάθε αλλαγή συνδεσιμότητας</string>
     <string name="setting_advanced_options">Προηγμένες επιλογές</string>
     <string name="setting_system">Διαχείριση εφαρμογών του συστήματος</string>
+    <string name="setting_log_app">Αναζήτηση νέων ιχνηλατών</string>
+    <string name="setting_filter">Αποκλεισμός Ιχνηλατών</string>
+    <string name="setting_filter_udp">Αποκλεισμός ιχνηλατών στο UDP</string>
     <string name="setting_handover">Απρόσκοπτη παράδοση VPN κατά την επαναφόρτωση</string>
     <string name="setting_lockdown">Κλείδωμα της κυκλοφορίας</string>
     <string name="setting_track_usage">Παρακολουθήστε τη χρήση δικτύου</string>
@@ -92,6 +96,7 @@
     <string name="summary_ip6">Δρομολογήστε την κυκλοφορία IP έκδοσης 6 στο TrackerControl έτσι ώστε να επιτρέπεται ή να αποκλείεται επιλεκτικά</string>
     <string name="summary_call">Απενεργοποιήστε το TrackerControl σε εισερχόμενες ή εξερχόμενες τηλεφωνικές κλήσεις. Αυτό μπορεί να χρησιμοποιηθεί για την αντιμετώπιση προβλημάτων κλήσεων IP / Wi-Fi.</string>
     <string name="summary_system">Ορίστε κανόνες για εφαρμογές συστήματος (για ειδικούς)</string>
+    <string name="summary_log_app">Απενεργοποίηση για μείωση της χρήσης της μπαταρίας. Οι νέοι ιχνηλάτες θα εξακολουθούν να αποκλείονται, αλλά δεν εμφανίζονται.</string>
     <string name="summary_track_usage">Παρακολουθείστε τον αριθμό των bytes που αποστέλλονται και λαμβάνονται για κάθε εφαρμογή και κάθε διεύθυνση. Αυτό μπορεί να οδηγήσει σε περισσότερη κατανάλωση μπαταρίας.</string>
     <string name="summary_block_domains">ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Οι αποκλεισμένοι hosts δεν εμφανίζονται στη διεπαφή χρήστη.</string>
     <string name="summary_rcode">Η προεπιλεγμένη τιμή είναι 3 (NXDOMAIN), που σημαίνει «ανύπαρκτος τομέας».</string>
@@ -218,7 +223,7 @@
     <string name="personalised_ads_description">Το Android προσφέρει περιορισμό της πρόσβασης εφαρμογών, στο αναγνωριστικό διαφήμισης Google της συσκευής σας. Ωστόσο, οι εφαρμογές μπορούν δυνητικά να αγνοήσουν αυτήν τη ρύθμιση και εξακολουθούν να χρησιμοποιούν αυτό το αναγνωριστικό. Μπορούν επίσης να συνεχίσουν να συλλέγουν αυτό το αναγνωριστικό για σκοπούς ανάλυσης, σύμφωνα με τις πολιτικές της Google. Θα πρέπει να εμπιστεύεστε την Google και την εταιρεία συλλογής δεδομένων.</string>
     <string name="data_managment">Διαχείριση Δεδομένων</string>
     <string name="data_management_description">Ο γενικός κανονισμός προστασίας δεδομένων της ΕΕ (GDPR) επιτρέπει στους χρήστες από την ΕΕ να διαχειρίζονται τυχόν δεδομένα που σχετίζονται με αυτούς. Αυτή η εφαρμογή παρέχει πρότυπα ηλεκτρονικού ταχυδρομείου για να επικοινωνήσετε με τον προγραμματιστή. Ο προγραμματιστής πρέπει να απαντήσει εντός ενός μηνός.</string>
-    <string name="contacts">Επαφή </string>
+    <string name="contacts">Επικοινωνία </string>
     <string name="contacts_description">Εάν πιστεύετε ότι μια εφαρμογή παραβιάζει τις αρχές προστασίας δεδομένων, μπορείτε να επικοινωνήσετε απευθείας με τους αρμόδιους υπεύθυνους.</string>
     <string name="play_services_required">Αυτή είναι μια ρύθμιση των Υπηρεσιών Google Play, οι οποίες δεν βρέθηκαν στη συσκευή σας.</string>
     <string name="no_mail_service">Εγκαταστήστε ένα πρόγραμμα email.</string>
@@ -288,6 +293,7 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">Από προεπιλογή, το TrackerControl αποκλείει όλους τους εντοπισμένους ιχνηλάτες. Αυτό μπορεί να χαλάσει τις εφαρμογές. Η μη αυστηρή λειτουργία (υπο ανάπτυξη) επιτρέπει ορισμένους βασικούς ιχνηλάτες.</string>
     <string name="exclude_vpn_explanation">Πρέπει να είναι ενεργό για τον εντοπισμό ή τον αποκλεισμό των ιχνηλατών. \n\nΣυμβουλή: Απενεργοποιήστε το εάν αντιμετωπίζετε προβλήματα.</string>
     <string name="uninstall">Απεγκατάσταση</string>
+    <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
     <string name="no_trackers_found_message_disabled">Ενεργοποιήστε το διακόπτη στην κύρια οθόνη και στη συνέχεια ανοίξτε την εφαρμογή για να εντοπίστε ιχνηλάτες</string>
     <string name="no_trackers_found_message">Εκκίνηση εφαρμογής για εύρεση ιχνηλατών</string>
     <string name="no_trackers_found_action">Έναρξη</string>
@@ -302,4 +308,7 @@ Sincerely,\n\n]]></string>
     <string name="enable">Ενεργοποίηση</string>
     <string name="internet_blocked">Η πρόσβαση στο διαδίκτυο αποκλείστηκε</string>
     <string name="internet_unblocked">Η πρόσβαση στο διαδίκτυο επιτράπηκε</string>
+    <string name="category_blocked">Οι ιχνηλάτες στην κατηγορία, αποκλείστηκαν</string>
+    <string name="category_unblocked">Οι ιχνηλάτες στην κατηγορία, δεν αποκλείστηκαν</string>
+    <string name="category_unblocked_warning">Πρέπει να μπλοκάρετε την κατηγορία</string>
 </resources>
