@@ -92,7 +92,7 @@
             <Preference
                 android:dependency="hosts_url_new"
                 android:key="hosts_download"
-                android:title="@string/setting_hosts_download" />
+                android:title="@string/setting_hosts_update" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
                 android:dependency="filter"

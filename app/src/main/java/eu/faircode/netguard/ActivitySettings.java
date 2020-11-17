@@ -262,7 +262,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (last_import != null)
                 pref_hosts_import.setSummary(getString(R.string.msg_import_last, last_import));
             if (last_download != null)
-                pref_hosts_download.setSummary(getString(R.string.msg_download_last, last_download));
+                pref_hosts_download.setSummary(getString(R.string.msg_update_last, last_download));
 
             // Handle hosts import
             // https://github.com/Free-Software-for-Android/AdAway/wiki/HostsSources
@@ -303,8 +303,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                                 prefs.edit().putString("hosts_last_download", last).apply();
 
                                 if (running) {
-                                    pref_hosts_download.setSummary(getString(R.string.msg_download_last, last));
-                                    Toast.makeText(ActivitySettings.this, R.string.msg_downloaded, Toast.LENGTH_LONG).show();
+                                    pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
+                                    Toast.makeText(ActivitySettings.this, R.string.msg_updated, Toast.LENGTH_LONG).show();
                                 }
 
                                 ServiceSinkhole.reload("hosts file download", ActivitySettings.this, false);

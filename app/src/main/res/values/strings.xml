@@ -98,8 +98,9 @@
     <string name="setting_import">Import settings</string>
     <string name="setting_hosts">Import hosts file</string>
     <string name="setting_hosts_append">Import hosts file (append)</string>
-    <string name="setting_hosts_url">Hosts file download URL</string>
+    <string name="setting_hosts_url">Hosts file URL</string>
     <string name="setting_hosts_download">Download hosts file</string>
+    <string name="setting_hosts_update">Update hosts file</string>
 
     <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
     <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
@@ -153,7 +154,9 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_import_last">Last import: %s</string>
     <string name="msg_downloading">Downloading\n%1s</string>
     <string name="msg_downloaded">Hosts file downloaded</string>
+    <string name="msg_updated">Hosts file updated and applied!</string>
     <string name="msg_download_last">Last download: %s</string>
+    <string name="msg_update_last">Last update: %s</string>
     <string name="msg_metered">Network is metered</string>
     <string name="msg_inactive">No active internet connection</string>
     <string name="msg_queue">TrackerControl is busy</string>
