@@ -744,7 +744,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (getIntentInvite(this).resolveActivity(pm) == null)
             menu.removeItem(R.id.menu_invite);
 
-        if (getIntentSupport().resolveActivity(getPackageManager()) == null)
+        if (getIntentSupport(this).resolveActivity(getPackageManager()) == null)
             menu.removeItem(R.id.menu_support);
 
         menu.findItem(R.id.menu_apps).setEnabled(getIntentApps(this).resolveActivity(pm) != null);
@@ -830,7 +830,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             menu_legend();
             return true;
         } else if (itemId == R.id.menu_support) {
-            startActivity(getIntentSupport());
+            startActivity(getIntentSupport(this));
             return true;
         } else if (itemId == R.id.menu_about) {
             menu_about();
@@ -1187,8 +1187,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         return intent;
     }
 
-    private static Intent getIntentSupport() {
-        return Common.emailIntent("app@trackercontrol.org", "About TrackerControl", "Hello,\n\n\n\nBest wishes,\n");
+    private static Intent getIntentSupport(Context context) {
+        return new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/OxfordHCC/tracker-control-android#support-trackercontrol"));
     }
 
     private Intent getIntentLogcat() {
