@@ -468,7 +468,7 @@ public class ServiceSinkhole extends VpnService {
                     if (VpnService.prepare(ServiceSinkhole.this) == null) {
                         Log.w(TAG, "VPN prepared connected=" + last_connected);
                         if (last_connected && !(ex instanceof StartFailedException)) {
-                            showAutoStartNotification();
+                            //showAutoStartNotification();
                             if (!Util.isPlayStoreInstall(ServiceSinkhole.this))
                                 showErrorNotification(ex.toString());
                         }
@@ -570,7 +570,9 @@ public class ServiceSinkhole extends VpnService {
                 } else {
                     last_builder = builder;
 
-                    boolean handover = prefs.getBoolean("handover", true);
+                    boolean handover = prefs.getBoolean("handover", false);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                        handover = false;
                     Log.i(TAG, "VPN restart handover=" + handover);
 
                     if (handover) {
@@ -1903,7 +1905,7 @@ public class ServiceSinkhole extends VpnService {
                 packet.allowed = true;
                 Log.i(TAG, "Allowing UDP " + packet);
             } else if (packet.uid < 2000 &&
-                    !last_connected && isSupported(packet.protocol)) {
+                    !last_connected && isSupported(packet.protocol) && false) {
                 // Allow system applications in disconnected state
                 packet.allowed = true;
                 Log.w(TAG, "Allowing disconnected system " + packet);
@@ -2527,6 +2529,8 @@ public class ServiceSinkhole extends VpnService {
 
             @Override
             public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
+                Log.i(TAG, "Changed properties=" + network + " props=" + linkProperties);
+
                 // Make sure the right DNS servers are being used
                 List<InetAddress> dns = linkProperties.getDnsServers();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
@@ -2543,38 +2547,32 @@ public class ServiceSinkhole extends VpnService {
 
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
-                Log.i(TAG, "Changed capabilities=" + network);
+                Log.i(TAG, "Changed capabilities=" + network + " caps=" + networkCapabilities);
 
                 boolean connected = Util.isConnected(ServiceSinkhole.this);
-                if (connected && (last_connected == null || !last_connected)) {
-                    last_connected = connected;
-                    reload("Connected state changed", ServiceSinkhole.this, false);
-                }
-
                 boolean unmetered = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
                 String generation = Util.getNetworkGeneration(ServiceSinkhole.this);
-                Log.i(TAG, "Generation=" + generation + " unmetered=" + unmetered);
+                Log.i(TAG, "Connected=" + connected + "/" + last_connected +
+                        " unmetered=" + unmetered + "/" + last_unmetered +
+                        " generation=" + generation + "/" + last_generation);
 
-                if (last_generation == null || !last_generation.equals(generation)) {
-                    if (last_generation != null) {
-                        Log.i(TAG, "New network generation=" + generation);
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                        if (prefs.getBoolean("unmetered_2g", false) ||
-                                prefs.getBoolean("unmetered_3g", false) ||
-                                prefs.getBoolean("unmetered_4g", false))
-                            reload("data connection state changed", ServiceSinkhole.this, false);
-                    }
+                if (last_connected != null && !last_connected.equals(connected))
+                    reload("Connected state changed", ServiceSinkhole.this, false);
 
-                    last_generation = generation;
+                if (last_unmetered != null && !last_unmetered.equals(unmetered))
+                    reload("Unmetered state changed", ServiceSinkhole.this, false);
+
+                if (last_generation != null && !last_generation.equals(generation)) {
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+                    if (prefs.getBoolean("unmetered_2g", false) ||
+                            prefs.getBoolean("unmetered_3g", false) ||
+                            prefs.getBoolean("unmetered_4g", false))
+                        reload("Generation changed", ServiceSinkhole.this, false);
                 }
 
-                if (last_unmetered == null || !last_unmetered.equals(unmetered)) {
-                    if (last_unmetered != null) {
-                        Log.i(TAG, "New unmetered=" + unmetered);
-                        reload("unmetered state changed", ServiceSinkhole.this, false);
-                    }
-                    last_unmetered = unmetered;
-                }
+                last_connected = connected;
+                last_unmetered = unmetered;
+                last_generation = generation;
             }
 
             @Override
