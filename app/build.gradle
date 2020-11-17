@@ -93,23 +93,23 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // https://developer.android.com/jetpack/androidx/releases/
-    implementation 'androidx.appcompat:appcompat:1.2.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.2.1'
     annotationProcessor 'androidx.annotation:annotation:1.1.0'
 
     // https://bumptech.github.io/glide/
-    implementation('com.github.bumptech.glide:glide:4.10.0') {
+    implementation('com.github.bumptech.glide:glide:4.11.0') {
         exclude group: "com.android.support"
     }
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    implementation 'com.opencsv:opencsv:4.6'
-    implementation 'com.maxmind.geoip2:geoip2:2.14.0'
+    implementation 'com.opencsv:opencsv:5.3'
+    implementation 'com.maxmind.geoip2:geoip2:2.15.0'
 
     // Crash reporting
     implementation "ch.acra:acra-mail:5.7.0"
