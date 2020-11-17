@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ TrackerControl is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ TrackerControl is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingEnd="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingStart="8dp"
+    tools:context="eu.faircode.netguard.ActivityForwarding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvProtocol"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextSmall" />
+
+        <TextView
+            android:id="@+id/tvDPort"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextSmall" />
+
+        <TextView
+            android:id="@+id/tvRAddr"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:textAppearance="@style/TextSmall" />
+
+        <TextView
+            android:id="@+id/tvRPort"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextSmall" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvRUid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="88dp"
+        android:layout_marginStart="88dp"
+        android:textAppearance="@style/TextSmall" />
+</LinearLayout>

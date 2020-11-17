@@ -71,6 +71,11 @@
         <item name="colorOff">@color/colorRedOn</item>
     </style>
 
+    <style name="AppDialog" parent="Theme.AppCompat.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <!-- Rocket Switch -->
     <style name="RocketSwitch">
         <item name="android:thumb">@drawable/switch_rocket</item>

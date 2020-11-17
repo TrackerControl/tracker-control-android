@@ -171,6 +171,29 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_always_on">Another VPN is set as Always-on VPN</string>
     <string name="msg_always_on_lockdown">Turn off "Block connections without VPN" in Android VPN settings to use TrackerControl in filtering mode</string>
     <string name="msg_private_dns">Turn off "Private DNS" in Android network settings to use TrackerControl in filtering mode</string>
+    <string name="msg_start_forward">Start forwarding from %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
+    <string name="msg_stop_forward">Stop forwarding of %1$s port %2$d?</string>
+
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+
+    <string-array name="protocolValues" translatable="false">
+        <item>17</item>
+        <item>6</item>
+    </string-array>
+
+    <string name="menu_add">Add</string>
+    <string name="menu_delete">Delete</string>
+
+    <string name="setting_forwarding">Port forwarding</string>
+    <string name="title_protocol">Protocol</string>
+    <string name="title_dport">Source port</string>
+    <string name="title_raddr">Destination address</string>
+    <string name="title_rport">Destination port</string>
+    <string name="title_ruid">Destination app</string>
+    <string name="title_external">For an external server select \'nobody\'</string>
 
     <string name="title_lockdown_enabled">Traffic is locked down</string>
     <string name="title_unmetered_allowed">Unmetered traffic is allowed</string>

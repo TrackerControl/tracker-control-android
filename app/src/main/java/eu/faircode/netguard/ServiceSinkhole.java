@@ -2016,7 +2016,16 @@ public class ServiceSinkhole extends VpnService {
 
         Allowed allowed = null;
         if (packet.allowed)
-            allowed = new Allowed();
+            if (mapForward.containsKey(packet.dport)) {
+                Forward fwd = mapForward.get(packet.dport);
+                if (fwd.ruid == packet.uid) {
+                    allowed = new Allowed();
+                } else {
+                    allowed = new Allowed(fwd.raddr, fwd.rport);
+                    packet.data = "> " + fwd.raddr + "/" + fwd.rport;
+                }
+            } else
+                allowed = new Allowed();
 
         lock.readLock().unlock();
 

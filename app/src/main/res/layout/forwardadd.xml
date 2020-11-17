@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ TrackerControl is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ TrackerControl is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="eu.faircode.netguard.ActivityForwarding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_launcher_round" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/app_name"
+            android:textAppearance="@style/TextLarge"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/setting_forwarding"
+        android:textAppearance="@style/TextTitle" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/title_protocol"
+                android:textAppearance="@style/TextSmall" />
+
+            <Spinner
+                android:id="@+id/spProtocol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:entries="@array/protocolNames"
+                android:prompt="@string/title_protocol"
+                android:textAppearance="@style/TextMedium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/title_dport"
+                android:textAppearance="@style/TextSmall" />
+
+            <EditText
+                android:id="@+id/etDPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="53"
+                android:inputType="number"
+                android:textAppearance="@style/TextMedium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/title_raddr"
+                android:textAppearance="@style/TextSmall" />
+
+            <EditText
+                android:id="@+id/etRAddr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="127.0.0.1"
+                android:inputType="text"
+                android:textAppearance="@style/TextMedium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/title_rport"
+                android:textAppearance="@style/TextSmall" />
+
+            <EditText
+                android:id="@+id/etRPort"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="5353"
+                android:inputType="number"
+                android:textAppearance="@style/TextMedium" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/title_ruid"
+                android:textAppearance="@style/TextSmall" />
+
+            <ProgressBar
+                android:id="@+id/pbRUid"
+                style="@android:style/Widget.ProgressBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
+
+            <Spinner
+                android:id="@+id/spRUid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:prompt="@string/title_ruid"
+                android:textAppearance="@style/TextMedium"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/title_external"
+                android:textAppearance="@style/TextSmall"
+                android:textStyle="italic" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

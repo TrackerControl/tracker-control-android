@@ -107,6 +107,27 @@
         </activity>
 
         <activity
+            android:name="eu.faircode.netguard.ActivityForwarding"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/setting_forwarding"
+            android:parentActivityName="eu.faircode.netguard.ActivitySettings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.faircode.netguard.ActivitySettings" />
+        </activity>
+
+        <activity
+            android:name="eu.faircode.netguard.ActivityForwardApproval"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name"
+            android:theme="@style/AppDialog">
+            <intent-filter>
+                <action android:name="eu.faircode.netguard.START_PORT_FORWARD" />
+                <action android:name="eu.faircode.netguard.STOP_PORT_FORWARD" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name="eu.faircode.netguard.ActivityLog"
             android:configChanges="orientation|screenSize"
             android:label="@string/menu_log"
