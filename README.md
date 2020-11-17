@@ -44,6 +44,17 @@ It is also available on the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/a
 
 A feature-reduced version is also available on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
 
+## Support TrackerControl
+
+There are many ways in which you can support TrackerControl. Here are a few ideas:
+
+1. Join one of the [online communities](https://github.com/OxfordHCC/tracker-control-android#communities) and share your ideas on make the app better.
+2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
+3. Help [translate](https://github.com/OxfordHCC/tracker-control-android#translation) the app into your language.
+4. Tell your friends how to protect their privacy with TrackerControl.
+
+Also, you can always reach out to me directly at hello@trackercontrol.org. I deeply welcome and answer every message.
+
 ## Communities
 
 1. Telegram Discussion Group: <https://t.me/TrackerControl>
