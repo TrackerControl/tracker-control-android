@@ -1,0 +1,5 @@
+- FEATURE: Add port forwarding
+- Categorise more trackers, add 'Fingerprinting' category
+- Fix problems with Android 11
+- Clarify updating of block list in UI
+- Update translations, libraries, and block list
