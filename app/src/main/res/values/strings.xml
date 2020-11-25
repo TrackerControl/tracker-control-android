@@ -67,6 +67,7 @@
     <string name="setting_advanced_options">Advanced options</string>
     <string name="setting_system">Manage system apps</string>
     <string name="setting_log_app">Search new trackers</string>
+    <string name="setting_log_logcat">Log transmissions to ADB</string>
     <string name="setting_filter">Block trackers</string>
     <string name="setting_filter_udp">Block trackers on UDP</string>
     <string name="setting_handover">Seamless VPN handover on reload</string>
@@ -120,6 +121,7 @@
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
+    <string name="summary_log_logcat">Disables blocking. Communications are logged in adb logcat with tag \'TC-Log\'.</string>
 
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_started">Checking trackers</string>
@@ -173,6 +175,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_private_dns">Turn off "Private DNS" in Android network settings to use TrackerControl in filtering mode</string>
     <string name="msg_start_forward">Start forwarding from %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Stop forwarding of %1$s port %2$d?</string>
+    <string name="msg_log_logcat">Warning: Blocking disabled because of ADB logging.</string>
 
     <string-array name="protocolNames">
         <item>UDP</item>

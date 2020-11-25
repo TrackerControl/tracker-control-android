@@ -396,6 +396,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Handle intent
         checkExtras(getIntent());
+
+        // Warn about disabled blocking if ADB logging is on
+        if (!Util.isPlayStoreInstall() && prefs.getBoolean("log_logcat", false))
+            Toast.makeText(this, R.string.msg_log_logcat, Toast.LENGTH_SHORT).show();
     }
 
     private void initiliaseStrictMode(boolean strictMode) {

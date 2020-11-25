@@ -71,6 +71,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -1886,9 +1887,10 @@ public class ServiceSinkhole extends VpnService {
                 protocol == 17 /* UDP */);
     }
 
+    static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, String> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Tracker> ipToTracker = new ConcurrentHashMap<>();
-    static String NO_DNAME = "NO_DNAME";
+    static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
 
     // Called from native code
@@ -1941,7 +1943,8 @@ public class ServiceSinkhole extends VpnService {
                     }*/
 
                 // Check if tracker known
-                if (!Util.isPlayStoreInstall()) {
+                if (!Util.isPlayStoreInstall()
+                        || prefs.getBoolean("log_logcat", false)) {
                     Tracker tracker = ipToTracker.get(packet.daddr);
                     if (tracker == null) {
                         // Check if IP known
@@ -1990,13 +1993,24 @@ public class ServiceSinkhole extends VpnService {
                         }
                     }
 
-                    if (tracker != NO_TRACKER) {
-                        // Block tracker if necessary
-                        TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                        if (tracker != null
-                                && b.blockedTracker(packet.uid, tracker)) {
-                            filtered = true;
-                            packet.allowed = false;
+                    // Log or block?
+                    if (prefs.getBoolean("log_logcat", false)) {
+                        String app = uidToApp.get(packet.uid);
+                        if (app == null) {
+                            PackageManager pm = getPackageManager();
+                            app = Common.getAppName(pm, packet.uid);
+                            uidToApp.put(packet.uid, app);
+                        }
+
+                        Log.i("TC-Log", app + " " + packet.daddr + " " + ipToHost.get(packet.daddr) + " " + tracker.name);
+                    } else {
+                        if (tracker != NO_TRACKER) {
+                            TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                            if (tracker != null
+                                    && b.blockedTracker(packet.uid, tracker)) {
+                                filtered = true;
+                                packet.allowed = false;
+                            }
                         }
                     }
                 }
