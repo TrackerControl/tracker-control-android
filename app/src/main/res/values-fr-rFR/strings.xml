@@ -20,7 +20,6 @@
     <string name="menu_settings">Paramètres</string>
     <string name="menu_invite">Inviter</string>
     <string name="menu_legend">Légende</string>
-    <string name="menu_support">Vous aimez cette application ?</string>
     <string name="menu_log_support">Explications</string>
     <string name="menu_about">À propos</string>
     <string name="menu_apps">Autres applications</string>
@@ -85,7 +84,6 @@
     <string name="setting_import">Importer les paramètres</string>
     <string name="setting_hosts">Importer un fichier hosts</string>
     <string name="setting_hosts_append">Importer un fichier hosts (ajouter)</string>
-    <string name="setting_hosts_url">URL de téléchargement du fichier hosts</string>
     <string name="setting_hosts_download">Télécharger le fichier hosts</string>
     <string name="summary_install">Afficher une notification dans la barre d\'état pour configurer directement les applications nouvellement installées (fonctionnalité pro)</string>
     <string name="summary_pause">Après avoir mis en pause TrackerControl via la barre des notifications, réactiver automatiquement TrackerControl après le nombre de minutes sélectionné (saisir 0 pour désactiver cette option).</string>

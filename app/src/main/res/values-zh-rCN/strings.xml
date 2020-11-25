@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
+    <string name="app_copyright">版权\u00A92019-2020 Konrad Kollnig (牛津大学计算机科学系以人为本的计算)\n\nTrackerControl 基于NetGuard，由Marcel Bokhorst (M66B) 开发。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
+    <string name="app_eula">使用本应用程序的风险由您自行承担。没有应用程序可以提供对网络跟踪100%的保护。</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">隐私政策</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie 政策</a></string>
     <string name="channel_foreground">正在运行的服务</string>
     <string name="channel_notify">一般通知</string>
@@ -20,7 +22,7 @@
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
     <string name="menu_legend">图例</string>
-    <string name="menu_support">喜欢这个应用？</string>
+    <string name="menu_support">支持本应用</string>
     <string name="menu_log_support">解释</string>
     <string name="menu_about">关于</string>
     <string name="menu_apps">其他应用</string>
@@ -84,8 +86,9 @@
     <string name="setting_import">导入设定</string>
     <string name="setting_hosts">导入 hosts 文件</string>
     <string name="setting_hosts_append">导入 hosts 文件 (追加)</string>
-    <string name="setting_hosts_url">hosts 文件下载地址</string>
+    <string name="setting_hosts_url">Hosts 文件 URL</string>
     <string name="setting_hosts_download">下载 hosts 文件</string>
+    <string name="setting_hosts_update">更新 hosts 文件</string>
     <string name="summary_install">显示状态栏通知直接对新安装的软件进行设置 (专业版功能)</string>
     <string name="summary_pause">从通知栏暂停软件运作后，在选定的分钟数后重新自动启用TrackerControl(输入0禁用此选项)。</string>
     <string name="summary_update">每日两次检查 GitHub 上的新版本</string>
@@ -129,7 +132,9 @@
     <string name="msg_import_last">上次导入： %s</string>
     <string name="msg_downloading">正在下载\n%1s</string>
     <string name="msg_downloaded">已下载主机文件</string>
+    <string name="msg_updated">已更新并应用 Hosts 文件！</string>
     <string name="msg_download_last">上次下载： %s</string>
+    <string name="msg_update_last">上次更新：%s</string>
     <string name="msg_metered">网络是计量的</string>
     <string name="msg_inactive">无活跃网络连接</string>
     <string name="msg_queue">TrackerControl 正忙</string>
@@ -144,6 +149,21 @@
     <string name="msg_always_on">已将另一个 VPN 设置为始终启用</string>
     <string name="msg_always_on_lockdown">要在过滤模式下使用TrackerControl，请在Android VPN设置中关闭“阻塞无VPN连接”，</string>
     <string name="msg_private_dns">要在过滤模式下使用TrackerControl，请在Android网络设置中关闭“私人DNS”，</string>
+    <string name="msg_start_forward">停止从%1$s端口%2$d转发流量到\'%5$s\'的%3$s:%4$d？</string>
+    <string name="msg_stop_forward">停止%1$s端口%2$d的流量转发？</string>
+    <string-array name="protocolNames">
+        <item>UDP协议</item>
+        <item>TCP协议</item>
+    </string-array>
+    <string name="menu_add">添加</string>
+    <string name="menu_delete">删除</string>
+    <string name="setting_forwarding">端口转发</string>
+    <string name="title_protocol">协议</string>
+    <string name="title_dport">源端口</string>
+    <string name="title_raddr">目标地址</string>
+    <string name="title_rport">目标端口</string>
+    <string name="title_ruid">目标应用</string>
+    <string name="title_external">对于外部服务器，选择\'无人\'</string>
     <string name="title_lockdown_enabled">流量已被锁定</string>
     <string name="title_unmetered_allowed">已允许非按流量计费的网络数据</string>
     <string name="title_unmetered_blocked">已拦截非按流量计费的网络数据</string>

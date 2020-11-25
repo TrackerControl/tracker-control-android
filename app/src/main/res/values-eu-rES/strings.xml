@@ -20,7 +20,6 @@
     <string name="menu_settings">Ezarpenak</string>
     <string name="menu_invite">Gonbidatu</string>
     <string name="menu_legend">Legenda</string>
-    <string name="menu_support">Aplikazioa gustuko duzu?</string>
     <string name="menu_log_support">Azalpena</string>
     <string name="menu_about">Honi buruz</string>
     <string name="menu_apps">Beste aplikazioak</string>
@@ -85,7 +84,6 @@
     <string name="setting_import">Inportatu ezarpenak</string>
     <string name="setting_hosts">Inportatu ostalarien fitxategia</string>
     <string name="setting_hosts_append">Inportatu ostalarien fitxategia (gehitu)</string>
-    <string name="setting_hosts_url">Ostalarien fitxategia deskargatzeko URL-a</string>
     <string name="setting_hosts_download">Deskargatu ostalarien fitxategia</string>
     <string name="summary_install">Erakutsi egoera barrako jakinarazpena berriki instalatutako aplikazioak zuzenean konfiguratzeko (ordainpeko ezaugarria)</string>
     <string name="summary_pause">Jakinarazpenaren etenaren ostean, aktibatu automatikoki TrackerControl berriz aukeratutako minutuak pasatu ostean (idatzi 0 ezaugarri hau desgaitzeko).</string>

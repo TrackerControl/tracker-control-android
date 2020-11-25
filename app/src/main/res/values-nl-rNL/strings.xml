@@ -19,7 +19,6 @@
     <string name="menu_settings">Instellingen</string>
     <string name="menu_invite">Inviteer</string>
     <string name="menu_legend">Legenda</string>
-    <string name="menu_support">Hou je van deze app?</string>
     <string name="menu_log_support">Uitleg</string>
     <string name="menu_about">Over</string>
     <string name="menu_apps">Andere apps</string>
@@ -81,7 +80,6 @@
     <string name="setting_import">Importeren instellingen</string>
     <string name="setting_hosts">Importeren van hosts-bestand</string>
     <string name="setting_hosts_append">Importeren van hosts-bestand (bijlage)</string>
-    <string name="setting_hosts_url">Hosts bestand downloaden URL</string>
     <string name="setting_hosts_download">Hostersbestand downloaden</string>
     <string name="summary_install">Toon statusbalkmelding om direct nieuw geïnstalleerde apps te configureren (pro-functie)</string>
     <string name="summary_pause">Na de pauze van de melding schakelt u TrackerControl automatisch weer in na het geselecteerde aantal minuten (voer 0 in om deze optie uit te schakelen).</string>
