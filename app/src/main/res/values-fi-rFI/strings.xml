@@ -19,7 +19,6 @@
     <string name="menu_settings">Asetukset</string>
     <string name="menu_invite">Kutsu</string>
     <string name="menu_legend">Legenda</string>
-    <string name="menu_support">Rakastatko tätä sovellusta?</string>
     <string name="menu_log_support">Selitys</string>
     <string name="menu_about">Tietoja</string>
     <string name="menu_apps">Muut sovellukset</string>
@@ -81,7 +80,6 @@
     <string name="setting_import">Tuo asetukset</string>
     <string name="setting_hosts">Tuo isäntätiedosto</string>
     <string name="setting_hosts_append">Tuo isäntätiedosto (liitä)</string>
-    <string name="setting_hosts_url">Isäntien tiedoston lataus-URL</string>
     <string name="setting_hosts_download">Lataa isäntätiedosto</string>
     <string name="summary_install">Näytä tilapalkin ilmoitus äskettäin asennettujen sovellusten määrittämiseksi suoraan (pro-ominaisuus)</string>
     <string name="summary_pause">Kun olet keskeyttänyt ilmoituksen, ota TrackerControl käyttöön automaattisesti uudelleen valitun minuutin jälkeen (poista tämä vaihtoehto kirjoittamalla 0).</string>

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">Το TrackerControl επιτρέπει στους χρήστες να παρακολουθούν και να ελέγχουν την ευρεία, συνεχιζόμενη, κρυφή συλλογή δεδομένων, σε εφαρμογές για κινητά, που αφορούν την συμπεριφορά των χρηστών (\'tracking\').</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig(Human-Centered Computing, Τμήμα Επιστήμης Υπολογιστών, Πανεπιστήμιο της Οξφόρδης)\n\nΤο TrackerControl βασίζεται στο NetGuard, που αναπτύχθηκε από τον Marcel Bokhorst (M66B).</string>
     <string name="app_android">Το TrackerControl απαιτεί Android 5.1 ή κάποια νεότερη έκδοση</string>
     <string name="app_xposed">Το Xposed προκαλεί πάρα πολλά σφάλματα, τα οποία ενδέχεται να έχουν ως αποτέλεσμα την κατάργηση του TrackerControl από το Google Play Store, επομένως το TrackerControl δεν υποστηρίζεται κατά την εγκατάσταση του Xposed</string>
+    <string name="app_eula">Η χρήση αυτής της εφαρμογής είναι με δική σας ευθύνη. Καμία εφαρμογή δεν μπορεί να προσφέρει 100% προστασία από την παρακολούθηση.</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Πολιτική Απορρήτου</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Πολιτική Cookie</a></string>
     <string name="channel_foreground">Υπηρεσίες που εκτελούνται</string>
     <string name="channel_notify">Γενικές ειδοποιήσεις</string>
@@ -20,7 +22,7 @@
     <string name="menu_settings">Ρυθμίσεις</string>
     <string name="menu_invite">Πρόσκληση</string>
     <string name="menu_legend">Υπόμνημα</string>
-    <string name="menu_support">Σας αρέσει η εφαρμογή;</string>
+    <string name="menu_support">Υποστηρίξτε αυτήν την εφαρμογή</string>
     <string name="menu_log_support">Επεξήγηση</string>
     <string name="menu_about">Σχετικά</string>
     <string name="menu_apps">Άλλες εφαρμογές</string>
@@ -85,8 +87,9 @@
     <string name="setting_import">Εισαγωγή ρυθμίσεων</string>
     <string name="setting_hosts">Εισαγωγή αρχείου hosts</string>
     <string name="setting_hosts_append">Εισαγωγή αρχείου hosts (προσθήκη)</string>
-    <string name="setting_hosts_url">Διεύθυνση κατεβάσματος αρχείου Hosts</string>
+    <string name="setting_hosts_url">URL αρχείου host</string>
     <string name="setting_hosts_download">Κατεβάστε το αρχείο hosts</string>
+    <string name="setting_hosts_update">Ενημέρωση αρχείου hosts</string>
     <string name="summary_install">Εμφάνιση ειδοποίησης στη γραμμή καταγραφής για απευθείας ρύθμιση παραμέτρων πρόσφατα εγκατεστημένων εφαρμογών (pro έκδοση)</string>
     <string name="summary_pause">Μετά την παύση από την ειδοποίηση, ενεργοποιήστε ξανά αυτόματα το TrackerControl μετά τον επιλεγμένο αριθμό λεπτών (πληκτρολογήστε 0 για να απενεργοποιήσετε αυτήν την επιλογή).</string>
     <string name="summary_update">Έλεγχος για νέες κυκλοφορίες στο GitHub, δύο φορές την ημέρα</string>
@@ -129,7 +132,9 @@
     <string name="msg_import_last">Τελευταία εισαγωγή: %s</string>
     <string name="msg_downloading">Ταχύτητα κατεβάσματος\n%1s</string>
     <string name="msg_downloaded">Ολοκλήρωση κατεβάσματος αρχείου Hosts</string>
+    <string name="msg_updated">Το αρχείο Hosts ενημερώθηκε και εφαρμόστηκε!</string>
     <string name="msg_download_last">Τελευταία λήψη: %s</string>
+    <string name="msg_update_last">Τελευταία ενημέρωση: %s</string>
     <string name="msg_metered">Γίνεται μέτρηση στο δίκτυο</string>
     <string name="msg_inactive">Δεν υπάρχει ενεργή σύνδεση στο διαδίκτυο</string>
     <string name="msg_queue">Το TrackerControl είναι απασχολημένο</string>
@@ -144,6 +149,21 @@
     <string name="msg_always_on">Ένα άλλο VPN έχει οριστεί ως μόνιμα ενεργοποιημένο VPN</string>
     <string name="msg_always_on_lockdown">Απενεργοποιήστε την επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις του VPN Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
     <string name="msg_private_dns">Απενεργοποιήστε το \"Ιδιωτικό DNS\" στις ρυθμίσεις δικτύου του Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
+    <string name="msg_start_forward">Ξεκίνησε προώθηση από %1$s θύρα %2$d εως %3$s:%4$d απο %5$s\';</string>
+    <string name="msg_stop_forward">Σταμάτημα προώθησης της %1$s θύρας %2$d;</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Προσθήκη</string>
+    <string name="menu_delete">Διαγραφή</string>
+    <string name="setting_forwarding">Port forwarding</string>
+    <string name="title_protocol">Πρωτόκολλο</string>
+    <string name="title_dport">Θύρα προέλευσης</string>
+    <string name="title_raddr">Διεύθυνση προορισμού</string>
+    <string name="title_rport">Θύρα προορισμού</string>
+    <string name="title_ruid">Εφαρμογή προορισμού</string>
+    <string name="title_external">Για έναν εξωτερικό διακομιστή, επιλέξτε \'nobody\'</string>
     <string name="title_lockdown_enabled">Η κυκλοφορία είναι κλειδωμένη</string>
     <string name="title_unmetered_allowed">Επιτρέπεται η χρονικά απεριόριστη κίνηση</string>
     <string name="title_unmetered_blocked">Αποκλείεται η χρονικά απεριόριστη κυκλοφορία</string>

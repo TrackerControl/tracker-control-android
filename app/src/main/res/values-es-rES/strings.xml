@@ -19,7 +19,6 @@
     <string name="menu_settings">Ajustes</string>
     <string name="menu_invite">Invitar</string>
     <string name="menu_legend">Leyenda</string>
-    <string name="menu_support">¿Te gusta esta aplicación?</string>
     <string name="menu_log_support">Explicación</string>
     <string name="menu_about">Acerca de</string>
     <string name="menu_apps">Otras aplicaciones</string>
@@ -81,7 +80,6 @@
     <string name="setting_import">Ajustes de importación</string>
     <string name="setting_hosts">Importar archivo de hosts</string>
     <string name="setting_hosts_append">Importar archivo de hosts (append)</string>
-    <string name="setting_hosts_url">URL del archivo de descarga del anfitrión</string>
     <string name="setting_hosts_download">Descargar archivo de hosts</string>
     <string name="summary_install">Muestra la notificación de la barra de estado para configurar directamente las aplicaciones recién instaladas (función pro)</string>
     <string name="summary_pause">Después de pausar la notificación, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca 0 para desactivar esta opción)</string>
