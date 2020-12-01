@@ -29,6 +29,7 @@ import android.widget.TextView;
 import androidx.collection.ArrayMap;
 import androidx.fragment.app.Fragment;
 
+import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
 import com.maxmind.geoip2.model.CountryResponse;
@@ -90,7 +91,7 @@ public class CountriesFragment extends Fragment {
                 return countryToCount;
 
             InputStream database = context.getAssets().open("GeoLite2-Country.mmdb");
-            DatabaseReader reader = new DatabaseReader.Builder(database).build();
+            DatabaseReader reader = new DatabaseReader.Builder(database).withCache(new CHMCache()).build();
 
             DatabaseHelper dh = DatabaseHelper.getInstance(getContext());
             cursor = dh.getHosts(uid);
