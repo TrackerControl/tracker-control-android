@@ -1,0 +1,4 @@
+- FEATURE: Add direct logging to ADB (enabled in advanced settings)
+- BUG: Fix crash on Android 7.x
+- Update translations, add Brazilian
+- Improve country lookup performance
