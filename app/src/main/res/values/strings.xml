@@ -121,7 +121,7 @@
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
-    <string name="summary_log_logcat">Disables blocking. Communications are logged in adb logcat with tag \'TC-Log\'.</string>
+    <string name="summary_log_logcat">Disables blocking. Communications (and identified trackers) are logged to device log. Retrieve with adb logcat with tag \'TC-Log\'.</string>
 
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_started">Checking trackers</string>
