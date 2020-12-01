@@ -109,7 +109,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     implementation 'com.opencsv:opencsv:5.3'
-    implementation 'com.maxmind.geoip2:geoip2:2.15.0'
+    implementation 'com.maxmind.geoip2:geoip2:2.14.0'
 
     // Crash reporting
     implementation "ch.acra:acra-mail:5.7.0"
