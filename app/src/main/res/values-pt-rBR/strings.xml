@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_copyright">Direitos autorais \u00A9 2019-2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl é baseado no NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
+    <string name="app_android">TrackerControl requer Android 5.1 ou posterior</string>
+    <string name="app_xposed">O Xposed provoca muitos travamentos, o que pode levar à remoção do TrackerControl da Google Play Store, logo, TrackerControl não é suportado enquanto o Xposed está instalado</string>
+    <string name="app_eula">O uso deste aplicativo está por sua própria conta e risco. Nenhum aplicativo pode oferecer 100% de proteção contra rastreamento.</string>
+    <string name="channel_foreground">Serviços em execução</string>
+    <string name="channel_notify">Notificações gerais</string>
+    <string name="channel_access">Notificações de acesso</string>
+    <string name="menu_filter">Filtrar apps</string>
+    <string name="menu_sort">Ordenar apps</string>
+    <string name="menu_log">Log de tráfego</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_legend">Legenda</string>
+    <string name="menu_support">Apoie este app</string>
+    <string name="menu_log_support">Explicação</string>
+    <string name="menu_about">Sobre</string>
+    <string name="menu_apps">Outros apps</string>
+    <string name="menu_pcap_enabled">Habilitar PCAP</string>
+    <string name="setting_options">Opções</string>
+    <string name="setting_dark">Tema escuro</string>
+    <string name="setting_install">Notificar sobre nova instalação</string>
+    <string name="setting_pause">Auto-habilitar após %1$s minutos</string>
+    <string name="setting_update">Verificar se há atualizações</string>
+    <string name="setting_system">Gerenciar apps do sistema</string>
+    <string name="msg_try">Experimente o TrackerControl</string>
+    <string name="msg_doze">Para resultados consistentes, as otimizações de bateria Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, selecione \"Todos os apps\" na parte superior, toque no TrackerControl na lista e selecione e confirme \"Não otimizar\".</string>
+    <string name="msg_datasaving">Para resultados consistentes, as opções de economia de dados do Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, ative as opções \"Dados em segundo plano\" e \"Uso de dados sem restrições\"</string>
+    <string name="msg_queue">TrackerControl está ocupado</string>
+    <string name="setting_forwarding">Redirecionamento de porta</string>
+    <string name="title_log_copy">Copiar</string>
+    <!-- App Overview -->
+    <!-- App Details -->
+    <!-- Actions -->
+    <string name="device_not_supported_title">Dispositivo não suportado</string>
+    <string name="device_not_supported_msg">O sistema operacional de seu dispositivo não permite o monitoramento e a filtragem das comunicações de rede. Isto é necessário para o TrackerControl.</string>
+    <string name="forever_free">Para sempre grátis</string>
+    <string name="your_privacy">Sua privacidade</string>
+    <string name="enable">Habilitar</string>
+</resources>
