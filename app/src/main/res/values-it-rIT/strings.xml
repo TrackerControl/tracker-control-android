@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permette agli utenti di monitorare e controllare la continua, diffusa e nascosta raccolta di dati riguardo i loro comportamenti effettuata dalle applicazioni (\'tracciamento\').</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl è basato su NetGuard, sviluppato da Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl richiede Android 5.1 o successiva</string>
     <string name="app_xposed">Xposed causa troppi crash, che potrebbero portare alla rimozione di TrackerControl dal Google Play Store, perciò TrackerControl non è supportato quando Xposed è installato</string>
+    <string name="app_eula">L\'utilizzo di questa app è a tuo rischio. Nessuna app può garantire una protezione assoluta contro il tracciamento.</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Informativa sulla privacy</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Informativa sui cookie</a></string>
     <string name="channel_foreground">Servizi in esecuzione</string>
     <string name="channel_notify">Notifiche generali</string>
@@ -20,6 +22,7 @@
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_invite">Invita</string>
     <string name="menu_legend">Legenda</string>
+    <string name="menu_support">Supporta questa app</string>
     <string name="menu_log_support">Spiegazioni</string>
     <string name="menu_about">Informazioni</string>
     <string name="menu_apps">Altre applicazioni</string>
@@ -84,7 +87,9 @@
     <string name="setting_import">Importa impostazioni</string>
     <string name="setting_hosts">Importa file hosts</string>
     <string name="setting_hosts_append">Importa file hosts (aggiungi)</string>
+    <string name="setting_hosts_url">URL file host</string>
     <string name="setting_hosts_download">Scarica file hosts</string>
+    <string name="setting_hosts_update">Aggiorna file host</string>
     <string name="summary_install">Visualizza una notifica nella barra di stato per configurare le applicazioni appena installate (funzionalità pro)</string>
     <string name="summary_pause">Dopo aver messo in pausa TrackerControl tramite la barra delle notifiche, riabilitalo automaticamente dopo il numero di minuti specificato (inserire 0 per disabilitare questa opzione).</string>
     <string name="summary_update">Cerca nuove versioni su GitHub due volte al giorno</string>
@@ -128,7 +133,9 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_import_last">Ultima importazione: %s</string>
     <string name="msg_downloading">Scaricando\n%1s</string>
     <string name="msg_downloaded">File hosts scaricato</string>
+    <string name="msg_updated">File host aggiornato ed applicato!</string>
     <string name="msg_download_last">Ultimo download: %s</string>
+    <string name="msg_update_last">Ultimo aggiornamento: %s</string>
     <string name="msg_metered">La rete è a consumo</string>
     <string name="msg_inactive">Nessuna connessione internet attiva</string>
     <string name="msg_queue">TrackerControl è occupato</string>
@@ -143,6 +150,21 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_always_on">Un\'altra VPN è impostata come sempre attiva</string>
     <string name="msg_always_on_lockdown">Disattiva \"Blocca connessioni senza VPN\" nelle impostazioni VPN di Android per utilizzare TrackerControl in modalità filtro</string>
     <string name="msg_private_dns">Disattiva \"DNS privato\" nelle impostazioni di rete di Android per utilizzare TrackerControl in modalità filtro</string>
+    <string name="msg_start_forward">Inizia l\'inoltro da %1$s porta %2$d a %3$s:%4$d di \'%5$s\'?</string>
+    <string name="msg_stop_forward">Interrompere l\'inoltro di %1$s porta %2$d?</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Aggiungi</string>
+    <string name="menu_delete">Elimina</string>
+    <string name="setting_forwarding">Port forwarding</string>
+    <string name="title_protocol">Protocollo</string>
+    <string name="title_dport">Porta di origine</string>
+    <string name="title_raddr">Indirizzo Destinazione</string>
+    <string name="title_rport">Porta destinazione</string>
+    <string name="title_ruid">App destinazione</string>
+    <string name="title_external">Per un server esterno selezionare \'nobody\'</string>
     <string name="title_lockdown_enabled">Il traffico è bloccato</string>
     <string name="title_unmetered_allowed">Il traffico non a consumo è consentito</string>
     <string name="title_unmetered_blocked">Il traffico non a consumo è bloccato</string>
