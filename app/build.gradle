@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion = 30
+    compileSdkVersion 30
 
     defaultConfig {
-        applicationId = "net.kollnig.missioncontrol"
+        applicationId "net.kollnig.missioncontrol"
         minSdkVersion 22
         targetSdkVersion 29
         //noinspection HighAppVersionCode
@@ -19,7 +19,7 @@ android {
             }
         }
 
-        // ndkVersion "21.0.6113669"
+        // ndkVersion "22.0.7026061"
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -46,44 +46,49 @@ android {
             //minifyEnabled = true
             //proguardFiles.add(file('proguard-rules.pro'))
         }
-        flavorDimensions "version"
-        productFlavors {
-            play {
-                applicationIdSuffix ".play"
-                versionNameSuffix "-play"
-                buildConfigField "String", "HOSTS_FILE_URI", "\"\""
-                buildConfigField "String", "GITHUB_LATEST_API", "\"\""
-            }
-            fdroid {
-                applicationIdSuffix ".fdroid"
-                versionNameSuffix "-fdroid"
-                buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
-                buildConfigField "String", "GITHUB_LATEST_API", "\"\""
-            }
-            github {
-                buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
-                buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
+    }
 
-            }
+    flavorDimensions "version"
+    productFlavors {
+        play {
+            applicationIdSuffix ".play"
+            versionNameSuffix "-play"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"\""
         }
-        applicationVariants.all { variant ->
-            variant.outputs.all { output ->
-                def appId = variant.applicationId // com.exampleFree.app OR com.examplePaid.app
-                def versionName = variant.versionName
-                def versionCode = variant.versionCode // e.g 1.0
-                def flavorName = variant.flavorName // e. g. Free
-                def buildType = variant.buildType.name // e. g. debug
-                def variantName = variant.name // e. g. FreeDebug
+        fdroid {
+            applicationIdSuffix ".fdroid"
+            versionNameSuffix "-fdroid"
+            buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"\""
+        }
+        github {
+            buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
+            buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/OxfordHCC/tracker-control-android/releases\""
 
-                // customize your app name by using variables
-                outputFileName = "TrackerControl-${variantName}-latest.apk"
-            }
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appId = variant.applicationId // com.exampleFree.app OR com.examplePaid.app
+            def versionName = variant.versionName
+            def versionCode = variant.versionCode // e.g 1.0
+            def flavorName = variant.flavorName // e. g. Free
+            def buildType = variant.buildType.name // e. g. debug
+            def variantName = variant.name // e. g. FreeDebug
+
+            // customize your app name by using variables
+            outputFileName = "TrackerControl-${variantName}-latest.apk"
+        }
+    }
+
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+
     packagingOptions { // due to geoip2
         exclude 'META-INF/DEPENDENCIES'
     }
