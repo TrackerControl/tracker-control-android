@@ -39,10 +39,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.data.InternetBlocklist;
@@ -129,15 +130,17 @@ public class DetailsActivity extends AppCompatActivity {
 
         // Set up paging
         detailsPagesAdapter =
-                new DetailsPagesAdapter(this,
-                        getSupportFragmentManager(),
+                new DetailsPagesAdapter(
+                        this,
                         Common.getAppName(getPackageManager(), appUid),
                         appName,
                         appUid);
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        ViewPager2 viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(detailsPagesAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
+        new TabLayoutMediator(tabs, viewPager, (tab, position) ->
+                tab.setText(getResources().getString(DetailsPagesAdapter.TAB_TITLES[position]))
+        ).attach();
 
         // set toolbar and back arrow
         Toolbar toolbar = findViewById(R.id.toolbar);

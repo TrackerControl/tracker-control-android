@@ -17,14 +17,13 @@
 
 package net.kollnig.missioncontrol;
 
-import android.content.Context;
 import android.os.Build;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import net.kollnig.missioncontrol.details.ActionsFragment;
 import net.kollnig.missioncontrol.details.CountriesFragment;
@@ -32,29 +31,27 @@ import net.kollnig.missioncontrol.details.TrackersFragment;
 
 
 /**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
+ * A [FragmentStateAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class DetailsPagesAdapter extends FragmentPagerAdapter {
+public class DetailsPagesAdapter extends FragmentStateAdapter {
     public static int tabTrackersPosition = 0;
     @StringRes
-    private static int[] TAB_TITLES = new int[]{
+    public static int[] TAB_TITLES = {
             R.string.tab_trackers,
             R.string.tab_actions,
             R.string.tab_countries,
     };
     private final String TAG = DetailsPagesAdapter.class.getSimpleName();
-    private final Context mContext;
     private final int mUid;
 
     private TrackersFragment fTrackers;
     private ActionsFragment fActions;
     private CountriesFragment fCountries;
 
-    public DetailsPagesAdapter(final Context context, FragmentManager fm, String appId, String appName, int uid) {
-        super(fm);
+    public DetailsPagesAdapter(FragmentActivity fa, String appId, String appName, int uid) {
+        super(fa);
 
-        mContext = context;
         mUid = uid;
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
@@ -74,8 +71,9 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
         fActions = ActionsFragment.newInstance(appId, appName);
     }
 
+    @NonNull
     @Override
-    public Fragment getItem(int position) {
+    public Fragment createFragment(int position) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             switch (position) {
                 case 0:
@@ -99,14 +97,8 @@ public class DetailsPagesAdapter extends FragmentPagerAdapter {
         return fTrackers;
     }
 
-    @Nullable
     @Override
-    public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
-    }
-
-    @Override
-    public int getCount() {
+    public int getItemCount() {
         return TAB_TITLES.length;
     }
 
