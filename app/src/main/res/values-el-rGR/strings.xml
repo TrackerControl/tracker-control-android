@@ -58,6 +58,7 @@
     <string name="setting_advanced_options">Προηγμένες επιλογές</string>
     <string name="setting_system">Διαχείριση εφαρμογών του συστήματος</string>
     <string name="setting_log_app">Αναζήτηση νέων ιχνηλατών</string>
+    <string name="setting_log_logcat">Καταγράψτε τις μεταδόσεις στο ADB</string>
     <string name="setting_filter">Αποκλεισμός Ιχνηλατών</string>
     <string name="setting_filter_udp">Αποκλεισμός ιχνηλατών στο UDP</string>
     <string name="setting_handover">Απρόσκοπτη παράδοση VPN κατά την επαναφόρτωση</string>
@@ -106,6 +107,7 @@
     <string name="summary_validate">Το όνομα τομέα χρησιμοποιείται για την επικύρωση της σύνδεσης στο διαδίκτυο στη θύρα 443 (https).</string>
     <string name="summary_socks5_enabled">Μόνο η κυκλοφορία TCP θα αποστέλλεται στο διακομιστή μεσολάβησης</string>
     <string name="summary_watchdog">Ελέγχετε περιοδικά αν εκτελείται ακόμα το TrackerControl (εισάγετε το μηδέν για να απενεργοποιήσετε αυτή την επιλογή). Αυτό μπορεί να οδηγήσει σε πρόσθετη κατανάλωση μπαταρίας.</string>
+    <string name="summary_log_logcat">Απενεργοποιεί το μπλοκάρισμα. Οι επικοινωνίες (και οι αναγνωρισμένοι ιχνηλάτες) καταγράφονται στο αρχείο καταγραφής συσκευών. Ανάκτηση με adb logcat με ετικέτα \"TC-Log\".</string>
     <string name="msg_sure">Είστε σίγουρος;</string>
     <string name="msg_started">Έλεγχος ιχνηλατών</string>
     <string name="msg_waiting">Αναμονή για συμβάν</string>
@@ -151,6 +153,7 @@
     <string name="msg_private_dns">Απενεργοποιήστε το \"Ιδιωτικό DNS\" στις ρυθμίσεις δικτύου του Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
     <string name="msg_start_forward">Ξεκίνησε προώθηση από %1$s θύρα %2$d εως %3$s:%4$d απο %5$s\';</string>
     <string name="msg_stop_forward">Σταμάτημα προώθησης της %1$s θύρας %2$d;</string>
+    <string name="msg_log_logcat">Προειδοποίηση: Το μπλοκάρισμα απενεργοποιήθηκε λόγω καταγραφής ADB.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>

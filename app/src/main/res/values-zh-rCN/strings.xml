@@ -57,6 +57,7 @@
     <string name="setting_advanced_options">高级选项</string>
     <string name="setting_system">管理系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
+    <string name="setting_log_logcat">记录到ADB的传输</string>
     <string name="setting_filter">屏蔽跟踪器</string>
     <string name="setting_filter_udp">屏蔽UDP上的跟踪器</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
@@ -105,6 +106,7 @@
     <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
+    <string name="summary_log_logcat">禁用拦截。网络通信(和识别的跟踪器) 会被记录到设备日志中。通过 adb logcat 标签 TC-Log\' 检索。</string>
     <string name="msg_sure">你确定吗？</string>
     <string name="msg_started">正在检查跟踪器</string>
     <string name="msg_waiting">等待事件</string>
@@ -151,6 +153,7 @@
     <string name="msg_private_dns">要在过滤模式下使用TrackerControl，请在Android网络设置中关闭“私人DNS”，</string>
     <string name="msg_start_forward">停止从%1$s端口%2$d转发流量到\'%5$s\'的%3$s:%4$d？</string>
     <string name="msg_stop_forward">停止%1$s端口%2$d的流量转发？</string>
+    <string name="msg_log_logcat">警告：因 ADB 日志记录，已禁用拦截。</string>
     <string-array name="protocolNames">
         <item>UDP协议</item>
         <item>TCP协议</item>

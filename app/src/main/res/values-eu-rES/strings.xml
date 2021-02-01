@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControlek aplikazioek egiten duten erabilpenaren jarraipenaren datuak era ezkutuan jasotzeko egiten duten lana monitorizatu eta kontrolatzeko aukera eskaintzen die erabiltzaileei (\'tracking\' bezala ezaguna).</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Cented Computing, Informatika Saila, Oxfordeko Unibertsitatea)\n\nTrackerControl Marcel Bokhorst-ek (M66B) garatutako NetGuard-en oinarritzen da.</string>
     <string name="app_android">TrackerControlek Android 5.1 edo berriagoa behar du</string>
     <string name="app_xposed">Xposedek arazo asko sortzen ditu eta horregatik agian TrackerControl Google Play Storetik ezabatu dezakete, beraz TrackerControl ezin da instalatu Xposed instalatuta dagoen artean</string>
+    <string name="app_eula">Aplikazio honen erabilera zure ardurapean dago. Aplikazio batek ezin du 100% babesa eskaini jarraipenaren aurka.</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Pribatutasun politika</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie Politika</a></string>
     <string name="channel_foreground">Martxan dauden zerbitzuak</string>
     <string name="channel_notify">Jakinarazpen orokorrak</string>
@@ -20,6 +22,7 @@
     <string name="menu_settings">Ezarpenak</string>
     <string name="menu_invite">Gonbidatu</string>
     <string name="menu_legend">Legenda</string>
+    <string name="menu_support">Onartu aplikazio hau</string>
     <string name="menu_log_support">Azalpena</string>
     <string name="menu_about">Honi buruz</string>
     <string name="menu_apps">Beste aplikazioak</string>
@@ -55,6 +58,7 @@
     <string name="setting_advanced_options">Aukera aurreratuak</string>
     <string name="setting_system">Kudeatu sistemako aplikazioak</string>
     <string name="setting_log_app">Bilatu trackeatzaile berriak</string>
+    <string name="setting_log_logcat">Erregistratu transmisioak ADBra</string>
     <string name="setting_filter">Blokeatu trackeatzaileak</string>
     <string name="setting_filter_udp">Blokeatu UDP bidezko trackeatzaileak</string>
     <string name="setting_handover">Pasatu VPNra etenik gabe birkargatzean</string>
@@ -84,7 +88,9 @@
     <string name="setting_import">Inportatu ezarpenak</string>
     <string name="setting_hosts">Inportatu ostalarien fitxategia</string>
     <string name="setting_hosts_append">Inportatu ostalarien fitxategia (gehitu)</string>
+    <string name="setting_hosts_url">Ostalarien fitxategiaren URLa</string>
     <string name="setting_hosts_download">Deskargatu ostalarien fitxategia</string>
+    <string name="setting_hosts_update">Eguneratu ostalarien fitxategia</string>
     <string name="summary_install">Erakutsi egoera barrako jakinarazpena berriki instalatutako aplikazioak zuzenean konfiguratzeko (ordainpeko ezaugarria)</string>
     <string name="summary_pause">Jakinarazpenaren etenaren ostean, aktibatu automatikoki TrackerControl berriz aukeratutako minutuak pasatu ostean (idatzi 0 ezaugarri hau desgaitzeko).</string>
     <string name="summary_update">Egiaztatu bertsio berririk dagoen GitHub-en egunean birritan</string>
@@ -101,6 +107,7 @@
     <string name="summary_validate">Internet konexioa 443 atakan (https) balioztatzeko erabilitako domeinuaren izena.</string>
     <string name="summary_socks5_enabled">TCP trafikoa besterik ez da bidaliko proxy zerbitzarira</string>
     <string name="summary_watchdog">Egiaztatu aldiro TrackerControl oraindik martxan dagoen (idatzi 0 ezaugarri hau desgaitzeko). Honek bateria gehiago erabiltzea ekar lezake.</string>
+    <string name="summary_log_logcat">Blokeatzea desgaitzen du. Komunikazioak (eta identifikatutako jarraitzaileak) gailuaren erregistroan erregistratzen dira. Berreskuratu adb logcat-ekin \'TC-Log\' etiketarekin.</string>
     <string name="msg_sure">Ziur zaude?</string>
     <string name="msg_started">Trackeatzaileak egiaztatzen</string>
     <string name="msg_waiting">Gertaeraren zain</string>
@@ -128,7 +135,9 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_import_last">Azken inportazioa: %s</string>
     <string name="msg_downloading">Deskargatzen\n%1s</string>
     <string name="msg_downloaded">Ostalarien fitxategia deskargatuta</string>
+    <string name="msg_updated">Ostalarien fitxategia eguneratu eta aplikatu da!</string>
     <string name="msg_download_last">Azken deskarga: %s</string>
+    <string name="msg_update_last">Azken eguneratzea: %s</string>
     <string name="msg_metered">Sarea neurtutakoa da</string>
     <string name="msg_inactive">Internet konexio aktiborik ez</string>
     <string name="msg_queue">TrackerControl lanean ari da</string>
@@ -143,6 +152,22 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_always_on">Beste VPN bat ezarri da beti gaituta dagoen VPN gisa</string>
     <string name="msg_always_on_lockdown">Itzali \'Blokeatu VPN gabeko konexioak\' Android VPN ezarpenetan TrackerControl iragazte moduan erabiltzeko</string>
     <string name="msg_private_dns">Itzali \'DNS pribatua\' Android sare ezarpenetan TrackerControl iragazte moduan erabiltzeko</string>
+    <string name="msg_start_forward">Hasi birbidalketa, hemendik %1$s ataka %2$d hona %3$s:%4$d - \'%5$s\'?</string>
+    <string name="msg_stop_forward">Utzi %1$s ataka %2$d birbidaltzeari?</string>
+    <string name="msg_log_logcat">Abisua: blokeatzea desgaituta dago ADB erregistroa dela eta.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Add</string>
+    <string name="menu_delete">Ezabatu</string>
+    <string name="setting_forwarding">Atakak birbidaltzea</string>
+    <string name="title_protocol">Protokoloa</string>
+    <string name="title_dport">Jatorriaren ataka</string>
+    <string name="title_raddr">Helburuaren helbidea</string>
+    <string name="title_rport">Helburuaren ataka</string>
+    <string name="title_ruid">Helburuaren aplikazioa</string>
+    <string name="title_external">Kanpo zerbitzari baterako aukeratu \'inor ez\'</string>
     <string name="title_lockdown_enabled">Trafikoa blokeatuta dago</string>
     <string name="title_unmetered_allowed">Neurtu gabeko trafikoa onartzen da</string>
     <string name="title_unmetered_blocked">Neurtu gabeko trafikoa blokeatzen da</string>
