@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permet aux utilisateurs de surveiller et de contrôler la collecte masquée et courante des données relatives à leur comportement dans les applications mobiles (\"tracking\").</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl est basé sur NetGuard, développé par Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl nécessite Android 5.1 ou une version ultérieure</string>
     <string name="app_xposed">Xposed provoque trop de plantages, ce qui peut entraîner le retrait de TrackerControl de la boutique Google Play. TrackerControl n\'est donc pas pris en charge lorsque Xposed est installé</string>
+    <string name="app_eula">L\'utilisation de l\'application se fait à vos risques et périls. Aucune application ne peut garantir une protection complète contre le suivi.</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Politique de confidentialité</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Politique relative aux cookies</a></string>
     <string name="channel_foreground">Services en cours d\'exécution</string>
     <string name="channel_notify">Notifications générales</string>
@@ -20,6 +22,7 @@
     <string name="menu_settings">Paramètres</string>
     <string name="menu_invite">Inviter</string>
     <string name="menu_legend">Légende</string>
+    <string name="menu_support">Soutenir cette application</string>
     <string name="menu_log_support">Explications</string>
     <string name="menu_about">À propos</string>
     <string name="menu_apps">Autres applications</string>
@@ -55,6 +58,7 @@
     <string name="setting_advanced_options">Paramètres avancés</string>
     <string name="setting_system">Gérer les applications système</string>
     <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
+    <string name="setting_log_logcat">Enregistrer les transmissions via ADB</string>
     <string name="setting_filter">Bloquer les traqueurs</string>
     <string name="setting_filter_udp">Bloquer les traqueurs sur UDP</string>
     <string name="setting_handover">Passage au VPN sans interruption lors du rechargement</string>
@@ -84,7 +88,9 @@
     <string name="setting_import">Importer les paramètres</string>
     <string name="setting_hosts">Importer un fichier hosts</string>
     <string name="setting_hosts_append">Importer un fichier hosts (ajouter)</string>
+    <string name="setting_hosts_url">URL du fichier de liste d\'hôtes</string>
     <string name="setting_hosts_download">Télécharger le fichier hosts</string>
+    <string name="setting_hosts_update">Mettre à jour le fichier hosts</string>
     <string name="summary_install">Afficher une notification dans la barre d\'état pour configurer directement les applications nouvellement installées (fonctionnalité pro)</string>
     <string name="summary_pause">Après avoir mis en pause TrackerControl via la barre des notifications, réactiver automatiquement TrackerControl après le nombre de minutes sélectionné (saisir 0 pour désactiver cette option).</string>
     <string name="summary_update">Vérifier les nouvelles versions sur GitHub deux fois par jour</string>
@@ -101,6 +107,7 @@
     <string name="summary_validate">Nom de domaine utilisé pour valider la connexion internet sur le port 443 (https).</string>
     <string name="summary_socks5_enabled">Seul le trafic TCP sera envoyé au serveur proxy</string>
     <string name="summary_watchdog">Vérifiez périodiquement si TrackerControl est toujours en cours d\'exécution (saisir zéro pour désactiver cette option). Cela peut entraîner une surconsommation de la batterie.</string>
+    <string name="summary_log_logcat">Désactiver le blocage. Les communications (et les traceurs identifiés) sont enregistrés dans le journal du téléphone. Récupérez les avec adb logcat et l\'étiquette \'TC-log\'.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
     <string name="msg_started">Vérification des traqueurs</string>
     <string name="msg_waiting">En attente d\'évènement</string>
@@ -126,7 +133,9 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_import_last">Dernière importation : %s</string>
     <string name="msg_downloading">Téléchargement\n%1s</string>
     <string name="msg_downloaded">Fichier hosts téléchargé</string>
+    <string name="msg_updated">Fichier de liste d\'hôtes mis à jour et appliqué !</string>
     <string name="msg_download_last">Dernier téléchargement : %s</string>
+    <string name="msg_update_last">Dernière mise à jour: %s</string>
     <string name="msg_metered">Le réseau est limité</string>
     <string name="msg_inactive">Pas de connexion Internet active</string>
     <string name="msg_queue">TrackerControl est occupé</string>
@@ -141,6 +150,22 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_always_on">Un autre VPN est défini comme toujours actif</string>
     <string name="msg_always_on_lockdown">Désactiver \"Bloquer les connexions sans VPN\" dans les paramètres VPN d\'Android pour utiliser TrackerControl en mode filtrage</string>
     <string name="msg_private_dns">Désactivez l’option « DNS privé » dans les paramètres réseau Android pour utiliser TrackerControl en mode filtrage</string>
+    <string name="msg_start_forward">Lancer la redirection du %1$s port %2$d au %3$s:%4$d de \'%5$s\' ?</string>
+    <string name="msg_stop_forward">Arrêter la redirection du %1$s port %2$d ?</string>
+    <string name="msg_log_logcat">Attention, le blocage est désactivé car la journalisation ADB est activée.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Ajouter</string>
+    <string name="menu_delete">Supprimer</string>
+    <string name="setting_forwarding">Redirection de port</string>
+    <string name="title_protocol">Protocole</string>
+    <string name="title_dport">Port source</string>
+    <string name="title_raddr">Adresse de destination</string>
+    <string name="title_rport">Port de destination</string>
+    <string name="title_ruid">Application de destination</string>
+    <string name="title_external">Pour un serveur externe, sélectionnez \"nobody\"</string>
     <string name="title_lockdown_enabled">Le trafic est verrouillé</string>
     <string name="title_unmetered_allowed">Le trafic illimité est autorisé</string>
     <string name="title_unmetered_blocked">Le trafic illimité est bloqué</string>
