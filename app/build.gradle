@@ -71,15 +71,14 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def appId = variant.applicationId // com.exampleFree.app OR com.examplePaid.app
-            def versionName = variant.versionName
-            def versionCode = variant.versionCode // e.g 1.0
-            def flavorName = variant.flavorName // e. g. Free
-            def buildType = variant.buildType.name // e. g. debug
-            def variantName = variant.name // e. g. FreeDebug
+            outputFileName = "TrackerControl-${variant.name}-latest.apk"
+        }
+    }
 
-            // customize your app name by using variables
-            outputFileName = "TrackerControl-${variantName}-latest.apk"
+    signingConfigs {
+        release {
+            v1SigningEnabled true
+            v2SigningEnabled true
         }
     }
 
@@ -108,10 +107,11 @@ dependencies {
     annotationProcessor 'androidx.annotation:annotation:1.1.0'
 
     // https://bumptech.github.io/glide/
-    implementation('com.github.bumptech.glide:glide:4.11.0') {
+    def glide_version = "4.11.0"
+    implementation("com.github.bumptech.glide:glide:$glide_version") {
         exclude group: "com.android.support"
     }
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
     implementation 'com.opencsv:opencsv:5.3'
     implementation 'com.maxmind.geoip2:geoip2:2.14.0'
