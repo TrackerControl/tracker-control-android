@@ -56,6 +56,7 @@ public class TrackerList {
         databaseHelper = DatabaseHelper.getInstance(c);
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+        prepareHostsBlocked(c);
     }
 
     public static TrackerList getInstance(Context c) {
