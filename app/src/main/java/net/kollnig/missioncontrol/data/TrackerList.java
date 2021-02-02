@@ -44,6 +44,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.ServiceSinkhole;
 
+import static eu.faircode.netguard.ServiceSinkhole.prepareHostsBlocked;
+
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
     private static Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
@@ -247,6 +249,7 @@ public class TrackerList {
                 if (tracker == null) {
                     String category = necessary ? "Content" : "Uncategorised";
                     tracker = new Tracker(name, category);
+                    tracker.country = jsonCompany.getString("country");
                     rootParents.put(name, tracker);
                 }
 
