@@ -103,7 +103,7 @@
     <string name="setting_hosts_download">Download hosts file</string>
     <string name="setting_hosts_update">Update hosts file</string>
 
-    <string name="summary_install">Show status bar notification to directly configure newly installed apps (pro feature)</string>
+    <string name="summary_install">Show status bar notification for newly installed apps</string>
     <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
     <string name="summary_update">Check for new releases on GitHub twice daily</string>
 
@@ -128,7 +128,8 @@
     <string name="msg_waiting">Waiting for event</string>
     <string name="msg_disabled">Use the switch above to enable TrackerControl.</string>
     <string name="msg_revoked">TrackerControl has been disabled, likely by using another VPN based app</string>
-    <string name="msg_installed">\'%1$s\' installed</string>
+    <string name="msg_installed">Problems with %1$s?</string>
+    <string name="msg_installed_description">Allow app to contact companies</string>
     <string name="msg_installed_n">Has been installed</string>
     <string name="msg_completed">Action completed</string>
     <string name="msg_vpn">TrackerControl uses a local VPN to filter internet traffic.

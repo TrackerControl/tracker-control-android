@@ -354,8 +354,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (!Util.isDebuggable(this))
             screen.removePreference(screen.findPreference("screen_development"));
 
-        cat_options.removePreference(screen.findPreference("install"));
-
         /*cat_network.removePreference(screen.findPreference("use_metered"));
         cat_network.removePreference(screen.findPreference("unmetered_2g"));
         cat_network.removePreference(screen.findPreference("unmetered_3g"));

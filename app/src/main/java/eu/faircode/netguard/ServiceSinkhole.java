@@ -2286,7 +2286,7 @@ public class ServiceSinkhole extends VpnService {
                     if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                         // Show notification
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                        if (prefs.getBoolean("install", false)) {
+                        if (prefs.getBoolean("installed", true)) {
                             int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
                             notifyNewApplication(uid);
                         }
@@ -2357,20 +2357,15 @@ public class ServiceSinkhole extends VpnService {
                     .setContentIntent(pi)
                     .setColor(getResources().getColor(R.color.colorTrackerControl))
                     .setAutoCancel(true);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                builder.setContentTitle(name)
-                        .setContentText(getString(R.string.msg_installed_n));
-            else
-                builder.setContentTitle(getString(R.string.app_name))
-                        .setContentText(getString(R.string.msg_installed, name));
+            builder.setContentTitle(getString(R.string.msg_installed, name))
+                    .setContentText(getString(R.string.msg_installed_description));
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 builder.setCategory(NotificationCompat.CATEGORY_STATUS)
                         .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
             // Get defaults
-            SharedPreferences prefs_wifi = getSharedPreferences("wifi", Context.MODE_PRIVATE);
+            /*SharedPreferences prefs_wifi = getSharedPreferences("wifi", Context.MODE_PRIVATE);
             SharedPreferences prefs_other = getSharedPreferences("other", Context.MODE_PRIVATE);
             boolean wifi = prefs_wifi.getBoolean(packages[0], prefs.getBoolean("whitelist_wifi", true));
             boolean other = prefs_other.getBoolean(packages[0], prefs.getBoolean("whitelist_other", true));
@@ -2404,7 +2399,7 @@ public class ServiceSinkhole extends VpnService {
                     getString(other ? R.string.title_allow_other : R.string.title_block_other),
                     piOther
             ).build();
-            builder.addAction(oAction);
+            builder.addAction(oAction);*/
 
             // Show notification
             if (internet)
@@ -2412,7 +2407,8 @@ public class ServiceSinkhole extends VpnService {
             else {
                 NotificationCompat.BigTextStyle expanded = new NotificationCompat.BigTextStyle(builder);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    expanded.bigText(getString(R.string.msg_installed_n));
+                    expanded.bigText(getString(R.string.msg_installed_description
+                    ));
                 else
                     expanded.bigText(getString(R.string.msg_installed, name));
                 expanded.setSummaryText(getString(R.string.title_internet));
