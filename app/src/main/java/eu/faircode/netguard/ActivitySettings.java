@@ -187,7 +187,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         });
 
         // VPN parameters
-        screen.findPreference("vpn4").setTitle(getString(R.string.setting_vpn4, prefs.getString("vpn4", "10.1.10.1")));
+        screen.findPreference("vpn4").setTitle(getString(R.string.setting_vpn4, prefs.getString("vpn4", "10.213.213.1")));
         screen.findPreference("vpn6").setTitle(getString(R.string.setting_vpn6, prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1")));
         EditTextPreference pref_dns1 = (EditTextPreference) screen.findPreference("dns");
         EditTextPreference pref_dns2 = (EditTextPreference) screen.findPreference("dns2");
@@ -531,7 +531,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
             }
             getPreferenceScreen().findPreference(name).setTitle(
-                    getString(R.string.setting_vpn4, prefs.getString(name, "10.1.10.1")));
+                    getString(R.string.setting_vpn4, prefs.getString(name, "10.213.213.1")));
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("vpn6".equals(name)) {

@@ -1296,7 +1296,7 @@ public class ServiceSinkhole extends VpnService {
             builder.setMetered(Util.isMeteredNetwork(this));
 
         // VPN address
-        String vpn4 = prefs.getString("vpn4", "10.1.10.1");
+        String vpn4 = prefs.getString("vpn4", "10.213.213.1");
         Log.i(TAG, "Using VPN4=" + vpn4);
         builder.addAddress(vpn4, 32);
         if (ip6) {

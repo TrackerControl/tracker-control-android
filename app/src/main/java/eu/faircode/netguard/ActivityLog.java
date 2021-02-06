@@ -123,7 +123,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         lvLog.setAdapter(adapter);
 
         try {
-            vpn4 = InetAddress.getByName(prefs.getString("vpn4", "10.1.10.1"));
+            vpn4 = InetAddress.getByName(prefs.getString("vpn4", "10.213.213.1"));
             vpn6 = InetAddress.getByName(prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1"));
         } catch (UnknownHostException ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));

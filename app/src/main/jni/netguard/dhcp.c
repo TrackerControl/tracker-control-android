@@ -48,15 +48,15 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
     log_android(ANDROID_LOG_WARN, "DHCP opcode", request->opcode);
 
     // Discover: source 0.0.0.0:68 destination 255.255.255.255:67
-    // Offer: source 10.1.10.1:67 destination 255.255.255.255:68
+    // Offer: source 10.213.213.1:67 destination 255.255.255.255:68
     // Request: source 0.0.0.0:68 destination 255.255.255.255:67
-    // Ack: source: 10.1.10.1 destination: 255.255.255.255
+    // Ack: source: 10.213.213.1 destination: 255.255.255.255
 
     if (request->opcode == 1) { // Discover/request
         struct dhcp_packet *response = ng_calloc(500, 1, "dhcp");
 
         // Hack
-        inet_pton(AF_INET, "10.1.10.1", (void *) &u->saddr);
+        inet_pton(AF_INET, "10.213.213.1", (void *) &u->saddr);
 
         /*
         Discover:
@@ -77,7 +77,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
         response->flags = 0;
         memset(&response->ciaddr, 0, sizeof(response->ciaddr));
         inet_pton(AF_INET, "10.1.10.2", &response->yiaddr);
-        inet_pton(AF_INET, "10.1.10.1", &response->siaddr);
+        inet_pton(AF_INET, "10.213.213.1", &response->siaddr);
         memset(&response->giaddr, 0, sizeof(response->giaddr));
 
         // https://tools.ietf.org/html/rfc2132
@@ -105,7 +105,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
 
         *(options + idx++) = 3; // gateway
         *(options + idx++) = 4; // IP4 length
-        inet_pton(AF_INET, "10.1.10.1", options + idx);
+        inet_pton(AF_INET, "10.213.213.1", options + idx);
         idx += 4;
 
         *(options + idx++) = 51; // lease time
@@ -115,7 +115,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
 
         *(options + idx++) = 54; // DHCP
         *(options + idx++) = 4; // IP4 length
-        inet_pton(AF_INET, "10.1.10.1", options + idx);
+        inet_pton(AF_INET, "10.213.213.1", options + idx);
         idx += 4;
 
         *(options + idx++) = 6; // DNS
