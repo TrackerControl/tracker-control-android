@@ -1338,6 +1338,23 @@ public class ServiceSinkhole extends VpnService {
                 listExclude.add(new IPUtil.CIDR("192.168.0.0", 16));
             }
 
+            if (!filter) {
+                for (InetAddress dns : getDns(ServiceSinkhole.this))
+                    if (dns instanceof Inet4Address)
+                        listExclude.add(new IPUtil.CIDR(dns.getHostAddress(), 32));
+
+                String dns_specifier = Util.getPrivateDnsSpecifier(ServiceSinkhole.this);
+                if (!TextUtils.isEmpty(dns_specifier))
+                    try {
+                        Log.i(TAG, "Resolving private dns=" + dns_specifier);
+                        for (InetAddress pdns : InetAddress.getAllByName(dns_specifier))
+                            if (pdns instanceof Inet4Address)
+                                listExclude.add(new IPUtil.CIDR(pdns.getHostAddress(), 32));
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.toString());
+                    }
+            }
+
             // https://en.wikipedia.org/wiki/Mobile_country_code
             Configuration config = getResources().getConfiguration();
 

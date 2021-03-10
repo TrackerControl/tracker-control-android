@@ -551,6 +551,14 @@ public class Util {
         return ((brief ? b : p) + (version > 0 ? version : ""));
     }
 
+    public static String getPrivateDnsSpecifier(Context context) {
+        String dns_mode = Settings.Global.getString(context.getContentResolver(), "private_dns_mode");
+        if ("hostname".equals(dns_mode))
+            return Settings.Global.getString(context.getContentResolver(), "private_dns_specifier");
+        else
+            return null;
+    }
+
     public interface DoubtListener {
         void onSure();
     }

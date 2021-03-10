@@ -16,9 +16,9 @@
     <string name="menu_app_system">Show system apps</string>
     <string name="menu_app_nointernet">Show apps without internet</string>
     <string name="menu_sort">Sort apps</string>
-    <string name="menu_sort_name">Sort on name</string>
-    <string name="menu_sort_uid">Sort on uid</string>
-    <string name="menu_sort_companies">Sort on companies</string>
+    <string name="menu_sort_name">Sort by name</string>
+    <string name="menu_sort_uid">Sort by uid</string>
+    <string name="menu_sort_companies">Sort by companies</string>
     <string name="menu_log">Traffic log</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_invite">Invite</string>
