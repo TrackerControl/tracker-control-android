@@ -407,11 +407,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 TrackerBlocklist b = TrackerBlocklist.getInstance(this);
                 for (PackageInfo info : Rule.getPackages(this))
                     try {
-                        // Skip self and system apps
-                        if (info.applicationInfo.uid == Process.myUid()
-                                || Rule.isSystem(info.applicationInfo.packageName, this))
+                        if (info.applicationInfo.uid == Process.myUid())
                             continue;
-
                         b.unblock(info.applicationInfo.uid, NECESSARY_CATEGORY);
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
