@@ -2355,10 +2355,9 @@ public class ServiceSinkhole extends VpnService {
     };
 
     public void notifyNewApplication(int uid) {
-        if (uid < 0)
+        if (uid < 0 || !Util.hasInternet(uid, this))
             return;
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         try {
             // Get application name
             String name = TextUtils.join(", ", Util.getApplicationNames(uid, this));
@@ -2387,43 +2386,6 @@ public class ServiceSinkhole extends VpnService {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 builder.setCategory(NotificationCompat.CATEGORY_STATUS)
                         .setVisibility(NotificationCompat.VISIBILITY_SECRET);
-
-            // Get defaults
-            /*SharedPreferences prefs_wifi = getSharedPreferences("wifi", Context.MODE_PRIVATE);
-            SharedPreferences prefs_other = getSharedPreferences("other", Context.MODE_PRIVATE);
-            boolean wifi = prefs_wifi.getBoolean(packages[0], prefs.getBoolean("whitelist_wifi", true));
-            boolean other = prefs_other.getBoolean(packages[0], prefs.getBoolean("whitelist_other", true));
-
-            // Build Wi-Fi action
-            Intent riWifi = new Intent(this, ServiceSinkhole.class);
-            riWifi.putExtra(ServiceSinkhole.EXTRA_COMMAND, ServiceSinkhole.Command.set);
-            riWifi.putExtra(ServiceSinkhole.EXTRA_NETWORK, "wifi");
-            riWifi.putExtra(ServiceSinkhole.EXTRA_UID, uid);
-            riWifi.putExtra(ServiceSinkhole.EXTRA_PACKAGE, packages[0]);
-            riWifi.putExtra(ServiceSinkhole.EXTRA_BLOCKED, !wifi);
-
-            PendingIntent piWifi = PendingIntent.getService(this, uid, riWifi, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action wAction = new NotificationCompat.Action.Builder(
-                    wifi ? R.drawable.wifi_on : R.drawable.wifi_off,
-                    getString(wifi ? R.string.title_allow_wifi : R.string.title_block_wifi),
-                    piWifi
-            ).build();
-            builder.addAction(wAction);
-
-            // Build mobile action
-            Intent riOther = new Intent(this, ServiceSinkhole.class);
-            riOther.putExtra(ServiceSinkhole.EXTRA_COMMAND, ServiceSinkhole.Command.set);
-            riOther.putExtra(ServiceSinkhole.EXTRA_NETWORK, "other");
-            riOther.putExtra(ServiceSinkhole.EXTRA_UID, uid);
-            riOther.putExtra(ServiceSinkhole.EXTRA_PACKAGE, packages[0]);
-            riOther.putExtra(ServiceSinkhole.EXTRA_BLOCKED, !other);
-            PendingIntent piOther = PendingIntent.getService(this, uid + 10000, riOther, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action oAction = new NotificationCompat.Action.Builder(
-                    other ? R.drawable.other_on : R.drawable.other_off,
-                    getString(other ? R.string.title_allow_other : R.string.title_block_other),
-                    piOther
-            ).build();
-            builder.addAction(oAction);*/
 
             // Show notification
             if (internet)
