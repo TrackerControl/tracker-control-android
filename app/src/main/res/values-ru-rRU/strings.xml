@@ -129,9 +129,9 @@
 \n\nВ следующем диалоговом окне включите опции \"Фоновый режим\" и \"Неограниченная передача данных\"</string>
     <string name="msg_filter">С включённой фильтрацией Android будет приписывать TrackerControl расход батареи и трафика проходящих через него приложений. В реальности общее энергопотребление и объём данных останутся прежними</string>
     <string name="msg_filter4">На Android 4 фильтрация должна быть включена</string>
-    <string name="msg_log_disabled">Логирование трафика отключено, для включение используйте переключатель выше. Это может привести к дополнительному расходу батареи.</string>
+    <string name="msg_log_disabled">Логирование трафика отключено, для включения используйте переключатель выше. Это может привести к дополнительному расходу батареи.</string>
     <string name="msg_clear_rules">Это сбросит правила и условия на значения по умолчанию</string>
-    <string name="msg_reset_access">Это удалит строки журнала попыток доступа без правил доступа/блокировки</string>
+    <string name="msg_reset_access">Это удалит только лог попыток доступа, не меняя правил доступа/блокировки</string>
     <string name="msg_import_last">Последний импорт: %s</string>
     <string name="msg_downloading">Скачивание\n%1s</string>
     <string name="msg_downloaded">Файл hosts загружен</string>
@@ -160,7 +160,7 @@
         <item>TCP</item>
     </string-array>
     <string name="menu_add">Добавить</string>
-    <string name="menu_delete">Удалить</string>
+    <string name="menu_delete">Удалить лог</string>
     <string name="setting_forwarding">Перенаправление портов</string>
     <string name="title_protocol">Протокол</string>
     <string name="title_dport">Порт источника</string>
@@ -319,12 +319,12 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">По умолчанию TrackerControl блокирует все найденные трекеры. Это может нарушить работу приложений. Нестрогий режим (в разработке) разрешает некоторые основные трекеры.</string>
     <string name="exclude_vpn_explanation">Должно быть включено для обнаружения или блокировки трекеров.\n\nСовет: Отключите, если столкнулись с проблемами.</string>
     <string name="uninstall">Удаление</string>
-    <string name="settings_uninstall">Настройки приложения &amp; Удаление</string>
+    <string name="settings_uninstall">Настройки приложения и деинсталляция</string>
     <string name="no_trackers_found_message_disabled">Включите переключатель на главном экране, затем запустите приложение, чтобы найти трекеры</string>
     <string name="no_trackers_found_message">Запустите приложение, чтобы найти трекеры</string>
     <string name="no_trackers_found_action">Запустить</string>
-    <string name="no_internet_message">"У этого приложения нет доступа в интернет. Оно всё ещё может отслеживать вас, обмениваясь данными с другими приложениями."</string>
-    <string name="no_internet">Нет доступа в интернет</string>
+    <string name="no_internet_message">"У этого приложения нет разрешения на доступ в интернет. Оно всё ещё может отслеживать вас, обмениваясь данными с другими приложениями."</string>
+    <string name="no_internet">Не имеет разрешения на доступ в интернет</string>
     <string name="bypass_vpn_error">"Невозможно заблокировать интернет. Приложение исключено из TrackerControl."</string>
     <string name="back">Назад</string>
     <string name="forever_free">Всегда бесплатно</string>

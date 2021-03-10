@@ -15,9 +15,9 @@
     <string name="menu_app_system">システムアプリを表示</string>
     <string name="menu_app_nointernet">インターネットを使用しないアプリを表示</string>
     <string name="menu_sort">アプリの並べ替え</string>
-    <string name="menu_sort_name">名前 順</string>
+    <string name="menu_sort_name">名前順</string>
     <string name="menu_sort_uid">UID 順</string>
-    <string name="menu_sort_companies">検知された会社数 順</string>
+    <string name="menu_sort_companies">検知された会社数順</string>
     <string name="menu_log">トラフィック ログ</string>
     <string name="menu_settings">設定</string>
     <string name="menu_invite">招待する</string>
@@ -39,6 +39,9 @@
     <string name="menu_export">エクスポート</string>
     <string name="menu_reset">リセット</string>
     <string name="menu_cleanup">クリーンアップ</string>
+    <string name="setting_options">一般設定</string>
+    <string name="setting_dark">ダークテーマ</string>
+    <string name="setting_install">新しいアプリのインストール時に通知</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
