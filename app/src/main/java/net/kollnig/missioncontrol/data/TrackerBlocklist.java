@@ -35,7 +35,7 @@ public class TrackerBlocklist {
     /**
      * Whilst blockmap is a list of apps to block, the set is a set of trackers not to block.
      */
-    private Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
+    private final Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
 
     private TrackerBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
@@ -51,11 +51,8 @@ public class TrackerBlocklist {
      * @return The current instance of the TrackerBlocklist, if none, a new instance is created.
      */
     public static TrackerBlocklist getInstance(Context c) {
-        if (instance == null) {
-            // Create the instance
+        if (instance == null)
             instance = new TrackerBlocklist(c);
-        }
-        // Return the instance
         return instance;
     }
 

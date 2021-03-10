@@ -27,7 +27,7 @@ import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 public class InternetBlocklist {
     public static final String SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY = "INTERNET_BLOCKLIST_APPS_KEY";
     private static InternetBlocklist instance;
-    private HashSet<Integer> blockmap = new HashSet<>();
+    private final HashSet<Integer> blockmap = new HashSet<>();
 
     private InternetBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
@@ -43,11 +43,8 @@ public class InternetBlocklist {
      * @return The current instance of the InternetBlocklist, if none, a new instance is created.
      */
     public static InternetBlocklist getInstance(Context c) {
-        if (instance == null) {
-            // Create the instance
+        if (instance == null)
             instance = new InternetBlocklist(c);
-        }
-        // Return the instance
         return instance;
     }
 

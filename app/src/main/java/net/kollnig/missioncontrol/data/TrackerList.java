@@ -107,7 +107,6 @@ public class TrackerList {
         Map<Integer, Set<String>> trackers = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts();
-
         if (cursor.moveToFirst()) {
             do {
                 int uid = cursor.getInt(cursor.getColumnIndex("uid"));
@@ -197,7 +196,6 @@ public class TrackerList {
                 categoryCompany.getChildren().add(child);
             } while (cursor.moveToNext());
         }
-
         cursor.close();
 
         // map to list

@@ -270,7 +270,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (running) {
                                                 if (!initializedStrictMode)
-                                                    initiliaseStrictMode(swStrictMode.isChecked());
+                                                    initialiseStrictMode(swStrictMode.isChecked());
 
                                                 Log.i(TAG, "Start intent=" + prepare);
                                                 try {
@@ -398,7 +398,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Toast.makeText(this, R.string.msg_log_logcat, Toast.LENGTH_SHORT).show();
     }
 
-    private void initiliaseStrictMode(boolean strictMode) {
+    private void initialiseStrictMode(boolean strictMode) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean("initialized_strict_mode", true).apply();
         prefs.edit().putBoolean("strict_blocking", strictMode).apply();
