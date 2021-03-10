@@ -660,23 +660,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
     };
 
-    private BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
             updateApplicationList(null);
-
-            String action = (intent == null ? null : intent.getAction());
-            if (Intent.ACTION_PACKAGE_ADDED.equals(action)) {
-                int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
-                if (uid > 0) {
-                    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                    TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                    if (!prefs.getBoolean("strict_blocking", true))
-                        b.unblock(uid, NECESSARY_CATEGORY);
-                }
-            }
         }
     };
 

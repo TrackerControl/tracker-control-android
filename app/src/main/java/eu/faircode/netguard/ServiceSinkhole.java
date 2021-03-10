@@ -113,6 +113,7 @@ import java.util.zip.GZIPInputStream;
 import javax.net.ssl.HttpsURLConnection;
 
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 
 public class ServiceSinkhole extends VpnService {
     private static final String TAG = "TrackerControl.VPN";
@@ -2284,11 +2285,17 @@ public class ServiceSinkhole extends VpnService {
                     Rule.clearCache(context);
 
                     if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
-                        // Show notification
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                        if (prefs.getBoolean("installed", true)) {
-                            int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
-                            notifyNewApplication(uid);
+                        int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
+                        if (uid > -1) {
+                            // Check strict blocking
+                            TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+                            if (!prefs.getBoolean("strict_blocking", true))
+                                b.unblock(uid, NECESSARY_CATEGORY);
+
+                            // Show install notification
+                            if (prefs.getBoolean("installed", true))
+                                notifyNewApplication(uid);
                         }
                     }
 
