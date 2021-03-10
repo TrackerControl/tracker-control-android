@@ -339,11 +339,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         rvApplication.setAdapter(adapter);
 
         // Swipe to refresh
-        //TypedValue tv = new TypedValue();
-        //getTheme().resolveAttribute(R.attr.colorPrimary, tv, true);
         swipeRefresh = findViewById(R.id.swipeRefresh);
-        //swipeRefresh.setColorSchemeColors(Color.WHITE, Color.WHITE, Color.WHITE);
-        //swipeRefresh.setProgressBackgroundColorSchemeColor(tv.data);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -387,7 +383,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intentFilter.addDataScheme("package");
         registerReceiver(packageChangedReceiver, intentFilter);
 
-        // Custom code -- First use
+        // Note first use
         if (!initialized)
             prefs.edit().putBoolean("initialized", true).apply();
 
