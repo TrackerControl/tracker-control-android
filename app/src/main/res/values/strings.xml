@@ -380,9 +380,9 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Social</string>
     <string name="tracker_uncategorised">Uncategorised</string>
 
-    <string name="setting_strict_blocking">Strict Blocking (Beta)</string>
-    <string name="summary_strict_blocking">Block potentially necessary trackers. More apps will break.</string>
-    <string name="strict_blocking_explanation">By default, TrackerControl blocks all found trackers. This might break apps. Non-strict mode (in development) allows some essential trackers.</string>
+    <string name="setting_strict_blocking">Strict Blocking</string>
+    <string name="summary_strict_blocking">For newly installed apps, block as much data sharing with companies as possible. More apps will break.</string>
+    <string name="strict_blocking_explanation">It is recommended for non-experts to disable this option to reduce app breakage. However, this allows some essential sharing with companies.</string>
 
     <string name="exclude_vpn" translatable="false">Monitoring</string>
     <string name="exclude_vpn_explanation">Must be on to detect or block trackers.\n\nTip: Disable if you run into issues.</string>
@@ -412,5 +412,6 @@ Sincerely,\n\n]]></string>
     <string name="category_blocked">Trackers in category blocked</string>
     <string name="category_unblocked">Trackers in category unblocked</string>
     <string name="category_unblocked_warning">Need to block category</string>
+    <string name="switch_strict_blocking">Block essential data sharing</string>
 
 </resources>

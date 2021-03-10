@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:checked="false"
-                android:text="Block potentially necessary trackers"
+                android:text="@string/switch_strict_blocking"
                 android:textAppearance="@style/TextSmall"
                 android:textColor="?android:textColorTertiary" />
 
