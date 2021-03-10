@@ -1,5 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_android">TrackerControl yêu cầu Android 5.1 hoặc cao hơn</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Chính sách riêng tư</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Chính sách cookie</a></string>
+    <string name="channel_foreground">Các dịch vụ đang chạy</string>
+    <string name="channel_notify">Thông báo chung</string>
+    <string name="menu_search">Tìm kiếm ứng dụng</string>
+    <string name="menu_filter">Lọc ứng dụng</string>
+    <string name="menu_app_user">Hiện ứng dụng người dùng</string>
+    <string name="menu_app_system">Hiện ứng dụng hệ thống</string>
+    <string name="menu_app_nointernet">Hiện ứng dụng không có internet</string>
+    <string name="menu_sort">Sắp xếp ứng dụng</string>
+    <string name="menu_sort_name">Sắp xếp theo tên</string>
+    <string name="menu_sort_uid">Sắp xếp theo uid</string>
+    <string name="menu_sort_companies">Sắp xếp theo công ty</string>
+    <string name="menu_settings">Cài đặt</string>
+    <string name="menu_invite">Mời</string>
+    <string name="menu_legend">Chú giải</string>
+    <string name="menu_support">Hỗ trợ ứng dụng này</string>
+    <string name="menu_log_support">Giải thích</string>
+    <string name="menu_about">Giới thiệu</string>
+    <string name="menu_apps">Ứng dụng khác</string>
+    <string name="menu_protocol_other">Khác</string>
+    <string name="menu_traffic_allowed">Đã cho phép</string>
+    <string name="menu_traffic_blocked">Đã chặn</string>
+    <string name="menu_live">Cập nhật trực tiếp</string>
+    <string name="menu_refresh">Làm mới</string>
+    <string name="menu_resolve">Hiện tên</string>
+    <string name="menu_organization">Hiện tổ chức</string>
+    <string name="menu_pcap_enabled">PCAP được bật</string>
+    <string name="menu_pcap_export">Xuất PCAP</string>
+    <string name="menu_clear">Xóa</string>
+    <string name="menu_export">Xuất</string>
+    <string name="menu_reset">Đặt lại</string>
+    <string name="menu_cleanup">Dọn dẹp</string>
+    <string name="setting_options">Tùy chọn</string>
+    <string name="setting_dark">Chủ đề tối</string>
+    <string name="setting_install">Thông báo khi có cài đặt mới</string>
+    <string name="setting_pause">Tự động bật sau %1$s phút</string>
+    <string name="setting_update">Kiểm tra cập nhật</string>
+    <plurals name="pause">
+        <item quantity="other">Tạm dừng %d phút</item>
+    </plurals>
+    <string name="setting_network_options">Tùy chọn mạng</string>
+    <string name="setting_tethering">Cho phép chia sẻ internet</string>
+    <string name="setting_lan">Cho phép truy cập mạng LAN</string>
+    <string name="setting_call">Tắt khi có cuộc gọi</string>
+    <string name="setting_reload_onconnectivity">Tải lại mỗi lần đổi kết nối</string>
+    <string name="setting_advanced_options">Tùy chọn nâng cao</string>
+    <string name="setting_system">Quản lý ứng dụng hệ thống</string>
+    <string name="setting_log_app">Tìm kiếm trình theo dõi mới</string>
+    <string name="setting_filter">Chặn trình theo dõi</string>
+    <string name="setting_filter_udp">Chặn trình theo dõi trên UDP</string>
+    <string name="setting_track_usage">Theo dõi sử dụng mạng</string>
+    <string name="setting_reset_usage">Đặt lại sử dụng mạng</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_backup">Sao lưu</string>
+    <string name="setting_export">Xuất cài đặt (không phải cho việc đặt lại thiết bị)</string>
+    <string name="setting_import">Nhập cài đặt</string>
+    <string name="summary_update">Kiểm tra phiên bản mới trên GitHub hai lần mỗi ngày</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
