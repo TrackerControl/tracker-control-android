@@ -401,8 +401,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private void initiliaseStrictMode(boolean strictMode) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit().putBoolean("initialized_strict_mode", true).apply();
-        prefs.edit().putBoolean("strict_mode", strictMode).apply();
-
+        prefs.edit().putBoolean("strict_blocking", strictMode).apply();
         if (!strictMode) {
             new Thread(() -> {
                 TrackerBlocklist b = TrackerBlocklist.getInstance(this);
