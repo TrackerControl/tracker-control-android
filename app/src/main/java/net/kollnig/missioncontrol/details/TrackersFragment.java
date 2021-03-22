@@ -118,10 +118,11 @@ public class TrackersFragment extends Fragment {
 
             @Override
             protected void onPreExecute() {
-                swipeRefresh.post(() -> {
-                    if (refreshing)
-                        swipeRefresh.setRefreshing(true);
-                });
+                if (swipeRefresh != null)
+                    swipeRefresh.post(() -> {
+                        if (refreshing)
+                            swipeRefresh.setRefreshing(true);
+                    });
             }
 
             @Override
