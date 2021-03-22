@@ -1,0 +1,5 @@
+- FEATURE: A non-strict blocking mode that leads to less app breakage.
+- Fix bug: install notifications are now only shown for apps with Internet
+- Fix bug: App crash when refreshing
+- Add Vietnamese (7% translated yet)
+- Update of other translations and dependencies
