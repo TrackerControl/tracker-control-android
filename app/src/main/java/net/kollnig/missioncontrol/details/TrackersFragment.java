@@ -93,11 +93,14 @@ public class TrackersFragment extends Fragment {
 
         running = true;
 
-        Context context = v.getContext();
-        trackerList = TrackerList.getInstance(context);
+        Context c = v.getContext();
+        if (c == null)
+            finish();
+        
+        trackerList = TrackerList.getInstance(c);
         RecyclerView recyclerView = v.findViewById(R.id.transmissions_list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new TrackersListAdapter(getContext(), recyclerView, mAppUid, mAppId);
+        recyclerView.setLayoutManager(new LinearLayoutManager(c));
+        adapter = new TrackersListAdapter(c, recyclerView, mAppUid, mAppId);
         recyclerView.setAdapter(adapter);
 
         swipeRefresh = v.findViewById(R.id.swipeRefresh);
@@ -127,15 +130,19 @@ public class TrackersFragment extends Fragment {
 
             @Override
             protected List<TrackerCategory> doInBackground(Object... arg) {
-                return trackerList.getAppTrackers(getContext(), mAppUid);
+                Context c = getContext();
+                
+                if (c == null)
+                    return null;
+                
+                return trackerList.getAppTrackers(c, mAppUid);
             }
 
             @Override
             protected void onPostExecute(List<TrackerCategory> result) {
                 if (running) {
-                    if (adapter != null) {
+                    if (adapter != null)
                         adapter.set(result);
-                    }
 
                     if (swipeRefresh != null) {
                         refreshing = false;
@@ -143,10 +150,8 @@ public class TrackersFragment extends Fragment {
                     }
 
                     // no trackers yet found
-                    if (result != null &&
-                            result.size() == 0) {
+                    if (result != null && result.size() == 0)
                         suggestLaunchingApp();
-                    }
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
