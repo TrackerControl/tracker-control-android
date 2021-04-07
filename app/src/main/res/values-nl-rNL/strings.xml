@@ -81,7 +81,6 @@
     <string name="setting_hosts">Importeren van hosts-bestand</string>
     <string name="setting_hosts_append">Importeren van hosts-bestand (bijlage)</string>
     <string name="setting_hosts_download">Hostersbestand downloaden</string>
-    <string name="summary_install">Toon statusbalkmelding om direct nieuw geïnstalleerde apps te configureren (pro-functie)</string>
     <string name="summary_pause">Na de pauze van de melding schakelt u TrackerControl automatisch weer in na het geselecteerde aantal minuten (voer 0 in om deze optie uit te schakelen).</string>
     <string name="summary_update">Controleer twee keer per dag op nieuwe releases op GitHub</string>
     <string name="summary_tethering">Afhankelijk van de Android-versie kan het aanbinden wel of niet werken. Vastgebonden verkeer kan niet worden gefilterd.</string>
@@ -101,7 +100,6 @@
     <string name="msg_waiting">Wachten op evenement</string>
     <string name="msg_disabled">Gebruik de bovenstaande schakelaar om TrackerControl in te schakelen.</string>
     <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
-    <string name="msg_installed">\'%1$s\' geïnstalleerd</string>
     <string name="msg_installed_n">Is geïnstalleerd</string>
     <string name="msg_completed">Actie voltooid</string>
     <string name="msg_vpn">TrackerControl gebruikt een lokaal VPN om het internetverkeer te filteren.
@@ -150,7 +148,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_interactive_allowed">Toestaan wanneer het scherm is ingeschakeld</string>
     <string name="title_roaming_blocked">Blokkeren bij roaming</string>
     <string name="title_metered">Standaard wordt een Wi-Fi-verbinding als niet gemeten beschouwd en een mobiele verbinding als wel gemeten</string>
-    <string name="title_internet">geen toestemming heeft voor het internet</string>
     <string name="title_disabled">is invalide</string>
     <string name="title_messaging">Inkomende berichten worden ontvangen door Google Play-services en niet door deze app en kunnen daarom niet worden geblokkeerd door deze app te blokkeren</string>
     <string name="title_download">Downloads worden uitgevoerd door de downloadmanager en niet door deze app en kunnen daarom niet worden geblokkeerd door deze app te blokkeren</string>
@@ -248,9 +245,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tracker_fingerprinting">Vingerafdrukken</string>
     <string name="tracker_social">Sociaal</string>
     <string name="tracker_uncategorised">Ongecategoriseerd</string>
-    <string name="setting_strict_blocking">Strikte blokkering (Beta)</string>
-    <string name="summary_strict_blocking">Blokkeer potentieel noodzakelijke trackers. Meer apps zullen breken.</string>
-    <string name="strict_blocking_explanation">Standaard blokkeert TrackerControl alle gevonden trackers. Dit zou apps kunnen breken. De niet-stringente modus (in ontwikkeling) staat een aantal essentiële trackers toe.</string>
     <string name="exclude_vpn_explanation">Moet de trackers opsporen of blokkeren: \n\nUitschakelen als je tegen problemen aanloopt.</string>
     <string name="uninstall">De-installeer</string>
     <string name="no_trackers_found_message_disabled">Schakel de schakelaar in het hoofdscherm in en start de app om trackers te vinden</string>

@@ -91,7 +91,7 @@
     <string name="setting_hosts_url">URL du fichier de liste d\'hôtes</string>
     <string name="setting_hosts_download">Télécharger le fichier hosts</string>
     <string name="setting_hosts_update">Mettre à jour le fichier hosts</string>
-    <string name="summary_install">Afficher une notification dans la barre d\'état pour configurer directement les applications nouvellement installées (fonctionnalité pro)</string>
+    <string name="summary_install">Afficher la notification d\'état pour les nouvelles applications installées</string>
     <string name="summary_pause">Après avoir mis en pause TrackerControl via la barre des notifications, réactiver automatiquement TrackerControl après le nombre de minutes sélectionné (saisir 0 pour désactiver cette option).</string>
     <string name="summary_update">Vérifier les nouvelles versions sur GitHub deux fois par jour</string>
     <string name="summary_tethering">Selon la version d\'Android, le partage de connexion peut fonctionner ou non. Le trafic partagé ne peut pas être filtré.</string>
@@ -113,7 +113,8 @@
     <string name="msg_waiting">En attente d\'évènement</string>
     <string name="msg_disabled">Utilisez l\'interrupteur ci-dessus pour activer TrackerControl.</string>
     <string name="msg_revoked">TrackerControl a été désactivé, probablement en utilisant une autre application VPN</string>
-    <string name="msg_installed">%1$s installé</string>
+    <string name="msg_installed">Problèmes avec %1$s?</string>
+    <string name="msg_installed_description">Permettre à l\'application de contacter des entreprises</string>
     <string name="msg_installed_n">A été installé</string>
     <string name="msg_completed">Tâche terminée</string>
     <string name="msg_vpn">TrackerControl utilise un VPN local pour filtrer le trafic Internet.
@@ -178,7 +179,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_interactive_allowed">Autoriser lorsque l\'écran est allumé</string>
     <string name="title_roaming_blocked">Bloquer lors de l\'itinérance</string>
     <string name="title_metered">Par défaut, une connexion Wi-Fi est considérée comme illimitée et une connexion mobile limitée</string>
-    <string name="title_internet">n\'a pas d\'autorisation d\'accès à internet</string>
+    <string name="title_internet">ne peut accéder à Internet</string>
     <string name="title_disabled">est désactivée</string>
     <string name="title_messaging">Les messages entrants sont reçus par les services Google Play et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
     <string name="title_download">Les téléchargements sont effectués par le gestionnaire de téléchargement et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
@@ -310,9 +311,9 @@ Cordialement,\n\n]]></string>
     <string name="tracker_fingerprinting">Empreintes numériques (fingerprinting)</string>
     <string name="tracker_social">Réseaux sociaux</string>
     <string name="tracker_uncategorised">Non catégorisé</string>
-    <string name="setting_strict_blocking">Blocage strict (Beta)</string>
-    <string name="summary_strict_blocking">Bloquer les traqueurs potentiellement nécessaires. Plus d\'applications cesseront de fonctionner.</string>
-    <string name="strict_blocking_explanation">Par défaut, TrackerControl bloque tous les traqueurs trouvés. Cela peut empêcher des applications de fonctionner. Le mode non strict (en cours de développement) autorise certains traqueurs considérés essentiels.</string>
+    <string name="setting_strict_blocking">Blocage strict</string>
+    <string name="summary_strict_blocking">Pour les nouvelles applications installées, bloque le partage des données avec autant d\'entreprise que possible. Plus d\'applications dysfonctionneront.</string>
+    <string name="strict_blocking_explanation">Pour les non experts, il est recommandé de désactiver cette fonction pour réduire les dysfonctionnements. Même si cela autorise le partage de données essentielles avec des entreprises.</string>
     <string name="exclude_vpn_explanation">Doit être activé pour détecter ou bloquer les traqueurs.\n\nAstuce: Désactiver si vous rencontrez des problèmes.</string>
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
@@ -333,4 +334,5 @@ Cordialement,\n\n]]></string>
     <string name="category_blocked">Traqueurs dans la catégorie bloqués</string>
     <string name="category_unblocked">Traqueurs dans la catégorie débloqués</string>
     <string name="category_unblocked_warning">Nécessite de bloquer la catégorie</string>
+    <string name="switch_strict_blocking">Bloquer le partage de données essentielles</string>
 </resources>
