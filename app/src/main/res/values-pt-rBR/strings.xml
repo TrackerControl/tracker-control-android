@@ -45,7 +45,6 @@
     <string name="setting_pcap_record_size">Tamanho do registro PCAP: %s B</string>
     <string name="setting_pcap_file_size">Tamanho máx. do arquivo PCAP: %s MB</string>
     <string name="setting_hosts_append">Importar arquivo hosts (anexar)</string>
-    <string name="summary_install">Exibir uma notificação na barra de status para configurar diretamente os apps recém-instalados (recurso pro)</string>
     <string name="summary_lan">Permitir que apps se conectem a endereços de rede local, como 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16</string>
     <string name="summary_system">Definir regras para apps do sistema (para usuários experientes)</string>
     <string name="summary_log_app">Desative para diminuir o consumo da bateria. Novos rastreadores ainda serão bloqueados, mas não serão exibidos.</string>

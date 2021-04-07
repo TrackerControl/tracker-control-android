@@ -81,7 +81,6 @@
     <string name="setting_hosts">Importar archivo de hosts</string>
     <string name="setting_hosts_append">Importar archivo de hosts (append)</string>
     <string name="setting_hosts_download">Descargar archivo de hosts</string>
-    <string name="summary_install">Muestra la notificación de la barra de estado para configurar directamente las aplicaciones recién instaladas (función pro)</string>
     <string name="summary_pause">Después de pausar la notificación, vuelve a activar automáticamente TrackerControl pasado cierto número de minutos (introduzca 0 para desactivar esta opción)</string>
     <string name="summary_update">Comprueba los nuevos lanzamientos en GitHub dos veces al día</string>
     <string name="summary_tethering">Dependiendo de la versión de Android, el tethering podría o no funcionar. El tráfico atado no puede ser filtrado.</string>
@@ -101,7 +100,6 @@
     <string name="msg_waiting">Esperando el evento</string>
     <string name="msg_disabled">Utiliza el interruptor de arriba para activar el TrackerControl.</string>
     <string name="msg_revoked">TrackerControl ha sido desactivado, probablemente usando otra aplicación basada en VPN</string>
-    <string name="msg_installed">\'%1$s\' se instaló</string>
     <string name="msg_installed_n">Se ha instalado</string>
     <string name="msg_completed">Acción completada</string>
     <string name="msg_vpn">TTrackerControl usa una VPN local para filtrar el tráfico de Internet.
@@ -150,7 +148,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_interactive_allowed">Permitir cuando la pantalla está encendida</string>
     <string name="title_roaming_blocked">Bloquear cuando está en itinerancia</string>
     <string name="title_metered">Por defecto una conexión Wi-Fi se considera no medida y una conexión móvil se considera medida</string>
-    <string name="title_internet">no tiene permiso de internet</string>
     <string name="title_disabled">está desactivado</string>
     <string name="title_messaging">Los mensajes entrantes son recibidos por los servicios de Google Play y no por esta aplicación y por lo tanto no pueden ser bloqueados por el aplicativo de bloqueo</string>
     <string name="title_download">Las descargas son realizadas por el gestor de descargas y no por esta aplicación y por lo tanto no pueden ser bloqueadas por el aplicativo de bloqueo</string>
@@ -248,9 +245,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="tracker_fingerprinting">Huellas dactilares</string>
     <string name="tracker_social">Social</string>
     <string name="tracker_uncategorised">Sin categoría</string>
-    <string name="setting_strict_blocking">Estricto bloqueo (Beta)</string>
-    <string name="summary_strict_blocking">Bloquear los rastreadores potencialmente necesarios. Se romperán más aplicaciones.</string>
-    <string name="strict_blocking_explanation">Por defecto, TrackerControl bloquea todos los rastreadores encontrados. Esto podría romper las aplicaciones. El modo no estricto (en desarrollo) permite algunos rastreadores esenciales.</string>
     <string name="exclude_vpn_explanation">Debe estar encendido para detectar o bloquear los rastreadores.\n\nSugerencia: Deshabilitar si se encuentra con problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilita el cambio en la pantalla principal, luego lanza la aplicación para encontrar rastreadores</string>
