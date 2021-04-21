@@ -1,1 +1,0 @@
-TrackerControl erlaubt Kontrolle über App-Tracking.
