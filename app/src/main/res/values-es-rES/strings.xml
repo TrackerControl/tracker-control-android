@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite a los usuarios monitorear y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Computación centrada en humanos, Departamento de Ciencias de la Computación, Universidad de Oxford)\n\nTrackerControl está basado en NetGuard, desarrollado por Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universidad de Oxford)\n\nTrackerControl está basado en NetGuard, desarrollado por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
-    <string name="app_xposed">Xposed genera demasiados problemas de funcionamiento, lo que podría ser el motivo del retiro de TrackerControl de la tienda de Google Play, por lo tanto TrackerControl no está admitida mientras Xposed esté instalado.</string>
+    <string name="app_xposed">Xposed genera demasiados crasheos, lo cual podría ocasionar que se retire TrackerControl de la tienda de Google Play. Por lo tanto, no habrá soporte para TrackerControl mientras Xposed esté instalado.</string>
     <string name="app_eula">El uso de esta aplicación es bajo tu propio riesgo. Ninguna aplicación puede ofrecer un 100% de protección contra el rastreo.</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Política de privacidad</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Política de cookies</a></string>
     <string name="channel_foreground">Servicios en ejecución</string>
     <string name="channel_notify">Notificaciones generales</string>
-    <string name="channel_access">Acceso a notificaciones</string>
+    <string name="channel_access">Notificaciones de acceso</string>
     <string name="menu_search">Buscar aplicación</string>
     <string name="menu_filter">Filtrar aplicaciones</string>
     <string name="menu_app_user">Mostrar apps del usuario</string>
@@ -111,19 +111,19 @@
     <string name="msg_sure">¿Estás seguro?</string>
     <string name="msg_started">Comprobando los rastreadores</string>
     <string name="msg_waiting">Esperando evento</string>
-    <string name="msg_disabled">Utiliza el interruptor de arriba para activar el TrackerControl.</string>
+    <string name="msg_disabled">Utilizá el interruptor de arriba para activar TrackerControl.</string>
     <string name="msg_revoked">TrackerControl ha sido desactivado, posiblemente por utilizar otra aplicación basada en VPN</string>
     <string name="msg_installed">¿Problemas con %1$s?</string>
     <string name="msg_installed_description">Permita que la aplicación contacte empresas</string>
     <string name="msg_installed_n">Se ha instalado</string>
     <string name="msg_completed">Acción completada</string>
     <string name="msg_vpn">TrackerControl usa una VPN local para filtrar el tráfico de Internet.
-Por este razón, por favor permite el acceso VPN en el siguiente diálogo.
+Por este razón, por favor permita el acceso VPN en el siguiente diálogo.
 El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_autostart">TrackerControl no pudo iniciarse automáticamente. Esto podría deberse a un error en su versión de Android.</string>
     <string name="msg_error">Ocurrió un error inesperado: \'%s\'</string>
     <string name="msg_start_failed">Android se negó a iniciar el servicio de VPN en este momento. Esto podría deberse a un error en su versión de Android.</string>
-    <string name="msg_try">Intenta TrackerControl</string>
+    <string name="msg_try">Probá TrackerControl</string>
     <string name="msg_doze">Para obtener resultados consistentes, las optimizaciones de la batería de Android deben ser desactivadas para TrackerControl.
 \n\nEn el siguiente diálogo, seleccione \"Todas las aplicaciones\" en la parte superior, pulse en TrackerControl en la lista. Luego, seleccione y confirme \"No optimizar\".</string>
     <string name="msg_datasaving">Para obtener resultados consistentes, las opciones de almacenamiento de datos de Android deben ser desactivadas para TrackerControl
@@ -142,17 +142,17 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_metered">La red está medida</string>
     <string name="msg_inactive">Sin conexión activa a internet</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
-    <string name="msg_update">Actualización disponible, toque para descargar</string>
-    <string name="msg_usage">Puedes permitir (verdoso) o denegar (rojizo) el acceso a Wi-Fi o Internet móvil tocando los iconos junto a una aplicación</string>
+    <string name="msg_update">Actualización disponible, tocá para descargar</string>
+    <string name="msg_usage">Podés permitir (verde) o denegar (rojo) el acceso a Wi-Fi o Internet móvil tocando los iconos junto a una aplicación</string>
     <string name="msg_whitelist">El acceso a Internet está permitido por defecto (modo lista negra), esto se puede cambiar en los ajustes</string>
-    <string name="msg_push">Mensajes entrantes (push) son manejados en su mayoría por el componente del sistema Servicios de Google Play, al que se le permite el acceso a Internet por defecto</string>
+    <string name="msg_push">Los mensajes entrantes (push) son manejados en su mayoría por el componente del sistema Servicios de Google Play, al que se le permite el acceso a Internet por defecto</string>
     <string name="msg_system">La gestión de todas las aplicaciones (del sistema) puede activarse en la configuración</string>
     <string name="msg_issue">Por favor, describa el problema e indique la hora del mismo:</string>
     <string name="msg_vpn_cancelled">Conexión VPN cancelada\n¿Configuraste otra VPN para que sea una VPN siempre activa?</string>
     <string name="msg_unavailable">Esta característica no está disponible en esta versión de Android</string>
     <string name="msg_always_on">Otra VPN está establecida como una VPN siempre activa</string>
     <string name="msg_always_on_lockdown">Desactive \"Bloquear conexiones sin VPN\" en la configuración de VPN de Android para usar TrackerControl en modo de filtrado</string>
-    <string name="msg_private_dns">Desactiva el \"DNS privado\" en la configuración de la red de Android para usar el TrackerControl en modo de filtrado</string>
+    <string name="msg_private_dns">Desactive el \"DNS privado\" en la configuración de la red de Android para usar el TrackerControl en modo de filtrado</string>
     <string name="msg_start_forward">¿Iniciar redirección desde el puerto %1$s, %2$d hacia %3$s:%4$d de \'%5$s\'?</string>
     <string name="msg_stop_forward">¿Detener redirección de %1$s puerto %2$d?</string>
     <string name="msg_log_logcat">Advertencia: Bloqueo deshabilitado debido al registro de ADB.</string>
@@ -183,8 +183,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_metered">Por defecto una conexión Wi-Fi se considera no medida y una conexión móvil se considera medida</string>
     <string name="title_internet">no se puede acceder a Internet</string>
     <string name="title_disabled">está desactivado</string>
-    <string name="title_messaging">Los mensajes entrantes son recibidos por los servicios de Google Play y no por esta aplicación y por lo tanto no pueden ser bloqueados bloqueando esta app</string>
-    <string name="title_download">Las descargas son realizadas por el gestor de descargas y no por esta aplicación y por lo tanto no pueden ser bloqueadas bloqueando esta app</string>
+    <string name="title_messaging">Los mensajes entrantes son recibidos por los servicios de Google Play y no por esta aplicación. Por lo tanto, no pueden ser bloqueados bloqueando esta app</string>
+    <string name="title_download">Las descargas son realizadas por el gestor de descargas y no por esta aplicación. Por lo tanto, no pueden ser bloqueadas bloqueando esta app</string>
     <string name="title_conditions">Condiciones</string>
     <string name="title_screen_wifi">Permitir Wi-Fi cuando la pantalla está encendida</string>
     <string name="title_screen_other">Permitir el móvil cuando la pantalla está encendida</string>
@@ -245,9 +245,9 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="block_tracking">Bloquear rastreadores</string>
     <string name="block_tracking_description">Muchas aplicaciones envían datos a terceros, por medio de rastreadores. TrackerControl permite bloquear estas transmisiones de red de forma selectiva. Sin embargo, use esto con prudencia, ya que los desarrolladores de aplicaciones dependen de estos servicios, en particular la publicidad.</string>
     <string name="personalised_ads">Limitar personalización</string>
-    <string name="personalised_ads_description">Android ofrece limitar el acceso de las aplicaciones al ID de publicidad de Google de tu dispositivo. Sin embargo, las aplicaciones pueden ignorar esta configuración y seguir utilizando este ID. También pueden seguir recopilando este ID con fines analíticos, de acuerdo con las políticas de Google. Debes confiar en Google y en la empresa de recopilación de datos.</string>
+    <string name="personalised_ads_description">Android ofrece limitar el acceso de las aplicaciones al ID de publicidad de Google de tu dispositivo. Sin embargo, las aplicaciones pueden ignorar esta configuración y seguir utilizando este ID. También pueden seguir recopilando este ID con fines analíticos, de acuerdo con las políticas de Google. Debés confiar en Google y en la empresa de recopilación de datos.</string>
     <string name="data_managment">Gestionar datos</string>
-    <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (GDPR) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
+    <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (RGPD) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
     <string name="contacts">Contacto </string>
     <string name="contacts_description">Si cree que una aplicación viola los principios de protección de datos, puede contactar directamente con las entidades responsables.</string>
     <string name="play_services_required">Esta es una configuración de los Servicios de Google Play, que no se encontraron en su dispositivo.</string>
@@ -288,7 +288,7 @@ Atentamente,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[A quien corresponda:\n
 \n
 \n
-Estoy invocando mi derecho a borrar como se especifica en el artículo 17 del Reglamento de Protección General de Datos de la UE (GDPR). Le solicito, como controlador de datos de la aplicación %s de Android (ID: %s), para borrar los siguientes datos personales que procesa sobre mí sin demora indebida:\n
+Estoy invocando mi derecho a borrar como se especifica en el artículo 17 del Reglamento de Protección General de Datos de la UE (RGPD). Le solicito, como controlador de datos de la aplicación %s de Android (ID: %s), para borrar los siguientes datos personales que procesa sobre mí sin demora indebida:\n
 • Todos los datos.\n
 \n
 La razón de mi solicitud de eliminación es que retiro o he retirado mi consentimiento para procesar los datos personales. Esta solicitud se refiere a cualquier tratamiento de mis datos personales por usted, incluyendo cualquier procesador que procese los datos personales en nombre de usted.\n
@@ -298,13 +298,13 @@ Por favor, proporcione su respuesta a través de medios seguros por correo elect
 Atentamente,\n\n]]></string>
     <string name="crash_dialog_text">Lo sentimos. TrackerControl dejó de funcionar. ¿Podría enviar un correo describiendo los detalles?</string>
     <string name="crash_dialog_comment">¿Algún comentario?</string>
-    <string name="instructions_monitoring_private_dns">Presiona el interruptor e interactúa con otras aplicaciones. El DNS privado debe estar desactivado.</string>
-    <string name="instructions_monitoring">Presiona el interruptor e interactúa con otras aplicaciones.</string>
+    <string name="instructions_monitoring_private_dns">Presioná el interruptor e interactuá con otras aplicaciones. El DNS privado debe estar desactivado.</string>
+    <string name="instructions_monitoring">Presioná el interruptor e interactuá con otras aplicaciones.</string>
     <string name="device_not_supported_title">Dispositivo no soportado</string>
-    <string name="device_not_supported_msg">El sistema operativo de su dispositivo on opermite monitorizar o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>
+    <string name="device_not_supported_msg">El sistema operativo de su dispositivo no permite monitorear o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>
     <string name="launch_app">Lanzar &amp; Buscar rastreadores</string>
     <string name="countries">Países de destino</string>
-    <string name="countries_explanation">Averigua adónde envía tu teléfono los datos de rastreo.\n\nLa información se basa en búsquedas de DNS e información de IP, y podría ser inexacta.</string>
+    <string name="countries_explanation">Averiguá a dónde envía tu teléfono los datos de rastreo.\n\nLa información se basa en búsquedas de DNS e información de IP, y podría ser inexacta.</string>
     <string name="countries_loading_failed">Oops... El mapa del país falló al cargar. Por favor, dígale a tc@kollnig.net cómo sucedió esto.</string>
     <string name="tracker_advertising">Publicidad</string>
     <string name="tracker_analytics">Datos de análisis</string>
@@ -319,12 +319,12 @@ Atentamente,\n\n]]></string>
     <string name="exclude_vpn_explanation">Debe estar encendido para detectar o bloquear los rastreadores.\n\nSugerencia: Deshabilitar si se encuentra con problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Ajustes de la aplicación &amp; Desinstalar</string>
-    <string name="no_trackers_found_message_disabled">Habilita el cambio en la pantalla principal, luego lanza la aplicación para encontrar rastreadores</string>
-    <string name="no_trackers_found_message">Lanza la aplicación para encontrar rastreadores</string>
+    <string name="no_trackers_found_message_disabled">Activá el interruptor en la pantalla principal, y después lanzá la aplicación para encontrar rastreadores</string>
+    <string name="no_trackers_found_message">Lanzá la aplicación para encontrar rastreadores</string>
     <string name="no_trackers_found_action">Lanzar</string>
     <string name="no_internet_message">"Esta aplicación no tiene acceso a Internet. Puede que todavía te rastree intercambiando datos con otras aplicaciones."</string>
     <string name="no_internet">No hay acceso a Internet</string>
-    <string name="bypass_vpn_error">"No se puede bloquear Internet. La aplicación está excluida del TrackerControl."</string>
+    <string name="bypass_vpn_error">"No se puede bloquear Internet. La aplicación está excluida de TrackerControl."</string>
     <string name="back">Volver</string>
     <string name="forever_free">Libre para siempre</string>
     <string name="your_privacy">Tu privacidad</string>
@@ -335,6 +335,6 @@ Atentamente,\n\n]]></string>
     <string name="internet_unblocked">Acceso a Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores en la categoría bloqueados</string>
     <string name="category_unblocked">Rastreadores en la categoría desbloqueados</string>
-    <string name="category_unblocked_warning">Necesita bloquear la categoría</string>
+    <string name="category_unblocked_warning">Se necesita bloquear la categoría</string>
     <string name="switch_strict_blocking">Bloquear que se compartan datos esenciales</string>
 </resources>
