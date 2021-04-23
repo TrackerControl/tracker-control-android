@@ -310,6 +310,8 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Sozial</string>
     <string name="tracker_uncategorised">Unkategorisiert</string>
     <string name="setting_strict_blocking">Strenges Blocken</string>
+    <string name="summary_strict_blocking">Blockieren Sie bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich. Es werden mehr Apps kaputt gehen.</string>
+    <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
     <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stossen.</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="settings_uninstall">App-Einstellungen &amp; deinstallieren</string>
@@ -330,4 +332,5 @@ Sincerely,\n\n]]></string>
     <string name="category_blocked">Tracker in dieser Kategorie geblockt</string>
     <string name="category_unblocked">Tracker in dieser Kategorie erlaubt</string>
     <string name="category_unblocked_warning">Kategorie blockieren</string>
+    <string name="switch_strict_blocking">Blockiere essentielle Datenübertragung</string>
 </resources>

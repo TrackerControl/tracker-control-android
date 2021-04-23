@@ -78,6 +78,7 @@
     <string name="setting_import">Nhập cài đặt</string>
     <string name="summary_install">Hiện thông báo trên thanh trạng thái cho các ứng dụng mới cài đặt</string>
     <string name="summary_update">Kiểm tra phiên bản mới trên GitHub hai lần mỗi ngày</string>
+    <string name="summary_lan">Cho phép các ứng dụng kết nối đến các địa chỉ mạng cục bộ, như 10.0.0.0/8, 172.16.0.0/12 và 192.168.0.0/16</string>
     <string name="summary_system">Định nghĩa các quy tắc cho các ứng dụng hệ thống (dành cho chuyên gia)</string>
     <string name="summary_log_app">Tắt để giảm sử dụng pin. Các trình theo dõi mới vẫn sẽ được chặn, nhưng không được hiện.</string>
     <string name="summary_track_usage">Theo dõi số lượng byte đã gửi và nhận cho mỗi ứng dụng và địa chỉ. Điều này có thể dẫn đến sử dụng thêm pin.</string>
@@ -135,6 +136,7 @@
     <string name="title_metered">Theo mặc định, kết nối Wi-Fi được coi là không trả phí và kết nối di động được coi là có trả phí</string>
     <string name="title_internet">không thể truy cập Internet</string>
     <string name="title_disabled">bị tắt</string>
+    <string name="title_messaging">Các thông báo đến được dịch vụ Google Play nhận và không phải ứng dụng này và do đó không thể bị chặn bằng cách chặn ứng dụng này</string>
     <string name="title_download">Các lượt tải xuống được trình quản lý tải xuống thực hiện và không phải ứng dụng này và do đó không thể bị chặn bằng cách chặn ứng dụng này</string>
     <string name="title_conditions">Điều kiện</string>
     <string name="title_screen_wifi">Cho phép Wi-Fi khi màn hình bật</string>
@@ -166,6 +168,7 @@
         <item quantity="other">đã thử liên hệ ít nhất %d công ty</item>
     </plurals>
     <string name="external_servers">Tự động lấy email của nhà phát triển?</string>
+    <string name="confirm_google_info">Ứng dụng này có thể tự động lấy email của nhà phát triển ứng dụng từ CH Play cho bạn.</string>
     <string name="ok">OK</string>
     <string name="yes">Có</string>
     <string name="no">Không</string>
@@ -181,6 +184,7 @@
     <string name="tab_actions">Dữ liệu của tôi</string>
     <string name="tracker_name">Tên trình theo dõi</string>
     <string name="internet_access">Truy cập Internet</string>
+    <string name="internet_access_explanation">Phải được bật để có quyền truy cập Internet.\n\nMẹo: Bạn cũng có thể nhấn vào biểu tượng ứng dụng trong màn hình chính.</string>
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
     <string name="block_tracking">Chặn trình theo dõi</string>
@@ -194,8 +198,30 @@
     <string name="request_deletion">Yêu cầu xoá</string>
     <string name="contact_developer">Nhà phát triển</string>
     <string name="contact_playstore">Google</string>
+    <string name="crash_dialog_text">Xin lỗi. TrackerControl vừa mới bị văng ra.. Bạn có muốn gửi email có các chi tiết cho chúng tôi không?</string>
     <string name="crash_dialog_comment">Có bình luận gì không?</string>
     <string name="device_not_supported_title">Thiết bị không được hỗ trợ</string>
     <string name="launch_app">Chạy &amp; tìm trình theo dõi</string>
     <string name="countries">Các quốc gia đích</string>
+    <string name="tracker_advertising">Quảng cáo</string>
+    <string name="tracker_analytics">Phân tích</string>
+    <string name="tracker_content">Thiết yếu</string>
+    <string name="tracker_cryptomining">Đào tiền ảo</string>
+    <string name="tracker_fingerprinting">Nhận dạng</string>
+    <string name="tracker_social">Xã hội</string>
+    <string name="tracker_uncategorised">Chưa phân loại</string>
+    <string name="setting_strict_blocking">Chặn chặt chẽ</string>
+    <string name="summary_strict_blocking">Đối với các ứng dụng mới cài đặt, chặn việc chia sẻ dữ liệu với các công ty nhiều nhất có thể. Nhiều ứng dụng hơn sẽ bị hỏng.</string>
+    <string name="exclude_vpn_explanation">Phải được bật để dò tìm hoặc chặn trình theo dõi.\n\nMẹo: Tắt nếu bạn gặp vấn đề.</string>
+    <string name="uninstall">Gỡ cài đặt</string>
+    <string name="settings_uninstall">Cài đặt của ứng dụng &amp; Gỡ cài đặt</string>
+    <string name="no_trackers_found_message_disabled">Bật công tắc trong màn hình chính, sau đó chạy ứng dụng để tìm trình theo dõi</string>
+    <string name="no_trackers_found_message">Chạy ứng dụng để tìm trình theo dõi</string>
+    <string name="no_trackers_found_action">Chạy</string>
+    <string name="no_internet_message">"Ứng dụng này không truy cập Internet. Nó có thể sẽ vẫn theo dõi bạn bằng cách trao đổi dữ liệu với các ứng dụng khác."</string>
+    <string name="no_internet">Không có truy cập Internet</string>
+    <string name="bypass_vpn_error">"Không thể chặn Internet. Ứng dụng được loại trừ khỏi TrackerControl."</string>
+    <string name="back">Quay lại</string>
+    <string name="forever_free">Miễn phí mãi mãi</string>
+    <string name="your_privacy">Sự riêng tư của bạn</string>
 </resources>
