@@ -81,7 +81,6 @@
     <string name="setting_hosts">Arquivo de anfitriões de importação</string>
     <string name="setting_hosts_append">Importar arquivo de anfitriões (anexo)</string>
     <string name="setting_hosts_download">Download do arquivo de hospedagem</string>
-    <string name="summary_install">Mostrar notificação da barra de status para configurar diretamente os aplicativos recém-instalados (recurso pro)</string>
     <string name="summary_pause">Após a pausa da notificação, ative automaticamente o TrackerControl novamente após o número de minutos selecionado (digite 0 para desativar esta opção).</string>
     <string name="summary_update">Verifique duas vezes por dia se há novos lançamentos no GitHub</string>
     <string name="summary_tethering">Dependendo da versão do Android, a amarração pode funcionar ou não. O tráfego amarrado não pode ser filtrado.</string>
@@ -101,7 +100,6 @@
     <string name="msg_waiting">À espera do evento</string>
     <string name="msg_disabled">Use o interruptor acima para ativar o TrackerControl.</string>
     <string name="msg_revoked">O TrackerControl foi desativado, provavelmente utilizando outro aplicativo baseado em VPN</string>
-    <string name="msg_installed">%1$s\' instalados</string>
     <string name="msg_installed_n">Foi instalado</string>
     <string name="msg_completed">Ação concluída</string>
     <string name="msg_vpn">O TrackerControl utiliza uma VPN local para filtrar o tráfego da Internet.
@@ -150,7 +148,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_interactive_allowed">Permitir quando a tela estiver ligada</string>
     <string name="title_roaming_blocked">Bloqueio em roaming</string>
     <string name="title_metered">Por padrão, uma conexão Wi-Fi é considerada como não-configurada e uma conexão móvel a ser medida</string>
-    <string name="title_internet">não tem permissão da internet</string>
     <string name="title_disabled">está desativado</string>
     <string name="title_messaging">As mensagens recebidas são recebidas pelos serviços do Google Play e não por este aplicativo e, portanto, não podem ser bloqueadas pelo bloqueio deste aplicativo</string>
     <string name="title_download">Os downloads são realizados pelo gerenciador de downloads e não por este aplicativo e, portanto, não podem ser bloqueados pelo bloqueio deste aplicativo</string>
@@ -282,9 +279,6 @@ disso,\n\n]]></string>
     <string name="tracker_fingerprinting">Impressão digital</string>
     <string name="tracker_social">Sociais</string>
     <string name="tracker_uncategorised">Não categorizado</string>
-    <string name="setting_strict_blocking">Bloqueio Estrito (Beta)</string>
-    <string name="summary_strict_blocking">Bloquear os rastreadores potencialmente necessários. Mais aplicativos irão quebrar.</string>
-    <string name="strict_blocking_explanation">Por padrão, o TrackerControl bloqueia todos os rastreadores encontrados. Isto pode quebrar as aplicações. O modo não-estrito (em desenvolvimento) permite alguns rastreadores essenciais.</string>
     <string name="exclude_vpn_explanation">É necessário estar disponível para detectar ou bloquear rastreadores.\n\nDica: Desative se você tiver problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilitar interruptor na tela principal, depois lançar aplicativo para encontrar rastreadores</string>

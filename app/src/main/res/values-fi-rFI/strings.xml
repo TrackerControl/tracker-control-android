@@ -81,7 +81,6 @@
     <string name="setting_hosts">Tuo isäntätiedosto</string>
     <string name="setting_hosts_append">Tuo isäntätiedosto (liitä)</string>
     <string name="setting_hosts_download">Lataa isäntätiedosto</string>
-    <string name="summary_install">Näytä tilapalkin ilmoitus äskettäin asennettujen sovellusten määrittämiseksi suoraan (pro-ominaisuus)</string>
     <string name="summary_pause">Kun olet keskeyttänyt ilmoituksen, ota TrackerControl käyttöön automaattisesti uudelleen valitun minuutin jälkeen (poista tämä vaihtoehto kirjoittamalla 0).</string>
     <string name="summary_update">Tarkista uudet versiot GitHubista kahdesti päivässä</string>
     <string name="summary_tethering">Android-versiosta riippuen jakaminen voi toimia tai ei toimi. Sidottua liikennettä ei voida suodattaa.</string>
@@ -101,7 +100,6 @@
     <string name="msg_waiting">Odottaa tapahtumaa</string>
     <string name="msg_disabled">Ota yllä oleva kytkin käyttöön TrackerControl.</string>
     <string name="msg_revoked">TrackerControl on poistettu käytöstä, todennäköisesti käyttämällä toista VPN-pohjaista sovellusta</string>
-    <string name="msg_installed">\'%1$s\' asennettu</string>
     <string name="msg_installed_n">On asennettu</string>
     <string name="msg_completed">Toiminto valmis</string>
     <string name="msg_vpn">TrackerControl suodattaa Internet-liikennettä paikallisen VPN: n avulla.
@@ -150,7 +148,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="title_interactive_allowed">Salli, kun näyttö on päällä</string>
     <string name="title_roaming_blocked">Estä verkkovierailun aikana</string>
     <string name="title_metered">Oletusarvoisesti Wi-Fi-yhteyttä ei katsota ja matkapuhelinyhteyttä mitataan</string>
-    <string name="title_internet">ei ole Internet-lupaa</string>
     <string name="title_disabled">on vammainen</string>
     <string name="title_messaging">Saapuvat viestit vastaanotetaan Google Play -palveluista eikä tästä sovelluksesta, joten niitä ei voida estää estämällä tätä sovellusta</string>
     <string name="title_download">Lataukset suorittaa latausten hallinta eikä tämä sovellus, joten niitä ei voida estää estämällä tätä sovellusta</string>
@@ -248,9 +245,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tracker_fingerprinting">Sormenjälkien ottaminen</string>
     <string name="tracker_social">Sosiaalinen</string>
     <string name="tracker_uncategorised">Uncategorized</string>
-    <string name="setting_strict_blocking">Tiukka esto (beeta)</string>
-    <string name="summary_strict_blocking">Estä mahdollisesti tarvittavat seurantalaitteet. Lisää sovelluksia hajoaa.</string>
-    <string name="strict_blocking_explanation">Oletuksena TrackerControl estää kaikki löydetyt seurantalaitteet. Tämä saattaa rikkoa sovelluksia. Tiukka tila (kehitteillä) sallii joitain välttämättömiä seurantalaitteita.</string>
     <string name="exclude_vpn_explanation">Seurannan on oltava päällä havaita tai estää seurannat.\n\nVinkki: Poista käytöstä, jos kohtaat ongelmia.</string>
     <string name="uninstall">Poista asennus</string>
     <string name="no_trackers_found_message_disabled">Ota kytkin käyttöön päänäytössä ja käynnistä sitten sovellus löytääksesi seurantalaitteet</string>

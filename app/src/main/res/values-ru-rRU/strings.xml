@@ -93,7 +93,7 @@
     <string name="setting_hosts_url">URL-адрес hosts-файла</string>
     <string name="setting_hosts_download">Скачать hosts-файл</string>
     <string name="setting_hosts_update">Обновить hosts-файл</string>
-    <string name="summary_install">Показать уведомление в статус-баре для настройки недавно установленных приложений (Pro-функция)</string>
+    <string name="summary_install">Показывать уведомление для новых приложений</string>
     <string name="summary_pause">После отключения через уведомление, автоматически включить TrackerControl снова после указанного количества минут (введите ноль, чтобы отключить эту опцию).</string>
     <string name="summary_update">Проверять наличие новых версий на GitHub два раза в день</string>
     <string name="summary_tethering">В зависимости от версии Android, режим модема может либо работать, либо не работать. Tethering-трафик не может быть отфильтрован.</string>
@@ -115,7 +115,8 @@
     <string name="msg_waiting">Ожидание события</string>
     <string name="msg_disabled">Для включения TrackerControl используйте переключатель выше.</string>
     <string name="msg_revoked">TrackerControl был отключен, скорее всего, из-за применения другого VPN-подключения</string>
-    <string name="msg_installed">\'%1$s\' установлено</string>
+    <string name="msg_installed">Проблемы с %1$s?</string>
+    <string name="msg_installed_description">Разрешить приложению связываться с компаниями</string>
     <string name="msg_installed_n">Было установлено</string>
     <string name="msg_completed">Действие завершено</string>
     <string name="msg_vpn">TrackerControl использует локальный VPN для фильтрации интернет-трафика.
@@ -180,7 +181,7 @@
     <string name="title_interactive_allowed">Разрешить при включённом экране</string>
     <string name="title_roaming_blocked">Блокировать в роуминге</string>
     <string name="title_metered">По умолчанию Wi-Fi соединение считается безлимитным, а мобильная связь лимитированной</string>
-    <string name="title_internet">не имеет разрешения на интернет</string>
+    <string name="title_internet">нет доступа в Интернет</string>
     <string name="title_disabled">отключено</string>
     <string name="title_messaging">Входящие сообщения принимаются службами Google Play, а не этим приложением, поэтому не могут быть заблокированы путём блокировки этого приложения</string>
     <string name="title_download">Загрузки выполняются менеджером загрузки, а не этим приложением, и поэтому не могут быть заблокированы путём блокировки этого приложения</string>
@@ -314,9 +315,9 @@ Sincerely,\n\n]]></string>
     <string name="tracker_fingerprinting">Фингерпринтинг</string>
     <string name="tracker_social">Соцсети</string>
     <string name="tracker_uncategorised">Без категории</string>
-    <string name="setting_strict_blocking">Строгая блокировка (бета)</string>
-    <string name="summary_strict_blocking">Блокировать потенциально необходимые трекеры. Больше приложений сломается.</string>
-    <string name="strict_blocking_explanation">По умолчанию TrackerControl блокирует все найденные трекеры. Это может нарушить работу приложений. Нестрогий режим (в разработке) разрешает некоторые основные трекеры.</string>
+    <string name="setting_strict_blocking">Строгая блокировка</string>
+    <string name="summary_strict_blocking">Максимально блокировать обмен данными с компаниями для новых приложений. Больше приложений будет ломаться.</string>
+    <string name="strict_blocking_explanation">Неспециалистам рекомендуется отключить эту опцию, чтобы приложения работали нормально. Однако, это разрешит слив основной необходимой для работы информации компаниям.</string>
     <string name="exclude_vpn_explanation">Должно быть включено для обнаружения или блокировки трекеров.\n\nСовет: Отключите, если столкнулись с проблемами.</string>
     <string name="uninstall">Удаление</string>
     <string name="settings_uninstall">Настройки приложения и деинсталляция</string>
@@ -337,4 +338,5 @@ Sincerely,\n\n]]></string>
     <string name="category_blocked">Трекеры в категории заблокированы</string>
     <string name="category_unblocked">Трекеры в категории разблокированы</string>
     <string name="category_unblocked_warning">Нужно заблокировать категорию</string>
+    <string name="switch_strict_blocking">Блокировка основных (необходимых для работы) данных</string>
 </resources>

@@ -1,0 +1,17 @@
+TrackerControl ermöglicht es Benutzern, die weit verbreitete, andauernde und versteckte Datensammlung in mobilen Apps über das Benutzerverhalten zu überwachen und zu kontrollieren.
+
+Um Tracking zu erkennen, kombiniert TrackerControl die Disconnect-Blockliste, die von Firefox verwendet wird, mit unserer eigenen Blockliste, die aus der Analyse von <i>~2 000 000</i> Apps erstellt wurde! Zusätzlich unterstützt TrackerControl eigene Blocklisten.
+
+Dieser Ansatz
+- enttarnt die Unternehmen, die hinter dem Tracking stehen,
+- erlaubt es, das Tracking selektiv zu blockieren, und
+- legt die Zwecke des Trackings, wie z. B. Analytik oder Werbung, offen.
+
+Die App zielt auch darauf ab, Sie über Ihre Rechte nach dem Datenschutzgesetz, wie z.B. der Datenschutz-Grundverordnung (DSGVO), aufzuklären.
+
+TrackerControl nutzt die VPN-Funktionalität von Android, um die Netzwerkkommunikation von Apps <i>lokal auf dem Android-Gerät</i> zu analysieren. Dies wird durch einen lokalen VPN-Server erreicht, um die Analyse des Netzwerkverkehrs durch TrackerControl zu ermöglichen.
+
+Es wird kein Root benötigt, andere VPNs oder Private DNS werden nicht unterstützt. Es wird kein externer VPN-Server verwendet, um Ihre Daten sicher zu halten! TrackerControl schützt Sie sogar vor <i>DNS-Cloaking</i>, einer beliebten Technik, um Tracker in Webseiten und Apps zu verstecken.
+
+TrackerControl wird immer frei und Open Source sein, da es sich um ein Forschungsprojekt handelt.
+

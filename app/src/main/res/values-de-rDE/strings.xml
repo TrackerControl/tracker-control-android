@@ -91,7 +91,7 @@
     <string name="setting_hosts_url">Hosts-Datei URL</string>
     <string name="setting_hosts_download">Hosts-Datei herunterladen</string>
     <string name="setting_hosts_update">Hosts-Datei aktualisieren</string>
-    <string name="summary_install">Statusleisten-Benachrichtigung anzeigen, um neu installierte Apps direkt zu konfigurieren (Pro-Funktion)</string>
+    <string name="summary_install">Statusleisten-Benachrichtigung für neu installierte Apps anzeigen</string>
     <string name="summary_pause">Nach dem Deaktivieren über die Benachrichtigung TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option).</string>
     <string name="summary_update">Überprüfe zweimal täglich nach neuen Versionen auf GitHub</string>
     <string name="summary_tethering">Abhängig von der Android Version kann Tethering funktionieren. Dieser Verkehr kann nicht gefiltert werden.</string>
@@ -113,7 +113,8 @@
     <string name="msg_waiting">Warte auf Ereignis</string>
     <string name="msg_disabled">Verwenden Sie den obigen Schalter um TrackerControl zu aktivieren.</string>
     <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
-    <string name="msg_installed">\'%1$s\' installiert</string>
+    <string name="msg_installed">Probleme mit %1$s?</string>
+    <string name="msg_installed_description">App erlauben, Unternehmen zu kontaktieren</string>
     <string name="msg_installed_n">Wurde installiert</string>
     <string name="msg_completed">Aktion abgeschlossen</string>
     <string name="msg_vpn">TrackerControl verwendet ein lokales VPN, um den Internetverkehr zu filtern. Gestatten Sie aus diesem Grund eine VPN-Verbindung im nächsten Dialogfenster. Ihr Internetverkehr wird nicht an einen VPN-Server gesendet.</string>
@@ -176,7 +177,7 @@
     <string name="title_interactive_allowed">Erlauben wenn Bildschirm eingeschaltet ist</string>
     <string name="title_roaming_blocked">Beim Roaming blockieren</string>
     <string name="title_metered">Standardmäßig wird eine WLAN-Verbindung als nicht volumenbeschränkt und eine mobile Verbindung als volumenbeschränkt behandelt</string>
-    <string name="title_internet">hat keine Internet-Berechtigung</string>
+    <string name="title_internet">kann nicht auf Internet zugreifen</string>
     <string name="title_disabled">ist deaktiviert</string>
     <string name="title_messaging">Eingehende Nachrichten werden von den Google Play-Diensten empfangen und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
     <string name="title_download">Downloads werden vom Download-Manager durchgeführt und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
@@ -308,9 +309,9 @@ Sincerely,\n\n]]></string>
     <string name="tracker_fingerprinting">Fingerabdruck</string>
     <string name="tracker_social">Sozial</string>
     <string name="tracker_uncategorised">Unkategorisiert</string>
-    <string name="setting_strict_blocking">Strenge Blockierung (Beta)</string>
-    <string name="summary_strict_blocking">Blockieren Sie potenziell notwendige Tracker. Weitere Apps werden unterbrochen.</string>
-    <string name="strict_blocking_explanation">Standardmäßig blockiert TrackerControl alle gefundenen Tracker. Dadurch können Apps beschädigt werden. Der nicht-strenge Modus (in Entwicklung) erlaubt einige wesentliche Tracker.</string>
+    <string name="setting_strict_blocking">Strenges Blocken</string>
+    <string name="summary_strict_blocking">Blockieren Sie bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich. Es werden mehr Apps kaputt gehen.</string>
+    <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
     <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stossen.</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="settings_uninstall">App-Einstellungen &amp; deinstallieren</string>
@@ -331,4 +332,5 @@ Sincerely,\n\n]]></string>
     <string name="category_blocked">Tracker in dieser Kategorie geblockt</string>
     <string name="category_unblocked">Tracker in dieser Kategorie erlaubt</string>
     <string name="category_unblocked_warning">Kategorie blockieren</string>
+    <string name="switch_strict_blocking">Blockiere essentielle Datenübertragung</string>
 </resources>

@@ -91,7 +91,6 @@
     <string name="setting_hosts_url">Ostalarien fitxategiaren URLa</string>
     <string name="setting_hosts_download">Deskargatu ostalarien fitxategia</string>
     <string name="setting_hosts_update">Eguneratu ostalarien fitxategia</string>
-    <string name="summary_install">Erakutsi egoera barrako jakinarazpena berriki instalatutako aplikazioak zuzenean konfiguratzeko (ordainpeko ezaugarria)</string>
     <string name="summary_pause">Jakinarazpenaren etenaren ostean, aktibatu automatikoki TrackerControl berriz aukeratutako minutuak pasatu ostean (idatzi 0 ezaugarri hau desgaitzeko).</string>
     <string name="summary_update">Egiaztatu bertsio berririk dagoen GitHub-en egunean birritan</string>
     <string name="summary_tethering">Android bertsioaren arabera, konexioa partekatzea ibili daiteke ala ez. Partekatutako konexioko trafikoa ezin da iragazi.</string>
@@ -113,7 +112,6 @@
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
     <string name="msg_revoked">TrackerControl desaktibatu egin da, ziur aski VPNan oinarritutako beste aplikazioren bat erabiltzeagatik</string>
-    <string name="msg_installed">\'%1$s\' instalatuta</string>
     <string name="msg_installed_n">Instalatu da</string>
     <string name="msg_completed">Ekintza burututa</string>
     <string name="msg_vpn">TrackerControlek VPN lokal bat darabil internet trafikoa iragazteko.
@@ -180,7 +178,7 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="title_interactive_allowed">Baimendu pantaila piztuta dagoenean</string>
     <string name="title_roaming_blocked">Blokeatu ibiltaritzan</string>
     <string name="title_metered">Defektuz Wi-Fi konexio bat neurtu gabekotzat hartzen da eta sare mugikorra neurtutzat</string>
-    <string name="title_internet">ez du Interneterako baimena</string>
+    <string name="title_internet">Ezin da internetera konektatu</string>
     <string name="title_disabled">desgaituta dago</string>
     <string name="title_messaging">Mezuak Google Play services bidez jasotzen dira, ez ditu aplikazio honek zuzenean jasotzen, beraz ezin dira blokeatu aplikazio hau blokeatuz</string>
     <string name="title_download">Deskargak deskarga kudeatzaileak egiten ditu eta ez aplikazio honek, ondorioz ezin dira blokeatu aplikazio hau blokeatuz</string>
@@ -316,9 +314,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_fingerprinting">Hatzmarkaketa</string>
     <string name="tracker_social">Soziala</string>
     <string name="tracker_uncategorised">Kategoriarik gabe</string>
-    <string name="setting_strict_blocking">Blokeatze zurruna (Beta)</string>
-    <string name="summary_strict_blocking">Blokeatu potentzialki beharrezkoak diren trackeatzaileak. Aplikazio gehiagok egingo dute huts.</string>
-    <string name="strict_blocking_explanation">Defektuz, TrackerControlek trackeatzaile guztiak blokeatzen ditu. Honek aplikazioak apurtu ditzake. Modu ez zurrunean (garatzaile moduan), beharrezko trackeatzaile batzuk baimentzen ditu.</string>
+    <string name="setting_strict_blocking">Blokeatze zurruna</string>
     <string name="exclude_vpn_explanation">Aktibo egon behar da trackeatzaileak detektatu edo blokeatzeko.\n\nAholkua: desaktibatu arazoak badituzu.</string>
     <string name="uninstall">Desinstalatu</string>
     <string name="settings_uninstall">Aplikazioaren ezarpenak &amp; Desinstalatu</string>

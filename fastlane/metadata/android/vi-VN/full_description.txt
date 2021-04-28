@@ -1,0 +1,17 @@
+TrackerControl cho phép người dùng giám sát và kiểm soát sự thu thập thông tin lan rộng, liên tục, không thể thấy trong các ứng dụng di động về hành vi người dùng ('theo dõi').
+
+Để phát hiện việc theo dõi, TrackerControl kết hợp sức mạnh của danh sách chặn Disconnect, được Firefox sử dụng, và danh sách chặn do chúng tôi tự làm, được tạo từ việc phân tích <i>~2 000 000</i> ứng dụng! Thêm nữa, TrackerControl cũng hỗ trợ các danh sách chặn tuỳ chỉnh.
+
+Cách tiếp cận này
+- làm lộ ra những công ty đứng sau việc theo dõi,
+- cho phép bạn chặn việc theo dõi một cách có lựa chọn, và
+- làm lộ ra mục đích của việc theo dõi, như là phân tích hoặc quảng cáo.
+
+Ứng dụng cũng có mục tiêu giáo dục về các quyền của bạn dưới Luật bảo vệ dữ liệu, như là Quy định chung về bảo vệ dữ liệu của Liên minh Châu Âu (GDPR).
+
+TrackerControl chạy bằng cách sử dụng chức năng VPN của Android, để phân tích sự giao tiếp qua mạng của các ứng dụng <i>một cách cục bộ trên thiết bị Android</i>. Việc này được làm thông qua một máy chủ VPN cục bộ, để bật việc phân tích lưu lượng mạng của TrackerControl.
+
+Không yêu cầu root, các VPN khác hoặc DNS riêng không được hỗ trợ. Không có máy chủ VPN ở ngoài nào được sử dụng, để giữ cho dữ liệu của bạn được an toàn! TrackerControl thậm chí còn bảo vệ bạn khỏi <i>che giấu DNS</i>, một kỹ thuật phổ biến để ẩn trình theo dõi trong các trang web và ứng dụng.
+
+TrackerControl sẽ luôn là tự do và mã nguồn mở, với tư cách là một dự án nghiên cứu.
+

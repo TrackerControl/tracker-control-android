@@ -91,7 +91,6 @@
     <string name="setting_hosts_url">URL αρχείου host</string>
     <string name="setting_hosts_download">Κατεβάστε το αρχείο hosts</string>
     <string name="setting_hosts_update">Ενημέρωση αρχείου hosts</string>
-    <string name="summary_install">Εμφάνιση ειδοποίησης στη γραμμή καταγραφής για απευθείας ρύθμιση παραμέτρων πρόσφατα εγκατεστημένων εφαρμογών (pro έκδοση)</string>
     <string name="summary_pause">Μετά την παύση από την ειδοποίηση, ενεργοποιήστε ξανά αυτόματα το TrackerControl μετά τον επιλεγμένο αριθμό λεπτών (πληκτρολογήστε 0 για να απενεργοποιήσετε αυτήν την επιλογή).</string>
     <string name="summary_update">Έλεγχος για νέες κυκλοφορίες στο GitHub, δύο φορές την ημέρα</string>
     <string name="summary_tethering">Ανάλογα με την έκδοση του Android, το tethering ενδέχεται να λειτουργεί ή οχι. Η κίνηση δεδομένων μέσω tethering δεν είναι δυνατό να φιλτραριστεί.</string>
@@ -113,7 +112,6 @@
     <string name="msg_waiting">Αναμονή για συμβάν</string>
     <string name="msg_disabled">Χρησιμοποιήστε τον παραπάνω διακόπτη για να ενεργοποιήσετε το TrackerControl.</string>
     <string name="msg_revoked">Το TrackerControl έχει απενεργοποιηθεί, πιθανότατα χρησιμοποιώντας μια άλλη εφαρμογή που βασίζεται σε VPN</string>
-    <string name="msg_installed">\'%1$s\' έχει εγκατασταθεί</string>
     <string name="msg_installed_n">Έχει εγκατασταθεί</string>
     <string name="msg_completed">Η ενεργεία ολοκληρώθηκε</string>
     <string name="msg_vpn">Το TrackerControl χρησιμοποιεί ένα τοπικό VPN για να φιλτράρει την κίνηση στο διαδίκτυο.
@@ -179,7 +177,6 @@
     <string name="title_interactive_allowed">Επιτρέπεται όταν η οθόνη είναι ενεργοποιημένη</string>
     <string name="title_roaming_blocked">Φραγή κατά την περιαγωγή</string>
     <string name="title_metered">Από προεπιλογή, μια σύνδεση Wi-Fi θεωρείται να είναι χρονικά απεριόριστη και μια σύνδεση κινητού χρονοχρέωση</string>
-    <string name="title_internet">δεν έχει άδεια χρήσης διαδικτύου</string>
     <string name="title_disabled">έχει απενεργοποιηθεί</string>
     <string name="title_messaging">Τα εισερχόμενα μηνύματα λαμβάνονται από τις υπηρεσίες Google Play και όχι από αυτήν την εφαρμογή και επομένως δεν μπορούν να αποκλειστούν αποκλείοντας αυτήν την εφαρμογή</string>
     <string name="title_download">Οι λήψεις εκτελούνται από τον διαχειριστή λήψεων και όχι από αυτήν την εφαρμογή και επομένως δεν μπορούν να αποκλειστούν με τον αποκλεισμό αυτής της εφαρμογής</string>
@@ -311,9 +308,6 @@ Sincerely,\n\n]]></string>
     <string name="tracker_fingerprinting">Ταυτοποίηση (Fingerprinting)</string>
     <string name="tracker_social">Κοινωνικά Δίκτυα</string>
     <string name="tracker_uncategorised">Χωρίς κατηγορία</string>
-    <string name="setting_strict_blocking">Αυστηρός Αποκλεισμός (Beta)</string>
-    <string name="summary_strict_blocking">Αποκλεισμός πιθανών απαραίτητων ιχνηλατών. Περισσότερες εφαρμογές μπορεί να χαλάσουν.</string>
-    <string name="strict_blocking_explanation">Από προεπιλογή, το TrackerControl αποκλείει όλους τους εντοπισμένους ιχνηλάτες. Αυτό μπορεί να χαλάσει τις εφαρμογές. Η μη αυστηρή λειτουργία (υπο ανάπτυξη) επιτρέπει ορισμένους βασικούς ιχνηλάτες.</string>
     <string name="exclude_vpn_explanation">Πρέπει να είναι ενεργό για τον εντοπισμό ή τον αποκλεισμό των ιχνηλατών. \n\nΣυμβουλή: Απενεργοποιήστε το εάν αντιμετωπίζετε προβλήματα.</string>
     <string name="uninstall">Απεγκατάσταση</string>
     <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
