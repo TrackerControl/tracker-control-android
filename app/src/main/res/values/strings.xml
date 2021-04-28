@@ -424,5 +424,7 @@ Sincerely,\n\n]]></string>
     <string name="none">None</string>
     <string name="trackers_static">Trackers in app code</string>
     <string name="trackers_static_explanation">TrackerControl detects tracking in the code and network traffic of apps.\n\nTracking that is detected in the network traffic can be blocked with TrackerControl.</string>
+    <string name="blocked">BLOCKED</string>
+    <string name="allowed">ALLOWED</string>
 
 </resources>

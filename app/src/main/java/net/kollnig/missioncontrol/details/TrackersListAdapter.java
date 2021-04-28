@@ -24,7 +24,10 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +41,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -87,25 +91,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         // Removes blinks
         ((SimpleItemAnimator) v.getItemAnimator()).setSupportsChangeAnimations(false);
-    }
-
-    public static String renderDetails(Context c, Tracker t, boolean blocked) {
-        List<String> sortedHosts = new ArrayList<>(t.getHosts());
-        java.util.Collections.sort(sortedHosts);
-        String hosts = "\n• " + TextUtils.join("\n• ", sortedHosts);
-
-        String name = t.name;
-        if (name.equals(TRACKER_HOSTLIST))
-            name = c.getString(R.string.tracker_hostlist);
-
-        String title;
-        if (t.lastSeen != 0) {
-            title = name + " (" + Util.relativeTime(t.lastSeen) + ")";
-        } else {
-            title = name;
-        }
-
-        return blocked ? title + hosts : title + " (" + c.getString(R.string.unblocked) + ")" + hosts;
     }
 
     public void set(List<TrackerCategory> items) {
@@ -198,9 +183,33 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             Tracker t = getItem(pos);
                             if (t != null) {
+                                String name = t.name;
+                                if (name.equals(TRACKER_HOSTLIST))
+                                    name = getContext().getString(R.string.tracker_hostlist);
+
+                                String title;
+                                if (t.lastSeen != 0) {
+                                    title = name + " (" + Util.relativeTime(t.lastSeen) + ")";
+                                } else {
+                                    title = name;
+                                }
+
+                                List<String> sortedHosts = new ArrayList<>(t.getHosts());
+                                Collections.sort(sortedHosts);
+                                String hosts = TextUtils.join("\n• ", sortedHosts);
+
                                 boolean blocked = b.blocked(mAppUid,
                                         TrackerBlocklist.getBlockingKey(t));
-                                tv.setText(renderDetails(getContext(), t, blocked));
+
+                                String status = getContext().getString(blocked ? R.string.blocked : R.string.allowed);
+                                int color = ContextCompat.getColor(getContext(), blocked ? R.color.colorPrimary: R.color.colorAccent);
+                                String text = String.format("%s %s\n• %s", title, status, hosts);
+                                Spannable spannable = new SpannableString(text);
+                                spannable.setSpan(new ForegroundColorSpan(color),
+                                        title.length() + 1,
+                                        (title + status).length() + 1,
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                tv.setText(spannable, TextView.BufferType.SPANNABLE);
                             }
 
                             return tv;
