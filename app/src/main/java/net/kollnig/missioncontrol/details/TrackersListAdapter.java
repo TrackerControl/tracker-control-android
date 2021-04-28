@@ -231,10 +231,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
                     if (!buttonView.isPressed()) return; // to fix errors
 
-                    if (hasBecomeChecked) {
+                    if (hasBecomeChecked)
                         b.block(mAppUid, trackerCategoryName);
-                        Toast.makeText(mContext, R.string.category_blocked, Toast.LENGTH_SHORT).show();
-                    } else {
+                    else {
                         b.unblock(mAppUid, trackerCategoryName);
                         Toast.makeText(mContext, R.string.category_unblocked, Toast.LENGTH_SHORT).show();
                     }

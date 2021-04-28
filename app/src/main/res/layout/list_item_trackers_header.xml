@@ -41,7 +41,6 @@
                 android:padding="1dp"
                 android:text="@string/trackers_static_explanation"
                 android:textColor="?android:textColorSecondary"
-                android:textStyle="italic"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_name3" />
 
