@@ -427,4 +427,7 @@ Sincerely,\n\n]]></string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>
 
+    <string name="setting_domain_based_blocked">Domain-based Blocking (in Development)</string>
+    <string name="summary_domain_based_blocking">Allows more granular blocking. Still in development.</string>
+
 </resources>

@@ -18,11 +18,13 @@
 package net.kollnig.missioncontrol.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
+import androidx.preference.PreferenceManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,19 +47,27 @@ import java.util.concurrent.ConcurrentHashMap;
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.ServiceSinkhole;
 
-import static eu.faircode.netguard.ServiceSinkhole.prepareHostsBlocked;
-
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
-    private static Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
+
     private static TrackerList instance;
-    private DatabaseHelper databaseHelper;
+    private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
+    private static boolean domainBasedBlocking;
+
+    private final DatabaseHelper databaseHelper;
 
     private TrackerList(Context c) {
         databaseHelper = DatabaseHelper.getInstance(c);
+
+        loadTrackers(c);
+    }
+
+    public void loadTrackers(Context c) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        domainBasedBlocking = prefs.getBoolean("domain_based_blocked", false);
+
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
-        prepareHostsBlocked(c);
     }
 
     public static TrackerList getInstance(Context c) {
@@ -68,7 +78,7 @@ public class TrackerList {
     }
 
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
-    private static Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, "Uncategorised");
+    private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, "Uncategorised");
 
     /**
      * Identifies tracker hosts
@@ -93,7 +103,10 @@ public class TrackerList {
 
         if (t == null
                 && ServiceSinkhole.mapHostsBlocked.containsKey(hostname))
-            return hostlistTracker;
+            if (domainBasedBlocking)
+                return hostlistTracker;
+            else
+                return new Tracker(hostname, "Uncategorised");
 
         return t;
     }
@@ -209,9 +222,8 @@ public class TrackerList {
 
         // sort lists
         Collections.sort(trackerCategoryList, (o1, o2) -> o1.getDisplayName(c).compareTo(o2.getDisplayName(c)));
-        for (TrackerCategory child : trackerCategoryList) {
+        for (TrackerCategory child : trackerCategoryList)
             Collections.sort(child.getChildren(), (o1, o2) -> o2.lastSeen.compareTo(o1.lastSeen));
-        }
 
         return trackerCategoryList;
     }
@@ -260,8 +272,10 @@ public class TrackerList {
 
                 // Add domains to tracker map
                 JSONArray domains = jsonCompany.getJSONArray("doms");
-                for (int j = 0; j < domains.length(); j++)
-                    hostnameToTracker.put(domains.getString(j), tracker);
+                for (int j = 0; j < domains.length(); j++) {
+                    String dom = domains.getString(j);
+                    addTrackerDomain(tracker, dom);
+                }
             }
         } catch (IOException | JSONException e) {
             Log.e(TAG, "Loading X-Ray list failed.. ", e);
@@ -310,13 +324,25 @@ public class TrackerList {
                             continue;
 
                         JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
-                        for (int j = 0; j < urls.length(); j++)
-                            hostnameToTracker.put(urls.getString(j), tracker);
+                        for (int j = 0; j < urls.length(); j++) {
+                            String dom = urls.getString(j);
+
+                            addTrackerDomain(tracker, dom);
+                        }
                     }
                 }
             }
         } catch (IOException | JSONException e) {
             Log.e(TAG, "Loading Disconnect.me list failed.. ", e);
         }
+    }
+
+    private void addTrackerDomain(Tracker tracker, String dom) {
+        if (domainBasedBlocking) {
+            Tracker t = new Tracker(dom + " (" + tracker.name + ")", tracker.category);
+            t.country = tracker.country;
+            hostnameToTracker.put(dom, t);
+        } else
+            hostnameToTracker.put(dom, tracker);
     }
 }
