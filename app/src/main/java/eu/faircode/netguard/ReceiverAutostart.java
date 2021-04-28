@@ -113,7 +113,7 @@ public class ReceiverAutostart extends BroadcastReceiver {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 editor.remove("show_top");
-                if ("data".equals(prefs.getString("sort", "trackers")))
+                if ("data".equals(prefs.getString("sort", "trackers_week")))
                     editor.remove("sort");
             }
 

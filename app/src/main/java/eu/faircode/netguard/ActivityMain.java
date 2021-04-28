@@ -752,13 +752,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         menu.findItem(R.id.menu_app_nointernet).setChecked(prefs.getBoolean("show_nointernet", true));
 
-        String sort = prefs.getString("sort", "trackers");
+        String sort = prefs.getString("sort", "trackers_week");
         if ("uid".equals(sort))
             menu.findItem(R.id.menu_sort_uid).setChecked(true);
         else if ("name".equals(sort))
             menu.findItem(R.id.menu_sort_name).setChecked(true);
+        else if ("trackers_all".equals(sort))
+            menu.findItem(R.id.menu_sort_trackers_all).setChecked(true);
         else
-            menu.findItem(R.id.menu_sort_trackers).setChecked(true);
+            menu.findItem(R.id.menu_sort_trackers_week).setChecked(true);
 
         menu.findItem(R.id.menu_lockdown).setChecked(prefs.getBoolean("lockdown", false));
 
@@ -788,9 +790,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             item.setChecked(true);
             prefs.edit().putString("sort", "name").apply();
             return true;
-        } else if (itemId == R.id.menu_sort_trackers) {
+        } else if (itemId == R.id.menu_sort_trackers_week) {
             item.setChecked(true);
-            prefs.edit().putString("sort", "trackers").apply();
+            prefs.edit().putString("sort", "trackers_week").apply();
+            return true;
+        } else if (itemId == R.id.menu_sort_trackers_all) {
+            item.setChecked(true);
+            prefs.edit().putString("sort", "trackers_all").apply();
             return true;
         } else if (itemId == R.id.menu_sort_uid) {
             item.setChecked(true);

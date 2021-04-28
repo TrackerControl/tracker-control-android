@@ -18,6 +18,7 @@
     <string name="menu_sort">Sort apps</string>
     <string name="menu_sort_name">Sort by name</string>
     <string name="menu_sort_uid">Sort by uid</string>
+    <string name="menu_sort_companies_week">Sort by companies (week)</string>
     <string name="menu_sort_companies">Sort by companies</string>
     <string name="menu_log">Traffic log</string>
     <string name="menu_settings">Settings</string>
@@ -275,9 +276,13 @@ Your internet traffic is not being sent to a remote VPN server.</string>
 
     <!-- App Overview -->
     <string name="tracked_app_name">Application Name</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">contacted %d company last week</item>
+        <item quantity="other">contacted %d companies last week</item>
+    </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">tried contacting at least %d company</item>
-        <item quantity="other">tried contacting at least %d companies</item>
+        <item quantity="one">contacted %d company all time</item>
+        <item quantity="other">contacted %d companies all time</item>
     </plurals>
     <string name="external_servers">Get developer email automatically?</string>
     <string name="confirm_google_info">This app can automatically get the email of the app developer from the Google Play Store for you.</string>

@@ -213,9 +213,12 @@ public class Rule {
 
     // Custom code: tracker counts
     private static Map<Integer, Integer> trackerCounts;
+    private static Map<Integer, Integer> trackerCountsPastWeek;
 
-    public int getTrackerCount() {
-        Integer trackerCount = trackerCounts.get(uid);
+    public int getTrackerCount(boolean pastWeekOnly) {
+        Map<Integer, Integer> c = (pastWeekOnly) ? trackerCountsPastWeek : trackerCounts;
+
+        Integer trackerCount = c.get(uid);
         if (trackerCount == null)
             trackerCount = 0;
 
@@ -415,8 +418,11 @@ public class Rule {
 
             // Load tracking counts
             TrackerList trackerList = TrackerList.getInstance(context);
-            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal();
+            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal(false);
+            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotalPastWeek = trackerList.getTrackerCountsAndTotal(true);
+
             trackerCounts = trackerCountsAndTotal.first();
+            trackerCountsPastWeek = trackerCountsAndTotalPastWeek.first();
             int trackerTotal = trackerCountsAndTotal.second();
 
             if (trackerTotal == 0
@@ -437,7 +443,7 @@ public class Rule {
             final Collator collator = Collator.getInstance(Locale.getDefault());
             collator.setStrength(Collator.SECONDARY); // Case insensitive, process accents etc
 
-            String sort = prefs.getString("sort", "trackers");
+            String sort = prefs.getString("sort", "trackers_week");
             if ("uid".equals(sort))
                 Collections.sort(listRules, new Comparator<Rule>() {
                     @Override
@@ -467,9 +473,11 @@ public class Rule {
                 Collections.sort(listRules, new Comparator<Rule>() {
                     @Override
                     public int compare(Rule rule, Rule other) {
-                        if (rule.getTrackerCount() < other.getTrackerCount())
+                        boolean pastWeekOnly = !("trackers_all".equals(sort));
+
+                        if (rule.getTrackerCount(pastWeekOnly) < other.getTrackerCount(pastWeekOnly))
                             return 1;
-                        else if (rule.getTrackerCount() > other.getTrackerCount())
+                        else if (rule.getTrackerCount(pastWeekOnly) > other.getTrackerCount(pastWeekOnly))
                             return -1;
                         else {
                             int i = collator.compare(rule.name, other.name);

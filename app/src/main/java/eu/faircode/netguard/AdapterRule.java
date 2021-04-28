@@ -558,11 +558,18 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             holder.cbApply.setWidth(0);
         }
 
-        final int trackerCount = rule.getTrackerCount();
+        String sort = prefs.getString("sort", "trackers_week");
+
+        boolean pastWeekOnly = !("trackers_all".equals(sort));
+        final int trackerCount = rule.getTrackerCount(pastWeekOnly);
         if (trackerCount > 0) {
             holder.tvDetails.setVisibility(View.VISIBLE);
-            holder.tvDetails.setText(context.getResources().getQuantityString(
-                    R.plurals.n_companies_found, trackerCount, trackerCount));
+            if (pastWeekOnly)
+                holder.tvDetails.setText(context.getResources().getQuantityString(
+                        R.plurals.n_companies_found_week, trackerCount, trackerCount));
+            else
+                holder.tvDetails.setText(context.getResources().getQuantityString(
+                        R.plurals.n_companies_found, trackerCount, trackerCount));
         } else if (!rule.internet) {
             holder.tvDetails.setVisibility(View.VISIBLE);
             holder.tvDetails.setText(R.string.no_internet);

@@ -34,7 +34,10 @@
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                    android:id="@+id/menu_sort_trackers"
+                    android:id="@+id/menu_sort_trackers_week"
+                    android:title="@string/menu_sort_companies_week"/>
+                <item
+                    android:id="@+id/menu_sort_trackers_all"
                     android:title="@string/menu_sort_companies"/>
                 <item
                     android:id="@+id/menu_sort_name"

@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -103,12 +104,17 @@ public class TrackerList {
      * @return A cursor pointing to the data. Caller must close the cursor.
      * Cursor should have app name and leak summation based on a sort type
      */
-    public synchronized Pair<Map<Integer, Integer>, Integer> getTrackerCountsAndTotal() {
+    public synchronized Pair<Map<Integer, Integer>, Integer> getTrackerCountsAndTotal(boolean pastWeekOnly) {
         Map<Integer, Set<String>> trackers = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts();
+        long limit = new Date().getTime() - 7 * 24 * 3600 * 1000L;
         if (cursor.moveToFirst()) {
             do {
+                long time = cursor.getLong(cursor.getColumnIndex("time"));
+                if (pastWeekOnly && time < limit)
+                    continue;
+
                 int uid = cursor.getInt(cursor.getColumnIndex("uid"));
                 Set<String> observedTrackers = trackers.get(uid);
                 if (observedTrackers == null) {
