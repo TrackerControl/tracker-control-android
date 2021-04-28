@@ -180,40 +180,43 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         View getView(int pos, @Nullable View convertView,
                                      @NonNull ViewGroup parent) {
                             TextView tv = (TextView) super.getView(pos, convertView, parent);
-
                             Tracker t = getItem(pos);
-                            if (t != null) {
-                                String name = t.name;
-                                if (name.equals(TRACKER_HOSTLIST))
-                                    name = getContext().getString(R.string.tracker_hostlist);
-
-                                String title;
-                                if (t.lastSeen != 0)
-                                    title = name + " (" + Util.relativeTime(t.lastSeen) + ")";
-                                else
-                                    title = name;
-
-                                List<String> sortedHosts = new ArrayList<>(t.getHosts());
-                                Collections.sort(sortedHosts);
-                                String hosts = TextUtils.join("\n• ", sortedHosts);
-
-                                boolean blocked = b.blocked(mAppUid,
-                                        TrackerBlocklist.getBlockingKey(t));
-
-                                String status = getContext().getString(blocked ? R.string.blocked : R.string.allowed);
-                                int color = ContextCompat.getColor(getContext(), blocked ? R.color.colorPrimary: R.color.colorAccent);
-                                String text = String.format("%s %s\n• %s", title, status, hosts);
-                                Spannable spannable = new SpannableString(text);
-                                spannable.setSpan(new ForegroundColorSpan(color),
-                                        title.length() + 1,
-                                        (title + status).length() + 1,
-                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                tv.setText(spannable, TextView.BufferType.SPANNABLE);
-                            }
-
+                            if (t != null)
+                                updateText(tv, t);
                             return tv;
                         }
 
+                        private void updateText(TextView tv, Tracker t) {
+                            String name = t.name;
+                            if (name.equals(TRACKER_HOSTLIST))
+                                name = getContext().getString(R.string.tracker_hostlist);
+
+                            String title = name;
+                            if (t.lastSeen != 0)
+                                name += " (" + Util.relativeTime(t.lastSeen) + ")";
+
+                            List<String> sortedHosts = new ArrayList<>(t.getHosts());
+                            Collections.sort(sortedHosts);
+                            String hosts = TextUtils.join("\n• ", sortedHosts);
+
+                            boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
+                            if (!categoryBlocked) {
+                                tv.setText(String.format("%s\n• %s", title, hosts));
+                                return;
+                            }
+
+                            boolean companyBlocked = b.blocked(mAppUid,
+                                    TrackerBlocklist.getBlockingKey(t));
+                            String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
+                            int color = ContextCompat.getColor(getContext(), companyBlocked ? R.color.colorPrimary: R.color.colorAccent);
+                            String text = String.format("%s %s\n• %s", title, status, hosts);
+                            Spannable spannable = new SpannableString(text);
+                            spannable.setSpan(new ForegroundColorSpan(color),
+                                    title.length() + 1,
+                                    (title + status).length() + 1,
+                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            tv.setText(spannable, TextView.BufferType.SPANNABLE);
+                        }
                     };
             holder.mCompaniesList.setAdapter(trackersAdapter);
 
@@ -235,6 +238,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         b.unblock(mAppUid, trackerCategoryName);
                         Toast.makeText(mContext, R.string.category_unblocked, Toast.LENGTH_SHORT).show();
                     }
+
+                    trackersAdapter.notifyDataSetChanged();
                 });
                 if (enabled)
                     holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {

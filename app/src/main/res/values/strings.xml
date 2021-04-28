@@ -415,8 +415,8 @@ Sincerely,\n\n]]></string>
     <string name="internet_unblocked">Internet access unblocked</string>
 
     <string name="category_blocked">Trackers in category blocked</string>
-    <string name="category_unblocked">Trackers in category unblocked</string>
-    <string name="category_unblocked_warning">Need to block category</string>
+    <string name="category_unblocked">Trackers in category allowed</string>
+    <string name="category_unblocked_warning">First block category!</string>
     <string name="switch_strict_blocking">Block essential data sharing</string>
 
     <string name="tracking_detection_failed">Tracker library detection failed. Please report this issue to the developer.</string>

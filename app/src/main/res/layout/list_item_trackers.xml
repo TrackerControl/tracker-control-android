@@ -34,7 +34,17 @@
             android:layout_marginTop="8dp"
             android:padding="1dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/root_name" />
+            app:layout_constraintTop_toBottomOf="@+id/root_name"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textStyle="italic"
+            android:text="Tip: You can unblock individual entries by tapping on them."
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/details_list" />
 
         <Switch
             android:id="@+id/switch_tracker"
