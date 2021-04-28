@@ -188,9 +188,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     name = getContext().getString(R.string.tracker_hostlist);
 
                                 String title;
-                                if (t.lastSeen != 0) {
+                                if (t.lastSeen != 0)
                                     title = name + " (" + Util.relativeTime(t.lastSeen) + ")";
-                                } else {
+                                else
                                     title = name;
                                 }
 
