@@ -28,7 +28,7 @@ public class Tracker {
     public Long lastSeen;
     public String country;
 
-    private Set<String> hosts = new HashSet<>();
+    private final Set<String> hosts = new HashSet<>();
 
     public Tracker(String name, String category, long lastSeen) {
         this.name = name;

@@ -17,14 +17,21 @@
 
 package net.kollnig.missioncontrol.details;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,14 +41,19 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.StaticTracker;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
@@ -111,7 +123,52 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item_trackers_header, parent, false);
-            return new VHHeader(view);
+
+            VHHeader header = new VHHeader(view);
+
+            PackageManager pm = mContext.getPackageManager();
+            Resources res = mContext.getResources();
+
+            TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+            tvDetectedTrackers.setVisibility(View.GONE);
+            ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
+
+            if (mContext instanceof Activity) {
+                Activity a = (Activity) mContext;
+
+                AsyncTask.execute(() -> {
+                    Set<StaticTracker> trackers;
+
+                    try {
+                        PackageInfo pkg = pm.getPackageInfo(mAppId, 0);
+                        String apk = pkg.applicationInfo.publicSourceDir;
+                        trackers = Common.detectTrackersStatic(res, apk);
+                        Log.d(TAG, trackers.toString());
+                    } catch (PackageManager.NameNotFoundException | IOException e) {
+                        a.runOnUiThread(() -> {
+                            tvDetectedTrackers.setText(R.string.tracking_detection_failed);
+                            tvDetectedTrackers.setVisibility(View.VISIBLE);
+                            pbTrackerDetection.setVisibility(View.GONE);
+                        });
+                        return;
+                    }
+
+                    final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
+                    Collections.sort(sortedTrackers);
+
+                    a.runOnUiThread(() -> {
+                        if (sortedTrackers.size() > 0)
+                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), sortedTrackers.toString()));
+                        else
+                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), a.getString(R.string.none)));
+
+                        tvDetectedTrackers.setVisibility(View.VISIBLE);
+                        pbTrackerDetection.setVisibility(View.GONE);
+                    });
+                });
+            }
+
+            return header;
         }
 
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");

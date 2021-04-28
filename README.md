@@ -151,6 +151,8 @@ that is distributed with the Firefox browser.
 
 *Country Visualisation*: TrackerControl offers to visualise the countries to which trackers sent data. The code was kindly offered by [Takuma Seno](https://github.com/takuseno/GeoMap). To map IP addresses to countries, TrackerControl includes the GeoLite2 database, created by MaxMind, available from <https://www.maxmind.com>.
 
+*ClassyShark3xodus*: TrackerControl allows to detect trackers in the app code. The signatures to do this are taken from [ClassyShark3xodus](https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/src).
+
 ## License
 This project is licensed under
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).

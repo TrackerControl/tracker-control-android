@@ -122,6 +122,9 @@ dependencies {
     compileOnly "com.google.auto.service:auto-service-annotations:1.0-rc6"
     annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
 
+    // Tracker detection
+    implementation 'com.github.lanchon.dexpatcher:multidexlib2:2.3.4.r2'
+
     implementation project(path: ':geomap')
 }
 

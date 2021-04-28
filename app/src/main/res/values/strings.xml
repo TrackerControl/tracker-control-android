@@ -414,4 +414,10 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked_warning">Need to block category</string>
     <string name="switch_strict_blocking">Block essential data sharing</string>
 
+    <string name="tracking_detection_failed">Tracker detection failed. Please report this issue to the developer.</string>
+    <string name="detected_trackers">Detected trackers in app code: %s</string>
+    <string name="none">None</string>
+    <string name="trackers_static">Trackers in app code</string>
+    <string name="trackers_static_explanation">TrackerControl detects tracking in the code and network traffic of apps.\n\nTracking that is detected in the network traffic can be blocked with TrackerControl.</string>
+
 </resources>
