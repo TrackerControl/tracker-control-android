@@ -146,36 +146,30 @@ public class CountriesFragment extends Fragment {
         TextView txtFailure = v.findViewById(R.id.txtFailure);
 
         new Thread(() -> {
-            boolean success = true;
-            final Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
-            SVG svg;
+            final int success;
             try {
-                svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
-            } catch (IllegalStateException | IOException | SVGParseException e) {
-                success = false;
-                svg = null;
-                e.printStackTrace();
-            }
+                SVG svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
 
-            final RenderOptions renderOptions = new RenderOptions();
-            String countries = TextUtils.join(",#", hostCountriesCount.keySet());
-            renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
+                Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
 
-            // run on UI, when mv initialised
-            boolean finalSuccess = success;
-            SVG finalSvg = svg;
-            mv.post(() -> {
-                if (finalSuccess) {
-                    Picture picture = finalSvg.renderToPicture(renderOptions);
+                final RenderOptions renderOptions = new RenderOptions();
+                String countries = TextUtils.join(",#", hostCountriesCount.keySet());
+                renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
+
+                mv.post(() -> {
+                    Picture picture = svg.renderToPicture(renderOptions);
                     mv.setImageDrawable(new PictureDrawable(picture));
-                    mv.setVisibility(View.VISIBLE);
-                } else {
+                    pbLoading.setVisibility(View.GONE);
+                });
+            } catch (IllegalStateException | IOException | SVGParseException e) {
+                e.printStackTrace();
+
+                mv.post(() -> {
                     mv.setVisibility(View.GONE);
                     txtFailure.setVisibility(View.VISIBLE);
-                }
-
-                pbLoading.setVisibility(View.GONE);
-            });
+                    pbLoading.setVisibility(View.GONE);
+                });
+            }
         }).start();
     }
 }
