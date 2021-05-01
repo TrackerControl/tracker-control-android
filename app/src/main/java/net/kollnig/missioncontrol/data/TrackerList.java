@@ -347,7 +347,7 @@ public class TrackerList {
 
     private void addTrackerDomain(Tracker tracker, String dom) {
         if (domainBasedBlocking) {
-            Tracker t = new Tracker(dom + " (" + tracker.name + ")", tracker.category);
+            Tracker t = new Tracker(dom + " (" + tracker.getName() + ")", tracker.category);
             t.country = tracker.country;
             hostnameToTracker.put(dom, t);
         } else

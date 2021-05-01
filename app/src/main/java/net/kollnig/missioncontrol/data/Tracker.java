@@ -48,6 +48,12 @@ public class Tracker {
     }
 
     public String getName() {
+        if (name.equals("Alphabet"))
+            return "Google";
+
+        if (name.equals("Adobe Systems"))
+            return "Adobe";
+
         return name;
     }
 

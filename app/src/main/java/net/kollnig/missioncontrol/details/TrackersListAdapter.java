@@ -187,7 +187,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         }
 
                         private void updateText(TextView tv, Tracker t) {
-                            String name = t.name;
+                            String name = t.getName();
                             if (name.equals(TRACKER_HOSTLIST))
                                 name = getContext().getString(R.string.tracker_hostlist);
 
