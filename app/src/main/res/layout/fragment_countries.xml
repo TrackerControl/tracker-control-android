@@ -56,6 +56,11 @@
         android:layout_height="wrap_content"
         android:indeterminate="true"/>
 
+    <ImageView
+        android:id="@+id/svgView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <TextView
         android:id="@+id/txtFailure"
         android:layout_width="match_parent"
@@ -68,13 +73,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <jp.gr.java_conf.androtaku.geomap.GeoMapView
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:visibility="invisible" />
 
 </LinearLayout>

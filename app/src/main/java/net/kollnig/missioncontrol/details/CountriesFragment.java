@@ -19,16 +19,23 @@ package net.kollnig.missioncontrol.details;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Picture;
+import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.collection.ArrayMap;
 import androidx.fragment.app.Fragment;
 
+import com.caverock.androidsvg.RenderOptions;
+import com.caverock.androidsvg.SVG;
+import com.caverock.androidsvg.SVGParseException;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.GeoIp2Exception;
@@ -43,7 +50,6 @@ import java.net.InetAddress;
 import java.util.Map;
 
 import eu.faircode.netguard.DatabaseHelper;
-import jp.gr.java_conf.androtaku.geomap.GeoMapView;
 
 import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
 
@@ -135,26 +141,40 @@ public class CountriesFragment extends Fragment {
         mAppUid = arguments.getInt(ARG_APP_UID);
 
         ProgressBar pbLoading = v.findViewById(R.id.pbLoading);
-        GeoMapView mv = v.findViewById(R.id.map_view);
+
+        ImageView mv = v.findViewById(R.id.svgView);
         TextView txtFailure = v.findViewById(R.id.txtFailure);
-        mv.setOnShownListener(success -> {
-            if (success) {
-                mv.setVisibility(View.VISIBLE);
-            } else {
-                mv.setVisibility(View.GONE);
-                txtFailure.setVisibility(View.VISIBLE);
-            }
-            pbLoading.setVisibility(View.GONE);
-        });
 
         new Thread(() -> {
+            boolean success = true;
             final Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
+            SVG svg;
+            try {
+                svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
+            } catch (IllegalStateException | IOException | SVGParseException e) {
+                success = false;
+                svg = null;
+                e.printStackTrace();
+            }
+
+            final RenderOptions renderOptions = new RenderOptions();
+            String countries = TextUtils.join(",#", hostCountriesCount.keySet());
+            renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
 
             // run on UI, when mv initialised
+            boolean finalSuccess = success;
+            SVG finalSvg = svg;
             mv.post(() -> {
-                for (String code : hostCountriesCount.keySet())
-                    mv.highlightCountry(code, "#B71C1C");
-                mv.show();
+                if (finalSuccess) {
+                    Picture picture = finalSvg.renderToPicture(renderOptions);
+                    mv.setImageDrawable(new PictureDrawable(picture));
+                    mv.setVisibility(View.VISIBLE);
+                } else {
+                    mv.setVisibility(View.GONE);
+                    txtFailure.setVisibility(View.VISIBLE);
+                }
+
+                pbLoading.setVisibility(View.GONE);
             });
         }).start();
     }
