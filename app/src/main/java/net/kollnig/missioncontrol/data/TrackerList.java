@@ -125,16 +125,30 @@ public class TrackerList {
         long limit = new Date().getTime() - 7 * 24 * 3600 * 1000L;
         if (cursor.moveToFirst()) {
             do {
+                int appUid = cursor.getInt(cursor.getColumnIndex("uid"));
+                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
+                Tracker tracker = findTracker(hostname);
+                checkTracker(trackers, appUid, tracker);
+
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
                 if (time > limit)
-                    checkTracker(trackersWeek, cursor);
-
-                checkTracker(trackers, cursor);
+                    checkTracker(trackersWeek, appUid, tracker);
             } while (cursor.moveToNext());
         }
         cursor.close();
 
         return new Pair<>(countTrackers(trackers), countTrackers(trackersWeek));
+    }
+
+    private void checkTracker(Map<Integer, Set<String>> trackers, int appUid, Tracker tracker) {
+        Set<String> observedTrackers = trackers.get(appUid);
+        if (observedTrackers == null) {
+            observedTrackers = new HashSet<>();
+            trackers.put(appUid, observedTrackers);
+        }
+
+        if (tracker != null)
+            observedTrackers.add(tracker.getName());
     }
 
     @NonNull
@@ -147,21 +161,6 @@ public class TrackerList {
         }
 
         return new Pair<>(trackerCounts, totalTracker);
-    }
-
-    private void checkTracker(Map<Integer, Set<String>> trackers, Cursor cursor) {
-        int uid = cursor.getInt(cursor.getColumnIndex("uid"));
-        Set<String> observedTrackers = trackers.get(uid);
-        if (observedTrackers == null) {
-            observedTrackers = new HashSet<>();
-            trackers.put(uid, observedTrackers);
-        }
-
-        // Add tracker
-        String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-        Tracker tracker = findTracker(hostname);
-        if (tracker != null)
-            observedTrackers.add(tracker.getName());
     }
 
     /**
