@@ -1,17 +1,17 @@
-TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
+Το TrackerControl επιτρέπει στους χρήστες να παρακολουθούν και να ελέγχουν την ευρεία, συνεχιζόμενη, κρυφή συλλογή δεδομένων, σε εφαρμογές για κινητά, που αφορούν την συμπεριφορά των χρηστών ('tracking').
 
-To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
+Για την ανίχνευση της συλλογής, το TrackerControl συνδυάζει τη δύναμη της λίστας αποκλεισμού αποσύνδεσης που χρησιμοποιείται από τον Firefox, με τη δική μας εσωτερική λίστα αποκλεισμών που δημιουργήθηκε από την ανάλυση <i>~2 000 000</i> εφαρμογών! Επιπλέον, το TrackerControl υποστηρίζει προσαρμοσμένες λίστες αποκλεισμού.
 
-This approach
-- reveals the companies behind tracking,
-- allows to block tracking selectively, and
-- exposes the purposes of tracking, such as analytics or advertising.
+Αυτή η προσέγγιση
+- αποκαλύπτει τις εταιρείες πίσω από την παρακολούθηση,
+- επιτρέπει τον αποκλεισμό της παρακολούθησης επιλεκτικά και
+- εκθέτει τους σκοπούς της ανίχνευσης, όπως η ανάλυση ή η διαφήμιση.
 
-The app also aims to educate about your rights under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
+Η εφαρμογή έχει επίσης ως στόχο να εκπαιδεύσει σχετικά με τα δικαιώματά σας στο πλαίσιο του Νόμου για την Προστασία Δεδομένων, όπως ο Γενικός Κανονισμός της ΕΕ για την Προστασία Δεδομένων (GDPR).
 
-Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps' network communications <i>locally on the Android device</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
+Τεχνικά το TrackerControl χρησιμοποιεί τη λειτουργία VPN του Android, για την ανάλυση των επικοινωνιών δικτύου εφαρμογών <i>τοπικά στη συσκευή Android</i>. Αυτό επιτυγχάνεται μέσω ενός τοπικού διακομιστή VPN, για την ενεργοποίηση της ανάλυσης κυκλοφορίας του δικτύου από το TrackerControl.
 
-No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
+Δεν απαιτείται root, άλλα VPN ή Private DNS δεν υποστηρίζονται. Δεν χρησιμοποιείται εξωτερικός διακομιστής VPN, για την ασφαλή διατήρηση των δεδομένων σας! Το TrackerControl προστατεύει ακόμη και από το <i>DNS cloacking</i>, μια δημοφιλή τεχνική απόκρυψης ιχνηλατών σε ιστοσελίδες και εφαρμογές.
 
-TrackerControl will always be free and open source, being a research project.
+Το TrackerControl θα είναι πάντα ελεύθερο και ανοικτού κώδικα, καθώς αποτελεί ερευνητικό έργο.
 
