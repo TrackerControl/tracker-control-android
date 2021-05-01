@@ -193,7 +193,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             String title = name;
                             if (t.lastSeen != 0)
-                                name += " (" + Util.relativeTime(t.lastSeen) + ")";
+                                title += " (" + Util.relativeTime(t.lastSeen) + ")";
 
                             List<String> sortedHosts = new ArrayList<>(t.getHosts());
                             Collections.sort(sortedHosts);
