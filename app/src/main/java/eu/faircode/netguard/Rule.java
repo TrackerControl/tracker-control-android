@@ -418,12 +418,15 @@ public class Rule {
 
             // Load tracking counts
             TrackerList trackerList = TrackerList.getInstance(context);
-            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal(false);
-            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotalPastWeek = trackerList.getTrackerCountsAndTotal(true);
+            Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>>
+                    trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal();
 
-            trackerCounts = trackerCountsAndTotal.first();
+            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotalAll = trackerCountsAndTotal.first();
+            Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotalPastWeek = trackerCountsAndTotal.second();
+
+            trackerCounts = trackerCountsAndTotalAll.first();
             trackerCountsPastWeek = trackerCountsAndTotalPastWeek.first();
-            int trackerTotal = trackerCountsAndTotal.second();
+            int trackerTotal = trackerCountsAndTotalAll.second();
 
             if (trackerTotal == 0
                 && context instanceof Activity) {

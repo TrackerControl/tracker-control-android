@@ -117,34 +117,28 @@ public class TrackerList {
      * @return A cursor pointing to the data. Caller must close the cursor.
      * Cursor should have app name and leak summation based on a sort type
      */
-    public synchronized Pair<Map<Integer, Integer>, Integer> getTrackerCountsAndTotal(boolean pastWeekOnly) {
+    public synchronized Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> getTrackerCountsAndTotal() {
         Map<Integer, Set<String>> trackers = new ArrayMap<>();
+        Map<Integer, Set<String>> trackersWeek = new ArrayMap<>();
 
         Cursor cursor = databaseHelper.getHosts();
         long limit = new Date().getTime() - 7 * 24 * 3600 * 1000L;
         if (cursor.moveToFirst()) {
             do {
                 long time = cursor.getLong(cursor.getColumnIndex("time"));
-                if (pastWeekOnly && time < limit)
-                    continue;
+                if (time > limit)
+                    checkTracker(trackersWeek, cursor);
 
-                int uid = cursor.getInt(cursor.getColumnIndex("uid"));
-                Set<String> observedTrackers = trackers.get(uid);
-                if (observedTrackers == null) {
-                    observedTrackers = new HashSet<>();
-                    trackers.put(uid, observedTrackers);
-                }
-
-                // Add tracker
-                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-                Tracker tracker = findTracker(hostname);
-                if (tracker != null)
-                    observedTrackers.add(tracker.getName());
+                checkTracker(trackers, cursor);
             } while (cursor.moveToNext());
         }
         cursor.close();
 
-        // Reduce to counts
+        return new Pair<>(countTrackers(trackers), countTrackers(trackersWeek));
+    }
+
+    @NonNull
+    private Pair<Map<Integer, Integer>, Integer> countTrackers(Map<Integer, Set<String>> trackers) {
         int totalTracker = 0;
         Map<Integer, Integer> trackerCounts = new ArrayMap<>();
         for (Map.Entry<Integer, Set<String>> entry : trackers.entrySet()) {
@@ -153,6 +147,21 @@ public class TrackerList {
         }
 
         return new Pair<>(trackerCounts, totalTracker);
+    }
+
+    private void checkTracker(Map<Integer, Set<String>> trackers, Cursor cursor) {
+        int uid = cursor.getInt(cursor.getColumnIndex("uid"));
+        Set<String> observedTrackers = trackers.get(uid);
+        if (observedTrackers == null) {
+            observedTrackers = new HashSet<>();
+            trackers.put(uid, observedTrackers);
+        }
+
+        // Add tracker
+        String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
+        Tracker tracker = findTracker(hostname);
+        if (tracker != null)
+            observedTrackers.add(tracker.getName());
     }
 
     /**
