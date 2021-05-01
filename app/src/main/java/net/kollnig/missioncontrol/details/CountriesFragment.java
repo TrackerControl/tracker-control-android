@@ -146,7 +146,6 @@ public class CountriesFragment extends Fragment {
         TextView txtFailure = v.findViewById(R.id.txtFailure);
 
         new Thread(() -> {
-            final int success;
             try {
                 SVG svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
 
