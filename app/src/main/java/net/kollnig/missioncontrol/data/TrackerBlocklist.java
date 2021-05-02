@@ -66,21 +66,32 @@ public class TrackerBlocklist {
 
         if (set != null) {
             blockmap.clear();
-            for (String id : set) {
-                Set<String> subset = prefs.getStringSet
-                        (SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + id, null);
-                if (subset == null) {
-                    subset = new HashSet<>();
+            for (String appUid : set) {
+                // Get saved blocklist for UID
+                Set<String> prefset = prefs.getStringSet
+                        (SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
+                Set<String> subset = new HashSet<>(); // make an editable copy
+                if (prefset != null)
+                    subset.addAll(prefset);
+
+                // Migrate from older TC version
+                if (subset.contains("Uncategorised | Alphabet")) {
+                    subset.remove("Uncategorised | Alphabet");
+                    subset.add("Uncategorised | Google");
+                }
+                if (subset.contains("Uncategorised | Adobe Systems")) {
+                    subset.remove("Uncategorised | Adobe Systems");
+                    subset.add("Uncategorised | Adobe");
                 }
 
                 // Retrieve uid
                 int uid = -1;
-                if (StringUtils.isNumeric(id)) {
-                    uid = Integer.parseInt(id);
+                if (StringUtils.isNumeric(appUid)) {
+                    uid = Integer.parseInt(appUid);
                 } else {
                     // Convert from old TrackerControl version
                     try {
-                        uid = c.getPackageManager().getApplicationInfo(id, 0).uid;
+                        uid = c.getPackageManager().getApplicationInfo(appUid, 0).uid;
                     } catch (PackageManager.NameNotFoundException e) {
                         e.printStackTrace();
                     }
