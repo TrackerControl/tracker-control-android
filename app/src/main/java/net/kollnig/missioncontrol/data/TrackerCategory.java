@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrackerCategory {
+    public static final String UNCATEGORISED = "Uncategorised";
     public String category;
     public Long lastSeen;
     private List<Tracker> children;
@@ -49,6 +50,7 @@ public class TrackerCategory {
                 return c.getString(R.string.tracker_fingerprinting);
             case "Social":
                 return c.getString(R.string.tracker_social);
+            case UNCATEGORISED:
             default:
                 return c.getString(R.string.tracker_uncategorised);
         }

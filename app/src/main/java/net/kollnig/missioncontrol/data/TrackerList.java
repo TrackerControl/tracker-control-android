@@ -47,6 +47,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.ServiceSinkhole;
 
+import static net.kollnig.missioncontrol.data.TrackerCategory.UNCATEGORISED;
+
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
 
@@ -78,7 +80,7 @@ public class TrackerList {
     }
 
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
-    private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, "Uncategorised");
+    private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
 
     /**
      * Identifies tracker hosts
@@ -106,7 +108,7 @@ public class TrackerList {
             if (domainBasedBlocking)
                 return hostlistTracker;
             else
-                return new Tracker(hostname, "Uncategorised");
+                return new Tracker(hostname, UNCATEGORISED);
 
         return t;
     }
@@ -272,7 +274,7 @@ public class TrackerList {
                 // Check if we've seen a tracker from the same root company
                 tracker = rootParents.get(name);
                 if (tracker == null) {
-                    String category = necessary ? "Content" : "Uncategorised";
+                    String category = necessary ? "Content" : UNCATEGORISED;
                     tracker = new Tracker(name, category);
                     tracker.country = jsonCompany.getString("country");
                     rootParents.put(name, tracker);
