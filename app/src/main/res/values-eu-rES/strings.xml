@@ -215,10 +215,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="title_log_copy">Kopiatu</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Aplikazioaren izena</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">gutxienez enpresa %dekin kontaktatzen saiatu da</item>
-        <item quantity="other">gutxienez %d enpresarekin kontaktatzen saiatu da</item>
-    </plurals>
     <string name="external_servers">Lortu garatzailearen eposta automatikoki?</string>
     <string name="confirm_google_info">Aplikazio honek aplikazioaren garatzaileren eposta Google Play Storetik lortu dezake.</string>
     <string name="ok">OK</string>
@@ -333,6 +329,4 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Internet sarbidea blokeatuta</string>
     <string name="internet_unblocked">Internet sarbidea desblokeatuta</string>
     <string name="category_blocked">Blokeatutako kategoriako trackeatzaileak</string>
-    <string name="category_unblocked">Desblokeatutako kategoriako trackeatzaileak</string>
-    <string name="category_unblocked_warning">Blokeatu behar dituzu kategoria</string>
 </resources>

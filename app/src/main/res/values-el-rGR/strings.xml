@@ -217,10 +217,6 @@
     <string name="title_log_copy">Αντιγραφή</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Όνομα εφαρμογής</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">προσπάθησε να επικοινωνήσει με τουλάχιστον %d εταιρεία</item>
-        <item quantity="other">προσπάθησε να επικοινωνήσει με τουλάχιστον %d εταιρείες</item>
-    </plurals>
     <string name="external_servers">Να λάβετε αυτόματα το email του προγραμματιστή;</string>
     <string name="confirm_google_info">Αυτή η εφαρμογή μπορεί να λάβει αυτόματα το email του προγραμματιστή της εφαρμογής από το Google Play Store για εσάς.</string>
     <string name="ok">ΟΚ</string>
@@ -333,7 +329,5 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Η πρόσβαση στο διαδίκτυο αποκλείστηκε</string>
     <string name="internet_unblocked">Η πρόσβαση στο διαδίκτυο επιτράπηκε</string>
     <string name="category_blocked">Οι ιχνηλάτες στην κατηγορία, αποκλείστηκαν</string>
-    <string name="category_unblocked">Οι ιχνηλάτες στην κατηγορία, δεν αποκλείστηκαν</string>
-    <string name="category_unblocked_warning">Πρέπει να μπλοκάρετε την κατηγορία</string>
     <string name="switch_strict_blocking">Αποκλεισμός ουσιαστικής κοινής χρήσης δεδομένων</string>
 </resources>

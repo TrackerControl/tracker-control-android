@@ -20,6 +20,4 @@
     <string name="internet_blocked">Internet-hozzáférés blokkolva</string>
     <string name="internet_unblocked">Internet-hozzáférés feloldva</string>
     <string name="category_blocked">Blokkolt kategóriába tartozó nyomkövetők</string>
-    <string name="category_unblocked">Trackers kategóriában feloldva</string>
-    <string name="category_unblocked_warning">Kell blokkolni kategória</string>
 </resources>

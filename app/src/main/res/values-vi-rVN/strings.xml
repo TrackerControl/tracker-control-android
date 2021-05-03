@@ -164,9 +164,6 @@
     <string name="title_log_copy">Sao chép</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Tên ứng dụng</string>
-    <plurals name="n_companies_found">
-        <item quantity="other">đã thử liên hệ ít nhất %d công ty</item>
-    </plurals>
     <string name="external_servers">Tự động lấy email của nhà phát triển?</string>
     <string name="confirm_google_info">Ứng dụng này có thể tự động lấy email của nhà phát triển ứng dụng từ CH Play cho bạn.</string>
     <string name="ok">OK</string>

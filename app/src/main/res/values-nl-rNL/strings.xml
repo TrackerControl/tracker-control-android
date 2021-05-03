@@ -184,10 +184,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_log_copy">Kopieer</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Toepassing Naam</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">geprobeerd contact op te nemen met ten minste %d bedrijf</item>
-        <item quantity="other">geprobeerd contact op te nemen met ten minste %d bedrijven</item>
-    </plurals>
     <string name="external_servers">Krijg je automatisch een e-mail van een ontwikkelaar?</string>
     <string name="confirm_google_info">Deze app kan automatisch de e-mail van de app-ontwikkelaar uit de Google Play Store voor u halen.</string>
     <string name="ok">OK</string>

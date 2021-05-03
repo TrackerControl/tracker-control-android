@@ -218,10 +218,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_log_copy">Copiar</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nombre de la aplicación</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">intentó contactar al menos %d empresas</item>
-        <item quantity="other">trató de contactar al menos %d empresas</item>
-    </plurals>
     <string name="external_servers">¿Obtener el correo electrónico del desarrollador automáticamente?</string>
     <string name="confirm_google_info">Esta aplicación puede obtener automáticamente el correo electrónico del desarrollador de la aplicación desde Google Play Store por usted.</string>
     <string name="ok">Aceptar</string>
@@ -334,7 +330,5 @@ Atentamente,\n\n]]></string>
     <string name="internet_blocked">Acceso a Internet bloqueado</string>
     <string name="internet_unblocked">Acceso a Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores en la categoría bloqueados</string>
-    <string name="category_unblocked">Rastreadores en la categoría desbloqueados</string>
-    <string name="category_unblocked_warning">Se necesita bloquear la categoría</string>
     <string name="switch_strict_blocking">Bloquear que se compartan datos esenciales</string>
 </resources>

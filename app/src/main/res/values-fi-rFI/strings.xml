@@ -184,10 +184,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="title_log_copy">Kopio</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Sovelluksen nimi</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">yritti ottaa yhteyttä vähintään %d yritykseen</item>
-        <item quantity="other">yritti ottaa yhteyttä vähintään %d yritykseen</item>
-    </plurals>
     <string name="external_servers">Saada kehittäjän sähköposti automaattisesti?</string>
     <string name="confirm_google_info">Tämä sovellus voi saada sovelluskehittäjän sähköpostin automaattisesti Google Play Kaupasta.</string>
     <string name="ok">OK</string>
