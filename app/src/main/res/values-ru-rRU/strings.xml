@@ -17,6 +17,7 @@
     <string name="menu_sort">Сортировка приложений</string>
     <string name="menu_sort_name">По названию</string>
     <string name="menu_sort_uid">По uid</string>
+    <string name="menu_sort_companies_week">Сортировать по компаниям (за неделю)</string>
     <string name="menu_sort_companies">По компании</string>
     <string name="menu_log">Лог трафика</string>
     <string name="menu_settings">Настройки</string>
@@ -161,7 +162,7 @@
         <item>TCP</item>
     </string-array>
     <string name="menu_add">Добавить</string>
-    <string name="menu_delete">Удалить лог</string>
+    <string name="menu_delete">Очистить лог</string>
     <string name="setting_forwarding">Перенаправление портов</string>
     <string name="title_protocol">Протокол</string>
     <string name="title_dport">Порт источника</string>
@@ -218,11 +219,17 @@
     <string name="title_log_copy">Скопировать</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Название приложения</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">%d компания за неделю</item>
+        <item quantity="few">%d компании за неделю</item>
+        <item quantity="many">%d компаний за неделю</item>
+        <item quantity="other">%d компаний за неделю</item>
+    </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">пыталось связаться как минимум с %d компанией</item>
-        <item quantity="few">пыталось связаться как минимум с %d компаниями</item>
-        <item quantity="many">пыталось связаться как минимум с %d компаниями</item>
-        <item quantity="other">пыталось связаться как минимум с %d компаниями</item>
+        <item quantity="one">%d компания за всё время</item>
+        <item quantity="few">%d компании за всё время</item>
+        <item quantity="many">%d компаний за всё время</item>
+        <item quantity="other">%d компаний за всё время</item>
     </plurals>
     <string name="external_servers">Получить e-mail адрес разработчика автоматически?</string>
     <string name="confirm_google_info">Это приложение может автоматически получить e-mail адрес разработчика приложения из Google Play Store для вас.</string>
@@ -336,7 +343,16 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Доступ в интернет заблокирован</string>
     <string name="internet_unblocked">Доступ в интернет разблокирован</string>
     <string name="category_blocked">Трекеры в категории заблокированы</string>
-    <string name="category_unblocked">Трекеры в категории разблокированы</string>
-    <string name="category_unblocked_warning">Нужно заблокировать категорию</string>
+    <string name="category_unblocked">Трекеры в категории разрешены</string>
+    <string name="category_unblocked_warning">Сначала заблокируйте категорию!</string>
     <string name="switch_strict_blocking">Блокировка основных (необходимых для работы) данных</string>
+    <string name="tracking_detection_failed">Ошибка обнаружения библиотек трекинга. Пожалуйста, сообщите об этой проблеме разработчику.</string>
+    <string name="detected_trackers">Обнаружено библиотек трекинга: %s</string>
+    <string name="none">Нет</string>
+    <string name="trackers_static">Библиотеки трекинга</string>
+    <string name="trackers_static_explanation">TrackerControl обнаруживает трекинг в коде приложения («библиотеки») и в сетевом трафике.\n\nТрекинг, обнаруженный в трафике, можно заблокировать с помощью TrackerControl.</string>
+    <string name="blocked">ЗАБЛОКИРОВАНО</string>
+    <string name="allowed">РАЗРЕШЕНО</string>
+    <string name="setting_domain_based_blocked">Блокировка по доменным именам (в разработке)</string>
+    <string name="summary_domain_based_blocking">Позволяет более точную блокировку. Пока в разработке.</string>
 </resources>

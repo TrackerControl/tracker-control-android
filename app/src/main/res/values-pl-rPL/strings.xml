@@ -186,12 +186,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="title_log_copy">Kopia</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nazwa wniosku</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">próbował skontaktować się z co najmniej %d firmą</item>
-        <item quantity="few">próbowano skontaktować się z co najmniej %d firmą</item>
-        <item quantity="many">próbował skontaktować się z co najmniej %d firmą</item>
-        <item quantity="other">próbował skontaktować się z co najmniej %d firm</item>
-    </plurals>
     <string name="external_servers">Otrzymujesz automatycznie e-mail od dewelopera?</string>
     <string name="confirm_google_info">Ta aplikacja może automatycznie uzyskać wiadomość e-mail od twórcy aplikacji z Google Play Store za Ciebie.</string>
     <string name="ok">OK</string>

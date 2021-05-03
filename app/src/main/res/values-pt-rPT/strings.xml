@@ -184,10 +184,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_log_copy">Cópia</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nome da Aplicação</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">tentou contatar no mínimo %d empresa</item>
-        <item quantity="other">experimentou contato com pelo menos %d empresas</item>
-    </plurals>
     <string name="external_servers">Receber e-mail do desenvolvedor automaticamente?</string>
     <string name="confirm_google_info">Este aplicativo pode receber automaticamente o e-mail do desenvolvedor do aplicativo na Loja do Google Play para você.</string>
     <string name="ok">OK</string>

@@ -17,6 +17,7 @@
     <string name="menu_sort">排序应用</string>
     <string name="menu_sort_name">按名称排序</string>
     <string name="menu_sort_uid">按 UID 排序</string>
+    <string name="menu_sort_companies_week">按公司排序(周)</string>
     <string name="menu_sort_companies">按公司排序</string>
     <string name="menu_log">流量日志</string>
     <string name="menu_settings">设置</string>
@@ -217,8 +218,11 @@
     <string name="title_log_copy">复制</string>
     <!-- App Overview -->
     <string name="tracked_app_name">应用程序名称</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="other">上周联系了 %d 个公司</item>
+    </plurals>
     <plurals name="n_companies_found">
-        <item quantity="other">尝试联系至少%d家公司</item>
+        <item quantity="other">使用以来联系了 %d 家公司</item>
     </plurals>
     <string name="external_servers">自动获取开发者电子邮件？</string>
     <string name="confirm_google_info">本应用可以自动为您从谷歌Play Store获取应用开发者的邮件。</string>
@@ -331,7 +335,16 @@
     <string name="internet_blocked">互联网访问被阻止</string>
     <string name="internet_unblocked">已解除联网限制</string>
     <string name="category_blocked">已阻止类别中的追踪器</string>
-    <string name="category_unblocked">已解除阻止类别中的追踪器</string>
-    <string name="category_unblocked_warning">需要阻止的类别</string>
+    <string name="category_unblocked">已允许此类别中的追踪器</string>
+    <string name="category_unblocked_warning">第一个拦截分类！</string>
     <string name="switch_strict_blocking">组织必要的数据共享</string>
+    <string name="tracking_detection_failed">追踪库检测失败。请将此问题报告给开发者。</string>
+    <string name="detected_trackers">检测到的跟踪库： %s</string>
+    <string name="none">无</string>
+    <string name="trackers_static">跟踪库</string>
+    <string name="trackers_static_explanation">TrackerControl检测代码（“库”）中的跟踪以及应用程序的网络流量。\n\n可以使用TrackerControl阻止在网络流量中检测到的跟踪。</string>
+    <string name="blocked">已屏蔽</string>
+    <string name="allowed">已允许</string>
+    <string name="setting_domain_based_blocked">基于域名的屏蔽(开发中)</string>
+    <string name="summary_domain_based_blocking">允许进行更高数据粒度的阻止。 仍在开发中。</string>
 </resources>
