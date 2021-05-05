@@ -214,10 +214,6 @@
     <string name="title_log_copy">Kopieren</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Name der App</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">versucht, mindestens %d Unternehmen zu kontaktieren</item>
-        <item quantity="other">versucht, mindestens %d Unternehmen zu kontaktieren</item>
-    </plurals>
     <string name="external_servers">Entwickler E-Mails automatisch erhalten?</string>
     <string name="confirm_google_info">Diese App kann automatisch die E-Mail des App-Entwicklers aus dem Google Play Store abrufen.</string>
     <string name="ok">Ok</string>
@@ -330,7 +326,5 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Internetzugang blockiert</string>
     <string name="internet_unblocked">Internetzugang freigegeben</string>
     <string name="category_blocked">Tracker in dieser Kategorie geblockt</string>
-    <string name="category_unblocked">Tracker in dieser Kategorie erlaubt</string>
-    <string name="category_unblocked_warning">Kategorie blockieren</string>
     <string name="switch_strict_blocking">Blockiere essentielle Datenübertragung</string>
 </resources>

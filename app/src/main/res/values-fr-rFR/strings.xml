@@ -216,10 +216,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_log_copy">Copier</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nom de l\'application</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">a essayé de contacter au moins %d entreprise</item>
-        <item quantity="other">a essayé de contacter au moins %d entreprises</item>
-    </plurals>
     <string name="external_servers">Obtenir automatiquement le courriel du développeur ?</string>
     <string name="confirm_google_info">Cette application peut obtenir automatiquement le courriel du développeur de l\'application depuis la boutique Google Play pour vous.</string>
     <string name="ok">OK</string>
@@ -332,7 +328,5 @@ Cordialement,\n\n]]></string>
     <string name="internet_blocked">Accès à Internet bloqué</string>
     <string name="internet_unblocked">Accès à Internet débloqué</string>
     <string name="category_blocked">Traqueurs dans la catégorie bloqués</string>
-    <string name="category_unblocked">Traqueurs dans la catégorie débloqués</string>
-    <string name="category_unblocked_warning">Nécessite de bloquer la catégorie</string>
     <string name="switch_strict_blocking">Bloquer le partage de données essentielles</string>
 </resources>

@@ -218,10 +218,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="title_log_copy">Copia</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nome applicazione</string>
-    <plurals name="n_companies_found">
-        <item quantity="one">ha provato a comunicare con almeno %d azienda</item>
-        <item quantity="other">ha provato a comunicare con almeno %d aziende</item>
-    </plurals>
     <string name="external_servers">Ottenere automaticamente l\'email dello sviluppatore?</string>
     <string name="confirm_google_info">Questa applicazione può ottenere automaticamente l\'email dello sviluppatore dell\'applicazione dal Google Play Store per te.</string>
     <string name="ok">OK</string>
@@ -334,7 +330,5 @@ Cordiali saluti,\n\n]]></string>
     <string name="internet_blocked">Accesso a internet bloccato</string>
     <string name="internet_unblocked">Accesso a internet non bloccato</string>
     <string name="category_blocked">Tracker nella categoria bloccati</string>
-    <string name="category_unblocked">Tracker nella categoria sbloccati</string>
-    <string name="category_unblocked_warning">Necessario bloccare la categoria</string>
     <string name="switch_strict_blocking">Blocca la condivisione di dati essenziali</string>
 </resources>

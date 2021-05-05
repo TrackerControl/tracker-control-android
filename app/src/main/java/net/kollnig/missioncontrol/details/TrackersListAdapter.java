@@ -200,21 +200,29 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             String hosts = TextUtils.join("\n• ", sortedHosts);
 
                             boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
-                            if (!categoryBlocked) {
-                                tv.setText(String.format("%s\n• %s", title, hosts));
-                                return;
-                            }
-
-                            boolean companyBlocked = b.blocked(mAppUid,
-                                    TrackerBlocklist.getBlockingKey(t));
-                            String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
-                            int color = ContextCompat.getColor(getContext(), companyBlocked ? R.color.colorPrimary: R.color.colorAccent);
-                            String text = String.format("%s %s\n• %s", title, status, hosts);
+                            String text;
+                            if (categoryBlocked)
+                                text = String.format("%s %s\n• %s", title, status, hosts);
+                            else
+                                text = String.format("%s\n• %s", title, hosts);
+                            
                             Spannable spannable = new SpannableString(text);
-                            spannable.setSpan(new ForegroundColorSpan(color),
-                                    title.length() + 1,
-                                    (title + status).length() + 1,
+                            spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+                                    0,
+                                    title.length(),
                                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            
+                            if (categoryBlocked) {
+                                boolean companyBlocked = b.blocked(mAppUid,
+                                        TrackerBlocklist.getBlockingKey(t));
+                                String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
+                                int color = ContextCompat.getColor(getContext(), companyBlocked ? R.color.colorPrimary: R.color.colorAccent);
+                                spannable.setSpan(new ForegroundColorSpan(color),
+                                        title.length() + 1,
+                                        (title + status).length() + 1,
+                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
+                            
                             tv.setText(spannable, TextView.BufferType.SPANNABLE);
                         }
                     };
