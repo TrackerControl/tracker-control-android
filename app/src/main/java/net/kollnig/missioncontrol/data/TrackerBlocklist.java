@@ -39,9 +39,8 @@ public class TrackerBlocklist {
 
     private TrackerBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
-        if (c != null) {
+        if (c != null)
             loadSettings(c);
-        }
     }
 
     /**
@@ -53,6 +52,7 @@ public class TrackerBlocklist {
     public static TrackerBlocklist getInstance(Context c) {
         if (instance == null)
             instance = new TrackerBlocklist(c);
+
         return instance;
     }
 
@@ -70,7 +70,9 @@ public class TrackerBlocklist {
                 // Get saved blocklist for UID
                 Set<String> prefset = prefs.getStringSet
                         (SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
-                Set<String> subset = new HashSet<>(); // make an editable copy
+
+                // Make an editable copy
+                Set<String> subset = new HashSet<>();
                 if (prefset != null)
                     subset.addAll(prefset);
 
@@ -86,9 +88,9 @@ public class TrackerBlocklist {
 
                 // Retrieve uid
                 int uid = -1;
-                if (StringUtils.isNumeric(appUid)) {
+                if (StringUtils.isNumeric(appUid))
                     uid = Integer.parseInt(appUid);
-                } else {
+                else {
                     // Convert from old TrackerControl version
                     try {
                         uid = c.getPackageManager().getApplicationInfo(appUid, 0).uid;
