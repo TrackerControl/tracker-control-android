@@ -1,0 +1,7 @@
+- [FEATURE] Add ClassyShark-like tracker detection
+- [FEATURE] Add domain-based blocking (in development)
+- [FEATURE] Add option to show tracking data sharing over past 7 days
+- [IMPROVEMENT] Faster and correct GeoMap
+- [IMPROVEMENT] Make tracker details UI more beautiful and intuitive
+- [FIXES] Fix crash, and correct counting of tracker companies.
+- [UPDATES] Update dependencies, translations, and tracker signatures

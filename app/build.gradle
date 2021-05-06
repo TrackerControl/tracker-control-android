@@ -8,8 +8,8 @@ android {
         minSdkVersion 22
         targetSdkVersion 29
         //noinspection HighAppVersionCode
-        versionCode 2021042802
-        versionName "2021.04.28"
+        versionCode 2021050501
+        versionName "2021.05.05"
 
         externalNativeBuild {
             cmake {
@@ -125,7 +125,7 @@ dependencies {
     // Tracker detection
     implementation 'com.github.lanchon.dexpatcher:multidexlib2:2.3.4.r2'
 
-    implementation project(path: ':geomap')
+    implementation 'com.caverock:androidsvg-aar:1.4'
 }
 
 // Fix lint error on release builds
