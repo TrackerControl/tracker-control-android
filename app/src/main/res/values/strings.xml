@@ -419,7 +419,8 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked_warning">First block category!</string>
     <string name="switch_strict_blocking">Block essential data sharing</string>
 
-    <string name="tracking_detection_failed">Tracker library detection failed. Please report this issue to the developer.</string>
+    <string name="tracking_detection_failed">Tracker library detection failed.</string>
+    <string name="tracking_detection_failed_report">Tracker library detection failed. Please report this issue to the developer.</string>
     <string name="detected_trackers">Detected tracker libraries: %s</string>
     <string name="none">None</string>
     <string name="trackers_static">Tracker libraries</string>

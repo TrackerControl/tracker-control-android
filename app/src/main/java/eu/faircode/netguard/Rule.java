@@ -114,7 +114,7 @@ public class Rule {
         return cacheLabel.get(info);
     }
 
-    static boolean isSystem(String packageName, Context context) {
+    public static boolean isSystem(String packageName, Context context) {
         if (!cacheSystem.containsKey(packageName))
             cacheSystem.put(packageName, Util.isSystem(packageName, context));
         return cacheSystem.get(packageName);

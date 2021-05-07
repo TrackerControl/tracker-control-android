@@ -62,6 +62,8 @@ import java.util.Set;
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
+import lanchon.multidexlib2.EmptyMultiDexContainerException;
+import lanchon.multidexlib2.MultiDexDetectedException;
 
 import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
 
@@ -122,6 +124,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 Activity a = (Activity) mContext;
 
                 AsyncTask.execute(() -> {
+                    boolean isSystem = Rule.isSystem(mAppId, mContext);
                     Set<StaticTracker> trackers;
 
                     try {
@@ -129,9 +132,14 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         String apk = pkg.applicationInfo.publicSourceDir;
                         trackers = Common.detectTrackersStatic(res, apk);
                         Log.d(TAG, trackers.toString());
-                    } catch (PackageManager.NameNotFoundException | IOException e) {
+                    } catch (PackageManager.NameNotFoundException | IOException | EmptyMultiDexContainerException | MultiDexDetectedException e) {
                         a.runOnUiThread(() -> {
-                            tvDetectedTrackers.setText(R.string.tracking_detection_failed);
+                            if (e instanceof EmptyMultiDexContainerException
+                                    || e instanceof MultiDexDetectedException
+                                    || isSystem)
+                                tvDetectedTrackers.setText(R.string.tracking_detection_failed);
+                            else
+                                tvDetectedTrackers.setText(R.string.tracking_detection_failed_report);
                             tvDetectedTrackers.setVisibility(View.VISIBLE);
                             pbTrackerDetection.setVisibility(View.GONE);
                         });
@@ -201,7 +209,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                             boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                             Spannable spannable;
-                            if (!categoryBlocked) {
+                            if (!categoryBlocked || Util.isPlayStoreInstall()) {
                                 String text = String.format("%s\n• %s", title, hosts);
                                 spannable = new SpannableString(text);
                             } else {
