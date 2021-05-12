@@ -17,6 +17,7 @@
     <string name="menu_sort">Ordina applicazioni</string>
     <string name="menu_sort_name">Ordina per nome</string>
     <string name="menu_sort_uid">Ordina per uid</string>
+    <string name="menu_sort_companies_week">Ordina per società (settimana)</string>
     <string name="menu_sort_companies">Ordina per azienda</string>
     <string name="menu_log">Registro del traffico</string>
     <string name="menu_settings">Impostazioni</string>
@@ -218,6 +219,14 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="title_log_copy">Copia</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nome applicazione</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">ha contattato %d azienda la settimana scorsa</item>
+        <item quantity="other">ha contattato %d aziende la settimana scorsa</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">ha contattato %d azienda in continuazione</item>
+        <item quantity="other">ha contattato %d aziende in continuazione</item>
+    </plurals>
     <string name="external_servers">Ottenere automaticamente l\'email dello sviluppatore?</string>
     <string name="confirm_google_info">Questa applicazione può ottenere automaticamente l\'email dello sviluppatore dell\'applicazione dal Google Play Store per te.</string>
     <string name="ok">OK</string>
@@ -330,5 +339,16 @@ Cordiali saluti,\n\n]]></string>
     <string name="internet_blocked">Accesso a internet bloccato</string>
     <string name="internet_unblocked">Accesso a internet non bloccato</string>
     <string name="category_blocked">Tracker nella categoria bloccati</string>
+    <string name="category_unblocked">Tracker nella categoria consentiti</string>
+    <string name="category_unblocked_warning">Prima categoria di blocchi!</string>
     <string name="switch_strict_blocking">Blocca la condivisione di dati essenziali</string>
+    <string name="tracking_detection_failed">Rilevamento librerie tracker fallito. Si prega di segnalare questo problema allo sviluppatore.</string>
+    <string name="detected_trackers">Librerie di tracker rilevati: %s</string>
+    <string name="none">Nessuno</string>
+    <string name="trackers_static">Librerie tracker</string>
+    <string name="trackers_static_explanation">TrackerControl rileva codice di tracking (\'librerie\') e il traffico di rete delle applicazioni.\n\nIl tracciamento che viene rilevato nel traffico di rete può essere bloccato con TrackerControl.</string>
+    <string name="blocked">BLOCCATO</string>
+    <string name="allowed">CONSENTITO</string>
+    <string name="setting_domain_based_blocked">Blocco basato sul dominio (in Sviluppo)</string>
+    <string name="summary_domain_based_blocking">Consente un blocco più decentralizzato. Ancora in sviluppo.</string>
 </resources>
