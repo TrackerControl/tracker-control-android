@@ -2,12 +2,10 @@ package net.kollnig.missioncontrol.data;
 
 import androidx.annotation.NonNull;
 
-import java.util.Objects;
-
 public class StaticTracker implements Comparable<StaticTracker> {
     private final String name;
     private final String web;
-    private final Integer id;
+    private final int id;
     private final String sign;
 
     public StaticTracker(@NonNull String name, String web, Integer id, String sign) {
@@ -23,12 +21,12 @@ public class StaticTracker implements Comparable<StaticTracker> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StaticTracker tracker = (StaticTracker) o;
-        return id.equals(tracker.id);
+        return id == tracker.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return id;
     }
 
     @Override
