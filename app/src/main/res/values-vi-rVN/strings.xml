@@ -8,6 +8,7 @@
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Chính sách riêng tư</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Chính sách cookie</a></string>
     <string name="channel_foreground">Các dịch vụ đang chạy</string>
     <string name="channel_notify">Thông báo chung</string>
+    <string name="channel_access">Thông báo truy cập</string>
     <string name="menu_search">Tìm kiếm ứng dụng</string>
     <string name="menu_filter">Lọc ứng dụng</string>
     <string name="menu_app_user">Hiện ứng dụng người dùng</string>
@@ -94,7 +95,9 @@
     <string name="summary_pause">Sau khi tạm dừng từ thông báo, tự động bật lại TrackerControl sau số phút được chọn (nhập 0 để tắt tùy chọn này).</string>
     <string name="summary_update">Kiểm tra phiên bản mới trên GitHub hai lần mỗi ngày</string>
     <string name="summary_tethering">Tùy thuộc vào phiên bản Android, việc chia sẻ mạng có thể được hoặc không được. Lưu lượng được chia sẻ không thể được lọc.</string>
+    <string name="summary_subnet">Bật định tuyến mạng con; có thể sẽ bật gọi Wi-Fi, nhưng cũng có thể sẽ động chạm đến các lỗi trong Android và làm tăng sử dụng pin</string>
     <string name="summary_lan">Cho phép các ứng dụng kết nối đến các địa chỉ mạng cục bộ, như 10.0.0.0/8, 172.16.0.0/12 và 192.168.0.0/16</string>
+    <string name="summary_ip6">Định tuyến lưu lượng IPv6 đến TrackerControl để nó có thể được cho phép hoặc chặn một cách có chọn lọc</string>
     <string name="summary_system">Định nghĩa các quy tắc cho các ứng dụng hệ thống (dành cho chuyên gia)</string>
     <string name="summary_log_app">Tắt để giảm sử dụng pin. Các trình theo dõi mới vẫn sẽ được chặn, nhưng không được hiện.</string>
     <string name="summary_track_usage">Theo dõi số lượng byte đã gửi và nhận cho mỗi ứng dụng và địa chỉ. Điều này có thể dẫn đến sử dụng thêm pin.</string>
@@ -114,6 +117,7 @@
     <string name="msg_completed">Hành động hoàn tất</string>
     <string name="msg_vpn">TrackerControl sử dụng một VPN cục bộ để lọc lưu lượng internet. Vì lý do này, hãy cho phép một kết nối VPN trong hộp thoại tiếp theo. Lưu lượng internet của bạn không được gửi đến một máy chủ VPN từ xa.</string>
     <string name="msg_try">Thử TrackerControl</string>
+    <string name="msg_filter4">Android 4 yêu cầu việc lọc được bật</string>
     <string name="msg_import_last">Lần nhập cuối: %s</string>
     <string name="msg_downloading">Đang tải xuống\n%1s</string>
     <string name="msg_downloaded">Đã tải xuống tệp máy chủ</string>
@@ -142,6 +146,7 @@
     <string name="title_rport">Cổng đích</string>
     <string name="title_ruid">Ứng dụng đích</string>
     <string name="title_external">Đối với một máy chủ ngoài chọn \'nobody\'</string>
+    <string name="title_lockdown_enabled">Lưu lượng bị khóa chặt</string>
     <string name="title_unmetered_allowed">Lưu lượng không trả phí được cho phép</string>
     <string name="title_unmetered_blocked">Lưu lượng không trả phí bị chặn</string>
     <string name="title_unmetered_disabled">Các quy tắc không trả phí không được áp dụng</string>
@@ -161,6 +166,7 @@
     <string name="title_screen_wifi">Cho phép Wi-Fi khi màn hình bật</string>
     <string name="title_screen_other">Cho phép mạng di động khi màn hình bật</string>
     <string name="title_roaming">Chặn khi chuyển vùng</string>
+    <string name="title_lockdown">Cho phép trong chế độ khóa chặt</string>
     <string name="title_access">Các cố gắng truy cập</string>
     <string name="title_precedence">Các quy tắc truy cập được ưu tiên trước các quy tắc khác</string>
     <string name="title_options">Tùy chọn</string>
@@ -183,6 +189,12 @@
     <string name="title_log_copy">Sao chép</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Tên ứng dụng</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="other">đã liên hệ với %d công ty trong tuần trước</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="other">đã liên hệ với %d công ty trong tất cả thời gian</item>
+    </plurals>
     <string name="external_servers">Tự động lấy email của nhà phát triển?</string>
     <string name="confirm_google_info">Ứng dụng này có thể tự động lấy email của nhà phát triển ứng dụng từ CH Play cho bạn.</string>
     <string name="ok">OK</string>
@@ -240,4 +252,13 @@
     <string name="back">Quay lại</string>
     <string name="forever_free">Miễn phí mãi mãi</string>
     <string name="your_privacy">Sự riêng tư của bạn</string>
+    <string name="unblocked">Đã bỏ chặn</string>
+    <string name="tracking_detection_failed">Phát hiện thư viện trình theo dõi thất bại. Vui lòng báo cáo vấn đề này đến nhà phát triển.</string>
+    <string name="detected_trackers">Đã phát hiện thư viện trình theo dõi: %s</string>
+    <string name="none">Không có</string>
+    <string name="trackers_static">Thư viện trình theo dõi</string>
+    <string name="blocked">ĐÃ CHẶN</string>
+    <string name="allowed">ĐÃ CHO PHÉP</string>
+    <string name="setting_domain_based_blocked">Chặn dựa trên miền (đang được phát triển)</string>
+    <string name="summary_domain_based_blocking">Cho phép chặn một cách chi tiết hơn. Vẫn đang được phát triển.</string>
 </resources>
