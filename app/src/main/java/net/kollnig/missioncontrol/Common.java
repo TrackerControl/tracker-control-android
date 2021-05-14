@@ -51,8 +51,6 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import lanchon.multidexlib2.BasicDexFileNamer;
-import lanchon.multidexlib2.EmptyMultiDexContainerException;
-import lanchon.multidexlib2.MultiDexDetectedException;
 import lanchon.multidexlib2.MultiDexIO;
 
 public class Common {
@@ -170,7 +168,7 @@ public class Common {
     }
 
     @NonNull
-    public static Set<StaticTracker> detectTrackersStatic(Resources res, String apk) throws IOException, EmptyMultiDexContainerException, MultiDexDetectedException {
+    public static Set<StaticTracker> detectTrackersStatic(Resources res, String apk) throws IOException, RuntimeException {
         DexFile dx = MultiDexIO.readDexFile(true, new File(apk), new BasicDexFileNamer(), null, null);
 
         String[] Sign = res.getStringArray(R.array.trackers);

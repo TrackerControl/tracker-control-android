@@ -53,7 +53,6 @@ import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -62,6 +61,8 @@ import java.util.Set;
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
+import lanchon.multidexlib2.DuplicateEntryNameException;
+import lanchon.multidexlib2.DuplicateTypeException;
 import lanchon.multidexlib2.EmptyMultiDexContainerException;
 import lanchon.multidexlib2.MultiDexDetectedException;
 
@@ -132,10 +133,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         String apk = pkg.applicationInfo.publicSourceDir;
                         trackers = Common.detectTrackersStatic(res, apk);
                         Log.d(TAG, trackers.toString());
-                    } catch (PackageManager.NameNotFoundException | IOException | EmptyMultiDexContainerException | MultiDexDetectedException e) {
+                    } catch (Exception e) {
                         a.runOnUiThread(() -> {
                             if (e instanceof EmptyMultiDexContainerException
                                     || e instanceof MultiDexDetectedException
+                                    || e instanceof DuplicateTypeException
+                                    || e instanceof DuplicateEntryNameException
+                                    || e instanceof PackageManager.NameNotFoundException
                                     || isSystem)
                                 tvDetectedTrackers.setText(R.string.tracking_detection_failed);
                             else
