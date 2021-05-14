@@ -16,7 +16,9 @@
     <string name="menu_sort">Sắp xếp ứng dụng</string>
     <string name="menu_sort_name">Sắp xếp theo tên</string>
     <string name="menu_sort_uid">Sắp xếp theo uid</string>
+    <string name="menu_sort_companies_week">Sắp xếp theo công ty (tuần)</string>
     <string name="menu_sort_companies">Sắp xếp theo công ty</string>
+    <string name="menu_log">Nhật ký lưu lượng</string>
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_invite">Mời</string>
     <string name="menu_legend">Chú giải</string>
@@ -46,6 +48,7 @@
         <item quantity="other">Tạm dừng %d phút</item>
     </plurals>
     <string name="setting_network_options">Tùy chọn mạng</string>
+    <string name="setting_subnet">Định tuyến mạng con</string>
     <string name="setting_tethering">Cho phép chia sẻ internet</string>
     <string name="setting_lan">Cho phép truy cập mạng LAN</string>
     <string name="setting_ip6">Bật lưu lượng IPv6</string>
@@ -54,10 +57,16 @@
     <string name="setting_advanced_options">Tùy chọn nâng cao</string>
     <string name="setting_system">Quản lý ứng dụng hệ thống</string>
     <string name="setting_log_app">Tìm kiếm trình theo dõi mới</string>
+    <string name="setting_log_logcat">Ghi lại các sự truyền tải ra ADB</string>
     <string name="setting_filter">Chặn trình theo dõi</string>
     <string name="setting_filter_udp">Chặn trình theo dõi trên UDP</string>
+    <string name="setting_handover">Chuyển giao VPN liền mạch khi tải lại</string>
+    <string name="setting_lockdown">Khoá chặt lưu lượng</string>
     <string name="setting_track_usage">Theo dõi sử dụng mạng</string>
     <string name="setting_reset_usage">Đặt lại sử dụng mạng</string>
+    <string name="setting_show_resolved">Hiện các tên miền đã xử lý</string>
+    <string name="setting_block_domains">Bật tệp máy chủ</string>
+    <string name="setting_rcode">Phản hồi chặn máy chủ: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -76,8 +85,15 @@
     <string name="setting_backup">Sao lưu</string>
     <string name="setting_export">Xuất cài đặt (không phải cho việc đặt lại thiết bị)</string>
     <string name="setting_import">Nhập cài đặt</string>
+    <string name="setting_hosts">Nhập tệp máy chủ</string>
+    <string name="setting_hosts_append">Nhập tệp máy chủ (thêm vào)</string>
+    <string name="setting_hosts_url">URL tệp máy chủ</string>
+    <string name="setting_hosts_download">Tải xuống tệp máy chủ</string>
+    <string name="setting_hosts_update">Câp nhật tệp máy chủ</string>
     <string name="summary_install">Hiện thông báo trên thanh trạng thái cho các ứng dụng mới cài đặt</string>
+    <string name="summary_pause">Sau khi tạm dừng từ thông báo, tự động bật lại TrackerControl sau số phút được chọn (nhập 0 để tắt tùy chọn này).</string>
     <string name="summary_update">Kiểm tra phiên bản mới trên GitHub hai lần mỗi ngày</string>
+    <string name="summary_tethering">Tùy thuộc vào phiên bản Android, việc chia sẻ mạng có thể được hoặc không được. Lưu lượng được chia sẻ không thể được lọc.</string>
     <string name="summary_lan">Cho phép các ứng dụng kết nối đến các địa chỉ mạng cục bộ, như 10.0.0.0/8, 172.16.0.0/12 và 192.168.0.0/16</string>
     <string name="summary_system">Định nghĩa các quy tắc cho các ứng dụng hệ thống (dành cho chuyên gia)</string>
     <string name="summary_log_app">Tắt để giảm sử dụng pin. Các trình theo dõi mới vẫn sẽ được chặn, nhưng không được hiện.</string>
@@ -100,12 +116,15 @@
     <string name="msg_try">Thử TrackerControl</string>
     <string name="msg_import_last">Lần nhập cuối: %s</string>
     <string name="msg_downloading">Đang tải xuống\n%1s</string>
+    <string name="msg_downloaded">Đã tải xuống tệp máy chủ</string>
+    <string name="msg_updated">Đã cập nhật và áp dụng tệp máy chủ!</string>
     <string name="msg_download_last">Lần tải xuống cuối: %s</string>
     <string name="msg_update_last">Lần cập nhật cuối: %s</string>
     <string name="msg_metered">Mạng có trả phí</string>
     <string name="msg_inactive">Không có kết nối internet hoạt động</string>
     <string name="msg_queue">TrackerControl đang bận</string>
     <string name="msg_update">Có bản cập nhật, nhấn để tải xuống</string>
+    <string name="msg_usage">Bạn có thể cho phép (xanh lá) hoặc từ chối (đỏ) truy cập internet Wi-Fi hoặc mạng di động bằng cách nhấn vào biểu tượng bên cạnh ứng dụng</string>
     <string name="msg_whitelist">Truy cập Internet được cho phép theo mặc định (chế độ danh sách đen), điều này có thể được thay đổi trong cài đặt</string>
     <string name="msg_vpn_cancelled">Đã hủy kết nối VPN\nBạn đã thiết lập một VPN khác làm VPN luôn bật à?</string>
     <string name="msg_unavailable">Tính năng này không có sẵn trong phiên bản Android này</string>
