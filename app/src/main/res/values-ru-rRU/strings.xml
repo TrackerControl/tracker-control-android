@@ -17,8 +17,8 @@
     <string name="menu_sort">Сортировка приложений</string>
     <string name="menu_sort_name">По названию</string>
     <string name="menu_sort_uid">По uid</string>
-    <string name="menu_sort_companies_week">Сортировать по компаниям (за неделю)</string>
-    <string name="menu_sort_companies">По компании</string>
+    <string name="menu_sort_companies_week">По компаниям (за неделю)</string>
+    <string name="menu_sort_companies">По компаниям</string>
     <string name="menu_log">Лог трафика</string>
     <string name="menu_settings">Настройки</string>
     <string name="menu_invite">Пригласить</string>
@@ -248,7 +248,7 @@
     <string name="tab_actions">Мои данные</string>
     <string name="tracker_name">Название трекера</string>
     <string name="internet_access">Интернет-доступ</string>
-    <string name="internet_access_explanation">Должен быть включён для доступа в Интернет.\n\nПодсказка: Вы также можете нажать значок приложения на главном экране.</string>
+    <string name="internet_access_explanation">Должен быть включён для доступа в Интернет.\n\nСовет: Вы также можете нажать значок приложения на главном экране.</string>
     <string name="app_info">Управление приложением</string>
     <!-- Actions -->
     <string name="block_tracking">Блокировать трекеры</string>
