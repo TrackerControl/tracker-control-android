@@ -64,8 +64,11 @@ public class ApplicationEx extends Application {
     protected void attachBaseContext (Context base) {
         super.attachBaseContext(base);
 
-        // The following line triggers the initialization of ACRA
-        ACRA.init(this);
+        try {
+            ACRA.init(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
