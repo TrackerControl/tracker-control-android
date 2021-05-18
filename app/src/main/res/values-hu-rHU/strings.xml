@@ -1,7 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">A TrackerControl lehetővé teszi a felhasználók számára, hogy figyelemmel kísérjék és ellenőrizzék a mobilalkalmazásokban a felhasználói viselkedéssel kapcsolatos széles körű, folyamatos, rejtett adatgyűjtést (\"tracking\").</string>
+    <string name="app_copyright">Szerzői Jog \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nA TrackerControl a NetGuardon alapul, amelyet a Marcel Bokhorst fejlesztett.(M66B).</string>
     <string name="app_android">TrackerControl igényel Android 5.1 vagy újabb</string>
+    <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Store-ból, ezért a TrackerControl nem támogatott, míg az XPosed telepítve van</string>
+    <string name="app_eula">Az alkalmazás használata saját felelősségére történik. Egyetlen alkalmazás sem kínál 100% -os védelmet a követés ellen.</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Titoktartási Irányelv</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Süti Irányelv</a></string>
+    <string name="channel_foreground">Futó szolgáltatások</string>
+    <string name="channel_notify">Általános értesítések</string>
+    <string name="channel_access">Hozzáférési értesítések</string>
+    <string name="menu_search">Alkalmazás keresése</string>
+    <string name="menu_filter">Alkalmazásszűrő</string>
+    <string name="menu_app_user">Felhasználói appok megjelenítése</string>
+    <string name="menu_app_system">Rendszer appok megjelenítése</string>
+    <string name="menu_app_nointernet">Internetnélküli appok megjelenítése</string>
+    <string name="menu_sort">Alkalmazások rendezése</string>
+    <string name="menu_sort_name">Névszerinti rendezés</string>
+    <string name="menu_sort_uid">Rendezés uid szerint</string>
+    <string name="menu_sort_companies_week">Rendezés cégek szerint (hét)</string>
+    <string name="menu_sort_companies">Rendezés cégek szerint</string>
+    <string name="menu_log">Forgalmi napló</string>
+    <string name="menu_settings">Beállítások</string>
+    <string name="menu_invite">Meghívás</string>
+    <string name="menu_legend">Jelmagyarázat</string>
+    <string name="menu_support">Támogassa az alkalmazást</string>
+    <string name="menu_log_support">Magyarázat</string>
+    <string name="menu_about">Névjegy</string>
+    <string name="menu_apps">További alkalmazások</string>
+    <string name="menu_protocol_other">Egyéb</string>
+    <string name="menu_traffic_allowed">Engedélyezett</string>
+    <string name="menu_traffic_blocked">Blokkolt</string>
+    <string name="menu_live">Folyamatosan frissül</string>
+    <string name="menu_refresh">Frissít</string>
+    <string name="menu_resolve">Nevek mutatása</string>
+    <string name="menu_organization">Szervezet mutatása</string>
+    <string name="menu_pcap_enabled">PCAP engedélyezve</string>
+    <string name="menu_pcap_export">PCAP exportálás</string>
+    <string name="menu_clear">Törlés</string>
+    <string name="menu_export">Exportálás</string>
+    <string name="menu_reset">Visszaállítás</string>
+    <string name="menu_cleanup">Takarítás</string>
+    <string name="setting_options">Opciók</string>
+    <string name="setting_dark">Sötét téma</string>
     <!-- App Overview -->
     <!-- App Details -->
     <string name="tab_actions">Saját Adatok</string>
