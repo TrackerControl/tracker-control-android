@@ -133,7 +133,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         String apk = pkg.applicationInfo.publicSourceDir;
                         trackers = Common.detectTrackersStatic(res, apk);
                         Log.d(TAG, trackers.toString());
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         a.runOnUiThread(() -> {
                             if (e instanceof EmptyMultiDexContainerException
                                     || e instanceof MultiDexDetectedException
@@ -142,6 +142,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     || e instanceof PackageManager.NameNotFoundException
                                     || isSystem)
                                 tvDetectedTrackers.setText(R.string.tracking_detection_failed);
+                            else if (e instanceof OutOfMemoryError)
+                                tvDetectedTrackers.setText(R.string.tracking_detection_failed_ram);
                             else
                                 tvDetectedTrackers.setText(R.string.tracking_detection_failed_report);
                             tvDetectedTrackers.setVisibility(View.VISIBLE);
