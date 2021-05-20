@@ -98,6 +98,7 @@
     <string name="summary_subnet">Bật định tuyến mạng con; có thể sẽ bật gọi Wi-Fi, nhưng cũng có thể sẽ động chạm đến các lỗi trong Android và làm tăng sử dụng pin</string>
     <string name="summary_lan">Cho phép các ứng dụng kết nối đến các địa chỉ mạng cục bộ, như 10.0.0.0/8, 172.16.0.0/12 và 192.168.0.0/16</string>
     <string name="summary_ip6">Định tuyến lưu lượng IPv6 đến TrackerControl để nó có thể được cho phép hoặc chặn một cách có chọn lọc</string>
+    <string name="summary_call">Tắt TrackerControl khi có cuộc gọi đến hoặc đi. Việc này có thể được sử dụng để khắc phục các sự cố gọi IP/Wi-Fi.</string>
     <string name="summary_system">Định nghĩa các quy tắc cho các ứng dụng hệ thống (dành cho chuyên gia)</string>
     <string name="summary_log_app">Tắt để giảm sử dụng pin. Các trình theo dõi mới vẫn sẽ được chặn, nhưng không được hiện.</string>
     <string name="summary_track_usage">Theo dõi số lượng byte đã gửi và nhận cho mỗi ứng dụng và địa chỉ. Điều này có thể dẫn đến sử dụng thêm pin.</string>
@@ -106,6 +107,7 @@
     <string name="summary_validate">Tên miền được sử dụng để xác thực kết nối internet tại cổng 443 (https).</string>
     <string name="summary_socks5_enabled">Chỉ có lưu lượng TCP sẽ được gửi đến máy chủ proxy</string>
     <string name="summary_watchdog">Kiểm tra định kỳ xem TrackerControl có vẫn chạy không (nhập 0 để tắt tùy chọn này). Điều này có thể dẫn đến sử dụng thêm pin.</string>
+    <string name="summary_log_logcat">Tắt việc chặn. Những sự giao tiếp (và các trình theo dõi đã nhận dạng) được ghi lại vào nhật ký thiết bị. Lấy bằng adb logcat với thẻ \'TC-Log\'.</string>
     <string name="msg_sure">Bạn có chắc không?</string>
     <string name="msg_started">Đang kiểm tra trình theo dõi</string>
     <string name="msg_waiting">Đang đợi sự kiện</string>
@@ -116,6 +118,9 @@
     <string name="msg_installed_n">Đã được cài đặt</string>
     <string name="msg_completed">Hành động hoàn tất</string>
     <string name="msg_vpn">TrackerControl sử dụng một VPN cục bộ để lọc lưu lượng internet. Vì lý do này, hãy cho phép một kết nối VPN trong hộp thoại tiếp theo. Lưu lượng internet của bạn không được gửi đến một máy chủ VPN từ xa.</string>
+    <string name="msg_autostart">TrackerControl không thể tự động khởi động. Điều này có khả năng là do một lỗi trong phiên bản Android của bạn.</string>
+    <string name="msg_error">Một lỗi không mong đợi đã xảy ra: \'%s\'</string>
+    <string name="msg_start_failed">Android đã từ chối khởi động dịch vụ VPN tại lúc này. Điều này có khá năng là do một lỗi trong phiên bản Android của bạn.</string>
     <string name="msg_try">Thử TrackerControl</string>
     <string name="msg_filter4">Android 4 yêu cầu việc lọc được bật</string>
     <string name="msg_import_last">Lần nhập cuối: %s</string>
