@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControlek aplikazioek egiten duten erabilpenaren jarraipenaren datuak era ezkutuan jasotzeko egiten duten lana monitorizatu eta kontrolatzeko aukera eskaintzen die erabiltzaileei (\'tracking\' bezala ezaguna).</string>
+    <string name="app_description">TrackerControl-ek aplikazioek egiten duten erabilpenaren jarraipenaren datuak era ezkutuan jasotzeko egiten duten lana monitorizatu eta kontrolatzeko aukera eskaintzen die erabiltzaileei (\'tracking\' bezala ezaguna).</string>
     <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Cented Computing, Informatika Saila, Oxfordeko Unibertsitatea)\n\nTrackerControl Marcel Bokhorst-ek (M66B) garatutako NetGuard-en oinarritzen da.</string>
     <string name="app_android">TrackerControlek Android 5.1 edo berriagoa behar du</string>
     <string name="app_xposed">Xposedek arazo asko sortzen ditu eta horregatik agian TrackerControl Google Play Storetik ezabatu dezakete, beraz TrackerControl ezin da instalatu Xposed instalatuta dagoen artean</string>
@@ -17,6 +17,7 @@
     <string name="menu_sort">Ordenatu aplikazioak</string>
     <string name="menu_sort_name">Izenaren arabera</string>
     <string name="menu_sort_uid">Uidaren arabera</string>
+    <string name="menu_sort_companies_week">Konpainien arabera zerrendatu (astea)</string>
     <string name="menu_sort_companies">Enpresaren arabera</string>
     <string name="menu_log">Trafikoaren loga</string>
     <string name="menu_settings">Ezarpenak</string>
@@ -91,6 +92,7 @@
     <string name="setting_hosts_url">Ostalarien fitxategiaren URLa</string>
     <string name="setting_hosts_download">Deskargatu ostalarien fitxategia</string>
     <string name="setting_hosts_update">Eguneratu ostalarien fitxategia</string>
+    <string name="summary_install">Egoera barrako jakinarazpen bat erakutsi instalatutako aplikazio berrientzako</string>
     <string name="summary_pause">Jakinarazpenaren etenaren ostean, aktibatu automatikoki TrackerControl berriz aukeratutako minutuak pasatu ostean (idatzi 0 ezaugarri hau desgaitzeko).</string>
     <string name="summary_update">Egiaztatu bertsio berririk dagoen GitHub-en egunean birritan</string>
     <string name="summary_tethering">Android bertsioaren arabera, konexioa partekatzea ibili daiteke ala ez. Partekatutako konexioko trafikoa ezin da iragazi.</string>
@@ -112,6 +114,8 @@
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
     <string name="msg_revoked">TrackerControl desaktibatu egin da, ziur aski VPNan oinarritutako beste aplikazioren bat erabiltzeagatik</string>
+    <string name="msg_installed">Arazoak %1$s(r)ekin?</string>
+    <string name="msg_installed_description">Baimendu aplikazioa konpainiekin kontaktatzea</string>
     <string name="msg_installed_n">Instalatu da</string>
     <string name="msg_completed">Ekintza burututa</string>
     <string name="msg_vpn">TrackerControlek VPN lokal bat darabil internet trafikoa iragazteko.
@@ -215,6 +219,14 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="title_log_copy">Kopiatu</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Aplikazioaren izena</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">konpainia %d kontaktatu du azken astean</item>
+        <item quantity="other">%d konpainia kontaktatu ditu azken astean</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">konpainia %d kontaktatu du denbora guztian</item>
+        <item quantity="other">%d konpainia kontaktatu ditu denbora guztian</item>
+    </plurals>
     <string name="external_servers">Lortu garatzailearen eposta automatikoki?</string>
     <string name="confirm_google_info">Aplikazio honek aplikazioaren garatzaileren eposta Google Play Storetik lortu dezake.</string>
     <string name="ok">OK</string>
@@ -311,6 +323,8 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Soziala</string>
     <string name="tracker_uncategorised">Kategoriarik gabe</string>
     <string name="setting_strict_blocking">Blokeatze zurruna</string>
+    <string name="summary_strict_blocking">Instalatutako aplikazio berrientzat, blokeatu ahalik eta datu partekatze gehien konpainiekin. Aplikazio gehiago hautsiko ditu.</string>
+    <string name="strict_blocking_explanation">Erabiltzaile ez adituentzako aukera hau ezgaitzea aholkatzen da, aplikazioen haustura ekiditeko. Hala ere, honek ezinbesteko partekatze batzuk onartzen ditu konpainiekin.</string>
     <string name="exclude_vpn_explanation">Aktibo egon behar da trackeatzaileak detektatu edo blokeatzeko.\n\nAholkua: desaktibatu arazoak badituzu.</string>
     <string name="uninstall">Desinstalatu</string>
     <string name="settings_uninstall">Aplikazioaren ezarpenak &amp; Desinstalatu</string>
@@ -329,4 +343,18 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Internet sarbidea blokeatuta</string>
     <string name="internet_unblocked">Internet sarbidea desblokeatuta</string>
     <string name="category_blocked">Blokeatutako kategoriako trackeatzaileak</string>
+    <string name="category_unblocked">Kategoriako aztarnariak baimenduta</string>
+    <string name="category_unblocked_warning">Blokeatu kategoria lehenago!</string>
+    <string name="switch_strict_blocking">Ezinbesteko datu partekatzeak blokeatu</string>
+    <string name="tracking_detection_failed">Aztarnari liburutegien antzemateak huts egin du. Mesedez eman arazo honen berri garatzaileari.</string>
+    <string name="detected_trackers">Aztarnari liburutegiak antzeman dira: %s</string>
+    <string name="none">Bat ere ez</string>
+    <string name="trackers_static">Aztarnari liburutegiak</string>
+    <string name="trackers_static_explanation">TrackerControl-ek aztarnariak antzematen ditu iturburuan (\"liburutegiak\") eta aplikazioen sareko trafikoan.
+
+Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daitezke.</string>
+    <string name="blocked">BLOKEATUTA</string>
+    <string name="allowed">BAIMENDUTA</string>
+    <string name="setting_domain_based_blocked">Domeinuan oinarritutako blokeoa (garapenean)</string>
+    <string name="summary_domain_based_blocking">Blokeo pikordunagoa baimentzen du. Garapenean oraindik.</string>
 </resources>

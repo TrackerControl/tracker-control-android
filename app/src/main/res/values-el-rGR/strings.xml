@@ -17,6 +17,7 @@
     <string name="menu_sort">Ταξινόμηση Εφαρμογών</string>
     <string name="menu_sort_name">Ταξινόμηση κατά όνομα</string>
     <string name="menu_sort_uid">Ταξινόμηση κατά uid</string>
+    <string name="menu_sort_companies_week">Ταξινόμηση ανά εταιρεία (εβδομάδα)</string>
     <string name="menu_sort_companies">Ταξινόμηση κατά εταιρείες</string>
     <string name="menu_log">Αρχείο καταγραφής κυκλοφορίας</string>
     <string name="menu_settings">Ρυθμίσεις</string>
@@ -217,6 +218,14 @@
     <string name="title_log_copy">Αντιγραφή</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Όνομα εφαρμογής</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">επικοινώνησε με %d εταιρεία την προηγούμενη εβδομάδα</item>
+        <item quantity="other">επικοινώνησε με %d εταιρείες την προηγούμενη εβδομάδα</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">επικοινωνεί με %d εταιρεία όλη την ώρα</item>
+        <item quantity="other">επικοινωνεί με %d εταιρείες όλη την ώρα</item>
+    </plurals>
     <string name="external_servers">Να λάβετε αυτόματα το email του προγραμματιστή;</string>
     <string name="confirm_google_info">Αυτή η εφαρμογή μπορεί να λάβει αυτόματα το email του προγραμματιστή της εφαρμογής από το Google Play Store για εσάς.</string>
     <string name="ok">ΟΚ</string>
@@ -329,5 +338,16 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Η πρόσβαση στο διαδίκτυο αποκλείστηκε</string>
     <string name="internet_unblocked">Η πρόσβαση στο διαδίκτυο επιτράπηκε</string>
     <string name="category_blocked">Οι ιχνηλάτες στην κατηγορία, αποκλείστηκαν</string>
+    <string name="category_unblocked">Επιτρεπόμενοι ιχνηλάτες στην κατηγορία</string>
+    <string name="category_unblocked_warning">Πρώτη κατηγορία αποκλεισμού!</string>
     <string name="switch_strict_blocking">Αποκλεισμός ουσιαστικής κοινής χρήσης δεδομένων</string>
+    <string name="tracking_detection_failed">Η ανίχνευση της βιβλιοθήκης ιχνηλατών απέτυχε. Αναφέρετε αυτό το ζήτημα στον προγραμματιστή.</string>
+    <string name="detected_trackers">Βιβλιοθήκες Ιχνηλατών που Εντοπίστηκαν: %s</string>
+    <string name="none">Κανένα</string>
+    <string name="trackers_static">Βιβλιοθήκες ιχνηλατών</string>
+    <string name="trackers_static_explanation">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κυκλοφορία στο δίκτυο των εφαρμογών.\n\nΗ παρακολούθηση που ανιχνεύεται στην κίνηση δικτύου μπορεί να αποκλειστεί με το TrackerControl.</string>
+    <string name="blocked">ΑΠΟΚΛΕΙΣΜΕΝΟ</string>
+    <string name="allowed">ΕΠΙΤΡΕΠΟΜΕΝΟ</string>
+    <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain (υπό ανάπτυξη)</string>
+    <string name="summary_domain_based_blocking">Επιτρέπει περισσότερο \"κοκκώδη\" μπλοκάρισμα. Ακόμα υπο ανάπτυξη.</string>
 </resources>
