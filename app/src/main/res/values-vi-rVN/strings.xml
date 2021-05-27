@@ -122,6 +122,7 @@
     <string name="msg_error">Một lỗi không mong đợi đã xảy ra: \'%s\'</string>
     <string name="msg_start_failed">Android đã từ chối khởi động dịch vụ VPN tại lúc này. Điều này có khá năng là do một lỗi trong phiên bản Android của bạn.</string>
     <string name="msg_try">Thử TrackerControl</string>
+    <string name="msg_doze">Để có kết quả liên tục chính xác, tối ưu hóa pin Android nên được tắt cho TrackerControl. \n\nTrong hộp thoại kế tiếp, chọn \"Tất cả ứng dụng\" ở phía trên cùng, bấm vào TrackerControl trong danh sách và chọn và xác nhận \"Không tối ưu hoá\".</string>
     <string name="msg_filter4">Android 4 yêu cầu việc lọc được bật</string>
     <string name="msg_import_last">Lần nhập cuối: %s</string>
     <string name="msg_downloading">Đang tải xuống\n%1s</string>
