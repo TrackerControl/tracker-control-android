@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen apps über das Benutzerverhalten (\"tracking\") zu überwachen und zu Steuern.</string>
+    <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen apps über das Benutzerverhalten (\"tracking\") zu überwachen und zu steuern.</string>
     <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
@@ -36,14 +36,14 @@
     <string name="menu_pcap_enabled">PCAP aktiviert</string>
     <string name="menu_pcap_export">PCAP-Export</string>
     <string name="menu_clear">Leeren</string>
-    <string name="menu_export">Export</string>
+    <string name="menu_export">Exportieren</string>
     <string name="menu_reset">Zurücksetzen</string>
     <string name="menu_cleanup">Bereinigen</string>
     <string name="setting_options">Optionen</string>
     <string name="setting_dark">Dunkles Design</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
     <string name="setting_pause">Automatisch nach %1$s Minuten aktivieren</string>
-    <string name="setting_update">Nach Updates suchen</string>
+    <string name="setting_update">Nach Aktualisierungen suchen</string>
     <plurals name="pause">
         <item quantity="one">Für %d Minute pausieren</item>
         <item quantity="other">Für %d Minuten pausieren</item>
@@ -58,7 +58,7 @@
     <string name="setting_advanced_options">Erweiterte Einstellungen</string>
     <string name="setting_system">Systemanwendungen verwalten</string>
     <string name="setting_log_app">Nach Trackern suchen</string>
-    <string name="setting_log_logcat">Log-übertragungen an ADB</string>
+    <string name="setting_log_logcat">Protokolliere Übertragungen an ADB</string>
     <string name="setting_filter">Tracker blockieren</string>
     <string name="setting_filter_udp">Tracker auf UDP blockieren</string>
     <string name="setting_handover">Nahtlose VPN-Übergabe beim Neuladen</string>

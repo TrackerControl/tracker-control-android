@@ -17,6 +17,7 @@
     <string name="menu_sort">Ordenar aplicaciones</string>
     <string name="menu_sort_name">Ordenar por nombre</string>
     <string name="menu_sort_uid">Ordenar por uid</string>
+    <string name="menu_sort_companies_week">Ordenar por empresas (semana)</string>
     <string name="menu_sort_companies">Clasificar por empresas</string>
     <string name="menu_log">Registro de tráfico</string>
     <string name="menu_settings">Ajustes</string>
@@ -118,7 +119,7 @@
     <string name="msg_installed_n">Se ha instalado</string>
     <string name="msg_completed">Acción completada</string>
     <string name="msg_vpn">TrackerControl usa una VPN local para filtrar el tráfico de Internet.
-Por este razón, por favor permita el acceso VPN en el siguiente diálogo.
+Por esta razón, por favor permita el acceso a la VPN en el siguiente diálogo.
 El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_autostart">TrackerControl no pudo iniciarse automáticamente. Esto podría deberse a un error en su versión de Android.</string>
     <string name="msg_error">Ocurrió un error inesperado: \'%s\'</string>
@@ -218,6 +219,14 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_log_copy">Copiar</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nombre de la aplicación</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">contactó %d empresa la última semana</item>
+        <item quantity="other">contactó %d empresas la última semana</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">contactó %d empresa desde el comienzo</item>
+        <item quantity="other">contactó %d empresas desde el comienzo</item>
+    </plurals>
     <string name="external_servers">¿Obtener el correo electrónico del desarrollador automáticamente?</string>
     <string name="confirm_google_info">Esta aplicación puede obtener automáticamente el correo electrónico del desarrollador de la aplicación desde Google Play Store por usted.</string>
     <string name="ok">Aceptar</string>
@@ -322,7 +331,7 @@ Atentamente,\n\n]]></string>
     <string name="no_internet">No hay acceso a Internet</string>
     <string name="bypass_vpn_error">"No se puede bloquear Internet. La aplicación está excluida de TrackerControl."</string>
     <string name="back">Volver</string>
-    <string name="forever_free">Libre para siempre</string>
+    <string name="forever_free">Libre por siempre</string>
     <string name="your_privacy">Tu privacidad</string>
     <string name="tracker_hostlist">Anfitriones definidos por el usuario</string>
     <string name="unblocked">Desbloqueado</string>
@@ -330,5 +339,16 @@ Atentamente,\n\n]]></string>
     <string name="internet_blocked">Acceso a Internet bloqueado</string>
     <string name="internet_unblocked">Acceso a Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores en la categoría bloqueados</string>
+    <string name="category_unblocked">Rastreadores en categoría permitidos</string>
+    <string name="category_unblocked_warning">¡Primero bloqueá la caregoría!</string>
     <string name="switch_strict_blocking">Bloquear que se compartan datos esenciales</string>
+    <string name="tracking_detection_failed">La detección de librerías de rastreadores falló. Por favor, reporte este problema al desarrollador.</string>
+    <string name="detected_trackers">Librerías de rastreadores detectadas: %s</string>
+    <string name="none">Ninguna</string>
+    <string name="trackers_static">Librerías de rastreadores</string>
+    <string name="trackers_static_explanation">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.\n\nEl rastreo detectado en el tráfico de red puede ser bloqueado con TrackerControl.</string>
+    <string name="blocked">BLOQUEADO</string>
+    <string name="allowed">PERMITIDO</string>
+    <string name="setting_domain_based_blocked">Bloqueo basado en Dominio (en Desarrollo)</string>
+    <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
 </resources>
