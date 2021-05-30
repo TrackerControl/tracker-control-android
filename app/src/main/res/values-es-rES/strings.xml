@@ -342,8 +342,10 @@ Atentamente,\n\n]]></string>
     <string name="category_unblocked">Rastreadores en categoría permitidos</string>
     <string name="category_unblocked_warning">¡Primero bloqueá la caregoría!</string>
     <string name="switch_strict_blocking">Bloquear que se compartan datos esenciales</string>
-    <string name="tracking_detection_failed">La detección de librerías de rastreadores falló. Por favor, reporte este problema al desarrollador.</string>
-    <string name="detected_trackers">Librerías de rastreadores detectadas: %s</string>
+    <string name="tracking_detection_failed">Falló la detección de biblioteca de rastreadores.</string>
+    <string name="tracking_detection_failed_ram">Falló la detección de biblioteca de rastreadores. No hay suficiente RAM.</string>
+    <string name="tracking_detection_failed_report">La detección de librerías de rastreadores falló. Por favor, reporte este problema al desarrollador.</string>
+    <string name="detected_trackers">Bibliotecas de rastreadores detectadas: %s</string>
     <string name="none">Ninguna</string>
     <string name="trackers_static">Librerías de rastreadores</string>
     <string name="trackers_static_explanation">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.\n\nEl rastreo detectado en el tráfico de red puede ser bloqueado con TrackerControl.</string>

@@ -1,6 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışı (\'izleme\') hakkında yaygın, devam eden, gizli veri toplamayı izlemesini ve kontrol etmesini sağlar.</string>
+    <string name="app_copyright">Telif Hakkı \u00A9 2019–2020 Konrad Kollnig (İnsan Merkezli Bilgi İşlem, Bilgisayar Bilimleri Bölümü, Oxford Üniversitesi)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
+    <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
+    <string name="app_xposed">Xposed, TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilecek çok fazla çökmeye neden olur, bu nedenle Xposed kuruluyken TrackerControl desteklenmez</string>
+    <string name="app_eula">Bu uygulamanın kullanımı kendi sorumluluğunuzdadır. Hiçbir uygulama izlemeye karşı %100 koruma sağlayamaz.</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Gizlilik Politikası</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Çerez Politikası</a></string>
+    <string name="channel_foreground">Çalışan hizmetler</string>
+    <string name="channel_notify">Genel bildirimler</string>
+    <string name="channel_access">Bildirimlere eriş</string>
+    <string name="menu_search">Uygulama ara</string>
+    <string name="menu_filter">Uygulamaları filtrele</string>
+    <string name="menu_app_user">Kullanıcı uygulamalarını göster</string>
+    <string name="menu_app_system">Sistem uygulamalarını göster</string>
+    <string name="menu_app_nointernet">İnternetsiz uygulamaları göster</string>
+    <string name="menu_sort">Uygulamaları sırala</string>
+    <string name="menu_sort_name">İsme göre sırala</string>
+    <string name="menu_sort_uid">Kullanıcı kimliğine göre sırala</string>
+    <string name="menu_sort_companies_week">Şirketlere göre sırala (hafta)</string>
+    <string name="menu_sort_companies">Şirketlere göre sırala</string>
+    <string name="menu_log">Trafik günlüğü</string>
+    <string name="menu_settings">Ayarlar</string>
+    <string name="menu_invite">Davet et</string>
+    <string name="menu_legend">Efsane</string>
+    <string name="menu_support">Bu uygulamayı destekleyin</string>
+    <string name="menu_log_support">Açıklama</string>
+    <string name="menu_about">Hakkında</string>
+    <string name="menu_apps">Diğer Uygulamalar</string>
+    <string name="menu_protocol_other">Diğer</string>
+    <string name="menu_traffic_allowed">İzin verildi</string>
+    <string name="menu_traffic_blocked">Engellendi</string>
+    <string name="menu_live">Canlı güncellemeler</string>
+    <string name="menu_refresh">Yenile</string>
+    <string name="menu_resolve">Adları göster</string>
+    <string name="menu_organization">Organizasyonu göster</string>
+    <string name="menu_pcap_enabled">PCAP etkinleştirildi</string>
+    <string name="menu_pcap_export">PCAP dışa aktarma</string>
+    <string name="menu_clear">Temizle</string>
+    <string name="menu_export">Dışarı aktar</string>
+    <string name="menu_reset">Sıfırla</string>
+    <string name="menu_cleanup">Temizle</string>
+    <string name="setting_options">Ayarlar</string>
+    <string name="setting_dark">Karanlık tema</string>
+    <string name="setting_install">Yeni uygulamaları bildir</string>
+    <string name="setting_pause">%1$s dakika sonra otomatik etkinleştir</string>
+    <string name="setting_update">Güncellemeleri denetle</string>
+    <plurals name="pause">
+        <item quantity="one">%d dakika duraklat</item>
+        <item quantity="other">%d dakika duraklat</item>
+    </plurals>
+    <string name="setting_network_options">Ağ seçenekleri</string>
+    <string name="setting_subnet">Alt ağ yönlendirmesi</string>
+    <string name="setting_tethering">İnternet paylaşımına izin ver</string>
+    <string name="setting_lan">Yerel ağ erişimine izin ver</string>
+    <string name="setting_ip6">IPv6 trafiğini etkinleştir</string>
+    <string name="setting_call">Aramada devre dışı bırak</string>
+    <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
+    <string name="setting_advanced_options">Gelişmiş seçenekler</string>
+    <string name="setting_system">Sistem uygulamaları yönet</string>
+    <string name="setting_log_app">Yeni izleyiciler ara</string>
+    <string name="setting_log_logcat">ADB\'ye aktarımları günlüğe kaydet</string>
+    <string name="setting_filter">İzleyicileri engelle</string>
+    <string name="setting_filter_udp">UDP\'de izleyicileri engelle</string>
+    <string name="setting_handover">Yeniden yüklemede kesintisiz VPN devredilmesi</string>
+    <string name="setting_lockdown">Trafiği durdur</string>
+    <string name="setting_track_usage">Veri kullanımını ölç</string>
+    <string name="setting_reset_usage">Veri kullanımını sıfırla</string>
+    <string name="setting_show_resolved">Çözümlenmiş alan adlarını göster</string>
+    <string name="setting_block_domains">Hosts dosyasını etkinleştir</string>
+    <string name="setting_rcode">Hosts engelleme yanıtı: %s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">Doğrulama adresi: %s</string>
+    <string name="setting_ttl">En düşük DNS TTL: %s s</string>
+    <string name="setting_socks5_enabled">SOCKS5 kullan</string>
+    <string name="setting_socks5_addr">SOCKS5 adresi: %s</string>
+    <string name="setting_socks5_port">SOCKS5 bağlantı noktası: %s</string>
+    <string name="setting_socks5_username">SOCKS5 kullanıcı adı: %s</string>
+    <string name="setting_socks5_password">SOCKS5 parolası: %s</string>
+    <string name="setting_pcap_record_size">PCAP kayıt boyutu: %s B</string>
+    <string name="setting_pcap_file_size">PCAP dosya boyutu sınırı: %s MB</string>
+    <string name="setting_watchdog">Bekçi: her %s dakika</string>
+    <string name="setting_stats_frequency">Yenileme aralığı: %s ms</string>
+    <string name="setting_stats_samples">Yenileme geçmişi: %s s</string>
+    <string name="setting_backup">Yedekle</string>
+    <string name="setting_export">Ayarları dışa aktar (cihaz sıfırlama için değil)</string>
+    <string name="setting_import">Ayarları içe aktar</string>
+    <string name="setting_hosts">Hosts dosyasını içe aktar</string>
+    <string name="setting_hosts_append">Hosts dosyasını içe aktar (ek)</string>
+    <string name="setting_hosts_url">Hosts dosya URL\'si</string>
+    <string name="setting_hosts_download">Hosts dosyasını indir</string>
+    <string name="setting_hosts_update">Hosts dosyasını güncelleştir</string>
+    <string name="summary_install">Yeni yüklenen uygulamalar için durum çubuğu bildirimini göster</string>
+    <string name="summary_pause">Bildirimi duraklattıktan sonra, seçilen dakika sayısından sonra TrackerControl\'ü otomatik olarak yeniden etkinleştirin (bu seçeneği devre dışı bırakmak için 0 girin).</string>
+    <string name="summary_update">Yeni sürümler için GitHub üzerinden günde iki defa kontrol et</string>
+    <string name="summary_tethering">Android sürümüne bağlı olarak, internet paylaşımı çalışabilir yada çalışmayabilir. Paylaşılan internet trafiği filtrelenemez.</string>
+    <string name="summary_subnet">Alt ağ yönlendirmesini etkinleştir; Wi-Fi aramasını etkinleştirebilir, fakat Android\'de hatalara sebep olup pil kullanımını arttırabilir</string>
+    <string name="summary_lan">Uygulamaların 10.0.0.0/8, 172.16.0.0/12 ve 192.168.0.0/16 gibi yerel ağ adreslerine bağlanmasına izin ver</string>
+    <string name="summary_ip6">IP sürüm 6 trafiğini, seçici olarak izin verilebilmesi veya engellenebilmesi için TrackerControl\'e yönlendirin</string>
+    <string name="summary_call">Telefon aramalarında TrackerControl devre dışı bırakılsın. IP/Kablosuz üzerinden arama sorunlarını çözmek için kullanılabilir.</string>
+    <string name="summary_system">Sistem uygulamalarına kural tanımlanmasını sağlar (gelişmiş kullanıcılar için)</string>
+    <string name="summary_log_app">Pil kullanımını azaltmak için devre dışı bırakın. Yeni izleyiciler yine engellenecek, ancak gösterilmeyecek.</string>
+    <string name="summary_track_usage">Her uygulama ve adres tarafından gönderilip alınan veri miktarını izleyin. Bu pil kullanımını arttırabilir.</string>
+    <string name="summary_block_domains">UYARI: Engellenen ana bilgisayarlar kullanıcı arayüzünde gösterilmez.</string>
+    <string name="summary_rcode">Varsayılan değer, \'var olmayan etki alanı\' anlamına gelen 3\'tür (NXDOMAIN).</string>
+    <string name="summary_validate">443 (https) bağlantı noktasındaki internet bağlantısını doğrulamak için kullanılan alan adı.</string>
+    <string name="summary_socks5_enabled">Sadece TCP trafiği vekil sunucuya gönderilecek</string>
+    <string name="summary_watchdog">TrackerControl\'ün hala çalışıp çalışmadığını periyodik olarak kontrol edin (bu seçeneği devre dışı bırakmak için sıfır girin). Bu, fazladan pil kullanımına neden olabilir.</string>
+    <string name="summary_log_logcat">Engellemeyi devre dışı bırakır. İletişimler (ve tanımlanan izleyiciler) cihaz günlüğüne kaydedilir. \'TC-Log\' etiketli adb logcat ile alın.</string>
+    <string name="msg_sure">Emin misiniz?</string>
+    <string name="msg_started">İzleyiciler kontrol ediliyor</string>
+    <string name="msg_waiting">Eylem bekleniyor</string>
+    <string name="msg_disabled">TrackerControl\'ü etkinleştirmek için yukarıdaki anahtarı kullanın.</string>
+    <string name="msg_revoked">TrackerControl, muhtemelen başka bir VPN tabanlı uygulama kullanılarak devre dışı bırakıldı</string>
+    <string name="msg_installed">%1$s ile ilgili sorun mu yaşıyorsunuz?</string>
+    <string name="msg_installed_description">Uygulamanın şirketlerle iletişim kurmasına izin verin</string>
+    <string name="msg_installed_n">Yüklendi</string>
+    <string name="msg_completed">Eylem tamamlandı</string>
+    <string name="msg_vpn">TrackerControl, internet trafiğini filtrelemek için yerel bir VPN kullanır.
+Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin verin.
+İnternet trafiğiniz uzak bir VPN sunucusuna gönderilmiyor.</string>
+    <string name="msg_autostart">TrackerControl otomatik olarak başlatılamadı. Bunun nedeni muhtemelen Android sürümünüzdeki bir hatadır.</string>
+    <string name="msg_error">Beklenmedik bir hata oluştu: \'%s\'</string>
+    <string name="msg_start_failed">Android şu anda VPN hizmetini başlatmayı reddetti. Bunun nedeni muhtemelen Android sürümünüzdeki bir hatadır.</string>
+    <string name="msg_try">TrackerControl\'ü deneyin</string>
+    <string name="msg_doze">Tutarlı sonuçlar için, TrackerControl için Android pil optimizasyonları devre dışı bırakılmalıdır.
+\n\nBir sonraki iletişim kutusunda, en üstteki \"Tüm uygulamalar\"ı seçin, listeden TrackerControl\'e dokunun ve \"Optimize etme\"yi seçip onaylayın.</string>
+    <string name="msg_datasaving">Tutarlı sonuçlar için, TrackerControl için Android veri kaydetme seçenekleri devre dışı bırakılmalıdır.
+\n\nBir sonraki iletişim kutusunda, \"Arka plan verileri\" ve \"Sınırsız veri kullanımı\" seçeneklerini etkinleştirin</string>
+    <string name="msg_filter">Filtrelemenin kullanılması, Android\'in verileri ve güç kullanımını TrackerControl ile ilişkilendirmesine neden olur - Android, verilerin ve gücün orijinal uygulamalar yerine TrackerControl tarafından kullanıldığını varsayar</string>
+    <string name="msg_filter4">Android 4 filtrelemenin etkinleştirilmesini gerektirir</string>
+    <string name="msg_log_disabled">Trafik günlüğü devre dışı bırakıldı, yukarıdan etkinleştirebilirsiniz. Trafik günlüğünü etkinleştirmek pil kullanımını arttırabilir.</string>
+    <string name="msg_clear_rules">Bu kural ve koşulları varsayılan değerlerine sıfırlar</string>
+    <string name="msg_reset_access">Bu eylem, kuralı olmayan internet erişim kayıtlarını siler</string>
+    <string name="msg_import_last">Son içe aktarma: %s</string>
+    <string name="msg_downloading">İndiriliyor\n%1s</string>
+    <string name="msg_downloaded">Hosts dosyası indirildi</string>
+    <string name="msg_updated">Hosts dosyası güncellendi ve uygulandı!</string>
+    <string name="msg_download_last">Son indirme: %s</string>
+    <string name="msg_update_last">Son güncelleme: %s</string>
+    <string name="msg_metered">Mevcut ağ kotalı</string>
+    <string name="msg_inactive">İnternet bağlantısı yok</string>
+    <string name="msg_queue">TrackerControl meşgul</string>
+    <string name="msg_update">Güncelleme mevcut, indirmek için dokunun</string>
+    <string name="msg_usage">Uygulamanın yanındaki simgelere dokunarak kablosuz veya mobil veri erişimine izin verip (yeşil) engelleyebilirsiniz (kırmızı)</string>
+    <string name="msg_whitelist">İnternet erişimine varsayılan olarak izin verilir (karaliste), bu ayarlardan değiştirilebilir</string>
+    <string name="msg_push">Gelen (anlık) iletiler genellikle internet erişimi varsayılan olarak verilen Play hizmetleri tarafından yönetilir</string>
+    <string name="msg_system">Tüm uygulamaların (sistem) yönetimi ayarlardan etkinleştirilebilir</string>
+    <string name="msg_issue">Lütfen sorunu açıklayın ve sorunun zamanını belirtin:</string>
+    <string name="msg_vpn_cancelled">VPN bağlantısı iptal edildi\nFarklı bir VPN\'i daima açık olarak ayarlamış olabilir misiniz?</string>
+    <string name="msg_unavailable">Bu özellik, bu Android sürümünde mevcut değil</string>
+    <string name="msg_always_on">Farklı bir VPN daima açık olarak ayarlanmış</string>
+    <string name="msg_always_on_lockdown">TrackerControl\'ü filtreleme modunda kullanmak için Android VPN ayarlarında \"VPN olmadan bağlantıları engelle\" seçeneğini kapatın</string>
+    <string name="msg_private_dns">TrackerControl filtrelemesini kullanmak için Android ağ ayarlarından \"Özel DNS\" seçeneğini kapatın</string>
+    <string name="msg_start_forward">\'%5$s\' için %1$s:%2$d -> %3$s:%4$d yönlendirmesi başlatılsın mı?</string>
+    <string name="msg_stop_forward">%1$s:%2$d yönlendirmesi durdurulsun mu?</string>
+    <string name="msg_log_logcat">Uyarı: ADB günlüğü nedeniyle engelleme devre dışı bırakıldı.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Ekle</string>
+    <string name="menu_delete">Sil</string>
+    <string name="setting_forwarding">Bağlantı noktası yönlendirme</string>
+    <string name="title_protocol">Protokol</string>
+    <string name="title_dport">Kaynak bağlantı noktası</string>
+    <string name="title_raddr">Alıcının adı</string>
+    <string name="title_rport">Hedef bağlantı noktası</string>
+    <string name="title_ruid">Hedef uygulama</string>
+    <string name="title_external">Harici bir sunucu için \'hiçkimse\' seçin</string>
+    <string name="title_lockdown_enabled">Trafik durduruldu</string>
+    <string name="title_unmetered_allowed">Kotasız trafiğe izin veriliyor</string>
+    <string name="title_unmetered_blocked">Kotasız trafik engelleniyor</string>
+    <string name="title_unmetered_disabled">Kotasız kurallar uygulanmıyor</string>
+    <string name="title_metered_allowed">Kotalı trafiğe izin veriliyor</string>
+    <string name="title_metered_blocked">Kotalı trafik engelleniyor</string>
+    <string name="title_metered_disabled">Kotalı kurallar uygulanmıyor</string>
+    <string name="title_host_allowed">Adrese izin veriliyor</string>
+    <string name="title_host_blocked">Adres engelleniyor</string>
+    <string name="title_interactive_allowed">Ekran açıkken izin veriliyor</string>
+    <string name="title_roaming_blocked">Dolaşımdayken engelle</string>
+    <string name="title_metered">Kablosuz ağlar kotasız, mobil bağlantılar kotalı olarak sayılır</string>
+    <string name="title_internet">internete erişilemiyor</string>
+    <string name="title_disabled">devre dışı</string>
+    <string name="title_messaging">İletiler bu uygulama tarafından değil, Google Play hizmetleri tarafından alınmakta bundan dolayı bu uygulamayı engellemek işe yaramaz</string>
+    <string name="title_download">İndirmeler bu uygulama tarafından değil, indirme yöneticisi tarafından yapılmakta bundan dolayı bu uygulamayı engellemek işe yaramaz</string>
+    <string name="title_conditions">Koşullar</string>
+    <string name="title_screen_wifi">Ekran açıkken kablosuza izin ver</string>
+    <string name="title_screen_other">Ekran açıkken mobil veriye izin ver</string>
+    <string name="title_roaming">Dolaşımdayken engelle</string>
+    <string name="title_lockdown">Trafik durdurulduğunda izin verilsin</string>
+    <string name="title_related">İlgilileri filtrele</string>
+    <string name="title_access">Erişim denemeleri</string>
+    <string name="title_precedence">Erişim kuralları diğer kurallara göre önceliklidir</string>
+    <string name="title_options">Ayarlar</string>
+    <string name="title_notify">İnternet erişim denemelerini bildir</string>
+    <string name="title_logging_disabled">Günlüğe kaydetme veya filtreleme etkin değil</string>
+    <string name="title_logging_enabled">Günlüğe kaydetme ve filtreleme etkin</string>
+    <string name="title_logging_configure">Yapılandır</string>
+    <string name="title_enable_logging">Engellenen adresler kaydedilsin</string>
+    <string name="title_enable_filtering">İzin verilen adresler kaydedilsin</string>
+    <string name="title_enable_notify">Yeni kaydedilen adresler bildirilsin</string>
+    <string name="title_enable_help0">Bu ayarlar tüm uygulamalar için uygulanan genel ayarlardır</string>
+    <string name="title_enable_help1">Adresleri ayrı ayrı yönetmek için filtreleme gereklidir</string>
+    <string name="title_enable_help2">Günlük (az) veya filtreleme (fazla) pil kullanımını arttırabilir ve ağ hızını etkileyebilir</string>
+    <string name="title_rate">Değerlendirme</string>
+    <string name="title_allow">İzin ver</string>
+    <string name="title_block">Engelle</string>
+    <string name="title_allow_wifi">Kablosuza izin ver</string>
+    <string name="title_block_wifi">Kablosuz engellensin</string>
+    <string name="title_allow_other">Mobil veriye izin ver</string>
+    <string name="title_block_other">Mobil veri engellensin</string>
+    <string name="title_nobody">hiçkimse</string>
+    <string name="title_dontask">Bir daha sorma</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Bağlantı noktası %1$d</string>
+    <string name="title_log_copy">Kopyala</string>
     <!-- App Overview -->
+    <string name="tracked_app_name">Uygulama Adı</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">geçen hafta %d şirketle bağlantı kuruldu</item>
+        <item quantity="other">geçen hafta %d şirketle bağlantı kuruldu</item>
+    </plurals>
+    <string name="external_servers">Geliştirici e-postasını otomatik olarak al?</string>
+    <string name="confirm_google_info">Bu uygulama, uygulama geliştiricisinin e-postasını sizin için Google Play Store\'dan otomatik olarak alabilir.</string>
+    <string name="ok">Tamam</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="menu_csv">CSV olarak dışa aktar</string>
+    <string name="exporting">Dışa aktarılıyor..</string>
+    <string name="share_csv">Paylaş</string>
+    <string name="export_failed">Dışa aktarım başarısız oldu</string>
+    <string name="exported">Depoya aktarıldı! Telefon belleğine bilgisayardan erişin veya başka bir uygulamayla paylaşın.</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Detaylar</string>
+    <string name="tab_trackers">İzleyiciler</string>
+    <string name="tab_countries">Ülkeler</string>
+    <string name="tab_actions">Bilgilerim</string>
+    <string name="tracker_name">İzleyici Adı</string>
+    <string name="internet_access">İnternet Erişimi</string>
+    <string name="internet_access_explanation">İnternet erişimi için açık olmalıdır.\n\nİpucu: Ana ekrandaki uygulama simgesine de dokunabilirsiniz.</string>
+    <string name="app_info">Uygulama Yönet</string>
     <!-- Actions -->
+    <string name="block_tracking">İzleyicileri engelle</string>
+    <string name="block_tracking_description">Birçok uygulama, izleyiciler olarak adlandırılan üçüncü taraflara veri gönderir. TrackerControl, bu ağ aktarımlarının seçici olarak engellenmesini sağlar. Yine de, uygulama geliştiricileri bu hizmetlere, özellikle de reklamcılığa güvendiklerinden bunu akıllıca kullanın.</string>
+    <string name="personalised_ads">Kişiselleştirmeyi Sınırla</string>
+    <string name="personalised_ads_description">Android, uygulamaların, cihazınızın Google Reklam Kimliğine erişimini sınırlamayı teklif eder. Ancak uygulamalar bu ayarı potansiyel olarak yok sayabilir ve yine de bu kimliği kullanabilir. Ayrıca, Google\'ın politikalarına göre analiz amacıyla bu kimliği toplamaya devam edebilirler. Google\'a ve veri toplama şirketine güvenmeniz gerekir.</string>
+    <string name="data_managment">Verileri yönet</string>
+    <string name="data_management_description">AB Genel Veri Koruma Yönetmeliği (GDPR), AB\'deki kullanıcıların kendileriyle ilgili tüm verileri yönetmesine olanak tanır. Bu uygulama, geliştiriciye ulaşmak için e-posta şablonları sağlar. Geliştiricinin bir ay içinde cevap vermesi gerekiyor.</string>
+    <string name="contacts">İletişim </string>
+    <string name="contacts_description">Bir uygulamanın veri koruma ilkelerini ihlal ettiğini düşünüyorsanız, sorumlu kuruluşlarla doğrudan iletişime geçmek isteyebilirsiniz.</string>
+    <string name="play_services_required">Bu, cihazınızda bulunmayan Google Play Hizmetlerinin bir ayarıdır.</string>
+    <string name="no_mail_service">Lütfen bir e-posta istemcisi kurun.</string>
+    <string name="blocking_settings">İzleyicileri seç</string>
+    <string name="ad_settings">Şimdi değiştir</string>
+    <string name="request_data">Veri talep et</string>
+    <string name="request_deletion">Silme iste</string>
+    <string name="contact_developer">Geliştirici</string>
+    <string name="contact_playstore">Google</string>
+    <string name="contact_officials">ABD Yetkilileri</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="subject_request_data">GDPR Konu Erişim Talebi</string>
+    <string name="body_request_data"><![CDATA[İlgili makama:\n
+\n
+\n
+Android uygulamasının %s (ID: %s) veri denetleyicisi olarak, benim hakkımda herhangi bir kişisel veri işleyip işlemediğinizi onaylamanızı rica ediyorum.\n
+Öyleyse, lütfen aşağıdakiler dahil olmak üzere AB Genel Veri Koruma Yönetmeliği'nin (GDPR) 15. Maddesinde belirtilen gerekli tüm bilgileri bana sağlayın:\n
+\n
+• kişisel verilerimin bir kopyası;\n
+• işlemenin amaçları;\n
+• ilgili kişisel veri kategorileri; \n
+• kişisel verilerimi ifşa ettiğiniz alıcılar ve sağladığınız güvenlik önlemleri;\n
+• kişisel verilerimin saklanma süresi veya bu sürenin belirlenmesinde kullanılan kriterler;\n
+• kişisel verilerimin kaynağı hakkında bilgi; ve\n
+• otomatik karar vermenin varlığı (profil oluşturma dahil) ve öyleyse: \n
+    - karar verme sürecine dahil olan mantık;\n
+    - benim için önemi ve öngörülen sonuçları;\n
+    - hataları, önyargıları ve ayrımcılığı önlemek için attığınız adımlar; ve\n
+    - bakış açımı nasıl ifade edebileceğimi ve bir karara nasıl itiraz edebileceğimi açıklayın.\n
+\n
+Bu talep, sizin adınıza kişisel verileri işleyen tüm işlemciler de dahil olmak üzere, kişisel verilerimin sizin tarafınızdan işlenmesiyle ilgilidir.\n
+\n
+Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldıktan sonraki bir ay içinde yanıt almayı sabırsızlıkla bekliyorum.\n
+\n
+İçtenlikle,\n\n]]></string>
+    <string name="crash_dialog_text">Afedersiniz. TrackerControl az önce çöktü. Bize ayrıntıları içeren bir e-posta gönderir misiniz?</string>
+    <string name="crash_dialog_comment">Herhangi bir yorum?</string>
+    <string name="instructions_monitoring_private_dns">Anahtarı değiştirin ve bazı uygulamalarla etkileşim kurun. Özel DNS devre dışı bırakılmalıdır.</string>
+    <string name="instructions_monitoring">Anahtarı değiştirin ve bazı uygulamalarla etkileşim kurun.</string>
+    <string name="device_not_supported_title">Cihazınız desteklenmiyor</string>
+    <string name="device_not_supported_msg">Cihazınızın işletim sistemi, ağ iletişimlerinin izlenmesine ve filtrelenmesine izin vermiyor. Bu, TrackerControl için gereklidir.</string>
+    <string name="launch_app">&amp; başlatın; İzleyici bulun</string>
+    <string name="countries">Hedef Ülkeler</string>
+    <string name="countries_explanation">Telefonunuzun izleme verilerini nereye gönderdiğini öğrenin.\n\nBilgiler, DNS aramalarına ve IP bilgilerine dayanır ve yanlış olabilir.</string>
+    <string name="countries_loading_failed">Hata.. Ülke haritası yüklenemedi. Lütfen bunun nasıl olduğunu tc@kollnig.net\'e anlatın.</string>
+    <string name="tracker_advertising">Reklâm</string>
+    <string name="tracker_analytics">Analitikler</string>
+    <string name="tracker_content">Gerekli</string>
+    <string name="tracker_cryptomining">Kripto Madencilik</string>
+    <string name="tracker_fingerprinting">Parmak izi</string>
+    <string name="tracker_social">Sosyal Medya</string>
+    <string name="tracker_uncategorised">Kategorize edilmemiş</string>
+    <string name="setting_strict_blocking">Sıkı Engelleme</string>
+    <string name="summary_strict_blocking">Yeni yüklenen uygulamalar için, şirketlerle mümkün olduğunca fazla veri paylaşımını engelleyin. Daha fazla uygulama bozulacak.</string>
+    <string name="strict_blocking_explanation">Uygulama kesintilerini azaltmak için uzman olmayan kişilerin bu seçeneği devre dışı bırakmaları önerilir. Ancak bu, şirketlerle bazı önemli paylaşımlara izin verir.</string>
+    <string name="exclude_vpn_explanation">İzleyicileri algılamak veya engellemek için açık olmalıdır.\n\nİpucu: Sorunlarla karşılaşırsanız devre dışı bırakın.</string>
+    <string name="uninstall">Kaldır</string>
+    <string name="settings_uninstall">Uygulama ayarları &amp; Kaldır</string>
+    <string name="no_trackers_found_message_disabled">Ana ekranda geçişi etkinleştirin, ardından izleyicileri bulmak için uygulamayı başlatın</string>
+    <string name="no_trackers_found_message">İzleyicileri bulmak için uygulamayı başlatın</string>
+    <string name="no_trackers_found_action">Başlat</string>
+    <string name="no_internet_message">"Bu uygulamanın İnternet erişimi yok. Diğer uygulamalarla veri alışverişi yaparak sizi izlemeye devam edebilir."</string>
+    <string name="no_internet">İnternet erişimi yok</string>
+    <string name="bypass_vpn_error">"İnternet engellenemiyor. Uygulama, TrackerControl'den hariç tutulur."</string>
+    <string name="back">Geri</string>
+    <string name="forever_free">Ömür Boyu Ücretsiz</string>
+    <string name="your_privacy">Kişisel Gizliliğiniz</string>
+    <string name="tracker_hostlist">Kullanıcı Tanımlı Hosts</string>
+    <string name="unblocked">Engel kaldırıldı</string>
+    <string name="enable">Etkinleştir</string>
+    <string name="internet_blocked">İnternet erişimi engellendi</string>
+    <string name="internet_unblocked">İnternet erişimi engellenmedi</string>
+    <string name="category_blocked">Kategorideki izleyiciler engellendi</string>
+    <string name="category_unblocked">Kategorideki izleyicilere izin verildi</string>
+    <string name="category_unblocked_warning">Önce kategoriyi engelleyin!</string>
+    <string name="switch_strict_blocking">Temel veri paylaşımını engelleyin</string>
+    <string name="tracking_detection_failed">İzleyici kitaplığı algılama başarısız oldu.</string>
+    <string name="tracking_detection_failed_ram">İzleyici kitaplığı algılama başarısız oldu. Yeterli RAM yok.</string>
+    <string name="tracking_detection_failed_report">İzleyici kitaplığı algılama başarısız oldu. Lütfen bu sorunu geliştiriciye bildirin.</string>
+    <string name="detected_trackers">Algılanan izleyici kitaplıkları: %s</string>
+    <string name="none">Hiç</string>
+    <string name="trackers_static">İzleyici kitaplıkları</string>
+    <string name="trackers_static_explanation">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.\n\nAğ trafiğinde tespit edilen izleme TrackerControl ile engellenebilir.</string>
+    <string name="blocked">ENGELLENDİ</string>
+    <string name="allowed">İZİN VERİLDİ</string>
+    <string name="setting_domain_based_blocked">Etki Alanına Dayalı Engelleme (Geliştirmede)</string>
+    <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
 </resources>

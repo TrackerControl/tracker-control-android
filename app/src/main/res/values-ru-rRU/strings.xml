@@ -346,7 +346,6 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked">Трекеры в категории разрешены</string>
     <string name="category_unblocked_warning">Сначала заблокируйте категорию!</string>
     <string name="switch_strict_blocking">Блокировка основных (необходимых для работы) данных</string>
-    <string name="tracking_detection_failed">Ошибка обнаружения библиотек трекинга. Пожалуйста, сообщите об этой проблеме разработчику.</string>
     <string name="detected_trackers">Обнаружено библиотек трекинга: %s</string>
     <string name="none">Нет</string>
     <string name="trackers_static">Библиотеки трекинга</string>

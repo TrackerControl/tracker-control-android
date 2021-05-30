@@ -341,7 +341,6 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked">Επιτρεπόμενοι ιχνηλάτες στην κατηγορία</string>
     <string name="category_unblocked_warning">Πρώτη κατηγορία αποκλεισμού!</string>
     <string name="switch_strict_blocking">Αποκλεισμός ουσιαστικής κοινής χρήσης δεδομένων</string>
-    <string name="tracking_detection_failed">Η ανίχνευση της βιβλιοθήκης ιχνηλατών απέτυχε. Αναφέρετε αυτό το ζήτημα στον προγραμματιστή.</string>
     <string name="detected_trackers">Βιβλιοθήκες Ιχνηλατών που Εντοπίστηκαν: %s</string>
     <string name="none">Κανένα</string>
     <string name="trackers_static">Βιβλιοθήκες ιχνηλατών</string>

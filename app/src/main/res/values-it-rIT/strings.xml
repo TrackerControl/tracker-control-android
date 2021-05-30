@@ -342,7 +342,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="category_unblocked">Tracker nella categoria consentiti</string>
     <string name="category_unblocked_warning">Prima categoria di blocchi!</string>
     <string name="switch_strict_blocking">Blocca la condivisione di dati essenziali</string>
-    <string name="tracking_detection_failed">Rilevamento librerie tracker fallito. Si prega di segnalare questo problema allo sviluppatore.</string>
     <string name="detected_trackers">Librerie di tracker rilevati: %s</string>
     <string name="none">Nessuno</string>
     <string name="trackers_static">Librerie tracker</string>

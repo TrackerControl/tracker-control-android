@@ -338,7 +338,9 @@
     <string name="category_unblocked">已允许此类别中的追踪器</string>
     <string name="category_unblocked_warning">第一个拦截分类！</string>
     <string name="switch_strict_blocking">组织必要的数据共享</string>
-    <string name="tracking_detection_failed">追踪库检测失败。请将此问题报告给开发者。</string>
+    <string name="tracking_detection_failed">追踪器库检测失败。</string>
+    <string name="tracking_detection_failed_ram">追踪器库检测失败。内存不足。</string>
+    <string name="tracking_detection_failed_report">追踪器库检测失败。请将此问题报告给开发者。</string>
     <string name="detected_trackers">检测到的跟踪库： %s</string>
     <string name="none">无</string>
     <string name="trackers_static">跟踪库</string>
