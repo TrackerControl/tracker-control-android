@@ -123,7 +123,12 @@
     <string name="msg_start_failed">Android đã từ chối khởi động dịch vụ VPN tại lúc này. Điều này có khá năng là do một lỗi trong phiên bản Android của bạn.</string>
     <string name="msg_try">Thử TrackerControl</string>
     <string name="msg_doze">Để có kết quả liên tục chính xác, tối ưu hóa pin Android nên được tắt cho TrackerControl. \n\nTrong hộp thoại kế tiếp, chọn \"Tất cả ứng dụng\" ở phía trên cùng, bấm vào TrackerControl trong danh sách và chọn và xác nhận \"Không tối ưu hoá\".</string>
+    <string name="msg_datasaving">Để có kết quả liên tục chính xác, tùy chọn tiết kiệm dữ liệu của Android nên được tắt cho TrackerControl\n\nTrong hộp thoại tiếp theo, hãy bật tùy chọn \"Dữ liệu nền\" và \"Sử dụng dữ liệu không hạn chế\"</string>
+    <string name="msg_filter">Việc sử dụng lọc sẽ làm cho Android hiểu lầm TrackerControl sử dụng dữ liệu và năng lượng - Android giả định dữ liệu và năng lượng đang được sử dụng bởi TrackerControl, thay vì các ứng dụng ban đầu</string>
     <string name="msg_filter4">Android 4 yêu cầu việc lọc được bật</string>
+    <string name="msg_log_disabled">Ghi nhật ký lưu lượng đang tắt, hãy sử dụng công tắc ở trên để bật ghi nhật ký. Việc ghi nhật ký lưu lượng có thể dẫn đến sử dụng thêm pin.</string>
+    <string name="msg_clear_rules">Việc này sẽ đặt lại các quy tắc và điều kiện về giá trị mặc định</string>
+    <string name="msg_reset_access">Việc này sẽ xóa các dòng nhật ký cố gắng truy cập mà không có quy tắc cho phép/chặn</string>
     <string name="msg_import_last">Lần nhập cuối: %s</string>
     <string name="msg_downloading">Đang tải xuống\n%1s</string>
     <string name="msg_downloaded">Đã tải xuống tệp máy chủ</string>
@@ -136,9 +141,17 @@
     <string name="msg_update">Có bản cập nhật, nhấn để tải xuống</string>
     <string name="msg_usage">Bạn có thể cho phép (xanh lá) hoặc từ chối (đỏ) truy cập internet Wi-Fi hoặc mạng di động bằng cách nhấn vào biểu tượng bên cạnh ứng dụng</string>
     <string name="msg_whitelist">Truy cập Internet được cho phép theo mặc định (chế độ danh sách đen), điều này có thể được thay đổi trong cài đặt</string>
+    <string name="msg_push">Các thông báo đến (đẩy) phần lớn là được thành phần Dịch vụ Play của hệ thống xử lý, nó được cho phép truy cập internet theo mặc định</string>
+    <string name="msg_system">Việc quản lý ứng dụng hệ thống có thể được bật trong cài đặt</string>
+    <string name="msg_issue">Vui lòng mô tả vấn đề và chỉ ra thời gian mà vấn đề xảy ra:</string>
     <string name="msg_vpn_cancelled">Đã hủy kết nối VPN\nBạn đã thiết lập một VPN khác làm VPN luôn bật à?</string>
     <string name="msg_unavailable">Tính năng này không có sẵn trong phiên bản Android này</string>
     <string name="msg_always_on">Một VPN khác được đặt là VPN luôn bật</string>
+    <string name="msg_always_on_lockdown">Tắt \"Chặn các kết nối mà không cần VPN\" trong cài đặt VPN của Android để sử dụng TrackerControl ở chế độ lọc</string>
+    <string name="msg_private_dns">Tắt \"DNS riêng\" trong cài đặt mạng của Android để sử dụng TrackerControl ở chế độ lọc</string>
+    <string name="msg_start_forward">Bắt đầu chuyển tiếp từ cổng %1$s %2$d đến %3$s:%4$d của \'%5$s\'?</string>
+    <string name="msg_stop_forward">Dừng chuyển tiếp cổng %1$s %2$d?</string>
+    <string name="msg_log_logcat">Cảnh báo: Việc chặn đã bị tắt vì ghi nhật ký ADB.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -173,6 +186,7 @@
     <string name="title_screen_other">Cho phép mạng di động khi màn hình bật</string>
     <string name="title_roaming">Chặn khi chuyển vùng</string>
     <string name="title_lockdown">Cho phép trong chế độ khóa chặt</string>
+    <string name="title_related">Lọc liên quan</string>
     <string name="title_access">Các cố gắng truy cập</string>
     <string name="title_precedence">Các quy tắc truy cập được ưu tiên trước các quy tắc khác</string>
     <string name="title_options">Tùy chọn</string>
@@ -181,8 +195,11 @@
     <string name="title_logging_enabled">Ghi nhật ký và lọc đang bật</string>
     <string name="title_logging_configure">Thiết lập</string>
     <string name="title_enable_logging">Chỉ bật ghi nhật ký của các địa chỉ bị chặn</string>
+    <string name="title_enable_filtering">Bật việc lọc để cũng ghi nhật ký các địa chỉ được cho phép</string>
+    <string name="title_enable_notify">Bật thông báo truy cập cho các địa chỉ mới ghi nhật ký</string>
     <string name="title_enable_help0">Các cài đặt này là cài đặt toàn ứng dụng áp dụng cho tất cả ứng dụng</string>
     <string name="title_enable_help1">Việc lọc cũng được yêu cầu để cho phép hoặc chặn các địa chỉ riêng lẻ</string>
+    <string name="title_enable_help2">Việc bật ghi nhật ký (ít hơn) hoặc lọc (nhiều hơn) có thể làm tăng sử dụng pin và có thể ảnh hưởng đến tốc độ mạng</string>
     <string name="title_rate">Đánh giá</string>
     <string name="title_allow">Cho phép</string>
     <string name="title_block">Chặn</string>
@@ -225,6 +242,7 @@
     <string name="personalised_ads">Giới hạn việc cá nhân hoá</string>
     <string name="data_managment">Quản lý dữ liệu</string>
     <string name="contacts">Liên hệ </string>
+    <string name="play_services_required">Đây là một cài đặt của Dịch vụ Google Play, nó không được tìm thấy trên thiết bị của bạn.</string>
     <string name="no_mail_service">Hãy cài đặt một ứng dụng email khách.</string>
     <string name="blocking_settings">Chọn trình theo dõi</string>
     <string name="ad_settings">Thay đổi ngay</string>
@@ -237,6 +255,7 @@
     <string name="device_not_supported_title">Thiết bị không được hỗ trợ</string>
     <string name="launch_app">Chạy &amp; tìm trình theo dõi</string>
     <string name="countries">Các quốc gia đích</string>
+    <string name="countries_loading_failed">Ối... Tải bản đồ quốc gia thất bại. Vui lòng nói cho tc@kollnig.net làm thế nào mà việc này xảy ra.</string>
     <string name="tracker_advertising">Quảng cáo</string>
     <string name="tracker_analytics">Phân tích</string>
     <string name="tracker_content">Thiết yếu</string>
@@ -259,7 +278,9 @@
     <string name="forever_free">Miễn phí mãi mãi</string>
     <string name="your_privacy">Sự riêng tư của bạn</string>
     <string name="unblocked">Đã bỏ chặn</string>
-    <string name="tracking_detection_failed">Phát hiện thư viện trình theo dõi thất bại. Vui lòng báo cáo vấn đề này đến nhà phát triển.</string>
+    <string name="enable">Bật</string>
+    <string name="internet_blocked">Đã chặn quyền truy cập internet</string>
+    <string name="internet_unblocked">Đã bỏ chặn quyền truy cập internet</string>
     <string name="detected_trackers">Đã phát hiện thư viện trình theo dõi: %s</string>
     <string name="none">Không có</string>
     <string name="trackers_static">Thư viện trình theo dõi</string>
