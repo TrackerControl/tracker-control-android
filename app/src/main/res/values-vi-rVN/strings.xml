@@ -207,7 +207,9 @@
     <string name="title_block_wifi">Chặn Wi-Fi</string>
     <string name="title_allow_other">Cho phép mạng di động</string>
     <string name="title_block_other">Chặn mạng di động</string>
+    <string name="title_nobody">nobody</string>
     <string name="title_dontask">Không hỏi lại</string>
+    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Cổng %1$d</string>
     <string name="title_log_copy">Sao chép</string>
     <!-- App Overview -->
@@ -239,9 +241,13 @@
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
     <string name="block_tracking">Chặn trình theo dõi</string>
+    <string name="block_tracking_description">Nhiều ứng dụng gửi dữ liệu đến các bên thứ ba, được gọi là trình theo dõi. TrackerControl cho phép bạn chặn các lượt truyền mạng đó một cách có chọn lọc. Tuy nhiên, hãy sử dụng việc này một cách khôn ngoan, vì các nhà phát triển dựa vào các dịch vụ đó, đáng chú ý nhất là quảng cáo.</string>
     <string name="personalised_ads">Giới hạn việc cá nhân hoá</string>
+    <string name="personalised_ads_description">Android cho phép bạn giới hạn quyền truy cập của các ứng dụng vào ID quảng cáo của Google của thiết bị. Tuy nhiên, các ứng dụng có thể bỏ qua cài đặt này, và vẫn sử dụng ID này. Chúng cũng có thể tiếp tục thu thập ID này để nhằm mục đích phân tích, theo như chính sách của Google. Bạn cần có sự tin cậy vào Google và công ty thu thập dữ liệu đó.</string>
     <string name="data_managment">Quản lý dữ liệu</string>
+    <string name="data_management_description">Quy định chung về bảo vệ dữ liệu của Liên minh Châu Âu (GDPR) cho phép những người dùng ở Liên minh châu Âu quản lý bất kỳ dữ liệu nào liên quan đến họ. Ứng dụng này cung cấp các mẫu email để liên hệ với nhà phát triển. Nhà phát triển đó phải trả lời trong vòng một tháng.</string>
     <string name="contacts">Liên hệ </string>
+    <string name="contacts_description">Nếu bạn nghĩ là một ứng dụng vi phạm các nguyên tắc bảo vệ dữ liệu, bạn có thể sẽ muốn liên hệ trực tiếp với những người có trách nhiệm.</string>
     <string name="play_services_required">Đây là một cài đặt của Dịch vụ Google Play, nó không được tìm thấy trên thiết bị của bạn.</string>
     <string name="no_mail_service">Hãy cài đặt một ứng dụng email khách.</string>
     <string name="blocking_settings">Chọn trình theo dõi</string>
@@ -250,11 +256,18 @@
     <string name="request_deletion">Yêu cầu xoá</string>
     <string name="contact_developer">Nhà phát triển</string>
     <string name="contact_playstore">Google</string>
+    <string name="contact_officials">Các quan chức của EU</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="crash_dialog_text">Xin lỗi. TrackerControl vừa mới bị văng ra.. Bạn có muốn gửi email có các chi tiết cho chúng tôi không?</string>
     <string name="crash_dialog_comment">Có bình luận gì không?</string>
+    <string name="instructions_monitoring_private_dns">Gạt công tắc và tương tác với một số ứng dụng. DNS riêng phải được tắt.</string>
+    <string name="instructions_monitoring">Gạt công tắc và tương tác với một số ứng dụng.</string>
     <string name="device_not_supported_title">Thiết bị không được hỗ trợ</string>
+    <string name="device_not_supported_msg">Hệ điều hành của thiết bị không cho phép việc giám sát và lọc các sự giao tiếp mạng. Điều này là bắt buộc cho TrackerControl.</string>
     <string name="launch_app">Chạy &amp; tìm trình theo dõi</string>
     <string name="countries">Các quốc gia đích</string>
+    <string name="countries_explanation">Tìm ra nơi mà điện thoại của bạn gửi dữ liệu theo dõi đến.\n\nThông tin được dựa trên tra cứu DNS và thông tin IP, và có thể không chính xác.</string>
     <string name="countries_loading_failed">Ối... Tải bản đồ quốc gia thất bại. Vui lòng nói cho tc@kollnig.net làm thế nào mà việc này xảy ra.</string>
     <string name="tracker_advertising">Quảng cáo</string>
     <string name="tracker_analytics">Phân tích</string>
@@ -265,6 +278,7 @@
     <string name="tracker_uncategorised">Chưa phân loại</string>
     <string name="setting_strict_blocking">Chặn chặt chẽ</string>
     <string name="summary_strict_blocking">Đối với các ứng dụng mới cài đặt, chặn việc chia sẻ dữ liệu với các công ty nhiều nhất có thể. Nhiều ứng dụng hơn sẽ bị hỏng.</string>
+    <string name="strict_blocking_explanation">Chúng tôi khuyên những người không phải chuyên gia tắt tuỳ chọn này để giảm sự hỏng hóc trong các ứng dụng. Tuy nhiên, việc này sẽ cho phép một ít sự chia sẻ cần thiết với các công ty.</string>
     <string name="exclude_vpn_explanation">Phải được bật để dò tìm hoặc chặn trình theo dõi.\n\nMẹo: Tắt nếu bạn gặp vấn đề.</string>
     <string name="uninstall">Gỡ cài đặt</string>
     <string name="settings_uninstall">Cài đặt của ứng dụng &amp; Gỡ cài đặt</string>
@@ -277,13 +291,22 @@
     <string name="back">Quay lại</string>
     <string name="forever_free">Miễn phí mãi mãi</string>
     <string name="your_privacy">Sự riêng tư của bạn</string>
+    <string name="tracker_hostlist">Các máy chủ được người dùng đặt</string>
     <string name="unblocked">Đã bỏ chặn</string>
     <string name="enable">Bật</string>
     <string name="internet_blocked">Đã chặn quyền truy cập internet</string>
     <string name="internet_unblocked">Đã bỏ chặn quyền truy cập internet</string>
+    <string name="category_blocked">Đã chặn các trình theo dõi trong thể loại</string>
+    <string name="category_unblocked">Đã cho phép các trình theo dõi trong thể loại</string>
+    <string name="category_unblocked_warning">Trước tiên hãy chặn thể loại!</string>
+    <string name="switch_strict_blocking">Chặn việc chia sẻ dữ liệu cần thiết</string>
+    <string name="tracking_detection_failed">Phát hiện thư viện trình theo dõi thất bại.</string>
+    <string name="tracking_detection_failed_ram">Phát hiện thư viện trình theo dõi thất bại. Không đủ RAM.</string>
+    <string name="tracking_detection_failed_report">Phát hiện thư viện trình theo dõi thất bại. Vui lòng báo cáo vấn đề này đến nhà phát triển.</string>
     <string name="detected_trackers">Đã phát hiện thư viện trình theo dõi: %s</string>
     <string name="none">Không có</string>
     <string name="trackers_static">Thư viện trình theo dõi</string>
+    <string name="trackers_static_explanation">TrackerControl phát hiện việc theo dõi trong mã (\'các thư viện\') và lưu lượng mạng của các ứng dụng.\n\nViệc theo dõi được phát hiện trong lưu lượng mạng có thể được TrackerControl chặn.</string>
     <string name="blocked">ĐÃ CHẶN</string>
     <string name="allowed">ĐÃ CHO PHÉP</string>
     <string name="setting_domain_based_blocked">Chặn dựa trên miền (đang được phát triển)</string>
