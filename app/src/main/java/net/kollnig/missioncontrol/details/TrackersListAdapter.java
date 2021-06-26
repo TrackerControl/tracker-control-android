@@ -180,6 +180,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (_holder instanceof VHItem) {
             VHItem holder = (VHItem) _holder;
 
+            // Hide blocking tips on Play Store
+            holder.mBlockingTip.setVisibility(Util.isPlayStoreInstall() ? View.GONE : View.VISIBLE);
+
             // Load data
             final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
             final TrackerCategory trackerCategory = getItem(position);
@@ -349,12 +352,14 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
         final Switch mSwitchTracker;
+        final TextView mBlockingTip;
 
         VHItem(View view) {
             super(view);
             mTrackerCategoryName = view.findViewById(R.id.root_name);
             mCompaniesList = view.findViewById(R.id.details_list);
             mSwitchTracker = view.findViewById(R.id.switch_tracker);
+            mBlockingTip = view.findViewById(R.id.tvBlockingTip);
         }
     }
 
