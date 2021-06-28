@@ -340,6 +340,9 @@ Cordialement,\n\n]]></string>
     <string name="category_unblocked">Traceurs dans la catégorie bloqués</string>
     <string name="category_unblocked_warning">Nécessite de bloquer la catégorie d\'abord !</string>
     <string name="switch_strict_blocking">Bloquer le partage de données essentielles</string>
+    <string name="tracking_detection_failed">La détection de la librairie de traceur a échoué.</string>
+    <string name="tracking_detection_failed_ram">La détection de la librairie de traceur a échoué. Pas assez de RAM.</string>
+    <string name="tracking_detection_failed_report">La détection de la librairie de traceur a échoué. Veuillez signaler ce problème au développeur.</string>
     <string name="detected_trackers">Librairies de traceurs détectées : %s</string>
     <string name="none">Aucune</string>
     <string name="trackers_static">Librairies de traceurs</string>
