@@ -297,6 +297,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
+            // Explain blocking, except in Play Store version
+            if (Util.isPlayStoreInstall())
+                holder.mLibraryExplanation.setText(R.string.trackers_static_explanation_playstore);
+            else
+                holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
+
             // Exclusion from VPN
             holder.mSwitchVPN.setChecked(apply.getBoolean(mAppId, true));
             holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -364,11 +370,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class VHHeader extends RecyclerView.ViewHolder {
+        final TextView mLibraryExplanation;
         final Switch mSwitchInternet;
         final Switch mSwitchVPN;
 
         VHHeader(View view) {
             super(view);
+            mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
             mSwitchInternet = view.findViewById(R.id.switch_internet);
             mSwitchVPN = view.findViewById(R.id.switch_vpn);
         }
