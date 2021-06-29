@@ -157,7 +157,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     a.runOnUiThread(() -> {
                         if (sortedTrackers.size() > 0)
-                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), sortedTrackers.toString()));
+                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), "\n• " + TextUtils.join("\n• ", sortedTrackers)));
                         else
                             tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), a.getString(R.string.none)));
 
