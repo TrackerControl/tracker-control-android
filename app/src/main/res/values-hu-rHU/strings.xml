@@ -204,11 +204,103 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="title_enable_help1">Szűrés szükséges az egyes címek engedélyezéséhez vagy blokkolásához</string>
     <string name="title_enable_help2">A naplózás engedélyezése (kevésbé) vagy szűrés (jobban) növelheti az akkumulátor használatot és érintheti a hálózat sebességét</string>
     <string name="title_rate">Értékelés</string>
+    <string name="title_allow">Engedélyez</string>
+    <string name="title_block">Blokkol</string>
+    <string name="title_allow_wifi">Wi-Fi engedélyezése</string>
+    <string name="title_block_wifi">Wi-Fi blokkolása</string>
+    <string name="title_allow_other">Mobiladat engedélyezése</string>
+    <string name="title_block_other">Mobiladat blokkolása</string>
+    <string name="title_nobody">senki</string>
+    <string name="title_dontask">Ne kérdezze újra</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Port %1$d</string>
+    <string name="title_log_copy">Másol</string>
     <!-- App Overview -->
+    <string name="tracked_app_name">Alkalmazás Név</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">az utolsó héten %d kapcsolat a cégekkel</item>
+        <item quantity="other">az utolsó héten %d kapcsolat a cégekkel</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">összesen %d kapcsolat a cégekkel</item>
+        <item quantity="other">összesen %d kapcsolat a cégekkel</item>
+    </plurals>
+    <string name="external_servers">Kapja meg automatikusan a fejlesztői e-mailt?</string>
+    <string name="confirm_google_info">Ez az alkalmazás automatikusan megtudja kapni az alkalmazásfejlesztő e-mailt a Google Play Áruházból.</string>
+    <string name="ok">Rendben</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="menu_csv">Exportálás CSV-ként</string>
+    <string name="exporting">Exportálás...</string>
+    <string name="share_csv">Megosztás</string>
+    <string name="export_failed">Sikertelen exportálás</string>
+    <string name="exported">Exportálva a tárolóba! Hozzáférés a telefon tárhelyéhez számítógépről, vagy megosztás más alkalmazással.</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Részletek</string>
+    <string name="tab_trackers">Trackerek</string>
+    <string name="tab_countries">Országok</string>
     <string name="tab_actions">Saját Adatok</string>
+    <string name="tracker_name">Követő-név</string>
+    <string name="internet_access">Internet hozzáférés</string>
+    <string name="internet_access_explanation">Be kell kapcsolnia az internet hozzáféréshez.\n\nTipp: A főképernyőn megérintheti az alkalmazás ikont is.</string>
+    <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
+    <string name="block_tracking">Követők blokkolása</string>
+    <string name="block_tracking_description">Számos alkalmazás küld adatokat harmadik félnek, úgynevezett nyomkövetőknek. A TrackerControl lehetővé teszi ezen hálózati adások szelektív blokkolását. Ennek ellenére használja ezt okosan, mivel az alkalmazásfejlesztők támaszkodnak ezekre a szolgáltatásokra, nevezetesen a reklámokra.</string>
+    <string name="personalised_ads">Korlátozza a személyre szabást</string>
+    <string name="personalised_ads_description">Az Android felajánlja az alkalmazások hozzáférésének korlátozását eszközének Google Hirdetési azonosítójához. Az alkalmazások azonban figyelmen kívül hagyhatják ezt a beállítást, és továbbra is használják ezt az azonosítót. A Google irányelveinek megfelelően továbbra is gyűjthetik az azonosítót elemzési célokra. Bizalomra van szüksége a Google és az adatgyűjtő vállalat iránt.</string>
+    <string name="data_managment">Adatok kezelése</string>
+    <string name="data_management_description">Az EU általános adatvédelmi rendelete (GDPR) lehetővé teszi az EU-ban élő felhasználók számára a velük kapcsolatos adatok kezelését. Ez az alkalmazás e-mail sablonokat kínál, hogy elérje a fejlesztőt. A fejlesztőnek egy hónapon belül válaszolnia kell.</string>
+    <string name="contacts">Kapcsolatok </string>
+    <string name="contacts_description">Ha úgy gondolja, hogy egy alkalmazás sérti az adatvédelmi elveket, érdemes közvetlenül kapcsolatba lépnie a felelős szervezetekkel.</string>
+    <string name="play_services_required">Ez a Google Play Szolgáltatások olyan beállítása, amelyet nem találtunk az eszközén.</string>
+    <string name="no_mail_service">Kérjük telepítsen egy e-mail klienst.</string>
+    <string name="blocking_settings">Követők kiválasztása</string>
+    <string name="ad_settings">Módosít</string>
+    <string name="request_data">Adatok kérelmezése</string>
+    <string name="request_deletion">Törlés kérelmezése</string>
+    <string name="contact_developer">Fejlesztő</string>
+    <string name="contact_playstore">Google</string>
+    <string name="contact_officials">EU tisztviselők</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Alanyi Hozzáférési Kérelem</string>
+    <string name="body_request_data"><![CDATA[A Felelős Személynek:\n
+\n
+\n
+Arra kérem Önt, mint a(z) %s (ID: %s) androidos alkalmazás adatkezelőjét, hogy erősítse meg, hogy személyes adatokat kezel-e rólam.\n
+Ha igen, kérjük, adja meg nekem az EU Általános Adatvédelmi Rendeletének (GDPR) 15. cikkében előírt összes szükséges információt, beleértve:\n
+\n
+• a személyes adataim másolata;\n
+• a feldolgozás célja;\n
+• az érintett személyes adatok kategóriái;\n
+• azok a címzettek, akiknek átadják személyes adataimat és az ön által nyújtott biztosítékok;\n
+• a személyes adatok tárolásának megőrzési ideje, vagy az ezen időszak meghatározásához használt kritériumok;\n
+• információk a személyes adatok forrásáról; és\n
+• az automatizált döntéshozatal (beleértve a profilalkotást) megléte és ha igen:\n
+    - a döntéshozatali folyamat logikája;\n
+    - a jelentősége és a számomra várható következmények;\n
+    - a hibák, elfogultság és megkülönböztetés megelőzése érdekében tett lépések; és\n
+    - magyarázza el, hogyan tudom kifejezni az álláspontomat és megtámadni a döntést.\n
+Ez a kérelem a személyes adatok bármilyen, ön általi feldolgozására vonatkozik, beleértve azokat a feldolgozókat is akik az ön nevében személyes adatokat kezelnek.\n
+\n
+Kérem, hogy válaszát biztonságos módon, e-mailben adja meg. Várom, hogy a kérés kézhezvételétől számított egy hónapon belül választ kapjak.\n
+\n
+Tisztelettel,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[A Felelős Személynek:\n
+\n
+\n
+A törléshez való jogomra hivatkozom az EU Általános Adatvédelmi Rendeletének (GDPR) 17. cikkében meghatározottak szerint. Arra kérem Önt, mint a %s (ID: %s) androidos alkalmazás adatkezelőjét, hogy indokolatlan késedelem nélkül törölje az alábbi, rólam kezelt személyes adatokat:\n
+• Minden adat.\n
+Az eltávolítási kérelmem oka, hogy visszavonom, vagy visszavontam a személyes adatok kezeléséhez szükséges beleegyezésemet. Ez a kérelem a személyes adatok bármilyen, ön általi feldolgozására vonatkozik, beleértve azokat a feldolgozókat is, akik az ön nevében személyes adatokat kezelnek.\n
+Kérem, hogy válaszát biztonságos módon, e-mailben adja meg. Várom, hogy a kérés kézhezvételétől számított egy hónapon belül választ kapjak.\n
+\n
+Tisztelettel,\n\n]]></string>
+    <string name="crash_dialog_text">Sajnálom. A TrackerControl éppen összeomlott.. Küldene nekünk egy e-mailt a részletekről?</string>
+    <string name="crash_dialog_comment">Bármi megjegyzés?</string>
+    <string name="instructions_monitoring_private_dns">Kapcsolja be a kapcsolót és használjon néhány alkalmazást. A privát DNS-t le kell tiltani.</string>
+    <string name="instructions_monitoring">Kapcsolja be a kapcsolót és használjon néhány alkalmazást.</string>
+    <string name="device_not_supported_title">Az eszköz nem támogatott</string>
     <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
     <string name="no_trackers_found_message">Indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
     <string name="no_trackers_found_action">Indítás</string>

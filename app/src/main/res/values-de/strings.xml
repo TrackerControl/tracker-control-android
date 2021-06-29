@@ -17,6 +17,7 @@
     <string name="menu_sort">Apps sortieren</string>
     <string name="menu_sort_name">Nach Name sortieren</string>
     <string name="menu_sort_uid">Nach UID sortieren</string>
+    <string name="menu_sort_companies_week">Nach Unternehmen sortieren (Woche)</string>
     <string name="menu_sort_companies">Nach Firmen sortieren</string>
     <string name="menu_log">Traffic-Log</string>
     <string name="menu_settings">Einstellungen</string>
@@ -214,6 +215,14 @@
     <string name="title_log_copy">Kopieren</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Name der App</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">%d Unternehmen kontaktiert vergangene Woche</item>
+        <item quantity="other">%d Unternehmen kontaktiert vergangene Woche</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">%d Unternehmen kontaktiert seit Beginn an</item>
+        <item quantity="other">%d Unternehmen kontaktiert seit Beginn an</item>
+    </plurals>
     <string name="external_servers">Entwickler E-Mails automatisch erhalten?</string>
     <string name="confirm_google_info">Diese App kann automatisch die E-Mail des App-Entwicklers aus dem Google Play Store abrufen.</string>
     <string name="ok">Ok</string>
@@ -326,5 +335,18 @@ Sincerely,\n\n]]></string>
     <string name="internet_blocked">Internetzugang blockiert</string>
     <string name="internet_unblocked">Internetzugang freigegeben</string>
     <string name="category_blocked">Tracker in dieser Kategorie geblockt</string>
+    <string name="category_unblocked">Tracker in Kategorie erlaubt</string>
+    <string name="category_unblocked_warning">Bitte zuerst Kategorie blockieren!</string>
     <string name="switch_strict_blocking">Blockiere essentielle Datenübertragung</string>
+    <string name="tracking_detection_failed">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen.</string>
+    <string name="tracking_detection_failed_ram">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen. Nicht genügend Arbeitsspeicher vorhanden.</string>
+    <string name="tracking_detection_failed_report">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen. Bitte melden Sie dieses Problem an den Entwickler.</string>
+    <string name="detected_trackers">Erkannte Tracker-Bibliotheken: %s</string>
+    <string name="none">Keine</string>
+    <string name="trackers_static">Tracker-Bibliotheken</string>
+    <string name="trackers_static_explanation">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.\n\nTracking, das im Netzwerkverkehr erkannt wird, kann mit TrackerControl blockiert werden.</string>
+    <string name="blocked">BLOCKIERT</string>
+    <string name="allowed">ERLAUBT</string>
+    <string name="setting_domain_based_blocked">Domänenbasierte Blockierung (in Entwicklung)</string>
+    <string name="summary_domain_based_blocking">Ermöglicht eine präzisere Blockierung. Derzeit in der Entwicklung.</string>
 </resources>
