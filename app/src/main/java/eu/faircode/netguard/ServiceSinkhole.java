@@ -1175,7 +1175,7 @@ public class ServiceSinkhole extends VpnService {
             try {
                 InetAddress dns = InetAddress.getByName(vpnDns1);
                 if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (ip6 || dns instanceof Inet4Address))
+                        (dns instanceof Inet4Address))
                     listDns.add(dns);
             } catch (Throwable ignored) {
             }
@@ -1184,7 +1184,7 @@ public class ServiceSinkhole extends VpnService {
             try {
                 InetAddress dns = InetAddress.getByName(vpnDns2);
                 if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (ip6 || dns instanceof Inet4Address))
+                        (dns instanceof Inet4Address))
                     listDns.add(dns);
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
@@ -1198,7 +1198,7 @@ public class ServiceSinkhole extends VpnService {
                 InetAddress ddns = InetAddress.getByName(def_dns);
                 if (!listDns.contains(ddns) &&
                         !(ddns.isLoopbackAddress() || ddns.isAnyLocalAddress()) &&
-                        (ip6 || ddns instanceof Inet4Address))
+                        (ddns instanceof Inet4Address))
                     listDns.add(ddns);
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
