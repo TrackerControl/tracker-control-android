@@ -157,7 +157,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     a.runOnUiThread(() -> {
                         if (sortedTrackers.size() > 0)
-                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), sortedTrackers.toString()));
+                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), "\n• " + TextUtils.join("\n• ", sortedTrackers)));
                         else
                             tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), a.getString(R.string.none)));
 
@@ -179,6 +179,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (_holder instanceof VHItem) {
             VHItem holder = (VHItem) _holder;
+
+            // Hide blocking tips on Play Store
+            holder.mBlockingTip.setVisibility(Util.isPlayStoreInstall() ? View.GONE : View.VISIBLE);
 
             // Load data
             final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
@@ -294,6 +297,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
+            // Explain blocking, except in Play Store version
+            if (Util.isPlayStoreInstall())
+                holder.mLibraryExplanation.setText(R.string.trackers_static_explanation_playstore);
+            else
+                holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
+
             // Exclusion from VPN
             holder.mSwitchVPN.setChecked(apply.getBoolean(mAppId, true));
             holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -349,21 +358,25 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
         final Switch mSwitchTracker;
+        final TextView mBlockingTip;
 
         VHItem(View view) {
             super(view);
             mTrackerCategoryName = view.findViewById(R.id.root_name);
             mCompaniesList = view.findViewById(R.id.details_list);
             mSwitchTracker = view.findViewById(R.id.switch_tracker);
+            mBlockingTip = view.findViewById(R.id.tvBlockingTip);
         }
     }
 
     static class VHHeader extends RecyclerView.ViewHolder {
+        final TextView mLibraryExplanation;
         final Switch mSwitchInternet;
         final Switch mSwitchVPN;
 
         VHHeader(View view) {
             super(view);
+            mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
             mSwitchInternet = view.findViewById(R.id.switch_internet);
             mSwitchVPN = view.findViewById(R.id.switch_vpn);
         }

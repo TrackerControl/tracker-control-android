@@ -1,0 +1,2 @@
+- Fix issue with resolving DNS on IPv6
+- Use Quad9 as fallback DNS

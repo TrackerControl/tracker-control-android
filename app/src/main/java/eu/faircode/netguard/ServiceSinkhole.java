@@ -1175,7 +1175,7 @@ public class ServiceSinkhole extends VpnService {
             try {
                 InetAddress dns = InetAddress.getByName(vpnDns1);
                 if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (ip6 || dns instanceof Inet4Address))
+                        (dns instanceof Inet4Address))
                     listDns.add(dns);
             } catch (Throwable ignored) {
             }
@@ -1184,7 +1184,7 @@ public class ServiceSinkhole extends VpnService {
             try {
                 InetAddress dns = InetAddress.getByName(vpnDns2);
                 if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (ip6 || dns instanceof Inet4Address))
+                        (dns instanceof Inet4Address))
                     listDns.add(dns);
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
@@ -1198,7 +1198,7 @@ public class ServiceSinkhole extends VpnService {
                 InetAddress ddns = InetAddress.getByName(def_dns);
                 if (!listDns.contains(ddns) &&
                         !(ddns.isLoopbackAddress() || ddns.isAnyLocalAddress()) &&
-                        (ip6 || ddns instanceof Inet4Address))
+                        (ddns instanceof Inet4Address))
                     listDns.add(ddns);
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
@@ -1241,11 +1241,11 @@ public class ServiceSinkhole extends VpnService {
         // Always set DNS servers
         if (listDns.size() == 0 || listDns.size() < count)
             try {
-                listDns.add(InetAddress.getByName("1.1.1.1"));
-                listDns.add(InetAddress.getByName("1.0.0.1"));
+                listDns.add(InetAddress.getByName("9.9.9.9"));
+                listDns.add(InetAddress.getByName("149.112.112.112"));
                 if (ip6) {
-                    listDns.add(InetAddress.getByName("2606:4700:4700::1111"));
-                    listDns.add(InetAddress.getByName("2606:4700:4700::1001"));
+                    listDns.add(InetAddress.getByName("2620:fe::fe"));
+                    listDns.add(InetAddress.getByName("2620:fe::9"));
                 }
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));

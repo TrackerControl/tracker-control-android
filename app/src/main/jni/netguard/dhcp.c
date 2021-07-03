@@ -120,7 +120,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
 
         *(options + idx++) = 6; // DNS
         *(options + idx++) = 4; // IP4 length
-        inet_pton(AF_INET, "1.1.1.1", options + idx);
+        inet_pton(AF_INET, "9.9.9.9", options + idx);
         idx += 4;
 
         *(options + idx++) = 255; // End

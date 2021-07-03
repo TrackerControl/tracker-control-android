@@ -1,0 +1,5 @@
+- Fix errors in Play Store version
+- Make GMail 'Essential' service
+- Improve UI for tracker library detection
+- Fix translation not being shown for Spanish, German, and French version
+- Update dependencies, translations, and hostlists
