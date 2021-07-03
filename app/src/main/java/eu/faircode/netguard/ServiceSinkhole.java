@@ -1241,11 +1241,11 @@ public class ServiceSinkhole extends VpnService {
         // Always set DNS servers
         if (listDns.size() == 0 || listDns.size() < count)
             try {
-                listDns.add(InetAddress.getByName("1.1.1.1"));
-                listDns.add(InetAddress.getByName("1.0.0.1"));
+                listDns.add(InetAddress.getByName("9.9.9.9"));
+                listDns.add(InetAddress.getByName("149.112.112.112"));
                 if (ip6) {
-                    listDns.add(InetAddress.getByName("2606:4700:4700::1111"));
-                    listDns.add(InetAddress.getByName("2606:4700:4700::1001"));
+                    listDns.add(InetAddress.getByName("2620:fe::fe"));
+                    listDns.add(InetAddress.getByName("2620:fe::9"));
                 }
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
