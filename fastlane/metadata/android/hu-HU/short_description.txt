@@ -1,1 +1,1 @@
-TrackerControl allows to monitor and control hidden data collection in apps.
+A TrackerControl lehetővé teszi az alkalmazások rejtett adatgyűjtésének ellenőrzését és blokkolását.
