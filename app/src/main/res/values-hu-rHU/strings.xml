@@ -344,6 +344,7 @@ Tisztelettel,\n\n]]></string>
     <string name="none">Egyik sem</string>
     <string name="trackers_static">Követő-könyvtárak</string>
     <string name="trackers_static_explanation">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt követés a TrackerControllal blokkolható.</string>
+    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.</string>
     <string name="blocked">BLOKKOLT</string>
     <string name="allowed">ENGEDÉLYEZETT</string>
     <string name="setting_domain_based_blocked">Tartományalapú blokkolás (fejlesztés alatt)</string>

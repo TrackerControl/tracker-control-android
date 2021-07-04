@@ -345,6 +345,7 @@ Sincerely,\n\n]]></string>
     <string name="none">Keine</string>
     <string name="trackers_static">Tracker-Bibliotheken</string>
     <string name="trackers_static_explanation">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.\n\nTracking, das im Netzwerkverkehr erkannt wird, kann mit TrackerControl blockiert werden.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.</string>
     <string name="blocked">BLOCKIERT</string>
     <string name="allowed">ERLAUBT</string>
     <string name="setting_domain_based_blocked">Domänenbasierte Blockierung (in Entwicklung)</string>
