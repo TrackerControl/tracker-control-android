@@ -346,6 +346,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="none">Nessuno</string>
     <string name="trackers_static">Librerie tracker</string>
     <string name="trackers_static_explanation">TrackerControl rileva codice di tracking (\'librerie\') e il traffico di rete delle applicazioni.\n\nIl tracciamento che viene rilevato nel traffico di rete può essere bloccato con TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl rileva codice di tracking (\'librerie\') e il traffico di rete delle applicazioni.</string>
     <string name="blocked">BLOCCATO</string>
     <string name="allowed">CONSENTITO</string>
     <string name="setting_domain_based_blocked">Blocco basato sul dominio (in Sviluppo)</string>
