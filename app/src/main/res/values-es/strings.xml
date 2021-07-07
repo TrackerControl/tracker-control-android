@@ -18,7 +18,7 @@
     <string name="menu_sort_name">Ordenar por nombre</string>
     <string name="menu_sort_uid">Ordenar por uid</string>
     <string name="menu_sort_companies_week">Ordenar por empresas (semana)</string>
-    <string name="menu_sort_companies">Clasificar por empresas</string>
+    <string name="menu_sort_companies">Ordenar por empresas</string>
     <string name="menu_log">Registro de tráfico</string>
     <string name="menu_settings">Ajustes</string>
     <string name="menu_invite">Invitar</string>
@@ -224,8 +224,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
         <item quantity="other">contactó %d empresas la última semana</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">contactó %d empresa desde el comienzo</item>
-        <item quantity="other">contactó %d empresas desde el comienzo</item>
+        <item quantity="one">contactó %d empresa en total</item>
+        <item quantity="other">contactó %d empresas en total</item>
     </plurals>
     <string name="external_servers">¿Obtener el correo electrónico del desarrollador automáticamente?</string>
     <string name="confirm_google_info">Esta aplicación puede obtener automáticamente el correo electrónico del desarrollador de la aplicación desde Google Play Store por usted.</string>
@@ -352,6 +352,6 @@ Atentamente,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.</string>
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
-    <string name="setting_domain_based_blocked">Bloqueo basado en Dominio (en Desarrollo)</string>
+    <string name="setting_domain_based_blocked">Bloqueo basado en Dominios (en Desarrollo)</string>
     <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
 </resources>
