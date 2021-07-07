@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl stelt gebruikers in staat om de wijdverbreide, voortdurende, verborgen gegevensverzameling in mobiele apps over gebruikersgedrag (\'tracking\') te volgen en te controleren.</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is gebaseerd op NetGuard, ontwikkeld door Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl vereist Android 5.1 of later</string>
     <string name="app_xposed">Xposed veroorzaakt te veel crashes, waardoor TrackerControl uit de Google Play Store kan worden verwijderd, daarom wordt TrackerControl niet ondersteund terwijl Xposed is geïnstalleerd</string>
+    <string name="app_eula">Het gebruik van deze app is op eigen risico. Geen enkele app kan 100% bescherming bieden tegen tracking.</string>
     <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Privacybeleid</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookiebeleid</a></string>
     <string name="channel_foreground">Lopende diensten</string>
     <string name="channel_notify">Algemene kennisgevingen</string>
@@ -14,11 +17,13 @@
     <string name="menu_sort">Apps sorteren</string>
     <string name="menu_sort_name">Sorteer op naam</string>
     <string name="menu_sort_uid">Sorteer op uid</string>
+    <string name="menu_sort_companies_week">Sorteren op bedrijven (week)</string>
     <string name="menu_sort_companies">Sorteer op bedrijven</string>
     <string name="menu_log">Verkeerslogboek</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_invite">Inviteer</string>
     <string name="menu_legend">Legenda</string>
+    <string name="menu_support">Steun deze app</string>
     <string name="menu_log_support">Uitleg</string>
     <string name="menu_about">Over</string>
     <string name="menu_apps">Andere apps</string>
@@ -31,7 +36,7 @@
     <string name="menu_organization">Toon organisatie</string>
     <string name="menu_pcap_enabled">PCAP ingeschakeld</string>
     <string name="menu_pcap_export">PCAP-export</string>
-    <string name="menu_clear">Duidelijk</string>
+    <string name="menu_clear">Wissen</string>
     <string name="menu_export">Exporteer</string>
     <string name="menu_reset">Reset</string>
     <string name="menu_cleanup">Opruimen</string>
@@ -53,6 +58,10 @@
     <string name="setting_reload_onconnectivity">Herladen bij elke verandering in de connectiviteit</string>
     <string name="setting_advanced_options">Geavanceerde opties</string>
     <string name="setting_system">Beheer systeem apps</string>
+    <string name="setting_log_app">Nieuwe trackers zoeken</string>
+    <string name="setting_log_logcat">Log transmissies naar ADB</string>
+    <string name="setting_filter">Blokkeer trackers</string>
+    <string name="setting_filter_udp">Blokkeer trackers op UDP</string>
     <string name="setting_handover">Naadloze VPN-overdracht bij herlading</string>
     <string name="setting_lockdown">Verkeersafsluiting</string>
     <string name="setting_track_usage">Traceer het netwerkgebruik</string>
@@ -76,11 +85,14 @@
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Exporteren van instellingen (niet voor apparaat reset)</string>
-    <string name="setting_import">Importeren instellingen</string>
+    <string name="setting_export">Exporteer instellingen (niet voor apparaat reset)</string>
+    <string name="setting_import">Importeer instellingen</string>
     <string name="setting_hosts">Importeren van hosts-bestand</string>
     <string name="setting_hosts_append">Importeren van hosts-bestand (bijlage)</string>
+    <string name="setting_hosts_url">URL van hosts-bestand</string>
     <string name="setting_hosts_download">Hostersbestand downloaden</string>
+    <string name="setting_hosts_update">Update hosts-bestand</string>
+    <string name="summary_install">Statusbalk melding weergeven voor nieuw geïnstalleerde apps</string>
     <string name="summary_pause">Na de pauze van de melding schakelt u TrackerControl automatisch weer in na het geselecteerde aantal minuten (voer 0 in om deze optie uit te schakelen).</string>
     <string name="summary_update">Controleer twee keer per dag op nieuwe releases op GitHub</string>
     <string name="summary_tethering">Afhankelijk van de Android-versie kan het aanbinden wel of niet werken. Vastgebonden verkeer kan niet worden gefilterd.</string>
@@ -89,17 +101,21 @@
     <string name="summary_ip6">Routeer IP versie 6 verkeer naar TrackerControl zodat het selectief kan worden toegestaan of geblokkeerd</string>
     <string name="summary_call">Schakel TrackerControl uit bij een inkomend of een uitgaand telefoongesprek. Dit kan gebruikt worden om IP/Wi-Fi belproblemen te omzeilen.</string>
     <string name="summary_system">Definieer regels voor systeemapplicaties (voor deskundigen)</string>
+    <string name="summary_log_app">Uitschakelen om het batterijgebruik te verminderen. Nieuwe trackers zullen nog steeds worden geblokkeerd, maar niet getoond.</string>
     <string name="summary_track_usage">Volg het aantal verzonden en ontvangen bytes voor elke app en elk adres. Dit kan resulteren in extra batterijverbruik.</string>
     <string name="summary_block_domains">WAARSCHUWING: Geblokkeerde hosts worden niet getoond in de UI.</string>
     <string name="summary_rcode">De standaardwaarde is 3 (NXDOMAIN), wat \'niet-bestaand domein\' betekent.</string>
     <string name="summary_validate">Domeinnaam die gebruikt wordt om de internetverbinding op poort 443 (https) te valideren.</string>
     <string name="summary_socks5_enabled">Alleen TCP-verkeer wordt naar de proxyserver gestuurd</string>
     <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog steeds actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
+    <string name="summary_log_logcat">Schakelt blokkering uit. Communicaties (en geïdentificeerde trackers) worden in het logboek van het apparaat vastgelegd. Haal terug met adb logcat met tag \'TC-Log\'.</string>
     <string name="msg_sure">Ben je zeker?</string>
     <string name="msg_started">Controle van trackers</string>
     <string name="msg_waiting">Wachten op evenement</string>
     <string name="msg_disabled">Gebruik de bovenstaande schakelaar om TrackerControl in te schakelen.</string>
     <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
+    <string name="msg_installed">Problemen met %1$s?</string>
+    <string name="msg_installed_description">App toestaan om contact op te nemen met bedrijven</string>
     <string name="msg_installed_n">Is geïnstalleerd</string>
     <string name="msg_completed">Actie voltooid</string>
     <string name="msg_vpn">TrackerControl gebruikt een lokaal VPN om het internetverkeer te filteren.
@@ -121,7 +137,9 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_import_last">Laatste import: %s</string>
     <string name="msg_downloading">Downloaden\n%1s</string>
     <string name="msg_downloaded">Hostsbestand gedownload</string>
+    <string name="msg_updated">Hosts-bestand bijgewerkt en toegepast!</string>
     <string name="msg_download_last">Laatste download: %s</string>
+    <string name="msg_update_last">Laatste update: %s</string>
     <string name="msg_metered">Netwerk wordt gemeten</string>
     <string name="msg_inactive">Geen actieve internetverbinding</string>
     <string name="msg_queue">TrackerControl is bezig</string>
@@ -136,6 +154,22 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_always_on">Een ander VPN is ingesteld als Always-on VPN</string>
     <string name="msg_always_on_lockdown">Schakel \"Blokkeer verbindingen zonder VPN\" uit in Android VPN-instellingen om TrackerControl te gebruiken in de filtermodus</string>
     <string name="msg_private_dns">Schakel \"Private DNS\" uit in de Android netwerkinstellingen om TrackerControl te gebruiken in de filtermodus</string>
+    <string name="msg_start_forward">Begin met doorsturen van %1$s poort %2$d naar %3$s:%4$d van \'%5$s\'?</string>
+    <string name="msg_stop_forward">Stop met doorsturen van %1$s poort %2$d?</string>
+    <string name="msg_log_logcat">Waarschuwing: Blokkeren uitgeschakeld vanwege ADB loggen.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Toevoegen</string>
+    <string name="menu_delete">Verwijderen</string>
+    <string name="setting_forwarding">Poort doorschakelen</string>
+    <string name="title_protocol">Protocol</string>
+    <string name="title_dport">Broncode poort</string>
+    <string name="title_raddr">Doeladres</string>
+    <string name="title_rport">Doel poort</string>
+    <string name="title_ruid">Bestemmings-app</string>
+    <string name="title_external">Voor een externe server selecteer \'niemand\'</string>
     <string name="title_lockdown_enabled">Het verkeer is afgesloten</string>
     <string name="title_unmetered_allowed">Onbeperkt verkeer is toegestaan</string>
     <string name="title_unmetered_blocked">Onbeperkt verkeer wordt geblokkeerd</string>
@@ -148,6 +182,7 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_interactive_allowed">Toestaan wanneer het scherm is ingeschakeld</string>
     <string name="title_roaming_blocked">Blokkeren bij roaming</string>
     <string name="title_metered">Standaard wordt een Wi-Fi-verbinding als niet gemeten beschouwd en een mobiele verbinding als wel gemeten</string>
+    <string name="title_internet">geen toegang tot internet</string>
     <string name="title_disabled">is invalide</string>
     <string name="title_messaging">Inkomende berichten worden ontvangen door Google Play-services en niet door deze app en kunnen daarom niet worden geblokkeerd door deze app te blokkeren</string>
     <string name="title_download">Downloads worden uitgevoerd door de downloadmanager en niet door deze app en kunnen daarom niet worden geblokkeerd door deze app te blokkeren</string>
@@ -184,6 +219,14 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_log_copy">Kopieer</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Toepassing Naam</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">%d bedrijf is vorige week gecontacteerd</item>
+        <item quantity="other">%d bedrijven zijn vorige week gecontacteerd</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">%d bedrijf altijd gecontacteerd</item>
+        <item quantity="other">%d bedrijven altijd gecontacteerd</item>
+    </plurals>
     <string name="external_servers">Krijg je automatisch een e-mail van een ontwikkelaar?</string>
     <string name="confirm_google_info">Deze app kan automatisch de e-mail van de app-ontwikkelaar uit de Google Play Store voor u halen.</string>
     <string name="ok">OK</string>
@@ -224,6 +267,40 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Onderwerp Verzoek om toegang</string>
+    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
+\n
+\n
+I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
+If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
+\n
+• a copy of my personal data;\n
+• the purposes of the processing;\n
+• the categories of personal data concerned;\n
+• the recipients you disclose my personal data to and the safeguards you provide;\n
+• the retention period for storing my personal data or the criteria used for determining this period;\n
+• information about the source of my personal data; and\n
+• the existence of automated decision-making (including profiling), and if so:\n
+    - the logic involved in the decision-making process;\n
+    - the significance and the envisaged consequences for me;\n
+    - the steps you have taken to prevent errors, bias and discrimination; and\n
+    - explain how I can express my point of view and challenge a decision.\n
+\n
+This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+\n
+Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+\n
+Sincerely,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
+\n
+\n
+I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
+• All data.\n
+\n
+The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+\n
+Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+\n
+Sincerely,\n\n]]></string>
     <string name="crash_dialog_text">Sorry. TrackerControl is net gecrasht... Zou je het erg vinden om ons een e-mail te sturen met details?</string>
     <string name="crash_dialog_comment">Heeft u commentaar?</string>
     <string name="instructions_monitoring_private_dns">Schakel de schakelaar om en ga met een aantal apps werken. Private DNS moet worden uitgeschakeld.</string>
@@ -241,8 +318,12 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tracker_fingerprinting">Vingerafdrukken</string>
     <string name="tracker_social">Sociaal</string>
     <string name="tracker_uncategorised">Ongecategoriseerd</string>
+    <string name="setting_strict_blocking">Strikte Blokkering</string>
+    <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps blokkeer zo veel mogelijk data delen met bedrijven. Meer apps werken niet goed.</string>
+    <string name="strict_blocking_explanation">Er wordt aanbevolen dat niet-deskundigen deze optie uitschakelen om de app-onderbreking te verminderen. Dit maakt het echter mogelijk om een aantal essentiële delen met bedrijven te delen.</string>
     <string name="exclude_vpn_explanation">Moet de trackers opsporen of blokkeren: \n\nUitschakelen als je tegen problemen aanloopt.</string>
     <string name="uninstall">De-installeer</string>
+    <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Schakel de schakelaar in het hoofdscherm in en start de app om trackers te vinden</string>
     <string name="no_trackers_found_message">Lanceer app om trackers te vinden</string>
     <string name="no_trackers_found_action">Starten</string>
@@ -257,4 +338,20 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="enable">Activeer</string>
     <string name="internet_blocked">Internettoegang geblokkeerd</string>
     <string name="internet_unblocked">Internettoegang gedeblokkeerd</string>
+    <string name="category_blocked">Trackers in categorie geblokkeerd</string>
+    <string name="category_unblocked">Trackers in categorie toegestaan</string>
+    <string name="category_unblocked_warning">Eerst categorie blokkeren!</string>
+    <string name="switch_strict_blocking">Blokkeer essentiële gegevens delen</string>
+    <string name="tracking_detection_failed">Tracker library detectie mislukt.</string>
+    <string name="tracking_detection_failed_ram">Tracker library detectie mislukt. Onvoldoende RAM.</string>
+    <string name="tracking_detection_failed_report">Tracker library detectie mislukt. Rapporteer dit probleem bij de ontwikkelaar.</string>
+    <string name="detected_trackers">Gedetecteerde tracker libraries: %s</string>
+    <string name="none">Geen</string>
+    <string name="trackers_static">Tracker libraries</string>
+    <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.\n\nTracking die wordt gedetecteerd in het netwerkverkeer kan met TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
+    <string name="blocked">GEBLOKKEERD</string>
+    <string name="allowed">TOEGESTAAN</string>
+    <string name="setting_domain_based_blocked">Domeingebaseerde blokkering (in Ontwikkeling)</string>
+    <string name="summary_domain_based_blocking">Staat meer granulaire blokkering toe. Nog steeds in ontwikkeling.</string>
 </resources>

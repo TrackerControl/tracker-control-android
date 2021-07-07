@@ -222,8 +222,8 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
         <item quantity="other">a contacté %d sociétés la semaine dernière</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">a contacté %d société la semaine dernière</item>
-        <item quantity="other">a contacté %d sociétés la semaine dernière</item>
+        <item quantity="one">a contacté %d entreprise</item>
+        <item quantity="other">a contacté %d entreprises</item>
     </plurals>
     <string name="external_servers">Obtenir automatiquement le courriel du développeur ?</string>
     <string name="confirm_google_info">Cette application peut obtenir automatiquement le courriel du développeur de l\'application depuis la boutique Google Play pour vous.</string>
