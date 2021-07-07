@@ -43,7 +43,7 @@
     <string name="setting_options">Opciones</string>
     <string name="setting_dark">Tema oscuro</string>
     <string name="setting_install">Notificar instalaciones nuevas</string>
-    <string name="setting_pause">Activar automáticamente después de %1$s minutos</string>
+    <string name="setting_pause">Autoactivar después de %1$s minutos</string>
     <string name="setting_update">Comprobar actualizaciones</string>
     <plurals name="pause">
         <item quantity="one">Pausar por %d min</item>
@@ -340,7 +340,7 @@ Atentamente,\n\n]]></string>
     <string name="internet_unblocked">Acceso a Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores en la categoría bloqueados</string>
     <string name="category_unblocked">Rastreadores en categoría permitidos</string>
-    <string name="category_unblocked_warning">¡Primero bloquea la categoría!</string>
+    <string name="category_unblocked_warning">¡Primero bloquee la categoría!</string>
     <string name="switch_strict_blocking">Bloquear que se compartan datos esenciales</string>
     <string name="tracking_detection_failed">Falló la detección de biblioteca de rastreadores.</string>
     <string name="tracking_detection_failed_ram">Falló la detección de biblioteca de rastreadores. No hay suficiente RAM.</string>
@@ -349,6 +349,7 @@ Atentamente,\n\n]]></string>
     <string name="none">Ninguna</string>
     <string name="trackers_static">Librerías de rastreadores</string>
     <string name="trackers_static_explanation">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.\n\nEl rastreo detectado en el tráfico de red puede ser bloqueado con TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.</string>
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
     <string name="setting_domain_based_blocked">Bloqueo basado en Dominio (en Desarrollo)</string>

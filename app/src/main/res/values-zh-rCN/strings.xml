@@ -345,6 +345,7 @@
     <string name="none">无</string>
     <string name="trackers_static">跟踪库</string>
     <string name="trackers_static_explanation">TrackerControl检测代码（“库”）中的跟踪以及应用程序的网络流量。\n\n可以使用TrackerControl阻止在网络流量中检测到的跟踪。</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl 检测应用程序的代码 (“库”) 和网络流量中的跟踪。</string>
     <string name="blocked">已屏蔽</string>
     <string name="allowed">已允许</string>
     <string name="setting_domain_based_blocked">基于域名的屏蔽(开发中)</string>
