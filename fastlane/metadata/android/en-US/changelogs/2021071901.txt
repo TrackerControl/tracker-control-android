@@ -1,0 +1,2 @@
+- Latest translations
+- Support for Android 12
