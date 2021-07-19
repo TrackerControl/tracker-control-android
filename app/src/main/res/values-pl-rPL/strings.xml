@@ -35,15 +35,15 @@
     <string name="menu_export">Eksport</string>
     <string name="menu_reset">Zresetować</string>
     <string name="menu_cleanup">Wyczyść</string>
-    <string name="setting_options">Opcje</string>
-    <string name="setting_dark">Ciemny temat</string>
-    <string name="setting_install">Powiadomić o nowej instalacji</string>
+    <string name="setting_options">Ustawienia</string>
+    <string name="setting_dark">Ciemny motyw</string>
+    <string name="setting_install">Powiadamiaj o nowej instalacji</string>
     <string name="setting_pause">Automatyczne włączenie po %1$s minutach</string>
-    <string name="setting_update">Sprawdzanie aktualizacji</string>
+    <string name="setting_update">Sprawdź aktualizacje</string>
     <plurals name="pause">
-        <item quantity="one">Pauza na %d min</item>
-        <item quantity="few">Pauza na %d min</item>
-        <item quantity="many">Pauza na %d min</item>
+        <item quantity="one">Wstrzymaj na %d minutę</item>
+        <item quantity="few">Wstrzymaj na %d minuty</item>
+        <item quantity="many">Wstrzymaj na %d minut</item>
         <item quantity="other">Pauza dla %d min</item>
     </plurals>
     <string name="setting_network_options">Opcje sieciowe</string>
@@ -83,6 +83,7 @@
     <string name="setting_hosts">Importuj plik hostów</string>
     <string name="setting_hosts_append">Plik importowy hostów (załącznik)</string>
     <string name="setting_hosts_download">Pobierz plik z hostami</string>
+    <string name="setting_hosts_update">Zaktualizuj plik hosts</string>
     <string name="summary_pause">Po przerwie od powiadomienia, po upływie wybranej liczby minut, TrackerControl zostanie automatycznie ponownie włączony (wpisz 0, aby wyłączyć tę opcję).</string>
     <string name="summary_update">Sprawdź, czy na GitHubie pojawiają się nowe wersje dwa razy dziennie</string>
     <string name="summary_tethering">W zależności od wersji Androida, wiązanie może działać lub nie działać. Ruch wiązany nie może być filtrowany.</string>

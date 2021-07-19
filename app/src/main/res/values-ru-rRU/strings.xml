@@ -353,6 +353,7 @@ Sincerely,\n\n]]></string>
     <string name="none">Нет</string>
     <string name="trackers_static">Библиотеки трекинга</string>
     <string name="trackers_static_explanation">TrackerControl обнаруживает трекинг в коде приложения («библиотеки») и в сетевом трафике.\n\nТрекинг, обнаруженный в трафике, можно заблокировать с помощью TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl обнаруживает трекинг в коде приложения («библиотеки») и в сетевом трафике.</string>
     <string name="blocked">ЗАБЛОКИРОВАНО</string>
     <string name="allowed">РАЗРЕШЕНО</string>
     <string name="setting_domain_based_blocked">Блокировка по доменным именам (в разработке)</string>
