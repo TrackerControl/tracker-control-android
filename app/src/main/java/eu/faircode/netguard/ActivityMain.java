@@ -26,9 +26,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.net.VpnService;
@@ -67,10 +69,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.opencsv.CSVWriter;
+
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
+import net.kollnig.missioncontrol.data.TrackerList;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
@@ -104,6 +117,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final int REQUEST_LOGCAT = 3;
     public static final int REQUEST_ROAMING = 4;
     public static final int REQUEST_DETAILS_UPDATED = 5;
+
+    private static final int REQUEST_EXPORT = 10;
 
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
 
@@ -549,10 +564,104 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         } else if (requestCode == REQUEST_DETAILS_UPDATED) {
             updateApplicationList(null);
+        } else if (requestCode == REQUEST_EXPORT) {
+            if (resultCode == RESULT_OK && data != null)
+                handleExport(data);
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    private void handleExport(Intent data) {
+        new AsyncTask<Object, Object, Throwable>() {
+            @Override
+            protected Throwable doInBackground(Object... objects) {
+                OutputStream out = null;
+                try {
+                    Uri target = data.getData();
+                    if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                        target = Uri.parse(target + "/trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                    Log.i(TAG, "Writing URI=" + target);
+                    out = getContentResolver().openOutputStream(target);
+                    csvExport(out);
+                    return null;
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    return ex;
+                } finally {
+                    if (out != null)
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable ex) {
+                if (running) {
+                    if (ex == null)
+                        Toast.makeText(ActivityMain.this, R.string.exported, Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(ActivityMain.this, R.string.export_failed, Toast.LENGTH_LONG).show();
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void csvExport(OutputStream out) throws IOException {
+        PackageManager pm = getPackageManager();
+        CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
+                CSVWriter.DEFAULT_SEPARATOR,
+                CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                CSVWriter.RFC4180_LINE_END);
+
+        Cursor data = DatabaseHelper.getInstance(this).getHosts();
+        if (data == null) throw new IOException("Could not read hosts.");
+
+        List<String> columnNames = new ArrayList<>();
+        Collections.addAll(columnNames, data.getColumnNames());
+        columnNames.add("Tracker");
+        columnNames.add("Category");
+        columnNames.add("Package");
+        columnNames.add("App");
+
+        csv.writeNext(columnNames.toArray(new String[0]));
+        while (data.moveToNext()) {
+            String[] row = new String[data.getColumnNames().length + 4];
+            for (int i = 0; i < data.getColumnNames().length; i++) {
+                row[i] = data.getString(i);
+            }
+
+            String hostname = data.getString(data.getColumnIndex("daddr"));
+            Tracker tracker = TrackerList.findTracker(hostname);
+            if (tracker != null) {
+                row[data.getColumnNames().length] = tracker.getName();
+                row[data.getColumnNames().length + 1] = tracker.getCategory();
+            } else {
+                row[data.getColumnNames().length] = "";
+                row[data.getColumnNames().length + 1] = "";
+            }
+
+            try {
+                String pkg = pm.getNameForUid(data.getInt(data.getColumnIndex("uid")));
+                ApplicationInfo info = pm.getApplicationInfo(pkg, 0);
+                String name = pm.getApplicationLabel(info).toString();
+
+                row[data.getColumnNames().length + 2] = pkg;
+                row[data.getColumnNames().length + 3] = name;
+            } catch (PackageManager.NameNotFoundException e) {
+                row[data.getColumnNames().length + 2] = "";
+                row[data.getColumnNames().length + 3] = "";
+            }
+
+            csv.writeNext(row);
+        }
+        csv.close();
+        data.close();
     }
 
     @Override
@@ -827,6 +936,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (itemId == R.id.menu_support) {
             startActivity(getIntentSupport(this));
             return true;
+        } else if (itemId == R.id.menu_csv) {
+            startActivityForResult(getIntentCreateExport(), REQUEST_EXPORT);
+            return true;
         } else if (itemId == R.id.menu_about) {
             menu_about();
             return true;
@@ -835,6 +947,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private Intent getIntentCreateExport() {
+        Intent intent;
+        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+        return intent;
     }
 
     private void showHints() {
