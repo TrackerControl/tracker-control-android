@@ -17,17 +17,15 @@
 
 package net.kollnig.missioncontrol;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,10 +33,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NavUtils;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -52,14 +47,15 @@ import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import eu.faircode.netguard.DatabaseHelper;
@@ -73,11 +69,11 @@ public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
     public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
 
-    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    private boolean running = false;
+
+    private static final int REQUEST_EXPORT = 10;
     public static PlayStore.AppInfo app = null;
     private final String TAG = DetailsActivity.class.getSimpleName();
-    final File exportDir = new File(
-            Environment.getExternalStorageDirectory(), "trackercontrol");
     private Integer appUid;
     private String appPackageName;
 
@@ -117,10 +113,28 @@ public class DetailsActivity extends AppCompatActivity {
 
     private DetailsPagesAdapter detailsPagesAdapter;
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        if (requestCode == REQUEST_EXPORT) {
+            if (resultCode == RESULT_OK && data != null)
+                handleExport(data);
+        } else {
+            Log.w(TAG, "Unknown activity result request=" + requestCode);
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void handleExport(Intent data) {
+        new ExportDatabaseCSVTask(data).execute();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        running = true;
 
         // Receive about details
         Intent intent = getIntent();
@@ -166,9 +180,7 @@ public class DetailsActivity extends AppCompatActivity {
             NavUtils.navigateUpFromSameTask(this);
             return true;
         } else if (itemId == R.id.action_export_csv) {
-            if (hasPermissions()) {
-                exportCsv();
-            }
+            startActivityForResult(getIntentCreateExport(), REQUEST_EXPORT);
             return true;
         } else if (itemId == R.id.action_clear) {
             DatabaseHelper dh = DatabaseHelper.getInstance(this);
@@ -189,72 +201,36 @@ public class DetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private Intent getIntentCreateExport() {
+        Intent intent;
+        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_TITLE, appPackageName + "_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+        return intent;
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         savePrefs(this);
     }
 
-    public boolean hasPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED)
-            return true;
-
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-        return false;
-    }
-
-    public void exportCsv() {
-        if (!exportDir.exists()) {
-            try {
-                if (!exportDir.mkdir())
-                    Toast.makeText(this, R.string.export_failed, Toast.LENGTH_SHORT).show();
-                return;
-            } catch (SecurityException ecp) {
-                Toast.makeText(this, R.string.export_failed, Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
-        new ExportDatabaseCSVTask().execute();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        if (requestCode == MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE) {// If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                exportCsv();
-            } else {
-                Toast.makeText(this, "Access to files required..", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void shareExport() {
-        File sharingFile = new File(exportDir, appPackageName + ".csv");
-        Uri uri = FileProvider.getUriForFile(Objects.requireNonNull(getApplicationContext()),
-                BuildConfig.APPLICATION_ID + ".provider", sharingFile);
-
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-        shareIntent.setType("application/csv");
-        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(Intent.createChooser(shareIntent, "Share CSV"));
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
         app = null;
+        running = false;
     }
 
     class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
         private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
         TrackerList trackerList;
+        Intent data;
+
+        public ExportDatabaseCSVTask(Intent data) {
+            this.data = data;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -264,69 +240,79 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         protected Boolean doInBackground(final String... args) {
-            if (exportDir == null) return false;
-
-            File file = new File(exportDir, appPackageName + ".csv");
+            OutputStream out = null;
             try {
-                file.createNewFile();
-                CSVWriter csv = new CSVWriter(new FileWriter(file),
-                        CSVWriter.DEFAULT_SEPARATOR,
-                        CSVWriter.DEFAULT_QUOTE_CHARACTER,
-                        CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                        CSVWriter.RFC4180_LINE_END);
-
-                Cursor data = trackerList.getAppInfo(appUid);
-                if (data == null) return false;
-
-                List<String> columnNames = new ArrayList<>();
-                Collections.addAll(columnNames, data.getColumnNames());
-                columnNames.add("Tracker Name");
-                columnNames.add("Tracker Category");
-
-                csv.writeNext(columnNames.toArray(new String[0]));
-                while (data.moveToNext()) {
-                    String[] row = new String[data.getColumnNames().length + 2];
-                    for (int i = 0; i < data.getColumnNames().length; i++) {
-                        row[i] = data.getString(i);
-                    }
-
-                    String hostname = data.getString(data.getColumnIndex("daddr"));
-                    Tracker tracker = TrackerList.findTracker(hostname);
-                    if (tracker != null) {
-                        row[data.getColumnNames().length] = tracker.getName();
-                        row[data.getColumnNames().length + 1] = tracker.getCategory();
-                    } else {
-                        row[data.getColumnNames().length] = "";
-                        row[data.getColumnNames().length + 1] = "";
-                    }
-
-                    csv.writeNext(row);
-                }
-                csv.close();
-                data.close();
-            } catch (IOException e) {
+                Uri target = data.getData();
+                if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                    target = Uri.parse(target + "/" + appPackageName + "_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                Log.i(TAG, "Writing URI=" + target);
+                out = getContentResolver().openOutputStream(target);
+                csvExport(out);
+                return true;
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                 return false;
+            } finally {
+                if (out != null)
+                    try {
+                        out.close();
+                    } catch (IOException ex) {
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    }
             }
+        }
 
-            return true;
+        private void csvExport(OutputStream out) throws IOException {
+            CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
+                    CSVWriter.DEFAULT_SEPARATOR,
+                    CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.RFC4180_LINE_END);
+
+            Cursor data = trackerList.getAppInfo(appUid);
+            if (data == null) throw new IOException("Could not read hosts.");
+
+            List<String> columnNames = new ArrayList<>();
+            Collections.addAll(columnNames, data.getColumnNames());
+            columnNames.add("Tracker Name");
+            columnNames.add("Tracker Category");
+
+            csv.writeNext(columnNames.toArray(new String[0]));
+            while (data.moveToNext()) {
+                String[] row = new String[data.getColumnNames().length + 2];
+                for (int i = 0; i < data.getColumnNames().length; i++) {
+                    row[i] = data.getString(i);
+                }
+
+                String hostname = data.getString(data.getColumnIndex("daddr"));
+                Tracker tracker = TrackerList.findTracker(hostname);
+                if (tracker != null) {
+                    row[data.getColumnNames().length] = tracker.getName();
+                    row[data.getColumnNames().length + 1] = tracker.getCategory();
+                } else {
+                    row[data.getColumnNames().length] = "";
+                    row[data.getColumnNames().length + 1] = "";
+                }
+
+                csv.writeNext(row);
+            }
+            csv.close();
+            data.close();
         }
 
         protected void onPostExecute(final Boolean success) {
-            if (this.dialog.isShowing()) {
-                this.dialog.dismiss();
-            }
+            if (running) {
+                if (this.dialog.isShowing())
+                    this.dialog.dismiss();
 
-            if (!success) {
-                Toast.makeText(DetailsActivity.this, R.string.export_failed, Toast.LENGTH_SHORT).show();
-                return;
+                if (success) {
+                    View v = findViewById(R.id.view_pager);
+                    Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
+                    s.show();
+                } else {
+                    Toast.makeText(DetailsActivity.this, R.string.export_failed, Toast.LENGTH_SHORT).show();
+                }
             }
-
-            // Export successful, ask user to further share file!
-            View v = findViewById(R.id.view_pager);
-            Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
-            s.setAction(R.string.share_csv, v1 -> shareExport());
-            s.setActionTextColor(getResources().getColor(R.color.colorPrimary));
-            s.show();
         }
     }
 }

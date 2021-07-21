@@ -294,7 +294,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="exporting">Exporting..</string>
     <string name="share_csv">Share</string>
     <string name="export_failed">Export failed</string>
-    <string name="exported">Exported to storage! Access phone storage from computer or share with other app.</string>
+    <string name="exported">Exported to storage!</string>
 
     <!-- App Details -->
     <string name="title_activity_detail">Details</string>
