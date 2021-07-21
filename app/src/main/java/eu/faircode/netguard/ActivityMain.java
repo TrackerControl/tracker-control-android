@@ -666,6 +666,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_ROAMING)
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ServiceSinkhole.reload("permission granted", this, false);

@@ -682,6 +682,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         PreferenceScreen screen = getPreferenceScreen();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
