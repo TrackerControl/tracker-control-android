@@ -275,6 +275,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     </string-array>
 
     <!-- App Overview -->
+    <string name="tracked_app_icon">Disable internet access for this application</string>
     <string name="tracked_app_name">Application Name</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contacted %d company last week</item>
