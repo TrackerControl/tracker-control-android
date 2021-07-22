@@ -394,10 +394,32 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
             adapter.notifyDataSetChanged();
             return true;
         } else if (itemId == R.id.menu_log_organization) {
-            item.setChecked(!item.isChecked());
-            prefs.edit().putBoolean("organization", item.isChecked()).apply();
-            adapter.setOrganization(item.isChecked());
-            adapter.notifyDataSetChanged();
+            // disabling need no dialog
+            if (item.isChecked()) {
+                item.setChecked(!item.isChecked());
+                prefs.edit().putBoolean("organization", item.isChecked()).apply();
+                adapter.setOrganization(item.isChecked());
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+            
+            // warn that enabling will send data to ipinfo.io
+            AlertDialog.Builder builder = new AlertDialog.Builder(c)
+                    .setTitle(R.string.confirm_ipinfo_title)
+                    .setMessage(R.string.confirm_ipinfo)
+                    .setPositiveButton(R.string.yes, (dialog, id2) -> {
+                        item.setChecked(!item.isChecked());
+                        prefs.edit().putBoolean("organization", item.isChecked()).apply();
+                        adapter.setOrganization(item.isChecked());
+                        adapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton(R.string.no, (dialog, id2) -> {
+                        dialog.dismiss();
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            
             return true;
         } else if (itemId == R.id.menu_pcap_enabled) {
             item.setChecked(!item.isChecked());
