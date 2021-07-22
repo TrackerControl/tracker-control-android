@@ -15,6 +15,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerInside"
+        android:contentDescription="@string/tracked_app_icon"
         android:src="@drawable/ic_rocket" />
 
     <LinearLayout
