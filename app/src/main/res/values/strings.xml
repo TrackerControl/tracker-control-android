@@ -285,8 +285,13 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item quantity="one">contacted %d company all time</item>
         <item quantity="other">contacted %d companies all time</item>
     </plurals>
+    
+    <string name="confirm_ipinfo_title">Retrieve organisation info?</string>
+    <string name="confirm_ipinfo">This will contact the external service ipinfo.io, and share data about contacted IPs with them.</string>
+    
     <string name="external_servers">Get developer email automatically?</string>
     <string name="confirm_google_info">This app can automatically get the email of the app developer from the Google Play Store for you.</string>
+    
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
