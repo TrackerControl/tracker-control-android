@@ -75,7 +75,7 @@ public class Common {
             in.close();
 
             return html.toString();
-        } catch (IOException e) {
+        } catch (IOException | OutOfMemoryError e) {
             return null;
         }
     }
