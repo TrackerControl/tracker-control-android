@@ -40,6 +40,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SwitchCompat;
@@ -404,7 +405,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
             }
             
             // warn that enabling will send data to ipinfo.io
-            AlertDialog.Builder builder = new AlertDialog.Builder(c)
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle(R.string.confirm_ipinfo_title)
                     .setMessage(R.string.confirm_ipinfo)
                     .setPositiveButton(R.string.yes, (dialog, id2) -> {
