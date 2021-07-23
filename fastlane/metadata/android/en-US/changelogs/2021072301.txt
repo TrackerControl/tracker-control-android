@@ -1,0 +1,6 @@
+- New feature: Export all seen trackers from main menu
+- Add warning dialog for enabling 'organizations' in Traffic Log
+- Update to target SDK 30
+- Remove write storage permission
+- Update dependencies and translations
+- Improve accessibility
