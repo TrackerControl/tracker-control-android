@@ -52,6 +52,7 @@ There are many ways in which you can support TrackerControl. Here are a few idea
 2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
 3. Help [translate](https://github.com/OxfordHCC/tracker-control-android#translation) the app into your language.
 4. Tell your friends how to protect their privacy with TrackerControl.
+5. Leave a star on GitHub.
 
 Also, you can always reach out to me directly at hello@trackercontrol.org. I deeply welcome and answer every message.
 
