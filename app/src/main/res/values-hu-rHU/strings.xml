@@ -10,10 +10,10 @@
     <string name="channel_notify">Általános értesítések</string>
     <string name="channel_access">Hozzáférési értesítések</string>
     <string name="menu_search">Alkalmazás keresése</string>
-    <string name="menu_filter">Alkalmazásszűrő</string>
+    <string name="menu_filter">Alkalmazás szűrő</string>
     <string name="menu_app_user">Felhasználói alkalmazások megjelenítése</string>
     <string name="menu_app_system">Rendszer alkalmazások megjelenítése</string>
-    <string name="menu_app_nointernet">Internet-nélküli appok megjelenítése</string>
+    <string name="menu_app_nointernet">Internet nélküli alkalmazások megjelenítése</string>
     <string name="menu_sort">Alkalmazások rendezése</string>
     <string name="menu_sort_name">Rendezés név alapján</string>
     <string name="menu_sort_uid">Rendezés UID szerint</string>
@@ -40,7 +40,7 @@
     <string name="menu_export">Exportálás</string>
     <string name="menu_reset">Visszaállítás</string>
     <string name="menu_cleanup">Takarítás</string>
-    <string name="setting_options">Opciók</string>
+    <string name="setting_options">Lehetőségek</string>
     <string name="setting_dark">Sötét téma</string>
     <string name="setting_install">Értesítés az új telepítésről</string>
     <string name="setting_pause">Automatikus engedélyezés %1$s perc után</string>
@@ -49,7 +49,7 @@
         <item quantity="one">Szünet %d percig</item>
         <item quantity="other">Szünet %d percig</item>
     </plurals>
-    <string name="setting_network_options">Hálózati opciók</string>
+    <string name="setting_network_options">Hálózati lehetőségek</string>
     <string name="setting_subnet">Alhálózati útválasztás</string>
     <string name="setting_tethering">Engedélyezi az internetmegosztást</string>
     <string name="setting_lan">LAN hozzáférés engedélyezése</string>
@@ -96,7 +96,7 @@
     <string name="summary_pause">Az értesítés szüneteltetése után a kiválasztott percek után automatikusan engedélyezze újra a TrackerControl alkalmazást (0 érték letiltja az opciót).</string>
     <string name="summary_update">Ellenőrizze naponta kétszer a GitHub-on az új kiadásokat</string>
     <string name="summary_tethering">Az Android verziótól függően a Tethering vagy működik, vagy nem. A megosztott forgalom nem szűrhető.</string>
-    <string name="summary_subnet">Engedélyezi a alhálózati útválasztót; lehet, hogy engedélyezi a Wi-Fi hívást, de lehet hogy hibát okoz az Androidban és növeli az akkumulátor használatot</string>
+    <string name="summary_subnet">Engedélyezi az alhálózati útválasztót; lehet, hogy engedélyezi a Wi-Fi hívást, de lehet hogy hibát okoz az Androidban és növeli az akkumulátor használatot</string>
     <string name="summary_lan">Engedélyezi az alkalmazások kapcsolódását a LAN hálózati címekhez, mint pl. 10.0.0.0/8, 172.16.0.0/12 és 192.168.0.0/16</string>
     <string name="summary_ip6">Az IPv6 forgalmat a TrackerControl szelektíven tudja tiltani vagy engedélyezni</string>
     <string name="summary_call">A TrackerControl letiltása a bejövő vagy kimenő telefonhívás alatt. Ez használható IP/Wi-Fi hívási problémák megoldására.</string>
@@ -196,7 +196,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="title_notify">Értesítés az internet hozzáférési kísérletekről</string>
     <string name="title_logging_disabled">A naplózás vagy a szűrés nincs engedélyezve</string>
     <string name="title_logging_enabled">A naplózás és a szűrés engedélyezve</string>
-    <string name="title_logging_configure">Konfigurálás</string>
+    <string name="title_logging_configure">Beállítás</string>
     <string name="title_enable_logging">Csak a blokkolt címek naplózásának engedélyezése</string>
     <string name="title_enable_filtering">A szűrés engedélyezése naplózza az engedélyezett címeket is</string>
     <string name="title_enable_notify">Engedélyezi az újonnan naplózott címek hozzáférési értesítéseit</string>
@@ -243,7 +243,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="tracker_name">Követő Neve</string>
     <string name="internet_access">Internet hozzáférés</string>
     <string name="internet_access_explanation">Be kell kapcsolnia az internet hozzáféréshez.\n\nTipp: A főképernyőn megérintheti az alkalmazás ikont is.</string>
-    <string name="app_info">Alkalmazáskezelés</string>
+    <string name="app_info">Alkalmazás kezelés</string>
     <!-- Actions -->
     <string name="block_tracking">Követők blokkolása</string>
     <string name="block_tracking_description">Számos alkalmazás küld adatokat harmadik félnek, úgynevezett nyomkövetőknek. A TrackerControl lehetővé teszi ezen hálózati adások szelektív blokkolását. Ennek ellenére használja ezt okosan, mivel az alkalmazásfejlesztők támaszkodnak ezekre a szolgáltatásokra, nevezetesen a reklámokra.</string>
@@ -310,20 +310,20 @@ Tisztelettel,\n\n]]></string>
     <string name="tracker_analytics">Elemzések</string>
     <string name="tracker_content">Alapvető</string>
     <string name="tracker_cryptomining">Cryptobányász</string>
-    <string name="tracker_fingerprinting">Eszköz-ujjlenyomat</string>
+    <string name="tracker_fingerprinting">Ujjlenyomat</string>
     <string name="tracker_social">Szociális</string>
     <string name="tracker_uncategorised">Kategória nélküli</string>
     <string name="setting_strict_blocking">Szigorú blokkolás</string>
     <string name="summary_strict_blocking">Az újonnan telepített alkalmazások esetén blokkolja a lehető legtöbb adatmegosztást. Több alkalmazás meg fog törni.</string>
     <string name="strict_blocking_explanation">Ha nem szakértő akkor ajánlott letiltani ezt az opciót az alkalmazások törésének csökkentése érdekében. Ez azonban lehetővé teszi az alapvető adatmegosztást a vállalatokkal.</string>
-    <string name="exclude_vpn_explanation">Kapcsolja be a nyomkövetők észleléséhez vagy blokkolásához.\n\nTipp: Tiltsa le, ha problémákba ütközik.</string>
+    <string name="exclude_vpn_explanation">Kapcsolja be a nyomkövetők észleléséhez vagy blokkolásához.\n\nTipp: Tiltsa le ha problémákba ütközik.</string>
     <string name="uninstall">Eltávolítás</string>
     <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
     <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
     <string name="no_trackers_found_message">Indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
     <string name="no_trackers_found_action">Indítás</string>
     <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik Internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
-    <string name="no_internet">Nincs Internet hozzáférése</string>
+    <string name="no_internet">Nincs internet hozzáférés</string>
     <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az App ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
     <string name="forever_free">Örökre Ingyenes</string>
@@ -335,14 +335,14 @@ Tisztelettel,\n\n]]></string>
     <string name="internet_unblocked">Blokkolatlan internet hozzáférés</string>
     <string name="category_blocked">A kategóriába tartozó követők blokkolva</string>
     <string name="category_unblocked">A kategóriába tartozó követők engedélyezve</string>
-    <string name="category_unblocked_warning">Blokkolja a kategóriát!</string>
+    <string name="category_unblocked_warning">Előbb blokkolja a kategóriát!</string>
     <string name="switch_strict_blocking">Blokkolja az alapvető adatmegosztást</string>
-    <string name="tracking_detection_failed">Követő-könyvtár észlelési hiba.</string>
-    <string name="tracking_detection_failed_ram">Követő-könyvtár észlelési hiba. Kevés a RAM.</string>
-    <string name="tracking_detection_failed_report">Követő-könyvtár észlelési hiba. Kérem jelentse ezt a hibát a fejlesztőnek.</string>
-    <string name="detected_trackers">Észlelt követő-könyvtárak: %s</string>
+    <string name="tracking_detection_failed">Követő könyvtár észlelési hiba.</string>
+    <string name="tracking_detection_failed_ram">Követő könyvtár észlelési hiba. Kevés a RAM.</string>
+    <string name="tracking_detection_failed_report">Követő könyvtár észlelési hiba. Kérem jelentse ezt a hibát a fejlesztőnek.</string>
+    <string name="detected_trackers">Észlelt követő könyvtárak: %s</string>
     <string name="none">Egyik sem</string>
-    <string name="trackers_static">Követő-könyvtárak</string>
+    <string name="trackers_static">Követő könyvtárak</string>
     <string name="trackers_static_explanation">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt követés a TrackerControllal blokkolható.</string>
     <string name="trackers_static_explanation_playstore">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.</string>
     <string name="blocked">BLOKKOLT</string>

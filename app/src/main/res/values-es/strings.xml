@@ -85,8 +85,8 @@
     <string name="setting_stats_frequency">Intervalo de muestra: %s ms</string>
     <string name="setting_stats_samples">Número de muestras: %s s</string>
     <string name="setting_backup">Respaldo</string>
-    <string name="setting_export">Ajustes de exportación</string>
-    <string name="setting_import">Ajustes de importación</string>
+    <string name="setting_export">Exportar ajustes</string>
+    <string name="setting_import">Importar ajustes</string>
     <string name="setting_hosts">Importar archivo de hosts</string>
     <string name="setting_hosts_append">Importar archivo de hosts (adjuntar)</string>
     <string name="setting_hosts_url">URL del archivo Hosts</string>
