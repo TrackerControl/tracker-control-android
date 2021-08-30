@@ -207,11 +207,11 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_enable_help2">Het inschakelen van logging (minder) of filtering (meer) kan het batterijverbruik verhogen en de netwerksnelheid beïnvloeden</string>
     <string name="title_rate">Beoordeel</string>
     <string name="title_allow">Toestaan</string>
-    <string name="title_block">Blok</string>
+    <string name="title_block">Blokkeren</string>
     <string name="title_allow_wifi">Wifi toestaan</string>
     <string name="title_block_wifi">Blokkeer Wi-Fi</string>
     <string name="title_allow_other">Mobiel toestaan</string>
-    <string name="title_block_other">Blok mobiel</string>
+    <string name="title_block_other">Blokkeer mobiel</string>
     <string name="title_nobody">niemand</string>
     <string name="title_dontask">Vraag het niet meer</string>
     <string name="title_log_whois">Whois %1$s</string>
@@ -247,7 +247,7 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="internet_access_explanation">Moet aanstaan voor internettoegang. \n\nTip: U kunt ook op het pictogram van de app in het hoofdscherm tikken.</string>
     <string name="app_info">App beheren</string>
     <!-- Actions -->
-    <string name="block_tracking">Blok trackers</string>
+    <string name="block_tracking">Blokkeer trackers</string>
     <string name="block_tracking_description">Veel apps sturen data naar derde partijen, zogenaamde trackers. TrackerControl maakt het mogelijk om deze netwerktransmissies selectief te blokkeren. Gebruik dit echter verstandig, want de ontwikkelaars van apps vertrouwen op deze diensten, met name op reclame.</string>
     <string name="personalised_ads">Beperkte personalisatie</string>
     <string name="personalised_ads_description">Android biedt aan om de toegang van apps tot de Google Advertising ID van uw toestel te beperken. Apps kunnen deze instelling echter mogelijk negeren en toch deze ID gebruiken. Ze kunnen deze ID ook blijven verzamelen voor analysedoeleinden, volgens het beleid van Google. U moet vertrouwen hebben in Google en het bedrijf dat de gegevens verzamelt.</string>
@@ -331,7 +331,7 @@ Sincerely,\n\n]]></string>
     <string name="no_internet">Geen internettoegang</string>
     <string name="bypass_vpn_error">"Kan het internet niet blokkeren. App is uitgesloten van TrackerControl."</string>
     <string name="back">Terug</string>
-    <string name="forever_free">Voor altijd gratis</string>
+    <string name="forever_free">Volledig Vrij</string>
     <string name="your_privacy">Uw privacy</string>
     <string name="tracker_hostlist">Door de gebruiker gedefinieerde hosts</string>
     <string name="unblocked">Ontgrendeld</string>
