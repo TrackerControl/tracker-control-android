@@ -6,7 +6,7 @@
 
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (<hello@trackercontrol.org>)!*
 
-TrackerControl allows users to monitor and control the widespread,
+TrackerControl is an Android app that allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 <p align="center">
