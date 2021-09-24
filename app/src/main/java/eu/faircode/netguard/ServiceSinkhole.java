@@ -676,9 +676,10 @@ public class ServiceSinkhole extends VpnService {
             // Clear expired DNS records
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
 
-            // Keep IP mappings clean
+            // Refresh mappings regularly
             ipToHost.clear();
             ipToTracker.clear();
+            uidToApp.clear();
 
             // Check for update
             if (!Util.isPlayStoreInstall(ServiceSinkhole.this) && !Util.isFDroidInstall() && prefs.getBoolean("update_check", true))
