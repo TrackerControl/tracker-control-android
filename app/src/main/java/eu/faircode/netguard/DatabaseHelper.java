@@ -62,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            return db.query(true, "access", new String[]{"uid", "daddr", "time"}, null, null, null, null, null, null);
+            return db.query(true, "access", new String[]{"uid", "daddr", "time", "uncertain"}, null, null, null, null, null, null);
         } finally {
             lock.readLock().unlock();
         }
