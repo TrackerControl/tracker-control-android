@@ -2354,6 +2354,7 @@ public class ServiceSinkhole extends VpnService {
                             DatabaseHelper dh = DatabaseHelper.getInstance(context);
                             dh.clearLog(uid);
                             dh.clearAccess(uid, false);
+                            uidToApp.remove(uid);
 
                             NotificationManagerCompat.from(context).cancel(uid); // installed notification
                             NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
