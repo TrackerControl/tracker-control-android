@@ -873,6 +873,9 @@ public class ServiceSinkhole extends VpnService {
             } else
                 dname = null;
 
+            if (uncertain == 1)
+                Log.d(TAG, "Found uncertain entry: " + dname);
+
             // Traffic log
             if (log)
                 dh.insertLog(packet, dname, connection, interactive);
@@ -883,7 +886,7 @@ public class ServiceSinkhole extends VpnService {
                 if (!(packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */))
                     packet.dport = 0;
 
-                dh.updateAccess(packet, dname, -1);
+                dh.updateAccess(packet, dname, -1, uncertain);
             }
 
             /*// custom code
