@@ -214,16 +214,13 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Show resolved
         Preference pref_show_resolved = screen.findPreference("show_resolved");
-        if (Util.isPlayStoreInstall(this))
-            cat_advanced.removePreference(pref_show_resolved);
-        else
-            pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
-                    return true;
-                }
-            });
+        pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
+                return true;
+            }
+        });
 
         // Handle export
         Preference pref_export = screen.findPreference("export");
