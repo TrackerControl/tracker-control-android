@@ -217,7 +217,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             String hosts = TextUtils.join("\n• ", sortedHosts);
 
                             if (t.isUncertain())
-                                hosts += "\n\nEntries marked with '*' might be inaccurate, due to the limitations of Android.";
+                                hosts += "\n" + "Entries marked with '*' might be inaccurate, due to the limitations of Android.";
 
                             boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                             Spannable spannable;
