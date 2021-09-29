@@ -20,6 +20,8 @@
 
 package eu.faircode.netguard;
 
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
+
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
@@ -87,8 +89,6 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Settings";
@@ -214,16 +214,13 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Show resolved
         Preference pref_show_resolved = screen.findPreference("show_resolved");
-        if (Util.isPlayStoreInstall(this))
-            cat_advanced.removePreference(pref_show_resolved);
-        else
-            pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
-                    return true;
-                }
-            });
+        pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
+                return true;
+            }
+        });
 
         // Handle export
         Preference pref_export = screen.findPreference("export");
@@ -968,10 +965,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlExport(getSharedPreferences("notify", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "notify");
 
-        serializer.startTag(null, "filter");
-        filterExport(serializer);
-        serializer.endTag(null, "filter");
-
         serializer.startTag(null, "forward");
         forwardExport(serializer);
         serializer.endTag(null, "forward");
@@ -1024,30 +1017,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             } else
                 Log.e(TAG, "Unknown key=" + key);
-        }
-    }
-
-    private void filterExport(XmlSerializer serializer) throws IOException {
-        try (Cursor cursor = DatabaseHelper.getInstance(this).getAccess()) {
-            int colUid = cursor.getColumnIndex("uid");
-            int colVersion = cursor.getColumnIndex("version");
-            int colProtocol = cursor.getColumnIndex("protocol");
-            int colDAddr = cursor.getColumnIndex("daddr");
-            int colDPort = cursor.getColumnIndex("dport");
-            int colTime = cursor.getColumnIndex("time");
-            int colBlock = cursor.getColumnIndex("block");
-            while (cursor.moveToNext())
-                for (String pkg : getPackages(cursor.getInt(colUid))) {
-                    serializer.startTag(null, "rule");
-                    serializer.attribute(null, "pkg", pkg);
-                    serializer.attribute(null, "version", Integer.toString(cursor.getInt(colVersion)));
-                    serializer.attribute(null, "protocol", Integer.toString(cursor.getInt(colProtocol)));
-                    serializer.attribute(null, "daddr", cursor.getString(colDAddr));
-                    serializer.attribute(null, "dport", Integer.toString(cursor.getInt(colDPort)));
-                    serializer.attribute(null, "time", Long.toString(cursor.getLong(colTime)));
-                    serializer.attribute(null, "block", Integer.toString(cursor.getInt(colBlock)));
-                    serializer.endTag(null, "rule");
-                }
         }
     }
 
@@ -1201,12 +1170,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             else if (qName.equals("notify"))
                 current = notify;
 
-            else if (qName.equals("filter")) {
-                current = null;
-                Log.i(TAG, "Clearing filters");
-                DatabaseHelper.getInstance(context).clearAccess();
-
-            } else if (qName.equals("forward")) {
+            else if (qName.equals("forward")) {
                 current = null;
                 Log.i(TAG, "Clearing forwards");
                 DatabaseHelper.getInstance(context).deleteForward();
@@ -1245,28 +1209,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                         } else
                             Log.e(TAG, "Unknown type key=" + key);
                     }
-                }
-
-            } else if (qName.equals("rule")) {
-                String pkg = attributes.getValue("pkg");
-
-                String version = attributes.getValue("version");
-                String protocol = attributes.getValue("protocol");
-
-                Packet packet = new Packet();
-                packet.version = (version == null ? 4 : Integer.parseInt(version));
-                packet.protocol = (protocol == null ? 6 /* TCP */ : Integer.parseInt(protocol));
-                packet.daddr = attributes.getValue("daddr");
-                packet.dport = Integer.parseInt(attributes.getValue("dport"));
-                packet.time = Long.parseLong(attributes.getValue("time"));
-
-                int block = Integer.parseInt(attributes.getValue("block"));
-
-                try {
-                    packet.uid = getUid(pkg);
-                    DatabaseHelper.getInstance(context).updateAccess(packet, null, block);
-                } catch (PackageManager.NameNotFoundException ex) {
-                    Log.w(TAG, "Package not found pkg=" + pkg);
                 }
 
             } else if (qName.equals("port")) {

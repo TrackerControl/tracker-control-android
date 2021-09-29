@@ -17,6 +17,8 @@
 
 package net.kollnig.missioncontrol.details;
 
+import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -65,8 +67,6 @@ import lanchon.multidexlib2.DuplicateEntryNameException;
 import lanchon.multidexlib2.DuplicateTypeException;
 import lanchon.multidexlib2.EmptyMultiDexContainerException;
 import lanchon.multidexlib2.MultiDexDetectedException;
-
-import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link TrackerCategory}.
@@ -215,6 +215,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             List<String> sortedHosts = new ArrayList<>(t.getHosts());
                             Collections.sort(sortedHosts);
                             String hosts = TextUtils.join("\n• ", sortedHosts);
+
+                            if (t.isUncertain())
+                                hosts += "\n" + "Entries marked with '*' might be inaccurate, due to the limitations of Android.";
 
                             boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                             Spannable spannable;
