@@ -232,7 +232,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="exporting">Dışa aktarılıyor..</string>
     <string name="share_csv">Paylaş</string>
     <string name="export_failed">Dışa aktarım başarısız oldu</string>
-    <string name="exported">Depoya aktarıldı! Telefon belleğine bilgisayardan erişin veya başka bir uygulamayla paylaşın.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detaylar</string>
     <string name="tab_trackers">İzleyiciler</string>

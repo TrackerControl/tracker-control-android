@@ -216,6 +216,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Másol</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Az alkalmazás internet hozzáférésének letiltása</string>
     <string name="tracked_app_name">Alkalmazás Név</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">az utolsó héten %d kapcsolat a céggel</item>
@@ -225,6 +226,8 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
         <item quantity="one">összesen %d kapcsolat a céggel</item>
         <item quantity="other">összesen %d kapcsolat a cégekkel</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Szervezeti információ kérése?</string>
+    <string name="confirm_ipinfo">Ez kapcsolatba lép az ipinfo.io külső szolgáltatással és megosztja vele a kapcsolat IP címeit.</string>
     <string name="external_servers">Kapja meg automatikusan a fejlesztői e-mailt?</string>
     <string name="confirm_google_info">Ez az alkalmazás automatikusan meg tudja kapni az alkalmazásfejlesztői e-mailt a Google Play Áruházból.</string>
     <string name="ok">Rendben</string>
@@ -234,7 +237,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="exporting">Exportálás...</string>
     <string name="share_csv">Megosztás</string>
     <string name="export_failed">Sikertelen exportálás</string>
-    <string name="exported">Exportálva a tárolóba! Hozzáférés a telefon tárhelyéhez számítógépről, vagy megosztás más alkalmazással.</string>
+    <string name="exported">Exportálva a tárhelyre!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Részletek</string>
     <string name="tab_trackers">Követők</string>
@@ -349,4 +352,5 @@ Tisztelettel,\n\n]]></string>
     <string name="allowed">ENGEDÉLYEZETT</string>
     <string name="setting_domain_based_blocked">Tartományalapú blokkolás (fejlesztés alatt)</string>
     <string name="summary_domain_based_blocking">Részletesebb blokkolást tesz lehetővé. Még fejlesztés alatt áll.</string>
+    <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
 </resources>

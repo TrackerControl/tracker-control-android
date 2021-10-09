@@ -193,7 +193,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="exporting">Viedään..</string>
     <string name="share_csv">Jaa</string>
     <string name="export_failed">Vienti epäonnistui</string>
-    <string name="exported">Viedään varastoon! Käytä puhelimen tallennustilaa tietokoneelta tai jaa toisen sovelluksen kanssa.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Yksityiskohdat</string>
     <string name="tab_trackers">Seurantalaitteet</string>
