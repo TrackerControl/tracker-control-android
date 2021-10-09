@@ -240,7 +240,6 @@
     <string name="exporting">Экспорт…</string>
     <string name="share_csv">Поделиться</string>
     <string name="export_failed">Экспорт не удался</string>
-    <string name="exported">Экспортировано в хранилище! Получите доступ к памяти телефона с компьютера или поделитесь через другое приложение.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Подробности</string>
     <string name="tab_trackers">Трекеры</string>

@@ -1,0 +1,17 @@
+உளவு கட்டுபடுத்தி செயலி அதிக அளவில், மறைமுகமாக பயனர்களை கண்காணிக்க பயன்படுத்தபடும் கண்காணிப்பான்களை கட்டுப்படுத்த உதவுகிறது("உளவு பார்த்தல்").
+
+உளவு பார்ப்பான்களை கண்டறிய, இச்செயலி <i>~2000000<i> செயலிகளை ஆராய்ந்து அறிந்த சொந்த பட்டியல் மற்றும் ஃபயர்பாக்ஸின் disconnect என்ற தடுப்பு பட்டியலையும் இணைத்து பயன்படுத்துகிறது! மேலும், இதில் உங்கள் தனிப்பட்ட பட்டியல்களையும் பயன்படுத்தலாம்.
+
+இம்முறை
+-உளவுபார்க்கும் நிறுவனங்களை வெளிக்கொண்டுவநந்து,
+-ஒருசில உளவு பார்ப்பான்களை மட்டும் கட்டுப்படுத்தி, மேலும்
+எதற்காக உளவு பார்க்கபடுகிறீர்கள் என்பதை தெரிவிக்கிறது.
+
+இச்செயலி தகவல் பாதுகாப்பு சட்டங்களை (GDPR) பற்றிய கல்வியை அளிப்பதை நோக்கமாக கொண்டுள்ளது.
+
+இச்செயலி ஆன்டிராய்டின் VPN தொழில்நுட்பம் மூலம் செயலிகளின் இணைய பயன்பாட்டை <i>இதே கருவியில் ஆராய்கிறது</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
+
+No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
+
+TrackerControl will always be free and open source, being a research project.
+

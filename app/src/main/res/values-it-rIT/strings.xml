@@ -236,7 +236,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="exporting">Esportazione in corso..</string>
     <string name="share_csv">Condividi</string>
     <string name="export_failed">Esportazione fallita</string>
-    <string name="exported">Esportato nella memoria interna! Accedi alla memoria del telefono dal computer oppure condividi con altre app.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Dettagli</string>
     <string name="tab_trackers">Tracker</string>
