@@ -18,6 +18,7 @@
 */
 
 #include "netguard.h"
+#include "tls.h"
 
 extern char socks5_addr[INET6_ADDRSTRLEN + 1];
 extern int socks5_port;
@@ -646,6 +647,15 @@ jboolean handle_tcp(const struct arguments *args,
                            : memcmp(&cur->tcp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
                              memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
         cur = cur->next;
+
+    // Try to extract hostname from SNI
+    char hostname[512] = "";
+    parse_tls_header((const char *) data, datalen, hostname);
+    int len = strlen(hostname);
+    if (len > 0) {
+        strncat(cur->tcp.hostname, hostname, 512 - 1);
+        log_android(ANDROID_LOG_DEBUG, "Resolved SNI: %s", cur->tcp.hostname);
+    }
 
     // Prepare logging
     char source[INET6_ADDRSTRLEN + 1];

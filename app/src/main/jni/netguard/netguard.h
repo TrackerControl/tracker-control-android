@@ -155,7 +155,7 @@ struct udp_session {
     uint8_t state;
 };
 
-struct tcp_session {
+struct   {
     jint uid;
     time_t time;
     int version;
@@ -192,6 +192,8 @@ struct tcp_session {
     uint8_t state;
     uint8_t socks5;
     struct segment *forward;
+
+    char hostname[512];
 };
 
 struct ng_session {
