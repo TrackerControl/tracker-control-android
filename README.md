@@ -174,7 +174,7 @@ If you use this project as part of your academic studies, please kindly cite the
 @inproceedings {kollnig2021_consent,
       author = {Konrad Kollnig and Pierre Dewitte and Max Van Kleek and Ge Wang and Daniel Omeiza and Helena Webb and Nigel Shadbolt},
       title = {A Fait Accompli? An Empirical Study into the Absence of Consent to Third-Party Tracking in Android Apps},
-      booktitle = {{Seventeenth Symposium on Usable Privacy and Security (SOUPS 2021)},
+      booktitle = {{Seventeenth Symposium on Usable Privacy and Security (SOUPS 2021)}},
       year = {2021},
       isbn = {978-1-939133-25-0},
       pages = {181--196},
