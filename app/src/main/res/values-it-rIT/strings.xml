@@ -218,6 +218,7 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="title_log_port">Porta %1$d</string>
     <string name="title_log_copy">Copia</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Disabilita l\'accesso a Internet per questa applicazione</string>
     <string name="tracked_app_name">Nome applicazione</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">ha contattato %d azienda la settimana scorsa</item>
@@ -227,6 +228,8 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
         <item quantity="one">ha contattato %d azienda in continuazione</item>
         <item quantity="other">ha contattato %d aziende in continuazione</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Recupera informazioni sull\'organizzazione?</string>
+    <string name="confirm_ipinfo">Questo contatterà il servizio esterno ipinfo.io, e condividerà con esso dati sugli indirizzi IP contattati.</string>
     <string name="external_servers">Ottenere automaticamente l\'email dello sviluppatore?</string>
     <string name="confirm_google_info">Questa applicazione può ottenere automaticamente l\'email dello sviluppatore dell\'applicazione dal Google Play Store per te.</string>
     <string name="ok">OK</string>
@@ -236,6 +239,7 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="exporting">Esportazione in corso..</string>
     <string name="share_csv">Condividi</string>
     <string name="export_failed">Esportazione fallita</string>
+    <string name="exported">Esportato nella memoria!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Dettagli</string>
     <string name="tab_trackers">Tracker</string>
@@ -341,6 +345,9 @@ Cordiali saluti,\n\n]]></string>
     <string name="category_unblocked">Tracker nella categoria consentiti</string>
     <string name="category_unblocked_warning">Prima categoria di blocchi!</string>
     <string name="switch_strict_blocking">Blocca la condivisione di dati essenziali</string>
+    <string name="tracking_detection_failed">Rilevamento libreria tracciante non riuscito.</string>
+    <string name="tracking_detection_failed_ram">Rilevamento libreria tracciante non riuscito. RAM insufficiente.</string>
+    <string name="tracking_detection_failed_report">Rilevamento libreria tracciante non riuscito. Per favore segnala questo problema allo sviluppatore.</string>
     <string name="detected_trackers">Librerie di tracker rilevati: %s</string>
     <string name="none">Nessuno</string>
     <string name="trackers_static">Librerie tracker</string>
@@ -350,4 +357,5 @@ Cordiali saluti,\n\n]]></string>
     <string name="allowed">CONSENTITO</string>
     <string name="setting_domain_based_blocked">Blocco basato sul dominio (in Sviluppo)</string>
     <string name="summary_domain_based_blocking">Consente un blocco più decentralizzato. Ancora in sviluppo.</string>
+    <string name="untap_unblock">Suggerimento: Puoi sbloccare i singoli elementi toccandoli.</string>
 </resources>
