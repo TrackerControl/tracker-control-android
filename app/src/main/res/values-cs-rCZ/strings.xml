@@ -95,6 +95,7 @@
     <string name="setting_hosts_download">Stáhnout soubor hosts</string>
     <string name="setting_hosts_update">Aktualizovat soubor hosts</string>
     <string name="summary_install">Zobrazit oznámení ve stavovém řádku pro nově nainstalované aplikace</string>
+    <string name="summary_pause">Po pozastavení z oznámení znovu automaticky povolí TrackerControl po zvoleném počtu minut. (zadáním 0 tuto možnost zakážete).</string>
     <string name="summary_update">Kontrolovat nové verze v GitHub dvakrát denně</string>
     <string name="summary_tethering">V závislosti na verzi systému Android, sdílení internetu (tethering) může nebo nemusí fungovat. Sdílenou síťovou komunikaci nelze filtrovat.</string>
     <string name="summary_subnet">Povolit směrování podsítě; může umožnit volání skrze Wi-Fi, ale také může vyvolat chyby v systému Android a zvýšit využití baterie</string>
@@ -109,11 +110,14 @@
     <string name="summary_validate">Název domény použitý pro validaci internetového spojení na portu 443 (https).</string>
     <string name="summary_socks5_enabled">Pouze TCP přenosy budou přenášeny skrze proxy server</string>
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
+    <string name="summary_log_logcat">Zakáže blokování. Komunikace (a identifikované slídiče) jsou zaznamenány do protokolu zařízení. Získejte záznam pomocí adb logcat se značkou \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
     <string name="msg_started">Kontrola slídičů</string>
     <string name="msg_waiting">Čekání na událost</string>
+    <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
     <string name="msg_installed">Problémy s %1$s?</string>
+    <string name="msg_installed_description">Umožnit aplikaci kontaktovat společnosti</string>
     <string name="msg_installed_n">Instalace dokončena</string>
     <string name="msg_completed">Akce dokončena</string>
     <string name="msg_vpn">TrackerControl používá lokální VPN pro filtrování internetového provozu.
@@ -216,7 +220,24 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopírovat</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Zakázat přístup k internetu pro tuto aplikaci</string>
     <string name="tracked_app_name">Název aplikace</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">poslední týden kontaktována %d společnost</item>
+        <item quantity="few">poslední týden kontaktovány %d společnosti</item>
+        <item quantity="many">poslední týden kontaktováno %d společností</item>
+        <item quantity="other">poslední týden kontaktováno %d společností</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">celkově kontaktována %d společnost</item>
+        <item quantity="few">celkově kontaktovány %d společnosti</item>
+        <item quantity="many">celkově kontaktováno %d společností</item>
+        <item quantity="other">celkově kontaktováno %d společností</item>
+    </plurals>
+    <string name="confirm_ipinfo_title">Získat informace o organizaci?</string>
+    <string name="confirm_ipinfo">Tímto bude kontaktována externí služba ipinfo.io a budou s ní sdíleny údaje o kontaktovaných IP adresách.</string>
+    <string name="external_servers">Získat automaticky e-mail od vývojáře?</string>
+    <string name="confirm_google_info">Tato aplikace pro vás může automaticky získat e-mail vývojáře aplikací z obchodu Google Play.</string>
     <string name="ok">OK</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
@@ -232,11 +253,21 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="tab_actions">Má data</string>
     <string name="tracker_name">Název slídiče</string>
     <string name="internet_access">Přístup k internetu</string>
+    <string name="internet_access_explanation">Musí být zapnutý přístup k internetu.\n\nTip: Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
     <string name="app_info">Spravovat aplikace</string>
     <!-- Actions -->
     <string name="block_tracking">Blokovat slídiče</string>
+    <string name="block_tracking_description">Mnoho aplikací odesílá data třetím stranám, tzv. slídičům. TrackerControl umožňuje tyto síťové přenosy selektivně blokovat. Využívejte je však s rozvahou, protože vývojáři aplikací na tyto služby spoléhají, zejména kvůli reklamě.</string>
+    <string name="personalised_ads">Omezit přizpůsobení</string>
+    <string name="personalised_ads_description">Systém Android nabízí omezení přístupu aplikací k reklamnímu Google ID vašeho zařízení. Aplikace však můžou toto nastavení ignorovat, a přesto toto ID používat. V souladu se zásadami společnosti Google můžou toto ID i nadále shromažďovat pro analytické účely. Musíte důvěřovat společnosti Google a společnosti, která údaje shromažďuje.</string>
     <string name="data_managment">Spravovat data</string>
+    <string name="data_management_description">Obecné nařízení EU o ochraně osobních údajů (GDPR) umožňuje uživatelům z EU spravovat veškeré údaje, které se jich týkají. Tato aplikace poskytuje e-mailové šablony, které umožňují oslovit vývojáře. Vývojář musí odpovědět do jednoho měsíce.</string>
     <string name="contacts">Kontakt </string>
+    <string name="contacts_description">Pokud se domníváte, že aplikace porušuje zásady ochrany osobních údajů, můžete se obrátit přímo na odpovědné subjekty.</string>
+    <string name="play_services_required">Toto je nastavení služeb Google Play, které nebyly ve vašem zařízení nalezeny.</string>
+    <string name="no_mail_service">Nainstalujte si e-mailového klienta.</string>
+    <string name="blocking_settings">Vybrat slídiče</string>
+    <string name="ad_settings">Změnit</string>
     <string name="request_data">Vyžádat data</string>
     <string name="request_deletion">Žádost o odstranění</string>
     <string name="contact_developer">Vývojář</string>
@@ -245,6 +276,29 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
+    <string name="body_request_data"><![CDATA[Komu:\n
+\n
+\n
+Žádám vás, abyste jako správce údajů aplikace Android %s (ID: %s), potvrdil, zda o mně zpracovává nějaké osobní údaje.\n
+Pokud ano, poskytněte mi prosím všechny požadované informace stanovené v článku 15 obecného nařízení EU o ochraně osobních údajů (GDPR), včetně:\n
+\n
+• kopie mých osobních údajů;\n
+• účelů zpracování;\n
+• kategorie dotčených osobních údajů;\n
+• příjemce, kterým sdělujete mé osobní údaje, a záruky, které poskytujete;\n
+• dobu uchovávání mých osobních údajů nebo kritéria použitá pro stanovení této doby;\n
+• informace o zdroji mých osobních údajů; a\n
+• existenci automatizovaného rozhodování (včetně profilování), a pokud možno:\n
+    - logiku rozhodovacího procesu;\n
+    - význam a předpokládané důsledky pro mě;\n
+    - opatření, která jste přijali, abyste předešli chybám, předpojatosti a diskriminaci; a\n
+    - vysvětlení, jak mohu vyjádřit svůj názor a napadnout rozhodnutí.\n
+\n
+Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
+\n
+Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se na odpověď do jednoho měsíce od obdržení mé žádosti.\n
+\n
+S pozdravem,\n\n]]></string>
     <string name="detected_trackers">Detekovány knihovny slídičů: %s</string>
     <string name="none">Nic</string>
     <string name="trackers_static">Knihovny slídičů</string>
