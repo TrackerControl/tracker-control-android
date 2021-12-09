@@ -193,7 +193,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="exporting">Exportar..</string>
     <string name="share_csv">Compartilhe</string>
     <string name="export_failed">Exportação falhou</string>
-    <string name="exported">Exportado para armazenamento! Acesse o armazenamento telefônico a partir do computador ou compartilhe com outro aplicativo.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detalhes</string>
     <string name="tab_trackers">Rastreadores</string>

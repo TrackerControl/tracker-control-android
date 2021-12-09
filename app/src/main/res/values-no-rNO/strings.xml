@@ -1,6 +1,360 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner (\"sporing\").</string>
+    <string name="app_copyright">Opphavsrett \u009 2019–2020 Konrad Kollnig (Human-Centred Computing, Institutt for informasjonsteknologi, Universitetet i Oxford)\n\nTrackerControl er basert på NetGuard, utviklet av Marcel Bokhorst (M66B).</string>
+    <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
+    <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
+    <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
+    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
+    <string name="channel_foreground">Kjørende tjenester</string>
+    <string name="channel_notify">Generelle varsler</string>
+    <string name="channel_access">Få tilgang til varsler</string>
+    <string name="menu_search">Søk etter app</string>
+    <string name="menu_filter">Filtrer apper</string>
+    <string name="menu_app_user">Vis brukerapper</string>
+    <string name="menu_app_system">Vis systemapper</string>
+    <string name="menu_app_nointernet">Vis apper uten internett</string>
+    <string name="menu_sort">Sorter apper</string>
+    <string name="menu_sort_name">Sorter etter navn</string>
+    <string name="menu_sort_uid">Sorter etter uid</string>
+    <string name="menu_sort_companies_week">Sorter etter bedrifter (uke)</string>
+    <string name="menu_sort_companies">Sorter etter bedrifter</string>
+    <string name="menu_log">Trafikklogg</string>
+    <string name="menu_settings">Innstillinger</string>
+    <string name="menu_invite">Inviter</string>
+    <string name="menu_legend">Legende</string>
+    <string name="menu_support">Støtt denne applikasjonen</string>
+    <string name="menu_log_support">Forklaring</string>
+    <string name="menu_about">Om</string>
+    <string name="menu_apps">Andre apper</string>
+    <string name="menu_protocol_other">Annen</string>
+    <string name="menu_traffic_allowed">Tillatt</string>
+    <string name="menu_traffic_blocked">Blokkert</string>
+    <string name="menu_live">Sanntidsoppdateringer</string>
+    <string name="menu_refresh">Oppdater</string>
+    <string name="menu_resolve">Vis navn</string>
+    <string name="menu_organization">Vis organisasjoner</string>
+    <string name="menu_pcap_enabled">PCAP er aktivert</string>
+    <string name="menu_pcap_export">Eksporter PCAP</string>
+    <string name="menu_clear">Tøm logg</string>
+    <string name="menu_export">Eksporter</string>
+    <string name="menu_reset">Nullstill</string>
+    <string name="menu_cleanup">Opprydding</string>
+    <string name="setting_options">Innstillinger</string>
+    <string name="setting_dark">Mørkt tema</string>
+    <string name="setting_install">Gi beskjed etter nye appinstallasjoner</string>
+    <string name="setting_pause">Skru på automatisk etter %1$s minutter</string>
+    <string name="setting_update">Se etter oppdateringer</string>
+    <plurals name="pause">
+        <item quantity="one">Suspender i %d minutt</item>
+        <item quantity="other">Suspender i %d minutter</item>
+    </plurals>
+    <string name="setting_network_options">Nettverksinnstillinger</string>
+    <string name="setting_subnet">Subnettruting</string>
+    <string name="setting_tethering">Tillat nettverksdeling</string>
+    <string name="setting_lan">Tillat LAN-tilgang</string>
+    <string name="setting_ip6">Skru på IPv6-trafikk</string>
+    <string name="setting_call">Deaktiver ved anrop</string>
+    <string name="setting_reload_onconnectivity">Last inn på nytt ved tilkoblingsendring</string>
+    <string name="setting_advanced_options">Avanserte innstillinger</string>
+    <string name="setting_system">Administrer systemapper</string>
+    <string name="setting_log_app">Søk etter nye sporere</string>
+    <string name="setting_log_logcat">Logg overføringer til ADB</string>
+    <string name="setting_filter">Blokker sporing</string>
+    <string name="setting_filter_udp">Blokker sporing på UDP</string>
+    <string name="setting_handover">Sømløs VPN-overlevering ved omlasting</string>
+    <string name="setting_lockdown">Blokker trafikk</string>
+    <string name="setting_track_usage">Spor nettverksbruk</string>
+    <string name="setting_reset_usage">Tilbakestill nettverksbruk</string>
+    <string name="setting_show_resolved">Vis oppklarte domenenavn</string>
+    <string name="setting_block_domains">Aktiver hosts-fil</string>
+    <string name="setting_rcode">Svar ved hosts-fil blokkering: %s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">Valider på: %s</string>
+    <string name="setting_ttl">Minste DNS TTL: %s s</string>
+    <string name="setting_socks5_enabled">Bruk SOCKS5-proxy</string>
+    <string name="setting_socks5_addr">SOCKS5-adresse: %s</string>
+    <string name="setting_socks5_port">SOCKS5-port: %s</string>
+    <string name="setting_socks5_username">SOCKS5-brukernavn: %s</string>
+    <string name="setting_socks5_password">SOCKS5-passord: %s</string>
+    <string name="setting_pcap_record_size">PCAP-loggstørrelse: %s B</string>
+    <string name="setting_pcap_file_size">Maks PCAP-filstørrelse: %s MB</string>
+    <string name="setting_watchdog">Watchdog: hvert %s. minutt</string>
+    <string name="setting_stats_frequency">Utdragsintervall: %s ms</string>
+    <string name="setting_stats_samples">Antall utdrag: %s s</string>
+    <string name="setting_backup">Sikkerhetskopi</string>
+    <string name="setting_export">Eksporter innstillinger (ikke for tilbakestilling av enheten)</string>
+    <string name="setting_import">Importer innstillinger</string>
+    <string name="setting_hosts">Importer «hosts»-fil</string>
+    <string name="setting_hosts_append">Importer «hosts»-fil (legges til)</string>
+    <string name="setting_hosts_url">\"Hosts\"-fil URL</string>
+    <string name="setting_hosts_download">Last ned «hosts»-fil</string>
+    <string name="setting_hosts_update">Oppdater \"hosts\"-fil</string>
+    <string name="summary_install">Vis statuslinjevarslinger for nylig installerte apper</string>
+    <string name="summary_pause">Når du har stoppet TrackerControl midlertidig, blir TrackerControl automatisk aktivert igjen etter det valgte antallet minutter (angi 0 for å deaktivere dette alternativet).</string>
+    <string name="summary_update">Se etter nye utgivelser på GitHub to ganger daglig</string>
+    <string name="summary_tethering">Avhengig av Android-versjon, kan nettverksdeling enten virke eller ikke. Nettverksdelt trafikk kan ikke filtreres.</string>
+    <string name="summary_subnet">Aktiver subnet-ruting; aktiverer kanskje Wi-Fi-samtale, men kan også utløse feil i Android og øke batteriforbruket</string>
+    <string name="summary_lan">Tillat apper å koble seg til lokale nettverksadresser, for eksempel 10.0.0.0/8, 172.16.0.0/12 og 192.168.0.0/16</string>
+    <string name="summary_ip6">Rute IP versjon 6-trafikk til TrackerControl slik at den selektivt kan tillates eller blokkeres</string>
+    <string name="summary_call">Deaktiver TrackerControl for innkommende eller utgående telefonsamtaler. Dette kan brukes til å komme rundt IP/Wi-Fi ringeproblemer.</string>
+    <string name="summary_system">Definer regler for systemapper (for eksperter)</string>
+    <string name="summary_log_app">Deaktiver for å redusere batteribruk. Nye sporere vil fremdeles bli blokkert, men ikke vist.</string>
+    <string name="summary_track_usage">Registrer antall bytes som er sendt og mottatt for hver app og adresse. Dette kan føre til ekstra batteribruk.</string>
+    <string name="summary_block_domains">ADVARSEL: Blokkerte verter er ikke vist i brukergrensesnittet.</string>
+    <string name="summary_rcode">Standardverdien er 3 (NXDOMAIN), som betyr \'ikke-eksisterende domene\'.</string>
+    <string name="summary_validate">Domenenavn brukt til å validere internettilkoblingen på port 443 (https).</string>
+    <string name="summary_socks5_enabled">Bare TCP-trafikk vil bli sendt til proxy-serveren</string>
+    <string name="summary_watchdog">Kontroller regelmessig om TrackerControl fortsatt kjører (angi null for å deaktivere dette alternativet). Dette kan føre til mer batteribruk.</string>
+    <string name="summary_log_logcat">Deaktiverer blokkering. Kommunikasjon (og identifiserte sporere) er logget på enhetsloggen. Hent den med adb logcat og taggen \'TC-Log\'.</string>
+    <string name="msg_sure">Er du sikker?</string>
+    <string name="msg_started">Kontrollerer sporere</string>
+    <string name="msg_waiting">Venter på hendelse</string>
+    <string name="msg_disabled">Bruk bryteren ovenfor for å aktivere TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl er deaktivert, sannsynligvis ved å bruke en annen VPN-basert app</string>
+    <string name="msg_installed">Problemer med %1$s?</string>
+    <string name="msg_installed_description">Tillat appen å kontakte bedrifter</string>
+    <string name="msg_installed_n">Har blitt installert</string>
+    <string name="msg_completed">Handlingen er utført</string>
+    <string name="msg_vpn">TrackerControl bruker en lokal VPN for å filtrere internettrafikk.
+Av denne grunn må du tillate en VPN-tilkobling i neste dialogboks.
+Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
+    <string name="msg_autostart">TrackerControl kunne ikke starte automatisk. Dette er sannsynligvis på grunn av en feil i Android-versjonen din.</string>
+    <string name="msg_error">En uventet feil har oppstått: \'%s\'</string>
+    <string name="msg_start_failed">Android nektet å starte VPN-tjenesten i dette øyeblikket. Dette er sannsynligvis på grunn av en feil i Android-versjonen din.</string>
+    <string name="msg_try">Prøv TrackerControl</string>
+    <string name="msg_doze">For konsistente resultater bør batterioptimaliseringen for Android deaktiveres for TrackerControl.
+\n\nI den neste dialogboksen velger du \"Alle apper\" øverst, Trykk på TrackerControl i listen og velger og bekrefter \"Ikke optimaliser\".</string>
+    <string name="msg_datasaving">For konsekvente resultat bør data-sparingsinstillingen til Android være deaktivert for TrackerControl\n\nI neste dialog, aktiver instillingen for \"Bakgrunnsdata\" og \"Ubegrenset databruk\"</string>
+    <string name="msg_filter">Ved å bruke filtrering vil Android attribuere data og strømforbruk til TrackerControl - Android tror dataen og strømmen blir brukt av TrackerControl, istedenfor de originale appene</string>
+    <string name="msg_filter4">Android 4 krever at filtrering er aktivert</string>
+    <string name="msg_log_disabled">Trafikklogging er skrudd av. Bruk bryteren over for å skru den på. Trafikklogging kan føre til ekstra batteribruk.</string>
+    <string name="msg_clear_rules">Dette vil tilbakestille reglene og betingelsene til sine standardverdier</string>
+    <string name="msg_reset_access">Dette vil slette log-linjer med tilgangsforsøk uten tillat/blokker regler</string>
+    <string name="msg_import_last">Siste importering: %s</string>
+    <string name="msg_downloading">Laster ned\n%1s</string>
+    <string name="msg_downloaded">«hosts»-filen har blitt lastet ned</string>
+    <string name="msg_updated">Hosts-filen er oppdatert og lagt til!</string>
+    <string name="msg_download_last">Siste nedlastning: %s</string>
+    <string name="msg_update_last">Siste oppdatering: %s</string>
+    <string name="msg_metered">Nettverket er forbruksmålt</string>
+    <string name="msg_inactive">Ingen nettverksforbindelse</string>
+    <string name="msg_queue">TrackerControl er opptatt</string>
+    <string name="msg_update">En oppdatering er tilgjengelig, trykk for å laste ned</string>
+    <string name="msg_usage">Du kan tillate (grønn) eller avslå (rød) tilgang til Wi-Fi eller mobilnett ved å trykke på ikonene ved siden av en app</string>
+    <string name="msg_whitelist">Som standard er internettilgang tillat (svarteliste-modus). Dette kan endres i instillingene</string>
+    <string name="msg_push">Innkommende (push) meldinger er hovedsakelig håndtert av system-komponenten Google Play Services, som er tillatt internettilgang som standard</string>
+    <string name="msg_system">Administrasjon av alle (system) apper kan aktiveres i innstillingene</string>
+    <string name="msg_issue">Vennligst beskriv problemet og angi tidspunktet for problemet:</string>
+    <string name="msg_vpn_cancelled">VPN-tilkobling avbrutt\nkonfigurerte du en annen VPN til å være en alltid-på VPN?</string>
+    <string name="msg_unavailable">Denne funksjonen er ikke tilgjengelig på denne Android-versjonen</string>
+    <string name="msg_always_on">En annen VPN er satt som alltid-på VPN</string>
+    <string name="msg_always_on_lockdown">Slå av \"Blokker forbindelser uten VPN\" i Android VPN-innstillingene for å bruke TrackerControl i filtreringsmodus</string>
+    <string name="msg_private_dns">Slå av \"Privat DNS\" i Android nettverksinnstillinger for å bruke TrackerControl i filtreringsmodus</string>
+    <string name="msg_start_forward">Start videresending fra %1$s port %2$d til %3$s:%4$d av \'%5$s\'?</string>
+    <string name="msg_stop_forward">Vil du avslutte videresending av %1$s port %2$d?</string>
+    <string name="msg_log_logcat">Advarsel: Blokkering deaktivert på grunn av ADB-logging.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Legg til</string>
+    <string name="menu_delete">Slett</string>
+    <string name="setting_forwarding">Port-viderekobling</string>
+    <string name="title_protocol">Protokoll</string>
+    <string name="title_dport">Kildeport</string>
+    <string name="title_raddr">Destinasjonsadresse</string>
+    <string name="title_rport">Destinasjonsport</string>
+    <string name="title_ruid">Destinasjonsapp</string>
+    <string name="title_external">For en ekstern tjener, velg «ingen»</string>
+    <string name="title_lockdown_enabled">Trafikk er blokkert</string>
+    <string name="title_unmetered_allowed">Ikke-forbruksmålt trafikk er tillatt</string>
+    <string name="title_unmetered_blocked">Ikke-forbruksmålt trafikk er blokkert</string>
+    <string name="title_unmetered_disabled">Regler for ikke-forbruksmålt trafikk er ikke i bruk</string>
+    <string name="title_metered_allowed">Forbruksmålt trafikk er tilatt</string>
+    <string name="title_metered_blocked">Forbruksmålt trafikk er blokkert</string>
+    <string name="title_metered_disabled">Regler for forbruksmålt trafikk er ikke i bruk</string>
+    <string name="title_host_allowed">Adressen er tillatt</string>
+    <string name="title_host_blocked">Adressen er blokkert</string>
+    <string name="title_interactive_allowed">Tillat når skjermen er skrudd på</string>
+    <string name="title_roaming_blocked">Blokker ved roaming</string>
+    <string name="title_metered">Som standard anses en Wi-Fi-tilkobling å ikke være forbruksmålt, og en mobiltilkobling anses for å være forbruksmålt</string>
+    <string name="title_internet">kan ikke koble til Internett</string>
+    <string name="title_disabled">er skrudd av</string>
+    <string name="title_messaging">Innkommende meldinger mottas av Google Play Services og ikke av denne appen og kan derfor ikke blokkeres ved å blokkere denne appen</string>
+    <string name="title_download">Nedlastinger utføres av downloadmanager-en og ikke av denne appen og kan derfor ikke blokkeres ved å blokkere denne appen</string>
+    <string name="title_conditions">Betingelser</string>
+    <string name="title_screen_wifi">Tillat Wi-Fi når skjermen er skrudd på</string>
+    <string name="title_screen_other">Tillat mobilnett når skjermen er skrudd på</string>
+    <string name="title_roaming">Blokker ved roaming</string>
+    <string name="title_lockdown">Tillat i låsemodus</string>
+    <string name="title_related">Filtrer relaterte</string>
+    <string name="title_access">Tilgangsforsøk</string>
+    <string name="title_precedence">Tilgangsregler tar prioritet over andre regler</string>
+    <string name="title_options">Innstillinger</string>
+    <string name="title_notify">Meld ifra om internettilgangsforsøk</string>
+    <string name="title_logging_disabled">Loggføring eller filtrering er ikke skrudd på</string>
+    <string name="title_logging_enabled">Loggføring og filtrering er skrudd på</string>
+    <string name="title_logging_configure">Konfigurer</string>
+    <string name="title_enable_logging">Aktiver logging bare av blokkerte adresser</string>
+    <string name="title_enable_filtering">Aktiver filtrering for å logge tillatte adresser også</string>
+    <string name="title_enable_notify">Aktiver tilgangsvarsler for nylig loggførte adresser</string>
+    <string name="title_enable_help0">Disse innstillingene er globale innstillinger som gjelder for alle apper</string>
+    <string name="title_enable_help1">Filtrering er også nødvendig for å tillate eller blokkere individuelle adresser</string>
+    <string name="title_enable_help2">Aktivering av logging (mindre) eller filtrering (mer) kan øke batteribruken og kan påvirke nettverkshastigheten</string>
+    <string name="title_rate">Vurder</string>
+    <string name="title_allow">Tillat</string>
+    <string name="title_block">Blokker</string>
+    <string name="title_allow_wifi">Tillat Wi-Fi</string>
+    <string name="title_block_wifi">Blokker Wi-Fi</string>
+    <string name="title_allow_other">Tillat mobilnett</string>
+    <string name="title_block_other">Blokker mobilnett</string>
+    <string name="title_nobody">ingen</string>
+    <string name="title_dontask">Ikke spør igjen</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Port %1$d</string>
+    <string name="title_log_copy">Kopier</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Deaktiver Internett-tilgang for denne applikasjonen</string>
+    <string name="tracked_app_name">Applikasjonsnavn</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">tok kontakt med %d firma i forrige uke</item>
+        <item quantity="other">tok kontakt med %d firma forrige uke</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">kontaktet totalt %d firma</item>
+        <item quantity="other">kontaktet totalt %d firma</item>
+    </plurals>
+    <string name="confirm_ipinfo_title">Hent organisasjonsinformasjon?</string>
+    <string name="confirm_ipinfo">Dette vil ta kontakt med den eksterne tjenesten ipinfo.io, og dele data om kontaktet IP-adresser med dem.</string>
+    <string name="external_servers">Få utvikler e-post automatisk?</string>
+    <string name="confirm_google_info">Denne appen kan automatisk skaffe apputviklerens e-post fra Google Play Store for deg.</string>
+    <string name="ok">Ok</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nei</string>
+    <string name="menu_csv">Eksporter som CSV</string>
+    <string name="exporting">Eksporterer..</string>
+    <string name="share_csv">Del</string>
+    <string name="export_failed">Eksport mislyktes</string>
+    <string name="exported">Eksportert til lagringsplass!</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Detaljer</string>
+    <string name="tab_trackers">Sporere</string>
+    <string name="tab_countries">Land</string>
+    <string name="tab_actions">Mine data</string>
+    <string name="tracker_name">Sporernavn</string>
+    <string name="internet_access">Internett-tilgang</string>
+    <string name="internet_access_explanation">Må være på for internettilgang.\n\nTips: Du kan også trykke på appikonet på hovedskjermen.</string>
+    <string name="app_info">Behandle app</string>
     <!-- Actions -->
+    <string name="block_tracking">Block sporere</string>
+    <string name="block_tracking_description">Mange apper sender data til tredjeparter, såkalte sporere. TrackerControl lar deg selektivt blokkere disse nettverksoverføringene. Men bruk dette klokt. Apputviklerne er avhengige av disse tjenestene, særlig for annonsering.</string>
+    <string name="personalised_ads">Begrens personalisering</string>
+    <string name="personalised_ads_description">Android lar deg begrense appenes tilgang til Google Advertising ID-en til enheten din. Apper kan imidlertid potensielt ignorere denne innstillingen, og fortsatt bruke denne IDen. De kan også fortsette å bruke denne ID-en for analytiske formål, i følge retningslinjene til Google. Du må kunne stole på Google og det datainnsamlende selskapet.</string>
+    <string name="data_managment">Administrer data</string>
+    <string name="data_management_description">EUs generelle personvernforordning (GDPR) tillater brukere fra EU å bestemme over alle data knyttet til dem. Denne appen tilbyr e-postmaler for å nå ut til utvikleren. Utvikleren må svare innen en måned.</string>
+    <string name="contacts">Ta kontakt </string>
+    <string name="contacts_description">Hvis du mener en applikasjon bryter med prinsippene om vern av data, så vil du kanskje kontakte de ansvarlige direkte.</string>
+    <string name="play_services_required">Dette er en innstilling av Google Play Tjenestene, som ikke ble funnet på din enhet.</string>
+    <string name="no_mail_service">Vennligst installer en e-postklient.</string>
+    <string name="blocking_settings">Velg sporere</string>
+    <string name="ad_settings">Endre nå</string>
+    <string name="request_data">Etterspør data</string>
+    <string name="request_deletion">Be om sletting</string>
+    <string name="contact_developer">Utvikler</string>
+    <string name="contact_playstore">Google</string>
+    <string name="contact_officials">EU-representanter</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="subject_request_data">Forespørsel om GDPR-datatilgang</string>
+    <string name="body_request_data"><![CDATA[Til de det måtte gjelde:\n
+\n
+\n
+Jeg ber deg, som datakontrolleren for Android-appen %s (ID: %s), å bekrefte om den behandler personopplysninger om meg.\n
+Dersom dette er tilfelle, vennligst oppgi alle påkrevde opplysninger angitt i artikkel 15 i EUs generelle personvernforordning (GDPR), inkludert:\n
+\n
+• En kopi av mine personopplysninger;\n
+• Formålene med behandlingen;\n
+• Kategoriene av personlige opplysninger.\n
+• Hvilke mottakerne du deler mine personopplysninger med og sikkerhetsanordningene du bruker.\n
+• Oppbevaringsperioden du lagrer mine personlige data eller kriteriene som brukes for å bestemme denne perioden.\n
+• informasjon om kilden til min personlige data; og\n
+• Om det finnes automatiserte beslutninger (inkludert profilering), og hvis det:\n
+    - logikken som er involvert i beslutningsprosessen;\n
+    - betydningen og den planlagte konsekvensen for meg;\n
+    - trinnene du har iverksatt for å forhindre feil, fornemmelse og diskriminering. og\n
+    - forklare hvordan jeg kan uttrykke mitt syn på og utfordre en avgjørelse.\n
+\n
+Denne forespørselen er knyttet til enhver behandling av mine personlige data fra deg, inkludert alle behandlere som behandler personopplysninger på vegne av deg.\n
+\n
+Oppgi ditt svar på en sikkert måte via e-post. Jeg ser frem til å motta svar innen en måned etter at du har mottatt min forespørsel.\n
+\n
+Vennlig hilsen\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Til den det måtte gjelde:\n
+\n
+\n
+Jeg påberoper meg retten til å slettes som angitt i artikkel 17 i EUs generelle personvernforordning (GDPR). Jeg ber deg, som datakontrolleren for Android-appen %s (ID: %s), å slette følgende personopplysninger den behandler om meg uten unødvendig forsinkelse:\n
+• Alle data.\n
+\n
+Bakgrunnen for min fjerning er at jeg trekker tilbake eller har trukket tilbake mitt samtykke til behandling av disse personlige dataene. Denne forespørselen omhandler all behandling av mine personlige opplysninger fra deg, inkludert eventuelle behandlere som behandler personopplysninger på vegne av deg.\n
+\n
+Vennligst oppgi ditt svar på en sikker måte via e-post. Jeg ser frem til å motta svar innen en måned etter at du har mottatt min forespørsel.\n
+\n
+Vennlig hilsen,\n\n]]></string>
+    <string name="crash_dialog_text">Beklager. TrackerControl krasjet nettopp.. Kan du tenke deg å sende oss en e-post med detaljer?</string>
+    <string name="crash_dialog_comment">Eventuelle kommentarer?</string>
+    <string name="instructions_monitoring_private_dns">Slå av/på bryteren og bruk noen apper. Privat DNS må deaktiveres.</string>
+    <string name="instructions_monitoring">Slå av/på bryteren og bruk noen apper.</string>
+    <string name="device_not_supported_title">Enhet støttes ikke</string>
+    <string name="device_not_supported_msg">Operativsystemet til enheten din tillater ikke overvåking og filtrering av nettverkskommunikasjon. Dette er nødvendig for TrackerControl.</string>
+    <string name="launch_app">Start &amp; Finn sporere</string>
+    <string name="countries">Destinasjonsland</string>
+    <string name="countries_explanation">Finn ut hvor telefonen sender sporingsdata.\n\nInformasjonen er basert på DNS-oppslag og IP-informasjon, og kan være unøyaktig.</string>
+    <string name="countries_loading_failed">Ops.. Landkartet kunne ikke lastes. Vennligst fortell tc@kollnig.net hvordan dette skjedde.</string>
+    <string name="tracker_advertising">Annonsering</string>
+    <string name="tracker_analytics">Statistikk</string>
+    <string name="tracker_content">Nødvendig</string>
+    <string name="tracker_cryptomining">Graving etter krypto</string>
+    <string name="tracker_fingerprinting">Fingeravtrykk</string>
+    <string name="tracker_social">Sosial</string>
+    <string name="tracker_uncategorised">Ukategorisert</string>
+    <string name="setting_strict_blocking">Streng blokkering</string>
+    <string name="summary_strict_blocking">For nylig installerte apper kan du blokkere så mye datadeling med bedrifter som mulig. Flere apper vil slutte å fungere.</string>
+    <string name="strict_blocking_explanation">Det anbefales at ikke-eksperter deaktiverer denne instillingen for å redusere appfeil. Dette tillater imidlertid noe grunnleggende deling med selskaper.</string>
+    <string name="exclude_vpn_explanation">Må være på for å oppdage eller blokkere sporinger.\n\nTips: Deaktiver hvis du møter på problemer.</string>
+    <string name="uninstall">Avinstaller</string>
+    <string name="settings_uninstall">Appinnstillinger &amp; Avinstaller</string>
+    <string name="no_trackers_found_message_disabled">Aktiver bryter på hovedskjermen, så start appen for å finne sporere</string>
+    <string name="no_trackers_found_message">Start app for å finne sporere</string>
+    <string name="no_trackers_found_action">Åpne</string>
+    <string name="no_internet_message">"Denne appen har ingen internettilgang. Det kan fortsatt spore deg ved å utveksle data med andre apper."</string>
+    <string name="no_internet">Ingen internettilgang</string>
+    <string name="bypass_vpn_error">"Kan ikke blokkere Internett. Appen er ekskludert fra TrackerControl."</string>
+    <string name="back">Tilbake</string>
+    <string name="forever_free">Alltid gratis</string>
+    <string name="your_privacy">Ditt Personvern</string>
+    <string name="tracker_hostlist">Brukerdefinert \"Hosts\"</string>
+    <string name="unblocked">Ublokkert</string>
+    <string name="enable">Aktiver</string>
+    <string name="internet_blocked">Internettilgang blokkert</string>
+    <string name="internet_unblocked">Internettilgang ublokkert</string>
+    <string name="category_blocked">Sporere i kategorien blokkert</string>
+    <string name="category_unblocked">Sporere i kategorien tillatt</string>
+    <string name="category_unblocked_warning">Første blokkekategori!</string>
+    <string name="switch_strict_blocking">Blokker essensiell datadeling</string>
+    <string name="tracking_detection_failed">Kunne ikke oppdage sporeringsbiblioteket.</string>
+    <string name="tracking_detection_failed_ram">Oppdagelse av sporingsbiblioteket feilet. Ikke nok RAM.</string>
+    <string name="tracking_detection_failed_report">Oppdagelse av sporingsbibliotek feilet. Vennligst rapporter dette problemet til utvikleren.</string>
+    <string name="detected_trackers">Oppdagede sporingsbibliotek: %s</string>
+    <string name="none">Ingen</string>
+    <string name="trackers_static">Sporingsbiblioteker</string>
+    <string name="trackers_static_explanation">TrackerControl oppdager sporing i koden (\'biblioteker\') og nettverkstrafikken til apper.\n\nSporing som oppdages i nettverkstrafikken kan blokkeres med TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl oppdager sporing i koden (\'biblioteker\') og nettverkstrafikken til apper.</string>
+    <string name="blocked">BLOKKERT</string>
+    <string name="allowed">TILLATT</string>
+    <string name="setting_domain_based_blocked">Domenebasert blokkering (under utvikling)</string>
+    <string name="summary_domain_based_blocking">Tillater mer granulær blokkering. Fortsatt under utvikling.</string>
+    <string name="untap_unblock">Tips: Du kan oppheve individuelle oppføringer ved å trykke på dem.</string>
 </resources>

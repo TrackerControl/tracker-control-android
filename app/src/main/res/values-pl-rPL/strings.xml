@@ -103,17 +103,20 @@
     <string name="summary_ip6">Kieruj ruch IP w wersji 6 do TrackerControl, aby mógł być selektywnie dopuszczony lub zablokowany</string>
     <string name="summary_call">Wyłączenie TrackerControl przy przychodzącym lub wychodzącym połączeniu telefonicznym. Można go używać do rozwiązywania problemów z połączeniami IP/Wi-Fi.</string>
     <string name="summary_system">Określanie zasad dotyczących aplikacji systemowych (dla ekspertów)</string>
+    <string name="summary_log_app">Wyłącz, aby zmniejszyć zużycie baterii. Nowe trackery będą nadal blokowane, ale nie będą wyświetlane.</string>
     <string name="summary_track_usage">Śledzenie liczby bajtów wysłanych i otrzymanych dla każdej aplikacji i adresu. Może to skutkować dodatkowym zużyciem baterii.</string>
     <string name="summary_block_domains">OSTRZEŻENIE: Zablokowane hosty nie są wyświetlane w UI.</string>
     <string name="summary_rcode">Domyślną wartością jest 3 (NXDOMAIN), co oznacza \"nieistniejąca domena\".</string>
     <string name="summary_validate">Nazwa domeny używana do walidacji połączenia internetowego na porcie 443 (https).</string>
     <string name="summary_socks5_enabled">Tylko ruch TCP będzie wysyłany do serwera proxy</string>
     <string name="summary_watchdog">Okresowo sprawdzać, czy TrackerControl nadal działa (wpisać zero, aby wyłączyć tę opcję). Może to spowodować dodatkowe zużycie baterii.</string>
+    <string name="summary_log_logcat">Wyłącza blokowanie. Łączność (i zidentyfikowane tracky) są rejestrowane do dziennika urządzenia. Pobierz z adb logcat z tagiem \'TC-Log\'.</string>
     <string name="msg_sure">Jesteś pewien?</string>
     <string name="msg_started">Kontrola trackerów</string>
     <string name="msg_waiting">Oczekiwanie na imprezę</string>
     <string name="msg_disabled">Użyj powyższego przełącznika, aby włączyć TrackerControl.</string>
     <string name="msg_revoked">TrackerControl został wyłączony, prawdopodobnie przy użyciu innej aplikacji opartej na sieci VPN</string>
+    <string name="msg_installed">Problemy z %1$s?</string>
     <string name="msg_installed_description">Zezwól aplikacji na kontakt z firmami</string>
     <string name="msg_installed_n">Został zainstalowany</string>
     <string name="msg_completed">Działanie zakończone</string>
@@ -136,6 +139,7 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_import_last">Ostatni import: %s</string>
     <string name="msg_downloading">Pobieranie\n%1s</string>
     <string name="msg_downloaded">Plik hosta pobrany</string>
+    <string name="msg_updated">Plik hostów zaktualizowany i zastosowany!</string>
     <string name="msg_download_last">Ostatnie pobranie: %s</string>
     <string name="msg_update_last">Ostatnia aktualizacja: %s</string>
     <string name="msg_metered">Sieć jest mierzona</string>
@@ -152,6 +156,9 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_always_on">Kolejny VPN jest ustawiony jako zawsze włączony VPN</string>
     <string name="msg_always_on_lockdown">Wyłączyć \"Blokowanie połączeń bez VPN\" w ustawieniach Android VPN, aby używać TrackerControl w trybie filtrowania</string>
     <string name="msg_private_dns">Wyłącz \"Prywatny DNS\" w ustawieniach sieciowych Androida, aby używać TrackerControl w trybie filtrowania</string>
+    <string name="msg_start_forward">Rozpocznij przekazywanie z portu %1$s %2$d do %3$s:%4$d z \'%5$s\'?</string>
+    <string name="msg_stop_forward">Zatrzymaj przekierowanie z %1$s port %2$d?</string>
+    <string name="msg_log_logcat">Ostrzeżenie: Blokowanie wyłączone ze względu na logowanie ADB.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -213,7 +220,10 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopia</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Wyłącz dostęp do Internetu dla tej aplikacji</string>
     <string name="tracked_app_name">Nazwa wniosku</string>
+    <string name="confirm_ipinfo_title">Pobierasz informacje o organizacji?</string>
+    <string name="confirm_ipinfo">Skontaktuje się z zewnętrznym serwisem ipinfo.io i udostępnia im dane o kontaktach z adresami IP.</string>
     <string name="external_servers">Otrzymujesz automatycznie e-mail od dewelopera?</string>
     <string name="confirm_google_info">Ta aplikacja może automatycznie uzyskać wiadomość e-mail od twórcy aplikacji z Google Play Store za Ciebie.</string>
     <string name="ok">OK</string>
@@ -223,7 +233,7 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="exporting">Eksportowanie..</string>
     <string name="share_csv">Share</string>
     <string name="export_failed">Eksport nie powiódł się</string>
-    <string name="exported">Wywieziony do magazynu! Uzyskaj dostęp do pamięci masowej telefonu z komputera lub udostępnij ją innym aplikacjom.</string>
+    <string name="exported">Eksportuj do pamięci</string>
     <!-- App Details -->
     <string name="title_activity_detail">Szczegóły</string>
     <string name="tab_trackers">Trackery</string>
@@ -254,6 +264,40 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">PKBR Przedmiot wniosku o dostęp</string>
+    <string name="body_request_data"><![CDATA[Do kogo może to dotyczyć:\n
+\n
+\n
+Żądam, jako kontroler danych aplikacji Androida %s (ID: %s), aby potwierdzić, czy przetwarza dane osobowe o mnie.\n
+Jeśli tak, proszę podać mi wszystkie wymagane informacje określone w art. 15 ogólnego rozporządzenia UE o ochronie danych (KRLD), zawierający:\n
+\n
+• kopię moich danych osobowych;\n
+• cele przetwarzania;\n
+• kategorie danych osobowych, których to dotyczy;\n
+• odbiorcy, którym ujawniasz moje dane osobowe oraz gwarancje, które zapewniłeś;\n
+• okres przechowywania moich danych osobowych lub kryteria użyte do określenia tego okresu;\n
+• informacje o źródle moich danych osobowych; i\n
+• istnienie automatycznego procesu decyzyjnego (w tym profilowanie), i jeśli tak:\n
+    - logika związana z procesem decyzyjnym;\n
+    - znaczenie i przewidywane konsekwencje dla mnie;\n
+    - kroki podjęte w celu zapobiegania błędom, stronniczości i dyskryminacji; i\n
+    - wyjaśnienie, w jaki sposób mogę wyrazić mój punkt widzenia i zakwestionować decyzję.\n
+\n
+Ta prośba dotyczy przetwarzania moich danych osobowych przez Ciebie, w tym wszelkie podmioty przetwarzające dane osobowe w imieniu Pana.\n
+\n
+Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
+\n
+Z poważaniem,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Do kogo może to dotyczyć:\n
+\n
+\n
+odwołuję się do mojego prawa do usunięcia danych zgodnie z art. 17 ogólnego rozporządzenia UE o ochronie danych (GKRLD). Proszę, jako kontroler danych aplikacji na Androida %s (ID: %s), aby usunąć następujące dane osobowe, które przetwarza o mnie bez zbędnej zwłoki:\n
+• Wszystkie dane.\n
+\n
+Powodem mojego wniosku o usunięcie danych jest to, że wycofałem lub wycofałem swoją zgodę na przetwarzanie danych osobowych. Wniosek ten dotyczy przetwarzania moich danych osobowych, w tym przetwarzania danych osobowych w imieniu Pana.\n
+\n
+Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
+\n
+Z poważaniem,\n\n]]></string>
     <string name="crash_dialog_text">Przepraszam. TrackerControl się rozbił... Mógłbyś wysłać nam e-mail ze szczegółami?</string>
     <string name="crash_dialog_comment">Jakieś uwagi?</string>
     <string name="instructions_monitoring_private_dns">Przełączaj przełącznik i współdziałaj z niektórymi aplikacjami. Prywatny DNS musi być wyłączony.</string>
@@ -271,8 +315,12 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="tracker_fingerprinting">Odcisk palców</string>
     <string name="tracker_social">Społeczne</string>
     <string name="tracker_uncategorised">Nieskategoryzowane</string>
+    <string name="setting_strict_blocking">Ścisłe blokowanie</string>
+    <string name="summary_strict_blocking">W przypadku nowo zainstalowanych aplikacji zablokuj jak najwięcej danych z firmami. Więcej aplikacji zostanie przerwanych.</string>
+    <string name="strict_blocking_explanation">Zalecane jest wyłączenie tej opcji dla osób niebędących ekspertami, aby zmniejszyć ryzyko przerwania działania aplikacji. Pozwala to jednak na podstawowe udostępnianie danych .</string>
     <string name="exclude_vpn_explanation">Musi być włączony, aby wykryć lub zablokować nadajniki. \n\nWskazówka: Wyłącz, jeżeli napotkasz problemy.</string>
     <string name="uninstall">Odinstaluj</string>
+    <string name="settings_uninstall">Ustawienia aplikacji &amp; Odinstaluj</string>
     <string name="no_trackers_found_message_disabled">Włączyć przełącznik na głównym ekranie, a następnie uruchomić aplikację w celu znalezienia trackerów</string>
     <string name="no_trackers_found_message">Uruchomienie aplikacji do wyszukiwania trackerów</string>
     <string name="no_trackers_found_action">Uruchomienie</string>
@@ -287,4 +335,21 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="enable">Włączyć</string>
     <string name="internet_blocked">Zablokowany dostęp do Internetu</string>
     <string name="internet_unblocked">Odblokowany dostęp do Internetu</string>
+    <string name="category_blocked">Trackery w kategorii zablokowane</string>
+    <string name="category_unblocked">Dozwolone trackery w kategorii</string>
+    <string name="category_unblocked_warning">Pierwsza kategoria bloku!</string>
+    <string name="switch_strict_blocking">Blokuj podstawowe udostępnianie danych</string>
+    <string name="tracking_detection_failed">Wykrywanie biblioteki tropiciela nie powiodło się.</string>
+    <string name="tracking_detection_failed_ram">Wykrywanie biblioteki trackerów nie powiodło się. Za mało pamięci RAM.</string>
+    <string name="tracking_detection_failed_report">Wykrywanie biblioteki trackerów nie powiodło się. Zgłoś ten problem deweloperowi.</string>
+    <string name="detected_trackers">Wykryte biblioteki trackerów: %s</string>
+    <string name="none">Żaden</string>
+    <string name="trackers_static">Biblioteki trackerów</string>
+    <string name="trackers_static_explanation">TrackerControl wykrywa śledzenie w kodzie (\"bibliotekach\") i ruch sieciowy aplikacji.\n\nŚledzenie, które jest wykrywane w ruchu sieciowym, może być blokowane za pomocą TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl wykrywa śledzenie w kodzie (\"bibliotekach\") i ruch sieciowy aplikacji.</string>
+    <string name="blocked">ZABLOKOWANE</string>
+    <string name="allowed">DOZWOLONE</string>
+    <string name="setting_domain_based_blocked">Blokowanie oparte na domenie (w programowaniu)</string>
+    <string name="summary_domain_based_blocking">Umożliwia bardziej szczegółowe blokowanie. Wciąż w fazie rozwoju.</string>
+    <string name="untap_unblock">Wskazówka: możesz odblokować poszczególne wpisy, dotykając ich.</string>
 </resources>

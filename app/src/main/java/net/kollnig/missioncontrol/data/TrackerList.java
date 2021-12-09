@@ -107,8 +107,11 @@ public class TrackerList {
                 && ServiceSinkhole.mapHostsBlocked.containsKey(hostname))
             if (domainBasedBlocking)
                 return hostlistTracker;
-            else
-                return new Tracker(hostname, UNCATEGORISED);
+            else {
+                t = new Tracker(hostname, UNCATEGORISED);
+                hostnameToTracker.put(hostname, t);
+                return t;
+            }
 
         return t;
     }

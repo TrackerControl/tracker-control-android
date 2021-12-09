@@ -218,6 +218,7 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="title_log_port">%1$d ataka</string>
     <string name="title_log_copy">Kopiatu</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Desaktibatu interneterako sarrera aplikazio honi</string>
     <string name="tracked_app_name">Aplikazioaren izena</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">konpainia %d kontaktatu du azken astean</item>
@@ -227,6 +228,8 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
         <item quantity="one">konpainia %d kontaktatu du denbora guztian</item>
         <item quantity="other">%d konpainia kontaktatu ditu denbora guztian</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Erakundearen informazioa ekarri?</string>
+    <string name="confirm_ipinfo">Honek ipinfo.io zerbitzua erabiliko du eta bertara IP helbideen informazioa bidaliko du.</string>
     <string name="external_servers">Lortu garatzailearen eposta automatikoki?</string>
     <string name="confirm_google_info">Aplikazio honek aplikazioaren garatzaileren eposta Google Play Storetik lortu dezake.</string>
     <string name="ok">OK</string>
@@ -236,7 +239,7 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="exporting">Esportatzen…</string>
     <string name="share_csv">Partekatu</string>
     <string name="export_failed">Esportazioak huts egin du</string>
-    <string name="exported">Biltegira esportatu da! Joan telefonoaren biltegiratzera ordenagailua erabiliz edo beste aplikazio bat erabiliz.</string>
+    <string name="exported">Biltegira esportatuta!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Xehetasunak</string>
     <string name="tab_trackers">Trackeatzaileak</string>
@@ -346,14 +349,19 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked">Kategoriako aztarnariak baimenduta</string>
     <string name="category_unblocked_warning">Blokeatu kategoria lehenago!</string>
     <string name="switch_strict_blocking">Ezinbesteko datu partekatzeak blokeatu</string>
+    <string name="tracking_detection_failed">Huts egin du tracker liburutegia detektatzeak.</string>
+    <string name="tracking_detection_failed_ram">Huts egin du tracker liburutegia detektatzeak. Ez dago behar beste RAM.</string>
+    <string name="tracking_detection_failed_report">Huts egin du tracker liburutegia detektatzeak. Mesedez eman arazo honen berri garatzaileari.</string>
     <string name="detected_trackers">Aztarnari liburutegiak antzeman dira: %s</string>
     <string name="none">Bat ere ez</string>
     <string name="trackers_static">Aztarnari liburutegiak</string>
     <string name="trackers_static_explanation">TrackerControl-ek aztarnariak antzematen ditu iturburuan (\"liburutegiak\") eta aplikazioen sareko trafikoan.
 
 Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daitezke.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControlek kodean (\"liburutegietan\") eta aplikazioen sare-trafikoak detektatzen ditu arazoak.</string>
     <string name="blocked">BLOKEATUTA</string>
     <string name="allowed">BAIMENDUTA</string>
     <string name="setting_domain_based_blocked">Domeinuan oinarritutako blokeoa (garapenean)</string>
     <string name="summary_domain_based_blocking">Blokeo pikordunagoa baimentzen du. Garapenean oraindik.</string>
+    <string name="untap_unblock">Aholkua: sarrerak banan banan desaktibatu ditzakezu gainean sakatuz.</string>
 </resources>

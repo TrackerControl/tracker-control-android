@@ -20,6 +20,8 @@
 
 package eu.faircode.netguard;
 
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -85,8 +87,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";

@@ -44,6 +44,9 @@ public class Tracker {
     @Override
     @NonNull
     public String toString() {
+        if (this.name == null)
+            return "NO_TRACKER";
+
         return getName();
     }
 

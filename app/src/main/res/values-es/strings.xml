@@ -218,6 +218,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_log_port">Puerto %1$d</string>
     <string name="title_log_copy">Copiar</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Desactivar acceso a internet para esta app</string>
     <string name="tracked_app_name">Nombre de la aplicación</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contactó %d empresa la última semana</item>
@@ -227,6 +228,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
         <item quantity="one">contactó %d empresa en total</item>
         <item quantity="other">contactó %d empresas en total</item>
     </plurals>
+    <string name="confirm_ipinfo_title">¿Conseguir info de organización?</string>
+    <string name="confirm_ipinfo">Esto contactará el servicio externo ipinfo.io, y compartirá datos sobre las direcciones IP contactadas con ellos.</string>
     <string name="external_servers">¿Obtener el correo electrónico del desarrollador automáticamente?</string>
     <string name="confirm_google_info">Esta aplicación puede obtener automáticamente el correo electrónico del desarrollador de la aplicación desde Google Play Store por usted.</string>
     <string name="ok">Aceptar</string>
@@ -236,7 +239,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="exporting">Exportando…</string>
     <string name="share_csv">Compartir</string>
     <string name="export_failed">Exportación fallida</string>
-    <string name="exported">¡Exportado al almacenamiento! Acceda al almacenamiento del teléfono desde el ordenador o compártalo con otra aplicación.</string>
+    <string name="exported">¡Exportado al almacenamiento!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detalles</string>
     <string name="tab_trackers">Rastreadores</string>
@@ -354,4 +357,5 @@ Atentamente,\n\n]]></string>
     <string name="allowed">PERMITIDO</string>
     <string name="setting_domain_based_blocked">Bloqueo basado en Dominios (en Desarrollo)</string>
     <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
+    <string name="untap_unblock">Tip: Podés desbloquear entradas individuales tocándolas.</string>
 </resources>

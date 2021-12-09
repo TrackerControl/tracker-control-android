@@ -20,6 +20,9 @@
 
 package eu.faircode.netguard;
 
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
+import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
+
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -113,9 +116,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 
 public class ServiceSinkhole extends VpnService {
     private static final String TAG = "TrackerControl.VPN";
@@ -676,9 +676,10 @@ public class ServiceSinkhole extends VpnService {
             // Clear expired DNS records
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
 
-            // Keep IP mappings clean
+            // Refresh mappings regularly
             ipToHost.clear();
             ipToTracker.clear();
+            uidToApp.clear();
 
             // Check for update
             if (!Util.isPlayStoreInstall(ServiceSinkhole.this) && !Util.isFDroidInstall() && prefs.getBoolean("update_check", true))
@@ -838,7 +839,7 @@ public class ServiceSinkhole extends VpnService {
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
 
             // Get real name
-            String dname = ipToHost.get(packet.daddr);
+            /*String dname = ipToHost.get(packet.daddr);
             if (dname == null) {
                 dname = dh.getQName(packet.uid, packet.daddr);
                 if (dname != null) {
@@ -848,6 +849,28 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
             if (dname == NO_DNAME)
+                dname = null;*/
+
+            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
+            int uncertain = (lookup != null && lookup.getCount() > 1) ? 1 : 0;
+            boolean isTracker = false;
+            String dname;
+
+            // Pick first entry of database lookup -- no way to be sure
+            if (lookup != null && lookup.moveToNext()) {
+                dname = lookup.getString(lookup.getColumnIndex("qname"));
+                if (dname != null)  {
+                    if (TrackerList.findTracker(dname) != null)
+                        isTracker = true;
+                    else { // DNS uncloaking
+                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                        if (aname != null && TrackerList.findTracker(aname) != null) {
+                            dname = aname;
+                            isTracker = true;
+                        }
+                    }
+                }
+            } else
                 dname = null;
 
             // Traffic log
@@ -855,7 +878,7 @@ public class ServiceSinkhole extends VpnService {
                 dh.insertLog(packet, dname, connection, interactive);
 
             // Application log
-            if (log_app && packet.uid >= 0 &&
+            if (log_app && isTracker && packet.uid >= 0 &&
                     !(packet.uid == 0 && (packet.protocol == 6 || packet.protocol == 17) && packet.dport == 53)) {
                 if (!(packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */))
                     packet.dport = 0;
@@ -1884,6 +1907,11 @@ public class ServiceSinkhole extends VpnService {
         if (DatabaseHelper.getInstance(ServiceSinkhole.this).insertDns(rr)) {
             Log.i(TAG, "New IP " + rr);
             prepareUidIPFilters(rr.QName);
+
+            if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
+                ipToHost.remove(rr.Resource);
+                ipToTracker.remove(rr.Resource);
+            }
         }
     }
 
@@ -1919,8 +1947,8 @@ public class ServiceSinkhole extends VpnService {
     }
 
     static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, String> ipToHost = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, Tracker> ipToTracker = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
 
@@ -1976,20 +2004,46 @@ public class ServiceSinkhole extends VpnService {
                 // Check if tracker known
                 if (!Util.isPlayStoreInstall()
                         || prefs.getBoolean("log_logcat", false)) {
-                    Tracker tracker = ipToTracker.get(packet.daddr);
+
+                    Tracker tracker = null;
+                    Expiring<Tracker> expiringTracker = ipToTracker.get(packet.daddr);
+                    if (expiringTracker != null) {
+                        tracker = expiringTracker.getOrExpired();
+
+                        if (tracker == null) // expired
+                            ipToTracker.remove(packet.daddr);
+                    }
+
                     if (tracker == null) {
                         // Check if IP known
-                        String dname = ipToHost.get(packet.daddr);
+                        String dname = null;
+                        Expiring<String> expiringHost = ipToHost.get(packet.daddr);
+                        if (expiringHost != null) {
+                            dname = expiringHost.getOrExpired();
+
+                            if (dname == null) // expired
+                                ipToHost.remove(packet.daddr);
+                        }
+
                         if (dname == null) {
                             // Retrieve dname from DB
                             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                            Cursor lookup = dh.getQAName(packet.uid, packet.daddr);
+                            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, true);
                             String aname = null;
+                            long time = new Date().getTime();
+                            long ttl = 7 * 24 * 3600 * 1000L;
 
                             // Pick first entry of database lookup -- no way to be sure
                             if (lookup != null && lookup.moveToNext()) {
                                 dname = lookup.getString(lookup.getColumnIndex("qname"));
                                 aname = lookup.getString(lookup.getColumnIndex("aname"));
+
+                                int colTime = lookup.getColumnIndex("time");
+                                int colTTL = lookup.getColumnIndex("ttl");
+                                if (!lookup.isNull(colTime))
+                                    time = lookup.getLong(colTime);
+                                if (!lookup.isNull(colTTL))
+                                    ttl = lookup.getLong(colTTL);
                             } else
                                 dname = null;
 
@@ -2019,8 +2073,8 @@ public class ServiceSinkhole extends VpnService {
                             }
 
                             // Save dname and tracker
-                            ipToHost.put(packet.daddr, dname);
-                            ipToTracker.put(packet.daddr, tracker);
+                            ipToHost.put(packet.daddr, new Expiring<>(dname, time + ttl));
+                            ipToTracker.put(packet.daddr, new Expiring<>(tracker, time + ttl));
                         }
                     }
 
@@ -2032,7 +2086,6 @@ public class ServiceSinkhole extends VpnService {
                             app = Common.getAppName(pm, packet.uid);
                             uidToApp.put(packet.uid, app);
                         }
-
                         Log.i("TC-Log", app + " " + packet.daddr + " " + ipToHost.get(packet.daddr) + " " + tracker.getName());
                     } else {
                         if (tracker != NO_TRACKER) {
@@ -2353,6 +2406,7 @@ public class ServiceSinkhole extends VpnService {
                             DatabaseHelper dh = DatabaseHelper.getInstance(context);
                             dh.clearLog(uid);
                             dh.clearAccess(uid, false);
+                            uidToApp.remove(uid);
 
                             NotificationManagerCompat.from(context).cancel(uid); // installed notification
                             NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
@@ -3161,6 +3215,27 @@ public class ServiceSinkhole extends VpnService {
         @Override
         public String toString() {
             return "v" + version + " p" + protocol + " port=" + dport + " uid=" + uid;
+        }
+    }
+
+    private class Expiring<T> {
+        private T t;
+        private long expires;
+
+        public Expiring(T t, long expires) {
+            this.t = t;
+            this.expires = expires;
+        }
+
+        public boolean isExpired() {
+            return System.currentTimeMillis() > this.expires;
+        }
+
+        public T getOrExpired() {
+            if (isExpired())
+                return null;
+
+            return t;
         }
     }
 

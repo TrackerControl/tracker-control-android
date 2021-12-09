@@ -907,18 +907,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getQAName(int uid, String ip) {
+    public Cursor getQAName(int uid, String ip, boolean alive) {
+        long now = new Date().getTime();
         lock.readLock().lock();
         try {
             if (readableDb == null)
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
             // There is a segmented index on resource
-            String query = "SELECT d.qname, d.aname";
+            String query = "SELECT d.qname, d.aname, d.time, d.ttl";
             query += " FROM dns AS d";
             query += " WHERE d.resource = '" + ip.replace("'", "''") + "'";
+            if (alive)
+                query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
+            query += " GROUP BY d.qname"; // remove duplicates
             query += " ORDER BY d.qname";
-            query += " LIMIT 1";
+            query += " LIMIT 2";
             return db.rawQuery(query, new String[]{});
         } finally {
             lock.readLock().unlock();

@@ -234,7 +234,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="exporting">Exportation en cours..</string>
     <string name="share_csv">Partager</string>
     <string name="export_failed">L\'exportation a échoué</string>
-    <string name="exported">Exporté vers la mémoire de stockage ! Accédez au stockage du téléphone à partir de l\'ordinateur ou partagez avec une autre application.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Détails</string>
     <string name="tab_trackers">Traqueurs</string>

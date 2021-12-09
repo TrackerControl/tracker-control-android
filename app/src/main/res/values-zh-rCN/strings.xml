@@ -217,6 +217,7 @@
     <string name="title_log_port">端口 %1$d</string>
     <string name="title_log_copy">复制</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">禁止此应用访问互联网</string>
     <string name="tracked_app_name">应用程序名称</string>
     <plurals name="n_companies_found_week">
         <item quantity="other">上周联系了 %d 个公司</item>
@@ -224,6 +225,8 @@
     <plurals name="n_companies_found">
         <item quantity="other">使用以来联系了 %d 家公司</item>
     </plurals>
+    <string name="confirm_ipinfo_title">获取组织信息？</string>
+    <string name="confirm_ipinfo">这将联系外部服务 ipinfo.io，并与其分享关于已联系的 IP 地址的数据。</string>
     <string name="external_servers">自动获取开发者电子邮件？</string>
     <string name="confirm_google_info">本应用可以自动为您从谷歌Play Store获取应用开发者的邮件。</string>
     <string name="ok">好</string>
@@ -233,7 +236,7 @@
     <string name="exporting">正在导出...</string>
     <string name="share_csv">分享</string>
     <string name="export_failed">导出失败</string>
-    <string name="exported">导出到存储! 从计算机访问手机存储或与其他应用共享。</string>
+    <string name="exported">已导出到存储！</string>
     <!-- App Details -->
     <string name="title_activity_detail">详情</string>
     <string name="tab_trackers">跟踪器</string>
@@ -350,4 +353,5 @@
     <string name="allowed">已允许</string>
     <string name="setting_domain_based_blocked">基于域名的屏蔽(开发中)</string>
     <string name="summary_domain_based_blocking">允许进行更高数据粒度的阻止。 仍在开发中。</string>
+    <string name="untap_unblock">提示：您可以轻按解除对单独条目的屏蔽。</string>
 </resources>

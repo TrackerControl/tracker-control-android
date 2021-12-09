@@ -2,7 +2,62 @@
 <resources>
     <string name="app_description">TrackerControl giver brugerne mulighed for at overvåge og kontrollere den udbredte, løbende, skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller en nyere version</string>
+    <string name="menu_search">Søg efter app</string>
+    <string name="menu_filter">Filtrér apps</string>
+    <string name="menu_app_user">Vis bruger-apps</string>
+    <string name="menu_app_system">Vis system-apps</string>
+    <string name="menu_app_nointernet">Vis apps uden internet</string>
+    <string name="menu_sort">Sortér apps</string>
+    <string name="menu_sort_name">Sortér efter navn</string>
+    <string name="menu_sort_companies_week">Sortér efter virksomheder (uge)</string>
+    <string name="menu_sort_companies">Sortér efter virksomheder</string>
+    <string name="menu_settings">Indstillinger</string>
+    <string name="menu_invite">Invitér</string>
+    <string name="menu_about">Omkring</string>
+    <string name="menu_apps">Andre apps</string>
+    <string name="menu_protocol_other">Andet</string>
+    <string name="menu_traffic_allowed">Tilladt</string>
+    <string name="menu_traffic_blocked">Blokeret</string>
+    <string name="menu_refresh">Genindlæs</string>
+    <string name="menu_resolve">Vis navne</string>
+    <string name="menu_clear">Ryd</string>
+    <string name="menu_export">Eksportér</string>
+    <string name="menu_reset">Nulstil</string>
+    <string name="setting_dark">Mørkt tema</string>
+    <string name="setting_advanced_options">Avancerede indstillinger</string>
+    <string name="setting_import">Importér indstillinger</string>
+    <string name="msg_sure">Er du sikker?</string>
+    <string name="msg_started">Kontrollérer trackere</string>
+    <string name="msg_installed">Problemer med %1$s?</string>
+    <string name="msg_installed_n">Er blevet installeret</string>
+    <string name="msg_try">Prøv TrackerControl</string>
+    <string name="msg_download_last">Seneste download: %s</string>
+    <string name="msg_update_last">Seneste opdatering: %s</string>
+    <string name="msg_queue">TrackerControl er optaget</string>
+    <string name="msg_update">Opdatering tilgængelig, tryk for at hente</string>
+    <string name="title_host_allowed">Adresse er tilladt</string>
+    <string name="title_host_blocked">Adresse er blokeret</string>
+    <string name="title_disabled">er deaktiveret</string>
+    <string name="title_logging_configure">Konfigurér</string>
+    <string name="title_allow">Tillad</string>
+    <string name="title_block">Blokér</string>
+    <string name="title_dontask">Spørg ikke igen</string>
+    <string name="title_log_copy">Kopiér</string>
     <!-- App Overview -->
+    <string name="ok">Ok</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="menu_csv">Eksportér som CSV</string>
+    <string name="exporting">Eksportére..</string>
+    <string name="share_csv">Del</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Detaljer</string>
+    <string name="tab_countries">Lande</string>
     <!-- Actions -->
+    <string name="block_tracking">Blokér trackere</string>
+    <string name="data_managment">Håndtér data</string>
+    <string name="uninstall">Afinstallér</string>
+    <string name="back">Tilbage</string>
+    <string name="your_privacy">Dit privatliv</string>
+    <string name="enable">Aktivér</string>
 </resources>
