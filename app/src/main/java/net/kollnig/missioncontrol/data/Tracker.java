@@ -27,7 +27,6 @@ public class Tracker {
     public String category;
     public Long lastSeen;
     public String country;
-    public boolean uncertain;
 
     private final Set<String> hosts = new HashSet<>();
 
@@ -72,13 +71,5 @@ public class Tracker {
 
     public Set<String> getHosts() {
         return hosts;
-    }
-
-    public boolean isUncertain() {
-        return uncertain;
-    }
-
-    public void setUncertain(boolean uncertain) {
-        this.uncertain = uncertain;
     }
 }

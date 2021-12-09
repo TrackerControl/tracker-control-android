@@ -50,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            return db.query(true, "access", new String[]{"daddr", "time", "uncertain"}, "uid = ?", new String[]{Integer.toString(uid)}, null, null, null, null);
+            return db.query(true, "access", new String[]{"daddr", "time"}, "uid = ?", new String[]{Integer.toString(uid)}, null, null, null, null);
         } finally {
             lock.readLock().unlock();
         }
@@ -71,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "TrackerControl.Database";
 
     private static final String DB_NAME = "Netguard";
-    private static final int DB_VERSION = 22;
+    private static final int DB_VERSION = 21;
 
     private static boolean once = true;
     private static List<LogChangedListener> logChangedListeners = new ArrayList<>();
@@ -198,7 +198,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ", sent INTEGER" +
                 ", received INTEGER" +
                 ", connections INTEGER" +
-                ", uncertain INTEGER" +
                 ");");
         db.execSQL("CREATE UNIQUE INDEX idx_access ON access(uid, version, protocol, daddr, dport)");
         db.execSQL("CREATE INDEX idx_access_daddr ON access(daddr)");
@@ -372,10 +371,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 createTableApp(db);
                 oldVersion = 21;
             }
-            if (oldVersion < 22) {
-                db.execSQL("ALTER TABLE access ADD COLUMN uncertain INTEGER");
-                oldVersion = 22;
-            }
 
             if (oldVersion == DB_VERSION) {
                 db.setVersion(oldVersion);
@@ -542,7 +537,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Access
 
-    public boolean updateAccess(Packet packet, String dname, int block, int uncertain) {
+    public boolean updateAccess(Packet packet, String dname, int block) {
         int rows;
 
         lock.writeLock().lock();
@@ -553,7 +548,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContentValues cv = new ContentValues();
                 cv.put("time", packet.time);
                 cv.put("allowed", packet.allowed ? 1 : 0);
-                cv.put("uncertain", uncertain);
                 if (block >= 0)
                     cv.put("block", block);
 
