@@ -17,6 +17,7 @@
     <string name="menu_sort">アプリの並べ替え</string>
     <string name="menu_sort_name">名前順</string>
     <string name="menu_sort_uid">UID 順</string>
+    <string name="menu_sort_companies_week">検知された会社数順（週間）</string>
     <string name="menu_sort_companies">検知された会社数順</string>
     <string name="menu_log">トラフィック ログ</string>
     <string name="menu_settings">設定</string>
@@ -42,6 +43,25 @@
     <string name="setting_options">一般設定</string>
     <string name="setting_dark">ダークテーマ</string>
     <string name="setting_install">新しいアプリのインストール時に通知</string>
+    <string name="setting_pause">%1$s 分後に自動的に有効にする</string>
+    <string name="setting_update">アップデートを確認</string>
+    <plurals name="pause">
+        <item quantity="other">%d 分間一時停止</item>
+    </plurals>
+    <string name="setting_network_options">ネットワーク設定</string>
+    <string name="setting_subnet">サブネットのルーティング</string>
+    <string name="setting_tethering">テザリングを許可</string>
+    <string name="setting_lan">LAN アクセスを許可</string>
+    <string name="setting_ip6">IPv6 トラフィックを有効にする</string>
+    <string name="setting_call">着信中は無効にする</string>
+    <string name="setting_reload_onconnectivity">接続の変更時に再読み込み</string>
+    <string name="setting_advanced_options">高度な設定</string>
+    <string name="setting_system">システムアプリを対象にする</string>
+    <string name="setting_log_app">新しいトラッカーを検索</string>
+    <string name="setting_log_logcat">ADB にログを送信</string>
+    <string name="setting_filter">トラッカーをブロック</string>
+    <string name="setting_filter_udp">UDP のトラッカーをブロック</string>
+    <string name="setting_handover">再読み込み時に VPN 接続を維持</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->

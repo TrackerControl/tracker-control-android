@@ -1,6 +1,6 @@
 # About TrackerControl
 
-[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol)
+[![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 **Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or a feature-reduced version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).**
 
@@ -157,3 +157,29 @@ that is distributed with the Firefox browser.
 ## License
 This project is licensed under
 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
+
+
+## Citation
+
+If you use this project as part of your academic studies, please kindly cite the below articles:
+
+```
+@article{kollnig2021_iphone_android,
+      title={Are iPhones Really Better for Privacy? A Comparative Study of iOS and Android Apps}, 
+      author={Konrad Kollnig and Anastasia Shuba and Reuben Binns and Max {Van Kleek} and Nigel Shadbolt},
+      year={2021},
+      journal={arXiv preprint arXiv:2109.13722}
+}
+
+@inproceedings {kollnig2021_consent,
+      author = {Konrad Kollnig and Pierre Dewitte and Max Van Kleek and Ge Wang and Daniel Omeiza and Helena Webb and Nigel Shadbolt},
+      title = {A Fait Accompli? An Empirical Study into the Absence of Consent to Third-Party Tracking in Android Apps},
+      booktitle = {{Seventeenth Symposium on Usable Privacy and Security (SOUPS 2021)}},
+      year = {2021},
+      isbn = {978-1-939133-25-0},
+      pages = {181--196},
+      url = {https://www.usenix.org/conference/soups2021/presentation/kollnig},
+      publisher = {{USENIX Association}},
+      month = aug,
+}
+```

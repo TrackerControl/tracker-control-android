@@ -217,6 +217,7 @@
     <string name="title_log_port">Θύρα %1$d</string>
     <string name="title_log_copy">Αντιγραφή</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Απενεργοποίηση της πρόσβασης στο διαδίκτυο για αυτήν την εφαρμογή</string>
     <string name="tracked_app_name">Όνομα εφαρμογής</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">επικοινώνησε με %d εταιρεία την προηγούμενη εβδομάδα</item>
@@ -226,6 +227,8 @@
         <item quantity="one">επικοινωνεί με %d εταιρεία όλη την ώρα</item>
         <item quantity="other">επικοινωνεί με %d εταιρείες όλη την ώρα</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Ανάκτηση πληροφοριών οργανισμού;</string>
+    <string name="confirm_ipinfo">Αυτό θα επικοινωνήσει με την εξωτερική υπηρεσία ipinfo.io, και θα μοιραστεί τα δεδομένα σχετικά με τις διευθύνσεις IP που επικοινωνούν μαζί τους.</string>
     <string name="external_servers">Να λάβετε αυτόματα το email του προγραμματιστή;</string>
     <string name="confirm_google_info">Αυτή η εφαρμογή μπορεί να λάβει αυτόματα το email του προγραμματιστή της εφαρμογής από το Google Play Store για εσάς.</string>
     <string name="ok">ΟΚ</string>
@@ -235,7 +238,7 @@
     <string name="exporting">Εξαγωγή..</string>
     <string name="share_csv">Κοινή χρήση</string>
     <string name="export_failed">Η εξαγωγή απέτυχε</string>
-    <string name="exported">Έγινε εξαγωγή στον αποθηκευτικό χώρο! Πρόσβαση στο χώρο αποθήκευσης τηλεφώνου από υπολογιστή ή κοινή χρήση με άλλη εφαρμογή.</string>
+    <string name="exported">Έγινε εξαγωγή στον χώρο αποθήκευσης!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Λεπτομέρειες</string>
     <string name="tab_trackers">Ιχνηλάτες</string>
@@ -341,12 +344,17 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked">Επιτρεπόμενοι ιχνηλάτες στην κατηγορία</string>
     <string name="category_unblocked_warning">Πρώτη κατηγορία αποκλεισμού!</string>
     <string name="switch_strict_blocking">Αποκλεισμός ουσιαστικής κοινής χρήσης δεδομένων</string>
+    <string name="tracking_detection_failed">Ο εντοπισμός της βιβλιοθήκης ιχνηλατών απέτυχε.</string>
+    <string name="tracking_detection_failed_ram">Ο εντοπισμός της βιβλιοθήκης ιχνηλατών απέτυχε. Μη επαρκής μνήμη RAM.</string>
+    <string name="tracking_detection_failed_report">Η ανίχνευση της βιβλιοθήκης ιχνηλατών απέτυχε. Αναφέρετε αυτό το ζήτημα στον προγραμματιστή.</string>
     <string name="detected_trackers">Βιβλιοθήκες Ιχνηλατών που Εντοπίστηκαν: %s</string>
     <string name="none">Κανένα</string>
     <string name="trackers_static">Βιβλιοθήκες ιχνηλατών</string>
     <string name="trackers_static_explanation">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κυκλοφορία στο δίκτυο των εφαρμογών.\n\nΗ παρακολούθηση που ανιχνεύεται στην κίνηση δικτύου μπορεί να αποκλειστεί με το TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κίνηση στο δίκτυο των εφαρμογών.</string>
     <string name="blocked">ΑΠΟΚΛΕΙΣΜΕΝΟ</string>
     <string name="allowed">ΕΠΙΤΡΕΠΟΜΕΝΟ</string>
     <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain (υπό ανάπτυξη)</string>
     <string name="summary_domain_based_blocking">Επιτρέπει περισσότερο \"κοκκώδη\" μπλοκάρισμα. Ακόμα υπο ανάπτυξη.</string>
+    <string name="untap_unblock">Συμβουλή: Μπορείτε να καταργήσετε την φραγή μεμονωμένων καταχωρήσεων πατώντας πάνω τους.</string>
 </resources>

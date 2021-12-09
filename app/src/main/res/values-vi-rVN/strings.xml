@@ -229,7 +229,6 @@
     <string name="exporting">Đang xuất..</string>
     <string name="share_csv">Chia sẻ</string>
     <string name="export_failed">Xuất thất bại</string>
-    <string name="exported">Đã xuất ra bộ nhớ! Truy cập bộ nhớ điện thoại từ máy tính hoặc chia sẻ bằng ứng dụng khác.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Chi tiết</string>
     <string name="tab_trackers">Trình theo dõi</string>
