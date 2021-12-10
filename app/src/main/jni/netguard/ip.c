@@ -18,6 +18,7 @@
 */
 
 #include "netguard.h"
+#include "tls.h"
 
 int max_tun_msg = 0;
 extern int loglevel;
@@ -285,7 +286,8 @@ void handle_ip(const struct arguments *args,
     jint uid = -1;
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        (protocol == IPPROTO_TCP && syn)) {
+        (protocol == IPPROTO_TCP && syn) ||
+        (protocol == IPPROTO_TCP && dport == 53)) {
         if (args->ctx->sdk <= 28) // Android 9 Pie
             uid = get_uid(version, protocol, saddr, sport, daddr, dport);
         else
@@ -301,15 +303,65 @@ void handle_ip(const struct arguments *args,
     struct allowed *redirect = NULL;
     if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
         allowed = 1; // could be a lingering/blocked session
-    else if (protocol == IPPROTO_TCP && (!syn || (uid == 0 && dport == 53)))
+    else if (protocol == IPPROTO_TCP && ((!syn && dport != 443) || (uid == 0 && dport == 53)))
         allowed = 1; // assume existing session
+    else if (protocol == IPPROTO_TCP && dport == 443 && syn)
+        allowed = 1;
     else {
-        jobject objPacket = create_packet(
-                args, version, protocol, flags, source, sport, dest, dport, data, uid, 0);
-        redirect = is_address_allowed(args, objPacket);
-        allowed = (redirect != NULL);
-        if (redirect != NULL && (*redirect->raddr == 0 || redirect->rport == 0))
-            redirect = NULL;
+        struct ng_session *cur = NULL;
+        char* packetdata = data;
+
+        // check if we have a CLIENT HELLO
+        if (protocol == IPPROTO_TCP && dport == 443 && !syn) {
+            // Get TCP headers
+            const uint8_t version = (*pkt) >> 4;
+            const struct iphdr *ip4 = (struct iphdr *) pkt;
+            const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+            const struct tcphdr *tcphdr = (struct tcphdr *) payload;
+            const uint8_t tcpoptlen = (uint8_t) ((tcphdr->doff - 5) * 4);
+            const uint8_t *tcpoptions = payload + sizeof(struct tcphdr);
+            const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
+            const uint16_t datalen = (const uint16_t) (length - (data - pkt));
+
+            // Search TCP session
+            struct ng_session *cur = args->ctx->ng_session;
+            while (cur != NULL &&
+                   !(cur->protocol == IPPROTO_TCP &&
+                     cur->tcp.version == version &&
+                     cur->tcp.source == tcphdr->source && cur->tcp.dest == tcphdr->dest &&
+                     (version == 4 ? cur->tcp.saddr.ip4 == ip4->saddr &&
+                                     cur->tcp.daddr.ip4 == ip4->daddr
+                                   : memcmp(&cur->tcp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                                     memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
+                cur = cur->next;
+
+            if (cur != NULL && cur->tcp.checkedHostname == 0) {
+                char hostname[512] = "";
+                parse_tls_header((const char *) data, datalen, hostname);
+                if (strnlen(hostname, 512) > 0) {
+                    log_android(ANDROID_LOG_DEBUG, "Seen SNI: %s", hostname);
+                    packetdata = hostname;
+                }
+            }
+            allowed = 1;
+        }
+
+        if (cur == NULL || cur->tcp.checkedHostname == 0) {
+            if (args->ctx->sdk <= 28) // Android 9 Pie. TODO: We might be missing some edge cases in the same UID section above by just copying it here
+                uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+            else
+                uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+
+            jobject objPacket = create_packet(
+                    args, version, protocol, flags, source, sport, dest, dport, packetdata, uid, 0);
+            redirect = is_address_allowed(args, objPacket);
+            allowed = (redirect != NULL);
+            if (redirect != NULL && (*redirect->raddr == 0 || redirect->rport == 0))
+                redirect = NULL;
+
+            if (cur != NULL)
+                cur->tcp.checkedHostname = 1;
+        }
     }
 
     // Handle allowed traffic
