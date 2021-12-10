@@ -1,0 +1,1 @@
+TrackerControl permíteche monitorizar e controlar a recolección oculta de datos de cada app.

@@ -236,7 +236,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="exporting">Exporteren..</string>
     <string name="share_csv">Deel</string>
     <string name="export_failed">Export mislukt</string>
-    <string name="exported">Naar de opslagruimte geëxporteerd! Krijg toegang tot de telefoonopslag vanaf de computer of deel deze met een andere app.</string>
     <!-- App Details -->
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Trackers</string>

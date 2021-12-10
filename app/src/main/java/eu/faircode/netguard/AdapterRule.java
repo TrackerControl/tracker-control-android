@@ -20,6 +20,11 @@
 
 package eu.faircode.netguard;
 
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
+import static eu.faircode.netguard.ActivityMain.REQUEST_DETAILS_UPDATED;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
@@ -85,11 +90,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static eu.faircode.netguard.ActivityMain.REQUEST_DETAILS_UPDATED;
-import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
-import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
-import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
 
 public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> implements Filterable {
     private static final String TAG = "TrackerControl.Adapter";
@@ -726,8 +726,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                         if (!checked) {
                             cbNotify.setChecked(false);
                             prefs.edit().putBoolean("notify_access", false).apply();
-                            ServiceSinkhole.reload("changed notify", context, false);
                         }
+                        ServiceSinkhole.reload("changed notify", context, false);
                         AdapterRule.this.notifyDataSetChanged();
                     }
                 });
