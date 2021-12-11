@@ -32,7 +32,6 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +45,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -143,13 +143,36 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             AsyncTask.execute(() -> {
                 boolean isSystem = Rule.isSystem(mAppId, mContext);
-                Set<StaticTracker> trackers;
+                final String trackerString;
 
                 try {
+                    Set<StaticTracker> trackers;
                     PackageInfo pkg = pm.getPackageInfo(mAppId, 0);
-                    String apk = pkg.applicationInfo.publicSourceDir;
-                    trackers = Common.detectTrackersStatic(res, apk);
-                    Log.d(TAG, trackers.toString());
+
+                    // Try to load cached result
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+                    int analysedCode = prefs.getInt("analysed-versioncode" + "+" + mAppId, Integer.MIN_VALUE);
+
+                    if (pkg.versionCode > analysedCode) {
+                        String apk = pkg.applicationInfo.publicSourceDir;
+                        trackers = Common.detectTrackersStatic(res, apk);
+
+                        final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
+                        Collections.sort(sortedTrackers);
+
+                        if (sortedTrackers.size() > 0)
+                            trackerString = "\n• " + TextUtils.join("\n• ", sortedTrackers);
+                        else
+                            trackerString = a.getString(R.string.none);
+
+                        // Cache results
+                        prefs.edit()
+                                .putInt("analysed-versioncode" + "+" + mAppId, pkg.versionCode)
+                                .putString("analysed-trackers" + "+" + mAppId, trackerString)
+                                .apply();
+                    } else
+                        trackerString = prefs.getString("analysed-trackers" + "+" + mAppId, null);
+
                 } catch (Throwable e) {
                     a.runOnUiThread(() -> {
                         if (e instanceof EmptyMultiDexContainerException
@@ -169,15 +192,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     return;
                 }
 
-                final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
-                Collections.sort(sortedTrackers);
-
                 a.runOnUiThread(() -> {
-                    if (sortedTrackers.size() > 0)
-                        tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), "\n• " + TextUtils.join("\n• ", sortedTrackers)));
+                    if (trackerString != null)
+                        tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), trackerString));
                     else
-                        tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), a.getString(R.string.none)));
-
+                        tvDetectedTrackers.setText(R.string.failed_loading_cached_analysis);
                     tvDetectedTrackers.setVisibility(View.VISIBLE);
                     pbTrackerDetection.setVisibility(View.GONE);
                 });
