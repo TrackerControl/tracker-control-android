@@ -21,6 +21,7 @@
         <item>com.noqoush.adfalcon.android.sdk</item>
         <item>com.kakao.adfit.</item>
         <item>com.adform.sdk.</item>
+        <item>com.glossomads.sdk.</item>
         <item>jp.tjkapp.adfurikunsdk.</item>
         <item>com.adincube.sdk.</item>
         <item>io.adjoe.protection.</item>
@@ -31,12 +32,13 @@
         <item>ru.tachos.admitadstatisticsdk</item>
         <item>com.admixer</item>
         <item>net.admixer.sdk</item>
-        <item>admost.adserver.ads.</item>
+        <item>admost.adserver.</item>
         <item>admost.sdk.</item>
         <item>com.admuing.danmaku.</item>
         <item>com.adobe.marketing.mobile</item>
         <item>com.adotmob</item>
         <item>com.igaworks.adpopcorn</item>
+        <item>com.igaworks.ssp.</item>
         <item>.adswizz.</item>
         <item>com.aerserv.sdk.</item>
         <item>com.airpush.</item>
@@ -44,10 +46,12 @@
         <item>com.adsmogo.</item>
         <item>com.alimama.</item>
         <item>org.alohalytics.</item>
+        <item>com.github.aloomaio.androidsdk</item>
         <item>tv.alphonso.service</item>
         <item>com.altamob.sdk</item>
         <item>com.altbeacon.beacon.</item>
         <item>org.altbeacon.beacon.</item>
+        <item>org.altbeacon.bluetooth.</item>
         <item>com.amazon.device.ads</item>
         <item>com.amazon.insights</item>
         <item>com.amazonaws.mobileconnectors.amazonmobileanalytics</item>
@@ -58,6 +62,7 @@
         <item>com.amobee.</item>
         <item>com.amplitude.</item>
         <item>com.anagog.jedai</item>
+        <item>com.npaw.youbora.</item>
         <item>com.anvato.androidsdk.</item>
         <item>com.anysdk.framework.AdsWrapper</item>
         <item>com.anysdk.framework.AnalyticsWrapper</item>
@@ -104,12 +109,14 @@
         <item>com.batch.android.</item>
         <item>com.bazaarvoice.bvandroidsdk</item>
         <item>com.beaconsinspace.android.beacon.detector.</item>
+        <item>com.beintoo.nucleon</item>
         <item>io.bidmachine.</item>
         <item>com.bitly.Bitly</item>
         <item>com.blesh.sdk.</item>
         <item>com.bluecats.sdk</item>
         <item>com.blueconic</item>
         <item>com.bluekai.sdk.</item>
+        <item>com.parse.bolts</item>
         <item>io.branch.</item>
         <item>com.appboy</item>
         <item>com.brightcove</item>
@@ -128,9 +135,11 @@
         <item>com.cauly.android.ad.</item>
         <item>com.fsn.cauly</item>
         <item>com.trid.tridad</item>
+        <item>com.cedexis</item>
         <item>com.chartbeat.androidsdk</item>
         <item>com.chartboost.sdk.</item>
         <item>com.cmcm.</item>
+        <item>com.cifrasoft.</item>
         <item>com.clevertap.</item>
         <item>com.cloudtech.</item>
         <item>net.crowdconnected.androidcolocator</item>
@@ -146,9 +155,9 @@
         <item>com.deltadna</item>
         <item>com.adobe.mobile.Analytics</item>
         <item>com.adobe.mobile.Config.</item>
-        <item>io.didomi.sdk.Didomi</item>
+        <item>io.didomi.sdk.</item>
         <item>io.display.</item>
-        <item>com.dv.</item>
+        <item>com.dv.DVSDK</item>
         <item>com.duapps.</item>
         <item>com.dynamicyield.</item>
         <item>com.dynatrace.agent</item>
@@ -161,7 +170,9 @@
         <item>com.estimote.</item>
         <item>com.eulerian.android.sdk</item>
         <item>com.exacttarget.</item>
+        <item>com.exponea.sdk</item>
         <item>com.infinario.android.infinariosdk.</item>
+        <item>com.sygic.aura.</item>
         <item>com.facebook.ads</item>
         <item>com.facebook.appevents</item>
         <item>com.facebook.CampaignTrackingReceiver</item>
@@ -177,6 +188,7 @@
         <item>com.fidzup.</item>
         <item>com.fiksu.asotracking</item>
         <item>com.fineboost.</item>
+        <item>com.flowsense.flowsensesdk.</item>
         <item>com.flurry.</item>
         <item>com.fluzo.sdk.</item>
         <item>com.flymob.sdk.</item>
@@ -184,10 +196,16 @@
         <item>com.footmarks.footmarkssdkm2</item>
         <item>com.foresee.sdk.ForeSee</item>
         <item>tv.freewheel.ad.</item>
+        <item>com.fullstory.FS</item>
+        <item>com.fullstory.instrumentation.</item>
+        <item>com.fullstory.jni.</item>
+        <item>com.fullstory.rust.</item>
+        <item>com.fullstory.util.</item>
         <item>com.sponsorpay</item>
         <item>com.fyber.</item>
         <item>com.gameanalytics.sdk</item>
         <item>com.gemius.sdk</item>
+        <item>jp.co.geniee.gnadsdk.</item>
         <item>com.gigya.</item>
         <item>com.gimbal.android</item>
         <item>com.giphy.sdk.analytics</item>
@@ -196,16 +214,21 @@
         <item>com.gomfactory.adpie.</item>
         <item>com.google.ads.</item>
         <item>com.google.android.ads.</item>
+        <item>com.google.android.gms.admob</item>
         <item>com.google.android.gms.ads.</item>
+        <item>com.google.firebase.firebase_ads.</item>
         <item>com.google.unity.ads.</item>
         <item>com.danielcwilson.plugins.analytics</item>
+        <item>com.google.analytics.</item>
         <item>com.google.android.apps.analytics.</item>
         <item>com.google.android.gms.analytics.</item>
         <item>com.crashlytics.</item>
         <item>com.google.firebase.crash</item>
         <item>io.fabric.</item>
+        <item>io.invertase.firebase.crashlytics.</item>
         <item>com.google.android.gms.measurement.</item>
         <item>com.google.firebase.analytics.</item>
+        <item>com.google.firebase.firebase_analytics</item>
         <item>com.google.android.gms.tagmanager</item>
         <item>com.google.tagmanager</item>
         <item>com.gpshopper</item>
@@ -215,15 +238,25 @@
         <item>com.heyzap.sdk.ads.</item>
         <item>net.hockeyapp.</item>
         <item>com.hound</item>
+        <item>com.huawei.agconnect.</item>
         <item>com.huawei.hms.analytics</item>
         <item>com.huawei.hms.location</item>
         <item>com.huawei.hms.plugin.ads</item>
         <item>com.huawei.hms.plugin.analytics</item>
+        <item>com.huawei.hms.support.api.push.</item>
+        <item>com.huawei.updatesdk.</item>
+        <item>io.huq.sourcekit.</item>
         <item>com.hypertrack</item>
         <item>io.hypertrack</item>
         <item>com.hyprmx.android.sdk.</item>
         <item>com.iab.omid.library</item>
+        <item>com.prime31.IAB.</item>
+        <item>com.prime31.util.IabHelperImpl</item>
         <item>com.digitalanalytics.</item>
+        <item>co.acoustic.mobile.push.sdk.</item>
+        <item>com.ibm.mce.sdk.</item>
+        <item>com.xtify.android.sdk.</item>
+        <item>com.xtify.mce.sdk.</item>
         <item>com.inlocomedia.android</item>
         <item>com.indooratlas.android.sdk</item>
         <item>de.infonline.</item>
@@ -232,6 +265,7 @@
         <item>in.inmobi.</item>
         <item>com.inneractive.api.ads</item>
         <item>com.inrix.sdk</item>
+        <item>com.useinsider.insider</item>
         <item>com.instabug.</item>
         <item>com.instreamatic</item>
         <item>com.integralads.avid.library</item>
@@ -257,7 +291,8 @@
         <item>.LigatusViewClient</item>
         <item>com.ligatus.android.adframework</item>
         <item>com.lisnr.</item>
-        <item>com.localytics.android.</item>
+        <item>com.localytics.android</item>
+        <item>com.localytics.react.</item>
         <item>com.locuslabs.sdk</item>
         <item>com.github.tony19.loggly</item>
         <item>com.github.tony19.timber.loggly</item>
@@ -267,7 +302,7 @@
         <item>com.mngads.</item>
         <item>ru.mail.mrgservice.advertising</item>
         <item>ru.mail.mrgservice.analytics</item>
-        <item>jp.maio.sdk.android.</item>
+        <item>jp.maio.sdk.</item>
         <item>com.mapbox.android.telemetry.</item>
         <item>com.mapbox.mapboxsdk.telemetry</item>
         <item>org.matomo</item>
@@ -293,6 +328,8 @@
         <item>com.innoquant.moca</item>
         <item>com.moengage.</item>
         <item>com.moodmedia</item>
+        <item>com.mopinion.mopinionsdk</item>
+        <item>mozilla.telemetry.glean.</item>
         <item>org.mozilla.gecko.telemetry</item>
         <item>org.mozilla.telemetry</item>
         <item>com.mparticle</item>
@@ -300,10 +337,13 @@
         <item>com.my.tracker.</item>
         <item>com.nativex</item>
         <item>net.nend.android</item>
+        <item>net.nend.unity.</item>
         <item>com.newrelic.agent.</item>
+        <item>com.newrelic.mobile.</item>
         <item>com.nexage.android.</item>
         <item>org.nexage.</item>
         <item>com.nielsen.app</item>
+        <item>com.offertoro.sdk.</item>
         <item>io.presage.</item>
         <item>com.adobe.adms.measurement.</item>
         <item>com.omniture.</item>
@@ -313,7 +353,9 @@
         <item>com.openback</item>
         <item>com.openlocate</item>
         <item>com.safegraph.</item>
-        <item>com.opensignal.datacollection.OpenSignalNdcSdk</item>
+        <item>com.opensignal.datacollection.</item>
+        <item>io.opencensus</item>
+        <item>io.opentelemetry</item>
         <item>com.openx.android_sdk_openx</item>
         <item>com.openx.view.plugplay</item>
         <item>com.optimizely.</item>
@@ -325,16 +367,20 @@
         <item>com.bytedance.sdk.openadsdk</item>
         <item>com.bytedance.tea.crash.</item>
         <item>com.parsely.parselyandroid</item>
+        <item>sdk.insert.io.</item>
+        <item>sdk.pendo.io.</item>
         <item>ly.persona.sdk</item>
         <item>com.foursquare.pilgrim</item>
         <item>com.pingstart.adsdk.</item>
         <item>com.placed.client</item>
         <item>com.placer.client.Placer</item>
+        <item>co.vmob.sdk</item>
         <item>com.pointinside</item>
         <item>com.pokkt.sdk.</item>
         <item>com.pollfish</item>
         <item>org.prebid.mobile</item>
         <item>com.telescope.android</item>
+        <item>io.predic.tracker</item>
         <item>io.proximi.proximiiolibrary</item>
         <item>com.pubmatic.sdk</item>
         <item>net.pubnative</item>
@@ -383,15 +429,19 @@
         <item>com.smaato.</item>
         <item>com.smartlook.sdk.smartlook.</item>
         <item>com.smartadserver.</item>
+        <item>com.snapchat.kit.sdk.SnapLogin</item>
         <item>com.snowplowanalytics.</item>
+        <item>com.ansca.corona</item>
         <item>com.soomla.</item>
         <item>io.split.android.</item>
         <item>com.splunk.mint</item>
         <item>com.beaconinside.proximitysdk.ProximityService</item>
         <item>com.startapp.</item>
+        <item>tv.superawesome.lib.</item>
         <item>tv.superawesome.sdk</item>
         <item>com.supersonic.adapters.supersonicads</item>
         <item>com.supersonicads.sdk</item>
+        <item>com.swirl</item>
         <item>com.swrve.sdk</item>
         <item>com.visiware.sync2ad.dmp.</item>
         <item>com.taboola.</item>
@@ -424,11 +474,12 @@
         <item>com.tencent.stat</item>
         <item>com.tencent.wxop.stat</item>
         <item>com.tencent.weiyun</item>
-        <item>com.tenjin.android.TenjinSDK</item>
+        <item>com.tenjin.android.</item>
         <item>cn.thinkingdata.</item>
         <item>com.tinder.ads</item>
         <item>com.tinder.analytics</item>
         <item>com.tnkfactory.ad</item>
+        <item>com.treasuredata</item>
         <item>com.mobileapptracker</item>
         <item>com.tune</item>
         <item>com.tutelatechnologies.sdk</item>
@@ -445,9 +496,11 @@
         <item>com.unity3d.services</item>
         <item>com.upsight.</item>
         <item>com.urbanairship</item>
-        <item>com.uxcam.UXCam</item>
+        <item>com.uxcam.</item>
         <item>io.vectaury.</item>
+        <item>com.oath.mobile.</item>
         <item>com.verizon.ads</item>
+        <item>com.verizondigitalmedia.mobile.</item>
         <item>com.vervewireless.advert.</item>
         <item>com.virgo.ads.</item>
         <item>com.vk.api.sdk.</item>
@@ -474,8 +527,8 @@
         <item>com.youappi.sdk.</item>
         <item>com.yume.android</item>
         <item>com.redbricklane.zapr</item>
+        <item>com.zendrive.sdk.</item>
         <item>com.zoho.zanalytics.</item>
-        <item>com.google.cloud.audit</item>
         <item>com.android.installreferrer</item>
         <item>com.automattic.android.tracks</item>
         <item>com.buglife.sdk</item>
@@ -498,6 +551,7 @@
         <item>com.databox.</item>
         <item>io.flowup</item>
         <item>com.frogermcs.activityframemetrics</item>
+        <item>com.google.cloud.audit</item>
         <item>com.timerazor.gravysdk.</item>
         <item>com.mtraction.mtractioninapptracker.</item>
         <item>com.parse.Parse</item>
@@ -532,6 +586,7 @@
         <item>AdFit (Daum)</item>
         <item>Adform</item>
         <item>Adfurikun</item>
+        <item>Adfurikun</item>
         <item>Adincube</item>
         <item>Adjoe</item>
         <item>Adjoe</item>
@@ -547,6 +602,7 @@
         <item>Adobe Experience Cloud</item>
         <item>Adot</item>
         <item>adPOPcorn</item>
+        <item>adPOPcorn</item>
         <item>AdsWizz</item>
         <item>AerServ</item>
         <item>Airpush</item>
@@ -554,8 +610,10 @@
         <item>Alimama (formerly AdsMogo)</item>
         <item>Alimama (formerly AdsMogo)</item>
         <item>Alohalytics</item>
+        <item>Alooma</item>
         <item>Alphonso</item>
         <item>Altamob</item>
+        <item>AltBeacon</item>
         <item>AltBeacon</item>
         <item>AltBeacon</item>
         <item>Amazon Advertisement</item>
@@ -568,6 +626,7 @@
         <item>Amobee</item>
         <item>Amplitude</item>
         <item>Anagog</item>
+        <item>Analytics by NPAW (Youbora Suite)</item>
         <item>Anvato (A Google Company)</item>
         <item>AnySDK</item>
         <item>AnySDK</item>
@@ -614,12 +673,14 @@
         <item>Batch</item>
         <item>Bazaarvoice</item>
         <item>BeaconsInSpace (Fysical)</item>
+        <item>Beintoo</item>
         <item>BidMachine</item>
         <item>Bitly</item>
         <item>Blesh</item>
         <item>Bluecats</item>
         <item>BlueConic</item>
         <item>BlueKai (acquired by Oracle)</item>
+        <item>Bolts</item>
         <item>Branch</item>
         <item>Braze (formerly Appboy)</item>
         <item>Brightcove</item>
@@ -638,9 +699,11 @@
         <item>Cauly</item>
         <item>Cauly</item>
         <item>Cauly</item>
+        <item>Cedexis Radar</item>
         <item>Chartbeat</item>
         <item>ChartBoost</item>
         <item>Cheetah Ads</item>
+        <item>Cifrasoft</item>
         <item>CleverTap</item>
         <item>Cloudmobi</item>
         <item>Colocator</item>
@@ -672,6 +735,8 @@
         <item>Eulerian</item>
         <item>ExactTarget</item>
         <item>Exponea</item>
+        <item>Exponea</item>
+        <item>Exponea</item>
         <item>Facebook Ads</item>
         <item>Facebook Analytics</item>
         <item>Facebook Analytics</item>
@@ -687,6 +752,7 @@
         <item>FidZup</item>
         <item>Fiksu</item>
         <item>fineboost</item>
+        <item>Flowsense</item>
         <item>Flurry</item>
         <item>FLUZO</item>
         <item>flymob</item>
@@ -694,10 +760,16 @@
         <item>Footmarks</item>
         <item>Foresee</item>
         <item>FreeWheel</item>
+        <item>fullstory</item>
+        <item>fullstory</item>
+        <item>fullstory</item>
+        <item>fullstory</item>
+        <item>fullstory</item>
         <item>Fyber SponsorPay</item>
         <item>Fyber</item>
         <item>GameAnalytics</item>
         <item>Gemius HeatMap</item>
+        <item>Geniee</item>
         <item>Gigya</item>
         <item>Gimbal</item>
         <item>GIPHY Analytics</item>
@@ -708,12 +780,17 @@
         <item>Google AdMob</item>
         <item>Google AdMob</item>
         <item>Google AdMob</item>
+        <item>Google AdMob</item>
+        <item>Google AdMob</item>
         <item>Google Analytics Plugin (Cordova)</item>
         <item>Google Analytics</item>
         <item>Google Analytics</item>
+        <item>Google Analytics</item>
         <item>Google CrashLytics</item>
         <item>Google CrashLytics</item>
         <item>Google CrashLytics</item>
+        <item>Google CrashLytics</item>
+        <item>Google Firebase Analytics</item>
         <item>Google Firebase Analytics</item>
         <item>Google Firebase Analytics</item>
         <item>Google Tag Manager</item>
@@ -729,11 +806,21 @@
         <item>Huawei Mobile Services (HMS) Core</item>
         <item>Huawei Mobile Services (HMS) Core</item>
         <item>Huawei Mobile Services (HMS) Core</item>
+        <item>Huawei Mobile Services (HMS) Core</item>
+        <item>Huawei Mobile Services (HMS) Core</item>
+        <item>Huawei Mobile Services (HMS) Core</item>
+        <item>Huq Sourcekit</item>
         <item>HyperTrack</item>
         <item>HyperTrack</item>
         <item>HyprMX</item>
         <item>IAB Open Measurement</item>
+        <item>IAB Open Measurement</item>
+        <item>IAB Open Measurement</item>
         <item>IBM Digital Analytics</item>
+        <item>IBM Mobile Marketing (Acoustic)</item>
+        <item>IBM Mobile Marketing (Acoustic)</item>
+        <item>IBM Mobile Marketing (Acoustic)</item>
+        <item>IBM Mobile Marketing (Acoustic)</item>
         <item>In Loco</item>
         <item>IndoorAtlas</item>
         <item>INFOnline</item>
@@ -742,6 +829,7 @@
         <item>Inmobi</item>
         <item>Inneractive</item>
         <item>Inrix</item>
+        <item>Insider</item>
         <item>Instabug</item>
         <item>Instreamatic (Adman)</item>
         <item>Integral Ad Science</item>
@@ -767,6 +855,7 @@
         <item>Ligatus</item>
         <item>Ligatus</item>
         <item>Lisnr</item>
+        <item>Localytics</item>
         <item>Localytics</item>
         <item>Locuslabs</item>
         <item>Loggly</item>
@@ -803,6 +892,8 @@
         <item>MOCA</item>
         <item>MoEngage</item>
         <item>Moodmedia</item>
+        <item>Mopinion</item>
+        <item>Mozilla Telemetry</item>
         <item>Mozilla Telemetry</item>
         <item>Mozilla Telemetry</item>
         <item>mParticle</item>
@@ -810,10 +901,13 @@
         <item>myTracker</item>
         <item>NativeX</item>
         <item>nend</item>
+        <item>nend</item>
+        <item>New Relic</item>
         <item>New Relic</item>
         <item>Nexage</item>
         <item>Nexage</item>
         <item>Nielsen</item>
+        <item>OfferToro</item>
         <item>Ogury Presage</item>
         <item>Omniture</item>
         <item>Omniture</item>
@@ -824,6 +918,8 @@
         <item>OpenLocate</item>
         <item>OpenLocate</item>
         <item>Opensignal</item>
+        <item>OpenTelemetry (OpenCensus, OpenTracing)</item>
+        <item>OpenTelemetry (OpenCensus, OpenTracing)</item>
         <item>OpenX</item>
         <item>OpenX</item>
         <item>Optimizely</item>
@@ -835,15 +931,19 @@
         <item>Pangle</item>
         <item>Pangle</item>
         <item>Parse.ly</item>
+        <item>Pendo</item>
+        <item>Pendo</item>
         <item>Persona.ly</item>
         <item>Pilgrim by Foursquare</item>
         <item>PingStart</item>
         <item>Placed</item>
         <item>Placer</item>
+        <item>Plexure</item>
         <item>Point Inside</item>
         <item>POKKT</item>
         <item>Pollfish</item>
         <item>Prebid Mobile</item>
+        <item>PredicIO</item>
         <item>PredicIO</item>
         <item>Proximi.io</item>
         <item>PubMatic</item>
@@ -893,15 +993,19 @@
         <item>Smaato</item>
         <item>SmartLook</item>
         <item>Smart</item>
+        <item>Snapchat Login Kit</item>
         <item>Snowplow</item>
+        <item>Solar2D (Corona)</item>
         <item>Soomla</item>
         <item>Split</item>
         <item>Splunk MINT</item>
         <item>Square Metrics</item>
         <item>Startapp</item>
         <item>SuperAwesome</item>
+        <item>SuperAwesome</item>
         <item>Supersonic Ads</item>
         <item>Supersonic Ads</item>
+        <item>Swirl</item>
         <item>Swrve</item>
         <item>Sync2Ad</item>
         <item>Taboola</item>
@@ -939,6 +1043,7 @@
         <item>Tinder Analytics</item>
         <item>Tinder Analytics</item>
         <item>TNK Factory</item>
+        <item>Treasure Data</item>
         <item>Tune</item>
         <item>Tune</item>
         <item>Tutela</item>
@@ -957,6 +1062,8 @@
         <item>Urbanairship</item>
         <item>UXCam</item>
         <item>Vectaury</item>
+        <item>Verizon Ads</item>
+        <item>Verizon Ads</item>
         <item>Verizon Ads</item>
         <item>Verve</item>
         <item>Virgo Mobile</item>
@@ -984,8 +1091,8 @@
         <item>YouAppi</item>
         <item>YuMe</item>
         <item>Zapr</item>
+        <item>Zendrive</item>
         <item>Zoho Analytics</item>
-        <item>°Cloud Audit Logs</item>
         <item>°Google Play Install Referrer</item>
         <item>°Tracks</item>
         <item>²?Buglife</item>
@@ -1008,6 +1115,7 @@
         <item>²Databox</item>
         <item>²FlowUp</item>
         <item>²froger_mcs</item>
+        <item>²Google Cloud Audit Logs</item>
         <item>²GravyAnalytics</item>
         <item>²mTraction</item>
         <item>²Parse</item>
@@ -1042,6 +1150,7 @@
         <item>https://www.daum.net</item>
         <item>https://site.adform.com</item>
         <item>https://adfurikun.jp/adfurikun/</item>
+        <item>https://adfurikun.jp/adfurikun/</item>
         <item>https://www.adincube.com/</item>
         <item>https://adjoe.io/</item>
         <item>https://adjoe.io/</item>
@@ -1057,6 +1166,7 @@
         <item>https://www.adobe.com/experience-cloud.html</item>
         <item>https://we-are-adot.com/</item>
         <item>https://adpopcorn.com/</item>
+        <item>https://adpopcorn.com/</item>
         <item>http://www.adswizz.com/</item>
         <item>https://www.aerserv.com/</item>
         <item>https://airpush.com/</item>
@@ -1064,8 +1174,10 @@
         <item>https://www.alimama.com/</item>
         <item>https://www.alimama.com/</item>
         <item>https://github.com/biodranik/Alohalytics</item>
+        <item>https://www.alooma.com</item>
         <item>http://alphonso.tv</item>
         <item>https://www.altamob.com/en/index.html</item>
+        <item>https://altbeacon.org</item>
         <item>https://altbeacon.org</item>
         <item>https://altbeacon.org</item>
         <item>https://developer.amazon.com/public/apis/earn/mobile-ads/docs/quick-start</item>
@@ -1078,6 +1190,7 @@
         <item>https://amobee.com</item>
         <item>http://www.amplitude.com</item>
         <item>https://anagog.com</item>
+        <item>https://nicepeopleatwork.com/</item>
         <item>https://cloud.google.com/solutions/media-entertainment/?a=2</item>
         <item>http://www.anysdk.com/</item>
         <item>http://www.anysdk.com/</item>
@@ -1124,12 +1237,14 @@
         <item>https://batch.com</item>
         <item>https://www.bazaarvoice.com/</item>
         <item>https://beaconsinspace.com</item>
+        <item>https://beintoo.com/</item>
         <item>https://bidmachine.io/</item>
         <item>https://bitly.com/</item>
         <item>https://www.blesh.com/</item>
         <item>https://www.bluecats.com/</item>
         <item>https://www.blueconic.com</item>
         <item>http://bluekai.com/registry/</item>
+        <item>https://github.com/BoltsFramework/Bolts-Android</item>
         <item>https://branch.io/</item>
         <item>https://www.braze.com</item>
         <item>https://www.brightcove.com</item>
@@ -1148,9 +1263,11 @@
         <item>https://www.cauly.net</item>
         <item>https://www.cauly.net</item>
         <item>https://www.cauly.net</item>
+        <item>https://www.cedexis.com/</item>
         <item>https://chartbeat.com/</item>
         <item>https://answers.chartboost.com/en-us/</item>
         <item>https://www.cmcm.com/</item>
+        <item>http://cifrasoft.com</item>
         <item>https://clevertap.com/</item>
         <item>http://www.cloudmobi.net/</item>
         <item>https://developers.colocator.net</item>
@@ -1182,6 +1299,8 @@
         <item>https://www.eulerian.com/en/</item>
         <item>http://help.exacttarget.com/en/technical_library/API_Overview/</item>
         <item>https://exponea.com</item>
+        <item>https://exponea.com</item>
+        <item>https://exponea.com</item>
         <item>https://developers.facebook.com/docs/android</item>
         <item>https://developers.facebook.com/docs/android</item>
         <item>https://developers.facebook.com/docs/android</item>
@@ -1197,6 +1316,7 @@
         <item>https://www.fidzup.com</item>
         <item>https://fiksu.com</item>
         <item>http://www.yifants.cn/</item>
+        <item>https://flowsense.com.br/</item>
         <item>http://www.flurry.com</item>
         <item>https://www.fluzo.com/</item>
         <item>https://flymob.com/</item>
@@ -1204,10 +1324,16 @@
         <item>https://www.footmarks.com</item>
         <item>https://www.foresee.com</item>
         <item>http://freewheel.tv/</item>
+        <item>https://www.fullstory.com/</item>
+        <item>https://www.fullstory.com/</item>
+        <item>https://www.fullstory.com/</item>
+        <item>https://www.fullstory.com/</item>
+        <item>https://www.fullstory.com/</item>
         <item>http://www.sponsorpay.com</item>
         <item>https://www.fyber.com/</item>
         <item>https://gameanalytics.com/features</item>
         <item>https://heatmap.gemius.com</item>
+        <item>https://geniee.co.jp/</item>
         <item>https://www.gigya.com</item>
         <item>https://gimbal.com/</item>
         <item>https://giphy.com/</item>
@@ -1218,12 +1344,17 @@
         <item>https://admob.google.com</item>
         <item>https://admob.google.com</item>
         <item>https://admob.google.com</item>
+        <item>https://admob.google.com</item>
+        <item>https://admob.google.com</item>
         <item>https://github.com/danwilson/google-analytics-plugin</item>
         <item>http://www.google.com/analytics/</item>
         <item>http://www.google.com/analytics/</item>
+        <item>http://www.google.com/analytics/</item>
         <item>http://crashlytics.com</item>
         <item>http://crashlytics.com</item>
         <item>http://crashlytics.com</item>
+        <item>http://crashlytics.com</item>
+        <item>https://firebase.google.com/</item>
         <item>https://firebase.google.com/</item>
         <item>https://firebase.google.com/</item>
         <item>https://www.google.com/analytics/tag-manager/</item>
@@ -1239,11 +1370,21 @@
         <item>https://developer.huawei.com/consumer/en/hms</item>
         <item>https://developer.huawei.com/consumer/en/hms</item>
         <item>https://developer.huawei.com/consumer/en/hms</item>
+        <item>https://developer.huawei.com/consumer/en/hms</item>
+        <item>https://developer.huawei.com/consumer/en/hms</item>
+        <item>https://developer.huawei.com/consumer/en/hms</item>
+        <item>https://huq.io/</item>
         <item>http://hypertrack.com</item>
         <item>http://hypertrack.com</item>
         <item>https://www.hyprmx.com</item>
         <item>https://iabtechlab.com/</item>
+        <item>https://iabtechlab.com/</item>
+        <item>https://iabtechlab.com/</item>
         <item>https://www.ibm.com/customer-engagement/coremetrics-software</item>
+        <item>https://acoustic.co/</item>
+        <item>https://acoustic.co/</item>
+        <item>https://acoustic.co/</item>
+        <item>https://acoustic.co/</item>
         <item>https://inloco.com.br</item>
         <item>http://www.indooratlas.com/</item>
         <item>https://www.infonline.de</item>
@@ -1252,6 +1393,7 @@
         <item>http://inmobi.com</item>
         <item>https://www.crunchbase.com/organization/inneractive</item>
         <item>http://inrix.com/</item>
+        <item>https://useinsider.com/</item>
         <item>https://instabug.com/crash-reporting</item>
         <item>http://instreamatic.com/</item>
         <item>https://integralads.com</item>
@@ -1277,6 +1419,7 @@
         <item>http://ligatus.com</item>
         <item>http://ligatus.com</item>
         <item>http://lisnr.com</item>
+        <item>http://localytics.com</item>
         <item>http://localytics.com</item>
         <item>http://locuslabs.com</item>
         <item>http://loggly.com/</item>
@@ -1313,6 +1456,8 @@
         <item>https://www.mocaplatform.com/</item>
         <item>https://www.moengage.com/</item>
         <item>https://us.moodmedia.com/</item>
+        <item>https://mopinion.com</item>
+        <item>https://wiki.mozilla.org/Telemetry</item>
         <item>https://wiki.mozilla.org/Telemetry</item>
         <item>https://wiki.mozilla.org/Telemetry</item>
         <item>http://mparticle.com</item>
@@ -1320,10 +1465,13 @@
         <item>https://tracker.my.com/</item>
         <item>http://www.nativex.com/</item>
         <item>https://nend.net/en/</item>
+        <item>https://nend.net/en/</item>
+        <item>http://www.newrelic.com</item>
         <item>http://www.newrelic.com</item>
         <item>http://nexage.com/</item>
         <item>http://nexage.com/</item>
         <item>https://www.nielsen.com</item>
+        <item>http://www.offertoro.com/</item>
         <item>http://www.presage.io/</item>
         <item>https://www.adobe.com/analytics/adobe-analytics-features.html</item>
         <item>https://www.adobe.com/analytics/adobe-analytics-features.html</item>
@@ -1334,6 +1482,8 @@
         <item>https://www.safegraph.com/</item>
         <item>https://www.safegraph.com/</item>
         <item>https://www.opensignal.com</item>
+        <item>https://opentelemetry.io/</item>
+        <item>https://opentelemetry.io/</item>
         <item>https://www.openx.com/</item>
         <item>https://www.openx.com/</item>
         <item>https://www.optimizely.com/</item>
@@ -1345,15 +1495,19 @@
         <item>https://www.pangleglobal.com</item>
         <item>https://www.pangleglobal.com</item>
         <item>https://www.parse.ly/</item>
+        <item>https://www.pendo.io</item>
+        <item>https://www.pendo.io</item>
         <item>http://persona.ly/</item>
         <item>https://enterprise.foursquare.com/products/pilgrim</item>
         <item>http://pingstart.com</item>
         <item>http://placed.com/</item>
         <item>https://placer.io/</item>
+        <item>https://www.plexure.com/</item>
         <item>https://www.pointinside.com/</item>
         <item>https://www.pokkt.com</item>
         <item>https://www.pollfish.com</item>
         <item>https://prebid.org</item>
+        <item>https://www.predic.io/</item>
         <item>https://www.predic.io/</item>
         <item>https://proximi.io/</item>
         <item>https://pubmatic.com/</item>
@@ -1403,15 +1557,19 @@
         <item>https://smaato.com</item>
         <item>https://www.smartlook.com/</item>
         <item>http://smartadserver.com/</item>
+        <item>https://kit.snapchat.com/docs/login-kit</item>
         <item>https://snowplowanalytics.com/</item>
+        <item>https://solar2d.com/</item>
         <item>https://soomla.com/</item>
         <item>https://www.split.io/</item>
         <item>https://mint.splunk.com/</item>
         <item>https://www.squaremetrics.com</item>
         <item>https://www.startapp.com</item>
         <item>https://www.superawesome.com/</item>
+        <item>https://www.superawesome.com/</item>
         <item>https://www.supersonic.com/</item>
         <item>https://www.supersonic.com/</item>
+        <item>http://swirl.com/</item>
         <item>https://www.swrve.com/</item>
         <item>https://www.sync2ad.com/</item>
         <item>https://www.taboola.com/</item>
@@ -1449,6 +1607,7 @@
         <item>http://tinder.com</item>
         <item>http://tinder.com</item>
         <item>http://www.tnkfactory.com</item>
+        <item>https://www.treasuredata.com/product/</item>
         <item>https://www.tune.com</item>
         <item>https://www.tune.com</item>
         <item>https://www.tutela.com/</item>
@@ -1467,6 +1626,8 @@
         <item>https://www.urbanairship.com/</item>
         <item>https://uxcam.com/</item>
         <item>http://vectaury.io/</item>
+        <item>https://www.verizonmedia.com/</item>
+        <item>https://www.verizonmedia.com/</item>
         <item>https://www.verizonmedia.com/</item>
         <item>https://www.verve.com</item>
         <item>http://virgomobile.com/</item>
@@ -1494,8 +1655,8 @@
         <item>https://www.youappi.com</item>
         <item>https://www.appbrain.com/stats/libraries/details/yume/yume</item>
         <item>https://www.zapr.in/</item>
+        <item>https://www.zendrive.com/</item>
         <item>http://analytics.zoho.com/</item>
-        <item>https://cloud.google.com/logging/docs/audit</item>
         <item>https://developer.android.com/google/play/installreferrer</item>
         <item>https://github.com/Automattic/Automattic-Tracks-Android</item>
         <item>https://buglife.com/docs/android</item>
@@ -1518,6 +1679,7 @@
         <item>https://developers.databox.com/sdks/ and https://github.com/databox/databox-java</item>
         <item>https://github.com/flowupio/FlowUpAndroidSDK</item>
         <item>http://frogermcs.github.io/FrameMetrics-realtime-app-smoothness-tracking/</item>
+        <item>https://cloud.google.com/logging/docs/audit</item>
         <item>http://gravyanalytics.com</item>
         <item>http://docs.mtraction.com/index.php/docs/integrations/android-unity-integration/</item>
         <item>https://docs.parseplatform.org/android/guide/#analytics</item>
@@ -1552,6 +1714,7 @@
         <item>analytics\.ad\.daum\.net|statistics\.videofarm\.daum\.net</item>
         <item>adform\.com|adformdsp\.net|adx\.adform\.net|files\.adform\.net|track\.adform\.net</item>
         <item>adfurikun\.jp|ginf\.adfurikun\.jp</item>
+        <item>adfurikun\.jp|ginf\.adfurikun\.jp</item>
         <item>sdk\.adincube\.com</item>
         <item>NC</item>
         <item>NC</item>
@@ -1567,6 +1730,7 @@
         <item>NC</item>
         <item>sdk\.adotmob\.com|sync\.adotmob\.com|tracker\.adotmob\.com</item>
         <item>NC</item>
+        <item>NC</item>
         <item>adswizz\.com|cdn\.adswizz.com\.edgesuite\.net</item>
         <item>ads\.aerserv\.com|debug\.aerserv\.com</item>
         <item>api\.airpush\.com|apidm\.airpush\.com|apistaging\.airpush\.com|apportal\.airpush\.com|appwall\.api\.airpush\.com|beta\.airpush\.com|cdnap\.airpush\.com|m\.airpush\.com</item>
@@ -1574,8 +1738,10 @@
         <item>\.alimama\.|\.adsmogo\.</item>
         <item>\.alimama\.|\.adsmogo\.</item>
         <item>NC</item>
+        <item>inputs\.alooma\.com</item>
         <item>api\.alphonso\.tv|prov\.alphonso\.tv</item>
         <item>api\.altamob\.com</item>
+        <item>NC</item>
         <item>NC</item>
         <item>NC</item>
         <item>NC</item>
@@ -1587,6 +1753,7 @@
         <item>NC</item>
         <item>amobee\.com</item>
         <item>amplitude\.com|api\.amplitude\.com</item>
+        <item>NC</item>
         <item>NC</item>
         <item>.*\.anvato\.net</item>
         <item>NC</item>
@@ -1639,7 +1806,9 @@
         <item>NC</item>
         <item>NC</item>
         <item>NC</item>
+        <item>NC</item>
         <item>stags\.bluekai\.com|tags\.bluekai\.com</item>
+        <item>NC</item>
         <item>api\.branch\.io</item>
         <item>appboy\.com</item>
         <item>metrics\.brightcove\.com</item>
@@ -1658,9 +1827,11 @@
         <item>ad\.cauly\.co\.kr</item>
         <item>ad\.cauly\.co\.kr</item>
         <item>ad\.cauly\.co\.kr</item>
+        <item>cedexis\-radar\.net|cedexis\.com|radar\.cedexis\.com</item>
         <item>.chartbeat\.com|.chartbeat\.net</item>
         <item>\.chartboost\.com</item>
         <item>cmcm\.com</item>
+        <item>\.tele\.fm</item>
         <item>wzrkt\.com</item>
         <item>api\.cloudmobi\.net|cloudmobi\.net|logger\.cloudmobi\.net|vast\.cloudmobi\.net</item>
         <item>colocator\.net</item>
@@ -1692,6 +1863,8 @@
         <item>eulerian\.com</item>
         <item>\.exacttarget\.</item>
         <item>api.infinario.com|sygic-api.infinario.com</item>
+        <item>api.infinario.com|sygic-api.infinario.com</item>
+        <item>api.infinario.com|sygic-api.infinario.com</item>
         <item>\.facebook\.com</item>
         <item>\.facebook\.com</item>
         <item>\.facebook\.com</item>
@@ -1707,6 +1880,7 @@
         <item>fidzup</item>
         <item>a\.fiksu\.com|sdk\.fiksu\.com</item>
         <item>NC</item>
+        <item>NC</item>
         <item>flurry\.com</item>
         <item>NC</item>
         <item>NC</item>
@@ -1714,10 +1888,16 @@
         <item>NC</item>
         <item>4seeresults\.com|analytics\.foresee\.com|foresee\.com|foreseeresults\.com|i\.4see\.mobi|rec\.replay\.answerscloud\.com</item>
         <item>fwmrm\.net</item>
+        <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>appengage-video\.sponsorpay\.com|cdn1\.sponsorpay\.com|cdn2\.sponsorpay\.com|cdn3\.sponsorpay\.com|cdn4\.sponsorpay\.com|engine\.sponsorpay\.com</item>
         <item>adproxy\.fyber\.com|appengage-video\.fyber\.com|banner\.fyber\.com|engine\.fyber\.com|interstitial\.fyber\.com|mbe-cdn\.fyber\.com|offer\.fyber\.com|service\.fyber\.com|tracker\.fyber\.com|video-interstitial-assets-cdn\.fyber\.com|video\.fyber\.com</item>
         <item>NC</item>
         <item>gemius\.pl</item>
+        <item>NC</item>
         <item>cdn1\.gigya\.com|cdn2\.gigya\.com|cdn3\.gigya\.com|cdn\.gigya\.com|cdns\.us1\.gigya\.com</item>
         <item>analytics-server\.gimbal\.com|api\.gimbal\.com|registration\.gimbal\.com|sdk-info\.gimbal\.com</item>
         <item>api\.giphy\.com|pingback\.giphy\.com</item>
@@ -1728,12 +1908,17 @@
         <item>2mdn\.net|\.google\.com|dmtry\.com|doubleclick\.com|doubleclick\.net|mng-ads\.com</item>
         <item>2mdn\.net|\.google\.com|dmtry\.com|doubleclick\.com|doubleclick\.net|mng-ads\.com</item>
         <item>2mdn\.net|\.google\.com|dmtry\.com|doubleclick\.com|doubleclick\.net|mng-ads\.com</item>
+        <item>2mdn\.net|\.google\.com|dmtry\.com|doubleclick\.com|doubleclick\.net|mng-ads\.com</item>
+        <item>2mdn\.net|\.google\.com|dmtry\.com|doubleclick\.com|doubleclick\.net|mng-ads\.com</item>
         <item>NC</item>
         <item>google-analytics\.com</item>
         <item>google-analytics\.com</item>
+        <item>google-analytics\.com</item>
         <item>crashlytics\.com</item>
         <item>crashlytics\.com</item>
         <item>crashlytics\.com</item>
+        <item>crashlytics\.com</item>
+        <item>firebase\.com</item>
         <item>firebase\.com</item>
         <item>firebase\.com</item>
         <item>www\.googletagmanager\.com|www\.googletagservices\.com</item>
@@ -1749,11 +1934,21 @@
         <item>NC</item>
         <item>NC</item>
         <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>api\.hypertrack\.com|hypertrack\.amazonaws\.com|trck\.at</item>
         <item>api\.hypertrack\.com|hypertrack\.amazonaws\.com|trck\.at</item>
         <item>hyprmx\.com</item>
         <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>data\.de\.coremetrics\.com</item>
+        <item>sdk6\.ibm\.xtify\.com</item>
+        <item>sdk6\.ibm\.xtify\.com</item>
+        <item>sdk6\.ibm\.xtify\.com</item>
+        <item>sdk6\.ibm\.xtify\.com</item>
         <item>inlocomedia\.com</item>
         <item>ipsws\.indooratlas\.com</item>
         <item>de\.ioam\.de</item>
@@ -1762,6 +1957,7 @@
         <item>c\.w\.inmobi\.com|china\.inmobi\.com|config-ltvp\.inmobi\.com|config\.inmobi\.com|et\.w\.inmobi\.com|i\.l\.inmobicdn\.net|i\.w\.inmobi\.com|inmobi\.cn|inmobi\.com|inmobi\.info|inmobi\.net|inmobi\.us|inmobicdn\.com|inmobicdn\.net|inmobisdk\-a\.akamaihd\.net|japan\.inmobi\.com|r\.w\.inmobi\.com|sdkm\.w\.inmobi\.com|sdktm\.w\.inmobi\.com|w\.inmobi\.com</item>
         <item>NC</item>
         <item>inrix\.com|inrix\.io</item>
+        <item>NC</item>
         <item>NC</item>
         <item>instreamatic\.com</item>
         <item>adsafeprotected\.com|iasds01\.com|integralads\.com</item>
@@ -1787,6 +1983,7 @@
         <item>ligatus\.com</item>
         <item>ligatus\.com</item>
         <item>lisnr\.com</item>
+        <item>analytics\.localytics\.com|manifest\.localytics\.com|profile\.localytics\.com|sdk-assets\.localytics\.com</item>
         <item>analytics\.localytics\.com|manifest\.localytics\.com|profile\.localytics\.com|sdk-assets\.localytics\.com</item>
         <item>locuslabs\.com</item>
         <item>loggly\.com</item>
@@ -1825,14 +2022,19 @@
         <item>moodpresence\.com</item>
         <item>NC</item>
         <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>mparticle\.com</item>
         <item>.target\.my\.com</item>
         <item>tracker-api\.my\.com</item>
         <item>nativex\.com</item>
         <item>NC</item>
+        <item>NC</item>
+        <item>js-agent\.newrelic\.com|mobile-collector\.newrelic\.com|newrelic\.com|nr-data\.net</item>
         <item>js-agent\.newrelic\.com|mobile-collector\.newrelic\.com|newrelic\.com|nr-data\.net</item>
         <item>nexage\.com</item>
         <item>nexage\.com</item>
+        <item>NC</item>
         <item>NC</item>
         <item>presage\.io</item>
         <item>omniture\.com|omtrdc\.net</item>
@@ -1844,12 +2046,16 @@
         <item>api\.safegraph\.com</item>
         <item>api\.safegraph\.com</item>
         <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>openx\.com|openx\.net|openx\.org|us-ads\.openx\.net</item>
         <item>openx\.com|openx\.net|openx\.org|us-ads\.openx\.net</item>
         <item>optimizely\.com</item>
         <item>api\.otherlevels\.com|geodata\.otherlevels\.com|mdn\.otherlevels\.com|rich\.otherlevels\.com|tags\.otherlevels\.com|ws\.otherlevels\.com</item>
         <item>outbrain\.com</item>
         <item>deliver.oztam.com.au</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>NC</item>
         <item>NC</item>
         <item>NC</item>
@@ -1863,7 +2069,9 @@
         <item>NC</item>
         <item>NC</item>
         <item>NC</item>
+        <item>NC</item>
         <item>.prebid.org</item>
+        <item>sdk\.predic\.io</item>
         <item>sdk\.predic\.io</item>
         <item>api\.proximi\.fi</item>
         <item>ads\.pubmatic\.com|aktrack\.pubmatic\.com|gads\.pubmatic\.com|image2\.pubmatic\.com|simage2\.pubmatic\.com</item>
@@ -1914,14 +2122,18 @@
         <item>smartlook\.com</item>
         <item>adsrvr\.org|akamai\.smartadserver\.com|cdn1\.smartadserver\.com|diff2\.smartadserver\.com|diff3\.smartadserver\.com|diff\.smartadserver\.com|eqx\.smartadserver\.com|gallery\.smartadserver\.com|im2\.smartadserver\.com|insight\.adsrvr\.org|itx5-publicidad\.smartadserver\.com|itx5\.smartadserver\.com|js\.adsrvr\.org|match\.adsrvr\.org|preview\.smartadserver\.com|rtb-csync\.smartadserver\.com|saspreview\.com|smartadserver\.com|smartadserver\.ru|tmk\.smartadserver\.com|usw\-lax\.adsrvr\.org</item>
         <item>NC</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>soom\.la</item>
         <item>event.split.io|sdk.split.io</item>
         <item>NC</item>
         <item>api\.beaconinside\.com</item>
         <item>c2i\.startappnetwork\.com|c2s\.startappnetwork\.com|click\.startappservice\.com|dts\.startappservice\.com|events\.startappservice\.com|images\.startappservice\.com|imp\.startappservice\.com|info\.static\.startappservice\.com|init\.startappservice\.com|req\.startappservice\.com|soda\.startappservice\.com|startappservice\.com|va\.origin\.startappservice\.com</item>
         <item>NC</item>
+        <item>NC</item>
         <item>click-haproxy\.supersonicads\.com|cx\.ssacdn\.com|init\.supersonicads\.com|logs\.supersonic\.com|outcome\.supersonicads\.com|ow-gateway\.supersonicads\.com|pixel-tracking\.sonic-us\.supersonicads\.com|rv-gateway\.supersonicads\.com|static\.ssacdn\.com|supersonic\.com|supersonicads-a\.akamaihd\.net|tag\-mediation.supersonic.com|ua\.supersonicads\.com|v\.ssacdn\.com|www\.supersonicads\.com</item>
         <item>click-haproxy\.supersonicads\.com|cx\.ssacdn\.com|init\.supersonicads\.com|logs\.supersonic\.com|outcome\.supersonicads\.com|ow-gateway\.supersonicads\.com|pixel-tracking\.sonic-us\.supersonicads\.com|rv-gateway\.supersonicads\.com|static\.ssacdn\.com|supersonic\.com|supersonicads-a\.akamaihd\.net|tag\-mediation.supersonic.com|ua\.supersonicads\.com|v\.ssacdn\.com|www\.supersonicads\.com</item>
+        <item>cdn-api\.swirl\.com</item>
         <item>api\.swrve\.com|content\.swrve\.com</item>
         <item>sync2ad\.com</item>
         <item>taboola\.com</item>
@@ -1959,6 +2171,7 @@
         <item>etl\.tindersparks\.com</item>
         <item>etl\.tindersparks\.com</item>
         <item>NC</item>
+        <item>NC</item>
         <item>mobileapptracking\.com</item>
         <item>mobileapptracking\.com</item>
         <item>NC</item>
@@ -1977,6 +2190,8 @@
         <item>device-api\.urbanairship\.com|urbanairship\.com</item>
         <item>NC</item>
         <item>vectaury\.io</item>
+        <item>NC</item>
+        <item>NC</item>
         <item>NC</item>
         <item>NC</item>
         <item>NC</item>
@@ -2004,6 +2219,7 @@
         <item>NC</item>
         <item>NC</item>
         <item>.zapr\.in</item>
+        <item>NC</item>
         <item>NC</item>
         <item>nc</item>
         <item>nc</item>
