@@ -23,9 +23,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Spannable;
@@ -50,8 +47,9 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.analysis.AnalysisException;
+import net.kollnig.missioncontrol.analysis.StaticAnalyser;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
-import net.kollnig.missioncontrol.data.StaticTracker;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
@@ -59,15 +57,10 @@ import net.kollnig.missioncontrol.data.TrackerCategory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
-import lanchon.multidexlib2.DuplicateEntryNameException;
-import lanchon.multidexlib2.DuplicateTypeException;
-import lanchon.multidexlib2.EmptyMultiDexContainerException;
-import lanchon.multidexlib2.MultiDexDetectedException;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link TrackerCategory}.
@@ -130,75 +123,37 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void staticTrackerAnalysis(View view) {
-        PackageManager pm = mContext.getPackageManager();
-        Resources res = mContext.getResources();
-
         TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
         ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
         pbTrackerDetection.setVisibility(View.VISIBLE);
 
         if (mContext instanceof Activity) {
-            Activity a = (Activity) mContext;
+            Activity activity = (Activity) mContext;
 
             AsyncTask.execute(() -> {
-                boolean isSystem = Rule.isSystem(mAppId, mContext);
-                final String trackerString;
+                String trackerString = null;
+                AnalysisException ex = null;
 
                 try {
-                    Set<StaticTracker> trackers;
-                    PackageInfo pkg = pm.getPackageInfo(mAppId, 0);
+                    trackerString = StaticAnalyser.analyse(mContext, mAppId);
+                } catch (AnalysisException e) {
+                    ex = e;
+                } finally {
+                    final String res;
 
-                    // Try to load cached result
-                    SharedPreferences prefs = mContext.getSharedPreferences("static_analysis", Context.MODE_PRIVATE);
-                    int analysedCode = prefs.getInt("versioncode_" + mAppId, Integer.MIN_VALUE);
+                    if (ex != null)
+                        res = ex.getMessage();
+                    else if (trackerString != null)
+                        res = String.format(activity.getString(R.string.detected_trackers), trackerString);
+                    else
+                        res = mContext.getString(R.string.failed_loading_cached_analysis);
 
-                    if (pkg.versionCode > analysedCode) {
-                        String apk = pkg.applicationInfo.publicSourceDir;
-                        trackers = Common.detectTrackersStatic(res, apk);
-
-                        final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
-                        Collections.sort(sortedTrackers);
-
-                        if (sortedTrackers.size() > 0)
-                            trackerString = "\n• " + TextUtils.join("\n• ", sortedTrackers);
-                        else
-                            trackerString = a.getString(R.string.none);
-
-                        // Cache results
-                        prefs.edit()
-                                .putInt("versioncode_" + mAppId, pkg.versionCode)
-                                .putString("trackers_" + mAppId, trackerString)
-                                .apply();
-                    } else
-                        trackerString = prefs.getString("trackers_" + mAppId, null);
-
-                } catch (Throwable e) {
-                    a.runOnUiThread(() -> {
-                        if (e instanceof EmptyMultiDexContainerException
-                                || e instanceof MultiDexDetectedException
-                                || e instanceof DuplicateTypeException
-                                || e instanceof DuplicateEntryNameException
-                                || e instanceof PackageManager.NameNotFoundException
-                                || isSystem)
-                            tvDetectedTrackers.setText(R.string.tracking_detection_failed);
-                        else if (e instanceof OutOfMemoryError)
-                            tvDetectedTrackers.setText(R.string.tracking_detection_failed_ram);
-                        else
-                            tvDetectedTrackers.setText(R.string.tracking_detection_failed_report);
+                    activity.runOnUiThread(() -> {
+                        tvDetectedTrackers.setText(res);
                         tvDetectedTrackers.setVisibility(View.VISIBLE);
                         pbTrackerDetection.setVisibility(View.GONE);
                     });
-                    return;
                 }
-
-                a.runOnUiThread(() -> {
-                    if (trackerString != null)
-                        tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), trackerString));
-                    else
-                        tvDetectedTrackers.setText(R.string.failed_loading_cached_analysis);
-                    tvDetectedTrackers.setVisibility(View.VISIBLE);
-                    pbTrackerDetection.setVisibility(View.GONE);
-                });
             });
         }
     }
