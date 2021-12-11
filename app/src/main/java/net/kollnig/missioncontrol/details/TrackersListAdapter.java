@@ -188,6 +188,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final TrackerCategory trackerCategory = getItem(position);
             final String trackerCategoryName = trackerCategory.getCategoryName();
 
+            // Display uncertainty
+            holder.mUncertain.setVisibility(trackerCategory.isUncertain() ? View.VISIBLE : View.GONE);
+
             // Add data to view
             holder.mTrackerCategoryName.setText(trackerCategory.getDisplayName(mContext));
             final ArrayAdapter<Tracker> trackersAdapter =
@@ -215,9 +218,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             List<String> sortedHosts = new ArrayList<>(t.getHosts());
                             Collections.sort(sortedHosts);
                             String hosts = TextUtils.join("\n• ", sortedHosts);
-
-                            if (t.isUncertain())
-                                hosts += "\n" + "Entries marked with '*' might be inaccurate, due to the limitations of Android.";
 
                             boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                             Spannable spannable;
@@ -362,6 +362,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final ListView mCompaniesList;
         final Switch mSwitchTracker;
         final TextView mBlockingTip;
+        final TextView mUncertain;
 
         VHItem(View view) {
             super(view);
@@ -369,6 +370,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mCompaniesList = view.findViewById(R.id.details_list);
             mSwitchTracker = view.findViewById(R.id.switch_tracker);
             mBlockingTip = view.findViewById(R.id.tvBlockingTip);
+            mUncertain = view.findViewById(R.id.tvUncertain);
         }
     }
 

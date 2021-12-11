@@ -211,16 +211,16 @@ public class TrackerList {
                         categoryCompany.lastSeen = lastSeen;
                 }
 
-                if (uncertain)
+                if (uncertain) {
                     host = host + " *";
+                    categoryCompany.setUncertain(true);
+                }
 
                 // check if tracker has already been added
                 for (Tracker child : categoryCompany.getChildren()) {
                     if (child.name != null
                             && child.name.equals(name)) {
                         child.addHost(host);
-                        if (uncertain)
-                            child.setUncertain(true);
 
                         if (child.lastSeen < lastSeen)
                             child.lastSeen = lastSeen;
@@ -231,7 +231,6 @@ public class TrackerList {
 
                 Tracker child = new Tracker(name, category, lastSeen);
                 child.addHost(host);
-                child.setUncertain(uncertain);
                 categoryCompany.getChildren().add(child);
             } while (cursor.moveToNext());
         }
