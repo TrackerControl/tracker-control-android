@@ -45,7 +45,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -150,8 +149,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     PackageInfo pkg = pm.getPackageInfo(mAppId, 0);
 
                     // Try to load cached result
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    int analysedCode = prefs.getInt("analysed-versioncode" + "+" + mAppId, Integer.MIN_VALUE);
+                    SharedPreferences prefs = mContext.getSharedPreferences("static_analysis", Context.MODE_PRIVATE);
+                    int analysedCode = prefs.getInt("versioncode_" + mAppId, Integer.MIN_VALUE);
 
                     if (pkg.versionCode > analysedCode) {
                         String apk = pkg.applicationInfo.publicSourceDir;
@@ -167,11 +166,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                         // Cache results
                         prefs.edit()
-                                .putInt("analysed-versioncode" + "+" + mAppId, pkg.versionCode)
-                                .putString("analysed-trackers" + "+" + mAppId, trackerString)
+                                .putInt("versioncode_" + mAppId, pkg.versionCode)
+                                .putString("trackers_" + mAppId, trackerString)
                                 .apply();
                     } else
-                        trackerString = prefs.getString("analysed-trackers" + "+" + mAppId, null);
+                        trackerString = prefs.getString("trackers_" + mAppId, null);
 
                 } catch (Throwable e) {
                     a.runOnUiThread(() -> {
