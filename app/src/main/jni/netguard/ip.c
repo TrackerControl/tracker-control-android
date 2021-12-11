@@ -292,8 +292,7 @@ void handle_ip(const struct arguments *args,
     jint uid = -1;
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        (protocol == IPPROTO_TCP && syn) ||
-        (protocol == IPPROTO_TCP && dport == 53)) {
+        (protocol == IPPROTO_TCP && syn && dport != 443) {
         if (args->ctx->sdk <= 28) // Android 9 Pie
             uid = get_uid(version, protocol, saddr, sport, daddr, dport);
         else
@@ -317,7 +316,8 @@ void handle_ip(const struct arguments *args,
         struct ng_session *cur = NULL;
         char* packetdata = data;
 
-        // check if we have a CLIENT HELLO
+        // Check if we have a CLIENT HELLO, and if so extract SNI
+        int handled = 0;
         if (protocol == IPPROTO_TCP && dport == 443 && !syn && is_play) {
             // Get TCP headers
             const uint8_t version = (*pkt) >> 4;
@@ -329,7 +329,7 @@ void handle_ip(const struct arguments *args,
             const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
             const uint16_t datalen = (const uint16_t) (length - (data - pkt));
 
-            // Search TCP session
+            // Search existing TCP session
             struct ng_session *cur = args->ctx->ng_session;
             while (cur != NULL &&
                    !(cur->protocol == IPPROTO_TCP &&
@@ -341,7 +341,9 @@ void handle_ip(const struct arguments *args,
                                      memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
                 cur = cur->next;
 
+            // Try to parse Server Name Extension
             if (cur != NULL && cur->tcp.checkedHostname == 0) {
+                handled = 1;
                 char hostname[512] = "";
                 parse_tls_header((const char *) data, datalen, hostname);
                 if (strnlen(hostname, 512) > 0) {
@@ -352,8 +354,9 @@ void handle_ip(const struct arguments *args,
             allowed = 1;
         }
 
+        // Existing TCP session, or unhandled TLS session?
         if (cur == NULL || cur->tcp.checkedHostname == 0) {
-            if (is_play) { // TODO: We might be missing some edge cases in the same UID section above by just copying it here
+            if (is_play && dport == 443 && handled) {
                 if (args->ctx->sdk <= 28) // Android 9 Pie.
                     uid = get_uid(version, protocol, saddr, sport, daddr, dport);
                 else
