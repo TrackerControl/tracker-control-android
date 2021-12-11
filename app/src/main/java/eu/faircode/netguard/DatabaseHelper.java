@@ -928,7 +928,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
             query += " GROUP BY d.qname"; // remove duplicates
             query += " ORDER BY d.qname";
-            query += " LIMIT 2";
             return db.rawQuery(query, new String[]{});
         } finally {
             lock.readLock().unlock();
