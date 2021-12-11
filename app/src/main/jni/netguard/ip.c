@@ -292,7 +292,7 @@ void handle_ip(const struct arguments *args,
     jint uid = -1;
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play)) {
+        (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play))) {
         if (args->ctx->sdk <= 28) // Android 9 Pie
             uid = get_uid(version, protocol, saddr, sport, daddr, dport);
         else
@@ -309,8 +309,8 @@ void handle_ip(const struct arguments *args,
     if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
         allowed = 1; // could be a lingering/blocked session
     else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !is_play)) // assume existing session
-                                         || (uid == 0 && dport == 53))        // assume existing session  
-                                         || (dport == 443 && syn && is_play)) // let SYN pass by until SNI can be extracted
+                                         || (uid == 0 && dport == 53)         // assume existing session
+                                         || (dport == 443 && syn && is_play))) // let SYN pass by until SNI can be extracted
         allowed = 1;
     else {
         struct ng_session *cur = NULL;
