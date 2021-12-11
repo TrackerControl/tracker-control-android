@@ -878,12 +878,14 @@ public class ServiceSinkhole extends VpnService {
 
             // Check if we have additional information from SNI
             if (packet.data != null
-                    && !packet.data.isEmpty()
-                    && !packet.data.equals(originalDname)) {
-                Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
-                dname = packet.data; // TODO: Add warning. No DNS uncloaking yet.
+                    && !packet.data.isEmpty()) {
                 uncertain = 0;
-                isTracker = TrackerList.findTracker(dname) != null;
+
+                if (!packet.data.equals(originalDname)) {
+                    Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
+                    dname = packet.data; // TODO: Add warning. No DNS uncloaking yet.
+                    isTracker = TrackerList.findTracker(dname) != null;
+                }
             }
 
             if (uncertain == 1)
