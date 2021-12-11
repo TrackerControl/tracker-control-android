@@ -48,7 +48,18 @@ import lanchon.multidexlib2.MultiDexDetectedException;
 import lanchon.multidexlib2.MultiDexIO;
 
 public class TrackerLibraryAnalyser {
-    public static String analyse(Context mContext, String mAppId) throws AnalysisException {
+    private final Context mContext;
+    private static final int EXODUS_DATABASE_VERSION = 422;
+
+    public TrackerLibraryAnalyser(Context mContext) {
+        this.mContext = mContext;
+
+        int current = getPrefs().getInt("version", Integer.MIN_VALUE);
+        if (current < EXODUS_DATABASE_VERSION)
+            getPrefs().edit().clear().putInt("version", EXODUS_DATABASE_VERSION).apply();
+    }
+
+    public String analyse(String mAppId) throws AnalysisException {
         String trackerString;
 
         try {
@@ -56,7 +67,7 @@ public class TrackerLibraryAnalyser {
             PackageInfo pkg = mContext.getPackageManager().getPackageInfo(mAppId, 0);
 
             // Try to load cached result
-            SharedPreferences prefs = mContext.getSharedPreferences("static_analysis", Context.MODE_PRIVATE);
+            SharedPreferences prefs = getPrefs();
             int analysedCode = prefs.getInt("versioncode_" + mAppId, Integer.MIN_VALUE);
 
             if (pkg.versionCode > analysedCode) {
@@ -94,6 +105,10 @@ public class TrackerLibraryAnalyser {
         }
 
         return trackerString;
+    }
+
+    private SharedPreferences getPrefs() {
+        return mContext.getSharedPreferences("static_analysis", Context.MODE_PRIVATE);
     }
 
     @NonNull

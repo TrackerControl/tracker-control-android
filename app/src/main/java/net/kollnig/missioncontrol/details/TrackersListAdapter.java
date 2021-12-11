@@ -135,7 +135,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 AnalysisException ex = null;
 
                 try {
-                    trackerString = TrackerLibraryAnalyser.analyse(mContext, mAppId);
+                    TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(mContext);
+                    trackerString = analyser.analyse(mAppId);
                 } catch (AnalysisException e) {
                     ex = e;
                 } finally {
