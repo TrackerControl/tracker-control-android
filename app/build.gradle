@@ -55,6 +55,10 @@ android {
             versionNameSuffix "-play"
             buildConfigField "String", "HOSTS_FILE_URI", "\"\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"\""
+
+            externalNativeBuild.cmake {
+                cFlags "-DPLAY"
+            }
         }
         fdroid {
             applicationIdSuffix ".fdroid"

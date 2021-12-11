@@ -856,7 +856,9 @@ public class ServiceSinkhole extends VpnService {
             boolean isTracker = false;
 
             Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
-            int uncertain = (lookup != null && lookup.getCount() > 1) ? 1 : 0;
+            int uncertain = (lookup != null
+                    && lookup.getCount() > 1
+                    && Util.isPlayStoreInstall()) ? 1 : 0; // TODO: Currently, only in Play Store version
 
             // Pick first entry of database lookup -- no way to be sure
             if (lookup != null && lookup.moveToNext()) {

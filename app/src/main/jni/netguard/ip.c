@@ -117,6 +117,12 @@ int is_upper_layer(int protocol) {
             protocol == IPPROTO_ICMPV6);
 }
 
+#ifdef PLAY
+int is_play = 1;
+#else
+int is_play = 0;
+#endif
+
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
                const int epoll_fd,
@@ -305,14 +311,14 @@ void handle_ip(const struct arguments *args,
         allowed = 1; // could be a lingering/blocked session
     else if (protocol == IPPROTO_TCP && ((!syn && dport != 443) || (uid == 0 && dport == 53)))
         allowed = 1; // assume existing session
-    else if (protocol == IPPROTO_TCP && dport == 443 && syn)
+    else if (protocol == IPPROTO_TCP && dport == 443 && syn && is_play)
         allowed = 1;
     else {
         struct ng_session *cur = NULL;
         char* packetdata = data;
 
         // check if we have a CLIENT HELLO
-        if (protocol == IPPROTO_TCP && dport == 443 && !syn) {
+        if (protocol == IPPROTO_TCP && dport == 443 && !syn && is_play) {
             // Get TCP headers
             const uint8_t version = (*pkt) >> 4;
             const struct iphdr *ip4 = (struct iphdr *) pkt;
@@ -347,10 +353,12 @@ void handle_ip(const struct arguments *args,
         }
 
         if (cur == NULL || cur->tcp.checkedHostname == 0) {
-            if (args->ctx->sdk <= 28) // Android 9 Pie. TODO: We might be missing some edge cases in the same UID section above by just copying it here
-                uid = get_uid(version, protocol, saddr, sport, daddr, dport);
-            else
-                uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+            if (is_play) { // TODO: We might be missing some edge cases in the same UID section above by just copying it here
+                if (args->ctx->sdk <= 28) // Android 9 Pie.
+                    uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+                else
+                    uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+            }
 
             jobject objPacket = create_packet(
                     args, version, protocol, flags, source, sport, dest, dport, packetdata, uid, 0);
