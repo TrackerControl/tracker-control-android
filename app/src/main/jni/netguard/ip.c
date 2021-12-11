@@ -308,10 +308,10 @@ void handle_ip(const struct arguments *args,
     struct allowed *redirect = NULL;
     if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
         allowed = 1; // could be a lingering/blocked session
-    else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !is_play)) || (uid == 0 && dport == 53)))
-        allowed = 1; // assume existing session
-    else if (protocol == IPPROTO_TCP && dport == 443 && syn && is_play)
-        allowed = 1; // let syn pass by if it's TLS and is_play. TODO: Check if this can ever be reached.
+    else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !is_play)) // assume existing session
+                                         || (uid == 0 && dport == 53))        // assume existing session  
+                                         || (dport == 443 && syn && is_play)) // let SYN pass by until SNI can be extracted
+        allowed = 1;
     else {
         struct ng_session *cur = NULL;
         char* packetdata = data;
