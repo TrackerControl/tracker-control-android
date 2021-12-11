@@ -21,10 +21,12 @@ import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -119,64 +121,67 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 view.findViewById(R.id.cardNotSupported).setVisibility(View.VISIBLE);
 
             VHHeader header = new VHHeader(view);
-
-            PackageManager pm = mContext.getPackageManager();
-            Resources res = mContext.getResources();
-
-            TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
-            tvDetectedTrackers.setVisibility(View.GONE);
-            ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
-
-            if (mContext instanceof Activity) {
-                Activity a = (Activity) mContext;
-
-                AsyncTask.execute(() -> {
-                    boolean isSystem = Rule.isSystem(mAppId, mContext);
-                    Set<StaticTracker> trackers;
-
-                    try {
-                        PackageInfo pkg = pm.getPackageInfo(mAppId, 0);
-                        String apk = pkg.applicationInfo.publicSourceDir;
-                        trackers = Common.detectTrackersStatic(res, apk);
-                        Log.d(TAG, trackers.toString());
-                    } catch (Throwable e) {
-                        a.runOnUiThread(() -> {
-                            if (e instanceof EmptyMultiDexContainerException
-                                    || e instanceof MultiDexDetectedException
-                                    || e instanceof DuplicateTypeException
-                                    || e instanceof DuplicateEntryNameException
-                                    || e instanceof PackageManager.NameNotFoundException
-                                    || isSystem)
-                                tvDetectedTrackers.setText(R.string.tracking_detection_failed);
-                            else if (e instanceof OutOfMemoryError)
-                                tvDetectedTrackers.setText(R.string.tracking_detection_failed_ram);
-                            else
-                                tvDetectedTrackers.setText(R.string.tracking_detection_failed_report);
-                            tvDetectedTrackers.setVisibility(View.VISIBLE);
-                            pbTrackerDetection.setVisibility(View.GONE);
-                        });
-                        return;
-                    }
-
-                    final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
-                    Collections.sort(sortedTrackers);
-
-                    a.runOnUiThread(() -> {
-                        if (sortedTrackers.size() > 0)
-                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), "\n• " + TextUtils.join("\n• ", sortedTrackers)));
-                        else
-                            tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), a.getString(R.string.none)));
-
-                        tvDetectedTrackers.setVisibility(View.VISIBLE);
-                        pbTrackerDetection.setVisibility(View.GONE);
-                    });
-                });
-            }
+            staticTrackerAnalysis(view);
 
             return header;
         }
 
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+    }
+
+    private void staticTrackerAnalysis(View view) {
+        PackageManager pm = mContext.getPackageManager();
+        Resources res = mContext.getResources();
+
+        TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+        tvDetectedTrackers.setVisibility(View.GONE);
+        ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
+
+        if (mContext instanceof Activity) {
+            Activity a = (Activity) mContext;
+
+            AsyncTask.execute(() -> {
+                boolean isSystem = Rule.isSystem(mAppId, mContext);
+                Set<StaticTracker> trackers;
+
+                try {
+                    PackageInfo pkg = pm.getPackageInfo(mAppId, 0);
+                    String apk = pkg.applicationInfo.publicSourceDir;
+                    trackers = Common.detectTrackersStatic(res, apk);
+                    Log.d(TAG, trackers.toString());
+                } catch (Throwable e) {
+                    a.runOnUiThread(() -> {
+                        if (e instanceof EmptyMultiDexContainerException
+                                || e instanceof MultiDexDetectedException
+                                || e instanceof DuplicateTypeException
+                                || e instanceof DuplicateEntryNameException
+                                || e instanceof PackageManager.NameNotFoundException
+                                || isSystem)
+                            tvDetectedTrackers.setText(R.string.tracking_detection_failed);
+                        else if (e instanceof OutOfMemoryError)
+                            tvDetectedTrackers.setText(R.string.tracking_detection_failed_ram);
+                        else
+                            tvDetectedTrackers.setText(R.string.tracking_detection_failed_report);
+                        tvDetectedTrackers.setVisibility(View.VISIBLE);
+                        pbTrackerDetection.setVisibility(View.GONE);
+                    });
+                    return;
+                }
+
+                final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
+                Collections.sort(sortedTrackers);
+
+                a.runOnUiThread(() -> {
+                    if (sortedTrackers.size() > 0)
+                        tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), "\n• " + TextUtils.join("\n• ", sortedTrackers)));
+                    else
+                        tvDetectedTrackers.setText(String.format(a.getString(R.string.detected_trackers), a.getString(R.string.none)));
+
+                    tvDetectedTrackers.setVisibility(View.VISIBLE);
+                    pbTrackerDetection.setVisibility(View.GONE);
+                });
+            });
+        }
     }
 
     @Override
