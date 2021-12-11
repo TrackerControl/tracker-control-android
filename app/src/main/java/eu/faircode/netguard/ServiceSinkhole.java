@@ -107,7 +107,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -758,8 +757,6 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    static HashMap<Integer, Set<String>> seenAppHosts = new HashMap<>();
-
     private final class LogHandler extends Handler {
         public int queue = 0;
 
@@ -905,16 +902,6 @@ public class ServiceSinkhole extends VpnService {
 
                 dh.updateAccess(packet, dname, -1, uncertain);
             }
-
-            /*// custom code
-            Set<String> hosts = seenAppHosts.get(packet.uid);
-            if (hosts == null) {
-                hosts = new HashSet<>();
-                seenAppHosts.put(packet.uid, hosts);
-            }
-            if (!hosts.contains(packet.daddr)) {
-                hosts.add(packet.daddr);
-            }*/
         }
 
         private void usage(Usage usage) {
@@ -1777,7 +1764,6 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
         }
-        // Custom code: could dynamic adding of rules here..
 
         lock.writeLock().unlock();
     }
