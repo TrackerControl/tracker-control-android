@@ -440,5 +440,7 @@ Sincerely,\n\n]]></string>
     <string name="summary_domain_based_blocking">Allows more granular blocking. Still in development.</string>
     <string name="untap_unblock">Tip: You can unblock individual entries by tapping on them.</string>
     <string name="uncertain_entry">Entries marked with \'*\' might be inaccurate, due to the limitations of Android.</string>
+    <string name="browsers_not_supported">Browsers not supported</string>
+    <string name="browsers_not_supported_explanation">The blocking of trackers in browsers is not supported by TrackerControl. Instead, use a browser with integrated tracker functionality to get better blocking of tracking.\n\nFor example: Mozilla Fennec, Bromite</string>
 
 </resources>

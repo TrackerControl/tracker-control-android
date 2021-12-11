@@ -112,6 +112,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item_trackers_header, parent, false);
 
+            Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"));
+            urlIntent.setPackage(mAppId);
+            if (Common.isCallable(mContext, urlIntent)
+                    && !Util.isPlayStoreInstall())
+                view.findViewById(R.id.cardNotSupported).setVisibility(View.VISIBLE);
+
             VHHeader header = new VHHeader(view);
 
             PackageManager pm = mContext.getPackageManager();
