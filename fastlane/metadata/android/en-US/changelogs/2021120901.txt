@@ -1,0 +1,6 @@
+- Update translations, tracker lists and dependencies
+- Improve expiration of DNS records
+- Fix crashes
+- Reduce RAM usage
+- Cleanup more regularly
+- Cleanup code

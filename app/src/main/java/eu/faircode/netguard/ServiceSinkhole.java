@@ -107,7 +107,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -758,8 +757,6 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    static HashMap<Integer, Set<String>> seenAppHosts = new HashMap<>();
-
     private final class LogHandler extends Handler {
         public int queue = 0;
 
@@ -851,27 +848,53 @@ public class ServiceSinkhole extends VpnService {
             if (dname == NO_DNAME)
                 dname = null;*/
 
-            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
-            int uncertain = (lookup != null && lookup.getCount() > 1) ? 1 : 0;
+            String dname = null;
+            String originalDname = null;
             boolean isTracker = false;
-            String dname;
 
-            // Pick first entry of database lookup -- no way to be sure
-            if (lookup != null && lookup.moveToNext()) {
-                dname = lookup.getString(lookup.getColumnIndex("qname"));
-                if (dname != null)  {
-                    if (TrackerList.findTracker(dname) != null)
-                        isTracker = true;
-                    else { // DNS uncloaking
-                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                        if (aname != null && TrackerList.findTracker(aname) != null) {
-                            dname = aname;
+            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
+            int uncertain = (lookup != null
+                    && lookup.getCount() > 1
+                    && Util.isPlayStoreInstall()) ? 1 : 0; // TODO: Currently, only in Play Store version
+
+            // Loop until we find tracker or reach last entry
+            if (lookup != null) {
+                while (lookup.moveToNext()) {
+                    dname = lookup.getString(lookup.getColumnIndex("qname"));
+                    if (dname != null)  {
+                        originalDname = dname;
+                        if (TrackerList.findTracker(dname) != null)
                             isTracker = true;
+                        else { // DNS uncloaking
+                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                            if (aname != null && TrackerList.findTracker(aname) != null) {
+                                dname = aname;
+                                isTracker = true;
+                            }
                         }
                     }
+
+                    if (isTracker)
+                        break;
                 }
-            } else
-                dname = null;
+
+                lookup.close();
+            }
+
+            // Check if we have additional information from SNI
+            if (packet.data != null
+                    && !packet.data.isEmpty()) {
+                uncertain = 0;
+
+                if (!packet.data.equals(originalDname)) {
+                    Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
+                    dname = packet.data; // TODO: Add warning. No DNS uncloaking yet.
+                    isTracker = TrackerList.findTracker(dname) != null;
+                }
+            }
+
+            if (uncertain == 1) // multiple dnames correspond to same IP address
+                Log.d(TAG, "Found uncertain entry: " + dname);
 
             // Traffic log
             if (log)
@@ -883,18 +906,8 @@ public class ServiceSinkhole extends VpnService {
                 if (!(packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */))
                     packet.dport = 0;
 
-                dh.updateAccess(packet, dname, -1);
+                dh.updateAccess(packet, dname, -1, uncertain);
             }
-
-            /*// custom code
-            Set<String> hosts = seenAppHosts.get(packet.uid);
-            if (hosts == null) {
-                hosts = new HashSet<>();
-                seenAppHosts.put(packet.uid, hosts);
-            }
-            if (!hosts.contains(packet.daddr)) {
-                hosts.add(packet.daddr);
-            }*/
         }
 
         private void usage(Usage usage) {
@@ -1757,7 +1770,6 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
         }
-        // Custom code: could dynamic adding of rules here..
 
         lock.writeLock().unlock();
     }
@@ -1966,11 +1978,6 @@ public class ServiceSinkhole extends VpnService {
                 packet.allowed = true;
                 Log.i(TAG, "Allowing UDP " + packet);
             } else if (packet.uid < 2000 &&
-                    !last_connected && isSupported(packet.protocol) && false) {
-                // Allow system applications in disconnected state
-                packet.allowed = true;
-                Log.w(TAG, "Allowing disconnected system " + packet);
-            } else if (packet.uid < 2000 &&
                     !mapUidKnown.containsKey(packet.uid) && isSupported(packet.protocol)) {
                 // Allow unknown system traffic
                 packet.allowed = true;
@@ -1981,122 +1988,16 @@ public class ServiceSinkhole extends VpnService {
                 Log.w(TAG, "Allowing self " + packet);
             } else {
                 boolean filtered = false;
-                /*IPKey key = new IPKey(packet.version, packet.protocol, packet.dport, packet.uid);
-                if (mapUidIPFilters.containsKey(key))
-                    try {
-                        InetAddress iaddr = InetAddress.getByName(packet.daddr);
-                        Map<InetAddress, IPRule> map = mapUidIPFilters.get(key);
-                        if (map != null && map.containsKey(iaddr)) {
-                            IPRule rule = map.get(iaddr);
-                            if (rule.isExpired())
-                                Log.i(TAG, "DNS expired " + packet + " rule " + rule);
-                            else {
-                                filtered = true;
-                                packet.allowed = !rule.isBlocked();
-                                Log.i(TAG, "Filtering " + packet +
-                                        " allowed=" + packet.allowed + " rule " + rule);
-                            }
-                        }
-                    } catch (UnknownHostException ex) {
-                        Log.w(TAG, "Allowed " + ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }*/
 
-                // Check if tracker known
-                if (!Util.isPlayStoreInstall()
-                        || prefs.getBoolean("log_logcat", false)) {
+                if (packet.data != null && !packet.data.isEmpty())
+                    Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
 
-                    Tracker tracker = null;
-                    Expiring<Tracker> expiringTracker = ipToTracker.get(packet.daddr);
-                    if (expiringTracker != null) {
-                        tracker = expiringTracker.getOrExpired();
-
-                        if (tracker == null) // expired
-                            ipToTracker.remove(packet.daddr);
-                    }
-
-                    if (tracker == null) {
-                        // Check if IP known
-                        String dname = null;
-                        Expiring<String> expiringHost = ipToHost.get(packet.daddr);
-                        if (expiringHost != null) {
-                            dname = expiringHost.getOrExpired();
-
-                            if (dname == null) // expired
-                                ipToHost.remove(packet.daddr);
-                        }
-
-                        if (dname == null) {
-                            // Retrieve dname from DB
-                            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, true);
-                            String aname = null;
-                            long time = new Date().getTime();
-                            long ttl = 7 * 24 * 3600 * 1000L;
-
-                            // Pick first entry of database lookup -- no way to be sure
-                            if (lookup != null && lookup.moveToNext()) {
-                                dname = lookup.getString(lookup.getColumnIndex("qname"));
-                                aname = lookup.getString(lookup.getColumnIndex("aname"));
-
-                                int colTime = lookup.getColumnIndex("time");
-                                int colTTL = lookup.getColumnIndex("ttl");
-                                if (!lookup.isNull(colTime))
-                                    time = lookup.getLong(colTime);
-                                if (!lookup.isNull(colTTL))
-                                    ttl = lookup.getLong(colTTL);
-                            } else
-                                dname = null;
-
-                            if (lookup != null)
-                                lookup.close();
-
-                            // Check dname for tracker
-                            if (dname == null) {
-                                dname = NO_DNAME;
-                                tracker = NO_TRACKER;
-                            } else {
-                                tracker = TrackerList.findTracker(dname);
-
-                                // DNS Uncloaking
-                                if (tracker == null
-                                        && aname != null) {
-                                    tracker = TrackerList.findTracker(aname);
-
-                                    if (tracker != null) {
-                                        dname = aname;
-                                        Log.d(TAG, "Uncloaked: " + dname + " -> " + aname);
-                                    }
-                                }
-
-                                if (tracker == null)
-                                    tracker = NO_TRACKER;
-                            }
-
-                            // Save dname and tracker
-                            ipToHost.put(packet.daddr, new Expiring<>(dname, time + ttl));
-                            ipToTracker.put(packet.daddr, new Expiring<>(tracker, time + ttl));
-                        }
-                    }
-
-                    // Log or block?
-                    if (prefs.getBoolean("log_logcat", false)) {
-                        String app = uidToApp.get(packet.uid);
-                        if (app == null) {
-                            PackageManager pm = getPackageManager();
-                            app = Common.getAppName(pm, packet.uid);
-                            uidToApp.put(packet.uid, app);
-                        }
-                        Log.i("TC-Log", app + " " + packet.daddr + " " + ipToHost.get(packet.daddr) + " " + tracker.getName());
-                    } else {
-                        if (tracker != NO_TRACKER) {
-                            TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                            if (tracker != null
-                                    && b.blockedTracker(packet.uid, tracker)) {
-                                filtered = true;
-                                packet.allowed = false;
-                            }
-                        }
-                    }
+                // Check if tracker is known
+                if ((!Util.isPlayStoreInstall()
+                        || prefs.getBoolean("log_logcat", false))
+                    && blockKnownTracker(packet.daddr, packet.uid)) {
+                        filtered = true;
+                        packet.allowed = false;
                 }
 
                 InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
@@ -2107,10 +2008,6 @@ public class ServiceSinkhole extends VpnService {
 
 	            if (!filtered)
                     packet.allowed = true;
-		            /*if (mapUidAllowed.containsKey(packet.uid))
-			            packet.allowed = mapUidAllowed.get(packet.uid);
-		            else
-			            Log.w(TAG, "No rules for " + packet);*/
             }
         }
 
@@ -2135,6 +2032,104 @@ public class ServiceSinkhole extends VpnService {
                     logPacket(packet);
 
         return allowed;
+    }
+
+    private boolean blockKnownTracker(String daddr, int uid) {
+        Tracker tracker = null;
+        Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
+        if (expiringTracker != null) {
+            tracker = expiringTracker.getOrExpired();
+
+            if (tracker == null) // expired
+                ipToTracker.remove(daddr);
+        }
+
+        if (tracker == null) {
+            // Check if IP known
+            String dname = null;
+            Expiring<String> expiringHost = ipToHost.get(daddr);
+            if (expiringHost != null) {
+                dname = expiringHost.getOrExpired();
+
+                if (dname == null) // expired
+                    ipToHost.remove(daddr);
+            }
+
+            if (dname == null) {
+                // Retrieve dname from DB
+                DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+                Cursor lookup = dh.getQAName(uid, daddr, true);
+                long time = new Date().getTime();
+                long ttl = 7 * 24 * 3600 * 1000L;
+
+                // Loop through entries and pick the one that is related to tracking
+                if (lookup != null) {
+                    while (lookup.moveToNext()) {
+                        // Get DNS expiry details
+                        int colTime = lookup.getColumnIndex("time");
+                        int colTTL = lookup.getColumnIndex("ttl");
+                        if (!lookup.isNull(colTime))
+                            time = lookup.getLong(colTime);
+                        if (!lookup.isNull(colTTL))
+                            ttl = lookup.getLong(colTTL);
+
+                        // Check tracker
+                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                        dname = lookup.getString(lookup.getColumnIndex("qname"));
+                        tracker = TrackerList.findTracker(dname);
+
+                        // If no tracker found, try DNS uncloaking
+                        if (tracker == null
+                                && aname != null) {
+                            tracker = TrackerList.findTracker(aname);
+
+                            if (tracker != null) {
+                                dname = aname;
+                                Log.d(TAG, "Uncloaked: " + dname + " -> " + aname);
+                            }
+                        }
+
+                        // If tracker found, seek no further
+                        if (tracker != null)
+                            break;
+                    }
+
+                    lookup.close();
+                }
+
+                // No success in finding dname or tracker?
+                if (dname == null)
+                    dname = NO_DNAME;
+                if (tracker == null)
+                    tracker = NO_TRACKER;
+
+                // Save dname and tracker
+                ipToHost.put(daddr, new Expiring<>(dname, time + ttl));
+                ipToTracker.put(daddr, new Expiring<>(tracker, time + ttl));
+            }
+        }
+
+        // Log or block?
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("log_logcat", false)) {
+            String app = uidToApp.get(uid);
+            if (app == null) {
+                PackageManager pm = getPackageManager();
+                app = Common.getAppName(pm, uid);
+                uidToApp.put(uid, app);
+            }
+            Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr) + " " + tracker.getName());
+        } else {
+            if (tracker != NO_TRACKER) {
+                TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                if (tracker != null
+                        && b.blockedTracker(uid, tracker)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     // Called from native code

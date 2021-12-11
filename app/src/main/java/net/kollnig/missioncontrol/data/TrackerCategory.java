@@ -28,7 +28,16 @@ public class TrackerCategory {
     public static final String UNCATEGORISED = "Uncategorised";
     public String category;
     public Long lastSeen;
+    private boolean uncertain = false;
     private List<Tracker> children;
+
+    public boolean isUncertain() {
+        return uncertain;
+    }
+
+    public void setUncertain(boolean uncertain) {
+        this.uncertain = uncertain;
+    }
 
     TrackerCategory(String category, long lastSeen) {
         this.category = category;

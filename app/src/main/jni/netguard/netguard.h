@@ -192,6 +192,8 @@ struct tcp_session {
     uint8_t state;
     uint8_t socks5;
     struct segment *forward;
+
+    int checkedHostname;
 };
 
 struct ng_session {
@@ -258,6 +260,9 @@ typedef struct pcaprec_hdr_s {
 #define DNS_QCLASS_IN 1
 #define DNS_QTYPE_A 1 // IPv4
 #define DNS_QTYPE_AAAA 28 // IPv6
+
+#define DNS_SVCB 64
+#define DNS_HTTPS 65
 
 #define DNS_QNAME_MAX 255
 #define DNS_TTL (10 * 60) // seconds

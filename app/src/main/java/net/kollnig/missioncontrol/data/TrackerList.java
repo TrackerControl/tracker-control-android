@@ -17,6 +17,8 @@
 
 package net.kollnig.missioncontrol.data;
 
+import static net.kollnig.missioncontrol.data.TrackerCategory.UNCATEGORISED;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -46,8 +48,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.ServiceSinkhole;
-
-import static net.kollnig.missioncontrol.data.TrackerCategory.UNCATEGORISED;
 
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
@@ -191,6 +191,7 @@ public class TrackerList {
             do {
                 String host = cursor.getString(cursor.getColumnIndex("daddr"));
                 long lastSeen = cursor.getLong(cursor.getColumnIndex("time"));
+                boolean uncertain = cursor.getInt(cursor.getColumnIndex("uncertain")) == 1;
 
                 Tracker tracker = findTracker(host);
                 if (tracker == null)
@@ -208,6 +209,11 @@ public class TrackerList {
                 } else {
                     if (categoryCompany.lastSeen < lastSeen)
                         categoryCompany.lastSeen = lastSeen;
+                }
+
+                if (uncertain) {
+                    host = host + " *";
+                    categoryCompany.setUncertain(true);
                 }
 
                 // check if tracker has already been added

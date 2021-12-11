@@ -17,6 +17,10 @@
 
 package net.kollnig.missioncontrol;
 
+import static net.kollnig.missioncontrol.data.InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -59,10 +63,6 @@ import java.util.List;
 import java.util.Set;
 
 import eu.faircode.netguard.DatabaseHelper;
-
-import static net.kollnig.missioncontrol.data.InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
 
 public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
@@ -146,7 +146,7 @@ public class DetailsActivity extends AppCompatActivity {
         detailsPagesAdapter =
                 new DetailsPagesAdapter(
                         this,
-                        Common.getAppName(getPackageManager(), appUid),
+                        appPackageName,
                         appName,
                         appUid);
         ViewPager2 viewPager = findViewById(R.id.view_pager);
