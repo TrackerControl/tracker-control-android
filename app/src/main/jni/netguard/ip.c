@@ -358,7 +358,7 @@ void handle_ip(const struct arguments *args,
             allowed = 1;
         }
 
-        // Existing TCP session, or unhandled TLS session?
+        // No existing TCP session, or unhandled TLS session?
         if (cur == NULL || cur->tcp.checkedHostname == 0) {
             jobject objPacket = create_packet(
                     args, version, protocol, flags, source, sport, dest, dport, packetdata, uid, 0);
