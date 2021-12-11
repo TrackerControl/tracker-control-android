@@ -108,7 +108,7 @@ public class TrackerLibraryAnalyser {
     }
 
     private SharedPreferences getPrefs() {
-        return mContext.getSharedPreferences("static_analysis", Context.MODE_PRIVATE);
+        return mContext.getSharedPreferences("library_analysis", Context.MODE_PRIVATE);
     }
 
     @NonNull
