@@ -114,16 +114,17 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item_trackers_header, parent, false);
 
+            // Show warning for browser apps
             Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"));
             urlIntent.setPackage(mAppId);
             if (Common.isCallable(mContext, urlIntent)
                     && !Util.isPlayStoreInstall())
                 view.findViewById(R.id.cardNotSupported).setVisibility(View.VISIBLE);
 
-            VHHeader header = new VHHeader(view);
+            // Find trackers in app code
             staticTrackerAnalysis(view);
 
-            return header;
+            return new VHHeader(view);
         }
 
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
@@ -134,8 +135,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Resources res = mContext.getResources();
 
         TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
-        tvDetectedTrackers.setVisibility(View.GONE);
         ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
+        pbTrackerDetection.setVisibility(View.VISIBLE);
 
         if (mContext instanceof Activity) {
             Activity a = (Activity) mContext;
