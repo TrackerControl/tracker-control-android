@@ -47,7 +47,7 @@ import lanchon.multidexlib2.EmptyMultiDexContainerException;
 import lanchon.multidexlib2.MultiDexDetectedException;
 import lanchon.multidexlib2.MultiDexIO;
 
-public class StaticAnalyser {
+public class TrackerLibraryAnalyser {
     public static String analyse(Context mContext, String mAppId) throws AnalysisException {
         String trackerString;
 

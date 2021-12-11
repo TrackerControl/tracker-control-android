@@ -48,7 +48,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.AnalysisException;
-import net.kollnig.missioncontrol.analysis.StaticAnalyser;
+import net.kollnig.missioncontrol.analysis.TrackerLibraryAnalyser;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -135,7 +135,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 AnalysisException ex = null;
 
                 try {
-                    trackerString = StaticAnalyser.analyse(mContext, mAppId);
+                    trackerString = TrackerLibraryAnalyser.analyse(mContext, mAppId);
                 } catch (AnalysisException e) {
                     ex = e;
                 } finally {
