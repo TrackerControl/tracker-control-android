@@ -887,7 +887,7 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            if (uncertain == 1)
+            if (uncertain == 1) // multiple dnames correspond to same IP address
                 Log.d(TAG, "Found uncertain entry: " + dname);
 
             // Traffic log
