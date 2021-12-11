@@ -115,7 +115,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     .inflate(R.layout.list_item_trackers_header, parent, false);
 
             // Show warning for browser apps
-            Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com"));
+            Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.wikipedia.org/"));
             urlIntent.setPackage(mAppId);
             if (Common.isCallable(mContext, urlIntent)
                     && !Util.isPlayStoreInstall())
