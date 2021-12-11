@@ -308,16 +308,15 @@ void handle_ip(const struct arguments *args,
     struct allowed *redirect = NULL;
     if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
         allowed = 1; // could be a lingering/blocked session
-    else if (protocol == IPPROTO_TCP && ((!syn && dport != 443) || (uid == 0 && dport == 53)))
+    else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !is_play)) || (uid == 0 && dport == 53)))
         allowed = 1; // assume existing session
     else if (protocol == IPPROTO_TCP && dport == 443 && syn && is_play)
-        allowed = 1;
+        allowed = 1; // let syn pass by if it's TLS and is_play. TODO: Check if this can ever be reached.
     else {
         struct ng_session *cur = NULL;
         char* packetdata = data;
 
         // Check if we have a CLIENT HELLO, and if so extract SNI
-        int handled = 0;
         if (protocol == IPPROTO_TCP && dport == 443 && !syn && is_play) {
             // Get TCP headers
             const uint8_t version = (*pkt) >> 4;
@@ -342,27 +341,25 @@ void handle_ip(const struct arguments *args,
                 cur = cur->next;
 
             // Try to parse Server Name Extension
-            if (cur != NULL && cur->tcp.checkedHostname == 0) {
-                handled = 1;
+            if (cur != NULL && cur->tcp.checkedHostname == 0) {                
                 char hostname[512] = "";
                 parse_tls_header((const char *) data, datalen, hostname);
                 if (strnlen(hostname, 512) > 0) {
                     log_android(ANDROID_LOG_DEBUG, "Seen SNI: %s", hostname);
                     packetdata = hostname;
                 }
+                
+                // Find uid to handle in main activity
+                if (args->ctx->sdk <= 28) // Android 9 Pie.
+                    uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+                else
+                    uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
             }
             allowed = 1;
         }
 
         // Existing TCP session, or unhandled TLS session?
         if (cur == NULL || cur->tcp.checkedHostname == 0) {
-            if (is_play && dport == 443 && handled) {
-                if (args->ctx->sdk <= 28) // Android 9 Pie.
-                    uid = get_uid(version, protocol, saddr, sport, daddr, dport);
-                else
-                    uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
-            }
-
             jobject objPacket = create_packet(
                     args, version, protocol, flags, source, sport, dest, dport, packetdata, uid, 0);
             redirect = is_address_allowed(args, objPacket);
