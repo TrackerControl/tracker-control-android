@@ -312,6 +312,20 @@ Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se n
 S pozdravem,\n\n]]></string>
     <string name="crash_dialog_text">Omlouváme se. TrackerControl přestal právě fungoval. Chcete nám poslat e-mail s podrobnostmi?</string>
     <string name="crash_dialog_comment">Nějaké komentáře?</string>
+    <string name="device_not_supported_title">Toto zařízení není podporováno</string>
+    <string name="device_not_supported_msg">Operační systém Vašeho zařízení neumožňuje monitorování a filtrování síťových komunikací. To je vyžadováno pro TrackerControl.</string>
+    <string name="launch_app">Spustit a najít slídiče</string>
+    <string name="countries">Cílové země</string>
+    <string name="tracker_advertising">Reklama</string>
+    <string name="tracker_analytics">Analytika</string>
+    <string name="tracker_content">Zásadní</string>
+    <string name="tracker_cryptomining">Těžba kryptoměn</string>
+    <string name="tracker_fingerprinting">Digitální otisk</string>
+    <string name="tracker_social">Sociální</string>
+    <string name="tracker_uncategorised">Nezařazené</string>
+    <string name="setting_strict_blocking">Přísné blokování</string>
+    <string name="uninstall">Odinstalovat</string>
+    <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="detected_trackers">Detekovány knihovny slídičů: %s</string>
     <string name="none">Nic</string>
     <string name="trackers_static">Knihovny slídičů</string>
