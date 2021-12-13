@@ -35,14 +35,13 @@ against *DNS cloaking*, a popular technique to hide trackers in websites and app
 TrackerControl will always be free and open source, being a research project.
 
 ## Download / Installation
-*Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
+*Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking. Analysis results shown within the app might be inaccurate.*
 
-TrackerControl can be downloaded [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
+There are multiple versions of TrackerControl.
 
-Alternatively, the app is available on [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), the most popular open-source Android app store.
-It is also available on the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
+If you're interested in blocking tracking, then best download TrackerControl [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
-A feature-reduced version is also available on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
+If you're interested in analysing tracking, then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The anallysis results from this version will usually be more accurate.
 
 ## Support TrackerControl
 
