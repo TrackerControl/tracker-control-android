@@ -352,4 +352,5 @@ Z poważaniem,\n\n]]></string>
     <string name="setting_domain_based_blocked">Blokowanie oparte na domenie (w programowaniu)</string>
     <string name="summary_domain_based_blocking">Umożliwia bardziej szczegółowe blokowanie. Wciąż w fazie rozwoju.</string>
     <string name="untap_unblock">Wskazówka: możesz odblokować poszczególne wpisy, dotykając ich.</string>
+    <string name="static_analysis">Wykrywaj trackery w kodzie aplikacji</string>
 </resources>
