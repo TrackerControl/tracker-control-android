@@ -312,6 +312,9 @@ Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se n
 S pozdravem,\n\n]]></string>
     <string name="crash_dialog_text">Omlouváme se. TrackerControl přestal právě fungoval. Chcete nám poslat e-mail s podrobnostmi?</string>
     <string name="crash_dialog_comment">Nějaké komentáře?</string>
+    <string name="instructions_monitoring_private_dns">Přepni switch a interaguj s aplikacemi.
+Privátní DNS musí být vypnutá.</string>
+    <string name="instructions_monitoring">Přepni switch a interaguj s aplikacemi.</string>
     <string name="device_not_supported_title">Toto zařízení není podporováno</string>
     <string name="device_not_supported_msg">Operační systém Vašeho zařízení neumožňuje monitorování a filtrování síťových komunikací. To je vyžadováno pro TrackerControl.</string>
     <string name="launch_app">Spustit a najít slídiče</string>
