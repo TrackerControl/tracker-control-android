@@ -228,6 +228,8 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
         <item quantity="one">%d bedrijf altijd gecontacteerd</item>
         <item quantity="other">%d bedrijven altijd gecontacteerd</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Informatie over organisatie ophalen?</string>
+    <string name="confirm_ipinfo">Dit neemt contact op met de externe dienst ipinfo.io en deelt gegevens over gecontacteerde IP-adressen.</string>
     <string name="external_servers">Krijg je automatisch een e-mail van een ontwikkelaar?</string>
     <string name="confirm_google_info">Deze app kan automatisch de e-mail van de app-ontwikkelaar uit de Google Play Store voor u halen.</string>
     <string name="ok">OK</string>
@@ -237,6 +239,7 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="exporting">Exporteren..</string>
     <string name="share_csv">Deel</string>
     <string name="export_failed">Export mislukt</string>
+    <string name="exported">Naar opslag geëxporteerd!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Trackers</string>
@@ -354,4 +357,7 @@ Sincerely,\n\n]]></string>
     <string name="allowed">TOEGESTAAN</string>
     <string name="setting_domain_based_blocked">Domeingebaseerde blokkering (in Ontwikkeling)</string>
     <string name="summary_domain_based_blocking">Staat meer granulaire blokkering toe. Nog steeds in ontwikkeling.</string>
+    <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
+    <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
+    <string name="browsers_not_supported">Browsers worden niet ondersteund op ⚠️</string>
 </resources>
