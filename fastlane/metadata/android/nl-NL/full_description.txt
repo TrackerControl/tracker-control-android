@@ -13,5 +13,5 @@ Onder de motorkap gebruikt TrackerControl de VPN-functionaliteit van Android om 
 
 Er is geen root vereist, andere VPN's of Private DNS worden niet ondersteund. Er wordt geen externe VPN-server gebruikt, om uw gegevens veilig te houden! TrackerControl beschermt u zelfs tegen <i>DNS cloaking</i>, een populaire techniek om trackers in websites en apps te verbergen.
 
-TrackerControl zal altijd gratis en open source zijn, omdat het een onderzoeksproject is.
+TrackerControl zal altijd gratis en open source blijven, omdat het een onderzoeksproject is.
 
