@@ -1,15 +1,15 @@
-TrackerControl stelt gebruikers in staat om de wijdverbreide, voortdurende, verborgen gegevensverzameling in mobiele apps over gebruikersgedrag ('tracking') te volgen en te controleren.
+TrackerControl stelt gebruikers in staat om de wijdverbreide, actieve, verborgen gegevensverzameling in mobiele apps te monitoren en te beheren over gebruikersgedrag ('tracking').
 
-Om tracking te detecteren combineert TrackerControl de kracht van de blokkeerlijst, gebruikt door Firefox, en onze interne blokkeerlijst wordt gebruikt, gemaakt van analyse <i>~2 000 000</i> apps! TrackerControl ondersteunt daarnaast aangepaste blokkeerlijsten.
+Om tracking te detecteren, combineert TrackerControl de kracht van de Disconnect-blokkadelijst, die door Firefox wordt gebruikt, en onze eigen blokkadelijst, die is gemaakt op basis van de analyse van <i>~2 000 000</i> apps! Bovendien ondersteunt TrackerControl aangepaste blokkadelijsten.
 
 Deze aanpak
 - onthult de bedrijven achter tracking,
 - laat toe om tracking selectief te blokkeren, en
-- stelt opsporingsdoeleinden bloot, zoals analytics of reclame.
+- onthult de doelstellingen van het traceren, zoals analytics of reclame.
 
-De app is ook gericht op educatie over uw rechten onder gegevensbescherming, zoals de algemene Verordening Gegevensbescherming (AVV).
+De app is ook gericht op voorlichting over uw rechten op grond van de gegevensbeschermingswetgeving, zoals de EU General Data Protection Regulation (GDPR).
 
-Onder de motorkap gebruikt TrackerControl de VPN-functionaliteit van Android om netwerkcommunicatie van apps te analyseren <i>lokaal op het Android-apparaat</i>. Dit wordt bereikt via een lokale VPN-server, om netwerkverkeersanalyse door TrackerControl, in te schakelen.
+Onder de motorkap gebruikt TrackerControl de VPN-functionaliteit van Android om netwerkverkeer van apps te analyseren <i>lokaal op het Android-apparaat</i>. Dit gebeurt via een lokale VPN-server, om analyse van het netwerkverkeer door TrackerControl mogelijk te maken.
 
 Er is geen root vereist, andere VPN's of Private DNS worden niet ondersteund. Er wordt geen externe VPN-server gebruikt, om uw gegevens veilig te houden! TrackerControl beschermt u zelfs tegen <i>DNS cloaking</i>, een populaire techniek om trackers in websites en apps te verbergen.
 
