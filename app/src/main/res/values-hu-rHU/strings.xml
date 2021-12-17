@@ -353,4 +353,6 @@ Tisztelettel,\n\n]]></string>
     <string name="setting_domain_based_blocked">Tartományalapú blokkolás (fejlesztés alatt)</string>
     <string name="summary_domain_based_blocking">Részletesebb blokkolást tesz lehetővé. Még fejlesztés alatt áll.</string>
     <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
+    <string name="uncertain_entry">A \"*\" jelzéssel ellátott bejegyzések pontatlanok lehetnek az Android korlátai miatt. Ez általában azt jelenti, hogy ugyanaz a vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelenti, hogy a különböző vállalatok ugyanazon az IP-cím mögött vannak (például tartalomszállítási hálózatot használnak).</string>
+    <string name="browsers_not_supported">A böngészők nem támogatottak ⚠️</string>
 </resources>
