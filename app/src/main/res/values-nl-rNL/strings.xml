@@ -218,6 +218,7 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_log_port">Haven %1$d</string>
     <string name="title_log_copy">Kopieer</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Uitschakelen van internettoegang voor deze applicatie</string>
     <string name="tracked_app_name">Toepassing Naam</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">%d bedrijf is vorige week gecontacteerd</item>
