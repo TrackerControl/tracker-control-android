@@ -37,9 +37,9 @@
     <string name="menu_pcap_enabled">PCAP ingeschakeld</string>
     <string name="menu_pcap_export">PCAP-export</string>
     <string name="menu_clear">Wissen</string>
-    <string name="menu_export">Exporteer</string>
+    <string name="menu_export">Exporteren</string>
     <string name="menu_reset">Reset</string>
-    <string name="menu_cleanup">Opruimen</string>
+    <string name="menu_cleanup">Opschonen</string>
     <string name="setting_options">Opties</string>
     <string name="setting_dark">Donker thema</string>
     <string name="setting_install">Verwittigen bij nieuwe installatie</string>
@@ -51,11 +51,11 @@
     </plurals>
     <string name="setting_network_options">Netwerkopties</string>
     <string name="setting_subnet">Subnet-routering</string>
-    <string name="setting_tethering">Laat het aanbinden toe</string>
+    <string name="setting_tethering">Tethering toestaan</string>
     <string name="setting_lan">LAN-toegang toestaan</string>
     <string name="setting_ip6">IPv6-verkeer inschakelen</string>
     <string name="setting_call">Uitschakelen op afroep</string>
-    <string name="setting_reload_onconnectivity">Herladen bij elke verandering in de connectiviteit</string>
+    <string name="setting_reload_onconnectivity">Herlaad bij wijzigen van de verbinding</string>
     <string name="setting_advanced_options">Geavanceerde opties</string>
     <string name="setting_system">Beheer systeem apps</string>
     <string name="setting_log_app">Nieuwe trackers zoeken</string>
@@ -85,17 +85,17 @@
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Exporteer instellingen (niet voor apparaat reset)</string>
-    <string name="setting_import">Importeer instellingen</string>
+    <string name="setting_export">Instellingen export (niet voor toestel-reset)</string>
+    <string name="setting_import">Instellingen import</string>
     <string name="setting_hosts">Importeren van hosts-bestand</string>
-    <string name="setting_hosts_append">Importeren van hosts-bestand (bijlage)</string>
+    <string name="setting_hosts_append">Importeer hosts-bestand (toevoegen)</string>
     <string name="setting_hosts_url">URL van hosts-bestand</string>
     <string name="setting_hosts_download">Hostersbestand downloaden</string>
     <string name="setting_hosts_update">Update hosts-bestand</string>
     <string name="summary_install">Statusbalk melding weergeven voor nieuw geïnstalleerde apps</string>
-    <string name="summary_pause">Na de pauze van de melding schakelt u TrackerControl automatisch weer in na het geselecteerde aantal minuten (voer 0 in om deze optie uit te schakelen).</string>
+    <string name="summary_pause">Na een pauze van de melding, automatisch TrackerControl weer inschakelen na het gekozen aantal minuten (voer 0 in om deze optie uit te schakelen).</string>
     <string name="summary_update">Controleer twee keer per dag op nieuwe releases op GitHub</string>
-    <string name="summary_tethering">Afhankelijk van de Android-versie kan het aanbinden wel of niet werken. Vastgebonden verkeer kan niet worden gefilterd.</string>
+    <string name="summary_tethering">Afhankelijk van de Android-versie, kan tethering mogelijk werken of niet werken. Getetherd verkeer kan niet worden gefilterd.</string>
     <string name="summary_subnet">Laat subnet-routering toe; zou het bellen via Wi-Fi kunnen toelaten, maar zou ook bugs in Android kunnen triggeren en het batterijgebruik kunnen verhogen</string>
     <string name="summary_lan">Apps toestaan om verbinding te maken met lokale netwerkadressen, zoals 10.0.0.0/8, 172.16.0.0/12 en 192.168.0.0/16</string>
     <string name="summary_ip6">Routeer IP versie 6 verkeer naar TrackerControl zodat het selectief kan worden toegestaan of geblokkeerd</string>
@@ -131,7 +131,7 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
 \n\nIn het volgende dialoogvenster schakelt u de opties \"Achtergrondgegevens\" en \"Onbeperkt gebruik van gegevens\" in</string>
     <string name="msg_filter">Using filtering will cause Android to attribute data and power usage to TrackerControl - Android assumes the data and power are being used by TrackerControl, rather than the original apps</string>
     <string name="msg_filter4">Android 4 vereist filtering om te kunnen worden ingeschakeld</string>
-    <string name="msg_log_disabled">Verkeerslogging is uitgeschakeld, gebruik de schakelaar hierboven om de logging in te schakelen. Verkeersregistratie kan leiden tot extra batterijverbruik.</string>
+    <string name="msg_log_disabled">Er is geen sprake van registreren van verkeer. Inschakelen van registratie kan met de schakelaar hierboven. Het kan leiden tot extra batterijverbruik.</string>
     <string name="msg_clear_rules">Dit zal de regels en voorwaarden terugzetten naar hun standaardwaarden</string>
     <string name="msg_reset_access">Dit zal de logregels van de toegangspoging verwijderen zonder toestemmings-/blokkeringsregels</string>
     <string name="msg_import_last">Laatste import: %s</string>
@@ -322,7 +322,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Sociaal</string>
     <string name="tracker_uncategorised">Ongecategoriseerd</string>
     <string name="setting_strict_blocking">Strikte Blokkering</string>
-    <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps blokkeer zo veel mogelijk data delen met bedrijven. Meer apps werken niet goed.</string>
+    <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps, blokkeer zoveel mogelijk het delen van data met bedrijven. Meer apps werken niet goed.</string>
     <string name="strict_blocking_explanation">Er wordt aanbevolen dat niet-deskundigen deze optie uitschakelen om de app-onderbreking te verminderen. Dit maakt het echter mogelijk om een aantal essentiële delen met bedrijven te delen.</string>
     <string name="exclude_vpn_explanation">Moet de trackers opsporen of blokkeren: \n\nUitschakelen als je tegen problemen aanloopt.</string>
     <string name="uninstall">De-installeer</string>
@@ -360,4 +360,6 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
     <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
     <string name="browsers_not_supported">Browsers worden niet ondersteund op ⚠️</string>
+    <string name="browsers_not_supported_explanation">Dit lijkt een browser-app te zijn.\n\nHet blokkeren van trackers in browsers wordt niet ondersteund door TrackerControl. Gebruik in plaats daarvan een browser met geïntegreerde anti-trackingfunctionaliteit voor een betere blokkering van tracking.\n\nBijvoorbeeld: Firefox Focus, Bromite</string>
+    <string name="static_analysis">Trackers detecteren in app code</string>
 </resources>
