@@ -359,7 +359,11 @@ Privátní DNS musí být vypnutá.</string>
     <string name="none">Nic</string>
     <string name="trackers_static">Knihovny trackerů</string>
     <string name="trackers_static_explanation">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.\n\nTracking, které je detekováno v síti může být zablokováno s TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.</string>
     <string name="blocked">BLOKOVÁNO</string>
     <string name="allowed">POVOLENO</string>
+    <string name="setting_domain_based_blocked">Doménové blokování (ve vývoji)</string>
+    <string name="summary_domain_based_blocking">Umožňuje rozšířené blokování. Ve vývoji.</string>
+    <string name="untap_unblock">Tip: Lze blokovat jednotlivé položky klepnutím na ně.</string>
     <string name="browsers_not_supported">Prohlížeče nejsou podporovány ⚠️</string>
 </resources>
