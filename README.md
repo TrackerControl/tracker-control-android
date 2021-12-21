@@ -173,8 +173,8 @@ If you use this project as part of your academic studies, please kindly cite the
 }
 
 @article{kollnig_before_2021,
-      title = {Before and after {GDPR}: Tracking in Mobile Apps},
-      shorttitle = {Before and after {GDPR}},
+      title = {{Before and after GDPR: Tracking in Mobile Apps}},
+      shorttitle = {{Before and after GDPR}},
       author = {Kollnig, Konrad and Binns, Reuben and Van Kleek, Max and Lyngs, Ulrik and Zhao, Jun and Tinsman, Claudine and Shadbolt, Nigel},
       year = {2021},
       journaltitle = {Internet Policy Review},
