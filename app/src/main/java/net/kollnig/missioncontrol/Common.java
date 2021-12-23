@@ -23,35 +23,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import net.kollnig.missioncontrol.data.StaticTracker;
-
-import org.jf.dexlib2.iface.ClassDef;
-import org.jf.dexlib2.iface.DexFile;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.zip.GZIPInputStream;
-
-import lanchon.multidexlib2.BasicDexFileNamer;
-import lanchon.multidexlib2.MultiDexIO;
 
 public class Common {
     @Nullable
@@ -165,33 +152,5 @@ public class Common {
     public static int dayOfYear() {
         Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.DAY_OF_YEAR);
-    }
-
-    @NonNull
-    public static Set<StaticTracker> detectTrackersStatic(Resources res, String apk) throws IOException, RuntimeException {
-        DexFile dx = MultiDexIO.readDexFile(true, new File(apk), new BasicDexFileNamer(), null, null);
-
-        String[] Sign = res.getStringArray(R.array.trackers);
-        String[] Names = res.getStringArray(R.array.tname);
-        String[] Web = res.getStringArray(R.array.tweb);
-        Set<StaticTracker> trackers = new HashSet<>();
-
-        for (ClassDef c: dx.getClasses()) {
-            String className = c.getType();
-            className = className.replace('/', '.');
-            className = className.substring( 1, className.length() - 1 );
-
-            if (className.length() > 8) {
-                if (className.contains(".")){
-                    for (int Signz = 0; Signz < Sign.length; Signz++) {
-                        if (className.contains(Sign[Signz])) {
-                            trackers.add(new StaticTracker(Names[Signz], Web[Signz], Signz, Sign[Signz]));
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return trackers;
     }
 }

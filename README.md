@@ -35,14 +35,13 @@ against *DNS cloaking*, a popular technique to hide trackers in websites and app
 TrackerControl will always be free and open source, being a research project.
 
 ## Download / Installation
-*Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking.*
+*Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking. Analysis results shown within the app might be inaccurate.*
 
-TrackerControl can be downloaded [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
+There are multiple versions of TrackerControl.
 
-Alternatively, the app is available on [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), the most popular open-source Android app store.
-It is also available on the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
+If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
-A feature-reduced version is also available on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
+If you're interested in *analysing* tracking and generating factual evidence of it (e.g. for research), then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The analysis results from this version will usually be more accurate.
 
 ## Support TrackerControl
 
@@ -152,7 +151,7 @@ that is distributed with the Firefox browser.
 
 *Country Visualisation*: TrackerControl offers to visualise the countries to which trackers sent data. The code was kindly offered by [Takuma Seno](https://github.com/takuseno/GeoMap). To map IP addresses to countries, TrackerControl includes the GeoLite2 database, created by MaxMind, available from <https://www.maxmind.com>.
 
-*ClassyShark3xodus*: TrackerControl allows to detect trackers in the app code. The signatures to do this are taken from [ClassyShark3xodus](https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/src).
+*ClassyShark3xodus*: TrackerControl allows to detect trackers in the app code. The signatures to do this are taken from [ClassyShark3xodus](https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/src/master/ClassySharkAndroid/app/src/main/res/values/arrays.xml).
 
 *sniproxy*: TrackerControl uses code that has been derived from an early version of [sniproxy](https://github.com/dlundquist/sniproxy) to parse the Server Name Indication (SNI) in TLS headers in accordance with the associated [IETF standard](https://datatracker.ietf.org/doc/html/rfc3546).
 
@@ -166,11 +165,23 @@ This project is licensed under
 If you use this project as part of your academic studies, please kindly cite the below articles:
 
 ```
-@article{kollnig2021_iphone_android,
+@article{kollnig2022_iphone_android,
       title={Are iPhones Really Better for Privacy? A Comparative Study of iOS and Android Apps}, 
       author={Konrad Kollnig and Anastasia Shuba and Reuben Binns and Max {Van Kleek} and Nigel Shadbolt},
-      year={2021},
-      journal={arXiv preprint arXiv:2109.13722}
+      year={2022},
+      journal={Proceedings on Privacy Enhancing Technologies}
+}
+
+@article{kollnig_before_2021,
+      title = {{Before and after GDPR: Tracking in Mobile Apps}},
+      shorttitle = {{Before and after GDPR}},
+      author = {Kollnig, Konrad and Binns, Reuben and Van Kleek, Max and Lyngs, Ulrik and Zhao, Jun and Tinsman, Claudine and Shadbolt, Nigel},
+      year = {2021},
+      journaltitle = {Internet Policy Review},
+      volume = {10},
+      number = {4},
+      issn = {2197-6775},
+      doi = {10.14763/2021.4.1611}
 }
 
 @inproceedings {kollnig2021_consent,
