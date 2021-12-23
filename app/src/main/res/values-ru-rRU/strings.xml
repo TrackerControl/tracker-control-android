@@ -218,6 +218,7 @@
     <string name="title_log_port">Порт %1$d</string>
     <string name="title_log_copy">Скопировать</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Отключить доступ в интернет для этого приложения</string>
     <string name="tracked_app_name">Название приложения</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">%d компания за неделю</item>
@@ -231,6 +232,8 @@
         <item quantity="many">%d компаний за всё время</item>
         <item quantity="other">%d компаний за всё время</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Получить сведения об организации?</string>
+    <string name="confirm_ipinfo">Это свяжется с внешним сервисом ipinfo.io, и поделится с ним данными о контактированных IP адресах.</string>
     <string name="external_servers">Получить e-mail адрес разработчика автоматически?</string>
     <string name="confirm_google_info">Это приложение может автоматически получить e-mail адрес разработчика приложения из Google Play Store для вас.</string>
     <string name="ok">ОК</string>
@@ -240,6 +243,7 @@
     <string name="exporting">Экспорт…</string>
     <string name="share_csv">Поделиться</string>
     <string name="export_failed">Экспорт не удался</string>
+    <string name="exported">Экспортировано в память!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Подробности</string>
     <string name="tab_trackers">Трекеры</string>
@@ -357,4 +361,9 @@ Sincerely,\n\n]]></string>
     <string name="allowed">РАЗРЕШЕНО</string>
     <string name="setting_domain_based_blocked">Блокировка по доменным именам (в разработке)</string>
     <string name="summary_domain_based_blocking">Позволяет более точную блокировку. Пока в разработке.</string>
+    <string name="untap_unblock">Подсказка: Вы можете разблокировать отдельные записи, нажав на них.</string>
+    <string name="uncertain_entry">Записи отмеченные знаком \'*\' могут быть неточными из-за ограничений Android. Это обычно означает, что одна и та же компания использует один и тот же IP адрес в разных доменах, но может также означать, что различные компании находятся за одним IP адресом (например, если они используют сети доставки контента).</string>
+    <string name="browsers_not_supported">Браузеры не поддерживаются ⚠️</string>
+    <string name="browsers_not_supported_explanation">Похоже, это приложение для браузера.\n\nБлокировка трекеров в браузерах не поддерживается TrackerControl. Вместо этого используйте браузер с встроенной функцией защиты от отслеживания, чтобы лучше блокировать отслеживание.\n\nНапример: Mozilla Fennec, Bromite</string>
+    <string name="static_analysis">Обнаружить трекеры в коде приложения</string>
 </resources>
