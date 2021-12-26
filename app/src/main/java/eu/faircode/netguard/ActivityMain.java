@@ -1289,7 +1289,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name));
-        intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.msg_try) + "\n\nhttps://github.com/OxfordHCC/tracker-control-android\n\n");
+        intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.msg_try) + "\n\nhttps://github.com/TrackerControl/tracker-control-android\n\n");
         return intent;
     }
 
