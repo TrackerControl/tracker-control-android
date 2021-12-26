@@ -213,7 +213,6 @@
     <string name="title_block_other">屏蔽移动网络</string>
     <string name="title_nobody">没有人</string>
     <string name="title_dontask">不要再次询问</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">端口 %1$d</string>
     <string name="title_log_copy">复制</string>
     <!-- App Overview -->
@@ -262,10 +261,7 @@
     <string name="request_data">请求数据</string>
     <string name="request_deletion">请求删除</string>
     <string name="contact_developer">开发者</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">欧盟官员</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR 主题访问请求</string>
     <string name="body_request_data"><![CDATA[致有关人士：\n
 \n
