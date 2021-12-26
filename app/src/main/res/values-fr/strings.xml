@@ -69,14 +69,12 @@
     <string name="setting_show_resolved">Afficher les noms de domaine résolus</string>
     <string name="setting_block_domains">Activer le fichier hosts</string>
     <string name="setting_rcode">Ces hôtes bloquent la réponse: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6 : %s</string>
     <string name="setting_dns">VPN DNS : %s</string>
     <string name="setting_validate">Valider : %s</string>
     <string name="setting_ttl">DNS TTL minimum: %s s</string>
     <string name="setting_socks5_enabled">Utiliser le proxy SOCKS5</string>
     <string name="setting_socks5_addr">Adresse SOCKS5: %s</string>
-    <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">Nom d\'utilisateur SOCKS5: %s</string>
     <string name="setting_socks5_password">Mot de passe SOCKS5: %s</string>
     <string name="setting_pcap_record_size">Taille d’enregistrement PCAP : %s B</string>
@@ -155,10 +153,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_start_forward">Lancer la redirection du %1$s port %2$d au %3$s:%4$d de \'%5$s\' ?</string>
     <string name="msg_stop_forward">Arrêter la redirection du %1$s port %2$d ?</string>
     <string name="msg_log_logcat">Attention, le blocage est désactivé car la journalisation ADB est activée.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Ajouter</string>
     <string name="menu_delete">Supprimer</string>
     <string name="setting_forwarding">Redirection de port</string>
@@ -184,7 +178,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_disabled">est désactivée</string>
     <string name="title_messaging">Les messages entrants sont reçus par les services Google Play et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
     <string name="title_download">Les téléchargements sont effectués par le gestionnaire de téléchargement et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
-    <string name="title_conditions">Conditions</string>
     <string name="title_screen_wifi">Autoriser le Wi-Fi lorsque l\'écran est allumé</string>
     <string name="title_screen_other">Autoriser les données mobiles quand l\'écran est allumé</string>
     <string name="title_roaming">Bloquer lors de l\'itinérance</string>
@@ -212,8 +205,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_block_other">Bloquer les données mobiles</string>
     <string name="title_nobody">personne</string>
     <string name="title_dontask">Ne plus demander</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Copier</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nom de l\'application</string>
@@ -227,7 +218,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     </plurals>
     <string name="external_servers">Obtenir automatiquement le courriel du développeur ?</string>
     <string name="confirm_google_info">Cette application peut obtenir automatiquement le courriel du développeur de l\'application depuis la boutique Google Play pour vous.</string>
-    <string name="ok">OK</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="menu_csv">Exporter en CSV</string>
@@ -259,10 +249,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="request_data">Demander les données</string>
     <string name="request_deletion">Demander la suppression des données</string>
     <string name="contact_developer">Développeur</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Représentants de l\'UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Demande d\'accès au données RGPD</string>
     <string name="body_request_data"><![CDATA[À la personne responsable :\n
 \n
