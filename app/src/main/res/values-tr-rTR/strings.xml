@@ -154,7 +154,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_always_on">Farklı bir VPN daima açık olarak ayarlanmış</string>
     <string name="msg_always_on_lockdown">TrackerControl\'ü filtreleme modunda kullanmak için Android VPN ayarlarında \"VPN olmadan bağlantıları engelle\" seçeneğini kapatın</string>
     <string name="msg_private_dns">TrackerControl filtrelemesini kullanmak için Android ağ ayarlarından \"Özel DNS\" seçeneğini kapatın</string>
-    <string name="msg_start_forward">\'%5$s\' için %1$s:%2$d -> %3$s:%4$d yönlendirmesi başlatılsın mı?</string>
+    <string name="msg_start_forward">\'%5$s\' için %1$s:%2$d -&gt; %3$s:%4$d yönlendirmesi başlatılsın mı?</string>
     <string name="msg_stop_forward">%1$s:%2$d yönlendirmesi durdurulsun mu?</string>
     <string name="msg_log_logcat">Uyarı: ADB günlüğü nedeniyle engelleme devre dışı bırakıldı.</string>
     <string-array name="protocolNames">
