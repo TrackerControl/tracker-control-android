@@ -1,4 +1,4 @@
-TrackerControl umožňuje uživatelům sledovat a ovládat rozsáhlé, probíhající, skryté sbírání dat v mobilních aplikacích o chování uživatelů ("tracking").
+TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
 
