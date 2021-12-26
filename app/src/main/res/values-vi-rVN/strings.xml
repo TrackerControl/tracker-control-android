@@ -68,9 +68,6 @@
     <string name="setting_show_resolved">Hiện các tên miền đã xử lý</string>
     <string name="setting_block_domains">Bật tệp máy chủ</string>
     <string name="setting_rcode">Phản hồi chặn máy chủ: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Xác thực tại: %s</string>
     <string name="setting_ttl">DNS TTL tối thiểu: %s s</string>
     <string name="setting_socks5_enabled">Sử dụng proxy SOCKS5</string>
@@ -152,10 +149,6 @@
     <string name="msg_start_forward">Bắt đầu chuyển tiếp từ cổng %1$s %2$d đến %3$s:%4$d của \'%5$s\'?</string>
     <string name="msg_stop_forward">Dừng chuyển tiếp cổng %1$s %2$d?</string>
     <string name="msg_log_logcat">Cảnh báo: Việc chặn đã bị tắt vì ghi nhật ký ADB.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Thêm</string>
     <string name="menu_delete">Xóa</string>
     <string name="setting_forwarding">Chuyển tiếp cổng</string>
@@ -207,9 +200,7 @@
     <string name="title_block_wifi">Chặn Wi-Fi</string>
     <string name="title_allow_other">Cho phép mạng di động</string>
     <string name="title_block_other">Chặn mạng di động</string>
-    <string name="title_nobody">nobody</string>
     <string name="title_dontask">Không hỏi lại</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Cổng %1$d</string>
     <string name="title_log_copy">Sao chép</string>
     <!-- App Overview -->
@@ -222,7 +213,6 @@
     </plurals>
     <string name="external_servers">Tự động lấy email của nhà phát triển?</string>
     <string name="confirm_google_info">Ứng dụng này có thể tự động lấy email của nhà phát triển ứng dụng từ CH Play cho bạn.</string>
-    <string name="ok">OK</string>
     <string name="yes">Có</string>
     <string name="no">Không</string>
     <string name="menu_csv">Xuất dưới dạng CSV</string>
@@ -254,10 +244,7 @@
     <string name="request_data">Yêu cầu dữ liệu</string>
     <string name="request_deletion">Yêu cầu xoá</string>
     <string name="contact_developer">Nhà phát triển</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Các quan chức của EU</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="crash_dialog_text">Xin lỗi. TrackerControl vừa mới bị văng ra.. Bạn có muốn gửi email có các chi tiết cho chúng tôi không?</string>
     <string name="crash_dialog_comment">Có bình luận gì không?</string>
     <string name="instructions_monitoring_private_dns">Gạt công tắc và tương tác với một số ứng dụng. DNS riêng phải được tắt.</string>
