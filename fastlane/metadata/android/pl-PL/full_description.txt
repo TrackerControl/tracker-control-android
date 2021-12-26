@@ -1,11 +1,11 @@
 TrackerControl umożliwia użytkownikom nadzór i kontrolę nad powszechnym, uporczywym i ukrytym gromadzeniem danych o aktywności użytkownika w aplikacjach mobilnych (tkzw tracking 'śledzeniem').
 
-"Disconnect blocklist", używanej przez Firefoksa oraz używana jest nasza wewnętrzna lista bloków, stworzona z analizy ~ 2 000 000 aplikacji! Ponadto TrackerControl obsługuje niestandardowe listy bloków.
+Aby wykryć śledzenie, TrackerControl łączy moc listy zablokowanych tkzw. "Disconnect blocklist", używanej przez Firefoksa oraz używana jest nasza wewnętrzna lista bloków, stworzona z analizy ~ 2 000 000 aplikacji!  Ponadto TrackerControl obsługuje niestandardowe listy bloków.
 
 Takie podejście
 - ujawnia firmy stojące za śledzeniem,
-pozwala na selektywne blokowanie śledzenia oraz
-ujawnia cele śledzenia, takie jak analityka lub reklama.
+ pozwala na selektywne blokowanie śledzenia oraz
+ ujawnia cele śledzenia, takie jak analityka lub reklama.
 
 Aplikacja ma również na celu edukację na temat Twoich praw wynikających z prawa o ochronie danych, takich jak ogólne rozporządzenie o ochronie danych UE (RODO).
 
