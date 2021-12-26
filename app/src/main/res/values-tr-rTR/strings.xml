@@ -69,9 +69,6 @@
     <string name="setting_show_resolved">Çözümlenmiş alan adlarını göster</string>
     <string name="setting_block_domains">Hosts dosyasını etkinleştir</string>
     <string name="setting_rcode">Hosts engelleme yanıtı: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Doğrulama adresi: %s</string>
     <string name="setting_ttl">En düşük DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">SOCKS5 kullan</string>
@@ -154,13 +151,9 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_always_on">Farklı bir VPN daima açık olarak ayarlanmış</string>
     <string name="msg_always_on_lockdown">TrackerControl\'ü filtreleme modunda kullanmak için Android VPN ayarlarında \"VPN olmadan bağlantıları engelle\" seçeneğini kapatın</string>
     <string name="msg_private_dns">TrackerControl filtrelemesini kullanmak için Android ağ ayarlarından \"Özel DNS\" seçeneğini kapatın</string>
-    <string name="msg_start_forward">\'%5$s\' için %1$s:%2$d -> %3$s:%4$d yönlendirmesi başlatılsın mı?</string>
+    <string name="msg_start_forward">\'%5$s\' için %1$s:%2$d -&gt; %3$s:%4$d yönlendirmesi başlatılsın mı?</string>
     <string name="msg_stop_forward">%1$s:%2$d yönlendirmesi durdurulsun mu?</string>
     <string name="msg_log_logcat">Uyarı: ADB günlüğü nedeniyle engelleme devre dışı bırakıldı.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Ekle</string>
     <string name="menu_delete">Sil</string>
     <string name="setting_forwarding">Bağlantı noktası yönlendirme</string>
@@ -214,7 +207,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="title_block_other">Mobil veri engellensin</string>
     <string name="title_nobody">hiçkimse</string>
     <string name="title_dontask">Bir daha sorma</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Bağlantı noktası %1$d</string>
     <string name="title_log_copy">Kopyala</string>
     <!-- App Overview -->
@@ -257,10 +249,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="request_data">Veri talep et</string>
     <string name="request_deletion">Silme iste</string>
     <string name="contact_developer">Geliştirici</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">ABD Yetkilileri</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Konu Erişim Talebi</string>
     <string name="body_request_data"><![CDATA[İlgili makama:\n
 \n
