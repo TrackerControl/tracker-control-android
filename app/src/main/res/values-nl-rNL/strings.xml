@@ -38,7 +38,6 @@
     <string name="menu_pcap_export">PCAP-export</string>
     <string name="menu_clear">Wissen</string>
     <string name="menu_export">Exporteren</string>
-    <string name="menu_reset">Reset</string>
     <string name="menu_cleanup">Opschonen</string>
     <string name="setting_options">Opties</string>
     <string name="setting_dark">Donker thema</string>
@@ -69,11 +68,7 @@
     <string name="setting_show_resolved">Toon opgeloste domeinnamen</string>
     <string name="setting_block_domains">Activeer gastherenbestand</string>
     <string name="setting_rcode">De gastheren blokkeren de reactie: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Valideer op: %s</string>
-    <string name="setting_ttl">Minimum DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Gebruik SOCKS5 proxy</string>
     <string name="setting_socks5_addr">SOCKS5 adres: %s</string>
     <string name="setting_socks5_port">SOCKS5 poort: %s</string>
@@ -84,7 +79,6 @@
     <string name="setting_watchdog">Waakhond: elke %s van de minuten</string>
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
-    <string name="setting_backup">Backup</string>
     <string name="setting_export">Instellingen export (niet voor toestel-reset)</string>
     <string name="setting_import">Instellingen import</string>
     <string name="setting_hosts">Importeren van hosts-bestand</string>
@@ -129,7 +123,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
 \n\nIn het volgende dialoogvenster \"Alle apps\" bovenaan, tik op TrackerControl in de lijst en selecteer en bevestig \"Niet optimaliseren\".</string>
     <string name="msg_datasaving">Voor consistente resultaten moeten de opties voor het opslaan van Android-gegevens voor TrackerControl worden uitgeschakeld.
 \n\nIn het volgende dialoogvenster schakelt u de opties \"Achtergrondgegevens\" en \"Onbeperkt gebruik van gegevens\" in</string>
-    <string name="msg_filter">Using filtering will cause Android to attribute data and power usage to TrackerControl - Android assumes the data and power are being used by TrackerControl, rather than the original apps</string>
     <string name="msg_filter4">Android 4 vereist filtering om te kunnen worden ingeschakeld</string>
     <string name="msg_log_disabled">Er is geen sprake van registreren van verkeer. Inschakelen van registratie kan met de schakelaar hierboven. Het kan leiden tot extra batterijverbruik.</string>
     <string name="msg_clear_rules">Dit zal de regels en voorwaarden terugzetten naar hun standaardwaarden</string>
@@ -157,14 +150,9 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_start_forward">Begin met doorsturen van %1$s poort %2$d naar %3$s:%4$d van \'%5$s\'?</string>
     <string name="msg_stop_forward">Stop met doorsturen van %1$s poort %2$d?</string>
     <string name="msg_log_logcat">Waarschuwing: Blokkeren uitgeschakeld vanwege ADB loggen.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Toevoegen</string>
     <string name="menu_delete">Verwijderen</string>
     <string name="setting_forwarding">Poort doorschakelen</string>
-    <string name="title_protocol">Protocol</string>
     <string name="title_dport">Broncode poort</string>
     <string name="title_raddr">Doeladres</string>
     <string name="title_rport">Doel poort</string>
@@ -214,7 +202,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_block_other">Blokkeer mobiel</string>
     <string name="title_nobody">niemand</string>
     <string name="title_dontask">Vraag het niet meer</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Haven %1$d</string>
     <string name="title_log_copy">Kopieer</string>
     <!-- App Overview -->
@@ -232,7 +219,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="confirm_ipinfo">Dit neemt contact op met de externe dienst ipinfo.io en deelt gegevens over gecontacteerde IP-adressen.</string>
     <string name="external_servers">Krijg je automatisch een e-mail van een ontwikkelaar?</string>
     <string name="confirm_google_info">Deze app kan automatisch de e-mail van de app-ontwikkelaar uit de Google Play Store voor u halen.</string>
-    <string name="ok">OK</string>
     <string name="yes">Ja</string>
     <string name="no">Geen</string>
     <string name="menu_csv">Exporteer als CSV</string>
@@ -241,8 +227,6 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="export_failed">Export mislukt</string>
     <string name="exported">Naar opslag geëxporteerd!</string>
     <!-- App Details -->
-    <string name="title_activity_detail">Details</string>
-    <string name="tab_trackers">Trackers</string>
     <string name="tab_countries">Landen</string>
     <string name="tab_actions">Mijn gegevens</string>
     <string name="tracker_name">Tracker naam</string>
@@ -265,45 +249,8 @@ Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="request_data">Data opvragen</string>
     <string name="request_deletion">Verzoek tot verwijdering</string>
     <string name="contact_developer">Ontwikkelaar</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU ambtenaren</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Onderwerp Verzoek om toegang</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
-\n
-• a copy of my personal data;\n
-• the purposes of the processing;\n
-• the categories of personal data concerned;\n
-• the recipients you disclose my personal data to and the safeguards you provide;\n
-• the retention period for storing my personal data or the criteria used for determining this period;\n
-• information about the source of my personal data; and\n
-• the existence of automated decision-making (including profiling), and if so:\n
-    - the logic involved in the decision-making process;\n
-    - the significance and the envisaged consequences for me;\n
-    - the steps you have taken to prevent errors, bias and discrimination; and\n
-    - explain how I can express my point of view and challenge a decision.\n
-\n
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
-• All data.\n
-\n
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
     <string name="crash_dialog_text">Sorry. TrackerControl is net gecrasht... Zou je het erg vinden om ons een e-mail te sturen met details?</string>
     <string name="crash_dialog_comment">Heeft u commentaar?</string>
     <string name="instructions_monitoring_private_dns">Schakel de schakelaar om en ga met een aantal apps werken. Private DNS moet worden uitgeschakeld.</string>
@@ -350,7 +297,6 @@ Sincerely,\n\n]]></string>
     <string name="tracking_detection_failed_report">Tracker library detectie mislukt. Rapporteer dit probleem bij de ontwikkelaar.</string>
     <string name="detected_trackers">Gedetecteerde tracker libraries: %s</string>
     <string name="none">Geen</string>
-    <string name="trackers_static">Tracker libraries</string>
     <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.\n\nTracking die wordt gedetecteerd in het netwerkverkeer kan met TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
     <string name="blocked">GEBLOKKEERD</string>
