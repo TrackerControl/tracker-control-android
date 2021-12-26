@@ -69,14 +69,10 @@
     <string name="setting_show_resolved">Mutassa a feloldott domain neveket</string>
     <string name="setting_block_domains">Hosts fájl engedélyezése</string>
     <string name="setting_rcode">Hosts blokkoló válasza: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Érvényesítés itt: %s</string>
     <string name="setting_ttl">Minimális DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">SOCKS5 proxy használata</string>
     <string name="setting_socks5_addr">SOCKS5 cím: %s</string>
-    <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">SOCKS5 felhasználónév: %s</string>
     <string name="setting_socks5_password">SOCKS5 jelszó: %s</string>
     <string name="setting_pcap_record_size">PCAP rekord méret: %s B</string>
@@ -155,13 +151,8 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Hozzáad</string>
     <string name="menu_delete">Töröl</string>
-    <string name="setting_forwarding">Port forwarding</string>
     <string name="title_protocol">Protokol</string>
     <string name="title_dport">Forrás port</string>
     <string name="title_raddr">Cél címe</string>
@@ -212,8 +203,6 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="title_block_other">Mobiladat blokkolása</string>
     <string name="title_nobody">senki</string>
     <string name="title_dontask">Ne kérdezze újra</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Másol</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Az alkalmazás internet hozzáférésének letiltása</string>
@@ -263,10 +252,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="request_data">Adatok kérelmezése</string>
     <string name="request_deletion">Törlés kérelmezése</string>
     <string name="contact_developer">Fejlesztő</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU tisztviselők</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Alanyi Hozzáférési Kérelem</string>
     <string name="body_request_data"><![CDATA[A Felelős Személynek:\n
 \n
