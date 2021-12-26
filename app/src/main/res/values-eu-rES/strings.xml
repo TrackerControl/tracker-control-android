@@ -69,9 +69,6 @@
     <string name="setting_show_resolved">Erakutsi ebatzitako domeinu izenak</string>
     <string name="setting_block_domains">Aktibatu ostalarien fitxategia</string>
     <string name="setting_rcode">Ostalaria blokeatzearen erantzuna: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Balioztatu hemen: %s</string>
     <string name="setting_ttl">Gutxieneko DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Erabili SOCKS5 proxya</string>
@@ -157,11 +154,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_start_forward">Hasi birbidalketa, hemendik %1$s ataka %2$d hona %3$s:%4$d - \'%5$s\'?</string>
     <string name="msg_stop_forward">Utzi %1$s ataka %2$d birbidaltzeari?</string>
     <string name="msg_log_logcat">Abisua: blokeatzea desgaituta dago ADB erregistroa dela eta.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
-    <string name="menu_add">Add</string>
     <string name="menu_delete">Ezabatu</string>
     <string name="setting_forwarding">Atakak birbidaltzea</string>
     <string name="title_protocol">Protokoloa</string>
@@ -214,7 +206,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="title_block_other">Blokeatu mugikorra</string>
     <string name="title_nobody">inor ere ez</string>
     <string name="title_dontask">Ez galdetu berriro</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">%1$d ataka</string>
     <string name="title_log_copy">Kopiatu</string>
     <!-- App Overview -->
@@ -232,7 +223,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="confirm_ipinfo">Honek ipinfo.io zerbitzua erabiliko du eta bertara IP helbideen informazioa bidaliko du.</string>
     <string name="external_servers">Lortu garatzailearen eposta automatikoki?</string>
     <string name="confirm_google_info">Aplikazio honek aplikazioaren garatzaileren eposta Google Play Storetik lortu dezake.</string>
-    <string name="ok">OK</string>
     <string name="yes">Bai</string>
     <string name="no">Ez</string>
     <string name="menu_csv">CSV bezala esportatu</string>
@@ -265,10 +255,7 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="request_data">Eskatu datuak</string>
     <string name="request_deletion">Eskatu ezabatzeko</string>
     <string name="contact_developer">Garatzailea</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EBko arduradunak</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">DBAO Sarrera Eskaera</string>
     <string name="body_request_data"><![CDATA[OHARRA: NORMALEAN GARATZAILEEK MEZU HAUEK INGELESEZ JASOTZEA ESKERTZEN DUTE, BATEZ ERE ZURE HERRIALDEKOAK EZ BADIRA, HORREGATIK EZ DUGU MEZU HAU ITZULI.
 
