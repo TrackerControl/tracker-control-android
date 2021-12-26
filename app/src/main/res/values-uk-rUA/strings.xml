@@ -1,59 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Політика конфіденційності</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Політика використання файлів cookie</a></string>
-    <string name="channel_foreground">Запущені сервіси</string>
-    <string name="channel_notify">Загальні сповіщення</string>
-    <string name="channel_access">Доступ до сповіщень</string>
-    <string name="menu_search">Пошук додатку</string>
-    <string name="menu_filter">Фільтр додатків</string>
-    <string name="menu_app_user">Показати завантажені додатки</string>
-    <string name="menu_app_system">Показати системні додатки</string>
-    <string name="menu_app_nointernet">Показати додатки без інтернету</string>
-    <string name="menu_sort">Сортувати додатки</string>
-    <string name="menu_sort_name">Сортувати за іменем</string>
-    <string name="menu_sort_uid">Сортувати за uid</string>
-    <string name="menu_sort_companies">Сортувати за компаніями</string>
-    <string name="menu_log">Журнал трафіку</string>
-    <string name="menu_settings">Параметри</string>
-    <string name="menu_invite">Запросити</string>
-    <string name="menu_support">Підтримати проєкт</string>
-    <string name="menu_log_support">Пояснення</string>
-    <string name="menu_about">Про додаток</string>
-    <string name="menu_apps">Інші додатки</string>
-    <string name="menu_protocol_other">Інше</string>
-    <string name="menu_traffic_allowed">Дозволено</string>
-    <string name="menu_traffic_blocked">Заблоковано</string>
-    <string name="menu_live">Поточні оновлення</string>
-    <string name="menu_refresh">Оновити</string>
-    <string name="menu_resolve">Відображати імена</string>
-    <string name="menu_organization">Відображати організації</string>
-    <string name="menu_pcap_enabled">PCAP увімкнено</string>
-    <string name="menu_pcap_export">Експорт PCAP</string>
-    <string name="menu_clear">Очистити</string>
-    <string name="menu_export">Експортувати</string>
-    <string name="menu_reset">Скинути</string>
-    <string name="menu_cleanup">Очищення</string>
-    <string name="setting_options">Параметри</string>
-    <string name="setting_dark">Темна тема</string>
-    <string name="setting_install">Сповіщати про нові додатки</string>
-    <string name="setting_pause">Автоматично увімкнути через %1$s хв.</string>
-    <string name="setting_update">Перевірити оновлення</string>
-    <string name="setting_network_options">Налаштування мережі</string>
-    <string name="setting_subnet">Маршрутизація підмережі</string>
-    <string name="setting_tethering">Дозволити режим модема</string>
-    <string name="setting_lan">Дозволити доступ до LAN</string>
-    <string name="setting_ip6">Увімкнути IPv6-трафік</string>
-    <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
-    <string name="setting_import">Імпортувати параметри</string>
-    <string name="setting_hosts">Імпортувати host-файл</string>
-    <string name="setting_hosts_append">Імпортувати host-файл (додати)</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
-    <string name="tracker_cryptomining">Криптомайнинг</string>
-    <string name="tracker_fingerprinting">Цифрові відбитки</string>
-    <string name="tracker_social">Соціальні мережі</string>
-    <string name="tracker_uncategorised">Без категорії</string>
-    <string name="setting_strict_blocking">Жорстке блокування</string>
-    <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
 </resources>
