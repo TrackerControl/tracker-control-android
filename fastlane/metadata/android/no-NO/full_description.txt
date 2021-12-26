@@ -1,17 +1,17 @@
-TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner ("sporing").
+TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
-For å oppdage sporing, så kombinerer TrackerControl effekten av Disconnect sine blokkeringslister, som brukes av Firefox, og vår egen blokkeringsliste, skapt basert på analyser av <i>~2 000 000</i> apper! I tillegg støtter TrackerControl egendefinerte blokkeringslister.
+To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
 
-Denne tilnærmingen
-- avslører selskapene bak sporingen,
-- gjør det mulig å blokkere sporing selektivt, og
-– eksponerer formålet med sporing, som analyse eller reklame.
+This approach
+- reveals the companies behind tracking,
+- allows to block tracking selectively, and
+- exposes the purposes of tracking, such as analytics or advertising.
 
-Appen ønsker også å gi opplæring i dine rettigheter under personvernlover, slik som EUs personvernforordning (GDPR).
+The app also aims to educate about your rights under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
 
-Under panseret bruker TrackerControl Androids VPN-funksjonalitet, for å analysere appenes nettverkskommunikasjon <i>lokalt på Android-enheten</i>. Dette oppnås gjennom en lokal VPN-server, for å muliggjøre nettverkstrafikk analyse av TrackerControl.
+Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps' network communications <i>locally on the Android device</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-Ingen root er nødvendig. Annen VPNer eller Private DNS støttes ikke. For å holde dataene dine trygg er ingen ekstern VPN server brukt! TrackerControl beskytter deg til og med mot <i>DNS cloaking</i>, en populær metode for å skjule sporere på nettsteder og apper.
+No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
 
-Som et forskningsprosjekt vil TrackerControl alltid være fri og åpen kildekode.
+TrackerControl will always be free and open source, being a research project.
 
