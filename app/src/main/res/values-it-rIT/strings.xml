@@ -69,9 +69,6 @@
     <string name="setting_show_resolved">Mostra nomi di dominio risolti</string>
     <string name="setting_block_domains">Abilita il file hosts</string>
     <string name="setting_rcode">Questi hosts bloccano la risposta: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Convalida: %s</string>
     <string name="setting_ttl">DNS TTL minimo: %s s</string>
     <string name="setting_socks5_enabled">Usa proxy SOCKS5</string>
@@ -84,7 +81,6 @@
     <string name="setting_watchdog">Watchdog: ogni %s minuti</string>
     <string name="setting_stats_frequency">Intervallo di campionamento: %s ms</string>
     <string name="setting_stats_samples">Numero di campioni: %s s</string>
-    <string name="setting_backup">Backup</string>
     <string name="setting_export">Esporta impostazioni (non utilizzabile in caso di ripristino del dispositivo)</string>
     <string name="setting_import">Importa impostazioni</string>
     <string name="setting_hosts">Importa file hosts</string>
@@ -157,13 +153,8 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_start_forward">Inizia l\'inoltro da %1$s porta %2$d a %3$s:%4$d di \'%5$s\'?</string>
     <string name="msg_stop_forward">Interrompere l\'inoltro di %1$s porta %2$d?</string>
     <string name="msg_log_logcat">Attenzione: Blocco disabilitato a causa del logging ADB.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Aggiungi</string>
     <string name="menu_delete">Elimina</string>
-    <string name="setting_forwarding">Port forwarding</string>
     <string name="title_protocol">Protocollo</string>
     <string name="title_dport">Porta di origine</string>
     <string name="title_raddr">Indirizzo Destinazione</string>
@@ -214,7 +205,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="title_block_other">Blocca rete mobile</string>
     <string name="title_nobody">nessuno</string>
     <string name="title_dontask">Non chiedere di nuovo</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Porta %1$d</string>
     <string name="title_log_copy">Copia</string>
     <!-- App Overview -->
@@ -232,9 +222,7 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="confirm_ipinfo">Questo contatterà il servizio esterno ipinfo.io, e condividerà con esso dati sugli indirizzi IP contattati.</string>
     <string name="external_servers">Ottenere automaticamente l\'email dello sviluppatore?</string>
     <string name="confirm_google_info">Questa applicazione può ottenere automaticamente l\'email dello sviluppatore dell\'applicazione dal Google Play Store per te.</string>
-    <string name="ok">OK</string>
     <string name="yes">Si</string>
-    <string name="no">No</string>
     <string name="menu_csv">Esporta come CSV</string>
     <string name="exporting">Esportazione in corso..</string>
     <string name="share_csv">Condividi</string>
@@ -265,10 +253,7 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="request_data">Richiedi dati</string>
     <string name="request_deletion">Richiesta la cancellazione dei dati</string>
     <string name="contact_developer">Sviluppatore</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Funzionari UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Richiesta Accesso Dati GDPR</string>
     <string name="body_request_data"><![CDATA[Alla persona responsabile:\n
 \n
@@ -317,7 +302,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="tracker_advertising">Pubblicità</string>
     <string name="tracker_analytics">Statistiche sui visitatori</string>
     <string name="tracker_content">Essenziali</string>
-    <string name="tracker_cryptomining">Cryptomining</string>
     <string name="tracker_fingerprinting">Impronte digitali (fingerprinting)</string>
     <string name="tracker_social">Rete sociale (social)</string>
     <string name="tracker_uncategorised">Senza categoria</string>
