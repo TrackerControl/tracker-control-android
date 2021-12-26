@@ -1,17 +1,17 @@
-TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışı ('izleme') hakkında yaygın, devam eden, gizli veri toplamayı izlemesini ve kontrol etmesini sağlar.
+TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
-TrackerControl, izlemeyi algılamak için Firefox tarafından kullanılan Bağlantıyı Kes engelleme listesinin gücünü birleştirir ve <i>~2 000 000</i> uygulamanın analizinden oluşturulan şirket içi engelleme listemiz kullanılır! Ek olarak, TrackerControl özel engelleme listelerini destekler.
+To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
 
-Bu yaklaşım
-- takibin arkasındaki şirketleri ortaya çıkarır,
-- seçici olarak izlemeyi engellemeye izin verir ve
-- analitik veya reklamcılık gibi izleme amaçlarını ortaya çıkarır.
+This approach
+- reveals the companies behind tracking,
+- allows to block tracking selectively, and
+- exposes the purposes of tracking, such as analytics or advertising.
 
-Uygulama ayrıca, AB Genel Veri Koruma Yönetmeliği (GDPR) gibi Veri Koruma Yasası kapsamındaki haklarınız hakkında eğitim vermeyi amaçlamaktadır.
+The app also aims to educate about your rights under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
 
-Başlık altında, TrackerControl, uygulamaların ağ iletişimlerini <i>Android cihazında yerel olarak</i> analiz etmek için Android'in VPN işlevini kullanır. Bu, TrackerControl tarafından ağ trafiği analizini etkinleştirmek için yerel bir VPN sunucusu aracılığıyla gerçekleştirilir.
+Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps' network communications <i>locally on the Android device</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-Kök erişimi gerekmez, diğer VPN'ler veya Özel DNS desteklenmez. Verilerinizi güvende tutmak için harici VPN sunucusu kullanılmaz! TrackerControl, sizi web sitelerinde ve uygulamalarda izleyicileri gizlemek için kullanılan popüler bir teknik olan <i>DNS gizlemeye</i> karşı bile korur.
+No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
 
-TrackerControl bir araştırma projesi olarak her zaman ücretsiz ve açık kaynak olacaktır.
+TrackerControl will always be free and open source, being a research project.
 
