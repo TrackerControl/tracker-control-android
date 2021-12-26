@@ -35,9 +35,7 @@
     <string name="menu_resolve">Zobrazit názvy</string>
     <string name="menu_organization">Zobrazit organizaci</string>
     <string name="menu_pcap_enabled">PCAP povolen</string>
-    <string name="menu_pcap_export">PCAP export</string>
     <string name="menu_clear">Reset filtrů</string>
-    <string name="menu_export">Export</string>
     <string name="menu_reset">Resetovat</string>
     <string name="menu_cleanup">Vyčistit</string>
     <string name="setting_options">Nastavení</string>
@@ -71,14 +69,10 @@
     <string name="setting_show_resolved">Zobrazit přeložené názvy domén</string>
     <string name="setting_block_domains">Povolit soubory hosts</string>
     <string name="setting_rcode">Hostitelé blokující odpověď: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Ověřit na: %s</string>
     <string name="setting_ttl">Minimální DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Použít SOCKS5 proxy</string>
     <string name="setting_socks5_addr">SOCKS5 adresa: %s</string>
-    <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">SOCKS5 uživatelské jméno: %s</string>
     <string name="setting_socks5_password">SOCKS5 heslo: %s</string>
     <string name="setting_pcap_record_size">Velikost záznamu PCAP: %s B</string>
@@ -159,10 +153,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_start_forward">Začít přesměrovávat z %1$s port %2$d na %3$s:%4$d z \'%5$s\'?</string>
     <string name="msg_stop_forward">Přestat přesměrovávat %1$s port %2$d?</string>
     <string name="msg_log_logcat">Varování: Blokování zakázáno z důvodu ADB záznamů.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Přidat</string>
     <string name="menu_delete">Odstranit</string>
     <string name="setting_forwarding">Přesměrování portů</string>
@@ -216,8 +206,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="title_block_other">Blokovat mobilní data</string>
     <string name="title_nobody">nikdo</string>
     <string name="title_dontask">Již se neptat</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopírovat</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Zakázat přístup k internetu pro tuto aplikaci</string>
@@ -238,7 +226,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="confirm_ipinfo">Tímto bude kontaktována externí služba ipinfo.io a budou s ní sdíleny údaje o kontaktovaných IP adresách.</string>
     <string name="external_servers">Získat automaticky e-mail od vývojáře?</string>
     <string name="confirm_google_info">Tato aplikace pro vás může automaticky získat e-mail vývojáře aplikací z obchodu Google Play.</string>
-    <string name="ok">OK</string>
     <string name="yes">Ano</string>
     <string name="no">Ne</string>
     <string name="menu_csv">Exportovat jako CSV</string>
@@ -271,11 +258,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="request_data">Vyžádat data</string>
     <string name="request_deletion">Žádost o odstranění</string>
     <string name="contact_developer">Vývojář</string>
-    <string name="contact_playstore">Google</string>
-    <string name="contact_officials">EU Officials</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">GDPR Subject Access Request</string>
     <string name="body_request_data"><![CDATA[Komu:\n
 \n
 \n
@@ -343,7 +325,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="back">Zpět</string>
     <string name="forever_free">Navždy zdarma</string>
     <string name="your_privacy">Vaše soukromí</string>
-    <string name="tracker_hostlist">User-Defined Hosts</string>
     <string name="unblocked">Neblokované</string>
     <string name="enable">Povolit</string>
     <string name="internet_blocked">Přístup k síti zablokován</string>
