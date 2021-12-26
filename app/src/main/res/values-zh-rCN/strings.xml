@@ -358,4 +358,5 @@
     <string name="browsers_not_supported">浏览器不受支持 ⚠️</string>
     <string name="browsers_not_supported_explanation">这似乎是一个浏览器应用程序。\n\nTrackerControl 不支持在浏览器中阻止跟踪器。 相反，请使用集成了反跟踪功能的浏览器来更好地阻止跟踪。\n\n例如：Mozilla Fennec、Bromite</string>
     <string name="static_analysis">检测应用代码中的跟踪器</string>
+    <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
 </resources>
