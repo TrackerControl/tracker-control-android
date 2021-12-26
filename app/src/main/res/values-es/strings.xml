@@ -157,10 +157,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_start_forward">¿Iniciar redirección desde el puerto %1$s, %2$d hacia %3$s:%4$d de \'%5$s\'?</string>
     <string name="msg_stop_forward">¿Detener redirección de %1$s puerto %2$d?</string>
     <string name="msg_log_logcat">Advertencia: Bloqueo deshabilitado debido al registro de ADB.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Añadir</string>
     <string name="menu_delete">Eliminar</string>
     <string name="setting_forwarding">Redirección de puertos</string>
@@ -234,7 +230,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="confirm_google_info">Esta aplicación puede obtener automáticamente el correo electrónico del desarrollador de la aplicación desde Google Play Store por usted.</string>
     <string name="ok">Aceptar</string>
     <string name="yes">Sí</string>
-    <string name="no">No</string>
     <string name="menu_csv">Exportar como CSV</string>
     <string name="exporting">Exportando…</string>
     <string name="share_csv">Compartir</string>
@@ -265,10 +260,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="request_data">Solicitar información</string>
     <string name="request_deletion">Solicitar eliminación</string>
     <string name="contact_developer">Desarrollador</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Oficiales de la UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Solicitud de acceso al tema del PIBR</string>
     <string name="body_request_data"><![CDATA[A quien corresponda:\n
 \n
@@ -319,7 +311,6 @@ Atentamente,\n\n]]></string>
     <string name="tracker_content">Esencial</string>
     <string name="tracker_cryptomining">Criptominería</string>
     <string name="tracker_fingerprinting">Huella del dispositivo</string>
-    <string name="tracker_social">Social</string>
     <string name="tracker_uncategorised">Sin categoría</string>
     <string name="setting_strict_blocking">Bloqueo estricto</string>
     <string name="summary_strict_blocking">Para apps recién instaladas, bloquea tantos datos compartidos con empresas como sea posible. Más apps se romperán.</string>
