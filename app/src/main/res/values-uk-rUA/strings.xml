@@ -43,9 +43,6 @@
     <string name="setting_tethering">Дозволити режим модема</string>
     <string name="setting_lan">Дозволити доступ до LAN</string>
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
     <string name="setting_hosts">Імпортувати host-файл</string>
@@ -53,8 +50,6 @@
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
     <string name="tracker_fingerprinting">Цифрові відбитки</string>
     <string name="tracker_social">Соціальні мережі</string>
