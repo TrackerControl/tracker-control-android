@@ -69,9 +69,6 @@
     <string name="setting_show_resolved">Vis oppklarte domenenavn</string>
     <string name="setting_block_domains">Aktiver hosts-fil</string>
     <string name="setting_rcode">Svar ved hosts-fil blokkering: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Valider på: %s</string>
     <string name="setting_ttl">Minste DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Bruk SOCKS5-proxy</string>
@@ -156,10 +153,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="msg_start_forward">Start videresending fra %1$s port %2$d til %3$s:%4$d av \'%5$s\'?</string>
     <string name="msg_stop_forward">Vil du avslutte videresending av %1$s port %2$d?</string>
     <string name="msg_log_logcat">Advarsel: Blokkering deaktivert på grunn av ADB-logging.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Legg til</string>
     <string name="menu_delete">Slett</string>
     <string name="setting_forwarding">Port-viderekobling</string>
@@ -213,8 +206,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="title_block_other">Blokker mobilnett</string>
     <string name="title_nobody">ingen</string>
     <string name="title_dontask">Ikke spør igjen</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopier</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Deaktiver Internett-tilgang for denne applikasjonen</string>
@@ -264,10 +255,7 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="request_data">Etterspør data</string>
     <string name="request_deletion">Be om sletting</string>
     <string name="contact_developer">Utvikler</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">EU-representanter</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Forespørsel om GDPR-datatilgang</string>
     <string name="body_request_data"><![CDATA[Til de det måtte gjelde:\n
 \n
