@@ -9,9 +9,9 @@ TrackerControl允许用户监控和控制移动应用程序中广泛的、持续
 
 该应用程序还旨在教育您在数据保护法下的权利，如欧盟一般数据保护条例(GDPR)。
 
-实际上，TrackerControl使用了Android的VPN功能分析应用程序的网络通信，这一切都是在<i>安卓设备上本地完成的</i> 这是通过一个本地VPN服务器来实现的，以便通过TrackerControl实现网络流量分析。
+实际上，TrackerControl使用了Android的VPN功能分析应用程序的网络通信，这一切都是在<i>安卓设备上本地完成的</i> 这是通过一个本地VPN服务器来实现的，以便通过TrackerControl实现网络流量分析。 This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-不需要 root 权限，不支持其他VPN或私有DNS。 没有使用外部 VPN 服务器来保持您的数据安全！ TrackerControl 甚至保护您不受 <i>DNS cloaking</i>的影响，这是一种在网站和应用中隐藏追踪器的流行技术。
+不需要 root 权限，不支持其他VPN或私有DNS。 没有使用外部 VPN 服务器来保持您的数据安全！ TrackerControl 甚至保护您不受 <i>DNS cloaking</i>的影响，这是一种在网站和应用中隐藏追踪器的流行技术。 No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
 
 TrackerControl 将永远是免费和开源的，作为一个研究项目。
 
