@@ -5,9 +5,9 @@ Um Tracking zu erkennen, kombiniert TrackerControl die Disconnect-Blockliste, di
 Dieser Ansatz
 - enttarnt die Unternehmen, die hinter dem Tracking stehen,
 - erlaubt es, das Tracking selektiv zu blockieren, und
-- legt die Zwecke des Trackings, wie z.
+- legt die Zwecke des Trackings, wie z. B. Analytik oder Werbung, offen.
 
-Die App zielt auch darauf ab, Sie über Ihre Rechte nach dem Datenschutzgesetz, wie z.B.
+Die App zielt auch darauf ab, Sie über Ihre Rechte nach dem Datenschutzgesetz, wie z.B. der Datenschutz-Grundverordnung (DSGVO), aufzuklären.
 
 TrackerControl nutzt die VPN-Funktionalität von Android, um die Netzwerkkommunikation von Apps <i>lokal auf dem Android-Gerät</i> zu analysieren. Dies wird durch einen lokalen VPN-Server erreicht, um die Analyse des Netzwerkverkehrs durch TrackerControl zu ermöglichen.
 
