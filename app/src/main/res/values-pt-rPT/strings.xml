@@ -60,9 +60,6 @@
     <string name="setting_show_resolved">Mostrar nomes de domínio resolvidos</string>
     <string name="setting_block_domains">Habilitar arquivo de anfitriões</string>
     <string name="setting_rcode">Anfitriões que bloqueiam a resposta: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">Validar em: %s</string>
     <string name="setting_ttl">Mínimo DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Use o proxy SOCKS5</string>
@@ -179,14 +176,12 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_block_other">Bloco móvel</string>
     <string name="title_nobody">ninguém</string>
     <string name="title_dontask">Não peça novamente</string>
-    <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Porto %1$d</string>
     <string name="title_log_copy">Cópia</string>
     <!-- App Overview -->
     <string name="tracked_app_name">Nome da Aplicação</string>
     <string name="external_servers">Receber e-mail do desenvolvedor automaticamente?</string>
     <string name="confirm_google_info">Este aplicativo pode receber automaticamente o e-mail do desenvolvedor do aplicativo na Loja do Google Play para você.</string>
-    <string name="ok">OK</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="menu_csv">Exportação como CSV</string>
@@ -218,10 +213,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="request_data">Solicitar dados</string>
     <string name="request_deletion">Solicitar exclusão</string>
     <string name="contact_developer">Desenvolvedor</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Oficiais da UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Pedido de Acesso ao Assunto GDPR</string>
     <string name="body_request_data"><![CDATA[Para quem isso pode preocupar:\n
 \n
