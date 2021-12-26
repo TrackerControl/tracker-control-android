@@ -2,9 +2,9 @@
 
 [![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-**Download directly [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or a feature-reduced version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).**
+**Download directly [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or a feature-reduced version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).**
 
-*If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/OxfordHCC/tracker-control-android/issues), or contact Konrad directly (<hello@trackercontrol.org>)!*
+*If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues), or contact Konrad directly (<hello@trackercontrol.org>)!*
 
 TrackerControl is an Android app that allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
@@ -39,7 +39,7 @@ TrackerControl will always be free and open source, being a research project.
 
 There are multiple versions of TrackerControl.
 
-If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
+If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
 If you're interested in *analysing* tracking and generating factual evidence of it (e.g. for research), then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The analysis results from this version will usually be more accurate.
 
@@ -47,9 +47,9 @@ If you're interested in *analysing* tracking and generating factual evidence of 
 
 There are many ways in which you can support TrackerControl. Here are a few ideas:
 
-1. Join one of the [online communities](https://github.com/OxfordHCC/tracker-control-android#communities) and share your ideas on make the app better.
+1. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
 2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
-3. Help [translate](https://github.com/OxfordHCC/tracker-control-android#translation) the app into your language.
+3. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
 4. Tell your friends how to protect their privacy with TrackerControl.
 5. Leave a star on GitHub.
 
@@ -88,7 +88,7 @@ unrooted Android devices.
 Only the meta data about network communications is logged, and displayed
 to the users.
 
-Download [here](https://github.com/OxfordHCC/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
+Download [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
 
 ## Privacy notice
 
