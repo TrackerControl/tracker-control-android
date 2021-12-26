@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="setting_lan">LAN 접근 허용</string>
-    <string name="setting_reload_onconnectivity">연결 변경 시마다 새로 고침</string>
-    <string name="setting_advanced_options">고급 설정</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
