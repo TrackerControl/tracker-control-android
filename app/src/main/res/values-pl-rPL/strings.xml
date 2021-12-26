@@ -71,10 +71,6 @@
     <string name="setting_show_resolved">Pokaż rozwiązane nazwy domen</string>
     <string name="setting_block_domains">Włącz plik hostów</string>
     <string name="setting_rcode">Gospodarze blokujący reakcję: %s</string>
-    <string name="setting_vpn4">VPN IPv4: %s</string>
-    <string name="setting_vpn6">VPN IPv6: %s</string>
-    <string name="setting_dns">VPN DNS: %s</string>
-    <string name="setting_validate">Validate at: %s</string>
     <string name="setting_ttl">Minimalne DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Użyj proxy SOCKS5</string>
     <string name="setting_socks5_addr">Adres SOCKS5: %s</string>
@@ -159,10 +155,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_start_forward">Rozpocznij przekazywanie z portu %1$s %2$d do %3$s:%4$d z \'%5$s\'?</string>
     <string name="msg_stop_forward">Zatrzymaj przekierowanie z %1$s port %2$d?</string>
     <string name="msg_log_logcat">Ostrzeżenie: Blokowanie wyłączone ze względu na logowanie ADB.</string>
-    <string-array name="protocolNames">
-        <item>UDP</item>
-        <item>TCP</item>
-    </string-array>
     <string name="menu_add">Dodaj</string>
     <string name="menu_delete">Usuń</string>
     <string name="setting_forwarding">Przekierowanie portów</string>
@@ -216,8 +208,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="title_block_other">Blokuj telefon</string>
     <string name="title_nobody">nikt</string>
     <string name="title_dontask">Nie pytaj ponownie</string>
-    <string name="title_log_whois">Whois %1$s</string>
-    <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Kopia</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Wyłącz dostęp do Internetu dla tej aplikacji</string>
@@ -226,12 +216,10 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="confirm_ipinfo">Skontaktuje się z zewnętrznym serwisem ipinfo.io i udostępnia im dane o kontaktach z adresami IP.</string>
     <string name="external_servers">Otrzymujesz automatycznie e-mail od dewelopera?</string>
     <string name="confirm_google_info">Ta aplikacja może automatycznie uzyskać wiadomość e-mail od twórcy aplikacji z Google Play Store za Ciebie.</string>
-    <string name="ok">OK</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="menu_csv">Eksport jako CSV</string>
     <string name="exporting">Eksportowanie..</string>
-    <string name="share_csv">Share</string>
     <string name="export_failed">Eksport nie powiódł się</string>
     <string name="exported">Eksportuj do pamięci</string>
     <!-- App Details -->
@@ -259,10 +247,7 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="request_data">Dane na żądanie</string>
     <string name="request_deletion">Wniosek o skreślenie</string>
     <string name="contact_developer">Deweloper</string>
-    <string name="contact_playstore">Google</string>
     <string name="contact_officials">Urzędnicy UE</string>
-    <string name="google_dpo_mail">data-protection-office@google.com</string>
-    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">PKBR Przedmiot wniosku o dostęp</string>
     <string name="body_request_data"><![CDATA[Do kogo może to dotyczyć:\n
 \n
