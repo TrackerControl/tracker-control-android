@@ -1,1 +1,1 @@
-TrackerControl pozwala monitorować i kontrolować gromadzenie ukrytych danych w aplikacjach.
+TrackerControl pomaga kontrolować zbieranie danych przez aplikacje.
