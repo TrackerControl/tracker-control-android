@@ -362,4 +362,5 @@ Sincerely,\n\n]]></string>
     <string name="browsers_not_supported">Browsers worden niet ondersteund op ⚠️</string>
     <string name="browsers_not_supported_explanation">Dit lijkt een browser-app te zijn.\n\nHet blokkeren van trackers in browsers wordt niet ondersteund door TrackerControl. Gebruik in plaats daarvan een browser met geïntegreerde anti-trackingfunctionaliteit voor een betere blokkering van tracking.\n\nBijvoorbeeld: Firefox Focus, Bromite</string>
     <string name="static_analysis">Trackers detecteren in app code</string>
+    <string name="failed_loading_cached_analysis">Het laden van tracker resultaten in de cache is mislukt. Graag dit melden aan de ontwikkelaar op hello@trackercontrol.org</string>
 </resources>
