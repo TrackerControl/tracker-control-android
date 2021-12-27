@@ -357,4 +357,5 @@ Tisztelettel,\n\n]]></string>
     <string name="browsers_not_supported">A böngészők nem támogatottak ⚠️</string>
     <string name="browsers_not_supported_explanation">Úgy tűnik, hogy ez egy böngészőalkalmazás.\n\nA böngészők követő blokkolását nem támogatja a TrackerControl. Használjon olyan böngészőt, amely nyomkövetés elleni védelemmel rendelkezik, hogy blokkolja a követést.\n\nPélda: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">A nyomkövetők észlelése az alkalmazáskódban</string>
+    <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen.</string>
 </resources>
