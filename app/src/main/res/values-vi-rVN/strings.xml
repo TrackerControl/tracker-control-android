@@ -213,6 +213,7 @@
     <string name="title_log_port">Cổng %1$d</string>
     <string name="title_log_copy">Sao chép</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Tắt quyền truy cập internet cho ứng dụng này</string>
     <string name="tracked_app_name">Tên ứng dụng</string>
     <plurals name="n_companies_found_week">
         <item quantity="other">đã liên hệ với %d công ty trong tuần trước</item>
@@ -220,6 +221,8 @@
     <plurals name="n_companies_found">
         <item quantity="other">đã liên hệ với %d công ty trong tất cả thời gian</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Lấy thông tin tổ chức?</string>
+    <string name="confirm_ipinfo">Việc này sẽ liên hệ với dịch vụ ngoài ipinfo.io, và chia sẻ dữ liệu về các địa chỉ IP đã liên hệ với họ.</string>
     <string name="external_servers">Tự động lấy email của nhà phát triển?</string>
     <string name="confirm_google_info">Ứng dụng này có thể tự động lấy email của nhà phát triển ứng dụng từ CH Play cho bạn.</string>
     <string name="ok">OK</string>
@@ -229,6 +232,7 @@
     <string name="exporting">Đang xuất..</string>
     <string name="share_csv">Chia sẻ</string>
     <string name="export_failed">Xuất thất bại</string>
+    <string name="exported">Đã xuất ra bộ nhớ!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Chi tiết</string>
     <string name="tab_trackers">Trình theo dõi</string>
@@ -306,6 +310,7 @@
     <string name="none">Không có</string>
     <string name="trackers_static">Thư viện trình theo dõi</string>
     <string name="trackers_static_explanation">TrackerControl phát hiện việc theo dõi trong mã (\'các thư viện\') và lưu lượng mạng của các ứng dụng.\n\nViệc theo dõi được phát hiện trong lưu lượng mạng có thể được TrackerControl chặn.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl phát hiện việc theo dõi trong mã (\'thư viện\') và lưu lượng mạng của các ứng dụng.</string>
     <string name="blocked">ĐÃ CHẶN</string>
     <string name="allowed">ĐÃ CHO PHÉP</string>
     <string name="setting_domain_based_blocked">Chặn dựa trên miền (đang được phát triển)</string>
