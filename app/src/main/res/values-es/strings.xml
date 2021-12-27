@@ -360,6 +360,7 @@ Atentamente,\n\n]]></string>
     <string name="untap_unblock">Tip: Podés desbloquear entradas individuales tocándolas.</string>
     <string name="uncertain_entry">Las entradas marcadas con \'*\' pueden ser inexactas, debido a las limitaciones de Android. Esto suele significar que la misma compañía utiliza la misma dirección IP en diferentes dominios, pero también puede significar que diferentes empresas están detrás de la misma dirección IP (por ej. si utilizan una Red de entrega de contenidos).</string>
     <string name="browsers_not_supported">Navegadores no soportados ⚠️</string>
-    <string name="browsers_not_supported_explanation">Esta app parece ser un navegador.\n\nEl bloqueo de rastreadores en navegadores no es compatible con TrackerControl. En su lugar, utilice un navegador con anti-rastreo integrado.\n\nPor ejemplo: Fennec F-Droid, Bromite</string>
-    <string name="static_analysis">Detectar rastreadores en código de app</string>
+    <string name="browsers_not_supported_explanation">Esta app parece ser un navegador.\n\nEl bloqueo de rastreadores en navegadores no es compatible con TrackerControl. En su lugar, utilizá un navegador con anti-rastreo integrado.\n\nPor ejemplo: Fennec F-Droid, Bromite</string>
+    <string name="static_analysis">Detectar rastreadores en código de apps</string>
+    <string name="failed_loading_cached_analysis">Error al cargar resultados de rastreadores en caché. Por favor, reportá esto al desarrollador en hello@trackercontrol.org</string>
 </resources>
