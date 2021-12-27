@@ -1,4 +1,4 @@
-TrackerControl stelt gebruikers in staat om de wijdverbreide, actieve, verborgen gegevensverzameling in mobiele apps te monitoren en te beheren over gebruikersgedrag ('tracking').
+Met TrackerControl kunnen gebruikers de wijdverbreide, voortdurende, verborgen gegevensverzameling in mobiele apps over gebruikersgedrag ('tracking') bewaken en controleren.
 
 Om tracking te detecteren, combineert TrackerControl de kracht van de Disconnect-blokkadelijst, die door Firefox wordt gebruikt, en onze eigen blokkadelijst, die is gemaakt op basis van de analyse van <i>~2 000 000</i> apps! Bovendien ondersteunt TrackerControl aangepaste blokkadelijsten.
 

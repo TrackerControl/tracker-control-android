@@ -213,6 +213,7 @@
     <string name="title_log_port">Cổng %1$d</string>
     <string name="title_log_copy">Sao chép</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Tắt quyền truy cập internet cho ứng dụng này</string>
     <string name="tracked_app_name">Tên ứng dụng</string>
     <plurals name="n_companies_found_week">
         <item quantity="other">đã liên hệ với %d công ty trong tuần trước</item>
@@ -220,6 +221,8 @@
     <plurals name="n_companies_found">
         <item quantity="other">đã liên hệ với %d công ty trong tất cả thời gian</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Lấy thông tin tổ chức?</string>
+    <string name="confirm_ipinfo">Việc này sẽ liên hệ với dịch vụ ngoài ipinfo.io, và chia sẻ dữ liệu về các địa chỉ IP đã liên hệ với họ.</string>
     <string name="external_servers">Tự động lấy email của nhà phát triển?</string>
     <string name="confirm_google_info">Ứng dụng này có thể tự động lấy email của nhà phát triển ứng dụng từ CH Play cho bạn.</string>
     <string name="ok">OK</string>
@@ -229,6 +232,7 @@
     <string name="exporting">Đang xuất..</string>
     <string name="share_csv">Chia sẻ</string>
     <string name="export_failed">Xuất thất bại</string>
+    <string name="exported">Đã xuất ra bộ nhớ!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Chi tiết</string>
     <string name="tab_trackers">Trình theo dõi</string>
@@ -306,8 +310,15 @@
     <string name="none">Không có</string>
     <string name="trackers_static">Thư viện trình theo dõi</string>
     <string name="trackers_static_explanation">TrackerControl phát hiện việc theo dõi trong mã (\'các thư viện\') và lưu lượng mạng của các ứng dụng.\n\nViệc theo dõi được phát hiện trong lưu lượng mạng có thể được TrackerControl chặn.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl phát hiện việc theo dõi trong mã (\'thư viện\') và lưu lượng mạng của các ứng dụng.</string>
     <string name="blocked">ĐÃ CHẶN</string>
     <string name="allowed">ĐÃ CHO PHÉP</string>
     <string name="setting_domain_based_blocked">Chặn dựa trên miền (đang được phát triển)</string>
     <string name="summary_domain_based_blocking">Cho phép chặn một cách chi tiết hơn. Vẫn đang được phát triển.</string>
+    <string name="untap_unblock">Mẹo: Bạn có thể bỏ chặn từng mục riêng bằng cách nhấn vào chúng.</string>
+    <string name="uncertain_entry">Các mục có dấu \'*\' có thể không chính xác do giới hạn của Android. Việc này thường có nghĩa là một công ty sử dụng cùng một địa chỉ IP dưới nhiều miền khác nhau, nhưng cũng có thể có nghĩa là nhiều công ty khác nhau đứng sau cùng một địa chỉ IP (vd: nếu họ sử dụng Content Delivery Network).</string>
+    <string name="browsers_not_supported">Trình duyệt không được hỗ trợ ⚠️</string>
+    <string name="browsers_not_supported_explanation">Cái này có vẻ là ứng dụng trình duyệt.\n\nViệc chặn trình theo dõi trong trình duyệt không được TrackerControl hỗ trợ. Thay vào đó, hãy sử dụng trình duyệt có chức năng chống theo dõi được tích hợp để chặn việc theo dõi tốt hơn.\n\nVí dụ: Mozilla Fennec, Bromite</string>
+    <string name="static_analysis">Phát hiện trình theo dõi trong mã ứng dụng</string>
+    <string name="failed_loading_cached_analysis">Tải kết quả trình theo dõi trong bộ nhớ đệm thất bại. Vui lòng báo cáo điều này đến nhà phát triển tại hello@trackercontrol.org</string>
 </resources>

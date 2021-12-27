@@ -361,4 +361,5 @@ Vennlig hilsen,\n\n]]></string>
     <string name="browsers_not_supported">Nettlesere støttes ikke ⚠️</string>
     <string name="browsers_not_supported_explanation">Dette ser ut til å være en nettleserapp.\n\nBlokkering av sporere i nettlesere er ikke støttet av TrackerControl. Bruk heller en nettleser med integrert anti-sporingsfunksjonalitet for å få bedre blokkering av sporing.\n\nFor eksempel: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Oppdag sporere i app-kode</string>
+    <string name="failed_loading_cached_analysis">Lasting av bufret sporer-resultat mislyktes. Vennligst rapporter dette til utvikleren på hello@trackercontrol.org</string>
 </resources>

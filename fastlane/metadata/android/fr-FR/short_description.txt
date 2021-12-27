@@ -1,1 +1,1 @@
-TrackerControl permet de surveiller et de contrôler la collecte cachée des données personnelles dans vos applications.
+TrackerControl permet de contrôler la collecte cachée des données personnelles.

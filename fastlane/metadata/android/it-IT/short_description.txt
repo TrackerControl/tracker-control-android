@@ -1,1 +1,1 @@
-TrackerControl consente di monitorare e controllare la raccolta di dati personali nelle applicazioni.
+TrackerControl aiuta a controllare la raccolta dati delle app.

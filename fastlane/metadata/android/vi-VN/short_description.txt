@@ -1,1 +1,1 @@
-TrackerControl cho phép bạn giám sát và kiểm soát việc thu thập dữ liệu không nhìn thấy được trong các ứng dụng.
+TrackerControl giúp kiểm soát luồng dữ liệu của ứng dụng.

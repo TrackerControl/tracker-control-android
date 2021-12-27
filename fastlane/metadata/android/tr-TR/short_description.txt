@@ -1,1 +1,1 @@
-TrackerControl, uygulamalarda gizli veri toplamanın izlenmesini ve kontrol edilmesini sağlar.
+TrackerControl, uygulamaların veri akışlarını kontrol etmeye yardımcı olur.
