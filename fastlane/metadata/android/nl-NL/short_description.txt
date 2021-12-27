@@ -1,1 +1,1 @@
-TrackerControl maakt het mogelijk om verborgen gegevensverzameling in apps te bewaken en te controleren.
+TrackerControl maakt het mogelijk om gegevensverzameling in apps te controleren.
