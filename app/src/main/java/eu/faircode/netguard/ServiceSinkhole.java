@@ -107,6 +107,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -854,16 +855,28 @@ public class ServiceSinkhole extends VpnService {
 
             Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
             int uncertain = (lookup != null
-                    && lookup.getCount() > 1
-                    && Util.isPlayStoreInstall()) ? 1 : 0; // TODO: Currently, only in Play Store version
+                    && lookup.getCount() > 1) ? 1 : 0;
 
             // Loop until we find tracker or reach last entry
+            Tracker foundTracker = NO_TRACKER;
             if (lookup != null) {
                 while (lookup.moveToNext()) {
                     dname = lookup.getString(lookup.getColumnIndex("qname"));
                     if (dname != null)  {
                         originalDname = dname;
-                        if (TrackerList.findTracker(dname) != null)
+                        Tracker t = TrackerList.findTracker(dname);
+
+                        if (foundTracker == NO_TRACKER
+                                && t != null) // if we found a tracker, then store for later
+                            foundTracker = t;
+
+                        if (foundTracker != NO_TRACKER
+                                && (t == null // could have uncertain tracker company if no company found for an observed domain
+                                || !Objects.equals(foundTracker.name, t.name)) // we have uncertain tracker company
+                                && uncertain == 1)
+                            uncertain = 2;
+
+                        if (t != null)
                             isTracker = true;
                         else { // DNS uncloaking
                             String aname = lookup.getString(lookup.getColumnIndex("aname"));

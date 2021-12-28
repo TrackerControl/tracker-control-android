@@ -193,7 +193,7 @@ public class TrackerList {
             do {
                 String host = cursor.getString(cursor.getColumnIndex("daddr"));
                 long lastSeen = cursor.getLong(cursor.getColumnIndex("time"));
-                boolean uncertain = cursor.getInt(cursor.getColumnIndex("uncertain")) == 1;
+                boolean uncertain = cursor.getInt(cursor.getColumnIndex("uncertain")) == 2;
 
                 Tracker tracker = findTracker(host);
                 if (tracker == null)
