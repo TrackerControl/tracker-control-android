@@ -311,7 +311,7 @@ public class TrackerList {
             /* Read domain list:
              *
              * File is a reversed string, because some anti-virus scanners found the list suspicious
-             * More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
+             * More here: https://github.com/TrackerControl/tracker-control-android/issues/30
              */
             InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json");
             int size = is.available();

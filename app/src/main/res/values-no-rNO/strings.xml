@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner (\"sporing\").</string>
-    <string name="app_copyright">Opphavsrett \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Institutt for informasjonsteknologi, Universitetet i Oxford)\n\nTrackerControl er basert på NetGuard, utviklet av Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Opphavsrett \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Institutt for informasjonsteknologi, Universitetet i Oxford)\n\nTrackerControl er basert på NetGuard, utviklet av Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
     <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
     <string name="channel_foreground">Kjørende tjenester</string>
     <string name="channel_notify">Generelle varsler</string>
     <string name="channel_access">Få tilgang til varsler</string>

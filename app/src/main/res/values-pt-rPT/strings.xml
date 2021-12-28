@@ -2,7 +2,7 @@
 <resources>
     <string name="app_android">TrackerControl requer Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa muitos erros, que podem resultar na remoção do TrackerControl da Google Play Store, portanto, TrackerControl não é suportado enquanto o Xposed está instalado</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Política de privacidade</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Política de Cookie</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de privacidade</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de Cookie</a></string>
     <string name="channel_foreground">Serviços em execução</string>
     <string name="channel_notify">Notificações gerais</string>
     <string name="channel_access">Notificações de acesso</string>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl は、隠れて行われる広範囲なデータ収集を監視・制御するためのアプリです。</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl は、Marcel Bokhorst (M66B) が開発した NetGuard に基づいています。</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl は、Marcel Bokhorst (M66B) が開発した NetGuard に基づいています。</string>
     <string name="app_android">TrackerControl は Android 5.1 以降を対象としています</string>
     <string name="app_xposed">Xposed は TrackerControl のクラシックを引き起こし、TrackerControl が Google Play ストアから削除される原因となる可能性があるため Xposed がインストールされたデバイスは、TrackerControl のサポート対象外となります。</string>
     <string name="app_eula">このアプリの使用はご自身の責任において行われます。いかなるアプリも追跡に対して 100% 保護することはできません。</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">プライバシーポリシー</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie ポリシー</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">プライバシーポリシー</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie ポリシー</a></string>
     <string name="channel_foreground">実行中のサービス</string>
     <string name="channel_notify">全般通知</string>
     <string name="channel_access">アクセス通知</string>

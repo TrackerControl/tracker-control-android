@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışı (\'izleme\') hakkında yaygın, devam eden, gizli veri toplamayı izlemesini ve kontrol etmesini sağlar.</string>
-    <string name="app_copyright">Telif Hakkı \u00A9 2019–2020 Konrad Kollnig (İnsan Merkezli Bilgi İşlem, Bilgisayar Bilimleri Bölümü, Oxford Üniversitesi)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
+    <string name="app_copyright">Telif Hakkı \u00A9 2019–2022 Konrad Kollnig (İnsan Merkezli Bilgi İşlem, Bilgisayar Bilimleri Bölümü, Oxford Üniversitesi)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
     <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
     <string name="app_xposed">Xposed, TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilecek çok fazla çökmeye neden olur, bu nedenle Xposed kuruluyken TrackerControl desteklenmez</string>
     <string name="app_eula">Bu uygulamanın kullanımı kendi sorumluluğunuzdadır. Hiçbir uygulama izlemeye karşı %100 koruma sağlayamaz.</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Gizlilik Politikası</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Çerez Politikası</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Gizlilik Politikası</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Çerez Politikası</a></string>
     <string name="channel_foreground">Çalışan hizmetler</string>
     <string name="channel_notify">Genel bildirimler</string>
     <string name="channel_access">Bildirimlere eriş</string>
