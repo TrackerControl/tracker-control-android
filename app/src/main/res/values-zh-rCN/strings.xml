@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
-    <string name="app_copyright">版权\u00A92019-2020 Konrad Kollnig (牛津大学计算机科学系以人为本的计算)\n\nTrackerControl 基于NetGuard，由Marcel Bokhorst (M66B) 开发。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_eula">使用本应用程序的风险由您自行承担。没有应用程序可以提供对网络跟踪100%的保护。</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">隐私政策</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie 政策</a></string>
     <string name="channel_foreground">正在运行的服务</string>
     <string name="channel_notify">一般通知</string>
     <string name="channel_access">读取通知</string>
