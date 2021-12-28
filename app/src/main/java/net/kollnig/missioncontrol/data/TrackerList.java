@@ -52,6 +52,8 @@ import eu.faircode.netguard.ServiceSinkhole;
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
 
+    private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
+
     private static TrackerList instance;
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     private static boolean domainBasedBlocking;
@@ -293,6 +295,10 @@ public class TrackerList {
                 JSONArray domains = jsonCompany.getJSONArray("doms");
                 for (int j = 0; j < domains.length(); j++) {
                     String dom = domains.getString(j);
+
+                    if (ignoreDomains.contains(dom))
+                        continue;
+
                     addTrackerDomain(tracker, dom);
                 }
             }
@@ -345,6 +351,9 @@ public class TrackerList {
                         JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
                         for (int j = 0; j < urls.length(); j++) {
                             String dom = urls.getString(j);
+
+                            if (ignoreDomains.contains(dom))
+                                continue;
 
                             addTrackerDomain(tracker, dom);
                         }
