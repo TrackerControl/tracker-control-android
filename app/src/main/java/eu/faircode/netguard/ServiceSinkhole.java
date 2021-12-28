@@ -909,6 +909,11 @@ public class ServiceSinkhole extends VpnService {
             if (uncertain == 1) // multiple dnames correspond to same IP address
                 Log.d(TAG, "Found uncertain entry: " + dname);
 
+            // Fallback: Check for IP-based tracking
+            if (dname == null
+                    && TrackerList.trackingIps.contains(packet.daddr))
+                isTracker = true;
+
             // Traffic log
             if (log)
                 dh.insertLog(packet, dname, connection, interactive);
@@ -2120,6 +2125,11 @@ public class ServiceSinkhole extends VpnService {
                 ipToHost.put(daddr, new Expiring<>(dname, time + ttl));
                 ipToTracker.put(daddr, new Expiring<>(tracker, time + ttl));
             }
+
+            // If we can't resolve domain, use IP-based blocklist as fallback
+            if (dname == null)
+                if (TrackerList.trackingIps.contains(daddr))
+                    tracker = TrackerList.findTracker(daddr);
         }
 
         // Log or block?

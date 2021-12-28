@@ -155,9 +155,10 @@ that is distributed with the Firefox browser.
 
 *sniproxy*: TrackerControl uses code that has been derived from an early version of [sniproxy](https://github.com/dlundquist/sniproxy) to parse the Server Name Indication (SNI) in TLS headers in accordance with the associated [IETF standard](https://datatracker.ietf.org/doc/html/rfc3546).
 
+*Peter Lowe's Blocklist*: TrackerControl uses the IP blocklist provided by [Peter Lowe](https://pgl.yoyo.org/adservers/iplist.php). Note that this bans anyone from making money from this, see the [license](https://pgl.yoyo.org/license/).
+
 ## License
-This project is licensed under
-[GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
+Except where indicated otherwise, this project is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
 
 
 ## Citation

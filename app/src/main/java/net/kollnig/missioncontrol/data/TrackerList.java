@@ -32,8 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,12 +59,12 @@ public class TrackerList {
     private static TrackerList instance;
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     private static boolean domainBasedBlocking;
+    public static Set<String> trackingIps = new HashSet<>();
 
     private final DatabaseHelper databaseHelper;
 
     private TrackerList(Context c) {
         databaseHelper = DatabaseHelper.getInstance(c);
-
         loadTrackers(c);
     }
 
@@ -72,6 +74,22 @@ public class TrackerList {
 
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+        loadIpBlocklist(c);
+    }
+
+    private void loadIpBlocklist(Context c) {
+        try {
+            InputStream is = c.getAssets().open("ip_blocklist.txt");
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ( (line = bfr.readLine()) != null) {
+                if (line.startsWith("#"))
+                    continue;
+                trackingIps.add(line);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Loading IP blocklist failed.. ", e);
+        }
     }
 
     public static TrackerList getInstance(Context c) {
@@ -113,6 +131,14 @@ public class TrackerList {
                 t = new Tracker(hostname, UNCATEGORISED);
                 hostnameToTracker.put(hostname, t);
                 return t;
+            }
+
+        if (t == null
+                && trackingIps.contains(hostname))
+            if (domainBasedBlocking)
+                return hostlistTracker;
+            else {
+                return new Tracker(hostname, UNCATEGORISED);
             }
 
         return t;
