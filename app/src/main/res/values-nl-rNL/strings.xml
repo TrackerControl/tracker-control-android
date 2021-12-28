@@ -125,8 +125,8 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_error">Een onverwachte fout: \'%s\'</string>
     <string name="msg_start_failed">Android weigert nu de VPN-service te starten. Dit komt waarschijnlijk door een bug in uw Android-versie.</string>
     <string name="msg_try">Probeer TrackerControl</string>
-    <string name="msg_doze">Voor consistente resultaten moeten de Android batterijoptimalisaties worden uitgeschakeld voor TrackerControl.
-\n\nIn het volgende dialoogvenster \"Alle apps\" bovenaan, tik op TrackerControl in de lijst en selecteer en bevestig \"Niet optimaliseren\".</string>
+    <string name="msg_doze">Voor consistente resultaten moet de Android batterij-optimalisatie worden uitgeschakeld voor TrackerControl.
+\n\nIn het volgende dialoogvenster, kies \"Alle apps\" bovenaan, tik op TrackerControl in de lijst en selecteer en bevestig \"Niet optimaliseren\".</string>
     <string name="msg_datasaving">Voor consistente resultaten moeten de opties voor het opslaan van Android-gegevens voor TrackerControl worden uitgeschakeld.
 \n\nIn het volgende dialoogvenster schakelt u de opties \"Achtergrondgegevens\" en \"Onbeperkt gebruik van gegevens\" in</string>
     <string name="msg_filter">Using filtering will cause Android to attribute data and power usage to TrackerControl - Android assumes the data and power are being used by TrackerControl, rather than the original apps</string>
