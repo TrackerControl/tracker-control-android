@@ -98,32 +98,32 @@
     <string name="summary_tethering">Afhankelijk van de Android-versie, kan tethering al of niet werken. Getetherd verkeer kan niet worden gefilterd.</string>
     <string name="summary_subnet">Subnet-routering toestaan: dit kan het bellen via Wi-Fi mogelijk toelaten, maar triggert mogelijk bugs in Android en kan het batterijgebruik verhogen.</string>
     <string name="summary_lan">Apps toestaan om verbinding te maken met lokale netwerkadressen, zoals 10.0.0.0/8, 172.16.0.0/12 en 192.168.0.0/16</string>
-    <string name="summary_ip6">Routeer IP versie 6 verkeer naar TrackerControl zodat het selectief kan worden toegestaan of geblokkeerd</string>
-    <string name="summary_call">Schakel TrackerControl uit bij een inkomend of een uitgaand telefoongesprek. Dit kan gebruikt worden om IP/Wi-Fi belproblemen te omzeilen.</string>
-    <string name="summary_system">Definieer regels voor systeemapplicaties (voor deskundigen)</string>
-    <string name="summary_log_app">Uitschakelen om het batterijgebruik te verminderen. Nieuwe trackers zullen nog steeds worden geblokkeerd, maar niet getoond.</string>
+    <string name="summary_ip6">IPv6 verkeer naar TrackerControl routeren zodat het naar keuze kan worden toegestaan of geblokkeerd</string>
+    <string name="summary_call">Schakel TrackerControl uit bij inkomende of uitgaande telefoongesprekken. Dit kan worden gebruikt om IP/Wi-Fi belproblemen te omzeilen.</string>
+    <string name="summary_system">Definieer regels voor systeem-apps (voor experts)</string>
+    <string name="summary_log_app">Uitschakelen om batterijverbruik te verminderen. Nieuwe trackers blijven geblokkeerd, maar worden niet getoond.</string>
     <string name="summary_track_usage">Volg het aantal verzonden en ontvangen bytes voor elke app en elk adres. Dit kan resulteren in extra batterijverbruik.</string>
     <string name="summary_block_domains">WAARSCHUWING: Geblokkeerde hosts worden niet getoond in de UI.</string>
-    <string name="summary_rcode">De standaardwaarde is 3 (NXDOMAIN), wat \'niet-bestaand domein\' betekent.</string>
-    <string name="summary_validate">Domeinnaam die gebruikt wordt om de internetverbinding op poort 443 (https) te valideren.</string>
+    <string name="summary_rcode">De standaardwaarde is 3 (NXDOMAIN), dit betekent \'niet-bestaand domein\'.</string>
+    <string name="summary_validate">Domeinnaam gebruikt om de internetverbinding op poort 443 (https) te valideren.</string>
     <string name="summary_socks5_enabled">Alleen TCP-verkeer wordt naar de proxyserver gestuurd</string>
-    <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog steeds actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
+    <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
     <string name="summary_log_logcat">Schakelt blokkering uit. Communicaties (en geïdentificeerde trackers) worden in het logboek van het apparaat vastgelegd. Haal terug met adb logcat met tag \'TC-Log\'.</string>
-    <string name="msg_sure">Ben je zeker?</string>
-    <string name="msg_started">Controle van trackers</string>
-    <string name="msg_waiting">Wachten op evenement</string>
-    <string name="msg_disabled">Gebruik de bovenstaande schakelaar om TrackerControl in te schakelen.</string>
+    <string name="msg_sure">Weet je het zeker?</string>
+    <string name="msg_started">Controleert trackers</string>
+    <string name="msg_waiting">Wacht op gebeurtenis</string>
+    <string name="msg_disabled">Gebruik bovenstaande schakelaar om TrackerControl te activeren.</string>
     <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
     <string name="msg_installed">Problemen met %1$s?</string>
-    <string name="msg_installed_description">App toestaan om contact op te nemen met bedrijven</string>
+    <string name="msg_installed_description">Toestaan dat app contact opneemt met bedrijven</string>
     <string name="msg_installed_n">Is geïnstalleerd</string>
     <string name="msg_completed">Actie voltooid</string>
-    <string name="msg_vpn">TrackerControl gebruikt een lokaal VPN om het internetverkeer te filteren.
-Om deze reden kunt u in het volgende dialoogvenster een VPN-verbinding toestaan.
-Uw internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
-    <string name="msg_autostart">TrackerControl kon niet automatisch starten. Dit komt waarschijnlijk door een bug in uw Android-versie.</string>
-    <string name="msg_error">Er is een onverwachte fout opgetreden: \'%s\'</string>
-    <string name="msg_start_failed">Android weigerde op dit moment de VPN-service te starten. Dit komt waarschijnlijk door een bug in uw Android-versie.</string>
+    <string name="msg_vpn">TrackerControl gebruikt een lokale VPN om het internetverkeer te filteren.
+Sta daarom een VPN verbinding toe in het volgende dialoogvenster.
+Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
+    <string name="msg_autostart">TrackerControl startte niet automatisch. Waarschijnlijk door een bug in uw Android-versie.</string>
+    <string name="msg_error">Een onverwachte fout: \'%s\'</string>
+    <string name="msg_start_failed">Android weigert nu de VPN-service te starten. Dit komt waarschijnlijk door een bug in uw Android-versie.</string>
     <string name="msg_try">Probeer TrackerControl</string>
     <string name="msg_doze">Voor consistente resultaten moeten de Android batterijoptimalisaties worden uitgeschakeld voor TrackerControl.
 \n\nIn het volgende dialoogvenster \"Alle apps\" bovenaan, tik op TrackerControl in de lijst en selecteer en bevestig \"Niet optimaliseren\".</string>
