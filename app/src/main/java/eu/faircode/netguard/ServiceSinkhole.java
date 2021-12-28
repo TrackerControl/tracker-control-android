@@ -872,7 +872,7 @@ public class ServiceSinkhole extends VpnService {
 
                         if (foundTracker != NO_TRACKER
                                 && (t == null // could have uncertain tracker company if no company found for an observed domain
-                                || !Objects.equals(foundTracker.name, t.name)) // we have uncertain tracker company
+                                || !Objects.equals(foundTracker.name, t.name)) // we have an uncertain tracker company
                                 && uncertain == 1)
                             uncertain = 2;
 
