@@ -349,7 +349,6 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.</string>
     <string name="blocked">BLOCKIERT</string>
     <string name="allowed">ERLAUBT</string>
-    <string name="setting_domain_based_blocked">Domänenbasierte Blockierung (in Entwicklung)</string>
     <string name="summary_domain_based_blocking">Ermöglicht eine präzisere Blockierung. Derzeit in der Entwicklung.</string>
     <string name="untap_unblock">Tipp: Sie können einzelne Einträge durch Tippen aufheben.</string>
 </resources>
