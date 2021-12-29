@@ -225,8 +225,8 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
         <item quantity="other">contact met %d bedrijven afgelopen week</item>
     </plurals>
     <plurals name="n_companies_found">
-        <item quantity="one">%d bedrijf altijd gecontacteerd</item>
-        <item quantity="other">%d bedrijven altijd gecontacteerd</item>
+        <item quantity="one">maakt altijd contact met %d bedrijf</item>
+        <item quantity="other">maakt altijd contat met %d bedrijven</item>
     </plurals>
     <string name="confirm_ipinfo_title">Informatie over organisatie ophalen?</string>
     <string name="confirm_ipinfo">Dit neemt contact op met de externe dienst ipinfo.io en deelt gegevens over gecontacteerde IP-adressen.</string>
@@ -247,7 +247,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tab_actions">Mijn gegevens</string>
     <string name="tracker_name">Tracker naam</string>
     <string name="internet_access">Internettoegang</string>
-    <string name="internet_access_explanation">Moet aanstaan voor internettoegang. \n\nTip: Of op de miniatuur van de app in het hoofdscherm tikken.</string>
+    <string name="internet_access_explanation">Moet aanstaan voor internettoegang.\n\nTip: Of op de miniatuur van de app in het hoofdscherm tikken.</string>
     <string name="app_info">App beheren</string>
     <!-- Actions -->
     <string name="block_tracking">Trackers blokkeren</string>
@@ -304,7 +304,7 @@ The reason for my removal request is that I withdraw or have withdrawn my consen
 Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
 \n
 Sincerely,\n\n]]></string>
-    <string name="crash_dialog_text">Sorry. TrackerControl is net vast gelopen. Stuur je ons een E-mail met details?</string>
+    <string name="crash_dialog_text">Sorry. TrackerControl is net vast gelopen.. Stuur je ons een E-mail met details?</string>
     <string name="crash_dialog_comment">Heb je opmerkingen?</string>
     <string name="instructions_monitoring_private_dns">Zet de schakelaar op aan en ga aan de slag met een aantal apps. Privé-DNS moet uit staan.</string>
     <string name="instructions_monitoring">Zet de schakelaar op aan en ga aan de slag met een aantal apps.</string>
@@ -322,7 +322,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Sociaal</string>
     <string name="tracker_uncategorised">Ongecategoriseerd</string>
     <string name="setting_strict_blocking">Strikt Blokkeren</string>
-    <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps, probeer zoveel als mogelijk het delen van data met bedrijven te blokkeren. Meer apps zullen falen.</string>
+    <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps: probeer zoveel als mogelijk het delen van data met bedrijven te blokkeren. Meer apps zullen falen.</string>
     <string name="strict_blocking_explanation">Het is aan te bevelen dat niet-experts deze optie uitschakelen. Apps lopen dan minder vaak vast. Maar dat staat delen van belangrijke informatie met bedrijven wel toe.</string>
     <string name="exclude_vpn_explanation">Moet ingeschakeld zijn om trackers op te sporen of te blokkeren: \n\nUitschakelen als problemen optreden.</string>
     <string name="uninstall">Deïnstalleren</string>
@@ -345,17 +345,18 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked">Trackers in categorie toegestaan</string>
     <string name="category_unblocked_warning">Eerst categorie blokkeren!</string>
     <string name="switch_strict_blocking">Blokkeer het delen van essentiële gegevens</string>
-    <string name="tracking_detection_failed">Tracker bibliotheek niet gedetecteerd.</string>
+    <string name="tracking_detection_failed">Tracker bibliotheek niet gedetecteerd</string>
     <string name="tracking_detection_failed_ram">Detectie tracker bibliotheek niet gelukt. Onvoldoende RAM.</string>
     <string name="tracking_detection_failed_report">Detectie tracker bibliotheek niet gelukt. Meld dit probleem bij de ontwikkelaar.</string>
     <string name="detected_trackers">Gevonden tracker bibliotheken: %s</string>
     <string name="none">Geen</string>
     <string name="trackers_static">Tracker bibliotheken</string>
-    <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.\n\nTrackerControl kan deze tracking blokkeren.</string>
+    <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.
+\n\nTrackerControl kan deze tracking blokkeren.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
     <string name="blocked">GEBLOKKEERD</string>
     <string name="allowed">TOEGESTAAN</string>
-    <string name="setting_domain_based_blocked">Domeingebaseerd blokkeren</string>
+    <string name="setting_domain_based_blocked">Blokkeren op basis van domein</string>
     <string name="summary_domain_based_blocking">Staat meer fijnmazig blokkeren toe. Nog steeds in ontwikkeling.</string>
     <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
     <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
