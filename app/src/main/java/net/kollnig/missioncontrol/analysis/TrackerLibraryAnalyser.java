@@ -95,7 +95,8 @@ public class TrackerLibraryAnalyser {
                     || e instanceof MultiDexDetectedException
                     || e instanceof DuplicateTypeException
                     || e instanceof DuplicateEntryNameException
-                    || e instanceof PackageManager.NameNotFoundException)
+                    || e instanceof PackageManager.NameNotFoundException
+                    || Rule.isSystem(mAppId, mContext))
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed));
             else if (e instanceof OutOfMemoryError)
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_ram));
