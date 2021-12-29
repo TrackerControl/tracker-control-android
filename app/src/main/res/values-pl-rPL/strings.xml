@@ -347,7 +347,6 @@ Z poważaniem,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl wykrywa śledzenie w kodzie (\"bibliotekach\") i ruch sieciowy aplikacji.</string>
     <string name="blocked">ZABLOKOWANE</string>
     <string name="allowed">DOZWOLONE</string>
-    <string name="setting_domain_based_blocked">Blokowanie oparte na domenie (w programowaniu)</string>
     <string name="summary_domain_based_blocking">Umożliwia bardziej szczegółowe blokowanie. Wciąż w fazie rozwoju.</string>
     <string name="untap_unblock">Wskazówka: możesz odblokować poszczególne wpisy, dotykając ich.</string>
     <string name="static_analysis">Wykrywaj trackery w kodzie aplikacji</string>
