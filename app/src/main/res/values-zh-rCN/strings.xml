@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
+    <string name="app_copyright">版权所有\u00A92019-2022 Konrad Kollnig (牛津大学计算机科学系以人为本的计算)\n\nTrackerControl 基于NetGuard，由Marcel Bokhorst (M66B) 开发。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_eula">使用本应用程序的风险由您自行承担。没有应用程序可以提供对网络跟踪100%的保护。</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">隐私政策</a><a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie 政策</a></string>
     <string name="channel_foreground">正在运行的服务</string>
     <string name="channel_notify">一般通知</string>
     <string name="channel_access">读取通知</string>
@@ -349,6 +351,7 @@
     <string name="trackers_static_explanation_playstore">TrackerControl 检测应用程序的代码 (“库”) 和网络流量中的跟踪。</string>
     <string name="blocked">已屏蔽</string>
     <string name="allowed">已允许</string>
+    <string name="setting_domain_based_blocked">基于域的屏蔽</string>
     <string name="summary_domain_based_blocking">允许进行更高数据粒度的阻止。 仍在开发中。</string>
     <string name="untap_unblock">提示：您可以轻按解除对单独条目的屏蔽。</string>
     <string name="uncertain_entry">由于 Android 的限制，标有“*”的条目可能不准确。 这通常意味着同一家公司在不同域下使用相同的 IP 地址，但也可能意味着不同的公司使用相同的 IP 地址(例如，如果他们使用内容交付网络)。</string>
