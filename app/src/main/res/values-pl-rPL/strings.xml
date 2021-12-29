@@ -220,6 +220,18 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Wyłącz dostęp do Internetu dla tej aplikacji</string>
     <string name="tracked_app_name">Nazwa wniosku</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">aplikacja kontaktowała się z %d firmą w ubiegłym tygodniu</item>
+        <item quantity="few">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
+        <item quantity="many">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
+        <item quantity="other">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">aplikacja kontaktowała się z %d firmą w ciągu całego czasu</item>
+        <item quantity="few">aplikacja kontaktowała się z %d firmami w ciągu całego czasu</item>
+        <item quantity="many">aplikacja kontaktowała się z %d firmami w ciągu całego czasu</item>
+        <item quantity="other">aplikacja kontaktowała się z %d firmami w ciągu całego czasu</item>
+    </plurals>
     <string name="confirm_ipinfo_title">Pobierasz informacje o organizacji?</string>
     <string name="confirm_ipinfo">Skontaktuje się z zewnętrznym serwisem ipinfo.io i udostępnia im dane o kontaktach z adresami IP.</string>
     <string name="external_servers">Otrzymujesz automatycznie e-mail od dewelopera?</string>
@@ -349,5 +361,7 @@ Z poważaniem,\n\n]]></string>
     <string name="allowed">DOZWOLONE</string>
     <string name="summary_domain_based_blocking">Umożliwia bardziej szczegółowe blokowanie. Wciąż w fazie rozwoju.</string>
     <string name="untap_unblock">Wskazówka: możesz odblokować poszczególne wpisy, dotykając ich.</string>
+    <string name="uncertain_entry">Wpisy oznaczone symbolem \'*\' mogą być niedokładne, ze względu na ograniczenia systemu Android. Zazwyczaj oznacza to, że ta sama firma używa tego samego adresu IP w różnych domenach, ale może również oznaczać, że za tym samym adresem IP stoją różne firmy, np. jeśli używają sieci dostarczania treści (Content Delivery Network).</string>
+    <string name="browsers_not_supported_explanation">Wygląda na to, że jest to przeglądarka.\n\nBlokowanie trackerów w przeglądarkach nie jest obsługiwane przez TrackerControl. Zamiast tego używaj przeglądarki z wbudowaną funkcjonalnością blokowania śledzenia.\n\nNa przykład: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Wykrywaj trackery w kodzie aplikacji</string>
 </resources>
