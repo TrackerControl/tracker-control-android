@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl umožňuje uživatelům sledovat a kontrolovat rozsáhlý, průběžný a skrytý sběr dat o chování uživatelů v mobilních aplikacích (\"sledování\").</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl je založen na systému NetGuard, který vyvinul Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl vyžaduje Android 5.1 nebo novější</string>
     <string name="app_xposed">Xposed způsobuje příliš mnoho pádů, což by mohlo vést k odstranění aplikace TrackerControl z Obchodu Google Play. TrackerControl proto není podporován, pokud je nainstalován Xposed</string>
     <string name="app_eula">Tuto aplikaci používáte na vlastní nebezpečí. Žádná aplikace nemůže nabídnout 100% ochranu před sledováním.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Zásady ochrany osobních údajů</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Zásady používání cookie</a></string>
     <string name="channel_foreground">Spuštěné služby</string>
     <string name="channel_notify">Obecná oznámení</string>
     <string name="channel_access">Přístup k oznámením</string>
@@ -360,10 +362,12 @@ Privátní DNS musí být vypnutá.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.</string>
     <string name="blocked">BLOKOVÁNO</string>
     <string name="allowed">POVOLENO</string>
+    <string name="setting_domain_based_blocked">Blokování na základě domény</string>
     <string name="summary_domain_based_blocking">Umožňuje rozšířené blokování. Ve vývoji.</string>
     <string name="untap_unblock">Tip: Lze blokovat jednotlivé položky klepnutím na ně.</string>
     <string name="uncertain_entry">Položky označené \'*\' můžou být nepřesné kvůli limitům androidu. To znamená, že společnost používá stejnou IP adresu pod různými doménami, nebo že společnosti jsou se stejnou IP adresou (když používají Content Delivery Network).</string>
     <string name="browsers_not_supported">Prohlížeče nejsou podporovány ⚠️</string>
     <string name="browsers_not_supported_explanation">Toto je zřejmě prohlížeč. \n\nBlokování trackerů v prohlížečích není podporováno. Používej prohlížeč s integrovanou anti-tracking funkcí pro lepší výsledky. \n\nNapříklad: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
+    <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
 </resources>
