@@ -355,7 +355,6 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
     <string name="blocked">GEBLOKKEERD</string>
     <string name="allowed">TOEGESTAAN</string>
-    <string name="setting_domain_based_blocked">Domeingebaseerde blokkering (in Ontwikkeling)</string>
     <string name="summary_domain_based_blocking">Staat meer granulaire blokkering toe. Nog steeds in ontwikkeling.</string>
     <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
     <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
