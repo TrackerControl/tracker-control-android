@@ -269,7 +269,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="contact_officials">EU functionarissen</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">GDPR Recht op informatie van de betrokkene</string>
+    <string name="subject_request_data">GDPR Verzoek op grond van recht op informatie</string>
     <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
@@ -304,10 +304,10 @@ The reason for my removal request is that I withdraw or have withdrawn my consen
 Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
 \n
 Sincerely,\n\n]]></string>
-    <string name="crash_dialog_text">Sorry. TrackerControl is net gecrasht. Wil je ons een e-mail met gegevens sturen?</string>
+    <string name="crash_dialog_text">Sorry. TrackerControl is net vast gelopen. Stuur je ons een E-mail met details?</string>
     <string name="crash_dialog_comment">Heb je opmerkingen?</string>
-    <string name="instructions_monitoring_private_dns">Zet de schakelaar om en ga aan de slag met een aantal apps. Private DNS moet uitgeschakeld zijn.</string>
-    <string name="instructions_monitoring">Zet de schakelaar om en ga aan de slag met een aantal apps.</string>
+    <string name="instructions_monitoring_private_dns">Zet de schakelaar op aan en ga aan de slag met een aantal apps. Privé-DNS moet uit staan.</string>
+    <string name="instructions_monitoring">Zet de schakelaar op aan en ga aan de slag met een aantal apps.</string>
     <string name="device_not_supported_title">Toestel wordt niet ondersteund</string>
     <string name="device_not_supported_msg">Het besturingssysteem van uw apparaat staat niet toede netwerkcommunicatie te controleren en te filteren. Dat is vereist voor TrackerControl.</string>
     <string name="launch_app">Start &amp; Trackers zoeken</string>
@@ -345,16 +345,17 @@ Sincerely,\n\n]]></string>
     <string name="category_unblocked">Trackers in categorie toegestaan</string>
     <string name="category_unblocked_warning">Eerst categorie blokkeren!</string>
     <string name="switch_strict_blocking">Blokkeer essentiële gegevens delen</string>
-    <string name="tracking_detection_failed">Tracker library detectie mislukt.</string>
-    <string name="tracking_detection_failed_ram">Tracker library detectie mislukt. Onvoldoende RAM.</string>
-    <string name="tracking_detection_failed_report">Tracker library detectie mislukt. Rapporteer dit probleem bij de ontwikkelaar.</string>
-    <string name="detected_trackers">Gedetecteerde tracker libraries: %s</string>
+    <string name="tracking_detection_failed">Tracker bibliotheek niet gedetecteerd.</string>
+    <string name="tracking_detection_failed_ram">Detectie tracker bibliotheek niet gelukt. Onvoldoende RAM.</string>
+    <string name="tracking_detection_failed_report">Detectie tracker bibliotheek niet gelukt. Meld dit probleem bij de ontwikkelaar.</string>
+    <string name="detected_trackers">Gevonden tracker bibliotheken: %s</string>
     <string name="none">Geen</string>
     <string name="trackers_static">Tracker libraries</string>
     <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.\n\nTracking die wordt gedetecteerd in het netwerkverkeer kan met TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
     <string name="blocked">GEBLOKKEERD</string>
     <string name="allowed">TOEGESTAAN</string>
+    <string name="setting_domain_based_blocked">Domeingebaseerd blokkeren</string>
     <string name="summary_domain_based_blocking">Staat meer granulaire blokkering toe. Nog steeds in ontwikkeling.</string>
     <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
     <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
