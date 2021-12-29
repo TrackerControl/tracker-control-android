@@ -333,6 +333,5 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="trackers_static_explanation">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.\n\nAğ trafiğinde tespit edilen izleme TrackerControl ile engellenebilir.</string>
     <string name="blocked">ENGELLENDİ</string>
     <string name="allowed">İZİN VERİLDİ</string>
-    <string name="setting_domain_based_blocked">Etki Alanına Dayalı Engelleme (Geliştirmede)</string>
     <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
 </resources>
