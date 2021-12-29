@@ -347,6 +347,5 @@ Cordialement,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl détecte le traçage dans le code (\'librairies\') et le trafic réseau des applications.</string>
     <string name="blocked">BLOQUÉ</string>
     <string name="allowed">AUTORISÉ</string>
-    <string name="setting_domain_based_blocked">Blocage par nom de domaine (en développement)</string>
     <string name="summary_domain_based_blocking">Permet un blocage plus ciblé. Encore en développement.</string>
 </resources>
