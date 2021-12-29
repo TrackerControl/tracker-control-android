@@ -354,6 +354,7 @@ Vennlig hilsen,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl oppdager sporing i koden (\'biblioteker\') og nettverkstrafikken til apper.</string>
     <string name="blocked">BLOKKERT</string>
     <string name="allowed">TILLATT</string>
+    <string name="setting_domain_based_blocked">Domenebasert blokkering</string>
     <string name="summary_domain_based_blocking">Tillater mer granulær blokkering. Fortsatt under utvikling.</string>
     <string name="untap_unblock">Tips: Du kan oppheve individuelle oppføringer ved å trykke på dem.</string>
     <string name="uncertain_entry">På grunn av begrensninger i Android kan oppføringer merket med \'*\' kan være unøyaktige. Dette betyr vanligvis at det samme foretaket bruker samme IP-adresse under forskjellige domener, men kan også bety at ulike selskap står bak samme IP-adresse (f.eks. hvis de bruker et innholdsleveringsnettverk).</string>
