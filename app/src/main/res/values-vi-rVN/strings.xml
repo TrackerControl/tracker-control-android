@@ -311,7 +311,6 @@
     <string name="trackers_static_explanation_playstore">TrackerControl phát hiện việc theo dõi trong mã (\'thư viện\') và lưu lượng mạng của các ứng dụng.</string>
     <string name="blocked">ĐÃ CHẶN</string>
     <string name="allowed">ĐÃ CHO PHÉP</string>
-    <string name="setting_domain_based_blocked">Chặn dựa trên miền (đang được phát triển)</string>
     <string name="summary_domain_based_blocking">Cho phép chặn một cách chi tiết hơn. Vẫn đang được phát triển.</string>
     <string name="untap_unblock">Mẹo: Bạn có thể bỏ chặn từng mục riêng bằng cách nhấn vào chúng.</string>
     <string name="uncertain_entry">Các mục có dấu \'*\' có thể không chính xác do giới hạn của Android. Việc này thường có nghĩa là một công ty sử dụng cùng một địa chỉ IP dưới nhiều miền khác nhau, nhưng cũng có thể có nghĩa là nhiều công ty khác nhau đứng sau cùng một địa chỉ IP (vd: nếu họ sử dụng Content Delivery Network).</string>
