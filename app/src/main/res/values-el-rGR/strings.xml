@@ -352,7 +352,6 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κίνηση στο δίκτυο των εφαρμογών.</string>
     <string name="blocked">ΑΠΟΚΛΕΙΣΜΕΝΟ</string>
     <string name="allowed">ΕΠΙΤΡΕΠΟΜΕΝΟ</string>
-    <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain (υπό ανάπτυξη)</string>
     <string name="summary_domain_based_blocking">Επιτρέπει περισσότερο \"κοκκώδη\" μπλοκάρισμα. Ακόμα υπο ανάπτυξη.</string>
     <string name="untap_unblock">Συμβουλή: Μπορείτε να καταργήσετε την φραγή μεμονωμένων καταχωρήσεων πατώντας πάνω τους.</string>
 </resources>
