@@ -950,6 +950,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getAName(String qname, boolean alive) {
+        long now = new Date().getTime();
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT d.qname, d.aname, d.time, d.ttl";
+            query += " FROM dns d";
+            query += " WHERE d.qname = ?";
+            if (alive)
+                query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
+            query += " LIMIT 1";
+            return db.rawQuery(query, new String[]{qname});
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
     public Cursor getDns() {
         lock.readLock().lock();
         try {

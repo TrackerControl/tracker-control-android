@@ -836,60 +836,44 @@ public class ServiceSinkhole extends VpnService {
 
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
 
-            // Get real name
-            /*String dname = ipToHost.get(packet.daddr);
-            if (dname == null) {
-                dname = dh.getQName(packet.uid, packet.daddr);
-                if (dname != null) {
-                    ipToHost.put(packet.daddr, dname);
-                } else {
-                    ipToHost.put(packet.daddr, NO_DNAME);
-                }
-            }
-            if (dname == NO_DNAME)
-                dname = null;*/
-
             String dname = null;
             String originalDname = null;
-            boolean isTracker = false;
 
             Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
             int uncertain = (lookup != null
                     && lookup.getCount() > 1) ? 1 : 0;
 
             // Loop until we find tracker or reach last entry
-            Tracker foundTracker = NO_TRACKER;
+            boolean isTracker = false;
             if (lookup != null) {
+                Pair<Tracker, String> foundTracker = new Pair<>(NO_TRACKER, null);
+
                 while (lookup.moveToNext()) {
                     dname = lookup.getString(lookup.getColumnIndex("qname"));
                     if (dname != null)  {
                         originalDname = dname;
-                        Tracker t = TrackerList.findTracker(dname);
 
-                        if (foundTracker == NO_TRACKER
-                                && t != null) // if we found a tracker, then store for later
-                            foundTracker = t;
+                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                        Pair<Tracker, String> p = getDecloakedTracker(dname, aname);
 
-                        if (foundTracker != NO_TRACKER
-                                && (t == null // could have uncertain tracker company if no company found for an observed domain
-                                || !Objects.equals(foundTracker.name, t.name)) // we have an uncertain tracker company
-                                && uncertain == 1)
-                            uncertain = 2;
-
-                        if (t != null)
+                        if (foundTracker.first == NO_TRACKER
+                                && p.first != null) { // store found tracker
                             isTracker = true;
-                        else { // DNS uncloaking
-                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                            if (aname != null && TrackerList.findTracker(aname) != null) {
-                                dname = aname;
-                                isTracker = true;
-                            }
+                            foundTracker = p;
+                        }
+
+                        if (foundTracker.first != NO_TRACKER
+                                && (p.first == null // could have uncertain tracker company if no company found for an observed domain
+                                || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an uncertain tracker company
+                                && uncertain == 1) {
+                            uncertain = 2;
+                            break;
                         }
                     }
-
-                    if (isTracker)
-                        break;
                 }
+
+                if (foundTracker.first != NO_TRACKER)
+                    dname = foundTracker.second;
 
                 lookup.close();
             }
@@ -901,8 +885,8 @@ public class ServiceSinkhole extends VpnService {
 
                 if (!packet.data.equals(originalDname)) {
                     Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
-                    dname = packet.data; // TODO: Add warning. No DNS uncloaking yet.
-                    isTracker = TrackerList.findTracker(dname) != null;
+                    dname = packet.data;
+                    isTracker = getDecloakedTracker(dname, dh).first != null;
                 }
             }
 
@@ -926,6 +910,31 @@ public class ServiceSinkhole extends VpnService {
 
                 dh.updateAccess(packet, dname, -1, uncertain);
             }
+        }
+
+        private Pair<Tracker, String> getDecloakedTracker(String qname, DatabaseHelper dh) {
+            Cursor lookup = dh.getAName(qname, false);
+            String aname = null;
+            if (lookup != null && lookup.moveToNext())
+                aname = lookup.getString(lookup.getColumnIndex("aname"));
+            return getDecloakedTracker(qname, aname);
+        }
+
+        private Pair<Tracker, String> getDecloakedTracker(String qname, String aname) {
+            String foundDname = null;
+            Tracker t = TrackerList.findTracker(qname);
+
+            if (t != null) {
+                foundDname = qname;
+            } else { // DNS uncloaking
+                if (aname != null) {
+                    t = TrackerList.findTracker(aname);
+                    if (t != null)
+                        foundDname = aname;
+                }
+            }
+
+            return new Pair<>(t, foundDname);
         }
 
         private void usage(Usage usage) {
