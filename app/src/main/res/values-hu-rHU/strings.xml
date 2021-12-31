@@ -107,7 +107,7 @@
     <string name="summary_rcode">Az alapértelmezett érték 3 (NXDOMAIN), ami azt jelenti: \'nem létező domain\'.</string>
     <string name="summary_validate">A használt domain név az internetkapcsolat ellenőrzéséhez a 443 (https) porton.</string>
     <string name="summary_socks5_enabled">Csak a TCP forgalom küldése a proxy szerverre</string>
-    <string name="summary_watchdog">Rendszeresen ellenőrzi ha a TrackerControl fut (a 0 beírása letiltja azt az opciót). Ez extra akkumulátor használattal járhat.</string>
+    <string name="summary_watchdog">Rendszeresen ellenőriz ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
     <string name="summary_log_logcat">Letiltja a blokkolást. A kommunikációt (és az azonosított nyomkövetőket) naplózza az eszköznaplóba. Letöltés az adb logcat segítségével a „TC-Log” címkével.</string>
     <string name="msg_sure">Biztos vagy benne?</string>
     <string name="msg_started">Nyomkövetők ellenőrzése</string>
