@@ -1,4 +1,4 @@
-# About TrackerControl
+# TrackerControl for Android
 
 [![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
@@ -8,10 +8,6 @@
 
 TrackerControl is an Android app that allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
-
-<p align="center">
-  <img alt="TrackerControl Logo" src="images/logo.png" style="display: block; margin: 0 auto;" height="100%" width="200" >
-</p>
 
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
 used by Firefox, and our in-house blocklist is used, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
