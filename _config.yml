@@ -5,4 +5,18 @@ show_downloads: true
 apk_url: https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk
 fdroid_url: https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid
 gplay_url: https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play
-logo: 
+
+title: TrackerControl for Android
+tagline: Monitor and control trackers and ads.
+description: TrackerControl is an Android app that allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour (tracking).
+logo: /images/logo.png
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /images/banner.jpg
+
+google_site_verification: RbAM_Ypx3z0yYmv4fKfaVywe-8oGWwLkcYTg5QB49RA
+
+locale: en_GB
