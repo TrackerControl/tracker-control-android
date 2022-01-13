@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
-    <meta name="google-site-verification" content="RbAM_Ypx3z0yYmv4fKfaVywe-8oGWwLkcYTg5QB49RA" />
 
 {% seo %}
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
@@ -15,11 +14,9 @@
   </head>
   <body>
     <div class="wrapper">
-      <header>
-        <h1><a href="{{ "/" | absolute_url }}">{{ site.title | default: site.github.repository_name }}</a></h1>
-        
+      <header>        
         {% if site.logo %}
-          <img src="{{site.logo | relative_url}}" alt="Logo" />
+          <a href="{{ "/" | absolute_url }}"><img src="{{site.logo | relative_url}}" alt="Logo" /></a>
         {% endif %}
 
         <p>{{ site.description | default: site.github.project_tagline }}</p>
