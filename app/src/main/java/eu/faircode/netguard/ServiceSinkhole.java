@@ -915,8 +915,11 @@ public class ServiceSinkhole extends VpnService {
         private Pair<Tracker, String> getDecloakedTracker(String qname, DatabaseHelper dh) {
             Cursor lookup = dh.getAName(qname, false);
             String aname = null;
-            if (lookup != null && lookup.moveToNext())
-                aname = lookup.getString(lookup.getColumnIndex("aname"));
+            if (lookup != null) {
+                if (lookup.moveToNext())
+                    aname = lookup.getString(lookup.getColumnIndex("aname"));
+                lookup.close();
+            }
             return getDecloakedTracker(qname, aname);
         }
 
