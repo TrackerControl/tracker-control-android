@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre seu comportamento (\"tracking\").</string>
+    <string name="app_copyright">Direitos autorais \u00A9 2019-2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl é baseado no NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou posterior</string>
     <string name="app_xposed">O Xposed provoca muitos travamentos, o que pode levar à remoção do TrackerControl da Google Play Store, logo, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_eula">O uso deste app está por sua própria conta e risco. Nenhum app pode oferecer 100% de proteção contra rastreamento.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de Privacidade</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de Cookies</a></string>
     <string name="channel_foreground">Serviços em execução</string>
     <string name="channel_notify">Notificações gerais</string>
     <string name="channel_access">Notificações de acesso</string>
@@ -13,6 +15,10 @@
     <string name="menu_app_system">Mostrar apps do sistema</string>
     <string name="menu_app_nointernet">Mostrar apps sem acesso à internet</string>
     <string name="menu_sort">Ordenar apps</string>
+    <string name="menu_sort_name">Ordenar por nome</string>
+    <string name="menu_sort_uid">Ordenar por uid</string>
+    <string name="menu_sort_companies_week">Ordenar por empresas (semana)</string>
+    <string name="menu_sort_companies">Ordenar por empresas</string>
     <string name="menu_log">Log de tráfego</string>
     <string name="menu_settings">Configurações</string>
     <string name="menu_invite">Convidar</string>
@@ -39,6 +45,10 @@
     <string name="setting_install">Notificar sobre nova instalação</string>
     <string name="setting_pause">Auto-habilitar após %1$s minutos</string>
     <string name="setting_update">Verificar se há atualizações</string>
+    <string name="setting_network_options">Opções de rede</string>
+    <string name="setting_subnet">Roteamento de subrede</string>
+    <string name="setting_tethering">Permitir tethering</string>
+    <string name="setting_lan">Permitir acesso à rede local</string>
     <string name="setting_ip6">Habilitar tráfego IPv6</string>
     <string name="setting_call">Desativar durante ligações</string>
     <string name="setting_reload_onconnectivity">Atualizar a cada alteração de conectividade</string>
@@ -47,6 +57,7 @@
     <string name="setting_log_app">Buscar novos rastreadores</string>
     <string name="setting_log_logcat">Registrar transmissões para o ADB</string>
     <string name="setting_filter">Bloquear rastreadores</string>
+    <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_lockdown">Bloqueio total de tráfego</string>
     <string name="setting_reset_usage">Redefinir o uso da rede</string>
     <string name="setting_show_resolved">Mostrar nomes de domínio resolvidos</string>
@@ -76,12 +87,28 @@
     <string name="summary_block_domains">AVISO: Hosts bloqueados não são exibidos na UI.</string>
     <string name="summary_validate">Nome de domínio utilizado para validar a conexão de internet na porta 443 (https).</string>
     <string name="summary_watchdog">Verificar periodicamente se TrackerControl ainda está sendo executado (digite zero para desativar essa opção). Isso pode resultar em uso extra de bateria.</string>
+    <string name="summary_log_logcat">Desativa a bloqueio. As comunicações (e rastreadores identificados) são registrados no log do dispositivo. Recupere com adb logcat com a tag \'TC-Log\'.</string>
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_started">Verificando rastreadores</string>
     <string name="msg_waiting">Aguardando evento</string>
+    <string name="msg_disabled">Use o interruptor acima para habilitar o TrackerControl.</string>
+    <string name="msg_revoked">O TrackerControl foi desativado, provavelmente outro aplicativo baseado em VPN está sendo utilizado</string>
+    <string name="msg_installed">Problemas com %1$s?</string>
+    <string name="msg_installed_n">Foi instalado</string>
+    <string name="msg_completed">Ação concluída</string>
+    <string name="msg_vpn">TrackerControl usa uma VPN local para filtrar o tráfego de internet.
+Por este motivo, por favor, permita uma conexão VPN na caixa de diálogo seguinte.
+O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.</string>
+    <string name="msg_autostart">O TrackerControl não pôde ser iniciado automaticamente. A causa mais provável seria um bug na sua versão do Android.</string>
+    <string name="msg_error">Um erro inesperado ocorreu: \'%s\'</string>
+    <string name="msg_start_failed">Android recusou-se a iniciar o serviço VPN nesse momento. A causa mais provável seria um bug na sua versão do Android.</string>
     <string name="msg_try">Experimente o TrackerControl</string>
     <string name="msg_doze">Para resultados consistentes, as otimizações de bateria Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, selecione \"Todos os apps\" na parte superior, toque no TrackerControl na lista e selecione e confirme \"Não otimizar\".</string>
     <string name="msg_datasaving">Para resultados consistentes, as opções de economia de dados do Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, habilite as opções \"Dados em segundo plano\" e \"Uso de dados sem restrições\"</string>
+    <string name="msg_filter">Usar filtragem pode fazer com que o Android atribua uso de dados e consumo de energia ao TrackerControl - o Android assume que o uso de dados e consumo de bateria são usados pelo TrackerControl e não pelas aplicações originais</string>
+    <string name="msg_filter4">Android 4 requer que filtragem esteja ativada</string>
+    <string name="msg_log_disabled">O log de tráfego está desabilitado, utilize o botão acima para habilitar o log. Logar o tráfego pode resultar em uso extra da bateria.</string>
+    <string name="msg_clear_rules">Isto irá redefinir as regras e condições para os seus valores padrão</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_push">Mensagens recebidas (push) são normalmente controladas pelo componente do sistema Google Play Services, ao qual é permitido o acesso à Internet por padrão</string>
     <string name="msg_system">Gerenciar todos (sistema) os apps pode ser habilitado nas configurações</string>
