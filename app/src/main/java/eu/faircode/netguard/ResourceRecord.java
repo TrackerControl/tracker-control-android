@@ -20,6 +20,8 @@
 
 package eu.faircode.netguard;
 
+import androidx.annotation.NonNull;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,11 +33,12 @@ public class ResourceRecord {
     public String Resource;
     public int TTL;
 
-    private static DateFormat formatter = SimpleDateFormat.getDateTimeInstance();
+    private static final DateFormat formatter = SimpleDateFormat.getDateTimeInstance();
 
     public ResourceRecord() {
     }
 
+    @NonNull
     @Override
     public String toString() {
         return formatter.format(new Date(Time).getTime()) +

@@ -25,7 +25,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,10 +47,10 @@ import java.util.zip.GZIPInputStream;
 public class DownloadTask extends AsyncTask<Object, Integer, Object> {
     private static final String TAG = "TrackerControl.Download";
 
-    private Context context;
-    private URL url;
-    private File file;
-    private Listener listener;
+    private final Context context;
+    private final URL url;
+    private final File file;
+    private final Listener listener;
     private PowerManager.WakeLock wakeLock;
 
     public interface Listener {
@@ -105,7 +104,7 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
             out = new FileOutputStream(file);
 
             long size = 0;
-            byte buffer[] = new byte[4096];
+            byte[] buffer = new byte[4096];
             int bytes;
             while (!isCancelled() && (bytes = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytes);
@@ -176,9 +175,8 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
                 .setOngoing(true)
                 .setAutoCancel(false);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationManagerCompat.from(context).notify(ServiceSinkhole.NOTIFY_DOWNLOAD, builder.build());
     }

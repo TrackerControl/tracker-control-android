@@ -50,7 +50,7 @@ import java.util.List;
 public class TrackersFragment extends Fragment {
     private static final String ARG_APP_ID = "app-id";
     private static final String ARG_APP_UID = "app-uid";
-    private final String TAG = TrackersFragment.class.getSimpleName();
+    //private final String TAG = TrackersFragment.class.getSimpleName();
     private TrackerList trackerList;
     private String mAppId;
     private int mAppUid;

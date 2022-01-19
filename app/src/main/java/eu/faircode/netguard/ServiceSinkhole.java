@@ -23,6 +23,7 @@ package eu.faircode.netguard;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -69,6 +70,8 @@ import android.util.Pair;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
@@ -102,7 +105,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -141,7 +143,7 @@ public class ServiceSinkhole extends VpnService {
     private int last_blocked = -1;
     private int last_hosts = -1;
 
-    private static Object jni_lock = new Object();
+    private static final Object jni_lock = new Object();
     private static long jni_context = 0;
     private Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
@@ -150,10 +152,10 @@ public class ServiceSinkhole extends VpnService {
 
     private static long last_hosts_modified = 0;
     public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
-    private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
-    private Map<Integer, Integer> mapUidKnown = new HashMap<>();
+    private final Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
+    private final Map<Integer, Integer> mapUidKnown = new HashMap<>();
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
-    private Map<Integer, Forward> mapForward = new HashMap<>();
+    private final Map<Integer, Forward> mapForward = new HashMap<>();
     public static ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     private volatile Looper commandLooper;
@@ -195,7 +197,7 @@ public class ServiceSinkhole extends VpnService {
 
     private static volatile PowerManager.WakeLock wlInstance = null;
 
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private static final String ACTION_HOUSE_HOLDING = "eu.faircode.netguard.HOUSE_HOLDING";
     private static final String ACTION_SCREEN_OFF_DELAYED = "eu.faircode.netguard.SCREEN_OFF_DELAYED";
@@ -257,7 +259,7 @@ public class ServiceSinkhole extends VpnService {
         return wlInstance;
     }
 
-    synchronized private static void releaseLock(Context context) {
+    synchronized private static void releaseLock() {
         if (wlInstance != null) {
             while (wlInstance.isHeld())
                 wlInstance.release();
@@ -407,7 +409,7 @@ public class ServiceSinkhole extends VpnService {
                     int watchdog = Integer.parseInt(prefs.getString("watchdog", "0"));
                     if (watchdog > 0) {
                         Log.i(TAG, "Watchdog " + watchdog + " minutes");
-                        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + watchdog * 60 * 1000, watchdog * 60 * 1000, pi);
+                        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + (long) watchdog * 60 * 1000, (long) watchdog * 60 * 1000, pi);
                     }
                 }
             }
@@ -435,11 +437,11 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case householding:
-                        householding(intent);
+                        householding();
                         break;
 
                     case watchdog:
-                        watchdog(intent);
+                        watchdog();
                         break;
 
                     default:
@@ -459,8 +461,8 @@ public class ServiceSinkhole extends VpnService {
                 if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
                     // Update main view
                     Intent ruleset = new Intent(ActivityMain.ACTION_RULES_CHANGED);
-                    ruleset.putExtra(ActivityMain.EXTRA_CONNECTED, cmd == Command.stop ? false : last_connected);
-                    ruleset.putExtra(ActivityMain.EXTRA_METERED, cmd == Command.stop ? false : last_metered);
+                    ruleset.putExtra(ActivityMain.EXTRA_CONNECTED, cmd != Command.stop && last_connected);
+                    ruleset.putExtra(ActivityMain.EXTRA_METERED, cmd != Command.stop && last_metered);
                     LocalBroadcastManager.getInstance(ServiceSinkhole.this).sendBroadcast(ruleset);
 
                     // Update widgets
@@ -562,65 +564,48 @@ public class ServiceSinkhole extends VpnService {
             List<Rule> listAllowed = getAllowedRules(listRule);
             ServiceSinkhole.Builder builder = getBuilder(listAllowed, listRule);
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-                last_builder = builder;
-                Log.i(TAG, "Legacy restart");
-
-                if (vpn != null) {
-                    stopNative(vpn);
-                    stopVPN(vpn);
-                    vpn = null;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ignored) {
-                    }
-                }
-                vpn = startVPN(last_builder);
+            if (vpn != null && prefs.getBoolean("filter", true) && builder.equals(last_builder)) {
+                Log.i(TAG, "Native restart");
+                stopNative();
 
             } else {
-                if (vpn != null && prefs.getBoolean("filter", true) && builder.equals(last_builder)) {
-                    Log.i(TAG, "Native restart");
-                    stopNative(vpn);
+                last_builder = builder;
 
-                } else {
-                    last_builder = builder;
+                boolean handover = prefs.getBoolean("handover", false);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                    handover = false;
+                Log.i(TAG, "VPN restart handover=" + handover);
 
-                    boolean handover = prefs.getBoolean("handover", false);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                        handover = false;
-                    Log.i(TAG, "VPN restart handover=" + handover);
+                if (handover) {
+                    // Attempt seamless handover
+                    ParcelFileDescriptor prev = vpn;
+                    vpn = startVPN(builder);
 
-                    if (handover) {
-                        // Attempt seamless handover
-                        ParcelFileDescriptor prev = vpn;
-                        vpn = startVPN(builder);
-
-                        if (prev != null && vpn == null) {
-                            Log.w(TAG, "Handover failed");
-                            stopNative(prev);
-                            stopVPN(prev);
-                            prev = null;
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException ignored) {
-                            }
-                            vpn = startVPN(last_builder);
-                            if (vpn == null)
-                                throw new IllegalStateException("Handover failed");
+                    if (prev != null && vpn == null) {
+                        Log.w(TAG, "Handover failed");
+                        stopNative();
+                        stopVPN(prev);
+                        prev = null;
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ignored) {
                         }
-
-                        if (prev != null) {
-                            stopNative(prev);
-                            stopVPN(prev);
-                        }
-                    } else {
-                        if (vpn != null) {
-                            stopNative(vpn);
-                            stopVPN(vpn);
-                        }
-
-                        vpn = startVPN(builder);
+                        vpn = startVPN(last_builder);
+                        if (vpn == null)
+                            throw new IllegalStateException("Handover failed");
                     }
+
+                    if (prev != null) {
+                        stopNative();
+                        stopVPN(prev);
+                    }
+                } else {
+                    if (vpn != null) {
+                        stopNative();
+                        stopVPN(vpn);
+                    }
+
+                    vpn = startVPN(builder);
                 }
             }
 
@@ -635,7 +620,7 @@ public class ServiceSinkhole extends VpnService {
 
         private void stop(boolean temporary) {
             if (vpn != null) {
-                stopNative(vpn);
+                stopNative();
                 stopVPN(vpn);
                 vpn = null;
                 unprepare();
@@ -666,7 +651,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         // Called every 12 hours
-        private void householding(Intent intent) {
+        private void householding() {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
 
             // Keep log records for three days, only wipe if logging on
@@ -686,7 +671,7 @@ public class ServiceSinkhole extends VpnService {
                 checkUpdate();
         }
 
-        private void watchdog(Intent intent) {
+        private void watchdog() {
             if (vpn == null) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
                 if (prefs.getBoolean("enabled", false)) {
@@ -839,7 +824,7 @@ public class ServiceSinkhole extends VpnService {
             String dname = null;
             String originalDname = null;
 
-            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
+            Cursor lookup = dh.getQAName(packet.daddr, false);
             int uncertain = (lookup != null
                     && lookup.getCount() > 1) ? 1 : 0;
 
@@ -948,7 +933,7 @@ public class ServiceSinkhole extends VpnService {
                 boolean track_usage = prefs.getBoolean("track_usage", false);
                 if (filter && log_app && track_usage) {
                     DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                    String dname = dh.getQName(usage.Uid, usage.DAddr);
+                    String dname = dh.getQName(usage.DAddr);
                     Log.i(TAG, "Usage account " + usage + " dname=" + dname);
                     dh.updateUsage(usage, dname);
                 }
@@ -964,11 +949,11 @@ public class ServiceSinkhole extends VpnService {
         private long tx = -1;
         private long rx = -1;
 
-        private List<Long> gt = new ArrayList<>();
-        private List<Float> gtx = new ArrayList<>();
-        private List<Float> grx = new ArrayList<>();
+        private final List<Long> gt = new ArrayList<>();
+        private final List<Float> gtx = new ArrayList<>();
+        private final List<Float> grx = new ArrayList<>();
 
-        private HashMap<Integer, Long> mapUidBytes = new HashMap<>();
+        private final HashMap<Integer, Long> mapUidBytes = new HashMap<>();
 
         public StatsHandler(Looper looper) {
             super(looper);
@@ -1079,12 +1064,7 @@ public class ServiceSinkhole extends VpnService {
                             mapUidBytes.put(ainfo.uid, TrafficStats.getUidTxBytes(ainfo.uid) + TrafficStats.getUidRxBytes(ainfo.uid));
 
                 } else if (t > 0) {
-                    TreeMap<Float, Integer> mapSpeedUid = new TreeMap<>(new Comparator<Float>() {
-                        @Override
-                        public int compare(Float value, Float other) {
-                            return -value.compareTo(other);
-                        }
-                    });
+                    TreeMap<Float, Integer> mapSpeedUid = new TreeMap<>((value, other) -> -value.compareTo(other));
                     float dt = (ct - t) / 1000f;
                     for (int uid : mapUidBytes.keySet()) {
                         long bytes = TrafficStats.getUidTxBytes(uid) + TrafficStats.getUidRxBytes(uid);
@@ -1221,9 +1201,8 @@ public class ServiceSinkhole extends VpnService {
                     .setOngoing(true)
                     .setAutoCancel(false);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
             if (state == State.none || state == State.waiting) {
                 if (state != State.none) {
@@ -1528,29 +1507,27 @@ public class ServiceSinkhole extends VpnService {
         builder.setMtu(mtu);
 
         // Add list of allowed applications
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                builder.addDisallowedApplication(getPackageName());
-            } catch (PackageManager.NameNotFoundException ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
-            if (last_connected && !filter)
-                for (Rule rule : listAllowed)
+        try {
+            builder.addDisallowedApplication(getPackageName());
+        } catch (PackageManager.NameNotFoundException ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+        if (last_connected && !filter)
+            for (Rule rule : listAllowed)
+                try {
+                    builder.addDisallowedApplication(rule.packageName);
+                } catch (PackageManager.NameNotFoundException ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
+        else if (filter)
+            for (Rule rule : listRule)
+                if (!rule.apply || (!system && rule.system))
                     try {
+                        Log.i(TAG, "Not routing " + rule.packageName);
                         builder.addDisallowedApplication(rule.packageName);
                     } catch (PackageManager.NameNotFoundException ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }
-            else if (filter)
-                for (Rule rule : listRule)
-                    if (!rule.apply || (!system && rule.system))
-                        try {
-                            Log.i(TAG, "Not routing " + rule.packageName);
-                            builder.addDisallowedApplication(rule.packageName);
-                        } catch (PackageManager.NameNotFoundException ex) {
-                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                        }
-        }
 
         // Build configure intent
         Intent configure = new Intent(this, ActivityMain.class);
@@ -1600,14 +1577,11 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "Starting tunnel thread context=" + jni_context);
                 jni_start(jni_context, prio);
 
-                tunnelThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Running tunnel context=" + jni_context);
-                        jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
-                        Log.i(TAG, "Tunnel exited");
-                        tunnelThread = null;
-                    }
+                tunnelThread = new Thread(() -> {
+                    Log.i(TAG, "Running tunnel context=" + jni_context);
+                    jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
+                    Log.i(TAG, "Tunnel exited");
+                    tunnelThread = null;
                 });
                 //tunnelThread.setPriority(Thread.MAX_PRIORITY);
                 tunnelThread.start();
@@ -1617,7 +1591,7 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private void stopNative(ParcelFileDescriptor vpn) {
+    private void stopNative() {
         Log.i(TAG, "Stop native");
 
         if (tunnelThread != null) {
@@ -1778,19 +1752,16 @@ public class ServiceSinkhole extends VpnService {
                             if (version == 6 && !(iname instanceof Inet6Address))
                                 continue;
 
-                            boolean exists = mapUidIPFilters.get(key).containsKey(iname);
-                            if (!exists || !mapUidIPFilters.get(key).get(iname).isBlocked()) {
+                            boolean exists = Objects.requireNonNull(mapUidIPFilters.get(key)).containsKey(iname);
+                            if (!exists || !Objects.requireNonNull(Objects.requireNonNull(mapUidIPFilters.get(key)).get(iname)).isBlocked()) {
                                 IPRule rule = new IPRule(key, name + "/" + iname, block, time + ttl);
-                                mapUidIPFilters.get(key).put(iname, rule);
+                                Objects.requireNonNull(mapUidIPFilters.get(key)).put(iname, rule);
                                 if (exists)
                                     Log.w(TAG, "Address conflict " + key + " " + daddr + "/" + dresource);
-                            } else if (exists) {
-                                mapUidIPFilters.get(key).get(iname).updateExpires(time + ttl);
+                            } else {
+                                Objects.requireNonNull(Objects.requireNonNull(mapUidIPFilters.get(key)).get(iname)).updateExpires(time + ttl);
                                 if (dname != null && ttl > 60 * 1000L)
                                     Log.w(TAG, "Address updated " + key + " " + daddr + "/" + dresource);
-                            } else {
-                                if (dname != null)
-                                    Log.i(TAG, "Ignored " + key + " " + daddr + "/" + dresource + "=" + block);
                             }
                         } else
                             Log.w(TAG, "Address not numeric " + name);
@@ -2045,6 +2016,7 @@ public class ServiceSinkhole extends VpnService {
         if (packet.allowed)
             if (mapForward.containsKey(packet.dport)) {
                 Forward fwd = mapForward.get(packet.dport);
+                assert fwd != null;
                 if (fwd.ruid == packet.uid) {
                     allowed = new Allowed();
                 } else {
@@ -2088,7 +2060,7 @@ public class ServiceSinkhole extends VpnService {
             if (dname == null) {
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                Cursor lookup = dh.getQAName(uid, daddr, true);
+                Cursor lookup = dh.getQAName(daddr, true);
                 long time = new Date().getTime();
                 long ttl = 7 * 24 * 3600 * 1000L;
 
@@ -2153,14 +2125,13 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
+            assert tracker != null;
             Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr) + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
                 TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                if (tracker != null
-                        && b.blockedTracker(uid, tracker)) {
-                    return true;
-                }
+                return tracker != null
+                        && b.blockedTracker(uid, tracker);
             }
         }
 
@@ -2172,42 +2143,39 @@ public class ServiceSinkhole extends VpnService {
         logHandler.account(usage);
     }
 
-    private BroadcastReceiver interactiveStateReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver interactiveStateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(final Context context, final Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
 
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                    Intent i = new Intent(ACTION_SCREEN_OFF_DELAYED);
-                    i.setPackage(context.getPackageName());
-                    PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-                    am.cancel(pi);
+            executor.submit(() -> {
+                AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                Intent i = new Intent(ACTION_SCREEN_OFF_DELAYED);
+                i.setPackage(context.getPackageName());
+                PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                am.cancel(pi);
 
-                    try {
-                        last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-                        reload("interactive state changed", ServiceSinkhole.this, true);
+                try {
+                    last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
+                    reload("interactive state changed", ServiceSinkhole.this, true);
 
-                        // Start/stop stats
-                        statsHandler.sendEmptyMessage(
-                                Util.isInteractive(ServiceSinkhole.this) ? MSG_STATS_START : MSG_STATS_STOP);
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    // Start/stop stats
+                    statsHandler.sendEmptyMessage(
+                            Util.isInteractive(ServiceSinkhole.this) ? MSG_STATS_START : MSG_STATS_STOP);
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                            am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
-                        else
-                            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
-                    }
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+                        am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
+                    else
+                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
                 }
             });
         }
     };
 
-    private BroadcastReceiver userReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver userReceiver = new BroadcastReceiver() {
         @Override
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
         public void onReceive(Context context, Intent intent) {
@@ -2233,7 +2201,7 @@ public class ServiceSinkhole extends VpnService {
         }
     };
 
-    private BroadcastReceiver idleStateReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver idleStateReceiver = new BroadcastReceiver() {
         @Override
         @TargetApi(Build.VERSION_CODES.M)
         public void onReceive(Context context, Intent intent) {
@@ -2249,15 +2217,13 @@ public class ServiceSinkhole extends VpnService {
         }
     };
 
-    private BroadcastReceiver connectivityChangedReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver connectivityChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Filter VPN connectivity changes
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
-                if (networkType == ConnectivityManager.TYPE_VPN)
-                    return;
-            }
+            int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
+            if (networkType == ConnectivityManager.TYPE_VPN)
+                return;
 
             // Reload rules
             Log.i(TAG, "Received " + intent);
@@ -2267,9 +2233,9 @@ public class ServiceSinkhole extends VpnService {
     };
 
     ConnectivityManager.NetworkCallback networkMonitorCallback = new ConnectivityManager.NetworkCallback() {
-        private String TAG = "TrackerControl.Monitor";
+        private final String TAG = "TrackerControl.Monitor";
 
-        private Map<Network, Long> validated = new HashMap<>();
+        private final Map<Network, Long> validated = new HashMap<>();
 
         // https://android.googlesource.com/platform/frameworks/base/+/master/services/core/java/com/android/server/connectivity/NetworkMonitor.java
 
@@ -2363,7 +2329,7 @@ public class ServiceSinkhole extends VpnService {
         }
     };
 
-    private PhoneStateListener phoneStateListener = new PhoneStateListener() {
+    private final PhoneStateListener phoneStateListener = new PhoneStateListener() {
         private String last_generation = null;
 
         @Override
@@ -2386,7 +2352,7 @@ public class ServiceSinkhole extends VpnService {
         }
     };
 
-    private BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
@@ -2470,7 +2436,7 @@ public class ServiceSinkhole extends VpnService {
             Intent main = new Intent(this, ActivityMain.class);
             main.putExtra(ActivityMain.EXTRA_REFRESH, true);
             main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-            PendingIntent pi = PendingIntent.getActivity(this, uid, main, PendingIntent.FLAG_UPDATE_CURRENT);
+            @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pi = PendingIntent.getActivity(this, uid, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
             builder.setSmallIcon(R.drawable.ic_rocket_white)
@@ -2480,9 +2446,8 @@ public class ServiceSinkhole extends VpnService {
             builder.setContentTitle(getString(R.string.msg_installed, name))
                     .setContentText(getString(R.string.msg_installed_description));
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                        .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
             // Show notification
             if (internet)
@@ -2495,7 +2460,7 @@ public class ServiceSinkhole extends VpnService {
                 else
                     expanded.bigText(getString(R.string.msg_installed, name));
                 expanded.setSummaryText(getString(R.string.title_internet));
-                NotificationManagerCompat.from(this).notify(uid, expanded.build());
+                NotificationManagerCompat.from(this).notify(uid, Objects.requireNonNull(expanded.build()));
             }
 
         } catch (PackageManager.NameNotFoundException ex) {
@@ -2544,13 +2509,11 @@ public class ServiceSinkhole extends VpnService {
         statsHandler = new StatsHandler(statsLooper);
 
         // Listen for user switches
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            IntentFilter ifUser = new IntentFilter();
-            ifUser.addAction(Intent.ACTION_USER_BACKGROUND);
-            ifUser.addAction(Intent.ACTION_USER_FOREGROUND);
-            registerReceiver(userReceiver, ifUser);
-            registeredUser = true;
-        }
+        IntentFilter ifUser = new IntentFilter();
+        ifUser.addAction(Intent.ACTION_USER_BACKGROUND);
+        ifUser.addAction(Intent.ACTION_USER_FOREGROUND);
+        registerReceiver(userReceiver, ifUser);
+        registeredUser = true;
 
         // Listen for idle mode state changes
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -2598,7 +2561,7 @@ public class ServiceSinkhole extends VpnService {
         am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + 60 * 1000, AlarmManager.INTERVAL_HALF_DAY, pi);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @androidx.annotation.RequiresApi(api = Build.VERSION_CODES.M)
     private void listenNetworkChanges() {
         // Listen for network changes
         Log.i(TAG, "Starting listening to network changes");
@@ -2678,7 +2641,7 @@ public class ServiceSinkhole extends VpnService {
             boolean same(List<InetAddress> last, List<InetAddress> current) {
                 if (last == null || current == null)
                     return false;
-                if (last == null || last.size() != current.size())
+                if (last.size() != current.size())
                     return false;
 
                 for (int i = 0; i < current.size(); i++)
@@ -2815,7 +2778,7 @@ public class ServiceSinkhole extends VpnService {
 
             for (Command command : Command.values())
                 commandHandler.removeMessages(command.ordinal());
-            releaseLock(this);
+            releaseLock();
 
             // Registered in command loop
             if (registeredInteractiveState) {
@@ -2862,7 +2825,7 @@ public class ServiceSinkhole extends VpnService {
 
             try {
                 if (vpn != null) {
-                    stopNative(vpn);
+                    stopNative();
                     stopVPN(vpn);
                     vpn = null;
                     unprepare();
@@ -2912,10 +2875,9 @@ public class ServiceSinkhole extends VpnService {
             builder.setContentTitle(getString(R.string.app_name))
                     .setContentText(getString(R.string.msg_started));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET)
-                    .setPriority(NotificationCompat.PRIORITY_MIN);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET)
+                .setPriority(NotificationCompat.PRIORITY_MIN);
 
         if (allowed >= 0)
             last_allowed = allowed;
@@ -2990,16 +2952,16 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_revoked));
 
-        NotificationManagerCompat.from(this).notify(NOTIFY_DISABLED, notification.build());
+        NotificationManagerCompat.from(this).notify(NOTIFY_DISABLED, Objects.requireNonNull(notification.build()));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void showLockdownNotification() {
         Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
         PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_LOCKDOWN, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -3016,21 +2978,21 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_always_on_lockdown));
 
-        NotificationManagerCompat.from(this).notify(NOTIFY_LOCKDOWN, notification.build());
+        NotificationManagerCompat.from(this).notify(NOTIFY_LOCKDOWN, Objects.requireNonNull(notification.build()));
     }
 
     private void removeLockdownNotification() {
         NotificationManagerCompat.from(this).cancel(NOTIFY_LOCKDOWN);
     }
 
-    private void showAutoStartNotification() {
+    // NEVER USED
+    /*private void showAutoStartNotification() {
         Intent main = new Intent(this, ActivityMain.class);
         main.putExtra(ActivityMain.EXTRA_APPROVE, true);
         PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_AUTOSTART, main, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -3044,15 +3006,14 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_autostart));
 
-        NotificationManagerCompat.from(this).notify(NOTIFY_AUTOSTART, notification.build());
-    }
+        NotificationManagerCompat.from(this).notify(NOTIFY_AUTOSTART, Objects.requireNonNull(notification.build()));
+    }*/
 
     private void showErrorNotification(String message) {
         Intent main = new Intent(this, ActivityMain.class);
@@ -3067,15 +3028,14 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_error, message));
         notification.setSummaryText(message);
 
-        NotificationManagerCompat.from(this).notify(NOTIFY_ERROR, notification.build());
+        NotificationManagerCompat.from(this).notify(NOTIFY_ERROR, Objects.requireNonNull(notification.build()));
     }
 
     private void showUpdateNotification(String name, String url) {
@@ -3091,9 +3051,8 @@ public class ServiceSinkhole extends VpnService {
                 .setOngoing(false)
                 .setAutoCancel(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+        builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationManagerCompat.from(this).notify(NOTIFY_UPDATE, builder.build());
     }
@@ -3105,12 +3064,12 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private class Builder extends VpnService.Builder {
-        private NetworkInfo networkInfo;
+        private final NetworkInfo networkInfo;
         private int mtu;
-        private List<String> listAddress = new ArrayList<>();
-        private List<String> listRoute = new ArrayList<>();
-        private List<InetAddress> listDns = new ArrayList<>();
-        private List<String> listDisallowed = new ArrayList<>();
+        private final List<String> listAddress = new ArrayList<>();
+        private final List<String> listRoute = new ArrayList<>();
+        private final List<InetAddress> listDns = new ArrayList<>();
+        private final List<String> listDisallowed = new ArrayList<>();
 
         private Builder() {
             super();
@@ -3212,7 +3171,7 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private class IPKey {
+    private static class IPKey {
         int version;
         int protocol;
         int dport;
@@ -3242,15 +3201,16 @@ public class ServiceSinkhole extends VpnService {
             return (version << 40) | (protocol << 32) | (dport << 16) | uid;
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "v" + version + " p" + protocol + " port=" + dport + " uid=" + uid;
         }
     }
 
-    private class Expiring<T> {
-        private T t;
-        private long expires;
+    private static class Expiring<T> {
+        private final T t;
+        private final long expires;
 
         public Expiring(T t, long expires) {
             this.t = t;
@@ -3269,10 +3229,10 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private class IPRule {
-        private IPKey key;
-        private String name;
-        private boolean block;
+    private static class IPRule {
+        private final IPKey key;
+        private final String name;
+        private final boolean block;
         private long expires;
 
         public IPRule(IPKey key, String name, boolean block, long expires) {
@@ -3286,9 +3246,10 @@ public class ServiceSinkhole extends VpnService {
             return this.block;
         }
 
-        public boolean isExpired() {
+        // NEVER USED
+        /*public boolean isExpired() {
             return System.currentTimeMillis() > this.expires;
-        }
+        }*/
 
         public void updateExpires(long expires) {
             this.expires = Math.max(this.expires, expires);
@@ -3300,6 +3261,7 @@ public class ServiceSinkhole extends VpnService {
             return (this.block == other.block && this.expires == other.expires);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return this.key + " " + this.name;

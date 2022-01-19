@@ -74,12 +74,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 22;
 
     private static boolean once = true;
-    private static List<LogChangedListener> logChangedListeners = new ArrayList<>();
-    private static List<AccessChangedListener> accessChangedListeners = new ArrayList<>();
-    private static List<ForwardChangedListener> forwardChangedListeners = new ArrayList<>();
+    private static final List<LogChangedListener> logChangedListeners = new ArrayList<>();
+    private static final List<AccessChangedListener> accessChangedListeners = new ArrayList<>();
+    private static final List<ForwardChangedListener> forwardChangedListeners = new ArrayList<>();
 
-    private static HandlerThread hthread = null;
-    private static Handler handler = null;
+    private static final HandlerThread hthread;
+    private static final Handler handler;
 
     private static final Map<Integer, Long> mapUidHosts = new HashMap<>();
 
@@ -87,8 +87,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final static int MSG_ACCESS = 2;
     private final static int MSG_FORWARD = 3;
 
-    private SharedPreferences prefs;
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+    private final SharedPreferences prefs;
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     static {
         hthread = new HandlerThread("DatabaseHelper");
@@ -246,16 +246,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private boolean columnExists(SQLiteDatabase db, String table, String column) {
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery("SELECT * FROM " + table + " LIMIT 0", null);
-            return (cursor.getColumnIndex(column) >= 0);
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + table + " LIMIT 0", null)) {
+            return (cursor.getColumnIndex(column) < 0);
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            return false;
-        } finally {
-            if (cursor != null)
-                cursor.close();
+            return true;
         }
     }
 
@@ -266,33 +261,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.beginTransaction();
         try {
             if (oldVersion < 2) {
-                if (!columnExists(db, "log", "version"))
+                if (columnExists(db, "log", "version"))
                     db.execSQL("ALTER TABLE log ADD COLUMN version INTEGER");
-                if (!columnExists(db, "log", "protocol"))
+                if (columnExists(db, "log", "protocol"))
                     db.execSQL("ALTER TABLE log ADD COLUMN protocol INTEGER");
-                if (!columnExists(db, "log", "uid"))
+                if (columnExists(db, "log", "uid"))
                     db.execSQL("ALTER TABLE log ADD COLUMN uid INTEGER");
                 oldVersion = 2;
             }
             if (oldVersion < 3) {
-                if (!columnExists(db, "log", "port"))
+                if (columnExists(db, "log", "port"))
                     db.execSQL("ALTER TABLE log ADD COLUMN port INTEGER");
-                if (!columnExists(db, "log", "flags"))
+                if (columnExists(db, "log", "flags"))
                     db.execSQL("ALTER TABLE log ADD COLUMN flags TEXT");
                 oldVersion = 3;
             }
             if (oldVersion < 4) {
-                if (!columnExists(db, "log", "connection"))
+                if (columnExists(db, "log", "connection"))
                     db.execSQL("ALTER TABLE log ADD COLUMN connection INTEGER");
                 oldVersion = 4;
             }
             if (oldVersion < 5) {
-                if (!columnExists(db, "log", "interactive"))
+                if (columnExists(db, "log", "interactive"))
                     db.execSQL("ALTER TABLE log ADD COLUMN interactive INTEGER");
                 oldVersion = 5;
             }
             if (oldVersion < 6) {
-                if (!columnExists(db, "log", "allowed"))
+                if (columnExists(db, "log", "allowed"))
                     db.execSQL("ALTER TABLE log ADD COLUMN allowed INTEGER");
                 oldVersion = 6;
             }
@@ -302,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 oldVersion = 8;
             }
             if (oldVersion < 8) {
-                if (!columnExists(db, "log", "data"))
+                if (columnExists(db, "log", "data"))
                     db.execSQL("ALTER TABLE log ADD COLUMN data TEXT");
                 db.execSQL("DROP INDEX idx_log_source");
                 db.execSQL("DROP INDEX idx_log_dest");
@@ -346,9 +341,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 oldVersion = 16;
             }
             if (oldVersion < 17) {
-                if (!columnExists(db, "access", "sent"))
+                if (columnExists(db, "access", "sent"))
                     db.execSQL("ALTER TABLE access ADD COLUMN sent INTEGER");
-                if (!columnExists(db, "access", "received"))
+                if (columnExists(db, "access", "received"))
                     db.execSQL("ALTER TABLE access ADD COLUMN received INTEGER");
                 oldVersion = 17;
             }
@@ -360,7 +355,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 oldVersion = 18;
             }
             if (oldVersion < 19) {
-                if (!columnExists(db, "access", "connections"))
+                if (columnExists(db, "access", "connections"))
                     db.execSQL("ALTER TABLE access ADD COLUMN connections INTEGER");
                 oldVersion = 19;
             }
@@ -542,7 +537,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Access
 
-    public boolean updateAccess(Packet packet, String dname, int block, int uncertain) {
+    public void updateAccess(Packet packet, String dname, int block, int uncertain) {
         int rows;
 
         lock.writeLock().lock();
@@ -589,7 +584,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         notifyAccessChanged();
-        return (rows == 0);
     }
 
     public void updateUsage(Usage usage, String dname) {
@@ -765,7 +759,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getAccessUnset(int uid, int limit, long since) {
+    // NEVER USED
+    /*public Cursor getAccessUnset(int uid, int limit, long since) {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -784,7 +779,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } finally {
             lock.readLock().unlock();
         }
-    }
+    }*/
 
     public long getHostCount(int uid, boolean usecache) {
         if (usecache)
@@ -891,7 +886,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private SQLiteDatabase readableDb;
 
-    public String getQName(int uid, String ip) {
+    public String getQName(String ip) {
         lock.readLock().lock();
         try {
             if (readableDb == null)
@@ -913,7 +908,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getQAName(int uid, String ip, boolean alive) {
+    public Cursor getQAName(String ip, boolean alive) {
         long now = new Date().getTime();
         lock.readLock().lock();
         try {

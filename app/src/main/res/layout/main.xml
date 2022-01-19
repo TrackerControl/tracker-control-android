@@ -33,11 +33,6 @@
                 android:visibility="gone" />
         </LinearLayout>
 
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
             <LinearLayout
                 android:id="@+id/llUsage"
                 android:layout_width="match_parent"
@@ -59,12 +54,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:text="@android:string/ok"
                     android:textAppearance="@style/TextSmall" />
             </LinearLayout>
-        </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
@@ -106,7 +99,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:text="@android:string/ok"
                     android:textAppearance="@style/TextMedium" />
@@ -133,7 +125,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:text="@android:string/ok"
                     android:textAppearance="@style/TextSmall" />
@@ -160,7 +151,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:text="@android:string/ok"
                     android:textAppearance="@style/TextSmall" />
@@ -173,6 +163,5 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

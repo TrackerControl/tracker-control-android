@@ -48,7 +48,7 @@ public class PlayStore {
     private static AppInfo parse(String playStoreInfo) {
         String scriptRegex = ">AF_initDataCallback[\\s\\S]*?</script";
         String keyRegex = "(ds:.*?)'";
-        String valueRegex = "data:([\\s\\S]*?)\\}\\);<\\/";
+        String valueRegex = "data:([\\s\\S]*?)}\\);</";
 
         Matcher scriptMatcher = Pattern.compile(scriptRegex)
                 .matcher(playStoreInfo);

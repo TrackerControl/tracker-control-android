@@ -1,10 +1,12 @@
 <!-- The header bar of the main screen -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    tools:ignore="ContentDescription">
 
     <LinearLayout
         android:visibility="gone"
@@ -17,7 +19,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_rocket"
-            app:tint="@color/switchTrackDisable" />
+            app:tint="@color/switchTrackDisable"/>
 
         <ImageView
             android:id="@+id/ivQueue"
@@ -31,7 +33,7 @@
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swEnabled"
         style="@style/RocketSwitch"
         android:layout_width="wrap_content"
@@ -61,7 +63,6 @@
             android:layout_height="24dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
             android:src="@drawable/ic_attach_money_white_24dp"
             android:visibility="invisible" />
     </LinearLayout>

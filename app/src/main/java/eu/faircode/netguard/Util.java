@@ -22,18 +22,13 @@ package eu.faircode.netguard;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ApplicationErrorReport;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
@@ -60,7 +55,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.net.ConnectivityManagerCompat;
 import androidx.preference.PreferenceManager;
 
-import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 
 import java.io.BufferedReader;
@@ -69,16 +63,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -206,11 +195,12 @@ public class Util {
         return (ssid == null ? "NULL" : ssid);
     }
 
-    public static int getNetworkType(Context context) {
+    // NVER USED
+    /*public static int getNetworkType(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = (cm == null ? null : cm.getActiveNetworkInfo());
         return (ni == null ? TelephonyManager.NETWORK_TYPE_UNKNOWN : ni.getSubtype());
-    }
+    }*/
 
     public static String getNetworkGeneration(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -327,10 +317,7 @@ public class Util {
 
     public static boolean isInteractive(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH)
-            return (pm != null && pm.isScreenOn());
-        else
-            return (pm != null && pm.isInteractive());
+        return (pm != null && pm.isInteractive());
     }
 
     public static boolean isPackageInstalled(String packageName, Context context) {
@@ -413,7 +400,7 @@ public class Util {
         return listResult;
     }
 
-    public static boolean canFilter(Context context) {
+    public static boolean canFilter() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             return true;
 
@@ -433,11 +420,11 @@ public class Util {
     }
 
     public static boolean isDebuggable(Context context) {
-        return ((context.getApplicationContext().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
+        return ((context.getApplicationContext().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0);
     }
 
     public static boolean isFDroidInstall() {
-        return BuildConfig.FLAVOR.equals("fdroid");
+        return true;
     }
 
     public static boolean isPlayStoreInstall(Context context) {
@@ -445,19 +432,14 @@ public class Util {
     }
 
     public static boolean isPlayStoreInstall() {
-        return BuildConfig.FLAVOR.equals("play");
-    }
-
-    public static boolean hasXposed(Context context) {
-        if (true || !isPlayStoreInstall(context))
-            return false;
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
-            if (ste.getClassName().startsWith("de.robv.android.xposed"))
-                return true;
         return false;
     }
 
-    public static boolean ownFault(Context context, Throwable ex) {
+    public static void hasXposed() {
+    }
+
+    // NEVER USED
+    /*public static boolean ownFault(Context context, Throwable ex) {
         if (ex instanceof OutOfMemoryError)
             return false;
         if (ex.getCause() != null)
@@ -466,7 +448,7 @@ public class Util {
             if (ste.getClassName().startsWith(context.getPackageName()))
                 return true;
         return false;
-    }
+    }*/
 
     public static void setTheme(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -486,7 +468,8 @@ public class Util {
         return Math.round(dips * context.getResources().getDisplayMetrics().density + 0.5f);
     }
 
-    private static int calculateInSampleSize(
+    // NEVER USED
+    /*private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int height = options.outHeight;
         int width = options.outWidth;
@@ -501,9 +484,10 @@ public class Util {
         }
 
         return inSampleSize;
-    }
+    }*/
 
-    public static Bitmap decodeSampledBitmapFromResource(
+    // NEER USED
+    /*public static Bitmap decodeSampledBitmapFromResource(
             Resources resources, int resourceId, int reqWidth, int reqHeight) {
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -513,7 +497,7 @@ public class Util {
         options.inJustDecodeBounds = false;
 
         return BitmapFactory.decodeResource(resources, resourceId, options);
-    }
+    }*/
 
     public static String getProtocolName(int protocol, int version, boolean brief) {
         // https://en.wikipedia.org/wiki/List_of_IP_protocol_numbers
@@ -547,7 +531,7 @@ public class Util {
                 break;
         }
         if (p == null)
-            return Integer.toString(protocol) + "/" + version;
+            return protocol + "/" + version;
         return ((brief ? b : p) + (version > 0 ? version : ""));
     }
 
@@ -571,17 +555,9 @@ public class Util {
         new AlertDialog.Builder(context)
                 .setView(view)
                 .setCancelable(true)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listener.onSure();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                    }
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> listener.onSure())
+                .setNegativeButton(android.R.string.no, (dialog, which) -> {
+                    // Do nothing
                 })
                 .create().show();
     }
@@ -618,14 +594,15 @@ public class Util {
         }
     }
 
-    public static String md5(String text, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    // NEVER USED
+    /*public static String md5(String text, String salt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         // MD5
         byte[] bytes = MessageDigest.getInstance("MD5").digest((text + salt).getBytes("UTF-8"));
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes)
             sb.append(String.format("%02X", b));
         return sb.toString();
-    }
+    }*/
 
     public static void logExtras(Intent intent) {
         if (intent != null)
@@ -648,7 +625,8 @@ public class Util {
         }
     }
 
-    public static StringBuilder readString(InputStreamReader reader) {
+    // NEVER USED
+    /*public static StringBuilder readString(InputStreamReader reader) {
         StringBuilder sb = new StringBuilder(2048);
         char[] read = new char[128];
         try {
@@ -657,9 +635,10 @@ public class Util {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
         return sb;
-    }
+    }*/
 
-    public static void sendCrashReport(Throwable ex, final Context context) {
+    // NEVER USED
+    /*public static void sendCrashReport(Throwable ex, final Context context) {
         if (!isPlayStoreInstall(context) || Util.isDebuggable(context))
             return;
 
@@ -696,7 +675,7 @@ public class Util {
         } catch (Throwable exex) {
             Log.e(TAG, exex.toString() + "\n" + Log.getStackTraceString(exex));
         }
-    }
+    }*/
 
     public static String getGeneralInfo(Context context) {
         StringBuilder sb = new StringBuilder();
@@ -735,8 +714,7 @@ public class Util {
         }
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            sb.append(String.format("Power saving %B\r\n", pm.isPowerSaveMode()));
+        sb.append(String.format("Power saving %B\r\n", pm.isPowerSaveMode()));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             sb.append(String.format("Battery optimizing %B\r\n", batteryOptimizing(context)));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -755,14 +733,11 @@ public class Util {
         NetworkInfo ani = cm.getActiveNetworkInfo();
         List<NetworkInfo> listNI = new ArrayList<>();
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            listNI.addAll(Arrays.asList(cm.getAllNetworkInfo()));
-        else
-            for (Network network : cm.getAllNetworks()) {
-                NetworkInfo ni = cm.getNetworkInfo(network);
-                if (ni != null)
-                    listNI.add(ni);
-            }
+        for (Network network : cm.getAllNetworks()) {
+            NetworkInfo ni = cm.getNetworkInfo(network);
+            if (ni != null)
+                listNI.add(ni);
+        }
 
         for (NetworkInfo ni : listNI) {
             sb.append(ni.getTypeName()).append('/').append(ni.getSubtypeName())
@@ -838,10 +813,7 @@ public class Util {
                 sb.append(String.format("Id: %s\r\n", Build.ID));
 
                 String abi;
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                    abi = Build.CPU_ABI;
-                else
-                    abi = (Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "?");
+                abi = (Build.SUPPORTED_ABIS.length > 0 ? Build.SUPPORTED_ABIS[0] : "?");
                 sb.append(String.format("ABI: %s\r\n", abi));
 
                 Runtime rt = Runtime.getRuntime();
@@ -995,7 +967,6 @@ public class Util {
     private static StringBuilder getLogcat() {
         StringBuilder builder = new StringBuilder();
         Process process1 = null;
-        Process process2 = null;
         BufferedReader br = null;
         try {
             String[] command1 = new String[]{"logcat", "-d", "-v", "threadtime"};
@@ -1016,12 +987,6 @@ public class Util {
                 try {
                     br.close();
                 } catch (IOException ignored) {
-                }
-            if (process2 != null)
-                try {
-                    process2.destroy();
-                } catch (Throwable ex) {
-                    Log.w(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                 }
             if (process1 != null)
                 try {

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    tools:context="eu.faircode.netguard.ActivityDns">
+    tools:context="eu.faircode.netguard.ActivityDns"
+    android:baselineAligned="false">
 
     <LinearLayout
         android:layout_width="60dp"
@@ -21,7 +22,7 @@
             android:id="@+id/tvTTL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|right"
+            android:layout_gravity="end"
             android:textAppearance="@style/TextSmall" />
     </LinearLayout>
 
@@ -29,7 +30,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
         android:layout_weight="1"
         android:orientation="vertical">
@@ -52,7 +52,6 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
         android:orientation="vertical">
 

@@ -22,18 +22,17 @@ package eu.faircode.netguard;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Process;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -49,11 +48,11 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class Rule {
     private static final String TAG = "TrackerControl.Rule";
@@ -93,10 +92,10 @@ public class Rule {
     public boolean expanded = false;
 
     private static List<PackageInfo> cachePackageInfo = null;
-    private static Map<PackageInfo, String> cacheLabel = new HashMap<>();
-    private static Map<String, Boolean> cacheSystem = new HashMap<>();
-    private static Map<String, Boolean> cacheInternet = new HashMap<>();
-    private static Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
+    private static final Map<PackageInfo, String> cacheLabel = new HashMap<>();
+    private static final Map<String, Boolean> cacheSystem = new HashMap<>();
+    private static final Map<String, Boolean> cacheInternet = new HashMap<>();
+    private static final Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
 
     static List<PackageInfo> getPackages(Context context) {
         if (cachePackageInfo == null) {
@@ -188,9 +187,7 @@ public class Rule {
             this.enabled = true;
             this.pkg = false;
         } else {
-            Cursor cursor = null;
-            try {
-                cursor = dh.getApp(this.packageName);
+            try (Cursor cursor = dh.getApp(this.packageName)) {
                 if (cursor.moveToNext()) {
                     this.name = cursor.getString(cursor.getColumnIndex("label"));
                     this.system = cursor.getInt(cursor.getColumnIndex("system")) > 0;
@@ -204,9 +201,6 @@ public class Rule {
 
                     dh.addApp(this.packageName, this.name, this.system, this.internet, this.enabled);
                 }
-            } finally {
-                if (cursor != null)
-                    cursor.close();
             }
         }
     }
@@ -398,7 +392,7 @@ public class Rule {
                         // Related packages
                         List<String> listPkg = new ArrayList<>();
                         if (pre_related.containsKey(info.packageName))
-                            listPkg.addAll(Arrays.asList(pre_related.get(info.packageName)));
+                            listPkg.addAll(Arrays.asList(Objects.requireNonNull(pre_related.get(info.packageName))));
                         for (PackageInfo pi : listPI)
                             if (pi.applicationInfo.uid == rule.uid && !pi.packageName.equals(rule.packageName)) {
                                 rule.relateduids = true;
@@ -448,44 +442,35 @@ public class Rule {
 
             String sort = prefs.getString("sort", "trackers_week");
             if ("uid".equals(sort))
-                Collections.sort(listRules, new Comparator<Rule>() {
-                    @Override
-                    public int compare(Rule rule, Rule other) {
-                        if (rule.uid < other.uid)
-                            return -1;
-                        else if (rule.uid > other.uid)
-                            return 1;
-                        else {
-                            int i = collator.compare(rule.name, other.name);
-                            return (i == 0 ? rule.packageName.compareTo(other.packageName) : i);
-                        }
+                Collections.sort(listRules, (rule, other1) -> {
+                    if (rule.uid < other1.uid)
+                        return -1;
+                    else if (rule.uid > other1.uid)
+                        return 1;
+                    else {
+                        int i = collator.compare(rule.name, other1.name);
+                        return (i == 0 ? rule.packageName.compareTo(other1.packageName) : i);
                     }
                 });
             else if ("name".equals(sort))
-                Collections.sort(listRules, new Comparator<Rule>() {
-                    @Override
-                    public int compare(Rule rule, Rule other) {
-                        if (all || rule.changed == other.changed) {
-                            int i = collator.compare(rule.name, other.name);
-                            return (i == 0 ? rule.packageName.compareTo(other.packageName) : i);
-                        }
-                        return (rule.changed ? -1 : 1);
+                Collections.sort(listRules, (rule, other12) -> {
+                    if (all || rule.changed == other12.changed) {
+                        int i = collator.compare(rule.name, other12.name);
+                        return (i == 0 ? rule.packageName.compareTo(other12.packageName) : i);
                     }
+                    return (rule.changed ? -1 : 1);
                 });
             else
-                Collections.sort(listRules, new Comparator<Rule>() {
-                    @Override
-                    public int compare(Rule rule, Rule other) {
-                        boolean pastWeekOnly = !("trackers_all".equals(sort));
+                Collections.sort(listRules, (rule, other13) -> {
+                    boolean pastWeekOnly = !("trackers_all".equals(sort));
 
-                        if (rule.getTrackerCount(pastWeekOnly) < other.getTrackerCount(pastWeekOnly))
-                            return 1;
-                        else if (rule.getTrackerCount(pastWeekOnly) > other.getTrackerCount(pastWeekOnly))
-                            return -1;
-                        else {
-                            int i = collator.compare(rule.name, other.name);
-                            return (i == 0 ? rule.packageName.compareTo(other.packageName) : i);
-                        }
+                    if (rule.getTrackerCount(pastWeekOnly) < other13.getTrackerCount(pastWeekOnly))
+                        return 1;
+                    else if (rule.getTrackerCount(pastWeekOnly) > other13.getTrackerCount(pastWeekOnly))
+                        return -1;
+                    else {
+                        int i = collator.compare(rule.name, other13.name);
+                        return (i == 0 ? rule.packageName.compareTo(other13.packageName) : i);
                     }
                 });
 
@@ -494,7 +479,9 @@ public class Rule {
         }
     }
 
-    private static List<String> getHandlingPackages(PackageManager pm, Intent intent) {
+
+    // NEVER USED
+    /*private static List<String> getHandlingPackages(PackageManager pm, Intent intent) {
         List<String> packagesList = new ArrayList<>();
 
         int flag = 0;
@@ -505,7 +492,7 @@ public class Rule {
             packagesList.add(info.activityInfo.packageName);
 
         return packagesList;
-    }
+    }*/
 
     private void updateChanged(boolean default_wifi, boolean default_other, boolean default_roaming) {
         changed = (wifi_blocked != default_wifi ||
@@ -525,6 +512,7 @@ public class Rule {
         updateChanged(default_wifi, default_other, default_roaming);
     }
 
+    @NonNull
     @Override
     public String toString() {
         // This is used in the port forwarding dialog application selector

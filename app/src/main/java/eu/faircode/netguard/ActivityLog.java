@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -57,24 +58,23 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 public class ActivityLog extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Log";
 
     private boolean running = false;
-    private ListView lvLog;
     private AdapterLog adapter;
     private MenuItem menuSearch = null;
 
     private boolean live;
-    private boolean resolve;
-    private boolean organization;
     private InetAddress vpn4 = null;
     private InetAddress vpn6 = null;
 
     private static final int REQUEST_PCAP = 1;
 
-    private DatabaseHelper.LogChangedListener listener = () -> runOnUiThread(this::updateAdapter);
+    private final DatabaseHelper.LogChangedListener listener = () -> runOnUiThread(this::updateAdapter);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,10 +84,10 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         running = true;
 
         // Action bar
-        View actionView = getLayoutInflater().inflate(R.layout.actionlog, null, false);
+        @SuppressLint("InflateParams") View actionView = getLayoutInflater().inflate(R.layout.actionlog, null, false);
         SwitchCompat swEnabled = actionView.findViewById(R.id.swEnabled);
 
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
 
         getSupportActionBar().setTitle(R.string.menu_log);
@@ -95,8 +95,8 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
         // Get settings
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        resolve = prefs.getBoolean("resolve", false);
-        organization = prefs.getBoolean("organization", false);
+        boolean resolve = prefs.getBoolean("resolve", false);
+        boolean organization = prefs.getBoolean("organization", false);
         boolean log = prefs.getBoolean("log", false);
 
         // Show disabled message
@@ -110,7 +110,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         // Listen for preference changes
         prefs.registerOnSharedPreferenceChangeListener(this);
 
-        lvLog = findViewById(R.id.lvLog);
+        ListView lvLog = findViewById(R.id.lvLog);
 
         boolean udp = prefs.getBoolean("proto_udp", true);
         boolean tcp = prefs.getBoolean("proto_tcp", true);
@@ -154,6 +154,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
             String ip;
             int port;
+            assert addr != null;
             if (addr.equals(vpn4) || addr.equals(vpn6)) {
                 ip = saddr;
                 port = sport;
@@ -277,7 +278,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
             tvDisabled.setVisibility(log ? View.GONE : View.VISIBLE);
 
             // Check switch state
-            SwitchCompat swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
+            SwitchCompat swEnabled = Objects.requireNonNull(getSupportActionBar()).getCustomView().findViewById(R.id.swEnabled);
             if (swEnabled.isChecked() != log)
                 swEnabled.setChecked(log);
 
@@ -415,9 +416,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
                         adapter.notifyDataSetChanged();
                         dialog.dismiss();
                     })
-                    .setNegativeButton(R.string.no, (dialog, id2) -> {
-                        dialog.dismiss();
-                    });
+                    .setNegativeButton(R.string.no, (dialog, id2) -> dialog.dismiss());
             AlertDialog dialog = builder.create();
             dialog.show();
             
@@ -498,7 +497,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/octet-stream");
-        intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+        intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".pcap");
         return intent;
     }
 

@@ -36,15 +36,16 @@ import net.kollnig.missioncontrol.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class AdapterDns extends CursorAdapter {
-    private int colorExpired;
+    private final int colorExpired;
 
-    private int colTime;
-    private int colQName;
-    private int colAName;
-    private int colResource;
-    private int colTTL;
+    private final int colTime;
+    private final int colQName;
+    private final int colAName;
+    private final int colResource;
+    private final int colTTL;
 
     public AdapterDns(Context context, Cursor cursor) {
         super(context, cursor, 0);
@@ -89,10 +90,10 @@ public class AdapterDns extends CursorAdapter {
         TextView tvTTL = view.findViewById(R.id.tvTTL);
 
         // Set values
-        tvTime.setText(new SimpleDateFormat("dd HH:mm").format(time));
+        tvTime.setText(new SimpleDateFormat("dd HH:mm", Locale.getDefault()).format(time));
         tvQName.setText(qname);
         tvAName.setText(aname);
         tvResource.setText(resource);
-        tvTTL.setText("+" + Integer.toString(ttl / 1000));
+        tvTTL.setText(R.string.plus_sign + ttl / 1000);
     }
 }

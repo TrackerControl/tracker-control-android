@@ -67,7 +67,7 @@ public class WidgetMain extends AppWidgetProvider {
 
     public static void updateWidgets(Context context) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int appWidgetIds[] = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, WidgetMain.class));
+        int[] appWidgetIds = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, WidgetMain.class));
         update(appWidgetIds, appWidgetManager, context);
     }
 }

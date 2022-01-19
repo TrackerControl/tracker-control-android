@@ -59,7 +59,8 @@
     <ImageView
         android:id="@+id/svgView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/txtFailure"

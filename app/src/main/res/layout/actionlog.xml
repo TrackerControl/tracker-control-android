@@ -4,12 +4,11 @@
     android:background="?attr/colorPrimary"
     android:orientation="horizontal">
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swEnabled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:saveEnabled="false" />
 </LinearLayout>

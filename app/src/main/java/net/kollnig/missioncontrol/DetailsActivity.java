@@ -60,6 +60,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import eu.faircode.netguard.DatabaseHelper;
@@ -159,7 +161,7 @@ public class DetailsActivity extends AppCompatActivity {
         // set toolbar and back arrow
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         // Set title
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -206,7 +208,7 @@ public class DetailsActivity extends AppCompatActivity {
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_TITLE, appPackageName + "_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+        intent.putExtra(Intent.EXTRA_TITLE, appPackageName + "_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
         return intent;
     }
 
@@ -244,7 +246,7 @@ public class DetailsActivity extends AppCompatActivity {
             try {
                 Uri target = data.getData();
                 if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                    target = Uri.parse(target + "/" + appPackageName + "_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                    target = Uri.parse(target + "/" + appPackageName + "_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
                 Log.i(TAG, "Writing URI=" + target);
                 out = getContentResolver().openOutputStream(target);
                 csvExport(out);

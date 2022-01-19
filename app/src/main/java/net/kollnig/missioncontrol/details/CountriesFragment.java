@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import androidx.fragment.app.Fragment;
 
@@ -55,7 +56,7 @@ import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
 
 public class CountriesFragment extends Fragment {
     private static final String ARG_APP_UID = "app-uid";
-    private final String TAG = CountriesFragment.class.getSimpleName();
+    //private final String TAG = CountriesFragment.class.getSimpleName();
     private int mAppUid;
 
     public CountriesFragment() {
@@ -79,7 +80,7 @@ public class CountriesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
+        //Bundle bundle = getArguments();
     }
 
     /**
@@ -134,10 +135,11 @@ public class CountriesFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(final View v, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View v, Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
         Bundle arguments = getArguments();
+        assert arguments != null;
         mAppUid = arguments.getInt(ARG_APP_UID);
 
         ProgressBar pbLoading = v.findViewById(R.id.pbLoading);

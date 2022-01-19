@@ -445,4 +445,12 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Detect trackers in app code</string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
 
+
+    <string name="plus_sign" translatable="false">+</string>
+    <string name="etDPort" translatable="false">53</string>
+    <string name="etRAddr" translatable="false">127.0.0.1</string>
+    <string name="etRPort" translatable="false">5353</string>
+    <string name="tvTx" translatable="false">▲</string>
+    <string name="tvRx" translatable="false">▼</string>
+
 </resources>
