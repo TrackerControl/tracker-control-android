@@ -9,6 +9,7 @@
 [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
       alt="Get it on F-Droid"
       height="80">](https://f-droid.org/app/net.kollnig.missioncontrol.fdroid)
+      
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
       alt='Get it on IzzyOnDroid' 
       height="80">](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol)
