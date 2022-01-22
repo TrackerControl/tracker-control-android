@@ -214,6 +214,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Copier</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Désactiver l\'accès à internet pour cette application</string>
     <string name="tracked_app_name">Nom de l\'application</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">a contacté %d société la semaine dernière</item>
@@ -223,6 +224,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
         <item quantity="one">a contacté %d entreprise</item>
         <item quantity="other">a contacté %d entreprises</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Récupérer les informations sur l\'organisation?</string>
     <string name="external_servers">Obtenir automatiquement le courriel du développeur ?</string>
     <string name="confirm_google_info">Cette application peut obtenir automatiquement le courriel du développeur de l\'application depuis la boutique Google Play pour vous.</string>
     <string name="ok">OK</string>
