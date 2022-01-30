@@ -284,13 +284,13 @@ public class TrackerList {
         // Keep track of parent companies
         Map<String, Tracker> rootParents = new HashMap<>();
 
-        try {
+        try (InputStream is = c.getAssets().open("xray-blacklist.json")) {
             // Read JSON
-            InputStream is = c.getAssets().open("xray-blacklist.json");
             int size = is.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
             String json = new String(buffer, StandardCharsets.UTF_8);
 
             // Each JSON array entry contains tracker company with domains
@@ -339,17 +339,17 @@ public class TrackerList {
      * @param c Context
      */
     private void loadDisconnectTrackers(Context c) {
-        try {
-            /* Read domain list:
-             *
-             * File is a reversed string, because some anti-virus scanners found the list suspicious
-             * More here: https://github.com/TrackerControl/tracker-control-android/issues/30
-             */
-            InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json");
+        /* Read domain list:
+         *
+         * File is a reversed string, because some anti-virus scanners found the list suspicious
+         * More here: https://github.com/TrackerControl/tracker-control-android/issues/30
+         */
+        try (InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json")) {
             int size = is.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();
 
