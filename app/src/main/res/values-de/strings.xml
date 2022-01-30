@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen apps über das Benutzerverhalten (\"tracking\") zu überwachen und zu steuern.</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universität Oxford)\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
     <string name="app_eula">Die Nutzung dieser App erfolgt auf eigenes Risiko. Keine App kann vollständigen Schutz vor Tracking garantieren.</string>
@@ -351,7 +351,12 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.</string>
     <string name="blocked">BLOCKIERT</string>
     <string name="allowed">ERLAUBT</string>
-    <string name="setting_domain_based_blocked">Domänenbasierte Blockierung (in Entwicklung)</string>
+    <string name="setting_domain_based_blocked">Domänenbasierte Blockierung</string>
     <string name="summary_domain_based_blocking">Ermöglicht eine präzisere Blockierung. Derzeit in der Entwicklung.</string>
     <string name="untap_unblock">Tipp: Sie können einzelne Einträge durch Tippen aufheben.</string>
+    <string name="uncertain_entry">Mit einem \'*\' markierte Einträge könnten aufgrund von Android-Einschränkungen ungenau sein. Dies bedeutet in der Regel, dass ein Unternehmen dieselbe IP-Adresse unter verschiedenen Domains verwendet, aber kann auch bedeuten, dass verschiedene Unternehmen die gleiche IP-Adresse verwenden (z. B. wenn sie ein Content Delivery Network verwenden).</string>
+    <string name="browsers_not_supported">Browser werden nicht unterstützt: ⚠️</string>
+    <string name="browsers_not_supported_explanation">Dies scheint eine Browser-App zu sein.\n\nDas Blockieren von Trackern in Browsern wird von TrackerControl nicht unterstützt. Verwenden Sie stattdessen einen Browser mit integrierter Anti-Tracking-Funktion.\n\nZum Beispiel: Mozilla Fennec, Bromite, Vivaldi</string>
+    <string name="static_analysis">Tracker im App-Code erkennen</string>
+    <string name="failed_loading_cached_analysis">Laden der zwischengespeicherten Tracker-Ergebnisse fehlgeschlagen. Bitte melden Sie dies dem Entwickler unter hello@trackercontrol.org</string>
 </resources>

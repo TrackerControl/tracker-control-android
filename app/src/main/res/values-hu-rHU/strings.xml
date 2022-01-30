@@ -107,7 +107,7 @@
     <string name="summary_rcode">Az alapértelmezett érték 3 (NXDOMAIN), ami azt jelenti: \'nem létező domain\'.</string>
     <string name="summary_validate">A használt domain név az internetkapcsolat ellenőrzéséhez a 443 (https) porton.</string>
     <string name="summary_socks5_enabled">Csak a TCP forgalom küldése a proxy szerverre</string>
-    <string name="summary_watchdog">Rendszeresen ellenőrzi ha a TrackerControl fut (a 0 beírása letiltja azt az opciót). Ez extra akkumulátor használattal járhat.</string>
+    <string name="summary_watchdog">Rendszeresen ellenőriz ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
     <string name="summary_log_logcat">Letiltja a blokkolást. A kommunikációt (és az azonosított nyomkövetőket) naplózza az eszköznaplóba. Letöltés az adb logcat segítségével a „TC-Log” címkével.</string>
     <string name="msg_sure">Biztos vagy benne?</string>
     <string name="msg_started">Nyomkövetők ellenőrzése</string>
@@ -350,7 +350,7 @@ Tisztelettel,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.</string>
     <string name="blocked">BLOKKOLT</string>
     <string name="allowed">ENGEDÉLYEZETT</string>
-    <string name="setting_domain_based_blocked">Tartományalapú blokkolás (fejlesztés alatt)</string>
+    <string name="setting_domain_based_blocked">Tartományalapú blokkolás</string>
     <string name="summary_domain_based_blocking">Részletesebb blokkolást tesz lehetővé. Még fejlesztés alatt áll.</string>
     <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
     <string name="uncertain_entry">A \"*\" jelzéssel ellátott bejegyzések pontatlanok lehetnek az Android korlátai miatt. Ez általában azt jelenti, hogy ugyanaz a vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelenti, hogy a különböző vállalatok ugyanazon az IP-cím mögött vannak (például tartalomszállítási hálózatot használnak).</string>

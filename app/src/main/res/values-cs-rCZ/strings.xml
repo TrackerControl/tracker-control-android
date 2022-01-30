@@ -362,11 +362,12 @@ Privátní DNS musí být vypnutá.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.</string>
     <string name="blocked">BLOKOVÁNO</string>
     <string name="allowed">POVOLENO</string>
-    <string name="setting_domain_based_blocked">Doménové blokování (ve vývoji)</string>
+    <string name="setting_domain_based_blocked">Blokování na základě domény</string>
     <string name="summary_domain_based_blocking">Umožňuje rozšířené blokování. Ve vývoji.</string>
     <string name="untap_unblock">Tip: Lze blokovat jednotlivé položky klepnutím na ně.</string>
     <string name="uncertain_entry">Položky označené \'*\' můžou být nepřesné kvůli limitům androidu. To znamená, že společnost používá stejnou IP adresu pod různými doménami, nebo že společnosti jsou se stejnou IP adresou (když používají Content Delivery Network).</string>
     <string name="browsers_not_supported">Prohlížeče nejsou podporovány ⚠️</string>
     <string name="browsers_not_supported_explanation">Toto je zřejmě prohlížeč. \n\nBlokování trackerů v prohlížečích není podporováno. Používej prohlížeč s integrovanou anti-tracking funkcí pro lepší výsledky. \n\nNapříklad: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
+    <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
 </resources>

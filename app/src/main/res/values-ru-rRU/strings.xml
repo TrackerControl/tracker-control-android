@@ -359,7 +359,6 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl обнаруживает трекинг в коде приложения («библиотеки») и в сетевом трафике.</string>
     <string name="blocked">ЗАБЛОКИРОВАНО</string>
     <string name="allowed">РАЗРЕШЕНО</string>
-    <string name="setting_domain_based_blocked">Блокировка по доменным именам (в разработке)</string>
     <string name="summary_domain_based_blocking">Позволяет более точную блокировку. Пока в разработке.</string>
     <string name="untap_unblock">Подсказка: Вы можете разблокировать отдельные записи, нажав на них.</string>
     <string name="uncertain_entry">Записи отмеченные знаком \'*\' могут быть неточными из-за ограничений Android. Это обычно означает, что одна и та же компания использует один и тот же IP адрес в разных доменах, но может также означать, что различные компании находятся за одним IP адресом (например, если они используют сети доставки контента).</string>

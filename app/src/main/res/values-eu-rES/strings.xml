@@ -361,7 +361,6 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="trackers_static_explanation_playstore">TrackerControlek kodean (\"liburutegietan\") eta aplikazioen sare-trafikoak detektatzen ditu arazoak.</string>
     <string name="blocked">BLOKEATUTA</string>
     <string name="allowed">BAIMENDUTA</string>
-    <string name="setting_domain_based_blocked">Domeinuan oinarritutako blokeoa (garapenean)</string>
     <string name="summary_domain_based_blocking">Blokeo pikordunagoa baimentzen du. Garapenean oraindik.</string>
     <string name="untap_unblock">Aholkua: sarrerak banan banan desaktibatu ditzakezu gainean sakatuz.</string>
 </resources>

@@ -351,7 +351,7 @@
     <string name="trackers_static_explanation_playstore">TrackerControl 检测应用程序的代码 (“库”) 和网络流量中的跟踪。</string>
     <string name="blocked">已屏蔽</string>
     <string name="allowed">已允许</string>
-    <string name="setting_domain_based_blocked">基于域名的屏蔽(开发中)</string>
+    <string name="setting_domain_based_blocked">基于域的屏蔽</string>
     <string name="summary_domain_based_blocking">允许进行更高数据粒度的阻止。 仍在开发中。</string>
     <string name="untap_unblock">提示：您可以轻按解除对单独条目的屏蔽。</string>
     <string name="uncertain_entry">由于 Android 的限制，标有“*”的条目可能不准确。 这通常意味着同一家公司在不同域下使用相同的 IP 地址，但也可能意味着不同的公司使用相同的 IP 地址(例如，如果他们使用内容交付网络)。</string>

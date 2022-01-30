@@ -355,7 +355,6 @@ Atentamente,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.</string>
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
-    <string name="setting_domain_based_blocked">Bloqueo basado en Dominios (en Desarrollo)</string>
     <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
     <string name="untap_unblock">Tip: Podés desbloquear entradas individuales tocándolas.</string>
     <string name="uncertain_entry">Las entradas marcadas con \'*\' pueden ser inexactas, debido a las limitaciones de Android. Esto suele significar que la misma compañía utiliza la misma dirección IP en diferentes dominios, pero también puede significar que diferentes empresas están detrás de la misma dirección IP (por ej. si utilizan una Red de entrega de contenidos).</string>

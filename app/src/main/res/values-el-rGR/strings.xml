@@ -354,7 +354,12 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κίνηση στο δίκτυο των εφαρμογών.</string>
     <string name="blocked">ΑΠΟΚΛΕΙΣΜΕΝΟ</string>
     <string name="allowed">ΕΠΙΤΡΕΠΟΜΕΝΟ</string>
-    <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain (υπό ανάπτυξη)</string>
+    <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain</string>
     <string name="summary_domain_based_blocking">Επιτρέπει περισσότερο \"κοκκώδη\" μπλοκάρισμα. Ακόμα υπο ανάπτυξη.</string>
     <string name="untap_unblock">Συμβουλή: Μπορείτε να καταργήσετε την φραγή μεμονωμένων καταχωρήσεων πατώντας πάνω τους.</string>
+    <string name="uncertain_entry">Οι καταχωρήσεις που σημειώνονται με \'*\' μπορεί να είναι ανακριβείς, λόγω των περιορισμών του Android. Αυτό συνήθως σημαίνει ότι η ίδια εταιρεία χρησιμοποιεί την ίδια διεύθυνση IP σε διαφορετικά domain, αλλά μπορεί επίσης να σημαίνει ότι διαφορετικές εταιρείες βρίσκονται πίσω από την ίδια διεύθυνση IP (π. χ.. αν χρησιμοποιούν ένα Δίκτυο Παράδοσης Περιεχομένου).</string>
+    <string name="browsers_not_supported">Οι περιηγητές δεν υποστηρίζονται ⚠️</string>
+    <string name="browsers_not_supported_explanation">Αυτό φαίνεται να είναι μια εφαρμογή περιήγησης.\n\nΟ αποκλεισμός των ιχνηλατών στα προγράμματα περιήγησης δεν υποστηρίζεται από το TrackerControl. Αντ \'αυτού, χρησιμοποιήστε ένα πρόγραμμα περιήγησης με ενσωματωμένη λειτουργία αντι-παρακολούθησης για να αποκτήσετε καλύτερο αποκλεισμό της παρακολούθησης.\n\nΓια παράδειγμα: Mozilla Fennec, Bromite</string>
+    <string name="static_analysis">Εντοπισμός ιχνηλατών στον κώδικα εφαρμογής</string>
+    <string name="failed_loading_cached_analysis">Η φόρτωση αποτελεσμάτων cached tracker απέτυχε. Παρακαλώ αναφέρετε το στον προγραμματιστή στο hello@trackercontrol.org</string>
 </resources>
