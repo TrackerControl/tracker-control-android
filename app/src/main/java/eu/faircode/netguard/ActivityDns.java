@@ -61,7 +61,7 @@ public class ActivityDns extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.resolving);
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.setting_show_resolved);
+        getSupportActionBar().setTitle(R.string.setting_show_resolved);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ListView lvDns = findViewById(R.id.lvDns);
@@ -95,7 +95,12 @@ public class ActivityDns extends AppCompatActivity {
             cleanup();
             return true;
         } else if (itemId == R.id.menu_clear) {
-            Util.areYouSure(this, R.string.menu_clear, this::clear);
+            Util.areYouSure(this, R.string.menu_clear, new Util.DoubtListener() {
+                @Override
+                public void onSure () {
+                    clear();
+                }
+            });
             return true;
         } else if (itemId == R.id.menu_export) {
             export();
@@ -160,7 +165,7 @@ public class ActivityDns extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
-        intent.putExtra(Intent.EXTRA_TITLE, "netguard_dns_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".xml");
+        intent.putExtra(Intent.EXTRA_TITLE, "netguard_dns_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
         return intent;
     }
 
