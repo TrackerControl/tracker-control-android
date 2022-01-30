@@ -156,7 +156,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_name" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <Switch
                 android:id="@+id/switch_vpn"
                 android:layout_width="wrap_content"
                 android:layout_height="21dp"
@@ -208,7 +208,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_name2" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <Switch
                 android:id="@+id/switch_internet"
                 android:layout_width="wrap_content"
                 android:layout_height="21dp"

@@ -53,7 +53,7 @@ import java.util.Objects;
 public class ActionsFragment extends Fragment implements View.OnClickListener {
     private static final String ARG_APP_ID = "app-id";
     private static final String ARG_APP_NAME = "app-name";
-    //private final String TAG = ActionsFragment.class.getSimpleName();
+    private final String TAG = ActionsFragment.class.getSimpleName();
     private String appId;
     private String appName;
 
@@ -79,7 +79,6 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Bundle bundle = getArguments();
     }
 
     @Override

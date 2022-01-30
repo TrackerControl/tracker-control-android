@@ -26,6 +26,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -80,13 +81,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -111,7 +109,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction().replace(android.R.id.content, new FragmentSettings()).commit();
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.menu_settings);
+        getSupportActionBar().setTitle(R.string.menu_settings);
         running = true;
     }
 
@@ -141,27 +139,35 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         Preference pref_reset_usage = screen.findPreference("reset_usage");
-        pref_reset_usage.setOnPreferenceClickListener(preference -> {
-            Util.areYouSure(ActivitySettings.this, R.string.setting_reset_usage, () -> new AsyncTask<Object, Object, Throwable>() {
-                @Override
-                protected Throwable doInBackground(Object... objects) {
-                    try {
-                        DatabaseHelper.getInstance(ActivitySettings.this).resetUsage(-1);
-                        return null;
-                    } catch (Throwable ex) {
-                        return ex;
-                    }
-                }
+        pref_reset_usage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Util.areYouSure(ActivitySettings.this, R.string.setting_reset_usage, new Util.DoubtListener() {
+                    @Override
+                    public void onSure() {
+                        new AsyncTask<Object, Object, Throwable>() {
+                            @Override
+                            protected Throwable doInBackground(Object... objects) {
+                                try {
+                                    DatabaseHelper.getInstance(ActivitySettings.this).resetUsage(-1);
+                                    return null;
+                                } catch (Throwable ex) {
+                                    return ex;
+                                }
+                            }
 
-                @Override
-                protected void onPostExecute(Throwable ex) {
-                    if (ex == null)
-                        Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
-                    else
-                        Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
-                }
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR));
-            return false;
+                            @Override
+                            protected void onPostExecute(Throwable ex) {
+                                if (ex == null)
+                                    Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                                else
+                                    Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                });
+                return false;
+            }
         });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -173,9 +179,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Handle port forwarding
         Preference pref_forwarding = screen.findPreference("forwarding");
-        pref_forwarding.setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(ActivitySettings.this, ActivityForwarding.class));
-            return true;
+        pref_forwarding.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(ActivitySettings.this, ActivityForwarding.class));
+                return true;
+            }
         });
 
         // VPN parameters
@@ -205,25 +214,34 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Show resolved
         Preference pref_show_resolved = screen.findPreference("show_resolved");
-        pref_show_resolved.setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
-            return true;
+        pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
+                return true;
+            }
         });
 
         // Handle export
         Preference pref_export = screen.findPreference("export");
         pref_export.setEnabled(getIntentCreateExport().resolveActivity(getPackageManager()) != null);
-        pref_export.setOnPreferenceClickListener(preference -> {
-            startActivityForResult(getIntentCreateExport(), ActivitySettings.REQUEST_EXPORT);
-            return true;
+        pref_export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivityForResult(getIntentCreateExport(), ActivitySettings.REQUEST_EXPORT);
+                return true;
+            }
         });
 
         // Handle import
         Preference pref_import = screen.findPreference("import");
         pref_import.setEnabled(getIntentOpenExport().resolveActivity(getPackageManager()) != null);
-        pref_import.setOnPreferenceClickListener(preference -> {
-            startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
-            return true;
+        pref_import.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
+                return true;
+            }
         });
 
         // Hosts file settings
@@ -264,65 +282,74 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             // Handle hosts import
             // https://github.com/Free-Software-for-Android/AdAway/wiki/HostsSources
             pref_hosts_import.setEnabled(getIntentOpenHosts().resolveActivity(getPackageManager()) != null);
-            pref_hosts_import.setOnPreferenceClickListener(preference -> {
-                startActivityForResult(getIntentOpenHosts(), ActivitySettings.REQUEST_HOSTS);
-                return true;
+            pref_hosts_import.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(getIntentOpenHosts(), ActivitySettings.REQUEST_HOSTS);
+                    return true;
+                }
             });
             pref_hosts_import_append.setEnabled(pref_hosts_import.isEnabled());
-            pref_hosts_import_append.setOnPreferenceClickListener(preference -> {
-                startActivityForResult(getIntentOpenHosts(), ActivitySettings.REQUEST_HOSTS_APPEND);
-                return true;
+            pref_hosts_import_append.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(getIntentOpenHosts(), ActivitySettings.REQUEST_HOSTS_APPEND);
+                    return true;
+                }
             });
 
             // Handle hosts file download
             pref_hosts_url.setSummary(pref_hosts_url.getText());
-            pref_hosts_download.setOnPreferenceClickListener(preference -> {
-                final File tmp = new File(getFilesDir(), "hosts.tmp");
-                final File hosts = new File(getFilesDir(), "hosts.txt");
-                EditTextPreference pref_hosts_url1 = (EditTextPreference) screen.findPreference("hosts_url_new");
-                try {
-                    new DownloadTask(ActivitySettings.this, new URL(pref_hosts_url1.getText()), tmp, new DownloadTask.Listener() {
-                        @Override
-                        public void onCompleted() {
-                            if (hosts.exists())
-                                hosts.delete();
-                            tmp.renameTo(hosts);
+            pref_hosts_download.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    final File tmp = new File(getFilesDir(), "hosts.tmp");
+                    final File hosts = new File(getFilesDir(), "hosts.txt");
+                    EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url_new");
+                    try {
+                        new DownloadTask(ActivitySettings.this, new URL(pref_hosts_url.getText()), tmp, new DownloadTask.Listener() {
+                            @Override
+                            public void onCompleted() {
+                                if (hosts.exists())
+                                    hosts.delete();
+                                tmp.renameTo(hosts);
 
-                            String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
-                            prefs.edit().putString("hosts_last_download", last).apply();
+                                String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
+                                prefs.edit().putString("hosts_last_download", last).apply();
 
-                            if (running) {
-                                pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
-                                Toast.makeText(ActivitySettings.this, R.string.msg_updated, Toast.LENGTH_LONG).show();
+                                if (running) {
+                                    pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
+                                    Toast.makeText(ActivitySettings.this, R.string.msg_updated, Toast.LENGTH_LONG).show();
+                                }
+
+                                ServiceSinkhole.reload("hosts file download", ActivitySettings.this, false);
                             }
 
-                            ServiceSinkhole.reload("hosts file download", ActivitySettings.this, false);
-                        }
+                            @Override
+                            public void onCancelled() {
+                                if (tmp.exists())
+                                    tmp.delete();
+                            }
 
-                        @Override
-                        public void onCancelled() {
-                            if (tmp.exists())
-                                tmp.delete();
-                        }
+                            @Override
+                            public void onException(Throwable ex) {
+                                if (tmp.exists())
+                                    tmp.delete();
 
-                        @Override
-                        public void onException(Throwable ex) {
-                            if (tmp.exists())
-                                tmp.delete();
-
-                            if (running)
-                                Toast.makeText(ActivitySettings.this, ex.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                } catch (MalformedURLException ex) {
-                    Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
+                                if (running)
+                                    Toast.makeText(ActivitySettings.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } catch (MalformedURLException ex) {
+                        Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
+                    }
+                    return true;
                 }
-                return true;
             });
         }
 
         // Development
-        if (Util.isDebuggable(this))
+        if (!Util.isDebuggable(this))
             screen.removePreference(screen.findPreference("screen_development"));
 
         /*cat_network.removePreference(screen.findPreference("use_metered"));
@@ -367,12 +394,14 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Log.i(TAG, "Up");
-            NavUtils.navigateUpFromSameTask(this);
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Log.i(TAG, "Up");
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -460,19 +489,27 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("filter".equals(name)) {
             // Show dialog
-            if (prefs.getBoolean(name, true)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && prefs.getBoolean(name, true)) {
                 LayoutInflater inflater = LayoutInflater.from(ActivitySettings.this);
                 View view = inflater.inflate(R.layout.filter, null, false);
                 dialogFilter = new AlertDialog.Builder(ActivitySettings.this)
                         .setView(view)
                         .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                            // Do nothing
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Do nothing
+                            }
                         })
-                        .setOnDismissListener(dialogInterface -> dialogFilter = null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                                dialogFilter = null;
+                            }
+                        })
                         .create();
                 dialogFilter.show();
-            } else if (!prefs.getBoolean(name, false)) {
+            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && !prefs.getBoolean(name, false)) {
                 prefs.edit().putBoolean(name, true).apply();
                 Toast.makeText(ActivitySettings.this, R.string.msg_filter4, Toast.LENGTH_SHORT).show();
             }
@@ -637,7 +674,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
                 requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, REQUEST_CALL);
 
-                return name == null;
+                if (name != null)
+                    return false;
             }
 
         return true;
@@ -674,14 +712,13 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
     }
 
-    private void checkDomain(String address) throws IllegalArgumentException {
+    private void checkDomain(String address) throws IllegalArgumentException, UnknownHostException {
         if (address != null)
             address = address.trim();
         if (TextUtils.isEmpty(address))
             throw new IllegalArgumentException("Bad address");
         if (Util.isNumericAddress(address))
             throw new IllegalArgumentException("Bad address");
-        assert address != null;
         if (!PatternsCompat.DOMAIN_NAME.matcher(address).matches())
             throw new IllegalArgumentException("Bad address");
     }
@@ -716,13 +753,16 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
-        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".xml");
+        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
         return intent;
     }
 
     private Intent getIntentOpenExport() {
         Intent intent;
-        intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        else
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
         return intent;
@@ -730,7 +770,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private Intent getIntentOpenHosts() {
         Intent intent;
-        intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        else
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/plain
         return intent;
@@ -744,7 +787,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 try {
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                        target = Uri.parse(target + "/trackercontrol_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".xml");
+                        target = Uri.parse(target + "/trackercontrol_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
                     Log.i(TAG, "Writing URI=" + target);
                     out = getContentResolver().openOutputStream(target);
                     xmlExport(out);
@@ -1009,7 +1052,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if (uid == 9999)
             return new String[]{"nobody"};
         else {
-            String[] pkgs = getPackageManager().getPackagesForUid(uid);
+            String pkgs[] = getPackageManager().getPackagesForUid(uid);
             if (pkgs == null)
                 return new String[0];
             else
@@ -1072,17 +1115,15 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 editor.putString(key, (String) value);
             else if (value instanceof Set)
                 editor.putStringSet(key, (Set<String>) value);
-            else {
-                assert value != null;
+            else
                 Log.e(TAG, "Unknown type=" + value.getClass());
-            }
         }
 
         editor.apply();
     }
 
     private class XmlImportHandler extends DefaultHandler {
-        private final Context context;
+        private Context context;
         public boolean enabled = false;
         public Map<String, Object> application = new HashMap<>();
         public Map<String, Object> wifi = new HashMap<>();
@@ -1102,112 +1143,94 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) {
-            switch (qName) {
-                case "netguard":
-                case "trackercontrol":
-                    // Ignore
-                    break;
+            if (qName.equals("netguard")
+                    || qName.equals("trackercontrol"))
+                ; // Ignore
 
-                case "application":
-                    current = application;
-                    break;
+            else if (qName.equals("application"))
+                current = application;
 
-                case "wifi":
-                    current = wifi;
-                    break;
+            else if (qName.equals("wifi"))
+                current = wifi;
 
-                case "mobile":
-                    current = mobile;
-                    break;
+            else if (qName.equals("mobile"))
+                current = mobile;
 
-                case "screen_wifi":
-                    current = screen_wifi;
-                    break;
+            else if (qName.equals("screen_wifi"))
+                current = screen_wifi;
 
-                case "screen_other":
-                    current = screen_other;
-                    break;
+            else if (qName.equals("screen_other"))
+                current = screen_other;
 
-                case "roaming":
-                    current = roaming;
-                    break;
+            else if (qName.equals("roaming"))
+                current = roaming;
 
-                case "lockdown":
-                    current = lockdown;
-                    break;
+            else if (qName.equals("lockdown"))
+                current = lockdown;
 
-                case "apply":
-                    current = apply;
-                    break;
+            else if (qName.equals("apply"))
+                current = apply;
 
-                case "notify":
-                    current = notify;
-                    break;
+            else if (qName.equals("notify"))
+                current = notify;
 
-                case "forward":
-                    current = null;
-                    Log.i(TAG, "Clearing forwards");
-                    DatabaseHelper.getInstance(context).deleteForward();
-                    break;
+            else if (qName.equals("forward")) {
+                current = null;
+                Log.i(TAG, "Clearing forwards");
+                DatabaseHelper.getInstance(context).deleteForward();
 
-                case "blocklist":
+            } else if (qName.equals("blocklist"))
                     current = blocklist;
-                    break;
 
-                case "setting":
-                    String key = attributes.getValue("key");
-                    String type = attributes.getValue("type");
-                    String value = attributes.getValue("value");
+            else if (qName.equals("setting")) {
+                String key = attributes.getValue("key");
+                String type = attributes.getValue("type");
+                String value = attributes.getValue("value");
 
-                    if (current == null)
-                        Log.e(TAG, "No current key=" + key);
+                if (current == null)
+                    Log.e(TAG, "No current key=" + key);
+                else {
+                    if ("enabled".equals(key))
+                        enabled = Boolean.parseBoolean(value);
                     else {
-                        if ("enabled".equals(key))
-                            enabled = Boolean.parseBoolean(value);
-                        else {
-                            if (current == application) {
-                                if ("hosts_last_import".equals(key) || "hosts_last_download".equals(key))
-                                    return;
-                            }
-
-                            if ("boolean".equals(type))
-                                current.put(key, Boolean.parseBoolean(value));
-                            else if ("integer".equals(type))
-                                current.put(key, Integer.parseInt(value));
-                            else if ("string".equals(type))
-                                current.put(key, value);
-                            else if ("set".equals(type)) {
-                                Set<String> set = new HashSet<>();
-                                if (!TextUtils.isEmpty(value))
-                                    Collections.addAll(set, value.split("\n"));
-                                current.put(key, set);
-                            } else
-                                Log.e(TAG, "Unknown type key=" + key);
+                        if (current == application) {
+                            if ("hosts_last_import".equals(key) || "hosts_last_download".equals(key))
+                                return;
                         }
+
+                        if ("boolean".equals(type))
+                            current.put(key, Boolean.parseBoolean(value));
+                        else if ("integer".equals(type))
+                            current.put(key, Integer.parseInt(value));
+                        else if ("string".equals(type))
+                            current.put(key, value);
+                        else if ("set".equals(type)) {
+                            Set<String> set = new HashSet<>();
+                            if (!TextUtils.isEmpty(value))
+                                for (String s : value.split("\n"))
+                                    set.add(s);
+                            current.put(key, set);
+                        } else
+                            Log.e(TAG, "Unknown type key=" + key);
                     }
+                }
 
-                    break;
+            } else if (qName.equals("port")) {
+                String pkg = attributes.getValue("pkg");
+                int protocol = Integer.parseInt(attributes.getValue("protocol"));
+                int dport = Integer.parseInt(attributes.getValue("dport"));
+                String raddr = attributes.getValue("raddr");
+                int rport = Integer.parseInt(attributes.getValue("rport"));
 
-                case "port":
-                    String pkg = attributes.getValue("pkg");
-                    int protocol = Integer.parseInt(attributes.getValue("protocol"));
-                    int dport = Integer.parseInt(attributes.getValue("dport"));
-                    String raddr = attributes.getValue("raddr");
-                    int rport = Integer.parseInt(attributes.getValue("rport"));
+                try {
+                    int uid = getUid(pkg);
+                    DatabaseHelper.getInstance(context).addForward(protocol, dport, raddr, rport, uid);
+                } catch (PackageManager.NameNotFoundException ex) {
+                    Log.w(TAG, "Package not found pkg=" + pkg);
+                }
 
-                    try {
-                        int uid = getUid(pkg);
-                        DatabaseHelper.getInstance(context).addForward(protocol, dport, raddr, rport, uid);
-                    } catch (PackageManager.NameNotFoundException ex) {
-                        Log.w(TAG, "Package not found pkg=" + pkg);
-                    }
-
-                    break;
-
-                default:
-                    Log.e(TAG, "Unknown element qname=" + qName);
-                    break;
-            }
+            } else
+                Log.e(TAG, "Unknown element qname=" + qName);
         }
 
         private int getUid(String pkg) throws PackageManager.NameNotFoundException {

@@ -23,7 +23,9 @@ package eu.faircode.netguard;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.TypedValue;
@@ -35,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 
 import net.kollnig.missioncontrol.R;
@@ -42,24 +45,23 @@ import net.kollnig.missioncontrol.R;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 public class AdapterAccess extends CursorAdapter {
-    private final int colVersion;
-    private final int colProtocol;
-    private final int colDaddr;
-    private final int colDPort;
-    private final int colTime;
-    private final int colAllowed;
-    private final int colBlock;
-    private final int colCount;
-    private final int colSent;
-    private final int colReceived;
-    private final int colConnections;
+    private int colVersion;
+    private int colProtocol;
+    private int colDaddr;
+    private int colDPort;
+    private int colTime;
+    private int colAllowed;
+    private int colBlock;
+    private int colCount;
+    private int colSent;
+    private int colReceived;
+    private int colConnections;
 
-    private final int colorText;
-    private final int colorOn;
-    private final int colorOff;
+    private int colorText;
+    private int colorOn;
+    private int colorOff;
 
     public AdapterAccess(Context context, Cursor cursor) {
         super(context, cursor, 0);
@@ -118,11 +120,15 @@ public class AdapterAccess extends CursorAdapter {
         TextView tvTraffic = view.findViewById(R.id.tvTraffic);
 
         // Set values
-        tvTime.setText(new SimpleDateFormat("dd HH:mm", Locale.getDefault()).format(time));
+        tvTime.setText(new SimpleDateFormat("dd HH:mm").format(time));
         if (block < 0)
             ivBlock.setImageDrawable(null);
         else {
             ivBlock.setImageResource(block > 0 ? R.drawable.host_blocked : R.drawable.host_allowed);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                Drawable wrap = DrawableCompat.wrap(ivBlock.getDrawable());
+                DrawableCompat.setTint(wrap, block > 0 ? colorOff : colorOn);
+            }
         }
 
         String dest = Util.getProtocolName(protocol, version, true) +

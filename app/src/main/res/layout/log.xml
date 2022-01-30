@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="eu.faircode.netguard.ActivityLog"
-    tools:ignore="ContentDescription">
+    tools:context="eu.faircode.netguard.ActivityLog">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +22,7 @@
             android:id="@+id/ivIcon"
             android:layout_width="24dip"
             android:layout_height="24dip"
-            android:layout_gravity="center_vertical"/>
+            android:layout_gravity="center_vertical" />
 
         <TextView
             android:id="@+id/tvUid"
@@ -39,6 +38,7 @@
             android:layout_width="16dip"
             android:layout_height="16dip"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp" />
 
         <ImageView
@@ -51,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:orientation="vertical">
 
@@ -75,6 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -96,6 +98,7 @@
                     android:id="@+id/tvSAddr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:textAppearance="@style/TextSmall"
                     android:textSize="12sp" />
@@ -118,6 +121,7 @@
                     android:id="@+id/tvDAddr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
                     android:layout_marginStart="4dp"
                     android:textAppearance="@style/TextSmall"
                     android:textSize="12sp" />
@@ -128,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextSmall"
-                android:textSize="11sp"
+                android:textSize="10sp"
                 android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
@@ -137,6 +141,7 @@
         android:id="@+id/tvData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
         android:layout_marginStart="50dp"
         android:textAppearance="@style/TextSmall"
         android:textSize="12sp" />

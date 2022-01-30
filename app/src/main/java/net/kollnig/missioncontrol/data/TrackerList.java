@@ -348,7 +348,7 @@ public class TrackerList {
             InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json");
             int size = is.available();
             byte[] buffer = new byte[size];
-            //int bytes_read = is.read(buffer);
+            is.read(buffer);
             is.close();
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();

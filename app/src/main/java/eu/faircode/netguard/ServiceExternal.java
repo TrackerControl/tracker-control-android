@@ -88,7 +88,7 @@ public class ServiceExternal extends IntentService {
                     out = new FileOutputStream(tmp);
 
                     long size = 0;
-                    byte[] buffer = new byte[4096];
+                    byte buffer[] = new byte[4096];
                     int bytes;
                     while ((bytes = in.read(buffer)) != -1) {
                         out.write(buffer, 0, bytes);

@@ -1,7 +1,5 @@
 <!-- Layout for the individual entries for apps in the main screen -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
@@ -9,8 +7,7 @@
     android:focusable="true"
     android:paddingStart="?listPreferredItemPaddingLeft"
     android:paddingEnd="?listPreferredItemPaddingRight"
-    android:minHeight="72dp"
-    tools:ignore="ContentDescription">
+    android:minHeight="72dp">
 
     <ImageView
         android:id="@+id/ivIcon"
@@ -59,7 +56,7 @@
 
     </LinearLayout>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
+    <Switch
         android:visibility="gone"
         android:id="@+id/cbApply"
         android:layout_width="wrap_content"
@@ -103,6 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
                 android:textAppearance="@style/TextSmall"
                 android:textSize="12sp" />
 
@@ -110,7 +108,8 @@
                 android:id="@+id/rlLockdown"
                 android:layout_width="24dp"
                 android:layout_height="?android:attr/listPreferredItemHeightSmall"
-                android:layout_marginStart="8dp">
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp">
 
                 <ImageView
                     android:id="@+id/ivLockdown"
@@ -129,7 +128,8 @@
                 <RelativeLayout
                     android:layout_width="24dp"
                     android:layout_height="?android:attr/listPreferredItemHeightSmall"
-                    android:layout_marginStart="8dp">
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp">
 
                     <CheckBox
                         android:id="@+id/cbWifi"
@@ -150,7 +150,7 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/screen"/>
+                        android:src="@drawable/screen" />
 
                     <View
                         android:layout_width="16dp"
@@ -169,7 +169,8 @@
                 <RelativeLayout
                     android:layout_width="24dp"
                     android:layout_height="?android:attr/listPreferredItemHeightSmall"
-                    android:layout_marginStart="8dp">
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp">
 
                     <CheckBox
                         android:id="@+id/cbOther"
@@ -197,13 +198,11 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:layout_gravity="center_vertical"
-                        android:gravity="center"
+                        android:gravity="center_horizontal"
                         android:text="@string/title_roaming_symbol"
                         android:textAppearance="@style/TextSmall"
                         android:textColor="?attr/colorOff"
-                        android:textSize="14sp"
-                        android:drawablePadding="10dp"
-                        app:drawableStartCompat="@drawable/screen" />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -233,6 +232,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             android:visibility="gone">
@@ -302,6 +302,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:text="@string/title_related" />
 
                 <ImageButton
@@ -309,6 +310,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:src="?attr/iconDatasaver"
                     android:visibility="gone" />
 
@@ -326,6 +328,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:src="?attr/iconSettings" />
 
             <LinearLayout
@@ -465,6 +468,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
                         android:src="?attr/iconPause" />
                 </LinearLayout>
 
@@ -490,6 +494,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
                         android:minWidth="0dp"
                         android:minHeight="0dp"
                         android:text="@string/title_logging_configure" />

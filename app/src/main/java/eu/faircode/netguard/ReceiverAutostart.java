@@ -99,9 +99,14 @@ public class ReceiverAutostart extends BroadcastReceiver {
                 editor.putBoolean("filter_udp", true);
                 editor.putBoolean("whitelist_wifi", false);
                 editor.putBoolean("whitelist_other", false);
+                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
+                    editor.putBoolean("filter", true); // Optional
             }
 
-            if (!Util.canFilter()) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+                editor.putBoolean("filter", true); // Mandatory
+
+            if (!Util.canFilter(context)) {
                 editor.putBoolean("log_app", false);
                 editor.putBoolean("filter", false);
             }
@@ -118,7 +123,7 @@ public class ReceiverAutostart extends BroadcastReceiver {
                 editor.remove("hosts_url_new");
             }
 
-            if (Util.isDebuggable(context))
+            if (!Util.isDebuggable(context))
                 editor.remove("loglevel");
 
             editor.putInt("version", newVersion);

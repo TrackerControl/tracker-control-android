@@ -72,7 +72,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    //private final String TAG = TrackersListAdapter.class.getSimpleName();
+    private final String TAG = TrackersListAdapter.class.getSimpleName();
     private final Integer mAppUid;
     private final String mAppId;
     private final Context mContext;
@@ -349,7 +349,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHItem extends RecyclerView.ViewHolder {
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
-        final SwitchMaterial mSwitchTracker;
+        final Switch mSwitchTracker;
         final TextView mBlockingTip;
         final TextView mUncertain;
 
@@ -365,8 +365,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class VHHeader extends RecyclerView.ViewHolder {
         final TextView mLibraryExplanation;
-        final SwitchMaterial mSwitchInternet;
-        final SwitchMaterial mSwitchVPN;
+        final Switch mSwitchInternet;
+        final Switch mSwitchVPN;
 
         VHHeader(View view) {
             super(view);

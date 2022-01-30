@@ -56,7 +56,7 @@ import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
 
 public class CountriesFragment extends Fragment {
     private static final String ARG_APP_UID = "app-uid";
-    //private final String TAG = CountriesFragment.class.getSimpleName();
+    private final String TAG = CountriesFragment.class.getSimpleName();
     private int mAppUid;
 
     public CountriesFragment() {
@@ -80,7 +80,6 @@ public class CountriesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Bundle bundle = getArguments();
     }
 
     /**

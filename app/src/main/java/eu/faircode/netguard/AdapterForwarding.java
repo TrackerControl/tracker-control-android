@@ -32,11 +32,11 @@ import android.widget.TextView;
 import net.kollnig.missioncontrol.R;
 
 public class AdapterForwarding extends CursorAdapter {
-    private final int colProtocol;
-    private final int colDPort;
-    private final int colRAddr;
-    private final int colRPort;
-    private final int colRUid;
+    private int colProtocol;
+    private int colDPort;
+    private int colRAddr;
+    private int colRPort;
+    private int colRUid;
 
     public AdapterForwarding(Context context, Cursor cursor) {
         super(context, cursor, 0);

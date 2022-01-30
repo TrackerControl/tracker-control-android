@@ -17,24 +17,32 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_launcher_round" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center"
+            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/app_name"
             android:textAppearance="@style/TextLarge"
-            android:textStyle="bold"
-            app:drawableStartCompat="@mipmap/ic_launcher_round"
-            android:drawablePadding="12dp"/>
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvForward"
@@ -54,13 +62,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="@android:string/cancel"
-            tools:ignore="RelativeOverlap" />
+            android:layout_alignParentRight="true"
+            android:text="@android:string/cancel" />
 
         <Button
             android:id="@+id/btnOk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:text="@android:string/ok" />
     </RelativeLayout>

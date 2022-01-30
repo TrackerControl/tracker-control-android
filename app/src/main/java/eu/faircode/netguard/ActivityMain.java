@@ -22,9 +22,9 @@ package eu.faircode.netguard;
 
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -33,6 +33,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.net.VpnService;
 import android.os.AsyncTask;
@@ -52,6 +53,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,13 +64,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.Common;
@@ -82,17 +84,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
 
-    private static final int[] TITLES = new int[]{
+    private static int[] TITLES = new int[]{
             R.string.app_name,
             R.string.control_trackers,
             R.string.forever_free,
@@ -101,6 +100,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private boolean running = false;
     private ImageView ivIcon;
+    private TextView tvTitle;
     private ImageView ivQueue;
     private SwitchCompat swEnabled;
     private ImageView ivMetered;
@@ -147,18 +147,25 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         // Check for Xposed
-        Util.hasXposed();
+        if (Util.hasXposed(this)) {
+            Log.i(TAG, "Xposed running");
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.xposed);
+            return;
+        }
 
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
         // Check for filtering
-        if (!Util.canFilter()) {
+        if (!Util.canFilter(this)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle(R.string.device_not_supported_title)
                     .setMessage(R.string.device_not_supported_msg)
-                    .setPositiveButton(R.string.ok, (dialog, id) -> finish());
+                    .setPositiveButton(R.string.ok, (dialog, id) -> {
+                        finish();
+                    });
 
             AlertDialog dialog = builder.create();
             dialog.setCancelable(false); // avoid back button
@@ -184,8 +191,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         // Action bar
-        @SuppressLint("InflateParams") final View actionView = getLayoutInflater().inflate(R.layout.actionmain, null, false);
-        TextView tvTitle = actionView.findViewById(R.id.tvTitle);
+        final View actionView = getLayoutInflater().inflate(R.layout.actionmain, null, false);
+        tvTitle = actionView.findViewById(R.id.tvTitle);
         ivIcon = actionView.findViewById(R.id.ivIcon);
         ivQueue = actionView.findViewById(R.id.ivQueue);
         swEnabled = actionView.findViewById(R.id.swEnabled);
@@ -196,123 +203,142 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvTitle.setText(TITLES[Common.dayOfYear() % TITLES.length]);
 
         // Icon
-        ivIcon.setOnLongClickListener(view -> {
-            menu_about();
-            return true;
+        ivIcon.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                menu_about();
+                return true;
+            }
         });
 
         // Title
-        Objects.requireNonNull(getSupportActionBar()).setTitle(null);
+        getSupportActionBar().setTitle(null);
 
         // Netguard is busy
-        ivQueue.setOnLongClickListener(view -> {
-            int[] location = new int[2];
-            actionView.getLocationOnScreen(location);
-            Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_queue, Toast.LENGTH_LONG);
-            toast.setGravity(
-                    Gravity.TOP | Gravity.START,
-                    location[0] + ivQueue.getLeft(),
-                    Math.round(location[1] + ivQueue.getBottom() - toast.getView().getPaddingTop()));
-            toast.show();
-            return true;
+        ivQueue.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                int location[] = new int[2];
+                actionView.getLocationOnScreen(location);
+                Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_queue, Toast.LENGTH_LONG);
+                toast.setGravity(
+                        Gravity.TOP | Gravity.LEFT,
+                        location[0] + ivQueue.getLeft(),
+                        Math.round(location[1] + ivQueue.getBottom() - toast.getView().getPaddingTop()));
+                toast.show();
+                return true;
+            }
         });
 
         // On/off switch
         swEnabled.setChecked(enabled);
-        swEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            Log.i(TAG, "Switch=" + isChecked);
-            prefs.edit().putBoolean("enabled", isChecked).apply();
+        swEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.i(TAG, "Switch=" + isChecked);
+                prefs.edit().putBoolean("enabled", isChecked).apply();
 
-            if (isChecked) {
-                try {
-                    String alwaysOn = Settings.Secure.getString(getContentResolver(), "always_on_vpn_app");
-                    Log.i(TAG, "Always-on=" + alwaysOn);
-                    if (!TextUtils.isEmpty(alwaysOn))
-                        if (getPackageName().equals(alwaysOn)) {
-                            if (prefs.getBoolean("filter", true)) {
-                                int lockdown = Settings.Secure.getInt(getContentResolver(), "always_on_vpn_lockdown", 0);
-                                Log.i(TAG, "Lockdown=" + lockdown);
-                                if (lockdown != 0) {
-                                    swEnabled.setChecked(false);
-                                    Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown, Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                            }
-                        } else {
-                            swEnabled.setChecked(false);
-                            Toast.makeText(ActivityMain.this, R.string.msg_always_on, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                } catch (Throwable ex) { // cannot access secure property in Android S+
-                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                }
-
-                boolean filter = prefs.getBoolean("filter", true);
-                if (filter && Util.isPrivateDns(ActivityMain.this))
-                    Toast.makeText(ActivityMain.this, R.string.msg_private_dns, Toast.LENGTH_LONG).show();
-
-                try {
-                    final Intent prepare = VpnService.prepare(ActivityMain.this);
-                    if (prepare == null) {
-                        Log.i(TAG, "Prepare done");
-                        onActivityResult(REQUEST_VPN, RESULT_OK, null);
-                    } else {
-                        // Show dialog
-                        LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
-                        final View view = inflater.inflate(R.layout.vpn, null, false);
-                        final SwitchMaterial swStrictMode = view.findViewById(R.id.swStrictBlocking);
-                        final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode", Util.isPlayStoreInstall());
-                        if (initializedStrictMode) {
-                            swStrictMode.setVisibility(View.GONE);
-                            view.findViewById(R.id.tvStrictBlocking).setVisibility(View.GONE);
-                        }
-
-                        dialogVpn = new AlertDialog.Builder(ActivityMain.this)
-                                .setView(view)
-                                .setCancelable(false)
-                                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                    if (running) {
-                                        if (!initializedStrictMode)
-                                            initialiseStrictMode(swStrictMode.isChecked());
-
-                                        Log.i(TAG, "Start intent=" + prepare);
-                                        try {
-                                            // com.android.vpndialogs.ConfirmDialog required
-                                            startActivityForResult(prepare, REQUEST_VPN);
-                                        } catch (Throwable ex) {
-                                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                                            onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
-                                            prefs.edit().putBoolean("enabled", false).apply();
-                                        }
+                if (isChecked) {
+                    try {
+                        String alwaysOn = Settings.Secure.getString(getContentResolver(), "always_on_vpn_app");
+                        Log.i(TAG, "Always-on=" + alwaysOn);
+                        if (!TextUtils.isEmpty(alwaysOn))
+                            if (getPackageName().equals(alwaysOn)) {
+                                if (prefs.getBoolean("filter", true)) {
+                                    int lockdown = Settings.Secure.getInt(getContentResolver(), "always_on_vpn_lockdown", 0);
+                                    Log.i(TAG, "Lockdown=" + lockdown);
+                                    if (lockdown != 0) {
+                                        swEnabled.setChecked(false);
+                                        Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown, Toast.LENGTH_LONG).show();
+                                        return;
                                     }
-                                })
-                                .setOnDismissListener(dialogInterface -> dialogVpn = null)
-                                .create();
-                        dialogVpn.show();
+                                }
+                            } else {
+                                swEnabled.setChecked(false);
+                                Toast.makeText(ActivityMain.this, R.string.msg_always_on, Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                    } catch (Throwable ex) { // cannot access secure property in Android S+
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }
-                } catch (Throwable ex) {
-                    // Prepare failed
-                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    prefs.edit().putBoolean("enabled", false).apply();
-                }
 
-            } else
-                ServiceSinkhole.stop("switch off", ActivityMain.this, false);
+                    boolean filter = prefs.getBoolean("filter", true);
+                    if (filter && Util.isPrivateDns(ActivityMain.this))
+                        Toast.makeText(ActivityMain.this, R.string.msg_private_dns, Toast.LENGTH_LONG).show();
+
+                    try {
+                        final Intent prepare = VpnService.prepare(ActivityMain.this);
+                        if (prepare == null) {
+                            Log.i(TAG, "Prepare done");
+                            onActivityResult(REQUEST_VPN, RESULT_OK, null);
+                        } else {
+                            // Show dialog
+                            LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
+                            final View view = inflater.inflate(R.layout.vpn, null, false);
+                            final SwitchCompat swStrictMode = view.findViewById(R.id.swStrictBlocking);
+                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode", Util.isPlayStoreInstall());
+                            if (initializedStrictMode) {
+                                swStrictMode.setVisibility(View.GONE);
+                                view.findViewById(R.id.tvStrictBlocking).setVisibility(View.GONE);
+                            }
+
+                            dialogVpn = new AlertDialog.Builder(ActivityMain.this)
+                                    .setView(view)
+                                    .setCancelable(false)
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (running) {
+                                                if (!initializedStrictMode)
+                                                    initialiseStrictMode(swStrictMode.isChecked());
+
+                                                Log.i(TAG, "Start intent=" + prepare);
+                                                try {
+                                                    // com.android.vpndialogs.ConfirmDialog required
+                                                    startActivityForResult(prepare, REQUEST_VPN);
+                                                } catch (Throwable ex) {
+                                                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                                                    onActivityResult(REQUEST_VPN, RESULT_CANCELED, null);
+                                                    prefs.edit().putBoolean("enabled", false).apply();
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialogInterface) {
+                                            dialogVpn = null;
+                                        }
+                                    })
+                                    .create();
+                            dialogVpn.show();
+                        }
+                    } catch (Throwable ex) {
+                        // Prepare failed
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        prefs.edit().putBoolean("enabled", false).apply();
+                    }
+
+                } else
+                    ServiceSinkhole.stop("switch off", ActivityMain.this, false);
+            }
         });
         if (enabled)
             checkDoze();
 
         // Network is metered
-        ivMetered.setOnLongClickListener(view -> {
-            int[] location = new int[2];
-            actionView.getLocationOnScreen(location);
-            Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_metered, Toast.LENGTH_LONG);
-            toast.setGravity(
-                    Gravity.TOP | Gravity.START,
-                    location[0] + ivMetered.getLeft(),
-                    Math.round(location[1] + ivMetered.getBottom() - toast.getView().getPaddingTop()));
-            toast.show();
-            return true;
+        ivMetered.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                int location[] = new int[2];
+                actionView.getLocationOnScreen(location);
+                Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_metered, Toast.LENGTH_LONG);
+                toast.setGravity(
+                        Gravity.TOP | Gravity.LEFT,
+                        location[0] + ivMetered.getLeft(),
+                        Math.round(location[1] + ivMetered.getBottom() - toast.getView().getPaddingTop()));
+                toast.show();
+                return true;
+            }
         });
 
         getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -326,17 +352,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
         rvApplication.setHasFixedSize(false);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.isAutoMeasureEnabled();
+        llm.setAutoMeasureEnabled(true);
         rvApplication.setLayoutManager(llm);
         adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
         rvApplication.setAdapter(adapter);
 
         // Swipe to refresh
         swipeRefresh = findViewById(R.id.swipeRefresh);
-        swipeRefresh.setOnRefreshListener(() -> {
-            Rule.clearCache(ActivityMain.this);
-            ServiceSinkhole.reload("pull", ActivityMain.this, false);
-            updateApplicationList(null);
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Rule.clearCache(ActivityMain.this);
+                ServiceSinkhole.reload("pull", ActivityMain.this, false);
+                updateApplicationList(null);
+            }
         });
 
         // Hint usage
@@ -344,10 +373,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Button btnUsage = findViewById(R.id.btnUsage);
         boolean hintUsage = prefs.getBoolean("hint_usage", true);
         llUsage.setVisibility(hintUsage ? View.VISIBLE : View.GONE);
-        btnUsage.setOnClickListener(view -> {
-            prefs.edit().putBoolean("hint_usage", false).apply();
-            llUsage.setVisibility(View.GONE);
-            showHints();
+        btnUsage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prefs.edit().putBoolean("hint_usage", false).apply();
+                llUsage.setVisibility(View.GONE);
+                showHints();
+            }
         });
 
         showHints();
@@ -410,30 +442,27 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Util.logExtras(intent);
         super.onNewIntent(intent);
 
-        if (Build.VERSION.SDK_INT < MIN_SDK) {
+        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
             return;
-        } else {
-            Util.hasXposed();
-        }
 
         setIntent(intent);
 
-        if (intent.hasExtra(EXTRA_REFRESH))
-            updateApplicationList(intent.getStringExtra(EXTRA_SEARCH));
-        else
-            updateSearch(intent.getStringExtra(EXTRA_SEARCH));
-        checkExtras(intent);
+        if (Build.VERSION.SDK_INT >= MIN_SDK) {
+            if (intent.hasExtra(EXTRA_REFRESH))
+                updateApplicationList(intent.getStringExtra(EXTRA_SEARCH));
+            else
+                updateSearch(intent.getStringExtra(EXTRA_SEARCH));
+            checkExtras(intent);
+        }
     }
 
     @Override
     protected void onResume() {
         Log.i(TAG, "Resume");
 
-        if (Build.VERSION.SDK_INT < MIN_SDK) {
+        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this)) {
             super.onResume();
             return;
-        } else {
-            Util.hasXposed();
         }
 
         DatabaseHelper.getInstance(this).addAccessChangedListener(accessChangedListener);
@@ -448,28 +477,26 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Log.i(TAG, "Pause");
         super.onPause();
 
-        if (Build.VERSION.SDK_INT < MIN_SDK) {
+        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
             return;
-        } else {
-            Util.hasXposed();
-        }
 
         DatabaseHelper.getInstance(this).removeAccessChangedListener(accessChangedListener);
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    public void onConfigurationChanged(Configuration newConfig) {
         Log.i(TAG, "Config");
         super.onConfigurationChanged(newConfig);
 
-        Util.hasXposed();
-           }
+        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
+            return;
+    }
 
     @Override
     public void onDestroy() {
         Log.i(TAG, "Destroy");
 
-        if (Build.VERSION.SDK_INT < MIN_SDK || !Util.canFilter()) {
+        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this) || !Util.canFilter(this)) {
             super.onDestroy();
             return;
         }
@@ -554,7 +581,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 try {
                     Uri target = data.getData();
                     if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                        target = Uri.parse(target + "/trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
+                        target = Uri.parse(target + "/trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
                     Log.i(TAG, "Writing URI=" + target);
                     out = getContentResolver().openOutputStream(target);
                     csvExport(out);
@@ -657,7 +684,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvDisabled.setVisibility(enabled ? View.GONE : View.VISIBLE);
 
             // Check switch state
-            SwitchCompat swEnabled = Objects.requireNonNull(getSupportActionBar()).getCustomView().findViewById(R.id.swEnabled);
+            SwitchCompat swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
             if (swEnabled.isChecked() != enabled)
                 swEnabled.setChecked(enabled);
 
@@ -694,7 +721,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             recreate();
     }
 
-    private final DatabaseHelper.AccessChangedListener accessChangedListener = new DatabaseHelper.AccessChangedListener() {
+    private DatabaseHelper.AccessChangedListener accessChangedListener = new DatabaseHelper.AccessChangedListener() {
         @Override
         public void onChanged() {
             runOnUiThread(new Runnable() {
@@ -707,7 +734,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
     };
 
-    private final BroadcastReceiver onRulesChanged = new BroadcastReceiver() {
+    private BroadcastReceiver onRulesChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
@@ -733,7 +760,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
     };
 
-    private final BroadcastReceiver onQueueChanged = new BroadcastReceiver() {
+    private BroadcastReceiver onQueueChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
@@ -796,13 +823,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 return true;
             }
         });
-        searchView.setOnCloseListener(() -> {
-            Intent intent = getIntent();
-            intent.removeExtra(EXTRA_SEARCH);
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Intent intent = getIntent();
+                intent.removeExtra(EXTRA_SEARCH);
 
-            if (adapter != null)
-                adapter.getFilter().filter(null);
-            return true;
+                if (adapter != null)
+                    adapter.getFilter().filter(null);
+                return true;
+            }
         });
         String search = getIntent().getStringExtra(EXTRA_SEARCH);
         if (search != null) {
@@ -813,10 +843,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (getIntentInvite(this).resolveActivity(pm) == null)
             menu.removeItem(R.id.menu_invite);
 
-        if (getIntentSupport().resolveActivity(getPackageManager()) == null)
+        if (getIntentSupport(this).resolveActivity(getPackageManager()) == null)
             menu.removeItem(R.id.menu_support);
 
-        menu.findItem(R.id.menu_apps).setEnabled(getIntentApps().resolveActivity(pm) != null);
+        menu.findItem(R.id.menu_apps).setEnabled(getIntentApps(this).resolveActivity(pm) != null);
 
         return true;
     }
@@ -890,7 +920,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             menu_lockdown(item);
             return true;
         } else if (itemId == R.id.menu_log) {
-            if (Util.canFilter())
+            if (Util.canFilter(this))
                 startActivity(new Intent(this, ActivityLog.class));
             else
                 Toast.makeText(this, R.string.msg_unavailable, Toast.LENGTH_SHORT).show();
@@ -905,7 +935,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             menu_legend();
             return true;
         } else if (itemId == R.id.menu_support) {
-            startActivity(getIntentSupport());
+            startActivity(getIntentSupport(this));
             return true;
         } else if (itemId == R.id.menu_csv) {
             startActivityForResult(getIntentCreateExport(), REQUEST_EXPORT);
@@ -925,7 +955,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
+        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
         return intent;
     }
 
@@ -940,9 +970,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
         boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
         llWhitelist.setVisibility(!(whitelist_wifi || whitelist_other) && hintWhitelist && !hintUsage ? View.VISIBLE : View.GONE);
-        btnWhitelist.setOnClickListener(view -> {
-            prefs.edit().putBoolean("hint_whitelist", false).apply();
-            llWhitelist.setVisibility(View.GONE);
+        btnWhitelist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prefs.edit().putBoolean("hint_whitelist", false).apply();
+                llWhitelist.setVisibility(View.GONE);
+            }
         });
 
         // Hint push messages
@@ -950,9 +983,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Button btnPush = findViewById(R.id.btnPush);
         boolean hintPush = prefs.getBoolean("hint_push", true);
         llPush.setVisibility(hintPush && !hintUsage ? View.VISIBLE : View.GONE);
-        btnPush.setOnClickListener(view -> {
-            prefs.edit().putBoolean("hint_push", false).apply();
-            llPush.setVisibility(View.GONE);
+        btnPush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prefs.edit().putBoolean("hint_push", false).apply();
+                llPush.setVisibility(View.GONE);
+            }
         });
 
         // Hint system applications
@@ -961,9 +997,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         boolean system = prefs.getBoolean("manage_system", false);
         boolean hintSystem = prefs.getBoolean("hint_system", true);
         llSystem.setVisibility(!system && hintSystem ? View.VISIBLE : View.GONE);
-        btnSystem.setOnClickListener(view -> {
-            prefs.edit().putBoolean("hint_system", false).apply();
-            llSystem.setVisibility(View.GONE);
+        btnSystem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prefs.edit().putBoolean("hint_system", false).apply();
+                llSystem.setVisibility(View.GONE);
+            }
         });
     }
 
@@ -990,9 +1029,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
             @Override
             protected void onPreExecute() {
-                swipeRefresh.post(() -> {
-                    if (refreshing)
-                        swipeRefresh.setRefreshing(true);
+                swipeRefresh.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (refreshing)
+                            swipeRefresh.setRefreshing(true);
+                    }
                 });
             }
 
@@ -1043,14 +1085,25 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     dialogDoze = new AlertDialog.Builder(this)
                             .setView(view)
                             .setCancelable(true)
-                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
-                                startActivity(doze);
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
+                                    startActivity(doze);
+                                }
                             })
-                            .setNegativeButton(android.R.string.no, (dialog, which) -> prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply())
-                            .setOnDismissListener(dialogInterface -> {
-                                dialogDoze = null;
-                                checkDataSaving();
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
+                                }
+                            })
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialogInterface) {
+                                    dialogDoze = null;
+                                    checkDataSaving();
+                                }
                             })
                             .create();
                     dialogDoze.show();
@@ -1076,17 +1129,30 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         dialogDoze = new AlertDialog.Builder(this)
                                 .setView(view)
                                 .setCancelable(true)
-                                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                                    prefs.edit().putBoolean("nodata", cbDontAsk.isChecked()).apply();
-                                    startActivity(settings);
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        prefs.edit().putBoolean("nodata", cbDontAsk.isChecked()).apply();
+                                        startActivity(settings);
+                                    }
                                 })
-                                .setNegativeButton(android.R.string.no, (dialog, which) -> prefs.edit().putBoolean("nodata", cbDontAsk.isChecked()).apply())
-                                .setOnDismissListener(dialogInterface -> dialogDoze = null)
+                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        prefs.edit().putBoolean("nodata", cbDontAsk.isChecked()).apply();
+                                    }
+                                })
+                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                    @Override
+                                    public void onDismiss(DialogInterface dialogInterface) {
+                                        dialogDoze = null;
+                                    }
+                                })
                                 .create();
                         dialogDoze.show();
                     }
                 } catch (Throwable ex) {
-                    Log.e(TAG, ex + "\n" + Arrays.toString(ex.getStackTrace()));
+                    Log.e(TAG, ex + "\n" + ex.getStackTrace());
                 }
         }
     }
@@ -1094,18 +1160,52 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private void menu_legend() {
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorOn, tv, true);
+        int colorOn = tv.data;
         getTheme().resolveAttribute(R.attr.colorOff, tv, true);
+        int colorOff = tv.data;
 
         // Create view
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.legend, null, false);
+        ImageView ivLockdownOn = view.findViewById(R.id.ivLockdownOn);
+        ImageView ivWifiOn = view.findViewById(R.id.ivWifiOn);
+        ImageView ivWifiOff = view.findViewById(R.id.ivWifiOff);
+        ImageView ivOtherOn = view.findViewById(R.id.ivOtherOn);
+        ImageView ivOtherOff = view.findViewById(R.id.ivOtherOff);
+        ImageView ivScreenOn = view.findViewById(R.id.ivScreenOn);
+        ImageView ivHostAllowed = view.findViewById(R.id.ivHostAllowed);
+        ImageView ivHostBlocked = view.findViewById(R.id.ivHostBlocked);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Drawable wrapLockdownOn = DrawableCompat.wrap(ivLockdownOn.getDrawable());
+            Drawable wrapWifiOn = DrawableCompat.wrap(ivWifiOn.getDrawable());
+            Drawable wrapWifiOff = DrawableCompat.wrap(ivWifiOff.getDrawable());
+            Drawable wrapOtherOn = DrawableCompat.wrap(ivOtherOn.getDrawable());
+            Drawable wrapOtherOff = DrawableCompat.wrap(ivOtherOff.getDrawable());
+            Drawable wrapScreenOn = DrawableCompat.wrap(ivScreenOn.getDrawable());
+            Drawable wrapHostAllowed = DrawableCompat.wrap(ivHostAllowed.getDrawable());
+            Drawable wrapHostBlocked = DrawableCompat.wrap(ivHostBlocked.getDrawable());
+
+            DrawableCompat.setTint(wrapLockdownOn, colorOff);
+            DrawableCompat.setTint(wrapWifiOn, colorOn);
+            DrawableCompat.setTint(wrapWifiOff, colorOff);
+            DrawableCompat.setTint(wrapOtherOn, colorOn);
+            DrawableCompat.setTint(wrapOtherOff, colorOff);
+            DrawableCompat.setTint(wrapScreenOn, colorOn);
+            DrawableCompat.setTint(wrapHostAllowed, colorOn);
+            DrawableCompat.setTint(wrapHostBlocked, colorOff);
+        }
 
 
         // Show dialog
         dialogLegend = new AlertDialog.Builder(this)
                 .setView(view)
                 .setCancelable(true)
-                .setOnDismissListener(dialogInterface -> dialogLegend = null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        dialogLegend = null;
+                    }
+                })
                 .create();
         dialogLegend.show();
     }
@@ -1138,7 +1238,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Handle logcat
         view.setOnClickListener(new View.OnClickListener() {
             private short tap = 0;
-            private final Toast toast = Toast.makeText(ActivityMain.this, "", Toast.LENGTH_SHORT);
+            private Toast toast = Toast.makeText(ActivityMain.this, "", Toast.LENGTH_SHORT);
 
             @Override
             public void onClick(View view) {
@@ -1160,19 +1260,29 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Handle rate
         btnRate.setVisibility(getIntentRate(this).resolveActivity(getPackageManager()) == null ? View.GONE : View.VISIBLE);
-        btnRate.setOnClickListener(view1 -> startActivity(getIntentRate(ActivityMain.this)));
+        btnRate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(getIntentRate(ActivityMain.this));
+            }
+        });
 
         // Show dialog
         dialogAbout = new AlertDialog.Builder(this)
                 .setView(view)
                 .setCancelable(true)
-                .setOnDismissListener(dialogInterface -> dialogAbout = null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        dialogAbout = null;
+                    }
+                })
                 .create();
         dialogAbout.show();
     }
 
     private void menu_apps() {
-        startActivity(getIntentApps());
+        startActivity(getIntentApps(this));
     }
 
     private static Intent getIntentInvite(Context context) {
@@ -1183,7 +1293,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         return intent;
     }
 
-    private static Intent getIntentApps() {
+    private static Intent getIntentApps(Context context) {
         return new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/dev?id=8420080860664580239"));
     }
 
@@ -1194,16 +1304,25 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         return intent;
     }
 
-    private static Intent getIntentSupport() {
+    private static Intent getIntentSupport(Context context) {
         return new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
     }
 
     private Intent getIntentLogcat() {
         Intent intent;
-        intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TITLE, "logcat.txt");
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
+                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
+            }
+        } else {
+            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TITLE, "logcat.txt");
+        }
         return intent;
     }
 }

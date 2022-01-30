@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:mContext=".details.ActionsFragment"
-    tools:ignore="ContentDescription">
+    tools:mContext=".details.ActionsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,7 +67,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_advertising"/>
+                        app:srcCompat="@drawable/ic_advertising" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <Button
@@ -157,8 +156,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/request_data"
-                        android:theme="@style/PrimaryFlatButton"
-                        style="?android:attr/buttonBarButtonStyle" />
+                        android:theme="@style/PrimaryFlatButton" />
 
                     <Button
                         android:id="@+id/btnReqDeletion"
@@ -168,8 +166,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/request_deletion"
-                        android:theme="@style/PrimaryFlatButton"
-                        style="?android:attr/buttonBarButtonStyle" />
+                        android:theme="@style/PrimaryFlatButton" />
                 </LinearLayout>
 
 
@@ -252,8 +249,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/contact_developer"
-                        android:theme="@style/PrimaryFlatButton"
-                        style="?android:attr/buttonBarButtonStyle" />
+                        android:theme="@style/PrimaryFlatButton" />
 
                     <Button
                         android:id="@+id/btnContactGoogle"
@@ -263,8 +259,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/contact_playstore"
-                        android:theme="@style/PrimaryFlatButton"
-                        style="?android:attr/buttonBarButtonStyle" />
+                        android:theme="@style/PrimaryFlatButton" />
 
                     <Button
                         android:id="@+id/btnContactOfficials"
@@ -274,8 +269,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="@string/contact_officials"
-                        android:theme="@style/PrimaryFlatButton"
-                        style="?android:attr/buttonBarButtonStyle" />
+                        android:theme="@style/PrimaryFlatButton" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>

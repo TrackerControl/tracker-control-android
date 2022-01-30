@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -85,8 +86,10 @@ public class ActivityForwardApproval extends Activity {
         Button btnOk = findViewById(R.id.btnOk);
         Button btnCancel = findViewById(R.id.btnCancel);
 
-        btnOk.setOnClickListener(view -> {
-            if (ACTION_START_PORT_FORWARD.equals(getIntent().getAction())) {
+        btnOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ACTION_START_PORT_FORWARD.equals(getIntent().getAction())) {
 /*
 am start -a eu.faircode.netguard.START_PORT_FORWARD \
 -n eu.faircode.netguard/eu.faircode.netguard.ActivityForwardApproval \
@@ -97,12 +100,12 @@ am start -a eu.faircode.netguard.START_PORT_FORWARD \
 --ei ruid 9999 \
 --user 0
 */
-                Log.i(TAG, "Start forwarding protocol " + protocol + " port " + dport + " to " + raddr + "/" + rport + " uid " + ruid);
-                DatabaseHelper dh = DatabaseHelper.getInstance(ActivityForwardApproval.this);
-                dh.deleteForward(protocol, dport);
-                dh.addForward(protocol, dport, raddr, rport, ruid);
+                    Log.i(TAG, "Start forwarding protocol " + protocol + " port " + dport + " to " + raddr + "/" + rport + " uid " + ruid);
+                    DatabaseHelper dh = DatabaseHelper.getInstance(ActivityForwardApproval.this);
+                    dh.deleteForward(protocol, dport);
+                    dh.addForward(protocol, dport, raddr, rport, ruid);
 
-            } else if (ACTION_STOP_PORT_FORWARD.equals(getIntent().getAction())) {
+                } else if (ACTION_STOP_PORT_FORWARD.equals(getIntent().getAction())) {
 /*
 am start -a eu.faircode.netguard.STOP_PORT_FORWARD \
 -n eu.faircode.netguard/eu.faircode.netguard.ActivityForwardApproval \
@@ -110,15 +113,21 @@ am start -a eu.faircode.netguard.STOP_PORT_FORWARD \
 --ei dport 53 \
 --user 0
 */
-                Log.i(TAG, "Stop forwarding protocol " + protocol + " port " + dport);
-                DatabaseHelper.getInstance(ActivityForwardApproval.this).deleteForward(protocol, dport);
+                    Log.i(TAG, "Stop forwarding protocol " + protocol + " port " + dport);
+                    DatabaseHelper.getInstance(ActivityForwardApproval.this).deleteForward(protocol, dport);
+                }
+
+                ServiceSinkhole.reload("forwarding", ActivityForwardApproval.this, false);
+
+                finish();
             }
-
-            ServiceSinkhole.reload("forwarding", ActivityForwardApproval.this, false);
-
-            finish();
         });
 
-        btnCancel.setOnClickListener(view -> finish());
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 }

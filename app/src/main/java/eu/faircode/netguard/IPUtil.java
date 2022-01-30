@@ -126,7 +126,6 @@ public class IPUtil {
             return long2inet((inet2long(this.address) & prefix2mask(this.prefix)) + (1L << (32 - this.prefix)) - 1);
         }
 
-        @NonNull
         @Override
         public String toString() {
             return address.getHostAddress() + "/" + prefix + "=" + getStart().getHostAddress() + "..." + getEnd().getHostAddress();

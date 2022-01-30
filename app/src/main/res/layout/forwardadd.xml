@@ -20,22 +20,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context="eu.faircode.netguard.ActivityForwarding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@mipmap/ic_launcher_round" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:text="@string/app_name"
             android:textAppearance="@style/TextLarge"
-            android:textStyle="bold"
-            android:gravity="center"
-            app:drawableStartCompat="@mipmap/ic_launcher_round"
-            android:drawablePadding="12dp"/>
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -81,10 +90,9 @@
                 android:id="@+id/etDPort"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/etDPort"
+                android:hint="53"
                 android:inputType="number"
-                android:textAppearance="@style/TextMedium"
-                tools:ignore="Autofill" />
+                android:textAppearance="@style/TextMedium" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -97,10 +105,9 @@
                 android:id="@+id/etRAddr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/etRAddr"
+                android:hint="127.0.0.1"
                 android:inputType="text"
-                android:textAppearance="@style/TextMedium"
-                tools:ignore="Autofill" />
+                android:textAppearance="@style/TextMedium" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -113,10 +120,9 @@
                 android:id="@+id/etRPort"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/etRPort"
+                android:hint="5353"
                 android:inputType="number"
-                android:textAppearance="@style/TextMedium"
-                tools:ignore="Autofill" />
+                android:textAppearance="@style/TextMedium" />
 
             <TextView
                 android:layout_width="wrap_content"

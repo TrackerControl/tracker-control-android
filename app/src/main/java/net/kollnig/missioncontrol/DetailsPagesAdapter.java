@@ -42,7 +42,7 @@ public class DetailsPagesAdapter extends FragmentStateAdapter {
             R.string.tab_actions,
             R.string.tab_countries,
     };
-    //private final String TAG = DetailsPagesAdapter.class.getSimpleName();
+    private final String TAG = DetailsPagesAdapter.class.getSimpleName();
     private final int mUid;
 
     private final TrackersFragment fTrackers;

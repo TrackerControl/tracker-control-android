@@ -25,8 +25,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -37,6 +39,7 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 
@@ -46,28 +49,29 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class AdapterLog extends CursorAdapter {
-    private static final String TAG = "TrackerControl.Log";
+    private static String TAG = "TrackerControl.Log";
 
     private boolean resolve;
     private boolean organization;
-    private final int colTime;
-    private final int colVersion;
-    private final int colProtocol;
-    private final int colFlags;
-    private final int colSAddr;
-    private final int colSPort;
-    private final int colDAddr;
-    private final int colDPort;
-    private final int colDName;
-    private final int colUid;
-    private final int colData;
-    private final int colAllowed;
-    private final int colConnection;
-    private final int colInteractive;
-    private final int iconSize;
+    private int colTime;
+    private int colVersion;
+    private int colProtocol;
+    private int colFlags;
+    private int colSAddr;
+    private int colSPort;
+    private int colDAddr;
+    private int colDPort;
+    private int colDName;
+    private int colUid;
+    private int colData;
+    private int colAllowed;
+    private int colConnection;
+    private int colInteractive;
+    private int colorOn;
+    private int colorOff;
+    private int iconSize;
     private InetAddress dns1 = null;
     private InetAddress dns2 = null;
     private InetAddress vpn4 = null;
@@ -94,7 +98,9 @@ public class AdapterLog extends CursorAdapter {
 
         TypedValue tv = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorOn, tv, true);
+        colorOn = tv.data;
         context.getTheme().resolveAttribute(R.attr.colorOff, tv, true);
+        colorOff = tv.data;
 
         iconSize = Util.dips2pixels(24, context);
 
@@ -157,7 +163,7 @@ public class AdapterLog extends CursorAdapter {
         ImageView ivInteractive = view.findViewById(R.id.ivInteractive);
 
         // Show time
-        tvTime.setText(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(time));
+        tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(time));
 
         // Show connection type
         if (connection <= 0)
@@ -168,12 +174,20 @@ public class AdapterLog extends CursorAdapter {
             else
                 ivConnection.setImageResource(connection == 1 ? R.drawable.wifi_off : R.drawable.other_off);
         }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Drawable wrap = DrawableCompat.wrap(ivConnection.getDrawable());
+            DrawableCompat.setTint(wrap, allowed > 0 ? colorOn : colorOff);
+        }
 
         // Show if screen on
         if (interactive <= 0)
             ivInteractive.setImageDrawable(null);
         else {
             ivInteractive.setImageResource(R.drawable.screen_on);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                Drawable wrap = DrawableCompat.wrap(ivInteractive.getDrawable());
+                DrawableCompat.setTint(wrap, colorOn);
+            }
         }
 
         // Show protocol name
@@ -209,7 +223,6 @@ public class AdapterLog extends CursorAdapter {
                 ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
             else {
                 Uri uri = Uri.parse("android.resource://" + info.packageName + "/" + info.icon);
-
                 GlideApp.with(context)
                         .load(uri)
                         //.diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -236,7 +249,7 @@ public class AdapterLog extends CursorAdapter {
         tvSAddr.setText(getKnownAddress(saddr));
 
         // Show destination address
-        if (!we && resolve && isKnownAddress(daddr))
+        if (!we && resolve && !isKnownAddress(daddr))
             if (dname == null) {
                 tvDaddr.setText(daddr);
                 new AsyncTask<String, Object, String>() {
@@ -268,7 +281,7 @@ public class AdapterLog extends CursorAdapter {
         // Show organization
         tvOrganization.setVisibility(View.GONE);
         if (!we && organization) {
-            if (isKnownAddress(daddr))
+            if (!isKnownAddress(daddr))
                 new AsyncTask<String, Object, String>() {
                     @Override
                     protected void onPreExecute() {
@@ -310,10 +323,10 @@ public class AdapterLog extends CursorAdapter {
         try {
             InetAddress a = InetAddress.getByName(addr);
             if (a.equals(dns1) || a.equals(dns2) || a.equals(vpn4) || a.equals(vpn6))
-                return false;
+                return true;
         } catch (UnknownHostException ignored) {
         }
-        return true;
+        return false;
     }
 
     private String getKnownAddress(String addr) {

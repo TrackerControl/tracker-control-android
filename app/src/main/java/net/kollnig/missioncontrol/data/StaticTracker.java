@@ -41,19 +41,9 @@ public class StaticTracker implements Comparable<StaticTracker> {
         return name;
     }
 
-    // NEVER USED
-    /*public String getWeb() {
-        return web;
-    }*/
-
     public Integer getId() {
         return id;
     }
-
-    // NEVER USED
-    /*public String getSign() {
-        return sign;
-    }*/
 
     @Override
     public int compareTo(StaticTracker t) {
