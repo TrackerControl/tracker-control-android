@@ -49,7 +49,7 @@ import lanchon.multidexlib2.MultiDexIO;
 
 public class TrackerLibraryAnalyser {
     private final Context mContext;
-    private static final int EXODUS_DATABASE_VERSION = 422; // eof422, see https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/commits/
+    private static final int EXODUS_DATABASE_VERSION = 423; // eof422, see https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/commits/
 
     public TrackerLibraryAnalyser(Context mContext) {
         this.mContext = mContext;

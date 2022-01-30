@@ -32,8 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,15 +54,17 @@ import eu.faircode.netguard.ServiceSinkhole;
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
 
+    private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
+
     private static TrackerList instance;
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     private static boolean domainBasedBlocking;
+    public static Set<String> trackingIps = new HashSet<>();
 
     private final DatabaseHelper databaseHelper;
 
     private TrackerList(Context c) {
         databaseHelper = DatabaseHelper.getInstance(c);
-
         loadTrackers(c);
     }
 
@@ -70,6 +74,22 @@ public class TrackerList {
 
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+        loadIpBlocklist(c);
+    }
+
+    private void loadIpBlocklist(Context c) {
+        try {
+            InputStream is = c.getAssets().open("ip_blocklist.txt");
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ( (line = bfr.readLine()) != null) {
+                if (line.startsWith("#"))
+                    continue;
+                trackingIps.add(line);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Loading IP blocklist failed.. ", e);
+        }
     }
 
     public static TrackerList getInstance(Context c) {
@@ -111,6 +131,14 @@ public class TrackerList {
                 t = new Tracker(hostname, UNCATEGORISED);
                 hostnameToTracker.put(hostname, t);
                 return t;
+            }
+
+        if (t == null
+                && trackingIps.contains(hostname))
+            if (domainBasedBlocking)
+                return hostlistTracker;
+            else {
+                return new Tracker(hostname, UNCATEGORISED);
             }
 
         return t;
@@ -191,7 +219,7 @@ public class TrackerList {
             do {
                 String host = cursor.getString(cursor.getColumnIndex("daddr"));
                 long lastSeen = cursor.getLong(cursor.getColumnIndex("time"));
-                boolean uncertain = cursor.getInt(cursor.getColumnIndex("uncertain")) == 1;
+                boolean uncertain = cursor.getInt(cursor.getColumnIndex("uncertain")) == 2;
 
                 Tracker tracker = findTracker(host);
                 if (tracker == null)
@@ -256,13 +284,13 @@ public class TrackerList {
         // Keep track of parent companies
         Map<String, Tracker> rootParents = new HashMap<>();
 
-        try {
+        try (InputStream is = c.getAssets().open("xray-blacklist.json")) {
             // Read JSON
-            InputStream is = c.getAssets().open("xray-blacklist.json");
             int size = is.available();
             byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
             String json = new String(buffer, StandardCharsets.UTF_8);
 
             // Each JSON array entry contains tracker company with domains
@@ -293,6 +321,10 @@ public class TrackerList {
                 JSONArray domains = jsonCompany.getJSONArray("doms");
                 for (int j = 0; j < domains.length(); j++) {
                     String dom = domains.getString(j);
+
+                    if (ignoreDomains.contains(dom))
+                        continue;
+
                     addTrackerDomain(tracker, dom);
                 }
             }
@@ -307,17 +339,17 @@ public class TrackerList {
      * @param c Context
      */
     private void loadDisconnectTrackers(Context c) {
-        try {
-            /* Read domain list:
-             *
-             * File is a reversed string, because some anti-virus scanners found the list suspicious
-             * More here: https://github.com/OxfordHCC/tracker-control-android/issues/30
-             */
-            InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json");
+        /* Read domain list:
+         *
+         * File is a reversed string, because some anti-virus scanners found the list suspicious
+         * More here: https://github.com/TrackerControl/tracker-control-android/issues/30
+         */
+        try (InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json")) {
             int size = is.available();
             byte[] buffer = new byte[size];
-            int bytes_read = is.read(buffer);
-            is.close();
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();
 
@@ -345,6 +377,9 @@ public class TrackerList {
                         JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
                         for (int j = 0; j < urls.length(); j++) {
                             String dom = urls.getString(j);
+
+                            if (ignoreDomains.contains(dom))
+                                continue;
 
                             addTrackerDomain(tracker, dom);
                         }

@@ -1305,7 +1305,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     private static Intent getIntentSupport(Context context) {
-        return new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/OxfordHCC/tracker-control-android#support-trackercontrol"));
+        return new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
     }
 
     private Intent getIntentLogcat() {

@@ -1,10 +1,10 @@
 <resources>
     <string name="app_description">TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour (\'tracking\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2020 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requires Android 5.1 or later</string>
     <string name="app_xposed">Xposed causes too many crashes, which might result in TrackerControl being removed from the Google Play Store, therefore TrackerControl isn\'t supported while Xposed is installed</string>
     <string name="app_eula">The usage of this app is at your own risk. No app can offer 100% protection against tracking.</string>
-    <string name="app_privacy"><a href="https://github.com/OxfordHCC/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/OxfordHCC/tracker-control-android#cookie-policy">Cookie Policy</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie Policy</a></string>
 
     <string name="channel_foreground">Running services</string>
     <string name="channel_notify">General notifications</string>
@@ -436,7 +436,7 @@ Sincerely,\n\n]]></string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>
 
-    <string name="setting_domain_based_blocked">Domain-based Blocking (in Development)</string>
+    <string name="setting_domain_based_blocked">Domain-based Blocking</string>
     <string name="summary_domain_based_blocking">Allows more granular blocking. Still in development.</string>
     <string name="untap_unblock">Tip: You can unblock individual entries by tapping on them.</string>
     <string name="uncertain_entry">Entries marked with \'*\' might be inaccurate, due to the limitations of Android. This usually means that the same company uses the same IP address under different domains, but can also mean that different companies are behind the same IP address (e.g. if they use a Content Delivery Network).</string>

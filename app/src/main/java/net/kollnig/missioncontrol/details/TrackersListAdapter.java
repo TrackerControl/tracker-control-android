@@ -45,6 +45,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
+
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.AnalysisException;
@@ -57,6 +59,7 @@ import net.kollnig.missioncontrol.data.TrackerCategory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
@@ -87,7 +90,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         apply = mContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
 
         // Removes blinks
-        ((SimpleItemAnimator) v.getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) Objects.requireNonNull(v.getItemAnimator())).setSupportsChangeAnimations(false);
     }
 
     public void set(List<TrackerCategory> items) {
@@ -160,7 +163,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder _holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder _holder, int position) {
         final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
 
         if (_holder instanceof VHItem) {

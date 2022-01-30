@@ -107,6 +107,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -835,48 +836,44 @@ public class ServiceSinkhole extends VpnService {
 
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
 
-            // Get real name
-            /*String dname = ipToHost.get(packet.daddr);
-            if (dname == null) {
-                dname = dh.getQName(packet.uid, packet.daddr);
-                if (dname != null) {
-                    ipToHost.put(packet.daddr, dname);
-                } else {
-                    ipToHost.put(packet.daddr, NO_DNAME);
-                }
-            }
-            if (dname == NO_DNAME)
-                dname = null;*/
-
             String dname = null;
             String originalDname = null;
-            boolean isTracker = false;
 
             Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
             int uncertain = (lookup != null
-                    && lookup.getCount() > 1
-                    && Util.isPlayStoreInstall()) ? 1 : 0; // TODO: Currently, only in Play Store version
+                    && lookup.getCount() > 1) ? 1 : 0;
 
             // Loop until we find tracker or reach last entry
+            boolean isTracker = false;
             if (lookup != null) {
+                Pair<Tracker, String> foundTracker = new Pair<>(NO_TRACKER, null);
+
                 while (lookup.moveToNext()) {
                     dname = lookup.getString(lookup.getColumnIndex("qname"));
                     if (dname != null)  {
                         originalDname = dname;
-                        if (TrackerList.findTracker(dname) != null)
+
+                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                        Pair<Tracker, String> p = getDecloakedTracker(dname, aname);
+
+                        if (foundTracker.first == NO_TRACKER
+                                && p.first != null) { // store found tracker
                             isTracker = true;
-                        else { // DNS uncloaking
-                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                            if (aname != null && TrackerList.findTracker(aname) != null) {
-                                dname = aname;
-                                isTracker = true;
-                            }
+                            foundTracker = p;
+                        }
+
+                        if (foundTracker.first != NO_TRACKER
+                                && (p.first == null // could have uncertain tracker company if no company found for an observed domain
+                                || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an uncertain tracker company
+                                && uncertain == 1) {
+                            uncertain = 2;
+                            break;
                         }
                     }
-
-                    if (isTracker)
-                        break;
                 }
+
+                if (foundTracker.first != NO_TRACKER)
+                    dname = foundTracker.second;
 
                 lookup.close();
             }
@@ -888,13 +885,18 @@ public class ServiceSinkhole extends VpnService {
 
                 if (!packet.data.equals(originalDname)) {
                     Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
-                    dname = packet.data; // TODO: Add warning. No DNS uncloaking yet.
-                    isTracker = TrackerList.findTracker(dname) != null;
+                    dname = packet.data;
+                    isTracker = getDecloakedTracker(dname, dh).first != null;
                 }
             }
 
             if (uncertain == 1) // multiple dnames correspond to same IP address
                 Log.d(TAG, "Found uncertain entry: " + dname);
+
+            // Fallback: Check for IP-based tracking
+            if (dname == null
+                    && TrackerList.trackingIps.contains(packet.daddr))
+                isTracker = true;
 
             // Traffic log
             if (log)
@@ -908,6 +910,34 @@ public class ServiceSinkhole extends VpnService {
 
                 dh.updateAccess(packet, dname, -1, uncertain);
             }
+        }
+
+        private Pair<Tracker, String> getDecloakedTracker(String qname, DatabaseHelper dh) {
+            Cursor lookup = dh.getAName(qname, false);
+            String aname = null;
+            if (lookup != null) {
+                if (lookup.moveToNext())
+                    aname = lookup.getString(lookup.getColumnIndex("aname"));
+                lookup.close();
+            }
+            return getDecloakedTracker(qname, aname);
+        }
+
+        private Pair<Tracker, String> getDecloakedTracker(String qname, String aname) {
+            String foundDname = null;
+            Tracker t = TrackerList.findTracker(qname);
+
+            if (t != null) {
+                foundDname = qname;
+            } else { // DNS uncloaking
+                if (aname != null) {
+                    t = TrackerList.findTracker(aname);
+                    if (t != null)
+                        foundDname = aname;
+                }
+            }
+
+            return new Pair<>(t, foundDname);
         }
 
         private void usage(Usage usage) {
@@ -2107,6 +2137,11 @@ public class ServiceSinkhole extends VpnService {
                 ipToHost.put(daddr, new Expiring<>(dname, time + ttl));
                 ipToTracker.put(daddr, new Expiring<>(tracker, time + ttl));
             }
+
+            // If we can't resolve domain, use IP-based blocklist as fallback
+            if (dname == null)
+                if (TrackerList.trackingIps.contains(daddr))
+                    tracker = TrackerList.findTracker(daddr);
         }
 
         // Log or block?
@@ -2118,14 +2153,13 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
+            assert tracker != null;
             Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr) + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
                 TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                if (tracker != null
-                        && b.blockedTracker(uid, tracker)) {
-                    return true;
-                }
+                return tracker != null
+                        && b.blockedTracker(uid, tracker);
             }
         }
 

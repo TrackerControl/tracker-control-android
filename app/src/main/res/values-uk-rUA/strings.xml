@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Політика конфіденційності</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Політика використання файлів cookie</a></string>
     <string name="channel_foreground">Запущені сервіси</string>
     <string name="channel_notify">Загальні сповіщення</string>
     <string name="channel_access">Доступ до сповіщень</string>
