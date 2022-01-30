@@ -2,8 +2,6 @@
 
 [![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-**Download directly [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or a feature-reduced version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).**
-
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues), or contact Konrad directly (<hello@trackercontrol.org>)!*
 
 TrackerControl is an Android app that allows users to monitor and control the widespread,
@@ -30,8 +28,34 @@ against *DNS cloaking*, a popular technique to hide trackers in websites and app
 
 TrackerControl will always be free and open source, being a research project.
 
+## Contents
+- [Download / Installation](#download--installation)
+- [Suppport TrackerControl](#support-trackercontrol)
+- [Communities](#communities)
+- [Translation](#translation)
+- [Highlights](#highlights)
+- [Privacy Notice](#privacy-notice)
+- [Cookie policy](#cookie-policy)
+- [Credits](#credits)
+- [License](#license)
+- [Citation](#citation)
+
 ## Download / Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking. Analysis results shown within the app might be inaccurate.*
+
+[<img src="https://camo.githubusercontent.com/70bffd8873ab81e1bb0bccc44e488c3a989e3bd5/68747470733a2f2f692e6962622e636f2f71306d6463345a2f6765742d69742d6f6e2d6769746875622e706e67"
+     alt="Get it on GitHub"
+      height="80">](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="80">](https://f-droid.org/app/net.kollnig.missioncontrol.fdroid)
+
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
+      alt='Get it on IzzyOnDroid'
+      height="80">](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
+      alt="Get it on Google Play"
+      height="80">](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play)
 
 There are multiple versions of TrackerControl.
 
@@ -86,7 +110,7 @@ to the users.
 
 Download [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
 
-## Privacy notice
+## Privacy Notice
 
 TrackerControl does not send any personal data off your device.
 
@@ -193,3 +217,4 @@ If you use this project as part of your academic studies, please kindly cite the
       month = aug,
 }
 ```
+

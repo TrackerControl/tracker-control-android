@@ -2153,14 +2153,13 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
+            assert tracker != null;
             Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr) + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
                 TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                if (tracker != null
-                        && b.blockedTracker(uid, tracker)) {
-                    return true;
-                }
+                return tracker != null
+                        && b.blockedTracker(uid, tracker);
             }
         }
 

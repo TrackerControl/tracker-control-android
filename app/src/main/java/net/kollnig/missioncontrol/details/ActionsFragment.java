@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -41,6 +42,8 @@ import eu.faircode.netguard.Util;
 
 import static net.kollnig.missioncontrol.Common.emailIntent;
 import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTrackersPosition;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -76,15 +79,15 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getArguments();
     }
 
     @Override
-    public void onViewCreated(final View v, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View v, Bundle savedInstanceState) {
         super.onViewCreated(v, savedInstanceState);
 
         // Load arguments
         Bundle arguments = getArguments();
+        assert arguments != null;
         appId = arguments.getString(ARG_APP_ID);
         appName = arguments.getString(ARG_APP_NAME);
 
@@ -113,7 +116,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
             if (a == null)
                 return;
             TabLayout tabs = a.findViewById(R.id.tabs);
-            tabs.getTabAt(tabTrackersPosition).select();
+            Objects.requireNonNull(tabs.getTabAt(tabTrackersPosition)).select();
         } else if (id == R.id.btnAdSettings) {
             if (Common.hasAdSettings(getContext())) {
                 startActivity(Common.adSettings());

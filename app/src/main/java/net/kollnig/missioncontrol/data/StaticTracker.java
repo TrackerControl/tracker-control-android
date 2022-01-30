@@ -31,6 +31,7 @@ public class StaticTracker implements Comparable<StaticTracker> {
         return name.hashCode();
     }
 
+    @NonNull
     @Override
     public String toString() {
         return name;
@@ -40,16 +41,8 @@ public class StaticTracker implements Comparable<StaticTracker> {
         return name;
     }
 
-    public String getWeb() {
-        return web;
-    }
-
     public Integer getId() {
         return id;
-    }
-
-    public String getSign() {
-        return sign;
     }
 
     @Override
