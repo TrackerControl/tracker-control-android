@@ -35,7 +35,7 @@ TrackerControl will always be free and open source, being a research project.
 - [Translation](#translation)
 - [Highlights](#highlights)
 - [Privacy Notice](#privacy-notice)
-- [Cookie policy](#cookie-policy)
+- [Cookie Policy](#cookie-policy)
 - [Credits](#credits)
 - [License](#license)
 - [Citation](#citation)
@@ -133,7 +133,7 @@ manually, via e-mail. ACRA shows a dialog to do this in TrackerControl.
 
 TrackerControl itself never sends any personal data off your device. 
 
-## Cookie policy
+## Cookie Policy
 
 TrackerControl does not use cookies of any kind.
 
