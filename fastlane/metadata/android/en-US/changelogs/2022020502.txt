@@ -1,0 +1,11 @@
+- Save lots of battery when using TrackerControl UI: store results from tracker library analysis
+- Implement parsing of Server Name Indication in Play Store version for better detection
+- Implement basic IP-based tracker detection and blocking
+- Highlight in UI that sometimes the shown company might be inaccurate
+- Highlight in UI that browsers are not supported
+- Make tracker blocking more robust
+- Remove CDNs from blocklist
+- Make disabling battery optimisations easier
+- Fix bug where duplicate tracker libraries were shown
+- Update dependencies, translations, blocklists and Classyshark/Exodus privacy database (eof422)
+- Cleanup code, improve in-app strings
