@@ -121,10 +121,10 @@ dependencies {
     implementation 'com.maxmind.geoip2:geoip2:2.14.0'
 
     // Crash reporting
-    implementation "ch.acra:acra-mail:5.7.0"
-    implementation "ch.acra:acra-dialog:5.7.0"
-    compileOnly "com.google.auto.service:auto-service-annotations:1.0-rc6"
-    annotationProcessor "com.google.auto.service:auto-service:1.0-rc6"
+    implementation "ch.acra:acra-mail:5.8.4"
+    implementation "ch.acra:acra-dialog:5.8.4"
+    compileOnly "com.google.auto.service:auto-service-annotations:1.0.1"
+    annotationProcessor "com.google.auto.service:auto-service:1.0.1"
 
     // Tracker detection
     implementation 'com.github.lanchon.dexpatcher:multidexlib2:2.3.4.r2'

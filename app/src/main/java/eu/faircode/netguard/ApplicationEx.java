@@ -20,6 +20,8 @@
 
 package eu.faircode.netguard;
 
+import static org.acra.data.StringFormat.KEY_VALUE_LIST;
+
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.app.Notification;
@@ -27,6 +29,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.os.StrictMode;
 import android.util.Log;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -34,29 +37,10 @@ import net.kollnig.missioncontrol.R;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
-import org.acra.annotation.AcraCore;
-import org.acra.annotation.AcraDialog;
-import org.acra.annotation.AcraMailSender;
+import org.acra.config.CoreConfigurationBuilder;
+import org.acra.config.DialogConfigurationBuilder;
+import org.acra.config.MailSenderConfigurationBuilder;
 
-import static org.acra.data.StringFormat.KEY_VALUE_LIST;
-
-@AcraCore(buildConfigClass = BuildConfig.class,
-        reportContent = { // limit collected data
-                ReportField.USER_COMMENT,
-                ReportField.REPORT_ID,
-                ReportField.USER_APP_START_DATE,
-                ReportField.USER_CRASH_DATE,
-                ReportField.ANDROID_VERSION,
-                ReportField.BUILD_CONFIG,
-                ReportField.STACK_TRACE
-        },
-        reportFormat = KEY_VALUE_LIST)
-@AcraMailSender(mailTo = "crash@trackercontrol.org",
-        resBody = R.string.crash_body,
-        reportAsFile = false,
-        reportFileName = "tracker-control-crash.json")
-@AcraDialog(resText = R.string.crash_dialog_text,
-        resCommentPrompt = R.string.crash_dialog_comment)
 public class ApplicationEx extends Application {
     private static final String TAG = "TrackerControl.App";
 
@@ -65,7 +49,45 @@ public class ApplicationEx extends Application {
         super.attachBaseContext(base);
 
         try {
-            ACRA.init(this);
+            CoreConfigurationBuilder builder = new CoreConfigurationBuilder(this);
+            builder
+                .withReportContent( // limit collected data
+                    ReportField.USER_COMMENT,
+                    ReportField.USER_APP_START_DATE,
+                    ReportField.USER_CRASH_DATE,
+                    ReportField.ANDROID_VERSION,
+                    ReportField.BUILD_CONFIG,
+                    ReportField.STACK_TRACE,
+                    ReportField.STACK_TRACE_HASH,
+                    ReportField.AVAILABLE_MEM_SIZE,
+                    ReportField.TOTAL_MEM_SIZE)
+                .withReportFormat(KEY_VALUE_LIST);
+
+            builder.getPluginConfigurationBuilder(MailSenderConfigurationBuilder.class)
+                    .withMailTo("crash@trackercontrol.org")
+                    .withResBody(R.string.crash_body)
+                    .withReportAsFile(true)
+                    .withReportFileName("tracker-control-crash.json")
+                    .withEnabled(true);
+
+            builder.getPluginConfigurationBuilder(DialogConfigurationBuilder.class)
+                    .withResText(R.string.crash_dialog_text)
+                    .withResCommentPrompt(R.string.crash_dialog_comment)
+                    .withEnabled(true);
+
+            ACRA.init(this, builder);
+
+            if(BuildConfig.DEBUG) {
+                //StrictMode.enableDefaults();
+                //StrictMode.allowThreadDiskReads();
+                StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                        .detectLeakedSqlLiteObjects()
+                        .detectLeakedClosableObjects()
+                        .penaltyLog()
+                        //.penaltyDeath()
+                        .build());
+                StrictMode.allowThreadDiskReads();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
