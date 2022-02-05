@@ -35,6 +35,10 @@ import org.acra.data.CrashReportData;
 public class ApplicationExFilter implements ReportingAdministrator {
     @Override
     public boolean shouldSendReport(@NonNull Context context, @NonNull CoreConfiguration config, @NonNull CrashReportData crashReportData) {
-        return !crashReportData.getString(ReportField.STACK_TRACE).contains("Context.startForegroundService() did not then call Service.startForeground()");
+        String stackTrace = crashReportData.getString(ReportField.STACK_TRACE);
+        if (stackTrace == null)
+            return true;
+
+        return !stackTrace.contains("Context.startForegroundService() did not then call Service.startForeground()");
     }
 }
