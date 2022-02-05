@@ -54,7 +54,7 @@ public class WidgetAdmin extends ReceiverAutostart {
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(INTENT_ON);
         i.setPackage(context.getPackageName());
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
         if (INTENT_ON.equals(intent.getAction())
                 || INTENT_OFF.equals(intent.getAction())
                 || INTENT_PAUSE.equals(intent.getAction()))

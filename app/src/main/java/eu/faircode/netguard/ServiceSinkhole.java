@@ -396,9 +396,9 @@ public class ServiceSinkhole extends VpnService {
                 watchdogIntent.setAction(ACTION_WATCHDOG);
                 PendingIntent pi;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    pi = PendingIntent.getForegroundService(ServiceSinkhole.this, 1, watchdogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    pi = PendingIntent.getForegroundService(ServiceSinkhole.this, 1, watchdogIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
                 else
-                    pi = PendingIntent.getService(ServiceSinkhole.this, 1, watchdogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    pi = PendingIntent.getService(ServiceSinkhole.this, 1, watchdogIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
                 AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 am.cancel(pi);
@@ -1210,7 +1210,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Show notification
             Intent main = new Intent(ServiceSinkhole.this, ActivityMain.class);
-            PendingIntent pi = PendingIntent.getActivity(ServiceSinkhole.this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi = PendingIntent.getActivity(ServiceSinkhole.this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(ServiceSinkhole.this, "notify");
             builder.setWhen(when)
@@ -1554,7 +1554,7 @@ public class ServiceSinkhole extends VpnService {
 
         // Build configure intent
         Intent configure = new Intent(this, ActivityMain.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, configure, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, configure, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
         builder.setConfigureIntent(pi);
 
         return builder;
@@ -2183,7 +2183,7 @@ public class ServiceSinkhole extends VpnService {
                     AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                     Intent i = new Intent(ACTION_SCREEN_OFF_DELAYED);
                     i.setPackage(context.getPackageName());
-                    PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
                     am.cancel(pi);
 
                     try {
@@ -2469,7 +2469,7 @@ public class ServiceSinkhole extends VpnService {
             Intent main = new Intent(this, ActivityMain.class);
             main.putExtra(ActivityMain.EXTRA_REFRESH, true);
             main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-            PendingIntent pi = PendingIntent.getActivity(this, uid, main, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi = PendingIntent.getActivity(this, uid, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
             builder.setSmallIcon(R.drawable.ic_rocket_white)
@@ -2589,9 +2589,9 @@ public class ServiceSinkhole extends VpnService {
         alarmIntent.setAction(ACTION_HOUSE_HOLDING);
         PendingIntent pi;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            pi = PendingIntent.getForegroundService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            pi = PendingIntent.getForegroundService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
         else
-            pi = PendingIntent.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            pi = PendingIntent.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + 60 * 1000, AlarmManager.INTERVAL_HALF_DAY, pi);
@@ -2888,11 +2888,11 @@ public class ServiceSinkhole extends VpnService {
 
     private Notification getEnforcingNotification(int allowed, int blocked, int hosts) {
         Intent main = new Intent(this, ActivityMain.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         Intent i = new Intent(INTENT_PAUSE);
         i.setPackage(this.getPackageName());
-        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         int pause = Integer.parseInt(prefs.getString("pause", "10"));
 
@@ -2958,7 +2958,7 @@ public class ServiceSinkhole extends VpnService {
 
     private Notification getWaitingNotification() {
         Intent main = new Intent(this, ActivityMain.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
         builder.setSmallIcon(R.drawable.ic_rocket_white)
@@ -2978,7 +2978,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void showDisabledNotification() {
         Intent main = new Intent(this, ActivityMain.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
@@ -3001,7 +3001,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void showLockdownNotification() {
         Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
-        PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_LOCKDOWN, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_LOCKDOWN, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorOff, tv, true);
@@ -3032,7 +3032,7 @@ public class ServiceSinkhole extends VpnService {
     private void showAutoStartNotification() {
         Intent main = new Intent(this, ActivityMain.class);
         main.putExtra(ActivityMain.EXTRA_APPROVE, true);
-        PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_AUTOSTART, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, NOTIFY_AUTOSTART, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
@@ -3055,7 +3055,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void showErrorNotification(String message) {
         Intent main = new Intent(this, ActivityMain.class);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
@@ -3079,7 +3079,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void showUpdateNotification(String name, String url) {
         Intent download = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        PendingIntent pi = PendingIntent.getActivity(this, 0, download, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, download, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_rocket_white)

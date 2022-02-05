@@ -62,6 +62,7 @@
         <activity
             android:name="eu.faircode.netguard.ActivityMain"
             android:configChanges="orientation|screenSize"
+            android:exported="true"
             android:label="@string/app_name_short"
             android:launchMode="singleTop"
             android:resizeableActivity="true">
@@ -89,6 +90,7 @@
         <activity
             android:name="eu.faircode.netguard.ActivitySettings"
             android:configChanges="orientation|screenSize"
+            android:exported="true"
             android:label="@string/menu_settings"
             android:parentActivityName="eu.faircode.netguard.ActivityMain">
             <intent-filter>
@@ -117,6 +119,7 @@
         <activity
             android:name="eu.faircode.netguard.ActivityForwardApproval"
             android:configChanges="orientation|screenSize"
+            android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/AppDialog">
             <intent-filter>
@@ -147,6 +150,7 @@
 
         <activity
             android:name="net.kollnig.missioncontrol.DetailsActivity"
+            android:exported="true"
             android:label="@string/title_activity_detail"
             android:parentActivityName="eu.faircode.netguard.ActivityMain"
             android:theme="@style/AppTheme.NoActionBar">
@@ -157,6 +161,7 @@
 
         <service
             android:name="eu.faircode.netguard.ServiceSinkhole"
+            android:exported="true"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>
@@ -166,6 +171,7 @@
 
         <service
             android:name="eu.faircode.netguard.ServiceExternal"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE" />
@@ -174,6 +180,7 @@
 
         <service
             android:name="eu.faircode.netguard.ServiceTileMain"
+            android:exported="true"
             android:icon="@drawable/ic_rocket_white"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
@@ -184,6 +191,7 @@
 
         <receiver
             android:name="eu.faircode.netguard.ReceiverAutostart"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter android:priority="999">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -191,7 +199,9 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="eu.faircode.netguard.ReceiverPackageRemoved">
+        <receiver
+            android:name="eu.faircode.netguard.ReceiverPackageRemoved"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
                 <data android:scheme="package" />
@@ -200,6 +210,7 @@
 
         <receiver
             android:name="eu.faircode.netguard.WidgetMain"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -209,19 +220,9 @@
                 android:resource="@xml/widgetmain" />
         </receiver>
 
-        <!--<receiver
-            android:name=".WidgetLockdown"
-            android:label="@string/setting_lockdown">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widgetlockdown" />
-        </receiver>-->
-
         <receiver
             android:name="eu.faircode.netguard.WidgetAdmin"
+            android:exported="true"
             android:label="@string/app_name"
             android:permission="net.kollnig.missioncontrol.permission.ADMIN">
             <intent-filter>

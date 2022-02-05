@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "net.kollnig.missioncontrol"
         minSdkVersion 22
-        targetSdkVersion 30
+        targetSdkVersion 31
         //noinspection HighAppVersionCode
         versionCode 2021121001
         versionName "2021.12.10"
@@ -24,11 +24,6 @@ android {
             // https://developer.android.com/ndk/guides/abis.html#sa
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
-    }
-
-    lintOptions {
-        disable 'MissingTranslation'
-        quiet false
     }
 
     externalNativeBuild {
@@ -94,6 +89,10 @@ android {
 
     packagingOptions { // due to geoip2
         exclude 'META-INF/DEPENDENCIES'
+    }
+
+    lint {
+        disable 'MissingTranslation'
     }
 }
 
