@@ -116,7 +116,7 @@ dependencies {
     }
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
-    implementation 'com.opencsv:opencsv:5.4'
+    implementation 'com.opencsv:opencsv:5.5.2'
     implementation 'com.maxmind.geoip2:geoip2:2.14.0'
 
     // Crash reporting
