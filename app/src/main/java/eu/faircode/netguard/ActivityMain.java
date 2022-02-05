@@ -120,6 +120,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private static final int REQUEST_EXPORT = 10;
 
+    public static final int REQUEST_BATTERY_OPTIMIZATION = 20;
+
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
 
     public static final String ACTION_RULES_CHANGED = "eu.faircode.netguard.ACTION_RULES_CHANGED";
@@ -564,9 +566,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         } else if (requestCode == REQUEST_DETAILS_UPDATED) {
             updateApplicationList(null);
+
         } else if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null)
                 handleExport(data);
+
+        } else if (requestCode == REQUEST_BATTERY_OPTIMIZATION) {
+            if (resultCode != RESULT_OK)
+                checkDoze();
+
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
@@ -1089,7 +1097,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
-                                    startActivity(doze);
+                                    if (!Util.isPlayStoreInstall()) {
+                                        Intent i = new Intent();
+                                        i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                                        i.setData(Uri.parse("package:" + getPackageName()));
+                                        startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
+                                    } else
+                                        startActivity(doze);
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

@@ -3,6 +3,8 @@
     package="net.kollnig.missioncontrol"
     android:installLocation="internalOnly">
 
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
     <uses-permission
         android:name="net.kollnig.missioncontrol.permission.ADMIN"
         tools:node="remove"/>
