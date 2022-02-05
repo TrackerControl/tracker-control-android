@@ -1098,9 +1098,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                 public void onClick(DialogInterface dialog, int which) {
                                     prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
                                     if (!Util.isPlayStoreInstall()) {
-                                        Intent i = new Intent();
-                                        i.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                                        i.setData(Uri.parse("package:" + getPackageName()));
+                                        Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                                                .setData(Uri.parse("package:" + getPackageName()));
                                         startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
                                     } else
                                         startActivity(doze);
