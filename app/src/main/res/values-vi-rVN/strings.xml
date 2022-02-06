@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl cho phép người dùng giám sát và kiểm soát sự thu thập thông tin lan rộng, liên tục, không thể thấy trong các ứng dụng di động về hành vi người dùng (\'theo dõi\').</string>
-    <string name="app_copyright">Bản quyền \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl được dựa trên NetGuard, nó được Marcel Bokhorst (M66B) phát triển.</string>
     <string name="app_android">TrackerControl yêu cầu Android 5.1 hoặc cao hơn</string>
     <string name="app_xposed">Xposed gây ra quá nhiều lỗi, điều đó có thể dẫn đến TrackerControl bị gỡ bỏ khỏi cửa hàng Google Play, do đó TrackerControl không được hỗ trợ khi Xposed được cài đặt</string>
     <string name="app_eula">Bạn tự chịu rủi ro khi sử dụng ứng dụng này. Không ứng dụng nào có thể bảo vệ bạn 100% khỏi việc theo dõi.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Chính sách riêng tư</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Chính sách cookie</a></string>
     <string name="channel_foreground">Các dịch vụ đang chạy</string>
     <string name="channel_notify">Thông báo chung</string>
     <string name="channel_access">Thông báo truy cập</string>
