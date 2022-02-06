@@ -116,6 +116,7 @@
     <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
     <string name="msg_installed">Problemen met %1$s?</string>
     <string name="msg_installed_description">Toestaan dat app contact opneemt met bedrijven</string>
+    <string name="msg_installed_tracker_libraries_found">Bevat %d trackerbibliotheken</string>
     <string name="msg_installed_n">Is geïnstalleerd</string>
     <string name="msg_completed">Actie voltooid</string>
     <string name="msg_vpn">TrackerControl gebruikt een lokale VPN om het internetverkeer te filteren.
