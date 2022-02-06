@@ -116,6 +116,7 @@
     <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
     <string name="msg_installed">Probleme mit %1$s?</string>
     <string name="msg_installed_description">App erlauben, Unternehmen zu kontaktieren</string>
+    <string name="msg_installed_tracker_libraries_found">Enthält %d Tracker-Bibliothek(en)</string>
     <string name="msg_installed_n">Wurde installiert</string>
     <string name="msg_completed">Aktion abgeschlossen</string>
     <string name="msg_vpn">TrackerControl verwendet ein lokales VPN, um den Internetverkehr zu filtern. Gestatten Sie aus diesem Grund eine VPN-Verbindung im nächsten Dialogfenster. Ihr Internetverkehr wird nicht an einen VPN-Server gesendet.</string>
