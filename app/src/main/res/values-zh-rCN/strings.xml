@@ -115,6 +115,7 @@
     <string name="msg_revoked">TrackerControl已被禁用，可能是通过使用另一个基于VPN的应用程序</string>
     <string name="msg_installed">遇到了 %1$s 的问题吗？</string>
     <string name="msg_installed_description">允许应用联系公司</string>
+    <string name="msg_installed_tracker_libraries_found">包含 %d 个跟踪库</string>
     <string name="msg_installed_n">已被安装</string>
     <string name="msg_completed">操作已完成</string>
     <string name="msg_vpn">TrackerControl使用一个本地VPN来过滤互联网流量。
