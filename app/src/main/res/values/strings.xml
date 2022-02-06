@@ -131,6 +131,7 @@
     <string name="msg_revoked">TrackerControl has been disabled, likely by using another VPN based app</string>
     <string name="msg_installed">Problems with %1$s?</string>
     <string name="msg_installed_description">Allow app to contact companies</string>
+    <string name="msg_installed_tracker_libraries_found">Contains %d tracker libraries</string>
     <string name="msg_installed_n">Has been installed</string>
     <string name="msg_completed">Action completed</string>
     <string name="msg_vpn">TrackerControl uses a local VPN to filter internet traffic.

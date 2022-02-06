@@ -20,6 +20,7 @@
 
 package eu.faircode.netguard;
 
+import static android.app.Activity.RESULT_OK;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
@@ -78,11 +79,14 @@ import androidx.preference.PreferenceManager;
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.analysis.AnalysisException;
+import net.kollnig.missioncontrol.analysis.TrackerLibraryAnalyser;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2407,7 +2411,7 @@ public class ServiceSinkhole extends VpnService {
 
                             // Show install notification
                             if (prefs.getBoolean("installed", true))
-                                notifyNewApplication(uid);
+                                notifyNewApplication(uid, this);
                         }
                     }
 
@@ -2450,7 +2454,7 @@ public class ServiceSinkhole extends VpnService {
         }
     };
 
-    public void notifyNewApplication(int uid) {
+    public void notifyNewApplication(int uid, BroadcastReceiver br) {
         if (uid < 0 || !Util.hasInternet(uid, this))
             return;
 
@@ -2484,8 +2488,13 @@ public class ServiceSinkhole extends VpnService {
                         .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
             // Show notification
-            if (internet)
+            if (internet) {
                 NotificationManagerCompat.from(this).notify(uid, builder.build());
+
+                // Check tracker libraries in app
+                if (br != null)
+                    checkTrackers(packages[0], uid, br, builder);
+            }
             else {
                 NotificationCompat.BigTextStyle expanded = new NotificationCompat.BigTextStyle(builder);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -2500,6 +2509,25 @@ public class ServiceSinkhole extends VpnService {
         } catch (PackageManager.NameNotFoundException ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
+    }
+
+    private void checkTrackers(String mAppId, int uid, BroadcastReceiver br, NotificationCompat.Builder builder) {
+        BroadcastReceiver.PendingResult result = br.goAsync();
+        new Thread() {
+            public void run() {
+                try {
+                    Context c = getApplicationContext();
+                    TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(c);
+                    int trackerCount = StringUtils.countMatches(analyser.analyse(mAppId), "•");
+                    builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
+                    NotificationManagerCompat.from(c).notify(uid, builder.build());
+                } catch (AnalysisException e) {
+                    e.printStackTrace();
+                }
+                result.setResultCode(RESULT_OK);
+                result.finish();
+            }
+        }.start();
     }
 
     @Override
@@ -2782,7 +2810,7 @@ public class ServiceSinkhole extends VpnService {
         ServiceSinkhole.reload("notification", ServiceSinkhole.this, false);
 
         // Update notification
-        notifyNewApplication(uid);
+        notifyNewApplication(uid, null);
 
         // Update UI
         Intent ruleset = new Intent(ActivityMain.ACTION_RULES_CHANGED);
