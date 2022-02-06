@@ -2,7 +2,6 @@
 <resources>
     <string name="app_android">TrackerControl edellyttää vähintään Androidin versiota 5.1</string>
     <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play Kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"> Tietosuojakäytäntö </a> <a href="https://github.com/TrackerControl/tracker-control -android # cookie-policy "> evästekäytäntö </a></string>
     <string name="channel_foreground">Käynnissä olevat palvelut</string>
     <string name="channel_notify">Yleiset ilmoitukset</string>
     <string name="channel_access">Käytä ilmoituksia</string>
