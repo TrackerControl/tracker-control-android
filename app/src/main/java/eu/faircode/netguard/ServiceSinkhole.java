@@ -21,6 +21,9 @@
 package eu.faircode.netguard;
 
 import static android.app.Activity.RESULT_OK;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
@@ -78,6 +81,7 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
+import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.AnalysisException;
 import net.kollnig.missioncontrol.analysis.TrackerLibraryAnalyser;
@@ -2468,20 +2472,29 @@ public class ServiceSinkhole extends VpnService {
             if (packages == null || packages.length < 1)
                 throw new PackageManager.NameNotFoundException(Integer.toString(uid));
             boolean internet = Util.hasInternet(uid, this);
+            final String packageName = packages[0];
 
             // Build notification
-            Intent main = new Intent(this, ActivityMain.class);
-            main.putExtra(ActivityMain.EXTRA_REFRESH, true);
-            main.putExtra(ActivityMain.EXTRA_SEARCH, Integer.toString(uid));
-            PendingIntent pi = PendingIntent.getActivity(this, uid, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            Intent main = new Intent(this, DetailsActivity.class);
+            main.putExtra(INTENT_EXTRA_APP_NAME, name);
+            main.putExtra(INTENT_EXTRA_APP_PACKAGENAME, packageName);
+            main.putExtra(INTENT_EXTRA_APP_UID, uid);
+            PendingIntent pi = PendingIntent.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
             builder.setSmallIcon(R.drawable.ic_rocket_white)
                     .setContentIntent(pi)
+                    .addAction(0, getString(R.string.title_activity_detail), pi)
                     .setColor(getResources().getColor(R.color.colorTrackerControl))
                     .setAutoCancel(true);
             builder.setContentTitle(getString(R.string.msg_installed, name))
                     .setContentText(getString(R.string.msg_installed_description));
+
+            // Add uninstall action
+            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(Uri.parse("package:" + packageName));
+            PendingIntent piUninstall = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            builder.addAction(0, getString(R.string.uninstall), piUninstall);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                 builder.setCategory(NotificationCompat.CATEGORY_STATUS)
@@ -2493,17 +2506,7 @@ public class ServiceSinkhole extends VpnService {
 
                 // Check tracker libraries in app
                 if (br != null)
-                    checkTrackers(packages[0], uid, br, builder);
-            }
-            else {
-                NotificationCompat.BigTextStyle expanded = new NotificationCompat.BigTextStyle(builder);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    expanded.bigText(getString(R.string.msg_installed_description
-                    ));
-                else
-                    expanded.bigText(getString(R.string.msg_installed, name));
-                expanded.setSummaryText(getString(R.string.title_internet));
-                NotificationManagerCompat.from(this).notify(uid, expanded.build());
+                    checkTrackers(packageName, uid, br, builder);
             }
 
         } catch (PackageManager.NameNotFoundException ex) {
@@ -2511,14 +2514,14 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private void checkTrackers(String mAppId, int uid, BroadcastReceiver br, NotificationCompat.Builder builder) {
+    private void checkTrackers(String packageName, int uid, BroadcastReceiver br, NotificationCompat.Builder builder) {
         BroadcastReceiver.PendingResult result = br.goAsync();
         new Thread() {
             public void run() {
                 try {
                     Context c = getApplicationContext();
                     TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(c);
-                    int trackerCount = StringUtils.countMatches(analyser.analyse(mAppId), "•");
+                    int trackerCount = StringUtils.countMatches(analyser.analyse(packageName), "•");
                     builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
                     NotificationManagerCompat.from(c).notify(uid, builder.build());
                 } catch (AnalysisException e) {
