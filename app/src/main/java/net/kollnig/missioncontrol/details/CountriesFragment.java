@@ -17,6 +17,8 @@
 
 package net.kollnig.missioncontrol.details;
 
+import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Picture;
@@ -51,8 +53,6 @@ import java.net.InetAddress;
 import java.util.Map;
 
 import eu.faircode.netguard.DatabaseHelper;
-
-import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
 
 public class CountriesFragment extends Fragment {
     private static final String ARG_APP_UID = "app-uid";
@@ -90,17 +90,14 @@ public class CountriesFragment extends Fragment {
     public synchronized Map<String, Integer> getHostCountriesCount(int uid) {
         Map<String, Integer> countryToCount = new ArrayMap<>();
 
-        Cursor cursor = null;
-        try {
-            Context context = getContext();
-            if (context == null)
-                return countryToCount;
+        Context context = getContext();
+        if (context == null)
+            return countryToCount;
 
+        DatabaseHelper dh = DatabaseHelper.getInstance(getContext());
+        try (Cursor cursor = dh.getHosts(uid)) {
             InputStream database = context.getAssets().open("GeoLite2-Country.mmdb");
             DatabaseReader reader = new DatabaseReader.Builder(database).withCache(new CHMCache()).build();
-
-            DatabaseHelper dh = DatabaseHelper.getInstance(getContext());
-            cursor = dh.getHosts(uid);
 
             if (cursor.moveToFirst()) {
                 do {
@@ -126,9 +123,6 @@ public class CountriesFragment extends Fragment {
             }
         } catch (IOException | GeoIp2Exception e) {
             e.printStackTrace();
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
         return countryToCount;
     }

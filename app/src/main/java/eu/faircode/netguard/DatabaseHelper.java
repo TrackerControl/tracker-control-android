@@ -246,16 +246,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private boolean columnExists(SQLiteDatabase db, String table, String column) {
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery("SELECT * FROM " + table + " LIMIT 0", null);
+        try (Cursor cursor = db.rawQuery("SELECT * FROM " + table + " LIMIT 0", null)) {
             return (cursor.getColumnIndex(column) >= 0);
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             return false;
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
     }
 

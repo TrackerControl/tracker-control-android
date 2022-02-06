@@ -146,29 +146,26 @@ public class TrackerList {
 
     /**
      * Retrieves information for all apps
-     *
-     * @return A cursor pointing to the data. Caller must close the cursor.
-     * Cursor should have app name and leak summation based on a sort type
      */
     public synchronized Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> getTrackerCountsAndTotal() {
         Map<Integer, Set<String>> trackers = new ArrayMap<>();
         Map<Integer, Set<String>> trackersWeek = new ArrayMap<>();
 
-        Cursor cursor = databaseHelper.getHosts();
-        long limit = new Date().getTime() - 7 * 24 * 3600 * 1000L;
-        if (cursor.moveToFirst()) {
-            do {
-                int appUid = cursor.getInt(cursor.getColumnIndex("uid"));
-                String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
-                Tracker tracker = findTracker(hostname);
-                checkTracker(trackers, appUid, tracker);
+        try (Cursor cursor = databaseHelper.getHosts()) {
+            long limit = new Date().getTime() - 7 * 24 * 3600 * 1000L;
+            if (cursor.moveToFirst()) {
+                do {
+                    int appUid = cursor.getInt(cursor.getColumnIndex("uid"));
+                    String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
+                    Tracker tracker = findTracker(hostname);
+                    checkTracker(trackers, appUid, tracker);
 
-                long time = cursor.getLong(cursor.getColumnIndex("time"));
-                if (time > limit)
-                    checkTracker(trackersWeek, appUid, tracker);
-            } while (cursor.moveToNext());
+                    long time = cursor.getLong(cursor.getColumnIndex("time"));
+                    if (time > limit)
+                        checkTracker(trackersWeek, appUid, tracker);
+                } while (cursor.moveToNext());
+            }
         }
-        cursor.close();
 
         return new Pair<>(countTrackers(trackers), countTrackers(trackersWeek));
     }

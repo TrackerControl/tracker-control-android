@@ -242,64 +242,56 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         protected Boolean doInBackground(final String... args) {
-            OutputStream out = null;
-            try {
-                Uri target = data.getData();
-                if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                    target = Uri.parse(target + "/" + appPackageName + "_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
-                Log.i(TAG, "Writing URI=" + target);
-                out = getContentResolver().openOutputStream(target);
+            Uri target = data.getData();
+            if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                target = Uri.parse(target + "/" + appPackageName + "_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
+            Log.i(TAG, "Writing URI=" + target);
+
+            try (OutputStream out = getContentResolver().openOutputStream(target)) {
                 csvExport(out);
                 return true;
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                 return false;
-            } finally {
-                if (out != null)
-                    try {
-                        out.close();
-                    } catch (IOException ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }
             }
         }
 
         private void csvExport(OutputStream out) throws IOException {
-            CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
+            try (CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
                     CSVWriter.DEFAULT_SEPARATOR,
                     CSVWriter.DEFAULT_QUOTE_CHARACTER,
                     CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.RFC4180_LINE_END);
+                    CSVWriter.RFC4180_LINE_END)) {
 
-            Cursor data = trackerList.getAppInfo(appUid);
-            if (data == null) throw new IOException("Could not read hosts.");
+                try (Cursor data = trackerList.getAppInfo(appUid)) {
+                    if (data == null) throw new IOException("Could not read hosts.");
 
-            List<String> columnNames = new ArrayList<>();
-            Collections.addAll(columnNames, data.getColumnNames());
-            columnNames.add("Tracker Name");
-            columnNames.add("Tracker Category");
+                    List<String> columnNames = new ArrayList<>();
+                    Collections.addAll(columnNames, data.getColumnNames());
+                    columnNames.add("Tracker Name");
+                    columnNames.add("Tracker Category");
 
-            csv.writeNext(columnNames.toArray(new String[0]));
-            while (data.moveToNext()) {
-                String[] row = new String[data.getColumnNames().length + 2];
-                for (int i = 0; i < data.getColumnNames().length; i++) {
-                    row[i] = data.getString(i);
+                    csv.writeNext(columnNames.toArray(new String[0]));
+                    while (data.moveToNext()) {
+                        String[] row = new String[data.getColumnNames().length + 2];
+                        for (int i = 0; i < data.getColumnNames().length; i++) {
+                            row[i] = data.getString(i);
+                        }
+
+                        String hostname = data.getString(data.getColumnIndex("daddr"));
+                        Tracker tracker = TrackerList.findTracker(hostname);
+                        if (tracker != null) {
+                            row[data.getColumnNames().length] = tracker.getName();
+                            row[data.getColumnNames().length + 1] = tracker.getCategory();
+                        } else {
+                            row[data.getColumnNames().length] = "";
+                            row[data.getColumnNames().length + 1] = "";
+                        }
+
+                        csv.writeNext(row);
+                    }
                 }
-
-                String hostname = data.getString(data.getColumnIndex("daddr"));
-                Tracker tracker = TrackerList.findTracker(hostname);
-                if (tracker != null) {
-                    row[data.getColumnNames().length] = tracker.getName();
-                    row[data.getColumnNames().length + 1] = tracker.getCategory();
-                } else {
-                    row[data.getColumnNames().length] = "";
-                    row[data.getColumnNames().length + 1] = "";
-                }
-
-                csv.writeNext(row);
             }
-            csv.close();
-            data.close();
         }
 
         protected void onPostExecute(final Boolean success) {

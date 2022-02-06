@@ -847,43 +847,43 @@ public class ServiceSinkhole extends VpnService {
             String dname = null;
             String originalDname = null;
 
-            Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false);
-            int uncertain = (lookup != null
-                    && lookup.getCount() > 1) ? 1 : 0;
-
-            // Loop until we find tracker or reach last entry
+            int uncertain = 0;
             boolean isTracker = false;
-            if (lookup != null) {
-                Pair<Tracker, String> foundTracker = new Pair<>(NO_TRACKER, null);
+            try(Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false)) {
+                uncertain = (lookup != null
+                        && lookup.getCount() > 1) ? 1 : 0;
 
-                while (lookup.moveToNext()) {
-                    dname = lookup.getString(lookup.getColumnIndex("qname"));
-                    if (dname != null)  {
-                        originalDname = dname;
+                // Loop until we find tracker or reach last entry
+                if (lookup != null) {
+                    Pair<Tracker, String> foundTracker = new Pair<>(NO_TRACKER, null);
 
-                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                        Pair<Tracker, String> p = getDecloakedTracker(dname, aname);
+                    while (lookup.moveToNext()) {
+                        dname = lookup.getString(lookup.getColumnIndex("qname"));
+                        if (dname != null)  {
+                            originalDname = dname;
 
-                        if (foundTracker.first == NO_TRACKER
-                                && p.first != null) { // store found tracker
-                            isTracker = true;
-                            foundTracker = p;
-                        }
+                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                            Pair<Tracker, String> p = getDecloakedTracker(dname, aname);
 
-                        if (foundTracker.first != NO_TRACKER
-                                && (p.first == null // could have uncertain tracker company if no company found for an observed domain
-                                || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an uncertain tracker company
-                                && uncertain == 1) {
-                            uncertain = 2;
-                            break;
+                            if (foundTracker.first == NO_TRACKER
+                                    && p.first != null) { // store found tracker
+                                isTracker = true;
+                                foundTracker = p;
+                            }
+
+                            if (foundTracker.first != NO_TRACKER
+                                    && (p.first == null // could have uncertain tracker company if no company found for an observed domain
+                                    || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an uncertain tracker company
+                                    && uncertain == 1) {
+                                uncertain = 2;
+                                break;
+                            }
                         }
                     }
+
+                    if (foundTracker.first != NO_TRACKER)
+                        dname = foundTracker.second;
                 }
-
-                if (foundTracker.first != NO_TRACKER)
-                    dname = foundTracker.second;
-
-                lookup.close();
             }
 
             // Check if we have additional information from SNI
@@ -2096,43 +2096,44 @@ public class ServiceSinkhole extends VpnService {
             if (dname == null) {
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                Cursor lookup = dh.getQAName(uid, daddr, true);
-                long time = new Date().getTime();
-                long ttl = 7 * 24 * 3600 * 1000L;
+                long time;
+                long ttl;
+                try (Cursor lookup = dh.getQAName(uid, daddr, true)) {
+                    time = new Date().getTime();
+                    ttl = 7 * 24 * 3600 * 1000L;
 
-                // Loop through entries and pick the one that is related to tracking
-                if (lookup != null) {
-                    while (lookup.moveToNext()) {
-                        // Get DNS expiry details
-                        int colTime = lookup.getColumnIndex("time");
-                        int colTTL = lookup.getColumnIndex("ttl");
-                        if (!lookup.isNull(colTime))
-                            time = lookup.getLong(colTime);
-                        if (!lookup.isNull(colTTL))
-                            ttl = lookup.getLong(colTTL);
+                    // Loop through entries and pick the one that is related to tracking
+                    if (lookup != null) {
+                        while (lookup.moveToNext()) {
+                            // Get DNS expiry details
+                            int colTime = lookup.getColumnIndex("time");
+                            int colTTL = lookup.getColumnIndex("ttl");
+                            if (!lookup.isNull(colTime))
+                                time = lookup.getLong(colTime);
+                            if (!lookup.isNull(colTTL))
+                                ttl = lookup.getLong(colTTL);
 
-                        // Check tracker
-                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                        dname = lookup.getString(lookup.getColumnIndex("qname"));
-                        tracker = TrackerList.findTracker(dname);
+                            // Check tracker
+                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                            dname = lookup.getString(lookup.getColumnIndex("qname"));
+                            tracker = TrackerList.findTracker(dname);
 
-                        // If no tracker found, try DNS uncloaking
-                        if (tracker == null
-                                && aname != null) {
-                            tracker = TrackerList.findTracker(aname);
+                            // If no tracker found, try DNS uncloaking
+                            if (tracker == null
+                                    && aname != null) {
+                                tracker = TrackerList.findTracker(aname);
 
-                            if (tracker != null) {
-                                dname = aname;
-                                Log.d(TAG, "Uncloaked: " + dname + " -> " + aname);
+                                if (tracker != null) {
+                                    dname = aname;
+                                    Log.d(TAG, "Uncloaked: " + dname + " -> " + aname);
+                                }
                             }
+
+                            // If tracker found, seek no further
+                            if (tracker != null)
+                                break;
                         }
-
-                        // If tracker found, seek no further
-                        if (tracker != null)
-                            break;
                     }
-
-                    lookup.close();
                 }
 
                 // No success in finding dname or tracker?

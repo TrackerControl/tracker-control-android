@@ -585,25 +585,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         new AsyncTask<Object, Object, Throwable>() {
             @Override
             protected Throwable doInBackground(Object... objects) {
-                OutputStream out = null;
-                try {
-                    Uri target = data.getData();
-                    if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                        target = Uri.parse(target + "/trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
-                    Log.i(TAG, "Writing URI=" + target);
-                    out = getContentResolver().openOutputStream(target);
+                Uri target = data.getData();
+                if (data.hasExtra("org.openintents.extra.DIR_PATH"))
+                    target = Uri.parse(target + "/trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                Log.i(TAG, "Writing URI=" + target);
+
+                try (OutputStream out = getContentResolver().openOutputStream(target)){
                     csvExport(out);
                     return null;
                 } catch (Throwable ex) {
                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     return ex;
-                } finally {
-                    if (out != null)
-                        try {
-                            out.close();
-                        } catch (IOException ex) {
-                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                        }
                 }
             }
 
@@ -621,55 +613,55 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void csvExport(OutputStream out) throws IOException {
         PackageManager pm = getPackageManager();
-        CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
+        try (CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
                 CSVWriter.DEFAULT_SEPARATOR,
                 CSVWriter.DEFAULT_QUOTE_CHARACTER,
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                CSVWriter.RFC4180_LINE_END);
+                CSVWriter.RFC4180_LINE_END)) {
 
-        Cursor data = DatabaseHelper.getInstance(this).getHosts();
-        if (data == null) throw new IOException("Could not read hosts.");
+            try (Cursor data = DatabaseHelper.getInstance(this).getHosts()) {
+                if (data == null) throw new IOException("Could not read hosts.");
 
-        List<String> columnNames = new ArrayList<>();
-        Collections.addAll(columnNames, data.getColumnNames());
-        columnNames.add("Tracker");
-        columnNames.add("Category");
-        columnNames.add("Package");
-        columnNames.add("App");
+                List<String> columnNames = new ArrayList<>();
+                Collections.addAll(columnNames, data.getColumnNames());
+                columnNames.add("Tracker");
+                columnNames.add("Category");
+                columnNames.add("Package");
+                columnNames.add("App");
 
-        csv.writeNext(columnNames.toArray(new String[0]));
-        while (data.moveToNext()) {
-            String[] row = new String[data.getColumnNames().length + 4];
-            for (int i = 0; i < data.getColumnNames().length; i++) {
-                row[i] = data.getString(i);
+                csv.writeNext(columnNames.toArray(new String[0]));
+                while (data.moveToNext()) {
+                    String[] row = new String[data.getColumnNames().length + 4];
+                    for (int i = 0; i < data.getColumnNames().length; i++) {
+                        row[i] = data.getString(i);
+                    }
+
+                    String hostname = data.getString(data.getColumnIndex("daddr"));
+                    Tracker tracker = TrackerList.findTracker(hostname);
+                    if (tracker != null) {
+                        row[data.getColumnNames().length] = tracker.getName();
+                        row[data.getColumnNames().length + 1] = tracker.getCategory();
+                    } else {
+                        row[data.getColumnNames().length] = "";
+                        row[data.getColumnNames().length + 1] = "";
+                    }
+
+                    try {
+                        String pkg = pm.getNameForUid(data.getInt(data.getColumnIndex("uid")));
+                        ApplicationInfo info = pm.getApplicationInfo(pkg, 0);
+                        String name = pm.getApplicationLabel(info).toString();
+
+                        row[data.getColumnNames().length + 2] = pkg;
+                        row[data.getColumnNames().length + 3] = name;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        row[data.getColumnNames().length + 2] = "";
+                        row[data.getColumnNames().length + 3] = "";
+                    }
+
+                    csv.writeNext(row);
+                }
             }
-
-            String hostname = data.getString(data.getColumnIndex("daddr"));
-            Tracker tracker = TrackerList.findTracker(hostname);
-            if (tracker != null) {
-                row[data.getColumnNames().length] = tracker.getName();
-                row[data.getColumnNames().length + 1] = tracker.getCategory();
-            } else {
-                row[data.getColumnNames().length] = "";
-                row[data.getColumnNames().length + 1] = "";
-            }
-
-            try {
-                String pkg = pm.getNameForUid(data.getInt(data.getColumnIndex("uid")));
-                ApplicationInfo info = pm.getApplicationInfo(pkg, 0);
-                String name = pm.getApplicationLabel(info).toString();
-
-                row[data.getColumnNames().length + 2] = pkg;
-                row[data.getColumnNames().length + 3] = name;
-            } catch (PackageManager.NameNotFoundException e) {
-                row[data.getColumnNames().length + 2] = "";
-                row[data.getColumnNames().length + 3] = "";
-            }
-
-            csv.writeNext(row);
         }
-        csv.close();
-        data.close();
     }
 
     @Override
