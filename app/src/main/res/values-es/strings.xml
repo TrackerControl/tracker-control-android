@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite a los usuarios monitorear y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
-    <string name="app_copyright">Derechos de autor \u00A9 2019–2022 Konrad Kollnig (Computación centrada en el ser humano, Departamento de Ciencias de la Computación, Universidad de Oxford)\n\nTrackerControl está basado en NetGuard, desarrollado por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
     <string name="app_xposed">Xposed genera demasiados crasheos, lo cual podría ocasionar que se retire TrackerControl de la tienda de Google Play. Por lo tanto, no habrá soporte para TrackerControl mientras Xposed esté instalado.</string>
     <string name="app_eula">El uso de esta aplicación es bajo tu propio riesgo. Ninguna aplicación puede ofrecer un 100% de protección contra el rastreo.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de privacidad</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de cookies</a></string>
     <string name="channel_foreground">Servicios en ejecución</string>
     <string name="channel_notify">Notificaciones generales</string>
     <string name="channel_access">Notificaciones de acceso</string>
