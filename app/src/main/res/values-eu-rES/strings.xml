@@ -58,10 +58,10 @@
     <string name="setting_reload_onconnectivity">Birkargatu konektibitate aldaketa bakoitzean</string>
     <string name="setting_advanced_options">Aukera aurreratuak</string>
     <string name="setting_system">Kudeatu sistemako aplikazioak</string>
-    <string name="setting_log_app">Bilatu trackeatzaile berriak</string>
+    <string name="setting_log_app">Aztarnari berriak bilatu</string>
     <string name="setting_log_logcat">Erregistratu transmisioak ADBra</string>
-    <string name="setting_filter">Blokeatu trackeatzaileak</string>
-    <string name="setting_filter_udp">Blokeatu UDP bidezko trackeatzaileak</string>
+    <string name="setting_filter">Aztarnariak blokeatu</string>
+    <string name="setting_filter_udp">UDP bidezko aztarnariak blokeatu</string>
     <string name="setting_handover">Pasatu VPNra etenik gabe birkargatzean</string>
     <string name="setting_lockdown">Blokeatu trafikoa</string>
     <string name="setting_track_usage">Monitorizatu sare-erabilera</string>
@@ -101,7 +101,7 @@
     <string name="summary_ip6">Bideratu IPv6 trafikoa TrackerControlera, selektiboki baimendu edo blokeatzeko</string>
     <string name="summary_call">Desgaitu TrackerControl telefono deiak jaso edo egitean. Hau IP/Wi-Fi deiekin arazoak daudenean erabili daiteke.</string>
     <string name="summary_system">Zehaztu sistemako aplikazioen arauak (adituentzat)</string>
-    <string name="summary_log_app">Desaktibatu bateria gutxiago erabiltzeko. Trackeatzaile berriak blokeatuta jarraituko dute, baina ez dira erakutsiko.</string>
+    <string name="summary_log_app">Desaktibatu bateria gutxiago erabiltzeko. Aztarnari berriak blokeatuta jarraituko dute, baina ez dira erakutsiko.</string>
     <string name="summary_track_usage">Monitorizatu aplikazio eta helbide bakoitzak bidali eta jasotako byte kopurua. Honek bateria kontsumoa areagotzea ekar lezake.</string>
     <string name="summary_block_domains">OHARRA: blokeatutako ostalariak ez dira UIan agertzen.</string>
     <string name="summary_rcode">Defektuzko balioa 3 (NXDOMAIN) da, eta \'domeinua ez da existitzen\' esan nahi du.</string>
@@ -110,7 +110,7 @@
     <string name="summary_watchdog">Egiaztatu aldiro TrackerControl oraindik martxan dagoen (idatzi 0 ezaugarri hau desgaitzeko). Honek bateria gehiago erabiltzea ekar lezake.</string>
     <string name="summary_log_logcat">Blokeatzea desgaitzen du. Komunikazioak (eta identifikatutako jarraitzaileak) gailuaren erregistroan erregistratzen dira. Berreskuratu adb logcat-ekin \'TC-Log\' etiketarekin.</string>
     <string name="msg_sure">Ziur zaude?</string>
-    <string name="msg_started">Trackeatzaileak egiaztatzen</string>
+    <string name="msg_started">Aztarnariak egiaztatzen</string>
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
     <string name="msg_revoked">TrackerControl desaktibatu egin da, ziur aski VPNan oinarritutako beste aplikazioren bat erabiltzeagatik</string>
@@ -243,16 +243,16 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="exported">Biltegira esportatuta!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Xehetasunak</string>
-    <string name="tab_trackers">Trackeatzaileak</string>
+    <string name="tab_trackers">Aztarnariak</string>
     <string name="tab_countries">Herrialdeak</string>
     <string name="tab_actions">Nire datuak</string>
-    <string name="tracker_name">Trackeatzailearen izena</string>
+    <string name="tracker_name">Aztarnariaren izena</string>
     <string name="internet_access">Internet sarbidea</string>
     <string name="internet_access_explanation">Aktibatuta egon behar da Internet sarbidea izateko.\n\nAholkua: pantaila nagusiko aplikazioaren ikonoa ere sakatu dezakezu.</string>
     <string name="app_info">Aplikazioa kudeatu</string>
     <!-- Actions -->
-    <string name="block_tracking">Trackeatzaileak blokeatu</string>
-    <string name="block_tracking_description">Aplikazio askok hirugarrenei datuak bidaltzen dizkiete, hauek dira trackeatzaileak. TrackerControlek bidalketa horiek blokeatzea ahalbidetzen du. Hala ere kontuz erabili, aplikazio-garatzaileek zerbitzu hauek erabili egiten dituzte-eta.</string>
+    <string name="block_tracking">Aztarnariak blokeatu</string>
+    <string name="block_tracking_description">Aplikazio askok hirugarrenei datuak bidaltzen dizkiete, hauek aztarnariak dira. TrackerControlek bidalketa horiek blokeatzea ahalbidetzen du. Hala ere kontuz erabili, aplikazio-garatzaileek zerbitzu hauek erabili egiten dituzte-eta.</string>
     <string name="personalised_ads">Mugatu pertsonalizazioa</string>
     <string name="personalised_ads_description">Androidek zure Google Advertising IDrako atzipena aplikazioei mugatzea eskaintzen du. Hala ere, aplikazioek ezarpen honi kasurik ez egitea gerta daiteke. ID hori estatistiketarako ere erabiltzen jarraitu dezakete, Googleren politiken arabera. Googlen eta datuak jasotzen dituen enpresan konfidantza izatea eskatzen du honek.</string>
     <string name="data_managment">Kudeatu datuak</string>
@@ -261,7 +261,7 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="contacts_description">Aplikazio baten datuen babeserako oinarriak betetzen ez dituela uste baduzu, arduradunekin kontaktatu dezakezu.</string>
     <string name="play_services_required">Hau Google Play Servicesen ezarpena bat da, baina ez da zure gailuan aurkitu.</string>
     <string name="no_mail_service">Instalatu eposta bezero bat.</string>
-    <string name="blocking_settings">Aukeratu trackeatzaileak</string>
+    <string name="blocking_settings">Aztarnariak aukeratu</string>
     <string name="ad_settings">Aldatu orain</string>
     <string name="request_data">Eskatu datuak</string>
     <string name="request_deletion">Eskatu ezabatzeko</string>
@@ -315,7 +315,7 @@ Sincerely,\n\n]]></string>
     <string name="instructions_monitoring">Aktibatu eta probatu aplikazio batzurekin.</string>
     <string name="device_not_supported_title">Gailu honekin ezin da erabili</string>
     <string name="device_not_supported_msg">Zure gailuaren sistema eragileak ez du sare-komunikazioak monitorizatu eta filtratzen uzten. Hau beharrezkoa da TrackerControl erabiltzeko.</string>
-    <string name="launch_app">Hasi &amp; bilatu trackeatzaileak</string>
+    <string name="launch_app">Hasi &amp; bilatu aztarnariak</string>
     <string name="countries">Helburu herrialdeak</string>
     <string name="countries_explanation">Jakin ezazu nora bidaltzen dituen zure telefonoak datuak.\n\nInformazioa DNS eta IP eragiketetatik ateratzen da eta agian ez da guztiz zehatza.</string>
     <string name="countries_loading_failed">Oops... huts egin du mapa kargatzeak. Idatzi tc@kollnig.net helbidera eta esan zer gertatu den mesedez.</string>
@@ -329,11 +329,11 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Blokeatze zurruna</string>
     <string name="summary_strict_blocking">Instalatutako aplikazio berrientzat, blokeatu ahalik eta datu partekatze gehien konpainiekin. Aplikazio gehiago hautsiko ditu.</string>
     <string name="strict_blocking_explanation">Erabiltzaile ez adituentzako aukera hau ezgaitzea aholkatzen da, aplikazioen haustura ekiditeko. Hala ere, honek ezinbesteko partekatze batzuk onartzen ditu konpainiekin.</string>
-    <string name="exclude_vpn_explanation">Aktibo egon behar da trackeatzaileak detektatu edo blokeatzeko.\n\nAholkua: desaktibatu arazoak badituzu.</string>
+    <string name="exclude_vpn_explanation">Aktibo egon behar da aztarnariak detektatu edo blokeatzeko.\n\nAholkua: desaktibatu arazoak badituzu.</string>
     <string name="uninstall">Desinstalatu</string>
     <string name="settings_uninstall">Aplikazioaren ezarpenak &amp; Desinstalatu</string>
-    <string name="no_trackers_found_message_disabled">Aktibatu pantaila nagusiko aukera, ondoren abiarazi aplikazioa trackeatzaileak bilatzeko</string>
-    <string name="no_trackers_found_message">Abiarazi aplikazioa trackeatzaileak bilatzeko</string>
+    <string name="no_trackers_found_message_disabled">Aktibatu pantaila nagusiko aukera, ondoren abiarazi aplikazioa aztarnariak bilatzeko</string>
+    <string name="no_trackers_found_message">Abiarazi aplikazioa aztarnariak bilatzeko</string>
     <string name="no_trackers_found_action">Abiarazi</string>
     <string name="no_internet_message">"Aplikazio honek ez du Interneterako sarbiderik. Hala ere beste aplikazio batzuekin datuak trukatuz jarraitu zaitzake."</string>
     <string name="no_internet">Internet sarbiderik ez</string>
@@ -346,7 +346,7 @@ Sincerely,\n\n]]></string>
     <string name="enable">Aktibatu</string>
     <string name="internet_blocked">Internet sarbidea blokeatuta</string>
     <string name="internet_unblocked">Internet sarbidea desblokeatuta</string>
-    <string name="category_blocked">Blokeatutako kategoriako trackeatzaileak</string>
+    <string name="category_blocked">Blokeatutako kategoriako aztarnariak</string>
     <string name="category_unblocked">Kategoriako aztarnariak baimenduta</string>
     <string name="category_unblocked_warning">Blokeatu kategoria lehenago!</string>
     <string name="switch_strict_blocking">Ezinbesteko datu partekatzeak blokeatu</string>
@@ -362,6 +362,11 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="trackers_static_explanation_playstore">TrackerControlek kodean (\"liburutegietan\") eta aplikazioen sare-trafikoak detektatzen ditu arazoak.</string>
     <string name="blocked">BLOKEATUTA</string>
     <string name="allowed">BAIMENDUTA</string>
+    <string name="setting_domain_based_blocked">Domeinuan oinarritutako blokeatzea</string>
     <string name="summary_domain_based_blocking">Blokeo pikordunagoa baimentzen du. Garapenean oraindik.</string>
     <string name="untap_unblock">Aholkua: sarrerak banan banan desaktibatu ditzakezu gainean sakatuz.</string>
+    <string name="browsers_not_supported">Nabigatzaileak ez daude onartuta ⚠️</string>
+    <string name="browsers_not_supported_explanation">Honek nabigatzaile baten itxura du.\n\nAztarnarien blokeatzea ez dago nabigatzaileetan onartuta TrackerControl-en. Horren ordez, erabili ezazu jarraipen babesa inetgratzen duen nabigatzaile bat aztarnarien blokeo hobea lortzeko.\n\nAdibidez: Mozilla Fennec, Bromite</string>
+    <string name="static_analysis">Aztarnariak antzeman aplikazioaren kodea</string>
+    <string name="failed_loading_cached_analysis">Cacheatutako aztarnarien emaitzak kargatzeak huts egin du. Mesedez eman honen berri garatzaileari hemen: hello@trackercontrol.org</string>
 </resources>
