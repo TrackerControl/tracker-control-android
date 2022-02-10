@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl umożliwia użytkownikom nadzór i kontrolę nad powszechnym, uporczywym i ukrytym gromadzeniem danych o aktywności użytkownika w aplikacjach mobilnych (\'śledzenie\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl powstał na podstawie NetGuard stworzonego przez Marcela Bokhorsta (M66B).</string>
+    <string name="app_copyright">Prawa autorskie \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl powstał na podstawie NetGuard stworzonego przez Marcela Bokhorsta (M66B).</string>
     <string name="app_android">TrackerControl wymaga Androida 5.1 lub nowszego</string>
     <string name="app_xposed">Xposed powoduje zbyt wiele awarii, które mogą spowodować usunięcie TrackerControl ze Sklepu Google Play, dlatego TrackerControl nie jest wspierany, gdy zainstalowany jest również Xposed</string>
     <string name="app_eula">Korzystasz z tej aplikacji na własne ryzyko. Żadna aplikacja nie jest w stanie zapewnić 100% ochrony przed śledzeniem.</string>
@@ -118,6 +118,7 @@
     <string name="msg_revoked">TrackerControl został wyłączony, prawdopodobnie przy użyciu innej aplikacji opartej na sieci VPN</string>
     <string name="msg_installed">Problemy z %1$s?</string>
     <string name="msg_installed_description">Zezwól aplikacji na kontakt z firmami</string>
+    <string name="msg_installed_tracker_libraries_found">Zawiera %d bibliotek trackerów</string>
     <string name="msg_installed_n">Został zainstalowany</string>
     <string name="msg_completed">Działanie zakończone</string>
     <string name="msg_vpn">TrackerControl używa lokalnego VPN do filtrowania ruchu internetowego.
@@ -361,9 +362,12 @@ Z poważaniem,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl wykrywa śledzenie w kodzie (\"bibliotekach\") i ruch sieciowy aplikacji.</string>
     <string name="blocked">ZABLOKOWANE</string>
     <string name="allowed">DOZWOLONE</string>
+    <string name="setting_domain_based_blocked">Blokowanie na podstawie domeny</string>
     <string name="summary_domain_based_blocking">Umożliwia bardziej szczegółowe blokowanie. Wciąż w fazie rozwoju.</string>
     <string name="untap_unblock">Wskazówka: możesz odblokować poszczególne wpisy, dotykając ich.</string>
     <string name="uncertain_entry">Wpisy oznaczone symbolem \'*\' mogą być niedokładne, ze względu na ograniczenia systemu Android. Zazwyczaj oznacza to, że ta sama firma używa tego samego adresu IP w różnych domenach, ale może również oznaczać, że za tym samym adresem IP stoją różne firmy, np. jeśli używają sieci dostarczania treści (Content Delivery Network).</string>
+    <string name="browsers_not_supported">Przeglądarki nie są obsługiwane ⚠️</string>
     <string name="browsers_not_supported_explanation">Wygląda na to, że jest to przeglądarka.\n\nBlokowanie trackerów w przeglądarkach nie jest obsługiwane przez TrackerControl. Zamiast tego używaj przeglądarki z wbudowaną funkcjonalnością blokowania śledzenia.\n\nNa przykład: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Wykrywaj trackery w kodzie aplikacji</string>
+    <string name="failed_loading_cached_analysis">Ładowanie informacji o trackerach z pamięci cache nie powiodło się. Proszę zgłosić to deweloperowi na hello@trackercontrol.org</string>
 </resources>

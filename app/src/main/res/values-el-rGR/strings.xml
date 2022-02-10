@@ -116,6 +116,7 @@
     <string name="msg_revoked">Το TrackerControl έχει απενεργοποιηθεί, πιθανότατα χρησιμοποιώντας μια άλλη εφαρμογή που βασίζεται σε VPN</string>
     <string name="msg_installed">Προβλήματα με %1$s;</string>
     <string name="msg_installed_description">Επιτρέψτε στην εφαρμογή να επικοινωνεί με εταιρείες</string>
+    <string name="msg_installed_tracker_libraries_found">Περιέχει %d βιβλιοθήκες ιχνηλατών</string>
     <string name="msg_installed_n">Έχει εγκατασταθεί</string>
     <string name="msg_completed">Η ενεργεία ολοκληρώθηκε</string>
     <string name="msg_vpn">Το TrackerControl χρησιμοποιεί ένα τοπικό VPN για να φιλτράρει την κίνηση στο διαδίκτυο.

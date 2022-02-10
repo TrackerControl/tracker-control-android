@@ -116,6 +116,7 @@
     <string name="msg_revoked">A TrackerControl letiltva, valószínűleg egy másik VPN alapú alkalmazással</string>
     <string name="msg_installed">Gondok vannak a %1$s?</string>
     <string name="msg_installed_description">Engedélyezi az app kapcsolatát a társaságokkal</string>
+    <string name="msg_installed_tracker_libraries_found">%d nyomkövető könyvtárat tartalmaz</string>
     <string name="msg_installed_n">Telepítésre került</string>
     <string name="msg_completed">Művelet befejezve</string>
     <string name="msg_vpn">A TrackerControl helyi VPN-t használ az internetes forgalom szűréséhez.

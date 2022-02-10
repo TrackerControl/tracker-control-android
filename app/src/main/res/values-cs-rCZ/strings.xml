@@ -118,6 +118,7 @@
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
     <string name="msg_installed">Problémy s %1$s?</string>
     <string name="msg_installed_description">Umožnit aplikaci kontaktovat společnosti</string>
+    <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven sledování: %d</string>
     <string name="msg_installed_n">Instalace dokončena</string>
     <string name="msg_completed">Akce dokončena</string>
     <string name="msg_vpn">TrackerControl používá lokální VPN pro filtrování internetového provozu.
