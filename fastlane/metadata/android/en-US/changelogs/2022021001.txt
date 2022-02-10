@@ -1,4 +1,5 @@
 - Save lots of battery when using TrackerControl UI: store results from tracker library analysis
+- Show number of tracker libraries in app install notifications (if this app has Internet access)
 - Implement parsing of Server Name Indication in Play Store version for better detection
 - Implement basic IP-based tracker detection and blocking
 - Highlight in UI that sometimes the shown company might be inaccurate
@@ -8,4 +9,5 @@
 - Make disabling battery optimisations easier
 - Fix bug where duplicate tracker libraries were shown
 - Update dependencies, translations, blocklists and Classyshark/Exodus privacy database (eof422)
+- Improve handling of resources (including database access) to avoid crashes
 - Cleanup code, improve in-app strings

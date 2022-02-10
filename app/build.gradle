@@ -8,8 +8,8 @@ android {
         minSdkVersion 22
         targetSdkVersion 31
         //noinspection HighAppVersionCode
-        versionCode 2022020502
-        versionName "2022.02.05"
+        versionCode 2022021001
+        versionName "2022.02.10"
 
         externalNativeBuild {
             cmake {
