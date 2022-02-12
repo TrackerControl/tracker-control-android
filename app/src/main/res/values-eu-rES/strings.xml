@@ -19,7 +19,7 @@
     <string name="menu_sort_uid">Uidaren arabera</string>
     <string name="menu_sort_companies_week">Konpainien arabera zerrendatu (astea)</string>
     <string name="menu_sort_companies">Enpresaren arabera</string>
-    <string name="menu_log">Trafikoaren loga</string>
+    <string name="menu_log">Trafikoaren erregistroa</string>
     <string name="menu_settings">Ezarpenak</string>
     <string name="menu_invite">Gonbidatu</string>
     <string name="menu_legend">Legenda</string>
@@ -132,9 +132,9 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
 \n\nHurrengo elkarrizketa-koadroan, gaitu \"bigarren planoko datuak\" eta \"mugagabeko datu erabilera\"</string>
     <string name="msg_filter">Iragaztea erabiltzean Androidek TrackerControli egotziko dio datu eta bateria erabilera - Androidek uste du TrackerControlek erabiltzen dituela datuak eta bateria, ez jatorrizko aplikazioak</string>
     <string name="msg_filter4">Android 4-k iragaztea gaitzera behartzen du</string>
-    <string name="msg_log_disabled">Trafikoaren loga desgaituta dago, erabili goiko botoia loga aktibatzeko. Trafikoaren logak bateria kontsumoa areagotu egin dezake.</string>
+    <string name="msg_log_disabled">Trafikoaren erregistroa desgaituta dago, erabili goiko botoia loga aktibatzeko. Trafikoaren erregistroak bateria kontsumoa areagotu egin dezake.</string>
     <string name="msg_clear_rules">Honek arauak eta baldintzak lehenetsitako balioetara berrezarriko ditu</string>
-    <string name="msg_reset_access">Honek baimendu/ukatu araurik gabeko sarbide saiakeren loga ezabatuko du</string>
+    <string name="msg_reset_access">Honek baimendu/ukatu araurik gabeko sarbide saiakeren erregistroa ezabatuko du</string>
     <string name="msg_import_last">Azken inportazioa: %s</string>
     <string name="msg_downloading">Deskargatzen\n%1s</string>
     <string name="msg_downloaded">Ostalarien fitxategia deskargatuta</string>
@@ -331,7 +331,7 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">Erabiltzaile ez adituentzako aukera hau ezgaitzea aholkatzen da, aplikazioen haustura ekiditeko. Hala ere, honek ezinbesteko partekatze batzuk onartzen ditu konpainiekin.</string>
     <string name="exclude_vpn_explanation">Aktibo egon behar da aztarnariak detektatu edo blokeatzeko.\n\nAholkua: desaktibatu arazoak badituzu.</string>
     <string name="uninstall">Desinstalatu</string>
-    <string name="settings_uninstall">Aplikazioaren ezarpenak &amp; Desinstalatu</string>
+    <string name="settings_uninstall">Aplikazioaren ezarpenak eta desinstalatzea</string>
     <string name="no_trackers_found_message_disabled">Aktibatu pantaila nagusiko aukera, ondoren abiarazi aplikazioa aztarnariak bilatzeko</string>
     <string name="no_trackers_found_message">Abiarazi aplikazioa aztarnariak bilatzeko</string>
     <string name="no_trackers_found_action">Abiarazi</string>
