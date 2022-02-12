@@ -365,6 +365,7 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="setting_domain_based_blocked">Domeinuan oinarritutako blokeatzea</string>
     <string name="summary_domain_based_blocking">Blokeo pikordunagoa baimentzen du. Garapenean oraindik.</string>
     <string name="untap_unblock">Aholkua: sarrerak banan banan desaktibatu ditzakezu gainean sakatuz.</string>
+    <string name="uncertain_entry">Baliteke \'*\' batekin markatutako sarrerak zehatzak ez izatea, Androiden mugen eraginez. Honek gehienetan esan nahi du konpainia berdinak IP helbide berdina erabiltzen duela domeinu ezberdinetarako, baina izan daiteke ere konpainia ezberdinek IP helbide berdinaren atzean daudela (adib. CDN bat erabiltzen badute).</string>
     <string name="browsers_not_supported">Nabigatzaileak ez daude onartuta ⚠️</string>
     <string name="browsers_not_supported_explanation">Honek nabigatzaile baten itxura du.\n\nAztarnarien blokeatzea ez dago nabigatzaileetan onartuta TrackerControl-en. Horren ordez, erabili ezazu jarraipen babesa inetgratzen duen nabigatzaile bat aztarnarien blokeo hobea lortzeko.\n\nAdibidez: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Aztarnariak antzeman aplikazioaren kodea</string>
