@@ -36,7 +36,7 @@
     <string name="menu_organization">Erakutsi erakundea</string>
     <string name="menu_pcap_enabled">PCAP gaituta</string>
     <string name="menu_pcap_export">PCAP exportazioa</string>
-    <string name="menu_clear">Garbitu</string>
+    <string name="menu_clear">Ezabatu</string>
     <string name="menu_export">Esportatu</string>
     <string name="menu_reset">Berrezarri</string>
     <string name="menu_cleanup">Garbitu</string>
