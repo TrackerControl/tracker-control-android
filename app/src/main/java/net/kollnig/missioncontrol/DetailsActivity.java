@@ -113,7 +113,7 @@ public class DetailsActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private DetailsPagesAdapter detailsPagesAdapter;
+    private DetailsStateAdapter detailsStateAdapter;
 
 
     @Override
@@ -145,17 +145,17 @@ public class DetailsActivity extends AppCompatActivity {
         String appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
         // Set up paging
-        detailsPagesAdapter =
-                new DetailsPagesAdapter(
+        detailsStateAdapter =
+                new DetailsStateAdapter(
                         this,
                         appPackageName,
                         appName,
                         appUid);
         ViewPager2 viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(detailsPagesAdapter);
+        viewPager.setAdapter(detailsStateAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         new TabLayoutMediator(tabs, viewPager, (tab, position) ->
-                tab.setText(getString(detailsPagesAdapter.getPageTitle(position)))
+                tab.setText(getString(detailsStateAdapter.getPageTitle(position)))
         ).attach();
 
         // set toolbar and back arrow
@@ -187,7 +187,7 @@ public class DetailsActivity extends AppCompatActivity {
         } else if (itemId == R.id.action_clear) {
             DatabaseHelper dh = DatabaseHelper.getInstance(this);
             dh.clearAccess(appUid, false);
-            detailsPagesAdapter.updateTrackerLists();
+            detailsStateAdapter.updateTrackerLists();
             return true;
         } else if (itemId == R.id.action_launch) {
             Intent launch = Common.getLaunchIntent(this, appPackageName);
