@@ -155,7 +155,7 @@ public class DetailsActivity extends AppCompatActivity {
         viewPager.setAdapter(detailsPagesAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         new TabLayoutMediator(tabs, viewPager, (tab, position) ->
-                tab.setText(getResources().getString(DetailsPagesAdapter.TAB_TITLES[position]))
+                tab.setText(getString(detailsPagesAdapter.getPageTitle(position)))
         ).attach();
 
         // set toolbar and back arrow

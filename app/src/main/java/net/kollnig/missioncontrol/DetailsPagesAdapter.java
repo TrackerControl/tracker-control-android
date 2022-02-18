@@ -35,9 +35,8 @@ import net.kollnig.missioncontrol.details.TrackersFragment;
  * one of the sections/tabs/pages.
  */
 public class DetailsPagesAdapter extends FragmentStateAdapter {
-    public static int tabTrackersPosition = 0;
     @StringRes
-    public static int[] TAB_TITLES = {
+    private static int[] TAB_TITLES = {
             R.string.tab_trackers,
             R.string.tab_actions,
             R.string.tab_countries,
@@ -95,6 +94,10 @@ public class DetailsPagesAdapter extends FragmentStateAdapter {
         }
 
         return fTrackers;
+    }
+
+    public int getPageTitle(final int position) {
+        return TAB_TITLES[position];
     }
 
     @Override

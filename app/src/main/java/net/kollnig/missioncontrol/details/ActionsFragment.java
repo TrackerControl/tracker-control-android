@@ -41,7 +41,6 @@ import net.kollnig.missioncontrol.data.PlayStore;
 import eu.faircode.netguard.Util;
 
 import static net.kollnig.missioncontrol.Common.emailIntent;
-import static net.kollnig.missioncontrol.DetailsPagesAdapter.tabTrackersPosition;
 
 import java.util.Objects;
 
@@ -116,7 +115,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
             if (a == null)
                 return;
             TabLayout tabs = a.findViewById(R.id.tabs);
-            Objects.requireNonNull(tabs.getTabAt(tabTrackersPosition)).select();
+            Objects.requireNonNull(tabs.getTabAt(0)).select();
         } else if (id == R.id.btnAdSettings) {
             if (Common.hasAdSettings(getContext())) {
                 startActivity(Common.adSettings());
