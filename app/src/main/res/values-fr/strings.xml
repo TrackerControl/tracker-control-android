@@ -4,6 +4,7 @@
     <string name="app_android">TrackerControl nécessite Android 5.1 ou une version ultérieure</string>
     <string name="app_xposed">Xposed provoque trop de plantages, ce qui peut entraîner le retrait de TrackerControl de la boutique Google Play. TrackerControl n\'est donc pas pris en charge lorsque Xposed est installé</string>
     <string name="app_eula">L\'utilisation de cette application se fait à vos propres risques. Aucune application ne peut offrir une protection à 100 % contre le suivi.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Politique de confidentialité</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Politique relative aux cookies</a></string>
     <string name="channel_foreground">Services en cours d\'exécution</string>
     <string name="channel_notify">Notifications générales</string>
     <string name="channel_access">Accéder aux notifications</string>
@@ -350,5 +351,8 @@ Cordialement,\n\n]]></string>
     <string name="blocked">BLOQUÉ</string>
     <string name="allowed">AUTORISÉ</string>
     <string name="summary_domain_based_blocking">Permet un blocage plus ciblé. Encore en développement.</string>
+    <string name="untap_unblock">Astuce : Vous pouvez débloquer des entrées individuelles en cliquant dessus.</string>
+    <string name="browsers_not_supported">Navigateurs non pris en charge ⚠️</string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
+    <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
 </resources>
