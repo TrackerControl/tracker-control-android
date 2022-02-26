@@ -350,4 +350,5 @@ Cordialement,\n\n]]></string>
     <string name="blocked">BLOQUÉ</string>
     <string name="allowed">AUTORISÉ</string>
     <string name="summary_domain_based_blocking">Permet un blocage plus ciblé. Encore en développement.</string>
+    <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
 </resources>
