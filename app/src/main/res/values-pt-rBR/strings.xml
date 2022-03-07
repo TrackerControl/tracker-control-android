@@ -62,6 +62,7 @@
     <string name="setting_track_usage">Rastrear uso da rede</string>
     <string name="setting_reset_usage">Redefinir o uso da rede</string>
     <string name="setting_show_resolved">Mostrar nomes de domínio resolvidos</string>
+    <string name="setting_block_domains">Habilitar o arquivo hosts</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -79,6 +80,7 @@
     <string name="setting_hosts_url">URL do arquivo hosts</string>
     <string name="setting_hosts_download">Baixar arquivo de hosts</string>
     <string name="setting_hosts_update">Atualizar o arquivo de hosts</string>
+    <string name="summary_install">Mostrar notificação na barra de status para aplicativos recém-instalados</string>
     <string name="summary_update">Procurar por novos releases no GitHub duas vezes ao dia</string>
     <string name="summary_tethering">Dependendo da versão do Android, tethering pode não funcionar. Trafego via tethering não pode ser filtrado.</string>
     <string name="summary_subnet">Ativa o roteamento de sub-rede; pode ativar chamada de Wi-Fi, mas pode também desencadear bugs no Android e aumentar o uso da bateria</string>
@@ -99,6 +101,8 @@
     <string name="msg_disabled">Use o interruptor acima para habilitar o TrackerControl.</string>
     <string name="msg_revoked">O TrackerControl foi desativado, provavelmente outro aplicativo baseado em VPN está sendo utilizado</string>
     <string name="msg_installed">Problemas com %1$s?</string>
+    <string name="msg_installed_description">Permitir que o app contate as empresas</string>
+    <string name="msg_installed_tracker_libraries_found">Contém %d bibliotecas de rastreadores</string>
     <string name="msg_installed_n">Foi instalado</string>
     <string name="msg_completed">Ação concluída</string>
     <string name="msg_vpn">TrackerControl usa uma VPN local para filtrar o tráfego de internet.
@@ -114,6 +118,9 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_filter4">Android 4 requer que filtragem esteja ativada</string>
     <string name="msg_log_disabled">O log de tráfego está desabilitado, utilize o botão acima para habilitar o log. Logar o tráfego pode resultar em uso extra da bateria.</string>
     <string name="msg_clear_rules">Isto irá redefinir as regras e condições para os seus valores padrão</string>
+    <string name="msg_downloading">Baixando\n%1s</string>
+    <string name="msg_downloaded">Arquivo de hosts baixado</string>
+    <string name="msg_updated">Arquivo de hosts atualizado e aplicado!</string>
     <string name="msg_download_last">Último download: %s</string>
     <string name="msg_update_last">Última atualização: %s</string>
     <string name="msg_metered">A rede é limitada</string>
@@ -129,6 +136,8 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_always_on">Outra aplicação VPN está definida como VPN sempre ativa</string>
     <string name="msg_always_on_lockdown">Desabilite a opção \"Bloquear conexões sem VPN\" nas configurações de VPN do Android para usar o TrackerControl em modo filtro</string>
     <string name="msg_private_dns">Desabilite \"DNS privado\" nas configurações de rede do Android para usar o TrackerControl em modo filtro</string>
+    <string name="msg_start_forward">Iniciar encaminhamento de %1$s porta %2$d para %3$s:%4$d de \'%5$s\'?</string>
+    <string name="msg_stop_forward">Parar encaminhamento de %1$s porta %2$d?</string>
     <string name="msg_log_logcat">Aviso: Bloqueio desativado por causa do log do ADB.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
@@ -144,6 +153,12 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="title_ruid">App de destino</string>
     <string name="title_external">Para um servidor externo, selecione \'ninguém\'</string>
     <string name="title_lockdown_enabled">O tráfego está bloqueado</string>
+    <string name="title_unmetered_allowed">Tráfego ilimitado permitido</string>
+    <string name="title_unmetered_blocked">Tráfego ilimitado bloqueado</string>
+    <string name="title_unmetered_disabled">Regras para conexões ilimitadas não são aplicadas</string>
+    <string name="title_metered_allowed">Tráfego limitado permitido</string>
+    <string name="title_metered_blocked">Tráfego limitado bloqueado</string>
+    <string name="title_metered_disabled">Regras para conexões limitadas não são aplicadas</string>
     <string name="title_host_allowed">Endereço permitido</string>
     <string name="title_host_blocked">Endereço bloqueado</string>
     <string name="title_interactive_allowed">Permitir quando a tela estiver ligada</string>
@@ -154,6 +169,8 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="title_messaging">As mensagens são recebidas pelos serviços do Google Play e não por esse aplicativo, portanto, não podendo ser bloqueadas simplesmente bloqueando esse aplicativo</string>
     <string name="title_download">Os downloads são executados pelo gerenciador de downloads e não por esse aplicativo, portanto, não podendo ser bloqueados simplesmente bloqueando esse aplicativo</string>
     <string name="title_conditions">Condições</string>
+    <string name="title_screen_wifi">Permitir Wi-Fi com a tela ligada</string>
+    <string name="title_screen_other">Permitir Dados Móveis com a tela ligada</string>
     <string name="title_roaming">Bloquear quando em roaming</string>
     <string name="title_lockdown">Permitir no modo de bloqueio</string>
     <string name="title_related">Filtrar relacionados</string>
@@ -165,6 +182,12 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="title_logging_enabled">Registro e filtragem ativados</string>
     <string name="title_logging_configure">Configurar</string>
     <string name="title_enable_logging">Habilitar o registro apenas de endereços bloqueados</string>
+    <string name="title_enable_filtering">Também habilitar o registro para endereços permitidos</string>
+    <string name="title_enable_notify">Habilitar notificações de acesso para endereços registrados recentemente</string>
+    <string name="title_enable_help0">Essas configurações são configurações globais que se aplicam a todos os apps</string>
+    <string name="title_enable_help1">A filtragem também é necessária para permitir ou bloquear endereços individuais</string>
+    <string name="title_enable_help2">Habilitar o registro (menos) ou a filtragem (mais) geram acréscimos no uso da bateria e pode afetar a velocidade da conexão</string>
+    <string name="title_rate">Avalie</string>
     <string name="title_allow">Permitir</string>
     <string name="title_block">Bloquear</string>
     <string name="title_allow_wifi">Permitir Wi-Fi</string>
@@ -179,6 +202,10 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <!-- App Overview -->
     <string name="tracked_app_icon">Desativar o acesso à internet para este aplicativo</string>
     <string name="tracked_app_name">Nome do aplicativo</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">contactou %d empresa na semana passada</item>
+        <item quantity="other">contactou %d empresas na semana passada</item>
+    </plurals>
     <string name="confirm_ipinfo_title">Obter informações da organização?</string>
     <string name="confirm_ipinfo">Entrará em contato com o serviço externo ipinfo.io, e compartilhará dados sobre endereços IP contactados com eles.</string>
     <string name="confirm_google_info">Este app pode obter automaticamente o e-mail do desenvolvedor do app na Google Play Store para você.</string>
@@ -265,6 +292,9 @@ Sincerely,\n\n]]></string>
     <string name="tracker_advertising">Anúncios</string>
     <string name="tracker_analytics">Analítico</string>
     <string name="tracker_content">Essencial</string>
+    <string name="tracker_cryptomining">Criptomagem</string>
+    <string name="tracker_fingerprinting">Impressão digital</string>
+    <string name="tracker_social">Mídias sociais</string>
     <string name="tracker_uncategorised">Não categorizado</string>
     <string name="setting_strict_blocking">Bloqueio rigoroso</string>
     <string name="exclude_vpn_explanation">Deve estar ativado para detectar ou bloquear rastreadores.\n\nDica: Desative se você tiver problemas.</string>
@@ -286,6 +316,7 @@ Sincerely,\n\n]]></string>
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores na categoria bloqueados</string>
     <string name="category_unblocked">Rastreadores na categoria permitidos</string>
+    <string name="switch_strict_blocking">Bloquear compartilhamento de dados essenciais</string>
     <string name="none">Nenhum</string>
     <string name="trackers_static">Bibliotecas de rastreadores</string>
     <string name="blocked">BLOQUEADO</string>
