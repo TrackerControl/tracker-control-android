@@ -283,6 +283,7 @@ Sincerely,\n\n]]></string>
     <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de parar. Você se importaria em nos enviar um email com detalhes?</string>
     <string name="crash_dialog_comment">Algum comentário?</string>
     <string name="instructions_monitoring_private_dns">Alterne o interruptor e interaja com alguns aplicativos. O DNS privado deve estar desativado.</string>
+    <string name="instructions_monitoring">Alternar e interagir com alguns aplicativos.</string>
     <string name="device_not_supported_title">Dispositivo não suportado</string>
     <string name="device_not_supported_msg">O sistema operacional de seu dispositivo não permite o monitoramento e a filtragem das comunicações de rede. Isto é necessário para o TrackerControl.</string>
     <string name="launch_app">Iniciar &amp; Encontrar rastreadores</string>
@@ -297,6 +298,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Mídias sociais</string>
     <string name="tracker_uncategorised">Não categorizado</string>
     <string name="setting_strict_blocking">Bloqueio rigoroso</string>
+    <string name="summary_strict_blocking">Para aplicativos recém-instalados, bloqueie o máximo possível de compartilhamento de dados com empresas. A tendência é que mais aplicativos irão quebrar.</string>
     <string name="exclude_vpn_explanation">Deve estar ativado para detectar ou bloquear rastreadores.\n\nDica: Desative se você tiver problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Configurações do app &amp; Desinstalar</string>
