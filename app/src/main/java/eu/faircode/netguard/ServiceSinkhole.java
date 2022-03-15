@@ -1677,7 +1677,7 @@ public class ServiceSinkhole extends VpnService {
 
     public static void prepareHostsBlocked(Context c) {
         BufferedReader br = null;
-        InputStreamReader is;
+        InputStreamReader is = null;
         File hosts = new File(c.getFilesDir(), "hosts.txt");
 
         try {
@@ -1727,6 +1727,12 @@ public class ServiceSinkhole extends VpnService {
                     br.close();
                 } catch (IOException exex) {
                     Log.e(TAG, exex.toString() + "\n" + Log.getStackTraceString(exex));
+                }
+            if (is != null)
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
         }
 
