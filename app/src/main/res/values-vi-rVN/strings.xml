@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl cho phép người dùng giám sát và kiểm soát sự thu thập thông tin lan rộng, liên tục, không thể thấy trong các ứng dụng di động về hành vi người dùng (\'theo dõi\').</string>
+    <string name="app_copyright">Bản quyền \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl được dựa trên NetGuard, được Marcel Bokhorst (M66B) phát triển.</string>
     <string name="app_android">TrackerControl yêu cầu Android 5.1 hoặc cao hơn</string>
     <string name="app_xposed">Xposed gây ra quá nhiều lỗi, điều đó có thể dẫn đến TrackerControl bị gỡ bỏ khỏi cửa hàng Google Play, do đó TrackerControl không được hỗ trợ khi Xposed được cài đặt</string>
     <string name="app_eula">Bạn tự chịu rủi ro khi sử dụng ứng dụng này. Không ứng dụng nào có thể bảo vệ bạn 100% khỏi việc theo dõi.</string>
@@ -312,6 +313,7 @@
     <string name="trackers_static_explanation_playstore">TrackerControl phát hiện việc theo dõi trong mã (\'thư viện\') và lưu lượng mạng của các ứng dụng.</string>
     <string name="blocked">ĐÃ CHẶN</string>
     <string name="allowed">ĐÃ CHO PHÉP</string>
+    <string name="setting_domain_based_blocked">Chặn dựa trên miền</string>
     <string name="summary_domain_based_blocking">Cho phép chặn một cách chi tiết hơn. Vẫn đang được phát triển.</string>
     <string name="untap_unblock">Mẹo: Bạn có thể bỏ chặn từng mục riêng bằng cách nhấn vào chúng.</string>
     <string name="uncertain_entry">Các mục có dấu \'*\' có thể không chính xác do giới hạn của Android. Việc này thường có nghĩa là một công ty sử dụng cùng một địa chỉ IP dưới nhiều miền khác nhau, nhưng cũng có thể có nghĩa là nhiều công ty khác nhau đứng sau cùng một địa chỉ IP (vd: nếu họ sử dụng Content Delivery Network).</string>
