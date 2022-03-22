@@ -87,8 +87,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    packagingOptions { // due to geoip2
-        exclude 'META-INF/DEPENDENCIES'
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
     }
 
     lint {
