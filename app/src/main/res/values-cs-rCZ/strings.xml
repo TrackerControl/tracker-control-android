@@ -328,6 +328,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="tracker_cryptomining">Těžba kryptoměn</string>
     <string name="tracker_fingerprinting">Digitální otisk</string>
     <string name="tracker_social">Sociální</string>
+    <string name="tracker_email">E-mail</string>
     <string name="tracker_uncategorised">Nezařazené</string>
     <string name="setting_strict_blocking">Přísné blokování</string>
     <string name="summary_strict_blocking">Blokovat skoro všechno sdílení dat nově nainstalovaných aplikací. Aplikace nemusí fungovat.</string>
