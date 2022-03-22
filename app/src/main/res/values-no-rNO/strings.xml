@@ -320,6 +320,7 @@ Vennlig hilsen,\n\n]]></string>
     <string name="tracker_cryptomining">Graving etter krypto</string>
     <string name="tracker_fingerprinting">Fingeravtrykk</string>
     <string name="tracker_social">Sosial</string>
+    <string name="tracker_email">E-post</string>
     <string name="tracker_uncategorised">Ukategorisert</string>
     <string name="setting_strict_blocking">Streng blokkering</string>
     <string name="summary_strict_blocking">For nylig installerte apper kan du blokkere så mye datadeling med bedrifter som mulig. Flere apper vil slutte å fungere.</string>
