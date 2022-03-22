@@ -321,6 +321,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_cryptomining">Crypto-mining</string>
     <string name="tracker_fingerprinting">Vingerafdrukken</string>
     <string name="tracker_social">Sociaal</string>
+    <string name="tracker_email">E-mail</string>
     <string name="tracker_uncategorised">Ongecategoriseerd</string>
     <string name="setting_strict_blocking">Strikt Blokkeren</string>
     <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps: probeer zoveel als mogelijk het delen van data met bedrijven te blokkeren. Meer apps zullen falen.</string>
