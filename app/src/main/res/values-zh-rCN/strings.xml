@@ -317,6 +317,7 @@
     <string name="tracker_cryptomining">挖矿</string>
     <string name="tracker_fingerprinting">指纹识别</string>
     <string name="tracker_social">社交</string>
+    <string name="tracker_email">电子邮件</string>
     <string name="tracker_uncategorised">未分类</string>
     <string name="setting_strict_blocking">严格屏蔽</string>
     <string name="summary_strict_blocking">对于新安装的应用程序，尽可能多地阻止与公司共享数据。更多的应用程序将无法正常工作。</string>
