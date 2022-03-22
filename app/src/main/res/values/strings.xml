@@ -390,6 +390,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_cryptomining">Cryptomining</string>
     <string name="tracker_fingerprinting">Fingerprinting</string>
     <string name="tracker_social">Social</string>
+    <string name="tracker_email">Email</string>
     <string name="tracker_uncategorised">Uncategorised</string>
 
     <string name="setting_strict_blocking">Strict Blocking</string>

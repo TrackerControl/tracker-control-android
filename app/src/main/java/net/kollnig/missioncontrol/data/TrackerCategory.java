@@ -59,6 +59,9 @@ public class TrackerCategory {
                 return c.getString(R.string.tracker_fingerprinting);
             case "Social":
                 return c.getString(R.string.tracker_social);
+            case "Email":
+            case "EmailStrict":
+                return c.getString(R.string.tracker_email);
             case UNCATEGORISED:
             default:
                 return c.getString(R.string.tracker_uncategorised);
