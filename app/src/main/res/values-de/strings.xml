@@ -317,6 +317,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_cryptomining">Verschlüsselung</string>
     <string name="tracker_fingerprinting">Fingerabdruck</string>
     <string name="tracker_social">Sozial</string>
+    <string name="tracker_email">E-Mail</string>
     <string name="tracker_uncategorised">Unkategorisiert</string>
     <string name="setting_strict_blocking">Strenges Blocken</string>
     <string name="summary_strict_blocking">Blockieren Sie bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich. Es werden mehr Apps kaputt gehen.</string>
