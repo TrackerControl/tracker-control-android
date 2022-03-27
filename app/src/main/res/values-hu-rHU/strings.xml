@@ -316,6 +316,7 @@ Tisztelettel,\n\n]]></string>
     <string name="tracker_cryptomining">Cryptobányász</string>
     <string name="tracker_fingerprinting">Ujjlenyomat</string>
     <string name="tracker_social">Szociális</string>
+    <string name="tracker_email">Email</string>
     <string name="tracker_uncategorised">Kategória nélküli</string>
     <string name="setting_strict_blocking">Szigorú blokkolás</string>
     <string name="summary_strict_blocking">Az újonnan telepített alkalmazások esetén blokkolja a lehető legtöbb adatmegosztást. Több alkalmazás meg fog törni.</string>
