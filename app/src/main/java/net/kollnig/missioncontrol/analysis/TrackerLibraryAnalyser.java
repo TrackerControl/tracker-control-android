@@ -129,6 +129,9 @@ public class TrackerLibraryAnalyser {
                 if (className.contains(".")){
                     for (int Signz = 0; Signz < Sign.length; Signz++) {
                         if (className.contains(Sign[Signz])) {
+                            if (Names[Signz].startsWith("µ?")) // exclude "good" trackers
+                                continue;
+
                             trackers.add(new StaticTracker(Names[Signz], Web[Signz], Signz, Sign[Signz]));
                             break;
                         }
