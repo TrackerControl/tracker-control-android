@@ -327,6 +327,7 @@ Z poważaniem,\n\n]]></string>
     <string name="tracker_cryptomining">Kryptominacja</string>
     <string name="tracker_fingerprinting">Odcisk palców</string>
     <string name="tracker_social">Społeczne</string>
+    <string name="tracker_email">Adres e-mail</string>
     <string name="tracker_uncategorised">Nieskategoryzowane</string>
     <string name="setting_strict_blocking">Ścisłe blokowanie</string>
     <string name="summary_strict_blocking">W przypadku nowo zainstalowanych aplikacji zablokuj jak najwięcej danych z firmami. Więcej aplikacji zostanie przerwanych.</string>
