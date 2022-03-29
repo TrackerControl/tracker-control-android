@@ -65,13 +65,31 @@
     <string name="setting_track_usage">ネットワークの使用状況を追跡</string>
     <string name="setting_reset_usage">ネットワークの使用状況をリセット</string>
     <string name="setting_show_resolved">解決したドメイン名を表示</string>
-    <string name="setting_block_domains">hostファイルを有効化</string>
+    <string name="setting_block_domains">ホストファイルを有効化</string>
     <string name="setting_rcode">応答をブロックしているホスト: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
     <string name="setting_validate">検証に使用: %s</string>
-    <string name="setting_ttl">DNSの最小TTL: %s 秒</string>
+    <string name="setting_ttl">DNSの最小TTL: %s秒</string>
+    <string name="setting_socks5_enabled">SOCKS5プロキシを使用</string>
+    <string name="setting_socks5_addr">SOCKS5 アドレス: %s</string>
+    <string name="setting_socks5_port">SOCKS5 ポート: %s</string>
+    <string name="setting_socks5_username">SOCKS5 ユーザー名: %s</string>
+    <string name="setting_socks5_password">SOCKS5 パスワード: %s</string>
+    <string name="setting_pcap_record_size">PCAP レコードサイズ: %s B</string>
+    <string name="setting_pcap_file_size">PCAP 最大ファイルサイズ: %s MB</string>
+    <string name="setting_watchdog">監視タイマー: %s 分毎</string>
+    <string name="setting_stats_frequency">サンプル間隔： %s ms</string>
+    <string name="setting_stats_samples">サンプル数: %s秒</string>
+    <string name="setting_backup">バックアップ</string>
+    <string name="setting_import">設定をインポート</string>
+    <string name="setting_hosts">ホストファイルをインポート</string>
+    <string name="setting_hosts_append">ホストファイルをインポート (追加)</string>
+    <string name="setting_hosts_url">ホストファイルのURL</string>
+    <string name="setting_hosts_download">ホストファイルをダウンロード</string>
+    <string name="setting_hosts_update">ホストファイルを更新</string>
+    <string name="summary_install">新しくアプリがインストールされた時にステータスバーに通知を表示</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
