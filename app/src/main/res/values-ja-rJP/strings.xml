@@ -4,6 +4,7 @@
     <string name="app_android">TrackerControl は Android 5.1 以降を対象としています</string>
     <string name="app_xposed">Xposed は TrackerControl のクラシックを引き起こし、TrackerControl が Google Play ストアから削除される原因となる可能性があるため Xposed がインストールされたデバイスは、TrackerControl のサポート対象外となります。</string>
     <string name="app_eula">このアプリの使用はご自身の責任において行われます。いかなるアプリも追跡に対して 100% 保護することはできません。</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">プライバシーポリシー</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">クッキーポリシー</a></string>
     <string name="channel_foreground">実行中のサービス</string>
     <string name="channel_notify">全般通知</string>
     <string name="channel_access">アクセス通知</string>
@@ -60,6 +61,17 @@
     <string name="setting_filter">トラッカーをブロック</string>
     <string name="setting_filter_udp">UDP のトラッカーをブロック</string>
     <string name="setting_handover">再読み込み時に VPN 接続を維持</string>
+    <string name="setting_lockdown">トラフィックを封鎖</string>
+    <string name="setting_track_usage">ネットワークの使用状況を追跡</string>
+    <string name="setting_reset_usage">ネットワークの使用状況をリセット</string>
+    <string name="setting_show_resolved">解決したドメイン名を表示</string>
+    <string name="setting_block_domains">hostファイルを有効化</string>
+    <string name="setting_rcode">応答をブロックしているホスト: %s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">検証に使用: %s</string>
+    <string name="setting_ttl">DNSの最小TTL: %s 秒</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
