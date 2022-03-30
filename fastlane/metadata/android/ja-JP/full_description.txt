@@ -1,17 +1,17 @@
-TrackerControlを使用すると、普段気付かないような、広範囲にわたる、データ収集(トラッキング)を監視・制御できます。
+TrackerControl を使用すると、普段気付いていない、広範囲にわたる、データ収集(トラッキング)を監視・制御できます。
 
-TrackerControl は、トラッキングを検出するため、Firefox で使用されている Disconnect blocklist と、 <i>2,000</i> 以上のアプリを解析することによって作成された、独自のブロックリストを組み合せて使用します。 さらに、TrackerControl はカスタムブロックリストをサポートしています。
+TrackerControl は、トラッキングを検出するため、Firefox で使用されている Disconnect blocklist と、 <i>2,000,000</i> 以上のアプリを解析することによって作成された、独自のブロックリストを組み合せて使用します！ さらに、カスタムブロックリストもサポートしています。
 
-This approach
+できること
 - トラッキングの背後にある企業を明らかにし、
 - 選択的にトラッキングをブロックすることができます。
 - また、分析や広告など、トラッキングの目的も明らかにします。
 
-他にも、EU一般データ保護規則(GDPR)など、データ保護法に基づくあなたのの権利についても知ることができます。
+他にも、EU一般データ保護規則(GDPR) など、データ保護法に基づくあなたのの権利についても知ることができます。
 
-Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps' network communications <i>locally on the Android device</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
+TrackerControl は、Android の VPN機能 を使用して、アプリのネットワーク通信を <i>デバイス上でローカルに分析します</i>。 これは、ネットワーク通信をローカルのVPNサーバーに経由させることで実現しています。
 
-No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
+ルート権限は不要です。 データの安全性を確保するため、外部のVPNサーバーは使用していません！ ウェブサイトやアプリにトラッカーを隠ためによく使われるテクニックである、 <i>DNSクローキング</i> からもあなたを守ります。
 
-TrackerControl will always be free and open source, being a research project.
+TrackerControlは、研究目的のプロジェクトであるため、これまでも、これからも、常にフリーで、オープンソースです。
 
