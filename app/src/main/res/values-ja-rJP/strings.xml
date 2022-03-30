@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControlを使用すると、普段気付かないような、広範囲にわたる、データ収集(トラッキング)を監視・制御できます。</string>
+    <string name="app_description">TrackerControl を使用すると、普段気付かないような、広範囲にわたる、データ収集(トラッキング)を監視・制御できます。</string>
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl は Marcel Bokhorst (M66B) によって開発された NetGuard をベースにしています。</string>
     <string name="app_android">TrackerControl には Android 5.1 以降が必要です</string>
     <string name="app_xposed">Xposed はクラッシュが多く、その結果 TrackerControl がGoogle Playストアから削除される可能性があるため、Xposed がインストールされている間は、 TrackerControl はサポートされません。</string>
@@ -123,12 +123,12 @@
     <string name="msg_error">予期しないエラーが発生しました: \'%s\'</string>
     <string name="msg_start_failed">現在、Android は VPNサービス の開始を拒否しています。これは、お使いの Android のバージョンにバグがあるためと思われます。</string>
     <string name="msg_try">TrackerControl を試す</string>
-    <string name="msg_doze">安定した結果を得るため、TrackerControl への Androidのバッテリー最適化を 無効にする必要があります。
-\n\n次のダイアログで、上部の「すべてのアプリ」を選択し、リストの中のTrackerControlをタップして、「最適化しない」を選択し、確認してください。</string>
-    <string name="msg_datasaving">安定した結果を得るため、TrackerControlへのAndroidのデータセーバーのオプションを無効にする必要があります。\n\n次のダイアログで、オプション「バックグラウンド データ」と「モバイルデータの無制限使用」を有効にしてください。</string>
+    <string name="msg_doze">安定した動作のため、TrackerControl への Androidのバッテリー最適化を 無効にする必要があります。
+\n\n次のダイアログで、上部の「すべてのアプリ」を選択し、リストの中のTrackerControlをタップして、「最適化しない」を選択してください。(機種によって設定が異なる場合があります)</string>
+    <string name="msg_datasaving">安定した動作のため、TrackerControl への Android のデータセーバーのオプションを無効にする必要があります。\n\n次のダイアログで、オプション「バックグラウンド データ」と「モバイルデータの無制限使用」を有効にしてください。</string>
     <string name="msg_filter">フィルターを使用すると、Android はデータと電力を、元のアプリではなく、TrackerControl が使用しているものとみなします。</string>
-    <string name="msg_filter4">Android 4ではフィルタリングを有効にする必要があります</string>
-    <string name="msg_log_disabled">トラフィックのログ記録は無効です。有効にするには上のスイッチを使用してください。トラフィックのログ記録は、バッテリーの使用量を増やす可能性があります。</string>
+    <string name="msg_filter4">Android 4 ではフィルタリングを有効にする必要があります</string>
+    <string name="msg_log_disabled">トラフィックのログ記録は無効です。有効にするには上のスイッチを使用してください。トラフィックのログ記録は、バッテリーの使用量を増やすことがあります。</string>
     <string name="msg_clear_rules">ルールと条件をデフォルトの値にリセットします</string>
     <string name="msg_reset_access">アクセス試行ログの内、許可/ブロック ルールのない行を削除します。</string>
     <string name="msg_import_last">最後のインポート: %s</string>
@@ -146,14 +146,14 @@
     <string name="msg_push">着信(プッシュ)メッセージのほとんどは、システムコンポーネントであるPlayサービスによって処理され、デフォルトではインターネットアクセスが許可されています</string>
     <string name="msg_system">すべての(システム)アプリを管理することは、設定で有効にできます</string>
     <string name="msg_issue">問題の内容と発生した時刻を記述してください。</string>
-    <string name="msg_vpn_cancelled">VPN接続がキャンセルされました\n別のVPNを常時接続VPNに設定していませんか？</string>
+    <string name="msg_vpn_cancelled">VPN接続 がキャンセルされました\n別の VPN を 常時接続VPN に設定していませんか？</string>
     <string name="msg_unavailable">この機能はこのAndroidのバージョンでは利用できません。</string>
-    <string name="msg_always_on">別のVPNが常時接続VPNに設定されています</string>
-    <string name="msg_always_on_lockdown">フィルタリングモードで TrackerControl を使用するには、AndroidのVPN設定で「VPN 以外の接続のブロック」をオフにします</string>
+    <string name="msg_always_on">別のVPN が 常時接続VPN に設定されています</string>
+    <string name="msg_always_on_lockdown">フィルタリングモードで TrackerControl を使用するには、Android のVPN設定で「 VPN 以外の接続のブロック」をオフにします</string>
     <string name="msg_private_dns">フィルタ リングモードで TrackerControl を使用するには Android のネットワーク設定で「プライベート DNS」をオフにしてください</string>
     <string name="msg_start_forward">%1$s のポート %2$d からの \'%5$s\' の %3$s:%4$d への転送を開始しますか？</string>
-    <string name="msg_stop_forward">%1$s のポート %2$d の転送を停止しますか？</string>
-    <string name="msg_log_logcat">警告: ADB ログ記録のためブロックは無効になっています。</string>
+    <string name="msg_stop_forward">%1$s のポート %2$d への転送を停止しますか？</string>
+    <string name="msg_log_logcat">警告:  ADB ログ記録のためブロックは無効になっています。</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -246,9 +246,9 @@
     <string name="app_info">アプリの管理</string>
     <!-- Actions -->
     <string name="block_tracking">トラッカーをブロック</string>
-    <string name="block_tracking_description">多くのアプリは、サードパーティ、いわゆるトラッカーにデータを送信します。 TrackerControlを使用すると、これらのネットワーク送信を選択的にブロックできます。ただし、アプリ開発者はこれらのサービス、特に広告に依存しているため、これを賢く使用する必要があります。</string>
+    <string name="block_tracking_description">多くのアプリは、サードパーティ、いわゆるトラッカーにデータを送信します。 TrackerControl を使用すると、これらのネットワーク送信を選択的にブロックできます。ただし、アプリ開発者はこれらのサービス、特に広告に依存しているため、これを賢く使用する必要があります。</string>
     <string name="personalised_ads">パーソナライズを制限</string>
-    <string name="personalised_ads_description">Androidでは、アプリがデバイスのGoogle Advertising IDにアクセスすることを制限することができます。しかし、アプリはこの設定を無視して、このIDを使用できる可能性があります。また、Googleのポリシーに従って、分析目的のためにこのIDを収集し続けることも可能です。Googleやデータ収集企業を信頼する必要があることになります。</string>
+    <string name="personalised_ads_description">Android では、アプリがデバイスの Google Advertising ID にアクセスすることを制限することができます。しかし、アプリはこの設定を無視して、このIDを使用できる可能性があります。また、Google のポリシーに従って、分析目的のためにこのIDを収集し続けることも可能です。Google やデータ収集企業を信頼する必要があることになります。</string>
     <string name="data_managment">データの管理</string>
     <string name="data_management_description">EU一般データ保護規則(GDPR)により、EUからのユーザは自分に関連するあらゆるデータを管理できるようになりました。このアプリは、開発者に連絡するためのメールテンプレートを提供しています。開発者は1ヶ月以内に回答しなければなりません。</string>
     <string name="contacts">問い合わせる </string>
@@ -265,12 +265,12 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPRサブジェクトアクセスリクエスト</string>
-    <string name="crash_dialog_text">すみません。TrackerControlがクラッシュしてしまいました... 詳細をメールで送っていただけませんか？</string>
+    <string name="crash_dialog_text">すみません。TrackerControl がクラッシュしてしまいました... 詳細をメールで送っていただけませんか？</string>
     <string name="crash_dialog_comment">コメントはありますか？</string>
     <string name="instructions_monitoring_private_dns">スイッチを切り替えて、いくつかのアプリと連動させます。プライベートDNSを無効にする必要があります。</string>
     <string name="instructions_monitoring">スイッチを切り替えて、いくつかのアプリを操作します。</string>
     <string name="device_not_supported_title">デバイスはサポートされていません</string>
-    <string name="device_not_supported_msg">お使いのデバイスのオペレーティングシステムはネットワーク通信の監視とフィルタリングを許可していません。これはTrackerControlに必要です。</string>
+    <string name="device_not_supported_msg">お使いのデバイスのオペレーティングシステムはネットワーク通信の監視とフィルタリングを許可していません。これは TrackerControl に必要です。</string>
     <string name="launch_app">起動 &amp; トラッカーを探す</string>
     <string name="countries">送信先の国</string>
     <string name="countries_explanation">お使いの携帯電話からどこにトラッキングデータが送信されているか調べます。\n\n情報はDNSルックアップとIP情報に基づいており、不正確である可能性があります。</string>
@@ -292,7 +292,7 @@
     <string name="no_trackers_found_message_disabled">メイン画面でスイッチを有効にしてから、アプリを起動してトラッカーを検出します</string>
     <string name="no_trackers_found_message">トラッカーを見つけるためにアプリを起動します</string>
     <string name="no_trackers_found_action">起動</string>
-    <string name="no_internet_message">"このアプリはインターネットに接続する権限を持っていませんが、他のアプリとやり取りすることで追跡できる可能性があります。"</string>
+    <string name="no_internet_message">"このアプリはインターネットに接続する権限を持っていませんが、他のアプリとやり取りすることでトラッキングできる可能性があります。"</string>
     <string name="no_internet">インターネットに接続する権限を持っていません</string>
     <string name="bypass_vpn_error">"インターネットをブロックできません。アプリは TrackerControl から除外されます。"</string>
     <string name="back">戻る</string>
@@ -313,16 +313,16 @@
     <string name="detected_trackers">検出されたトラッカーライブラリ: %s</string>
     <string name="none">なし</string>
     <string name="trackers_static">トラッカーライブラリ</string>
-    <string name="trackers_static_explanation">TrackerControlは、コード(ライブラリ)とアプリのネットワークトラフィックを解析し、トラッキングを検出します。\n\nネットワークトラフィックで検出されたトラッキングは、TrackerControl でブロックできます。</string>
-    <string name="trackers_static_explanation_playstore">TrackerControlは、アプリのコード(ライブラリ)とネットワークトラフィックから、トラッキングを検出します。</string>
+    <string name="trackers_static_explanation">TrackerControl は、コード(ライブラリ)とアプリのネットワークトラフィックを解析し、トラッキングを検出します。\n\nネットワークトラフィックで検出されたトラッキングは、TrackerControl でブロックできます。</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl は、アプリのコード(ライブラリ)とネットワークトラフィックから、トラッキングを検出します。</string>
     <string name="blocked">ブロック</string>
     <string name="allowed">許可</string>
     <string name="setting_domain_based_blocked">ドメインベースのブロッキング</string>
     <string name="summary_domain_based_blocking">よりきめ細かいブロックが可能になります。まだ開発中です。</string>
     <string name="untap_unblock">ヒント: 個々のエントリのブロックを解除するには、それらをタップします。</string>
-    <string name="uncertain_entry">「*」の付いた項目は、Androidの制限により、不正確な場合があります。これは通常、同じ会社が異なるドメインで同じIPアドレスを使用していることを意味しますが、同じIPアドレスの背後に別の会社がいることもあります（例：コンテンツ配信ネットワークを使用している場合など）。</string>
+    <string name="uncertain_entry">「*」の付いた項目は、Android の制限により、不正確な場合があります。これは通常、同じ会社が異なるドメインで同じIPアドレスを使用していることを意味しますが、同じIPアドレスの背後に別の会社がいることもあります（例：コンテンツ配信ネットワークを使用している場合など）。</string>
     <string name="browsers_not_supported">ブラウザはサポートされていません ⚠️</string>
-    <string name="browsers_not_supported_explanation">これはブラウザアプリのようです。\n\nブラウザでのトラッカーのブロックはTrackerControlではサポートされていません。代わりに、統合されたアンチトラッキング機能を備えたブラウザを使用することで、トラッキングを適切にブロックできます。\n\n例：Mozilla Fennec、Bromite</string>
+    <string name="browsers_not_supported_explanation">これはブラウザアプリのようです。\n\nブラウザでのトラッカーのブロックは TrackerControl ではサポートされていません。\n代わりに、Mozilla Fennec、Bromite など、\n統合されたアンチトラッキング機能を備えたブラウザを使用することで、トラッキングを適切にブロックできます。</string>
     <string name="static_analysis">アプリコード内にトラッカーを検出しました</string>
     <string name="failed_loading_cached_analysis">キャッシュされたトラッカーの結果の読み込みに失敗しました。 hello@trackercontrol.orgで開発者にこれを報告してください</string>
 </resources>
