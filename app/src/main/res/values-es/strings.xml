@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl permite a los usuarios monitorear y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
+    <string name="app_description">TrackerControl permite a los usuarios monitorizar y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
     <string name="app_xposed">Xposed genera demasiados crasheos, lo cual podría ocasionar que se retire TrackerControl de la tienda de Google Play. Por lo tanto, no habrá soporte para TrackerControl mientras Xposed esté instalado.</string>
     <string name="app_eula">El uso de esta aplicación es bajo tu propio riesgo. Ninguna aplicación puede ofrecer un 100% de protección contra el rastreo.</string>
@@ -21,7 +21,7 @@
     <string name="menu_settings">Ajustes</string>
     <string name="menu_invite">Invitar</string>
     <string name="menu_legend">Leyenda</string>
-    <string name="menu_support">Apoyá esta app</string>
+    <string name="menu_support">Apoya esta app</string>
     <string name="menu_log_support">Explicación</string>
     <string name="menu_about">Acerca de</string>
     <string name="menu_apps">Otras aplicaciones</string>
@@ -62,7 +62,7 @@
     <string name="setting_filter_udp">Bloquear rastreadores en UDP</string>
     <string name="setting_handover">Transferencia fluida a VPN al actualizar</string>
     <string name="setting_lockdown">Bloquear tráfico</string>
-    <string name="setting_track_usage">Monitorear uso de red</string>
+    <string name="setting_track_usage">Monitorizar uso de red</string>
     <string name="setting_reset_usage">Reiniciar el uso de red</string>
     <string name="setting_show_resolved">Mostrar nombres de dominio resueltos    </string>
     <string name="setting_block_domains">Activar archivo de hosts</string>
@@ -110,7 +110,7 @@
     <string name="msg_sure">¿Estás seguro?</string>
     <string name="msg_started">Comprobando los rastreadores</string>
     <string name="msg_waiting">Esperando evento</string>
-    <string name="msg_disabled">Utilizá el interruptor de arriba para activar TrackerControl.</string>
+    <string name="msg_disabled">Utiliza el interruptor de arriba para activar TrackerControl.</string>
     <string name="msg_revoked">TrackerControl ha sido desactivado, posiblemente por utilizar otra aplicación basada en VPN</string>
     <string name="msg_installed">¿Problemas con %1$s?</string>
     <string name="msg_installed_description">Permita que la aplicación contacte empresas</string>
@@ -122,7 +122,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_autostart">TrackerControl no pudo iniciarse automáticamente. Esto podría deberse a un error en su versión de Android.</string>
     <string name="msg_error">Ocurrió un error inesperado: \'%s\'</string>
     <string name="msg_start_failed">Android se negó a iniciar el servicio de VPN en este momento. Esto podría deberse a un error en su versión de Android.</string>
-    <string name="msg_try">Probá TrackerControl</string>
+    <string name="msg_try">Prueba TrackerControl</string>
     <string name="msg_doze">Para obtener resultados consistentes, las optimizaciones de la batería de Android deben ser desactivadas para TrackerControl.
 \n\nEn el siguiente diálogo, seleccione \"Todas las aplicaciones\" en la parte superior, pulse en TrackerControl en la lista. Luego, seleccione y confirme \"No optimizar\".</string>
     <string name="msg_datasaving">Para obtener resultados consistentes, las opciones de almacenamiento de datos de Android deben ser desactivadas para TrackerControl
@@ -141,8 +141,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_metered">La red está medida</string>
     <string name="msg_inactive">Sin conexión activa a internet</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
-    <string name="msg_update">Actualización disponible, tocá para descargar</string>
-    <string name="msg_usage">Podés permitir (verde) o denegar (rojo) el acceso a Wi-Fi o Internet móvil tocando los iconos junto a una aplicación</string>
+    <string name="msg_update">Actualización disponible, presiona para descargar</string>
+    <string name="msg_usage">Puedes permitir (verde) o denegar (rojo) el acceso a Wi-Fi o Internet móvil tocando los iconos junto a una aplicación</string>
     <string name="msg_whitelist">El acceso a Internet está permitido por defecto (modo lista negra), esto se puede cambiar en los ajustes</string>
     <string name="msg_push">Los mensajes entrantes (push) son manejados en su mayoría por el componente del sistema Servicios de Google Play, al que se le permite el acceso a Internet por defecto</string>
     <string name="msg_system">La gestión de todas las aplicaciones (del sistema) puede activarse en la configuración</string>
@@ -251,7 +251,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="block_tracking">Bloquear rastreadores</string>
     <string name="block_tracking_description">Muchas aplicaciones envían datos a terceros, por medio de rastreadores. TrackerControl permite bloquear estas transmisiones de red de forma selectiva. Sin embargo, use esto con prudencia, ya que los desarrolladores de aplicaciones dependen de estos servicios, en particular la publicidad.</string>
     <string name="personalised_ads">Limitar personalización</string>
-    <string name="personalised_ads_description">Android ofrece limitar el acceso de las aplicaciones al ID de publicidad de Google de tu dispositivo. Sin embargo, las aplicaciones pueden ignorar esta configuración y seguir utilizando este ID. También pueden seguir recopilando este ID con fines analíticos, de acuerdo con las políticas de Google. Debés confiar en Google y en la empresa de recopilación de datos.</string>
+    <string name="personalised_ads_description">Android ofrece limitar el acceso de las aplicaciones al ID de publicidad de Google de tu dispositivo. Sin embargo, las aplicaciones pueden ignorar esta configuración y seguir utilizando este ID. También pueden seguir recopilando este ID con fines analíticos, de acuerdo con las políticas de Google. Debes confiar en Google y en la empresa de recopilación de datos.</string>
     <string name="data_managment">Gestionar datos</string>
     <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (RGPD) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
     <string name="contacts">Contacto </string>
@@ -304,7 +304,7 @@ Por favor, proporcione su respuesta a través de medios seguros por correo elect
 Atentamente,\n\n]]></string>
     <string name="crash_dialog_text">Lo sentimos. TrackerControl dejó de funcionar. ¿Podría enviar un correo describiendo los detalles?</string>
     <string name="crash_dialog_comment">¿Algún comentario?</string>
-    <string name="instructions_monitoring_private_dns">Presioná el interruptor e interactuá con otras aplicaciones. El DNS privado debe estar desactivado.</string>
+    <string name="instructions_monitoring_private_dns">Presiona el interruptor e interactua con otras aplicaciones. El DNS privado debe estar desactivado.</string>
     <string name="instructions_monitoring">Presioná el interruptor e interactuá con otras aplicaciones.</string>
     <string name="device_not_supported_title">Dispositivo no soportado</string>
     <string name="device_not_supported_msg">El sistema operativo de su dispositivo no permite monitorear o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>
