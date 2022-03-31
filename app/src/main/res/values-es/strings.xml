@@ -305,12 +305,12 @@ Atentamente,\n\n]]></string>
     <string name="crash_dialog_text">Lo sentimos. TrackerControl dejó de funcionar. ¿Podría enviar un correo describiendo los detalles?</string>
     <string name="crash_dialog_comment">¿Algún comentario?</string>
     <string name="instructions_monitoring_private_dns">Presiona el interruptor e interactua con otras aplicaciones. El DNS privado debe estar desactivado.</string>
-    <string name="instructions_monitoring">Presioná el interruptor e interactuá con otras aplicaciones.</string>
+    <string name="instructions_monitoring">Presiona el interruptor e interactua con otras aplicaciones.</string>
     <string name="device_not_supported_title">Dispositivo no soportado</string>
-    <string name="device_not_supported_msg">El sistema operativo de su dispositivo no permite monitorear o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>
+    <string name="device_not_supported_msg">El sistema operativo de su dispositivo no permite monitorizar o filtrar las conexiones de red. Esto es necesario para TrackerControl.</string>
     <string name="launch_app">Lanzar &amp; Buscar rastreadores</string>
     <string name="countries">Países de destino</string>
-    <string name="countries_explanation">Averiguá a dónde envía tu teléfono los datos de rastreo.\n\nLa información se basa en búsquedas de DNS e información de IP, y podría ser inexacta.</string>
+    <string name="countries_explanation">Averigua a dónde envía tu teléfono los datos de rastreo.\n\nLa información se basa en búsquedas de DNS e información de IP, y podría ser inexacta.</string>
     <string name="countries_loading_failed">Oops... El mapa del país falló al cargar. Por favor, dígale a tc@kollnig.net cómo sucedió esto.</string>
     <string name="tracker_advertising">Publicidad</string>
     <string name="tracker_analytics">Datos de análisis</string>
@@ -325,9 +325,9 @@ Atentamente,\n\n]]></string>
     <string name="exclude_vpn_explanation">Debe estar encendido para detectar o bloquear los rastreadores.\n\nSugerencia: Deshabilitar si se encuentra con problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Ajustes de la aplicación &amp; Desinstalar</string>
-    <string name="no_trackers_found_message_disabled">Activá el interruptor en la pantalla principal, y después lanzá la aplicación para encontrar rastreadores</string>
-    <string name="no_trackers_found_message">Lanzá la aplicación para encontrar rastreadores</string>
-    <string name="no_trackers_found_action">Lanzar</string>
+    <string name="no_trackers_found_message_disabled">Activa el interruptor en la pantalla principal, y después ejecuta la aplicación para encontrar rastreadores</string>
+    <string name="no_trackers_found_message">Ejecuta la aplicación para encontrar rastreadores</string>
+    <string name="no_trackers_found_action">Ejecutar</string>
     <string name="no_internet_message">"Esta aplicación no tiene acceso a Internet. Puede que todavía te rastree intercambiando datos con otras aplicaciones."</string>
     <string name="no_internet">No hay acceso a Internet</string>
     <string name="bypass_vpn_error">"No se puede bloquear Internet. La aplicación está excluida de TrackerControl."</string>
@@ -354,10 +354,10 @@ Atentamente,\n\n]]></string>
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
     <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
-    <string name="untap_unblock">Tip: Podés desbloquear entradas individuales tocándolas.</string>
+    <string name="untap_unblock">Tip: Puedes desbloquear entradas individuales tocándolas.</string>
     <string name="uncertain_entry">Las entradas marcadas con \'*\' pueden ser inexactas, debido a las limitaciones de Android. Esto suele significar que la misma compañía utiliza la misma dirección IP en diferentes dominios, pero también puede significar que diferentes empresas están detrás de la misma dirección IP (por ej. si utilizan una Red de entrega de contenidos).</string>
     <string name="browsers_not_supported">Navegadores no soportados ⚠️</string>
-    <string name="browsers_not_supported_explanation">Esta app parece ser un navegador.\n\nEl bloqueo de rastreadores en navegadores no es compatible con TrackerControl. En su lugar, utilizá un navegador con anti-rastreo integrado.\n\nPor ejemplo: Fennec F-Droid, Bromite</string>
+    <string name="browsers_not_supported_explanation">Esta app parece ser un navegador.\n\nEl bloqueo de rastreadores en navegadores no es compatible con TrackerControl. En su lugar, utiliza un navegador con anti-rastreo integrado.\n\nPor ejemplo: Fennec F-Droid, Bromite</string>
     <string name="static_analysis">Detectar rastreadores en código de apps</string>
-    <string name="failed_loading_cached_analysis">Error al cargar resultados de rastreadores en caché. Por favor, reportá esto al desarrollador en hello@trackercontrol.org</string>
+    <string name="failed_loading_cached_analysis">Error al cargar resultados de rastreadores en caché. Por favor, reporta esto al desarrollador en hello@trackercontrol.org</string>
 </resources>
