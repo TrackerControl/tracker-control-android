@@ -44,6 +44,8 @@ The core of TC builds on the NetGuard app, which is in active use by millions of
 
 In addition to providing insights into app tracking, users of TC can also block unwanted transmissions, which has contributed to building a vibrant community of tens of thousands of users. This community has helped make TC available in 19 languages.
 
+TC has faciliated and inspired academic research at the intersection of policy and privacy technolology [@kollnig2021_consent; @appchk]. It has also been used by the Finnish innovation fund Sitra for its 'Digipower investigation' into apps' data practices. As part of this study, leading Finnish politicians and journalists used TrackerControl to analyse the practices of Android apps. The results of this investigation will be presented at the Finnish and European Parliament over the course of 2022. Both studies underline that TC can support research into app privacy.
+
 # Screenshots
 
 ![App overview.](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png){ width=25% } ![Tracker details.](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png){ width=25% } ![Destination countries.](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png){ width=25% }
