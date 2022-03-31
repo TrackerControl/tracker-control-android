@@ -46,7 +46,7 @@ In addition to providing insights into app tracking, users of TC can also block 
 
 # Screenshots
 
-![App overview.](1.png){ width=25% } ![Tracker details.](2.png){ width=25% } ![Destination countries.](3.png){ width=25% }
+![App overview.](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png){ width=25% } ![Tracker details.](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png){ width=25% } ![Destination countries.](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png){ width=25% }
 
 The left-hand screenshot shows the app overview. The middle screenshot shows the observed tracking companies, domains and purposes for one app. The right-hand screenshot shows the destinations of tracking data, obtained from the contacted IP addresses.
 
