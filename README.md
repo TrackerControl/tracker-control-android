@@ -35,6 +35,7 @@ TrackerControl will always be free and open source, being a research project.
 - [Communities](#communities)
 - [Translation](#translation)
 - [Highlights](#highlights)
+- [Build Instructions](#build-instructions)
 - [Privacy Notice](#privacy-notice)
 - [Cookie Policy](#cookie-policy)
 - [Credits](#credits)
@@ -126,8 +127,9 @@ Contact me at hello@trackercontrol.org, if you're missing a language.
 TrackerControl provides
 - *real-time monitoring* of app tracking, including destination companies and countries,
 - *granular blocking* of app tracking,
-- *one-click data requests* as granted under EU Data Protection Legislation, and
-- *ad-blocking* using widely available host files.
+- *one-click data requests* as granted under EU Data Protection Legislation,
+- *ad-blocking* using widely available host files, and
+- *tracker library analysis* of apps' code.
 
 <p align="center">
     <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="margin: 0 auto;" height="100%" width="25%" >
@@ -142,6 +144,20 @@ Only the meta data about network communications is logged, and displayed
 to the users.
 
 Download [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
+
+## Build Instructions
+
+Building this project is rather straightforward. In combination with F-Droid, this repository currently uses automated builds and therefore complies with a standard Android build pipeline.
+
+For building, you need:
+- Android Studio (including a default installation of the Android SDK, including build tools)
+- Android NDK (all recent versions should be compatible)
+
+Next, you just need to start the building process from within Android Studio.
+
+Alternatively, you can also use the provided gradle wrapper for building. Details on this can be found in the [Android developer documentation](https://developer.android.com/studio/build/building-cmdline).
+
+If you find any problems with these instructions, feel free to file this in the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
 
 ## Privacy Notice
 
