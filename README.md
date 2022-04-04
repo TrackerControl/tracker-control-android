@@ -64,26 +64,6 @@ If you're interested in *blocking* tracking, then best download TrackerControl f
 
 If you're interested in *analysing* tracking and generating factual evidence of it (e.g. for research), then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The analysis results from this version will usually be more accurate.
 
-## Contributing
-
-TrackerControl is a community-driven project and welcomes contributions of all kinds. This does not require programming skills.
-
-If you need support in using the app, join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities).
-
-If you find any errors or bugs or have suggestions for improvements, you can use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues). The issue tracker provides two different templates, one one for bugs and the other for improvements.
-
-If you want to contribute directly to code of TrackerControl, feel free to file a pull request or, alternatively, use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
-
-If you do not have programming skills, here are some further suggestions on how you can support the project:
-
-1. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
-2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
-3. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
-4. Tell your friends how to protect their privacy with TrackerControl.
-5. Leave a star on GitHub.
-
-Also, you can always reach out to the main developer Konrad directly at <hello@trackercontrol.org>. I deeply welcome and answer every message.
-
 ## Example Use
 
 TrackerControl is mainly designed to help you investigate the tracking practices of the apps on your smartphone. For this purpose, TrackerControl combines two analysis techniques: tracker library analysis and network traffic analysis.
@@ -107,6 +87,26 @@ By default, the analysis of system apps is disabled. This is because the analysi
 In addition to the analysing of apps' network traffic, TrackerControl can also detect the presence of tracking libraries within apps' code. Compared to network traffic analysis, this approach might pick up additional tracking practices that are not observed during testing in a lab setting, but may occur in a real-world scenario.
 
 The analysis of tracker libraries in code is rather straightforward. You only need to select an app of interest from the main screen of TrackerControl.
+
+## Contributing
+
+TrackerControl is a community-driven project and welcomes contributions of all kinds. This does not require programming skills.
+
+If you need support in using the app, join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities).
+
+If you find any errors or bugs or have suggestions for improvements, you can use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues). The issue tracker provides two different templates, one one for bugs and the other for improvements.
+
+If you want to contribute directly to code of TrackerControl, feel free to file a pull request or, alternatively, use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
+
+If you do not have programming skills, here are some further suggestions on how you can support the project:
+
+1. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
+2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
+3. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
+4. Tell your friends how to protect their privacy with TrackerControl.
+5. Leave a star on GitHub.
+
+Also, you can always reach out to the main developer Konrad directly at <hello@trackercontrol.org>. I deeply welcome and answer every message.
 
 ## Communities
 
