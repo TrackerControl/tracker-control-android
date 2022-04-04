@@ -63,17 +63,25 @@ If you're interested in *blocking* tracking, then best download TrackerControl f
 
 If you're interested in *analysing* tracking and generating factual evidence of it (e.g. for research), then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The analysis results from this version will usually be more accurate.
 
-## Support TrackerControl
+## Contributing
 
-There are many ways in which you can support TrackerControl. Here are a few ideas:
+TrackerControl is a community-driven project and welcomes contributions of all kinds. This does not require programming skills.
 
-1. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
+If you need support in using the app, join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities).
+
+If you find any errors or bugs or have suggestions for improvements, you can use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues). The issue tracker provides two different templates, one one for bugs and the other for improvements.
+
+If you want to contribute directly to code of TrackerControl, feel free to file a pull request or, alternatively, use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
+
+If you do not have programming skills, here are some further suggestions on how you can support the project:
+
+1. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
 2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
-3. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
+3. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
 4. Tell your friends how to protect their privacy with TrackerControl.
 5. Leave a star on GitHub.
 
-Also, you can always reach out to me directly at hello@trackercontrol.org. I deeply welcome and answer every message.
+Also, you can always reach out to the main developer Konrad directly at <hello@trackercontrol.org>. I deeply welcome and answer every message.
 
 ## Communities
 
