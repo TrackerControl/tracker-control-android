@@ -9,7 +9,7 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
 
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
 used by Firefox, and our in-house blocklist is used, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
-Additionally, TrackerControl supports custom blocklists.
+Additionally, TrackerControl supports custom blocklists and uses the signatures from [ClassyShark3xodus](https://f-droid.org/en/packages/com.oF2pks.classyshark3xodus/)/[Exodus Privacy](https://exodus-privacy.eu.org/) for the analysis of tracker libraries within app code.
 
 This approach
 - reveals the companies behind tracking,
@@ -30,7 +30,8 @@ TrackerControl will always be free and open source, being a research project.
 
 ## Contents
 - [Download / Installation](#download--installation)
-- [Suppport TrackerControl](#support-trackercontrol)
+- [Example Use](#example-use)
+- [Contributing](#contributing)
 - [Communities](#communities)
 - [Translation](#translation)
 - [Highlights](#highlights)
@@ -82,6 +83,30 @@ If you do not have programming skills, here are some further suggestions on how 
 5. Leave a star on GitHub.
 
 Also, you can always reach out to the main developer Konrad directly at <hello@trackercontrol.org>. I deeply welcome and answer every message.
+
+## Example Use
+
+TrackerControl is mainly designed to help you investigate the tracking practices of the apps on your smartphone. For this purpose, TrackerControl combines two analysis techniques: tracker library analysis and network traffic analysis.
+
+### Network traffic analysis
+
+Mobile trackers rely on the sending of personal data over the internet. This is why tracking can be detected and analysed from apps' network traffic. This is the core functionality of TrackerControl. The advantage of this approach over tracker library analysis is that actual evidence of data sharing is gathered; by contrast, when analysing solely the presence of tracking libraries in apps, some of these libraries may never be activated by an app at run-time.
+
+At the moment, TrackerControl Slim, available on the [Google Play Store](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) is the preferred tool for tracking analysis, because this version of TrackerControl does block network traffic and additionally resolves contacted domains using TLS Server Name Indication.
+
+You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
+
+You can export the results of your analysis from the app menu TrackerControl to CSV ("Export as CSV"). If you export to CSV from the main screen of TrackerControl, you create nice visualisations of your exported traffic data using purpose-built software by [Hestia Labs](https://experiences.hestialabs.org/tracker-control#load-data).
+
+It is further possible to enable the direct logging of contacted domains to the console. This is helpful for research studies that instrument apps using an additional computer and can be enabled through Settings -> Advanced options -> Log transmissions to ADB. Note that this disables any blocking.
+
+By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps.
+
+### Tracker library analysis
+
+In addition to the analysing of apps' network traffic, TrackerControl can also detect the presence of tracking libraries within apps' code. Compared to network traffic analysis, this approach might pick up additional tracking practices that are not observed during testing in a lab setting, but may occur in a real-world scenario.
+
+The analysis of tracker libraries in code is rather straightforward. You only need to select an app of interest from the main screen of TrackerControl.
 
 ## Communities
 
