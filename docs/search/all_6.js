@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['getappinfo_0',['getAppInfo',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_list.html#a2bd18cda88b071f94832febb69952231',1,'net::kollnig::missioncontrol::data::TrackerList']]],
+  ['getappname_1',['getAppName',['../classnet_1_1kollnig_1_1missioncontrol_1_1_common.html#a921fa689663100763bf1845191c808fb',1,'net::kollnig::missioncontrol::Common']]],
+  ['getapptrackers_2',['getAppTrackers',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_list.html#a1c830fe18ef2ce4e7cb180a4ee6a414f',1,'net::kollnig::missioncontrol::data::TrackerList']]],
+  ['getblockingkey_3',['getBlockingKey',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_blocklist.html#af1b9c9b9a5d70327821ad7f94c7fccd2',1,'net::kollnig::missioncontrol::data::TrackerBlocklist']]],
+  ['getblocklist_4',['getBlocklist',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_internet_blocklist.html#af49268a8cad86448b7f9d80ac207e595',1,'net.kollnig.missioncontrol.data.InternetBlocklist.getBlocklist()'],['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_blocklist.html#a0e4f35596bb18518cf1e76502314c6fa',1,'net.kollnig.missioncontrol.data.TrackerBlocklist.getBlocklist()']]],
+  ['getcategory_5',['getCategory',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker.html#a9791990ed0005f17e53a1ded8913b4c7',1,'net::kollnig::missioncontrol::data::Tracker']]],
+  ['getcategoryname_6',['getCategoryName',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_category.html#ab06ef3fc8ab30b644d1a23303bc12fff',1,'net::kollnig::missioncontrol::data::TrackerCategory']]],
+  ['getchildren_7',['getChildren',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_category.html#a65d9e8a53ecfb882523f0f217ff1f032',1,'net::kollnig::missioncontrol::data::TrackerCategory']]],
+  ['getdisplayname_8',['getDisplayName',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_category.html#a70a616cd1502d388f354519b4cb7b8ae',1,'net::kollnig::missioncontrol::data::TrackerCategory']]],
+  ['gethostcountriescount_9',['getHostCountriesCount',['../classnet_1_1kollnig_1_1missioncontrol_1_1details_1_1_countries_fragment.html#a670814765ce5338c8aafaa11b5dee4da',1,'net::kollnig::missioncontrol::details::CountriesFragment']]],
+  ['gethosts_10',['getHosts',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker.html#a4218152f6412ecefcf6b33a6742e9491',1,'net::kollnig::missioncontrol::data::Tracker']]],
+  ['getid_11',['getId',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_library.html#ae4e7dcd8611e5beb09cfd02a045ecc7b',1,'net::kollnig::missioncontrol::data::TrackerLibrary']]],
+  ['getinfo_12',['getInfo',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_play_store.html#ab551d368eb67200e8ef97c9bac44eb89',1,'net::kollnig::missioncontrol::data::PlayStore']]],
+  ['getinstance_13',['getInstance',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_internet_blocklist.html#ac4a5ae74af64bfe89e3d6ddbd7bb5e38',1,'net.kollnig.missioncontrol.data.InternetBlocklist.getInstance()'],['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_blocklist.html#a8c694dbaefab17c3d34d5299d26bb704',1,'net.kollnig.missioncontrol.data.TrackerBlocklist.getInstance()'],['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_list.html#a62556e25d59a2bcd172ded7b4ecb0d6f',1,'net.kollnig.missioncontrol.data.TrackerList.getInstance()']]],
+  ['getlaunchintent_14',['getLaunchIntent',['../classnet_1_1kollnig_1_1missioncontrol_1_1_common.html#a56996f31baaa8150aa81db4e1ba9f640',1,'net::kollnig::missioncontrol::Common']]],
+  ['getname_15',['getName',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker.html#a1973e441183a4490eae8b4ed6686fb64',1,'net.kollnig.missioncontrol.data.Tracker.getName()'],['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_library.html#abe656a717674748ac1fca9def73a4eb5',1,'net.kollnig.missioncontrol.data.TrackerLibrary.getName()']]],
+  ['getsnackbar_16',['getSnackbar',['../classnet_1_1kollnig_1_1missioncontrol_1_1_common.html#a9e5f0110795c381dff5cfee0ead49f39',1,'net::kollnig::missioncontrol::Common']]],
+  ['getsubset_17',['getSubset',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_blocklist.html#af07350224ea522336ccc184c3b44b1e8',1,'net::kollnig::missioncontrol::data::TrackerBlocklist']]],
+  ['gettrackercountsandtotal_18',['getTrackerCountsAndTotal',['../classnet_1_1kollnig_1_1missioncontrol_1_1data_1_1_tracker_list.html#a20880240f0898be64a70e751be4cc017',1,'net::kollnig::missioncontrol::data::TrackerList']]],
+  ['glidehelper_19',['GlideHelper',['../classeu_1_1faircode_1_1netguard_1_1_glide_helper.html',1,'eu::faircode::netguard']]]
+];
