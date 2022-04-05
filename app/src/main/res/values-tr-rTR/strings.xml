@@ -216,6 +216,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="title_log_port">Bağlantı noktası %1$d</string>
     <string name="title_log_copy">Kopyala</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Bu uygulama için internet erişimini devre dışı bırak</string>
     <string name="tracked_app_name">Uygulama Adı</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">geçen hafta %d şirketle bağlantı kuruldu</item>
@@ -230,6 +231,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="exporting">Dışa aktarılıyor..</string>
     <string name="share_csv">Paylaş</string>
     <string name="export_failed">Dışa aktarım başarısız oldu</string>
+    <string name="exported">Depolama birimine aktarıldı!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detaylar</string>
     <string name="tab_trackers">İzleyiciler</string>
@@ -299,6 +301,7 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="tracker_cryptomining">Kripto Madencilik</string>
     <string name="tracker_fingerprinting">Parmak izi</string>
     <string name="tracker_social">Sosyal Medya</string>
+    <string name="tracker_email">E-Posta</string>
     <string name="tracker_uncategorised">Kategorize edilmemiş</string>
     <string name="setting_strict_blocking">Sıkı Engelleme</string>
     <string name="summary_strict_blocking">Yeni yüklenen uygulamalar için, şirketlerle mümkün olduğunca fazla veri paylaşımını engelleyin. Daha fazla uygulama bozulacak.</string>
