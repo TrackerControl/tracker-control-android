@@ -9,7 +9,7 @@ ongoing, hidden data collection in mobile apps about user behaviour ('tracking')
 
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
 used by Firefox, and our in-house blocklist is used, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
-Additionally, TrackerControl supports custom blocklists.
+Additionally, TrackerControl supports custom blocklists and uses the signatures from [ClassyShark3xodus](https://f-droid.org/en/packages/com.oF2pks.classyshark3xodus/)/[Exodus Privacy](https://exodus-privacy.eu.org/) for the analysis of tracker libraries within app code.
 
 This approach
 - reveals the companies behind tracking,
@@ -30,10 +30,12 @@ TrackerControl will always be free and open source, being a research project.
 
 ## Contents
 - [Download / Installation](#download--installation)
-- [Suppport TrackerControl](#support-trackercontrol)
+- [Example Use](#example-use)
+- [Contributing](#contributing)
 - [Communities](#communities)
 - [Translation](#translation)
 - [Highlights](#highlights)
+- [Build Instructions](#build-instructions)
 - [Privacy Notice](#privacy-notice)
 - [Cookie Policy](#cookie-policy)
 - [Credits](#credits)
@@ -63,17 +65,49 @@ If you're interested in *blocking* tracking, then best download TrackerControl f
 
 If you're interested in *analysing* tracking and generating factual evidence of it (e.g. for research), then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The analysis results from this version will usually be more accurate.
 
-## Support TrackerControl
+## Example Use
 
-There are many ways in which you can support TrackerControl. Here are a few ideas:
+TrackerControl is mainly designed to help you investigate the tracking practices of the apps on your smartphone. For this purpose, TrackerControl combines two analysis techniques: tracker library analysis and network traffic analysis.
 
-1. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
+### Network traffic analysis
+
+Mobile trackers rely on the sending of personal data over the internet. This is why tracking can be detected and analysed from apps' network traffic. This is the core functionality of TrackerControl. The advantage of this approach over tracker library analysis is that actual evidence of data sharing is gathered; by contrast, when analysing solely the presence of tracking libraries in apps, some of these libraries may never be activated by an app at run-time.
+
+At the moment, TrackerControl Slim, available on the [Google Play Store](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) is the preferred tool for tracking analysis, because this version of TrackerControl does block network traffic and additionally resolves contacted domains using TLS Server Name Indication.
+
+You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
+
+You can export the results of your analysis from the app menu TrackerControl to CSV ("Export as CSV"). If you export to CSV from the main screen of TrackerControl, you create nice visualisations of your exported traffic data using purpose-built software by [Hestia Labs](https://experiences.hestialabs.org/tracker-control#load-data).
+
+It is further possible to enable the direct logging of contacted domains to the console. This is helpful for research studies that instrument apps using an additional computer and can be enabled through Settings -> Advanced options -> Log transmissions to ADB. Note that this disables any blocking.
+
+By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps.
+
+### Tracker library analysis
+
+In addition to the analysing of apps' network traffic, TrackerControl can also detect the presence of tracking libraries within apps' code. Compared to network traffic analysis, this approach might pick up additional tracking practices that are not observed during testing in a lab setting, but may occur in a real-world scenario.
+
+The analysis of tracker libraries in code is rather straightforward. You only need to select an app of interest from the main screen of TrackerControl.
+
+## Contributing
+
+TrackerControl is a community-driven project and welcomes contributions of all kinds. This does not require programming skills.
+
+If you need support in using the app, join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities).
+
+If you find any errors or bugs or have suggestions for improvements, you can use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues). The issue tracker provides two different templates, one one for bugs and the other for improvements.
+
+If you want to contribute directly to code of TrackerControl, feel free to file a pull request or, alternatively, use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
+
+If you do not have programming skills, here are some further suggestions on how you can support the project:
+
+1. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
 2. Rate the (feature-reduced version of the) app on [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play).
-3. Help [translate](https://github.com/TrackerControl/tracker-control-android#translation) the app into your language.
+3. Join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities) and share your ideas on make the app better.
 4. Tell your friends how to protect their privacy with TrackerControl.
 5. Leave a star on GitHub.
 
-Also, you can always reach out to me directly at hello@trackercontrol.org. I deeply welcome and answer every message.
+Also, you can always reach out to the main developer Konrad directly at <hello@trackercontrol.org>. I deeply welcome and answer every message.
 
 ## Communities
 
@@ -93,8 +127,9 @@ Contact me at hello@trackercontrol.org, if you're missing a language.
 TrackerControl provides
 - *real-time monitoring* of app tracking, including destination companies and countries,
 - *granular blocking* of app tracking,
-- *one-click data requests* as granted under EU Data Protection Legislation, and
-- *ad-blocking* using widely available host files.
+- *one-click data requests* as granted under EU Data Protection Legislation,
+- *ad-blocking* using widely available host files, and
+- *tracker library analysis* of apps' code.
 
 <p align="center">
     <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="margin: 0 auto;" height="100%" width="25%" >
@@ -109,6 +144,20 @@ Only the meta data about network communications is logged, and displayed
 to the users.
 
 Download [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).
+
+## Build Instructions
+
+Building this project is rather straightforward. In combination with F-Droid, this repository currently uses automated builds and therefore complies with a standard Android build pipeline.
+
+For building, you need:
+- Android Studio (including a default installation of the Android SDK, including build tools)
+- Android NDK (all recent versions should be compatible)
+
+Next, you just need to start the building process from within Android Studio.
+
+Alternatively, you can also use the provided gradle wrapper for building. Details on this can be found in the [Android developer documentation](https://developer.android.com/studio/build/building-cmdline).
+
+If you find any problems with these instructions, feel free to file this in the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
 
 ## Privacy Notice
 
@@ -185,28 +234,9 @@ Except where indicated otherwise, this project is licensed under [GPLv3](https:/
 
 ## Citation
 
-If you use this project as part of your academic studies, please kindly cite the below articles:
+If you use this project as part of your academic studies, please kindly cite the below article:
 
 ```
-@article{kollnig2022_iphone_android,
-      title={Are iPhones Really Better for Privacy? A Comparative Study of iOS and Android Apps}, 
-      author={Konrad Kollnig and Anastasia Shuba and Reuben Binns and Max {Van Kleek} and Nigel Shadbolt},
-      year={2022},
-      journal={Proceedings on Privacy Enhancing Technologies}
-}
-
-@article{kollnig_before_2021,
-      title = {{Before and after GDPR: Tracking in Mobile Apps}},
-      shorttitle = {{Before and after GDPR}},
-      author = {Kollnig, Konrad and Binns, Reuben and Van Kleek, Max and Lyngs, Ulrik and Zhao, Jun and Tinsman, Claudine and Shadbolt, Nigel},
-      year = {2021},
-      journaltitle = {Internet Policy Review},
-      volume = {10},
-      number = {4},
-      issn = {2197-6775},
-      doi = {10.14763/2021.4.1611}
-}
-
 @inproceedings {kollnig2021_consent,
       author = {Konrad Kollnig and Pierre Dewitte and Max Van Kleek and Ge Wang and Daniel Omeiza and Helena Webb and Nigel Shadbolt},
       title = {A Fait Accompli? An Empirical Study into the Absence of Consent to Third-Party Tracking in Android Apps},
