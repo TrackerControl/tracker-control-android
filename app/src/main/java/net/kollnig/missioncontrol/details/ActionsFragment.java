@@ -17,6 +17,8 @@
 
 package net.kollnig.missioncontrol.details;
 
+import static net.kollnig.missioncontrol.Common.emailIntent;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -38,11 +40,9 @@ import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.PlayStore;
 
-import eu.faircode.netguard.Util;
-
-import static net.kollnig.missioncontrol.Common.emailIntent;
-
 import java.util.Objects;
+
+import eu.faircode.netguard.Util;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -179,6 +179,12 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    /**
+     * Create GDPR subject access request
+     *
+     * @param v    Current view
+     * @param mail Email address of contact, e.g. app developer
+     */
     private void contactDeveloper(View v, String mail) {
         String subject = null, body = null;
         if (v.getId() == R.id.btnReqData) {
@@ -194,6 +200,13 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         sendEmail(mail, subject, body);
     }
 
+    /**
+     * Show an intent to write an email
+     *
+     * @param email   The recipient email address
+     * @param subject The email subject
+     * @param body    The email body
+     */
     public void sendEmail(@Nullable String email, String subject, String body) {
         Intent i = emailIntent(email, subject, body);
         try {

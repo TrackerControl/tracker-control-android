@@ -58,7 +58,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -70,26 +69,19 @@ public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
     public static final String INTENT_EXTRA_APP_UID = "INTENT_APP_UID";
     public static final String INTENT_EXTRA_APP_NAME = "INTENT_APP_NAME";
-
-    private boolean running = false;
-
     private static final int REQUEST_EXPORT = 10;
     public static PlayStore.AppInfo app = null;
     private final String TAG = DetailsActivity.class.getSimpleName();
+    private boolean running = false;
     private Integer appUid;
     private String appPackageName;
+    private DetailsStateAdapter detailsStateAdapter;
 
-    private static Set<String> intToStringSet(Set<Integer> ints) {
-        Set<String> strings = new HashSet<>();
-
-
-        for (Integer _int : ints) {
-            strings.add(String.valueOf(_int));
-        }
-
-        return strings;
-    }
-
+    /**
+     * Saves the changed tracker settings
+     *
+     * @param c The context
+     */
     public static void savePrefs(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -98,7 +90,7 @@ public class DetailsActivity extends AppCompatActivity {
         // Tracker settings
         TrackerBlocklist b = TrackerBlocklist.getInstance(c);
         Set<Integer> trackerIntSet = b.getBlocklist();
-        Set<String> trackerSet = intToStringSet(trackerIntSet);
+        Set<String> trackerSet = Common.intToStringSet(trackerIntSet);
         editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
         for (Integer uid : trackerIntSet) {
             Set<String> subset = b.getSubset(uid);
@@ -107,28 +99,22 @@ public class DetailsActivity extends AppCompatActivity {
 
         // Internet settings
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(c);
-        Set<String> internetSet = intToStringSet(internetBlocklist.getBlocklist());
+        Set<String> internetSet = Common.intToStringSet(internetBlocklist.getBlocklist());
         editor.putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, internetSet);
 
         editor.apply();
     }
 
-    private DetailsStateAdapter detailsStateAdapter;
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        // Export to CSV?
         if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null)
-                handleExport(data);
+                new ExportDatabaseCSVTask(data).execute(); // export to CSV
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void handleExport(Intent data) {
-        new ExportDatabaseCSVTask(data).execute();
     }
 
     @Override
@@ -203,6 +189,11 @@ public class DetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Creates an intent to save a file. Necessary to determine destination of CSV export.
+     *
+     * @return File intent
+     */
     private Intent getIntentCreateExport() {
         Intent intent;
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -225,6 +216,9 @@ public class DetailsActivity extends AppCompatActivity {
         running = false;
     }
 
+    /**
+     * Export tracking findings to CSV
+     */
     class ExportDatabaseCSVTask extends AsyncTask<String, Void, Boolean> {
         private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
         TrackerList trackerList;
@@ -251,11 +245,17 @@ public class DetailsActivity extends AppCompatActivity {
                 csvExport(out);
                 return true;
             } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                Log.e(TAG, ex + "\n" + Log.getStackTraceString(ex));
                 return false;
             }
         }
 
+        /**
+         * Retrieve information to be exported from database and save to CSV file.
+         *
+         * @param out The destination for the exported information
+         * @throws IOException If saving the CSV fails
+         */
         private void csvExport(OutputStream out) throws IOException {
             try (CSVWriter csv = new CSVWriter(new OutputStreamWriter(out),
                     CSVWriter.DEFAULT_SEPARATOR,

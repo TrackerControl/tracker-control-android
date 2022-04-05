@@ -19,6 +19,9 @@ package net.kollnig.missioncontrol.analysis;
 
 import androidx.annotation.Nullable;
 
+/**
+ * This class stores exceptions during static tracker library analysis
+ */
 public class AnalysisException extends Exception {
     String message;
 

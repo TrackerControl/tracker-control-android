@@ -24,6 +24,9 @@ import net.kollnig.missioncontrol.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Categorises tracker companies into high-level categories
+ */
 public class TrackerCategory {
     public static final String UNCATEGORISED = "Uncategorised";
     public String category;
@@ -31,19 +34,41 @@ public class TrackerCategory {
     private boolean uncertain = false;
     private List<Tracker> children;
 
-    public boolean isUncertain() {
-        return uncertain;
-    }
-
-    public void setUncertain(boolean uncertain) {
-        this.uncertain = uncertain;
-    }
-
+    /**
+     * Create class to store tracker category
+     *
+     * @param category Tracker category
+     * @param lastSeen Time when company within category was last contacted
+     */
     TrackerCategory(String category, long lastSeen) {
         this.category = category;
         this.lastSeen = lastSeen;
     }
 
+    /**
+     * Some trackers are uncertain, due to the nature of DNS. This returns information about this.
+     *
+     * @return Whether it's uncertain a tracker company has been contacted by an app.
+     */
+    public boolean isUncertain() {
+        return uncertain;
+    }
+
+    /**
+     * Some trackers are uncertain, due to the nature of DNS. This saves information about this.
+     *
+     * @param uncertain Whether it's uncertain a tracker company has been contacted by an app.
+     */
+    public void setUncertain(boolean uncertain) {
+        this.uncertain = uncertain;
+    }
+
+    /**
+     * Get a name of tracker category for display in UI
+     *
+     * @param c Context
+     * @return Name of tracker category to be shown in UI
+     */
     public String getDisplayName(Context c) {
         switch (category) {
             case "Advertising":
@@ -68,6 +93,11 @@ public class TrackerCategory {
         }
     }
 
+    /**
+     * Get list of tracker companies that are within this tracker category
+     *
+     * @return List of tracker companies that are within this tracker category
+     */
     public List<Tracker> getChildren() {
         if (this.children == null)
             this.children = new ArrayList<>();
@@ -75,6 +105,11 @@ public class TrackerCategory {
         return this.children;
     }
 
+    /**
+     * Get category name that is used internally
+     *
+     * @return Internally-used tracker category name
+     */
     public String getCategoryName() {
         return category;
     }

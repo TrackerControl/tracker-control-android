@@ -112,6 +112,9 @@ public class TrackersFragment extends Fragment {
         updateTrackerList();
     }
 
+    /**
+     * Communicate with tracker database to show information about tracking in a given app
+     */
     public void updateTrackerList() {
         new AsyncTask<Object, Object, List<TrackerCategory>>() {
             private boolean refreshing = true;
@@ -154,6 +157,9 @@ public class TrackersFragment extends Fragment {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    /**
+     * Remind user to start app to create some network traffic for analysis by TrackerControl
+     */
     private void suggestLaunchingApp() {
         Activity activity = getActivity();
         if (activity == null)
@@ -171,12 +177,12 @@ public class TrackersFragment extends Fragment {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (launch != null) {
             final boolean enabled = prefs.getBoolean("enabled", false);
-            int msg = enabled ? R.string.no_trackers_found_message: R.string.no_trackers_found_message_disabled;
+            int msg = enabled ? R.string.no_trackers_found_message : R.string.no_trackers_found_message_disabled;
             Snackbar s = Common.getSnackbar(activity, msg);
             if (s == null)
                 return;
 
-            s.setAction(enabled ? R.string.no_trackers_found_action: R.string.back, v -> {
+            s.setAction(enabled ? R.string.no_trackers_found_action : R.string.back, v -> {
                 if (enabled)
                     activity.startActivity(launch);
                 else

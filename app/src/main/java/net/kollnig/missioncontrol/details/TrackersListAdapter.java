@@ -45,8 +45,6 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.AnalysisException;
@@ -76,8 +74,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Integer mAppUid;
     private final String mAppId;
     private final Context mContext;
-    private List<TrackerCategory> mValues = new ArrayList<>();
     private final SharedPreferences apply;
+    private List<TrackerCategory> mValues = new ArrayList<>();
 
     public TrackersListAdapter(Context c,
                                RecyclerView v,
@@ -125,6 +123,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
+    /**
+     * Do static analysis of tracker libraries in app code, and display results
+     *
+     * @param view The tracker view to render the results of the analysis in
+     */
     private void staticTrackerAnalysis(View view) {
         TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
         ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
@@ -217,7 +220,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 boolean companyBlocked = b.blocked(mAppUid,
                                         TrackerBlocklist.getBlockingKey(t));
                                 String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
-                                int color = ContextCompat.getColor(getContext(), companyBlocked ? R.color.colorPrimary: R.color.colorAccent);
+                                int color = ContextCompat.getColor(getContext(), companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
 
                                 String text = String.format("%s %s\n• %s", title, status, hosts);
 

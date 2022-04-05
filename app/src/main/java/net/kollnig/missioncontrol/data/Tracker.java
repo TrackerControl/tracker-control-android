@@ -22,20 +22,35 @@ import androidx.annotation.NonNull;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Store information about tracker companies, and tracker found in apps' network traffic
+ */
 public class Tracker {
+    private final Set<String> hosts = new HashSet<>();
     public String name;
     public String category;
     public Long lastSeen;
     public String country;
 
-    private final Set<String> hosts = new HashSet<>();
-
+    /**
+     * Creates class for tracker seen in apps' network traffic
+     *
+     * @param name     Company name of tracker
+     * @param category Category of tracker
+     * @param lastSeen Time when tracker was last seen in network traffic
+     */
     public Tracker(String name, String category, long lastSeen) {
         this.name = name;
         this.category = category;
         this.lastSeen = lastSeen;
     }
 
+    /**
+     * Creates class to store information about tracker (not necessarily seen in network traffic)
+     *
+     * @param name     Company name of tracker
+     * @param category Category of tracker
+     */
     public Tracker(String name, String category) {
         this.name = name;
         this.category = category;
@@ -50,6 +65,11 @@ public class Tracker {
         return getName();
     }
 
+    /**
+     * Get name of tracker company
+     *
+     * @return Name of tracker company
+     */
     public String getName() {
         if (name.equals("Alphabet"))
             return "Google";
@@ -60,15 +80,30 @@ public class Tracker {
         return name;
     }
 
+    /**
+     * Get category of tracker
+     *
+     * @return Category of tracker
+     */
     public String getCategory() {
         if (category == null || category.equals("null")) return null;
         return category;
     }
 
+    /**
+     * Add observed tracker host
+     *
+     * @param host Tracker host
+     */
     void addHost(String host) {
         this.hosts.add(host);
     }
 
+    /**
+     * Get set of hosts that this tracker company has been observed contacting
+     *
+     * @return
+     */
     public Set<String> getHosts() {
         return hosts;
     }

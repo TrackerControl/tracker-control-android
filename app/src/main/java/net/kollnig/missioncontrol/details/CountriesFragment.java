@@ -141,29 +141,40 @@ public class CountriesFragment extends Fragment {
         TextView txtFailure = v.findViewById(R.id.txtFailure);
 
         new Thread(() -> {
-            try {
-                SVG svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
-
-                Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
-
-                final RenderOptions renderOptions = new RenderOptions();
-                String countries = TextUtils.join(",#", hostCountriesCount.keySet());
-                renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
-
-                mv.post(() -> {
-                    Picture picture = svg.renderToPicture(renderOptions);
-                    mv.setImageDrawable(new PictureDrawable(picture));
-                    pbLoading.setVisibility(View.GONE);
-                });
-            } catch (IllegalStateException | IOException | SVGParseException e) {
-                e.printStackTrace();
-
-                mv.post(() -> {
-                    mv.setVisibility(View.GONE);
-                    txtFailure.setVisibility(View.VISIBLE);
-                    pbLoading.setVisibility(View.GONE);
-                });
-            }
+            showCountriesMap(pbLoading, mv, txtFailure);
         }).start();
+    }
+
+    /**
+     * Show a country map of the tracking destinations
+     *
+     * @param pbLoading  A progress bar to show progress
+     * @param mv         An image view to render the resulting country map
+     * @param txtFailure A text view to show a message in case of failure
+     */
+    private void showCountriesMap(ProgressBar pbLoading, ImageView mv, TextView txtFailure) {
+        try {
+            SVG svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
+
+            Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
+
+            final RenderOptions renderOptions = new RenderOptions();
+            String countries = TextUtils.join(",#", hostCountriesCount.keySet());
+            renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
+
+            mv.post(() -> {
+                Picture picture = svg.renderToPicture(renderOptions);
+                mv.setImageDrawable(new PictureDrawable(picture));
+                pbLoading.setVisibility(View.GONE);
+            });
+        } catch (IllegalStateException | IOException | SVGParseException e) {
+            e.printStackTrace();
+
+            mv.post(() -> {
+                mv.setVisibility(View.GONE);
+                txtFailure.setVisibility(View.VISIBLE);
+                pbLoading.setVisibility(View.GONE);
+            });
+        }
     }
 }

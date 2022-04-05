@@ -16,14 +16,19 @@
  */
 package net.kollnig.missioncontrol.data;
 
+import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
-
+/**
+ * Stores those apps whose access to internet is blocked.
+ * <p>
+ * Analogous implementation to TrackerBlocklist.
+ */
 public class InternetBlocklist {
     public static final String SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY = "INTERNET_BLOCKLIST_APPS_KEY";
     private static InternetBlocklist instance;
@@ -37,9 +42,9 @@ public class InternetBlocklist {
     }
 
     /**
-     * Singleton getter.
+     * Singleton getter for InternetBlocklist
      *
-     * @param c context used to access shared preferences from.
+     * @param c context used to access InternetBlocklist from
      * @return The current instance of the InternetBlocklist, if none, a new instance is created.
      */
     public static InternetBlocklist getInstance(Context c) {
@@ -48,6 +53,11 @@ public class InternetBlocklist {
         return instance;
     }
 
+    /**
+     * Load past settings
+     *
+     * @param c Context
+     */
     public void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, null);
@@ -61,22 +71,46 @@ public class InternetBlocklist {
         }
     }
 
+    /**
+     * Get set of apps' uids which shan't access internet
+     *
+     * @return Set of uids
+     */
     public Set<Integer> getBlocklist() {
         return blockmap;
     }
 
+    /**
+     * Clear blocklist
+     */
     public void clear() {
         blockmap.clear();
     }
 
+    /**
+     * Block internet for a given app
+     *
+     * @param uid Uid of app to block internet
+     */
     public synchronized void block(int uid) {
         blockmap.add(uid);
     }
 
+    /**
+     * Unblock internet for a given app
+     *
+     * @param uid Uid of app to unblock internet
+     */
     public synchronized void unblock(int uid) {
         blockmap.remove(uid);
     }
 
+    /**
+     * Check if internet is blocked for given app
+     *
+     * @param uid Uid of app to check
+     * @return If internet is blocked for given app
+     */
     public boolean blockedInternet(int uid) {
         return blockmap.contains(uid);
     }

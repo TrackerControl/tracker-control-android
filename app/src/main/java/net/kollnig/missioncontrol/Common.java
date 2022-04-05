@@ -37,10 +37,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public class Common {
+    /**
+     * Downloads content from a provided URL
+     *
+     * @param url URL for download
+     * @return Downloaded content
+     */
     @Nullable
     public static String fetch(String url) {
         try {
@@ -67,11 +75,22 @@ public class Common {
         }
     }
 
+    /**
+     * Returns an intent to the system ad settings
+     *
+     * @return Intent to open system ad settings
+     */
     public static Intent adSettings() {
         Intent intent = new Intent();
         return intent.setComponent(new ComponentName("com.google.android.gms", "com.google.android.gms.ads.settings.AdsSettingsActivity"));
     }
 
+    /**
+     * Returns an intent to open a URL in a browser
+     *
+     * @param url A URL to be opened
+     * @return An intent to open the provided URL
+     */
     public static Intent browse(String url) {
         if (!url.startsWith("http://") && !url.startsWith("https://"))
             url = "http://" + url;
@@ -79,10 +98,24 @@ public class Common {
         return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
     }
 
+    /**
+     * Check if system ad settings exist
+     *
+     * @param c Context
+     * @return Information if system ad settings exist
+     */
     public static boolean hasAdSettings(Context c) {
         return isCallable(c, adSettings());
     }
 
+    /**
+     * Returns intent to write an email with an email app
+     *
+     * @param email   The recipient email address
+     * @param subject The subject line
+     * @param body    The email body
+     * @return The intent
+     */
     public static Intent emailIntent(@Nullable String email, String subject, String body) {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
@@ -94,6 +127,13 @@ public class Common {
         return i;
     }
 
+    /**
+     * Checks if intent exists
+     *
+     * @param c      Content
+     * @param intent Intent
+     * @return Information if intent exists
+     */
     public static boolean isCallable(Context c, Intent intent) {
         List<ResolveInfo> list = c.getPackageManager().queryIntentActivities(intent,
                 PackageManager.MATCH_DEFAULT_ONLY);
@@ -131,12 +171,26 @@ public class Common {
         return "Unknown";
     }
 
+    /**
+     * Returns launch intent for a provided app
+     *
+     * @param activity The current activity
+     * @param appId    Package name of the app to be launched
+     * @return An intent
+     */
     public static Intent getLaunchIntent(Activity activity, String appId) {
         Intent intent = activity.getPackageManager().getLaunchIntentForPackage(appId);
         return intent == null ||
                 intent.resolveActivity(activity.getPackageManager()) == null ? null : intent;
     }
 
+    /**
+     * Computes a message in a snackbar to be shown to user.
+     *
+     * @param activity The current activity
+     * @param msg      The message to be shown
+     * @return The computed snackbar. Displayed with .show()
+     */
     @Nullable
     public static Snackbar getSnackbar(Activity activity, int msg) {
         View v = activity.getWindow().getDecorView().findViewById(android.R.id.content);
@@ -149,8 +203,29 @@ public class Common {
         return s;
     }
 
+    /**
+     * Computes the current day of year
+     *
+     * @return The current day of year
+     */
     public static int dayOfYear() {
         Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.DAY_OF_YEAR);
+    }
+
+    /**
+     * Casts a set of integers to set of strings
+     *
+     * @param ints Set of integers
+     * @return Set of strings
+     */
+    static Set<String> intToStringSet(Set<Integer> ints) {
+        Set<String> strings = new HashSet<>();
+
+        for (Integer _int : ints) {
+            strings.add(String.valueOf(_int));
+        }
+
+        return strings;
     }
 }

@@ -105,7 +105,6 @@ public class DetailsStateAdapter extends FragmentStateAdapter {
         return TAB_TITLES.length;
     }
 
-
     void updateTrackerLists() {
         if (fTrackers != null)
             fTrackers.updateTrackerList();

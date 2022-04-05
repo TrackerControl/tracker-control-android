@@ -51,16 +51,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.ServiceSinkhole;
 
+/**
+ * Loads and stores the database of known tracker companies and their domains
+ */
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
-
     private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
-
-    private static TrackerList instance;
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
-    private static boolean domainBasedBlocking;
     public static Set<String> trackingIps = new HashSet<>();
-
+    public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
+    private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
+    private static TrackerList instance;
+    private static boolean domainBasedBlocking;
     private final DatabaseHelper databaseHelper;
 
     private TrackerList(Context c) {
@@ -68,39 +70,18 @@ public class TrackerList {
         loadTrackers(c);
     }
 
-    public void loadTrackers(Context c) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        domainBasedBlocking = prefs.getBoolean("domain_based_blocked", false);
-
-        loadXrayTrackers(c);
-        loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
-        loadIpBlocklist(c);
-    }
-
-    private void loadIpBlocklist(Context c) {
-        try {
-            InputStream is = c.getAssets().open("ip_blocklist.txt");
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ( (line = bfr.readLine()) != null) {
-                if (line.startsWith("#"))
-                    continue;
-                trackingIps.add(line);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Loading IP blocklist failed.. ", e);
-        }
-    }
-
+    /**
+     * Get an instance of the tracker database
+     *
+     * @param c Context
+     * @return Instance of the tracker database
+     */
     public static TrackerList getInstance(Context c) {
         if (instance == null)
             instance = new TrackerList(c);
 
         return instance;
     }
-
-    public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
-    private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
 
     /**
      * Identifies tracker hosts
@@ -145,7 +126,42 @@ public class TrackerList {
     }
 
     /**
-     * Retrieves information for all apps
+     * Load tracker domain database
+     *
+     * @param c Context
+     */
+    public void loadTrackers(Context c) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        domainBasedBlocking = prefs.getBoolean("domain_based_blocked", false);
+
+        loadXrayTrackers(c);
+        loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+        loadIpBlocklist(c);
+    }
+
+    /**
+     * Load database of tracker IPs
+     *
+     * @param c Context
+     */
+    private void loadIpBlocklist(Context c) {
+        try {
+            InputStream is = c.getAssets().open("ip_blocklist.txt");
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.startsWith("#"))
+                    continue;
+                trackingIps.add(line);
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "Loading IP blocklist failed.. ", e);
+        }
+    }
+
+    /**
+     * Retrieves information about number of contacted tracking companies, for all apps
+     * @return Number of contacted tracking companies, for all apps
      */
     public synchronized Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> getTrackerCountsAndTotal() {
         Map<Integer, Set<String>> trackers = new ArrayMap<>();
@@ -170,6 +186,12 @@ public class TrackerList {
         return new Pair<>(countTrackers(trackers), countTrackers(trackersWeek));
     }
 
+    /**
+     * Helper method to check tracker
+     * @param trackers Set of seen trackers
+     * @param appUid Uid of app
+     * @param tracker Seen tracker
+     */
     private void checkTracker(Map<Integer, Set<String>> trackers, int appUid, Tracker tracker) {
         Set<String> observedTrackers = trackers.get(appUid);
         if (observedTrackers == null) {
@@ -181,6 +203,11 @@ public class TrackerList {
             observedTrackers.add(tracker.getName());
     }
 
+    /**
+     * Count the number of seen trackers
+     * @param trackers Set of seen trackers
+     * @return
+     */
     @NonNull
     private Pair<Map<Integer, Integer>, Integer> countTrackers(Map<Integer, Set<String>> trackers) {
         int totalTracker = 0;
@@ -195,7 +222,6 @@ public class TrackerList {
 
     /**
      * Retrieve info for CSV export
-     *
      * @return All logged communications about app
      */
     public Cursor getAppInfo(int uid) {
@@ -204,7 +230,6 @@ public class TrackerList {
 
     /**
      * Retrieves information about all seen trackers
-     *
      * @return A list of seen trackers
      */
     public synchronized List<TrackerCategory> getAppTrackers(Context c, int uid) {
@@ -274,7 +299,6 @@ public class TrackerList {
 
     /**
      * Loads X-Ray tracker list
-     *
      * @param c Context
      */
     private void loadXrayTrackers(Context c) {
@@ -332,7 +356,6 @@ public class TrackerList {
 
     /**
      * Load Disconnect.me tracker list
-     *
      * @param c Context
      */
     private void loadDisconnectTrackers(Context c) {
@@ -388,6 +411,11 @@ public class TrackerList {
         }
     }
 
+    /**
+     * Internal method to add tracker to the tracker database that is used at runtime
+     * @param tracker Tracker to be added
+     * @param dom Domain to be added
+     */
     private void addTrackerDomain(Tracker tracker, String dom) {
         if (domainBasedBlocking) {
             Tracker t = new Tracker(dom + " (" + tracker.getName() + ")", tracker.category);

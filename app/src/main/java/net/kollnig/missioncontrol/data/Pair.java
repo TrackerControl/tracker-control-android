@@ -17,6 +17,12 @@
 
 package net.kollnig.missioncontrol.data;
 
+/**
+ * Provides way to return pairs of results
+ *
+ * @param <T> Type of first element of pair
+ * @param <U> Type of second element of pair
+ */
 public class Pair<T, U> {
     private final T t;
     private final U u;

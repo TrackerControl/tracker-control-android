@@ -26,7 +26,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.StaticTracker;
+import net.kollnig.missioncontrol.data.TrackerLibrary;
 
 import org.jf.dexlib2.iface.ClassDef;
 import org.jf.dexlib2.iface.DexFile;
@@ -48,8 +48,8 @@ import lanchon.multidexlib2.MultiDexDetectedException;
 import lanchon.multidexlib2.MultiDexIO;
 
 public class TrackerLibraryAnalyser {
-    private final Context mContext;
     private static final int EXODUS_DATABASE_VERSION = 423; // eof422, see https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/commits/
+    private final Context mContext;
 
     public TrackerLibraryAnalyser(Context mContext) {
         this.mContext = mContext;
@@ -59,11 +59,62 @@ public class TrackerLibraryAnalyser {
             getPrefs().edit().clear().putInt("version", EXODUS_DATABASE_VERSION).apply();
     }
 
+    /**
+     * Does the tracker library analysis.
+     * <p>
+     * Matches class names of the app to be analysed against the Exodus tracker database, which
+     * contains information on known class of tracker libraries.
+     *
+     * @param c   Context
+     * @param apk Path to apk to analyse
+     * @return Found trackers
+     * @throws IOException      I/O errors
+     * @throws RuntimeException Non I/O errors
+     */
+    @NonNull
+    private static Set<TrackerLibrary> findTrackers(Context c, String apk) throws IOException, RuntimeException {
+        DexFile dx = MultiDexIO.readDexFile(true, new File(apk), new BasicDexFileNamer(), null, null);
+
+        String[] Sign = c.getResources().getStringArray(R.array.trackers);
+        String[] Names = c.getResources().getStringArray(R.array.tname);
+        String[] Web = c.getResources().getStringArray(R.array.tweb);
+        Set<TrackerLibrary> trackers = new HashSet<>();
+
+        for (ClassDef classDef : dx.getClasses()) {
+            String className = classDef.getType();
+            className = className.replace('/', '.');
+            className = className.substring(1, className.length() - 1);
+
+            if (className.length() > 8) {
+                if (className.contains(".")) {
+                    for (int Signz = 0; Signz < Sign.length; Signz++) {
+                        if (className.contains(Sign[Signz])) {
+                            if (Names[Signz].startsWith("µ?")) // exclude "good" trackers
+                                continue;
+
+                            trackers.add(new TrackerLibrary(Names[Signz], Web[Signz], Signz, Sign[Signz]));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return trackers;
+    }
+
+    /**
+     * Encapsulates the tracker library analysis, and caches results to avoid duplicate analyses
+     *
+     * @param mAppId The package name of the app to analyse
+     * @return A string with the analysis results
+     * @throws AnalysisException In case something goes wrong
+     */
     public String analyse(String mAppId) throws AnalysisException {
         String trackerString;
 
         try {
-            Set<StaticTracker> trackers;
+            Set<TrackerLibrary> trackers;
             PackageInfo pkg = mContext.getPackageManager().getPackageInfo(mAppId, 0);
 
             // Try to load cached result
@@ -74,7 +125,7 @@ public class TrackerLibraryAnalyser {
                 String apk = pkg.applicationInfo.publicSourceDir;
                 trackers = findTrackers(mContext, apk);
 
-                final List<StaticTracker> sortedTrackers = new ArrayList<>(trackers);
+                final List<TrackerLibrary> sortedTrackers = new ArrayList<>(trackers);
                 Collections.sort(sortedTrackers);
 
                 if (sortedTrackers.size() > 0)
@@ -109,37 +160,5 @@ public class TrackerLibraryAnalyser {
 
     private SharedPreferences getPrefs() {
         return mContext.getSharedPreferences("library_analysis", Context.MODE_PRIVATE);
-    }
-
-    @NonNull
-    private static Set<StaticTracker> findTrackers(Context c, String apk) throws IOException, RuntimeException {
-        DexFile dx = MultiDexIO.readDexFile(true, new File(apk), new BasicDexFileNamer(), null, null);
-
-        String[] Sign = c.getResources().getStringArray(R.array.trackers);
-        String[] Names = c.getResources().getStringArray(R.array.tname);
-        String[] Web = c.getResources().getStringArray(R.array.tweb);
-        Set<StaticTracker> trackers = new HashSet<>();
-
-        for (ClassDef classDef: dx.getClasses()) {
-            String className = classDef.getType();
-            className = className.replace('/', '.');
-            className = className.substring( 1, className.length() - 1 );
-
-            if (className.length() > 8) {
-                if (className.contains(".")){
-                    for (int Signz = 0; Signz < Sign.length; Signz++) {
-                        if (className.contains(Sign[Signz])) {
-                            if (Names[Signz].startsWith("µ?")) // exclude "good" trackers
-                                continue;
-
-                            trackers.add(new StaticTracker(Names[Signz], Web[Signz], Signz, Sign[Signz]));
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return trackers;
     }
 }

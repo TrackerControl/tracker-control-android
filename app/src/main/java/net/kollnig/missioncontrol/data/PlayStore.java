@@ -17,6 +17,8 @@
 
 package net.kollnig.missioncontrol.data;
 
+import static net.kollnig.missioncontrol.Common.fetch;
+
 import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
@@ -25,11 +27,20 @@ import org.json.JSONException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static net.kollnig.missioncontrol.Common.fetch;
-
+/**
+ * Retrieve information about an app from the Google Play Store.
+ * <p>
+ * Currently, this is only used to retrieve the email address of an app developer for GDPR requests.
+ */
 public class PlayStore {
     private static final String PLAYSTORE_BASE = "https://play.google.com/store/apps/details?id=";
 
+    /**
+     * Download and parse Play Store page for a given app
+     *
+     * @param appId The package name of the app to analyse
+     * @return The parsed app information
+     */
     @Nullable
     public static AppInfo getInfo(String appId) {
         String playStoreInfo = fetch(PLAYSTORE_BASE + appId);
@@ -40,9 +51,11 @@ public class PlayStore {
     }
 
     /**
-     * Parsing of PlayStore Info, according to https://github.com/facundoolano/google-play-scraper/
+     * Parsing of Play Store information.
+     * <p>
+     * Source: https://github.com/facundoolano/google-play-scraper/
      *
-     * @param playStoreInfo Fetched html from PlayStore
+     * @param playStoreInfo Fetched HTML from Play Store
      */
     @Nullable
     private static AppInfo parse(String playStoreInfo) {
@@ -100,6 +113,9 @@ public class PlayStore {
         return null;
     }
 
+    /**
+     * Stores the parsed Play Store information
+     */
     public static class AppInfo {
         public String policyUrl;
         public String developerMail;

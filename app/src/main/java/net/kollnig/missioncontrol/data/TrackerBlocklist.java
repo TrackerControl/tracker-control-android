@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Stores what trackers are blocked, for each app.
+ */
 public class TrackerBlocklist {
     public static final String SHARED_PREFS_BLOCKLIST_APPS_KEY = "APPS_BLOCKLIST_APPS_KEY";
     final public static String PREF_BLOCKLIST = "blocklist";
@@ -44,9 +47,9 @@ public class TrackerBlocklist {
     }
 
     /**
-     * Singleton getter.
+     * Singleton getter for TrackerBlocklist
      *
-     * @param c context used to access shared preferences from.
+     * @param c context used to access TrackerBlocklist from
      * @return The current instance of the TrackerBlocklist, if none, a new instance is created.
      */
     public static TrackerBlocklist getInstance(Context c) {
@@ -56,10 +59,21 @@ public class TrackerBlocklist {
         return instance;
     }
 
+    /**
+     * For a given tracker company, this computes a key to store the blocking state of this tracker.
+     *
+     * @param t Tracker company
+     * @return The key for storage of the blocking state
+     */
     public static String getBlockingKey(Tracker t) {
         return t.category + " | " + t.getName();
     }
 
+    /**
+     * Load past settings
+     *
+     * @param c Context
+     */
     public void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
@@ -105,22 +119,47 @@ public class TrackerBlocklist {
         }
     }
 
+    /**
+     * Get set of apps' uids which have information about blocked trackers
+     *
+     * @return Set of apps' uids
+     */
     public Set<Integer> getBlocklist() {
         return blockmap.keySet();
     }
 
+    /**
+     * Get information about what specific trackers are blocked for a given app
+     *
+     * @param uid Uid of the app
+     * @return Information about what specific trackers are blocked
+     */
     public Set<String> getSubset(int uid) {
         return blockmap.get(uid);
     }
 
+    /**
+     * Completely clear blocklist.
+     */
     public void clear() {
         blockmap.clear();
     }
 
+    /**
+     * Clear all blocked trackers for a specific app
+     *
+     * @param uid Uid of app
+     */
     public void clear(int uid) {
         blockmap.remove(uid);
     }
 
+    /**
+     * Block a given tracker for a given app
+     *
+     * @param uid Uid of the app
+     * @param t   Key of the tracker to be blocked
+     */
     public synchronized void block(int uid, String t) {
         Set<String> app = blockmap.get(uid);
         if (app == null)
@@ -128,6 +167,12 @@ public class TrackerBlocklist {
         app.remove(t);
     }
 
+    /**
+     * Unlock a given tracker for a given app
+     *
+     * @param uid Uid of the app
+     * @param t   Key of the tracker to be unblocked
+     */
     public synchronized void unblock(int uid, String t) {
         Set<String> app = blockmap.get(uid);
 
@@ -139,14 +184,33 @@ public class TrackerBlocklist {
         app.add(t);
     }
 
+    /**
+     * Block a given tracker for a given app
+     *
+     * @param uid Uid of the app
+     * @param t   Tracker to be blocked
+     */
     public synchronized void block(int uid, Tracker t) {
         block(uid, getBlockingKey(t));
     }
 
+    /**
+     * Unblock a given tracker for a given app
+     *
+     * @param uid Uid of the app
+     * @param t   Tracker to be unblocked
+     */
     public synchronized void unblock(int uid, Tracker t) {
         unblock(uid, getBlockingKey(t));
     }
 
+    /**
+     * Check if a given app can access a given tracker
+     *
+     * @param uid Uid of the app
+     * @param key Key of the tracker
+     * @return Whether access to this tracker is blocked
+     */
     public boolean blocked(int uid, String key) {
         Set<String> trackers = this.getSubset(uid);
         if (trackers == null) {
@@ -156,6 +220,13 @@ public class TrackerBlocklist {
         return !trackers.contains(key); // negate since it's a whitelist
     }
 
+    /**
+     * Check if a given app can access a given tracker
+     *
+     * @param uid Uid of the app
+     * @param t   Tracker
+     * @return Whether access to this tracker is blocked
+     */
     public boolean blockedTracker(int uid, Tracker t) {
         return blocked(uid, t.category)
                 && blocked(uid, getBlockingKey(t));
