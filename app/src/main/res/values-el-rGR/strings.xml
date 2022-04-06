@@ -320,6 +320,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_cryptomining">Συλλογή Κρυπτονομισμάτων</string>
     <string name="tracker_fingerprinting">Ταυτοποίηση (Fingerprinting)</string>
     <string name="tracker_social">Κοινωνικά Δίκτυα</string>
+    <string name="tracker_email">Email</string>
     <string name="tracker_uncategorised">Χωρίς κατηγορία</string>
     <string name="setting_strict_blocking">Αυστηρός Αποκλεισμός</string>
     <string name="summary_strict_blocking">Για νέες εφαρμογές, αποκλείστε όσο το δυνατόν περισσότερα δεδομένα μοιράζονται με εταιρείες. Περισσότερες εφαρμογές θα έχουν προβλήματα.</string>
