@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen apps über das Benutzerverhalten (\"tracking\") zu überwachen und zu steuern.</string>
+    <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen Apps über das Benutzerverhalten (\"tracking\") zu überwachen und zu steuern.</string>
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universität Oxford)\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
@@ -59,7 +59,7 @@
     <string name="setting_advanced_options">Erweiterte Einstellungen</string>
     <string name="setting_system">Systemanwendungen verwalten</string>
     <string name="setting_log_app">Nach Trackern suchen</string>
-    <string name="setting_log_logcat">Protokolliere Übertragungen an ADB</string>
+    <string name="setting_log_logcat">Übertragungen an ADB protokollieren</string>
     <string name="setting_filter">Tracker blockieren</string>
     <string name="setting_filter_udp">Tracker auf UDP blockieren</string>
     <string name="setting_handover">Nahtlose VPN-Übergabe beim Neuladen</string>
@@ -68,7 +68,7 @@
     <string name="setting_reset_usage">Netzwerknutzung zurücksetzen</string>
     <string name="setting_show_resolved">Aufgelöste Domainnamen anzeigen</string>
     <string name="setting_block_domains">Hosts-Datei aktivieren</string>
-    <string name="setting_rcode">Host-Blockierung Antwort: %s</string>
+    <string name="setting_rcode">Antwort der Host-Blockierung: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -85,33 +85,33 @@
     <string name="setting_stats_frequency">Abtastfrequenz: %s ms</string>
     <string name="setting_stats_samples">Anzahl Samples: %s s</string>
     <string name="setting_backup">Sicherung</string>
-    <string name="setting_export">Export-Einstellungen (nicht für das Zurücksetzen des Geräts)</string>
-    <string name="setting_import">Import-Einstellungen</string>
+    <string name="setting_export">Einstellungen exportieren (nicht für das Zurücksetzen des Geräts)</string>
+    <string name="setting_import">Einstellungen importieren</string>
     <string name="setting_hosts">Hosts-Datei importieren</string>
     <string name="setting_hosts_append">Hosts-Datei importieren (anhängen)</string>
-    <string name="setting_hosts_url">Hosts-Datei URL</string>
+    <string name="setting_hosts_url">Hosts-Datei-URL</string>
     <string name="setting_hosts_download">Hosts-Datei herunterladen</string>
     <string name="setting_hosts_update">Hosts-Datei aktualisieren</string>
     <string name="summary_install">Statusleisten-Benachrichtigung für neu installierte Apps anzeigen</string>
     <string name="summary_pause">Nach dem Deaktivieren über die Benachrichtigung TrackerControl nach einer festgelegten Anzahl von Minuten automatisch wieder aktivieren (Null eingeben zum Deaktivieren dieser Option).</string>
-    <string name="summary_update">Überprüfe zweimal täglich nach neuen Versionen auf GitHub</string>
-    <string name="summary_tethering">Abhängig von der Android Version kann Tethering funktionieren. Dieser Verkehr kann nicht gefiltert werden.</string>
+    <string name="summary_update">Zweimal täglich auf GitHub nach neuen Versionen suchen</string>
+    <string name="summary_tethering">Abhängig von der Android-Version kann Tethering funktionieren. Dieser Verkehr kann nicht gefiltert werden.</string>
     <string name="summary_subnet">Subnet-Routing aktivieren; ermöglicht möglicherweise das Telefonieren über WLAN, kann aber auch Fehler in Android verursachen und lässt den Batterieverbrauch steigen</string>
     <string name="summary_lan">Apps den Zugriff auf lokale Netzwerkadressen wie 10.0.0.0/8, 172.16.0.0/12 und 192.168.0.0/16 erlauben</string>
-    <string name="summary_ip6">IP6-Datenverkehr an TrackerControl weiterleiten, so dass er selektiv zugelassen oder blockiert werden kann</string>
+    <string name="summary_ip6">IP6-Datenverkehr an TrackerControl weiterleiten, so dass er selektiv erlaubt oder blockiert werden kann</string>
     <string name="summary_call">TrackerControl bei eingehenden oder ausgehenden Anrufen deaktivieren. Dadurch können Probleme mit IP/WLAN-Telefonie gelöst werden.</string>
     <string name="summary_system">Regeln für System-Apps festlegen (für Experten)</string>
     <string name="summary_log_app">Deaktivieren, um den Akkuverbrauch zu verringern. Neue Tracker werden weiterhin blockiert, aber nicht angezeigt.</string>
-    <string name="summary_track_usage">Verfolgen Sie die Anzahl der gesendeten und empfangenen Bytes für jede App und Adresse. Dies kann zu einem erhöhten Akkuverbrauch führen.</string>
+    <string name="summary_track_usage">Die Anzahl der gesendeten und empfangenen Bytes für jede App und Adresse verfolgen. Dies kann zu einem erhöhten Akkuverbrauch führen.</string>
     <string name="summary_block_domains">WARNUNG: Blockierte Hosts werden nicht in der Benutzeroberfläche angezeigt.</string>
     <string name="summary_rcode">Der Standardwert ist 3 (NXDOMAIN), was \'nicht existierende Domain\' bedeutet.</string>
     <string name="summary_validate">Domain-Name, der verwendet wird, um die Internetverbindung unter Port 443 (https) zu validieren.</string>
     <string name="summary_socks5_enabled">Nur TCP-Datenverkehr wird an den Proxyserver gesendet</string>
     <string name="summary_watchdog">In regelmäßigen Abständen überprüfen, ob TrackerControl noch läuft (geben Sie Null ein, um diese Option zu deaktivieren). Kann zu erhöhtem Akkuverbrauch führen.</string>
-    <string name="summary_log_logcat">Deaktiviert das blockieren. Kommunikation (und identifizierte Tracker) werden im geräteprotokoll protokolliert. Abrufen mit adb logcat mit tag \'TC-Log\".</string>
+    <string name="summary_log_logcat">Deaktiviert das blockieren. Kommunikation (und identifizierte Tracker) werden im Geräteprotokoll protokolliert. Abrufen mit adb logcat mit Tag \'TC-Log\".</string>
     <string name="msg_sure">Sind Sie sicher?</string>
     <string name="msg_started">Tracker werden überprüft</string>
-    <string name="msg_waiting">Warte auf Ereignis</string>
+    <string name="msg_waiting">Auf Ereignis warten</string>
     <string name="msg_disabled">Verwenden Sie den obigen Schalter um TrackerControl zu aktivieren.</string>
     <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
     <string name="msg_installed">Probleme mit %1$s?</string>
@@ -132,7 +132,7 @@
     <string name="msg_clear_rules">Dadurch werden die Regeln und Bedingungen auf ihre Standardwerte zurückgesetzt</string>
     <string name="msg_reset_access">Dadurch werden alle Zugriffsversuche im Protokoll ohne Erlaubt-/Blockier-Regeln gelöscht</string>
     <string name="msg_import_last">Letzter Import: %s</string>
-    <string name="msg_downloading">Lade\n%1s herunter</string>
+    <string name="msg_downloading">%1s wird\nheruntergeladen</string>
     <string name="msg_downloaded">Hosts-Datei heruntergeladen</string>
     <string name="msg_updated">Hosts-Datei wurde aktualisiert und angewendet!</string>
     <string name="msg_download_last">Letzter Download: %s</string>
