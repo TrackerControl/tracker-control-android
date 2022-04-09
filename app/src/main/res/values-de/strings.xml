@@ -149,7 +149,7 @@
     <string name="msg_vpn_cancelled">VPN-Verbindung abgebrochen\nHaben Sie ein anderes VPN als \'immer eingeschaltet\' konfiguriert?</string>
     <string name="msg_unavailable">Diese Funktion ist in dieser Android-Version nicht verfügbar</string>
     <string name="msg_always_on">Ein anderes VPN ist als \'immer eingeschaltet\' konfiguriert</string>
-    <string name="msg_always_on_lockdown">Um TrackerControl im Filtermodus benutzen zu können in den Android VPN-Einstellungen \"Verbindungen ohne VPN blockieren\" deaktivieren</string>
+    <string name="msg_always_on_lockdown">Um TrackerControl im Filtermodus benutzen zu können, müssen Sie in den Android-VPN-Einstellungen \"Verbindungen ohne VPN blockieren\" deaktivieren</string>
     <string name="msg_private_dns">\"Privates DNS\" in Android Netzwerkeinstellungen deaktivieren um TrackerControl im Filtermodus zu verwenden</string>
     <string name="msg_start_forward">Weiterleitung von %1$s Port %2$d nach %3$s:%4$d von \'%5$s\' starten?</string>
     <string name="msg_stop_forward">Weiterleitung von %1$s Port %2$d stoppen?</string>
@@ -164,14 +164,14 @@
     <string name="title_protocol">Protokoll</string>
     <string name="title_dport">Quell-Port</string>
     <string name="title_raddr">Zieladresse</string>
-    <string name="title_rport">Zielport</string>
+    <string name="title_rport">Ziel-Port</string>
     <string name="title_ruid">Ziel-App</string>
     <string name="title_external">Für einen externen Server wählen Sie \'Keiner\' aus</string>
     <string name="title_lockdown_enabled">Datenverkehr ist eingeschränkt</string>
     <string name="title_unmetered_allowed">Volumenunbeschränkter Verkehr ist erlaubt</string>
     <string name="title_unmetered_blocked">Volumenunbeschränkter Verkehr ist blockiert</string>
     <string name="title_unmetered_disabled">Unbeschränkte Regeln werden nicht angewendet</string>
-    <string name="title_metered_allowed">Volumenbeschränkter Verkehr ist zugelassen</string>
+    <string name="title_metered_allowed">Volumenbeschränkter Verkehr ist erlaubt</string>
     <string name="title_metered_blocked">Volumenbeschränkter Verkehr ist blockiert</string>
     <string name="title_metered_disabled">Beschränkte Regeln werden nicht angewendet</string>
     <string name="title_host_allowed">Adresse ist erlaubt</string>
@@ -181,7 +181,7 @@
     <string name="title_metered">Standardmäßig wird eine WLAN-Verbindung als nicht volumenbeschränkt und eine mobile Verbindung als volumenbeschränkt behandelt</string>
     <string name="title_internet">kann nicht auf Internet zugreifen</string>
     <string name="title_disabled">ist deaktiviert</string>
-    <string name="title_messaging">Eingehende Nachrichten werden von den Google Play-Diensten empfangen und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
+    <string name="title_messaging">Eingehende Nachrichten werden von den Google-Play-Diensten empfangen und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
     <string name="title_download">Downloads werden vom Download-Manager durchgeführt und nicht von dieser App und können daher nicht durch Blockieren dieser App blockiert werden</string>
     <string name="title_conditions">Bedingungen</string>
     <string name="title_screen_wifi">WLAN erlauben, wenn Bildschirm eingeschaltet ist</string>
@@ -199,11 +199,11 @@
     <string name="title_enable_logging">Die Protokollierung nur für blockierte Adressen aktivieren</string>
     <string name="title_enable_filtering">Auch die Filterung für die Protokollierung erlaubter Adressen aktivieren</string>
     <string name="title_enable_notify">Zugriffsbenachrichtigungen für neu protokollierte Adressen aktivieren</string>
-    <string name="title_enable_help0">Diese Einstellungen sind globale Einstellungen, die für alle Apps gelten</string>
-    <string name="title_enable_help1">Die Filterung ist auch für das Zulassen oder Blockieren einzelner Adressen erforderlich</string>
+    <string name="title_enable_help0">Diese Einstellungen sind global und gelten für alle Apps</string>
+    <string name="title_enable_help1">Die Filterung ist auch für das Erlauben oder Blockieren einzelner Adressen erforderlich</string>
     <string name="title_enable_help2">Die Protokollierung (weniger) oder Filterung (mehr) kann den Batterieverbrauch erhöhen und die Netzwerkgeschwindigkeit beeinflussen</string>
     <string name="title_rate">Bewerten</string>
-    <string name="title_allow">Zulassen</string>
+    <string name="title_allow">Erlauben</string>
     <string name="title_block">Blockieren</string>
     <string name="title_allow_wifi">WLAN erlauben</string>
     <string name="title_block_wifi">WLAN blockieren</string>
@@ -227,13 +227,13 @@
     </plurals>
     <string name="confirm_ipinfo_title">Organisationsinformationen abrufen?</string>
     <string name="confirm_ipinfo">Dadurch wird eine Verbindung zum externen Dienst ipinfo.io hergestellt und Daten über kontaktierte IP-Adressen ausgetauscht.</string>
-    <string name="external_servers">Entwickler E-Mails automatisch erhalten?</string>
+    <string name="external_servers">Entwickler-E-Mails automatisch erhalten?</string>
     <string name="confirm_google_info">Diese App kann automatisch die E-Mail des App-Entwicklers aus dem Google Play Store abrufen.</string>
     <string name="ok">Ok</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="menu_csv">Als CSV-Datei exportieren</string>
-    <string name="exporting">Exportiere...</string>
+    <string name="exporting">Wird exportiert ...</string>
     <string name="share_csv">Teilen</string>
     <string name="export_failed">Export fehlgeschlagen</string>
     <string name="exported">In den Speicher exportiert!</string>
@@ -244,7 +244,7 @@
     <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
     <string name="internet_access">Internetzugang</string>
-    <string name="internet_access_explanation">Muss für den Internetzugang eingeschaltet sein. \n\n Tipp: Sie können auch auf das App-Symbol im Hauptbildschirm tippen.</string>
+    <string name="internet_access_explanation">Muss für den Internetzugang eingeschaltet sein.\n\nTipp: Sie können auch auf das App-Symbol im Hauptbildschirm tippen.</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
@@ -252,10 +252,10 @@
     <string name="personalised_ads">Personalisierung beschränken</string>
     <string name="personalised_ads_description">Android bietet an, den Zugriff von Apps auf die Google-Werbe-ID Ihres Geräts einzuschränken. Apps können diese Einstellung jedoch möglicherweise ignorieren und weiterhin diese ID verwenden. Sie können diese ID gemäß den Richtlinien von Google auch weiterhin zu Analysezwecken erfassen. Sie benötigen Vertrauen in Google und das datenerhebende Unternehmen.</string>
     <string name="data_managment">Daten verwalten</string>
-    <string name="data_management_description">Die Allgemeine Datenschutzverordnung der EU (GDPR) ermöglicht es Nutzern aus der EU, alle mit ihnen zusammenhängenden Daten zu verwalten. Diese App bietet E-Mail-Vorlagen an, um den Entwickler zu kontaktieren. Der Entwickler ist dazu verpflichtet, innerhalb eines Monats zu antworten.</string>
+    <string name="data_management_description">Die Allgemeine Datenschutzverordnung der EU (DSGVO) ermöglicht es Nutzern aus der EU, alle mit ihnen zusammenhängenden Daten zu verwalten. Diese App bietet E-Mail-Vorlagen an, um den Entwickler zu kontaktieren. Der Entwickler ist dazu verpflichtet, innerhalb eines Monats zu antworten.</string>
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Wenn Sie der Meinung sind, dass eine App gegen Datenschutzprinzipien verstößt, können Sie sich direkt an die zuständigen Instanzen wenden.</string>
-    <string name="play_services_required">Dies ist eine Einstellung der Google Play-Dienste, die nicht auf Ihrem Gerät gefunden wurden.</string>
+    <string name="play_services_required">Dies ist eine Einstellung der Google-Play-Dienste, die nicht auf Ihrem Gerät gefunden wurden.</string>
     <string name="no_mail_service">Bitte installieren Sie einen E-Mail-Client.</string>
     <string name="blocking_settings">Tracker auswählen</string>
     <string name="ad_settings">Jetzt ändern</string>
@@ -301,7 +301,7 @@ The reason for my removal request is that I withdraw or have withdrawn my consen
 Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
 \n
 Sincerely,\n\n]]></string>
-    <string name="crash_dialog_text">Entschuldigung. TrackerControl ist abgestürzt... Wir wären sehr dankbar dafür, wenn Sie uns eine E-Mail mit Details schicken.</string>
+    <string name="crash_dialog_text">Entschuldigung. TrackerControl ist abgestürzt ... Wir wären sehr dankbar dafür, wenn Sie uns eine E-Mail mit Details schicken.</string>
     <string name="crash_dialog_comment">Bemerkungen?</string>
     <string name="instructions_monitoring_private_dns">Betätigen Sie den Schalter und nutzen Sie einige Apps. Private DNS muss deaktiviert werden.</string>
     <string name="instructions_monitoring">Betätigen Sie den Schalter und nutzen Sie einige Apps.</string>
@@ -310,23 +310,23 @@ Sincerely,\n\n]]></string>
     <string name="launch_app">Starten &amp; Tracker finden</string>
     <string name="countries">Zielländer</string>
     <string name="countries_explanation">Herausfinden, wohin Ihr Telefon Tracking-Daten sendet.\n\nInformationen basieren auf DNS-Abfragen und IP-Informationen und können ungenau sein.</string>
-    <string name="countries_loading_failed">Hoppla.. Die Karte konnte nicht geladen werden. Bitte an tc@kollnig.net wenden.</string>
+    <string name="countries_loading_failed">Hoppla ... Die Karte konnte nicht geladen werden. Bitte wenden Sie sich an tc@kollnig.net.</string>
     <string name="tracker_advertising">Werbung</string>
     <string name="tracker_analytics">Analyse</string>
     <string name="tracker_content">Notwendig</string>
     <string name="tracker_cryptomining">Verschlüsselung</string>
     <string name="tracker_fingerprinting">Fingerabdruck</string>
-    <string name="tracker_social">Sozial</string>
+    <string name="tracker_social">Soziale Medien</string>
     <string name="tracker_email">E-Mail</string>
     <string name="tracker_uncategorised">Unkategorisiert</string>
     <string name="setting_strict_blocking">Strenges Blocken</string>
-    <string name="summary_strict_blocking">Blockieren Sie bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich. Es werden mehr Apps kaputt gehen.</string>
+    <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
     <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
-    <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stossen.</string>
+    <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stoßen.</string>
     <string name="uninstall">Deinstallieren</string>
-    <string name="settings_uninstall">App-Einstellungen &amp; deinstallieren</string>
-    <string name="no_trackers_found_message_disabled">Aktiviere den Hauptbildschirm und starte die App um Tracker zu finden</string>
-    <string name="no_trackers_found_message">Starte App um Tracker zu finden</string>
+    <string name="settings_uninstall">App-Einstellungen &amp; Deinstallation</string>
+    <string name="no_trackers_found_message_disabled">Den Hauptbildschirm aktivieren und die App starten um Tracker zu finden</string>
+    <string name="no_trackers_found_message">App starten um Tracker zu finden</string>
     <string name="no_trackers_found_action">Starten</string>
     <string name="no_internet_message">"Diese App hat keinen Internetzugang. Sie kann Sie trotzdem verfolgen, indem sie Daten mit anderen Anwendungen austauscht."</string>
     <string name="no_internet">Kein Internetzugang</string>
@@ -339,10 +339,10 @@ Sincerely,\n\n]]></string>
     <string name="enable">Aktivieren</string>
     <string name="internet_blocked">Internetzugang blockiert</string>
     <string name="internet_unblocked">Internetzugang freigegeben</string>
-    <string name="category_blocked">Tracker in dieser Kategorie geblockt</string>
-    <string name="category_unblocked">Tracker in Kategorie erlaubt</string>
-    <string name="category_unblocked_warning">Bitte zuerst Kategorie blockieren!</string>
-    <string name="switch_strict_blocking">Blockiere essentielle Datenübertragung</string>
+    <string name="category_blocked">Tracker in dieser Kategorie blockiert</string>
+    <string name="category_unblocked">Tracker in dieser Kategorie erlaubt</string>
+    <string name="category_unblocked_warning">Bitte zuerst die Kategorie blockieren!</string>
+    <string name="switch_strict_blocking">Essentielle Datenübertragung blockieren</string>
     <string name="tracking_detection_failed">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen.</string>
     <string name="tracking_detection_failed_ram">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen. Nicht genügend Arbeitsspeicher vorhanden.</string>
     <string name="tracking_detection_failed_report">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen. Bitte melden Sie dieses Problem an den Entwickler.</string>
