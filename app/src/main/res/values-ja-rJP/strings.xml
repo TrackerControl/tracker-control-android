@@ -253,7 +253,6 @@
     <string name="data_management_description">EU一般データ保護規則(GDPR)により、EUからのユーザは自分に関連するあらゆるデータを管理できるようになりました。このアプリは、開発者に連絡するためのメールテンプレートを提供しています。開発者は1ヶ月以内に回答しなければなりません。</string>
     <string name="contacts">問い合わせる </string>
     <string name="contacts_description">アプリケーションがデータ保護の原則に違反していると思われる場合は、責任のある団体に直接連絡することができます。</string>
-    <string name="play_services_required">お使いの端末で見つからなかったGoogle Play Servicesの設定です。</string>
     <string name="no_mail_service">メールクライアントをインストールしてください。</string>
     <string name="blocking_settings">トラッカーを選択</string>
     <string name="ad_settings">今すぐ変更</string>
