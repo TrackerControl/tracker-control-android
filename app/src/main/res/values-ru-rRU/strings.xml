@@ -260,7 +260,6 @@
     <string name="data_management_description">Общий регламент ЕС по защите данных (GDPR) позволяет пользователям из Европейского союза управлять любыми связанными с ними данными. Это приложение предоставляет шаблоны электронной почты для связи с разработчиком. Разработчик должен ответить в течение одного месяца.</string>
     <string name="contacts">Контакты </string>
     <string name="contacts_description">Если вы считаете, что приложение нарушает принципы защиты данных, вы можете напрямую связаться с ответственными лицами.</string>
-    <string name="play_services_required">Это настройка Сервисов Google Play, которые не обнаружены на вашем устройстве.</string>
     <string name="no_mail_service">Пожалуйста, установите почтовый клиент.</string>
     <string name="blocking_settings">Выберите трекеры</string>
     <string name="ad_settings">Изменить сейчас</string>
