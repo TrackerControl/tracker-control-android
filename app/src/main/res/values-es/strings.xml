@@ -256,7 +256,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (RGPD) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
     <string name="contacts">Contacto </string>
     <string name="contacts_description">Si cree que una aplicación viola los principios de protección de datos, puede contactar directamente con las entidades responsables.</string>
-    <string name="play_services_required">Esta es una configuración de los Servicios de Google Play, que no se encontraron en su dispositivo.</string>
     <string name="no_mail_service">Por favor, instale un cliente de correo electrónico.</string>
     <string name="blocking_settings">Seleccionar rastreadores</string>
     <string name="ad_settings">Cambiar ahora</string>
