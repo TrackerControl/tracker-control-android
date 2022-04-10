@@ -265,6 +265,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="data_management_description">Obecné nařízení EU o ochraně osobních údajů (GDPR) umožňuje uživatelům z EU spravovat veškeré údaje, které se jich týkají. Tato aplikace poskytuje e-mailové šablony, které umožňují oslovit vývojáře. Vývojář musí odpovědět do jednoho měsíce.</string>
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Pokud se domníváte, že aplikace porušuje zásady ochrany osobních údajů, můžete se obrátit přímo na odpovědné subjekty.</string>
+    <string name="play_services_required">Toto je nastavení služeb Google Play, které nebyly ve vašem zařízení nalezeny.</string>
     <string name="no_mail_service">Nainstalujte si e-mailového klienta.</string>
     <string name="blocking_settings">Označ trackery</string>
     <string name="ad_settings">Změnit</string>
