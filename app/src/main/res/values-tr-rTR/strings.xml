@@ -250,7 +250,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="data_management_description">AB Genel Veri Koruma Yönetmeliği (GDPR), AB\'deki kullanıcıların kendileriyle ilgili tüm verileri yönetmesine olanak tanır. Bu uygulama, geliştiriciye ulaşmak için e-posta şablonları sağlar. Geliştiricinin bir ay içinde cevap vermesi gerekiyor.</string>
     <string name="contacts">İletişim </string>
     <string name="contacts_description">Bir uygulamanın veri koruma ilkelerini ihlal ettiğini düşünüyorsanız, sorumlu kuruluşlarla doğrudan iletişime geçmek isteyebilirsiniz.</string>
-    <string name="play_services_required">Bu, cihazınızda bulunmayan Google Play Hizmetlerinin bir ayarıdır.</string>
     <string name="no_mail_service">Lütfen bir e-posta istemcisi kurun.</string>
     <string name="blocking_settings">İzleyicileri seç</string>
     <string name="ad_settings">Şimdi değiştir</string>
