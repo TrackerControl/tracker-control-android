@@ -258,7 +258,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="data_management_description">EUs generelle personvernforordning (GDPR) tillater brukere fra EU å bestemme over alle data knyttet til dem. Denne appen tilbyr e-postmaler for å nå ut til utvikleren. Utvikleren må svare innen en måned.</string>
     <string name="contacts">Ta kontakt </string>
     <string name="contacts_description">Hvis du mener en applikasjon bryter med prinsippene om vern av data, så vil du kanskje kontakte de ansvarlige direkte.</string>
-    <string name="play_services_required">Dette er en innstilling av Google Play Tjenestene, som ikke ble funnet på din enhet.</string>
     <string name="no_mail_service">Vennligst installer en e-postklient.</string>
     <string name="blocking_settings">Velg sporere</string>
     <string name="ad_settings">Endre nå</string>
