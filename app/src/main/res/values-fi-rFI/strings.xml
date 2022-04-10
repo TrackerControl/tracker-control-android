@@ -210,7 +210,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="data_management_description">EU: n yleisen tietosuoja-asetuksen (GDPR) avulla EU: n käyttäjät voivat hallita kaikkia niihin liittyviä tietoja. Tämä sovellus tarjoaa sähköpostimallit kehittäjän tavoittamiseksi. Kehittäjän on vastattava kuukauden kuluessa.</string>
     <string name="contacts">Ottaa yhteyttä </string>
     <string name="contacts_description">Jos uskot sovelluksen olevan tietosuojaperiaatteiden vastainen, kannattaa ehkä ottaa yhteyttä suoraan vastuuhenkilöihin.</string>
-    <string name="play_services_required">Tämä on Google Play -palveluiden asetus, jota ei löydy laitteeltasi.</string>
     <string name="no_mail_service">Asenna sähköpostiohjelma.</string>
     <string name="blocking_settings">Valitse seurantalaitteet</string>
     <string name="ad_settings">Vaihda nyt</string>
