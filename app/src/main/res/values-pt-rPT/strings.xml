@@ -210,7 +210,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="data_management_description">A Regulamentação Geral de Proteção de Dados da UE (GDPR) permite aos usuários da UE gerenciar quaisquer dados relacionados a eles. Este aplicativo fornece modelos de e-mail para chegar até o desenvolvedor. O desenvolvedor tem que responder dentro de um mês.</string>
     <string name="contacts">Contato </string>
     <string name="contacts_description">Se você acha que uma aplicação viola os princípios de proteção de dados, você pode querer entrar em contato diretamente com as entidades responsáveis.</string>
-    <string name="play_services_required">Este é um cenário dos serviços do Google Play, que não foram encontrados no dispositivo yourr.</string>
     <string name="no_mail_service">Por favor, instale um cliente de e-mail.</string>
     <string name="blocking_settings">Selecione rastreadores</string>
     <string name="ad_settings">Mudar agora</string>
