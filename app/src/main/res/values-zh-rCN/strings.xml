@@ -256,6 +256,7 @@
     <string name="data_management_description">欧盟通用数据保护条例(GDPR) 允许来自欧盟的用户管理任何与他们相关的数据。这个应用程序提供电子邮件模板，以联系到开发商。开发商必须在一个月内答复。</string>
     <string name="contacts">联系方式 </string>
     <string name="contacts_description">如果您认为某个应用程序违反了数据保护原则，您可能希望直接联系相关实体。</string>
+    <string name="play_services_required">这是 Google Play 服务中的一个设置，在你的设备上没有找到 。</string>
     <string name="no_mail_service">请安装一个电子邮件客户端。</string>
     <string name="blocking_settings">选择跟踪器</string>
     <string name="ad_settings">现在更改</string>
