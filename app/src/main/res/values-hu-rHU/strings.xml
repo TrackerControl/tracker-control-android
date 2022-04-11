@@ -257,6 +257,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="data_management_description">Az EU általános adatvédelmi rendelete (GDPR) lehetővé teszi az EU-ban élő felhasználók számára a velük kapcsolatos adatok kezelését. Ez az alkalmazás e-mail sablonokat kínál, hogy elérje a fejlesztőt. A fejlesztőnek egy hónapon belül válaszolnia kell.</string>
     <string name="contacts">Kapcsolatok </string>
     <string name="contacts_description">Ha úgy gondolja, hogy egy alkalmazás sérti az adatvédelmi elveket, érdemes közvetlenül kapcsolatba lépnie a felelős szervezetekkel.</string>
+    <string name="play_services_required">Ez a Google Play Szolgáltatások beállítása, amely nem található az eszközén.</string>
     <string name="no_mail_service">Kérjük telepítsen egy e-mail klienst.</string>
     <string name="blocking_settings">Követők kiválasztása</string>
     <string name="ad_settings">Módosít</string>
