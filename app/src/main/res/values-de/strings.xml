@@ -255,6 +255,7 @@
     <string name="data_management_description">Die Allgemeine Datenschutzverordnung der EU (DSGVO) ermöglicht es Nutzern aus der EU, alle mit ihnen zusammenhängenden Daten zu verwalten. Diese App bietet E-Mail-Vorlagen an, um den Entwickler zu kontaktieren. Der Entwickler ist dazu verpflichtet, innerhalb eines Monats zu antworten.</string>
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Wenn Sie der Meinung sind, dass eine App gegen Datenschutzprinzipien verstößt, können Sie sich direkt an die zuständigen Instanzen wenden.</string>
+    <string name="play_services_required">Dies ist eine Einstellung der Google Play-Dienste, die auf Ihrem Gerät nicht gefunden wurden.</string>
     <string name="no_mail_service">Bitte installieren Sie einen E-Mail-Client.</string>
     <string name="blocking_settings">Tracker auswählen</string>
     <string name="ad_settings">Jetzt ändern</string>
