@@ -222,6 +222,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
         <item quantity="one">geçen hafta %d şirketle bağlantı kuruldu</item>
         <item quantity="other">geçen hafta %d şirketle bağlantı kuruldu</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Organizasyon bilgisi alınsın mı?</string>
     <string name="external_servers">Geliştirici e-postasını otomatik olarak al?</string>
     <string name="confirm_google_info">Bu uygulama, uygulama geliştiricisinin e-postasını sizin için Google Play Store\'dan otomatik olarak alabilir.</string>
     <string name="ok">Tamam</string>
