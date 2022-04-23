@@ -60,6 +60,6 @@ Konrad Kollnig was funded by the UK Engineering and Physical Sciences Research C
 
 The underlying network analysis functionality is provided by the NetGuard Firewall, developed by Marcel Bokhorst [@netguard].
 
-TrackerControl would not have been possible without the help of many  outstanding indviduals, including Max Van Kleek, Katherine Fletcher, George Chalhoub, and numerous app testers and friends.
+TrackerControl would not have been possible without the help of many outstanding indviduals, including Max Van Kleek, Katherine Fletcher, George Chalhoub, and numerous app testers and friends.
 
 # References
