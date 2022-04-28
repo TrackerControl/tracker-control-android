@@ -258,7 +258,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="data_management_description">Il Regolamento Generale sulla Protezione dei Dati (GDPR) dell\'UE consente agli utenti dell\'UE di gestire tutti i dati ad essi correlati. Questa applicazione fornisce modelli di email per contattare lo sviluppatore. Lo sviluppatore è obbligato a rispondere entro un mese.</string>
     <string name="contacts">Contatta </string>
     <string name="contacts_description">Se pensi che un\'applicazione violi i principi di protezione dei dati, puoi contattare direttamente gli enti responsabili.</string>
-    <string name="play_services_required">Questa è una impostazione di Google Play Services, che non è stata trovata sul tuo dispositivo.</string>
     <string name="no_mail_service">Si prega di installare un client di posta elettronica.</string>
     <string name="blocking_settings">Seleziona tracker</string>
     <string name="ad_settings">Modifica ora</string>

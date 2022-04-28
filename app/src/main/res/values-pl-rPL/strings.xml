@@ -113,7 +113,7 @@
     <string name="summary_log_logcat">Wyłącza blokowanie. Łączność (i zidentyfikowane tracky) są rejestrowane do dziennika urządzenia. Pobierz z adb logcat z tagiem \'TC-Log\'.</string>
     <string name="msg_sure">Jesteś pewien?</string>
     <string name="msg_started">Kontrola trackerów</string>
-    <string name="msg_waiting">Oczekiwanie na imprezę</string>
+    <string name="msg_waiting">Oczekiwanie na zdarzenie</string>
     <string name="msg_disabled">Użyj powyższego przełącznika, aby włączyć TrackerControl.</string>
     <string name="msg_revoked">TrackerControl został wyłączony, prawdopodobnie przy użyciu innej aplikacji opartej na sieci VPN</string>
     <string name="msg_installed">Problemy z %1$s?</string>
@@ -265,7 +265,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="data_management_description">Ogólne rozporządzenie UE w sprawie ochrony danych (PKBR) pozwala użytkownikom z UE na zarządzanie wszelkimi związanymi z nimi danymi. Aplikacja ta udostępnia szablony wiadomości e-mail, które umożliwiają dotarcie do dewelopera. Deweloper musi odpowiedzieć w ciągu jednego miesiąca.</string>
     <string name="contacts">Kontakt </string>
     <string name="contacts_description">Jeśli uważasz, że dana aplikacja narusza zasady ochrony danych osobowych, możesz skontaktować się bezpośrednio z odpowiedzialnymi podmiotami.</string>
-    <string name="play_services_required">Jest to ustawienie usług Google Play, które nie zostały znalezione na Twoim urządzeniu.</string>
     <string name="no_mail_service">Proszę zainstalować klienta poczty elektronicznej.</string>
     <string name="blocking_settings">Wybierz trackery</string>
     <string name="ad_settings">Zmień teraz</string>

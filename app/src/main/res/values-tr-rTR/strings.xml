@@ -114,6 +114,7 @@
     <string name="msg_revoked">TrackerControl, muhtemelen başka bir VPN tabanlı uygulama kullanılarak devre dışı bırakıldı</string>
     <string name="msg_installed">%1$s ile ilgili sorun mu yaşıyorsunuz?</string>
     <string name="msg_installed_description">Uygulamanın şirketlerle iletişim kurmasına izin verin</string>
+    <string name="msg_installed_tracker_libraries_found">%d izleyici kitaplığı içeriyor</string>
     <string name="msg_installed_n">Yüklendi</string>
     <string name="msg_completed">Eylem tamamlandı</string>
     <string name="msg_vpn">TrackerControl, internet trafiğini filtrelemek için yerel bir VPN kullanır.
@@ -216,11 +217,13 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="title_log_port">Bağlantı noktası %1$d</string>
     <string name="title_log_copy">Kopyala</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Bu uygulama için internet erişimini devre dışı bırak</string>
     <string name="tracked_app_name">Uygulama Adı</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">geçen hafta %d şirketle bağlantı kuruldu</item>
         <item quantity="other">geçen hafta %d şirketle bağlantı kuruldu</item>
     </plurals>
+    <string name="confirm_ipinfo_title">Organizasyon bilgisi alınsın mı?</string>
     <string name="external_servers">Geliştirici e-postasını otomatik olarak al?</string>
     <string name="confirm_google_info">Bu uygulama, uygulama geliştiricisinin e-postasını sizin için Google Play Store\'dan otomatik olarak alabilir.</string>
     <string name="ok">Tamam</string>
@@ -230,6 +233,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="exporting">Dışa aktarılıyor..</string>
     <string name="share_csv">Paylaş</string>
     <string name="export_failed">Dışa aktarım başarısız oldu</string>
+    <string name="exported">Depolama birimine aktarıldı!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detaylar</string>
     <string name="tab_trackers">İzleyiciler</string>
@@ -248,7 +252,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="data_management_description">AB Genel Veri Koruma Yönetmeliği (GDPR), AB\'deki kullanıcıların kendileriyle ilgili tüm verileri yönetmesine olanak tanır. Bu uygulama, geliştiriciye ulaşmak için e-posta şablonları sağlar. Geliştiricinin bir ay içinde cevap vermesi gerekiyor.</string>
     <string name="contacts">İletişim </string>
     <string name="contacts_description">Bir uygulamanın veri koruma ilkelerini ihlal ettiğini düşünüyorsanız, sorumlu kuruluşlarla doğrudan iletişime geçmek isteyebilirsiniz.</string>
-    <string name="play_services_required">Bu, cihazınızda bulunmayan Google Play Hizmetlerinin bir ayarıdır.</string>
     <string name="no_mail_service">Lütfen bir e-posta istemcisi kurun.</string>
     <string name="blocking_settings">İzleyicileri seç</string>
     <string name="ad_settings">Şimdi değiştir</string>
@@ -299,6 +302,7 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="tracker_cryptomining">Kripto Madencilik</string>
     <string name="tracker_fingerprinting">Parmak izi</string>
     <string name="tracker_social">Sosyal Medya</string>
+    <string name="tracker_email">E-Posta</string>
     <string name="tracker_uncategorised">Kategorize edilmemiş</string>
     <string name="setting_strict_blocking">Sıkı Engelleme</string>
     <string name="summary_strict_blocking">Yeni yüklenen uygulamalar için, şirketlerle mümkün olduğunca fazla veri paylaşımını engelleyin. Daha fazla uygulama bozulacak.</string>
@@ -333,5 +337,8 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="trackers_static_explanation">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.\n\nAğ trafiğinde tespit edilen izleme TrackerControl ile engellenebilir.</string>
     <string name="blocked">ENGELLENDİ</string>
     <string name="allowed">İZİN VERİLDİ</string>
+    <string name="setting_domain_based_blocked">Domain\'e Dayalı Engelleme</string>
     <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
+    <string name="browsers_not_supported">Tarayıcılar desteklenmemektedir ⚠️</string>
+    <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
 </resources>

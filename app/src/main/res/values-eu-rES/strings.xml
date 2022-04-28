@@ -259,7 +259,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="data_management_description">Europar Batasunaren Datuen Babeserako Araudi Orokorrak (DBAO, GDPR edo RPGD) EBko erabiltzaileek euren datuak kudeatzeko gaitasuna ematen die. Aplikazio honek garatzaileari bidaltzeko txantiloi mezuak eskaintzen dizkizu. Garatzaileak hilabeteko epean erantzun behar dizu.</string>
     <string name="contacts">Kontaktua </string>
     <string name="contacts_description">Aplikazio baten datuen babeserako oinarriak betetzen ez dituela uste baduzu, arduradunekin kontaktatu dezakezu.</string>
-    <string name="play_services_required">Hau Google Play Servicesen ezarpena bat da, baina ez da zure gailuan aurkitu.</string>
     <string name="no_mail_service">Instalatu eposta bezero bat.</string>
     <string name="blocking_settings">Aztarnariak aukeratu</string>
     <string name="ad_settings">Aldatu orain</string>

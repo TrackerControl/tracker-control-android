@@ -253,7 +253,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="data_management_description">Le Règlement général sur la protection des données (RGPD) de l\'UE permet aux utilisateurs de l\'UE de gérer toutes les données qui leur sont liées. Cette application fournit des modèles de courriel pour contacter le développeur. Le développeur a pour obligation de répondre dans un délai d\'un mois.</string>
     <string name="contacts">Contacter </string>
     <string name="contacts_description">Si vous pensez qu\'une application enfreint les principes de protection des données, vous pouvez contacter directement les entités responsables.</string>
-    <string name="play_services_required">Ceci est un paramètre des services Google Play, qui n\'a pas été trouvé sur votre appareil.</string>
     <string name="no_mail_service">Veuillez installer un client de messagerie électronique.</string>
     <string name="blocking_settings">Sélectionnez les traqueurs</string>
     <string name="ad_settings">Modifier maintenant</string>

@@ -259,7 +259,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="data_management_description">De algemene gegevensbeschermingsverordening van de EU (GDPR) stelt gebruikers uit de EU in staat om alle gegevens die op hen betrekking hebben te beheren. Deze app biedt E-mailsjablonen om de ontwikkelaar te bereiken. De ontwikkelaar moet binnen een maand antwoorden.</string>
     <string name="contacts">Contacteer </string>
     <string name="contacts_description">Als je denkt dat een app in strijd is met de beginselen van gegevensbescherming, kun je rechtstreeks contact opnemen met de verantwoordelijke instanties.</string>
-    <string name="play_services_required">Dit is een instelling van de Google Play Services, die niet werd gevonden op het toestel.</string>
+    <string name="play_services_required">Dit is een instelling van de Google Play-services, die niet is gevonden op het toestel.</string>
     <string name="no_mail_service">Installeer een E-mail client.</string>
     <string name="blocking_settings">Trackers selecteren</string>
     <string name="ad_settings">Nu wijzigen</string>

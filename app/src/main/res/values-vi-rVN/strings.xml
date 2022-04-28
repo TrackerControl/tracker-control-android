@@ -251,7 +251,6 @@
     <string name="data_management_description">Quy định chung về bảo vệ dữ liệu của Liên minh Châu Âu (GDPR) cho phép những người dùng ở Liên minh châu Âu quản lý bất kỳ dữ liệu nào liên quan đến họ. Ứng dụng này cung cấp các mẫu email để liên hệ với nhà phát triển. Nhà phát triển đó phải trả lời trong vòng một tháng.</string>
     <string name="contacts">Liên hệ </string>
     <string name="contacts_description">Nếu bạn nghĩ là một ứng dụng vi phạm các nguyên tắc bảo vệ dữ liệu, bạn có thể sẽ muốn liên hệ trực tiếp với những người có trách nhiệm.</string>
-    <string name="play_services_required">Đây là một cài đặt của Dịch vụ Google Play, nó không được tìm thấy trên thiết bị của bạn.</string>
     <string name="no_mail_service">Hãy cài đặt một ứng dụng email khách.</string>
     <string name="blocking_settings">Chọn trình theo dõi</string>
     <string name="ad_settings">Thay đổi ngay</string>
