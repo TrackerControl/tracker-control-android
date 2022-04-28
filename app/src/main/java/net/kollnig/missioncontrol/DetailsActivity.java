@@ -278,7 +278,7 @@ public class DetailsActivity extends AppCompatActivity {
                             row[i] = data.getString(i);
                         }
 
-                        String hostname = data.getString(data.getColumnIndex("daddr"));
+                        String hostname = data.getString(data.getColumnIndexOrThrow("daddr"));
                         Tracker tracker = TrackerList.findTracker(hostname);
                         if (tracker != null) {
                             row[data.getColumnNames().length] = tracker.getName();

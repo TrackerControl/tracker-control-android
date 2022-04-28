@@ -171,12 +171,12 @@ public class TrackerList {
             long limit = new Date().getTime() - 7 * 24 * 3600 * 1000L;
             if (cursor.moveToFirst()) {
                 do {
-                    int appUid = cursor.getInt(cursor.getColumnIndex("uid"));
-                    String hostname = cursor.getString(cursor.getColumnIndex("daddr"));
+                    int appUid = cursor.getInt(cursor.getColumnIndexOrThrow("uid"));
+                    String hostname = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
                     Tracker tracker = findTracker(hostname);
                     checkTracker(trackers, appUid, tracker);
 
-                    long time = cursor.getLong(cursor.getColumnIndex("time"));
+                    long time = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
                     if (time > limit)
                         checkTracker(trackersWeek, appUid, tracker);
                 } while (cursor.moveToNext());
@@ -239,9 +239,9 @@ public class TrackerList {
         if (cursor.moveToFirst()) {
             outer:
             do {
-                String host = cursor.getString(cursor.getColumnIndex("daddr"));
-                long lastSeen = cursor.getLong(cursor.getColumnIndex("time"));
-                boolean uncertain = cursor.getInt(cursor.getColumnIndex("uncertain")) == 2;
+                String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+                long lastSeen = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
+                boolean uncertain = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain")) == 2;
 
                 Tracker tracker = findTracker(host);
                 if (tracker == null)

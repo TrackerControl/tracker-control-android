@@ -101,7 +101,7 @@ public class CountriesFragment extends Fragment {
 
             if (cursor.moveToFirst()) {
                 do {
-                    String host = cursor.getString(cursor.getColumnIndex("daddr"));
+                    String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
                     if (findTracker(host) == null)
                         continue;
 
