@@ -293,10 +293,10 @@ void handle_ip(const struct arguments *args,
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
         (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play))) {
-        if (args->ctx->sdk <= 28) // Android 9 Pie
-            uid = get_uid(version, protocol, saddr, sport, daddr, dport);
-        else
-            uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+            if (args->ctx->sdk <= 28) // Android 9 Pie
+                uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+            else
+                uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
     }
 
     log_android(ANDROID_LOG_DEBUG,
@@ -348,13 +348,14 @@ void handle_ip(const struct arguments *args,
                     log_android(ANDROID_LOG_DEBUG, "Seen SNI: %s", hostname);
                     packetdata = hostname;
                 }
-                
-                // Find uid to handle in main activity
-                if (args->ctx->sdk <= 28) // Android 9 Pie.
-                    uid = get_uid(version, protocol, saddr, sport, daddr, dport);
-                else
-                    uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
             }
+
+            // Find uid to handle in main activity
+            if (args->ctx->sdk <= 28) // Android 9 Pie.
+                uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+            else
+                uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+
             allowed = 1;
         }
 
