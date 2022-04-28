@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -44,6 +45,7 @@ import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -270,11 +272,23 @@ public class AdapterLog extends CursorAdapter {
                     @Override
                     protected void onPostExecute(String name) {
                         tvDaddr.setText(">" + name);
+
+                        if (TrackerList.findTracker(name) != null)
+                            tvDaddr.setTypeface(null, Typeface.BOLD);
+                        else
+                            tvDaddr.setTypeface(null, Typeface.NORMAL);
+
                         ViewCompat.setHasTransientState(tvDaddr, false);
                     }
                 }.execute(daddr);
-            } else
+            } else {
+                if (TrackerList.findTracker(dname) != null)
+                    tvDaddr.setTypeface(null, Typeface.BOLD);
+                else
+                    tvDaddr.setTypeface(null, Typeface.NORMAL);
+
                 tvDaddr.setText(dname);
+            }
         else
             tvDaddr.setText(getKnownAddress(daddr));
 
@@ -309,8 +323,8 @@ public class AdapterLog extends CursorAdapter {
                 }.execute(daddr);
         }
 
-        // Show extra data
-        if (TextUtils.isEmpty(data)) {
+        // Show extra data, but not for TLS (because we retrieve the SNI from the data field)
+        if (TextUtils.isEmpty(data) || dport == 443) {
             tvData.setText("");
             tvData.setVisibility(View.GONE);
         } else {
