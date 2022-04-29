@@ -81,7 +81,9 @@ You can export the results of your analysis from the app menu TrackerControl to 
 
 It is further possible to enable the direct logging of contacted domains to the console. This is helpful for research studies that instrument apps using an additional computer and can be enabled through Settings -> Advanced options -> Log transmissions to ADB. Note that this disables any blocking.
 
-By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps.
+By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps. The analysis of system apps might be helpful if you want to analyse the data sharing of sytem apps, such as Google Maps, YouTube or the Google Play Service, all of which might be used by other apps to do tracking for them. In other words, without looking at system apps, some tracking might be missed; the challenge here, however, is that it's difficult to differentiate different apps that use other Google apps for tracking. This means that for a robust analysis, it's prudent to uninstall and deactivate as many apps on the user's phone as possible.
+
+TrackerControl also has a traffic log functionality that can be accssed from the menu bar. If enabled, contacted tracking domains will be highlighted in **bold**. Note, however, that the traffic log currently lacks a display of whether there's ambiguity in the contacted domains (as opposed to the per-app screens that show when certain domains are *uncertain*).
 
 ### Tracker library analysis
 
