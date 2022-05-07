@@ -24,7 +24,7 @@ bibliography: paper.bib
 
 # Summary
 
-Third-party tracking allows companies to collect users' behavioural data, track their activity across digital devices, and potentially share this data with third-party companies. This can put deep insights into private lives into the hands of strangers, and often happens without the awareness of end-users. In light of this, we have developed TrackerControl, which aims to provide the interested individuals with real-time evidence of tracking.
+Third-party tracking allows companies to collect users' behavioural data, track their activity across digital devices, and potentially share this data with third-party companies. This can put deep insights into private lives into the hands of strangers, and often happens without the awareness of end-users. In light of this, we have developed TrackerControl, which aims to provide interested individuals with real-time evidence of tracking.
 
 # Statement of need
 
@@ -40,13 +40,13 @@ To improve the quality of tracking analysis and make it available to a wide audi
 
 The tracking database behind TC is a unique feature of the app. The core of this database is the `X-Ray 2020` database that is the product of significant research efforts over the past years [@binns2018;@van_kleek_better_2017;@kollnig2021_consent;@kollnig2021_iphone_android]. This database has been created from analysing more than 2 million Android apps. The `X-Ray 2020` is complemented by the Disconnect.me database, that is the foundation for tracker blocking in Mozilla Firefox on the web. We further integrate the commonly used StevenBlack hostlist for tracking in apps, as a fallback. Overall, these databases provide information on 1) the *companies* behind tracking on the web and in apps, 2) the *countries* in which these companies are based, 3) and the *purposes* for which tracking is conducted (e.g. Analytics or Ads). The visualisation of tracking inside TC loosely follows the work by Van Kleek et al.&nbsp;[@van_kleek_better_2017; @van_kleek_x-ray_2018].
 
-The core of TC builds on the NetGuard app, which is in active use by millions of users worldwide [@netguard]. The high maturity of NetGuard ensures reliability of tracker analysis whilst minimising battery impact and supporting the long-term maintainability of TC. In addition to providing insights into app tracking, users of TC can also block unwanted transmissions, which has contributed to building a vibrant community of tens of thousands of users. This community has helped make TC available in 19 languages.
+The core of TC builds on the NetGuard app, which is in active use by millions of users worldwide [@netguard]. The high maturity of NetGuard ensures the reliability of the  tracker analysis whilst minimising battery impact and supporting the long-term maintainability of TC. In addition to providing insights into app tracking, users of TC can also block unwanted transmissions, which has contributed to building a vibrant community of tens of thousands of users. This community has helped make TC available in 19 languages.
 
 # Use in past and ongoing research
 
-TC has faciliated and inspired academic research at the intersection of policy and privacy technolology [@kollnig2021_consent; @appchk]. It has also been used by the Finnish innovation fund Sitra for its 'Digipower investigation' into apps' data practices. As part of this study, leading Finnish politicians and journalists used TrackerControl to analyse the practices of Android apps. The results of this investigation will be presented at the Finnish and European Parliament over the course of 2022.
+TC has faciliated and inspired academic research at the intersection of policy and privacy technolology [@kollnig2021_consent; @appchk]. It has also been used by the Finnish innovation fund Sitra for its 'Digipower investigation' into apps' data practices. As part of this study, leading Finnish politicians and journalists used TC to analyse the practices of Android apps. The results of this investigation will be presented at the Finnish and European Parliament over the course of 2022.
 
-TC is also part of the PlatformControl toolkit (https://www.platformcontrol.org) that forms the foundation of ongoing research efforts into app privacy as part of our research group at the University of Oxford&nbsp;[@kollnig2021_consent; @kollnig2021_iphone_android; @kollnig_before_2021; @kollnig2021_iphone_android; @kollnig_goodbye_2022].
+TC is also part of the PlatformControl toolkit (<https://www.platformcontrol.org/> ) that forms the foundation of ongoing research efforts into app privacy as part of our research group at the University of Oxford&nbsp;[@kollnig2021_consent; @kollnig2021_iphone_android; @kollnig_before_2021; @kollnig2021_iphone_android; @kollnig_goodbye_2022].
 
 # Screenshots
 
