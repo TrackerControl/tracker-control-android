@@ -1,0 +1,3 @@
+- Highlight tracker domains in traffic log as bold
+- Update host lists, dependencies, translations
+- Fix bugs
