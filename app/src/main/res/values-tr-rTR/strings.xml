@@ -4,6 +4,7 @@
     <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
     <string name="app_xposed">Xposed, TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilecek çok fazla çökmeye neden olur, bu nedenle Xposed kuruluyken TrackerControl desteklenmez</string>
     <string name="app_eula">Bu uygulamanın kullanımı kendi sorumluluğunuzdadır. Hiçbir uygulama izlemeye karşı %100 koruma sağlayamaz.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Gizlilik Politikası</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Çerez Politikası</a></string>
     <string name="channel_foreground">Çalışan hizmetler</string>
     <string name="channel_notify">Genel bildirimler</string>
     <string name="channel_access">Bildirimlere eriş</string>
@@ -341,4 +342,5 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
     <string name="browsers_not_supported">Tarayıcılar desteklenmemektedir ⚠️</string>
     <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
+    <string name="failed_loading_cached_analysis">Önbelleğe alınmış izleyici sonuçları yüklenemedi. Lütfen bunu hello@trackercontrol.org adresinden geliştiriciye bildirin</string>
 </resources>
