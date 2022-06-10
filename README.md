@@ -8,7 +8,7 @@ TrackerControl is an Android app that allows users to monitor and control the wi
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
-used by Firefox, and our in-house blocklist is used, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
+used by Firefox, and of our in-house blocklist, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
 Additionally, TrackerControl supports custom blocklists and uses the signatures from [ClassyShark3xodus](https://f-droid.org/en/packages/com.oF2pks.classyshark3xodus/)/[Exodus Privacy](https://exodus-privacy.eu.org/) for the analysis of tracker libraries within app code.
 
 This approach
