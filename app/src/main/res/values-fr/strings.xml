@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permet aux utilisateurs de surveiller et de contrôler la collecte (cachée et courante) des données relatives à leur comportement dans les applications mobiles (\"tracking\").</string>
+    <string name="app_copyright">Copyright \u00A9 2019-2022 Konrad Kollnig (Informatique centrée sur l’humanité, Département des sciences informatiques, Université d\'Oxford)\n\nTrackerControl est basé sur NetGuard, développé par Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl nécessite Android 5.1 ou une version ultérieure</string>
     <string name="app_xposed">Xposed provoque trop de plantages, ce qui peut entraîner le retrait de TrackerControl de la boutique Google Play. TrackerControl n\'est donc pas pris en charge lorsque Xposed est installé</string>
     <string name="app_eula">L\'utilisation de cette application se fait à vos propres risques. Aucune application ne peut offrir une protection à 100 % contre le suivi.</string>
@@ -115,6 +116,7 @@
     <string name="msg_revoked">TrackerControl a été désactivé, probablement en utilisant une autre application VPN</string>
     <string name="msg_installed">Problèmes avec %1$s?</string>
     <string name="msg_installed_description">Permettre à l\'application de contacter des societés</string>
+    <string name="msg_installed_tracker_libraries_found">Contient %d bibliothèques de traqueurs</string>
     <string name="msg_installed_n">A été installé</string>
     <string name="msg_completed">Tâche terminée</string>
     <string name="msg_vpn">TrackerControl utilise un VPN local pour filtrer le trafic Internet.
@@ -226,6 +228,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
         <item quantity="other">a contacté %d entreprises</item>
     </plurals>
     <string name="confirm_ipinfo_title">Récupérer les informations sur l\'organisation?</string>
+    <string name="confirm_ipinfo">Ceci contactera le service externe ipinfo.io, et partagera des données sur les adresses IP avec eux.</string>
     <string name="external_servers">Obtenir automatiquement le courriel du développeur ?</string>
     <string name="confirm_google_info">Cette application peut obtenir automatiquement le courriel du développeur de l\'application depuis la boutique Google Play pour vous.</string>
     <string name="ok">OK</string>
@@ -235,6 +238,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="exporting">Exportation en cours..</string>
     <string name="share_csv">Partager</string>
     <string name="export_failed">L\'exportation a échoué</string>
+    <string name="exported">Exporté vers l\'espace de stockage !</string>
     <!-- App Details -->
     <string name="title_activity_detail">Détails</string>
     <string name="tab_trackers">Traqueurs</string>
