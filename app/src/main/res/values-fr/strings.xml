@@ -168,7 +168,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_raddr">Adresse de destination</string>
     <string name="title_rport">Port de destination</string>
     <string name="title_ruid">Application de destination</string>
-    <string name="title_external">Pour un serveur externe, sélectionnez \"nobody\"</string>
+    <string name="title_external">Pour un serveur externe, sélectionnez \"personne\"</string>
     <string name="title_lockdown_enabled">Le trafic est verrouillé</string>
     <string name="title_unmetered_allowed">Le trafic illimité est autorisé</string>
     <string name="title_unmetered_blocked">Le trafic illimité est bloqué</string>
@@ -181,7 +181,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_interactive_allowed">Autoriser lorsque l\'écran est allumé</string>
     <string name="title_roaming_blocked">Bloquer lors de l\'itinérance</string>
     <string name="title_metered">Par défaut, une connexion Wi-Fi est considérée comme illimitée et une connexion mobile limitée</string>
-    <string name="title_internet">ne peut accéder à Internet</string>
+    <string name="title_internet">Impossible d\'accéder à Internet</string>
     <string name="title_disabled">est désactivée</string>
     <string name="title_messaging">Les messages entrants sont reçus par les services Google Play et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
     <string name="title_download">Les téléchargements sont effectués par le gestionnaire de téléchargement et non par cette application et ne peuvent donc pas être bloqués en bloquant cette application</string>
