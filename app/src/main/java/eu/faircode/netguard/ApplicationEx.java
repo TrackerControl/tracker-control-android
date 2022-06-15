@@ -38,7 +38,9 @@ import net.kollnig.missioncontrol.R;
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.config.CoreConfigurationBuilder;
+import org.acra.config.DialogConfiguration;
 import org.acra.config.DialogConfigurationBuilder;
+import org.acra.config.MailSenderConfiguration;
 import org.acra.config.MailSenderConfigurationBuilder;
 
 public class ApplicationEx extends Application {
@@ -49,7 +51,7 @@ public class ApplicationEx extends Application {
         super.attachBaseContext(base);
 
         try {
-            CoreConfigurationBuilder builder = new CoreConfigurationBuilder(this);
+            CoreConfigurationBuilder builder = new CoreConfigurationBuilder();
             builder
                 .withReportContent( // limit collected data
                     ReportField.USER_COMMENT,
@@ -61,19 +63,21 @@ public class ApplicationEx extends Application {
                     ReportField.STACK_TRACE_HASH,
                     ReportField.AVAILABLE_MEM_SIZE,
                     ReportField.TOTAL_MEM_SIZE)
-                .withReportFormat(KEY_VALUE_LIST);
-
-            builder.getPluginConfigurationBuilder(MailSenderConfigurationBuilder.class)
-                    .withMailTo("crash@trackercontrol.org")
-                    .withResBody(R.string.crash_body)
-                    .withReportAsFile(true)
-                    .withReportFileName("tracker-control-crash.json")
-                    .withEnabled(true);
-
-            builder.getPluginConfigurationBuilder(DialogConfigurationBuilder.class)
-                    .withResText(R.string.crash_dialog_text)
-                    .withResCommentPrompt(R.string.crash_dialog_comment)
-                    .withEnabled(true);
+                .withReportFormat(KEY_VALUE_LIST)
+                .withPluginConfigurations(
+                        new MailSenderConfigurationBuilder()
+                            .withMailTo("crash@trackercontrol.org")
+                            .withBody(getString(R.string.crash_body))
+                            .withReportAsFile(true)
+                            .withReportFileName("tracker-control-crash.json")
+                            .withEnabled(true)
+                            .build(),
+                        new DialogConfigurationBuilder()
+                            .withText(getString(R.string.crash_dialog_text))
+                            .withCommentPrompt(getString(R.string.crash_dialog_comment))
+                            .withEnabled(true)
+                            .build()
+                );
 
             ACRA.init(this, builder);
 
