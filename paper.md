@@ -46,7 +46,7 @@ The core of TC builds on the NetGuard app, which is in active use by millions of
 
 TC has faciliated and inspired academic research at the intersection of policy and privacy technolology [@kollnig2021_consent; @appchk]. It has also been used by the Finnish innovation fund Sitra for its 'Digipower investigation' into apps' data practices. As part of this study, leading Finnish politicians and journalists used TC to analyse the practices of Android apps. The results of this investigation will be presented at the Finnish and European Parliament over the course of 2022.
 
-TC is also part of the PlatformControl toolkit (at <https://www.platformcontrol.org/>) that forms the foundation of ongoing research efforts into app privacy as part of our research group at the University of Oxford&nbsp;[@kollnig2021_consent; @kollnig2021_iphone_android; @kollnig_before_2021; @kollnig2021_iphone_android; @kollnig_goodbye_2022].
+TC is also part of the PlatformControl toolkit (available at <https://www.platformcontrol.org/>) that forms the foundation of ongoing research efforts into app privacy as part of our research group at the University of Oxford&nbsp;[@kollnig2021_consent; @kollnig2021_iphone_android; @kollnig_before_2021; @kollnig2021_iphone_android; @kollnig_goodbye_2022].
 
 # Screenshots
 
