@@ -73,17 +73,17 @@ TrackerControl is mainly designed to help you investigate the tracking practices
 
 Mobile trackers rely on the sending of personal data over the internet. This is why tracking can be detected and analysed from apps' network traffic. This is the core functionality of TrackerControl. The advantage of this approach over tracker library analysis is that actual evidence of data sharing is gathered; by contrast, when analysing solely the presence of tracking libraries in apps, some of these libraries may never be activated by an app at run-time.
 
-At the moment, TrackerControl Slim, available on the [Google Play Store](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) is the preferred tool for tracking analysis, because this version of TrackerControl does block network traffic and additionally resolves contacted domains using TLS Server Name Indication.
+At the moment, TrackerControl Slim, available on the [Google Play Store](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) is the preferred tool for tracking analysis, because this version of TrackerControl does not block network traffic and additionally resolves contacted domains using TLS Server Name Indication.
 
 You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
 
-You can export the results of your analysis from the app menu TrackerControl to CSV ("Export as CSV"). If you export to CSV from the main screen of TrackerControl, you create nice visualisations of your exported traffic data using purpose-built software by [Hestia Labs](https://experiences.hestialabs.org/tracker-control#load-data).
+You can export the results of your analysis from the app menu TrackerControl to CSV ("Export as CSV"). If you export to CSV from the main screen of TrackerControl, you can create nice visualisations of your exported traffic data using purpose-built software by [Hestia Labs](https://experiences.hestialabs.org/tracker-control#load-data).
 
 It is further possible to enable the direct logging of contacted domains to the console. This is helpful for research studies that instrument apps using an additional computer and can be enabled through Settings -> Advanced options -> Log transmissions to ADB. Note that this disables any blocking.
 
 By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps. The analysis of system apps might be helpful if you want to analyse the data sharing of sytem apps, such as Google Maps, YouTube or the Google Play Service, all of which might be used by other apps to do tracking for them. In other words, without looking at system apps, some tracking might be missed; the challenge here, however, is that it's difficult to differentiate different apps that use other Google apps for tracking. This means that for a robust analysis, it's prudent to uninstall and deactivate as many apps on the user's phone as possible.
 
-TrackerControl also has a traffic log functionality that can be accssed from the menu bar. If enabled, contacted tracking domains will be highlighted in **bold**. Note, however, that the traffic log currently lacks a display of whether there's ambiguity in the contacted domains (as opposed to the per-app screens that show when certain domains are *uncertain*).
+TrackerControl also has a traffic log functionality that can be accssed from the menu bar. If enabled, contacted tracking domains will be highlighted in **bold**. Note, however, that the traffic log currently lacks a display of whether there's ambiguity in the contacted domains (as opposed to the per-app screens that show when certain domains are *uncertain*). Displayed domains can be inaccurate.
 
 ### Tracker library analysis
 
