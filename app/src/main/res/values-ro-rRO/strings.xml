@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_android">TrackerControl necesită Android 5.1 sau mai nou</string>
+    <string name="channel_notify">Notificări generale</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
