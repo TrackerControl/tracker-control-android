@@ -2,7 +2,35 @@
 <resources>
     <string name="app_android">TrackerControl necesită Android 5.1 sau mai nou</string>
     <string name="channel_notify">Notificări generale</string>
+    <string name="menu_sort_name">Sortează după nume</string>
+    <string name="menu_sort_uid">Sortare după uid</string>
+    <string name="menu_settings">Setări</string>
+    <string name="menu_invite">Invită</string>
+    <string name="menu_legend">Legendă</string>
+    <string name="menu_about">Despre</string>
+    <string name="menu_apps">Alte aplicații</string>
+    <string name="setting_options">Opțiuni</string>
+    <string name="setting_dark">Temă întunecată</string>
+    <string name="setting_advanced_options">Opțiuni avansate</string>
+    <string name="setting_import">Importă setări</string>
+    <string name="msg_sure">Ești sigur?</string>
+    <string name="msg_try">Încearcă TrackerControl</string>
+    <string name="msg_inactive">Nu există conexiune la internet</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_delete">Șterge</string>
+    <string name="title_conditions">Condiții</string>
+    <string name="title_options">Opțiuni</string>
     <!-- App Overview -->
+    <string name="yes">Da</string>
+    <string name="no">Nu</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Detalii</string>
+    <string name="tab_countries">Țări</string>
     <!-- Actions -->
+    <string name="contacts">Contact </string>
+    <string name="contact_playstore">Google</string>
+    <string name="back">Înapoi</string>
 </resources>
