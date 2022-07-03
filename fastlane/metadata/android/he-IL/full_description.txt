@@ -1,17 +1,17 @@
-TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
+TrackerControl מאפשר למשתמשים לנטר ולשלוט באיסוף הנתונים הנרחב, המתמשך והנסתר באפליקציות לנייד על התנהגות המשתמש ('מעקב').
 
-To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
+כדי לזהות מעקב, TrackerControl משלב את העוצמה של רשימת החסימה של Disconnect, המשמשת את Firefox, ונעשה שימוש ברשימת החסימה הפנימית שלנו, שנוצרה מניתוח <i>~2,000,000</i> אפליקציות! בנוסף, TrackerControl תומך ברשימות חסימה מותאמות אישית.
 
-This approach
-- reveals the companies behind tracking,
-- allows to block tracking selectively, and
-- exposes the purposes of tracking, such as analytics or advertising.
+הגישה הזו
+- חושף את החברות מאחורי המעקב,
+- מאפשר לחסום מעקב באופן סלקטיבי, וכן
+חושף את מטרות המעקב, כגון ניתוח או פרסום.
 
-The app also aims to educate about your rights under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
+האפליקציה גם נועדה לחנך על הזכויות שלך על פי חוק הגנת מידע, כגון תקנת הגנת המידע הכללית של האיחוד האירופי (GDPR).
 
-Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps' network communications <i>locally on the Android device</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
+מתחת למכסה המנוע, TrackerControl משתמש בפונקציונליות ה-VPN של אנדרואיד, כדי לנתח את תקשורת הרשת של אפליקציות <i>מקומית במכשיר האנדרואיד</i>. הדבר מתבצע באמצעות שרת VPN מקומי, כדי לאפשר ניתוח תעבורת רשת על ידי TrackerControl.
 
-No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
+אין צורך בשורש, VPNs אחרים או DNS פרטי אינם נתמכים. לא נעשה שימוש בשרת VPN חיצוני, כדי לשמור על בטיחות הנתונים שלך! TrackerControl אפילו מגן עליך מפני <i>הסואת DNS</i>, טכניקה פופולרית להסתרת עוקבים באתרים ובאפליקציות.
 
-TrackerControl will always be free and open source, being a research project.
+TrackerControl תמיד יהיה חינמי וקוד פתוח, בהיותו פרויקט מחקר.
 
