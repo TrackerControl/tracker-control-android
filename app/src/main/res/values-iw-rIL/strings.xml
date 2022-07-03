@@ -160,6 +160,57 @@
     <string name="msg_start_forward">האם להתחיל להעביר מ-%1$s יציאה %2$d ל-%3$s:%4$d של \'%5$s\'?</string>
     <string name="msg_stop_forward">להפסיק את ההעברה של יציאה %1$s %2$d?</string>
     <string name="msg_log_logcat">אזהרה: החסימה מושבתת בגלל רישום ADB.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">הוסף</string>
+    <string name="menu_delete">מחק</string>
+    <string name="setting_forwarding">העברת פורטים</string>
+    <string name="title_protocol">נוהל</string>
+    <string name="title_dport">יציאת מקור</string>
+    <string name="title_raddr">כתובת יעד</string>
+    <string name="title_rport">נמל היעד</string>
+    <string name="title_ruid">אפליקציית יעד</string>
+    <string name="title_external">עבור שרת חיצוני בחר \'אף אחד\'</string>
+    <string name="title_lockdown_enabled">התנועה נעולה</string>
+    <string name="title_unmetered_allowed">תנועה ללא מדידה מותרת</string>
+    <string name="title_unmetered_blocked">תנועה ללא מדידה חסומה</string>
+    <string name="title_unmetered_disabled">כללים ללא מדידה אינם מוחלים</string>
+    <string name="title_metered_allowed">תנועה מדודה מותרת</string>
+    <string name="title_metered_blocked">תנועה מדודה חסומה</string>
+    <string name="title_metered_disabled">כללים מדדים אינם מיושמים</string>
+    <string name="title_host_allowed">כתובת מותרת</string>
+    <string name="title_host_blocked">הכתובת חסומה</string>
+    <string name="title_interactive_allowed">אפשר כשהמסך פועל</string>
+    <string name="title_roaming_blocked">חסום בעת נדידה</string>
+    <string name="title_metered">כברירת מחדל, חיבור Wi-Fi נחשב ללא מדידה וחיבור נייד למדוד</string>
+    <string name="title_internet">לא יכול לגשת לאינטרנט</string>
+    <string name="title_disabled">מושבת</string>
+    <string name="title_messaging">הודעות נכנסות מתקבלות על ידי שירותי Google Play ולא על ידי אפליקציה זו ולכן לא ניתן לחסום אותן על ידי חסימת אפליקציה זו</string>
+    <string name="title_download">ההורדות מתבצעות על ידי מנהל ההורדות ולא על ידי אפליקציה זו ולכן לא ניתן לחסום אותן על ידי חסימת אפליקציה זו</string>
+    <string name="title_conditions">תנאים</string>
+    <string name="title_screen_wifi">אפשר Wi-Fi כשהמסך פועל</string>
+    <string name="title_screen_other">אפשר לנייד כשהמסך פועל</string>
+    <string name="title_roaming">חסום בעת נדידה</string>
+    <string name="title_lockdown">אפשר במצב נעילה</string>
+    <string name="title_related">סנן דומים</string>
+    <string name="title_access">נסיונות גישה</string>
+    <string name="title_precedence">כללי הגישה מקבלים עדיפות על פני כללים אחרים</string>
+    <string name="title_options">אפשרויות</string>
+    <string name="title_notify">הודעה על ניסיונות גישה לאינטרנט</string>
+    <string name="title_logging_disabled">רישום או סינון אינם מופעלים</string>
+    <string name="title_logging_enabled">רישום וסינון מופעלים</string>
+    <string name="title_logging_configure">הגדר</string>
+    <string name="title_enable_logging">אפשר רישום של כתובות חסומות בלבד</string>
+    <string name="title_enable_filtering">אפשר סינון גם כדי לרשום כתובות מותרות</string>
+    <string name="title_enable_notify">אפשר הודעות גישה עבור כתובות שנרשמו לאחרונה</string>
+    <string name="title_enable_help0">הגדרות אלה הן הגדרות כלליות החלות על כל היישומים</string>
+    <string name="title_enable_help1">נדרש סינון גם על מנת לאפשר או לחסום כתובות בודדות</string>
+    <string name="title_enable_help2">הפעלת תיעוד (מופחת) או סינון (מוגבר) עלול להשפיע על צריכת סוללה, ועשוי גם להשפיע על מהירות הרשת</string>
+    <string name="title_rate">דרג</string>
+    <string name="title_allow">אפשר</string>
+    <string name="title_block">חסום</string>
     <string name="title_allow_wifi">אפשר Wi-Fi</string>
     <string name="title_block_wifi">חסום Wi-Fi</string>
     <string name="title_allow_other">אפשר נייד</string>
@@ -172,6 +223,18 @@
     <!-- App Overview -->
     <string name="tracked_app_icon">השבת את הגישה לאינטרנט עבור יישום זה</string>
     <string name="tracked_app_name">שם האפליקציה</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">יצר קשר עם החברה %d בשבוע שעבר</item>
+        <item quantity="two">יצר קשר עם החברות %d בשבוע שעבר</item>
+        <item quantity="many">יצר קשר עם %d חברות בשבוע שעבר</item>
+        <item quantity="other">יצר קשר עם %d החברות בשבוע שעבר</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">יצר קשר עם %d חברה כל הזמן</item>
+        <item quantity="two">יצר קשר עם %d חברות כל הזמן</item>
+        <item quantity="many">יצר קשר עם %d חברות כל הזמן</item>
+        <item quantity="other">יוצרים קשר עם %d החברות כל הזמן</item>
+    </plurals>
     <string name="confirm_ipinfo_title">האם לאחזר את פרטי הארגון?</string>
     <string name="confirm_ipinfo">פעולה זו תיצור קשר עם השירות החיצוני ipinfo.io, וישתף איתם נתונים לגבי כתובות IP שאליו יצרו קשר.</string>
     <string name="external_servers">לקבל דוא\"ל למפתח באופן אוטומטי?</string>
