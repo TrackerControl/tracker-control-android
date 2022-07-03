@@ -1,5 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl מאפשר למשתמשים לפקח ולשלוט באיסוף הנתונים הנרחב, המתמשך והנסתר באפליקציות לנייד על התנהגות המשתמש (\'מעקב\').</string>
+    <string name="app_copyright">זכויות יוצרים \u00A9 2019–2022 Konrad Kollnig (מחשוב במרכז אנושי, המחלקה למדעי המחשב, אוניברסיטת אוקספורד)\n\nTrackerControl מבוסס על NetGuard, שפותח על ידי Marcel Bokhorst (M66B).</string>
+    <string name="app_android">TrackerControl דורש אנדרואיד 5.1 ומעלה</string>
+    <string name="app_xposed">Xposed גורם ליותר מדי קריסות, מה שעלול לגרום להסרה של TrackerControl מחנות Google Play, לכן TrackerControl אינו נתמך כאשר Xposed מותקן</string>
+    <string name="app_eula">השימוש באפליקציה זו הוא על אחריותך בלבד. אף אפליקציה לא יכולה להציע 100% הגנה מפני מעקב.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">מדיניות פרטיות</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">מדניות קובצי עוגיות</a></string>
+    <string name="channel_foreground">שירות מופעל</string>
+    <string name="channel_notify">הודעות כלליות</string>
+    <string name="channel_access">גישה להתראות</string>
+    <string name="menu_search">חפש אפליקציה</string>
+    <string name="menu_filter">סינון אפליקציות</string>
+    <string name="menu_app_user">הצג אפליקציות משתמש</string>
+    <string name="menu_app_system">הצג אפליקציות מערכת</string>
+    <string name="menu_app_nointernet">הצג אפליקציות ללא אינטרנט</string>
+    <string name="menu_sort">מיין אפליקציות</string>
+    <string name="menu_sort_name">מיין לפי שם</string>
+    <string name="menu_sort_uid">מיין לפי המזהה שלך</string>
+    <string name="menu_sort_companies_week">מיין לפי חברות (שבוע)</string>
+    <string name="menu_sort_companies">מיין לפי חברות</string>
+    <string name="menu_log">יומן התנועה</string>
+    <string name="menu_settings">הגדרות</string>
+    <string name="menu_invite">להזמין</string>
+    <string name="menu_legend">אגדי</string>
+    <string name="menu_support">תמכו באפליקציה הזו</string>
+    <string name="menu_log_support">הדרכה</string>
+    <string name="menu_about">אודות</string>
+    <string name="menu_apps">אפליקציות נוספות שלנו</string>
+    <string name="menu_protocol_other">אחר</string>
+    <string name="menu_traffic_allowed">מאושר</string>
+    <string name="menu_traffic_blocked">חסום</string>
+    <string name="menu_live">עידכונים חיים</string>
+    <string name="menu_refresh">רענן</string>
+    <string name="menu_resolve">הצג שם</string>
+    <string name="menu_organization">הצג ארגון</string>
+    <string name="menu_pcap_enabled">PCAP מופעל</string>
+    <string name="menu_pcap_export">ייצוא PCAP</string>
+    <string name="menu_clear">נקה</string>
+    <string name="menu_export">ייצא</string>
+    <string name="menu_reset">אפס</string>
+    <string name="menu_cleanup">לנקות</string>
+    <string name="setting_options">אפשרויות</string>
+    <string name="setting_dark">ערכת נושא כהה</string>
+    <string name="setting_install">הודע על התקנה חדשה</string>
+    <string name="setting_pause">הפעלה אוטומטית לאחר %1$s דקות</string>
+    <string name="setting_update">בדוק עדכונים</string>
+    <string name="setting_network_options">אפשרויות רשת</string>
+    <string name="setting_subnet">ניתוב רשת משנה</string>
+    <string name="setting_tethering">אפשר קשירה</string>
+    <string name="setting_lan">אפשר גישה לרשת LAN</string>
+    <string name="summary_block_domains">אזהרה: מארחים חסומים אינם מוצגים בממשק המשתמש.</string>
+    <string name="summary_rcode">ערך ברירת המחדל הוא 3 (NXDOMAIN), שפירושו \'דומיין לא קיים\'.</string>
+    <string name="summary_validate">שם הדומיין המשמש לאימות חיבור האינטרנט ביציאה 443 (https).</string>
+    <string name="summary_socks5_enabled">רק תעבורת TCP תישלח לשרת ה-proxy</string>
+    <string name="summary_watchdog">בדוק מעת לעת אם TrackerControl עדיין פועל (הזן אפס כדי להשבית אפשרות זו). זה עלול לגרום לשימוש נוסף בסוללה.</string>
+    <string name="summary_log_logcat">משבית את החסימה. תקשורת (וגששים מזוהים) נרשמות ביומן המכשיר. אחזר עם adb logcat עם התג \'TC-Log\'.</string>
+    <string name="msg_sure">אתה בטוח?</string>
+    <string name="msg_started">בדוק עוקבים</string>
+    <string name="msg_waiting">ממתין לאירוע</string>
+    <string name="msg_disabled">השתמש במתג למעלה כדי להפעיל את TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl מנוטרל, ככל הנראה בגלל שימוש ביישום מבוסס VPN אחר</string>
+    <string name="msg_installed">יש בעיות עם %1$s?</string>
+    <string name="msg_installed_description">אפשר לאפליקציה ליצור קשר עם חברות</string>
+    <string name="msg_installed_tracker_libraries_found">מכיל %d ספריות מעקב</string>
+    <string name="msg_installed_n">הותקן</string>
+    <string name="msg_completed">הפעולה הושלמה</string>
+    <string name="msg_vpn">TrackerControl משתמש ב-VPN מקומי כדי לסנן תעבורת אינטרנט.
+מסיבה זו, אנא אפשר חיבור VPN בתיבת הדו-שיח הבאה.
+תעבורת האינטרנט שלך לא נשלחת לשרת VPN מרוחק.</string>
+    <string name="msg_autostart">TrackerControl לא יכול היה להפעיל אוטומטית. זה כנראה בגלל באג בגרסת האנדרואיד שלך.</string>
+    <string name="msg_error">אירעה שגיאה בלתי צפויה: \'%s\'</string>
+    <string name="msg_start_failed">אנדרואיד סירבה להפעיל את שירות ה-VPN ברגע זה. זה כנראה בגלל באג בגרסת האנדרואיד שלך.</string>
+    <string name="msg_try">נסה את TrackerControl</string>
+    <string name="msg_doze">לתוצאות עקביות, יש להשבית את אופטימיזציית הסוללה של אנדרואיד עבור TrackerControl.
+\n\nבתיבת הדו-שיח הבאה, בחר \"כל האפליקציות\" בחלק העליון, הקש על TrackerControl ברשימה ובחר ואשר \"אל תבצע אופטימיזציה\".</string>
+    <string name="msg_datasaving">לקבלת תוצאות עקביות, יש להשבית את אפשרויות שמירת הנתונים של אנדרואיד עבור TrackerControl
+\n\nבתיבת הדו-שיח הבאה, הפעל את האפשרויות \"נתוני רקע\" ו\"שימוש בלתי מוגבל בנתונים\"</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
