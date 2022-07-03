@@ -55,6 +55,56 @@
     <string name="setting_subnet">ניתוב רשת משנה</string>
     <string name="setting_tethering">אפשר קשירה</string>
     <string name="setting_lan">אפשר גישה לרשת LAN</string>
+    <string name="setting_ip6">אפשר תעבורת IPv6</string>
+    <string name="setting_call">השבת במהלך שיחה</string>
+    <string name="setting_reload_onconnectivity">טען מחדש בכל שינוי קישוריות</string>
+    <string name="setting_advanced_options">אפשרויות מתקדמות</string>
+    <string name="setting_system">נהל אפליקציות מערכת</string>
+    <string name="setting_log_app">חפש עוקבים חדשים</string>
+    <string name="setting_log_logcat">יומן שידורים ל-ADB</string>
+    <string name="setting_filter">חסימת עוקבים</string>
+    <string name="setting_filter_udp">חסום עוקבים ב-UDP</string>
+    <string name="setting_handover">העברה חלקה של ה-VPN בטעינה מחדש</string>
+    <string name="setting_lockdown">נעילת תעבורה</string>
+    <string name="setting_track_usage">עקוב אחר השימוש ברשת</string>
+    <string name="setting_reset_usage">אפס את מונה השימוש ברשת</string>
+    <string name="setting_show_resolved">הצג שמות דומיין שנפתרו</string>
+    <string name="setting_block_domains">אפשר קובץ מארחים</string>
+    <string name="setting_rcode">תגובה חוסמת מארח: %s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">אמת ב: %s</string>
+    <string name="setting_ttl">TTL DNS מינימלי: %s s</string>
+    <string name="setting_socks5_enabled">השתמש ב- SOCKS5 proxy</string>
+    <string name="setting_socks5_addr">כתובת SOCKS5: %s</string>
+    <string name="setting_socks5_port">פורט SOCKS5: %s</string>
+    <string name="setting_socks5_username">שם משתמש SOCKS5: %s</string>
+    <string name="setting_socks5_password">סיסמת SOCKS5: %s</string>
+    <string name="setting_pcap_record_size">גודל רשומת PCAP: %s B</string>
+    <string name="setting_pcap_file_size">גודל מקסימלי של קובץ PCAP: %s MB</string>
+    <string name="setting_watchdog">כלב שמירה: כל %s דקות</string>
+    <string name="setting_stats_frequency">מרווח הדגימה: %s מ\"ש</string>
+    <string name="setting_stats_samples">מספר דגימות: %s s</string>
+    <string name="setting_backup">גיבוי</string>
+    <string name="setting_export">ייצוא הגדרות (לא לאיפוס מכשיר)</string>
+    <string name="setting_import">ייבוא הגדרות</string>
+    <string name="setting_hosts">ייבוא קובץ מארחים</string>
+    <string name="setting_hosts_append">יבא קובץ מארחים (הוספה)</string>
+    <string name="setting_hosts_url">כתובת אתר של קובץ מארח</string>
+    <string name="setting_hosts_download">הורד קובץ מארחים</string>
+    <string name="setting_hosts_update">עדכן את קובץ המארחים</string>
+    <string name="summary_install">הצג הודעת שורת מצב עבור אפליקציות שהותקנו לאחרונה</string>
+    <string name="summary_pause">לאחר הפסקה מההתראה, הפעל שוב את TrackerControl באופן אוטומטי לאחר מספר הדקות שנבחר (הזן 0 כדי להשבית אפשרות זו).</string>
+    <string name="summary_update">בדוק אם יש מהדורות חדשות ב-GitHub פעמיים ביום</string>
+    <string name="summary_tethering">בהתאם לגרסת האנדרואיד, שיתוף אינטרנט בין ניידים עשוי לעבוד או לא. לא ניתן לסנן תעבורה קשורה.</string>
+    <string name="summary_subnet">אפשר ניתוב רשת משנה; עשוי לאפשר שיחות Wi-Fi, אך עשוי גם להפעיל באגים באנדרואיד ולהגביר את השימוש בסוללה</string>
+    <string name="summary_lan">אפשר ליישומים להתחבר לכתובות רשת מקומית, כגון 10.0.0.0/8, 172.16.0.0/12 ו- 192.168.0.0/16</string>
+    <string name="summary_ip6">נתב תעבורת IP גרסת 6 אל TrackerControl כך שניתן יהיה לאפשר או לחסום אותה באופן סלקטיבי</string>
+    <string name="summary_call">השבת את TrackerControl בשיחת טלפון נכנסת או יוצאת. זה יכול לשמש כדי לעקוף בעיות שיחות IP/Wi-Fi.</string>
+    <string name="summary_system">הגדר כללים עבור אפליקציות מערכת (עבור מומחים)</string>
+    <string name="summary_log_app">השבת כדי להפחית את השימוש בסוללה. עוקבים חדשים עדיין ייחסמו, אך לא יוצגו.</string>
+    <string name="summary_track_usage">עקוב אחר מספר הבתים שנשלחו והתקבלו עבור כל אפליקציה וכתובת. זה עלול לגרום לשימוש נוסף בסוללה.</string>
     <string name="summary_block_domains">אזהרה: מארחים חסומים אינם מוצגים בממשק המשתמש.</string>
     <string name="summary_rcode">ערך ברירת המחדל הוא 3 (NXDOMAIN), שפירושו \'דומיין לא קיים\'.</string>
     <string name="summary_validate">שם הדומיין המשמש לאימות חיבור האינטרנט ביציאה 443 (https).</string>
@@ -109,6 +159,7 @@
     <string name="msg_private_dns">כבה את \"DNS פרטי\" בהגדרות רשת אנדרואיד כדי להשתמש ב-TrackerControl במצב סינון</string>
     <string name="msg_start_forward">האם להתחיל להעביר מ-%1$s יציאה %2$d ל-%3$s:%4$d של \'%5$s\'?</string>
     <string name="msg_stop_forward">להפסיק את ההעברה של יציאה %1$s %2$d?</string>
+    <string name="msg_log_logcat">אזהרה: החסימה מושבתת בגלל רישום ADB.</string>
     <string name="title_allow_wifi">אפשר Wi-Fi</string>
     <string name="title_block_wifi">חסום Wi-Fi</string>
     <string name="title_allow_other">אפשר נייד</string>
@@ -160,6 +211,66 @@
     <string name="contact_developer">מפתח</string>
     <string name="contact_playstore">גוגל</string>
     <string name="contact_officials">פקידי האיחוד האירופי</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="subject_request_data">בקשת גישה בנושא GDPR</string>
+    <string name="body_request_data"><![CDATA[למי זה עשוי להדאיג:\n \n \n אני מבקש ממך, כבקר הנתונים של אפליקציית אנדרואיד %s (מזהה: %s), לאשר אם היא מעבדת נתונים אישיים כלשהם עלי.\n אם כן, אנא ספק לי את כל המידע הנדרש הקבוע בסעיף 15 של תקנת הגנת הנתונים הכללית של האיחוד האירופי (GDPR), כולל:\n \n • עותק של הנתונים האישיים שלי;\n • מטרות העיבוד;\n •  קטגוריות הנתונים האישיים הנוגעים בדבר;\n • הנמענים שאתה חושף בפניהם את הנתונים האישיים שלי והאמצעים שאתה מספק;\n • תקופת השמירה לאחסון הנתונים האישיים שלי או הקריטריונים המשמשים לקביעת תקופה זו;\n • מידע על  מקור הנתונים האישיים שלי;  ו\n • קיומה של קבלת החלטות אוטומטית (כולל פרופיל), ואם כן:\n - ההיגיון הכרוך בתהליך קבלת ההחלטות;\n - המשמעות וההשלכות הצפויות עבורי;\n - השלבים  נקטת כדי למנוע טעויות, הטיה ואפליה;  ו\n - הסבר כיצד אני יכול להביע את נקודת המבט שלי ולערער על החלטה.\n \n בקשה זו מתייחסת לכל עיבוד של הנתונים האישיים שלי על ידך, לרבות כל מעבדים המעבדים נתונים אישיים בשמך.\n \n  אנא ספק את תגובתך באמצעים מאובטחים באימייל.  אני מצפה לקבל תשובה תוך חודש מיום קבלת הבקשה שלי.\n \n בכבוד רב,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[למי זה עשוי לעניין:\n
+ \n
+ \n
+ אני פונה לזכותי למחיקה כמפורט בסעיף 17 של תקנת הגנת המידע הכללית של האיחוד האירופי (GDPR). אני מבקש ממך, כבקר הנתונים של אפליקציית Android %s (מזהה: %s), למחוק את הנתונים האישיים הבאים שהיא מעבדת עלי ללא דיחוי מיותר:\n
+ • כל הנתונים.\n
+ \n
+ הסיבה לבקשת ההסרה שלי היא שאני חוזר בו או חזרתי בו מהסכמתי לעיבוד הנתונים האישיים. בקשה זו מתייחסת לכל עיבוד של הנתונים האישיים שלי על ידך, לרבות כל מעבדים המעבדים נתונים אישיים בשמך.\n
+ \n
+ אנא ספק את תגובתך באמצעים מאובטחים בדוא"ל. אני מצפה לקבל תשובה תוך חודש מיום קבלת הבקשה שלי.\n
+ \n
+ בכבוד רב,\n\n]]></string>
+    <string name="crash_dialog_text">מצטער. TrackerControl פשוט קרס.. אכפת לך לשלוח לנו מייל עם פרטים?</string>
+    <string name="crash_dialog_comment">הערות כלשהן?</string>
+    <string name="instructions_monitoring_private_dns">החלף את המתג ופעל עם אפליקציות מסוימות. יש להשבית DNS פרטי.</string>
+    <string name="instructions_monitoring">החלף את המתג ופעל עם אפליקציות מסוימות.</string>
+    <string name="device_not_supported_title">מכשיר לא נתמך</string>
+    <string name="device_not_supported_msg">מערכת ההפעלה של המכשיר שלך אינה מאפשרת ניטור וסינון של תקשורת רשת. זה נדרש עבור TrackerControl.</string>
+    <string name="launch_app">הפעל &amp; כדי למצוא עוקבים</string>
+    <string name="countries">מדינות יעד</string>
+    <string name="countries_explanation">גלה לאן הטלפון שלך שולח נתוני מעקב.\n\nמידע מבוסס על חיפושי DNS ומידע IP, וייתכן שהוא לא מדויק.</string>
+    <string name="countries_loading_failed">אופס.. מפת המדינה לא הצליחה לטעון. אנא ספר ל-tc@kollnig.net איך זה קרה.</string>
+    <string name="tracker_advertising">פרסום</string>
+    <string name="tracker_analytics">ניתוח</string>
+    <string name="tracker_content">חיוני</string>
+    <string name="tracker_cryptomining">קריפטומינציה</string>
+    <string name="tracker_fingerprinting">טביעת אצבע</string>
+    <string name="tracker_social">חברתי</string>
+    <string name="tracker_email">אימייל</string>
+    <string name="tracker_uncategorised">לא מסווג</string>
+    <string name="setting_strict_blocking">חסימה קפדנית</string>
+    <string name="summary_strict_blocking">עבור אפליקציות שהותקנו לאחרונה, חסום כמה שיותר שיתוף נתונים עם חברות. אפליקציות נוספות יישברו.</string>
+    <string name="strict_blocking_explanation">מומלץ למי שאינם מומחים להשבית אפשרות זו כדי להפחית את שבירת האפליקציה. עם זאת, זה מאפשר שיתוף חיוני עם חברות.</string>
+    <string name="exclude_vpn_explanation">חייב להיות פועל כדי לזהות או לחסום עוקבים.\n\nטיפ: השבת אם נתקלת בבעיות.</string>
+    <string name="uninstall">הסר את ההתקנה</string>
+    <string name="settings_uninstall">הגדרות אפליקציה &amp; הסר את ההתקנה</string>
+    <string name="no_trackers_found_message_disabled">הפעל את המתג במסך הראשי, ולאחר מכן הפעל את האפליקציה כדי למצוא עוקבים</string>
+    <string name="no_trackers_found_message">הפעל אפליקציה כדי למצוא עוקבים</string>
+    <string name="no_trackers_found_action">פתח</string>
+    <string name="no_internet_message">"לאפליקציה הזו אין גישה לאינטרנט. ייתכן שהוא עדיין עוקב אחריך על ידי החלפת נתונים עם אפליקציות אחרות."</string>
+    <string name="no_internet">אין גישה לאינטרנט</string>
+    <string name="bypass_vpn_error">"לא ניתן לחסום את האינטרנט. האפליקציה אינה נכללת ב-TrackerControl."</string>
+    <string name="back">חזור</string>
+    <string name="forever_free">לעולם חופשי</string>
+    <string name="your_privacy">הפרטיות שלך</string>
+    <string name="tracker_hostlist">מארחים בהגדרת משתמש</string>
+    <string name="unblocked">בוטלה החסימה</string>
+    <string name="enable">אפשר</string>
+    <string name="internet_blocked">הגישה לאינטרנט מוגבלת</string>
+    <string name="internet_unblocked">בוטלה חסימת הגישה לאינטרנט</string>
+    <string name="category_blocked">עוקבים בקטגוריה חסומים</string>
+    <string name="category_unblocked">עוקבים בקטגוריה מותרים</string>
+    <string name="category_unblocked_warning">קטגוריית הבלוק הראשון!</string>
+    <string name="switch_strict_blocking">חסום שיתוף נתונים חיוני</string>
+    <string name="tracking_detection_failed">זיהוי ספריית המעקב נכשל.</string>
+    <string name="tracking_detection_failed_ram">זיהוי ספריית המעקב נכשל. אין מספיק זיכרון RAM.</string>
+    <string name="tracking_detection_failed_report">זיהוי ספריית המעקב נכשל. אנא דווח על בעיה זו למפתח.</string>
     <string name="detected_trackers">ספריות מעקב שזוהו: %s</string>
     <string name="none">ללא</string>
     <string name="trackers_static">ספריות גשש</string>
