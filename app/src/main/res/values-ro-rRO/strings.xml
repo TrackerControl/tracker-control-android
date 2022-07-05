@@ -16,8 +16,11 @@
     <string name="setting_advanced_options">Opțiuni avansate</string>
     <string name="setting_import">Importă setări</string>
     <string name="msg_sure">Ești sigur?</string>
+    <string name="msg_installed">Probleme cu %1$s?</string>
     <string name="msg_try">Încearcă TrackerControl</string>
     <string name="msg_inactive">Nu există conexiune la internet</string>
+    <string name="msg_queue">TrackerControl este ocupat</string>
+    <string name="msg_update">Actualizare disponibilă, atingeți pentru a descărca</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -25,6 +28,7 @@
     <string name="menu_delete">Șterge</string>
     <string name="title_conditions">Condiții</string>
     <string name="title_options">Opțiuni</string>
+    <string name="title_dontask">Nu mai întreba</string>
     <!-- App Overview -->
     <string name="yes">Da</string>
     <string name="no">Nu</string>
@@ -34,6 +38,7 @@
     <!-- Actions -->
     <string name="contacts">Contact </string>
     <string name="contact_playstore">Google</string>
+    <string name="tracker_email">Email</string>
     <string name="back">Înapoi</string>
     <string name="forever_free">Întotdeauna Gratuit</string>
 </resources>
