@@ -20,6 +20,7 @@
     <string name="menu_traffic_allowed">Permis</string>
     <string name="menu_traffic_blocked">Blocat</string>
     <string name="menu_live">Actualizare în timp real</string>
+    <string name="menu_export">Export</string>
     <string name="setting_options">Opțiuni</string>
     <string name="setting_dark">Temă întunecată</string>
     <string name="setting_network_options">Opțiuni rețea</string>
@@ -43,7 +44,9 @@
     <string name="title_conditions">Condiții</string>
     <string name="title_options">Opțiuni</string>
     <string name="title_dontask">Nu mai întreba</string>
+    <string name="title_log_copy">Copiază</string>
     <!-- App Overview -->
+    <string name="ok">OK</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>
     <!-- App Details -->
@@ -52,7 +55,9 @@
     <!-- Actions -->
     <string name="contacts">Contact </string>
     <string name="contact_playstore">Google</string>
+    <string name="tracker_social">Social</string>
     <string name="tracker_email">Email</string>
     <string name="back">Înapoi</string>
     <string name="forever_free">Întotdeauna Gratuit</string>
+    <string name="blocked">BLOCAT</string>
 </resources>
