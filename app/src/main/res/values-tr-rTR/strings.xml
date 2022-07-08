@@ -344,7 +344,9 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="allowed">İZİN VERİLDİ</string>
     <string name="setting_domain_based_blocked">Domain\'e Dayalı Engelleme</string>
     <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
+    <string name="uncertain_entry">Android\'in sınırlamaları nedeniyle, \'*\' ile işaretlenmiş girdiler yanlış olabilir.  Genellikle aynı şirket farklı domain altında aynı IP adresini kullandığında yaşanır, bu farklı şirketlerin aynı IP adresinin arkasında olduğu anlamınada gelebilir. (ör. eğer bir içerik dağıtım ağı kullanıyorlarsa(CDN))</string>
     <string name="browsers_not_supported">Tarayıcılar desteklenmemektedir ⚠️</string>
+    <string name="browsers_not_supported_explanation">Bu bir tarayıcı uygulaması gibi gözüküyor.\n\n Tarayıcılarda izcilerin engellenmesi İzciKontrolü tarafından desteklenmez. Bunun yerine, İzcileri daha iyi engellemek için, izleme önleme işlevi entegreli bir tarayıcı kullanın.\n\n Örneğin: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
     <string name="failed_loading_cached_analysis">Önbelleğe alınmış izleyici sonuçları yüklenemedi. Lütfen bunu hello@trackercontrol.org adresinden geliştiriciye bildirin</string>
 </resources>
