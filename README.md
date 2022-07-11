@@ -239,7 +239,19 @@ Except where indicated otherwise, this project is licensed under [GPLv3](https:/
 If you use this project as part of your academic studies, please kindly cite the below article:
 
 ```
-@inproceedings {kollnig2021_consent,
+@article{kollnig2022_app,
+     doi = {10.21105/joss.04270},
+     year = {2022},
+     publisher = {The Open Journal},
+     volume = {7},
+     number = {75},
+     pages = {4270},
+     author = {Konrad Kollnig and Nigel Shadbolt},
+     title = {TrackerControl: Transparency and Choice around App Tracking},
+     journal = {Journal of Open Source Software}
+}
+
+@inproceedings {kollnig2021_consent_analysis,
       author = {Konrad Kollnig and Pierre Dewitte and Max Van Kleek and Ge Wang and Daniel Omeiza and Helena Webb and Nigel Shadbolt},
       title = {A Fait Accompli? An Empirical Study into the Absence of Consent to Third-Party Tracking in Android Apps},
       booktitle = {{Seventeenth Symposium on Usable Privacy and Security (SOUPS 2021)}},
