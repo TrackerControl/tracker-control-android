@@ -8,5 +8,6 @@ authors:
   given-names: "Nigel"
   orcid: "https://orcid.org/0000-0002-5085-9724"
 title: "TrackerControl"
-date-released: 2019-12-01
+date-released: 2022-07-08
+doi: 10.21105/joss.04270
 url: "https://github.com/TrackerControl/tracker-control-android"
