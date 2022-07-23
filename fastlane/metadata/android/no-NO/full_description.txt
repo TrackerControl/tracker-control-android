@@ -3,6 +3,7 @@ TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og 
 For å oppdage sporing, så kombinerer TrackerControl effekten av Disconnect sine blokkeringslister, som brukes av Firefox, og vår egen blokkeringsliste, skapt basert på analyser av <i>~2 000 000</i> apper! I tillegg støtter TrackerControl egendefinerte blokkeringslister.
 
 Denne tilnærmingen
+
 - avslører selskapene bak sporingen,
 - gjør det mulig å blokkere sporing selektivt, og
 – eksponerer formålet med sporing, som analyse eller reklame.
