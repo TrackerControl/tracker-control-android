@@ -3,6 +3,7 @@ TrackerControl permette agli utenti di monitorare e controllare la continua, dif
 Per rilevare il monitoraggio, TrackerControl combina la potenza della blocklist di Disconnect, utilizzata da Firefox, e la nostra blocklist, creata analizzando <i>~2 000 000</i> app! Inoltre, TrackerControl supporta blocklist personalizzate.
 
 Questo approccio
+
 - rivela le aziende dietro il tracciamento,
 - permette di bloccare il tracciamento in modo selettivo, e
 - mostra le finalità del tracciamento, come le analytics o la pubblicità.
