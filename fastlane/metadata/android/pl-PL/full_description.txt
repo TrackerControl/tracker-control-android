@@ -3,6 +3,7 @@ TrackerControl umożliwia użytkownikom nadzór i kontrolę nad powszechnym, upo
 Aby wykryć śledzenie, TrackerControl łączy moc listy zablokowanych tkzw. "Disconnect blocklist", używanej przez Firefoksa oraz używana jest nasza wewnętrzna lista bloków, stworzona z analizy ~ 2 000 000 aplikacji!  Ponadto TrackerControl obsługuje niestandardowe listy bloków.
 
 Takie podejście
+
 - ujawnia firmy stojące za śledzeniem,
  pozwala na selektywne blokowanie śledzenia oraz
  ujawnia cele śledzenia, takie jak analityka lub reklama.
