@@ -3,6 +3,7 @@ Met TrackerControl kunnen gebruikers de wijdverbreide, voortdurende, verborgen g
 Om tracking te detecteren, combineert TrackerControl de kracht van de Disconnect-blokkadelijst, die door Firefox wordt gebruikt, en onze eigen blokkadelijst, die is gemaakt op basis van de analyse van <i>~2 000 000</i> apps! Bovendien ondersteunt TrackerControl aangepaste blokkadelijsten.
 
 Deze aanpak
+
 - onthult de bedrijven achter tracking,
 - laat toe om tracking selectief te blokkeren, en
 - onthult de doelstellingen van het traceren, zoals analytics of reclame.
