@@ -3,6 +3,7 @@ A TrackerControl lehetővé teszi a felhasználóknak, hogy figyelemmel kísérj
 A követés észleléséhez a TrackerControl egyesíti a Firefox által használt Disconnect blokklista erejét és a házon belüli blokklistánkat, amelyet <i> ~ 2 000 000 </i> alkalmazás elemzésével hoztak létre! Ezenkívül a TrackerControl támogatja az egyéni blokklistákat.
 
 Ez a megközelítés
+
 - feltárja a követés mögött álló vállalatokat,
 - lehetővé teszi a követés szelektív blokkolását és
 - leleplezi a követés célját, például az elemzéseket vagy a hirdetéseket.
