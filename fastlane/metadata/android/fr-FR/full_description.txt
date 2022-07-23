@@ -3,6 +3,7 @@ TrackerControl permet aux utilisateurs de surveiller et de contrôler la collect
 Pour le détecter, TrackerControl combine deux listes de blocages, celle de Disconnect, utilisée par Firefox, et sa propre liste maison, créée en analysant <i> ~2 000 000</i> applications! TrackerControl supporte aussi vos propres listes personnalisées.
 
 Cette approche
+
 - révèle les entreprises effectuant du suivi,
 - permet de bloquer le suivi de manière sélective et
 - montre les buts du suivi, comme l'analyse comportementale ou la publicité.
