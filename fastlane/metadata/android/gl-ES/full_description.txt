@@ -3,6 +3,7 @@ TrackerControl permite aos usuarios monitorizar e controlar a recolección de da
 Para a detección do rastreo, TrackerControl combina a potente lista de bloqueo de Disconnect, usada por Firefox, e unha lista de bloqueo propia, creada a partires do análise de ¡<i>~2 000 000</i> de apps! A maiores, TrackerControl soporta listas de bloqueo personalizadas.
 
 Esta aproximación
+
 - revela as compañías detrás do rastreo
 - permite o bloqueo selectivo do rastreo, e
 - amosa o motivo do rastreo, por exemplo análise estadístico ou anuncios.
