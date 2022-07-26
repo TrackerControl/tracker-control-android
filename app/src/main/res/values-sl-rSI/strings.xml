@@ -90,6 +90,15 @@
     <string name="setting_export">Izvozi nastavitve (ni za ponastavitev naprave)</string>
     <string name="setting_import">Uvozi nastavitve</string>
     <string name="setting_hosts">Uvozi datoteko gostiteljev</string>
+    <string name="setting_hosts_append">Uvozi datoteko gostiteljev (pripni)</string>
+    <string name="setting_hosts_url">URL datoteke gostiteljev</string>
+    <string name="setting_hosts_download">Prejmi datoteko gostiteljev</string>
+    <string name="setting_hosts_update">Posodobi datoteko gostiteljev</string>
+    <string name="summary_install">Prikaži obvestilo v vrstici stanja za na novo nameščene programe</string>
+    <string name="summary_pause">Po premoru iz obvestila samodejno omogoči TrackerControl po izbranem številu minut (vnesite 0 , da onemogočite to možnost).</string>
+    <string name="summary_update">Dvakrat dnevno preveri za nove izdaje na GitHubu</string>
+    <string name="summary_tethering">Delovanje privezovanja je odvisno od različice Androida.  Privezanega prenosa ni mogoče filtrirati.</string>
+    <string name="summary_subnet">Omogoči podomrežno usmerjanje; lahko omogoči klicanje Wi-Fi, lahko pa tudi sproži hrošče v Androidu in poveča porabo energije.</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
