@@ -74,7 +74,7 @@
     <string name="setting_vpn4">IPv4 VPN: %s</string>
     <string name="setting_vpn6">IPv6 VPN: %s</string>
     <string name="setting_dns">DNS VPN-a: %s</string>
-    <string name="setting_validate">Preveri na: %s</string>
+    <string name="setting_validate">Preveri veljavnost na: %s</string>
     <string name="setting_ttl">Najmanjši DNS TTL: %s s</string>
     <string name="setting_socks5_enabled">Uporabi posr. strežnik SOCKS5</string>
     <string name="setting_socks5_addr">Naslov SOCKS5: %s</string>
@@ -99,6 +99,36 @@
     <string name="summary_update">Dvakrat dnevno preveri za nove izdaje na GitHubu</string>
     <string name="summary_tethering">Delovanje privezovanja je odvisno od različice Androida.  Privezanega prenosa ni mogoče filtrirati.</string>
     <string name="summary_subnet">Omogoči podomrežno usmerjanje; lahko omogoči klicanje Wi-Fi, lahko pa tudi sproži hrošče v Androidu in poveča porabo energije.</string>
+    <string name="summary_lan">Dovoli programom, da se povežejo na krajevne omrežne naslove, kot so 10.0.0.0/8, 172.16.0.0/12 in 192.168.0.0/16.</string>
+    <string name="summary_ip6">Preusmeri promet IP različice 6 v TrackerControl, da se ga lahko izbirno dovoli ali blokira.</string>
+    <string name="summary_call">Onemogoči TrackerControl ob dohodnih ali odhodnih klicih.  To se lahko uporabi, da se zaobide težave pri klicanju IP/Wi-Fi.</string>
+    <string name="summary_system">Določi pravila za sistemske programe (za napredne uporabnike)</string>
+    <string name="summary_log_app">Onemogočite za zmanjšanje porabe energije.  Novi sledilci bodo še vedno blokirani, vendar ne bodo prikazani.</string>
+    <string name="summary_track_usage">Sledi številu poslanih in prejetih bajtov za vsak program in naslov.  To lahko povzroči dodatno porabo energije.</string>
+    <string name="summary_block_domains">OPOZORILO: blokirani gostitelji niso prikazani v up. vmesniku.</string>
+    <string name="summary_rcode">Privzeta vrednost je 3 (NXDOMAIN), kar pomeni \'neobstoječa domena\'.</string>
+    <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
+    <string name="summary_socks5_enabled">Posredniškemu strežniku bo poslan samo promet TCP.</string>
+    <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
+    <string name="summary_log_logcat">Onemogoči blokiranje.  Komunikacija (in prepoznani sledilci) se beleži v dnevnik naprave.  Pridobite jo lahko z adb logcat z oznako \'TC-log\'.</string>
+    <string name="msg_sure">Ali ste prepričani?</string>
+    <string name="msg_started">Preverjanje sledilcev</string>
+    <string name="msg_waiting">Čakanje na dogodek</string>
+    <string name="msg_disabled">Uporabite stikalo zgoraj, da omogočite TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl je bil onemogočen verjetno z uporabo drugega programa, osnovanega na VPN-u.</string>
+    <string name="msg_installed">Težave s/z %1$s?</string>
+    <string name="msg_installed_description">Dovoli programom, da navežejo stik s podjetji</string>
+    <string name="msg_installed_tracker_libraries_found">Vsebuje %d sledilnih knjižnic.</string>
+    <string name="msg_installed_n">Je bil nameščen</string>
+    <string name="msg_completed">Dejanje je končano.</string>
+    <string name="msg_vpn">TrackerControl za filtriranje internetnega prometa uporablja krajevni VPN.
+Zato v naslednjem pogovornem oknu dovolite povezavo VPN.
+Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
+    <string name="msg_autostart">Programa ni bilo mogoče samodejno začeti.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
+    <string name="msg_error">Pojavila se je nepričakovana napaka: \'%s\'</string>
+    <string name="msg_start_failed">Android je trenutno zavrnil zagon storitve VPN.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
+    <string name="msg_try">Poizkusite TrackerControl</string>
+    <string name="msg_doze">Za dosledne rezultate onemogočate Androidovo optimizacijo baterije za TrackerControl.</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
