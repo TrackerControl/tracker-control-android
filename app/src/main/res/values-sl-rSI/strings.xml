@@ -132,6 +132,17 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
 \n\nV naslednjem pogovornem oknu na vrhu izberite \"Vsi programi\", na seznamu se dotaknite TrackerControl in potrdite \"Brez optimizacije\".</string>
     <string name="msg_datasaving">Za dosledne rezultate onemogočite Androidovo varčevanje s podatki za TrackerControl.
 \n\nV naslednjem pogovornem oknu omogočite možnosti \"Podatki v ozadju\" in \"Neomejena poraba podatkov\".</string>
+    <string name="msg_filter">Če boste uporabljali filtriranje, bo Android porabo podatkov in energije dodelil TrackerControlu (Android bo mislil, da podatke in energijo porablja TrackerControl in ne izvirni programi).</string>
+    <string name="msg_filter4">Android 4 zahteva, da je filtriranje omogočeno.</string>
+    <string name="msg_log_disabled">Beleženje prometa je onemogočeno.  Uporabite zgornje stikalo, da ga omogočite.  Beleženje prometa lahko povzroči dodatno porabo energije.</string>
+    <string name="msg_clear_rules">To bo ponastavilo pravila in pogoje na privzete vrednosti.</string>
+    <string name="msg_reset_access">To bo izbrisalo dnevniške vrstice poizkusov dostopa, ki so brez pravil za dovolitev/blokiranje.</string>
+    <string name="msg_import_last">Zadnji uvoz: %s</string>
+    <string name="msg_downloading">Prejemanje\n%1s</string>
+    <string name="msg_downloaded">Datoteka gostiteljev je bila prejeta.</string>
+    <string name="msg_updated">Datoteka gostiteljev je bila posodobljena in uveljavljena!</string>
+    <string name="msg_download_last">Zadnji prejem: %s</string>
+    <string name="msg_update_last">Zadnja posodobitev: %s</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
