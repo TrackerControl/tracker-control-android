@@ -128,7 +128,10 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_error">Pojavila se je nepričakovana napaka: \'%s\'</string>
     <string name="msg_start_failed">Android je trenutno zavrnil zagon storitve VPN.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
     <string name="msg_try">Poizkusite TrackerControl</string>
-    <string name="msg_doze">Za dosledne rezultate onemogočate Androidovo optimizacijo baterije za TrackerControl.</string>
+    <string name="msg_doze">Za dosledne rezultate onemogočate Androidovo optimizacijo baterije za TrackerControl.
+\n\nV naslednjem pogovornem oknu na vrhu izberite \"Vsi programi\", na seznamu se dotaknite TrackerControl in potrdite \"Brez optimizacije\".</string>
+    <string name="msg_datasaving">Za dosledne rezultate onemogočite Androidovo varčevanje s podatki za TrackerControl.
+\n\nV naslednjem pogovornem oknu omogočite možnosti \"Podatki v ozadju\" in \"Neomejena poraba podatkov\".</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
