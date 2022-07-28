@@ -143,6 +143,30 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_updated">Datoteka gostiteljev je bila posodobljena in uveljavljena!</string>
     <string name="msg_download_last">Zadnji prejem: %s</string>
     <string name="msg_update_last">Zadnja posodobitev: %s</string>
+    <string name="msg_metered">Omrežje je merjeno.</string>
+    <string name="msg_inactive">Ni dejavne internetne povezave.</string>
+    <string name="msg_queue">TrackerControl je zaposlen.</string>
+    <string name="msg_update">Na voljo je posodobitev, dotaknite za prejem.</string>
+    <string name="msg_usage">Dostop do omrežja Wi-Fi ali mobilnega interneta lahko dovolite (zeleno) ali zavrnete (rdeče) z dotikom ikone poleg programa.</string>
+    <string name="msg_whitelist">Dostop do interneta je privzeto dovoljen (način črnega seznama).  To lahko spremenite v nastavitvah.</string>
+    <string name="msg_push">Dohodna (potisna) sporočila v glavnem obdela sistemski sestavni del Storitve Play, ki mu je dostop do interneta privzeto dovoljen.</string>
+    <string name="msg_system">Upravljanje z vsemi (sistemskimi) programi lahko omogočite v nastavitvah.</string>
+    <string name="msg_issue">Prosim, opišite težavo in čas njenega nastanka:</string>
+    <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
+    <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
+    <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
+    <string name="msg_always_on_lockdown">Izklopite \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN, da TrackerControl uporabite v filtrirnem načinu.</string>
+    <string name="msg_private_dns">Izklopite \"Zasebni DNS\" v Androidovih omrežnih nastavitvah, da TrackerControl uporabite v filtrirnem načinu.</string>
+    <string name="msg_start_forward">Začni posredovati iz %1$s, vrata %2$d v %3$s:%4$d od%5$s?</string>
+    <string name="msg_stop_forward">Ustavi posredovati %1$s, vrata %2$d?</string>
+    <string name="msg_log_logcat">Opozorilo: blokiranje je onemogočeno zaradi beleženja ADB.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Dodaj</string>
+    <string name="menu_delete">Izbriši</string>
+    <string name="setting_forwarding">Posredovanje vrat</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
