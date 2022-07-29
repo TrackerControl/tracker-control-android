@@ -221,6 +221,43 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="title_log_port">Vrata %1$d</string>
     <string name="title_log_copy">Kopiraj</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Onemogoči dostop do interneta za ta program</string>
+    <string name="tracked_app_name">Ime programa</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">je prejšnji teden navezal stik z %d-im podjetjem</item>
+        <item quantity="two">je prejšnji teden navezal stik z %d-mi podjetji</item>
+        <item quantity="few">je prejšnji teden navezal stik s %d-mi podjetji</item>
+        <item quantity="other">je prejšnji teden navezal stik s/z %d-mi podjetji</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">je do sedaj navezal stik z %d-im podjetjem</item>
+        <item quantity="two">je do sedaj navezal stik z %d-mi podjetji</item>
+        <item quantity="few">je do sedaj navezal stik s %d-mi podjetji</item>
+        <item quantity="other">je do sedaj navezal stik s/z %d-mi podjetji</item>
+    </plurals>
+    <string name="confirm_ipinfo_title">Pridobi podatke o ustanovi?</string>
+    <string name="confirm_ipinfo">To bo stopilo v stik z zunanjo storitvijo ipinfo.io in ji sporočilo podatke o IP-naslovu stika.</string>
+    <string name="external_servers">Samodejno dobi e-pošto razvijalca?</string>
+    <string name="confirm_google_info">Ta program lahko samodejno dobi e-pošto razvijalca programa iz Trgovine Google Play.</string>
+    <string name="ok">V redu</string>
+    <string name="yes">Da</string>
+    <string name="no">Ne</string>
+    <string name="menu_csv">Izvozi kot CSV</string>
+    <string name="exporting">Izvažanje …</string>
+    <string name="share_csv">Deli</string>
+    <string name="export_failed">Izvoz je spodletel.</string>
+    <string name="exported">Izvoženo v shrambo!</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Podrobnosti</string>
+    <string name="tab_trackers">Sledilci</string>
+    <string name="tab_countries">Države</string>
+    <string name="tab_actions">Moji podatki</string>
+    <string name="tracker_name">Ime sledilca</string>
+    <string name="internet_access">Dostop do interneta</string>
+    <string name="internet_access_explanation">Za dostop do interneta mora biti vklopljeno.\n\nNasvet: lahko se tudi dotaknete ikone programa na glavnem zaslonu.</string>
+    <string name="app_info">Upravljanje programa</string>
     <!-- Actions -->
+    <string name="block_tracking">Blokiraj sledilce</string>
+    <string name="block_tracking_description">Veliko programov pošilja podatke tretjim osebam, t.i. sledilcem.  TrackerControl omogoča izbirno blokiranje teh omrežnih prenosov.  Toda to uporabljajte modro, ker se razvijalci zanašajo na te storitve, še največ na oglaševanje.</string>
+    <string name="personalised_ads">Omeji osebno prilagajanje</string>
 </resources>
