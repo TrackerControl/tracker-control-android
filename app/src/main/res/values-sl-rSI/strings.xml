@@ -211,6 +211,15 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="title_rate">Oceni</string>
     <string name="title_allow">Dovoli</string>
     <string name="title_block">Blokiraj</string>
+    <string name="title_allow_wifi">Dovoli Wi-Fi</string>
+    <string name="title_block_wifi">Blokiraj Wi-Fi</string>
+    <string name="title_allow_other">Dovoli mob. povezavo</string>
+    <string name="title_block_other">Blokirajo mob. povezavo</string>
+    <string name="title_nobody">nihče</string>
+    <string name="title_dontask">Ne vprašaj več</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Vrata %1$d</string>
+    <string name="title_log_copy">Kopiraj</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
