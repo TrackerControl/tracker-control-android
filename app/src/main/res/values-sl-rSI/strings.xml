@@ -260,4 +260,5 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="block_tracking">Blokiraj sledilce</string>
     <string name="block_tracking_description">Veliko programov pošilja podatke tretjim osebam, t.i. sledilcem.  TrackerControl omogoča izbirno blokiranje teh omrežnih prenosov.  Toda to uporabljajte modro, ker se razvijalci zanašajo na te storitve, še največ na oglaševanje.</string>
     <string name="personalised_ads">Omeji osebno prilagajanje</string>
+    <string name="personalised_ads_description">Android programom nudi omejitev dostopa do Goglovega oglaševalskega ID-ja.  Vendar programi lahko prezrejo to nastavitev in vseeno uporabijo ta ID.  Lahko tudi še naprej zbirajo ta ID za potrebe preučevanja glede na Googlove pravilnike.  Morali boste zaupati Googlu in podjetju, ki zbira podatke.</string>
 </resources>
