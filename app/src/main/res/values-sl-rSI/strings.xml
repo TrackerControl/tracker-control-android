@@ -261,4 +261,13 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="block_tracking_description">Veliko programov pošilja podatke tretjim osebam, t.i. sledilcem.  TrackerControl omogoča izbirno blokiranje teh omrežnih prenosov.  Toda to uporabljajte modro, ker se razvijalci zanašajo na te storitve, še največ na oglaševanje.</string>
     <string name="personalised_ads">Omeji osebno prilagajanje</string>
     <string name="personalised_ads_description">Android programom nudi omejitev dostopa do Goglovega oglaševalskega ID-ja.  Vendar programi lahko prezrejo to nastavitev in vseeno uporabijo ta ID.  Lahko tudi še naprej zbirajo ta ID za potrebe preučevanja glede na Googlove pravilnike.  Morali boste zaupati Googlu in podjetju, ki zbira podatke.</string>
+    <string name="data_managment">Upravljaj s podatki</string>
+    <string name="data_management_description">Evropska Splošna Uredba o varstvu podatkov (GDPR) uporabnikom evropske unije omogoča upravljanje z vsemi podatki, ki so povezani z njimi.  Ta program nudi e-poštne predloge za stik z raziskovalcem.  Razvijalec mora odgovoriti v mesecu dni.</string>
+    <string name="contacts">Stik </string>
+    <string name="contacts_description">Če mislite, da program krši načela zaščite podatkov, navežite stik neposredno z odgovorno osebo.</string>
+    <string name="play_services_required">To je nastavitev Storitev Google Play, ki je ni bilo mogoče najti na vaši napravi.</string>
+    <string name="no_mail_service">Namestite e-poštnega odjemalca.</string>
+    <string name="blocking_settings">Izberite sledilce</string>
+    <string name="ad_settings">Spremeni zdaj</string>
+    <string name="request_data">Zahtevaj podatke</string>
 </resources>
