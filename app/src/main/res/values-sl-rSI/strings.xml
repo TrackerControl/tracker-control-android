@@ -294,4 +294,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tracker_social">Družabno</string>
     <string name="tracker_email">E-pošta</string>
     <string name="tracker_uncategorised">Neuvrščeno</string>
+    <string name="setting_strict_blocking">Strogo blokiranje</string>
+    <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
+    <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
 </resources>
