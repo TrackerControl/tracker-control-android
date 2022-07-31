@@ -122,7 +122,7 @@
     <string name="msg_installed_n">Je bil nameščen</string>
     <string name="msg_completed">Dejanje je končano.</string>
     <string name="msg_vpn">TrackerControl za filtriranje internetnega prometa uporablja krajevni VPN.
-Zato v naslednjem pogovornem oknu dovolite povezavo VPN.
+V ta namen v naslednjem pogovornem oknu dovolite povezavo VPN.
 Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_autostart">Programa ni bilo mogoče samodejno začeti.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
     <string name="msg_error">Pojavila se je nepričakovana napaka: \'%s\'</string>
@@ -151,7 +151,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_whitelist">Dostop do interneta je privzeto dovoljen (način črnega seznama).  To lahko spremenite v nastavitvah.</string>
     <string name="msg_push">Dohodna (potisna) sporočila v glavnem obdela sistemski sestavni del Storitve Play, ki mu je dostop do interneta privzeto dovoljen.</string>
     <string name="msg_system">Upravljanje z vsemi (sistemskimi) programi lahko omogočite v nastavitvah.</string>
-    <string name="msg_issue">Prosim, opišite težavo in čas njenega nastanka:</string>
+    <string name="msg_issue">Prosimo, opišite težavo in čas njenega nastanka:</string>
     <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
     <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
     <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
@@ -270,4 +270,28 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="blocking_settings">Izberite sledilce</string>
     <string name="ad_settings">Spremeni zdaj</string>
     <string name="request_data">Zahtevaj podatke</string>
+    <string name="request_deletion">Zahtevaj izbris</string>
+    <string name="contact_developer">Razvijalec</string>
+    <string name="contact_playstore">Google</string>
+    <string name="contact_officials">Uradniki evropske unije</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/about-edpb/members_sl</string>
+    <string name="crash_dialog_text">Žal se je TrackerControl sesul.  Ali bi nam hoteli poslati e-pošto s podrobnostmi?</string>
+    <string name="crash_dialog_comment">Opombe?</string>
+    <string name="instructions_monitoring_private_dns">Preklopite stikalo in uporabljajte programe.  Zasebni DNS mora biti omogočen.</string>
+    <string name="instructions_monitoring">Preklopite stikalo in uporabljajte programe.</string>
+    <string name="device_not_supported_title">Naprava ni podprta</string>
+    <string name="device_not_supported_msg">Operacijski sistem vaše naprave ne dovoli nadzora in filtriranja omrežnih komunikacij.  TrackerControl to zahteva.</string>
+    <string name="launch_app">Zaženi in poišči sledilce</string>
+    <string name="countries">Ciljne države</string>
+    <string name="countries_explanation">Spoznajte, kam vaš telefon pošilja sledilne podatke.\n\nPodatki so osnovani glede na poizvedbe DNS in podatkov o IP-jih, in so lahko netočni.</string>
+    <string name="countries_loading_failed">Ups.  Nalaganje zemljevida držav je spodletelo.  Prosimo, na tc@kollnig.net sporočite, kako se je to zgodilo.</string>
+    <string name="tracker_advertising">Oglaševanje</string>
+    <string name="tracker_analytics">Analitika</string>
+    <string name="tracker_content">Bistvenega pomena</string>
+    <string name="tracker_cryptomining">Kriptorudarjenje</string>
+    <string name="tracker_fingerprinting">Ustvarjanje osebnega odtisa</string>
+    <string name="tracker_social">Družabno</string>
+    <string name="tracker_email">E-pošta</string>
+    <string name="tracker_uncategorised">Neuvrščeno</string>
 </resources>
