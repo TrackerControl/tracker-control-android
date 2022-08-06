@@ -3,6 +3,7 @@ TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışı (
 TrackerControl, izlemeyi algılamak için Firefox tarafından kullanılan Bağlantıyı Kes engelleme listesinin gücünü birleştirir ve <i>~2 000 000</i> uygulamanın analizinden oluşturulan şirket içi engelleme listemiz kullanılır! Ek olarak, TrackerControl özel engelleme listelerini destekler.
 
 Bu yaklaşım
+
 - takibin arkasındaki şirketleri ortaya çıkarır,
 - seçici olarak izlemeyi engellemeye izin verir ve
 - analitik veya reklamcılık gibi izleme amaçlarını ortaya çıkarır.

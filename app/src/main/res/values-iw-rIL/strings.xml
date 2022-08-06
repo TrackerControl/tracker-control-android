@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl מאפשר למשתמשים לפקח ולשלוט באיסוף הנתונים הנרחב, המתמשך והנסתר באפליקציות לנייד על התנהגות המשתמש (\'מעקב\').</string>
-    <string name="app_copyright">זכויות יוצרים \u00A9 2019–2022 Konrad Kollnig (מחשוב במרכז אנושי, המחלקה למדעי המחשב, אוניברסיטת אוקספורד)\n\nTrackerControl מבוסס על NetGuard, שפותח על ידי Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">זכויות יוצרים \u00A9 2019–2022 Konrad Kollnig (מחשוב במרכז אנושי, המחלקה למדעי המחשב, אוניברסיטת אוקספורד)\n\nTrackerControl מבוסס על NetGuard, שפותח על ידי מרסל בוקרסט (M66B).</string>
     <string name="app_android">TrackerControl דורש אנדרואיד 5.1 ומעלה</string>
     <string name="app_xposed">Xposed גורם ליותר מדי קריסות, מה שעלול לגרום להסרה של TrackerControl מחנות Google Play, לכן TrackerControl אינו נתמך כאשר Xposed מותקן</string>
     <string name="app_eula">השימוש באפליקציה זו הוא על אחריותך בלבד. אף אפליקציה לא יכולה להציע 100% הגנה מפני מעקב.</string>

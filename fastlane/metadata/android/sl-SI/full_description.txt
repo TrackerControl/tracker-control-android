@@ -1,0 +1,18 @@
+TrackerControl uporabnikom omogoča nadzirati razširjeno in prikrito zbiranje podatkov v programih o uporabnikovem vedenju ('sledenje').
+
+Za zaznavanje sledenja TrackerControl združuje moč blokirnih seznamov Disconnect, ki jih uporablja Firefox, in našega lastnega blokirnega seznama, ki smo ga ustvarili z preučevanjem okoli <i>2.000.000</i> programov! Poleg tega TrackerControl podpira blokirne sezname po meri.
+
+Ta pristop
+
+- razkrije podjetja, ki stojijo za sledenjem,
+- omogoča izbirno blokiranje sledenja in
+- izpostavi namene sledenja, kot so analitika ali oglaševanje.
+
+Namen programa je tudi izučiti uporabnika o zakonskih pravicah  glede zaščite podatkov, kot je evropska Splošna Uredba o varstvu podatkov (GPDR).
+
+TrackerControl <i>na sami napravi Android</i> za preučevanje omrežnih komunikacij programov uporablja Androidovo zmožnost VPN-ov. To doseže s krajevnim strežnikom VPN, da omogoči preučitev omrežnega prometa.
+
+Skrbniški dostop ni potreben, drugi VPN-i ali zasebni DNS pa nista podprta. Noben zunanji strežnik VPN se ne uporablja, da zagotovi varnost vaših podatkov! TrackerControl vas celo ščiti pred <i>prikrivanjem DNS</i>, priljubljeno tehniko za skrivanje sledilcev na spletnih mestih in v programih.
+
+TrackerControl bo kot raziskovalni projekt vedno brezplačen in odprtokoden.
+

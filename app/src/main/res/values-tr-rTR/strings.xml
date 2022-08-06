@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışı (\'izleme\') hakkında yaygın, devam eden, gizli veri toplamayı izlemesini ve kontrol etmesini sağlar.</string>
+    <string name="app_copyright">Telif Hakkı \u00A9 2019–2022 Konrad Kollnig (İnsan Merkezli Bilgi İşlem, Bilgisayar Bilimleri Bölümü, Oxford Üniversitesi)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
     <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
     <string name="app_xposed">Xposed, TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilecek çok fazla çökmeye neden olur, bu nedenle Xposed kuruluyken TrackerControl desteklenmez</string>
     <string name="app_eula">Bu uygulamanın kullanımı kendi sorumluluğunuzdadır. Hiçbir uygulama izlemeye karşı %100 koruma sağlayamaz.</string>
@@ -225,6 +226,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
         <item quantity="other">geçen hafta %d şirketle bağlantı kuruldu</item>
     </plurals>
     <string name="confirm_ipinfo_title">Organizasyon bilgisi alınsın mı?</string>
+    <string name="confirm_ipinfo">Bu, harici hizmet ipinfo.io ile iletişim kuracak ve onlarla iletişim kurulan IP adresleri hakkındaki verileri paylaşacaktır.</string>
     <string name="external_servers">Geliştirici e-postasını otomatik olarak al?</string>
     <string name="confirm_google_info">Bu uygulama, uygulama geliştiricisinin e-postasını sizin için Google Play Store\'dan otomatik olarak alabilir.</string>
     <string name="ok">Tamam</string>
@@ -253,6 +255,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="data_management_description">AB Genel Veri Koruma Yönetmeliği (GDPR), AB\'deki kullanıcıların kendileriyle ilgili tüm verileri yönetmesine olanak tanır. Bu uygulama, geliştiriciye ulaşmak için e-posta şablonları sağlar. Geliştiricinin bir ay içinde cevap vermesi gerekiyor.</string>
     <string name="contacts">İletişim </string>
     <string name="contacts_description">Bir uygulamanın veri koruma ilkelerini ihlal ettiğini düşünüyorsanız, sorumlu kuruluşlarla doğrudan iletişime geçmek isteyebilirsiniz.</string>
+    <string name="play_services_required">Bu, cihazınızda bulunmayan Google Play Hizmetlerinin bir ayarıdır.</string>
     <string name="no_mail_service">Lütfen bir e-posta istemcisi kurun.</string>
     <string name="blocking_settings">İzleyicileri seç</string>
     <string name="ad_settings">Şimdi değiştir</string>
@@ -336,11 +339,14 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="none">Hiç</string>
     <string name="trackers_static">İzleyici kitaplıkları</string>
     <string name="trackers_static_explanation">TrackerControl, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.\n\nAğ trafiğinde tespit edilen izleme TrackerControl ile engellenebilir.</string>
+    <string name="trackers_static_explanation_playstore">İzciKontrolü, koddaki (\'kütüphaneler\') izlemeyi ve uygulamaların ağ trafiğini algılar.</string>
     <string name="blocked">ENGELLENDİ</string>
     <string name="allowed">İZİN VERİLDİ</string>
     <string name="setting_domain_based_blocked">Domain\'e Dayalı Engelleme</string>
     <string name="summary_domain_based_blocking">Daha ayrıntılı engellemeye izin verir. Hala geliştirme aşamasında.</string>
+    <string name="uncertain_entry">Android\'in sınırlamaları nedeniyle, \'*\' ile işaretlenmiş girdiler yanlış olabilir.  Genellikle aynı şirket farklı domain altında aynı IP adresini kullandığında yaşanır, bu farklı şirketlerin aynı IP adresinin arkasında olduğu anlamınada gelebilir. (ör. eğer bir içerik dağıtım ağı kullanıyorlarsa(CDN))</string>
     <string name="browsers_not_supported">Tarayıcılar desteklenmemektedir ⚠️</string>
+    <string name="browsers_not_supported_explanation">Bu bir tarayıcı uygulaması gibi gözüküyor.\n\n Tarayıcılarda izcilerin engellenmesi İzciKontrolü tarafından desteklenmez. Bunun yerine, İzcileri daha iyi engellemek için, izleme önleme işlevi entegreli bir tarayıcı kullanın.\n\n Örneğin: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
     <string name="failed_loading_cached_analysis">Önbelleğe alınmış izleyici sonuçları yüklenemedi. Lütfen bunu hello@trackercontrol.org adresinden geliştiriciye bildirin</string>
 </resources>

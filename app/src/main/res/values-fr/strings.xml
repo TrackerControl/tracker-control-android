@@ -246,7 +246,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="tab_actions">Mes données</string>
     <string name="tracker_name">Nom du traqueur</string>
     <string name="internet_access">Accès à internet</string>
-    <string name="internet_access_explanation">Doit être démarrée pour accéder à Internet.\n\nAstuce : vous pouvez également appuyer sur l\'icône de l\'application sur l\'écran principal.</string>
+    <string name="internet_access_explanation">Doit être activé pour accéder à Internet.\n\nAstuce : vous pouvez également appuyer sur l\'icône de l\'application sur l\'écran principal.</string>
     <string name="app_info">Gérer l\'application</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquer les traqueurs</string>

@@ -3,6 +3,7 @@ TrackerControl cho phép người dùng giám sát và kiểm soát sự thu th�
 Để phát hiện việc theo dõi, TrackerControl kết hợp sức mạnh của danh sách chặn Disconnect, được Firefox sử dụng, và danh sách chặn do chúng tôi tự làm, được tạo từ việc phân tích <i>~2 000 000</i> ứng dụng! Thêm nữa, TrackerControl cũng hỗ trợ các danh sách chặn tuỳ chỉnh.
 
 Cách tiếp cận này
+
 - làm lộ ra những công ty đứng sau việc theo dõi,
 - cho phép bạn chặn việc theo dõi một cách có lựa chọn, và
 - làm lộ ra mục đích của việc theo dõi, như là phân tích hoặc quảng cáo.

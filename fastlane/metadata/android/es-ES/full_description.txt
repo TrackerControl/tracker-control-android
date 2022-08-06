@@ -3,6 +3,7 @@ TrackerControl permite a los usuarios monitorear y controlar la recolección ext
 Para detectar el rastreo, TrackerControl combina el poder de la lista de bloqueo Disconnect, utilizada por Firefox, y de nuestra lista de bloqueo interna... ¡Creada analizando <i>~2 000 000</i> apps! Adicionalmente, TrackerControl permite listas de bloqueo personalizadas.
 
 Este enfoque
+
 - revela las compañías detrás del rastreo
 - permite bloquear el rastreo selectivamente y,
 - expone los propósitos de cada rastreador, como pueden ser el análisis o los anuncios.

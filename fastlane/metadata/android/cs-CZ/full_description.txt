@@ -3,6 +3,7 @@ TrackerControl umožňuje uživatelům sledovat a ovládat rozsáhlé, probíhaj
 K detekci slídičů kombinuje TrackerControl sílu seznamu blokování Disconnect, který používá Firefox, a náš vlastní seznam blokování vytvořený na základě analýzy <i>~2 000 000</i> aplikací! TrackerControl navíc podporuje vlastní seznamy blokování.
 
 Tento přístup
+
 - odhaluje společnosti, které stojí za sledováním,
 - umožňuje selektivně blokovat sledování a
 - odhaluje účel sledování, jako je analýza nebo reklama.

@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Departamentul de Informatică, Universitatea din Oxford)\n\nTrackerControl se bazează pe NetGuard, dezvoltat de Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl necesită Android 5.1 sau mai nou</string>
+    <string name="app_eula">Utilizarea acestei aplicații este pe propriul risc. Nicio aplicație nu poate oferi protecție 100% împotriva urmăririi.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Politica de confidențialitate</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Politica de cookie</a></string>
     <string name="channel_notify">Notificări generale</string>
+    <string name="menu_app_user">Arată aplicațiile utilizatorului</string>
+    <string name="menu_app_system">Arată aplicațiile de sistem</string>
+    <string name="menu_app_nointernet">Arată aplicații fără permisiuni internet</string>
     <string name="menu_sort_name">Sortează după nume</string>
     <string name="menu_sort_uid">Sortare după uid</string>
+    <string name="menu_log">Jurnal de trafic</string>
     <string name="menu_settings">Setări</string>
     <string name="menu_invite">Invită</string>
     <string name="menu_legend">Legendă</string>
+    <string name="menu_support">Susțineți această aplicație</string>
     <string name="menu_about">Despre</string>
     <string name="menu_apps">Alte aplicații</string>
+    <string name="menu_traffic_allowed">Permis</string>
+    <string name="menu_traffic_blocked">Blocat</string>
+    <string name="menu_live">Actualizare în timp real</string>
+    <string name="menu_export">Export</string>
     <string name="setting_options">Opțiuni</string>
     <string name="setting_dark">Temă întunecată</string>
+    <string name="setting_network_options">Opțiuni rețea</string>
+    <string name="setting_tethering">Permite partajarea conexiunii</string>
+    <string name="setting_lan">Permite acces LAN</string>
+    <string name="setting_call">Dezactivare în timpul apelului</string>
     <string name="setting_advanced_options">Opțiuni avansate</string>
     <string name="setting_import">Importă setări</string>
     <string name="msg_sure">Ești sigur?</string>
+    <string name="msg_installed">Probleme cu %1$s?</string>
+    <string name="msg_installed_n">A fost instalat</string>
     <string name="msg_try">Încearcă TrackerControl</string>
     <string name="msg_inactive">Nu există conexiune la internet</string>
+    <string name="msg_queue">TrackerControl este ocupat</string>
+    <string name="msg_update">Actualizare disponibilă, atingeți pentru a descărca</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -23,7 +43,10 @@
     <string name="menu_delete">Șterge</string>
     <string name="title_conditions">Condiții</string>
     <string name="title_options">Opțiuni</string>
+    <string name="title_dontask">Nu mai întreba</string>
+    <string name="title_log_copy">Copiază</string>
     <!-- App Overview -->
+    <string name="ok">OK</string>
     <string name="yes">Da</string>
     <string name="no">Nu</string>
     <!-- App Details -->
@@ -32,5 +55,9 @@
     <!-- Actions -->
     <string name="contacts">Contact </string>
     <string name="contact_playstore">Google</string>
+    <string name="tracker_social">Social</string>
+    <string name="tracker_email">Email</string>
     <string name="back">Înapoi</string>
+    <string name="forever_free">Întotdeauna Gratuit</string>
+    <string name="blocked">BLOCAT</string>
 </resources>
