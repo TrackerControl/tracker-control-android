@@ -1496,6 +1496,10 @@ public class ServiceSinkhole extends VpnService {
                 listExclude.add(new IPUtil.CIDR("97.0.0.0", 10)); // 97.0.0.0 - 97.63.255.255
             }
 
+            // SFR MMS
+            if (config.mnc == 10 && config.mcc == 208)
+                listExclude.add(new IPUtil.CIDR("10.151.0.0", 24));
+
             // Broadcast
             listExclude.add(new IPUtil.CIDR("224.0.0.0", 3));
 
