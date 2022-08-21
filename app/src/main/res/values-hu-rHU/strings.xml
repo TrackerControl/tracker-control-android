@@ -95,7 +95,7 @@
     <string name="summary_install">Állapotsor értesítés megjelenítése az újonnan telepített alkalmazásokhoz</string>
     <string name="summary_pause">Az értesítés szüneteltetése után a kiválasztott percek után automatikusan engedélyezze újra a TrackerControl alkalmazást (0 érték letiltja az opciót).</string>
     <string name="summary_update">Ellenőrizze naponta kétszer a GitHub-on az új kiadásokat</string>
-    <string name="summary_tethering">Az Android verziótól függően a Tethering vagy működik, vagy nem. A megosztott forgalom nem szűrhető.</string>
+    <string name="summary_tethering">Az Android verziótól függően az internetmegosztás vagy működik, vagy nem. A megosztott forgalom nem szűrhető.</string>
     <string name="summary_subnet">Engedélyezi az alhálózati útválasztót; lehet, hogy engedélyezi a Wi-Fi hívást, de lehet, hogy hibát okoz az Androidban és növeli az akkumulátor használatot</string>
     <string name="summary_lan">Engedélyezi az alkalmazások kapcsolódását a LAN hálózati címekhez, mint pl. 10.0.0.0/8, 172.16.0.0/12 és 192.168.0.0/16</string>
     <string name="summary_ip6">Az IPv6 forgalmat a TrackerControl szelektíven tudja tiltani vagy engedélyezni</string>
@@ -183,7 +183,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="title_metered">Alapértelmezésben a Wi-Fi kapcsolat méretlennek a mobil kapcsolat pedig mértnek minősül</string>
     <string name="title_internet">nem lehet elérni az internetet</string>
     <string name="title_disabled">letiltva</string>
-    <string name="title_messaging">A bejövő üzeneteket a Google Play Szolgáltatások fogadja és nem ez az alkalmazás, ezért azokat nem lehet letiltani az alkalmazás blokkolásával</string>
+    <string name="title_messaging">A bejövő üzeneteket a Google Play-szolgáltatások fogadja és nem ez az alkalmazás, ezért azokat nem lehet letiltani az alkalmazás blokkolásával</string>
     <string name="title_download">A letöltések a letöltéskezelővel történnek, nem pedig ezzel az alkalmazással, ezért a letöltéseket nem lehet blokkolni az alkalmazás blokkolásával</string>
     <string name="title_conditions">Feltételek</string>
     <string name="title_screen_wifi">Wi-Fi engedélyezése bekapcsolt képernyőnél</string>
@@ -348,8 +348,8 @@ Tisztelettel,\n\n]]></string>
     <string name="detected_trackers">Észlelt nyomkövető könyvtárak: %s</string>
     <string name="none">Egyik sem</string>
     <string name="trackers_static">Nyomkövető könyvtárak</string>
-    <string name="trackers_static_explanation">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt követés a TrackerControllal blokkolható.</string>
-    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a követést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.</string>
+    <string name="trackers_static_explanation">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt nyomkövetés a TrackerControllal blokkolható.</string>
+    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.</string>
     <string name="blocked">BLOKKOLT</string>
     <string name="allowed">ENGEDÉLYEZETT</string>
     <string name="setting_domain_based_blocked">Tartományalapú blokkolás</string>
@@ -357,7 +357,7 @@ Tisztelettel,\n\n]]></string>
     <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
     <string name="uncertain_entry">A \"*\" jelzéssel ellátott bejegyzések pontatlanok lehetnek az Android korlátai miatt. Ez általában azt jelenti, hogy ugyanaz a vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelenti, hogy a különböző vállalatok ugyanazon az IP-cím mögött vannak (például tartalomszállítási hálózatot használnak).</string>
     <string name="browsers_not_supported">A böngészők nem támogatottak ⚠️</string>
-    <string name="browsers_not_supported_explanation">Úgy tűnik, hogy ez egy böngészőalkalmazás.\n\nA böngészők nyomkövető blokkolását nem támogatja a TrackerControl. Használjon olyan böngészőt, amely nyomkövetés elleni védelemmel rendelkezik, hogy blokkolja a követést.\n\nPélda: Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">Úgy tűnik, hogy ez egy böngészőalkalmazás.\n\nA böngészők nyomkövető blokkolását nem támogatja a TrackerControl. Használjon olyan böngészőt, amely nyomkövetés elleni védelemmel rendelkezik, hogy blokkolja a nyomon követést.\n\nPélda: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">A nyomkövetők észlelése az alkalmazáskódban</string>
     <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen.</string>
 </resources>
