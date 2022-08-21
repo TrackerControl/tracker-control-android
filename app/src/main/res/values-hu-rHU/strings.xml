@@ -2,15 +2,15 @@
 <resources>
     <string name="app_description">A TrackerControl lehetővé teszi a felhasználók számára, hogy figyelemmel kísérjék és ellenőrizzék a mobilalkalmazásokban a felhasználói viselkedéssel kapcsolatos széles körű, folyamatos, rejtett adatgyűjtést (nyomkövetés).</string>
     <string name="app_copyright">Szerzői Jog \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nA TrackerControl a NetGuardon alapul, amelyet a Marcel Bokhorst fejlesztett.(M66B).</string>
-    <string name="app_android">A TrackerControl Android 5.1-et vagy újabbat igényel</string>
+    <string name="app_android">A TrackerControl Android 5.1-et, vagy újabbat igényel</string>
     <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Áruházból, ezért a TrackerControl nem támogatott amíg az Xposed telepítve van</string>
-    <string name="app_eula">Az alkalmazás használata saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
+    <string name="app_eula">Az alkalmazás használata a saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Titoktartási Irányelv</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Süti Irányelv</a></string>
     <string name="channel_foreground">Futó szolgáltatások</string>
     <string name="channel_notify">Általános értesítések</string>
     <string name="channel_access">Hozzáférési értesítések</string>
     <string name="menu_search">Alkalmazás keresése</string>
-    <string name="menu_filter">Alkalmazás szűrő</string>
+    <string name="menu_filter">Alkalmazások szűrése</string>
     <string name="menu_app_user">Felhasználói alkalmazások megjelenítése</string>
     <string name="menu_app_system">Rendszer alkalmazások megjelenítése</string>
     <string name="menu_app_nointernet">Internet nélküli alkalmazások megjelenítése</string>
@@ -60,14 +60,14 @@
     <string name="setting_system">Rendszeralkalmazások kezelése</string>
     <string name="setting_log_app">Új nyomkövetők keresése</string>
     <string name="setting_log_logcat">Napló továbbítása az ADB-nek</string>
-    <string name="setting_filter">Követők blokkolása</string>
-    <string name="setting_filter_udp">Követők blokkolása UDP-n</string>
+    <string name="setting_filter">Nyomkövetők blokkolása</string>
+    <string name="setting_filter_udp">Nyomkövetők blokkolása UDP-n</string>
     <string name="setting_handover">Zökkenőmentes VPN átadás újratöltéskor</string>
     <string name="setting_lockdown">Forgalom lezárása</string>
     <string name="setting_track_usage">A hálózat használatának nyomon követése</string>
     <string name="setting_reset_usage">Hálózathasználat alaphelyzetbe</string>
     <string name="setting_show_resolved">Mutassa a feloldott tartományneveket</string>
-    <string name="setting_block_domains">Hosts fájl engedélyezése</string>
+    <string name="setting_block_domains">Hosts-fájl engedélyezése</string>
     <string name="setting_rcode">Hosts blokkoló válasza: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
@@ -87,11 +87,11 @@
     <string name="setting_backup">Biztonsági mentés</string>
     <string name="setting_export">Beállítások exportálása (nem az eszköz visszaállításához)</string>
     <string name="setting_import">Beállítások importálása</string>
-    <string name="setting_hosts">Hosts fájl importálása</string>
-    <string name="setting_hosts_append">Hosts fájl importálása (hozzáfűz)</string>
-    <string name="setting_hosts_url">Hosts fájl URL</string>
-    <string name="setting_hosts_download">Hosts fájl letöltése</string>
-    <string name="setting_hosts_update">Hosts fájl frissítése</string>
+    <string name="setting_hosts">Hosts-fájl importálása</string>
+    <string name="setting_hosts_append">Hosts-fájl importálása (hozzáfűz)</string>
+    <string name="setting_hosts_url">Hosts-fájl URL</string>
+    <string name="setting_hosts_download">Hosts-fájl letöltése</string>
+    <string name="setting_hosts_update">Hosts-fájl frissítése</string>
     <string name="summary_install">Állapotsor értesítés megjelenítése az újonnan telepített alkalmazásokhoz</string>
     <string name="summary_pause">Az értesítés szüneteltetése után a kiválasztott percek után automatikusan engedélyezze újra a TrackerControl alkalmazást (0 érték letiltja az opciót).</string>
     <string name="summary_update">Ellenőrizze naponta kétszer a GitHub-on az új kiadásokat</string>
@@ -103,7 +103,7 @@
     <string name="summary_system">Szabályok megadása a rendszer alkalmazásokra (szakértőknek)</string>
     <string name="summary_log_app">Az akkumulátor használatának csökkentése érdekében tiltsa le. Az új nyomkövetők továbbra is blokkolásra kerülnek, de nem jelennek meg.</string>
     <string name="summary_track_usage">Nyomon követheti a küldött és fogadott bájtok számát minden egyes alkalmazáshoz és címhez. Ez extra akkumulátor használattal járhat.</string>
-    <string name="summary_block_domains">FIGYELEM: A tiltott hosts nem jelenik meg a felhasználói felületen.</string>
+    <string name="summary_block_domains">FIGYELEM: A tiltott gazdagépek nem jelennek meg a felhasználói felületen.</string>
     <string name="summary_rcode">Az alapértelmezett érték 3 (NXDOMAIN), ami azt jelenti: „nem létező tartomány”.</string>
     <string name="summary_validate">Az internetkapcsolat ellenőrzéséhez a 443 (https) porton, használt tartománynév.</string>
     <string name="summary_socks5_enabled">Csak a TCP forgalom küldése a proxy-szerverre</string>
@@ -126,8 +126,8 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="msg_error">Váratlan hiba történt: \'%s\'</string>
     <string name="msg_start_failed">Az Android nem volt hajlandó elindítani a VPN szolgáltatást. Ez valószínűleg az Androidjának hibája miatt következett be.</string>
     <string name="msg_try">Próbálja ki a TrackerControlt</string>
-    <string name="msg_doze">A következetes eredményekhez az Androidos akkumulátor-optimalizálásban a TrackerControlt kivétellé kell tenni.\n\nA következő párbeszédablakban válassza felül az „Összes alkalmazás\"-t, érintse meg a TrackerControl feliratot és válassza a „Ne optimalizálja\" részt.</string>
-    <string name="msg_datasaving">A következetes eredmény érdekében az Android adatforgalom-csökkentő bekapcsolásakor is biztosítani kell az adathasználatot a TrackerControl számára\n\nA következő párbeszédablakban engedélyezni kell a „Háttér adat\" és a „Korlátlan adathasználat\" opciót</string>
+    <string name="msg_doze">A következetes eredményekhez az Androidos akkumulátor-optimalizálásban a TrackerControlt kivétellé kell tenni.\n\nA következő párbeszédablakban válassza felül az „Összes alkalmazás”-t, érintse meg a TrackerControl feliratot és válassza a „Ne optimalizálja” részt.</string>
+    <string name="msg_datasaving">A következetes eredmény érdekében az Android adatforgalom-csökkentő bekapcsolásakor is biztosítani kell az adathasználatot a TrackerControl számára\n\nA következő párbeszédablakban engedélyezni kell a „Háttér adat” és a „Korlátlan adathasználat” opciót</string>
     <string name="msg_filter">A szűrés használatával az adat és az energia használat attributumait a TrackerControlhoz sorolja. Az Android azt feltételezi, hogy ezeket a TrackerControl használta fel és nem az eredeti alkalmazás</string>
     <string name="msg_filter4">A szűrés engedélyezéséhez legalább Android 4 szükséges</string>
     <string name="msg_log_disabled">Forgalom naplózása le van tiltva, a fenti kapcsolóval engedélyezheti a naplózást. A forgalom naplózása extra akkumulátorhasználattal jár.</string>
@@ -135,8 +135,8 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="msg_reset_access">Ez törli az elérési kísérleteket a naplóból az engedélyezés/tiltás szabályok nélkül</string>
     <string name="msg_import_last">Utolsó importálás: %s</string>
     <string name="msg_downloading">Letöltés\n%1s</string>
-    <string name="msg_downloaded">Hosts fájl letöltve</string>
-    <string name="msg_updated">A hosts fájl frissítve és alkalmazva!</string>
+    <string name="msg_downloaded">Hosts-fájl letöltve</string>
+    <string name="msg_updated">A hosts-fájl frissítve és alkalmazva!</string>
     <string name="msg_download_last">Utolsó letöltés: %s</string>
     <string name="msg_update_last">Utolsó frissítés: %s</string>
     <string name="msg_metered">Ez mért hálózat</string>
@@ -152,7 +152,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az Android verzión</string>
     <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
     <string name="msg_always_on_lockdown">Kapcsold ki a \"A VPN nélküli kapcsolatok blokkolását\" az Android VPN beállításaiban hogy a TrackerControlt használhasd szűrés módban</string>
-    <string name="msg_private_dns">Kapcsold ki a „Privát DNS\"-t az Android hálózati beállításaiban, hogy a TrackerControlt szűrés módban használhasd</string>
+    <string name="msg_private_dns">Kapcsold ki a „Privát DNS”-t az Android hálózati beállításaiban, hogy a TrackerControlt szűrés módban használhasd</string>
     <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
@@ -168,7 +168,7 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="title_raddr">Cél címe</string>
     <string name="title_rport">Cél port</string>
     <string name="title_ruid">Cél app</string>
-    <string name="title_external">Külső kiszolgálóhoz válassza a „senki\" lehetőséget</string>
+    <string name="title_external">Külső kiszolgálóhoz válassza a „senki” lehetőséget</string>
     <string name="title_lockdown_enabled">A forgalom lezárva</string>
     <string name="title_unmetered_allowed">Méretlen forgalom engedélyezve</string>
     <string name="title_unmetered_blocked">Méretlen forgalom letiltva</string>
@@ -241,25 +241,25 @@ Az internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</string>
     <string name="exported">Exportálva a tárhelyre!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Részletek</string>
-    <string name="tab_trackers">Követők</string>
+    <string name="tab_trackers">Nyomkövetők</string>
     <string name="tab_countries">Országok</string>
     <string name="tab_actions">Adataim</string>
-    <string name="tracker_name">Követőneve</string>
+    <string name="tracker_name">Nyomkövető neve</string>
     <string name="internet_access">Internet hozzáférés</string>
     <string name="internet_access_explanation">Be kell kapcsolnia az internet hozzáféréshez.\n\nTipp: A főképernyőn megérintheti az alkalmazás ikont is.</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
-    <string name="block_tracking">Követők blokkolása</string>
+    <string name="block_tracking">Nyomkövetők blokkolása</string>
     <string name="block_tracking_description">Számos alkalmazás küld adatokat harmadik félnek, úgynevezett nyomkövetőknek. A TrackerControl lehetővé teszi ezen hálózati adások szelektív blokkolását. Ennek ellenére használja ezt okosan, mivel az alkalmazásfejlesztők támaszkodnak ezekre a szolgáltatásokra, nevezetesen a reklámokra.</string>
     <string name="personalised_ads">Korlátozza a személyre szabást</string>
-    <string name="personalised_ads_description">Az Android felajánlja az alkalmazások hozzáférésének korlátozását eszközének Google Hirdetési azonosítójához. Az alkalmazások azonban figyelmen kívül hagyhatják ezt a beállítást, és továbbra is használják ezt az azonosítót. A Google irányelveinek megfelelően továbbra is gyűjthetik az azonosítót elemzési célokra. Bizalomra van szüksége a Google és az adatgyűjtő vállalat iránt.</string>
-    <string name="data_managment">Adatok Kezelése</string>
+    <string name="personalised_ads_description">Az Android felajánlja az alkalmazások hozzáférésének korlátozását eszközének Google Hirdetési Azonosítójához. Az alkalmazások azonban figyelmen kívül hagyhatják ezt a beállítást, és továbbra is használják ezt az azonosítót. A Google irányelveinek megfelelően továbbra is gyűjthetik az azonosítót elemzési célokra. Bizalomra van szüksége a Google és az adatgyűjtő vállalat iránt.</string>
+    <string name="data_managment">Adatok kezelése</string>
     <string name="data_management_description">Az EU általános adatvédelmi rendelete (GDPR) lehetővé teszi az EU-ban élő felhasználók számára a velük kapcsolatos adatok kezelését. Ez az alkalmazás e-mail sablonokat kínál, hogy elérje a fejlesztőt. A fejlesztőnek egy hónapon belül válaszolnia kell.</string>
     <string name="contacts">Kapcsolatok </string>
     <string name="contacts_description">Ha úgy gondolja, hogy egy alkalmazás sérti az adatvédelmi elveket, érdemes közvetlenül kapcsolatba lépnie a felelős szervezetekkel.</string>
     <string name="play_services_required">Ez a Google Play-szolgáltatások beállítása, amely nem található az eszközén.</string>
-    <string name="no_mail_service">Kérjük telepítsen egy e-mail klienst.</string>
-    <string name="blocking_settings">Követők kiválasztása</string>
+    <string name="no_mail_service">Kérjük telepítsen egy e-mail klienset.</string>
+    <string name="blocking_settings">Nyomkövetők kiválasztása</string>
     <string name="ad_settings">Módosít</string>
     <string name="request_data">Adatok kérelmezése</string>
     <string name="request_deletion">Törlés kérelmezése</string>
@@ -278,7 +278,7 @@ Ha igen, kérjük, adja meg nekem az EU Általános Adatvédelmi Rendeletének (
 • a személyes adataim másolata;\n
 • a feldolgozás célja;\n
 • az érintett személyes adatok kategóriái;\n
-• azok a címzettek, akiknek átadják személyes adataimat és az ön által nyújtott biztosítékok;\n
+• azok a címzettek, akiknek átadják személyes adataimat és az Ön által nyújtott biztosítékok;\n
 • a személyes adatok tárolásának megőrzési ideje, vagy az ezen időszak meghatározásához használt kritériumok;\n
 • információk a személyes adatok forrásáról; és\n
 • az automatizált döntéshozatal (beleértve a profilalkotást) megléte és ha igen:\n
@@ -296,7 +296,7 @@ Tisztelettel,\n\n]]></string>
 \n
 A törléshez való jogomra hivatkozom az EU Általános Adatvédelmi Rendeletének (GDPR) 17. cikkében meghatározottak szerint. Arra kérem Önt, mint a %s (ID: %s) androidos alkalmazás adatkezelőjét, hogy indokolatlan késedelem nélkül törölje az alábbi, rólam kezelt személyes adatokat:\n
 • Minden adat.\n
-Az eltávolítási kérelmem oka, hogy visszavonom, vagy visszavontam a személyes adatok kezeléséhez szükséges beleegyezésemet. Ez a kérelem a személyes adatok bármilyen, ön általi feldolgozására vonatkozik, beleértve azokat a feldolgozókat is, akik az ön nevében személyes adatokat kezelnek.\n
+Az eltávolítási kérelmem oka, hogy visszavonom, vagy visszavontam a személyes adatok kezeléséhez szükséges beleegyezésemet. Ez a kérelem a személyes adatok bármilyen, Ön általi feldolgozására vonatkozik, beleértve azokat a feldolgozókat is, akik az ön nevében személyes adatokat kezelnek.\n
 Kérem, hogy válaszát biztonságos módon, e-mailben adja meg. Várom, hogy a kérés kézhezvételétől számított egy hónapon belül választ kapjak.\n
 \n
 Tisztelettel,\n\n]]></string>
@@ -306,7 +306,7 @@ Tisztelettel,\n\n]]></string>
     <string name="instructions_monitoring">Kapcsolja be a kapcsolót és használjon néhány alkalmazást.</string>
     <string name="device_not_supported_title">Az eszköz nem támogatott</string>
     <string name="device_not_supported_msg">A készüléke operációs rendszere nem teszi lehetővé a hálózati kommunikáció nyomon követését és szűrését. Ehhez a TrackerControlra van szükség.</string>
-    <string name="launch_app">Indítás &amp; Követők keresése</string>
+    <string name="launch_app">Indítás &amp; Nyomkövetők keresése</string>
     <string name="countries">Célországok</string>
     <string name="countries_explanation">Tudja meg hová küldi a telefonja az adatokat.\n\nAz információk DNS kereséseken és IP információkon alapulnak és pontatlanok lehetnek.</string>
     <string name="countries_loading_failed">Hoppá.. Az országtérkép betöltése nem sikerült. Kérlek írd meg, - (tc@kollnig.net) - hogy történt.</string>
@@ -316,7 +316,7 @@ Tisztelettel,\n\n]]></string>
     <string name="tracker_cryptomining">Cryptobányász</string>
     <string name="tracker_fingerprinting">Ujjlenyomat</string>
     <string name="tracker_social">Szociális</string>
-    <string name="tracker_email">Email</string>
+    <string name="tracker_email">E-mail</string>
     <string name="tracker_uncategorised">Kategória nélküli</string>
     <string name="setting_strict_blocking">Szigorú blokkolás</string>
     <string name="summary_strict_blocking">Az újonnan telepített alkalmazások esetén blokkolja a lehető legtöbb adatmegosztást. Több alkalmazás meg fog törni.</string>
@@ -338,18 +338,18 @@ Tisztelettel,\n\n]]></string>
     <string name="enable">Engedélyez</string>
     <string name="internet_blocked">Internet hozzáférés blokkolva</string>
     <string name="internet_unblocked">Blokkolatlan internet hozzáférés</string>
-    <string name="category_blocked">A kategóriába tartozó követők blokkolva</string>
-    <string name="category_unblocked">A kategóriába tartozó követők engedélyezve</string>
+    <string name="category_blocked">A kategóriába tartozó nyomkövetők blokkolva</string>
+    <string name="category_unblocked">A kategóriába tartozó nyomkövetők engedélyezve</string>
     <string name="category_unblocked_warning">Előbb blokkolja a kategóriát!</string>
     <string name="switch_strict_blocking">Blokkolja az alapvető adatmegosztást</string>
-    <string name="tracking_detection_failed">Követő könyvtár észlelési hiba.</string>
-    <string name="tracking_detection_failed_ram">Követő könyvtár észlelési hiba. Kevés a RAM.</string>
-    <string name="tracking_detection_failed_report">Követő könyvtár észlelési hiba. Kérem jelentse ezt a hibát a fejlesztőnek.</string>
-    <string name="detected_trackers">Észlelt követő könyvtárak: %s</string>
+    <string name="tracking_detection_failed">Nyomkövető könyvtár észlelési hiba.</string>
+    <string name="tracking_detection_failed_ram">Nyomkövető könyvtár észlelési hiba. Kevés a RAM.</string>
+    <string name="tracking_detection_failed_report">Nyomkövető könyvtár észlelési hiba. Kérem jelentse ezt a hibát a fejlesztőnek.</string>
+    <string name="detected_trackers">Észlelt nyomkövető könyvtárak: %s</string>
     <string name="none">Egyik sem</string>
-    <string name="trackers_static">Követő könyvtárak</string>
+    <string name="trackers_static">Nyomkövető könyvtárak</string>
     <string name="trackers_static_explanation">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt követés a TrackerControllal blokkolható.</string>
-    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a követést a kódokban (\'könyvtárak\') és az alkalmazások hálózati forgalmában.</string>
+    <string name="trackers_static_explanation_playstore">A TrackerControl észleli a követést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.</string>
     <string name="blocked">BLOKKOLT</string>
     <string name="allowed">ENGEDÉLYEZETT</string>
     <string name="setting_domain_based_blocked">Tartományalapú blokkolás</string>
@@ -357,7 +357,7 @@ Tisztelettel,\n\n]]></string>
     <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
     <string name="uncertain_entry">A \"*\" jelzéssel ellátott bejegyzések pontatlanok lehetnek az Android korlátai miatt. Ez általában azt jelenti, hogy ugyanaz a vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelenti, hogy a különböző vállalatok ugyanazon az IP-cím mögött vannak (például tartalomszállítási hálózatot használnak).</string>
     <string name="browsers_not_supported">A böngészők nem támogatottak ⚠️</string>
-    <string name="browsers_not_supported_explanation">Úgy tűnik, hogy ez egy böngészőalkalmazás.\n\nA böngészők követő blokkolását nem támogatja a TrackerControl. Használjon olyan böngészőt, amely nyomkövetés elleni védelemmel rendelkezik, hogy blokkolja a követést.\n\nPélda: Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">Úgy tűnik, hogy ez egy böngészőalkalmazás.\n\nA böngészők nyomkövető blokkolását nem támogatja a TrackerControl. Használjon olyan böngészőt, amely nyomkövetés elleni védelemmel rendelkezik, hogy blokkolja a követést.\n\nPélda: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">A nyomkövetők észlelése az alkalmazáskódban</string>
     <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen.</string>
 </resources>
