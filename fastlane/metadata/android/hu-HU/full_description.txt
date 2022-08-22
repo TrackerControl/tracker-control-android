@@ -12,7 +12,7 @@ Az alkalmazás célja, hogy ismerje meg az Adatvédelmi Törvény, az EU Által�
 
 A TrackerControl az Android VPN funkcióit használja, hogy elemezze az alkalmazások hálózati kommunikációját <i> helyileg az Android eszközön </i>. Ez egy helyi VPN kiszolgálón keresztül valósul meg, lehetővé téve a hálózati forgalom elemzését a TrackerControllal.
 
-Nincs szükség root-ra, más VPN-ek vagy Privát DNS nem támogatott. Nem használ külső VPN-kiszolgálót az adatok biztonsága érdekében! A TrackerControl még a <i> DNS álcázás </i> ellen is megvéd, ami egy népszerű technika a nyomkövetők elrejtésére a webhelyeken és az alkalmazásokban.
+Nincs szükség root-ra, más VPN-ek, vagy Privát DNS nem támogatott. Nem használ külső VPN-kiszolgálót az adatok biztonsága érdekében! A TrackerControl még a <i> DNS álcázás </i> ellen is megvéd, ami egy népszerű technika a nyomkövetők elrejtésére a webhelyeken és az alkalmazásokban.
 
 A TrackerControl kutatási projektként mindig ingyenes és nyílt forráskódú lesz.
 
