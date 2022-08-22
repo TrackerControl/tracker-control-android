@@ -1,1 +1,1 @@
-A TrackerControl segít az alkalmazások adatgyűjtésének ellenőrzésében.
+A TrackerControllal láthatja és tilthatja az alkalmazások adatgyüjtését.
