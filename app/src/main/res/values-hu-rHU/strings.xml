@@ -331,7 +331,7 @@ Tisztelettel,\n\n]]></string>
     <string name="no_trackers_found_message">Indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
     <string name="no_trackers_found_action">Indítás</string>
     <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
-    <string name="no_internet">Nincs internet hozzáférés</string>
+    <string name="no_internet">Nincs internet-hozzáférés</string>
     <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az App ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
     <string name="forever_free">Örökre Ingyenes</string>
