@@ -89,7 +89,7 @@
     <string name="setting_import">Importer les paramètres</string>
     <string name="setting_hosts">Importer un fichier hosts</string>
     <string name="setting_hosts_append">Importer un fichier hosts (ajouter)</string>
-    <string name="setting_hosts_url">URL du fichier de liste d\'hôtes</string>
+    <string name="setting_hosts_url">URL du fichier hosts</string>
     <string name="setting_hosts_download">Télécharger le fichier hosts</string>
     <string name="setting_hosts_update">Mettre à jour le fichier hosts</string>
     <string name="summary_install">Afficher la notification d\'état pour les nouvelles applications installées</string>
