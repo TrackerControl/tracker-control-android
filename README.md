@@ -77,7 +77,7 @@ At the moment, TrackerControl Slim, available on the [Google Play Store](https:/
 
 You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
 
-You can export the results of your analysis from the app menu TrackerControl to CSV ("Export as CSV"). If you export to CSV from the main screen of TrackerControl, you can create nice visualisations of your exported traffic data using purpose-built software by [Hestia Labs](https://experiences.hestialabs.org/tracker-control#load-data).
+You can export the results of your analysis from the app menu TrackerControl to CSV ("Export as CSV"). If you export to CSV from the main screen of TrackerControl, you can create nice visualisations of your exported traffic data using purpose-built software by [Hestia Labs](https://digipower.academy/experience/tracker-control).
 
 It is further possible to enable the direct logging of contacted domains to the console. This is helpful for research studies that instrument apps using an additional computer and can be enabled through Settings -> Advanced options -> Log transmissions to ADB. Note that this disables any blocking.
 
