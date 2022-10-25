@@ -115,7 +115,7 @@ Also, you can always reach out to the main developer Konrad directly at <hello@t
 
 1. Telegram Discussion Group: <https://t.me/TrackerControl>
 2. Telegram News Channel: <https://t.me/TrackerControlChannel>
-3. Matrix Community: <https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org>
+3. ~~Matrix Community: <https://matrix.to/#/!htazLJNOSogSGbSPQL:matrix.org?via=matrix.org>~~ (temporarily closed due to spam)
 4. /e/ Community: <https://community.e.foundation/t/trackercontrol-a-way-to-neutralize-in-app-trackers/>
 5. XDA Developers: <https://forum.xda-developers.com/android/apps-games/control-trackers-ads-t4161821>
 
