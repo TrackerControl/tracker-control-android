@@ -44,6 +44,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 
+import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.TrackerList;
 
@@ -324,7 +325,7 @@ public class AdapterLog extends CursorAdapter {
         }
 
         // Show extra data, but not for TLS (because we retrieve the SNI from the data field)
-        if (TextUtils.isEmpty(data) || dport == 443) {
+        if ((TextUtils.isEmpty(data) || dport == 443) && !BuildConfig.DEBUG) {
             tvData.setText("");
             tvData.setVisibility(View.GONE);
         } else {

@@ -690,7 +690,9 @@ public class ServiceSinkhole extends VpnService {
             uidToApp.clear();
 
             // Check for update
-            if (!Util.isPlayStoreInstall(ServiceSinkhole.this) && !Util.isFDroidInstall() && prefs.getBoolean("update_check", true))
+            if (!Util.isPlayStoreInstall(ServiceSinkhole.this)
+                    && !Util.isFDroidInstall()
+                    && prefs.getBoolean("update_check", true))
                 checkUpdate();
         }
 
@@ -2103,7 +2105,7 @@ public class ServiceSinkhole extends VpnService {
                     ipToHost.remove(daddr);
             }
 
-            if (dname == null) {
+            if (dname == null) { // TODO: Note that this does not implement any SNI code
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                 long time;
@@ -3120,6 +3122,9 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void showUpdateNotification(String name, String url) {
+        if (Util.isFDroidInstall())
+            return;
+
         Intent download = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         PendingIntent pi = PendingIntent.getActivity(this, 0, download, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 
