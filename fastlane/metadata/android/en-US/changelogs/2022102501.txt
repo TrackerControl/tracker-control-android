@@ -1,0 +1,4 @@
+- add Slovenian, revamp Hungarian, minor updates to other translations
+- update host lists and dependencies
+- merge latest NetGuard changes
+- fix several bugs
