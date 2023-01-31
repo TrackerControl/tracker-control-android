@@ -86,7 +86,7 @@
     <string name="setting_watchdog">Pes čuvaj: vsakih %s min.</string>
     <string name="setting_stats_frequency">Vzorčni razmik: %s ms</string>
     <string name="setting_stats_samples">Št. vzorcev: %s s</string>
-    <string name="setting_backup">Varnostno kopiraj</string>
+    <string name="setting_backup">Varnostno kopiranje</string>
     <string name="setting_export">Izvozi nastavitve (ni za ponastavitev naprave)</string>
     <string name="setting_import">Uvozi nastavitve</string>
     <string name="setting_hosts">Uvozi datoteko gostiteljev</string>
@@ -94,7 +94,7 @@
     <string name="setting_hosts_url">URL datoteke gostiteljev</string>
     <string name="setting_hosts_download">Prejmi datoteko gostiteljev</string>
     <string name="setting_hosts_update">Posodobi datoteko gostiteljev</string>
-    <string name="summary_install">Prikaži obvestilo v vrstici stanja za na novo nameščene programe</string>
+    <string name="summary_install">Prikaži obvestilo v vrstici stanja za na novo nameščene programe.</string>
     <string name="summary_pause">Po premoru iz obvestila samodejno omogoči TrackerControl po izbranem številu minut (vnesite 0 , da onemogočite to možnost).</string>
     <string name="summary_update">Dvakrat dnevno preveri za nove izdaje na GitHubu</string>
     <string name="summary_tethering">Delovanje privezovanja je odvisno od različice Androida.  Privezanega prenosa ni mogoče filtrirati.</string>
@@ -102,7 +102,7 @@
     <string name="summary_lan">Dovoli programom, da se povežejo na krajevne omrežne naslove, kot so 10.0.0.0/8, 172.16.0.0/12 in 192.168.0.0/16.</string>
     <string name="summary_ip6">Preusmeri promet IP različice 6 v TrackerControl, da se ga lahko izbirno dovoli ali blokira.</string>
     <string name="summary_call">Onemogoči TrackerControl ob dohodnih ali odhodnih klicih.  To se lahko uporabi, da se zaobide težave pri klicanju IP/Wi-Fi.</string>
-    <string name="summary_system">Določi pravila za sistemske programe (za napredne uporabnike)</string>
+    <string name="summary_system">Določi pravila za sistemske programe (za napredne uporabnike).</string>
     <string name="summary_log_app">Onemogočite za zmanjšanje porabe energije.  Novi sledilci bodo še vedno blokirani, vendar ne bodo prikazani.</string>
     <string name="summary_track_usage">Sledi številu poslanih in prejetih bajtov za vsak program in naslov.  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_block_domains">OPOZORILO: blokirani gostitelji niso prikazani v up. vmesniku.</string>
@@ -254,13 +254,13 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tab_actions">Moji podatki</string>
     <string name="tracker_name">Ime sledilca</string>
     <string name="internet_access">Dostop do interneta</string>
-    <string name="internet_access_explanation">Za dostop do interneta mora biti vklopljeno.\n\nNasvet: lahko se tudi dotaknete ikone programa na glavnem zaslonu.</string>
+    <string name="internet_access_explanation">Za dostop do interneta mora biti to vklopljeno.\n\nNasvet: lahko se tudi dotaknete ikone programa na glavnem zaslonu.</string>
     <string name="app_info">Upravljanje programa</string>
     <!-- Actions -->
     <string name="block_tracking">Blokiraj sledilce</string>
-    <string name="block_tracking_description">Veliko programov pošilja podatke tretjim osebam, t.i. sledilcem.  TrackerControl omogoča izbirno blokiranje teh omrežnih prenosov.  Toda to uporabljajte modro, ker se razvijalci zanašajo na te storitve, še največ na oglaševanje.</string>
+    <string name="block_tracking_description">Veliko programov pošilja podatke tretjim osebam, t.i. sledilcem.  TrackerControl omogoča izbirno blokiranje teh omrežnih prenosov.  Toda to uporabljajte po pameti, ker se razvijalci zanašajo na te storitve, še največ pa na oglaševanje.</string>
     <string name="personalised_ads">Omeji osebno prilagajanje</string>
-    <string name="personalised_ads_description">Android programom nudi omejitev dostopa do Goglovega oglaševalskega ID-ja.  Vendar programi lahko prezrejo to nastavitev in vseeno uporabijo ta ID.  Lahko tudi še naprej zbirajo ta ID za potrebe preučevanja glede na Googlove pravilnike.  Morali boste zaupati Googlu in podjetju, ki zbira podatke.</string>
+    <string name="personalised_ads_description">Android programom nudi omejitev dostopa do Googlovega oglaševalskega ID-ja.  Vendar programi lahko prezrejo to nastavitev in vseeno uporabijo ta ID.  Lahko tudi še naprej beležijo ta ID za potrebe preučevanja glede na Googlove pravilnike.  Morali boste zaupati Googlu in podjetju, ki zbira podatke.</string>
     <string name="data_managment">Upravljaj s podatki</string>
     <string name="data_management_description">Evropska Splošna Uredba o varstvu podatkov (GDPR) uporabnikom evropske unije omogoča upravljanje z vsemi podatki, ki so povezani z njimi.  Ta program nudi e-poštne predloge za stik z raziskovalcem.  Razvijalec mora odgovoriti v mesecu dni.</string>
     <string name="contacts">Stik </string>
@@ -319,13 +319,13 @@ Sincerely,\n\n]]></string>
     <string name="device_not_supported_msg">Operacijski sistem vaše naprave ne dovoli nadzora in filtriranja omrežnih komunikacij.  TrackerControl to zahteva.</string>
     <string name="launch_app">Zaženi in poišči sledilce</string>
     <string name="countries">Ciljne države</string>
-    <string name="countries_explanation">Spoznajte, kam vaš telefon pošilja sledilne podatke.\n\nPodatki so osnovani glede na poizvedbe DNS in podatkov o IP-jih, in so lahko netočni.</string>
+    <string name="countries_explanation">Spoznajte, kam vaš telefon pošilja sledilne podatke.\n\nPodatki so osnovani glede na poizvedbe DNS in podatke o IP-jih, in so lahko netočni.</string>
     <string name="countries_loading_failed">Ups.  Nalaganje zemljevida držav je spodletelo.  Prosimo, na tc@kollnig.net sporočite, kako se je to zgodilo.</string>
     <string name="tracker_advertising">Oglaševanje</string>
     <string name="tracker_analytics">Analitika</string>
     <string name="tracker_content">Bistvenega pomena</string>
     <string name="tracker_cryptomining">Kriptorudarjenje</string>
-    <string name="tracker_fingerprinting">Ustvarjanje osebnega odtisa</string>
+    <string name="tracker_fingerprinting">Ustvarjanje oseb. odtisa</string>
     <string name="tracker_social">Družabno</string>
     <string name="tracker_email">E-pošta</string>
     <string name="tracker_uncategorised">Neuvrščeno</string>
@@ -334,7 +334,7 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
     <string name="exclude_vpn_explanation">Mora biti vklopljeno za zaznavanje ali blokiranje sledilcev.\n\nNasvet: Onemogočite, če naletite na težave.</string>
     <string name="uninstall">Odstrani</string>
-    <string name="settings_uninstall">Nastavitve programa in odstrani</string>
+    <string name="settings_uninstall">Nastavitve programa in odstranitev</string>
     <string name="no_trackers_found_message_disabled">Omogočite stikalo na glavnem zaslonu, nato zaženite program, da poiščete sledilce.</string>
     <string name="no_trackers_found_message">Zaženi program in poišči sledilce</string>
     <string name="no_trackers_found_action">Zaženi</string>
