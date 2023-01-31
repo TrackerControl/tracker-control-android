@@ -271,6 +271,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             cat_advanced.removePreference(pref_hosts_url);
             cat_advanced.removePreference(pref_hosts_download);
 
+            cat_advanced.removePreference(cat_advanced.findPreference("domain_based_blocking"));
+            cat_advanced.removePreference(cat_advanced.findPreference("log_app"));
+            cat_advanced.removePreference(cat_advanced.findPreference("filter_udp"));
+            cat_advanced.findPreference("filter").setEnabled(false);
         } else {
             String last_import = prefs.getString("hosts_last_import", null);
             String last_download = prefs.getString("hosts_last_download", null);
