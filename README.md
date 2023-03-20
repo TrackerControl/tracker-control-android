@@ -2,6 +2,8 @@
 
 [![Crowdin](https://badges.crowdin.net/trackercontrol/localized.svg)](https://crowdin.com/project/trackercontrol) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
+**An iOS version is in the making. See [here](https://ios.trackercontrol.org).**
+
 *If you have missing features or bugs, join the [community](#communities), use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues), or contact Konrad directly (<hello@trackercontrol.org>)!*
 
 TrackerControl is an Android app that allows users to monitor and control the widespread,
