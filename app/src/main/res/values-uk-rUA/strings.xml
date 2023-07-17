@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl дозволяє користувачам відстежувати та контролювати широко розповсюджений, постійний, прихований збір даних у мобільних застосунках про поведінку користувачів (\"стеження\").</string>
+    <string name="app_android">TrackerControl потребує Android 5.1 або новішої версії</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Політика конфіденційності</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Політика використання файлів cookie</a></string>
     <string name="channel_foreground">Запущені сервіси</string>
     <string name="channel_notify">Загальні сповіщення</string>
     <string name="channel_access">Доступ до сповіщень</string>
@@ -11,6 +14,7 @@
     <string name="menu_sort">Сортувати додатки</string>
     <string name="menu_sort_name">Сортувати за іменем</string>
     <string name="menu_sort_uid">Сортувати за uid</string>
+    <string name="menu_sort_companies_week">Сортувати по компаніям (тиждень)</string>
     <string name="menu_sort_companies">Сортувати за компаніями</string>
     <string name="menu_log">Журнал трафіку</string>
     <string name="menu_settings">Параметри</string>
@@ -42,22 +46,81 @@
     <string name="setting_tethering">Дозволити режим модема</string>
     <string name="setting_lan">Дозволити доступ до LAN</string>
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
+    <string name="setting_filter">Блокувати трекери</string>
+    <string name="setting_track_usage">Відстежувати використання мережі</string>
+    <string name="setting_reset_usage">Скинути результат використання мережі</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_ttl">Мінімальний DNS TTL: %s с</string>
+    <string name="setting_socks5_enabled">Використовувати проксі SOCKS5</string>
+    <string name="setting_socks5_addr">Адреса SOCKS5: %s</string>
+    <string name="setting_socks5_port">Порт SOCKS5: %s</string>
+    <string name="setting_socks5_username">Ім’я користувача SOCKS5: %s</string>
+    <string name="setting_socks5_password">Пароль SOCKS5: %s</string>
     <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
     <string name="setting_hosts">Імпортувати host-файл</string>
     <string name="setting_hosts_append">Імпортувати host-файл (додати)</string>
+    <string name="setting_hosts_url">URL-адреса hosts-файла</string>
+    <string name="setting_hosts_download">Завантажити hosts-файл</string>
+    <string name="setting_hosts_update">Оновити hosts-файл</string>
+    <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
+    <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
+    <string name="summary_validate">Доменне ім’я, що використовується для перевірки інтернет-з’єднання через порт 443 (https).</string>
+    <string name="summary_socks5_enabled">На проксі-сервер направлятиметься лише TCP-трафік</string>
+    <string name="msg_sure">Ви впевнені?</string>
+    <string name="msg_installed_description">Дозволити застосунку звертатися до компаній</string>
+    <string name="msg_installed_n">Було встановлено</string>
+    <string name="msg_completed">Дію завершено</string>
+    <string name="msg_vpn">TrackerControl використовує локальний VPN для фільтрації інтернет-трафіку. З огляду на це, будь ласка, дозвольте VPN-підключення в наступному діалоговому вікні. На віддалені VPN-сервери ваш трафік не надсилатиметься.</string>
+    <string name="msg_autostart">TrackerControl не зміг запуститися автоматично. Ймовірно, це через помилку у вашій версії Android.</string>
+    <string name="msg_error">Сталася непередбачена помилка: \'%s\'</string>
+    <string name="msg_start_failed">Наразі Android відмовився запустити VPN-сервіс. Імовірно, це спричинено помилкою у вашій версії Android.</string>
+    <string name="msg_try">Спробуйте TrackerControl</string>
+    <string name="msg_doze">Для досягнення коректних результатів необхідно вимкнути економію заряду акумулятора Android для TrackerControl.\n\nУ верхній частині наступного діалогового вікна виберіть «Усі програми», знайдіть у списку TrackerControl і виберіть його, а потім виберіть «Не економити» і підтвердьте.</string>
+    <string name="msg_datasaving">Для отримання коректних результатів слід вимкнути опції збереження даних Android для TrackerControl \n\nУ наступному діалоговому вікні увімкніть опції «Фонові дані» та «Необмежене використання даних»</string>
+    <string name="msg_filter">Використання фільтрування призведе до того, що Android приписуватиме споживання даних та батареї TrackerControl; Android вважатиме, що дані та батарея споживаються не застосунками, які фільтруються, а TrackerControl\'ом</string>
+    <string name="msg_filter4">На Android 4 фільтрацію необхідно увімкнути</string>
+    <string name="msg_clear_rules">Це призведе до скидання правил та умов до значень за замовчуванням</string>
+    <string name="msg_reset_access">Це видалить рядки журналу спроб доступу, що не містять правил дозволу/блокування</string>
+    <string name="msg_import_last">Останній імпорт: %s</string>
+    <string name="msg_downloaded">Host-файл завантажено</string>
+    <string name="msg_queue">TrackerControl зайнятий</string>
+    <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
+    <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="title_protocol">Протокол</string>
+    <string name="title_allow">Дозволити</string>
+    <string name="title_block">Заблокувати</string>
+    <string name="title_allow_wifi">Дозволити Wi-Fi</string>
+    <string name="title_block_wifi">Блокувати Wi-Fi</string>
+    <string name="title_allow_other">Дозволити мобільні дані</string>
+    <string name="title_block_other">Блокувати мобільні дані</string>
     <!-- App Overview -->
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+    <string name="share_csv">Поширити</string>
     <!-- App Details -->
+    <string name="tab_trackers">Трекери</string>
+    <string name="tab_countries">Країни</string>
+    <string name="internet_access">Доступ до Інтернету</string>
     <!-- Actions -->
+    <string name="contact_playstore">Google</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="device_not_supported_title">Пристрій не підтримується</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
     <string name="tracker_fingerprinting">Цифрові відбитки</string>
     <string name="tracker_social">Соціальні мережі</string>
     <string name="tracker_uncategorised">Без категорії</string>
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
+    <string name="no_trackers_found_action">Запустити</string>
+    <string name="blocked">ЗАБЛОКОВАНО</string>
+    <string name="allowed">ДОЗВОЛЕНО</string>
+    <string name="browsers_not_supported">Браузери не підтримуються ⚠️</string>
 </resources>
