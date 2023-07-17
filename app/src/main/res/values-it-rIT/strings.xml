@@ -116,6 +116,7 @@
     <string name="msg_revoked">TrackerControl è stata disabilitata, probabilmente a causa di un\'altra applicazione che usa una VPN</string>
     <string name="msg_installed">Problemi con %1$s?</string>
     <string name="msg_installed_description">Consenti all\'app di contattare le aziende</string>
+    <string name="msg_installed_tracker_libraries_found">Contiene %d librerie tracker</string>
     <string name="msg_installed_n">È stata installata</string>
     <string name="msg_completed">Azione completata</string>
     <string name="msg_vpn">TrackerControl utilizza una VPN locale per filtrare il traffico di rete. 
@@ -258,6 +259,7 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="data_management_description">Il Regolamento Generale sulla Protezione dei Dati (GDPR) dell\'UE consente agli utenti dell\'UE di gestire tutti i dati ad essi correlati. Questa applicazione fornisce modelli di email per contattare lo sviluppatore. Lo sviluppatore è obbligato a rispondere entro un mese.</string>
     <string name="contacts">Contatta </string>
     <string name="contacts_description">Se pensi che un\'applicazione violi i principi di protezione dei dati, puoi contattare direttamente gli enti responsabili.</string>
+    <string name="play_services_required">Questa è una impostazione di Google Play Services, che non è stata trovata sul tuo dispositivo.</string>
     <string name="no_mail_service">Si prega di installare un client di posta elettronica.</string>
     <string name="blocking_settings">Seleziona tracker</string>
     <string name="ad_settings">Modifica ora</string>
@@ -319,6 +321,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="tracker_cryptomining">Cryptomining</string>
     <string name="tracker_fingerprinting">Impronte digitali (fingerprinting)</string>
     <string name="tracker_social">Rete sociale (social)</string>
+    <string name="tracker_email">Email</string>
     <string name="tracker_uncategorised">Senza categoria</string>
     <string name="setting_strict_blocking">Blocco rigoroso</string>
     <string name="summary_strict_blocking">Per le applicazioni appena installate, blocca quante più comunicazioni con aziende possibile. Un maggior numero di applicazioni non funzioneranno.</string>

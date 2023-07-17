@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite a los usuarios monitorizar y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
+    <string name="app_copyright">Derechos de autor \u00A9 2019–2022 Konrad Kollnig (Computación centrada en el ser humano, Departamento de Ciencias de la Computación, Universidad de Oxford)\n\nTrackerControl está basado en NetGuard, desarrollado por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
     <string name="app_xposed">Xposed genera demasiados crasheos, lo cual podría ocasionar que se retire TrackerControl de la tienda de Google Play. Por lo tanto, no habrá soporte para TrackerControl mientras Xposed esté instalado.</string>
     <string name="app_eula">El uso de esta aplicación es bajo tu propio riesgo. Ninguna aplicación puede ofrecer un 100% de protección contra el rastreo.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de privacidad</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de cookies</a></string>
     <string name="channel_foreground">Servicios en ejecución</string>
     <string name="channel_notify">Notificaciones generales</string>
     <string name="channel_access">Notificaciones de acceso</string>
@@ -114,6 +116,7 @@
     <string name="msg_revoked">TrackerControl ha sido desactivado, posiblemente por utilizar otra aplicación basada en VPN</string>
     <string name="msg_installed">¿Problemas con %1$s?</string>
     <string name="msg_installed_description">Permita que la aplicación contacte empresas</string>
+    <string name="msg_installed_tracker_libraries_found">Contiene %d librerías rastreadoras</string>
     <string name="msg_installed_n">Se ha instalado</string>
     <string name="msg_completed">Acción completada</string>
     <string name="msg_vpn">TrackerControl usa una VPN local para filtrar el tráfico de Internet.
@@ -256,6 +259,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="data_management_description">El Reglamento General de Protección de Datos de la UE (RGPD) permite a los usuarios de la Unión Europea gestionar cualquier dato relacionado con ellos. Esta aplicación proporciona plantillas de correo electrónico para llegar al desarrollador. El desarrollador tiene que responder en el plazo de un mes.</string>
     <string name="contacts">Contacto </string>
     <string name="contacts_description">Si cree que una aplicación viola los principios de protección de datos, puede contactar directamente con las entidades responsables.</string>
+    <string name="play_services_required">Esta es una configuración de los Servicios de Google Play, que no se encontraron en su dispositivo.</string>
     <string name="no_mail_service">Por favor, instale un cliente de correo electrónico.</string>
     <string name="blocking_settings">Seleccionar rastreadores</string>
     <string name="ad_settings">Cambiar ahora</string>
@@ -317,6 +321,7 @@ Atentamente,\n\n]]></string>
     <string name="tracker_cryptomining">Criptominería</string>
     <string name="tracker_fingerprinting">Huella del dispositivo</string>
     <string name="tracker_social">Social</string>
+    <string name="tracker_email">Correo electrónico</string>
     <string name="tracker_uncategorised">Sin categoría</string>
     <string name="setting_strict_blocking">Bloqueo estricto</string>
     <string name="summary_strict_blocking">Para apps recién instaladas, bloquea tantos datos compartidos con empresas como sea posible. Más apps se romperán.</string>
@@ -352,6 +357,7 @@ Atentamente,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.</string>
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
+    <string name="setting_domain_based_blocked">Bloqueo basado en dominios</string>
     <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
     <string name="untap_unblock">Tip: Puedes desbloquear entradas individuales tocándolas.</string>
     <string name="uncertain_entry">Las entradas marcadas con \'*\' pueden ser inexactas, debido a las limitaciones de Android. Esto suele significar que la misma compañía utiliza la misma dirección IP en diferentes dominios, pero también puede significar que diferentes empresas están detrás de la misma dirección IP (por ej. si utilizan una Red de entrega de contenidos).</string>

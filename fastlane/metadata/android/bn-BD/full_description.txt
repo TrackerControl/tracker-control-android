@@ -14,5 +14,5 @@ Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps
 
 No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
 
-TrackerControl va fi întotdeauna gratuit și cu sursă deschisă, fiind un proiect de cercetare.
+TrackerControl will always be free and open source, being a research project.
 

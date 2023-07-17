@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_description">ট্র্যাকারকন্ট্রোল মোবাইল অ্যাপ সমুহের বিস্তৃত, চলমান এবং লুকিয়ে ব্যবহারকারীদের তথ্য সংগ্রহ নিয়ন্ত্রণ ও নিরীক্ষণ করতে দেয় |</string>
+    <string name="app_android">ট্র্যাকারকন্ট্রোল ব্যবহার এর জন্য এন্ড্রোইড সংস্করণ ৫.১ বা তার পরবর্তী প্রওয়াজন </string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">গোপনীয়তা নীতি</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie Policy</a></string>
+    <string name="channel_foreground">চলমান পরিষেবাগুলি </string>
+    <string name="channel_notify">সাধারণ বিজ্ঞপ্তি</string>
+    <string name="menu_search">অ্যাপ এর জন্য খুঁজুন</string>
+    <string name="menu_filter">অ্যাপ গুলো বাছাইকরুন </string>
+    <string name="menu_app_user">ব্যবহারকারী অ্যাপগুলি প্রদর্শন করুন</string>
+    <string name="menu_app_system">সিস্টেম অ্যাপ্স প্রদর্শন করুন</string>
+    <string name="menu_app_nointernet">ইন্টারনেট এ সংযুক্ত হয়ন এমন অ্যাপ্স প্রদর্শন করুন</string>
+    <string name="menu_sort">অ্যাপ সমূহ সাজাও</string>
+    <string name="menu_sort_name">নাম অনুযায়ী সাজান</string>
+    <string name="menu_sort_uid">Uid অনুযায়ী সাজান</string>
+    <string name="menu_settings">সুরসংযোজন</string>
+    <string name="menu_invite">আমন্ত্রণ</string>
+    <string name="menu_legend">কিংবদন্তি</string>
+    <string name="menu_support">এই এপপ্ কে সাহায্য করুন</string>
+    <string name="menu_log_support">ব্যাখ্যা</string>
+    <string name="menu_about">সম্পর্কে</string>
+    <string name="menu_apps">অন্যান্য অ্যাপ্স</string>
+    <string name="menu_protocol_other">অন্যান্য</string>
+    <string name="menu_traffic_allowed">অনুমোদিত</string>
+    <string name="menu_traffic_blocked">অবরুদ্ধ</string>
+    <string name="menu_live">সরাসরি হালনাগাদ</string>
+    <string name="menu_refresh">সতেজকরণ করুন</string>
+    <string name="menu_resolve">নাম সমূহ দেখান</string>
+    <string name="menu_organization">সংগঠন দেখান</string>
+    <string name="menu_pcap_enabled">PCAP সক্রিয়</string>
+    <string name="menu_pcap_export">PCAP আনয়ন করা</string>
+    <string name="menu_clear">সাফ</string>
+    <string name="menu_export">রপ্তানি</string>
+    <string name="menu_reset">পুন:স্থাপন</string>
+    <string name="menu_cleanup">পরিষ্কার করা</string>
+    <string name="setting_options">বিকল্পসমূহ</string>
+    <string name="setting_dark">অন্ধকার থিম</string>
+    <string name="setting_install">নতুন এপপ্স ইনস্টলেশন এ জানান</string>
+    <string name="setting_update">হালনাগাদের জন্য পরীক্ষা করুন</string>
+    <plurals name="pause">
+        <item quantity="one">%d মিনিট পরে মনে করান</item>
+        <item quantity="other">%d মিনিট পরে মনে করান</item>
+    </plurals>
+    <string name="setting_network_options">আন্তর্জাল বিকল্প সমূহ</string>
+    <string name="setting_subnet">সাবনেট রাউটিং</string>
+    <string name="setting_lan">অনুপ্রবেশ অধিকার দিন</string>
+    <string name="summary_update">প্রতিদিন ২ বার নতুন এপপ্স এর update চেক করুন</string>
+    <string name="summary_block_domains">সতর্কতা : Blocked hosts UI এ দেখানো হবেনা </string>
+    <string name="msg_sure">আপনি কি নিশ্চিত?</string>
+    <string name="msg_started">Checking trackers</string>
+    <string name="msg_waiting">পুনরায় চেষ্টার অপেক্ষায়</string>
+    <!-- App Overview -->
+    <!-- App Details -->
+    <!-- Actions -->
+</resources>
