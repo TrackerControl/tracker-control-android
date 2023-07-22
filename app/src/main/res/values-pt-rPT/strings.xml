@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">O TrackerControl permite que os utilizadores monitorem e controlem a coleta de dados generalizada, contínua e oculta em aplicativos móveis sobre o comportamento do utilizador (\'rastreamento\').</string>
+    <string name="app_copyright">Direitos Autorais \u00A9 2019-2022 Konrad Kollnig (Computação à base de humanos, Departamento de Ciência da Computação, Universidade de Oxford)\n\nTrackerControl é baseado em NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa muitos erros, que podem resultar na remoção do TrackerControl da Google Play Store, portanto, TrackerControl não é suportado enquanto o Xposed está instalado</string>
+    <string name="app_eula">O uso desta aplicação está no seu próprio risco. Nenhuma aplicação pode oferecer 100% de proteção contra rastreamento.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Política de privacidade</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Política de Cookie</a></string>
     <string name="channel_foreground">Serviços em execução</string>
     <string name="channel_notify">Notificações gerais</string>
     <string name="channel_access">Notificações de acesso</string>
@@ -14,11 +17,13 @@
     <string name="menu_sort">Classificar aplicações</string>
     <string name="menu_sort_name">Classificar no nome</string>
     <string name="menu_sort_uid">Ordenar em uid</string>
+    <string name="menu_sort_companies_week">Classificar por empresas (semana)</string>
     <string name="menu_sort_companies">Ordenar em empresas</string>
     <string name="menu_log">Diário de tráfego</string>
     <string name="menu_settings">Configurações</string>
     <string name="menu_invite">Convide</string>
     <string name="menu_legend">Lenda</string>
+    <string name="menu_support">Apoiar a aplicação</string>
     <string name="menu_log_support">Explicação</string>
     <string name="menu_about">Sobre</string>
     <string name="menu_apps">Outras aplicações</string>
@@ -53,6 +58,10 @@
     <string name="setting_reload_onconnectivity">Recarregar em cada mudança de conectividade</string>
     <string name="setting_advanced_options">Opções avançadas</string>
     <string name="setting_system">Gerenciar aplicações de sistemas</string>
+    <string name="setting_log_app">Pesquisar novos rastreadores</string>
+    <string name="setting_log_logcat">Registrar transmissões para o ADB</string>
+    <string name="setting_filter">Bloquear rastreadores</string>
+    <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_handover">Entrega de VPN sem emendas na recarga</string>
     <string name="setting_lockdown">Bloqueio do tráfego</string>
     <string name="setting_track_usage">Rastrear a utilização da rede</string>
@@ -80,7 +89,10 @@
     <string name="setting_import">Configurações de importação</string>
     <string name="setting_hosts">Arquivo de anfitriões de importação</string>
     <string name="setting_hosts_append">Importar arquivo de anfitriões (anexo)</string>
+    <string name="setting_hosts_url">Hosts URL do arquivo</string>
     <string name="setting_hosts_download">Download do arquivo de hospedagem</string>
+    <string name="setting_hosts_update">Atualizar arquivo de hosts</string>
+    <string name="summary_install">Mostrar notificação na barra de status para apps recém-instalados</string>
     <string name="summary_pause">Após a pausa da notificação, ative automaticamente o TrackerControl novamente após o número de minutos selecionado (digite 0 para desativar esta opção).</string>
     <string name="summary_update">Verifique duas vezes por dia se há novos lançamentos no GitHub</string>
     <string name="summary_tethering">Dependendo da versão do Android, a amarração pode funcionar ou não. O tráfego amarrado não pode ser filtrado.</string>
@@ -89,17 +101,22 @@
     <string name="summary_ip6">Rota IP versão 6 tráfego para TrackerControl para que possa ser seletivamente permitido ou bloqueado</string>
     <string name="summary_call">Desativar o TrackerControl na entrada ou saída de chamadas telefônicas. Isto pode ser usado para contornar problemas de chamadas IP/Wi-Fi.</string>
     <string name="summary_system">Definir regras para aplicações do sistema (para especialistas)</string>
+    <string name="summary_log_app">Desativar para diminuir o uso da bateria. Novos rastreadores ainda serão bloqueados, mas não mostrados.</string>
     <string name="summary_track_usage">Rastrear o número de bytes enviados e recebidos para cada aplicativo e endereço. Isto pode resultar no uso de bateria extra.</string>
     <string name="summary_block_domains">AVISO: Hospedeiros bloqueados não são mostrados na UI.</string>
     <string name="summary_rcode">O valor padrão é 3 (NXDOMAIN), o que significa \"domínio inexistente\".</string>
     <string name="summary_validate">Nome de domínio utilizado para validar a conexão de Internet na porta 443 (https).</string>
     <string name="summary_socks5_enabled">Somente o tráfego TCP será enviado para o servidor proxy</string>
     <string name="summary_watchdog">Verifique periodicamente se o TrackerControl ainda está funcionando (digite zero para desativar esta opção). Isto pode resultar no uso de bateria extra.</string>
+    <string name="summary_log_logcat">Desativa bloqueio. As comunicações (e rastreadores identificados) são registados no log do dispositivo. Recupere com adb logcat com a etiqueta \'TC-Log\'.</string>
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_started">Rastreadores de checagem</string>
     <string name="msg_waiting">À espera do evento</string>
     <string name="msg_disabled">Use o interruptor acima para ativar o TrackerControl.</string>
     <string name="msg_revoked">O TrackerControl foi desativado, provavelmente utilizando outro aplicativo baseado em VPN</string>
+    <string name="msg_installed">Problemas com %1$s?</string>
+    <string name="msg_installed_description">Permitir que o app contacte empresas</string>
+    <string name="msg_installed_tracker_libraries_found">Contém %d bibliotecas de rastreadores</string>
     <string name="msg_installed_n">Foi instalado</string>
     <string name="msg_completed">Ação concluída</string>
     <string name="msg_vpn">O TrackerControl utiliza uma VPN local para filtrar o tráfego da Internet.
@@ -121,7 +138,9 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_import_last">Última importação: %s</string>
     <string name="msg_downloading">Download\n%1s</string>
     <string name="msg_downloaded">Arquivo de anfitriões baixado</string>
+    <string name="msg_updated">Arquivo de hosts atualizado e aplicado!</string>
     <string name="msg_download_last">Último download: %s</string>
+    <string name="msg_update_last">Última atualização: %s</string>
     <string name="msg_metered">A rede é medida</string>
     <string name="msg_inactive">Sem conexão ativa com a Internet</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
@@ -136,6 +155,22 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_always_on">Outra VPN é configurada como VPN sempre ativa</string>
     <string name="msg_always_on_lockdown">Desligar \"Bloquear conexões sem VPN\" nas configurações VPN do Android para usar o TrackerControl no modo de filtragem</string>
     <string name="msg_private_dns">Desligue o \"DNS privado\" nas configurações de rede do Android para usar o TrackerControl no modo de filtragem</string>
+    <string name="msg_start_forward">Iniciar encaminhamento da porta %1$s %2$d para %3$s:%4$d de \'%5$s\'?</string>
+    <string name="msg_stop_forward">Parar o encaminhamento da porta %1$s %2$d?</string>
+    <string name="msg_log_logcat">Aviso: Bloqueio desativado por causa do registro do ADB.</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Adicionar</string>
+    <string name="menu_delete">Eliminar</string>
+    <string name="setting_forwarding">Redirecionamento de porta</string>
+    <string name="title_protocol">Protocolo</string>
+    <string name="title_dport">Porta de origem</string>
+    <string name="title_raddr">Endereço de destino</string>
+    <string name="title_rport">Porta de destino</string>
+    <string name="title_ruid">Aplicação de destino</string>
+    <string name="title_external">Para um servidor externo, selecione \'nobody\'</string>
     <string name="title_lockdown_enabled">O tráfego está bloqueado</string>
     <string name="title_unmetered_allowed">Tráfego ilimitado é permitido</string>
     <string name="title_unmetered_blocked">Tráfego desimpedido é bloqueado</string>
@@ -148,6 +183,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_interactive_allowed">Permitir quando a tela estiver ligada</string>
     <string name="title_roaming_blocked">Bloqueio em roaming</string>
     <string name="title_metered">Por padrão, uma conexão Wi-Fi é considerada como não-configurada e uma conexão móvel a ser medida</string>
+    <string name="title_internet">impossível acessar a Internet</string>
     <string name="title_disabled">está desativado</string>
     <string name="title_messaging">As mensagens recebidas são recebidas pelos serviços do Google Play e não por este aplicativo e, portanto, não podem ser bloqueadas pelo bloqueio deste aplicativo</string>
     <string name="title_download">Os downloads são realizados pelo gerenciador de downloads e não por este aplicativo e, portanto, não podem ser bloqueados pelo bloqueio deste aplicativo</string>
@@ -183,6 +219,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_log_port">Porto %1$d</string>
     <string name="title_log_copy">Cópia</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Desativar acesso à internet para esta aplicação</string>
     <string name="tracked_app_name">Nome da Aplicação</string>
     <string name="external_servers">Receber e-mail do desenvolvedor automaticamente?</string>
     <string name="confirm_google_info">Este aplicativo pode receber automaticamente o e-mail do desenvolvedor do aplicativo na Loja do Google Play para você.</string>
