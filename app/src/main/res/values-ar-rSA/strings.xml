@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_description">TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour (\'tracking\').</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
