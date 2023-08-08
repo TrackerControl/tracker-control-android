@@ -574,6 +574,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (requestCode == REQUEST_BATTERY_OPTIMIZATION) {
             if (resultCode != RESULT_OK)
                 checkDoze();
+            else
+                checkDataSaving();
 
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
@@ -1075,8 +1077,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void checkDoze() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            final Intent doze = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-            if (Util.batteryOptimizing(this) && getPackageManager().resolveActivity(doze, 0) != null) {
+            if (Util.batteryOptimizing(this)) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 if (!prefs.getBoolean("nodoze", false)) {
                     LayoutInflater inflater = LayoutInflater.from(this);
@@ -1089,25 +1090,23 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
-                                    if (!Util.isPlayStoreInstall()) {
-                                        Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                                                .setData(Uri.parse("package:" + getPackageName()));
-                                        startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
-                                    } else
-                                        startActivity(doze);
+                                    Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                                            .setData(Uri.parse("package:" + getPackageName()));
+                                    startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
+                                    checkDataSaving();
                                 }
                             })
                             .setOnDismissListener(new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
                                     dialogDoze = null;
-                                    checkDataSaving();
+                                    //checkDataSaving();
                                 }
                             })
                             .create();
