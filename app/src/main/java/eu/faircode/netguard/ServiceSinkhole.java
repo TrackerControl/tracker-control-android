@@ -29,6 +29,7 @@ import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.ForegroundServiceStartNotAllowedException;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -3362,14 +3363,34 @@ public class ServiceSinkhole extends VpnService {
         intent.putExtra(EXTRA_COMMAND, Command.run);
         intent.putExtra(EXTRA_REASON, reason);
 
-        ContextCompat.startForegroundService(context, intent);
+        try {
+            ContextCompat.startForegroundService(context, intent);
+        } catch (Throwable ex) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ex instanceof ForegroundServiceStartNotAllowedException)
+                try {
+                    context.startService(intent);
+                } catch (Throwable exex) {
+                    Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
+                }
+        }
     }
 
     public static void start(String reason, Context context) {
         Intent intent = new Intent(context, ServiceSinkhole.class);
         intent.putExtra(EXTRA_COMMAND, Command.start);
         intent.putExtra(EXTRA_REASON, reason);
-        ContextCompat.startForegroundService(context, intent);
+        try {
+            ContextCompat.startForegroundService(context, intent);
+        } catch (Throwable ex) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ex instanceof ForegroundServiceStartNotAllowedException)
+                try {
+                    context.startService(intent);
+                } catch (Throwable exex) {
+                    Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
+                }
+        }
     }
 
     public static void reload(String reason, Context context, boolean interactive) {
@@ -3379,7 +3400,17 @@ public class ServiceSinkhole extends VpnService {
             intent.putExtra(EXTRA_COMMAND, Command.reload);
             intent.putExtra(EXTRA_REASON, reason);
             intent.putExtra(EXTRA_INTERACTIVE, interactive);
-            ContextCompat.startForegroundService(context, intent);
+            try {
+                ContextCompat.startForegroundService(context, intent);
+            } catch (Throwable ex) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                        ex instanceof ForegroundServiceStartNotAllowedException)
+                    try {
+                        context.startService(intent);
+                    } catch (Throwable exex) {
+                        Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
+                    }
+            }
         }
     }
 
@@ -3388,13 +3419,33 @@ public class ServiceSinkhole extends VpnService {
         intent.putExtra(EXTRA_COMMAND, Command.stop);
         intent.putExtra(EXTRA_REASON, reason);
         intent.putExtra(EXTRA_TEMPORARY, vpnonly);
-        ContextCompat.startForegroundService(context, intent);
+        try {
+            ContextCompat.startForegroundService(context, intent);
+        } catch (Throwable ex) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ex instanceof ForegroundServiceStartNotAllowedException)
+                try {
+                    context.startService(intent);
+                } catch (Throwable exex) {
+                    Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
+                }
+        }
     }
 
     public static void reloadStats(String reason, Context context) {
         Intent intent = new Intent(context, ServiceSinkhole.class);
         intent.putExtra(EXTRA_COMMAND, Command.stats);
         intent.putExtra(EXTRA_REASON, reason);
-        ContextCompat.startForegroundService(context, intent);
+        try {
+            ContextCompat.startForegroundService(context, intent);
+        } catch (Throwable ex) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ex instanceof ForegroundServiceStartNotAllowedException)
+                try {
+                    context.startService(intent);
+                } catch (Throwable exex) {
+                    Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
+                }
+        }
     }
 }
