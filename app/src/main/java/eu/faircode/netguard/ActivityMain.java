@@ -1077,7 +1077,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void checkDoze() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (Util.batteryOptimizing(this)) {
+            final Intent doze = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+            if (Util.batteryOptimizing(this) && getPackageManager().resolveActivity(doze, 0) != null) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 if (!prefs.getBoolean("nodoze", false)) {
                     LayoutInflater inflater = LayoutInflater.from(this);
@@ -1089,10 +1090,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
-                                    Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                                            .setData(Uri.parse("package:" + getPackageName()));
-                                    startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
+                                    if (!Util.isPlayStoreInstall()) {
+                                        Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                                                .setData(Uri.parse("package:" + getPackageName()));
+                                        startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
+                                    } else {
+                                        startActivity(doze);
+
+                                    }
                                 }
                             })
                             .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -1106,7 +1111,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                 @Override
                                 public void onDismiss(DialogInterface dialogInterface) {
                                     dialogDoze = null;
-                                    //checkDataSaving();
+                                    if (Util.isPlayStoreInstall())
+                                        checkDataSaving();
                                 }
                             })
                             .create();
