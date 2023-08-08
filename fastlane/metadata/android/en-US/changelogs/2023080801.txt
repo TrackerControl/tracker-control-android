@@ -1,0 +1,2 @@
+- update host lists, translations and dependencies
+- fix bug when disabling doze mode on non-Play builds
