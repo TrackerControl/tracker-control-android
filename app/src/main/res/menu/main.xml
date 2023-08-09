@@ -10,7 +10,6 @@
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
         android:title="@string/menu_filter"
-        android:visible="false"
         netguard:showAsAction="always|collapseActionView">
         <menu>
             <item
