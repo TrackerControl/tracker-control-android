@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl giver brugerne mulighed for at overvåge og kontrollere den udbredte, løbende, skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
+    <string name="app_copyright">Ophavsret \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Institut for Datalogi Universitet i Oxford)\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller en nyere version</string>
+    <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan resultere i TrackerControl bliver fjernet fra Google Play Butik, derfor TrackerControl understøttes ikke, mens Xposed er installeret</string>
+    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
+    <string name="channel_foreground">Kørende tjenester</string>
+    <string name="channel_notify">Generelle notifikationer</string>
+    <string name="channel_access">Tilgå notifikationer</string>
     <string name="menu_search">Søg efter app</string>
     <string name="menu_filter">Filtrér apps</string>
     <string name="menu_app_user">Vis bruger-apps</string>
@@ -9,8 +16,10 @@
     <string name="menu_app_nointernet">Vis apps uden internet</string>
     <string name="menu_sort">Sortér apps</string>
     <string name="menu_sort_name">Sortér efter navn</string>
+    <string name="menu_sort_uid">Sortér efter UID</string>
     <string name="menu_sort_companies_week">Sortér efter virksomheder (uge)</string>
     <string name="menu_sort_companies">Sortér efter virksomheder</string>
+    <string name="menu_log">Trafiklog</string>
     <string name="menu_settings">Indstillinger</string>
     <string name="menu_invite">Invitér</string>
     <string name="menu_about">Omkring</string>
