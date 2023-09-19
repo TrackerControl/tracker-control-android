@@ -18,7 +18,7 @@
     <string name="menu_sort_name">Nach Name sortieren</string>
     <string name="menu_sort_uid">Nach UID sortieren</string>
     <string name="menu_sort_companies_week">Nach Unternehmen sortieren (Woche)</string>
-    <string name="menu_sort_companies">Nach Firmen sortieren</string>
+    <string name="menu_sort_companies">Nach Unternehmen sortieren</string>
     <string name="menu_log">Traffic-Log</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
@@ -319,8 +319,8 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Soziale Medien</string>
     <string name="tracker_email">E-Mail</string>
     <string name="tracker_uncategorised">Unkategorisiert</string>
-    <string name="setting_strict_blocking">Strenges Blocken</string>
-    <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
+    <string name="setting_strict_blocking">Strenges Blockieren</string>
+    <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Unternehmen wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
     <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
     <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stoßen.</string>
     <string name="uninstall">Deinstallieren</string>
