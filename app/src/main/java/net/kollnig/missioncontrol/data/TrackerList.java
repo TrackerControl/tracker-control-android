@@ -235,56 +235,56 @@ public class TrackerList {
     public synchronized List<TrackerCategory> getAppTrackers(Context c, int uid) {
         Map<String, TrackerCategory> categoryToTracker = new ArrayMap<>();
 
-        Cursor cursor = databaseHelper.getHosts(uid);
-        if (cursor.moveToFirst()) {
-            outer:
-            do {
-                String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
-                long lastSeen = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
-                boolean uncertain = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain")) == 2;
+        try (Cursor cursor = databaseHelper.getHosts(uid)) {
+            if (cursor.moveToFirst()) {
+                outer:
+                do {
+                    String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+                    long lastSeen = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
+                    boolean uncertain = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain")) == 2;
 
-                Tracker tracker = findTracker(host);
-                if (tracker == null)
-                    continue;
+                    Tracker tracker = findTracker(host);
+                    if (tracker == null)
+                        continue;
 
-                String category = tracker.category;
-                String name = tracker.name;
-                if (category == null || category.equals("null"))
-                    category = name;
+                    String category = tracker.category;
+                    String name = tracker.name;
+                    if (category == null || category.equals("null"))
+                        category = name;
 
-                TrackerCategory categoryCompany = categoryToTracker.get(category);
-                if (categoryCompany == null) {
-                    categoryCompany = new TrackerCategory(category, lastSeen);
-                    categoryToTracker.put(category, categoryCompany);
-                } else {
-                    if (categoryCompany.lastSeen < lastSeen)
-                        categoryCompany.lastSeen = lastSeen;
-                }
-
-                if (uncertain) {
-                    host = host + " *";
-                    categoryCompany.setUncertain(true);
-                }
-
-                // check if tracker has already been added
-                for (Tracker child : categoryCompany.getChildren()) {
-                    if (child.name != null
-                            && child.name.equals(name)) {
-                        child.addHost(host);
-
-                        if (child.lastSeen < lastSeen)
-                            child.lastSeen = lastSeen;
-
-                        continue outer;
+                    TrackerCategory categoryCompany = categoryToTracker.get(category);
+                    if (categoryCompany == null) {
+                        categoryCompany = new TrackerCategory(category, lastSeen);
+                        categoryToTracker.put(category, categoryCompany);
+                    } else {
+                        if (categoryCompany.lastSeen < lastSeen)
+                            categoryCompany.lastSeen = lastSeen;
                     }
-                }
 
-                Tracker child = new Tracker(name, category, lastSeen);
-                child.addHost(host);
-                categoryCompany.getChildren().add(child);
-            } while (cursor.moveToNext());
+                    if (uncertain) {
+                        host = host + " *";
+                        categoryCompany.setUncertain(true);
+                    }
+
+                    // check if tracker has already been added
+                    for (Tracker child : categoryCompany.getChildren()) {
+                        if (child.name != null
+                                && child.name.equals(name)) {
+                            child.addHost(host);
+
+                            if (child.lastSeen < lastSeen)
+                                child.lastSeen = lastSeen;
+
+                            continue outer;
+                        }
+                    }
+
+                    Tracker child = new Tracker(name, category, lastSeen);
+                    child.addHost(host);
+                    categoryCompany.getChildren().add(child);
+                } while (cursor.moveToNext());
+            }
         }
-        cursor.close();
 
         // map to list
         List<TrackerCategory> trackerCategoryList = new ArrayList<>(categoryToTracker.values());
