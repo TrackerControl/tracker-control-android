@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen Apps über das Benutzerverhalten (\"tracking\") zu überwachen und zu steuern.</string>
+    <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen Apps über das Benutzerverhalten („Tracking“) zu überwachen und zu steuern.</string>
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universität Oxford)\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
@@ -18,7 +18,7 @@
     <string name="menu_sort_name">Nach Name sortieren</string>
     <string name="menu_sort_uid">Nach UID sortieren</string>
     <string name="menu_sort_companies_week">Nach Unternehmen sortieren (Woche)</string>
-    <string name="menu_sort_companies">Nach Firmen sortieren</string>
+    <string name="menu_sort_companies">Nach Unternehmen sortieren</string>
     <string name="menu_log">Traffic-Log</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
@@ -58,7 +58,7 @@
     <string name="setting_reload_onconnectivity">Bei jeder Verbindungsänderung neu laden</string>
     <string name="setting_advanced_options">Erweiterte Einstellungen</string>
     <string name="setting_system">Systemanwendungen verwalten</string>
-    <string name="setting_log_app">Nach Trackern suchen</string>
+    <string name="setting_log_app">Neue Tracker suchen</string>
     <string name="setting_log_logcat">Übertragungen an ADB protokollieren</string>
     <string name="setting_filter">Tracker blockieren</string>
     <string name="setting_filter_udp">Tracker auf UDP blockieren</string>
@@ -319,8 +319,8 @@ Sincerely,\n\n]]></string>
     <string name="tracker_social">Soziale Medien</string>
     <string name="tracker_email">E-Mail</string>
     <string name="tracker_uncategorised">Unkategorisiert</string>
-    <string name="setting_strict_blocking">Strenges Blocken</string>
-    <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Anbietern wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
+    <string name="setting_strict_blocking">Strenges Blockieren</string>
+    <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Unternehmen wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
     <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
     <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stoßen.</string>
     <string name="uninstall">Deinstallieren</string>
