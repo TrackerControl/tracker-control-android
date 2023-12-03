@@ -71,10 +71,10 @@ public class Tracker {
      * @return Name of tracker company
      */
     public String getName() {
-        if (name.equals("Alphabet"))
+        if (name != null && name.equals("Alphabet"))
             return "Google";
 
-        if (name.equals("Adobe Systems"))
+        if (name != null && name.equals("Adobe Systems"))
             return "Adobe";
 
         return name;
