@@ -2176,7 +2176,7 @@ public class ServiceSinkhole extends VpnService {
                 uidToApp.put(uid, app);
             }
             assert tracker != null;
-            Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr) + " " + tracker.getName());
+            Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr).getOrExpired() + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
                 TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
