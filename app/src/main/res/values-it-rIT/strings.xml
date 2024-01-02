@@ -362,7 +362,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="untap_unblock">Suggerimento: Puoi sbloccare i singoli elementi toccandoli.</string>
     <string name="uncertain_entry">Le voci contrassegnate con \'*\' potrebbero essere imprecise, a causa delle limitazioni di Android. Di solito ciò significa che la stessa società utilizza lo stesso indirizzo IP in diversi domini, ma può anche significare che diverse società sono dietro lo stesso indirizzo IP (es. se utilizzano una \"rete di consegna dei contenuti\").</string>
     <string name="browsers_not_supported">Browser non supportato ⚠️</string>
-    <string name="browsers_not_supported_explanation">Quest\'app sembra essere un browser.\n\nTrackerControl non supporta il blocco dei tracker nei browser. Utilizza invece un browser con funzionalità anti-tracking integrate per ottenere un migliore blocco del tracciamento.\n\nPer esempio: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Rilevati tracker nel codice dell\'app</string>
     <string name="failed_loading_cached_analysis">Caricamento dei risultati del tracker nella cache fallito. Per favore segnalalo allo sviluppatore su hello@trackercontrol.org</string>
 </resources>
