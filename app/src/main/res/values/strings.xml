@@ -443,7 +443,7 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Tip: You can unblock individual entries by tapping on them.</string>
     <string name="uncertain_entry">Entries marked with \'*\' might be inaccurate, due to the limitations of Android. This usually means that the same company uses the same IP address under different domains, but can also mean that different companies are behind the same IP address (e.g. if they use a Content Delivery Network).</string>
     <string name="browsers_not_supported">Browsers not supported ⚠️</string>
-    <string name="browsers_not_supported_explanation">This appears to be a browser app.\n\nThe blocking of trackers in browsers is not supported by TrackerControl. Instead, use a browser with integrated anti-tracking functionality to get better blocking of tracking.\n\nFor example: Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">This appears to be a browser app.\n\nThe blocking of trackers in browsers is not supported by TrackerControl. Instead, use a browser with integrated anti-tracking functionality to get better blocking of tracking.\n\nFor example: Mozilla Fennec</string>
     <string name="static_analysis">Detect trackers in app code</string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for access attempt notifications, error messages, etc.)</string>
