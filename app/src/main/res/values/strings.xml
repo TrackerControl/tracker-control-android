@@ -446,6 +446,6 @@ Sincerely,\n\n]]></string>
     <string name="browsers_not_supported_explanation">This appears to be a browser app.\n\nThe blocking of trackers in browsers is not supported by TrackerControl. Instead, use a browser with integrated anti-tracking functionality to get better blocking of tracking.\n\nFor example: Mozilla Fennec</string>
     <string name="static_analysis">Detect trackers in app code</string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
-    <string name="msg_notifications">Tap to grant notification permissions (for access attempt notifications, error messages, etc.)</string>
+    <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
 
 </resources>
