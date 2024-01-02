@@ -356,7 +356,6 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Dica: você pode desbloquear entradas individuais tocando nelas.</string>
     <string name="uncertain_entry">As entradas marcadas com \'*\' podem ser imprecisas devido às limitações do Android. Isso geralmente significa que a mesma empresa usa o mesmo endereço IP em domínios diferentes, mas também pode significar que empresas diferentes estão por trás do mesmo endereço IP (por exemplo, se usarem uma rede de distribuição de conteúdo).</string>
     <string name="browsers_not_supported">Navegadores não suportados ⚠️</string>
-    <string name="browsers_not_supported_explanation">Parece ser um aplicativo de navegador.\n\nO bloqueio de rastreadores nos navegadores não é suportado pelo TrackerControl. Em vez disso, use um navegador com a funcionalidade de anti-rastreamento integrada para obter um melhor bloqueio de rastreamento.\n\nPor exemplo: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Detectar rastreadores no código do aplicativo</string>
     <string name="failed_loading_cached_analysis">Falha ao carregar resultados do rastreador em cache. Por favor reporte isto para o desenvolvedor em hello@trackercontrol.org</string>
 </resources>
