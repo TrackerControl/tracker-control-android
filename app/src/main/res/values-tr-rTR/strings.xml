@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışı (\'izleme\') hakkında yaygın, devam eden, gizli veri toplamayı izlemesini ve kontrol etmesini sağlar.</string>
-    <string name="app_copyright">Telif Hakkı \u00A9 2019–2022 Konrad Kollnig (İnsan Merkezli Bilgi İşlem, Bilgisayar Bilimleri Bölümü, Oxford Üniversitesi)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
+    <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışıyla ilgili yaygın, devam eden, gizli veri toplama işlemini (\'tracking\') görmesine ve kontrol etmesine olanak tanır.</string>
+    <string name="app_copyright">Telif Hakkı \u00A9 2019-2022 Konrad Kollnig (İnsan merkezli Bilgi İşlem, Oxford Üniversitesi Bilgisayar Bilimleri Bölümü)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
     <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
-    <string name="app_xposed">Xposed, TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilecek çok fazla çökmeye neden olur, bu nedenle Xposed kuruluyken TrackerControl desteklenmez</string>
+    <string name="app_xposed">Xposed çok fazla çökmeye neden oluyor ve bu da TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilir, bu nedenle Xposed yüklüyken TrackerControl desteklenmez</string>
     <string name="app_eula">Bu uygulamanın kullanımı kendi sorumluluğunuzdadır. Hiçbir uygulama izlemeye karşı %100 koruma sağlayamaz.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Gizlilik Politikası</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Çerez Politikası</a></string>
     <string name="channel_foreground">Çalışan hizmetler</string>
     <string name="channel_notify">Genel bildirimler</string>
-    <string name="channel_access">Bildirimlere eriş</string>
+    <string name="channel_access">Bildirimlere erişim</string>
     <string name="menu_search">Uygulama ara</string>
     <string name="menu_filter">Uygulamaları filtrele</string>
     <string name="menu_app_user">Kullanıcı uygulamalarını göster</string>
@@ -30,7 +30,7 @@
     <string name="menu_protocol_other">Diğer</string>
     <string name="menu_traffic_allowed">İzin verildi</string>
     <string name="menu_traffic_blocked">Engellendi</string>
-    <string name="menu_live">Canlı güncellemeler</string>
+    <string name="menu_live">Anlık güncellemeler</string>
     <string name="menu_refresh">Yenile</string>
     <string name="menu_resolve">Adları göster</string>
     <string name="menu_organization">Organizasyonu göster</string>
@@ -54,7 +54,7 @@
     <string name="setting_tethering">İnternet paylaşımına izin ver</string>
     <string name="setting_lan">Yerel ağ erişimine izin ver</string>
     <string name="setting_ip6">IPv6 trafiğini etkinleştir</string>
-    <string name="setting_call">Aramada devre dışı bırak</string>
+    <string name="setting_call">Çağrı sırasında devre dışı bırak</string>
     <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
     <string name="setting_advanced_options">Gelişmiş seçenekler</string>
     <string name="setting_system">Sistem uygulamaları yönet</string>
@@ -225,6 +225,10 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
         <item quantity="one">geçen hafta %d şirketle bağlantı kuruldu</item>
         <item quantity="other">geçen hafta %d şirketle bağlantı kuruldu</item>
     </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">tüm zamanlarda %d şirketle bağlantı kuruldu</item>
+        <item quantity="other">tüm zamanlarda %d şirketle bağlantı kuruldu</item>
+    </plurals>
     <string name="confirm_ipinfo_title">Organizasyon bilgisi alınsın mı?</string>
     <string name="confirm_ipinfo">Bu, harici hizmet ipinfo.io ile iletişim kuracak ve onlarla iletişim kurulan IP adresleri hakkındaki verileri paylaşacaktır.</string>
     <string name="external_servers">Geliştirici e-postasını otomatik olarak al?</string>
@@ -290,6 +294,17 @@ Bu talep, sizin adınıza kişisel verileri işleyen tüm işlemciler de dahil o
 Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldıktan sonraki bir ay içinde yanıt almayı sabırsızlıkla bekliyorum.\n
 \n
 İçtenlikle,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[İlgili Makama:\n
+\n
+\n
+AB Genel Veri Koruma Yönetmeliği'nin (GDPR) 17. Maddesinde belirtildiği şekilde silme hakkımı kullanıyorum. Android uygulaması olan %s (ID: %s) veri sorumlusu olarak sizden ricam, hakkımda işlediği aşağıdaki kişisel verileri gereksiz bir gecikme olmadan silmenizi rica ediyorum:\n
+• Tüm veriler.\n
+\n
+Kaldırma talebimin nedeni, kişisel verilerimin işlenmesine ilişkin onayımı geri çekmem veya geri almış olmamdır. Bu talep, sizin adınıza kişisel verileri işleyen işleyiciler de dahil olmak üzere, kişisel verilerimin sizin tarafınızdan işlenmesiyle ilgilidir.\n
+\n
+Lütfen yanıtınızı güvenli şekilde e-posta ile gönderin. Talebimin alınmasından itibaren bir ay içinde yanıt almayı dört gözle bekliyorum.\n
+\n
+Saygılarımla,\n\n]]></string>
     <string name="crash_dialog_text">Afedersiniz. TrackerControl az önce çöktü. Bize ayrıntıları içeren bir e-posta gönderir misiniz?</string>
     <string name="crash_dialog_comment">Herhangi bir yorum?</string>
     <string name="instructions_monitoring_private_dns">Anahtarı değiştirin ve bazı uygulamalarla etkileşim kurun. Özel DNS devre dışı bırakılmalıdır.</string>

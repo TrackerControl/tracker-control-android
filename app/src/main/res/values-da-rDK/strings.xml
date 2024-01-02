@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl giver brugerne mulighed for at overvåge og kontrollere den udbredte, løbende, skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
+    <string name="app_copyright">Ophavsret \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Institut for Datalogi Universitet i Oxford)\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller en nyere version</string>
+    <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan resultere i TrackerControl bliver fjernet fra Google Play Butik, derfor TrackerControl understøttes ikke, mens Xposed er installeret</string>
+    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
+    <string name="channel_foreground">Kørende tjenester</string>
+    <string name="channel_notify">Generelle notifikationer</string>
+    <string name="channel_access">Tilgå notifikationer</string>
     <string name="menu_search">Søg efter app</string>
     <string name="menu_filter">Filtrér apps</string>
     <string name="menu_app_user">Vis bruger-apps</string>
@@ -9,22 +16,48 @@
     <string name="menu_app_nointernet">Vis apps uden internet</string>
     <string name="menu_sort">Sortér apps</string>
     <string name="menu_sort_name">Sortér efter navn</string>
+    <string name="menu_sort_uid">Sortér efter UID</string>
     <string name="menu_sort_companies_week">Sortér efter virksomheder (uge)</string>
     <string name="menu_sort_companies">Sortér efter virksomheder</string>
+    <string name="menu_log">Trafiklog</string>
     <string name="menu_settings">Indstillinger</string>
     <string name="menu_invite">Invitér</string>
+    <string name="menu_legend">Legend</string>
+    <string name="menu_support">Støt appen</string>
+    <string name="menu_log_support">Forklaring</string>
     <string name="menu_about">Omkring</string>
     <string name="menu_apps">Andre apps</string>
     <string name="menu_protocol_other">Andet</string>
     <string name="menu_traffic_allowed">Tilladt</string>
     <string name="menu_traffic_blocked">Blokeret</string>
+    <string name="menu_live">Live opdateringer</string>
     <string name="menu_refresh">Genindlæs</string>
     <string name="menu_resolve">Vis navne</string>
+    <string name="menu_organization">Vis organisation</string>
+    <string name="menu_pcap_enabled">PCAP aktiveret</string>
+    <string name="menu_pcap_export">PCAP eksport</string>
     <string name="menu_clear">Ryd</string>
     <string name="menu_export">Eksportér</string>
     <string name="menu_reset">Nulstil</string>
+    <string name="menu_cleanup">Ryd op</string>
+    <string name="setting_options">Indstillinger</string>
     <string name="setting_dark">Mørkt tema</string>
+    <string name="setting_install">Underret ved ny installation</string>
+    <string name="setting_pause">Auto-aktivér efter %1$s minutter</string>
+    <string name="setting_update">Søg efter opdateringer</string>
+    <plurals name="pause">
+        <item quantity="one">Sæt på pause i %d min</item>
+        <item quantity="other">Sæt på pause i %d minutter</item>
+    </plurals>
+    <string name="setting_network_options">Netværksindstillinger</string>
+    <string name="setting_subnet">Subnet routing</string>
+    <string name="setting_tethering">Tillad tethering</string>
+    <string name="setting_lan">Tillad LAN-adgang</string>
+    <string name="setting_ip6">Aktivér IPv6-trafik</string>
+    <string name="setting_call">Deaktivér ved opkald</string>
+    <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
     <string name="setting_advanced_options">Avancerede indstillinger</string>
+    <string name="setting_system">Håndtér systemapps</string>
     <string name="setting_import">Importér indstillinger</string>
     <string name="msg_sure">Er du sikker?</string>
     <string name="msg_started">Kontrollérer trackere</string>
