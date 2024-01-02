@@ -369,7 +369,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="untap_unblock">Tip: Lze blokovat jednotlivé položky klepnutím na ně.</string>
     <string name="uncertain_entry">Položky označené \'*\' můžou být nepřesné kvůli limitům androidu. To znamená, že společnost používá stejnou IP adresu pod různými doménami, nebo že společnosti jsou se stejnou IP adresou (když používají Content Delivery Network).</string>
     <string name="browsers_not_supported">Prohlížeče nejsou podporovány ⚠️</string>
-    <string name="browsers_not_supported_explanation">Toto je zřejmě prohlížeč. \n\nBlokování trackerů v prohlížečích není podporováno. Používej prohlížeč s integrovanou anti-tracking funkcí pro lepší výsledky. \n\nNapříklad: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
     <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
 </resources>
