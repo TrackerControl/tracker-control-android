@@ -360,7 +360,6 @@ Cordialement,\n\n]]></string>
     <string name="untap_unblock">Astuce : Vous pouvez débloquer des entrées individuelles en cliquant dessus.</string>
     <string name="uncertain_entry">Les entrées marquées par \'*\' peuvent être inexactes en raison des limitations d\'Android. Cela signifie généralement que la même entreprise utilise la même adresse IP sous différents domaines, mais cela peut aussi signifier que différentes entreprises sont derrière la même adresse IP (par exemple, s\'ils utilisent un réseau de distribution de contenu).</string>
     <string name="browsers_not_supported">Navigateurs non pris en charge ⚠️</string>
-    <string name="browsers_not_supported_explanation">Cela semble être une application de navigateur.\n\nLe blocage de traqueurs dans les navigateurs n\'est pas pris en charge par TrackerControl. À la place, utilisez un navigateur avec une fonctionnalité anti-pistage intégrée pour obtenir un meilleur blocage du pistage.\n\nPar exemple : Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
 </resources>
