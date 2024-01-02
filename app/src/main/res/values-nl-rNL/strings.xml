@@ -366,4 +366,5 @@ Sincerely,\n\n]]></string>
     <string name="browsers_not_supported_explanation">Dit lijkt een browser app te zijn.\n\n TrackerControl ondersteunt het blokkeren van trackers in browsers niet. Gebruik in plaats daarvan een browser met geïntegreerde anti-tracking functionaliteit voor een betere blokkering.\n\nBijvoorbeeld Mozilla Focus</string>
     <string name="static_analysis">Trackers detecteren in app code</string>
     <string name="failed_loading_cached_analysis">Het laden van tracker resultaten in de cache is mislukt. Graag dit melden aan de ontwikkelaar op hello@trackercontrol.org</string>
+    <string name="msg_notifications">Tic hier om meldingen toe te staan (voor foutmeldingen, enz.)</string>
 </resources>
