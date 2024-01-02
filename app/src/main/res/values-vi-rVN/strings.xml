@@ -317,7 +317,6 @@
     <string name="untap_unblock">Mẹo: Bạn có thể bỏ chặn từng mục riêng bằng cách nhấn vào chúng.</string>
     <string name="uncertain_entry">Các mục có dấu \'*\' có thể không chính xác do giới hạn của Android. Việc này thường có nghĩa là một công ty sử dụng cùng một địa chỉ IP dưới nhiều miền khác nhau, nhưng cũng có thể có nghĩa là nhiều công ty khác nhau đứng sau cùng một địa chỉ IP (vd: nếu họ sử dụng Content Delivery Network).</string>
     <string name="browsers_not_supported">Trình duyệt không được hỗ trợ ⚠️</string>
-    <string name="browsers_not_supported_explanation">Cái này có vẻ là ứng dụng trình duyệt.\n\nViệc chặn trình theo dõi trong trình duyệt không được TrackerControl hỗ trợ. Thay vào đó, hãy sử dụng trình duyệt có chức năng chống theo dõi được tích hợp để chặn việc theo dõi tốt hơn.\n\nVí dụ: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Phát hiện trình theo dõi trong mã ứng dụng</string>
     <string name="failed_loading_cached_analysis">Tải kết quả trình theo dõi trong bộ nhớ đệm thất bại. Vui lòng báo cáo điều này đến nhà phát triển tại hello@trackercontrol.org</string>
 </resources>
