@@ -358,6 +358,8 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Tipp: Sie können einzelne Einträge durch Tippen aufheben.</string>
     <string name="uncertain_entry">Mit einem \'*\' markierte Einträge könnten aufgrund von Android-Einschränkungen ungenau sein. Dies bedeutet in der Regel, dass ein Unternehmen dieselbe IP-Adresse unter verschiedenen Domains verwendet, aber kann auch bedeuten, dass verschiedene Unternehmen die gleiche IP-Adresse verwenden (z. B. wenn sie ein Content Delivery Network verwenden).</string>
     <string name="browsers_not_supported">Browser werden nicht unterstützt: ⚠️</string>
+    <string name="browsers_not_supported_explanation">Dies scheint eine Browser-App zu sein.\n\nDas Blockieren von Trackern in Browsern wird von TrackerControl nicht unterstützt. Verwenden Sie stattdessen einen Browser mit integrierter Anti-Tracking Funktion, um eine bessere Blockierung zu erhalten.\n\nZum Beispiel: Mozilla Fennec</string>
     <string name="static_analysis">Tracker im App-Code erkennen</string>
     <string name="failed_loading_cached_analysis">Laden der zwischengespeicherten Tracker-Ergebnisse fehlgeschlagen. Bitte melden Sie dies dem Entwickler unter hello@trackercontrol.org</string>
+    <string name="msg_notifications">Tippen, um Benachrichtigungen zu erlauben (für Fehlermeldungen, etc.)</string>
 </resources>
