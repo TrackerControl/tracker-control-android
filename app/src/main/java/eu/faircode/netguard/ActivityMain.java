@@ -22,6 +22,7 @@ package eu.faircode.netguard;
 
 import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -64,6 +65,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
@@ -114,9 +117,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private static final int REQUEST_VPN = 1;
     private static final int REQUEST_INVITE = 2;
-    private static final int REQUEST_LOGCAT = 3;
-    public static final int REQUEST_ROAMING = 4;
-    public static final int REQUEST_DETAILS_UPDATED = 5;
+    public static final int REQUEST_ROAMING = 3;
+    public static final int REQUEST_DETAILS_UPDATED = 4;
+
+    private static final int REQUEST_NOTIFICATIONS = 5;
 
     private static final int REQUEST_EXPORT = 10;
 
@@ -350,6 +354,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         TextView tvDisabled = findViewById(R.id.tvDisabled);
         tvDisabled.setVisibility(enabled ? View.GONE : View.VISIBLE);
 
+        // Notification permissions
+        TextView tvNotifications = findViewById(R.id.tvNotifications);
+        tvNotifications.setVisibility(View.GONE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            tvNotifications.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_NOTIFICATIONS);
+                }
+            });
+
         // Application list
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
         rvApplication.setHasFixedSize(false);
@@ -402,7 +417,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
         intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
         intentFilter.addDataScheme("package");
-        registerReceiver(packageChangedReceiver, intentFilter);
+        ContextCompat.registerReceiver(this, packageChangedReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
 
         // Note first use
         if (!initialized)
@@ -470,6 +485,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         DatabaseHelper.getInstance(this).addAccessChangedListener(accessChangedListener);
         if (adapter != null)
             adapter.notifyDataSetChanged();
+
+        boolean canNotify =
+                (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                        (ContextCompat.checkSelfPermission(this,
+                                android.Manifest.permission.POST_NOTIFICATIONS) ==
+                                PackageManager.PERMISSION_GRANTED));
+        TextView tvNotifications = findViewById(R.id.tvNotifications);
+        if (tvNotifications != null)
+            tvNotifications.setVisibility(canNotify ? View.GONE : View.VISIBLE);
 
         super.onResume();
     }
@@ -555,15 +579,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (requestCode == REQUEST_INVITE) {
             // Do nothing
 
-        } else if (requestCode == REQUEST_LOGCAT) {
-            // Send logcat by e-mail
-            if (resultCode == RESULT_OK) {
-                Uri target = data.getData();
-                if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                    target = Uri.parse(target + "/logcat.txt");
-                Log.i(TAG, "Export URI=" + target);
-                Util.sendLogcat(target, this);
-            }
         } else if (requestCode == REQUEST_DETAILS_UPDATED) {
             updateApplicationList(null);
 
@@ -669,9 +684,22 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_ROAMING)
+        if (requestCode == REQUEST_ROAMING) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ServiceSinkhole.reload("permission granted", this, false);
+        } else if (requestCode == REQUEST_NOTIFICATIONS) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED &&
+                    !ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.POST_NOTIFICATIONS))
+                try {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex + "\n" + ex.getStackTrace());
+                }
+        }
     }
 
     @Override
@@ -1014,13 +1042,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "Requesting VPN approval");
             swEnabled.toggle();
         }
-
-        if (intent.hasExtra(EXTRA_LOGCAT)) {
-            Log.i(TAG, "Requesting logcat");
-            Intent logcat = getIntentLogcat();
-            if (logcat.resolveActivity(getPackageManager()) != null)
-                startActivityForResult(logcat, REQUEST_LOGCAT);
-        }
     }
 
     private void updateApplicationList(final String search) {
@@ -1245,29 +1266,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         tvEula.setMovementMethod(LinkMovementMethod.getInstance());
         tvPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
 
-        // Handle logcat
-        view.setOnClickListener(new View.OnClickListener() {
-            private short tap = 0;
-            private Toast toast = Toast.makeText(ActivityMain.this, "", Toast.LENGTH_SHORT);
-
-            @Override
-            public void onClick(View view) {
-                tap++;
-                if (tap == 7) {
-                    tap = 0;
-                    toast.cancel();
-
-                    Intent intent = getIntentLogcat();
-                    if (intent.resolveActivity(getPackageManager()) != null)
-                        startActivityForResult(intent, REQUEST_LOGCAT);
-
-                } else if (tap > 3) {
-                    toast.setText(Integer.toString(7 - tap));
-                    toast.show();
-                }
-            }
-        });
-
         // Handle rate
         btnRate.setVisibility(getIntentRate(this).resolveActivity(getPackageManager()) == null ? View.GONE : View.VISIBLE);
         btnRate.setOnClickListener(new View.OnClickListener() {
@@ -1316,23 +1314,5 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private static Intent getIntentSupport(Context context) {
         return new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
-    }
-
-    private Intent getIntentLogcat() {
-        Intent intent;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            if (Util.isPackageInstalled("org.openintents.filemanager", this)) {
-                intent = new Intent("org.openintents.action.PICK_DIRECTORY");
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=org.openintents.filemanager"));
-            }
-        } else {
-            intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TITLE, "logcat.txt");
-        }
-        return intent;
     }
 }

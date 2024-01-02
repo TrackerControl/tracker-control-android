@@ -75,7 +75,8 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
         wakeLock.acquire();
         showNotification(0);
-        Toast.makeText(context, context.getString(R.string.msg_downloading, url.toString()), Toast.LENGTH_SHORT).show();
+        if (!Util.isPlayStoreInstall(context))
+            Toast.makeText(context, context.getString(R.string.msg_downloading, url.toString()), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -164,7 +165,7 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
 
     private void showNotification(int progress) {
         Intent main = new Intent(context, ActivitySettings.class);
-        PendingIntent pi = PendingIntent.getActivity(context, ServiceSinkhole.NOTIFY_DOWNLOAD, main, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        PendingIntent pi = PendingIntentCompat.getActivity(context, ServiceSinkhole.NOTIFY_DOWNLOAD, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "notify");
         builder.setSmallIcon(R.drawable.ic_file_download_white_24dp)
@@ -180,7 +181,8 @@ public class DownloadTask extends AsyncTask<Object, Integer, Object> {
             builder.setCategory(NotificationCompat.CATEGORY_STATUS)
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
-        NotificationManagerCompat.from(context).notify(ServiceSinkhole.NOTIFY_DOWNLOAD, builder.build());
+        if (Util.canNotify(context))
+            NotificationManagerCompat.from(context).notify(ServiceSinkhole.NOTIFY_DOWNLOAD, builder.build());
     }
 
 }

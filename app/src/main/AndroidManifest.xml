@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- http://developer.android.com/guide/topics/security/permissions.html#normal-dangerous -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <!-- https://developer.android.com/preview/privacy/package-visibility -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
@@ -162,6 +164,7 @@
         <service
             android:name="eu.faircode.netguard.ServiceSinkhole"
             android:exported="true"
+            android:foregroundServiceType="dataSync"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>
@@ -172,6 +175,7 @@
         <service
             android:name="eu.faircode.netguard.ServiceExternal"
             android:exported="true"
+            android:foregroundServiceType="dataSync"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="net.kollnig.missioncontrol.DOWNLOAD_HOSTS_FILE" />
