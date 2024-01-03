@@ -76,18 +76,14 @@ public class TrackerCategory {
             case "Analytics":
                 return c.getString(R.string.tracker_analytics);
             case "Content":
-            case "Anti-fraud":
                 return c.getString(R.string.tracker_content);
             case "Cryptomining":
                 return c.getString(R.string.tracker_cryptomining);
-            case "FingerprintingGeneral":
-            case "FingerprintingInvasive":
+            case "Fingerprinting":
                 return c.getString(R.string.tracker_fingerprinting);
             case "Social":
                 return c.getString(R.string.tracker_social);
             case "Email":
-            case "EmailStrict":
-            case "EmailAggressive":
                 return c.getString(R.string.tracker_email);
             case UNCATEGORISED:
             default:

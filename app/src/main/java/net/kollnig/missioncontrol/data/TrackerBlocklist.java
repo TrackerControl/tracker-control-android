@@ -99,6 +99,22 @@ public class TrackerBlocklist {
                     subset.remove("Uncategorised | Adobe Systems");
                     subset.add("Uncategorised | Adobe");
                 }
+                if (subset.contains("FingerprintingGeneral")) {
+                    subset.remove("FingerprintingGeneral");
+                    subset.add("Fingerprinting");
+                }
+                if (subset.contains("FingerprintingInvasive")) {
+                    subset.remove("FingerprintingInvasive");
+                    subset.add("Fingerprinting");
+                }
+                if (subset.contains("EmailStrict")) {
+                    subset.remove("EmailStrict");
+                    subset.add("Email");
+                }
+                if (subset.contains("EmailAggressive")) {
+                    subset.remove("EmailAggressive");
+                    subset.add("Email");
+                }
 
                 // Retrieve uid
                 int uid = -1;

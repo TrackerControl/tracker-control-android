@@ -383,6 +383,21 @@ public class TrackerList {
                     // Found tracker, now add to list
                     JSONObject jsonTracker = category.getJSONObject(i);
                     String trackerName = jsonTracker.keys().next();
+
+                    switch (categoryName) {
+                        case "FingerprintingGeneral":
+                        case "FingerprintingInvasive":
+                            categoryName = "Fingerprinting";
+                            break;
+                        case "EmailStrict":
+                        case "EmailAggressive":
+                            categoryName = "Email";
+                            break;
+                        case "Anti-fraud":
+                            categoryName = "Content";
+                            break;
+                    }
+
                     Tracker tracker = new Tracker(trackerName, categoryName);
 
                     // Parse tracker domains
