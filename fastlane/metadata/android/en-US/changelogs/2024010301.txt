@@ -1,0 +1,3 @@
+- Fix 'Email' and 'Fingerprinting' categories; this enable more blocking than previously
+- Sync latest NetGuard changes to increase compatibility with Android 14
+- Fix bugs, and update dependencies and host lists

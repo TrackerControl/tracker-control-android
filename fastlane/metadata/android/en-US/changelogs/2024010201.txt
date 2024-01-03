@@ -1,1 +1,0 @@
-- Sync latest NetGuard changes to increase compatibility with Android 14
