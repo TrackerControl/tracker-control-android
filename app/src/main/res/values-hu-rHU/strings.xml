@@ -360,6 +360,8 @@ Tisztelettel,\n\n]]></string>
     <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
     <string name="uncertain_entry">A \"*\" jelzéssel ellátott bejegyzések pontatlanok lehetnek az Android korlátai miatt. Ez általában azt jelenti, hogy ugyanaz a vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelenti, hogy a különböző vállalatok ugyanazon az IP-cím mögött vannak (például tartalomszállítási hálózatot használnak).</string>
     <string name="browsers_not_supported">A böngészők nem támogatottak ⚠️</string>
+    <string name="browsers_not_supported_explanation">Úgy tűnik, ez egy böngészőalkalmazás.\n\nA TrackerControl nem támogatja a nyomkövetők blokkolását a böngészőkben. Használjon beépített nyomkövetési funkcióval rendelkező böngészőt a követés jobb blokkolása érdekében.\n\nPéldául: Mozilla Fennec</string>
     <string name="static_analysis">A nyomkövetők észlelése az alkalmazáskódban</string>
     <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen</string>
+    <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
 </resources>
