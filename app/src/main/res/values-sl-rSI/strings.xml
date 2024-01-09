@@ -368,6 +368,8 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
     <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi pomeni, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
     <string name="browsers_not_supported">⚠️ Brskalniki niso podprti.</string>
+    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nTrackerControl ne podpira blokiranje sledilcev v brskalnikih.  Za to lahko uporabljate brskalnik z vgrajeno zmožnostjo blokiranja sledenja.\n\nNa primer Mozilla Fennec ali Bromite.</string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
+    <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
 </resources>
