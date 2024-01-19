@@ -166,7 +166,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_protocol">Protokol</string>
     <string name="title_dport">Forrás portja</string>
     <string name="title_raddr">Cél címe</string>
-    <string name="title_rport">Cél port</string>
+    <string name="title_rport">Cél portszáma</string>
     <string name="title_ruid">Cél app</string>
     <string name="title_external">Külső kiszolgálóhoz válassza a „senki” lehetőséget</string>
     <string name="title_lockdown_enabled">A forgalom lezárva</string>
@@ -334,8 +334,8 @@ Tisztelettel,\n\n]]></string>
     <string name="no_internet">Nincs internet-hozzáférés</string>
     <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az App ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
-    <string name="forever_free">Örökre Ingyenes</string>
-    <string name="your_privacy">Az Ön Személyes Adatai</string>
+    <string name="forever_free">Örökre ingyenes</string>
+    <string name="your_privacy">Az Ön személyes adatai</string>
     <string name="tracker_hostlist">Felhasználó által megadott gazdagépek</string>
     <string name="unblocked">Blokkolatlan</string>
     <string name="enable">Engedélyez</string>
