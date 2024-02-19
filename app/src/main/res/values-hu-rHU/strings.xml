@@ -5,7 +5,7 @@
     <string name="app_android">A TrackerControl Android 5.1-et, vagy újabbat igényel</string>
     <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Áruházból, ezért a TrackerControl nem támogatott amíg az Xposed telepítve van</string>
     <string name="app_eula">Az alkalmazás használata a saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Titoktartási Irányelv</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Süti Irányelv</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Titoktartási irányelv</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Süti irányelv</a></string>
     <string name="channel_foreground">Futó szolgáltatások</string>
     <string name="channel_notify">Általános értesítések</string>
     <string name="channel_access">Hozzáférési értesítések</string>
