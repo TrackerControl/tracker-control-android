@@ -62,6 +62,7 @@
     <string name="setting_lockdown">트래픽 차단</string>
     <string name="setting_track_usage">네트워크 사용량 추적</string>
     <string name="setting_reset_usage">네트워크 사용량 초기화</string>
+    <string name="setting_block_domains">hosts 파일 활성화</string>
     <string name="setting_backup">백업</string>
     <string name="setting_export">설정 내보내기 (초기화용 아님)</string>
     <string name="setting_import">설정 불러오기</string>
@@ -72,6 +73,16 @@
     <string name="setting_hosts_update">hosts 파일 업데이트</string>
     <string name="summary_install">새로 설치된 앱에 대해 상태바 알림 표시</string>
     <string name="summary_pause">알림으로부터 일시 정지 이후, 자동으로 TrackerControl을 선택된 분 이후에 다시 활성화 (0을 입력하면 비활성화)</string>
+    <string name="summary_update">하루에 두 번씩 GitHub에서 새로운 릴리스 확인</string>
+    <string name="summary_tethering">안드로이드 버전에 따라, 테더링은 작동할 수도 하지 않을 수도 있습니다. 테더링된 트래픽은 필터링할 수 없습니다.</string>
+    <string name="summary_subnet">서브넷 라우팅을 활성화합니다. Wi-Fi 통화가 가능하게 될 수도 있지만, Android 내에서 버그가 발생하고 배터리 사용량이 증가할 수 있습니다.</string>
+    <string name="summary_lan">앱이 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16과 같은 근거리 통신망에 연결할 수 있도록 허용합니다.</string>
+    <string name="summary_ip6">IPv6을 NetGuard로 라우팅하여 선택적으로 허용 및 차단할 수 있도록 합니다.</string>
+    <string name="summary_call">전화를 수발신할 때 TrackerControl을 비활성화합니다. IP/Wi-Fi 전화 이용 시 발생하는 문제를 해결할 때 사용할 수 있습니다.</string>
+    <string name="summary_system">시스템 앱에 대한 규칙 정의 (숙련자용)</string>
+    <string name="summary_log_app">배터리 사용량을 줄이기 위해 비활성화하세요. 새로운 트래커는 차단되지만, 보여지지 않습니다.</string>
+    <string name="summary_track_usage">각 앱 및 주소에서 송수신한 바이트 수를 추적합니다. 배터리 사용량이 증가할 수 있습니다.</string>
+    <string name="msg_sure">확실한가요?</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
