@@ -68,6 +68,7 @@
     <string name="setting_reset_usage">Redefinir o uso da rede</string>
     <string name="setting_show_resolved">Mostrar nomes de domínio resolvidos</string>
     <string name="setting_block_domains">Habilitar o arquivo hosts</string>
+    <string name="setting_rcode">Resposta de bloqueio de hosts: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -255,6 +256,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="data_management_description">O Regulamento Geral sobre a Proteção de Dados da UE (RGPD) permite aos usuários da UE gerenciar quaisquer dados relacionados a eles. Este app fornece modelos de e-mail para contatar o desenvolvedor. O desenvolvedor tem que responder dentro de um mês.</string>
     <string name="contacts">Contato </string>
     <string name="contacts_description">Se você acha que uma aplicação viola os princípios de proteção de dados, você pode querer entrar em contato diretamente com as entidades responsáveis.</string>
+    <string name="play_services_required">Esta é uma configuração do Google Play Services que não foi encontrada no seu dispositivo.</string>
     <string name="no_mail_service">Por favor, instale um cliente de e-mail.</string>
     <string name="blocking_settings">Selecionar rastreadores</string>
     <string name="ad_settings">Alterar agora</string>
