@@ -59,6 +59,7 @@
     <string name="setting_advanced_options">Avancerede indstillinger</string>
     <string name="setting_system">Håndtér systemapps</string>
     <string name="setting_log_app">Søg efter nye trackere</string>
+    <string name="setting_log_logcat">Log overførsler til ADB</string>
     <string name="setting_filter">Blokér trackere</string>
     <string name="setting_filter_udp">Blokér trackere på UDP</string>
     <string name="setting_track_usage">Spor netværksforbrug</string>
