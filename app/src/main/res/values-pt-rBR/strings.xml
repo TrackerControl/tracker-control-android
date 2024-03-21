@@ -68,6 +68,7 @@
     <string name="setting_reset_usage">Redefinir o uso da rede</string>
     <string name="setting_show_resolved">Mostrar nomes de domínio resolvidos</string>
     <string name="setting_block_domains">Habilitar o arquivo hosts</string>
+    <string name="setting_rcode">Resposta de bloqueio de hosts: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -255,6 +256,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="data_management_description">O Regulamento Geral sobre a Proteção de Dados da UE (RGPD) permite aos usuários da UE gerenciar quaisquer dados relacionados a eles. Este app fornece modelos de e-mail para contatar o desenvolvedor. O desenvolvedor tem que responder dentro de um mês.</string>
     <string name="contacts">Contato </string>
     <string name="contacts_description">Se você acha que uma aplicação viola os princípios de proteção de dados, você pode querer entrar em contato diretamente com as entidades responsáveis.</string>
+    <string name="play_services_required">Esta é uma configuração do Google Play Services que não foi encontrada no seu dispositivo.</string>
     <string name="no_mail_service">Por favor, instale um cliente de e-mail.</string>
     <string name="blocking_settings">Selecionar rastreadores</string>
     <string name="ad_settings">Alterar agora</string>
@@ -356,7 +358,6 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Dica: você pode desbloquear entradas individuais tocando nelas.</string>
     <string name="uncertain_entry">As entradas marcadas com \'*\' podem ser imprecisas devido às limitações do Android. Isso geralmente significa que a mesma empresa usa o mesmo endereço IP em domínios diferentes, mas também pode significar que empresas diferentes estão por trás do mesmo endereço IP (por exemplo, se usarem uma rede de distribuição de conteúdo).</string>
     <string name="browsers_not_supported">Navegadores não suportados ⚠️</string>
-    <string name="browsers_not_supported_explanation">Parece ser um aplicativo de navegador.\n\nO bloqueio de rastreadores nos navegadores não é suportado pelo TrackerControl. Em vez disso, use um navegador com a funcionalidade de anti-rastreamento integrada para obter um melhor bloqueio de rastreamento.\n\nPor exemplo: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Detectar rastreadores no código do aplicativo</string>
     <string name="failed_loading_cached_analysis">Falha ao carregar resultados do rastreador em cache. Por favor reporte isto para o desenvolvedor em hello@trackercontrol.org</string>
 </resources>

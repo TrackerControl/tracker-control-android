@@ -358,7 +358,8 @@
     <string name="untap_unblock">提示：您可以轻按解除对单独条目的屏蔽。</string>
     <string name="uncertain_entry">由于 Android 的限制，标有“*”的条目可能不准确。 这通常意味着同一家公司在不同域下使用相同的 IP 地址，但也可能意味着不同的公司使用相同的 IP 地址(例如，如果他们使用内容交付网络)。</string>
     <string name="browsers_not_supported">浏览器不受支持 ⚠️</string>
-    <string name="browsers_not_supported_explanation">这似乎是一个浏览器应用程序。\n\nTrackerControl 不支持在浏览器中阻止跟踪器。 相反，请使用集成了反跟踪功能的浏览器来更好地阻止跟踪。\n\n例如：Mozilla Fennec、Bromite</string>
+    <string name="browsers_not_supported_explanation">这似乎是一个浏览器应用。\n\nTrackerControl 不支持在浏览器中阻止跟踪器。 请使用集成了反跟踪功能的浏览器来更好地阻止跟踪。\n\n例如：Mozilla Fennec</string>
     <string name="static_analysis">检测应用代码中的跟踪器</string>
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
+    <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
 </resources>

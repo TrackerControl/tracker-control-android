@@ -368,7 +368,6 @@ Z poważaniem,\n\n]]></string>
     <string name="untap_unblock">Wskazówka: możesz odblokować poszczególne wpisy, dotykając ich.</string>
     <string name="uncertain_entry">Wpisy oznaczone symbolem \'*\' mogą być niedokładne, ze względu na ograniczenia systemu Android. Zazwyczaj oznacza to, że ta sama firma używa tego samego adresu IP w różnych domenach, ale może również oznaczać, że za tym samym adresem IP stoją różne firmy, np. jeśli używają sieci dostarczania treści (Content Delivery Network).</string>
     <string name="browsers_not_supported">Przeglądarki nie są obsługiwane ⚠️</string>
-    <string name="browsers_not_supported_explanation">Wygląda na to, że jest to przeglądarka.\n\nBlokowanie trackerów w przeglądarkach nie jest obsługiwane przez TrackerControl. Zamiast tego używaj przeglądarki z wbudowaną funkcjonalnością blokowania śledzenia.\n\nNa przykład: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Wykrywaj trackery w kodzie aplikacji</string>
     <string name="failed_loading_cached_analysis">Ładowanie informacji o trackerach z pamięci cache nie powiodło się. Proszę zgłosić to deweloperowi na hello@trackercontrol.org</string>
 </resources>
