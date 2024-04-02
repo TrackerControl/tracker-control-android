@@ -1,4 +1,4 @@
-TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre o comportamento do usuário, também conhecido como ("tracking").
+TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre o comportamento do usuário ("tracking").
 
 Para detectar os rastreadores, o TrackerControl combina o poder da lista de bloqueio do Disconnect, usada pelo Firefox, e nossa lista de bloqueio interna é usada, criada a partir da análise de <i>~2 000 000</i> de aplicativos! Além disso, o TrackerControl suporta listas de bloqueio personalizadas.
 
