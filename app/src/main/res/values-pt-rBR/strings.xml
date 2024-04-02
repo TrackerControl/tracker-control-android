@@ -85,6 +85,7 @@
     <string name="setting_stats_frequency">Intervalo de amostra: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Backup</string>
+    <string name="setting_export">Exportar configurações</string>
     <string name="setting_import">Importar Configuracoes</string>
     <string name="setting_hosts">Importar arquivo de hosts</string>
     <string name="setting_hosts_append">Importar arquivo hosts (anexar)</string>
@@ -342,6 +343,7 @@ Sincerely,\n\n]]></string>
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores na categoria bloqueados</string>
     <string name="category_unblocked">Rastreadores na categoria permitidos</string>
+    <string name="category_unblocked_warning">Primeira categoria bloqueada!</string>
     <string name="switch_strict_blocking">Bloquear compartilhamento de dados essenciais</string>
     <string name="tracking_detection_failed">Falha na detecção da biblioteca do rastreador.</string>
     <string name="tracking_detection_failed_ram">A detecção da biblioteca do rastreador falhou. Não há RAM suficiente.</string>
