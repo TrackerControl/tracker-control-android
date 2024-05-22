@@ -12,7 +12,7 @@ O aplicativo também visa educar sobre seus direitos sob a Lei de Proteção de 
 
 Por baixo dos panos, o TrackerControl usa a funcionalidade de VPN do Android para analisar as comunicações de rede de apps <i>localmente no dispositivo Android</i>. Isto é feito através de um servidor VPN local, para habilitar a análise de tráfego de rede pelo TrackerControl.
 
-Root não é necessário, outras VPNs ou DNS privado não são suportadas. Nenhum servidor de VPN externo é usado, para manter seus dados seguros! TrackerControl até protege você contra <i>DNS cloaking</i>, uma técnica popular para ocultar rastreadores em sites e aplicativos.
+Root não é necessário, outras VPNs ou DNS privado não são suportados. Nenhum servidor de VPN externo é usado, para manter seus dados seguros! TrackerControl até protege você contra <i>DNS cloaking</i>, uma técnica popular para ocultar rastreadores em sites e aplicativos.
 
 O TrackerControl será sempre gratuito e de código aberto, sendo um projeto de pesquisa.
 
