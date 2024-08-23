@@ -58,6 +58,12 @@
     <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
     <string name="setting_advanced_options">Avancerede indstillinger</string>
     <string name="setting_system">Håndtér systemapps</string>
+    <string name="setting_log_app">Søg efter nye trackere</string>
+    <string name="setting_log_logcat">Log overførsler til ADB</string>
+    <string name="setting_filter">Blokér trackere</string>
+    <string name="setting_filter_udp">Blokér trackere på UDP</string>
+    <string name="setting_track_usage">Spor netværksforbrug</string>
+    <string name="setting_reset_usage">Nulstil netværksforbrug</string>
     <string name="setting_import">Importér indstillinger</string>
     <string name="msg_sure">Er du sikker?</string>
     <string name="msg_started">Kontrollérer trackere</string>

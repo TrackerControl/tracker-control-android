@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre seu comportamento (\"tracking\").</string>
+    <string name="app_description">TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre o comportamento do usuário (\"tracking\").</string>
     <string name="app_copyright">Direitos autorais \u00A9 2019-2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl é baseado no NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou posterior</string>
     <string name="app_xposed">O Xposed provoca muitos travamentos, o que pode levar à remoção do TrackerControl da Google Play Store, logo, TrackerControl não é suportado enquanto o Xposed está instalado</string>
@@ -68,6 +68,7 @@
     <string name="setting_reset_usage">Redefinir o uso da rede</string>
     <string name="setting_show_resolved">Mostrar nomes de domínio resolvidos</string>
     <string name="setting_block_domains">Habilitar o arquivo hosts</string>
+    <string name="setting_rcode">Resposta de bloqueio de hosts: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -84,7 +85,8 @@
     <string name="setting_stats_frequency">Intervalo de amostra: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_import">Importar Configuracoes</string>
+    <string name="setting_export">Exportar configurações</string>
+    <string name="setting_import">Importar configurações</string>
     <string name="setting_hosts">Importar arquivo de hosts</string>
     <string name="setting_hosts_append">Importar arquivo hosts (anexar)</string>
     <string name="setting_hosts_url">URL do arquivo hosts</string>
@@ -255,6 +257,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="data_management_description">O Regulamento Geral sobre a Proteção de Dados da UE (RGPD) permite aos usuários da UE gerenciar quaisquer dados relacionados a eles. Este app fornece modelos de e-mail para contatar o desenvolvedor. O desenvolvedor tem que responder dentro de um mês.</string>
     <string name="contacts">Contato </string>
     <string name="contacts_description">Se você acha que uma aplicação viola os princípios de proteção de dados, você pode querer entrar em contato diretamente com as entidades responsáveis.</string>
+    <string name="play_services_required">Esta é uma configuração do Google Play Services que não foi encontrada no seu dispositivo.</string>
     <string name="no_mail_service">Por favor, instale um cliente de e-mail.</string>
     <string name="blocking_settings">Selecionar rastreadores</string>
     <string name="ad_settings">Alterar agora</string>
@@ -340,6 +343,7 @@ Sincerely,\n\n]]></string>
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores na categoria bloqueados</string>
     <string name="category_unblocked">Rastreadores na categoria permitidos</string>
+    <string name="category_unblocked_warning">Primeira categoria bloqueada!</string>
     <string name="switch_strict_blocking">Bloquear compartilhamento de dados essenciais</string>
     <string name="tracking_detection_failed">Falha na detecção da biblioteca do rastreador.</string>
     <string name="tracking_detection_failed_ram">A detecção da biblioteca do rastreador falhou. Não há RAM suficiente.</string>
@@ -356,7 +360,8 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Dica: você pode desbloquear entradas individuais tocando nelas.</string>
     <string name="uncertain_entry">As entradas marcadas com \'*\' podem ser imprecisas devido às limitações do Android. Isso geralmente significa que a mesma empresa usa o mesmo endereço IP em domínios diferentes, mas também pode significar que empresas diferentes estão por trás do mesmo endereço IP (por exemplo, se usarem uma rede de distribuição de conteúdo).</string>
     <string name="browsers_not_supported">Navegadores não suportados ⚠️</string>
-    <string name="browsers_not_supported_explanation">Parece ser um aplicativo de navegador.\n\nO bloqueio de rastreadores nos navegadores não é suportado pelo TrackerControl. Em vez disso, use um navegador com a funcionalidade de anti-rastreamento integrada para obter um melhor bloqueio de rastreamento.\n\nPor exemplo: Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">Parece ser um aplicativo de navegador.\n\nO bloqueio de rastreadores nos navegadores não é suportado pelo TrackerControl. Em vez disso, use um navegador com a funcionalidade de anti-rastreamento integrada para obter um melhor bloqueio de rastreamento.\n\nPor exemplo: Mozilla Fennec</string>
     <string name="static_analysis">Detectar rastreadores no código do aplicativo</string>
     <string name="failed_loading_cached_analysis">Falha ao carregar resultados do rastreador em cache. Por favor reporte isto para o desenvolvedor em hello@trackercontrol.org</string>
+    <string name="msg_notifications">Toque para conceder permissões de notificação (para mensagens de erro, etc.)</string>
 </resources>

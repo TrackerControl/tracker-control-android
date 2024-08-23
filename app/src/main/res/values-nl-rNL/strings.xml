@@ -363,7 +363,8 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
     <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
     <string name="browsers_not_supported">Browsers worden niet ondersteund ⚠️</string>
-    <string name="browsers_not_supported_explanation">Dit lijkt een browser-app te zijn.\n\nHet blokkeren van trackers in browsers wordt niet ondersteund door TrackerControl. Gebruik in plaats daarvan een browser met geïntegreerde anti-trackingfunctionaliteit voor beter blokkeren van tracking.\n\nBijvoorbeeld: Firefox Focus, Bromite</string>
+    <string name="browsers_not_supported_explanation">Dit lijkt een browser app te zijn.\n\n TrackerControl ondersteunt het blokkeren van trackers in browsers niet. Gebruik in plaats daarvan een browser met geïntegreerde anti-tracking functionaliteit voor een betere blokkering.\n\nBijvoorbeeld Mozilla Focus</string>
     <string name="static_analysis">Trackers detecteren in app code</string>
     <string name="failed_loading_cached_analysis">Het laden van tracker resultaten in de cache is mislukt. Graag dit melden aan de ontwikkelaar op hello@trackercontrol.org</string>
+    <string name="msg_notifications">Tic hier om meldingen toe te staan (voor foutmeldingen, enz.)</string>
 </resources>

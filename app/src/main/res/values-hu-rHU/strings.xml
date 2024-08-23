@@ -5,7 +5,7 @@
     <string name="app_android">A TrackerControl Android 5.1-et, vagy újabbat igényel</string>
     <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Áruházból, ezért a TrackerControl nem támogatott amíg az Xposed telepítve van</string>
     <string name="app_eula">Az alkalmazás használata a saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Titoktartási Irányelv</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Süti Irányelv</a></string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Titoktartási irányelv</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Süti irányelv</a></string>
     <string name="channel_foreground">Futó szolgáltatások</string>
     <string name="channel_notify">Általános értesítések</string>
     <string name="channel_access">Hozzáférési értesítések</string>
@@ -166,7 +166,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_protocol">Protokol</string>
     <string name="title_dport">Forrás portja</string>
     <string name="title_raddr">Cél címe</string>
-    <string name="title_rport">Cél port</string>
+    <string name="title_rport">Cél portszáma</string>
     <string name="title_ruid">Cél app</string>
     <string name="title_external">Külső kiszolgálóhoz válassza a „senki” lehetőséget</string>
     <string name="title_lockdown_enabled">A forgalom lezárva</string>
@@ -334,8 +334,8 @@ Tisztelettel,\n\n]]></string>
     <string name="no_internet">Nincs internet-hozzáférés</string>
     <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az App ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
-    <string name="forever_free">Örökre Ingyenes</string>
-    <string name="your_privacy">Az Ön Személyes Adatai</string>
+    <string name="forever_free">Örökre ingyenes</string>
+    <string name="your_privacy">Az Ön személyes adatai</string>
     <string name="tracker_hostlist">Felhasználó által megadott gazdagépek</string>
     <string name="unblocked">Blokkolatlan</string>
     <string name="enable">Engedélyez</string>
@@ -360,7 +360,8 @@ Tisztelettel,\n\n]]></string>
     <string name="untap_unblock">Tipp: Az egyes bejegyzések tiltásának feloldásához érintse meg őket. Ez visszafelé is működik.</string>
     <string name="uncertain_entry">A \"*\" jelzéssel ellátott bejegyzések pontatlanok lehetnek az Android korlátai miatt. Ez általában azt jelenti, hogy ugyanaz a vállalat ugyanazt az IP-címet használja különböző területeken, de azt is jelenti, hogy a különböző vállalatok ugyanazon az IP-cím mögött vannak (például tartalomszállítási hálózatot használnak).</string>
     <string name="browsers_not_supported">A böngészők nem támogatottak ⚠️</string>
-    <string name="browsers_not_supported_explanation">Úgy tűnik, hogy ez egy böngészőalkalmazás.\n\nA böngészők nyomkövető blokkolását nem támogatja a TrackerControl. Használjon olyan böngészőt, amely nyomkövetés elleni védelemmel rendelkezik, hogy blokkolja a nyomon követést.\n\nPélda: Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">Úgy tűnik, ez egy böngészőalkalmazás.\n\nA TrackerControl nem támogatja a nyomkövetők blokkolását a böngészőkben. Használjon beépített nyomkövetési funkcióval rendelkező böngészőt a követés jobb blokkolása érdekében.\n\nPéldául: Mozilla Fennec</string>
     <string name="static_analysis">A nyomkövetők észlelése az alkalmazáskódban</string>
     <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen</string>
+    <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
 </resources>
