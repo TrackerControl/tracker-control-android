@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
     <string name="summary_log_logcat">Schakelt blokkering uit. Communicaties (en geïdentificeerde trackers) worden in het logboek van het apparaat vastgelegd. Haal terug met adb logcat met tag \'TC-Log\'.</string>
     <string name="msg_sure">Weet je het zeker?</string>
-    <string name="msg_started">Trackers controleren</string>
     <string name="msg_waiting">Wacht op gebeurtenis</string>
     <string name="msg_disabled">Gebruik bovenstaande schakelaar om TrackerControl te activeren.</string>
     <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
