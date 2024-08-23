@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Rendszeresen ellenőriz ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
     <string name="summary_log_logcat">Letiltja a blokkolást. A kommunikációt (és az azonosított nyomkövetőket) naplózza az eszköznaplóba. Letöltés az adb logcat segítségével a „TC-Log” címkével.</string>
     <string name="msg_sure">Biztos vagy benne?</string>
-    <string name="msg_started">Nyomkövetők ellenőrzése</string>
     <string name="msg_waiting">Várakozás eseményre</string>
     <string name="msg_disabled">Használja a fenti kapcsolót a TrackerControl engedélyezéséhez.</string>
     <string name="msg_revoked">A TrackerControl le van tiltva, valószínűleg egy másik VPN alapú alkalmazással</string>
