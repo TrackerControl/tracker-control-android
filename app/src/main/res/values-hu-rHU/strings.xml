@@ -145,14 +145,14 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_update">Frissítés érhető el, érintse meg a letöltéshez</string>
     <string name="msg_usage">Engedélyezni (zöldes) vagy tiltani (vöröses) tudja a Wi-Fi vagy mobil internet hozzáférést, ha megérinti az alkalmazás melletti ikont</string>
     <string name="msg_whitelist">Az internet hozzáférés alapértelmezésként engedélyezve van (blacklist mód), ezt meg lehet változtatni a beállításokban</string>
-    <string name="msg_push">A bejövő (push) üzeneteket többnyire a Play Szolgáltatások rendszerösszetevő kezeli, ennek alapértelmezés szerint engedélyezve van az internet hozzáférés</string>
+    <string name="msg_push">A bejövő (push) üzeneteket többnyire a Play Szolgáltatások rendszerösszetevő kezeli, ennek alapértelmezés szerint engedélyezve van az internet-hozzáférése</string>
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_issue">Kérjük írja le a problémát és a probléma időpontját:</string>
-    <string name="msg_vpn_cancelled">VPN kapcsolat megszüntetve\nBeállít másik VPN kapcsolatot, hogy a VPN-csatlakozás állandó legyen?</string>
+    <string name="msg_vpn_cancelled">VPN kapcsolat megszüntetve\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az Android verzión</string>
     <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
-    <string name="msg_always_on_lockdown">Kapcsold ki a \"A VPN nélküli kapcsolatok blokkolását\" az Android VPN beállításaiban hogy a TrackerControlt használhasd szűrés módban</string>
-    <string name="msg_private_dns">Kapcsold ki a „Privát DNS”-t az Android hálózati beállításaiban, hogy a TrackerControlt szűrés módban használhasd</string>
+    <string name="msg_always_on_lockdown">Kapcsold ki a „A VPN nélküli kapcsolatok blokkolását” az Android VPN beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
+    <string name="msg_private_dns">Kapcsold ki a „Privát DNS”-t az Android hálózati beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
     <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
@@ -163,11 +163,11 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="menu_add">Hozzáad</string>
     <string name="menu_delete">Töröl</string>
     <string name="setting_forwarding">Port forwarding</string>
-    <string name="title_protocol">Protokol</string>
+    <string name="title_protocol">Protokoll</string>
     <string name="title_dport">Forrás portja</string>
     <string name="title_raddr">Cél címe</string>
     <string name="title_rport">Cél portszáma</string>
-    <string name="title_ruid">Cél app</string>
+    <string name="title_ruid">Cél alkalmazás</string>
     <string name="title_external">Külső kiszolgálóhoz válassza a „senki” lehetőséget</string>
     <string name="title_lockdown_enabled">A forgalom lezárva</string>
     <string name="title_unmetered_allowed">Méretlen forgalom engedélyezve</string>
@@ -180,10 +180,10 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_host_blocked">A cím letiltva</string>
     <string name="title_interactive_allowed">Bekapcsolt képernyőnél engedélyezi</string>
     <string name="title_roaming_blocked">Letiltás barangolásnál</string>
-    <string name="title_metered">Alapértelmezésben a Wi-Fi kapcsolat méretlennek a mobil kapcsolat pedig mértnek minősül</string>
+    <string name="title_metered">Alapértelmezés szerint a Wi-Fi kapcsolat méretlennek, a mobil kapcsolat pedig mértnek minősül</string>
     <string name="title_internet">nem lehet elérni az internetet</string>
     <string name="title_disabled">letiltva</string>
-    <string name="title_messaging">A bejövő üzeneteket a Google Play-szolgáltatások fogadja és nem ez az alkalmazás, ezért azokat nem lehet letiltani az alkalmazás blokkolásával</string>
+    <string name="title_messaging">A bejövő üzeneteket a Google Play-szolgáltatások fogadja és nem ez az alkalmazás, ezért azokat nem lehet letiltani ennek az alkalmazásnak a blokkolásával</string>
     <string name="title_download">A letöltések a letöltéskezelővel történnek, nem pedig ezzel az alkalmazással, ezért a letöltéseket nem lehet blokkolni ennek az alkalmazásnak a blokkolásával</string>
     <string name="title_conditions">Feltételek</string>
     <string name="title_screen_wifi">Wi-Fi engedélyezése bekapcsolt képernyőnél</string>
@@ -193,16 +193,16 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_related">Szűrővel kapcsolatos</string>
     <string name="title_access">Hozzáférési kísérletek</string>
     <string name="title_precedence">A hozzáférési szabályok elsőbbséget élveznek más szabályok előtt</string>
-    <string name="title_options">Lehetőségek</string>
-    <string name="title_notify">Értesítés az internet hozzáférési kísérletekről</string>
+    <string name="title_options">Beállítások</string>
+    <string name="title_notify">Értesítés az internet-hozzáférési kísérletekről</string>
     <string name="title_logging_disabled">A naplózás vagy a szűrés nincs engedélyezve</string>
-    <string name="title_logging_enabled">A naplózás és a szűrés engedélyezve</string>
+    <string name="title_logging_enabled">A naplózás és a szűrés engedélyezve van</string>
     <string name="title_logging_configure">Beállítás</string>
     <string name="title_enable_logging">Csak a blokkolt címek naplózásának engedélyezése</string>
     <string name="title_enable_filtering">A szűrés engedélyezése naplózza az engedélyezett címeket is</string>
     <string name="title_enable_notify">Engedélyezi az újonnan naplózott címek hozzáférési értesítéseit</string>
     <string name="title_enable_help0">Ezek a beállítások globális beállítások, amik minden alkalmazásra vonatkoznak</string>
-    <string name="title_enable_help1">Szűrés szükséges az egyes címek engedélyezéséhez, vagy blokkolásához</string>
+    <string name="title_enable_help1">Szűrés szükséges az egyes címek engedélyezéséhez vagy blokkolásához</string>
     <string name="title_enable_help2">A naplózás engedélyezése (kevésbé), vagy a szűrés (jobban) növelheti az akkumulátor használatot és érintheti a hálózat sebességét</string>
     <string name="title_rate">Értékelés</string>
     <string name="title_allow">Engedélyez</string>
@@ -220,8 +220,8 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tracked_app_icon">Az alkalmazás internet hozzáférésének letiltása</string>
     <string name="tracked_app_name">Alkalmazásnév</string>
     <plurals name="n_companies_found_week">
-        <item quantity="one">az utolsó héten %d kapcsolat a céggel</item>
-        <item quantity="other">az utolsó héten %d kapcsolat a cégekkel</item>
+        <item quantity="one">a legutóbbi héten %d kapcsolat a céggel</item>
+        <item quantity="other">a kegutóbbi héten %d kapcsolat a cégekkel</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">összesen %d kapcsolat a céggel</item>
@@ -245,8 +245,8 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tab_countries">Országok</string>
     <string name="tab_actions">Adataim</string>
     <string name="tracker_name">Nyomkövető neve</string>
-    <string name="internet_access">Internet hozzáférés</string>
-    <string name="internet_access_explanation">Be kell kapcsolnia az internet hozzáféréshez.\n\nTipp: A főképernyőn megérintheti az alkalmazás ikont is.</string>
+    <string name="internet_access">Internet-hozzáférés</string>
+    <string name="internet_access_explanation">Be kell kapcsolnia az internet-hozzáféréshez.\n\nTipp: A főképernyőn megérintheti az alkalmazás ikont is.</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
     <string name="block_tracking">Nyomkövetők blokkolása</string>
@@ -268,7 +268,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="contact_officials">EU tisztviselők</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
-    <string name="subject_request_data">GDPR Alanyi Hozzáférési Kérelem</string>
+    <string name="subject_request_data">GDPR alanyi hozzáférési kérelem</string>
     <string name="body_request_data"><![CDATA[A Felelős Személynek:\n
 \n
 \n
