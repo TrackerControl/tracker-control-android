@@ -12,7 +12,7 @@
     <string name="menu_search">Alkalmazás keresése</string>
     <string name="menu_filter">Alkalmazások szűrése</string>
     <string name="menu_app_user">Felhasználói alkalmazások megjelenítése</string>
-    <string name="menu_app_system">Rendszer alkalmazások megjelenítése</string>
+    <string name="menu_app_system">Rendszeralkalmazások megjelenítése</string>
     <string name="menu_app_nointernet">Internet nélküli alkalmazások megjelenítése</string>
     <string name="menu_sort">Alkalmazások rendezése</string>
     <string name="menu_sort_name">Rendezés név alapján</string>
@@ -110,11 +110,12 @@
     <string name="summary_watchdog">Rendszeresen ellenőriz ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
     <string name="summary_log_logcat">Letiltja a blokkolást. A kommunikációt (és az azonosított nyomkövetőket) naplózza az eszköznaplóba. Letöltés az adb logcat segítségével a „TC-Log” címkével.</string>
     <string name="msg_sure">Biztos vagy benne?</string>
+    <string name="msg_started">Nyomkövetők keresése...</string>
     <string name="msg_waiting">Várakozás eseményre</string>
     <string name="msg_disabled">Használja a fenti kapcsolót a TrackerControl engedélyezéséhez.</string>
     <string name="msg_revoked">A TrackerControl le van tiltva, valószínűleg egy másik VPN alapú alkalmazással</string>
     <string name="msg_installed">%1$s gondok vannak?</string>
-    <string name="msg_installed_description">Engedélyezi az app kapcsolatát a társaságokkal</string>
+    <string name="msg_installed_description">Engedélyezi az alkalmazás kapcsolatát a társaságokkal</string>
     <string name="msg_installed_tracker_libraries_found">%d nyomkövető könyvtárat tartalmaz</string>
     <string name="msg_installed_n">Telepítésre került</string>
     <string name="msg_completed">Művelet befejezve</string>
@@ -331,7 +332,7 @@ Tisztelettel,\n\n]]></string>
     <string name="no_trackers_found_action">Indítás</string>
     <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
     <string name="no_internet">Nincs internet-hozzáférés</string>
-    <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az App ki van zárva TrackerControlból."</string>
+    <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az alkalmazás ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
     <string name="forever_free">Örökre ingyenes</string>
     <string name="your_privacy">Az Ön személyes adatai</string>
