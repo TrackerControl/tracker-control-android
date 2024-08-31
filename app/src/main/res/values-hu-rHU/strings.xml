@@ -96,7 +96,7 @@
     <string name="summary_pause">Az értesítés szüneteltetése után a kiválasztott percek után automatikusan engedélyezze újra a TrackerControl alkalmazást (0 érték letiltja az opciót).</string>
     <string name="summary_update">Ellenőrizze a GitHub-on az új kiadásokat naponta kétszer</string>
     <string name="summary_tethering">Az android verziótól függően az internetmegosztás vagy működik, vagy nem. A megosztott forgalom nem szűrhető.</string>
-    <string name="summary_subnet">Engedélyezi az alhálózati útválasztót; lehet, hogy engedélyezi a Wi-Fi hívást, de lehet, hogy hibát okoz Az androidban és növeli az akkumulátor használatot</string>
+    <string name="summary_subnet">Engedélyezi az alhálózati útválasztót. Lehet, hogy engedélyezi a Wi-Fi hívást, de lehet, hogy hibát okoz az androidban és növeli az akkumulátor használatot.</string>
     <string name="summary_lan">Engedélyezi az alkalmazások kapcsolódását a LAN hálózati címekhez, mint pl. 10.0.0.0/8, 172.16.0.0/12 és 192.168.0.0/16</string>
     <string name="summary_ip6">Az IPv6 forgalmat a TrackerControl szelektíven tudja tiltani vagy engedélyezni</string>
     <string name="summary_call">A TrackerControl letiltása a bejövő vagy kimenő telefonhívás alatt. Ez használható IP/Wi-Fi hívási problémák megoldására.</string>
