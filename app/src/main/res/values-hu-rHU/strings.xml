@@ -304,7 +304,7 @@ Kérem, hogy válaszát biztonságos módon, e-mailben adja meg. Várom, hogy a 
 \n
 Tisztelettel,\n\n]]></string>
     <string name="crash_dialog_text">Sajnálom. A TrackerControl éppen összeomlott.. Küldene nekünk egy e-mailt a részletekről?</string>
-    <string name="crash_dialog_comment">Valami megjegyzés?</string>
+    <string name="crash_dialog_comment">Megjegyzés?</string>
     <string name="instructions_monitoring_private_dns">Kapcsolja be a kapcsolót és használjon néhány alkalmazást. A privát DNS-t le kell tiltani.</string>
     <string name="instructions_monitoring">Kapcsolja be a kapcsolót és használjon néhány alkalmazást.</string>
     <string name="device_not_supported_title">Az eszköz nem támogatott</string>
