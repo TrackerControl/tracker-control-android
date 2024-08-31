@@ -126,9 +126,9 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_error">Váratlan hiba történt: \'%s\'</string>
     <string name="msg_start_failed">Az android nem volt hajlandó elindítani a VPN szolgáltatást. Ez valószínűleg Az androidjának hibája miatt következett be.</string>
     <string name="msg_try">Próbálja ki a TrackerControlt</string>
-    <string name="msg_doze">A következetes eredményekhez Az androidos akkumulátor-optimalizálásban a TrackerControlt kivétellé kell tenni.\n\nA következő párbeszédablakban válassza felül az „Összes alkalmazás”-t, érintse meg a TrackerControl feliratot és válassza a „Ne optimalizálja” lehetőséget.</string>
-    <string name="msg_datasaving">A következetes eredmény érdekében Az android adatforgalom-csökkentő bekapcsolásakor is biztosítani kell az adathasználatot a TrackerControl számára\n\nA következő párbeszédablakban engedélyezni kell a „Háttér adat” és a „Korlátlan adathasználat” lehetőséget</string>
-    <string name="msg_filter">A szűrés használatával az adat és az energia használat attributumait a TrackerControlhoz sorolja. Az android azt feltételezi, hogy ezeket a TrackerControl használta fel és nem az eredeti alkalmazás</string>
+    <string name="msg_doze">A következetes eredményekhez az androidos akkumulátor-optimalizálásban a TrackerControlt kivétellé kell tenni.\n\nA következő párbeszédablakban válassza ki felül az „Összes alkalmazás”-t, érintse meg a TrackerControl feliratot és válassza a „Ne optimalizálja” lehetőséget.</string>
+    <string name="msg_datasaving">A következetes eredmény érdekében az android adatforgalom-csökkentő bekapcsolásakor is biztosítani kell az adathasználatot a TrackerControl számára.\n\nA következő párbeszédablakban engedélyeznie kell a „Háttér adat” és a „Korlátlan adathasználat” lehetőséget.</string>
+    <string name="msg_filter">A szűrés használatával az adat és energia használat attributumait a TrackerControlhoz sorolja. Az android azt feltételezi, hogy ezeket a TrackerControl használta fel és nem az eredeti alkalmazás.</string>
     <string name="msg_filter4">A szűrés engedélyezéséhez legalább Android 4 szükséges</string>
     <string name="msg_log_disabled">Forgalom naplózása le van tiltva, a fenti kapcsolóval engedélyezheti a naplózást. A forgalom naplózása extra akkumulátorhasználattal jár.</string>
     <string name="msg_clear_rules">Ez alaphelyzetbe állítja a szabályok és a feltételek értékeit</string>
@@ -149,10 +149,10 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_issue">Kérjük írja le a problémát és a probléma időpontját:</string>
     <string name="msg_vpn_cancelled">VPN kapcsolat megszüntetve\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
-    <string name="msg_unavailable">Ez a funkció nem érhető el ezen Az android verzión</string>
+    <string name="msg_unavailable">Ez a funkció nem érhető el ezen az android verzión</string>
     <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
     <string name="msg_always_on_lockdown">Kapcsold ki a „A VPN nélküli kapcsolatok blokkolását” Az android VPN beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
-    <string name="msg_private_dns">Kapcsold ki a „Privát DNS”-t Az android hálózati beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
+    <string name="msg_private_dns">Kapcsold ki a „Privát DNS”-t az android hálózati beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
     <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
@@ -221,7 +221,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tracked_app_name">Alkalmazásnév</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">a legutóbbi héten %d kapcsolat a céggel</item>
-        <item quantity="other">a kegutóbbi héten %d kapcsolat a cégekkel</item>
+        <item quantity="other">a legutóbbi héten %d kapcsolat a cégekkel</item>
     </plurals>
     <plurals name="n_companies_found">
         <item quantity="one">összesen %d kapcsolat a céggel</item>
@@ -335,7 +335,7 @@ Tisztelettel,\n\n]]></string>
     <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az alkalmazás ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
     <string name="forever_free">Örökre ingyenes</string>
-    <string name="your_privacy">Az Ön személyes adatai</string>
+    <string name="your_privacy">Az Ön személyes adatbiztonsága</string>
     <string name="tracker_hostlist">Felhasználó által megadott gazdagépek</string>
     <string name="unblocked">Blokkolatlan</string>
     <string name="enable">Engedélyez</string>
