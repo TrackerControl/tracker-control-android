@@ -148,7 +148,7 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_push">A bejövő (push) üzeneteket többnyire a Play Szolgáltatások rendszerösszetevő kezeli, ennek alapértelmezés szerint engedélyezve van az internet-hozzáférése</string>
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_issue">Kérjük írja le a problémát és a probléma időpontját:</string>
-    <string name="msg_vpn_cancelled">VPN kapcsolat megszüntetve\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
+    <string name="msg_vpn_cancelled">A VPN kapcsolat meg lett szüntetve.\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az android verzión</string>
     <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
     <string name="msg_always_on_lockdown">Kapcsold ki a „A VPN nélküli kapcsolatok blokkolását” Az android VPN beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
