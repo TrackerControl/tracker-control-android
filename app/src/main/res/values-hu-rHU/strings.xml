@@ -335,7 +335,7 @@ Tisztelettel,\n\n]]></string>
     <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az alkalmazás ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
     <string name="forever_free">Örökre ingyenes</string>
-    <string name="your_privacy">Az Ön személyes adatbiztonsága</string>
+    <string name="your_privacy">Az Ön adatainak védelme</string>
     <string name="tracker_hostlist">Felhasználó által megadott gazdagépek</string>
     <string name="unblocked">Blokkolatlan</string>
     <string name="enable">Engedélyez</string>
