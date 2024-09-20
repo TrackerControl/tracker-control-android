@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Периодически проверять, запущен ли TrackerControl (введите ноль, чтобы отключить эту опцию). Это может привести к большему расходу батареи.</string>
     <string name="summary_log_logcat">Отключает блокировку. Соединения (и идентифицированные трекеры) записываются в журнал устройства. Извлечение через adb logcat с тегом \'TC-Log\'.</string>
     <string name="msg_sure">Вы уверены?</string>
-    <string name="msg_started">Проверка трекеров</string>
     <string name="msg_waiting">Ожидание события</string>
     <string name="msg_disabled">Для включения TrackerControl используйте переключатель выше.</string>
     <string name="msg_revoked">TrackerControl был отключен, скорее всего, из-за применения другого VPN-подключения</string>

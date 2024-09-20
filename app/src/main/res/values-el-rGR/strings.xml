@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Ελέγχετε περιοδικά αν εκτελείται ακόμα το TrackerControl (εισάγετε το μηδέν για να απενεργοποιήσετε αυτή την επιλογή). Αυτό μπορεί να οδηγήσει σε πρόσθετη κατανάλωση μπαταρίας.</string>
     <string name="summary_log_logcat">Απενεργοποιεί το μπλοκάρισμα. Οι επικοινωνίες (και οι αναγνωρισμένοι ιχνηλάτες) καταγράφονται στο αρχείο καταγραφής συσκευών. Ανάκτηση με adb logcat με ετικέτα \"TC-Log\".</string>
     <string name="msg_sure">Είστε σίγουρος;</string>
-    <string name="msg_started">Έλεγχος ιχνηλατών</string>
     <string name="msg_waiting">Αναμονή για συμβάν</string>
     <string name="msg_disabled">Χρησιμοποιήστε τον παραπάνω διακόπτη για να ενεργοποιήσετε το TrackerControl.</string>
     <string name="msg_revoked">Το TrackerControl έχει απενεργοποιηθεί, πιθανότατα χρησιμοποιώντας μια άλλη εφαρμογή που βασίζεται σε VPN</string>

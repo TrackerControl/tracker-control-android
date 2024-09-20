@@ -112,7 +112,7 @@
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_log_logcat">Onemogoči blokiranje.  Komunikacija (in prepoznani sledilci) se beleži v dnevnik naprave.  Pridobite jo lahko z adb logcat z oznako \'TC-log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
-    <string name="msg_started">Preverjanje sledilcev</string>
+    <string name="msg_started">Iskanje sledilcev …</string>
     <string name="msg_waiting">Čakanje na dogodek</string>
     <string name="msg_disabled">Uporabite stikalo zgoraj, da omogočite TrackerControl.</string>
     <string name="msg_revoked">TrackerControl je bil onemogočen verjetno z uporabo drugega programa, osnovanega na VPN-u.</string>
