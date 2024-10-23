@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Kontroller regelmessig om TrackerControl fortsatt kjører (angi null for å deaktivere dette alternativet). Dette kan føre til mer batteribruk.</string>
     <string name="summary_log_logcat">Deaktiverer blokkering. Kommunikasjon (og identifiserte sporere) er logget på enhetsloggen. Hent den med adb logcat og taggen \'TC-Log\'.</string>
     <string name="msg_sure">Er du sikker?</string>
-    <string name="msg_started">Kontrollerer sporere</string>
     <string name="msg_waiting">Venter på hendelse</string>
     <string name="msg_disabled">Bruk bryteren ovenfor for å aktivere TrackerControl.</string>
     <string name="msg_revoked">TrackerControl er deaktivert, sannsynligvis ved å bruke en annen VPN-basert app</string>

@@ -66,7 +66,6 @@
     <string name="setting_reset_usage">Nulstil netværksforbrug</string>
     <string name="setting_import">Importér indstillinger</string>
     <string name="msg_sure">Er du sikker?</string>
-    <string name="msg_started">Kontrollérer trackere</string>
     <string name="msg_installed">Problemer med %1$s?</string>
     <string name="msg_installed_n">Er blevet installeret</string>
     <string name="msg_try">Prøv TrackerControl</string>

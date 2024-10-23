@@ -112,7 +112,7 @@
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
     <string name="summary_log_logcat">Zakáže blokování. Komunikace (a rozpoznané trackery) jsou zaznamenány do logu zařízení. Získej záznam přes adb logcat s tagem \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
-    <string name="msg_started">Kontrola trackerů</string>
+    <string name="msg_started">Vyhledávání slídičů...</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
