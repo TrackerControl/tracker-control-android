@@ -134,6 +134,14 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_always_on">Toinen VPN on asetettu Always-on VPN</string>
     <string name="msg_always_on_lockdown">Poista Estä yhteydet ilman VPN: ää käytöstä Android VPN -asetuksissa, jotta voit käyttää TrackerControlia suodatustilassa</string>
     <string name="msg_private_dns">Poista yksityinen DNS käytöstä Android-verkkoasetuksissa, jotta voit käyttää TrackerControlia suodatustilassa</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Lisää</string>
+    <string name="menu_delete">Poista</string>
+    <string name="title_protocol">Protokolla</string>
+    <string name="title_dport">Lähdeportti</string>
     <string name="title_lockdown_enabled">Liikenne on lukittu</string>
     <string name="title_unmetered_allowed">Lukematon liikenne on sallittua</string>
     <string name="title_unmetered_blocked">Lukematon liikenne on estetty</string>
