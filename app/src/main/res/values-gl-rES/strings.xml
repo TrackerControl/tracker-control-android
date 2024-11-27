@@ -58,7 +58,6 @@
     <string name="summary_watchdog">Comprobación periódica de que TrackerControl está activo (poña cero para deshabilitar). Isto pode causar consumo extra de batería.</string>
     <string name="summary_log_logcat">Deshabilitar bloqueo. As comunicacións (e rastrexadores identificados) rexístranse nos logs do dispositivo. Recupéranse con adb logcat coa etiqueta \'TC-Log\'.</string>
     <string name="msg_sure">¿Está seguro?</string>
-    <string name="msg_started">Comprobando rastrexadores</string>
     <string name="msg_waiting">Agardando por evento</string>
     <string name="msg_disabled">Use o botón de enriba para activar TrackerControl.</string>
     <string name="msg_revoked">TrackerControl foi deactivado, é moi posible que por usar outra aplicación con VPN</string>

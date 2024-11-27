@@ -110,7 +110,7 @@
     <string name="summary_watchdog">TrackerControl\'ün hala çalışıp çalışmadığını periyodik olarak kontrol edin (bu seçeneği devre dışı bırakmak için sıfır girin). Bu, fazladan pil kullanımına neden olabilir.</string>
     <string name="summary_log_logcat">Engellemeyi devre dışı bırakır. İletişimler (ve tanımlanan izleyiciler) cihaz günlüğüne kaydedilir. \'TC-Log\' etiketli adb logcat ile alın.</string>
     <string name="msg_sure">Emin misiniz?</string>
-    <string name="msg_started">İzleyiciler kontrol ediliyor</string>
+    <string name="msg_started">Takipçiler aranıyor...</string>
     <string name="msg_waiting">Eylem bekleniyor</string>
     <string name="msg_disabled">TrackerControl\'ü etkinleştirmek için yukarıdaki anahtarı kullanın.</string>
     <string name="msg_revoked">TrackerControl, muhtemelen başka bir VPN tabanlı uygulama kullanılarak devre dışı bırakıldı</string>
@@ -297,7 +297,7 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="body_delete_data"><![CDATA[İlgili Makama:\n
 \n
 \n
-AB Genel Veri Koruma Yönetmeliği\'nin (GDPR) 17. Maddesinde belirtildiği şekilde silme hakkımı kullanıyorum. Android uygulaması olan %s (ID: %s) veri sorumlusu olarak sizden ricam, hakkımda işlediği aşağıdaki kişisel verileri gereksiz bir gecikme olmadan silmenizi rica ediyorum:\n
+AB Genel Veri Koruma Yönetmeliği'nin (GDPR) 17. Maddesinde belirtildiği şekilde silme hakkımı kullanıyorum. Android uygulaması olan %s (ID: %s) veri sorumlusu olarak sizden ricam, hakkımda işlediği aşağıdaki kişisel verileri gereksiz bir gecikme olmadan silmenizi rica ediyorum:\n
 • Tüm veriler.\n
 \n
 Kaldırma talebimin nedeni, kişisel verilerimin işlenmesine ilişkin onayımı geri çekmem veya geri almış olmamdır. Bu talep, sizin adınıza kişisel verileri işleyen işleyiciler de dahil olmak üzere, kişisel verilerimin sizin tarafınızdan işlenmesiyle ilgilidir.\n
@@ -362,6 +362,8 @@ Saygılarımla,\n\n]]></string>
     <string name="untap_unblock">İpucu: Tek tek girişlere dokunarak engellemeyi kaldırabilirsiniz.</string>
     <string name="uncertain_entry">Android\'in sınırlamaları nedeniyle, \'*\' ile işaretlenmiş girdiler yanlış olabilir.  Genellikle aynı şirket farklı domain altında aynı IP adresini kullandığında yaşanır, bu farklı şirketlerin aynı IP adresinin arkasında olduğu anlamınada gelebilir. (ör. eğer bir içerik dağıtım ağı kullanıyorlarsa(CDN))</string>
     <string name="browsers_not_supported">Tarayıcılar desteklenmemektedir ⚠️</string>
+    <string name="browsers_not_supported_explanation">Bu bir tarayıcı uygulaması gibi gözüküyor.\n\n Tarayıcılarda izcilerin engellenmesi İzciKontrolü tarafından desteklenmez. Bunun yerine, İzcileri daha iyi engellemek için, izleme önleme işlevi entegreli bir tarayıcı kullanın.\n\n Örneğin: Mozilla Fennec</string>
     <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
     <string name="failed_loading_cached_analysis">Önbelleğe alınmış izleyici sonuçları yüklenemedi. Lütfen bunu hello@trackercontrol.org adresinden geliştiriciye bildirin</string>
+    <string name="msg_notifications">Bildirim izinleri vermek için dokunun (hata mesajları vb. için)</string>
 </resources>
