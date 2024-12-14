@@ -19,7 +19,7 @@ android {
             }
         }
 
-        //ndkVersion "21.4.7075529"
+        ndkVersion "25.2.9519653"
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
@@ -97,6 +97,9 @@ android {
         disable 'MissingTranslation'
     }
     namespace 'net.kollnig.missioncontrol'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {

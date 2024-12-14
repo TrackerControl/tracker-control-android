@@ -1354,11 +1354,11 @@ public class ServiceSinkhole extends VpnService {
             ParcelFileDescriptor pfd = builder.establish();
 
             // Set underlying network
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && false) {
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                 Network active = (cm == null ? null : cm.getActiveNetwork());
                 if (active != null) {
-                    Log.i(TAG, "Setting underlying network=" + cm.getNetworkInfo(active));
+                    Log.i(TAG, "Setting underlying network=" + active + " " + cm.getNetworkInfo(active));
                     setUnderlyingNetworks(new Network[]{active});
                 }
             }
@@ -1405,6 +1405,20 @@ public class ServiceSinkhole extends VpnService {
                     Log.i(TAG, "Using DNS=" + dns);
                     builder.addDnsServer(dns);
                 }
+            }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            try {
+                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                Network active = (cm == null ? null : cm.getActiveNetwork());
+                LinkProperties props = (active == null ? null : cm.getLinkProperties(active));
+                String domain = (props == null ? null : props.getDomains());
+                if (domain != null) {
+                    Log.i(TAG, "Using search domain=" + domain);
+                    builder.addSearchDomain(domain);
+                }
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
 
         // Subnet routing
@@ -2477,10 +2491,13 @@ public class ServiceSinkhole extends VpnService {
     public void notifyNewApplication(int uid, BroadcastReceiver br) {
         if (uid < 0 || !Util.hasInternet(uid, this))
             return;
+        if (uid == Process.myUid())
+            return;
 
         try {
             // Get application name
-            String name = TextUtils.join(", ", Util.getApplicationNames(uid, this));
+            List<String> names = Util.getApplicationNames(uid, this);
+            String name = (names.size() == 0 ? Integer.toString(uid) : TextUtils.join(", ", names));
 
             // Get application info
             PackageManager pm = getPackageManager();
@@ -2655,8 +2672,9 @@ public class ServiceSinkhole extends VpnService {
         builder.addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
 
         ConnectivityManager.NetworkCallback nc = new ConnectivityManager.NetworkCallback() {
+            private Network last_network = null;
             private Boolean last_connected = null;
-            private Boolean last_unmetered = null;
+            private Boolean last_metered = null;
             private String last_generation = null;
             private List<InetAddress> last_dns = null;
 
@@ -2664,6 +2682,7 @@ public class ServiceSinkhole extends VpnService {
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
                 last_connected = Util.isConnected(ServiceSinkhole.this);
+                last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
                 reload("network available", ServiceSinkhole.this, false);
             }
 
@@ -2690,28 +2709,37 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "Changed capabilities=" + network + " caps=" + networkCapabilities);
 
                 boolean connected = Util.isConnected(ServiceSinkhole.this);
-                boolean unmetered = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+                boolean metered = Util.isMeteredNetwork(ServiceSinkhole.this);
                 String generation = Util.getNetworkGeneration(ServiceSinkhole.this);
                 Log.i(TAG, "Connected=" + connected + "/" + last_connected +
-                        " unmetered=" + unmetered + "/" + last_unmetered +
+                        " unmetered=" + metered + "/" + last_metered +
                         " generation=" + generation + "/" + last_generation);
 
-                if (last_connected != null && !last_connected.equals(connected))
-                    reload("Connected state changed", ServiceSinkhole.this, false);
+                String reason = null;
 
-                if (last_unmetered != null && !last_unmetered.equals(unmetered))
-                    reload("Unmetered state changed", ServiceSinkhole.this, false);
+                if (reason == null && !Objects.equals(network, last_network))
+                    reason = "Network changed";
 
-                if (last_generation != null && !last_generation.equals(generation)) {
+                if (reason == null && last_connected != null && !last_connected.equals(connected))
+                    reason = "Connected state changed";
+
+                if (reason == null && last_metered != null && !last_metered.equals(metered))
+                    reason = "Unmetered state changed";
+
+                if (reason == null && last_generation != null && !last_generation.equals(generation)) {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
                     if (prefs.getBoolean("unmetered_2g", false) ||
                             prefs.getBoolean("unmetered_3g", false) ||
                             prefs.getBoolean("unmetered_4g", false))
-                        reload("Generation changed", ServiceSinkhole.this, false);
+                        reason = "Generation changed";
                 }
 
+                if (reason != null)
+                    reload(reason, ServiceSinkhole.this, false);
+
+                last_network = network;
                 last_connected = connected;
-                last_unmetered = unmetered;
+                last_metered = metered;
                 last_generation = generation;
             }
 
@@ -3161,6 +3189,7 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private class Builder extends VpnService.Builder {
+        private Network activeNetwork;
         private NetworkInfo networkInfo;
         private int mtu;
         private List<String> listAddress = new ArrayList<>();
@@ -3171,6 +3200,7 @@ public class ServiceSinkhole extends VpnService {
         private Builder() {
             super();
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            activeNetwork = (Build.VERSION.SDK_INT < Build.VERSION_CODES.M ? null : cm.getActiveNetwork());
             networkInfo = cm.getActiveNetworkInfo();
         }
 
@@ -3227,6 +3257,9 @@ public class ServiceSinkhole extends VpnService {
             Builder other = (Builder) obj;
 
             if (other == null)
+                return false;
+
+            if (!Objects.equals(this.activeNetwork, other.activeNetwork))
                 return false;
 
             if (this.networkInfo == null || other.networkInfo == null ||
