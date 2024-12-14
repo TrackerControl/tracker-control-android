@@ -2,11 +2,11 @@ TrackerControl allows users to monitor and control the widespread, ongoing, hidd
 
 To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
 
-Tämä lähestymistapa
+This approach
 
-- paljastaa jäljityksen takana olevat yritykset,
-- mahdollistaa seurannan estämisen valikoivasti, ja
-- paljastaa seurannan tarkoitukset, kuten analytiikka tai mainonta.
+- reveals the companies behind tracking,
+- allows to block tracking selectively, and
+- exposes the purposes of tracking, such as analytics or advertising.
 
 The app also aims to educate about your rights under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
 

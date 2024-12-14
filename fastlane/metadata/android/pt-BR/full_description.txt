@@ -1,18 +1,18 @@
-TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
+TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre o comportamento do usuário ("tracking").
 
-To detect tracking, TrackerControl combines the power of the Disconnect blocklist, used by Firefox, and our in-house blocklist is used, created from analysing <i>~2 000 000</i> apps! Additionally, TrackerControl supports custom blocklists.
+Para detectar os rastreadores, o TrackerControl combina o poder da lista de bloqueio do Disconnect, usada pelo Firefox, e nossa lista de bloqueio interna é usada, criada a partir da análise de <i>~2 000 000</i> de aplicativos! Além disso, o TrackerControl suporta listas de bloqueio personalizadas.
 
-This approach
+Esta abordagem
 
-- reveals the companies behind tracking,
-- allows to block tracking selectively, and
-- exposes the purposes of tracking, such as analytics or advertising.
+- revela as empresas que estão por trás do rastreamento
+- permite bloquear a navegação de forma seletiva, e
+- expõe os propósitos de rastreamento, como análise ou publicidade.
 
-The app also aims to educate about your rights under Data Protection Law, such the EU General Data Protection Regulation (GDPR).
+O aplicativo também visa educar sobre seus direitos sob a Lei de Proteção de Dados, como o Regulamento Geral de Proteção de Dados da UE (RGPD).
 
-Under the hood, TrackerControl uses Android's VPN functionality, to analyse apps' network communications <i>locally on the Android device</i>. This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
+Por baixo dos panos, o TrackerControl usa a funcionalidade de VPN do Android para analisar as comunicações de rede de apps <i>localmente no dispositivo Android</i>. Isto é feito através de um servidor VPN local, para habilitar a análise de tráfego de rede pelo TrackerControl.
 
-No root is required, other VPNs or Private DNS are not supported. No external VPN server is used, to keep your data safe! TrackerControl even protects you against <i>DNS cloaking</i>, a popular technique to hide trackers in websites and apps.
+Root não é necessário, outras VPNs ou DNS privado não são suportados. Nenhum servidor de VPN externo é usado, para manter seus dados seguros! TrackerControl até protege você contra <i>DNS cloaking</i>, uma técnica popular para ocultar rastreadores em sites e aplicativos.
 
-TrackerControl will always be free and open source, being a research project.
+O TrackerControl será sempre gratuito e de código aberto, sendo um projeto de pesquisa.
 

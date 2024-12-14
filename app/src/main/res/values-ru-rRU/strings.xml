@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Периодически проверять, запущен ли TrackerControl (введите ноль, чтобы отключить эту опцию). Это может привести к большему расходу батареи.</string>
     <string name="summary_log_logcat">Отключает блокировку. Соединения (и идентифицированные трекеры) записываются в журнал устройства. Извлечение через adb logcat с тегом \'TC-Log\'.</string>
     <string name="msg_sure">Вы уверены?</string>
-    <string name="msg_started">Проверка трекеров</string>
     <string name="msg_waiting">Ожидание события</string>
     <string name="msg_disabled">Для включения TrackerControl используйте переключатель выше.</string>
     <string name="msg_revoked">TrackerControl был отключен, скорее всего, из-за применения другого VPN-подключения</string>
@@ -360,6 +359,5 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Подсказка: Вы можете разблокировать отдельные записи, нажав на них.</string>
     <string name="uncertain_entry">Записи отмеченные знаком \'*\' могут быть неточными из-за ограничений Android. Это обычно означает, что одна и та же компания использует один и тот же IP адрес в разных доменах, но может также означать, что различные компании находятся за одним IP адресом (например, если они используют сети доставки контента).</string>
     <string name="browsers_not_supported">Браузеры не поддерживаются ⚠️</string>
-    <string name="browsers_not_supported_explanation">Похоже, это приложение для браузера.\n\nБлокировка трекеров в браузерах не поддерживается TrackerControl. Вместо этого используйте браузер с встроенной функцией защиты от отслеживания, чтобы лучше блокировать отслеживание.\n\nНапример: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Обнаружить трекеры в коде приложения</string>
 </resources>

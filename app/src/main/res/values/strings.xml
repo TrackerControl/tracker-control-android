@@ -125,7 +125,7 @@
     <string name="summary_log_logcat">Disables blocking. Communications (and identified trackers) are logged to device log. Retrieve with adb logcat with tag \'TC-Log\'.</string>
 
     <string name="msg_sure">Are you sure?</string>
-    <string name="msg_started">Checking trackers</string>
+    <string name="msg_started">Looking for trackers...</string>
     <string name="msg_waiting">Waiting for event</string>
     <string name="msg_disabled">Use the switch above to enable TrackerControl.</string>
     <string name="msg_revoked">TrackerControl has been disabled, likely by using another VPN based app</string>

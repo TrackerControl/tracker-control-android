@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Egiaztatu aldiro TrackerControl oraindik martxan dagoen (idatzi 0 ezaugarri hau desgaitzeko). Honek bateria gehiago erabiltzea ekar lezake.</string>
     <string name="summary_log_logcat">Blokeatzea desgaitzen du. Komunikazioak (eta identifikatutako jarraitzaileak) gailuaren erregistroan erregistratzen dira. Berreskuratu adb logcat-ekin \'TC-Log\' etiketarekin.</string>
     <string name="msg_sure">Ziur zaude?</string>
-    <string name="msg_started">Aztarnariak egiaztatzen</string>
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
     <string name="msg_revoked">TrackerControl desaktibatu egin da, ziur aski VPNan oinarritutako beste aplikazioren bat erabiltzeagatik</string>
@@ -366,7 +365,6 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="untap_unblock">Aholkua: sarrerak banan banan desaktibatu ditzakezu gainean sakatuz.</string>
     <string name="uncertain_entry">Baliteke \'*\' batekin markatutako sarrerak zehatzak ez izatea, Androiden mugen eraginez. Honek gehienetan esan nahi du konpainia berdinak IP helbide berdina erabiltzen duela domeinu ezberdinetarako, baina izan daiteke ere konpainia ezberdinek IP helbide berdinaren atzean daudela (adib. CDN bat erabiltzen badute).</string>
     <string name="browsers_not_supported">Nabigatzaileak ez daude onartuta ⚠️</string>
-    <string name="browsers_not_supported_explanation">Honek nabigatzaile baten itxura du.\n\nAztarnarien blokeatzea ez dago nabigatzaileetan onartuta TrackerControl-en. Horren ordez, erabili ezazu jarraipen babesa inetgratzen duen nabigatzaile bat aztarnarien blokeo hobea lortzeko.\n\nAdibidez: Mozilla Fennec, Bromite</string>
     <string name="static_analysis">Aztarnariak antzeman aplikazioaren kodea</string>
     <string name="failed_loading_cached_analysis">Cacheatutako aztarnarien emaitzak kargatzeak huts egin du. Mesedez eman honen berri garatzaileari hemen: hello@trackercontrol.org</string>
 </resources>

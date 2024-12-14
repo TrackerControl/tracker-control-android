@@ -112,7 +112,7 @@
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_log_logcat">Onemogoči blokiranje.  Komunikacija (in prepoznani sledilci) se beleži v dnevnik naprave.  Pridobite jo lahko z adb logcat z oznako \'TC-log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
-    <string name="msg_started">Preverjanje sledilcev</string>
+    <string name="msg_started">Iskanje sledilcev …</string>
     <string name="msg_waiting">Čakanje na dogodek</string>
     <string name="msg_disabled">Uporabite stikalo zgoraj, da omogočite TrackerControl.</string>
     <string name="msg_revoked">TrackerControl je bil onemogočen verjetno z uporabo drugega programa, osnovanega na VPN-u.</string>
@@ -368,7 +368,8 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
     <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi pomeni, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
     <string name="browsers_not_supported">⚠️ Brskalniki niso podprti.</string>
-    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nTrackerControl ne podpira blokiranje sledilcev v brskalnikih.  Namesto tega lahko uporabljate brskalnik z vgrajeno zmožnostjo blokiranja sledenja za boljše blokiranje.\n\nNa primer Mozilla Fennec ali Bromite.</string>
+    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nTrackerControl ne podpira blokiranje sledilcev v brskalnikih.  Za to lahko uporabljate brskalnik z vgrajeno zmožnostjo blokiranja sledenja.\n\nNa primer Mozilla Fennec ali Bromite.</string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
+    <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
 </resources>

@@ -112,7 +112,7 @@
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
     <string name="summary_log_logcat">Zakáže blokování. Komunikace (a rozpoznané trackery) jsou zaznamenány do logu zařízení. Získej záznam přes adb logcat s tagem \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
-    <string name="msg_started">Kontrola trackerů</string>
+    <string name="msg_started">Vyhledávání slídičů...</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
@@ -369,7 +369,8 @@ Privátní DNS musí být vypnutá.</string>
     <string name="untap_unblock">Tip: Lze blokovat jednotlivé položky klepnutím na ně.</string>
     <string name="uncertain_entry">Položky označené \'*\' můžou být nepřesné kvůli limitům androidu. To znamená, že společnost používá stejnou IP adresu pod různými doménami, nebo že společnosti jsou se stejnou IP adresou (když používají Content Delivery Network).</string>
     <string name="browsers_not_supported">Prohlížeče nejsou podporovány ⚠️</string>
-    <string name="browsers_not_supported_explanation">Toto je zřejmě prohlížeč. \n\nBlokování trackerů v prohlížečích není podporováno. Používej prohlížeč s integrovanou anti-tracking funkcí pro lepší výsledky. \n\nNapříklad: Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">Toto je zřejmě prohlížeč. \n\nBlokování trackerů v prohlížečích není podporováno. Používej prohlížeč s integrovanou anti-tracking funkcí pro lepší výsledky. \n\nNapříklad: Mozilla Fennec</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
     <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
+    <string name="msg_notifications">Klepnutím udělíte oprávnění k oznámením (pro chybové zprávy atd.)</string>
 </resources>

@@ -110,7 +110,6 @@
     <string name="summary_watchdog">Vérifiez périodiquement si TrackerControl est toujours en cours d\'exécution (saisir zéro pour désactiver cette option). Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_log_logcat">Désactive le blocage. Les communications (et les traqueurs identifiés) sont enregistrées dans le journal de l\'appareil. Récupérer avec le log adb et l\'étiquette \'TC-Log\'.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
-    <string name="msg_started">Vérification des traqueurs</string>
     <string name="msg_waiting">En attente d\'évènement</string>
     <string name="msg_disabled">Utilisez l\'interrupteur ci-dessus pour activer TrackerControl.</string>
     <string name="msg_revoked">TrackerControl a été désactivé, probablement en utilisant une autre application VPN</string>
@@ -360,7 +359,8 @@ Cordialement,\n\n]]></string>
     <string name="untap_unblock">Astuce : Vous pouvez débloquer des entrées individuelles en cliquant dessus.</string>
     <string name="uncertain_entry">Les entrées marquées par \'*\' peuvent être inexactes en raison des limitations d\'Android. Cela signifie généralement que la même entreprise utilise la même adresse IP sous différents domaines, mais cela peut aussi signifier que différentes entreprises sont derrière la même adresse IP (par exemple, s\'ils utilisent un réseau de distribution de contenu).</string>
     <string name="browsers_not_supported">Navigateurs non pris en charge ⚠️</string>
-    <string name="browsers_not_supported_explanation">Cela semble être une application de navigateur.\n\nLe blocage de traqueurs dans les navigateurs n\'est pas pris en charge par TrackerControl. À la place, utilisez un navigateur avec une fonctionnalité anti-pistage intégrée pour obtenir un meilleur blocage du pistage.\n\nPar exemple : Mozilla Fennec, Bromite</string>
+    <string name="browsers_not_supported_explanation">Cela semble être une application de navigateur.\n\nLe blocage des trackers dans les navigateurs n\'est pas pris en charge par TrackerControl.  Utilisez plutôt un navigateur doté d\'une fonctionnalité anti-pistage intégrée pour mieux bloquer le suivi.\n\nPar exemple : Mozilla Fennec</string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
+    <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
 </resources>

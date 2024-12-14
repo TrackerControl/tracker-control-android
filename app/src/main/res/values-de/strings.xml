@@ -110,7 +110,7 @@
     <string name="summary_watchdog">In regelmäßigen Abständen überprüfen, ob TrackerControl noch läuft (geben Sie Null ein, um diese Option zu deaktivieren). Kann zu erhöhtem Akkuverbrauch führen.</string>
     <string name="summary_log_logcat">Deaktiviert das blockieren. Kommunikation (und identifizierte Tracker) werden im Geräteprotokoll protokolliert. Abrufen mit adb logcat mit Tag \'TC-Log\".</string>
     <string name="msg_sure">Sind Sie sicher?</string>
-    <string name="msg_started">Tracker werden überprüft</string>
+    <string name="msg_started">Suche nach Trackern...</string>
     <string name="msg_waiting">Auf Ereignis warten</string>
     <string name="msg_disabled">Verwenden Sie den obigen Schalter um TrackerControl zu aktivieren.</string>
     <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
@@ -358,7 +358,8 @@ Sincerely,\n\n]]></string>
     <string name="untap_unblock">Tipp: Sie können einzelne Einträge durch Tippen aufheben.</string>
     <string name="uncertain_entry">Mit einem \'*\' markierte Einträge könnten aufgrund von Android-Einschränkungen ungenau sein. Dies bedeutet in der Regel, dass ein Unternehmen dieselbe IP-Adresse unter verschiedenen Domains verwendet, aber kann auch bedeuten, dass verschiedene Unternehmen die gleiche IP-Adresse verwenden (z. B. wenn sie ein Content Delivery Network verwenden).</string>
     <string name="browsers_not_supported">Browser werden nicht unterstützt: ⚠️</string>
-    <string name="browsers_not_supported_explanation">Dies scheint eine Browser-App zu sein.\n\nDas Blockieren von Trackern in Browsern wird von TrackerControl nicht unterstützt. Verwenden Sie stattdessen einen Browser mit integrierter Anti-Tracking-Funktion.\n\nZum Beispiel: Mozilla Fennec, Bromite, Vivaldi</string>
+    <string name="browsers_not_supported_explanation">Dies scheint eine Browser-App zu sein.\n\nDas Blockieren von Trackern in Browsern wird von TrackerControl nicht unterstützt. Verwenden Sie stattdessen einen Browser mit integrierter Anti-Tracking Funktion, um eine bessere Blockierung zu erhalten.\n\nZum Beispiel: Mozilla Fennec</string>
     <string name="static_analysis">Tracker im App-Code erkennen</string>
     <string name="failed_loading_cached_analysis">Laden der zwischengespeicherten Tracker-Ergebnisse fehlgeschlagen. Bitte melden Sie dies dem Entwickler unter hello@trackercontrol.org</string>
+    <string name="msg_notifications">Tippen, um Benachrichtigungen zu erlauben (für Fehlermeldungen, etc.)</string>
 </resources>
