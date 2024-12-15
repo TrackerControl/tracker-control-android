@@ -8,7 +8,7 @@ android {
         minSdk 22
         targetSdk 34
         //noinspection HighAppVersionCode
-        versionCode 2024121501
+        versionCode 2024121502
         versionName "2024.12.15"
 
         externalNativeBuild {
@@ -19,7 +19,7 @@ android {
             }
         }
 
-        ndkVersion "25.2.9519653"
+        ndkVersion "27.2.12479018"
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
