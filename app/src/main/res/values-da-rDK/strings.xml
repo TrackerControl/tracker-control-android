@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControl giver brugerne mulighed for at overvåge og kontrollere den udbredte, løbende, skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
+    <string name="app_description">TrackerControl lader brugere overvåge og kontrollere den udbredte, løbende, og skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
     <string name="app_copyright">Ophavsret \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Institut for Datalogi Universitet i Oxford)\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
-    <string name="app_android">TrackerControl kræver Android 5.1 eller en nyere version</string>
-    <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan resultere i TrackerControl bliver fjernet fra Google Play Butik, derfor TrackerControl understøttes ikke, mens Xposed er installeret</string>
+    <string name="app_android">TrackerControl kræver Android 5.1 eller nyere</string>
+    <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan medføre, at TrackerControl fjernes fra Google Play Butik. Derfor understøttes TrackerControl ikke, mens Xposed er installeret</string>
     <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
     <string name="channel_foreground">Kørende tjenester</string>
@@ -11,8 +11,8 @@
     <string name="channel_access">Tilgå notifikationer</string>
     <string name="menu_search">Søg efter app</string>
     <string name="menu_filter">Filtrér apps</string>
-    <string name="menu_app_user">Vis bruger-apps</string>
-    <string name="menu_app_system">Vis system-apps</string>
+    <string name="menu_app_user">Vis brugerapps</string>
+    <string name="menu_app_system">Vis systemapps</string>
     <string name="menu_app_nointernet">Vis apps uden internet</string>
     <string name="menu_sort">Sortér apps</string>
     <string name="menu_sort_name">Sortér efter navn</string>
@@ -25,17 +25,17 @@
     <string name="menu_legend">Legend</string>
     <string name="menu_support">Støt appen</string>
     <string name="menu_log_support">Forklaring</string>
-    <string name="menu_about">Omkring</string>
+    <string name="menu_about">Om</string>
     <string name="menu_apps">Andre apps</string>
     <string name="menu_protocol_other">Andet</string>
     <string name="menu_traffic_allowed">Tilladt</string>
     <string name="menu_traffic_blocked">Blokeret</string>
-    <string name="menu_live">Live opdateringer</string>
+    <string name="menu_live">Live-opdateringer</string>
     <string name="menu_refresh">Genindlæs</string>
     <string name="menu_resolve">Vis navne</string>
     <string name="menu_organization">Vis organisation</string>
     <string name="menu_pcap_enabled">PCAP aktiveret</string>
-    <string name="menu_pcap_export">PCAP eksport</string>
+    <string name="menu_pcap_export">PCAP-eksport</string>
     <string name="menu_clear">Ryd</string>
     <string name="menu_export">Eksportér</string>
     <string name="menu_reset">Nulstil</string>
@@ -50,7 +50,7 @@
         <item quantity="other">Sæt på pause i %d minutter</item>
     </plurals>
     <string name="setting_network_options">Netværksindstillinger</string>
-    <string name="setting_subnet">Subnet routing</string>
+    <string name="setting_subnet">Subnet-routing</string>
     <string name="setting_tethering">Tillad tethering</string>
     <string name="setting_lan">Tillad LAN-adgang</string>
     <string name="setting_ip6">Aktivér IPv6-trafik</string>
@@ -60,8 +60,8 @@
     <string name="setting_system">Håndtér systemapps</string>
     <string name="setting_log_app">Søg efter nye trackere</string>
     <string name="setting_log_logcat">Log overførsler til ADB</string>
-    <string name="setting_filter">Blokér trackere</string>
-    <string name="setting_filter_udp">Blokér trackere på UDP</string>
+    <string name="setting_filter">Bloker trackere</string>
+    <string name="setting_filter_udp">Bloker trackere på UDP</string>
     <string name="setting_track_usage">Spor netværksforbrug</string>
     <string name="setting_reset_usage">Nulstil netværksforbrug</string>
     <string name="setting_import">Importér indstillinger</string>
@@ -72,29 +72,29 @@
     <string name="msg_download_last">Seneste download: %s</string>
     <string name="msg_update_last">Seneste opdatering: %s</string>
     <string name="msg_queue">TrackerControl er optaget</string>
-    <string name="msg_update">Opdatering tilgængelig, tryk for at hente</string>
+    <string name="msg_update">Opdatering tilgængelig; tryk for at hente</string>
     <string name="title_host_allowed">Adresse er tilladt</string>
     <string name="title_host_blocked">Adresse er blokeret</string>
     <string name="title_disabled">er deaktiveret</string>
-    <string name="title_logging_configure">Konfigurér</string>
+    <string name="title_logging_configure">Konfigurer</string>
     <string name="title_allow">Tillad</string>
-    <string name="title_block">Blokér</string>
+    <string name="title_block">Bloker</string>
     <string name="title_dontask">Spørg ikke igen</string>
     <string name="title_log_copy">Kopiér</string>
     <!-- App Overview -->
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="yes">Ja</string>
     <string name="no">Nej</string>
     <string name="menu_csv">Eksportér som CSV</string>
-    <string name="exporting">Eksportére..</string>
+    <string name="exporting">Eksporterer...</string>
     <string name="share_csv">Del</string>
     <!-- App Details -->
     <string name="title_activity_detail">Detaljer</string>
     <string name="tab_countries">Lande</string>
     <!-- Actions -->
-    <string name="block_tracking">Blokér trackere</string>
-    <string name="data_managment">Håndtér data</string>
-    <string name="uninstall">Afinstallér</string>
+    <string name="block_tracking">Bloker trackere</string>
+    <string name="data_managment">Administrer data</string>
+    <string name="uninstall">Afinstaller</string>
     <string name="back">Tilbage</string>
     <string name="your_privacy">Dit privatliv</string>
     <string name="enable">Aktivér</string>
