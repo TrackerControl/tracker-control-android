@@ -75,11 +75,16 @@
     <string name="summary_log_app">Deaktiver for at mindske batteriforbrug. Nye trackere blokeres stadig, men vises ikke.</string>
     <string name="summary_track_usage">Spor antallet af sendte og modtagne bytes for hver app og adresse. Dette kan resultere i ekstra batteriforbrug.</string>
     <string name="msg_sure">Er du sikker?</string>
+    <string name="msg_started">Leder efter trackere...</string>
+    <string name="msg_disabled">Brug knappen ovenfor for at aktivere TrackerControl.</string>
     <string name="msg_installed">Problemer med %1$s?</string>
+    <string name="msg_installed_tracker_libraries_found">Indeholder %d tracker-biblioteker</string>
     <string name="msg_installed_n">Er blevet installeret</string>
     <string name="msg_try">Prøv TrackerControl</string>
+    <string name="msg_import_last">Sidste import: %s</string>
     <string name="msg_download_last">Seneste download: %s</string>
     <string name="msg_update_last">Seneste opdatering: %s</string>
+    <string name="msg_inactive">Ingen aktiv internetforbindelse</string>
     <string name="msg_queue">TrackerControl er optaget</string>
     <string name="msg_update">Opdatering tilgængelig; tryk for at hente</string>
     <string name="title_host_allowed">Adresse er tilladt</string>
