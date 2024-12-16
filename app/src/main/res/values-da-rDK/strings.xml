@@ -64,6 +64,11 @@
     <string name="setting_filter_udp">Bloker trackere på UDP</string>
     <string name="setting_track_usage">Spor netværksforbrug</string>
     <string name="setting_reset_usage">Nulstil netværksforbrug</string>
+    <string name="setting_socks5_enabled">Brug SOCKS5-proxy</string>
+    <string name="setting_socks5_addr">SOCKS5-adresse: %s</string>
+    <string name="setting_socks5_port">SOCKS5-port: %s</string>
+    <string name="setting_socks5_username">SOCKS5-brugernavn: %s</string>
+    <string name="setting_socks5_password">SOCKS5-adgangskode: %s</string>
     <string name="setting_import">Importér indstillinger</string>
     <string name="msg_sure">Er du sikker?</string>
     <string name="msg_installed">Problemer med %1$s?</string>
