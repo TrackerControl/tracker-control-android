@@ -109,6 +109,7 @@
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
     <string name="summary_log_logcat">禁用拦截。网络通信(和识别的跟踪器) 会被记录到设备日志中。通过 adb logcat 标签 TC-Log\' 检索。</string>
     <string name="msg_sure">你确定吗？</string>
+    <string name="msg_started">正在查找追踪器...</string>
     <string name="msg_waiting">等待事件</string>
     <string name="msg_disabled">使用上面的开关来启用TrackerControl</string>
     <string name="msg_revoked">TrackerControl已被禁用，可能是通过使用另一个基于VPN的应用程序</string>
