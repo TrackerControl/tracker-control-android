@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">Met TrackerControl kunnen gebruikers de wijdverbreide, voortdurende, verborgen gegevensverzameling in mobiele apps over gebruikersgedrag (\'tracking\') bewaken en controleren.</string>
+    <string name="app_description">TrackerControl bewaakt en controleert het wijdverbreid, voortdurend, en verborgen verzamelen van informatie over het gebruikersgedrag in mobiele apps (\'tracking\').</string>
     <string name="app_copyright">Copyright \u00A9 2019-2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universiteit van Oxford)\n\nTrackerControl is gebaseerd op NetGuard, ontwikkeld door Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl vereist Android 5.1 of nieuwer</string>
     <string name="app_xposed">Xposed veroorzaakt te veel crashes, wat ertoe kan leiden dat TrackerControl uit de Google Play Store wordt verwijderd, daarom wordt TrackerControl niet ondersteund zolang Xposed is geïnstalleerd.</string>
@@ -110,6 +110,7 @@
     <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
     <string name="summary_log_logcat">Schakelt blokkering uit. Communicaties (en geïdentificeerde trackers) worden in het logboek van het apparaat vastgelegd. Haal terug met adb logcat met tag \'TC-Log\'.</string>
     <string name="msg_sure">Weet je het zeker?</string>
+    <string name="msg_started">Op zoek naar trackers...</string>
     <string name="msg_waiting">Wacht op gebeurtenis</string>
     <string name="msg_disabled">Gebruik bovenstaande schakelaar om TrackerControl te activeren.</string>
     <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
