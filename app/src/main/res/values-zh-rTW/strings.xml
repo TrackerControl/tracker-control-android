@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menu_app_system">顯示系統 App</string>
+    <string name="menu_app_nointernet">顯示沒有網路連線的App</string>
+    <string name="menu_sort">排序 Apps</string>
+    <string name="menu_sort_name">依名稱排序</string>
+    <string name="menu_sort_uid">依UID排序</string>
+    <string name="menu_sort_companies_week">按公司排序 (周)</string>
+    <string name="menu_sort_companies">按公司排序</string>
+    <string name="menu_settings">設定</string>
+    <string name="menu_invite">邀請</string>
+    <string name="menu_support">支持這款App</string>
+    <string name="menu_log_support">說明</string>
+    <string name="menu_about">相關資訊</string>
+    <string name="menu_apps">其他App</string>
+    <string name="menu_protocol_other">其他</string>
+    <string name="menu_traffic_allowed">已允許</string>
+    <string name="menu_traffic_blocked">已封鎖</string>
+    <string name="menu_live">即時更新</string>
+    <string name="menu_refresh">重新整理</string>
+    <string name="menu_resolve">顯示名稱</string>
+    <string name="menu_organization">顯示組織</string>
+    <string name="menu_pcap_enabled">PCAP 已啟用</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
