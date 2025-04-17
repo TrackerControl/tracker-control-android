@@ -323,7 +323,7 @@ Sincerely,\n\n]]></string>
     <string name="countries_loading_failed">Ups.  Nalaganje zemljevida držav je spodletelo.  Prosimo, na tc@kollnig.net sporočite, kako se je to zgodilo.</string>
     <string name="tracker_advertising">Oglaševanje</string>
     <string name="tracker_analytics">Analitika</string>
-    <string name="tracker_content">Bistvenega pomena</string>
+    <string name="tracker_content">Bistv. pomena</string>
     <string name="tracker_cryptomining">Kriptorudarjenje</string>
     <string name="tracker_fingerprinting">Ustvarjanje oseb. odtisa</string>
     <string name="tracker_social">Družabno</string>
@@ -332,7 +332,7 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strogo blokiranje</string>
     <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
     <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
-    <string name="exclude_vpn_explanation">Mora biti vklopljeno za zaznavanje ali blokiranje sledilcev.\n\nNasvet: Onemogočite, če naletite na težave.</string>
+    <string name="exclude_vpn_explanation">Mora biti vklopljeno za zaznavanje ali blokiranje sledilcev.\n\nNasvet: onemogočite, če naletite na težave.</string>
     <string name="uninstall">Odstrani</string>
     <string name="settings_uninstall">Nastavitve programa in odstranitev</string>
     <string name="no_trackers_found_message_disabled">Omogočite stikalo na glavnem zaslonu, nato zaženite program, da poiščete sledilce.</string>
@@ -366,9 +366,9 @@ Sincerely,\n\n]]></string>
     <string name="setting_domain_based_blocked">Blokiranje glede na domeno</string>
     <string name="summary_domain_based_blocking">Dovoli bolj prefinjeno blokiranje.  To je še vedno v razvoju.</string>
     <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
-    <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi pomeni, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
+    <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
     <string name="browsers_not_supported">⚠️ Brskalniki niso podprti.</string>
-    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nTrackerControl ne podpira blokiranje sledilcev v brskalnikih.  Za to lahko uporabljate brskalnik z vgrajeno zmožnostjo blokiranja sledenja.\n\nNa primer Mozilla Fennec ali Bromite.</string>
+    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nTrackerControl ne podpira blokiranje sledilcev v brskalnikih.  Za to lahko uporabite brskalnik z vgrajeno zmožnostjo blokiranja sledenja.\n\nNa primer Mozilla Fennec ali Bromite.</string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
