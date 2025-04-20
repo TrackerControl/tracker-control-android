@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menu_app_user">Näita kasutaja rakendusi</string>
+    <string name="menu_app_system">Näita süsteemirakendusi</string>
+    <string name="menu_traffic_allowed">Lubatud</string>
+    <string name="menu_traffic_blocked">Blokeeritud</string>
+    <string name="menu_live">Andmeuuendused reaalajas</string>
+    <string name="menu_refresh">Uuenda</string>
+    <string name="menu_resolve">Näita nimesid</string>
+    <string name="menu_organization">Näita organisatsiooni</string>
+    <string name="menu_pcap_enabled">PCAP on kasutusel</string>
+    <string name="setting_lan">Luba ligipääs kohtvõrku</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">Lisa</string>
+    <string name="menu_delete">Kustuta</string>
+    <string name="setting_forwarding">Pordi suunamine</string>
+    <string name="title_protocol">Protokoll</string>
+    <string name="title_dport">Lähteport</string>
+    <string name="title_raddr">Sihtaadress</string>
+    <string name="title_rport">Sihtport</string>
+    <string name="title_host_allowed">Aadress on lubatud</string>
+    <string name="title_host_blocked">Aadress on blokeeritud</string>
+    <string name="title_interactive_allowed">Luba, kui ekraan on sisse lülitatud</string>
+    <string name="title_roaming_blocked">Blokeeri andmerändluse ajal</string>
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
