@@ -28,4 +28,6 @@
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
+    <string name="tracker_uncategorised">Kategoriseerimata</string>
+    <string name="browsers_not_supported">Veebibrauserid pole toetatud ⚠️</string>
 </resources>
