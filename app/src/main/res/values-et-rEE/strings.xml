@@ -70,15 +70,37 @@
     <string name="title_host_blocked">Aadress on blokeeritud</string>
     <string name="title_interactive_allowed">Luba, kui ekraan on sisse lülitatud</string>
     <string name="title_roaming_blocked">Blokeeri andmerändluse ajal</string>
+    <string name="title_allow">Luba</string>
+    <string name="title_block">Keela</string>
+    <string name="title_allow_wifi">Luba WiFi kasutamine</string>
+    <string name="title_block_wifi">Keela WiFi kasutamine</string>
+    <string name="title_allow_other">Luba mobiilse andmeside kasutamine</string>
+    <string name="title_block_other">Keela mobiilse andmeside kasutamine</string>
+    <string name="title_dontask">Ära küsi enam uuesti</string>
+    <string name="title_log_copy">Kopeeri</string>
     <!-- App Overview -->
+    <string name="yes">Jah</string>
+    <string name="no">Ei</string>
+    <string name="menu_csv">Ekspordi CSV-failina</string>
+    <string name="exporting">Ekspordin...</string>
     <string name="share_csv">Jaga</string>
+    <string name="export_failed">Eksportimine ei õnenstunud</string>
+    <string name="exported">Eksportimine andmeruumi õnnestus!</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Üksikasjad</string>
     <string name="tab_trackers">Jälitajad</string>
+    <string name="tab_countries">Maad</string>
+    <string name="tab_actions">Minu andmed</string>
     <string name="tracker_name">Jälitaja nimi</string>
+    <string name="internet_access">Internetiühendus</string>
+    <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
     <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest nagu reklaamimine või vigade otsing.</string>
+    <string name="data_managment">Halda andmeid</string>
     <string name="blocking_settings">Vali jälitajad</string>
+    <string name="contact_developer">Arendaja</string>
+    <string name="contact_playstore">Google</string>
     <string name="crash_dialog_text">Vabandust, TrackerControl jooksis just kokku. Kas sa oleksid nõus meile saatma e-kirja üksikasjaliku kirjeldusega?</string>
     <string name="launch_app">Käivita ja otsi jälitajaid</string>
     <string name="tracker_uncategorised">Kategoriseerimata</string>
