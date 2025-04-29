@@ -3,6 +3,7 @@
     <string name="app_description">TrackerControl võimaldab kasutajatel jälgida ja kontrollida laialt levinud, pidevalt toimuvat ja varjatud kasutajate käitumisega seotud andmekogumist nutirakendustes (tuntud ka kui „jälitamine“).</string>
     <string name="app_copyright">Autoriõigused \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl põhineb rakendusel NetGuard, mille arendajaks on Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl eeldab Androidi versiooni 5.1 või hilisema olemasolu</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privaatsusreeglid</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Küpsiste kasutamise reeglid</a></string>
     <string name="menu_search">Otsi rakendust</string>
     <string name="menu_filter">Filtreeri rakendusi</string>
     <string name="menu_app_user">Näita kasutaja rakendusi</string>
@@ -25,12 +26,30 @@
     <string name="menu_pcap_enabled">PCAP on kasutusel</string>
     <string name="setting_options">Üldised eelistused</string>
     <string name="setting_dark">Tume kujundus</string>
+    <string name="setting_update">Kontrolli uuendusi</string>
     <string name="setting_network_options">Võrgueelistused</string>
     <string name="setting_lan">Luba ligipääs kohtvõrku</string>
+    <string name="setting_reload_onconnectivity">Laadi uuesti igal välisühenduse muutumisel</string>
     <string name="setting_advanced_options">Täiendavad eelistused</string>
+    <string name="setting_system">Halda süsteemi rakendusi</string>
+    <string name="setting_log_app">Otsi uusi jälitajaid</string>
+    <string name="setting_filter">Blokeeri jälitajaid</string>
+    <string name="setting_filter_udp">Blokeeri jälitajaid UDP-protokolli alusel</string>
+    <string name="setting_block_domains">Kasuta hosts-faili</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_socks5_addr">SOCKS5 serveri aadress: %s</string>
+    <string name="setting_socks5_port">SOCKS5 serveri port: %s</string>
+    <string name="setting_socks5_username">SOCKS5 kasutajanimi: %s</string>
+    <string name="setting_socks5_password">SOCKS5 salasõna: %s</string>
     <string name="setting_backup">Varundus</string>
     <string name="setting_export">Ekspordi seadistused (mitte seadme lähtestamiseks)</string>
     <string name="setting_import">Impordi seadistused</string>
+    <string name="msg_started">Otsin jälitajaid...</string>
+    <string name="msg_disabled">TrackerControli sisselülitamiseks kasuta ülal asuvat liugurlülitit.</string>
+    <string name="msg_revoked">TrackerControl on lülitatud välja, ilmselt mõne teise VPN-põhise rakenduse tõttu</string>
+    <string name="msg_installed_tracker_libraries_found">Sisaldab %d jälitajate teeki</string>
     <string name="msg_updated">Hosts-fail on uuendatud ja kasutusel!</string>
     <string name="msg_download_last">Viimati allalaaditud: %s</string>
     <string name="msg_update_last">Viimati uuendatud: %s</string>
@@ -52,18 +71,35 @@
     <string name="title_interactive_allowed">Luba, kui ekraan on sisse lülitatud</string>
     <string name="title_roaming_blocked">Blokeeri andmerändluse ajal</string>
     <!-- App Overview -->
+    <string name="share_csv">Jaga</string>
     <!-- App Details -->
     <string name="tab_trackers">Jälitajad</string>
+    <string name="tracker_name">Jälitaja nimi</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
     <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest nagu reklaamimine või vigade otsing.</string>
+    <string name="blocking_settings">Vali jälitajad</string>
+    <string name="crash_dialog_text">Vabandust, TrackerControl jooksis just kokku. Kas sa oleksid nõus meile saatma e-kirja üksikasjaliku kirjeldusega?</string>
+    <string name="launch_app">Käivita ja otsi jälitajaid</string>
     <string name="tracker_uncategorised">Kategoriseerimata</string>
+    <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
     <string name="no_trackers_found_message">Jälitajate tuvastamiseks käivita rakendus</string>
     <string name="no_trackers_found_action">Käivita</string>
+    <string name="no_internet_message">"See rakendus ei kasuta internetiühendust. Sellele vaatamata võib ta vahetades andmeid teiste rakendustega sind ikkagi jälitada."</string>
+    <string name="no_internet">Puudub toimiv internetiühendus</string>
+    <string name="bypass_vpn_error">"Internetti ei õnnestu blokeerida. See rakendus on TrackerControli tööst välistatud."</string>
+    <string name="back">Tagasi</string>
+    <string name="your_privacy">Sinu privaatsus</string>
     <string name="category_blocked">Blokeeritud jälitajad</string>
     <string name="category_unblocked">Lubatud jälitajad</string>
+    <string name="tracking_detection_failed">Jälitajate teekide tuvastamine ei õnnestunud.</string>
+    <string name="tracking_detection_failed_ram">Jälitajate teekide tuvastamine ei õnnestunud. Pole piisavalt muutmälu.</string>
+    <string name="tracking_detection_failed_report">Jälitajate teekide tuvastamine ei õnnestunud. Palun teata sellest veast arendajatele.</string>
     <string name="detected_trackers">Tuvastatud jälitajate teegid: %s</string>
     <string name="trackers_static">Jälitajate teegid</string>
+    <string name="blocked">BLOKEERITUD</string>
+    <string name="allowed">LUBATUD</string>
+    <string name="setting_domain_based_blocked">Domeenipõhine blokeerimine</string>
     <string name="browsers_not_supported">Veebibrauserid pole toetatud ⚠️</string>
     <string name="static_analysis">Tuvasta jälitajaid rakenduse koodist</string>
 </resources>
