@@ -25,6 +25,7 @@
     <string name="menu_resolve">Näita nimesid</string>
     <string name="menu_organization">Näita organisatsiooni</string>
     <string name="menu_pcap_enabled">PCAP on kasutusel</string>
+    <string name="menu_export">Ekspordi</string>
     <string name="setting_options">Üldised eelistused</string>
     <string name="setting_dark">Tume kujundus</string>
     <string name="setting_update">Kontrolli uuendusi</string>
@@ -36,6 +37,8 @@
     <string name="setting_log_app">Otsi uusi jälitajaid</string>
     <string name="setting_filter">Blokeeri jälitajaid</string>
     <string name="setting_filter_udp">Blokeeri jälitajaid UDP-protokolli alusel</string>
+    <string name="setting_track_usage">Jälgi võrgukasutust</string>
+    <string name="setting_reset_usage">Lähtesta võrgukasutuse andmed</string>
     <string name="setting_block_domains">Kasuta hosts-faili</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
@@ -47,10 +50,20 @@
     <string name="setting_backup">Varundus</string>
     <string name="setting_export">Ekspordi seadistused (mitte seadme lähtestamiseks)</string>
     <string name="setting_import">Impordi seadistused</string>
+    <string name="setting_hosts">Impordi hosts fail</string>
+    <string name="setting_hosts_append">Impordi hosts fail (lisades olemasolevale)</string>
+    <string name="setting_hosts_url">Hosts-faili võrguaadress</string>
+    <string name="setting_hosts_download">Laadi alla hosts fail</string>
+    <string name="setting_hosts_update">Uuenda hosts faili</string>
+    <string name="summary_install">Näita olekuribal teavitusi hiljuti paigaldatud rakenduste kohta</string>
     <string name="msg_started">Otsin jälitajaid...</string>
     <string name="msg_disabled">TrackerControli sisselülitamiseks kasuta ülal asuvat liugurlülitit.</string>
     <string name="msg_revoked">TrackerControl on lülitatud välja, ilmselt mõne teise VPN-põhise rakenduse tõttu</string>
     <string name="msg_installed_tracker_libraries_found">Sisaldab %d jälitajate teeki</string>
+    <string name="msg_installed_n">On paigaldatud</string>
+    <string name="msg_error">Tekkis ootamatu viga: „%s“</string>
+    <string name="msg_import_last">Viimane import: %s</string>
+    <string name="msg_downloading">Allalaadimisel\n%1s</string>
     <string name="msg_updated">Hosts-fail on uuendatud ja kasutusel!</string>
     <string name="msg_download_last">Viimati allalaaditud: %s</string>
     <string name="msg_update_last">Viimati uuendatud: %s</string>
