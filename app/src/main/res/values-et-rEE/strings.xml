@@ -4,6 +4,7 @@
     <string name="app_copyright">Autoriõigused \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl põhineb rakendusel NetGuard, mille arendajaks on Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl eeldab Androidi versiooni 5.1 või hilisema olemasolu</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privaatsusreeglid</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Küpsiste kasutamise reeglid</a></string>
+    <string name="channel_notify">Üldised teavitused</string>
     <string name="menu_search">Otsi rakendust</string>
     <string name="menu_filter">Filtreeri rakendusi</string>
     <string name="menu_app_user">Näita kasutaja rakendusi</string>
