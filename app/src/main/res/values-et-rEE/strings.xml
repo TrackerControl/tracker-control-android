@@ -30,6 +30,8 @@
     <string name="menu_export">Ekspordi</string>
     <string name="setting_options">Üldised eelistused</string>
     <string name="setting_dark">Tume kujundus</string>
+    <string name="setting_install">Teavitu uue paigalduse puhul</string>
+    <string name="setting_pause">Lülita automaatselt sisse %1$s minuti pärast</string>
     <string name="setting_update">Kontrolli uuendusi</string>
     <string name="setting_network_options">Võrgueelistused</string>
     <string name="setting_lan">Luba ligipääs kohtvõrku</string>
@@ -66,9 +68,12 @@
     <string name="msg_error">Tekkis ootamatu viga: „%s“</string>
     <string name="msg_import_last">Viimane import: %s</string>
     <string name="msg_downloading">Allalaadimisel\n%1s</string>
+    <string name="msg_downloaded">Hosts-fail on allalaaditud</string>
     <string name="msg_updated">Hosts-fail on uuendatud ja kasutusel!</string>
     <string name="msg_download_last">Viimati allalaaditud: %s</string>
     <string name="msg_update_last">Viimati uuendatud: %s</string>
+    <string name="msg_metered">Võrguühendus on mahupõhine</string>
+    <string name="msg_inactive">Aktiivne internetiühendus puudub</string>
     <string name="msg_queue">TrackerControl on hõivatud</string>
     <string name="msg_update">Saadaval on uuendus, allalaadimiseks klõpsi</string>
     <string-array name="protocolNames">
@@ -117,7 +122,10 @@
     <string name="blocking_settings">Vali jälitajad</string>
     <string name="contact_developer">Arendaja</string>
     <string name="contact_playstore">Google</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="crash_dialog_text">Vabandust, TrackerControl jooksis just kokku. Kas sa oleksid nõus meile saatma e-kirja üksikasjaliku kirjeldusega?</string>
+    <string name="crash_dialog_comment">Kas sul on kommentare?</string>
     <string name="launch_app">Käivita ja otsi jälitajaid</string>
     <string name="tracker_uncategorised">Kategoriseerimata</string>
     <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
