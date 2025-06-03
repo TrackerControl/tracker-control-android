@@ -54,7 +54,7 @@ TrackerControl will always be free and open source, being a research project.
       alt="Get it on F-Droid"
       height="80">](https://f-droid.org/app/net.kollnig.missioncontrol.fdroid)
 
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
+[<img src="images/get-it-on-izzy.png"
       alt='Get it on IzzyOnDroid'
       height="80">](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol)
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
