@@ -11,7 +11,7 @@
     <string name="menu_filter">Filtreeri rakendusi</string>
     <string name="menu_app_user">Näita kasutaja rakendusi</string>
     <string name="menu_app_system">Näita süsteemirakendusi</string>
-    <string name="menu_app_nointernet">Näita rakendusi, mis ei vaja internetti</string>
+    <string name="menu_app_nointernet">Näita rakendusi, mis ei vaja internetiühendust</string>
     <string name="menu_sort">Järjesta rakendusi</string>
     <string name="menu_sort_name">Järjesta nime alusel</string>
     <string name="menu_log">Liikluse logi</string>
@@ -87,10 +87,17 @@
     <string name="title_dport">Lähteport</string>
     <string name="title_raddr">Sihtaadress</string>
     <string name="title_rport">Sihtport</string>
+    <string name="title_unmetered_allowed">Mittemahupõhine liiklus on lubatud</string>
+    <string name="title_unmetered_blocked">Mittemahupõhine liiklus on blokeeritud</string>
+    <string name="title_unmetered_disabled">Mittemahupõhise liikluse reeglid ei kehti</string>
+    <string name="title_metered_allowed">Mahupõhine liiklus on lubatud</string>
+    <string name="title_metered_blocked">Mahupõhine liiklus on blokeeritud</string>
+    <string name="title_metered_disabled">Mahupõhise liikluse reeglid ei kehti</string>
     <string name="title_host_allowed">Aadress on lubatud</string>
     <string name="title_host_blocked">Aadress on blokeeritud</string>
     <string name="title_interactive_allowed">Luba, kui ekraan on sisse lülitatud</string>
     <string name="title_roaming_blocked">Blokeeri andmerändluse ajal</string>
+    <string name="title_metered">Vaikimisi eelab rakendus, et WiFi ühendus pole mahupõhine ja mobiilne andmeside on mahupõhine</string>
     <string name="title_allow">Luba</string>
     <string name="title_block">Keela</string>
     <string name="title_allow_wifi">Luba WiFi kasutamine</string>
@@ -119,7 +126,12 @@
     <string name="block_tracking">Blokeeri jälitajaid</string>
     <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest nagu reklaamimine või vigade otsing.</string>
     <string name="data_managment">Halda andmeid</string>
+    <string name="contacts">Kontakt </string>
+    <string name="contacts_description">Kui sa arvad, et rakendus riku andmekaitsereegleid, siis sa võid vastavate organisatsioonidega otse ühendust võtta.</string>
+    <string name="play_services_required">See on Google Play teenuste seadistus ning need puuduvad sinu nutiseadmest.</string>
+    <string name="no_mail_service">Palun paigalda e-posti klient.</string>
     <string name="blocking_settings">Vali jälitajad</string>
+    <string name="ad_settings">Muuda kohe</string>
     <string name="contact_developer">Arendaja</string>
     <string name="contact_playstore">Google</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
@@ -133,11 +145,13 @@
     <string name="no_trackers_found_action">Käivita</string>
     <string name="no_internet_message">"See rakendus ei kasuta internetiühendust. Sellele vaatamata võib ta vahetades andmeid teiste rakendustega sind ikkagi jälitada."</string>
     <string name="no_internet">Puudub toimiv internetiühendus</string>
-    <string name="bypass_vpn_error">"Internetti ei õnnestu blokeerida. See rakendus on TrackerControli tööst välistatud."</string>
+    <string name="bypass_vpn_error">"Internetiühendust ei õnnestu blokeerida. See rakendus on TrackerControli tööst välistatud."</string>
     <string name="back">Tagasi</string>
     <string name="your_privacy">Sinu privaatsus</string>
     <string name="category_blocked">Blokeeritud jälitajad</string>
     <string name="category_unblocked">Lubatud jälitajad</string>
+    <string name="category_unblocked_warning">Esmalt blokeeri kategooria!</string>
+    <string name="switch_strict_blocking">Blokeeri põhiline andmejagamine</string>
     <string name="tracking_detection_failed">Jälitajate teekide tuvastamine ei õnnestunud.</string>
     <string name="tracking_detection_failed_ram">Jälitajate teekide tuvastamine ei õnnestunud. Pole piisavalt muutmälu.</string>
     <string name="tracking_detection_failed_report">Jälitajate teekide tuvastamine ei õnnestunud. Palun teata sellest veast arendajatele.</string>
@@ -148,4 +162,5 @@
     <string name="setting_domain_based_blocked">Domeenipõhine blokeerimine</string>
     <string name="browsers_not_supported">Veebibrauserid pole toetatud ⚠️</string>
     <string name="static_analysis">Tuvasta jälitajaid rakenduse koodist</string>
+    <string name="msg_notifications">Teavituste õiguste lubamiseks klõpsi (näiteks veasõnumite jaoks)</string>
 </resources>
