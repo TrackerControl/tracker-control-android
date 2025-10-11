@@ -46,6 +46,8 @@
     <string name="setting_tethering">Дозволити режим модема</string>
     <string name="setting_lan">Дозволити доступ до LAN</string>
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
+    <string name="setting_advanced_options">Розширені параметри</string>
+    <string name="setting_system">Керування системними програмами</string>
     <string name="setting_filter">Блокувати трекери</string>
     <string name="setting_track_usage">Відстежувати використання мережі</string>
     <string name="setting_reset_usage">Скинути результат використання мережі</string>
@@ -58,6 +60,7 @@
     <string name="setting_socks5_port">Порт SOCKS5: %s</string>
     <string name="setting_socks5_username">Ім’я користувача SOCKS5: %s</string>
     <string name="setting_socks5_password">Пароль SOCKS5: %s</string>
+    <string name="setting_backup">Резервне копіювання</string>
     <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
     <string name="setting_hosts">Імпортувати host-файл</string>
@@ -103,20 +106,30 @@
     <!-- App Overview -->
     <string name="yes">Так</string>
     <string name="no">Ні</string>
+    <string name="menu_csv">Експортувати як CSV</string>
+    <string name="exporting">Експорт..</string>
     <string name="share_csv">Поширити</string>
+    <string name="export_failed">Експорт не вдався</string>
+    <string name="exported">Експортовано до сховища!</string>
     <!-- App Details -->
     <string name="tab_trackers">Трекери</string>
     <string name="tab_countries">Країни</string>
     <string name="tab_actions">Мої дані</string>
     <string name="internet_access">Доступ до Інтернету</string>
+    <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
+    <string name="data_management_description">Загальний регламент ЄС про захист даних (GDPR) дозволяє користувачам з ЄС керувати будь-якими даними, що стосуються їх. Ця програма надає шаблони електронних листів для зв\'язку з розробником. Розробник повинен відповісти протягом одного місяця.</string>
     <string name="contacts">Контакт </string>
     <string name="contacts_description">Якщо ви вважаєте, що програма порушує принципи захисту даних, ви можете звернутися безпосередньо до відповідальних органів.</string>
+    <string name="blocking_settings">Вибрати трекери</string>
+    <string name="request_data">Запит даних</string>
+    <string name="request_deletion">Запит на видалення</string>
     <string name="contact_developer">Розробник</string>
     <string name="contact_playstore">Google</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
+    <string name="launch_app">Запуск &amp; Пошук трекерів</string>
     <string name="countries">Країни призначення</string>
     <string name="countries_explanation">Дізнайтеся, куди ваш телефон надсилає дані відстеження.\n\nІнформація базується на DNS-запитах та IP-адресах і може бути неточною.</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
@@ -125,6 +138,8 @@
     <string name="tracker_uncategorised">Без категорії</string>
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
+    <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
+    <string name="no_trackers_found_message">Запустіть додаток, щоб знайти трекери</string>
     <string name="no_trackers_found_action">Запустити</string>
     <string name="blocked">ЗАБЛОКОВАНО</string>
     <string name="allowed">ДОЗВОЛЕНО</string>
