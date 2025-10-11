@@ -107,12 +107,18 @@
     <!-- App Details -->
     <string name="tab_trackers">Трекери</string>
     <string name="tab_countries">Країни</string>
+    <string name="tab_actions">Мої дані</string>
     <string name="internet_access">Доступ до Інтернету</string>
     <!-- Actions -->
+    <string name="contacts">Контакт </string>
+    <string name="contacts_description">Якщо ви вважаєте, що програма порушує принципи захисту даних, ви можете звернутися безпосередньо до відповідальних органів.</string>
+    <string name="contact_developer">Розробник</string>
     <string name="contact_playstore">Google</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
+    <string name="countries">Країни призначення</string>
+    <string name="countries_explanation">Дізнайтеся, куди ваш телефон надсилає дані відстеження.\n\nІнформація базується на DNS-запитах та IP-адресах і може бути неточною.</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
     <string name="tracker_fingerprinting">Цифрові відбитки</string>
     <string name="tracker_social">Соціальні мережі</string>
