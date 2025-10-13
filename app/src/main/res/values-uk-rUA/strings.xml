@@ -48,9 +48,16 @@
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
     <string name="setting_advanced_options">Розширені параметри</string>
     <string name="setting_system">Керування системними програмами</string>
+    <string name="setting_log_app">Пошук нових трекерів</string>
+    <string name="setting_log_logcat">Передавання журналів до ADB</string>
     <string name="setting_filter">Блокувати трекери</string>
+    <string name="setting_filter_udp">Блокувати трекери на UDP</string>
+    <string name="setting_handover">Безперебійна передача VPN при перезавантаженні</string>
     <string name="setting_track_usage">Відстежувати використання мережі</string>
     <string name="setting_reset_usage">Скинути результат використання мережі</string>
+    <string name="setting_show_resolved">Показати визначені доменні імена</string>
+    <string name="setting_block_domains">Увімкнути файл hosts</string>
+    <string name="setting_rcode">Відповідь блокування хостів: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
@@ -68,11 +75,21 @@
     <string name="setting_hosts_url">URL-адреса hosts-файла</string>
     <string name="setting_hosts_download">Завантажити hosts-файл</string>
     <string name="setting_hosts_update">Оновити hosts-файл</string>
+    <string name="summary_install">Показувати сповіщення в рядку стану для щойно встановлених програм</string>
+    <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
+    <string name="summary_update">Перевіряйте наявність нових релізів на GitHub двічі на день</string>
+    <string name="summary_system">Визначення правил для системних програм (для експертів)</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
     <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
     <string name="summary_validate">Доменне ім’я, що використовується для перевірки інтернет-з’єднання через порт 443 (https).</string>
     <string name="summary_socks5_enabled">На проксі-сервер направлятиметься лише TCP-трафік</string>
+    <string name="summary_log_logcat">Вимикає блокування. Комунікації (та ідентифіковані трекери) реєструються в журналі пристрою. Отримати за допомогою adb logcat з тегом «TC-Log».</string>
     <string name="msg_sure">Ви впевнені?</string>
+    <string name="msg_started">Шукаю трекери...</string>
+    <string name="msg_waiting">Очікування події</string>
+    <string name="msg_disabled">Використайте перемикач вище, щоб увімкнути TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl було вимкнено, ймовірно, за допомогою іншого додатка на основі VPN</string>
+    <string name="msg_installed">Проблеми з %1$s?</string>
     <string name="msg_installed_description">Дозволити застосунку звертатися до компаній</string>
     <string name="msg_installed_n">Було встановлено</string>
     <string name="msg_completed">Дію завершено</string>
@@ -96,7 +113,19 @@
         <item>UDP</item>
         <item>TCP</item>
     </string-array>
+    <string name="menu_add">Додати</string>
+    <string name="menu_delete">Видалити</string>
+    <string name="setting_forwarding">Переадресація портів</string>
     <string name="title_protocol">Протокол</string>
+    <string name="title_unmetered_disabled">Нелімітовані правила не застосовуються</string>
+    <string name="title_metered_allowed">Дозволено вимірювання трафіку</string>
+    <string name="title_host_allowed">Адреса дозволена</string>
+    <string name="title_host_blocked">Адреса заблокована</string>
+    <string name="title_interactive_allowed">Дозволити, коли екран увімкнено</string>
+    <string name="title_roaming_blocked">Блокувати під час роумінгу</string>
+    <string name="title_internet">немає доступу до Інтернету</string>
+    <string name="title_options">Опції</string>
+    <string name="title_rate">Оцінити</string>
     <string name="title_allow">Дозволити</string>
     <string name="title_block">Заблокувати</string>
     <string name="title_allow_wifi">Дозволити Wi-Fi</string>
@@ -132,6 +161,8 @@
     <string name="launch_app">Запуск &amp; Пошук трекерів</string>
     <string name="countries">Країни призначення</string>
     <string name="countries_explanation">Дізнайтеся, куди ваш телефон надсилає дані відстеження.\n\nІнформація базується на DNS-запитах та IP-адресах і може бути неточною.</string>
+    <string name="tracker_advertising">Реклама</string>
+    <string name="tracker_content">Необхідний</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
     <string name="tracker_fingerprinting">Цифрові відбитки</string>
     <string name="tracker_social">Соціальні мережі</string>
@@ -141,6 +172,9 @@
     <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
     <string name="no_trackers_found_message">Запустіть додаток, щоб знайти трекери</string>
     <string name="no_trackers_found_action">Запустити</string>
+    <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
+    <string name="trackers_static">Бібліотеки трекерів</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.</string>
     <string name="blocked">ЗАБЛОКОВАНО</string>
     <string name="allowed">ДОЗВОЛЕНО</string>
     <string name="browsers_not_supported">Браузери не підтримуються ⚠️</string>
