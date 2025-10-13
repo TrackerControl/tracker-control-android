@@ -144,6 +144,7 @@
     <string name="tab_trackers">Трекери</string>
     <string name="tab_countries">Країни</string>
     <string name="tab_actions">Мої дані</string>
+    <string name="tracker_name">Назва трекера</string>
     <string name="internet_access">Доступ до Інтернету</string>
     <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
@@ -162,10 +163,12 @@
     <string name="countries">Країни призначення</string>
     <string name="countries_explanation">Дізнайтеся, куди ваш телефон надсилає дані відстеження.\n\nІнформація базується на DNS-запитах та IP-адресах і може бути неточною.</string>
     <string name="tracker_advertising">Реклама</string>
+    <string name="tracker_analytics">Аналітика</string>
     <string name="tracker_content">Необхідний</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
     <string name="tracker_fingerprinting">Цифрові відбитки</string>
     <string name="tracker_social">Соціальні мережі</string>
+    <string name="tracker_email">Електронна пошта</string>
     <string name="tracker_uncategorised">Без категорії</string>
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
