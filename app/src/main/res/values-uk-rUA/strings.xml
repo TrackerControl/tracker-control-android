@@ -108,6 +108,7 @@
     <string name="msg_downloaded">Host-файл завантажено</string>
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
+    <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
     <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
     <string-array name="protocolNames">
         <item>UDP</item>
@@ -132,6 +133,7 @@
     <string name="title_block_wifi">Блокувати Wi-Fi</string>
     <string name="title_allow_other">Дозволити мобільні дані</string>
     <string name="title_block_other">Блокувати мобільні дані</string>
+    <string name="title_dontask">Не питайте більше</string>
     <!-- App Overview -->
     <string name="yes">Так</string>
     <string name="no">Ні</string>
@@ -148,16 +150,44 @@
     <string name="internet_access">Доступ до Інтернету</string>
     <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
+    <string name="personalised_ads_description">Android пропонує обмежити доступ додатків до рекламного ідентифікатора Google вашого пристрою. Однак додатки можуть ігнорувати це налаштування і продовжувати використовувати цей ідентифікатор. Вони також можуть продовжувати збирати цей ідентифікатор для аналітичних цілей відповідно до політики Google. Вам потрібно довіряти Google і компанії, що збирає дані.</string>
+    <string name="data_managment">Управління даними</string>
     <string name="data_management_description">Загальний регламент ЄС про захист даних (GDPR) дозволяє користувачам з ЄС керувати будь-якими даними, що стосуються їх. Ця програма надає шаблони електронних листів для зв\'язку з розробником. Розробник повинен відповісти протягом одного місяця.</string>
     <string name="contacts">Контакт </string>
     <string name="contacts_description">Якщо ви вважаєте, що програма порушує принципи захисту даних, ви можете звернутися безпосередньо до відповідальних органів.</string>
+    <string name="play_services_required">Це налаштування служб Google Play, які не були знайдені на вашому пристрої.</string>
+    <string name="no_mail_service">Будь ласка, встановіть поштовий клієнт.</string>
     <string name="blocking_settings">Вибрати трекери</string>
+    <string name="ad_settings">Змінити зараз</string>
     <string name="request_data">Запит даних</string>
     <string name="request_deletion">Запит на видалення</string>
     <string name="contact_developer">Розробник</string>
     <string name="contact_playstore">Google</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="body_request_data"><![CDATA[До кого це може стосуватися:\n
+\n
+\n
+Я прошу вас, як контролера даних додатка для Android %s (ID: %s), підтвердити, чи обробляє він будь-які мої персональні дані.\n
+Якщо так, будь ласка, надайте мені всю необхідну інформацію, передбачену статтею 15 Загального регламенту про захист даних ЄС (GDPR), включаючи:\n
+\n
+• копію моїх персональних даних;\n
+• цілі обробки;\n
+• категорії відповідних персональних даних;\n
+• одержувачів, яким ви розкриваєте мої персональні дані, та заходи безпеки, які ви забезпечуєте;\n
+• строк зберігання моїх персональних даних або критерії, що використовуються для визначення цього строку;\n
+• інформацію про джерело моїх персональних даних; та\n
+• наявність автоматизованого прийняття рішень (включно з профілюванням), і якщо так:\n
+    - логіка, що використовується в процесі прийняття рішень;\n
+    - значення та передбачувані наслідки для мене;\n
+    - заходи, які ви вжили для запобігання помилкам, упередженості та дискримінації; та\n
+- пояснення, як я можу висловити свою точку зору та оскаржити рішення.\n
+\n
+Цей запит стосується будь-якої обробки моїх персональних даних вами, включаючи будь-яких обробників, які обробляють персональні дані від вашого імені.\n
+\n
+Будь ласка, надайте свою відповідь безпечним способом електронною поштою. Я сподіваюся отримати відповідь протягом одного місяця з моменту отримання мого запиту.\n
+\n
+З повагою,\n\n]]></string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
     <string name="launch_app">Запуск &amp; Пошук трекерів</string>
     <string name="countries">Країни призначення</string>
