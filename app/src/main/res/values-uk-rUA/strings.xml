@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl дозволяє користувачам відстежувати та контролювати широко розповсюджений, постійний, прихований збір даних у мобільних застосунках про поведінку користувачів (\"стеження\").</string>
+    <string name="app_copyright">Авторські права \u00A9 2019–2022 Конрад Колльніг (Human-Centred Computing, факультет інформатики, Оксфордський університет)\n\nTrackerControl базується на NetGuard, розробленому Марселем Бокхорстом (M66B).</string>
     <string name="app_android">TrackerControl потребує Android 5.1 або новішої версії</string>
+    <string name="app_xposed">Xposed викликає занадто багато збоїв, що може призвести до видалення TrackerControl з Google Play Store, тому TrackerControl не підтримується, якщо встановлено Xposed</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Політика конфіденційності</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Політика використання файлів cookie</a></string>
     <string name="channel_foreground">Запущені сервіси</string>
     <string name="channel_notify">Загальні сповіщення</string>
@@ -108,6 +110,7 @@
     <string name="msg_downloaded">Host-файл завантажено</string>
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
+    <string name="msg_push">Вхідні (push) повідомлення в основному обробляються системним компонентом Play services, якому за замовчуванням дозволено доступ до Інтернету</string>
     <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
     <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
     <string-array name="protocolNames">
