@@ -140,6 +140,7 @@
     <string name="title_block_other">Блокувати мобільні дані</string>
     <string name="title_dontask">Не питайте більше</string>
     <!-- App Overview -->
+    <string name="confirm_google_info">Ця програма може автоматично отримати для вас електронну адресу розробника програми з Google Play Store.</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="menu_csv">Експортувати як CSV</string>
@@ -155,6 +156,7 @@
     <string name="internet_access">Доступ до Інтернету</string>
     <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
+    <string name="block_tracking_description">Багато додатків надсилають дані третім сторонам, так званим трекерам. TrackerControl дозволяє вибірково блокувати ці мережеві передачі. Однак використовуйте цю функцію з розумом, оскільки розробники додатків покладаються на ці послуги, зокрема на рекламу.</string>
     <string name="personalised_ads_description">Android пропонує обмежити доступ додатків до рекламного ідентифікатора Google вашого пристрою. Однак додатки можуть ігнорувати це налаштування і продовжувати використовувати цей ідентифікатор. Вони також можуть продовжувати збирати цей ідентифікатор для аналітичних цілей відповідно до політики Google. Вам потрібно довіряти Google і компанії, що збирає дані.</string>
     <string name="data_managment">Управління даними</string>
     <string name="data_management_description">Загальний регламент ЄС про захист даних (GDPR) дозволяє користувачам з ЄС керувати будь-якими даними, що стосуються їх. Ця програма надає шаблони електронних листів для зв\'язку з розробником. Розробник повинен відповісти протягом одного місяця.</string>
@@ -209,6 +211,7 @@
     <string name="launch_app">Запуск &amp; Пошук трекерів</string>
     <string name="countries">Країни призначення</string>
     <string name="countries_explanation">Дізнайтеся, куди ваш телефон надсилає дані відстеження.\n\nІнформація базується на DNS-запитах та IP-адресах і може бути неточною.</string>
+    <string name="countries_loading_failed">Упс.. Не вдалося завантажити карту країни. Будь ласка, повідомте на адресу tc@kollnig.net, як це сталося.</string>
     <string name="tracker_advertising">Реклама</string>
     <string name="tracker_analytics">Аналітика</string>
     <string name="tracker_content">Необхідний</string>
@@ -223,10 +226,15 @@
     <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
     <string name="no_trackers_found_message">Запустіть додаток, щоб знайти трекери</string>
     <string name="no_trackers_found_action">Запустити</string>
+    <string name="no_internet_message">"Цей додаток не має доступу до Інтернету. Він все ще може відстежувати вас, обмінюючись даними з іншими додатками."</string>
+    <string name="bypass_vpn_error">"Неможливо заблокувати Інтернет. Додаток виключено з TrackerControl."</string>
     <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
     <string name="trackers_static">Бібліотеки трекерів</string>
     <string name="trackers_static_explanation_playstore">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.</string>
     <string name="blocked">ЗАБЛОКОВАНО</string>
     <string name="allowed">ДОЗВОЛЕНО</string>
+    <string name="untap_unblock">Порада: Ви можете розблокувати окремі записи, натиснувши на них.</string>
+    <string name="uncertain_entry">Записи, позначені символом «*», можуть бути неточними через обмеження системи Android. Зазвичай це означає, що одна й та сама компанія використовує одну й ту саму IP-адресу під різними доменами, але також може означати, що за однією IP-адресою стоять різні компанії (наприклад, якщо вони використовують мережу доставки контенту).</string>
     <string name="browsers_not_supported">Браузери не підтримуються ⚠️</string>
+    <string name="browsers_not_supported_explanation">Схоже, це браузерний додаток.\n\nTrackerControl не підтримує блокування трекерів у браузерах. Натомість використовуйте браузер із вбудованою функцією захисту від відстеження, щоб краще блокувати відстеження.\n\nНаприклад: Mozilla Fennec</string>
 </resources>
