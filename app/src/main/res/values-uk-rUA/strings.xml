@@ -129,6 +129,7 @@
     <string name="title_roaming_blocked">Блокувати під час роумінгу</string>
     <string name="title_internet">немає доступу до Інтернету</string>
     <string name="title_messaging">Вхідні повідомлення надходять до сервісів Google Play, а не до цієї програми, тому їх не можна заблокувати, заблокувавши цю програму</string>
+    <string name="title_download">Завантаження виконуються менеджером завантажень, а не цим додатком, тому їх неможливо заблокувати, заблокувавши цей додаток</string>
     <string name="title_options">Опції</string>
     <string name="title_rate">Оцінити</string>
     <string name="title_allow">Дозволити</string>
