@@ -81,6 +81,7 @@
     <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
     <string name="summary_update">Перевіряйте наявність нових релізів на GitHub двічі на день</string>
     <string name="summary_subnet">Увімкнути маршрутизацію підмережі; може увімкнути дзвінки через Wi-Fi, але також може спричинити помилки в Android і збільшити споживання заряду акумулятора</string>
+    <string name="summary_call">Вимкніть TrackerControl для вхідних або вихідних телефонних дзвінків. Це можна використовувати для вирішення проблем із дзвінками через IP/Wi-Fi.</string>
     <string name="summary_system">Визначення правил для системних програм (для експертів)</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
     <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
@@ -105,6 +106,7 @@
     <string name="msg_datasaving">Для отримання коректних результатів слід вимкнути опції збереження даних Android для TrackerControl \n\nУ наступному діалоговому вікні увімкніть опції «Фонові дані» та «Необмежене використання даних»</string>
     <string name="msg_filter">Використання фільтрування призведе до того, що Android приписуватиме споживання даних та батареї TrackerControl; Android вважатиме, що дані та батарея споживаються не застосунками, які фільтруються, а TrackerControl\'ом</string>
     <string name="msg_filter4">На Android 4 фільтрацію необхідно увімкнути</string>
+    <string name="msg_log_disabled">Реєстрація трафіку вимкнена, використовуйте перемикач вище, щоб увімкнути реєстрацію. Реєстрація трафіку може призвести до додаткового споживання заряду акумулятора.</string>
     <string name="msg_clear_rules">Це призведе до скидання правил та умов до значень за замовчуванням</string>
     <string name="msg_reset_access">Це видалить рядки журналу спроб доступу, що не містять правил дозволу/блокування</string>
     <string name="msg_import_last">Останній імпорт: %s</string>
@@ -234,6 +236,7 @@
     <string name="bypass_vpn_error">"Неможливо заблокувати Інтернет. Додаток виключено з TrackerControl."</string>
     <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
     <string name="trackers_static">Бібліотеки трекерів</string>
+    <string name="trackers_static_explanation">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.\n\nВідстеження, виявлене в мережевому трафіку, можна заблокувати за допомогою TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.</string>
     <string name="blocked">ЗАБЛОКОВАНО</string>
     <string name="allowed">ДОЗВОЛЕНО</string>
