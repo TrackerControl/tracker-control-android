@@ -80,6 +80,7 @@
     <string name="summary_install">Показувати сповіщення в рядку стану для щойно встановлених програм</string>
     <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
     <string name="summary_update">Перевіряйте наявність нових релізів на GitHub двічі на день</string>
+    <string name="summary_subnet">Увімкнути маршрутизацію підмережі; може увімкнути дзвінки через Wi-Fi, але також може спричинити помилки в Android і збільшити споживання заряду акумулятора</string>
     <string name="summary_system">Визначення правил для системних програм (для експертів)</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
     <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
@@ -111,8 +112,10 @@
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
     <string name="msg_push">Вхідні (push) повідомлення в основному обробляються системним компонентом Play services, якому за замовчуванням дозволено доступ до Інтернету</string>
+    <string name="msg_vpn_cancelled">VPN-з’єднання скасовано\nВи налаштували інший VPN як постійно активний VPN?</string>
     <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
     <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
+    <string name="msg_private_dns">Вимкніть «Приватний DNS» в налаштуваннях мережі Android, щоб використовувати TrackerControl у режимі фільтрування</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -206,6 +209,7 @@
 Будь ласка, надайте свою відповідь безпечним способом електронною поштою. Я сподіваюся отримати відповідь протягом одного місяця з моменту отримання мого запиту.\n
 \n
 З повагою,\n\n]]></string>
+    <string name="crash_dialog_text">Вибачте. TrackerControl щойно завис. Чи не могли б ви надіслати нам електронного листа з детальною інформацією?</string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
     <string name="device_not_supported_msg">Операційна система вашого пристрою не дозволяє здійснювати моніторинг та фільтрування мережевих комунікацій. Це необхідно для роботи TrackerControl.</string>
     <string name="launch_app">Запуск &amp; Пошук трекерів</string>
