@@ -4,6 +4,7 @@
     <string name="app_copyright">Авторські права \u00A9 2019–2022 Конрад Колльніг (Human-Centred Computing, факультет інформатики, Оксфордський університет)\n\nTrackerControl базується на NetGuard, розробленому Марселем Бокхорстом (M66B).</string>
     <string name="app_android">TrackerControl потребує Android 5.1 або новішої версії</string>
     <string name="app_xposed">Xposed викликає занадто багато збоїв, що може призвести до видалення TrackerControl з Google Play Store, тому TrackerControl не підтримується, якщо встановлено Xposed</string>
+    <string name="app_eula">Використання цього додатка здійснюється на ваш власний ризик. Жоден додаток не може забезпечити 100% захист від відстеження.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Політика конфіденційності</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Політика використання файлів cookie</a></string>
     <string name="channel_foreground">Запущені сервіси</string>
     <string name="channel_notify">Загальні сповіщення</string>
@@ -48,6 +49,8 @@
     <string name="setting_tethering">Дозволити режим модема</string>
     <string name="setting_lan">Дозволити доступ до LAN</string>
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
+    <string name="setting_call">Вимкнути під час дзвінка</string>
+    <string name="setting_reload_onconnectivity">Перезавантажувати при кожній зміні підключення</string>
     <string name="setting_advanced_options">Розширені параметри</string>
     <string name="setting_system">Керування системними програмами</string>
     <string name="setting_log_app">Пошук нових трекерів</string>
@@ -81,6 +84,7 @@
     <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
     <string name="summary_update">Перевіряйте наявність нових релізів на GitHub двічі на день</string>
     <string name="summary_subnet">Увімкнути маршрутизацію підмережі; може увімкнути дзвінки через Wi-Fi, але також може спричинити помилки в Android і збільшити споживання заряду акумулятора</string>
+    <string name="summary_lan">Дозволити програмам підключатися до адрес локальної мережі, таких як 10.0.0.0/8, 172.16.0.0/12 та 192.168.0.0/16</string>
     <string name="summary_call">Вимкніть TrackerControl для вхідних або вихідних телефонних дзвінків. Це можна використовувати для вирішення проблем із дзвінками через IP/Wi-Fi.</string>
     <string name="summary_system">Визначення правил для системних програм (для експертів)</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
