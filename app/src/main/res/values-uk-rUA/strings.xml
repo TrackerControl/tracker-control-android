@@ -66,12 +66,16 @@
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">Перевірити о: %s</string>
     <string name="setting_ttl">Мінімальний DNS TTL: %s с</string>
     <string name="setting_socks5_enabled">Використовувати проксі SOCKS5</string>
     <string name="setting_socks5_addr">Адреса SOCKS5: %s</string>
     <string name="setting_socks5_port">Порт SOCKS5: %s</string>
     <string name="setting_socks5_username">Ім’я користувача SOCKS5: %s</string>
     <string name="setting_socks5_password">Пароль SOCKS5: %s</string>
+    <string name="setting_pcap_record_size">Розмір запису PCAP: %s B</string>
+    <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
+    <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
     <string name="setting_backup">Резервне копіювання</string>
     <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
@@ -128,11 +132,18 @@
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
     <string name="msg_usage">Ви можете дозволити (зелений колір) або заборонити (червоний колір) доступ до Wi-Fi або мобільного Інтернету, натиснувши на піктограми поруч із додатком</string>
+    <string name="msg_whitelist">Доступ до Інтернету дозволений за замовчуванням (режим чорного списку), це можна змінити в налаштуваннях</string>
     <string name="msg_push">Вхідні (push) повідомлення в основному обробляються системним компонентом Play services, якому за замовчуванням дозволено доступ до Інтернету</string>
+    <string name="msg_system">Керування всіма (системними) програмами можна ввімкнути в налаштуваннях</string>
+    <string name="msg_issue">Будь ласка, опишіть проблему та вкажіть час її виникнення:</string>
     <string name="msg_vpn_cancelled">VPN-з’єднання скасовано\nВи налаштували інший VPN як постійно активний VPN?</string>
     <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
+    <string name="msg_always_on">Інша VPN налаштована як VPN з постійним підключенням</string>
     <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
     <string name="msg_private_dns">Вимкніть «Приватний DNS» в налаштуваннях мережі Android, щоб використовувати TrackerControl у режимі фільтрування</string>
+    <string name="msg_start_forward">Розпочати переадресацію з порту %1$s %2$d на порт %3$s:%4$d з \'%5$s\'?</string>
+    <string name="msg_stop_forward">Зупинити переадресацію порту %2$d на %1$s?</string>
+    <string name="msg_log_logcat">Попередження: Блокування вимкнено через ведення журналу ADB.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -141,6 +152,11 @@
     <string name="menu_delete">Видалити</string>
     <string name="setting_forwarding">Переадресація портів</string>
     <string name="title_protocol">Протокол</string>
+    <string name="title_dport">Порт джерела</string>
+    <string name="title_raddr">Адреса призначення</string>
+    <string name="title_rport">Порт призначення</string>
+    <string name="title_ruid">Додаток призначення</string>
+    <string name="title_external">Для зовнішнього сервера виберіть «ніхто»</string>
     <string name="title_unmetered_disabled">Нелімітовані правила не застосовуються</string>
     <string name="title_metered_allowed">Дозволено вимірювання трафіку</string>
     <string name="title_host_allowed">Адреса дозволена</string>
@@ -150,7 +166,9 @@
     <string name="title_internet">немає доступу до Інтернету</string>
     <string name="title_messaging">Вхідні повідомлення надходять до сервісів Google Play, а не до цієї програми, тому їх не можна заблокувати, заблокувавши цю програму</string>
     <string name="title_download">Завантаження виконуються менеджером завантажень, а не цим додатком, тому їх неможливо заблокувати, заблокувавши цей додаток</string>
+    <string name="title_precedence">Правила доступу мають пріоритет над іншими правилами</string>
     <string name="title_options">Опції</string>
+    <string name="title_enable_help2">Увімкнення ведення журналу (менше) або фільтрації (більше) може збільшити використання батареї та вплинути на швидкість мережі</string>
     <string name="title_rate">Оцінити</string>
     <string name="title_allow">Дозволити</string>
     <string name="title_block">Заблокувати</string>
