@@ -41,4 +41,6 @@
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
+    <string name="browsers_not_supported">不支援瀏覽器 ⚠️</string>
+    <string name="browsers_not_supported_explanation">這似乎是一款瀏覽器應用程式。\n\n瀏覽器中的追蹤器封鎖功能不受 TrackerControl 支援。請改用具備整合式反追蹤功能的瀏覽器，以獲得更完善的追蹤封鎖效果。\n\n例如：Mozilla Fennec</string>
 </resources>
