@@ -22,6 +22,7 @@
     <string name="menu_log">Журнал трафіку</string>
     <string name="menu_settings">Параметри</string>
     <string name="menu_invite">Запросити</string>
+    <string name="menu_legend">Легенда</string>
     <string name="menu_support">Підтримати проєкт</string>
     <string name="menu_log_support">Пояснення</string>
     <string name="menu_about">Про додаток</string>
@@ -178,6 +179,7 @@
     <string name="title_block_other">Блокувати мобільні дані</string>
     <string name="title_dontask">Не питайте більше</string>
     <!-- App Overview -->
+    <string name="confirm_ipinfo">Це призведе до зв\'язку із зовнішньою службою ipinfo.io та передачі їй даних про IP-адреси, з якими було встановлено зв\'язок.</string>
     <string name="confirm_google_info">Ця програма може автоматично отримати для вас електронну адресу розробника програми з Google Play Store.</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
@@ -192,9 +194,12 @@
     <string name="tab_actions">Мої дані</string>
     <string name="tracker_name">Назва трекера</string>
     <string name="internet_access">Доступ до Інтернету</string>
+    <string name="internet_access_explanation">Повинно бути увімкнено для доступу до Інтернету.\n\nПорада: Ви також можете натиснути на піктограму програми на головному екрані.</string>
     <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
+    <string name="block_tracking">Блокувати трекери</string>
     <string name="block_tracking_description">Багато додатків надсилають дані третім сторонам, так званим трекерам. TrackerControl дозволяє вибірково блокувати ці мережеві передачі. Однак використовуйте цю функцію з розумом, оскільки розробники додатків покладаються на ці послуги, зокрема на рекламу.</string>
+    <string name="personalised_ads">Обмежити персоналізацію</string>
     <string name="personalised_ads_description">Android пропонує обмежити доступ додатків до рекламного ідентифікатора Google вашого пристрою. Однак додатки можуть ігнорувати це налаштування і продовжувати використовувати цей ідентифікатор. Вони також можуть продовжувати збирати цей ідентифікатор для аналітичних цілей відповідно до політики Google. Вам потрібно довіряти Google і компанії, що збирає дані.</string>
     <string name="data_managment">Управління даними</string>
     <string name="data_management_description">Загальний регламент ЄС про захист даних (GDPR) дозволяє користувачам з ЄС керувати будь-якими даними, що стосуються їх. Ця програма надає шаблони електронних листів для зв\'язку з розробником. Розробник повинен відповісти протягом одного місяця.</string>
@@ -208,8 +213,10 @@
     <string name="request_deletion">Запит на видалення</string>
     <string name="contact_developer">Розробник</string>
     <string name="contact_playstore">Google</string>
+    <string name="contact_officials">Чиновники ЄС</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="subject_request_data">Запит на доступ до даних відповідно до GDPR</string>
     <string name="body_request_data"><![CDATA[До кого це може стосуватися:\n
 \n
 \n
@@ -245,6 +252,8 @@
 \n
 З повагою,\n\n]]></string>
     <string name="crash_dialog_text">Вибачте. TrackerControl щойно завис. Чи не могли б ви надіслати нам електронного листа з детальною інформацією?</string>
+    <string name="crash_dialog_comment">Якісь коментарі?</string>
+    <string name="instructions_monitoring_private_dns">Увімкніть перемикач і взаємодійте з деякими програмами. Приватний DNS має бути вимкнено.</string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
     <string name="device_not_supported_msg">Операційна система вашого пристрою не дозволяє здійснювати моніторинг та фільтрування мережевих комунікацій. Це необхідно для роботи TrackerControl.</string>
     <string name="launch_app">Запуск &amp; Пошук трекерів</string>
@@ -267,6 +276,15 @@
     <string name="no_trackers_found_action">Запустити</string>
     <string name="no_internet_message">"Цей додаток не має доступу до Інтернету. Він все ще може відстежувати вас, обмінюючись даними з іншими додатками."</string>
     <string name="bypass_vpn_error">"Неможливо заблокувати Інтернет. Додаток виключено з TrackerControl."</string>
+    <string name="unblocked">Розблоковано</string>
+    <string name="enable">Увімкнути</string>
+    <string name="internet_blocked">Доступ до Інтернету заблоковано</string>
+    <string name="internet_unblocked">Доступ до Інтернету розблоковано</string>
+    <string name="category_blocked">Трекери в категорії заблоковані</string>
+    <string name="category_unblocked">Трекери в категорії дозволені</string>
+    <string name="switch_strict_blocking">Блокувати обмін важливими даними</string>
+    <string name="tracking_detection_failed">Не вдалося виявити бібліотеку трекера.</string>
+    <string name="tracking_detection_failed_report">Не вдалося виявити бібліотеку трекера. Будь ласка, повідомте про цю проблему розробнику.</string>
     <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
     <string name="trackers_static">Бібліотеки трекерів</string>
     <string name="trackers_static_explanation">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.\n\nВідстеження, виявлене в мережевому трафіку, можна заблокувати за допомогою TrackerControl.</string>
@@ -277,4 +295,7 @@
     <string name="uncertain_entry">Записи, позначені символом «*», можуть бути неточними через обмеження системи Android. Зазвичай це означає, що одна й та сама компанія використовує одну й ту саму IP-адресу під різними доменами, але також може означати, що за однією IP-адресою стоять різні компанії (наприклад, якщо вони використовують мережу доставки контенту).</string>
     <string name="browsers_not_supported">Браузери не підтримуються ⚠️</string>
     <string name="browsers_not_supported_explanation">Схоже, це браузерний додаток.\n\nTrackerControl не підтримує блокування трекерів у браузерах. Натомість використовуйте браузер із вбудованою функцією захисту від відстеження, щоб краще блокувати відстеження.\n\nНаприклад: Mozilla Fennec</string>
+    <string name="static_analysis">Виявлення трекерів у коді програми</string>
+    <string name="failed_loading_cached_analysis">Не вдалося завантажити кешовані результати трекера. Повідомте про це розробника за адресою hello@trackercontrol.org</string>
+    <string name="msg_notifications">Натисніть, щоб надати дозволи на сповіщення (для повідомлень про помилки тощо)</string>
 </resources>
