@@ -169,6 +169,10 @@
     <string name="title_download">Завантаження виконуються менеджером завантажень, а не цим додатком, тому їх неможливо заблокувати, заблокувавши цей додаток</string>
     <string name="title_precedence">Правила доступу мають пріоритет над іншими правилами</string>
     <string name="title_options">Опції</string>
+    <string name="title_enable_filtering">Увімкнути фільтрацію, щоб також реєструвати дозволені адреси</string>
+    <string name="title_enable_notify">Увімкнути сповіщення про доступ для нових зареєстрованих адрес</string>
+    <string name="title_enable_help0">Ці налаштування є глобальними налаштуваннями, які застосовуються до всіх програм</string>
+    <string name="title_enable_help1">Фільтрування також необхідне для дозволу або блокування окремих адрес</string>
     <string name="title_enable_help2">Увімкнення ведення журналу (менше) або фільтрації (більше) може збільшити використання батареї та вплинути на швидкість мережі</string>
     <string name="title_rate">Оцінити</string>
     <string name="title_allow">Дозволити</string>
@@ -178,9 +182,17 @@
     <string name="title_allow_other">Дозволити мобільні дані</string>
     <string name="title_block_other">Блокувати мобільні дані</string>
     <string name="title_dontask">Не питайте більше</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Порт %1$d</string>
+    <string name="title_log_copy">Копіювати</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Вимкнути доступ до Інтернету для цієї програми</string>
+    <string name="tracked_app_name">Назва програми</string>
+    <string name="confirm_ipinfo_title">Отримати інформацію про організацію?</string>
     <string name="confirm_ipinfo">Це призведе до зв\'язку із зовнішньою службою ipinfo.io та передачі їй даних про IP-адреси, з якими було встановлено зв\'язок.</string>
+    <string name="external_servers">Отримувати електронну пошту розробника автоматично?</string>
     <string name="confirm_google_info">Ця програма може автоматично отримати для вас електронну адресу розробника програми з Google Play Store.</string>
+    <string name="ok">Добре</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
     <string name="menu_csv">Експортувати як CSV</string>
@@ -189,6 +201,7 @@
     <string name="export_failed">Експорт не вдався</string>
     <string name="exported">Експортовано до сховища!</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Деталі</string>
     <string name="tab_trackers">Трекери</string>
     <string name="tab_countries">Країни</string>
     <string name="tab_actions">Мої дані</string>
@@ -254,6 +267,7 @@
     <string name="crash_dialog_text">Вибачте. TrackerControl щойно завис. Чи не могли б ви надіслати нам електронного листа з детальною інформацією?</string>
     <string name="crash_dialog_comment">Якісь коментарі?</string>
     <string name="instructions_monitoring_private_dns">Увімкніть перемикач і взаємодійте з деякими програмами. Приватний DNS має бути вимкнено.</string>
+    <string name="instructions_monitoring">Переведіть перемикач і взаємодійте з деякими програмами.</string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
     <string name="device_not_supported_msg">Операційна система вашого пристрою не дозволяє здійснювати моніторинг та фільтрування мережевих комунікацій. Це необхідно для роботи TrackerControl.</string>
     <string name="launch_app">Запуск &amp; Пошук трекерів</string>
@@ -271,11 +285,19 @@
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
     <string name="strict_blocking_explanation">Не експертам рекомендується вимкнути цю опцію, щоб зменшити кількість поломок програми. Однак це дозволяє ділитися деякими важливими даними з компаніями.</string>
+    <string name="exclude_vpn_explanation">Повинно бути увімкнено для виявлення або блокування трекерів.\n\nПорада: вимкніть, якщо виникнуть проблеми.</string>
+    <string name="uninstall">Видалити</string>
     <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
+    <string name="no_trackers_found_message_disabled">Увімкніть перемикач на головному екрані, а потім запустіть додаток, щоб знайти трекери</string>
     <string name="no_trackers_found_message">Запустіть додаток, щоб знайти трекери</string>
     <string name="no_trackers_found_action">Запустити</string>
     <string name="no_internet_message">"Цей додаток не має доступу до Інтернету. Він все ще може відстежувати вас, обмінюючись даними з іншими додатками."</string>
+    <string name="no_internet">Немає доступу до Інтернету</string>
     <string name="bypass_vpn_error">"Неможливо заблокувати Інтернет. Додаток виключено з TrackerControl."</string>
+    <string name="back">Назад</string>
+    <string name="forever_free">Назавжди безкоштовно</string>
+    <string name="your_privacy">Ваша конфіденційність</string>
+    <string name="tracker_hostlist">Користувацькі хости</string>
     <string name="unblocked">Розблоковано</string>
     <string name="enable">Увімкнути</string>
     <string name="internet_blocked">Доступ до Інтернету заблоковано</string>
@@ -284,6 +306,7 @@
     <string name="category_unblocked">Трекери в категорії дозволені</string>
     <string name="switch_strict_blocking">Блокувати обмін важливими даними</string>
     <string name="tracking_detection_failed">Не вдалося виявити бібліотеку трекера.</string>
+    <string name="tracking_detection_failed_ram">Не вдалося виявити бібліотеку трекера. Недостатньо оперативної пам\'яті.</string>
     <string name="tracking_detection_failed_report">Не вдалося виявити бібліотеку трекера. Будь ласка, повідомте про цю проблему розробнику.</string>
     <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
     <string name="trackers_static">Бібліотеки трекерів</string>
@@ -291,6 +314,8 @@
     <string name="trackers_static_explanation_playstore">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.</string>
     <string name="blocked">ЗАБЛОКОВАНО</string>
     <string name="allowed">ДОЗВОЛЕНО</string>
+    <string name="setting_domain_based_blocked">Блокування на основі домену</string>
+    <string name="summary_domain_based_blocking">Дозволяє більш детальне блокування. Все ще в розробці.</string>
     <string name="untap_unblock">Порада: Ви можете розблокувати окремі записи, натиснувши на них.</string>
     <string name="uncertain_entry">Записи, позначені символом «*», можуть бути неточними через обмеження системи Android. Зазвичай це означає, що одна й та сама компанія використовує одну й ту саму IP-адресу під різними доменами, але також може означати, що за однією IP-адресою стоять різні компанії (наприклад, якщо вони використовують мережу доставки контенту).</string>
     <string name="browsers_not_supported">Браузери не підтримуються ⚠️</string>
