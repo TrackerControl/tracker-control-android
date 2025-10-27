@@ -45,6 +45,12 @@
     <string name="setting_install">Сповіщати про нові додатки</string>
     <string name="setting_pause">Автоматично увімкнути через %1$s хв.</string>
     <string name="setting_update">Перевірити оновлення</string>
+    <plurals name="pause">
+        <item quantity="one">Призупинити на %d хвилину</item>
+        <item quantity="few">Пауза на %d хвилин</item>
+        <item quantity="many">Пауза на %d хвилин</item>
+        <item quantity="other">Пауза на %d хвилин</item>
+    </plurals>
     <string name="setting_network_options">Налаштування мережі</string>
     <string name="setting_subnet">Маршрутизація підмережі</string>
     <string name="setting_tethering">Дозволити режим модема</string>
@@ -59,6 +65,7 @@
     <string name="setting_filter">Блокувати трекери</string>
     <string name="setting_filter_udp">Блокувати трекери на UDP</string>
     <string name="setting_handover">Безперебійна передача VPN при перезавантаженні</string>
+    <string name="setting_lockdown">Трафік в карантині</string>
     <string name="setting_track_usage">Відстежувати використання мережі</string>
     <string name="setting_reset_usage">Скинути результат використання мережі</string>
     <string name="setting_show_resolved">Показати визначені доменні імена</string>
@@ -75,8 +82,10 @@
     <string name="setting_socks5_username">Ім’я користувача SOCKS5: %s</string>
     <string name="setting_socks5_password">Пароль SOCKS5: %s</string>
     <string name="setting_pcap_record_size">Розмір запису PCAP: %s B</string>
+    <string name="setting_pcap_file_size">Макс. розмір файлу PCAP: %s МБ</string>
     <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
     <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
+    <string name="setting_stats_samples">Кількість зразків: %s s</string>
     <string name="setting_backup">Резервне копіювання</string>
     <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
@@ -88,6 +97,7 @@
     <string name="summary_install">Показувати сповіщення в рядку стану для щойно встановлених програм</string>
     <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
     <string name="summary_update">Перевіряйте наявність нових релізів на GitHub двічі на день</string>
+    <string name="summary_tethering">Залежно від версії Android, тетеринг може працювати або не працювати. Трафік через тетеринг не можна фільтрувати.</string>
     <string name="summary_subnet">Увімкнути маршрутизацію підмережі; може увімкнути дзвінки через Wi-Fi, але також може спричинити помилки в Android і збільшити споживання заряду акумулятора</string>
     <string name="summary_lan">Дозволити програмам підключатися до адрес локальної мережі, таких як 10.0.0.0/8, 172.16.0.0/12 та 192.168.0.0/16</string>
     <string name="summary_ip6">Спрямовувати трафік IP версії 6 до TrackerControl, щоб його можна було вибірково дозволяти або блокувати</string>
@@ -129,6 +139,7 @@
     <string name="msg_updated">Файл hosts оновлено та застосовано!</string>
     <string name="msg_download_last">Останнє завантаження: %s</string>
     <string name="msg_update_last">Останнє оновлення: %s</string>
+    <string name="msg_metered">Мережа має ліміт</string>
     <string name="msg_inactive">Відсутнє активне підключення до Інтернету</string>
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
@@ -158,17 +169,36 @@
     <string name="title_rport">Порт призначення</string>
     <string name="title_ruid">Додаток призначення</string>
     <string name="title_external">Для зовнішнього сервера виберіть «ніхто»</string>
+    <string name="title_lockdown_enabled">Трафік блокується</string>
+    <string name="title_unmetered_allowed">Дозволено необмежений трафік</string>
+    <string name="title_unmetered_blocked">Необмежений трафік заблоковано</string>
     <string name="title_unmetered_disabled">Нелімітовані правила не застосовуються</string>
     <string name="title_metered_allowed">Дозволено вимірювання трафіку</string>
+    <string name="title_metered_blocked">Обмежений трафік заблоковано</string>
+    <string name="title_metered_disabled">Правила вимірювання не застосовуються</string>
     <string name="title_host_allowed">Адреса дозволена</string>
     <string name="title_host_blocked">Адреса заблокована</string>
     <string name="title_interactive_allowed">Дозволити, коли екран увімкнено</string>
     <string name="title_roaming_blocked">Блокувати під час роумінгу</string>
+    <string name="title_metered">За замовчуванням Wi-Fi з\'єднання вважається безлімітним, а мобільне з\'єднання — лімітованим</string>
     <string name="title_internet">немає доступу до Інтернету</string>
+    <string name="title_disabled">відключено</string>
     <string name="title_messaging">Вхідні повідомлення надходять до сервісів Google Play, а не до цієї програми, тому їх не можна заблокувати, заблокувавши цю програму</string>
     <string name="title_download">Завантаження виконуються менеджером завантажень, а не цим додатком, тому їх неможливо заблокувати, заблокувавши цей додаток</string>
+    <string name="title_conditions">Умови</string>
+    <string name="title_screen_wifi">Дозволити Wi-Fi, коли екран увімкнено</string>
+    <string name="title_screen_other">Дозволити мобільний зв\'язок, коли екран увімкнено</string>
+    <string name="title_roaming">Блокування під час роумінгу</string>
+    <string name="title_lockdown">Дозволити в режимі блокування</string>
+    <string name="title_related">Фільтр, пов\'язаний з</string>
+    <string name="title_access">Спроби доступу</string>
     <string name="title_precedence">Правила доступу мають пріоритет над іншими правилами</string>
     <string name="title_options">Опції</string>
+    <string name="title_notify">Повідомляти про спроби доступу до Інтернету</string>
+    <string name="title_logging_disabled">Ведення журналу або фільтрація не ввімкнені</string>
+    <string name="title_logging_enabled">Ведення журналу та фільтрація ввімкнені</string>
+    <string name="title_logging_configure">Налаштувати</string>
+    <string name="title_enable_logging">Увімкнути реєстрацію лише заблокованих адрес</string>
     <string name="title_enable_filtering">Увімкнути фільтрацію, щоб також реєструвати дозволені адреси</string>
     <string name="title_enable_notify">Увімкнути сповіщення про доступ для нових зареєстрованих адрес</string>
     <string name="title_enable_help0">Ці налаштування є глобальними налаштуваннями, які застосовуються до всіх програм</string>
@@ -181,6 +211,7 @@
     <string name="title_block_wifi">Блокувати Wi-Fi</string>
     <string name="title_allow_other">Дозволити мобільні дані</string>
     <string name="title_block_other">Блокувати мобільні дані</string>
+    <string name="title_nobody">ніхто</string>
     <string name="title_dontask">Не питайте більше</string>
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Порт %1$d</string>
@@ -188,6 +219,18 @@
     <!-- App Overview -->
     <string name="tracked_app_icon">Вимкнути доступ до Інтернету для цієї програми</string>
     <string name="tracked_app_name">Назва програми</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">звернувся до компанії %d минулого тижня</item>
+        <item quantity="few">звернувся до %d компаній минулого тижня</item>
+        <item quantity="many">звернувся до %d компаній минулого тижня</item>
+        <item quantity="other">звернувся до %d компаній минулого тижня</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">звернувся до %d компанії за весь час</item>
+        <item quantity="few">звернувся до %d компаній за весь час</item>
+        <item quantity="many">звернувся до %d компаній за весь час</item>
+        <item quantity="other">звернувся до %d компаній за весь час</item>
+    </plurals>
     <string name="confirm_ipinfo_title">Отримати інформацію про організацію?</string>
     <string name="confirm_ipinfo">Це призведе до зв\'язку із зовнішньою службою ipinfo.io та передачі їй даних про IP-адреси, з якими було встановлено зв\'язок.</string>
     <string name="external_servers">Отримувати електронну пошту розробника автоматично?</string>
@@ -304,11 +347,13 @@
     <string name="internet_unblocked">Доступ до Інтернету розблоковано</string>
     <string name="category_blocked">Трекери в категорії заблоковані</string>
     <string name="category_unblocked">Трекери в категорії дозволені</string>
+    <string name="category_unblocked_warning">Перша заблокована категорія!</string>
     <string name="switch_strict_blocking">Блокувати обмін важливими даними</string>
     <string name="tracking_detection_failed">Не вдалося виявити бібліотеку трекера.</string>
     <string name="tracking_detection_failed_ram">Не вдалося виявити бібліотеку трекера. Недостатньо оперативної пам\'яті.</string>
     <string name="tracking_detection_failed_report">Не вдалося виявити бібліотеку трекера. Будь ласка, повідомте про цю проблему розробнику.</string>
     <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
+    <string name="none">Нічого</string>
     <string name="trackers_static">Бібліотеки трекерів</string>
     <string name="trackers_static_explanation">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.\n\nВідстеження, виявлене в мережевому трафіку, можна заблокувати за допомогою TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.</string>
