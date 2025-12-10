@@ -470,17 +470,8 @@ public class Util {
     }
 
     public static void setTheme(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean dark = prefs.getBoolean("dark_theme", false);
-        context.setTheme(dark ? R.style.AppThemeRedDark : R.style.AppThemeRed);
-
-        if (dark) {
-            AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(
-                    AppCompatDelegate.MODE_NIGHT_NO);
-        }
+        context.setTheme(R.style.AppThemeRed);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 
     public static int dips2pixels(int dips, Context context) {

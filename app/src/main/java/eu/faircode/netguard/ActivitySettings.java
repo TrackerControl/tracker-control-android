@@ -438,9 +438,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("pause".equals(name))
             getPreferenceScreen().findPreference(name).setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
 
-        else if ("dark_theme".equals(name))
-            recreate();
-
         else if ("subnet".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 

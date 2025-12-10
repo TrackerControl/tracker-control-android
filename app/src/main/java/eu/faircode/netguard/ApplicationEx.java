@@ -129,18 +129,17 @@ public class ApplicationEx extends Application {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                     android.widget.FrameLayout content = activity.findViewById(android.R.id.content);
 
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                    boolean dark = prefs.getBoolean("dark_theme", false);
-
                     // On Android 15+, setStatusBarColor is ignored
                     // Set window background to primary color - this shows behind the status bar
                     int primaryColor = ContextCompat.getColor(activity, R.color.colorPrimary);
                     activity.getWindow().setBackgroundDrawable(new ColorDrawable(primaryColor));
 
+                    boolean isNight = (activity.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+
                     // Set status bar icons to light (white) since our background is dark
                     View decor = activity.getWindow().getDecorView();
                     WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightStatusBars(false);
-                    WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightNavigationBars(!dark);
+                    WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightNavigationBars(!isNight);
 
                     ViewCompat.setOnApplyWindowInsetsListener(content, new OnApplyWindowInsetsListener() {
                         @NonNull
@@ -157,8 +156,9 @@ public class ApplicationEx extends Application {
                             // Set background on the actual layout (first child), not on the content frame
                             // This way the padding area shows the window background (primary color)
                             if (content.getChildCount() > 0) {
+                                boolean isNight = (activity.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
                                 View child = content.getChildAt(0);
-                                child.setBackgroundColor(dark ? Color.BLACK : Color.WHITE);
+                                child.setBackgroundColor(isNight ? Color.BLACK : Color.WHITE);
                             }
 
                             return insets;

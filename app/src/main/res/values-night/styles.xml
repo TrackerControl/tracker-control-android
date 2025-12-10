@@ -7,5 +7,12 @@
         <item name="android:windowBackground">@color/black</item>
         <item name="android:colorBackground">@color/black</item>
     </style>
-</resources>
 
+    <style name="AppThemeRed" parent="BaseThemeLight">
+        <item name="colorPrimary">@color/colorRedPrimary</item>
+        <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
+        <item name="colorAccent">@color/colorRedAccent</item>
+        <item name="colorOn">@color/colorRedOff</item>
+        <item name="colorOff">@color/colorRedOn</item>
+    </style>
+</resources>

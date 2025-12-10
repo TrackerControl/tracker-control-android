@@ -12,10 +12,6 @@
                 android:summary="@string/summary_strict_blocking"
                 android:title="@string/setting_strict_blocking" />
             <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="false"
-                android:key="dark_theme"
-                android:title="@string/setting_dark" />
-            <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="true"
                 android:key="installed"
                 android:summary="@string/summary_install"
