@@ -29,7 +29,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -46,7 +45,6 @@ import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
@@ -132,8 +130,8 @@ public class ApplicationEx extends Application {
 
                     // On Android 15+, setStatusBarColor is ignored
                     // Set window background to primary color - this shows behind the status bar
-                    int primaryColor = ContextCompat.getColor(activity, R.color.colorPrimary);
-                    activity.getWindow().setBackgroundDrawable(new ColorDrawable(primaryColor));
+                    int statusBarColor = ContextCompat.getColor(activity, R.color.colorPrimaryDark);
+                    activity.getWindow().setBackgroundDrawable(new ColorDrawable(statusBarColor));
 
                     boolean isNight = Common.isNight(activity);
 
@@ -147,9 +145,6 @@ public class ApplicationEx extends Application {
                         @Override
                         public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
                             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
-
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-                            boolean dark = prefs.getBoolean("dark_theme", false);
 
                             // Apply padding to android.R.id.content for system bars
                             v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
