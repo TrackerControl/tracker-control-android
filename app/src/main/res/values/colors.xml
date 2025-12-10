@@ -1,5 +1,6 @@
 <resources>
     <color name="colorTrackerControl">#B71C1C</color>
+    <color name="black">#000000</color>
 
     <color name="colorPrimary">#B71C1C</color>
     <color name="colorPrimaryDark">#7f0000</color>

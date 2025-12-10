@@ -158,7 +158,7 @@ public class ApplicationEx extends Application {
                             // This way the padding area shows the window background (primary color)
                             if (content.getChildCount() > 0) {
                                 View child = content.getChildAt(0);
-                                child.setBackgroundColor(dark ? Color.parseColor("#ff121212") : Color.WHITE);
+                                child.setBackgroundColor(dark ? Color.BLACK : Color.WHITE);
                             }
 
                             return insets;
