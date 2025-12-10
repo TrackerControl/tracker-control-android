@@ -21,7 +21,6 @@
 package eu.faircode.netguard;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -30,8 +29,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-import androidx.preference.PreferenceManager;
-
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 
 import java.text.SimpleDateFormat;
@@ -49,9 +47,7 @@ public class AdapterDns extends CursorAdapter {
     public AdapterDns(Context context, Cursor cursor) {
         super(context, cursor, 0);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        if (prefs.getBoolean("dark_theme", false))
+        if (Common.isNight(context))
             colorExpired = Color.argb(128, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY));
         else
             colorExpired = Color.argb(128, Color.red(Color.LTGRAY), Color.green(Color.LTGRAY), Color.blue(Color.LTGRAY));

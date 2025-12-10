@@ -746,9 +746,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             boolean system = prefs.getBoolean("manage_system", false);
             boolean hint = prefs.getBoolean("hint_system", true);
             llSystem.setVisibility(!system && hint ? View.VISIBLE : View.GONE);
-
-        } else if ("dark_theme".equals(name))
-            recreate();
+        }
     }
 
     private DatabaseHelper.AccessChangedListener accessChangedListener = new DatabaseHelper.AccessChangedListener() {

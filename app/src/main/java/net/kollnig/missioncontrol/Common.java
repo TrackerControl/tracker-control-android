@@ -228,4 +228,8 @@ public class Common {
 
         return strings;
     }
+
+    public static boolean isNight(Context context) {
+        return (context.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+    }
 }

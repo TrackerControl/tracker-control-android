@@ -278,12 +278,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     }
 
     public AdapterRule(Context context, View anchor) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
         this.anchor = anchor;
         this.inflater = LayoutInflater.from(context);
 
-        if (prefs.getBoolean("dark_theme", false))
+        if (Common.isNight(context))
             colorChanged = Color.argb(128, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY));
         else
             colorChanged = Color.argb(128, 230, 230, 230);

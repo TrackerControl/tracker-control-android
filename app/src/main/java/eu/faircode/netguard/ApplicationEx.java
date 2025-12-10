@@ -49,6 +49,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 
@@ -134,7 +135,7 @@ public class ApplicationEx extends Application {
                     int primaryColor = ContextCompat.getColor(activity, R.color.colorPrimary);
                     activity.getWindow().setBackgroundDrawable(new ColorDrawable(primaryColor));
 
-                    boolean isNight = (activity.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+                    boolean isNight = Common.isNight(activity);
 
                     // Set status bar icons to light (white) since our background is dark
                     View decor = activity.getWindow().getDecorView();
@@ -156,9 +157,8 @@ public class ApplicationEx extends Application {
                             // Set background on the actual layout (first child), not on the content frame
                             // This way the padding area shows the window background (primary color)
                             if (content.getChildCount() > 0) {
-                                boolean isNight = (activity.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
                                 View child = content.getChildAt(0);
-                                child.setBackgroundColor(isNight ? Color.BLACK : Color.WHITE);
+                                child.setBackgroundColor(Common.isNight(activity) ? Color.BLACK : Color.WHITE);
                             }
 
                             return insets;
