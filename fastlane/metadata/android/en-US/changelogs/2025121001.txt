@@ -1,0 +1,3 @@
+- Update for Android 16+ (this was hard; sorry for the delay; Google's Android changes are annoying)
+- Make dark mode actually dark, and follow system setting
+- Update dependencies + translations + host lists
