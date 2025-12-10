@@ -22,6 +22,14 @@
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+    <!-- Edge-to-edge variant for DetailsActivity -->
+    <style name="AppTheme.EdgeToEdge" parent="AppTheme.NoActionBar">
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+
     <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
         <item name="android:buttonStyle">
             @style/Widget.AppCompat.Button.Borderless.Colored

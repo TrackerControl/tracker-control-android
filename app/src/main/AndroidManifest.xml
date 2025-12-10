@@ -155,7 +155,7 @@
             android:exported="true"
             android:label="@string/title_activity_detail"
             android:parentActivityName="eu.faircode.netguard.ActivityMain"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.EdgeToEdge">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.faircode.netguard.ActivityMain" />

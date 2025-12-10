@@ -31,15 +31,16 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
@@ -48,6 +49,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 
 import org.acra.ACRA;
@@ -121,28 +123,43 @@ public class ApplicationEx extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+                if (activity.getClass() == DetailsActivity.class)
+                    return;
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                    View content = activity.findViewById(android.R.id.content);
+                    android.widget.FrameLayout content = activity.findViewById(android.R.id.content);
+
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+                    boolean dark = prefs.getBoolean("dark_theme", false);
+
+                    // On Android 15+, setStatusBarColor is ignored
+                    // Set window background to primary color - this shows behind the status bar
+                    int primaryColor = ContextCompat.getColor(activity, R.color.colorPrimary);
+                    activity.getWindow().setBackgroundDrawable(new ColorDrawable(primaryColor));
+
+                    // Set status bar icons to light (white) since our background is dark
+                    View decor = activity.getWindow().getDecorView();
+                    WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightStatusBars(false);
+                    WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightNavigationBars(!dark);
+
                     ViewCompat.setOnApplyWindowInsetsListener(content, new OnApplyWindowInsetsListener() {
                         @NonNull
                         @Override
                         public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
                             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
 
-                            TypedValue tv = new TypedValue();
-                            activity.getTheme().resolveAttribute(R.attr.colorPrimaryDark, tv, true);
-
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
                             boolean dark = prefs.getBoolean("dark_theme", false);
 
-                            activity.getWindow().getDecorView().setBackgroundColor(tv.data);
-                            content.setBackgroundColor(dark ? Color.parseColor("#ff121212") : Color.WHITE);
+                            // Apply padding to android.R.id.content for system bars
+                            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
 
-                            int actionBarHeight = Util.dips2pixels(56, activity);
-                            View decor = activity.getWindow().getDecorView();
-                            WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightStatusBars(false);
-                            WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightNavigationBars(!dark);
-                            v.setPadding(bars.left, bars.top + actionBarHeight, bars.right, bars.bottom);
+                            // Set background on the actual layout (first child), not on the content frame
+                            // This way the padding area shows the window background (primary color)
+                            if (content.getChildCount() > 0) {
+                                View child = content.getChildAt(0);
+                                child.setBackgroundColor(dark ? Color.parseColor("#ff121212") : Color.WHITE);
+                            }
 
                             return insets;
                         }

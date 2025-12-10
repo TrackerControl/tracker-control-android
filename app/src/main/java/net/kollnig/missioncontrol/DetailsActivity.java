@@ -38,9 +38,16 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.opencsv.CSVWriter;
@@ -120,7 +127,16 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Enable edge-to-edge content
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_details);
+
+        // Status bar appearance
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        insetsController.setAppearanceLightStatusBars(false);
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        }
 
         running = true;
 
@@ -153,6 +169,28 @@ public class DetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setTitle(getString(R.string.app_info));
         toolbar.setSubtitle(appName);
+
+        // Apply window insets so content avoids status/navigation bars
+        AppBarLayout appBar = findViewById(R.id.appbar);
+        final int appBarInitialLeft = appBar.getPaddingLeft();
+        final int appBarInitialTop = appBar.getPaddingTop();
+        final int appBarInitialRight = appBar.getPaddingRight();
+        final int appBarInitialBottom = appBar.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(appBarInitialLeft, appBarInitialTop + sysBars.top, appBarInitialRight, appBarInitialBottom);
+            return insets;
+        });
+
+        final int pagerInitialLeft = viewPager.getPaddingLeft();
+        final int pagerInitialTop = viewPager.getPaddingTop();
+        final int pagerInitialRight = viewPager.getPaddingRight();
+        final int pagerInitialBottom = viewPager.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(pagerInitialLeft + sysBars.left, pagerInitialTop, pagerInitialRight + sysBars.right, pagerInitialBottom + sysBars.bottom);
+            return insets;
+        });
     }
 
     @Override
