@@ -5,11 +5,11 @@ android {
 
     defaultConfig {
         applicationId "net.kollnig.missioncontrol"
-        minSdk 22
+        minSdk 23
         targetSdk 35
         //noinspection HighAppVersionCode
-        versionCode 2024121503
-        versionName "2024.12.15"
+        versionCode 2025121001
+        versionName "2025.12.10"
 
         externalNativeBuild {
             cmake {
@@ -122,32 +122,32 @@ dependencies {
 
     // https://developer.android.com/jetpack/androidx/releases/
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
     annotationProcessor 'androidx.annotation:annotation:1.9.1'
 
     // fix errors with libraries
-    def lifecycle_version = '2.9.2'
+    def lifecycle_version = '2.10.0'
     //implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     // https://bumptech.github.io/glide/
-    def glide_version = "4.16.0"
+    def glide_version = "5.0.5"
     implementation("com.github.bumptech.glide:glide:$glide_version") {
         exclude group: "com.android.support"
     }
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
-    implementation 'com.opencsv:opencsv:5.11.2'
+    implementation 'com.opencsv:opencsv:5.12.0'
     implementation 'com.maxmind.geoip2:geoip2:4.3.1'
 
     // Crash reporting
-    implementation "ch.acra:acra-mail:5.12.0"
-    implementation "ch.acra:acra-dialog:5.12.0"
+    implementation "ch.acra:acra-mail:5.13.1"
+    implementation "ch.acra:acra-dialog:5.13.1"
     compileOnly "com.google.auto.service:auto-service-annotations:1.1.1"
     annotationProcessor "com.google.auto.service:auto-service:1.1.1"
 
