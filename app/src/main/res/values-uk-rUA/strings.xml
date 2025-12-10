@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl дозволяє користувачам відстежувати та контролювати широко розповсюджений, постійний, прихований збір даних у мобільних застосунках про поведінку користувачів (\"стеження\").</string>
+    <string name="app_copyright">Авторські права \u00A9 2019–2022 Конрад Колльніг (Human-Centred Computing, факультет інформатики, Оксфордський університет)\n\nTrackerControl базується на NetGuard, розробленому Марселем Бокхорстом (M66B).</string>
     <string name="app_android">TrackerControl потребує Android 5.1 або новішої версії</string>
+    <string name="app_xposed">Xposed викликає занадто багато збоїв, що може призвести до видалення TrackerControl з Google Play Store, тому TrackerControl не підтримується, якщо встановлено Xposed</string>
+    <string name="app_eula">Використання цього додатка здійснюється на ваш власний ризик. Жоден додаток не може забезпечити 100% захист від відстеження.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Політика конфіденційності</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Політика використання файлів cookie</a></string>
     <string name="channel_foreground">Запущені сервіси</string>
     <string name="channel_notify">Загальні сповіщення</string>
@@ -19,6 +22,7 @@
     <string name="menu_log">Журнал трафіку</string>
     <string name="menu_settings">Параметри</string>
     <string name="menu_invite">Запросити</string>
+    <string name="menu_legend">Легенда</string>
     <string name="menu_support">Підтримати проєкт</string>
     <string name="menu_log_support">Пояснення</string>
     <string name="menu_about">Про додаток</string>
@@ -41,23 +45,48 @@
     <string name="setting_install">Сповіщати про нові додатки</string>
     <string name="setting_pause">Автоматично увімкнути через %1$s хв.</string>
     <string name="setting_update">Перевірити оновлення</string>
+    <plurals name="pause">
+        <item quantity="one">Призупинити на %d хвилину</item>
+        <item quantity="few">Пауза на %d хвилин</item>
+        <item quantity="many">Пауза на %d хвилин</item>
+        <item quantity="other">Пауза на %d хвилин</item>
+    </plurals>
     <string name="setting_network_options">Налаштування мережі</string>
     <string name="setting_subnet">Маршрутизація підмережі</string>
     <string name="setting_tethering">Дозволити режим модема</string>
     <string name="setting_lan">Дозволити доступ до LAN</string>
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
+    <string name="setting_call">Вимкнути під час дзвінка</string>
+    <string name="setting_reload_onconnectivity">Перезавантажувати при кожній зміні підключення</string>
+    <string name="setting_advanced_options">Розширені параметри</string>
+    <string name="setting_system">Керування системними програмами</string>
+    <string name="setting_log_app">Пошук нових трекерів</string>
+    <string name="setting_log_logcat">Передавання журналів до ADB</string>
     <string name="setting_filter">Блокувати трекери</string>
+    <string name="setting_filter_udp">Блокувати трекери на UDP</string>
+    <string name="setting_handover">Безперебійна передача VPN при перезавантаженні</string>
+    <string name="setting_lockdown">Трафік в карантині</string>
     <string name="setting_track_usage">Відстежувати використання мережі</string>
     <string name="setting_reset_usage">Скинути результат використання мережі</string>
+    <string name="setting_show_resolved">Показати визначені доменні імена</string>
+    <string name="setting_block_domains">Увімкнути файл hosts</string>
+    <string name="setting_rcode">Відповідь блокування хостів: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">Перевірити о: %s</string>
     <string name="setting_ttl">Мінімальний DNS TTL: %s с</string>
     <string name="setting_socks5_enabled">Використовувати проксі SOCKS5</string>
     <string name="setting_socks5_addr">Адреса SOCKS5: %s</string>
     <string name="setting_socks5_port">Порт SOCKS5: %s</string>
     <string name="setting_socks5_username">Ім’я користувача SOCKS5: %s</string>
     <string name="setting_socks5_password">Пароль SOCKS5: %s</string>
+    <string name="setting_pcap_record_size">Розмір запису PCAP: %s B</string>
+    <string name="setting_pcap_file_size">Макс. розмір файлу PCAP: %s МБ</string>
+    <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
+    <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
+    <string name="setting_stats_samples">Кількість зразків: %s s</string>
+    <string name="setting_backup">Резервне копіювання</string>
     <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
     <string name="setting_hosts">Імпортувати host-файл</string>
@@ -65,12 +94,31 @@
     <string name="setting_hosts_url">URL-адреса hosts-файла</string>
     <string name="setting_hosts_download">Завантажити hosts-файл</string>
     <string name="setting_hosts_update">Оновити hosts-файл</string>
+    <string name="summary_install">Показувати сповіщення в рядку стану для щойно встановлених програм</string>
+    <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
+    <string name="summary_update">Перевіряйте наявність нових релізів на GitHub двічі на день</string>
+    <string name="summary_tethering">Залежно від версії Android, тетеринг може працювати або не працювати. Трафік через тетеринг не можна фільтрувати.</string>
+    <string name="summary_subnet">Увімкнути маршрутизацію підмережі; може увімкнути дзвінки через Wi-Fi, але також може спричинити помилки в Android і збільшити споживання заряду акумулятора</string>
+    <string name="summary_lan">Дозволити програмам підключатися до адрес локальної мережі, таких як 10.0.0.0/8, 172.16.0.0/12 та 192.168.0.0/16</string>
+    <string name="summary_ip6">Спрямовувати трафік IP версії 6 до TrackerControl, щоб його можна було вибірково дозволяти або блокувати</string>
+    <string name="summary_call">Вимкніть TrackerControl для вхідних або вихідних телефонних дзвінків. Це можна використовувати для вирішення проблем із дзвінками через IP/Wi-Fi.</string>
+    <string name="summary_system">Визначення правил для системних програм (для експертів)</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
     <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
+    <string name="summary_block_domains">УВАГА: Заблоковані хости не відображаються в інтерфейсі користувача.</string>
+    <string name="summary_rcode">Значенням за замовчуванням є 3 (NXDOMAIN), що означає «домен не існує».</string>
     <string name="summary_validate">Доменне ім’я, що використовується для перевірки інтернет-з’єднання через порт 443 (https).</string>
     <string name="summary_socks5_enabled">На проксі-сервер направлятиметься лише TCP-трафік</string>
+    <string name="summary_watchdog">Періодично перевіряйте, чи TrackerControl все ще працює (введіть нуль, щоб вимкнути цю опцію). Це може призвести до додаткового споживання заряду акумулятора.</string>
+    <string name="summary_log_logcat">Вимикає блокування. Комунікації (та ідентифіковані трекери) реєструються в журналі пристрою. Отримати за допомогою adb logcat з тегом «TC-Log».</string>
     <string name="msg_sure">Ви впевнені?</string>
+    <string name="msg_started">Шукаю трекери...</string>
+    <string name="msg_waiting">Очікування події</string>
+    <string name="msg_disabled">Використайте перемикач вище, щоб увімкнути TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl було вимкнено, ймовірно, за допомогою іншого додатка на основі VPN</string>
+    <string name="msg_installed">Проблеми з %1$s?</string>
     <string name="msg_installed_description">Дозволити застосунку звертатися до компаній</string>
+    <string name="msg_installed_tracker_libraries_found">Містить %d бібліотек трекерів</string>
     <string name="msg_installed_n">Було встановлено</string>
     <string name="msg_completed">Дію завершено</string>
     <string name="msg_vpn">TrackerControl використовує локальний VPN для фільтрації інтернет-трафіку. З огляду на це, будь ласка, дозвольте VPN-підключення в наступному діалоговому вікні. На віддалені VPN-сервери ваш трафік не надсилатиметься.</string>
@@ -82,45 +130,242 @@
     <string name="msg_datasaving">Для отримання коректних результатів слід вимкнути опції збереження даних Android для TrackerControl \n\nУ наступному діалоговому вікні увімкніть опції «Фонові дані» та «Необмежене використання даних»</string>
     <string name="msg_filter">Використання фільтрування призведе до того, що Android приписуватиме споживання даних та батареї TrackerControl; Android вважатиме, що дані та батарея споживаються не застосунками, які фільтруються, а TrackerControl\'ом</string>
     <string name="msg_filter4">На Android 4 фільтрацію необхідно увімкнути</string>
+    <string name="msg_log_disabled">Реєстрація трафіку вимкнена, використовуйте перемикач вище, щоб увімкнути реєстрацію. Реєстрація трафіку може призвести до додаткового споживання заряду акумулятора.</string>
     <string name="msg_clear_rules">Це призведе до скидання правил та умов до значень за замовчуванням</string>
     <string name="msg_reset_access">Це видалить рядки журналу спроб доступу, що не містять правил дозволу/блокування</string>
     <string name="msg_import_last">Останній імпорт: %s</string>
+    <string name="msg_downloading">Завантаження\n%1s</string>
     <string name="msg_downloaded">Host-файл завантажено</string>
+    <string name="msg_updated">Файл hosts оновлено та застосовано!</string>
+    <string name="msg_download_last">Останнє завантаження: %s</string>
+    <string name="msg_update_last">Останнє оновлення: %s</string>
+    <string name="msg_metered">Мережа має ліміт</string>
+    <string name="msg_inactive">Відсутнє активне підключення до Інтернету</string>
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
+    <string name="msg_usage">Ви можете дозволити (зелений колір) або заборонити (червоний колір) доступ до Wi-Fi або мобільного Інтернету, натиснувши на піктограми поруч із додатком</string>
+    <string name="msg_whitelist">Доступ до Інтернету дозволений за замовчуванням (режим чорного списку), це можна змінити в налаштуваннях</string>
+    <string name="msg_push">Вхідні (push) повідомлення в основному обробляються системним компонентом Play services, якому за замовчуванням дозволено доступ до Інтернету</string>
+    <string name="msg_system">Керування всіма (системними) програмами можна ввімкнути в налаштуваннях</string>
+    <string name="msg_issue">Будь ласка, опишіть проблему та вкажіть час її виникнення:</string>
+    <string name="msg_vpn_cancelled">VPN-з’єднання скасовано\nВи налаштували інший VPN як постійно активний VPN?</string>
+    <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
+    <string name="msg_always_on">Інша VPN налаштована як VPN з постійним підключенням</string>
     <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
+    <string name="msg_private_dns">Вимкніть «Приватний DNS» в налаштуваннях мережі Android, щоб використовувати TrackerControl у режимі фільтрування</string>
+    <string name="msg_start_forward">Розпочати переадресацію з порту %1$s %2$d на порт %3$s:%4$d з \'%5$s\'?</string>
+    <string name="msg_stop_forward">Зупинити переадресацію порту %2$d на %1$s?</string>
+    <string name="msg_log_logcat">Попередження: Блокування вимкнено через ведення журналу ADB.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
     </string-array>
+    <string name="menu_add">Додати</string>
+    <string name="menu_delete">Видалити</string>
+    <string name="setting_forwarding">Переадресація портів</string>
     <string name="title_protocol">Протокол</string>
+    <string name="title_dport">Порт джерела</string>
+    <string name="title_raddr">Адреса призначення</string>
+    <string name="title_rport">Порт призначення</string>
+    <string name="title_ruid">Додаток призначення</string>
+    <string name="title_external">Для зовнішнього сервера виберіть «ніхто»</string>
+    <string name="title_lockdown_enabled">Трафік блокується</string>
+    <string name="title_unmetered_allowed">Дозволено необмежений трафік</string>
+    <string name="title_unmetered_blocked">Необмежений трафік заблоковано</string>
+    <string name="title_unmetered_disabled">Нелімітовані правила не застосовуються</string>
+    <string name="title_metered_allowed">Дозволено вимірювання трафіку</string>
+    <string name="title_metered_blocked">Обмежений трафік заблоковано</string>
+    <string name="title_metered_disabled">Правила вимірювання не застосовуються</string>
+    <string name="title_host_allowed">Адреса дозволена</string>
+    <string name="title_host_blocked">Адреса заблокована</string>
+    <string name="title_interactive_allowed">Дозволити, коли екран увімкнено</string>
+    <string name="title_roaming_blocked">Блокувати під час роумінгу</string>
+    <string name="title_metered">За замовчуванням Wi-Fi з\'єднання вважається безлімітним, а мобільне з\'єднання — лімітованим</string>
+    <string name="title_internet">немає доступу до Інтернету</string>
+    <string name="title_disabled">відключено</string>
+    <string name="title_messaging">Вхідні повідомлення надходять до сервісів Google Play, а не до цієї програми, тому їх не можна заблокувати, заблокувавши цю програму</string>
+    <string name="title_download">Завантаження виконуються менеджером завантажень, а не цим додатком, тому їх неможливо заблокувати, заблокувавши цей додаток</string>
+    <string name="title_conditions">Умови</string>
+    <string name="title_screen_wifi">Дозволити Wi-Fi, коли екран увімкнено</string>
+    <string name="title_screen_other">Дозволити мобільний зв\'язок, коли екран увімкнено</string>
+    <string name="title_roaming">Блокування під час роумінгу</string>
+    <string name="title_lockdown">Дозволити в режимі блокування</string>
+    <string name="title_related">Фільтр, пов\'язаний з</string>
+    <string name="title_access">Спроби доступу</string>
+    <string name="title_precedence">Правила доступу мають пріоритет над іншими правилами</string>
+    <string name="title_options">Опції</string>
+    <string name="title_notify">Повідомляти про спроби доступу до Інтернету</string>
+    <string name="title_logging_disabled">Ведення журналу або фільтрація не ввімкнені</string>
+    <string name="title_logging_enabled">Ведення журналу та фільтрація ввімкнені</string>
+    <string name="title_logging_configure">Налаштувати</string>
+    <string name="title_enable_logging">Увімкнути реєстрацію лише заблокованих адрес</string>
+    <string name="title_enable_filtering">Увімкнути фільтрацію, щоб також реєструвати дозволені адреси</string>
+    <string name="title_enable_notify">Увімкнути сповіщення про доступ для нових зареєстрованих адрес</string>
+    <string name="title_enable_help0">Ці налаштування є глобальними налаштуваннями, які застосовуються до всіх програм</string>
+    <string name="title_enable_help1">Фільтрування також необхідне для дозволу або блокування окремих адрес</string>
+    <string name="title_enable_help2">Увімкнення ведення журналу (менше) або фільтрації (більше) може збільшити використання батареї та вплинути на швидкість мережі</string>
+    <string name="title_rate">Оцінити</string>
     <string name="title_allow">Дозволити</string>
     <string name="title_block">Заблокувати</string>
     <string name="title_allow_wifi">Дозволити Wi-Fi</string>
     <string name="title_block_wifi">Блокувати Wi-Fi</string>
     <string name="title_allow_other">Дозволити мобільні дані</string>
     <string name="title_block_other">Блокувати мобільні дані</string>
+    <string name="title_nobody">ніхто</string>
+    <string name="title_dontask">Не питайте більше</string>
+    <string name="title_log_whois">Whois %1$s</string>
+    <string name="title_log_port">Порт %1$d</string>
+    <string name="title_log_copy">Копіювати</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">Вимкнути доступ до Інтернету для цієї програми</string>
+    <string name="tracked_app_name">Назва програми</string>
+    <plurals name="n_companies_found_week">
+        <item quantity="one">звернувся до компанії %d минулого тижня</item>
+        <item quantity="few">звернувся до %d компаній минулого тижня</item>
+        <item quantity="many">звернувся до %d компаній минулого тижня</item>
+        <item quantity="other">звернувся до %d компаній минулого тижня</item>
+    </plurals>
+    <plurals name="n_companies_found">
+        <item quantity="one">звернувся до %d компанії за весь час</item>
+        <item quantity="few">звернувся до %d компаній за весь час</item>
+        <item quantity="many">звернувся до %d компаній за весь час</item>
+        <item quantity="other">звернувся до %d компаній за весь час</item>
+    </plurals>
+    <string name="confirm_ipinfo_title">Отримати інформацію про організацію?</string>
+    <string name="confirm_ipinfo">Це призведе до зв\'язку із зовнішньою службою ipinfo.io та передачі їй даних про IP-адреси, з якими було встановлено зв\'язок.</string>
+    <string name="external_servers">Отримувати електронну пошту розробника автоматично?</string>
+    <string name="confirm_google_info">Ця програма може автоматично отримати для вас електронну адресу розробника програми з Google Play Store.</string>
+    <string name="ok">Добре</string>
     <string name="yes">Так</string>
     <string name="no">Ні</string>
+    <string name="menu_csv">Експортувати як CSV</string>
+    <string name="exporting">Експорт..</string>
     <string name="share_csv">Поширити</string>
+    <string name="export_failed">Експорт не вдався</string>
+    <string name="exported">Експортовано до сховища!</string>
     <!-- App Details -->
+    <string name="title_activity_detail">Деталі</string>
     <string name="tab_trackers">Трекери</string>
     <string name="tab_countries">Країни</string>
+    <string name="tab_actions">Мої дані</string>
+    <string name="tracker_name">Назва трекера</string>
     <string name="internet_access">Доступ до Інтернету</string>
+    <string name="internet_access_explanation">Повинно бути увімкнено для доступу до Інтернету.\n\nПорада: Ви також можете натиснути на піктограму програми на головному екрані.</string>
+    <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
+    <string name="block_tracking">Блокувати трекери</string>
+    <string name="block_tracking_description">Багато додатків надсилають дані третім сторонам, так званим трекерам. TrackerControl дозволяє вибірково блокувати ці мережеві передачі. Однак використовуйте цю функцію з розумом, оскільки розробники додатків покладаються на ці послуги, зокрема на рекламу.</string>
+    <string name="personalised_ads">Обмежити персоналізацію</string>
+    <string name="personalised_ads_description">Android пропонує обмежити доступ додатків до рекламного ідентифікатора Google вашого пристрою. Однак додатки можуть ігнорувати це налаштування і продовжувати використовувати цей ідентифікатор. Вони також можуть продовжувати збирати цей ідентифікатор для аналітичних цілей відповідно до політики Google. Вам потрібно довіряти Google і компанії, що збирає дані.</string>
+    <string name="data_managment">Управління даними</string>
+    <string name="data_management_description">Загальний регламент ЄС про захист даних (GDPR) дозволяє користувачам з ЄС керувати будь-якими даними, що стосуються їх. Ця програма надає шаблони електронних листів для зв\'язку з розробником. Розробник повинен відповісти протягом одного місяця.</string>
+    <string name="contacts">Контакт </string>
+    <string name="contacts_description">Якщо ви вважаєте, що програма порушує принципи захисту даних, ви можете звернутися безпосередньо до відповідальних органів.</string>
+    <string name="play_services_required">Це налаштування служб Google Play, які не були знайдені на вашому пристрої.</string>
+    <string name="no_mail_service">Будь ласка, встановіть поштовий клієнт.</string>
+    <string name="blocking_settings">Вибрати трекери</string>
+    <string name="ad_settings">Змінити зараз</string>
+    <string name="request_data">Запит даних</string>
+    <string name="request_deletion">Запит на видалення</string>
+    <string name="contact_developer">Розробник</string>
     <string name="contact_playstore">Google</string>
+    <string name="contact_officials">Чиновники ЄС</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="subject_request_data">Запит на доступ до даних відповідно до GDPR</string>
+    <string name="body_request_data"><![CDATA[До кого це може стосуватися:\n
+\n
+\n
+Я прошу вас, як контролера даних додатка для Android %s (ID: %s), підтвердити, чи обробляє він будь-які мої персональні дані.\n
+Якщо так, будь ласка, надайте мені всю необхідну інформацію, передбачену статтею 15 Загального регламенту про захист даних ЄС (GDPR), включаючи:\n
+\n
+• копію моїх персональних даних;\n
+• цілі обробки;\n
+• категорії відповідних персональних даних;\n
+• одержувачів, яким ви розкриваєте мої персональні дані, та заходи безпеки, які ви забезпечуєте;\n
+• строк зберігання моїх персональних даних або критерії, що використовуються для визначення цього строку;\n
+• інформацію про джерело моїх персональних даних; та\n
+• наявність автоматизованого прийняття рішень (включно з профілюванням), і якщо так:\n
+    - логіка, що використовується в процесі прийняття рішень;\n
+    - значення та передбачувані наслідки для мене;\n
+    - заходи, які ви вжили для запобігання помилкам, упередженості та дискримінації; та\n
+- пояснення, як я можу висловити свою точку зору та оскаржити рішення.\n
+\n
+Цей запит стосується будь-якої обробки моїх персональних даних вами, включаючи будь-яких обробників, які обробляють персональні дані від вашого імені.\n
+\n
+Будь ласка, надайте свою відповідь безпечним способом електронною поштою. Я сподіваюся отримати відповідь протягом одного місяця з моменту отримання мого запиту.\n
+\n
+З повагою,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[До відома зацікавлених осіб:\n
+\n
+\n
+Я користуюся своїм правом на видалення даних, передбаченим статтею 17 Загального регламенту про захист даних ЄС (GDPR). Я прошу вас, як контролера даних мобільного додатку для Android %s (ID: %s), без зайвої затримки видалити наступні особисті дані, які він обробляє про мене:\n
+• Всі дані.\n
+\n
+Причиною мого запиту на видалення є те, що я відкликаю або відкликав свою згоду на обробку персональних даних. Цей запит стосується будь-якої обробки моїх персональних даних вами, включаючи будь-яких обробників, які обробляють персональні дані від вашого імені.\n
+\n
+Будь ласка, надайте свою відповідь безпечним способом електронною поштою. Я сподіваюся отримати відповідь протягом одного місяця з моменту отримання мого запиту.\n
+\n
+З повагою,\n\n]]></string>
+    <string name="crash_dialog_text">Вибачте. TrackerControl щойно завис. Чи не могли б ви надіслати нам електронного листа з детальною інформацією?</string>
+    <string name="crash_dialog_comment">Якісь коментарі?</string>
+    <string name="instructions_monitoring_private_dns">Увімкніть перемикач і взаємодійте з деякими програмами. Приватний DNS має бути вимкнено.</string>
+    <string name="instructions_monitoring">Переведіть перемикач і взаємодійте з деякими програмами.</string>
     <string name="device_not_supported_title">Пристрій не підтримується</string>
+    <string name="device_not_supported_msg">Операційна система вашого пристрою не дозволяє здійснювати моніторинг та фільтрування мережевих комунікацій. Це необхідно для роботи TrackerControl.</string>
+    <string name="launch_app">Запуск &amp; Пошук трекерів</string>
+    <string name="countries">Країни призначення</string>
+    <string name="countries_explanation">Дізнайтеся, куди ваш телефон надсилає дані відстеження.\n\nІнформація базується на DNS-запитах та IP-адресах і може бути неточною.</string>
+    <string name="countries_loading_failed">Упс.. Не вдалося завантажити карту країни. Будь ласка, повідомте на адресу tc@kollnig.net, як це сталося.</string>
+    <string name="tracker_advertising">Реклама</string>
+    <string name="tracker_analytics">Аналітика</string>
+    <string name="tracker_content">Необхідний</string>
     <string name="tracker_cryptomining">Криптомайнинг</string>
     <string name="tracker_fingerprinting">Цифрові відбитки</string>
     <string name="tracker_social">Соціальні мережі</string>
+    <string name="tracker_email">Електронна пошта</string>
     <string name="tracker_uncategorised">Без категорії</string>
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
+    <string name="strict_blocking_explanation">Не експертам рекомендується вимкнути цю опцію, щоб зменшити кількість поломок програми. Однак це дозволяє ділитися деякими важливими даними з компаніями.</string>
+    <string name="exclude_vpn_explanation">Повинно бути увімкнено для виявлення або блокування трекерів.\n\nПорада: вимкніть, якщо виникнуть проблеми.</string>
+    <string name="uninstall">Видалити</string>
+    <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
+    <string name="no_trackers_found_message_disabled">Увімкніть перемикач на головному екрані, а потім запустіть додаток, щоб знайти трекери</string>
+    <string name="no_trackers_found_message">Запустіть додаток, щоб знайти трекери</string>
     <string name="no_trackers_found_action">Запустити</string>
+    <string name="no_internet_message">"Цей додаток не має доступу до Інтернету. Він все ще може відстежувати вас, обмінюючись даними з іншими додатками."</string>
+    <string name="no_internet">Немає доступу до Інтернету</string>
+    <string name="bypass_vpn_error">"Неможливо заблокувати Інтернет. Додаток виключено з TrackerControl."</string>
+    <string name="back">Назад</string>
+    <string name="forever_free">Назавжди безкоштовно</string>
+    <string name="your_privacy">Ваша конфіденційність</string>
+    <string name="tracker_hostlist">Користувацькі хости</string>
+    <string name="unblocked">Розблоковано</string>
+    <string name="enable">Увімкнути</string>
+    <string name="internet_blocked">Доступ до Інтернету заблоковано</string>
+    <string name="internet_unblocked">Доступ до Інтернету розблоковано</string>
+    <string name="category_blocked">Трекери в категорії заблоковані</string>
+    <string name="category_unblocked">Трекери в категорії дозволені</string>
+    <string name="category_unblocked_warning">Перша заблокована категорія!</string>
+    <string name="switch_strict_blocking">Блокувати обмін важливими даними</string>
+    <string name="tracking_detection_failed">Не вдалося виявити бібліотеку трекера.</string>
+    <string name="tracking_detection_failed_ram">Не вдалося виявити бібліотеку трекера. Недостатньо оперативної пам\'яті.</string>
+    <string name="tracking_detection_failed_report">Не вдалося виявити бібліотеку трекера. Будь ласка, повідомте про цю проблему розробнику.</string>
+    <string name="detected_trackers">Виявлені бібліотеки трекерів: %s</string>
+    <string name="none">Нічого</string>
+    <string name="trackers_static">Бібліотеки трекерів</string>
+    <string name="trackers_static_explanation">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.\n\nВідстеження, виявлене в мережевому трафіку, можна заблокувати за допомогою TrackerControl.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl виявляє відстеження в коді («бібліотеках») та мережевому трафіку додатків.</string>
     <string name="blocked">ЗАБЛОКОВАНО</string>
     <string name="allowed">ДОЗВОЛЕНО</string>
+    <string name="setting_domain_based_blocked">Блокування на основі домену</string>
+    <string name="summary_domain_based_blocking">Дозволяє більш детальне блокування. Все ще в розробці.</string>
+    <string name="untap_unblock">Порада: Ви можете розблокувати окремі записи, натиснувши на них.</string>
+    <string name="uncertain_entry">Записи, позначені символом «*», можуть бути неточними через обмеження системи Android. Зазвичай це означає, що одна й та сама компанія використовує одну й ту саму IP-адресу під різними доменами, але також може означати, що за однією IP-адресою стоять різні компанії (наприклад, якщо вони використовують мережу доставки контенту).</string>
     <string name="browsers_not_supported">Браузери не підтримуються ⚠️</string>
+    <string name="browsers_not_supported_explanation">Схоже, це браузерний додаток.\n\nTrackerControl не підтримує блокування трекерів у браузерах. Натомість використовуйте браузер із вбудованою функцією захисту від відстеження, щоб краще блокувати відстеження.\n\nНаприклад: Mozilla Fennec</string>
+    <string name="static_analysis">Виявлення трекерів у коді програми</string>
+    <string name="failed_loading_cached_analysis">Не вдалося завантажити кешовані результати трекера. Повідомте про це розробника за адресою hello@trackercontrol.org</string>
+    <string name="msg_notifications">Натисніть, щоб надати дозволи на сповіщення (для повідомлень про помилки тощо)</string>
 </resources>

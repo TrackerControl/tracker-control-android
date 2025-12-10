@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl 讓使用者監控與限制行動App中的個資收集行為(追蹤)。</string>
+    <string name="app_copyright">版權所有 \u00A9 2019–2022 Konrad Kollnig（牛津大學電腦科學系，人本計算學）\n\nTrackerControl 基於 Marcel Bokhorst (M66B) 開發的 NetGuard 建立。</string>
     <string name="app_android">TrackerControl 需要 Android 5.1 或更高版本</string>
     <string name="app_xposed">Xposed 會導致太多當機，可能導致 TrackerControl 從 Google Play 商店被移除，因此若已安裝 Xposed 時TrackerControl則不支援</string>
     <string name="app_eula">您必須自行承擔使用此應用程式的風險。任何應用程式都無法提供 100% 的防追蹤保護。</string>
-    <string name="channel_foreground">正在運行的服務</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">隱私政策</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie 政策</a></string>
+    <string name="channel_foreground">正在執行的服務</string>
     <string name="channel_notify">一般通知</string>
-    <string name="menu_search">搜尋 App</string>
-    <string name="menu_filter">以App過濾</string>
-    <string name="menu_app_user">顯示使用者App</string>
-    <string name="menu_app_system">顯示系統 App</string>
-    <string name="menu_app_nointernet">顯示沒有網路連線的App</string>
-    <string name="menu_sort">排序 Apps</string>
+    <string name="menu_search">搜尋應用程式</string>
+    <string name="menu_filter">以應用程式過濾</string>
+    <string name="menu_app_user">顯示使用者應用程式</string>
+    <string name="menu_app_system">顯示系統應用程式</string>
+    <string name="menu_app_nointernet">顯示不使用網際網路的應用程式</string>
+    <string name="menu_sort">排序應用程式</string>
     <string name="menu_sort_name">依名稱排序</string>
-    <string name="menu_sort_uid">依UID排序</string>
+    <string name="menu_sort_uid">依 UID 排序</string>
     <string name="menu_sort_companies_week">按公司排序 (周)</string>
     <string name="menu_sort_companies">按公司排序</string>
     <string name="menu_settings">設定</string>
     <string name="menu_invite">邀請</string>
-    <string name="menu_support">支持這款App</string>
+    <string name="menu_support">支持這款應用程式</string>
     <string name="menu_log_support">說明</string>
     <string name="menu_about">相關資訊</string>
-    <string name="menu_apps">其他App</string>
+    <string name="menu_apps">其他應用程式</string>
     <string name="menu_protocol_other">其他</string>
     <string name="menu_traffic_allowed">已允許</string>
     <string name="menu_traffic_blocked">已封鎖</string>
@@ -30,15 +32,174 @@
     <string name="menu_resolve">顯示名稱</string>
     <string name="menu_organization">顯示組織</string>
     <string name="menu_pcap_enabled">PCAP 已啟用</string>
+    <string name="menu_export">匯出</string>
     <string name="menu_reset">重置</string>
+    <string name="menu_cleanup">清理</string>
     <string name="setting_options">選項</string>
-    <string name="setting_dark">夜間模式</string>
+    <string name="setting_dark">深色主題</string>
     <string name="setting_install">有新安裝動作時通知</string>
     <string name="setting_pause">在 %1$s 分鐘後自動啟用</string>
     <string name="setting_update">檢查是否有更新</string>
-    <string name="setting_network_options">網絡設置</string>
+    <plurals name="pause">
+        <item quantity="other">暫停 %d 分鐘</item>
+    </plurals>
+    <string name="setting_network_options">網路選項</string>
+    <string name="setting_subnet">子網路路由</string>
+    <string name="setting_tethering">允許網路共用</string>
     <string name="setting_lan">允許區域網路存取</string>
+    <string name="setting_ip6">啟用 IPv6 流量</string>
+    <string name="setting_call">在通話期間停用</string>
+    <string name="setting_reload_onconnectivity">每當連線改變時均重新載入</string>
+    <string name="setting_advanced_options">進階選項</string>
+    <string name="setting_system">管理系統應用程式</string>
+    <string name="setting_log_app">搜尋新的追蹤器</string>
+    <string name="setting_log_logcat">將日誌記錄傳輸至 ADB</string>
+    <string name="setting_filter">阻擋追蹤器</string>
+    <string name="setting_filter_udp">在 UDP 上阻擋追蹤器</string>
+    <string name="setting_handover">重新載入時無縫 VPN 交接</string>
+    <string name="setting_lockdown">全面封鎖網路流量</string>
+    <string name="setting_track_usage">追蹤網路用量</string>
+    <string name="setting_reset_usage">重置網路用量</string>
+    <string name="setting_show_resolved">顯示已解析的網域名稱</string>
+    <string name="setting_block_domains">啟用 hosts 檔案</string>
+    <string name="setting_rcode">Hosts 阻擋回應：%s</string>
+    <string name="setting_vpn4">VPN IPv4: %s</string>
+    <string name="setting_vpn6">VPN IPv6: %s</string>
+    <string name="setting_dns">VPN DNS: %s</string>
+    <string name="setting_validate">驗證於：%s</string>
+    <string name="setting_ttl">DNS TTL 最小值：%s s</string>
+    <string name="setting_socks5_enabled">使用 SOCKS5 代理</string>
+    <string name="setting_socks5_addr">SOCKS5 網址：%s</string>
+    <string name="setting_socks5_port">SOCKS5 連接埠：%s</string>
+    <string name="setting_socks5_username">SOCKS5 帳號：%s</string>
+    <string name="setting_socks5_password">SOCKS5 密碼：%s</string>
+    <string name="setting_pcap_record_size">PCAP 記錄大小：%s B</string>
+    <string name="setting_pcap_file_size">PCAP 最大檔案大小：%s MB</string>
+    <string name="setting_watchdog">監控：每 %s 分鐘</string>
+    <string name="setting_stats_frequency">取樣間隔：%s ms</string>
+    <string name="setting_stats_samples">取樣數：%s s</string>
+    <string name="setting_backup">備份</string>
+    <string name="setting_export">匯出設定（不適用裝置重置）</string>
+    <string name="setting_import">匯入設定</string>
+    <string name="setting_hosts">匯入 hosts 檔案</string>
+    <string name="setting_hosts_append">匯入 hosts 檔案（附加）</string>
+    <string name="setting_hosts_url">Hosts 檔案 URL</string>
+    <string name="setting_hosts_download">下載 hosts 檔案</string>
+    <string name="setting_hosts_update">更新 hosts 檔案</string>
+    <string name="summary_install">新安裝的 apps 顯示狀態列通知</string>
+    <string name="summary_pause">暫停通知後，將於指定分鐘數後自動重新啟用 TrackerControl（輸入 0 即可停用此選項）。</string>
+    <string name="summary_update">每日檢查兩次 GitHub 上的新版本</string>
+    <string name="summary_tethering">依 Android 版本而定，網路共用 (tethering) 或許可用，或許不可用。共用流量將無法過濾。</string>
+    <string name="summary_subnet">啟用子網路路由；也許能啟用 Wi-Fi 通話，但也有可能會觸發 Android 當中的臭蟲，導致耗電量增加</string>
+    <string name="summary_lan">允許應用程式連接到區域網路位址，例如 10.0.0.0/8、172.16.0.0/12 以及 192.168.0.0/16</string>
+    <string name="summary_ip6">將 IPv6 流量路由至 TrackerControl，以便選擇性地允許或封鎖該流量</string>
+    <string name="summary_call">在接聽或撥打電話時停用 TrackerControl。這可以解決 IP/Wi-Fi 網路電話的通話問題。</string>
+    <string name="msg_vpn">TrackerControl 使用本地端 VPN 來過濾網際網路流量。
+因此，請在下一個對話方塊允許 VPN 連線。
+您的網際網路流量不會被送到遠端的 VPN 伺服器。</string>
+    <string name="msg_downloaded">已下載 hosts 檔案</string>
+    <string name="msg_updated">已上傳和套用 hosts 檔案！</string>
+    <string name="msg_inactive">無網際網路連線</string>
+    <string name="msg_update">有更新版本，請點選下載</string>
+    <string name="msg_usage">您可以點選 app 旁邊的圖示以允許 (綠色) 或禁止 (紅色) app 存取 Wi-Fi 或行動網路</string>
+    <string name="msg_push">收到的 (推送) 訊息通常由系統元件 Play 服務所處理，那預設允許存取網際網路</string>
+    <string name="msg_system">您可在進階選項中啟用所有 (包含系統) apps 之管理</string>
+    <string name="msg_issue">請描述問題並寫明問題發生的時間：</string>
+    <string name="msg_vpn_cancelled">VPN 連線已取消\n您是否把另一個 VPN 配置為「永遠連線的 VPN」？</string>
+    <string name="msg_unavailable">此功能無法在這個版本的 Android 上執行</string>
+    <string name="msg_always_on">另一個 VPN 連線被設定成 「永遠連線的 VPN」</string>
+    <string name="msg_private_dns">在 Android 網路設定中關閉「私人 DNS」功能，即可啟用 TrackerControl 的過濾模式</string>
+    <string name="msg_log_logcat">警告：因 ADB 日誌記錄功能，阻擋機制已停用。</string>
+    <string-array name="protocolNames">
+        <item>UDP</item>
+        <item>TCP</item>
+    </string-array>
+    <string name="menu_add">新增</string>
+    <string name="title_internet">無法存取網際網路</string>
+    <string name="title_screen_wifi">在螢幕開啟時啟用 Wi-fi</string>
+    <string name="title_notify">通知網際網路存取嘗試</string>
     <!-- App Overview -->
+    <string name="tracked_app_icon">關閉這個 app 的網際網路連線</string>
+    <string name="menu_csv">匯出為 CSV</string>
+    <string name="export_failed">匯出失敗</string>
+    <string name="exported">已匯出到儲存空間！</string>
     <!-- App Details -->
+    <string name="title_activity_detail">詳細資訊</string>
+    <string name="tab_trackers">追蹤器</string>
+    <string name="tab_countries">國家</string>
+    <string name="tab_actions">我的資料</string>
+    <string name="tracker_name">追蹤器名稱</string>
+    <string name="internet_access">網際網路連線</string>
+    <string name="internet_access_explanation">必須打開才能連線網路\n\n提示：您也可以在主畫面輕按一下 app 圖案。</string>
+    <string name="app_info">管理應用程式</string>
     <!-- Actions -->
+    <string name="block_tracking">阻擋追蹤器</string>
+    <string name="block_tracking_description">許多應用程式會將資料傳送給第三方，即所謂的追蹤器。TrackerControl 允許使用者選擇性地封鎖這些網路傳輸。然而，請謹慎使用此功能，因為應用程式開發者仰賴這些服務運作，尤其是廣告服務。</string>
+    <string name="personalised_ads">限制個人化</string>
+    <string name="personalised_ads_description">Android 系統允許限制應用程式存取裝置的 Google 廣告識別碼。然而，應用程式可能無視此設定，仍會使用該識別碼。根據 Google 政策，應用程式亦可繼續為分析目的收集此識別碼。您需要信任 Google 及資料收集公司。</string>
+    <string name="data_managment">管理資料</string>
+    <string name="data_management_description">歐盟《一般資料保護規範》（GDPR）允許歐盟使用者管理任何與其相關的資料。本應用程式提供電子郵件範本供使用者聯繫開發者，開發者須於一個月內回覆。</string>
+    <string name="contacts">聯絡 </string>
+    <string name="contacts_description">若您認為某項應用程式違反了資料保護原則，可直接聯繫相關負責單位。</string>
+    <string name="play_services_required">這是 Google Play 服務的設定，並不會出現在您的裝置上。</string>
+    <string name="no_mail_service">請安裝電子郵件用戶端。</string>
+    <string name="blocking_settings">選擇追蹤器</string>
+    <string name="ad_settings">立即更改</string>
+    <string name="request_data">請求資料</string>
+    <string name="request_deletion">請求刪除</string>
+    <string name="contact_developer">開發人員</string>
+    <string name="contact_playstore">Google</string>
+    <string name="contact_officials">歐盟官員</string>
+    <string name="google_dpo_mail">data-protection-office@google.com</string>
+    <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
+    <string name="subject_request_data">GDPR 當事人存取請求</string>
+    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
+\n
+\n
+I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
+If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
+\n
+• a copy of my personal data;\n
+• the purposes of the processing;\n
+• the categories of personal data concerned;\n
+• the recipients you disclose my personal data to and the safeguards you provide;\n
+• the retention period for storing my personal data or the criteria used for determining this period;\n
+• information about the source of my personal data; and\n
+• the existence of automated decision-making (including profiling), and if so:\n
+    - the logic involved in the decision-making process;\n
+    - the significance and the envisaged consequences for me;\n
+    - the steps you have taken to prevent errors, bias and discrimination; and\n
+    - explain how I can express my point of view and challenge a decision.\n
+\n
+This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+\n
+Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+\n
+Sincerely,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
+\n
+\n
+I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
+• All data.\n
+\n
+The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
+\n
+Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
+\n
+Sincerely,\n\n]]></string>
+    <string name="instructions_monitoring_private_dns">撥動開關與一些 app 互動。私人 DNS 必須關閉。</string>
+    <string name="device_not_supported_title">不支援裝置</string>
+    <string name="device_not_supported_msg">您的裝置作業系統不允許監控及過濾網路通訊。此功能為 TrackerControl 所需。</string>
+    <string name="countries">目的地國家</string>
+    <string name="countries_explanation">查看您的手機資料會被傳送到哪裡。\n\n地理資訊基於 DNS lookups 和 IP 資料，有可能不準確。</string>
+    <string name="countries_loading_failed">糟糕.. 國家地圖載入失敗。請告訴 tc@kollnig.net 怎麼會這樣。</string>
+    <string name="tracker_content">基本</string>
+    <string name="exclude_vpn_explanation">必須打開才能偵測或阻擋追蹤器\n\n提示：如果遇到問題時可以試著關閉。</string>
+    <string name="uninstall">解除安裝</string>
+    <string name="no_internet">沒有網際網路連線</string>
+    <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>
+    <string name="internet_blocked">已封鎖網路連線</string>
+    <string name="internet_unblocked">已解除封鎖網路連線</string>
+    <string name="browsers_not_supported">不支援瀏覽器 ⚠️</string>
+    <string name="browsers_not_supported_explanation">這似乎是一款瀏覽器應用程式。\n\n瀏覽器中的追蹤器封鎖功能不受 TrackerControl 支援。請改用具備整合式反追蹤功能的瀏覽器，以獲得更完善的追蹤封鎖效果。\n\n例如：Mozilla Fennec</string>
 </resources>

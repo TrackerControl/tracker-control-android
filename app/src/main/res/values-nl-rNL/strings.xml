@@ -5,7 +5,7 @@
     <string name="app_android">TrackerControl vereist Android 5.1 of nieuwer</string>
     <string name="app_xposed">Xposed veroorzaakt te veel crashes, wat ertoe kan leiden dat TrackerControl uit de Google Play Store wordt verwijderd, daarom wordt TrackerControl niet ondersteund zolang Xposed is geïnstalleerd.</string>
     <string name="app_eula">Het gebruik van deze app is op eigen risico. Geen enkele app kan 100% bescherming bieden tegen tracking.</string>
-    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privacybeleid</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookiebeleid</a></string>
+    <string name="app_privacy">&lt;a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"&gt;&lt;a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"&gt;Privacybeleid&lt;/a&gt; &lt;a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy"&gt;Cookiebeleid&lt;/a&gt;</string>
     <string name="channel_foreground">Actieve services</string>
     <string name="channel_notify">Algemene meldingen</string>
     <string name="channel_access">Toegangsmeldingen</string>
