@@ -304,8 +304,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 if (!buttonView.isPressed()) return; // to fix errors
                 apply.edit().putBoolean(mAppId, isChecked).apply();
 
-                Rule.clearCache(mContext);
-                ServiceSinkhole.reload("app blocking changed", mContext, false);
+                // Move expensive operations off the main thread to prevent UI freezing
+                // Rule.clearCache() can block waiting for a lock held by Rule.getRules()
+                AsyncTask.execute(() -> {
+                    Rule.clearCache(mContext);
+                    ServiceSinkhole.reload("app blocking changed", mContext, false);
+                });
 
                 notifyDataSetChanged();
             });
