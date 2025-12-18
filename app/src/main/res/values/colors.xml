@@ -4,6 +4,7 @@
 
     <color name="colorPrimary">#B71C1C</color>
     <color name="colorPrimaryDark">#7f0000</color>
+    <color name="colorPrimaryLight">#FFCDD2</color>
     <color name="colorAccent">#004D40</color>
 
     <color name="colorRedPrimary">@color/colorPrimary</color> <!-- or: F44336 -->

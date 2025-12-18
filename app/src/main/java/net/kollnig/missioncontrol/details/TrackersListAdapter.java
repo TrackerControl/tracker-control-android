@@ -48,7 +48,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.AnalysisException;
-import net.kollnig.missioncontrol.analysis.TrackerLibraryAnalyser;
+import net.kollnig.missioncontrol.analysis.AnalysisProgressCallback;
+import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -114,8 +115,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     && !Util.isPlayStoreInstall())
                 view.findViewById(R.id.cardNotSupported).setVisibility(View.VISIBLE);
 
-            // Find trackers in app code
-            staticTrackerAnalysis(view);
+            // Setup button for on-demand tracker analysis
+            setupTrackerAnalysisButton(view);
 
             return new VHHeader(view);
         }
@@ -124,28 +125,93 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
+     * Setup button for on-demand tracker library analysis
+     *
+     * @param view The tracker view to add the button handler to
+     */
+    private void setupTrackerAnalysisButton(View view) {
+        View btnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
+        TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+        View layoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
+        TextView tvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
+        ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
+
+        TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
+        
+        // Check if analysis is currently in progress
+        if (manager.isAnalysisInProgress(mAppId)) {
+            btnAnalyze.setEnabled(false);
+            layoutProgress.setVisibility(View.VISIBLE);
+            tvAnalysisProgress.setText(R.string.analyzing_classes);
+            pbTrackerDetection.setProgress(0);
+            tvDetectedTrackers.setVisibility(View.GONE);
+        } else if (mContext instanceof Activity) {
+            // Show cached results if available
+            Activity activity = (Activity) mContext;
+            String cachedResults = manager.getCachedResult(mAppId);
+            
+            if (cachedResults != null) {
+                String res = String.format(activity.getString(R.string.detected_trackers), cachedResults);
+                tvDetectedTrackers.setText(res);
+                tvDetectedTrackers.setVisibility(View.VISIBLE);
+            }
+        }
+
+        btnAnalyze.setOnClickListener(v -> {
+            staticTrackerAnalysis(view);
+        });
+    }
+
+    /**
      * Do static analysis of tracker libraries in app code, and display results
      *
      * @param view The tracker view to render the results of the analysis in
      */
     private void staticTrackerAnalysis(View view) {
+        TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
+        
+        // Try to mark as starting - returns false if already running
+        if (!manager.markAnalysisStarting(mAppId)) {
+            Toast.makeText(mContext, R.string.analysis_already_running, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        View btnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
         TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+        View layoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
+        TextView tvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
         ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
-        pbTrackerDetection.setVisibility(View.VISIBLE);
+        
+        btnAnalyze.setEnabled(false);
+        pbTrackerDetection.setProgress(0);
+        layoutProgress.setVisibility(View.VISIBLE);
+        tvAnalysisProgress.setText(R.string.analyzing_classes);
+        tvDetectedTrackers.setVisibility(View.GONE);
 
         if (mContext instanceof Activity) {
             Activity activity = (Activity) mContext;
+
+            // Create progress callback that updates UI
+            AnalysisProgressCallback progressCallback = (current, total) -> {
+                int percent = (current * 100) / total;
+                activity.runOnUiThread(() -> {
+                    pbTrackerDetection.setProgress(percent);
+                    tvAnalysisProgress.setText(String.format(
+                            activity.getString(R.string.analyzing_classes_progress), percent));
+                });
+            };
 
             AsyncTask.execute(() -> {
                 String trackerString = null;
                 AnalysisException ex = null;
 
                 try {
-                    TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(mContext);
-                    trackerString = analyser.analyse(mAppId);
+                    trackerString = manager.analyse(mAppId, true, progressCallback);
                 } catch (AnalysisException e) {
                     ex = e;
                 } finally {
+                    manager.markAnalysisFinished(mAppId);
+                    
                     final String res;
 
                     if (ex != null)
@@ -158,10 +224,14 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     activity.runOnUiThread(() -> {
                         tvDetectedTrackers.setText(res);
                         tvDetectedTrackers.setVisibility(View.VISIBLE);
-                        pbTrackerDetection.setVisibility(View.GONE);
+                        layoutProgress.setVisibility(View.GONE);
+                        btnAnalyze.setEnabled(true);
                     });
                 }
             });
+        } else {
+            // If not an Activity context, mark as finished since we won't run
+            manager.markAnalysisFinished(mAppId);
         }
     }
 

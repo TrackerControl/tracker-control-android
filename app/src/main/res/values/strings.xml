@@ -431,10 +431,14 @@ Sincerely,\n\n]]></string>
     <string name="tracking_detection_failed_ram">Tracker library detection failed. Not enough RAM.</string>
     <string name="tracking_detection_failed_report">Tracker library detection failed. Please report this issue to the developer.</string>
     <string name="detected_trackers">Detected tracker libraries: %s</string>
+    <string name="analyzing_classes">Analysing classes…</string>
+    <string name="analyzing_classes_progress">Analysing classes… %d%%</string>
+    <string name="analysis_already_running">Analysis already in progress</string>
     <string name="none">None</string>
     <string name="trackers_static">Tracker libraries</string>
     <string name="trackers_static_explanation">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.\n\nTracking that is detected in the network traffic can be blocked with TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.</string>
+    <string name="analyze_tracker_libraries">Analyse tracker libraries</string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>
 

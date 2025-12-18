@@ -18,7 +18,6 @@
 package net.kollnig.missioncontrol.analysis;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
@@ -34,6 +33,7 @@ import org.jf.dexlib2.iface.DexFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,15 +48,20 @@ import lanchon.multidexlib2.MultiDexDetectedException;
 import lanchon.multidexlib2.MultiDexIO;
 
 public class TrackerLibraryAnalyser {
-    private static final int EXODUS_DATABASE_VERSION = 423; // eof422, see https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/commits/
     private final Context mContext;
+    private AnalysisProgressCallback mProgressCallback;
 
     public TrackerLibraryAnalyser(Context mContext) {
         this.mContext = mContext;
+    }
 
-        int current = getPrefs().getInt("version", Integer.MIN_VALUE);
-        if (current < EXODUS_DATABASE_VERSION)
-            getPrefs().edit().clear().putInt("version", EXODUS_DATABASE_VERSION).apply();
+    /**
+     * Sets the progress callback to receive progress updates during analysis.
+     *
+     * @param callback The callback to receive progress updates
+     */
+    public void setProgressCallback(AnalysisProgressCallback callback) {
+        this.mProgressCallback = callback;
     }
 
     /**
@@ -65,14 +70,15 @@ public class TrackerLibraryAnalyser {
      * Matches class names of the app to be analysed against the Exodus tracker database, which
      * contains information on known class of tracker libraries.
      *
-     * @param c   Context
-     * @param apk Path to apk to analyse
+     * @param c        Context
+     * @param apk      Path to apk to analyse
+     * @param callback Optional progress callback to report progress
      * @return Found trackers
      * @throws IOException      I/O errors
      * @throws RuntimeException Non I/O errors
      */
     @NonNull
-    private static Set<TrackerLibrary> findTrackers(Context c, String apk) throws IOException, RuntimeException {
+    private static Set<TrackerLibrary> findTrackers(Context c, String apk, AnalysisProgressCallback callback) throws IOException, RuntimeException {
         DexFile dx = MultiDexIO.readDexFile(true, new File(apk), new BasicDexFileNamer(), null, null);
 
         String[] Sign = c.getResources().getStringArray(R.array.trackers);
@@ -80,7 +86,24 @@ public class TrackerLibraryAnalyser {
         String[] Web = c.getResources().getStringArray(R.array.tweb);
         Set<TrackerLibrary> trackers = new HashSet<>();
 
-        for (ClassDef classDef : dx.getClasses()) {
+        // Get the classes as a collection to determine total count
+        Collection<? extends ClassDef> classes = dx.getClasses();
+        int totalClasses = classes.size();
+        int processedClasses = 0;
+        int lastReportedPercent = -1;
+
+        for (ClassDef classDef : classes) {
+            processedClasses++;
+            
+            // Report progress (limit updates to avoid UI flooding)
+            if (callback != null) {
+                int currentPercent = (processedClasses * 100) / totalClasses;
+                if (currentPercent != lastReportedPercent) {
+                    lastReportedPercent = currentPercent;
+                    callback.onProgress(processedClasses, totalClasses);
+                }
+            }
+            
             String className = classDef.getType();
             className = className.replace('/', '.');
             className = className.substring(1, className.length() - 1);
@@ -104,61 +127,49 @@ public class TrackerLibraryAnalyser {
     }
 
     /**
-     * Encapsulates the tracker library analysis, and caches results to avoid duplicate analyses
+     * Performs tracker library analysis on an app (no caching).
+     * This method should be called through TrackerAnalysisManager for proper caching and thread safety.
      *
-     * @param mAppId The package name of the app to analyse
+     * @param packageName The package name of the app to analyse
      * @return A string with the analysis results
      * @throws AnalysisException In case something goes wrong
      */
-    public String analyse(String mAppId) throws AnalysisException {
-        String trackerString;
-
+    public String analyseApp(String packageName) throws AnalysisException {
         try {
-            Set<TrackerLibrary> trackers;
-            PackageInfo pkg = mContext.getPackageManager().getPackageInfo(mAppId, 0);
-
-            // Try to load cached result
-            SharedPreferences prefs = getPrefs();
-            int analysedCode = prefs.getInt("versioncode_" + mAppId, Integer.MIN_VALUE);
-
-            if (pkg.versionCode > analysedCode) {
-                String apk = pkg.applicationInfo.publicSourceDir;
-                trackers = findTrackers(mContext, apk);
-
-                final List<TrackerLibrary> sortedTrackers = new ArrayList<>(trackers);
-                Collections.sort(sortedTrackers);
-
-                if (sortedTrackers.size() > 0)
-                    trackerString = "\n• " + TextUtils.join("\n• ", sortedTrackers);
-                else
-                    trackerString = mContext.getString(R.string.none);
-
-                // Cache results
-                prefs.edit()
-                        .putInt("versioncode_" + mAppId, pkg.versionCode)
-                        .putString("trackers_" + mAppId, trackerString)
-                        .apply();
-            } else
-                trackerString = prefs.getString("trackers_" + mAppId, null);
-
+            PackageInfo pkg = mContext.getPackageManager().getPackageInfo(packageName, 0);
+            String apk = pkg.applicationInfo.publicSourceDir;
+            
+            Set<TrackerLibrary> trackers = findTrackers(mContext, apk, mProgressCallback);
+            
+            final List<TrackerLibrary> sortedTrackers = new ArrayList<>(trackers);
+            Collections.sort(sortedTrackers);
+            
+            if (sortedTrackers.size() > 0) {
+                return "\n• " + TextUtils.join("\n• ", sortedTrackers);
+            } else {
+                return mContext.getString(R.string.none);
+            }
+            
         } catch (Throwable e) {
             if (e instanceof EmptyMultiDexContainerException
                     || e instanceof MultiDexDetectedException
                     || e instanceof DuplicateTypeException
                     || e instanceof DuplicateEntryNameException
                     || e instanceof PackageManager.NameNotFoundException
-                    || Rule.isSystem(mAppId, mContext))
+                    || Rule.isSystem(packageName, mContext))
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed));
             else if (e instanceof OutOfMemoryError)
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_ram));
             else
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_report));
         }
-
-        return trackerString;
     }
-
-    private SharedPreferences getPrefs() {
-        return mContext.getSharedPreferences("library_analysis", Context.MODE_PRIVATE);
+    
+    /**
+     * @deprecated Use TrackerAnalysisManager.analyse() instead for proper caching and thread safety
+     */
+    @Deprecated
+    public String analyse(String packageName) throws AnalysisException {
+        return analyseApp(packageName);
     }
 }
