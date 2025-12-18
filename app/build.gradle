@@ -96,6 +96,9 @@ android {
 
     compileOptions {
         encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
     }
 
     packagingOptions {
@@ -118,6 +121,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // https://developer.android.com/jetpack/androidx/releases/
