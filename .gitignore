@@ -17,6 +17,8 @@ keystore.properties
 *.ap_
 *.aab
 
+*.dm
+
 # Files for the ART/Dalvik VM
 *.dex
 
