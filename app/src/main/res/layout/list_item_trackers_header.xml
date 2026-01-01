@@ -93,25 +93,75 @@
                 android:id="@+id/tvDetectedTrackers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:padding="1dp"
                 android:text="@string/detected_trackers"
                 android:textColor="?android:textColorSecondary"
-                android:textStyle="italic"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvLibraryExplanation" />
 
-            <ProgressBar
-                android:id="@+id/pbDetectedTrackers"
-                style="?android:attr/progressBarStyle"
+            <LinearLayout
+                android:id="@+id/layoutAnalysisProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLibraryExplanation">
+
+                <TextView
+                    android:id="@+id/tvAnalysisProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/analyzing_classes"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="13sp" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/pbDetectedTrackers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:max="100"
+                    android:progress="0"
+                    app:trackCornerRadius="4dp"
+                    app:trackThickness="6dp"
+                    app:indicatorColor="@color/colorPrimary"
+                    app:trackColor="@color/colorPrimaryLight" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrierResults"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:visibility="gone"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="tvLibraryExplanation,tvDetectedTrackers,layoutAnalysisProgress" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAnalyzeTrackers"
+                android:theme="@style/Theme.MaterialComponents.DayNight"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:paddingVertical="12dp"
+                android:text="@string/analyze_tracker_libraries"
+                android:textAllCaps="false"
+                android:textColor="@color/colorPrimary"
+                app:icon="@drawable/ic_scan_code"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/colorPrimary"
+                app:cornerRadius="8dp"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1.5dp"
+                app:rippleColor="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvDetectedTrackers" />
+                app:layout_constraintTop_toBottomOf="@+id/barrierResults" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

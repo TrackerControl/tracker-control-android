@@ -85,7 +85,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.AnalysisException;
-import net.kollnig.missioncontrol.analysis.TrackerLibraryAnalyser;
+import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -2555,11 +2555,12 @@ public class ServiceSinkhole extends VpnService {
             public void run() {
                 try {
                     Context c = getApplicationContext();
-                    TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(c);
-                    int trackerCount = StringUtils.countMatches(analyser.analyse(packageName), "•");
+                    TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(c);
+                    // Use cached result or perform analysis - thread-safe through manager
+                    int trackerCount = StringUtils.countMatches(manager.runAnalysisSync(packageName), "•");
                     builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
                     NotificationManagerCompat.from(c).notify(uid, builder.build());
-                } catch (AnalysisException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 result.setResultCode(RESULT_OK);

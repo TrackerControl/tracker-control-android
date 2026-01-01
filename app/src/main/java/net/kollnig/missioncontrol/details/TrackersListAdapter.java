@@ -47,8 +47,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.analysis.AnalysisException;
-import net.kollnig.missioncontrol.analysis.TrackerLibraryAnalyser;
+import net.kollnig.missioncontrol.analysis.AnalysisStateListener;
+import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -114,8 +114,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     && !Util.isPlayStoreInstall())
                 view.findViewById(R.id.cardNotSupported).setVisibility(View.VISIBLE);
 
-            // Find trackers in app code
-            staticTrackerAnalysis(view);
+            // Setup button for on-demand tracker analysis
+            setupTrackerAnalysisButton(view);
 
             return new VHHeader(view);
         }
@@ -124,45 +124,118 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Do static analysis of tracker libraries in app code, and display results
+     * Setup button for on-demand tracker library analysis
      *
-     * @param view The tracker view to render the results of the analysis in
+     * @param view The tracker view to add the button handler to
      */
-    private void staticTrackerAnalysis(View view) {
+    private void setupTrackerAnalysisButton(View view) {
+        TextView btnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
         TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+        View layoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
+        TextView tvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
         ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
-        pbTrackerDetection.setVisibility(View.VISIBLE);
 
-        if (mContext instanceof Activity) {
-            Activity activity = (Activity) mContext;
+        TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
 
-            AsyncTask.execute(() -> {
-                String trackerString = null;
-                AnalysisException ex = null;
+        // Define UI update logic
+        AnalysisStateListener listener = new AnalysisStateListener() {
+            @Override
+            public void onAnalysisQueued() {
+                btnAnalyze.setEnabled(false);
+                layoutProgress.setVisibility(View.VISIBLE);
+                tvAnalysisProgress.setText(R.string.analysis_queued);
+                pbTrackerDetection.setIndeterminate(true);
+                tvDetectedTrackers.setVisibility(View.GONE);
+            }
 
-                try {
-                    TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(mContext);
-                    trackerString = analyser.analyse(mAppId);
-                } catch (AnalysisException e) {
-                    ex = e;
-                } finally {
-                    final String res;
+            @Override
+            public void onAnalysisRunning() {
+                btnAnalyze.setEnabled(false);
+                layoutProgress.setVisibility(View.VISIBLE);
+                tvAnalysisProgress.setText(R.string.analyzing_classes);
+                pbTrackerDetection.setIndeterminate(false);
+                pbTrackerDetection.setProgress(0);
+                tvDetectedTrackers.setVisibility(View.GONE);
+            }
 
-                    if (ex != null)
-                        res = ex.getMessage();
-                    else if (trackerString != null)
-                        res = String.format(activity.getString(R.string.detected_trackers), trackerString);
-                    else
-                        res = mContext.getString(R.string.failed_loading_cached_analysis);
-
-                    activity.runOnUiThread(() -> {
-                        tvDetectedTrackers.setText(res);
-                        tvDetectedTrackers.setVisibility(View.VISIBLE);
-                        pbTrackerDetection.setVisibility(View.GONE);
-                    });
+            @Override
+            public void onAnalysisProgress(int percent) {
+                pbTrackerDetection.setProgress(percent);
+                if (mContext instanceof Activity) {
+                    tvAnalysisProgress.setText(String.format(
+                            mContext.getString(R.string.analyzing_classes_progress), percent));
                 }
-            });
+            }
+
+            @Override
+            public void onAnalysisFinished(String result) {
+                layoutProgress.setVisibility(View.GONE);
+                btnAnalyze.setEnabled(true);
+
+                if (mContext instanceof Activity) {
+                    String res = String.format(mContext.getString(R.string.detected_trackers), result);
+                    tvDetectedTrackers.setText(res);
+                    tvDetectedTrackers.setVisibility(View.VISIBLE);
+                }
+
+                // Refresh button text in case other analyses ended
+                btnAnalyze.setText(R.string.analyze_tracker_libraries);
+            }
+
+            @Override
+            public void onAnalysisFailed(String message) {
+                layoutProgress.setVisibility(View.GONE);
+                btnAnalyze.setEnabled(true);
+                tvDetectedTrackers.setText(message);
+                tvDetectedTrackers.setVisibility(View.VISIBLE);
+            }
+        };
+
+        // Attach listener to the view so we can remove it later if needed,
+        // or just add it. Ideally we should remove it when view is detached.
+        // For this fix, we'll add it and rely on the Set in Manager to not duplicate
+        // excessive listeners,
+        // but to prevent leaks, we should remove it.
+        // However, standard RecyclerView pattern makes this hard without custom View
+        // wrapper.
+        // We will add it unconditionally here (as it's the header, usually only one
+        // exists)
+        // AND we will check status synchronously.
+
+        manager.addAnalysisListener(mAppId, listener);
+
+        // Handling view detachment to avoid leaks
+        view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                manager.addAnalysisListener(mAppId, listener);
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                manager.removeAnalysisListener(mAppId, listener);
+            }
+        });
+
+        // Initial state check (if not running, show cache)
+        if (!manager.isAnalysisInProgress(mAppId)) {
+            String cachedResults = manager.getCachedResult(mAppId);
+            if (cachedResults != null && mContext instanceof Activity) {
+                String res = String.format(mContext.getString(R.string.detected_trackers), cachedResults);
+
+                if (manager.isCacheStale(mAppId)) {
+                    res += mContext.getString(R.string.analysis_outdated_version);
+                    btnAnalyze.setText(R.string.update_analysis);
+                }
+
+                tvDetectedTrackers.setText(res);
+                tvDetectedTrackers.setVisibility(View.VISIBLE);
+            }
         }
+
+        btnAnalyze.setOnClickListener(v -> {
+            manager.startAnalysis(mAppId);
+        });
     }
 
     @Override

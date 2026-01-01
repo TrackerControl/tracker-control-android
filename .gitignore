@@ -1,5 +1,7 @@
 output-metadata.json
 
+.vscode/
+
 /app/full
 /app/play
 
