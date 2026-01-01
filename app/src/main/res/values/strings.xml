@@ -440,7 +440,7 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static_explanation_playstore">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.</string>
     <string name="analyze_tracker_libraries">Analyse tracker libraries</string>
     <string name="update_analysis">Update analysis</string>
-    <string name="analysis_outdated_version"> (analysis from old app version)</string>
+    <string name="analysis_outdated_version">\n\nNote: Analysis is of a previous app version. This might have changed integrated tracking libraries.</string>
     <string name="analysis_queued">Analysis queued…</string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>

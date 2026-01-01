@@ -27,13 +27,17 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.UUID;
 
 /**
  * Manager class that handles caching, coordination, and background execution of
@@ -48,7 +52,6 @@ public class TrackerAnalysisManager {
 
     private static TrackerAnalysisManager instance;
     private final Context mContext;
-    private final ExecutorService executorService;
     private final Handler mainHandler;
 
     // Track active analyses with detailed state
@@ -59,7 +62,6 @@ public class TrackerAnalysisManager {
 
     private TrackerAnalysisManager(Context context) {
         this.mContext = context.getApplicationContext();
-        this.executorService = Executors.newSingleThreadExecutor();
         this.mainHandler = new Handler(Looper.getMainLooper());
 
         // Initialize/update database version
@@ -140,35 +142,60 @@ public class TrackerAnalysisManager {
     }
 
     /**
-     * Starts an analysis for the given package in the background.
+     * Starts an analysis for the given package using WorkManager.
      * Updates are delivered to registered listeners.
      */
     public void startAnalysis(String packageName) {
         if (activeAnalyses.containsKey(packageName)) {
             Log.d(TAG, "Analysis already in progress for " + packageName);
-            return;
         }
 
-        // Mark as Queued initially
-        activeAnalyses.put(packageName, AnalysisState.QUEUED);
-        notifyQueued(packageName);
+        // Mark as Queued initially for immediate UI feedback
+        // If the process dies, this map is cleared, which is correct as the listener is
+        // also gone.
+        // When WorkManager starts the worker later, it will call runAnalysisFromWorker
+        // which sets state to RUNNING.
+        if (!activeAnalyses.containsKey(packageName)) {
+            activeAnalyses.put(packageName, AnalysisState.QUEUED);
+            notifyQueued(packageName);
+        }
 
-        executorService.submit(() -> {
-            try {
-                // Now really running
-                activeAnalyses.put(packageName, AnalysisState.RUNNING);
-                mainHandler.post(() -> notifyRunning(packageName));
+        Data inputData = new Data.Builder()
+                .putString(TrackerAnalysisWorker.KEY_PACKAGE_NAME, packageName)
+                .build();
 
-                String result = runAnalysisSync(packageName, true);
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
+                .setInputData(inputData)
+                .addTag(packageName)
+                .build();
 
-                activeAnalyses.remove(packageName);
-                mainHandler.post(() -> notifyFinished(packageName, result));
-            } catch (Exception e) {
-                Log.e(TAG, "Analysis failed for " + packageName, e);
-                activeAnalyses.remove(packageName);
-                mainHandler.post(() -> notifyFailed(packageName, e.getMessage()));
-            }
-        });
+        WorkManager.getInstance(mContext).enqueueUniqueWork(
+                packageName,
+                ExistingWorkPolicy.KEEP,
+                workRequest);
+    }
+
+    /**
+     * Entry point for the Worker.
+     * Manages state updates and listener notifications.
+     */
+    public String runAnalysisFromWorker(String packageName, AnalysisProgressCallback workerCallback) throws Exception {
+        try {
+            // Update state to RUNNING
+            activeAnalyses.put(packageName, AnalysisState.RUNNING);
+            mainHandler.post(() -> notifyRunning(packageName));
+
+            String result = runAnalysisSync(packageName, true, workerCallback);
+
+            activeAnalyses.remove(packageName);
+            mainHandler.post(() -> notifyFinished(packageName, result));
+            return result;
+        } catch (Exception e) {
+            Log.e(TAG, "Analysis failed for " + packageName, e);
+            activeAnalyses.remove(packageName);
+            mainHandler.post(() -> notifyFailed(packageName, e.getMessage()));
+            throw e;
+        }
     }
 
     /**
@@ -176,13 +203,14 @@ public class TrackerAnalysisManager {
      * Use startAnalysis() for UI tasks to ensure lifecycle safety.
      */
     public String runAnalysisSync(String packageName) throws Exception {
-        return runAnalysisSync(packageName, false);
+        return runAnalysisSync(packageName, false, null);
     }
 
     /**
      * worker logic.
      */
-    private String runAnalysisSync(String packageName, boolean forceRefresh) throws Exception {
+    private String runAnalysisSync(String packageName, boolean forceRefresh,
+            @Nullable AnalysisProgressCallback extraCallback) throws Exception {
         PackageInfo pkg;
         try {
             pkg = mContext.getPackageManager().getPackageInfo(packageName, 0);
@@ -206,6 +234,9 @@ public class TrackerAnalysisManager {
         analyser.setProgressCallback((current, total) -> {
             int percent = (int) ((current / (float) total) * 100);
             mainHandler.post(() -> notifyProgress(packageName, percent));
+            if (extraCallback != null) {
+                extraCallback.onProgress(current, total);
+            }
         });
 
         String result = analyser.analyseApp(packageName);
