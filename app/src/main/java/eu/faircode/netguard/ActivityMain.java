@@ -685,10 +685,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_ROAMING) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 ServiceSinkhole.reload("permission granted", this, false);
         } else if (requestCode == REQUEST_NOTIFICATIONS) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED &&
+            if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED &&
                     !ActivityCompat.shouldShowRequestPermissionRationale(this,
                             Manifest.permission.POST_NOTIFICATIONS))
                 try {
