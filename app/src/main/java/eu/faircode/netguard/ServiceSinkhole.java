@@ -2571,7 +2571,17 @@ public class ServiceSinkhole extends VpnService {
     @Override
     public void onCreate() {
         Log.i(TAG, "Create version=" + Util.getSelfVersionName(this) + "/" + Util.getSelfVersionCode(this));
-        startForeground(NOTIFY_WAITING, getWaitingNotification());
+        try {
+            startForeground(NOTIFY_WAITING, getWaitingNotification());
+        } catch (Exception ex) {
+            Log.e(TAG, "Failed to start foreground service", ex);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ex instanceof android.app.ForegroundServiceStartNotAllowedException) {
+                stopSelf();
+                return;
+            }
+            throw ex;
+        }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
