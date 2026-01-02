@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl, kullanıcıların mobil uygulamalarda kullanıcı davranışıyla ilgili yaygın, devam eden, gizli veri toplama işlemini (\'tracking\') görmesine ve kontrol etmesine olanak tanır.</string>
-    <string name="app_copyright">Telif Hakkı \u00A9 2019-2022 Konrad Kollnig (İnsan merkezli Bilgi İşlem, Oxford Üniversitesi Bilgisayar Bilimleri Bölümü)\n\nTrackerControl, Marcel Bokhorst (M66B) tarafından geliştirilen NetGuard\'a dayanmaktadır.</string>
     <string name="app_android">TrackerControl, Android 5.1 veya sonraki bir sürümünü gerektirir</string>
     <string name="app_xposed">Xposed çok fazla çökmeye neden oluyor ve bu da TrackerControl\'ün Google Play Store\'dan kaldırılmasına neden olabilir, bu nedenle Xposed yüklüyken TrackerControl desteklenmez</string>
     <string name="app_eula">Bu uygulamanın kullanımı kendi sorumluluğunuzdadır. Hiçbir uygulama izlemeye karşı %100 koruma sağlayamaz.</string>
@@ -123,8 +122,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_error">Beklenmedik bir hata oluştu: \'%s\'</string>
     <string name="msg_start_failed">Android şu anda VPN hizmetini başlatmayı reddetti. Bunun nedeni muhtemelen Android sürümünüzdeki bir hatadır.</string>
     <string name="msg_try">TrackerControl\'ü deneyin</string>
-    <string name="msg_doze">Tutarlı sonuçlar için, TrackerControl için Android pil optimizasyonları devre dışı bırakılmalıdır.
-\n\nBir sonraki iletişim kutusunda, en üstteki \"Tüm uygulamalar\"ı seçin, listeden TrackerControl\'e dokunun ve \"Optimize etme\"yi seçip onaylayın.</string>
     <string name="msg_datasaving">Tutarlı sonuçlar için, TrackerControl için Android veri kaydetme seçenekleri devre dışı bırakılmalıdır.
 \n\nBir sonraki iletişim kutusunda, \"Arka plan verileri\" ve \"Sınırsız veri kullanımı\" seçeneklerini etkinleştirin</string>
     <string name="msg_filter">Filtrelemenin kullanılması, Android\'in verileri ve güç kullanımını TrackerControl ile ilişkilendirmesine neden olur - Android, verilerin ve gücün orijinal uygulamalar yerine TrackerControl tarafından kullanıldığını varsayar</string>
@@ -359,4 +356,5 @@ Saygılarımla,\n\n]]></string>
     <string name="static_analysis">Uygulama kodundaki izleyicileri algıla</string>
     <string name="failed_loading_cached_analysis">Önbelleğe alınmış izleyici sonuçları yüklenemedi. Lütfen bunu hello@trackercontrol.org adresinden geliştiriciye bildirin</string>
     <string name="msg_notifications">Bildirim izinleri vermek için dokunun (hata mesajları vb. için)</string>
+    <!-- Onboarding -->
 </resources>
