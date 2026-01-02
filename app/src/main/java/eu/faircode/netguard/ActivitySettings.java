@@ -64,6 +64,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -980,11 +981,78 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             } else if (value instanceof Set) {
                 Set<String> set = (Set<String>) value;
-                serializer.startTag(null, "setting");
-                serializer.attribute(null, "key", key);
-                serializer.attribute(null, "type", "set");
-                serializer.attribute(null, "value", TextUtils.join("\n", set));
-                serializer.endTag(null, "setting");
+
+                // InternetBlocklist: convert UIDs to package names
+                if (key.equals(InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY)) {
+                    Set<String> packageNames = new HashSet<>();
+                    PackageManager pm = getPackageManager();
+                    for (String uidStr : set) {
+                        try {
+                            int uid = Integer.parseInt(uidStr);
+                            String[] packages = pm.getPackagesForUid(uid);
+                            if (packages != null) {
+                                Collections.addAll(packageNames, packages);
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.w(TAG, "Invalid UID in blocklist: " + uidStr);
+                        }
+                    }
+
+                    // Key for package names
+                    serializer.startTag(null, "setting");
+                    serializer.attribute(null, "key", "INTERNET_BLOCKLIST_PACKAGES_KEY");
+                    serializer.attribute(null, "type", "set");
+                    serializer.attribute(null, "value", TextUtils.join("\n", packageNames));
+                    serializer.endTag(null, "setting");
+                } else if (key.equals(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY)) {
+                    // TrackerBlocklist: convert UIDs to package names
+                    Set<String> packageNames = new HashSet<>();
+                    PackageManager pm = getPackageManager();
+                    for (String uidStr : set) {
+                        try {
+                            int uid = Integer.parseInt(uidStr);
+                            String[] packages = pm.getPackagesForUid(uid);
+                            if (packages != null) {
+                                for (String pkg : packages) {
+                                    packageNames.add(pkg);
+
+                                    // Also export the per-app settings for this UID
+                                    // The key format for per-app settings is APPS_BLOCKLIST_APPS_KEY + "_" + uid
+                                    String perAppKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uidStr;
+                                    Set<String> perAppSettings = prefs.getStringSet(perAppKey, null);
+                                    if (perAppSettings != null) {
+                                        serializer.startTag(null, "setting");
+                                        // Use a package-based key: APPS_BLOCKLIST_PACKAGES_KEY + "_" + packageName
+                                        serializer.attribute(null, "key", "APPS_BLOCKLIST_PACKAGES_KEY" + "_" + pkg);
+                                        serializer.attribute(null, "type", "set");
+                                        serializer.attribute(null, "value", TextUtils.join("\n", perAppSettings));
+                                        serializer.endTag(null, "setting");
+                                    }
+                                }
+                            }
+                        } catch (NumberFormatException e) {
+                            Log.w(TAG, "Invalid UID in blocklist: " + uidStr);
+                        }
+                    }
+
+                    // Key for package names list
+                    serializer.startTag(null, "setting");
+                    serializer.attribute(null, "key", "APPS_BLOCKLIST_PACKAGES_KEY");
+                    serializer.attribute(null, "type", "set");
+                    serializer.attribute(null, "value", TextUtils.join("\n", packageNames));
+                    serializer.endTag(null, "setting");
+
+                } else if (key.startsWith(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_")) {
+                    // Skip the original UID-based per-app settings as we handled them above
+                    // This prevents duplication and confusion
+
+                } else {
+                    serializer.startTag(null, "setting");
+                    serializer.attribute(null, "key", key);
+                    serializer.attribute(null, "type", "set");
+                    serializer.attribute(null, "value", TextUtils.join("\n", set));
+                    serializer.endTag(null, "setting");
+                }
 
             } else
                 Log.e(TAG, "Unknown key=" + key);
@@ -1163,6 +1231,69 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                         if (current == application) {
                             if ("hosts_last_import".equals(key) || "hosts_last_download".equals(key))
                                 return;
+                        }
+
+                        // InternetBlocklist: convert package names back to UIDs
+                        if ("INTERNET_BLOCKLIST_PACKAGES_KEY".equals(key) && "set".equals(type)) {
+                            Set<String> uids = new HashSet<>();
+                            if (!TextUtils.isEmpty(value)) {
+                                PackageManager pm = context.getPackageManager();
+                                for (String pkg : value.split("\n")) {
+                                    try {
+                                        int uid = pm.getApplicationInfo(pkg, 0).uid;
+                                        uids.add(Integer.toString(uid));
+                                    } catch (PackageManager.NameNotFoundException e) {
+                                        Log.w(TAG, "Package not found during import: " + pkg);
+                                    }
+                                }
+                            }
+                            // Store under original key
+                            String originalKey = InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
+                            current.put(originalKey, uids);
+                            return;
+                        }
+
+                        // TrackerBlocklist: convert package names back to UIDs
+                        if ("APPS_BLOCKLIST_PACKAGES_KEY".equals(key) && "set".equals(type)) {
+                            Set<String> uids = new HashSet<>();
+                            if (!TextUtils.isEmpty(value)) {
+                                PackageManager pm = context.getPackageManager();
+                                for (String pkg : value.split("\n")) {
+                                    try {
+                                        int uid = pm.getApplicationInfo(pkg, 0).uid;
+                                        uids.add(Integer.toString(uid));
+                                    } catch (PackageManager.NameNotFoundException e) {
+                                        Log.w(TAG, "Package not found during import: " + pkg);
+                                    }
+                                }
+                            }
+                            // Store under original key
+                            String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
+                            current.put(originalKey, uids);
+                            return;
+                        }
+
+                        // TrackerBlocklist: per-app settings
+                        if (key.startsWith("APPS_BLOCKLIST_PACKAGES_KEY_") && "set".equals(type)) {
+                            // Extract package name
+                            String pkg = key.substring("APPS_BLOCKLIST_PACKAGES_KEY_".length());
+                            try {
+                                PackageManager pm = context.getPackageManager();
+                                int uid = pm.getApplicationInfo(pkg, 0).uid;
+
+                                Set<String> set = new HashSet<>();
+                                if (!TextUtils.isEmpty(value))
+                                    for (String s : value.split("\n"))
+                                        set.add(s);
+
+                                // Store under original UID-based key
+                                String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid;
+                                current.put(originalKey, set);
+
+                            } catch (PackageManager.NameNotFoundException e) {
+                                Log.w(TAG, "Package not found during import of settings: " + pkg);
+                            }
+                            return;
                         }
 
                         if ("boolean".equals(type))

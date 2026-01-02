@@ -120,14 +120,6 @@ public class TrackerBlocklist {
                 int uid = -1;
                 if (StringUtils.isNumeric(appUid))
                     uid = Integer.parseInt(appUid);
-                else {
-                    // Convert from old TrackerControl version
-                    try {
-                        uid = c.getPackageManager().getApplicationInfo(appUid, 0).uid;
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
 
                 if (uid >= 0)
                     blockmap.put(uid, subset);

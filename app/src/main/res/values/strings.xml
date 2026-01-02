@@ -103,7 +103,7 @@
     <string name="setting_stats_samples">Number of samples: %s s</string>
 
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Export settings (not for device reset)</string>
+    <string name="setting_export">Export settings</string>
     <string name="setting_import">Import settings</string>
     <string name="setting_hosts">Import hosts file</string>
     <string name="setting_hosts_append">Import hosts file (append)</string>
