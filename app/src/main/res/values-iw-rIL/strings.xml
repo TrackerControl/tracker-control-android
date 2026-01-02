@@ -58,8 +58,6 @@
     <string name="setting_ip6">אפשר תעבורת IPv6</string>
     <string name="setting_call">השבת במהלך שיחה</string>
     <string name="setting_reload_onconnectivity">טען מחדש בכל שינוי קישוריות</string>
-    <string name="setting_advanced_options">אפשרויות מתקדמות</string>
-    <string name="setting_system">נהל אפליקציות מערכת</string>
     <string name="setting_log_app">חפש עוקבים חדשים</string>
     <string name="setting_log_logcat">יומן שידורים ל-ADB</string>
     <string name="setting_filter">חסימת עוקבים</string>
@@ -88,7 +86,6 @@
     <string name="setting_stats_frequency">מרווח הדגימה: %s מ\"ש</string>
     <string name="setting_stats_samples">מספר דגימות: %s s</string>
     <string name="setting_backup">גיבוי</string>
-    <string name="setting_export">ייצוא הגדרות (לא לאיפוס מכשיר)</string>
     <string name="setting_import">ייבוא הגדרות</string>
     <string name="setting_hosts">ייבוא קובץ מארחים</string>
     <string name="setting_hosts_append">יבא קובץ מארחים (הוספה)</string>
@@ -103,7 +100,6 @@
     <string name="summary_lan">אפשר ליישומים להתחבר לכתובות רשת מקומית, כגון 10.0.0.0/8, 172.16.0.0/12 ו- 192.168.0.0/16</string>
     <string name="summary_ip6">נתב תעבורת IP גרסת 6 אל TrackerControl כך שניתן יהיה לאפשר או לחסום אותה באופן סלקטיבי</string>
     <string name="summary_call">השבת את TrackerControl בשיחת טלפון נכנסת או יוצאת. זה יכול לשמש כדי לעקוף בעיות שיחות IP/Wi-Fi.</string>
-    <string name="summary_system">הגדר כללים עבור אפליקציות מערכת (עבור מומחים)</string>
     <string name="summary_log_app">השבת כדי להפחית את השימוש בסוללה. עוקבים חדשים עדיין ייחסמו, אך לא יוצגו.</string>
     <string name="summary_track_usage">עקוב אחר מספר הבתים שנשלחו והתקבלו עבור כל אפליקציה וכתובת. זה עלול לגרום לשימוש נוסף בסוללה.</string>
     <string name="summary_block_domains">אזהרה: מארחים חסומים אינם מוצגים בממשק המשתמש.</string>
