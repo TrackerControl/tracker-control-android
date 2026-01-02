@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl 讓使用者監控與限制行動App中的個資收集行為(追蹤)。</string>
-    <string name="app_copyright">版權所有 \u00A9 2019–2022 Konrad Kollnig（牛津大學電腦科學系，人本計算學）\n\nTrackerControl 基於 Marcel Bokhorst (M66B) 開發的 NetGuard 建立。</string>
     <string name="app_android">TrackerControl 需要 Android 5.1 或更高版本</string>
     <string name="app_xposed">Xposed 會導致太多當機，可能導致 TrackerControl 從 Google Play 商店被移除，因此若已安裝 Xposed 時TrackerControl則不支援</string>
     <string name="app_eula">您必須自行承擔使用此應用程式的風險。任何應用程式都無法提供 100% 的防追蹤保護。</string>
@@ -197,4 +196,5 @@ Sincerely,\n\n]]></string>
     <string name="internet_unblocked">已解除封鎖網路連線</string>
     <string name="browsers_not_supported">不支援瀏覽器 ⚠️</string>
     <string name="browsers_not_supported_explanation">這似乎是一款瀏覽器應用程式。\n\n瀏覽器中的追蹤器封鎖功能不受 TrackerControl 支援。請改用具備整合式反追蹤功能的瀏覽器，以獲得更完善的追蹤封鎖效果。\n\n例如：Mozilla Fennec</string>
+    <!-- Onboarding -->
 </resources>
