@@ -56,8 +56,6 @@
     <string name="setting_ip6">Включить IPv6-трафик</string>
     <string name="setting_call">Отключить при звонке</string>
     <string name="setting_reload_onconnectivity">Перезапуск при каждой смене подключения</string>
-    <string name="setting_advanced_options">Расширенные настройки</string>
-    <string name="setting_system">Управлять системными приложениями</string>
     <string name="setting_log_app">Искать новые трекеры</string>
     <string name="setting_log_logcat">Выводить лог соединений в ADB</string>
     <string name="setting_filter">Блокировать трекеры</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Частота замеров: %s мс</string>
     <string name="setting_stats_samples">Число замеров: %s с</string>
     <string name="setting_backup">Резервное копирование</string>
-    <string name="setting_export">Экспорт настроек (не для сброса устройства)</string>
     <string name="setting_import">Импорт настроек</string>
     <string name="setting_hosts">Импорт hosts-файла</string>
     <string name="setting_hosts_append">Импорт hosts-файла (присоединить)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Разрешить приложениям подключаться к локальным сетевым адресам таким, как 10.0.0.0/8, 172.16.0.0/12 и 192.168.0.0/16</string>
     <string name="summary_ip6">Направлять IPv6 трафик в TrackerControl, чтобы его можно было выборочно разрешать или блокировать</string>
     <string name="summary_call">Отключить TrackerControl при входящем или исходящем телефонном звонке. Эту опцию можно использовать для решения проблем с IP/Wi-Fi звонками.</string>
-    <string name="summary_system">Определить правила для системных приложений (для экспертов)</string>
     <string name="summary_log_app">Отключите, чтобы уменьшить расход батареи. Новые трекеры по-прежнему будут блокироваться, но не отображаться.</string>
     <string name="summary_track_usage">Отслеживать количество отправленных и полученных байт для каждого приложения и адресов. Это может привести к большему расходу батареи.</string>
     <string name="summary_block_domains">ВНИМАНИЕ: Заблокированные узлы не отображаются в интерфейсе.</string>
