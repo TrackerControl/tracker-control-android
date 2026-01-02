@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
-    <string name="app_copyright">版权所有\u00A92019-2022 Konrad Kollnig (牛津大学计算机科学系以人为本的计算)\n\nTrackerControl 基于NetGuard，由Marcel Bokhorst (M66B) 开发。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_eula">使用本应用程序的风险由您自行承担。没有应用程序可以提供对网络跟踪100%的保护。</string>
@@ -122,8 +121,6 @@
     <string name="msg_error">发生一个未知错误: \'%s\'</string>
     <string name="msg_start_failed">Android此时拒绝启动VPN服务。这可能你的Android版本中的一个bug造成的。</string>
     <string name="msg_try">尝试TrackerControl</string>
-    <string name="msg_doze">为了获得一致的结果，应该禁用对TrackerControl的Android电池优化。
-\n\n在下一个对话框中，选择顶部的“全部应用”，点击列表中的TrackerControl，选择并确认“不优化”。</string>
     <string name="msg_datasaving">为了得到一致的结果，对TrackerControl的Android数据节省选项应该被禁用
 \n\n在下一个对话框中，启用“后台数据”和“不受限制的数据使用”选项</string>
     <string name="msg_filter">使用过滤会使Android把数据和电量使用归于TrackerControl——Android假设数据和电量是由TrackerControl使用的，而不是原来的应用程序</string>
@@ -362,4 +359,5 @@
     <string name="static_analysis">检测应用代码中的跟踪器</string>
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
+    <!-- Onboarding -->
 </resources>
