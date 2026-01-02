@@ -56,8 +56,6 @@
     <string name="setting_ip6">Skru på IPv6-trafikk</string>
     <string name="setting_call">Deaktiver ved anrop</string>
     <string name="setting_reload_onconnectivity">Last inn på nytt ved tilkoblingsendring</string>
-    <string name="setting_advanced_options">Avanserte innstillinger</string>
-    <string name="setting_system">Administrer systemapper</string>
     <string name="setting_log_app">Søk etter nye sporere</string>
     <string name="setting_log_logcat">Logg overføringer til ADB</string>
     <string name="setting_filter">Blokker sporing</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Utdragsintervall: %s ms</string>
     <string name="setting_stats_samples">Antall utdrag: %s s</string>
     <string name="setting_backup">Sikkerhetskopi</string>
-    <string name="setting_export">Eksporter innstillinger (ikke for tilbakestilling av enheten)</string>
     <string name="setting_import">Importer innstillinger</string>
     <string name="setting_hosts">Importer «hosts»-fil</string>
     <string name="setting_hosts_append">Importer «hosts»-fil (legges til)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Tillat apper å koble seg til lokale nettverksadresser, for eksempel 10.0.0.0/8, 172.16.0.0/12 og 192.168.0.0/16</string>
     <string name="summary_ip6">Rute IP versjon 6-trafikk til TrackerControl slik at den selektivt kan tillates eller blokkeres</string>
     <string name="summary_call">Deaktiver TrackerControl for innkommende eller utgående telefonsamtaler. Dette kan brukes til å komme rundt IP/Wi-Fi ringeproblemer.</string>
-    <string name="summary_system">Definer regler for systemapper (for eksperter)</string>
     <string name="summary_log_app">Deaktiver for å redusere batteribruk. Nye sporere vil fremdeles bli blokkert, men ikke vist.</string>
     <string name="summary_track_usage">Registrer antall bytes som er sendt og mottatt for hver app og adresse. Dette kan føre til ekstra batteribruk.</string>
     <string name="summary_block_domains">ADVARSEL: Blokkerte verter er ikke vist i brukergrensesnittet.</string>
