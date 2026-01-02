@@ -2943,7 +2943,8 @@ public class ServiceSinkhole extends VpnService {
         Log.i(TAG, "Start intent=" + intent + " command=" + cmd + " reason=" + reason +
                 " vpn=" + (vpn != null) + " user=" + (Process.myUid() / 100000));
 
-        commandHandler.queue(intent);
+        if (commandHandler != null)
+            commandHandler.queue(intent);
 
         return START_STICKY;
     }
