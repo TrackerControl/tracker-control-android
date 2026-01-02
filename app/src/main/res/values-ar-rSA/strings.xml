@@ -86,6 +86,7 @@
     <string name="setting_pcap_record_size">حجم سجل PCAP: %s بايت</string>
     <string name="setting_pcap_file_size">الحد الأقصى لحجم ملف PCAP: %s ميجابايت</string>
     <string name="setting_watchdog">المراقب: كل %s دقيقة</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">فاصل العينة: %s مللي ثانية</string>
     <string name="setting_stats_samples">عدد العينات: %s ثانية</string>
     <string name="setting_backup">نسخ احتياطي</string>
@@ -153,8 +154,6 @@
     <string name="msg_vpn_cancelled">تم إلغاء اتصال VPN\nهل قمت بتكوين VPN آخر ليكون VPN يعمل دائمًا؟</string>
     <string name="msg_unavailable">هذه الميزة غير متاحة في إصدار Android هذا</string>
     <string name="msg_always_on">تم تعيين VPN آخر كـ VPN يعمل دائمًا</string>
-    <string name="msg_always_on_lockdown">أوقف تشغيل \"حظر الاتصالات بدون VPN\" في إعدادات VPN في Android لاستخدام التحكم في التتبع في وضع التصفية</string>
-    <string name="msg_private_dns">أوقف تشغيل \"DNS الخاص\" في إعدادات شبكة Android لاستخدام التحكم في التتبع في وضع التصفية</string>
     <string name="msg_start_forward">بدء إعادة التوجيه من منفذ %2$d الخاص بـ %1$s إلى %4$d:%3$s الخاص بـ \'%5$s\'؟</string>
     <string name="msg_stop_forward">إيقاف إعادة توجيه منفذ %2$d الخاص بـ %1$s؟</string>
     <string name="msg_log_logcat">تحذير: تم تعطيل الحظر بسبب تسجيل ADB.</string>
@@ -256,7 +255,6 @@
     <string name="tab_actions">بياناتي</string>
     <string name="tracker_name">اسم أداة التتبع</string>
     <string name="internet_access">الوصول إلى الإنترنت</string>
-    <string name="internet_access_explanation">يجب أن يكون قيد التشغيل للوصول إلى الإنترنت.\n\nنصيحة: يمكنك أيضًا النقر على أيقونة التطبيق في الشاشة الرئيسية.</string>
     <string name="app_info">إدارة التطبيق</string>
     <!-- Actions -->
     <string name="block_tracking">حظر أدوات التتبع</string>
@@ -334,7 +332,6 @@
     <string name="setting_strict_blocking">حظر صارم</string>
     <string name="summary_strict_blocking">بالنسبة للتطبيقات المثبتة حديثًا، قم بحظر أكبر قدر ممكن من مشاركة البيانات مع الشركات. سيتم كسر المزيد من التطبيقات.</string>
     <string name="strict_blocking_explanation">يوصى بغير الخبراء بتعطيل هذا الخيار لتقليل تعطل التطبيق. ومع ذلك، فإن هذا يسمح ببعض المشاركة الأساسية مع الشركات.</string>
-    <string name="exclude_vpn_explanation">يجب أن يكون قيد التشغيل للكشف عن أدوات التتبع أو حظرها.\n\nنصيحة: قم بالتعطيل إذا واجهت مشاكل.</string>
     <string name="uninstall">إلغاء التثبيت</string>
     <string name="settings_uninstall">إعدادات التطبيق وإلغاء التثبيت</string>
     <string name="no_trackers_found_message_disabled">قم بتمكين المفتاح في الشاشة الرئيسية، ثم قم بتشغيل التطبيق للعثور على أدوات التتبع</string>
