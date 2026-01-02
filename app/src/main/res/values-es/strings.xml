@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">Tamaño de registro PCAP: %s B</string>
     <string name="setting_pcap_file_size">Tamaño máximo del archivo PCAP: %s MB</string>
     <string name="setting_watchdog">Watchdog: cada %s minutos</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Intervalo de muestra: %s ms</string>
     <string name="setting_stats_samples">Número de muestras: %s s</string>
     <string name="setting_backup">Respaldo</string>
@@ -153,8 +154,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_vpn_cancelled">Conexión VPN cancelada\n¿Configuraste otra VPN para que sea una VPN siempre activa?</string>
     <string name="msg_unavailable">Esta característica no está disponible en esta versión de Android</string>
     <string name="msg_always_on">Otra VPN está establecida como una VPN siempre activa</string>
-    <string name="msg_always_on_lockdown">Desactive \"Bloquear conexiones sin VPN\" en la configuración de VPN de Android para usar TrackerControl en modo de filtrado</string>
-    <string name="msg_private_dns">Desactive el \"DNS privado\" en la configuración de la red de Android para usar el TrackerControl en modo de filtrado</string>
     <string name="msg_start_forward">¿Iniciar redirección desde el puerto %1$s, %2$d hacia %3$s:%4$d de \'%5$s\'?</string>
     <string name="msg_stop_forward">¿Detener redirección de %1$s puerto %2$d?</string>
     <string name="msg_log_logcat">Advertencia: Bloqueo deshabilitado debido al registro de ADB.</string>
@@ -248,7 +247,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="tab_actions">Mis datos</string>
     <string name="tracker_name">Nombre del rastreador</string>
     <string name="internet_access">Acceso a Internet</string>
-    <string name="internet_access_explanation">Debe estar encendido para acceder a Internet.\n\nConsejo: También puede tocar el icono de la aplicación en la pantalla principal.</string>
     <string name="app_info">Gestionar App</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
@@ -326,7 +324,6 @@ Atentamente,\n\n]]></string>
     <string name="setting_strict_blocking">Bloqueo estricto</string>
     <string name="summary_strict_blocking">Para apps recién instaladas, bloquea tantos datos compartidos con empresas como sea posible. Más apps se romperán.</string>
     <string name="strict_blocking_explanation">Se recomienda a los no expertos deshabilitar esta opción para evitar el mal funcionamiento de las apps. Sin embargo, esto permite compartir lo esencial con las empresas.</string>
-    <string name="exclude_vpn_explanation">Debe estar encendido para detectar o bloquear los rastreadores.\n\nSugerencia: Deshabilitar si se encuentra con problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Ajustes de la aplicación &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Activa el interruptor en la pantalla principal, y después ejecuta la aplicación para encontrar rastreadores</string>
