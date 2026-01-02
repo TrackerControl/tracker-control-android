@@ -51,6 +51,7 @@
     <string name="setting_subnet">Enrutado de subredes</string>
     <string name="setting_tethering">Permitir tethering</string>
     <string name="setting_lan">Permitir acceso LAN</string>
+    <!-- Secure DNS (DoH) -->
     <string name="summary_block_domains">AVISO: Os hosts bloqueados non se amosan na interface.</string>
     <string name="summary_rcode">O valor por defecto é 3 (NXDOMAIN), que quere dicir \"dominio non existente\".</string>
     <string name="summary_validate">Nome de dominio usado para validar a conexión a internet no porto 443 (https).</string>
