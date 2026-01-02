@@ -63,6 +63,7 @@
     <string name="setting_track_usage">네트워크 사용량 추적</string>
     <string name="setting_reset_usage">네트워크 사용량 초기화</string>
     <string name="setting_block_domains">hosts 파일 활성화</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_backup">백업</string>
     <string name="setting_export">설정 내보내기 (초기화용 아님)</string>
     <string name="setting_import">설정 불러오기</string>
