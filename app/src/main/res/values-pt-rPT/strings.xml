@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">O TrackerControl permite que os utilizadores monitorem e controlem a coleta de dados generalizada, contínua e oculta em aplicativos móveis sobre o comportamento do utilizador (\'rastreamento\').</string>
-    <string name="app_copyright">Direitos Autorais \u00A9 2019-2022 Konrad Kollnig (Computação à base de humanos, Departamento de Ciência da Computação, Universidade de Oxford)\n\nTrackerControl é baseado em NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa muitos erros, que podem resultar na remoção do TrackerControl da Google Play Store, portanto, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_eula">O uso desta aplicação está no seu próprio risco. Nenhuma aplicação pode oferecer 100% de proteção contra rastreamento.</string>
@@ -122,8 +121,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_error">Ocorreu um erro inesperado: \'%s\'</string>
     <string name="msg_start_failed">O Android recusou-se a iniciar o serviço de VPN neste momento. Isto é provavelmente devido a um bug em sua versão Android.</string>
     <string name="msg_try">Experimente o TrackerControl</string>
-    <string name="msg_doze">Para resultados consistentes, as otimizações de bateria do Android devem ser desativadas para o TrackerControl.
-\n\nNa próxima caixa de diálogo, selecione \"Todos os aplicativos\" no topo, toque no TrackerControl na lista e selecione e confirme \"Não otimizar\".</string>
     <string name="msg_datasaving">Para resultados consistentes, as opções de salvamento de dados do Android devem ser desativadas no TrackerControl
 \n\nNa próxima caixa de diálogo, ativar as opções \"Dados de fundo\" e \"Uso irrestrito de dados\"</string>
     <string name="msg_filter">O uso de filtragem fará com que o Android atribua dados e uso de energia ao TrackerControl - o Android assume que os dados e a energia estão sendo usados pelo TrackerControl, ao invés dos aplicativos originais</string>
@@ -319,4 +316,5 @@ disso,\n\n]]></string>
     <string name="enable">Habilitar</string>
     <string name="internet_blocked">Acesso à Internet bloqueado</string>
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
+    <!-- Onboarding -->
 </resources>
