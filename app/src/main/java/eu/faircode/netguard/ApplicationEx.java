@@ -158,11 +158,6 @@ public class ApplicationEx extends Application {
                             if (content.getChildCount() > 0) {
                                 View child = content.getChildAt(0);
                                 child.setBackgroundColor(Common.isNight(activity) ? Color.BLACK : Color.WHITE);
-
-                                // Apply the bottom padding to the child instead, so the content is safe but the
-                                // background extends
-                                child.setPadding(child.getPaddingLeft(), child.getPaddingTop(), child.getPaddingRight(),
-                                        bars.bottom);
                             }
 
                             return insets;

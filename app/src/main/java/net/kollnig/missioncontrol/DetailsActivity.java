@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -132,11 +134,16 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         // Status bar appearance
-        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(),
+                getWindow().getDecorView());
         insetsController.setAppearanceLightStatusBars(false);
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
+
+        // Set window background to primary dark color to show behind the transparent
+        // status bar
+        getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorPrimaryDark)));
 
         running = true;
 
@@ -147,18 +154,18 @@ public class DetailsActivity extends AppCompatActivity {
         String appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
 
         // Set up paging
-        detailsStateAdapter =
-                new DetailsStateAdapter(
-                        this,
-                        appPackageName,
-                        appName,
-                        appUid);
+        detailsStateAdapter = new DetailsStateAdapter(
+                this,
+                appPackageName,
+                appName,
+                appUid);
         ViewPager2 viewPager = findViewById(R.id.view_pager);
+        viewPager
+                .setBackgroundColor(Common.isNight(this) ? android.graphics.Color.BLACK : android.graphics.Color.WHITE);
         viewPager.setAdapter(detailsStateAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
-        new TabLayoutMediator(tabs, viewPager, (tab, position) ->
-                tab.setText(getString(detailsStateAdapter.getPageTitle(position)))
-        ).attach();
+        new TabLayoutMediator(tabs, viewPager,
+                (tab, position) -> tab.setText(getString(detailsStateAdapter.getPageTitle(position)))).attach();
 
         // set toolbar and back arrow
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -176,9 +183,19 @@ public class DetailsActivity extends AppCompatActivity {
         final int appBarInitialTop = appBar.getPaddingTop();
         final int appBarInitialRight = appBar.getPaddingRight();
         final int appBarInitialBottom = appBar.getPaddingBottom();
+        final ViewGroup.MarginLayoutParams appBarParams = (ViewGroup.MarginLayoutParams) appBar.getLayoutParams();
+        final int appBarInitialMarginTop = appBarParams.topMargin;
+
         ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
             Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(appBarInitialLeft, appBarInitialTop + sysBars.top, appBarInitialRight, appBarInitialBottom);
+
+            // Use margin instead of padding for the top inset so the window background
+            // shows through
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = appBarInitialMarginTop + sysBars.top;
+            v.setLayoutParams(params);
+
+            v.setPadding(appBarInitialLeft, appBarInitialTop, appBarInitialRight, appBarInitialBottom);
             return insets;
         });
 
@@ -188,7 +205,9 @@ public class DetailsActivity extends AppCompatActivity {
         final int pagerInitialBottom = viewPager.getPaddingBottom();
         ViewCompat.setOnApplyWindowInsetsListener(viewPager, (v, insets) -> {
             Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(pagerInitialLeft + sysBars.left, pagerInitialTop, pagerInitialRight + sysBars.right, pagerInitialBottom + sysBars.bottom);
+            int extraPadding = eu.faircode.netguard.Util.dips2pixels(16, this);
+            v.setPadding(pagerInitialLeft + sysBars.left, pagerInitialTop, pagerInitialRight + sysBars.right,
+                    pagerInitialBottom + sysBars.bottom + extraPadding);
             return insets;
         });
     }
@@ -228,7 +247,8 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates an intent to save a file. Necessary to determine destination of CSV export.
+     * Creates an intent to save a file. Necessary to determine destination of CSV
+     * export.
      *
      * @return File intent
      */
@@ -237,7 +257,8 @@ public class DetailsActivity extends AppCompatActivity {
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_TITLE, appPackageName + "_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
+        intent.putExtra(Intent.EXTRA_TITLE, appPackageName + "_"
+                + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
         return intent;
     }
 
@@ -276,7 +297,8 @@ public class DetailsActivity extends AppCompatActivity {
         protected Boolean doInBackground(final String... args) {
             Uri target = data.getData();
             if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                target = Uri.parse(target + "/" + appPackageName + "_" + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
+                target = Uri.parse(target + "/" + appPackageName + "_"
+                        + new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date().getTime()) + ".csv");
             Log.i(TAG, "Writing URI=" + target);
 
             try (OutputStream out = getContentResolver().openOutputStream(target)) {
@@ -302,7 +324,8 @@ public class DetailsActivity extends AppCompatActivity {
                     CSVWriter.RFC4180_LINE_END)) {
 
                 try (Cursor data = trackerList.getAppInfo(appUid)) {
-                    if (data == null) throw new IOException("Could not read hosts.");
+                    if (data == null)
+                        throw new IOException("Could not read hosts.");
 
                     List<String> columnNames = new ArrayList<>();
                     Collections.addAll(columnNames, data.getColumnNames());
