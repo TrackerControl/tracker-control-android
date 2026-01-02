@@ -504,7 +504,7 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_network_action">Grant Unrestricted Access</string>
     <string name="onboarding_network_sure">Restricted background data can cause TrackerControl to fail. Are you sure you want to proceed without granting unrestricted access?</string>
 
-    <string name="onboarding_dns_title">Secure DNS</string>
+    <string name="onboarding_dns_title">Secure DNS (Beta feature; may not work as expected)</string>
     <string name="onboarding_dns_desc">Protect your privacy from your ISP by encrypting your DNS traffic using DNS-over-HTTPS (DoH).\n\nThis prevents "DNS hijacking" and keeps your browsing habits private from your network provider.</string>
     <string name="onboarding_dns_action">Enable Secure DNS</string>
     <string name="onboarding_dns_action_disable">Disable Secure DNS</string>
