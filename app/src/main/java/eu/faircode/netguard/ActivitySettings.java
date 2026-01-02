@@ -456,7 +456,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("unmetered_2g".equals(name) ||
                 "unmetered_3g".equals(name) ||
-                "unmetered_4g".equals(name))
+                "unmetered_4g".equals(name) ||
+                "exclude_system_vpn".equals(name) ||
+                "wifi_only".equals(name) ||
+                "screen_delay".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("national_roaming".equals(name))

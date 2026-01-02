@@ -1395,7 +1395,7 @@ public class ServiceSinkhole extends VpnService {
         boolean lan = prefs.getBoolean("lan", false);
         boolean ip6 = prefs.getBoolean("ip6", true);
         boolean filter = prefs.getBoolean("filter", true);
-        boolean system = prefs.getBoolean("manage_system", false);
+        boolean excludeSystem = prefs.getBoolean("exclude_system_vpn", false);
 
         // Build VPN service
         Builder builder = new Builder();
@@ -1595,7 +1595,7 @@ public class ServiceSinkhole extends VpnService {
                 for (Rule rule : listRule)
                     // Only exclude if explicitly set to exclude from VPN
                     // This ensures system apps still get secure DNS even when manage_system=false
-                    if (rule.vpn_exclude)
+                    if (rule.vpn_exclude || (excludeSystem && rule.system))
                         try {
                             Log.i(TAG, "Not routing " + rule.packageName);
                             builder.addDisallowedApplication(rule.packageName);

@@ -65,8 +65,8 @@
     <string name="setting_call">Disable on call</string>
     <string name="setting_reload_onconnectivity">Reload on every connectivity change</string>
 
-    <string name="setting_advanced_options">Advanced options</string>
-    <string name="setting_system">Manage system apps</string>
+    <string name="setting_advanced_options">Advanced options (for experts)</string>
+    <string name="setting_system">Show system apps</string>
     <string name="setting_log_app">Search new trackers</string>
     <string name="setting_log_logcat">Log transmissions to ADB</string>
     <string name="setting_filter">Block trackers</string>
@@ -123,7 +123,7 @@
     <string name="summary_ip6">Route IP version 6 traffic to TrackerControl so it can selectively be allowed or blocked</string>
     <string name="summary_call">Disable TrackerControl on incoming or outgoing telephone call. This can be used to work around IP/Wi-Fi calling problems.</string>
 
-    <string name="summary_system">Define rules for system apps (for experts)</string>
+    <string name="summary_system">Show system apps in the app list</string>
     <string name="summary_log_app">Disable to decrease battery usage. New trackers will still be blocked, but not shown.</string>
     <string name="summary_track_usage">Track the number of bytes sent and received for each app and address. This might result in extra battery usage.</string>
     <string name="summary_block_domains">WARNING: Blocked hosts are not shown in UI.</string>
@@ -409,8 +409,7 @@ Sincerely,\n\n]]></string>
     <string name="exclude_vpn" translatable="false">Tracker Protection</string>
     <string name="exclude_vpn_explanation">Detects and blocks trackers for this app.</string>
     <string name="vpn_exclude">Exclude from VPN</string>
-    <string name="vpn_exclude_explanation">Enable if you run into issues. App will bypass TrackerControl completely.</string>
-
+    <string name="vpn_exclude_explanation">Enable if you run into issues. App will bypass TrackerControl completely.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED for this to work.</string>
     <string name="uninstall">Uninstall</string>
     <string name="settings_uninstall">App Settings &amp; Uninstall</string>
 
@@ -465,5 +464,8 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Detect trackers in app code</string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
+
+    <string name="setting_exclude_system_vpn">Exclude system apps</string>
+    <string name="summary_exclude_system_vpn">Exclude all system apps from the VPN to prevent connectivity issues.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
 
 </resources>
