@@ -167,6 +167,7 @@
 
     </androidx.cardview.widget.CardView>
 
+    <!-- App Controls Card - Groups all toggles together -->
     <androidx.cardview.widget.CardView
         android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
@@ -176,98 +177,147 @@
         app:cardElevation="1dp"
         app:cardMaxElevation="@dimen/z_card">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <TextView
-                android:id="@+id/root_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/exclude_vpn"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <TextView
+            <!-- Exclude from VPN Toggle (troubleshooting - first for visibility) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cardVpnExclude"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="1dp"
-                android:text="@string/exclude_vpn_explanation"
-                android:textColor="?android:textColorSecondary"
-                android:textStyle="italic"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/root_name" />
+                android:layout_height="wrap_content">
 
-            <Switch
-                android:id="@+id/switch_vpn"
-                android:layout_width="wrap_content"
-                android:layout_height="21dp"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintBottom_toBottomOf="@+id/root_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/vpn_exclude_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/vpn_exclude"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/tvVpnExcludeExplanation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="48dp"
+                    android:text="@string/vpn_exclude_explanation"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="13sp"
+                    android:textStyle="italic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/vpn_exclude_name" />
 
-    </androidx.cardview.widget.CardView>
+                <Switch
+                    android:id="@+id/switch_vpn_exclude"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:textColorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@+id/vpn_exclude_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/vpn_exclude_name" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="@dimen/z_card">
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp">
-
-            <TextView
-                android:id="@+id/root_name2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/internet_access"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
-
-            <TextView
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="1dp"
-                android:text="@string/internet_access_explanation"
-                android:textColor="?android:textColorSecondary"
-                android:textStyle="italic"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/root_name2" />
+                android:layout_height="1dp"
+                android:layout_marginVertical="12dp"
+                android:background="?android:attr/listDivider" />
 
-            <Switch
-                android:id="@+id/switch_internet"
-                android:layout_width="wrap_content"
-                android:layout_height="21dp"
-                android:textColor="?android:textColorPrimary"
-                app:layout_constraintBottom_toBottomOf="@+id/root_name2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!-- Tracker Protection Toggle -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/root_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/exclude_vpn"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tvTrackerProtectionExplanation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="48dp"
+                    android:text="@string/exclude_vpn_explanation"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/root_name" />
+
+                <Switch
+                    android:id="@+id/switch_vpn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:textColorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@+id/root_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/root_name" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="12dp"
+                android:background="?android:attr/listDivider" />
+
+            <!-- Internet Access Toggle -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/root_name2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/internet_access"
+                    android:textColor="?android:textColorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tvInternetAccessExplanation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="48dp"
+                    android:text="@string/internet_access_explanation"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/root_name2" />
+
+                <Switch
+                    android:id="@+id/switch_internet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:textColorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@+id/root_name2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/root_name2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 

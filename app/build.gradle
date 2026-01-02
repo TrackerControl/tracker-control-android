@@ -13,6 +13,13 @@ android {
 
         buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
 
+        // Secure DNS (DoH) configuration
+        buildConfigField "String", "DEFAULT_DOH_ENDPOINT", "\"https://dns.quad9.net/dns-query\""
+        buildConfigField "String", "DEFAULT_DNS_IPV4", "\"9.9.9.9\""
+        buildConfigField "String", "DEFAULT_DNS_IPV4_2", "\"149.112.112.112\""
+        buildConfigField "String", "DEFAULT_DNS_IPV6", "\"2620:fe::fe\""
+        buildConfigField "String", "DEFAULT_DNS_IPV6_2", "\"2620:fe::9\""
+
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -159,6 +166,9 @@ dependencies {
     implementation 'org.smali:dexlib2:2.5.2'
 
     implementation 'com.caverock:androidsvg-aar:1.4'
+
+    // OkHttp for DNS-over-HTTPS
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
 }
 
 // Fix lint error on release builds

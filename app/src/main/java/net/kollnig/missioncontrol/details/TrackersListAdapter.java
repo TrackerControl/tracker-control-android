@@ -77,6 +77,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final String mAppId;
     private final Context mContext;
     private final SharedPreferences apply;
+    private final SharedPreferences vpn_exclude_prefs;
     private List<TrackerCategory> mValues = new ArrayList<>();
 
     // Analysis UI elements (populated when header is created)
@@ -95,6 +96,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mAppId = appId;
 
         apply = mContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
+        vpn_exclude_prefs = mContext.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
 
         // Removes blinks
         ((SimpleItemAnimator) Objects.requireNonNull(v.getItemAnimator())).setSupportsChangeAnimations(false);
@@ -400,6 +402,21 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 notifyDataSetChanged();
             });
+
+            // Exclude from VPN toggle (completely bypasses TrackerControl)
+            holder.mSwitchVpnExclude.setChecked(vpn_exclude_prefs.getBoolean(mAppId, false));
+            holder.mSwitchVpnExclude.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (!buttonView.isPressed())
+                    return;
+                vpn_exclude_prefs.edit().putBoolean(mAppId, isChecked).apply();
+
+                AsyncTask.execute(() -> {
+                    Rule.clearCache(mContext);
+                    ServiceSinkhole.reload("vpn exclude changed", mContext, false);
+                });
+
+                notifyDataSetChanged();
+            });
         }
     }
 
@@ -445,12 +462,14 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mLibraryExplanation;
         final Switch mSwitchInternet;
         final Switch mSwitchVPN;
+        final Switch mSwitchVpnExclude;
 
         VHHeader(View view) {
             super(view);
             mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
             mSwitchInternet = view.findViewById(R.id.switch_internet);
             mSwitchVPN = view.findViewById(R.id.switch_vpn);
+            mSwitchVpnExclude = view.findViewById(R.id.switch_vpn_exclude);
         }
     }
 }

@@ -38,6 +38,19 @@
             android:title="@string/setting_network_options">
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
+                android:key="doh_enabled"
+                android:summary="@string/summary_doh_enabled"
+                android:title="@string/setting_doh_enabled" />
+            <EditTextPreference
+                android:defaultValue="https://dns.quad9.net/dns-query"
+                android:dependency="doh_enabled"
+                android:hint="https://dns.quad9.net/dns-query"
+                android:inputType="textUri"
+                android:key="doh_endpoint"
+                android:summary="@string/summary_doh_endpoint"
+                android:title="@string/setting_doh_endpoint" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
                 android:key="subnet"
                 android:summary="@string/summary_subnet"
                 android:title="@string/setting_subnet" />
@@ -82,6 +95,7 @@
                 android:key="manage_system"
                 android:summary="@string/summary_system"
                 android:title="@string/setting_system" />
+
             <EditTextPreference
                 android:defaultValue="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
                 android:hint="https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"

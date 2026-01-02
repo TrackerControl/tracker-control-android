@@ -231,6 +231,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         screen.findPreference("watchdog")
                 .setTitle(getString(R.string.setting_watchdog, prefs.getString("watchdog", "0")));
 
+        // DoH endpoint
+        EditTextPreference pref_doh_endpoint = (EditTextPreference) screen.findPreference("doh_endpoint");
+        if (pref_doh_endpoint != null) {
+            pref_doh_endpoint.setSummary(prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT));
+        }
+
         // Show resolved
         Preference pref_show_resolved = screen.findPreference("show_resolved");
         pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -561,6 +567,32 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             }
             getPreferenceScreen().findPreference(name).setTitle(
                     getString(R.string.setting_dns, prefs.getString(name, "-")));
+            ServiceSinkhole.reload("changed " + name, this, false);
+
+        } else if ("doh_enabled".equals(name)) {
+            // Reset DoH client when toggled
+            net.kollnig.missioncontrol.dns.DnsOverHttpsClient.resetInstance();
+            ServiceSinkhole.reload("changed " + name, this, false);
+
+        } else if ("doh_endpoint".equals(name)) {
+            String endpoint = prefs.getString(name, BuildConfig.DEFAULT_DOH_ENDPOINT);
+            try {
+                // Validate URL format
+                if (!TextUtils.isEmpty(endpoint)) {
+                    new URL(endpoint);
+                    if (!endpoint.startsWith("https://")) {
+                        throw new MalformedURLException("DoH endpoint must use HTTPS");
+                    }
+                }
+            } catch (MalformedURLException ex) {
+                prefs.edit().remove(name).apply();
+                ((EditTextPreference) getPreferenceScreen().findPreference(name)).setText(null);
+                Toast.makeText(ActivitySettings.this, "Invalid DoH URL: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            getPreferenceScreen().findPreference(name).setSummary(
+                    prefs.getString(name, BuildConfig.DEFAULT_DOH_ENDPOINT));
+            // Reset DoH client to pick up new endpoint
+            net.kollnig.missioncontrol.dns.DnsOverHttpsClient.resetInstance();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("validate".equals(name)) {

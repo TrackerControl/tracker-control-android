@@ -82,6 +82,7 @@ public class Rule {
     public boolean lockdown = false;
 
     public boolean apply = true;
+    public boolean vpn_exclude = false; // If true, completely exclude from VPN (no DNS, no routing)
     public boolean notify = true;
 
     public boolean relateduids = false;
@@ -239,6 +240,7 @@ public class Rule {
             SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
             SharedPreferences lockdown = context.getSharedPreferences("lockdown", Context.MODE_PRIVATE);
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
+            SharedPreferences vpn_exclude_prefs = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
 
             // Get settings
@@ -397,6 +399,7 @@ public class Rule {
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
                         rule.apply = apply.getBoolean(info.packageName, true);
+                        rule.vpn_exclude = vpn_exclude_prefs.getBoolean(info.packageName, false);
                         rule.notify = notify.getBoolean(info.packageName, true);
 
                         // Related packages

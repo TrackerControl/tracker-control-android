@@ -92,6 +92,13 @@
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
     <string name="setting_watchdog">Watchdog: every %s minutes</string>
 
+    <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Secure DNS (DoH)</string>
+    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Applies to all apps.</string>
+    <string name="warning_beta">Beta feature. May not work as expected.</string>
+    <string name="setting_doh_endpoint">DoH Endpoint URL</string>
+    <string name="summary_doh_endpoint">HTTPS URL for DNS-over-HTTPS queries</string>
+
     <string name="setting_stats_frequency">Sample interval: %s ms</string>
     <string name="setting_stats_samples">Number of samples: %s s</string>
 
@@ -176,8 +183,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_vpn_cancelled">VPN connection cancelled\nDid you configure another VPN to be an always-on VPN?</string>
     <string name="msg_unavailable">This feature is not available on this Android version</string>
     <string name="msg_always_on">Another VPN is set as Always-on VPN</string>
-    <string name="msg_always_on_lockdown">Turn off "Block connections without VPN" in Android VPN settings to use TrackerControl in filtering mode</string>
-    <string name="msg_private_dns">Turn off "Private DNS" in Android network settings to use TrackerControl in filtering mode</string>
+
+    <string name="msg_private_dns">Turn off "Private DNS" in Android network settings. TrackerControl provides its own Secure DNS feature in Settings.</string>
     <string name="msg_start_forward">Start forwarding from %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Stop forwarding of %1$s port %2$d?</string>
     <string name="msg_log_logcat">Warning: Blocking disabled because of ADB logging.</string>
@@ -312,7 +319,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tab_actions">My Data</string>
     <string name="tracker_name">Tracker Name</string>
     <string name="internet_access">Internet Access</string>
-    <string name="internet_access_explanation">Must be on for Internet access.\n\nTip: You can also tap the app icon in the main screen.</string>
+    <string name="internet_access_explanation">You can also tap the app icon in the main screen.</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
@@ -399,8 +406,10 @@ Sincerely,\n\n]]></string>
     <string name="summary_strict_blocking">For newly installed apps, block as much data sharing with companies as possible. More apps will break.</string>
     <string name="strict_blocking_explanation">It is recommended for non-experts to disable this option to reduce app breakage. However, this allows some essential sharing with companies.</string>
 
-    <string name="exclude_vpn" translatable="false">Monitoring</string>
-    <string name="exclude_vpn_explanation">Must be on to detect or block trackers.\n\nTip: Disable if you run into issues.</string>
+    <string name="exclude_vpn" translatable="false">Tracker Protection</string>
+    <string name="exclude_vpn_explanation">Detects and blocks trackers for this app.</string>
+    <string name="vpn_exclude">Exclude from VPN</string>
+    <string name="vpn_exclude_explanation">Enable if you run into issues. App will bypass TrackerControl completely.</string>
 
     <string name="uninstall">Uninstall</string>
     <string name="settings_uninstall">App Settings &amp; Uninstall</string>

@@ -21,6 +21,7 @@
 package eu.faircode.netguard;
 
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 import net.kollnig.missioncontrol.R;
@@ -31,5 +32,10 @@ public class FragmentSettings extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+
+        Preference doh = findPreference("doh_enabled");
+        if (doh != null) {
+            doh.setSummary(doh.getSummary() + " (" + getString(R.string.warning_beta) + ")");
+        }
     }
 }
