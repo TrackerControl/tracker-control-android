@@ -120,19 +120,4 @@ class SignatureTrie {
 
         return lastMatch;
     }
-
-    /**
-     * Returns the number of signatures stored in the trie.
-     */
-    int size() {
-        return countSignatures(root);
-    }
-
-    private int countSignatures(TrieNode node) {
-        int count = node.trackerInfo != null ? 1 : 0;
-        for (TrieNode child : node.children.values()) {
-            count += countSignatures(child);
-        }
-        return count;
-    }
 }

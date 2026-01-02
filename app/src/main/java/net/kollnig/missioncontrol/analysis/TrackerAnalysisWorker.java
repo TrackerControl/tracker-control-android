@@ -53,18 +53,7 @@ public class TrackerAnalysisWorker extends Worker {
             PackageInfo pkg = context.getPackageManager().getPackageInfo(packageName, 0);
 
             // Perform analysis with progress reporting
-            TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(context);
-            AtomicInteger lastProgress = new AtomicInteger(-1);
-            analyser.setProgressCallback((current, total) -> {
-                int percent = (int) ((current / (float) total) * 100);
-                if (lastProgress.getAndSet(percent) != percent) {
-                    setProgressAsync(new Data.Builder()
-                            .putInt(KEY_PROGRESS, percent)
-                            .build());
-                }
-            });
-
-            String result = analyser.analyseApp(packageName);
+            String result = doAnalysis(context, packageName);
 
             // Cache the result
             TrackerAnalysisManager.getInstance(context)
@@ -87,5 +76,19 @@ public class TrackerAnalysisWorker extends Worker {
                     .putString(KEY_ERROR, e.getMessage() != null ? e.getMessage() : "Unknown error")
                     .build());
         }
+    }
+
+    private String doAnalysis(Context context, String packageName) throws AnalysisException {
+        TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(context);
+        AtomicInteger lastProgress = new AtomicInteger(-1);
+        analyser.setProgressCallback((current, total) -> {
+            int percent = (int) ((current / (float) total) * 100);
+            if (lastProgress.getAndSet(percent) != percent) {
+                setProgressAsync(new Data.Builder()
+                        .putInt(KEY_PROGRESS, percent)
+                        .build());
+            }
+        });
+        return analyser.analyseApp(packageName);
     }
 }

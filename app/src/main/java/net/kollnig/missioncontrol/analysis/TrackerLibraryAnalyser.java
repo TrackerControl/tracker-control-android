@@ -35,6 +35,7 @@ import org.jf.dexlib2.iface.DexFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -231,9 +232,7 @@ public class TrackerLibraryAnalyser {
             // Add split APKs if present (App Bundles)
             String[] splits = pkg.applicationInfo.splitSourceDirs;
             if (splits != null) {
-                for (String split : splits) {
-                    apkPaths.add(split);
-                }
+                apkPaths.addAll(Arrays.asList(splits));
             }
 
             Set<TrackerLibrary> trackers = new HashSet<>();
