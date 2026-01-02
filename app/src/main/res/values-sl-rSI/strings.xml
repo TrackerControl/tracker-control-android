@@ -84,6 +84,7 @@
     <string name="setting_pcap_record_size">Velikost zapisa PCAP: %s B</string>
     <string name="setting_pcap_file_size">Najv. velikost datoteke PCAP: %s MB</string>
     <string name="setting_watchdog">Pes čuvaj: vsakih %s min.</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Vzorčni razmik: %s ms</string>
     <string name="setting_stats_samples">Št. vzorcev: %s s</string>
     <string name="setting_backup">Varnostno kopiranje</string>
@@ -155,8 +156,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
     <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
     <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
-    <string name="msg_always_on_lockdown">Izklopite \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN, da TrackerControl uporabite v filtrirnem načinu.</string>
-    <string name="msg_private_dns">Izklopite \"Zasebni DNS\" v Androidovih omrežnih nastavitvah, da TrackerControl uporabite v filtrirnem načinu.</string>
     <string name="msg_start_forward">Začni posredovati iz %1$s, vrata %2$d v %3$s:%4$d od%5$s?</string>
     <string name="msg_stop_forward">Ustavi posredovati %1$s, vrata %2$d?</string>
     <string name="msg_log_logcat">Opozorilo: blokiranje je onemogočeno zaradi beleženja ADB.</string>
@@ -254,7 +253,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tab_actions">Moji podatki</string>
     <string name="tracker_name">Ime sledilca</string>
     <string name="internet_access">Dostop do interneta</string>
-    <string name="internet_access_explanation">Za dostop do interneta mora biti to vklopljeno.\n\nNasvet: lahko se tudi dotaknete ikone programa na glavnem zaslonu.</string>
     <string name="app_info">Upravljanje programa</string>
     <!-- Actions -->
     <string name="block_tracking">Blokiraj sledilce</string>
@@ -332,7 +330,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strogo blokiranje</string>
     <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
     <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
-    <string name="exclude_vpn_explanation">Mora biti vklopljeno za zaznavanje ali blokiranje sledilcev.\n\nNasvet: onemogočite, če naletite na težave.</string>
     <string name="uninstall">Odstrani</string>
     <string name="settings_uninstall">Nastavitve programa in odstranitev</string>
     <string name="no_trackers_found_message_disabled">Omogočite stikalo na glavnem zaslonu, nato zaženite program, da poiščete sledilce.</string>
