@@ -56,8 +56,6 @@
     <string name="setting_ip6">IPv6-verkeer inschakelen</string>
     <string name="setting_call">Uitschakelen bij bellen</string>
     <string name="setting_reload_onconnectivity">Herlaad bij elke wijziging van de verbinding</string>
-    <string name="setting_advanced_options">Geavanceerde opties</string>
-    <string name="setting_system">Systeem-apps beheren</string>
     <string name="setting_log_app">Nieuwe trackers zoeken</string>
     <string name="setting_log_logcat">Log transmissies naar ADB</string>
     <string name="setting_filter">Trackers blokkeren</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Instellingen exporteren (niet voor toestel-reset)</string>
     <string name="setting_import">Instellingen importeren</string>
     <string name="setting_hosts">Hosts-bestand importeren</string>
     <string name="setting_hosts_append">Hosts-bestand importeren(toevoegen)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Apps toestaan om verbinding te maken met lokale netwerkadressen, zoals 10.0.0.0/8, 172.16.0.0/12 en 192.168.0.0/16</string>
     <string name="summary_ip6">IPv6 verkeer naar TrackerControl routeren zodat het naar keuze kan worden toegestaan of geblokkeerd</string>
     <string name="summary_call">Schakel TrackerControl uit bij inkomende of uitgaande telefoongesprekken. Dit kan worden gebruikt om IP/Wi-Fi belproblemen te omzeilen.</string>
-    <string name="summary_system">Definieer regels voor systeem-apps (voor experts)</string>
     <string name="summary_log_app">Uitschakelen om batterijverbruik te verminderen. Nieuwe trackers blijven geblokkeerd, maar worden niet getoond.</string>
     <string name="summary_track_usage">Volg het aantal verzonden en ontvangen bytes voor elke app en elk adres. Dit kan resulteren in extra batterijverbruik.</string>
     <string name="summary_block_domains">WAARSCHUWING: Geblokkeerde hosts worden niet getoond in de UI.</string>
