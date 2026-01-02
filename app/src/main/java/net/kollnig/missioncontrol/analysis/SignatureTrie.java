@@ -33,28 +33,6 @@ class SignatureTrie {
     private final TrieNode root = new TrieNode();
 
     /**
-     * Data class to hold tracker information associated with a signature.
-     */
-    static class TrackerInfo {
-        final String name;
-        final String web;
-        final int id;
-        final String signature;
-
-        TrackerInfo(String name, String web, int id, String signature) {
-            this.name = name;
-            this.web = web;
-            this.id = id;
-            this.signature = signature;
-        }
-    }
-
-    private static class TrieNode {
-        final Map<Character, TrieNode> children = new HashMap<>();
-        TrackerInfo trackerInfo = null; // Non-null if this node marks end of a signature
-    }
-
-    /**
      * Inserts a tracker signature into the trie.
      *
      * @param signature The class signature pattern to match (e.g.,
@@ -119,5 +97,27 @@ class SignatureTrie {
         }
 
         return lastMatch;
+    }
+
+    /**
+     * Data class to hold tracker information associated with a signature.
+     */
+    static class TrackerInfo {
+        final String name;
+        final String web;
+        final int id;
+        final String signature;
+
+        TrackerInfo(String name, String web, int id, String signature) {
+            this.name = name;
+            this.web = web;
+            this.id = id;
+            this.signature = signature;
+        }
+    }
+
+    private static class TrieNode {
+        final Map<Character, TrieNode> children = new HashMap<>();
+        TrackerInfo trackerInfo = null; // Non-null if this node marks end of a signature
     }
 }

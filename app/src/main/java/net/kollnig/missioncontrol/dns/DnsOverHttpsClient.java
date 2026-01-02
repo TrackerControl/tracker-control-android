@@ -23,11 +23,6 @@ import net.kollnig.missioncontrol.BuildConfig;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,32 +41,9 @@ public class DnsOverHttpsClient {
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 5000;
     private static final int WRITE_TIMEOUT_MS = 5000;
-
+    private static DnsOverHttpsClient instance;
     private final OkHttpClient client;
     private final String endpoint;
-
-    private static DnsOverHttpsClient instance;
-
-    public static synchronized DnsOverHttpsClient getInstance(Context context) {
-        if (instance == null) {
-            instance = new DnsOverHttpsClient(context);
-        }
-        return instance;
-    }
-
-    /**
-     * Get instance with specific endpoint (used by DnsProxyServer).
-     */
-    public static synchronized DnsOverHttpsClient getInstance(String endpoint) {
-        if (instance == null || !instance.endpoint.equals(endpoint)) {
-            instance = new DnsOverHttpsClient(endpoint);
-        }
-        return instance;
-    }
-
-    public static synchronized void resetInstance() {
-        instance = null;
-    }
 
     private DnsOverHttpsClient(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -100,17 +72,30 @@ public class DnsOverHttpsClient {
         Log.i(TAG, "DoH client initialized with endpoint: " + endpoint);
     }
 
+    public static synchronized DnsOverHttpsClient getInstance(Context context) {
+        if (instance == null) {
+            instance = new DnsOverHttpsClient(context);
+        }
+        return instance;
+    }
+
     /**
-     * Check if DoH is enabled in preferences.
+     * Get instance with specific endpoint (used by DnsProxyServer).
      */
-    public static boolean isEnabled(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean("doh_enabled", false);
+    public static synchronized DnsOverHttpsClient getInstance(String endpoint) {
+        if (instance == null || !instance.endpoint.equals(endpoint)) {
+            instance = new DnsOverHttpsClient(endpoint);
+        }
+        return instance;
+    }
+
+    public static synchronized void resetInstance() {
+        instance = null;
     }
 
     /**
      * Resolve a DNS query using DoH.
-     * 
+     *
      * @param dnsQuery Raw DNS wire format query bytes
      * @return DNS wire format response bytes, or null on failure
      */

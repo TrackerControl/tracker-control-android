@@ -161,6 +161,7 @@ public class TrackerList {
 
     /**
      * Retrieves information about number of contacted tracking companies, for all apps
+     *
      * @return Number of contacted tracking companies, for all apps
      */
     public synchronized Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> getTrackerCountsAndTotal() {
@@ -188,9 +189,10 @@ public class TrackerList {
 
     /**
      * Helper method to check tracker
+     *
      * @param trackers Set of seen trackers
-     * @param appUid Uid of app
-     * @param tracker Seen tracker
+     * @param appUid   Uid of app
+     * @param tracker  Seen tracker
      */
     private void checkTracker(Map<Integer, Set<String>> trackers, int appUid, Tracker tracker) {
         Set<String> observedTrackers = trackers.get(appUid);
@@ -205,6 +207,7 @@ public class TrackerList {
 
     /**
      * Count the number of seen trackers
+     *
      * @param trackers Set of seen trackers
      * @return
      */
@@ -222,6 +225,7 @@ public class TrackerList {
 
     /**
      * Retrieve info for CSV export
+     *
      * @return All logged communications about app
      */
     public Cursor getAppInfo(int uid) {
@@ -230,6 +234,7 @@ public class TrackerList {
 
     /**
      * Retrieves information about all seen trackers
+     *
      * @return A list of seen trackers
      */
     public synchronized List<TrackerCategory> getAppTrackers(Context c, int uid) {
@@ -299,6 +304,7 @@ public class TrackerList {
 
     /**
      * Loads X-Ray tracker list
+     *
      * @param c Context
      */
     private void loadXrayTrackers(Context c) {
@@ -356,6 +362,7 @@ public class TrackerList {
 
     /**
      * Load Disconnect.me tracker list
+     *
      * @param c Context
      */
     private void loadDisconnectTrackers(Context c) {
@@ -428,8 +435,9 @@ public class TrackerList {
 
     /**
      * Internal method to add tracker to the tracker database that is used at runtime
+     *
      * @param tracker Tracker to be added
-     * @param dom Domain to be added
+     * @param dom     Domain to be added
      */
     private void addTrackerDomain(Tracker tracker, String dom) {
         if (domainBasedBlocking) {

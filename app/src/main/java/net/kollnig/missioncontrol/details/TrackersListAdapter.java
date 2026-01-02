@@ -41,7 +41,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.work.Data;
@@ -88,9 +87,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private ProgressBar mPbTrackerDetection;
 
     public TrackersListAdapter(Context c,
-            RecyclerView v,
-            Integer appUid,
-            String appId) {
+                               RecyclerView v,
+                               Integer appUid,
+                               String appId) {
         mContext = c;
         mAppUid = appUid;
         mAppId = appId;
@@ -260,7 +259,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
                 @Override
                 public @NonNull View getView(int pos, @Nullable View convertView,
-                        @NonNull ViewGroup parent) {
+                                             @NonNull ViewGroup parent) {
                     TextView tv = (TextView) super.getView(pos, convertView, parent);
                     Tracker t = getItem(pos);
                     if (t != null)

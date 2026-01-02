@@ -32,16 +32,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * endpoint.
  */
 public class DnsProxyServer {
-    private static final String TAG = "TrackerControl.DnsProxy";
     public static final int DNS_PROXY_PORT = 5353;
     public static final String DNS_PROXY_ADDRESS = "127.0.0.1";
-
+    private static final String TAG = "TrackerControl.DnsProxy";
     private static DnsProxyServer instance;
 
     private final Context context;
+    private final AtomicBoolean running = new AtomicBoolean(false);
     private DatagramSocket serverSocket;
     private ExecutorService executor;
-    private final AtomicBoolean running = new AtomicBoolean(false);
 
     private DnsProxyServer(Context context) {
         this.context = context.getApplicationContext();
