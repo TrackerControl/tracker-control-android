@@ -58,8 +58,6 @@
     <string name="setting_ip6">Увімкнути IPv6-трафік</string>
     <string name="setting_call">Вимкнути під час дзвінка</string>
     <string name="setting_reload_onconnectivity">Перезавантажувати при кожній зміні підключення</string>
-    <string name="setting_advanced_options">Розширені параметри</string>
-    <string name="setting_system">Керування системними програмами</string>
     <string name="setting_log_app">Пошук нових трекерів</string>
     <string name="setting_log_logcat">Передавання журналів до ADB</string>
     <string name="setting_filter">Блокувати трекери</string>
@@ -88,7 +86,6 @@
     <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
     <string name="setting_stats_samples">Кількість зразків: %s s</string>
     <string name="setting_backup">Резервне копіювання</string>
-    <string name="setting_export">Експорт налаштувань (не для скидання пристрою)</string>
     <string name="setting_import">Імпортувати параметри</string>
     <string name="setting_hosts">Імпортувати host-файл</string>
     <string name="setting_hosts_append">Імпортувати host-файл (додати)</string>
@@ -103,7 +100,6 @@
     <string name="summary_lan">Дозволити програмам підключатися до адрес локальної мережі, таких як 10.0.0.0/8, 172.16.0.0/12 та 192.168.0.0/16</string>
     <string name="summary_ip6">Спрямовувати трафік IP версії 6 до TrackerControl, щоб його можна було вибірково дозволяти або блокувати</string>
     <string name="summary_call">Вимкніть TrackerControl для вхідних або вихідних телефонних дзвінків. Це можна використовувати для вирішення проблем із дзвінками через IP/Wi-Fi.</string>
-    <string name="summary_system">Визначення правил для системних програм (для експертів)</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
     <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
     <string name="summary_block_domains">УВАГА: Заблоковані хости не відображаються в інтерфейсі користувача.</string>
