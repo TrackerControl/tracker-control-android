@@ -36,7 +36,8 @@ public class TrackerBlocklist {
     public static String NECESSARY_CATEGORY = "Content";
     private static TrackerBlocklist instance;
     /**
-     * Whilst blockmap is a list of apps to block, the set is a set of trackers not to block.
+     * Whilst blockmap is a list of apps to block, the set is a set of trackers not
+     * to block.
      */
     private final Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
 
@@ -50,7 +51,8 @@ public class TrackerBlocklist {
      * Singleton getter for TrackerBlocklist
      *
      * @param c context used to access TrackerBlocklist from
-     * @return The current instance of the TrackerBlocklist, if none, a new instance is created.
+     * @return The current instance of the TrackerBlocklist, if none, a new instance
+     *         is created.
      */
     public static TrackerBlocklist getInstance(Context c) {
         if (instance == null)
@@ -60,7 +62,8 @@ public class TrackerBlocklist {
     }
 
     /**
-     * For a given tracker company, this computes a key to store the blocking state of this tracker.
+     * For a given tracker company, this computes a key to store the blocking state
+     * of this tracker.
      *
      * @param t Tracker company
      * @return The key for storage of the blocking state
@@ -82,8 +85,7 @@ public class TrackerBlocklist {
             blockmap.clear();
             for (String appUid : set) {
                 // Get saved blocklist for UID
-                Set<String> prefset = prefs.getStringSet
-                        (SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
+                Set<String> prefset = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
 
                 // Make an editable copy
                 Set<String> subset = new HashSet<>();
