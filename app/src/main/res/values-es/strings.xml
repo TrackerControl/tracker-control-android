@@ -56,8 +56,6 @@
     <string name="setting_ip6">Habilitar el tráfico IPv6</string>
     <string name="setting_call">Desactivar en llamadas</string>
     <string name="setting_reload_onconnectivity">Actualizar al cambiar la conectividad</string>
-    <string name="setting_advanced_options">Opciones avanzadas</string>
-    <string name="setting_system">Gestionar aplicaciones de sistema</string>
     <string name="setting_log_app">Buscar nuevos rastreadores</string>
     <string name="setting_log_logcat">Registrar transmisiones al ADB</string>
     <string name="setting_filter">Bloquear rastreadores</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Intervalo de muestra: %s ms</string>
     <string name="setting_stats_samples">Número de muestras: %s s</string>
     <string name="setting_backup">Respaldo</string>
-    <string name="setting_export">Exportar ajustes</string>
     <string name="setting_import">Importar ajustes</string>
     <string name="setting_hosts">Importar archivo de hosts</string>
     <string name="setting_hosts_append">Importar archivo de hosts (adjuntar)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Permite que las aplicaciones se conecten a las direcciones de la red de área local, como 10.0.0.0/8, 172.16.0.0/12 y 192.168.0.0/16</string>
     <string name="summary_ip6">Rutea el tráfico de la versión 6 de la IP al TrackerControl para que pueda ser permitido o bloqueado selectivamente</string>
     <string name="summary_call">Desactiva TrackerControl en llamadas telefónicas entrantes o salientes. Esto puede ser usado para solucionar problemas de llamadas IP/Wi-Fi.</string>
-    <string name="summary_system">Define reglas para aplicaciones de sistema (para expertos)</string>
     <string name="summary_log_app">Desactivar para reducir el uso de la batería. Los nuevos rastreadores seguirán bloqueados, pero no se mostrarán.</string>
     <string name="summary_track_usage">Rastrea el número de bytes enviados y recibidos por cada aplicación y dirección. Esto podría aumentar el consumo de la batería</string>
     <string name="summary_block_domains">ADVERTENCIA: Los hosts bloqueados no se mostrarán en la interfaz.</string>
