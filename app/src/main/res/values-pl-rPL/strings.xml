@@ -84,6 +84,7 @@
     <string name="setting_pcap_record_size">Wielkość rekordu PCAP: %s B</string>
     <string name="setting_pcap_file_size">PCAP maks. rozmiar pliku: %s MB</string>
     <string name="setting_watchdog">Watchdog: co %s minuty</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Przedział czasowy próby: %s ms</string>
     <string name="setting_stats_samples">Liczba próbek: %s s</string>
     <string name="setting_backup">Kopia zapasowa</string>
@@ -155,8 +156,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_vpn_cancelled">Połączenie VPN zostało anulowane\nCzy skonfigurowałeś inny VPN, aby był zawsze włączony?</string>
     <string name="msg_unavailable">Ta funkcja nie jest dostępna w tej wersji Androida</string>
     <string name="msg_always_on">Kolejny VPN jest ustawiony jako zawsze włączony VPN</string>
-    <string name="msg_always_on_lockdown">Wyłączyć \"Blokowanie połączeń bez VPN\" w ustawieniach Android VPN, aby używać TrackerControl w trybie filtrowania</string>
-    <string name="msg_private_dns">Wyłącz \"Prywatny DNS\" w ustawieniach sieciowych Androida, aby używać TrackerControl w trybie filtrowania</string>
     <string name="msg_start_forward">Rozpocznij przekazywanie z portu %1$s %2$d do %3$s:%4$d z \'%5$s\'?</string>
     <string name="msg_stop_forward">Zatrzymaj przekierowanie z %1$s port %2$d?</string>
     <string name="msg_log_logcat">Ostrzeżenie: Blokowanie wyłączone ze względu na logowanie ADB.</string>
@@ -254,7 +253,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="tab_actions">Moje dane</string>
     <string name="tracker_name">Nazwa znacznika</string>
     <string name="internet_access">Dostęp do internetu</string>
-    <string name="internet_access_explanation">Musi być włączony dla dostępu do Internetu.\n\nWskazówka: Możesz również stuknąć ikonę aplikacji na ekranie głównym.</string>
     <string name="app_info">Zarządzaj aplikacją</string>
     <!-- Actions -->
     <string name="block_tracking">Trackery blokowe</string>
@@ -332,7 +330,6 @@ Z poważaniem,\n\n]]></string>
     <string name="setting_strict_blocking">Ścisłe blokowanie</string>
     <string name="summary_strict_blocking">W przypadku nowo zainstalowanych aplikacji zablokuj jak najwięcej danych z firmami. Więcej aplikacji zostanie przerwanych.</string>
     <string name="strict_blocking_explanation">Zalecane jest wyłączenie tej opcji dla osób niebędących ekspertami, aby zmniejszyć ryzyko przerwania działania aplikacji. Pozwala to jednak na podstawowe udostępnianie danych .</string>
-    <string name="exclude_vpn_explanation">Musi być włączony, aby wykryć lub zablokować nadajniki. \n\nWskazówka: Wyłącz, jeżeli napotkasz problemy.</string>
     <string name="uninstall">Odinstaluj</string>
     <string name="settings_uninstall">Ustawienia aplikacji &amp; Odinstaluj</string>
     <string name="no_trackers_found_message_disabled">Włączyć przełącznik na głównym ekranie, a następnie uruchomić aplikację w celu znalezienia trackerów</string>
