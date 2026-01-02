@@ -56,8 +56,6 @@
     <string name="setting_ip6">IPv6 trafiğini etkinleştir</string>
     <string name="setting_call">Çağrı sırasında devre dışı bırak</string>
     <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
-    <string name="setting_advanced_options">Gelişmiş seçenekler</string>
-    <string name="setting_system">Sistem uygulamaları yönet</string>
     <string name="setting_log_app">Yeni izleyiciler ara</string>
     <string name="setting_log_logcat">ADB\'ye aktarımları günlüğe kaydet</string>
     <string name="setting_filter">İzleyicileri engelle</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Yenileme aralığı: %s ms</string>
     <string name="setting_stats_samples">Yenileme geçmişi: %s s</string>
     <string name="setting_backup">Yedekle</string>
-    <string name="setting_export">Ayarları dışa aktar (cihaz sıfırlama için değil)</string>
     <string name="setting_import">Ayarları içe aktar</string>
     <string name="setting_hosts">Hosts dosyasını içe aktar</string>
     <string name="setting_hosts_append">Hosts dosyasını içe aktar (ek)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Uygulamaların 10.0.0.0/8, 172.16.0.0/12 ve 192.168.0.0/16 gibi yerel ağ adreslerine bağlanmasına izin ver</string>
     <string name="summary_ip6">IP sürüm 6 trafiğini, seçici olarak izin verilebilmesi veya engellenebilmesi için TrackerControl\'e yönlendirin</string>
     <string name="summary_call">Telefon aramalarında TrackerControl devre dışı bırakılsın. IP/Kablosuz üzerinden arama sorunlarını çözmek için kullanılabilir.</string>
-    <string name="summary_system">Sistem uygulamalarına kural tanımlanmasını sağlar (gelişmiş kullanıcılar için)</string>
     <string name="summary_log_app">Pil kullanımını azaltmak için devre dışı bırakın. Yeni izleyiciler yine engellenecek, ancak gösterilmeyecek.</string>
     <string name="summary_track_usage">Her uygulama ve adres tarafından gönderilip alınan veri miktarını izleyin. Bu pil kullanımını arttırabilir.</string>
     <string name="summary_block_domains">UYARI: Engellenen ana bilgisayarlar kullanıcı arayüzünde gösterilmez.</string>
