@@ -112,19 +112,19 @@
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
     <string name="summary_log_logcat">Zakáže blokování. Komunikace (a rozpoznané trackery) jsou zaznamenány do logu zařízení. Získej záznam přes adb logcat s tagem \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
-    <string name="msg_started">Vyhledávání slídičů...</string>
+    <string name="msg_started">Vyhledávání trackerů...</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
     <string name="msg_installed">Problémy s %1$s?</string>
     <string name="msg_installed_description">Umožnit aplikaci kontaktovat společnosti</string>
-    <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven sledování: %d</string>
+    <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven trackerů: %d</string>
     <string name="msg_installed_n">Instalace dokončena</string>
     <string name="msg_completed">Akce dokončena</string>
     <string name="msg_vpn">TrackerControl používá lokální VPN pro filtrování internetového provozu.
 Z tohoto důvodu prosím povolte VPN připojení v následujícím dialogu.
 Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.</string>
-    <string name="msg_autostart">TrackerControl nemůže být spuštěn automaticky při startu zařízení kvůli chybě ve Vaší verzi Androidu.</string>
+    <string name="msg_autostart">TrackerControl nemůže být spuštěn automaticky při startu zařízení kvůli chybě ve vaší verzi Androidu.</string>
     <string name="msg_error">Došlo k neočekávané chybě: \'%s\'</string>
     <string name="msg_start_failed">Android odmítl spustit službu VPN. Může to být způsobeno chybou ve vaší verzi Androidu.</string>
     <string name="msg_try">Vyzkoušejte TrackerControl</string>
@@ -267,7 +267,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="contacts_description">Pokud se domníváte, že aplikace porušuje zásady ochrany osobních údajů, můžete se obrátit přímo na odpovědné subjekty.</string>
     <string name="play_services_required">Toto je nastavení služeb Google Play, které nebyly ve vašem zařízení nalezeny.</string>
     <string name="no_mail_service">Nainstalujte si e-mailového klienta.</string>
-    <string name="blocking_settings">Označ trackery</string>
+    <string name="blocking_settings">Označit trackery</string>
     <string name="ad_settings">Změnit</string>
     <string name="request_data">Vyžádat data</string>
     <string name="request_deletion">Žádost o odstranění</string>
@@ -318,7 +318,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="instructions_monitoring">Přepni switch a interaguj s aplikacemi.</string>
     <string name="device_not_supported_title">Toto zařízení není podporováno</string>
     <string name="device_not_supported_msg">Operační systém Vašeho zařízení neumožňuje monitorování a filtrování síťových komunikací. To je vyžadováno pro TrackerControl.</string>
-    <string name="launch_app">Spustit &amp; Najít trackery</string>
+    <string name="launch_app">Spustit a najít trackery</string>
     <string name="countries">Cílové země</string>
     <string name="countries_explanation">Zjisti kam jsou tracking data posílána. \n\nInformace jsou založeny na DNS vyhledáváních a IP informacích a můžou být nepřesné.</string>
     <string name="countries_loading_failed">Mapu se nepodařilo načíst. Prosím napište tc@kollnig.net jak se to stalo.</string>
@@ -358,10 +358,17 @@ Privátní DNS musí být vypnutá.</string>
     <string name="tracking_detection_failed_ram">Detekce tracker library se nepovedla. Nedostatek RAM.</string>
     <string name="tracking_detection_failed_report">Detekce tracker library se nepovedla. Nahlaš chybu vývojáři.</string>
     <string name="detected_trackers">Detekovány knihovny trackerů: %s</string>
+    <string name="analyzing_classes">Analyzuji třídy…</string>
+    <string name="analyzing_classes_progress">Analyzuji třídy… %d%%</string>
+    <string name="analysis_already_running">Analýza již probíhá</string>
     <string name="none">Nic</string>
     <string name="trackers_static">Knihovny trackerů</string>
     <string name="trackers_static_explanation">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.\n\nTracking, které je detekováno v síti může být zablokováno s TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.</string>
+    <string name="analyze_tracker_libraries">Analýza knihoven trackerů</string>
+    <string name="update_analysis">Aktualizovat analýzu</string>
+    <string name="analysis_outdated_version">\n\nNote: Analýza se týká předchozí verze aplikace. Mohlo dojít ke změně integrovaných knihoven pro sledování.</string>
+    <string name="analysis_queued">Analýza ve frontě…</string>
     <string name="blocked">BLOKOVÁNO</string>
     <string name="allowed">POVOLENO</string>
     <string name="setting_domain_based_blocked">Blokování na základě domény</string>
