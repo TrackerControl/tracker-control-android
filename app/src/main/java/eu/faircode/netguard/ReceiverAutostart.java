@@ -94,6 +94,26 @@ public class ReceiverAutostart extends BroadcastReceiver {
                 } else if (oldVersion <= 2017032112)
                     editor.remove("ip6");
 
+                if (oldVersion < 2026010203) {
+                    Log.i(TAG, "Migrating Tracker Protection to VPN Exclusion");
+                    SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
+                    SharedPreferences vpn_exclude = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor vpn_exclude_editor = vpn_exclude.edit();
+                    SharedPreferences.Editor apply_editor = apply.edit();
+
+                    Map<String, ?> allApply = apply.getAll();
+                    for (Map.Entry<String, ?> entry : allApply.entrySet()) {
+                        if (entry.getValue() instanceof Boolean && !((Boolean) entry.getValue())) {
+                            String packageName = entry.getKey();
+                            Log.i(TAG, "Excluding package=" + packageName);
+                            vpn_exclude_editor.putBoolean(packageName, true);
+                            apply_editor.putBoolean(packageName, true);
+                        }
+                    }
+                    vpn_exclude_editor.apply();
+                    apply_editor.apply();
+                }
+
             } else {
                 Log.i(TAG, "Initializing sdk=" + Build.VERSION.SDK_INT);
                 editor.putBoolean("filter_udp", true);
