@@ -62,6 +62,12 @@
             android:value="2.1" />
 
         <activity
+            android:name="net.kollnig.missioncontrol.ActivityOnboarding"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
             android:name="eu.faircode.netguard.ActivityMain"
             android:configChanges="orientation|screenSize"
             android:exported="true"

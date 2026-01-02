@@ -1,3 +1,10 @@
-<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/ic_signal_wifi_4_bar_white_24dp"
-    android:tint="?attr/colorOn" />
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorOn">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,2C7.31,2,3.07,3.9,0,7l12,15L24,7C20.93,3.9,16.69,2,12,2z"/>
+</vector>

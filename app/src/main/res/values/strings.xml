@@ -1,6 +1,6 @@
 <resources>
     <string name="app_description">TrackerControl allows users to monitor and control the widespread, ongoing, hidden data collection in mobile apps about user behaviour (\'tracking\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requires Android 5.1 or later</string>
     <string name="app_xposed">Xposed causes too many crashes, which might result in TrackerControl being removed from the Google Play Store, therefore TrackerControl isn\'t supported while Xposed is installed</string>
     <string name="app_eula">The usage of this app is at your own risk. No app can offer 100% protection against tracking.</string>
@@ -156,8 +156,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_mb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; MB</string>
     <string name="msg_gb" translatable="false">%1$7.3f&#9650; %2$7.3f&#9660; GB</string>
     <string name="msg_count" translatable="false">%dx</string>
-    <string name="msg_doze">For consistent results, the Android battery optimizations should be disabled for TrackerControl.
-\n\nIn the next dialog, select \"All apps\" at the top, tap on TrackerControl in the list and select and confirm \"Don\'t optimize\".</string>
+    <string name="msg_doze">For consistent results, the Android battery optimisations should be disabled for TrackerControl.
+\n\nIn the next dialog, select \"All apps\" at the top, tap on TrackerControl in the list and select and confirm \"Don\'t optimise\".</string>
     <string name="msg_datasaving">For consistent results, the Android data saving options should be disabled for TrackerControl
 \n\nIn the next dialog, enable the options \"Background data\" and \"Unrestricted data usage\"</string>
     <string name="msg_filter">Using filtering will cause Android to attribute data and power usage to TrackerControl - Android assumes the data and power are being used by TrackerControl, rather than the original apps</string>
@@ -467,5 +467,58 @@ Sincerely,\n\n]]></string>
 
     <string name="setting_exclude_system_vpn">Exclude system apps</string>
     <string name="summary_exclude_system_vpn">Exclude all system apps from the VPN to prevent connectivity issues.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
+
+    <!-- Onboarding -->
+    <string name="title_next">Next</string>
+    <string name="title_skip">Skip</string>
+    <string name="title_previous">Previous</string>
+    <string name="title_finish">Get Started</string>
+    
+    <string name="onboarding_welcome_title">Take Control of Your Privacy</string>
+    <string name="onboarding_welcome_desc">TrackerControl is a community-driven research project that empowers you to:\n\n• <b>Monitor</b> hidden data collection by mobile apps in real-time.\n• <b>Block</b> trackers and ads using our database of <b>2,000,000 analysed apps</b>.\n• <b>Identify</b> destination companies and countries receiving your data.\n\nAll analysis happens <b>locally on your device</b> – your traffic never leaves your control.</string>
+    
+    <string name="onboarding_vpn_title">Enable Protection</string>
+    <string name="onboarding_vpn_desc">TrackerControl uses Android\'s local VPN interface to analyse your internet traffic.\n\n<b>Important:</b> No external VPN server is involved. We don\'t see your data.</string>
+    <string name="onboarding_vpn_action">Enable On-Device VPN</string>
+    <string name="onboarding_vpn_sure">TrackerControl cannot filter any traffic without the local VPN. Are you sure you want to proceed without enabling it?</string>
+    
+    <string name="onboarding_battery_title">Prevent Interruption</string>
+    <string name="onboarding_battery_desc">Android may kill background apps to save battery. To ensure continuous protection against trackers, please disable optimisations for TrackerControl.</string>
+    <string name="onboarding_battery_action">Disable Optimisation</string>
+    <string name="onboarding_battery_sure">Without disabling battery optimisations, TrackerControl may be stopped by Android at any time. Are you sure you want to proceed?</string>
+    
+    <string name="onboarding_notify_title">Stay Informed</string>
+    <string name="onboarding_notify_desc">Allow notifications to see real-time updates and control the protection directly from the status bar.</string>
+    <string name="onboarding_notify_action">Allow Notifications</string>
+    <string name="onboarding_notify_sure">Without notification permissions, you will not be able to see real-time updates or control protection from the status bar. Are you sure?</string>
+    
+    <string name="onboarding_privatedns_title">Disable Private DNS</string>
+    <string name="onboarding_privatedns_desc">Android\'s \"Private DNS\" feature interferes with TrackerControl\'s ability to block trackers. This setting <b>must</b> be set to \"Off\" to proceed.</string>
+    <string name="onboarding_privatedns_instruction">Settings -> Network &amp; internet -> Private DNS -> Off.</string>
+    <string name="onboarding_privatedns_action">Open DNS Settings</string>
+    <string name="onboarding_privatedns_skip_title">Skip Private DNS Disabling?</string>
+    <string name="onboarding_privatedns_skip_msg">Proceeding with Private DNS enabled will heavily restrict TrackerControl. Most tracking will not be blocked, leaving only the tracker library analysis. Additionally, the VPN filter will be disabled to ensure basic functionality.</string>
+
+    <string name="onboarding_network_title">Unrestricted Network</string>
+    <string name="onboarding_network_desc">Data Saving options can prevent TrackerControl from working properly in the background. Grant unrestricted access for the most reliable protection.</string>
+    <string name="onboarding_network_action">Grant Unrestricted Access</string>
+    <string name="onboarding_network_sure">Restricted background data can cause TrackerControl to fail. Are you sure you want to proceed without granting unrestricted access?</string>
+
+    <string name="onboarding_dns_title">Secure DNS</string>
+    <string name="onboarding_dns_desc">Protect your privacy from your ISP by encrypting your DNS traffic using DNS-over-HTTPS (DoH).\n\nThis prevents "DNS hijacking" and keeps your browsing habits private from your network provider.</string>
+    <string name="onboarding_dns_action">Enable Secure DNS</string>
+    <string name="onboarding_dns_action_disable">Disable Secure DNS</string>
+
+    <string name="onboarding_blocking_title">Block Trackers</string>
+    <string name="onboarding_blocking_desc">Reveal and block widespread tracking in your apps.\n\n• <b>Blocklists</b>: Combines Firefox Disconnect with our unique analysis of <b>2,000,000 apps</b>.\n• <b>GDPR</b>: Exercise your rights with <b>one-click data erasure requests</b>.\n• <b>Transparency</b>: Uncover exactly which companies and countries harvest your data.</string>
+    <string name="onboarding_blocking_action">Enable Blocking</string>
+    <string name="onboarding_blocking_action_disable">Disable Blocking</string>
+    <string name="onboarding_blocking_sure">Tracker blocking is a core feature of TrackerControl. Are you sure you want to disable it?</string>
+    
+    <string name="onboarding_action_enabled">Enabled</string>
+    <string name="onboarding_action_disabled">Disabled</string>
+    <string name="onboarding_action_granted">Granted</string>
+    <string name="onboarding_action_optimized">Optimised</string>
+    <string name="onboarding_action_unrestricted">Unrestricted</string>
 
 </resources>

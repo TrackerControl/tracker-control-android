@@ -76,6 +76,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.opencsv.CSVWriter;
 
+import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -143,6 +144,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "Create version=" + Util.getSelfVersionName(this) + "/" + Util.getSelfVersionCode(this));
         Util.logExtras(getIntent());
+
+        // Check Onboarding
+        SharedPreferences prefsOnboarding = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefsOnboarding.getBoolean("onboarding_complete", false)) {
+            super.onCreate(savedInstanceState);
+            startActivity(new Intent(this, ActivityOnboarding.class));
+            finish();
+            return;
+        }
 
         // Check minimum Android version
         if (Build.VERSION.SDK_INT < MIN_SDK) {
@@ -513,7 +523,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public void onDestroy() {
         Log.i(TAG, "Destroy");
 
-        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this) || !Util.canFilter(this)) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this) || !Util.canFilter(this)
+                || !prefs.getBoolean("onboarding_complete", false)) {
             super.onDestroy();
             return;
         }
