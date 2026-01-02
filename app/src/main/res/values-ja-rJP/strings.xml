@@ -81,6 +81,7 @@
     <string name="setting_pcap_record_size">PCAP レコードサイズ: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大ファイルサイズ: %s MB</string>
     <string name="setting_watchdog">監視タイマー: %s分毎</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">サンプリング間隔: %s ミリ秒</string>
     <string name="setting_stats_samples">サンプル数: %s 秒</string>
     <string name="setting_backup">バックアップ</string>
@@ -148,8 +149,6 @@
     <string name="msg_vpn_cancelled">VPN接続 がキャンセルされました\n別の VPN を 常時接続VPN に設定していませんか？</string>
     <string name="msg_unavailable">この機能はこのAndroidのバージョンでは利用できません。</string>
     <string name="msg_always_on">別のVPN が 常時接続VPN に設定されています</string>
-    <string name="msg_always_on_lockdown">フィルタリングモードで TrackerControl を使用するには、Android のVPN設定で「 VPN 以外の接続のブロック」をオフにします</string>
-    <string name="msg_private_dns">フィルタ リングモードで TrackerControl を使用するには Android のネットワーク設定で「プライベート DNS」をオフにしてください</string>
     <string name="msg_start_forward">%1$s のポート %2$d からの \'%5$s\' の %3$s:%4$d への転送を開始しますか？</string>
     <string name="msg_stop_forward">%1$s のポート %2$d への転送を停止しますか？</string>
     <string name="msg_log_logcat">警告:  ADB ログ記録のためブロックは無効になっています。</string>
@@ -241,7 +240,6 @@
     <string name="tab_actions">自分のデータ</string>
     <string name="tracker_name">トラッカー名</string>
     <string name="internet_access">インターネットアクセス</string>
-    <string name="internet_access_explanation">インターネットにアクセスするにはオンである必要があります。\n\nヒント: メイン画面でアプリのアイコンをタップしてもオンにできます。</string>
     <string name="app_info">アプリの管理</string>
     <!-- Actions -->
     <string name="block_tracking">トラッカーをブロック</string>
@@ -285,7 +283,6 @@
     <string name="setting_strict_blocking">厳格なブロッキング</string>
     <string name="summary_strict_blocking">新しくインストールされたアプリの場合、できるかぎり多くのデータシェアリングをブロックます。アプリが動かなくなる可能性が高くなります。</string>
     <string name="strict_blocking_explanation">十分な知識がある方以外は、アプリの破損を減らすためにこのオプションを無効にすることをお勧めします。ただし、これにより、企業へのいくつかのデータが送信可能になります。</string>
-    <string name="exclude_vpn_explanation">トラッカーを検出またはブロックするにはオンである必要があります。\n\nヒント: 問題が発生した場合は無効にします。</string>
     <string name="uninstall">アンインストール</string>
     <string name="settings_uninstall">アプリの設定やアンインストール</string>
     <string name="no_trackers_found_message_disabled">メイン画面でスイッチを有効にしてから、アプリを起動してトラッカーを検出します</string>
