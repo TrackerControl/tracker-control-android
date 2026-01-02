@@ -54,8 +54,6 @@
     <string name="setting_ip6">Ota IPv6-liikenne käyttöön</string>
     <string name="setting_call">Poista käytöstä puhelun aikana</string>
     <string name="setting_reload_onconnectivity">Lataa jokainen yhteysmuutos uudelleen</string>
-    <string name="setting_advanced_options">Edistyneet asetukset</string>
-    <string name="setting_system">Hallitse järjestelmäsovelluksia</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
     <string name="setting_filter">Estä seuraimet</string>
     <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
@@ -83,7 +81,6 @@
     <string name="setting_stats_frequency">Näyteväli: %s ms</string>
     <string name="setting_stats_samples">Näytteiden lukumäärä: %s s</string>
     <string name="setting_backup">Varmuuskopioi</string>
-    <string name="setting_export">Vie asetukset (ei laitteen palauttamista varten)</string>
     <string name="setting_import">Tuo asetukset</string>
     <string name="setting_hosts">Tuo isäntätiedosto</string>
     <string name="setting_hosts_append">Tuo isäntätiedosto (lisäys)</string>
@@ -98,7 +95,6 @@
     <string name="summary_lan">Salli sovellusten muodostaa yhteys lähiverkko-osoitteisiin, kuten 10.0.0.0/8, 172.16.0.0/12 ja 192.168.0.0/16</string>
     <string name="summary_ip6">Reititä IP-version 6 liikenne TrackerControliin, jotta se voidaan valikoivasti sallia tai estää</string>
     <string name="summary_call">Poista TrackerControl käytöstä saapuvassa tai lähtevässä puhelussa. Tätä voidaan käyttää IP / Wi-Fi-puheluiden ongelmien kiertämiseen.</string>
-    <string name="summary_system">Määritä säännöt järjestelmäsovelluksille (asiantuntijoille)</string>
     <string name="summary_log_app">Poista käytöstä vähentääksesi akun käyttöä. Uudet seuraimet estetään edelleen, mutta niitä ei näytetä.</string>
     <string name="summary_track_usage">Mukana lähetettyjen ja vastaanotettujen tavujen asettamiseksi kustakin sovelluksesta ja osoitteesta. Tämä voi johtaa ylimääräiseen akun käyttöön.</string>
     <string name="summary_block_domains">VAROITUS: Estettyjä isäntiä ei näytetä käyttöliittymässä.</string>
