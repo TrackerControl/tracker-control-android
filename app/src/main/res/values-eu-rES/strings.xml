@@ -56,8 +56,6 @@
     <string name="setting_ip6">Gaitu IPv6 trafikoa</string>
     <string name="setting_call">Desgaitu deietan</string>
     <string name="setting_reload_onconnectivity">Birkargatu konektibitate aldaketa bakoitzean</string>
-    <string name="setting_advanced_options">Aukera aurreratuak</string>
-    <string name="setting_system">Kudeatu sistemako aplikazioak</string>
     <string name="setting_log_app">Aztarnari berriak bilatu</string>
     <string name="setting_log_logcat">Erregistratu transmisioak ADBra</string>
     <string name="setting_filter">Aztarnariak blokeatu</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Laginaren tartea: %s ms</string>
     <string name="setting_stats_samples">Lagin kopurua: %s s</string>
     <string name="setting_backup">Segurtasun kopia</string>
-    <string name="setting_export">Esportatu ezarpenak (ez da gailua berrezartzeko)</string>
     <string name="setting_import">Inportatu ezarpenak</string>
     <string name="setting_hosts">Inportatu ostalarien fitxategia</string>
     <string name="setting_hosts_append">Inportatu ostalarien fitxategia (gehitu)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Baimendu aplikazioei sare lokaleko helbideetara konektatzea, adibidez 10.0.0.0/8, 172.16.0.0/12 eta 192.168.0.0/16</string>
     <string name="summary_ip6">Bideratu IPv6 trafikoa TrackerControlera, selektiboki baimendu edo blokeatzeko</string>
     <string name="summary_call">Desgaitu TrackerControl telefono deiak jaso edo egitean. Hau IP/Wi-Fi deiekin arazoak daudenean erabili daiteke.</string>
-    <string name="summary_system">Zehaztu sistemako aplikazioen arauak (adituentzat)</string>
     <string name="summary_log_app">Desaktibatu bateria gutxiago erabiltzeko. Aztarnari berriak blokeatuta jarraituko dute, baina ez dira erakutsiko.</string>
     <string name="summary_track_usage">Monitorizatu aplikazio eta helbide bakoitzak bidali eta jasotako byte kopurua. Honek bateria kontsumoa areagotzea ekar lezake.</string>
     <string name="summary_block_domains">OHARRA: blokeatutako ostalariak ez dira UIan agertzen.</string>
