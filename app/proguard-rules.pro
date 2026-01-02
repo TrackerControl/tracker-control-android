@@ -59,5 +59,28 @@
 #    public *;
 #}
 
-#AdMob
--dontwarn com.google.android.gms.internal.**
+#WorkManager
+-keep class * extends androidx.work.Worker
+-keep class * extends androidx.work.ListenableWorker {
+    public <init>(android.content.Context, androidx.work.WorkerParameters);
+}
+
+#GeoIP2
+-keep class com.maxmind.** { *; }
+-dontwarn com.maxmind.**
+
+#dexlib2
+-dontwarn org.jf.dexlib2.**
+
+#ACRA
+-keep class org.acra.** { *; }
+
+# Suppress warnings for missing annotation processor classes
+-dontwarn javax.annotation.**
+-dontwarn com.google.auto.service.**
+-dontwarn com.google.errorprone.annotations.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+-dontwarn javax.annotation.CheckReturnValue
+-dontwarn javax.annotation.concurrent.GuardedBy
+
