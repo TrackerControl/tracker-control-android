@@ -57,6 +57,14 @@ import androidx.core.app.NavUtils;
 import androidx.core.util.PatternsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
+import java.util.concurrent.TimeUnit;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
@@ -98,8 +106,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private static final int REQUEST_EXPORT = 1;
     private static final int REQUEST_IMPORT = 2;
-    private static final int REQUEST_HOSTS = 3;
-    private static final int REQUEST_HOSTS_APPEND = 4;
     private static final int REQUEST_CALL = 5;
 
     private AlertDialog dialogFilter = null;
@@ -248,8 +254,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Hosts file settings
         cat_advanced.removePreference(screen.findPreference("use_hosts"));
         EditTextPreference pref_rcode = (EditTextPreference) screen.findPreference("rcode");
-        Preference pref_hosts_import = screen.findPreference("hosts_import");
-        Preference pref_hosts_import_append = screen.findPreference("hosts_import_append");
         EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url_new");
         final Preference pref_hosts_download = screen.findPreference("hosts_download");
 
@@ -265,93 +269,59 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         if (Util.isPlayStoreInstall(this)) {
             Log.i(TAG, "Play store install");
-            cat_advanced.removePreference(pref_rcode);
             cat_advanced.removePreference(pref_forwarding);
-            cat_advanced.removePreference(pref_hosts_import);
-            cat_advanced.removePreference(pref_hosts_import_append);
-            cat_advanced.removePreference(pref_hosts_url);
-            cat_advanced.removePreference(pref_hosts_download);
 
             cat_advanced.removePreference(cat_advanced.findPreference("domain_based_blocking"));
             cat_advanced.removePreference(cat_advanced.findPreference("log_app"));
             cat_advanced.removePreference(cat_advanced.findPreference("filter_udp"));
             cat_advanced.findPreference("filter").setEnabled(false);
-        } else {
-            String last_import = prefs.getString("hosts_last_import", null);
-            String last_download = prefs.getString("hosts_last_download", null);
-            if (last_import != null)
-                pref_hosts_import.setSummary(getString(R.string.msg_import_last, last_import));
-            if (last_download != null)
-                pref_hosts_download.setSummary(getString(R.string.msg_update_last, last_download));
-
-            // Handle hosts import
-            // https://github.com/Free-Software-for-Android/AdAway/wiki/HostsSources
-            pref_hosts_import.setEnabled(getIntentOpenHosts().resolveActivity(getPackageManager()) != null);
-            pref_hosts_import.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startActivityForResult(getIntentOpenHosts(), ActivitySettings.REQUEST_HOSTS);
-                    return true;
-                }
-            });
-            pref_hosts_import_append.setEnabled(pref_hosts_import.isEnabled());
-            pref_hosts_import_append.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    startActivityForResult(getIntentOpenHosts(), ActivitySettings.REQUEST_HOSTS_APPEND);
-                    return true;
-                }
-            });
-
-            // Handle hosts file download
-            pref_hosts_url.setSummary(pref_hosts_url.getText());
-            pref_hosts_download.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    final File tmp = new File(getFilesDir(), "hosts.tmp");
-                    final File hosts = new File(getFilesDir(), "hosts.txt");
-                    EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url_new");
-                    try {
-                        new DownloadTask(ActivitySettings.this, new URL(pref_hosts_url.getText()), tmp, new DownloadTask.Listener() {
-                            @Override
-                            public void onCompleted() {
-                                if (hosts.exists())
-                                    hosts.delete();
-                                tmp.renameTo(hosts);
-
-                                String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
-                                prefs.edit().putString("hosts_last_download", last).apply();
-
-                                if (running) {
-                                    pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
-                                    Toast.makeText(ActivitySettings.this, R.string.msg_updated, Toast.LENGTH_LONG).show();
-                                }
-
-                                ServiceSinkhole.reload("hosts file download", ActivitySettings.this, false);
-                            }
-
-                            @Override
-                            public void onCancelled() {
-                                if (tmp.exists())
-                                    tmp.delete();
-                            }
-
-                            @Override
-                            public void onException(Throwable ex) {
-                                if (tmp.exists())
-                                    tmp.delete();
-
-                                if (running)
-                                    Toast.makeText(ActivitySettings.this, ex.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    } catch (MalformedURLException ex) {
-                        Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
-                    }
-                    return true;
-                }
-            });
         }
+
+        String last_download = prefs.getString("hosts_last_download", null);
+        if (last_download != null)
+            pref_hosts_download.setSummary(getString(R.string.msg_update_last, last_download));
+
+        pref_hosts_url.setSummary(pref_hosts_url.getText());
+        pref_hosts_download.setOnPreferenceClickListener(preference -> {
+            OneTimeWorkRequest downloadWork = new OneTimeWorkRequest.Builder(HostsDownloadWorker.class)
+                    .addTag("ManualHostsDownload")
+                    .build();
+            WorkManager.getInstance(ActivitySettings.this).enqueue(downloadWork);
+            Toast.makeText(ActivitySettings.this, getString(R.string.msg_downloading, pref_hosts_url.getText()),
+                    Toast.LENGTH_SHORT).show();
+            return true;
+        });
+
+        WorkManager.getInstance(this).getWorkInfosByTagLiveData("ManualHostsDownload").observe(this, workInfos -> {
+            if (workInfos != null && !workInfos.isEmpty()) {
+                androidx.work.WorkInfo workInfo = workInfos.get(0);
+                if (workInfo.getState() == androidx.work.WorkInfo.State.SUCCEEDED) {
+                    String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
+                    pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
+                }
+            }
+        });
+
+        eu.faircode.netguard.SwitchPreference pref_hosts_auto_update = (eu.faircode.netguard.SwitchPreference) screen
+                .findPreference("hosts_auto_update");
+        pref_hosts_auto_update.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                boolean enabled = (Boolean) newValue;
+                if (enabled) {
+                    PeriodicWorkRequest saveRequest = new PeriodicWorkRequest.Builder(HostsDownloadWorker.class, 24,
+                            TimeUnit.HOURS)
+                            .build();
+                    WorkManager.getInstance(ActivitySettings.this).enqueueUniquePeriodicWork(
+                            "HostsUpdate",
+                            ExistingPeriodicWorkPolicy.UPDATE,
+                            saveRequest);
+                } else {
+                    WorkManager.getInstance(ActivitySettings.this).cancelUniqueWork("HostsUpdate");
+                }
+                return true;
+            }
+        });
 
         // Development
         if (!Util.isDebuggable(this))

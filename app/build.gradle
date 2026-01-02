@@ -11,6 +11,8 @@ android {
         versionCode 2026010201
         versionName "2026.01.02"
 
+        buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
+
         externalNativeBuild {
             cmake {
                 cppFlags ""
@@ -61,7 +63,6 @@ android {
         play {
             applicationIdSuffix ".play"
             versionNameSuffix "-play"
-            buildConfigField "String", "HOSTS_FILE_URI", "\"\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"\""
 
             externalNativeBuild.cmake {
@@ -71,13 +72,10 @@ android {
         fdroid {
             applicationIdSuffix ".fdroid"
             versionNameSuffix "-fdroid"
-            buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"\""
         }
         github {
-            buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
             buildConfigField "String", "GITHUB_LATEST_API", "\"https://api.github.com/repos/TrackerControl/tracker-control-android/releases\""
-
         }
     }
 

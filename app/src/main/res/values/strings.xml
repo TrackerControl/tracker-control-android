@@ -103,6 +103,8 @@
     <string name="setting_hosts_url">Hosts file URL</string>
     <string name="setting_hosts_download">Download hosts file</string>
     <string name="setting_hosts_update">Update hosts file</string>
+    <string name="setting_hosts_auto_update">Auto-update hosts</string>
+    <string name="summary_hosts_auto_update">Automatically update the hosts file in the background</string>
 
     <string name="summary_install">Show status bar notification for newly installed apps</string>
     <string name="summary_pause">After pause from the notification, automatically enable TrackerControl again after the selected number of minutes (enter 0 to disable this option).</string>
