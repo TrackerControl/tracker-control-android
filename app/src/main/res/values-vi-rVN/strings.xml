@@ -54,8 +54,6 @@
     <string name="setting_ip6">Bật lưu lượng IPv6</string>
     <string name="setting_call">Tắt khi có cuộc gọi</string>
     <string name="setting_reload_onconnectivity">Tải lại mỗi lần đổi kết nối</string>
-    <string name="setting_advanced_options">Tùy chọn nâng cao</string>
-    <string name="setting_system">Quản lý ứng dụng hệ thống</string>
     <string name="setting_log_app">Tìm kiếm trình theo dõi mới</string>
     <string name="setting_log_logcat">Ghi lại các sự truyền tải ra ADB</string>
     <string name="setting_filter">Chặn trình theo dõi</string>
@@ -84,7 +82,6 @@
     <string name="setting_stats_frequency">Thời gian giữa mỗi lần lấy mẫu: %s ms</string>
     <string name="setting_stats_samples">Số lượng các mẫu: %s s</string>
     <string name="setting_backup">Sao lưu</string>
-    <string name="setting_export">Xuất cài đặt (không phải cho việc đặt lại thiết bị)</string>
     <string name="setting_import">Nhập cài đặt</string>
     <string name="setting_hosts">Nhập tệp máy chủ</string>
     <string name="setting_hosts_append">Nhập tệp máy chủ (thêm vào)</string>
@@ -99,7 +96,6 @@
     <string name="summary_lan">Cho phép các ứng dụng kết nối đến các địa chỉ mạng cục bộ, như 10.0.0.0/8, 172.16.0.0/12 và 192.168.0.0/16</string>
     <string name="summary_ip6">Định tuyến lưu lượng IPv6 đến TrackerControl để nó có thể được cho phép hoặc chặn một cách có chọn lọc</string>
     <string name="summary_call">Tắt TrackerControl khi có cuộc gọi đến hoặc đi. Việc này có thể được sử dụng để khắc phục các sự cố gọi IP/Wi-Fi.</string>
-    <string name="summary_system">Định nghĩa các quy tắc cho các ứng dụng hệ thống (dành cho chuyên gia)</string>
     <string name="summary_log_app">Tắt để giảm sử dụng pin. Các trình theo dõi mới vẫn sẽ được chặn, nhưng không được hiện.</string>
     <string name="summary_track_usage">Theo dõi số lượng byte đã gửi và nhận cho mỗi ứng dụng và địa chỉ. Điều này có thể dẫn đến sử dụng thêm pin.</string>
     <string name="summary_block_domains">CẢNH BÁO: Các miền bị chặn không được hiện trên giao diện.</string>
