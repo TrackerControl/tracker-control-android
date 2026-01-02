@@ -84,6 +84,7 @@
     <string name="setting_pcap_record_size">Розмір запису PCAP: %s B</string>
     <string name="setting_pcap_file_size">Макс. розмір файлу PCAP: %s МБ</string>
     <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
     <string name="setting_stats_samples">Кількість зразків: %s s</string>
     <string name="setting_backup">Резервне копіювання</string>
@@ -151,8 +152,6 @@
     <string name="msg_vpn_cancelled">VPN-з’єднання скасовано\nВи налаштували інший VPN як постійно активний VPN?</string>
     <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
     <string name="msg_always_on">Інша VPN налаштована як VPN з постійним підключенням</string>
-    <string name="msg_always_on_lockdown">Вимкніть параметр \"Блокувати підключення без VPN\" у параметрах VPN в Android, щоб використовувати TrackerControl у режимі фільтрування</string>
-    <string name="msg_private_dns">Вимкніть «Приватний DNS» в налаштуваннях мережі Android, щоб використовувати TrackerControl у режимі фільтрування</string>
     <string name="msg_start_forward">Розпочати переадресацію з порту %1$s %2$d на порт %3$s:%4$d з \'%5$s\'?</string>
     <string name="msg_stop_forward">Зупинити переадресацію порту %2$d на %1$s?</string>
     <string name="msg_log_logcat">Попередження: Блокування вимкнено через ведення журналу ADB.</string>
@@ -250,7 +249,6 @@
     <string name="tab_actions">Мої дані</string>
     <string name="tracker_name">Назва трекера</string>
     <string name="internet_access">Доступ до Інтернету</string>
-    <string name="internet_access_explanation">Повинно бути увімкнено для доступу до Інтернету.\n\nПорада: Ви також можете натиснути на піктограму програми на головному екрані.</string>
     <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
     <string name="block_tracking">Блокувати трекери</string>
@@ -328,7 +326,6 @@
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
     <string name="strict_blocking_explanation">Не експертам рекомендується вимкнути цю опцію, щоб зменшити кількість поломок програми. Однак це дозволяє ділитися деякими важливими даними з компаніями.</string>
-    <string name="exclude_vpn_explanation">Повинно бути увімкнено для виявлення або блокування трекерів.\n\nПорада: вимкніть, якщо виникнуть проблеми.</string>
     <string name="uninstall">Видалити</string>
     <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
     <string name="no_trackers_found_message_disabled">Увімкніть перемикач на головному екрані, а потім запустіть додаток, щоб знайти трекери</string>
