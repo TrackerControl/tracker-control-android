@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl מאפשר למשתמשים לפקח ולשלוט באיסוף הנתונים הנרחב, המתמשך והנסתר באפליקציות לנייד על התנהגות המשתמש (\'מעקב\').</string>
-    <string name="app_copyright">זכויות יוצרים \u00A9 2019–2022 Konrad Kollnig (מחשוב במרכז אנושי, המחלקה למדעי המחשב, אוניברסיטת אוקספורד)\n\nTrackerControl מבוסס על NetGuard, שפותח על ידי מרסל בוקרסט (M66B).</string>
     <string name="app_android">TrackerControl דורש אנדרואיד 5.1 ומעלה</string>
     <string name="app_xposed">Xposed גורם ליותר מדי קריסות, מה שעלול לגרום להסרה של TrackerControl מחנות Google Play, לכן TrackerControl אינו נתמך כאשר Xposed מותקן</string>
     <string name="app_eula">השימוש באפליקציה זו הוא על אחריותך בלבד. אף אפליקציה לא יכולה להציע 100% הגנה מפני מעקב.</string>
@@ -124,8 +123,6 @@
     <string name="msg_error">אירעה שגיאה בלתי צפויה: \'%s\'</string>
     <string name="msg_start_failed">אנדרואיד סירבה להפעיל את שירות ה-VPN ברגע זה. זה כנראה בגלל באג בגרסת האנדרואיד שלך.</string>
     <string name="msg_try">נסה את TrackerControl</string>
-    <string name="msg_doze">לתוצאות עקביות, יש להשבית את אופטימיזציית הסוללה של אנדרואיד עבור TrackerControl.
-\n\nבתיבת הדו-שיח הבאה, בחר \"כל האפליקציות\" בחלק העליון, הקש על TrackerControl ברשימה ובחר ואשר \"אל תבצע אופטימיזציה\".</string>
     <string name="msg_datasaving">לקבלת תוצאות עקביות, יש להשבית את אפשרויות שמירת הנתונים של אנדרואיד עבור TrackerControl
 \n\nבתיבת הדו-שיח הבאה, הפעל את האפשרויות \"נתוני רקע\" ו\"שימוש בלתי מוגבל בנתונים\"</string>
     <string name="msg_filter">שימוש בסינון יגרום ל-אנדרואיד לייחס נתונים וצריכת חשמל ל-TrackerControl - אנדרואיד מניח שהנתונים והכוח נמצאים בשימוש על-ידי TrackerControl, ולא האפליקציות המקוריות</string>
@@ -340,4 +337,5 @@
     <string name="browsers_not_supported">דפדפנים לא נתמכים ⚠️</string>
     <string name="static_analysis">זיהוי עוקבים בקוד האפליקציה</string>
     <string name="failed_loading_cached_analysis">טעינת תוצאות המעקב בקובץ השמור נכשלה. אנא דווח על כך למפתח בכתובת hello@trackercontrol.org</string>
+    <!-- Onboarding -->
 </resources>
