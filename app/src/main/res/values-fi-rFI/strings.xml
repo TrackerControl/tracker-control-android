@@ -79,6 +79,7 @@
     <string name="setting_pcap_record_size">PCAP-tietueen koko: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. tiedostokoko: %s MB</string>
     <string name="setting_watchdog">Watchdog: %s minuutin välein</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Näyteväli: %s ms</string>
     <string name="setting_stats_samples">Näytteiden lukumäärä: %s s</string>
     <string name="setting_backup">Varmuuskopioi</string>
@@ -148,8 +149,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_vpn_cancelled">VPN-yhteys peruutettu\nOletko määrittänyt toisen VPN: n aina käytössä olevaksi VPN: ksi?</string>
     <string name="msg_unavailable">Tämä ominaisuus ei ole käytettävissä tässä Android-versiossa</string>
     <string name="msg_always_on">Toinen VPN on asetettu \"Aina käytössä \"-tilaan</string>
-    <string name="msg_always_on_lockdown">Poista Estä yhteydet ilman VPN: ää käytöstä Android VPN -asetuksissa, jotta voit käyttää TrackerControlia suodatustilassa</string>
-    <string name="msg_private_dns">Poista yksityinen DNS käytöstä Android-verkkoasetuksissa, jotta voit käyttää TrackerControlia suodatustilassa</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -238,7 +237,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tab_actions">Omat tiedot</string>
     <string name="tracker_name">Seuraimen nimi</string>
     <string name="internet_access">Internet-yhteys</string>
-    <string name="internet_access_explanation">Internet-yhteyden on oltava päällä.\n\nVinkki: Voit myös napauttaa sovelluskuvaketta päänäytössä.</string>
     <string name="app_info">Hallitse sovellusta</string>
     <!-- Actions -->
     <string name="block_tracking">Estä seuraimet</string>
@@ -279,7 +277,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tracker_email">Sähköposti</string>
     <string name="tracker_uncategorised">Luokittelemattomat</string>
     <string name="setting_strict_blocking">Tiukka Esto</string>
-    <string name="exclude_vpn_explanation">Seurannan on oltava päällä havaikseen tai estääkseen seuraimet.\n\nVinkki: Poista käytöstä, jos kohtaat ongelmia.</string>
     <string name="uninstall">Poista asennus</string>
     <string name="settings_uninstall">Sovelluksen tiedot</string>
     <string name="no_trackers_found_message_disabled">Ota käyttöön päänäytön kytkimestä ja käynnistä sitten sovellus löytääksesi seuraimia</string>
