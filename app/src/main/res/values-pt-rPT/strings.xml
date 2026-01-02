@@ -56,8 +56,6 @@
     <string name="setting_ip6">Habilitar o tráfego IPv6</string>
     <string name="setting_call">Desativar em plantão</string>
     <string name="setting_reload_onconnectivity">Recarregar em cada mudança de conectividade</string>
-    <string name="setting_advanced_options">Opções avançadas</string>
-    <string name="setting_system">Gerenciar aplicações de sistemas</string>
     <string name="setting_log_app">Pesquisar novos rastreadores</string>
     <string name="setting_log_logcat">Registrar transmissões para o ADB</string>
     <string name="setting_filter">Bloquear rastreadores</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Intervalo de amostragem: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Cópia de segurança</string>
-    <string name="setting_export">Configurações de exportação (não para reiniciar o dispositivo)</string>
     <string name="setting_import">Configurações de importação</string>
     <string name="setting_hosts">Arquivo de anfitriões de importação</string>
     <string name="setting_hosts_append">Importar arquivo de anfitriões (anexo)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Permitir a conexão de aplicativos a endereços de rede local, como 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16</string>
     <string name="summary_ip6">Rota IP versão 6 tráfego para TrackerControl para que possa ser seletivamente permitido ou bloqueado</string>
     <string name="summary_call">Desativar o TrackerControl na entrada ou saída de chamadas telefônicas. Isto pode ser usado para contornar problemas de chamadas IP/Wi-Fi.</string>
-    <string name="summary_system">Definir regras para aplicações do sistema (para especialistas)</string>
     <string name="summary_log_app">Desativar para diminuir o uso da bateria. Novos rastreadores ainda serão bloqueados, mas não mostrados.</string>
     <string name="summary_track_usage">Rastrear o número de bytes enviados e recebidos para cada aplicativo e endereço. Isto pode resultar no uso de bateria extra.</string>
     <string name="summary_block_domains">AVISO: Hospedeiros bloqueados não são mostrados na UI.</string>
