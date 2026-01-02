@@ -21,50 +21,34 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
-
+import androidx.lifecycle.LiveData;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 /**
- * Manager class that handles caching, coordination, and background execution of
- * tracker library analysis.
- * Implements the Observer pattern to allow UI components to subscribe to
- * analysis updates.
+ * Manager class that handles caching and scheduling of tracker library analysis
+ * via WorkManager.
  */
 public class TrackerAnalysisManager {
-    private static final String TAG = "TrackerAnalysisManager";
     private static final int EXODUS_DATABASE_VERSION = 423;
     private static final String PREFS_NAME = "library_analysis";
 
     private static TrackerAnalysisManager instance;
     private final Context mContext;
-    private final Handler mainHandler;
-
-    // Track active analyses with detailed state
-    private final Map<String, AnalysisState> activeAnalyses = Collections.synchronizedMap(new HashMap<>());
-
-    // Observers: PackageName -> Set<Listener>
-    private final Map<String, Set<AnalysisStateListener>> listeners = Collections.synchronizedMap(new HashMap<>());
+    private final WorkManager workManager;
 
     private TrackerAnalysisManager(Context context) {
         this.mContext = context.getApplicationContext();
-        this.mainHandler = new Handler(Looper.getMainLooper());
+        this.workManager = WorkManager.getInstance(mContext);
 
-        // Initialize/update database version
+        // Initialize/update database version - clears cache if Exodus DB updated
         SharedPreferences prefs = getPrefs();
         int current = prefs.getInt("version", Integer.MIN_VALUE);
         if (current < EXODUS_DATABASE_VERSION) {
@@ -80,49 +64,42 @@ public class TrackerAnalysisManager {
     }
 
     /**
-     * Subscribe to analysis updates for a specific package.
-     * If an analysis is already running, the listener will be notified immediately.
+     * Starts an analysis for the given package using WorkManager.
+     *
+     * @param packageName The package to analyze
+     * @return The UUID of the work request, which can be used to observe progress
      */
-    public void addAnalysisListener(String packageName, AnalysisStateListener listener) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> pkgListeners = listeners.get(packageName);
-            if (pkgListeners == null) {
-                pkgListeners = Collections.synchronizedSet(new HashSet<>());
-                listeners.put(packageName, pkgListeners);
-            }
-            pkgListeners.add(listener);
-        }
+    public UUID startAnalysis(String packageName) {
+        Data inputData = new Data.Builder()
+                .putString(TrackerAnalysisWorker.KEY_PACKAGE_NAME, packageName)
+                .build();
 
-        // If running, notify immediately
-        AnalysisState state = activeAnalyses.get(packageName);
-        if (state != null) {
-            mainHandler.post(() -> {
-                if (state == AnalysisState.QUEUED) {
-                    listener.onAnalysisQueued();
-                } else if (state == AnalysisState.RUNNING) {
-                    listener.onAnalysisRunning();
-                }
-            });
-        }
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
+                .setInputData(inputData)
+                .addTag(packageName)
+                .build();
+
+        // KEEP policy: if work already running for this package, don't start another
+        workManager.enqueueUniqueWork(
+                packageName,
+                ExistingWorkPolicy.KEEP,
+                workRequest);
+
+        return workRequest.getId();
     }
 
     /**
-     * Unsubscribe from analysis updates.
+     * Observe work status for a given work ID.
      */
-    public void removeAnalysisListener(String packageName, AnalysisStateListener listener) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> pkgListeners = listeners.get(packageName);
-            if (pkgListeners != null) {
-                pkgListeners.remove(listener);
-                if (pkgListeners.isEmpty()) {
-                    listeners.remove(packageName);
-                }
-            }
-        }
+    public LiveData<WorkInfo> getWorkInfoLiveData(UUID workId) {
+        return workManager.getWorkInfoByIdLiveData(workId);
     }
 
-    public boolean isAnalysisInProgress(String packageName) {
-        return activeAnalyses.containsKey(packageName);
+    /**
+     * Observe work status for a given package (by tag).
+     */
+    public LiveData<java.util.List<WorkInfo>> getWorkInfoByPackageLiveData(String packageName) {
+        return workManager.getWorkInfosByTagLiveData(packageName);
     }
 
     @Nullable
@@ -142,167 +119,13 @@ public class TrackerAnalysisManager {
     }
 
     /**
-     * Starts an analysis for the given package using WorkManager.
-     * Updates are delivered to registered listeners.
+     * Saves analysis result to cache. Called by the Worker.
      */
-    public void startAnalysis(String packageName) {
-        if (activeAnalyses.containsKey(packageName)) {
-            Log.d(TAG, "Analysis already in progress for " + packageName);
-        }
-
-        // Mark as Queued initially for immediate UI feedback
-        // If the process dies, this map is cleared, which is correct as the listener is
-        // also gone.
-        // When WorkManager starts the worker later, it will call runAnalysisFromWorker
-        // which sets state to RUNNING.
-        if (!activeAnalyses.containsKey(packageName)) {
-            activeAnalyses.put(packageName, AnalysisState.QUEUED);
-            notifyQueued(packageName);
-        }
-
-        Data inputData = new Data.Builder()
-                .putString(TrackerAnalysisWorker.KEY_PACKAGE_NAME, packageName)
-                .build();
-
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
-                .setInputData(inputData)
-                .addTag(packageName)
-                .build();
-
-        WorkManager.getInstance(mContext).enqueueUniqueWork(
-                packageName,
-                ExistingWorkPolicy.KEEP,
-                workRequest);
-    }
-
-    /**
-     * Entry point for the Worker.
-     * Manages state updates and listener notifications.
-     */
-    public String runAnalysisFromWorker(String packageName, AnalysisProgressCallback workerCallback) throws Exception {
-        try {
-            // Update state to RUNNING
-            activeAnalyses.put(packageName, AnalysisState.RUNNING);
-            mainHandler.post(() -> notifyRunning(packageName));
-
-            String result = runAnalysisSync(packageName, true, workerCallback);
-
-            activeAnalyses.remove(packageName);
-            mainHandler.post(() -> notifyFinished(packageName, result));
-            return result;
-        } catch (Exception e) {
-            Log.e(TAG, "Analysis failed for " + packageName, e);
-            activeAnalyses.remove(packageName);
-            mainHandler.post(() -> notifyFailed(packageName, e.getMessage()));
-            throw e;
-        }
-    }
-
-    /**
-     * Synchronous analysis method for use by background services.
-     * Use startAnalysis() for UI tasks to ensure lifecycle safety.
-     */
-    public String runAnalysisSync(String packageName) throws Exception {
-        return runAnalysisSync(packageName, false, null);
-    }
-
-    /**
-     * worker logic.
-     */
-    private String runAnalysisSync(String packageName, boolean forceRefresh,
-            @Nullable AnalysisProgressCallback extraCallback) throws Exception {
-        PackageInfo pkg;
-        try {
-            pkg = mContext.getPackageManager().getPackageInfo(packageName, 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            throw new Exception("Package not found: " + packageName);
-        }
-
-        SharedPreferences prefs = getPrefs();
-        int cachedVersionCode = prefs.getInt("versioncode_" + packageName, Integer.MIN_VALUE);
-
-        // Check cache first
-        if (!forceRefresh && pkg.versionCode <= cachedVersionCode) {
-            String cached = prefs.getString("trackers_" + packageName, null);
-            if (cached != null) {
-                return cached;
-            }
-        }
-
-        // Perform analysis
-        TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(mContext);
-        analyser.setProgressCallback((current, total) -> {
-            int percent = (int) ((current / (float) total) * 100);
-            mainHandler.post(() -> notifyProgress(packageName, percent));
-            if (extraCallback != null) {
-                extraCallback.onProgress(current, total);
-            }
-        });
-
-        String result = analyser.analyseApp(packageName);
-
-        // Cache result
-        prefs.edit()
-                .putInt("versioncode_" + packageName, pkg.versionCode)
+    public void cacheResult(String packageName, String result, int versionCode) {
+        getPrefs().edit()
+                .putInt("versioncode_" + packageName, versionCode)
                 .putString("trackers_" + packageName, result)
                 .apply();
-
-        return result;
-    }
-
-    private void notifyQueued(String packageName) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> s = listeners.get(packageName);
-            if (s != null) {
-                for (AnalysisStateListener l : new HashSet<>(s)) {
-                    l.onAnalysisQueued();
-                }
-            }
-        }
-    }
-
-    private void notifyRunning(String packageName) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> s = listeners.get(packageName);
-            if (s != null) {
-                for (AnalysisStateListener l : new HashSet<>(s)) {
-                    l.onAnalysisRunning();
-                }
-            }
-        }
-    }
-
-    private void notifyProgress(String packageName, int percent) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> s = listeners.get(packageName);
-            if (s != null) {
-                for (AnalysisStateListener l : new HashSet<>(s)) {
-                    l.onAnalysisProgress(percent);
-                }
-            }
-        }
-    }
-
-    private void notifyFinished(String packageName, String result) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> s = listeners.get(packageName);
-            if (s != null) {
-                for (AnalysisStateListener l : new HashSet<>(s)) {
-                    l.onAnalysisFinished(result);
-                }
-            }
-        }
-    }
-
-    private void notifyFailed(String packageName, String message) {
-        synchronized (listeners) {
-            Set<AnalysisStateListener> s = listeners.get(packageName);
-            if (s != null) {
-                for (AnalysisStateListener l : new HashSet<>(s)) {
-                    l.onAnalysisFailed(message);
-                }
-            }
-        }
     }
 
     private SharedPreferences getPrefs() {

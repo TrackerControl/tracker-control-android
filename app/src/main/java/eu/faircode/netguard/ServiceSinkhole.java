@@ -2556,10 +2556,19 @@ public class ServiceSinkhole extends VpnService {
                 try {
                     Context c = getApplicationContext();
                     TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(c);
-                    // Use cached result or perform analysis - thread-safe through manager
-                    int trackerCount = StringUtils.countMatches(manager.runAnalysisSync(packageName), "•");
-                    builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
-                    NotificationManagerCompat.from(c).notify(uid, builder.build());
+
+                    // Check cache first
+                    String cachedResult = manager.getCachedResult(packageName);
+                    if (cachedResult != null && !manager.isCacheStale(packageName)) {
+                        // Use cached result
+                        int trackerCount = StringUtils.countMatches(cachedResult, "•");
+                        builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
+                        NotificationManagerCompat.from(c).notify(uid, builder.build());
+                    } else {
+                        // Schedule analysis for later - notification will show generic message
+                        manager.startAnalysis(packageName);
+                        // Don't update notification here, user can check app details for results
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

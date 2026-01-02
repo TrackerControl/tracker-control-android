@@ -42,13 +42,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.work.Data;
+import androidx.work.WorkInfo;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.analysis.AnalysisStateListener;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
+import net.kollnig.missioncontrol.analysis.TrackerAnalysisWorker;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -58,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
@@ -78,9 +83,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<TrackerCategory> mValues = new ArrayList<>();
 
     public TrackersListAdapter(Context c,
-                               RecyclerView v,
-                               Integer appUid,
-                               String appId) {
+            RecyclerView v,
+            Integer appUid,
+            String appId) {
         mContext = c;
         mAppUid = appUid;
         mAppId = appId;
@@ -120,7 +125,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return new VHHeader(view);
         }
 
-        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+        throw new RuntimeException(
+                "there is no type that matches the type " + viewType + " + make sure your using types correctly");
     }
 
     /**
@@ -137,104 +143,116 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
 
-        // Define UI update logic
-        AnalysisStateListener listener = new AnalysisStateListener() {
-            @Override
-            public void onAnalysisQueued() {
-                btnAnalyze.setEnabled(false);
-                layoutProgress.setVisibility(View.VISIBLE);
-                tvAnalysisProgress.setText(R.string.analysis_queued);
-                pbTrackerDetection.setIndeterminate(true);
-                tvDetectedTrackers.setVisibility(View.GONE);
+        // Show cached results initially
+        String cachedResults = manager.getCachedResult(mAppId);
+        if (cachedResults != null && mContext instanceof Activity) {
+            String res = String.format(mContext.getString(R.string.detected_trackers), cachedResults);
+            if (manager.isCacheStale(mAppId)) {
+                res += mContext.getString(R.string.analysis_outdated_version);
+                btnAnalyze.setText(R.string.update_analysis);
+            }
+            tvDetectedTrackers.setText(res);
+            tvDetectedTrackers.setVisibility(View.VISIBLE);
+        }
+
+        // Observer for WorkInfo updates (handles both new and existing work)
+        Observer<java.util.List<WorkInfo>> workInfoListObserver = workInfoList -> {
+            if (workInfoList == null || workInfoList.isEmpty()) {
+                // No work running, show cached results or default state
+                return;
             }
 
-            @Override
-            public void onAnalysisRunning() {
-                btnAnalyze.setEnabled(false);
-                layoutProgress.setVisibility(View.VISIBLE);
-                tvAnalysisProgress.setText(R.string.analyzing_classes);
-                pbTrackerDetection.setIndeterminate(false);
-                pbTrackerDetection.setProgress(0);
-                tvDetectedTrackers.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnalysisProgress(int percent) {
-                pbTrackerDetection.setProgress(percent);
-                if (mContext instanceof Activity) {
-                    tvAnalysisProgress.setText(String.format(
-                            mContext.getString(R.string.analyzing_classes_progress), percent));
+            // Find the most recent non-terminal work
+            WorkInfo activeWork = null;
+            for (WorkInfo info : workInfoList) {
+                if (!info.getState().isFinished()) {
+                    activeWork = info;
+                    break;
                 }
             }
 
-            @Override
-            public void onAnalysisFinished(String result) {
-                layoutProgress.setVisibility(View.GONE);
-                btnAnalyze.setEnabled(true);
-
-                if (mContext instanceof Activity) {
-                    String res = String.format(mContext.getString(R.string.detected_trackers), result);
-                    tvDetectedTrackers.setText(res);
-                    tvDetectedTrackers.setVisibility(View.VISIBLE);
-                }
-
-                // Refresh button text in case other analyses ended
-                btnAnalyze.setText(R.string.analyze_tracker_libraries);
+            // If no active work, check for most recently finished
+            if (activeWork == null) {
+                activeWork = workInfoList.get(0);
             }
 
-            @Override
-            public void onAnalysisFailed(String message) {
-                layoutProgress.setVisibility(View.GONE);
-                btnAnalyze.setEnabled(true);
-                tvDetectedTrackers.setText(message);
-                tvDetectedTrackers.setVisibility(View.VISIBLE);
+            WorkInfo workInfo = activeWork;
+
+            switch (workInfo.getState()) {
+                case ENQUEUED:
+                    btnAnalyze.setEnabled(false);
+                    layoutProgress.setVisibility(View.VISIBLE);
+                    tvAnalysisProgress.setText(R.string.analysis_queued);
+                    pbTrackerDetection.setIndeterminate(true);
+                    tvDetectedTrackers.setVisibility(View.GONE);
+                    break;
+
+                case RUNNING:
+                    btnAnalyze.setEnabled(false);
+                    layoutProgress.setVisibility(View.VISIBLE);
+                    pbTrackerDetection.setIndeterminate(false);
+                    tvDetectedTrackers.setVisibility(View.GONE);
+
+                    Data progress = workInfo.getProgress();
+                    int percent = progress.getInt(TrackerAnalysisWorker.KEY_PROGRESS, 0);
+                    pbTrackerDetection.setProgress(percent);
+                    if (mContext instanceof Activity) {
+                        tvAnalysisProgress.setText(String.format(
+                                mContext.getString(R.string.analyzing_classes_progress), percent));
+                    }
+                    break;
+
+                case SUCCEEDED:
+                    layoutProgress.setVisibility(View.GONE);
+                    btnAnalyze.setEnabled(true);
+                    btnAnalyze.setText(R.string.analyze_tracker_libraries);
+
+                    String result = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_RESULT);
+                    if (result != null && mContext instanceof Activity) {
+                        String res = String.format(mContext.getString(R.string.detected_trackers), result);
+                        tvDetectedTrackers.setText(res);
+                        tvDetectedTrackers.setVisibility(View.VISIBLE);
+                    }
+                    break;
+
+                case FAILED:
+                    layoutProgress.setVisibility(View.GONE);
+                    btnAnalyze.setEnabled(true);
+
+                    String error = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_ERROR);
+                    if (error != null) {
+                        tvDetectedTrackers.setText(error);
+                        tvDetectedTrackers.setVisibility(View.VISIBLE);
+                    }
+                    break;
+
+                case CANCELLED:
+                    layoutProgress.setVisibility(View.GONE);
+                    btnAnalyze.setEnabled(true);
+                    break;
+
+                case BLOCKED:
+                    // Waiting for constraints, treat like ENQUEUED
+                    btnAnalyze.setEnabled(false);
+                    layoutProgress.setVisibility(View.VISIBLE);
+                    tvAnalysisProgress.setText(R.string.analysis_queued);
+                    pbTrackerDetection.setIndeterminate(true);
+                    tvDetectedTrackers.setVisibility(View.GONE);
+                    break;
             }
         };
 
-        // Attach listener to the view so we can remove it later if needed,
-        // or just add it. Ideally we should remove it when view is detached.
-        // For this fix, we'll add it and rely on the Set in Manager to not duplicate
-        // excessive listeners,
-        // but to prevent leaks, we should remove it.
-        // However, standard RecyclerView pattern makes this hard without custom View
-        // wrapper.
-        // We will add it unconditionally here (as it's the header, usually only one
-        // exists)
-        // AND we will check status synchronously.
-
-        manager.addAnalysisListener(mAppId, listener);
-
-        // Handling view detachment to avoid leaks
-        view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-                manager.addAnalysisListener(mAppId, listener);
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                manager.removeAnalysisListener(mAppId, listener);
-            }
-        });
-
-        // Initial state check (if not running, show cache)
-        if (!manager.isAnalysisInProgress(mAppId)) {
-            String cachedResults = manager.getCachedResult(mAppId);
-            if (cachedResults != null && mContext instanceof Activity) {
-                String res = String.format(mContext.getString(R.string.detected_trackers), cachedResults);
-
-                if (manager.isCacheStale(mAppId)) {
-                    res += mContext.getString(R.string.analysis_outdated_version);
-                    btnAnalyze.setText(R.string.update_analysis);
-                }
-
-                tvDetectedTrackers.setText(res);
-                tvDetectedTrackers.setVisibility(View.VISIBLE);
-            }
+        // Observe existing work for this package (if any is running)
+        if (mContext instanceof LifecycleOwner) {
+            manager.getWorkInfoByPackageLiveData(mAppId)
+                    .observe((LifecycleOwner) mContext, workInfoListObserver);
         }
 
         btnAnalyze.setOnClickListener(v -> {
-            manager.startAnalysis(mAppId);
+            if (mContext instanceof LifecycleOwner) {
+                manager.startAnalysis(mAppId);
+                // Observer above will automatically pick up the new work
+            }
         });
     }
 
@@ -258,61 +276,61 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             // Add data to view
             holder.mTrackerCategoryName.setText(trackerCategory.getDisplayName(mContext));
-            final ArrayAdapter<Tracker> trackersAdapter =
-                    new ArrayAdapter<Tracker>(mContext, R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
-                        @Override
-                        public @NonNull
-                        View getView(int pos, @Nullable View convertView,
-                                     @NonNull ViewGroup parent) {
-                            TextView tv = (TextView) super.getView(pos, convertView, parent);
-                            Tracker t = getItem(pos);
-                            if (t != null)
-                                updateText(tv, t);
-                            return tv;
-                        }
+            final ArrayAdapter<Tracker> trackersAdapter = new ArrayAdapter<Tracker>(mContext,
+                    R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
+                @Override
+                public @NonNull View getView(int pos, @Nullable View convertView,
+                        @NonNull ViewGroup parent) {
+                    TextView tv = (TextView) super.getView(pos, convertView, parent);
+                    Tracker t = getItem(pos);
+                    if (t != null)
+                        updateText(tv, t);
+                    return tv;
+                }
 
-                        private void updateText(TextView tv, Tracker t) {
-                            String name = t.getName();
-                            if (name.equals(TRACKER_HOSTLIST))
-                                name = getContext().getString(R.string.tracker_hostlist);
+                private void updateText(TextView tv, Tracker t) {
+                    String name = t.getName();
+                    if (name.equals(TRACKER_HOSTLIST))
+                        name = getContext().getString(R.string.tracker_hostlist);
 
-                            String title = name;
-                            if (t.lastSeen != 0)
-                                title += " (" + Util.relativeTime(t.lastSeen) + ")";
+                    String title = name;
+                    if (t.lastSeen != 0)
+                        title += " (" + Util.relativeTime(t.lastSeen) + ")";
 
-                            List<String> sortedHosts = new ArrayList<>(t.getHosts());
-                            Collections.sort(sortedHosts);
-                            String hosts = TextUtils.join("\n• ", sortedHosts);
+                    List<String> sortedHosts = new ArrayList<>(t.getHosts());
+                    Collections.sort(sortedHosts);
+                    String hosts = TextUtils.join("\n• ", sortedHosts);
 
-                            boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
-                            Spannable spannable;
-                            if (!categoryBlocked || Util.isPlayStoreInstall()) {
-                                String text = String.format("%s\n• %s", title, hosts);
-                                spannable = new SpannableString(text);
-                            } else {
-                                boolean companyBlocked = b.blocked(mAppUid,
-                                        TrackerBlocklist.getBlockingKey(t));
-                                String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
-                                int color = ContextCompat.getColor(getContext(), companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
+                    boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
+                    Spannable spannable;
+                    if (!categoryBlocked || Util.isPlayStoreInstall()) {
+                        String text = String.format("%s\n• %s", title, hosts);
+                        spannable = new SpannableString(text);
+                    } else {
+                        boolean companyBlocked = b.blocked(mAppUid,
+                                TrackerBlocklist.getBlockingKey(t));
+                        String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
+                        int color = ContextCompat.getColor(getContext(),
+                                companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
 
-                                String text = String.format("%s %s\n• %s", title, status, hosts);
+                        String text = String.format("%s %s\n• %s", title, status, hosts);
 
-                                spannable = new SpannableString(text);
+                        spannable = new SpannableString(text);
 
-                                spannable.setSpan(new ForegroundColorSpan(color),
-                                        title.length() + 1,
-                                        (title + status).length() + 1,
-                                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            }
+                        spannable.setSpan(new ForegroundColorSpan(color),
+                                title.length() + 1,
+                                (title + status).length() + 1,
+                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
 
-                            spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
-                                    0,
-                                    name.length(),
-                                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
+                            0,
+                            name.length(),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                            tv.setText(spannable, TextView.BufferType.SPANNABLE);
-                        }
-                    };
+                    tv.setText(spannable, TextView.BufferType.SPANNABLE);
+                }
+            };
             holder.mCompaniesList.setAdapter(trackersAdapter);
 
             if (Util.isPlayStoreInstall(mContext)) {
@@ -321,10 +339,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 boolean enabled = apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid);
                 holder.mSwitchTracker.setEnabled(enabled);
                 holder.mSwitchTracker.setChecked(
-                        b.blocked(mAppUid, trackerCategoryName)
-                );
+                        b.blocked(mAppUid, trackerCategoryName));
                 holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
-                    if (!buttonView.isPressed()) return; // to fix errors
+                    if (!buttonView.isPressed())
+                        return; // to fix errors
 
                     if (hasBecomeChecked)
                         b.block(mAppUid, trackerCategoryName);
@@ -341,7 +359,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             return;
 
                         Tracker t = trackersAdapter.getItem(i);
-                        if (t == null) return;
+                        if (t == null)
+                            return;
 
                         final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
                         if (!blockedTrackerCategory) {
@@ -361,7 +380,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     holder.mCompaniesList.setOnItemClickListener(null);
             }
 
-            //cast holder to VHItem and set data
+            // cast holder to VHItem and set data
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
@@ -374,7 +393,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // Exclusion from VPN
             holder.mSwitchVPN.setChecked(apply.getBoolean(mAppId, true));
             holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (!buttonView.isPressed()) return; // to fix errors
+                if (!buttonView.isPressed())
+                    return; // to fix errors
                 apply.edit().putBoolean(mAppId, isChecked).apply();
 
                 // Move expensive operations off the main thread to prevent UI freezing
@@ -390,10 +410,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // Blocking of Internet
             holder.mSwitchInternet.setEnabled(apply.getBoolean(mAppId, true));
             holder.mSwitchInternet.setChecked(
-                    !w.blockedInternet(mAppUid)
-            );
+                    !w.blockedInternet(mAppUid));
             holder.mSwitchInternet.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
-                if (!buttonView.isPressed()) return; // to fix errors
+                if (!buttonView.isPressed())
+                    return; // to fix errors
 
                 if (hasBecomeChecked)
                     w.unblock(mAppUid);
