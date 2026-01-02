@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl umożliwia użytkownikom nadzór i kontrolę nad powszechnym, uporczywym i ukrytym gromadzeniem danych o aktywności użytkownika w aplikacjach mobilnych (\'śledzenie\').</string>
-    <string name="app_copyright">Prawa autorskie \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl powstał na podstawie NetGuard stworzonego przez Marcela Bokhorsta (M66B).</string>
     <string name="app_android">TrackerControl wymaga Androida 5.1 lub nowszego</string>
     <string name="app_xposed">Xposed powoduje zbyt wiele awarii, które mogą spowodować usunięcie TrackerControl ze Sklepu Google Play, dlatego TrackerControl nie jest wspierany, gdy zainstalowany jest również Xposed</string>
     <string name="app_eula">Korzystasz z tej aplikacji na własne ryzyko. Żadna aplikacja nie jest w stanie zapewnić 100% ochrony przed śledzeniem.</string>
@@ -125,8 +124,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_error">Wystąpił nieoczekiwany błąd: \'%s\'</string>
     <string name="msg_start_failed">Android odmówił uruchomienia usługi VPN w tym momencie. Jest to prawdopodobnie spowodowane błędem w twojej wersji Androida.</string>
     <string name="msg_try">Spróbuj TrackerControl</string>
-    <string name="msg_doze">W celu uzyskania spójnych wyników, optymalizacja baterii systemu Android powinna być wyłączona dla TrackerControl.
-\n\nW następnym oknie dialogowym wybierz \"Wszystkie aplikacje\" u góry, dotknij na liście TrackerControl, a następnie wybierz i potwierdź \"Nie optymalizuj\".</string>
     <string name="msg_datasaving">Dla uzyskania spójnych wyników, opcje zapisu danych w systemie Android powinny być wyłączone dla TrackerControl
 \n\nW następnym oknie dialogowym należy włączyć opcje \"Dane w tle\" i \"Nieograniczone korzystanie z danych\"</string>
     <string name="msg_filter">Użycie filtrowania spowoduje, że Android przypisze dane i zużycie energii do TrackerControl - Android zakłada, że dane i zużycie energii są wykorzystywane przez TrackerControl, a nie przez oryginalne aplikacje</string>
@@ -365,4 +362,5 @@ Z poważaniem,\n\n]]></string>
     <string name="static_analysis">Wykrywaj trackery w kodzie aplikacji</string>
     <string name="failed_loading_cached_analysis">Ładowanie informacji o trackerach z pamięci cache nie powiodło się. Proszę zgłosić to deweloperowi na hello@trackercontrol.org</string>
     <string name="msg_notifications">Dotknij, aby przyznać uprawnienia do powiadomień (dla komunikatów o błędach itp.)</string>
+    <!-- Onboarding -->
 </resources>
