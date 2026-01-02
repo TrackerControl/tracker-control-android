@@ -55,8 +55,6 @@
     <string name="setting_ip6">允许 IPv6 流量</string>
     <string name="setting_call">在通话期间禁用</string>
     <string name="setting_reload_onconnectivity">在每次连接更改时重新加载</string>
-    <string name="setting_advanced_options">高级选项</string>
-    <string name="setting_system">管理系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
     <string name="setting_log_logcat">记录到ADB的传输</string>
     <string name="setting_filter">屏蔽跟踪器</string>
@@ -85,7 +83,6 @@
     <string name="setting_stats_frequency">采样间隔： %s 毫秒</string>
     <string name="setting_stats_samples">样本数: %s s</string>
     <string name="setting_backup">备份</string>
-    <string name="setting_export">导出设定 (不适用于设备重置)</string>
     <string name="setting_import">导入设定</string>
     <string name="setting_hosts">导入 hosts 文件</string>
     <string name="setting_hosts_append">导入 hosts 文件 (追加)</string>
@@ -100,7 +97,6 @@
     <string name="summary_lan">允许应用连接至局域网，比如 10.0.0.0/8，172.16.0.0/12和 192.168.0.0/16</string>
     <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或屏蔽</string>
     <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
-    <string name="summary_system">定义系统应用的规则 (专家用户)</string>
     <string name="summary_log_app">禁用以减少电池使用量。新的跟踪器仍将被屏蔽，但不会显示。</string>
     <string name="summary_track_usage">跟踪每个应用程序和地址发送和接收的字节数。这可能会导致额外的电池使用。</string>
     <string name="summary_block_domains">警告: 被屏蔽的主机未在用户界面中显示。</string>
