@@ -56,8 +56,6 @@
     <string name="setting_ip6">IPv6 forgalom engedélyezése</string>
     <string name="setting_call">Letiltás hívás közben</string>
     <string name="setting_reload_onconnectivity">Újratöltés minden kapcsolatváltozáskor</string>
-    <string name="setting_advanced_options">Haladó beállítások</string>
-    <string name="setting_system">Rendszeralkalmazások kezelése</string>
     <string name="setting_log_app">Új nyomkövetők keresése</string>
     <string name="setting_log_logcat">Napló továbbítása az ADB-nek</string>
     <string name="setting_filter">Nyomkövetők blokkolása</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Mintavétel időköze: %s ms</string>
     <string name="setting_stats_samples">Minták száma: %s s</string>
     <string name="setting_backup">Biztonsági mentés</string>
-    <string name="setting_export">Beállítások exportálása (nem az eszköz visszaállításához)</string>
     <string name="setting_import">Beállítások importálása</string>
     <string name="setting_hosts">Hosts fájl importálása</string>
     <string name="setting_hosts_append">Hosts fájl importálása (hozzáfűz)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Engedélyezi az alkalmazások kapcsolódását a LAN hálózati címekhez, mint pl. 10.0.0.0/8, 172.16.0.0/12 és 192.168.0.0/16</string>
     <string name="summary_ip6">Az IPv6 forgalmat a TrackerControl szelektíven tudja tiltani vagy engedélyezni</string>
     <string name="summary_call">A TrackerControl letiltása a bejövő vagy kimenő telefonhívás alatt. Ez használható IP/Wi-Fi hívási problémák megoldására.</string>
-    <string name="summary_system">Szabályok megadása a rendszeralkalmazásokra (szakértőknek)</string>
     <string name="summary_log_app">Az akkumulátor használatának csökkentése érdekében tiltsa le. Az új nyomkövetők továbbra is blokkolásra kerülnek, de nem jelennek meg.</string>
     <string name="summary_track_usage">Nyomon követheti a küldött és fogadott bájtok számát minden egyes alkalmazáshoz és címhez. Ez extra akkumulátor használattal járhat.</string>
     <string name="summary_block_domains">FIGYELEM: A tiltott gazdagépek nem jelennek meg a felhasználói felületen.</string>
