@@ -114,6 +114,7 @@ android {
 
     lint {
         disable 'MissingTranslation'
+        disable 'ExtraTranslation'
     }
     namespace = 'net.kollnig.missioncontrol'
     buildFeatures {
