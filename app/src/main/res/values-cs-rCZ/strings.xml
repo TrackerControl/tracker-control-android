@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl umožňuje uživatelům sledovat a kontrolovat rozsáhlý, průběžný a skrytý sběr dat o chování uživatelů v mobilních aplikacích (\"sledování\").</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl je založen na systému NetGuard, který vyvinul Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl vyžaduje Android 5.1 nebo novější</string>
     <string name="app_xposed">Xposed způsobuje příliš mnoho pádů, což by mohlo vést k odstranění aplikace TrackerControl z Obchodu Google Play. TrackerControl proto není podporován, pokud je nainstalován Xposed</string>
     <string name="app_eula">Tuto aplikaci používáte na vlastní nebezpečí. Žádná aplikace nemůže nabídnout 100% ochranu před sledováním.</string>
@@ -132,8 +131,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_error">Došlo k neočekávané chybě: \'%s\'</string>
     <string name="msg_start_failed">Android odmítl spustit službu VPN. Může to být způsobeno chybou ve vaší verzi Androidu.</string>
     <string name="msg_try">Vyzkoušejte TrackerControl</string>
-    <string name="msg_doze">Pro optimální výsledky by pro TrackerControl měla být vypnuta optimalizace spotřeby baterie.
-\n\nV následujícím dialogu nahoře se přepněte na \"Všechny aplikace\", v seznamu vyberte TrackerControl a označte a potvrďte volbu \"Neoptimalizovat\".</string>
     <string name="msg_datasaving">Pro optimální výsledky by pro TrackerControl měly být vypnuty funkce úspory dat systému Android
 \n\nV následujícím dialogu povolte možnosti \"Data na pozadí\" a \"Neomezené využití dat\"</string>
     <string name="msg_filter">Použití filtrování způsobí, že systém Android přiřadí využití dat a baterie aplikaci TrackerControl, namísto původním aplikacím</string>
@@ -384,4 +381,5 @@ Privátní DNS musí být vypnutá.</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
     <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
     <string name="msg_notifications">Klepnutím udělíte oprávnění k oznámením (pro chybové zprávy atd.)</string>
+    <!-- Onboarding -->
 </resources>
