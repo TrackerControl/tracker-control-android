@@ -58,8 +58,6 @@
     <string name="setting_ip6">Povolit IPv6 přenosy</string>
     <string name="setting_call">Vypnout během hovoru</string>
     <string name="setting_reload_onconnectivity">Načíst znovu při každé změně připojení</string>
-    <string name="setting_advanced_options">Pokročilé nastavení</string>
-    <string name="setting_system">Spravovat systémové aplikace</string>
     <string name="setting_log_app">Hledat nové trackery</string>
     <string name="setting_log_logcat">Záznamy přenosů do ADB</string>
     <string name="setting_filter">Blokovat trackery</string>
@@ -85,16 +83,22 @@
     <string name="setting_pcap_file_size">Max. velikost souboru PCAP: %s MB</string>
     <string name="setting_watchdog">Hlídač: každých %s minut</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Zabezpečený DNS (DoH)</string>
+    <string name="summary_doh_enabled">Šifrujte dotazy DNS pomocí protokolu DNS-over-HTTPS. Platí pro všechny aplikace.</string>
+    <string name="warning_beta">Beta funkce. Nemusí fungovat podle očekávání.</string>
+    <string name="setting_doh_endpoint">Koncový bod DoH URL</string>
+    <string name="summary_doh_endpoint">HTTPS URL pro dotazy DNS-overHTTPS</string>
     <string name="setting_stats_frequency">Interval vzorkování: %s ms</string>
     <string name="setting_stats_samples">Počet vzorků: %s</string>
     <string name="setting_backup">Záloha</string>
-    <string name="setting_export">Export nastavení (ne pro reset zařízení)</string>
     <string name="setting_import">Import nastavení</string>
     <string name="setting_hosts">Importovat soubor hosts</string>
     <string name="setting_hosts_append">Importovat soubor hosts (připojit)</string>
     <string name="setting_hosts_url">URL souborů hosts</string>
     <string name="setting_hosts_download">Stáhnout soubor hosts</string>
     <string name="setting_hosts_update">Aktualizovat soubor hosts</string>
+    <string name="setting_hosts_auto_update">Automatická aktualizace hostitelů</string>
+    <string name="summary_hosts_auto_update">Automaticky aktualizovat soubor hosts na pozadí</string>
     <string name="summary_install">Zobrazit oznámení ve stavovém řádku pro nově nainstalované aplikace</string>
     <string name="summary_pause">Po pozastavení z oznámení znovu automaticky povolí TrackerControl po zvoleném počtu minut. (zadáním 0 tuto možnost zakážete).</string>
     <string name="summary_update">Kontrolovat nové verze v GitHub dvakrát denně</string>
@@ -103,7 +107,6 @@
     <string name="summary_lan">Povolit aplikacím připojení k adresám místní sítě, např. 10.0.0.0/8, 172.16.0.0/12 a 192.168.0.0/16</string>
     <string name="summary_ip6">Přesměrovat IPv6 přenosy do TrackerControl, aby je bylo možné selektivně zakázat nebo povolit</string>
     <string name="summary_call">Zakázat TrackerControl při příchozím nebo odchozím telefonním hovoru. Může vyřešit problémy s IP/Wi-Fi voláním.</string>
-    <string name="summary_system">Definovat pravidla pro systémové aplikace (pro odborníky)</string>
     <string name="summary_log_app">Zakázáním snížíte spotřebu baterie. Nové trackery budou stále blokovány, nebudou se zobrazovat.</string>
     <string name="summary_track_usage">Sledovat počet odeslaných a přijatých bytů pro každou aplikaci a adresu. Může mít vliv na spotřebu baterie.</string>
     <string name="summary_block_domains">VAROVÁNÍ: Blokovaní hostitelé nejsou zobrazeni v UI.</string>
@@ -156,6 +159,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_vpn_cancelled">VPN spojení ukončeno\nNenastavili jste jinou VPN jako trvalou síť VPN?</string>
     <string name="msg_unavailable">Tato funkce není na této verzi Androidu k dispozici</string>
     <string name="msg_always_on">Jiná VPN je nastavena jako Trvalá síť VPN</string>
+    <string name="msg_private_dns">V nastavení sítě Android vypněte \"Private DNS\". TrackerControl nabízí vlastní funkci Secure DNS v nastavení.</string>
     <string name="msg_start_forward">Začít přesměrovávat z %1$s port %2$d na %3$s:%4$d z \'%5$s\'?</string>
     <string name="msg_stop_forward">Přestat přesměrovávat %1$s port %2$d?</string>
     <string name="msg_log_logcat">Varování: Blokování zakázáno z důvodu ADB záznamů.</string>
@@ -253,6 +257,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="tab_actions">Moje data</string>
     <string name="tracker_name">Název trackeru</string>
     <string name="internet_access">Přístup k internetu</string>
+    <string name="internet_access_explanation">Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
     <string name="app_info">Spravovat aplikace</string>
     <!-- Actions -->
     <string name="block_tracking">Blokovat trackery</string>
@@ -331,6 +336,8 @@ Privátní DNS musí být vypnutá.</string>
     <string name="setting_strict_blocking">Přísné blokování</string>
     <string name="summary_strict_blocking">Blokovat skoro všechno sdílení dat nově nainstalovaných aplikací. Aplikace nemusí fungovat.</string>
     <string name="strict_blocking_explanation">Je doporučeno vypnout tuto možnost pro snížení počtu nefungujících aplikací. Je ale třeba k zakázání veškerého sdílení.</string>
+    <string name="exclude_vpn_explanation">Detekuje a blokuje trackery pro tuto aplikaci.</string>
+    <string name="vpn_exclude">Vyloučit z VPN</string>
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
