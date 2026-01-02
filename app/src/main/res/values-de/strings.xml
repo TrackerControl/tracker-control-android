@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">PCAP Aufnahmegröße: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. Dateigröße: %s MB</string>
     <string name="setting_watchdog">Watchdog: alle %s Minuten</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Abtastfrequenz: %s ms</string>
     <string name="setting_stats_samples">Anzahl Samples: %s s</string>
     <string name="setting_backup">Sicherung</string>
@@ -149,8 +150,6 @@
     <string name="msg_vpn_cancelled">VPN-Verbindung abgebrochen\nHaben Sie ein anderes VPN als \'immer eingeschaltet\' konfiguriert?</string>
     <string name="msg_unavailable">Diese Funktion ist in dieser Android-Version nicht verfügbar</string>
     <string name="msg_always_on">Ein anderes VPN ist als \'immer eingeschaltet\' konfiguriert</string>
-    <string name="msg_always_on_lockdown">Um TrackerControl im Filtermodus benutzen zu können, müssen Sie in den Android-VPN-Einstellungen \"Verbindungen ohne VPN blockieren\" deaktivieren</string>
-    <string name="msg_private_dns">\"Privates DNS\" in Android Netzwerkeinstellungen deaktivieren um TrackerControl im Filtermodus zu verwenden</string>
     <string name="msg_start_forward">Weiterleitung von %1$s Port %2$d nach %3$s:%4$d von \'%5$s\' starten?</string>
     <string name="msg_stop_forward">Weiterleitung von %1$s Port %2$d stoppen?</string>
     <string name="msg_log_logcat">Warnung: Blockierung wegen ADB-Protokollierung deaktiviert.</string>
@@ -244,7 +243,6 @@
     <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
     <string name="internet_access">Internetzugang</string>
-    <string name="internet_access_explanation">Muss für den Internetzugang eingeschaltet sein.\n\nTipp: Sie können auch auf das App-Symbol im Hauptbildschirm tippen.</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
@@ -322,7 +320,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strenges Blockieren</string>
     <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Unternehmen wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
     <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
-    <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stoßen.</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="settings_uninstall">App-Einstellungen &amp; Deinstallation</string>
     <string name="no_trackers_found_message_disabled">Den Hauptbildschirm aktivieren und die App starten um Tracker zu finden</string>
