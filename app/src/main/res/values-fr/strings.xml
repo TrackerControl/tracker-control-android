@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permet aux utilisateurs de surveiller et de contrôler la collecte (cachée et courante) des données relatives à leur comportement dans les applications mobiles (\"tracking\").</string>
-    <string name="app_copyright">Copyright \u00A9 2019-2022 Konrad Kollnig (Informatique centrée sur l’humanité, Département des sciences informatiques, Université d\'Oxford)\n\nTrackerControl est basé sur NetGuard, développé par Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl nécessite Android 5.1 ou une version ultérieure</string>
     <string name="app_xposed">Xposed provoque trop de plantages, ce qui peut entraîner le retrait de TrackerControl de la boutique Google Play. TrackerControl n\'est donc pas pris en charge lorsque Xposed est installé</string>
     <string name="app_eula">L\'utilisation de cette application se fait à vos risques et périls. Aucune application ne peut garantir une protection complète contre le pistage.</string>
@@ -56,6 +55,8 @@
     <string name="setting_ip6">Activer le trafic IPv6</string>
     <string name="setting_call">Désactiver lors des appels</string>
     <string name="setting_reload_onconnectivity">Recharger à chaque changement de type de connexion</string>
+    <string name="setting_advanced_options">Options avancées (pour les experts)</string>
+    <string name="setting_system">Afficher les applications système</string>
     <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
     <string name="setting_log_logcat">Journaliser les transmissions via ADB</string>
     <string name="setting_filter">Bloquer les traqueurs</string>
@@ -81,6 +82,11 @@
     <string name="setting_pcap_file_size">Taille max. du fichier PCAP: %s MB</string>
     <string name="setting_watchdog">Chien de garde : toutes les %s minutes</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">DNS sécurisé (DoH)</string>
+    <string name="summary_doh_enabled">Chiffrer les requêtes DNS en utilisant le DNS-overHTTPS. S\'applique à toutes les applications.</string>
+    <string name="warning_beta">Fonctionnalité bêta. Peut ne pas fonctionner comme attendu.</string>
+    <string name="setting_doh_endpoint">DoH Endpoint URL</string>
+    <string name="summary_doh_endpoint">URL HTTPS pour les requêtes DNS-sur-HTTPS</string>
     <string name="setting_stats_frequency">Intervalle d\'échantillonnage : %s ms</string>
     <string name="setting_stats_samples">Nombre d\'échantillons: %s s</string>
     <string name="setting_backup">Sauvegarde</string>
@@ -98,6 +104,7 @@
     <string name="summary_lan">Autoriser les applications à se connecter à des adresses de réseau local, comme 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16</string>
     <string name="summary_ip6">Diriger le trafic IP version 6 vers TrackerControl pour qu\'il puisse être autorisé ou bloqué sélectivement</string>
     <string name="summary_call">Désactivez TrackerControl sur les appels téléphoniques entrants ou sortants. Cela peut être utilisé pour contourner les problèmes d\'appel IP/Wi-Fi.</string>
+    <string name="summary_system">Afficher les applications système dans la liste des applications</string>
     <string name="summary_log_app">Désactiver pour diminuer la consommation de la batterie. Les nouveaux traqueurs seront toujours bloqués, mais ne seront pas affichés.</string>
     <string name="summary_track_usage">Surveiller le nombre d\'octets envoyés et reçus pour chaque application et adresse. Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_block_domains">AVERTISSEMENT : Les hôtes bloqués ne sont pas affichés dans l\'interface utilisateur.</string>
@@ -122,7 +129,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_error">Une erreur inattendue s\'est produite: \'%s\'</string>
     <string name="msg_start_failed">Android vient refuser de démarrer le VPN. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_try">Essayez TrackerControl</string>
-    <string name="msg_doze">Pour des résultats fiables, les optimisations Android de la batterie doivent être désactivées pour TrackerControl.\n\nDans la fenêtre suivante, sélectionnez « Toutes les applications » en haut, appuyez sur TrackerControl dans la liste, puis sélectionnez et confirmez « Ne pas optimiser ».</string>
     <string name="msg_datasaving">Pour des résultats fiables, les options de limitation de données d\'Android doivent être désactivées pour TrackerControl \n\nDans la fenêtre suivante, activez les options « Données en arrière-plan » et « Utilisation de données sans restriction »</string>
     <string name="msg_filter">Utiliser le filtrage fera qu\'Android attribuera l\'utilisation des données et de la batterie à TrackerControl - Android suppose que les données et la batterie sont utilisées par TrackerControl, plutôt que par les applications d\'origine</string>
     <string name="msg_filter4">Android 4 nécessite que le filtrage soit activé</string>
@@ -240,6 +246,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="tab_actions">Mes données</string>
     <string name="tracker_name">Nom du traqueur</string>
     <string name="internet_access">Accès à internet</string>
+    <string name="internet_access_explanation">Vous pouvez également appuyer sur l\'icône de l\'application sur l\'écran principal.</string>
     <string name="app_info">Gérer l\'application</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquer les traqueurs</string>
@@ -317,6 +324,8 @@ Cordialement,\n\n]]></string>
     <string name="setting_strict_blocking">Blocage strict</string>
     <string name="summary_strict_blocking">Pour les nouvelles applications installées, bloque le partage des données avec autant d\'entreprise que possible. Plus d\'applications dysfonctionneront.</string>
     <string name="strict_blocking_explanation">Pour les non experts, il est recommandé de désactiver cette fonction pour réduire les dysfonctionnements. Même si cela autorise le partage de données essentielles avec des entreprises.</string>
+    <string name="exclude_vpn_explanation">Détecte et bloque les trackers pour cette application.</string>
+    <string name="vpn_exclude">Exclure du VPN</string>
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>
@@ -356,4 +365,6 @@ Cordialement,\n\n]]></string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
+    <string name="setting_exclude_system_vpn">Exclure les applications système</string>
+    <!-- Onboarding -->
 </resources>
