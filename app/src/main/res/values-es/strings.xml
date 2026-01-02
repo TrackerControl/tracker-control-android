@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite a los usuarios monitorizar y controlar la recopilación de datos extendida, continua y oculta en las aplicaciones móviles sobre el comportamiento del usuario (\'rastreo\').</string>
-    <string name="app_copyright">Derechos de autor \u00A9 2019–2022 Konrad Kollnig (Computación centrada en el ser humano, Departamento de Ciencias de la Computación, Universidad de Oxford)\n\nTrackerControl está basado en NetGuard, desarrollado por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requiere Android 5.1 o superior</string>
     <string name="app_xposed">Xposed genera demasiados crasheos, lo cual podría ocasionar que se retire TrackerControl de la tienda de Google Play. Por lo tanto, no habrá soporte para TrackerControl mientras Xposed esté instalado.</string>
     <string name="app_eula">El uso de esta aplicación es bajo tu propio riesgo. Ninguna aplicación puede ofrecer un 100% de protección contra el rastreo.</string>
@@ -123,8 +122,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_error">Ocurrió un error inesperado: \'%s\'</string>
     <string name="msg_start_failed">Android se negó a iniciar el servicio de VPN en este momento. Esto podría deberse a un error en su versión de Android.</string>
     <string name="msg_try">Prueba TrackerControl</string>
-    <string name="msg_doze">Para obtener resultados consistentes, las optimizaciones de la batería de Android deben ser desactivadas para TrackerControl.
-\n\nEn el siguiente diálogo, seleccione \"Todas las aplicaciones\" en la parte superior, pulse en TrackerControl en la lista. Luego, seleccione y confirme \"No optimizar\".</string>
     <string name="msg_datasaving">Para obtener resultados consistentes, las opciones de almacenamiento de datos de Android deben ser desactivadas para TrackerControl
 \n\nEn el siguiente diálogo, habilite las opciones \"Datos en segundo plano\" y \"Uso ilimitado de datos\"</string>
     <string name="msg_filter">El uso del filtrado hará que Android atribuya el uso de los datos y energía a TrackerControl - Android asume que estos son usados por TrackerControl, en lugar de las aplicaciones originales</string>
@@ -359,4 +356,5 @@ Atentamente,\n\n]]></string>
     <string name="static_analysis">Detectar rastreadores en código de apps</string>
     <string name="failed_loading_cached_analysis">Error al cargar resultados de rastreadores en caché. Por favor, reporta esto al desarrollador en hello@trackercontrol.org</string>
     <string name="msg_notifications">Toca para conceder permisos de notificación</string>
+    <!-- Onboarding -->
 </resources>

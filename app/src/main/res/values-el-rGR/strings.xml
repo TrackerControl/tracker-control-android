@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">Το TrackerControl επιτρέπει στους χρήστες να παρακολουθούν και να ελέγχουν την ευρεία, συνεχιζόμενη, κρυφή συλλογή δεδομένων, σε εφαρμογές για κινητά, που αφορούν την συμπεριφορά των χρηστών (\'tracking\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig(Human-Centered Computing, Τμήμα Επιστήμης Υπολογιστών, Πανεπιστήμιο της Οξφόρδης)\n\nΤο TrackerControl βασίζεται στο NetGuard, που αναπτύχθηκε από τον Marcel Bokhorst (M66B).</string>
     <string name="app_android">Το TrackerControl απαιτεί Android 5.1 ή κάποια νεότερη έκδοση</string>
     <string name="app_xposed">Το Xposed προκαλεί πάρα πολλά σφάλματα, τα οποία ενδέχεται να έχουν ως αποτέλεσμα την κατάργηση του TrackerControl από το Google Play Store, επομένως το TrackerControl δεν υποστηρίζεται κατά την εγκατάσταση του Xposed</string>
     <string name="app_eula">Η χρήση αυτής της εφαρμογής είναι με δική σας ευθύνη. Καμία εφαρμογή δεν μπορεί να προσφέρει 100% προστασία από την παρακολούθηση.</string>
@@ -122,8 +121,6 @@
     <string name="msg_error">Παρουσιάστηκε ένα μη αναμενόμενο σφάλμα: «%s»</string>
     <string name="msg_start_failed">Το Android αρνήθηκε να ξεκινήσει την υπηρεσία VPN αυτή τη στιγμή. Αυτό είναι πιθανό εξαιτίας ενός σφάλματος στην έκδοση του Android σας.</string>
     <string name="msg_try">Δοκιμάστε το TrackerControl</string>
-    <string name="msg_doze">Για σωστά αποτελέσματα, οι βελτιστοποιήσεις μπαταρίας Android πρέπει να απενεργοποιηθούν για το TrackerControl.
-\n\n Στο επόμενο παράθυρο, επιλέξτε \"Όλες οι εφαρμογές\" στο επάνω μέρος, πατήστε στο TrackerControl στη λίστα και επιλέξτε και επιβεβαιώστε \"Μην βελτιστοποιήσετε\".</string>
     <string name="msg_datasaving">Για συνεπή αποτελέσματα, η επιλογή εξοικονόμησης δεδομένων του Android θα πρέπει να απενεργοποιηθεί για το TrackerControl \n\nΣτο επόμενο παράθυρο, ενεργοποιήστε τις επιλογές «δεδομένα παρασκηνίου » και «απεριόριστα δεδομένα χρήσης»</string>
     <string name="msg_filter">Η χρήση φιλτραρίσματος θα κάνει το Android να αποδώσει τη χρήση δεδομένων και κατανάλωσης στο TrackerControl, υποθέτοντας ότι τα δεδομένα και η κατανάλωση χρησιμοποιούνται από το TrackerControl, αντί για τις πραγματικές εφαρμογές</string>
     <string name="msg_filter4">Το Android 4 απαιτεί φιλτράρισμα για να ενεργοποιηθεί</string>
@@ -355,4 +352,5 @@ Sincerely,\n\n]]></string>
     <string name="browsers_not_supported">Οι περιηγητές δεν υποστηρίζονται ⚠️</string>
     <string name="static_analysis">Εντοπισμός ιχνηλατών στον κώδικα εφαρμογής</string>
     <string name="failed_loading_cached_analysis">Η φόρτωση αποτελεσμάτων cached tracker απέτυχε. Παρακαλώ αναφέρετε το στον προγραμματιστή στο hello@trackercontrol.org</string>
+    <!-- Onboarding -->
 </resources>

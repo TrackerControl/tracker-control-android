@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permette agli utenti di monitorare e controllare la continua, diffusa e nascosta raccolta di dati riguardo i loro comportamenti effettuata dalle applicazioni (\'tracciamento\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl is based upon NetGuard, developed by Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl richiede Android 5.1 o successiva</string>
     <string name="app_xposed">Xposed causa troppi crash, che potrebbero portare alla rimozione di TrackerControl dal Google Play Store, perciò TrackerControl non è supportato quando Xposed è installato</string>
     <string name="app_eula">L\'utilizzo di questa app è a tuo rischio. Nessuna app può garantire una protezione assoluta contro il tracciamento.</string>
@@ -122,8 +121,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_error">Si è verificato un errore imprevisto: \'%s\'</string>
     <string name="msg_start_failed">Android ha impedito l\'avvio del servizio VPN. Questo è probabilmente dovuto a un bug nella tua versione di Android.</string>
     <string name="msg_try">Prova TrackerControl</string>
-    <string name="msg_doze">Per ottenere risultati attendibili, l\'ottimizzazione batteria dovrebbe essere disabilitata per TrackerControl.
-\n\nNella prossima schermata, selezionare \"Tutte le app\" in alto, poi scegliere TrackerControl nella lista e selezionare \"Non ottimizzare\".</string>
     <string name="msg_datasaving">Per ottenere risultati attendibili, l\'opzione di risparmio dati di Android dovrebbe essere disabilitata per TrackerControl
 \n\nNella prossima schermata, attivare le opzioni di \"Dati in Background\" e \"Utilizzo dati illimitato\"</string>
     <string name="msg_filter">L\'utilizzo del filtraggio farà sì che Android attribuirà il traffico di dati ed il consumo della batteria a TrackerControl - Android considera i dati e la batteria utilizzati da TrackerControl invece che dalle rispettive applicazioni</string>
@@ -356,4 +353,5 @@ Cordiali saluti,\n\n]]></string>
     <string name="browsers_not_supported">Browser non supportato ⚠️</string>
     <string name="static_analysis">Rilevati tracker nel codice dell\'app</string>
     <string name="failed_loading_cached_analysis">Caricamento dei risultati del tracker nella cache fallito. Per favore segnalalo allo sviluppatore su hello@trackercontrol.org</string>
+    <!-- Onboarding -->
 </resources>

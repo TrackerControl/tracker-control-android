@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner (\"sporing\").</string>
-    <string name="app_copyright">Opphavsrett \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Institutt for informasjonsteknologi, Universitetet i Oxford)\n\nTrackerControl er basert på NetGuard, utviklet av Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
     <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
@@ -122,8 +121,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="msg_error">En uventet feil har oppstått: \'%s\'</string>
     <string name="msg_start_failed">Android nektet å starte VPN-tjenesten i dette øyeblikket. Dette er sannsynligvis på grunn av en feil i Android-versjonen din.</string>
     <string name="msg_try">Prøv TrackerControl</string>
-    <string name="msg_doze">For konsistente resultater bør batterioptimaliseringen for Android deaktiveres for TrackerControl.
-\n\nI den neste dialogboksen velger du \"Alle apper\" øverst, Trykk på TrackerControl i listen og velger og bekrefter \"Ikke optimaliser\".</string>
     <string name="msg_datasaving">For konsekvente resultat bør data-sparingsinstillingen til Android være deaktivert for TrackerControl\n\nI neste dialog, aktiver instillingen for \"Bakgrunnsdata\" og \"Ubegrenset databruk\"</string>
     <string name="msg_filter">Ved å bruke filtrering vil Android attribuere data og strømforbruk til TrackerControl - Android tror dataen og strømmen blir brukt av TrackerControl, istedenfor de originale appene</string>
     <string name="msg_filter4">Android 4 krever at filtrering er aktivert</string>
@@ -357,4 +354,5 @@ Vennlig hilsen,\n\n]]></string>
     <string name="static_analysis">Oppdag sporere i app-kode</string>
     <string name="failed_loading_cached_analysis">Lasting av bufret sporer-resultat mislyktes. Vennligst rapporter dette til utvikleren på hello@trackercontrol.org</string>
     <string name="msg_notifications">Trykk for å gi varslingsrettigheter (for feilmeldinger osv.)</string>
+    <!-- Onboarding -->
 </resources>

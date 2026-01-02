@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl-ek aplikazioek egiten duten erabilpenaren jarraipenaren datuak era ezkutuan jasotzeko egiten duten lana monitorizatu eta kontrolatzeko aukera eskaintzen die erabiltzaileei (\'tracking\' bezala ezaguna).</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Cented Computing, Informatika Saila, Oxfordeko Unibertsitatea)\n\nTrackerControl Marcel Bokhorst-ek (M66B) garatutako NetGuard-en oinarritzen da.</string>
     <string name="app_android">TrackerControlek Android 5.1 edo berriagoa behar du</string>
     <string name="app_xposed">Xposedek arazo asko sortzen ditu eta horregatik agian TrackerControl Google Play Storetik ezabatu dezakete, beraz TrackerControl ezin da instalatu Xposed instalatuta dagoen artean</string>
     <string name="app_eula">Aplikazio honen erabilera zure ardurapean dago. Aplikazio batek ezin du 100% babesa eskaini jarraipenaren aurka.</string>
@@ -122,8 +121,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_error">Ustekabeko errorea gertatu da: \'%s\'</string>
     <string name="msg_start_failed">Androidek uko egin dio VPN zerbitzua orain abiatzeari. Litekeena da zure Android bertsioak akats bat duelako izatea.</string>
     <string name="msg_try">Probatu TrackerControl</string>
-    <string name="msg_doze">Emaitza egokiak izateko, Android sistemako bateria optimizazioak desgaitu behar dira TrackerControl aplikazioarentzat.
-\n\nHurrengo elkarrizketa-koadroan, hautatu \"Aplikazio guztiak\" goian, sakatu TrackerControl zerrendan eta berretsi \"Ez optimizatu\".</string>
     <string name="msg_datasaving">Emaitza egokiak izateko, Android sistemako datuak aurrezteko optimizazioak desgaitu behar dira TrackerControl aplikazioarentzat.
 \n\nHurrengo elkarrizketa-koadroan, gaitu \"bigarren planoko datuak\" eta \"mugagabeko datu erabilera\"</string>
     <string name="msg_filter">Iragaztea erabiltzean Androidek TrackerControli egotziko dio datu eta bateria erabilera - Androidek uste du TrackerControlek erabiltzen dituela datuak eta bateria, ez jatorrizko aplikazioak</string>
@@ -360,4 +357,5 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="browsers_not_supported">Nabigatzaileak ez daude onartuta ⚠️</string>
     <string name="static_analysis">Aztarnariak antzeman aplikazioaren kodea</string>
     <string name="failed_loading_cached_analysis">Cacheatutako aztarnarien emaitzak kargatzeak huts egin du. Mesedez eman honen berri garatzaileari hemen: hello@trackercontrol.org</string>
+    <!-- Onboarding -->
 </resources>

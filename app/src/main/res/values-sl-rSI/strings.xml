@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl uporabnikom omogoča nadzirati razširjeno in prikrito zbiranje podatkov v programih o uporabnikovem vedenju (\'sledenje\').</string>
-    <string name="app_copyright">Avtorske pravice \u00A9 2019-2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl je osnovan na NetGuardu, ki ga je razvil Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl zahteva Android 5.1 ali novejšega</string>
     <string name="app_xposed">Xposed povzroča preveč zrušitev, ki lahko vodijo k odstranitvi programa iz Trgovine Play, zato TrackerControl ni podprt, ko je nameščen Xposed.</string>
     <string name="app_eula">Ta program uporabljate na svojo odgovornost.  Noben program ne zagotavlja 100 % zaščite pred sledenjem.</string>
@@ -125,8 +124,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_error">Pojavila se je nepričakovana napaka: \'%s\'</string>
     <string name="msg_start_failed">Android je trenutno zavrnil zagon storitve VPN.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
     <string name="msg_try">Poizkusite TrackerControl</string>
-    <string name="msg_doze">Za dosledne rezultate onemogočate Androidovo optimizacijo baterije za TrackerControl.
-\n\nV naslednjem pogovornem oknu na vrhu izberite \"Vsi programi\", na seznamu se dotaknite TrackerControl in potrdite \"Brez optimizacije\".</string>
     <string name="msg_datasaving">Za dosledne rezultate onemogočite Androidovo varčevanje s podatki za TrackerControl.
 \n\nV naslednjem pogovornem oknu omogočite možnosti \"Podatki v ozadju\" in \"Neomejena poraba podatkov\".</string>
     <string name="msg_filter">Če boste uporabljali filtriranje, bo Android porabo podatkov in energije dodelil TrackerControlu (Android bo mislil, da podatke in energijo porablja TrackerControl in ne izvirni programi).</string>
@@ -372,4 +369,5 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
+    <!-- Onboarding -->
 </resources>

@@ -118,8 +118,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_error">Tapahtui odottamaton virhe: \'%s\'</string>
     <string name="msg_start_failed">Android kieltäytyi käynnistämästä VPN-palvelua tällä hetkellä. Tämä johtuu todennäköisesti Android-version virheestä.</string>
     <string name="msg_try">Kokeile TrackerControlia</string>
-    <string name="msg_doze">Yhdenmukaisten tulosten saavuttamiseksi Android-akun optimoinnit tulisi poistaa käytöstä TrackerControlissa.
-\n\nValitse seuraavassa valintaikkunassa yläreunassa \"Kaikki sovellukset\", napauta luettelossa TrackerControl ja valitse ja vahvista \"Älä optimoi\".</string>
     <string name="msg_datasaving">Yhdenmukaisten tulosten saavuttamiseksi Android-tietojen tallennusasetukset on poistettava käytöstä TrackerControlissa
 \n\nOta seuraavassa valintaikkunassa käyttöön vaihtoehdot \"Taustatiedot\" ja \"Rajoittamaton tiedon käyttö\"</string>
     <string name="msg_filter">Suodatuksen käyttö saa Androidin määrittelemään tiedot ja virrankulutuksen TrackerControlille - Android olettaa, että TrackerControl käyttää tietoja ja virtaa alkuperäisten sovellusten sijaan</string>
@@ -303,4 +301,5 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="allowed">SALLITTU</string>
     <string name="browsers_not_supported">Selaimia ei tueta ⚠️</string>
     <string name="static_analysis">Tunnista sovelluskoodissa olevat seuraimet</string>
+    <!-- Onboarding -->
 </resources>

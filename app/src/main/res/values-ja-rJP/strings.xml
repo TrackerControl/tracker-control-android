@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl を使用すると、普段気付かないような、広範囲にわたる、データ収集(トラッキング)を監視・制御できます。</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl は Marcel Bokhorst (M66B) によって開発された NetGuard をベースにしています。</string>
     <string name="app_android">TrackerControl には Android 5.1 以降が必要です</string>
     <string name="app_xposed">Xposed はクラッシュが多く、その結果 TrackerControl がGoogle Playストアから削除される可能性があるため、Xposed がインストールされている間は、 TrackerControl はサポートされません。</string>
     <string name="app_eula">本アプリの使用は、ご自身の責任において行ってください。どんなアプリもトラッキングから 100％ 保護することはできません。</string>
@@ -119,8 +118,6 @@
     <string name="msg_error">予期しないエラーが発生しました: \'%s\'</string>
     <string name="msg_start_failed">現在、Android は VPNサービス の開始を拒否しています。これは、お使いの Android のバージョンにバグがあるためと思われます。</string>
     <string name="msg_try">TrackerControl を試す</string>
-    <string name="msg_doze">安定した動作のため、TrackerControl への Androidのバッテリー最適化を 無効にする必要があります。
-\n\n次のダイアログで、上部の「すべてのアプリ」を選択し、リストの中のTrackerControlをタップして、「最適化しない」を選択してください。(機種によって設定が異なる場合があります)</string>
     <string name="msg_datasaving">安定した動作のため、TrackerControl への Android のデータセーバーのオプションを無効にする必要があります。\n\n次のダイアログで、オプション「バックグラウンド データ」と「モバイルデータの無制限使用」を有効にしてください。</string>
     <string name="msg_filter">フィルターを使用すると、Android はデータと電力を、元のアプリではなく、TrackerControl が使用しているものとみなします。</string>
     <string name="msg_filter4">Android 4 ではフィルタリングを有効にする必要があります</string>
@@ -316,4 +313,5 @@
     <string name="browsers_not_supported">ブラウザはサポートされていません ⚠️</string>
     <string name="static_analysis">アプリコード内にトラッカーを検出しました</string>
     <string name="failed_loading_cached_analysis">キャッシュされたトラッカーの結果の読み込みに失敗しました。 hello@trackercontrol.orgで開発者にこれを報告してください</string>
+    <!-- Onboarding -->
 </resources>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen Apps über das Benutzerverhalten („Tracking“) zu überwachen und zu steuern.</string>
-    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universität Oxford)\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
     <string name="app_eula">Die Nutzung dieser App erfolgt auf eigenes Risiko. Keine App kann vollständigen Schutz vor Tracking garantieren.</string>
@@ -121,7 +120,6 @@
     <string name="msg_error">Unerwarteter Fehler ist aufgetreten: \'%s\'</string>
     <string name="msg_start_failed">Android hat es momentan abgelehnt, den VPN-Dienst zu starten. Ursache ist wahrscheinlich ein Fehler in Ihrer Android-Version.</string>
     <string name="msg_try">TrackerControl ausprobieren</string>
-    <string name="msg_doze">Für konsistente Ergebnisse sollte für TrackerControl die Android-Batterie-Optimierungen deaktiviert werden.\n\nIm nächsten Dialogfenster wählen Sie ganz oben \"Alle Apps\", tippen auf TrackerControl in der Liste und wählen und bestätigen \"Nicht optimieren\".</string>
     <string name="msg_datasaving">Für konsistente Ergebnisse sollte die Android-Option \"Datensparen\" für TrackerControl deaktiviert werden\n\nIm nächsten Fenster aktivieren Sie die Optionen \"Hintergrunddaten\" und \"Uneingeschränkte Datennutzung\"</string>
     <string name="msg_filter">Bei Verwendung von Filterung werden Daten- und Energiewerte erfasst und Android nimmt an, dass Daten und Energie von TrackerControl statt von der ursprünglichen Anwendungen verbraucht werden</string>
     <string name="msg_filter4">Android 4 erfordert die Aktivierung der Filterung</string>
@@ -355,4 +353,5 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Tracker im App-Code erkennen</string>
     <string name="failed_loading_cached_analysis">Laden der zwischengespeicherten Tracker-Ergebnisse fehlgeschlagen. Bitte melden Sie dies dem Entwickler unter hello@trackercontrol.org</string>
     <string name="msg_notifications">Tippen, um Benachrichtigungen zu erlauben (für Fehlermeldungen, etc.)</string>
+    <!-- Onboarding -->
 </resources>

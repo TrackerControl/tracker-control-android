@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl дозволяє користувачам відстежувати та контролювати широко розповсюджений, постійний, прихований збір даних у мобільних застосунках про поведінку користувачів (\"стеження\").</string>
-    <string name="app_copyright">Авторські права \u00A9 2019–2022 Конрад Колльніг (Human-Centred Computing, факультет інформатики, Оксфордський університет)\n\nTrackerControl базується на NetGuard, розробленому Марселем Бокхорстом (M66B).</string>
     <string name="app_android">TrackerControl потребує Android 5.1 або новішої версії</string>
     <string name="app_xposed">Xposed викликає занадто багато збоїв, що може призвести до видалення TrackerControl з Google Play Store, тому TrackerControl не підтримується, якщо встановлено Xposed</string>
     <string name="app_eula">Використання цього додатка здійснюється на ваш власний ризик. Жоден додаток не може забезпечити 100% захист від відстеження.</string>
@@ -123,7 +122,6 @@
     <string name="msg_error">Сталася непередбачена помилка: \'%s\'</string>
     <string name="msg_start_failed">Наразі Android відмовився запустити VPN-сервіс. Імовірно, це спричинено помилкою у вашій версії Android.</string>
     <string name="msg_try">Спробуйте TrackerControl</string>
-    <string name="msg_doze">Для досягнення коректних результатів необхідно вимкнути економію заряду акумулятора Android для TrackerControl.\n\nУ верхній частині наступного діалогового вікна виберіть «Усі програми», знайдіть у списку TrackerControl і виберіть його, а потім виберіть «Не економити» і підтвердьте.</string>
     <string name="msg_datasaving">Для отримання коректних результатів слід вимкнути опції збереження даних Android для TrackerControl \n\nУ наступному діалоговому вікні увімкніть опції «Фонові дані» та «Необмежене використання даних»</string>
     <string name="msg_filter">Використання фільтрування призведе до того, що Android приписуватиме споживання даних та батареї TrackerControl; Android вважатиме, що дані та батарея споживаються не застосунками, які фільтруються, а TrackerControl\'ом</string>
     <string name="msg_filter4">На Android 4 фільтрацію необхідно увімкнути</string>
@@ -361,4 +359,5 @@
     <string name="static_analysis">Виявлення трекерів у коді програми</string>
     <string name="failed_loading_cached_analysis">Не вдалося завантажити кешовані результати трекера. Повідомте про це розробника за адресою hello@trackercontrol.org</string>
     <string name="msg_notifications">Натисніть, щоб надати дозволи на сповіщення (для повідомлень про помилки тощо)</string>
+    <!-- Onboarding -->
 </resources>

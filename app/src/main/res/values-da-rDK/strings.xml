@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl lader brugere overvåge og kontrollere den udbredte, løbende, og skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
-    <string name="app_copyright">Ophavsret \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Institut for Datalogi Universitet i Oxford)\n\nTrackerControl er baseret på NetGuard, udviklet af Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan medføre, at TrackerControl fjernes fra Google Play Butik. Derfor understøttes TrackerControl ikke, mens Xposed er installeret</string>
     <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
@@ -110,4 +109,5 @@
     <string name="back">Tilbage</string>
     <string name="your_privacy">Dit privatliv</string>
     <string name="enable">Aktivér</string>
+    <!-- Onboarding -->
 </resources>
