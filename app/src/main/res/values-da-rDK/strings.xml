@@ -56,8 +56,6 @@
     <string name="setting_ip6">Aktivér IPv6-trafik</string>
     <string name="setting_call">Deaktivér ved opkald</string>
     <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
-    <string name="setting_advanced_options">Avancerede indstillinger</string>
-    <string name="setting_system">Håndtér systemapps</string>
     <string name="setting_log_app">Søg efter nye trackere</string>
     <string name="setting_log_logcat">Log overførsler til ADB</string>
     <string name="setting_filter">Bloker trackere</string>
@@ -72,7 +70,6 @@
     <!-- Secure DNS (DoH) -->
     <string name="setting_import">Importér indstillinger</string>
     <string name="summary_lan">Tillad apps at oprette forbindelse til lokale netværksadresser som 10.0.0.0/8, 172.16.0.0/12 og 192.168.0.0/16</string>
-    <string name="summary_system">Definer regler for systemapps (for eksperter)</string>
     <string name="summary_log_app">Deaktiver for at mindske batteriforbrug. Nye trackere blokeres stadig, men vises ikke.</string>
     <string name="summary_track_usage">Spor antallet af sendte og modtagne bytes for hver app og adresse. Dette kan resultere i ekstra batteriforbrug.</string>
     <string name="msg_sure">Er du sikker?</string>
