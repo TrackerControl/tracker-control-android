@@ -10,7 +10,7 @@ TrackerControl is an Android app that allows users to monitor and control the wi
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
-used by Firefox, and of our in-house blocklist, created *from analysing ~2&nbsp;000&nbsp;000 apps*!
+used by Firefox, and of our in-house blocklist, created *from analysing ~2&nbsp;000&nbsp;000 apps*! **To protect your privacy from your ISP, you can also optionally encrypt your DNS traffic using DNS-over-HTTPS (DoH).**
 Additionally, TrackerControl supports custom blocklists and uses the signatures from [ClassyShark3xodus](https://f-droid.org/en/packages/com.oF2pks.classyshark3xodus/)/[Exodus Privacy](https://exodus-privacy.eu.org/) for the analysis of tracker libraries within app code.
 
 This approach
@@ -24,7 +24,7 @@ Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
 This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-No root is required, other VPNs or Private DNS are not supported.
+No root is required. Other VPNs or Android's "Private DNS" feature are not supported (due to Android limitations), but TrackerControl provides its own **Secure DNS (DNS-over-HTTPS / DoH)** feature to protect your DNS traffic.
 No external VPN server is used, to keep your data safe! TrackerControl even protects you
 against *DNS cloaking*, a popular technique to hide trackers in websites and apps.
 
@@ -61,7 +61,14 @@ TrackerControl will always be free and open source, being a research project.
       alt="Get it on Google Play"
       height="80">](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play)
 
-There are multiple versions of TrackerControl.
+There are multiple versions of TrackerControl:
+
+| Feature |   Play Store (Slim)    | F-Droid / GitHub (Full) |
+| :--- |:----------------------:| :---: |
+| **Tracker Analysis** |           ✅            | ✅ |
+| **Traffic Log** |           ✅            | ✅ |
+| **Tracker & Ad Blocking** | ❌ (Google Restriction) | ✅ |
+| **Secure DNS (DoH)** |           ✅            | ✅ |
 
 If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
@@ -83,9 +90,9 @@ You can export the results of your analysis from the app menu TrackerControl to 
 
 It is further possible to enable the direct logging of contacted domains to the console. This is helpful for research studies that instrument apps using an additional computer and can be enabled through Settings -> Advanced options -> Log transmissions to ADB. Note that this disables any blocking.
 
-By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps. The analysis of system apps might be helpful if you want to analyse the data sharing of sytem apps, such as Google Maps, YouTube or the Google Play Service, all of which might be used by other apps to do tracking for them. In other words, without looking at system apps, some tracking might be missed; the challenge here, however, is that it's difficult to differentiate different apps that use other Google apps for tracking. This means that for a robust analysis, it's prudent to uninstall and deactivate as many apps on the user's phone as possible.
+By default, the analysis of system apps is disabled. This is because the analysis of the network traffic of system apps can lead to unexpected behaviour and should only be used by experienced users. You can enable the analysis of system apps through Settings -> Advanced Options -> Manage system apps. The analysis of system apps might be helpful if you want to analyse the data sharing of system apps, such as Google Maps, YouTube or the Google Play Service, all of which might be used by other apps to do tracking for them. In other words, without looking at system apps, some tracking might be missed; the challenge here, however, is that it's difficult to differentiate different apps that use other Google apps for tracking. This means that for a robust analysis, it's prudent to uninstall and deactivate as many apps on the user's phone as possible.
 
-TrackerControl also has a traffic log functionality that can be accssed from the menu bar. If enabled, contacted tracking domains will be highlighted in **bold**. Note, however, that the traffic log currently lacks a display of whether there's ambiguity in the contacted domains (as opposed to the per-app screens that show when certain domains are *uncertain*). Displayed domains can be inaccurate.
+TrackerControl also has a traffic log functionality that can be accessed from the menu bar. If enabled, contacted tracking domains will be highlighted in **bold**. Note, however, that the traffic log currently lacks a display of whether there's ambiguity in the contacted domains (as opposed to the per-app screens that show when certain domains are *uncertain*). Displayed domains can be inaccurate.
 
 ### Tracker library analysis
 
@@ -99,7 +106,7 @@ TrackerControl is a community-driven project and welcomes contributions of all k
 
 If you need support in using the app, join one of the [online communities](https://github.com/TrackerControl/tracker-control-android#communities).
 
-If you find any errors or bugs or have suggestions for improvements, you can use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues). The issue tracker provides two different templates, one one for bugs and the other for improvements.
+If you find any errors or bugs or have suggestions for improvements, you can use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues). The issue tracker provides two different templates, one for bugs and the other for improvements.
 
 If you want to contribute directly to code of TrackerControl, feel free to file a pull request or, alternatively, use the [issue tracker](https://github.com/TrackerControl/tracker-control-android/issues).
 
@@ -132,8 +139,9 @@ TrackerControl provides
 - *real-time monitoring* of app tracking, including destination companies and countries,
 - *granular blocking* of app tracking,
 - *one-click data requests* as granted under EU Data Protection Legislation,
-- *ad-blocking* using widely available host files, and
-- *tracker library analysis* of apps' code.
+- *ad-blocking* using widely available host files,
+- *tracker library analysis* of apps' code, and
+- *secure DNS* using DNS-over-HTTPS (DoH) (optional).
 
 <p align="center">
     <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="margin: 0 auto;" height="100%" width="25%" >
@@ -181,7 +189,7 @@ necessary for network communications (e.g. IP address).
 
 TrackerControl uses the ACRA plugin. This is considered to be a 'good' tracker.
 It's open-source, and could be used to collect crash reports automatically
-to a server–TrackerControl DOES NOT do this. Instead, the user must app report crashes
+to a server–TrackerControl DOES NOT do this. Instead, the user must manually report crashes
 manually, via e-mail. ACRA shows a dialog to do this in TrackerControl.
 
 TrackerControl itself never sends any personal data off your device. 
