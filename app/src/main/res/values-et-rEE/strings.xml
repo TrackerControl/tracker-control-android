@@ -51,6 +51,7 @@
     <string name="setting_socks5_port">SOCKS5 serveri port: %s</string>
     <string name="setting_socks5_username">SOCKS5 kasutajanimi: %s</string>
     <string name="setting_socks5_password">SOCKS5 salasõna: %s</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_backup">Varundus</string>
     <string name="setting_export">Ekspordi seadistused (mitte seadme lähtestamiseks)</string>
     <string name="setting_import">Impordi seadistused</string>
