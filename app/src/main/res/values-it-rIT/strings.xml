@@ -56,8 +56,6 @@
     <string name="setting_ip6">Abilita il traffico IPv6</string>
     <string name="setting_call">Disabilita durante le chiamate</string>
     <string name="setting_reload_onconnectivity">Ricarica ad ogni cambio di connessione</string>
-    <string name="setting_advanced_options">Opzioni avanzate</string>
-    <string name="setting_system">Gestisci applicazioni di sistema</string>
     <string name="setting_log_app">Ricerca nuovi tracker</string>
     <string name="setting_log_logcat">Log trasmissioni ad ADB</string>
     <string name="setting_filter">Blocca tracker</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Intervallo di campionamento: %s ms</string>
     <string name="setting_stats_samples">Numero di campioni: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Esporta impostazioni (non utilizzabile in caso di ripristino del dispositivo)</string>
     <string name="setting_import">Importa impostazioni</string>
     <string name="setting_hosts">Importa file hosts</string>
     <string name="setting_hosts_append">Importa file hosts (aggiungi)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Consenti alle applicazioni di connettersi ad indirizzi della rete locale, come, ad esempio, 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16</string>
     <string name="summary_ip6">Indirizza il traffico IP versione 6 verso TrackerControl così da consentirlo o bloccarlo selettivamente</string>
     <string name="summary_call">Disattiva TrackerControl durante le chiamate telefoniche. Può essere utile per risolvere problemi legati alle chiamate IP/Wi-Fi.</string>
-    <string name="summary_system">Definisci regole per le applicazioni di sistema (per esperti)</string>
     <string name="summary_log_app">Disabilita per diminuire il consumo della batteria. I nuovi tracker verranno comunque bloccati, ma non saranno mostrati.</string>
     <string name="summary_track_usage">Tieni traccia del numero di byte inviati e ricevuti per ogni applicazione e indirizzo. Questo potrebbe aumentare il consumo della batteria.</string>
     <string name="summary_block_domains">ATTENZIONE: Gli hosts bloccati non sono mostrati nell\'interfaccia utente.</string>
