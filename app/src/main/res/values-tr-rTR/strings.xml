@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">PCAP kayıt boyutu: %s B</string>
     <string name="setting_pcap_file_size">PCAP dosya boyutu sınırı: %s MB</string>
     <string name="setting_watchdog">Bekçi: her %s dakika</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Yenileme aralığı: %s ms</string>
     <string name="setting_stats_samples">Yenileme geçmişi: %s s</string>
     <string name="setting_backup">Yedekle</string>
@@ -153,8 +154,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_vpn_cancelled">VPN bağlantısı iptal edildi\nFarklı bir VPN\'i daima açık olarak ayarlamış olabilir misiniz?</string>
     <string name="msg_unavailable">Bu özellik, bu Android sürümünde mevcut değil</string>
     <string name="msg_always_on">Farklı bir VPN daima açık olarak ayarlanmış</string>
-    <string name="msg_always_on_lockdown">TrackerControl\'ü filtreleme modunda kullanmak için Android VPN ayarlarında \"VPN olmadan bağlantıları engelle\" seçeneğini kapatın</string>
-    <string name="msg_private_dns">TrackerControl filtrelemesini kullanmak için Android ağ ayarlarından \"Özel DNS\" seçeneğini kapatın</string>
     <string name="msg_start_forward">\'%5$s\' için %1$s:%2$d -&gt; %3$s:%4$d yönlendirmesi başlatılsın mı?</string>
     <string name="msg_stop_forward">%1$s:%2$d yönlendirmesi durdurulsun mu?</string>
     <string name="msg_log_logcat">Uyarı: ADB günlüğü nedeniyle engelleme devre dışı bırakıldı.</string>
@@ -248,7 +247,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="tab_actions">Bilgilerim</string>
     <string name="tracker_name">İzleyici Adı</string>
     <string name="internet_access">İnternet Erişimi</string>
-    <string name="internet_access_explanation">İnternet erişimi için açık olmalıdır.\n\nİpucu: Ana ekrandaki uygulama simgesine de dokunabilirsiniz.</string>
     <string name="app_info">Uygulama Yönet</string>
     <!-- Actions -->
     <string name="block_tracking">İzleyicileri engelle</string>
@@ -326,7 +324,6 @@ Saygılarımla,\n\n]]></string>
     <string name="setting_strict_blocking">Sıkı Engelleme</string>
     <string name="summary_strict_blocking">Yeni yüklenen uygulamalar için, şirketlerle mümkün olduğunca fazla veri paylaşımını engelleyin. Daha fazla uygulama bozulacak.</string>
     <string name="strict_blocking_explanation">Uygulama kesintilerini azaltmak için uzman olmayan kişilerin bu seçeneği devre dışı bırakmaları önerilir. Ancak bu, şirketlerle bazı önemli paylaşımlara izin verir.</string>
-    <string name="exclude_vpn_explanation">İzleyicileri algılamak veya engellemek için açık olmalıdır.\n\nİpucu: Sorunlarla karşılaşırsanız devre dışı bırakın.</string>
     <string name="uninstall">Kaldır</string>
     <string name="settings_uninstall">Uygulama ayarları &amp; Kaldır</string>
     <string name="no_trackers_found_message_disabled">Ana ekranda geçişi etkinleştirin, ardından izleyicileri bulmak için uygulamayı başlatın</string>
