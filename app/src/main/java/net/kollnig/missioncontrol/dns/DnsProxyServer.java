@@ -41,6 +41,7 @@ public class DnsProxyServer {
     private final AtomicBoolean running = new AtomicBoolean(false);
     private DatagramSocket serverSocket;
     private ExecutorService executor;
+    private int dohFailures = 0;
 
     private DnsProxyServer(Context context) {
         this.context = context.getApplicationContext();
@@ -161,13 +162,24 @@ public class DnsProxyServer {
             byte[] responseData = dohClient.resolve(queryData);
 
             if (responseData != null) {
+                dohFailures = 0;
                 // Send response back to client
                 DatagramPacket response = new DatagramPacket(
                         responseData, responseData.length, clientAddress, clientPort);
                 serverSocket.send(response);
                 Log.d(TAG, "DoH query successful, response sent to " + clientAddress + ":" + clientPort);
             } else {
-                Log.w(TAG, "DoH query returned null response");
+                dohFailures++;
+                Log.w(TAG, "DoH query returned null response, failures=" + dohFailures);
+
+                if (dohFailures >= 10) {
+                    if (eu.faircode.netguard.Util.isInternetWorking(context)) {
+                        Log.w(TAG, "DoH server unreachable even though internet is working, showing notification");
+                        eu.faircode.netguard.ServiceSinkhole.dohError(context);
+                        dohFailures = 0; // Reset to wait for the next 10 failures
+                    }
+                }
+
                 // Send SERVFAIL response
                 sendServFailResponse(queryData, clientAddress, clientPort);
             }

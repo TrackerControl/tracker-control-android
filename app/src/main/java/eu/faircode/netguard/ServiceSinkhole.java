@@ -65,13 +65,11 @@ import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
-import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
@@ -84,7 +82,6 @@ import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.analysis.AnalysisException;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -159,6 +156,7 @@ public class ServiceSinkhole extends VpnService {
 
     private static long last_hosts_modified = 0;
     public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
+    private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
@@ -181,7 +179,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_TRAFFIC = 7;
     private static final int NOTIFY_UPDATE = 8;
     public static final int NOTIFY_EXTERNAL = 9;
-    public static final int NOTIFY_DOWNLOAD = 10;
+    private static final int NOTIFY_DOH_ERROR = 11;
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -203,7 +201,7 @@ public class ServiceSinkhole extends VpnService {
     }
 
     public enum Command {
-        run, start, reload, stop, stats, set, householding, watchdog
+        run, start, reload, stop, stats, set, householding, watchdog, doh_error
     }
 
     private static volatile PowerManager.WakeLock wlInstance = null;
@@ -458,6 +456,10 @@ public class ServiceSinkhole extends VpnService {
 
                     case watchdog:
                         watchdog(intent);
+                        break;
+
+                    case doh_error:
+                        showDohErrorNotification();
                         break;
 
                     default:
@@ -2341,8 +2343,6 @@ public class ServiceSinkhole extends VpnService {
     ConnectivityManager.NetworkCallback networkMonitorCallback = new ConnectivityManager.NetworkCallback() {
         private String TAG = "TrackerControl.Monitor";
 
-        private Map<Network, Long> validated = new HashMap<>();
-
         // https://android.googlesource.com/platform/frameworks/base/+/master/services/core/java/com/android/server/connectivity/NetworkMonitor.java
 
         @Override
@@ -2377,8 +2377,8 @@ public class ServiceSinkhole extends VpnService {
             NetworkInfo ni = cm.getNetworkInfo(network);
             Log.i(TAG, "Lost network " + network + " " + ni);
 
-            synchronized (validated) {
-                validated.remove(network);
+            synchronized (mapValidated) {
+                mapValidated.remove(network);
             }
         }
 
@@ -2396,9 +2396,9 @@ public class ServiceSinkhole extends VpnService {
                     capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN) &&
                     !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
 
-                synchronized (validated) {
-                    if (validated.containsKey(network) &&
-                            validated.get(network) + 20 * 1000 > new Date().getTime()) {
+                synchronized (mapValidated) {
+                    if (mapValidated.containsKey(network) &&
+                            mapValidated.get(network) + 20 * 1000 > new Date().getTime()) {
                         Log.i(TAG, "Already validated " + network + " " + ni);
                         return;
                     }
@@ -2413,8 +2413,8 @@ public class ServiceSinkhole extends VpnService {
                     socket = network.getSocketFactory().createSocket();
                     socket.connect(new InetSocketAddress(host, 443), 10000);
                     Log.i(TAG, "Validated " + network + " " + ni + " host=" + host);
-                    synchronized (validated) {
-                        validated.put(network, new Date().getTime());
+                    synchronized (mapValidated) {
+                        mapValidated.put(network, new Date().getTime());
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -3265,6 +3265,31 @@ public class ServiceSinkhole extends VpnService {
             NotificationManagerCompat.from(this).notify(NOTIFY_ERROR, notification.build());
     }
 
+    private void showDohErrorNotification() {
+        Intent main = new Intent(this, ActivityMain.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.msg_doh_unreachable))
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setOngoing(false)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(getString(R.string.msg_doh_unreachable));
+
+        if (Util.canNotify(this))
+            NotificationManagerCompat.from(this).notify(NOTIFY_DOH_ERROR, notification.build());
+    }
+
     private void showUpdateNotification(String name, String url) {
         if (Util.isFDroidInstall())
             return;
@@ -3293,6 +3318,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationManagerCompat.from(this).cancel(NOTIFY_DISABLED);
         NotificationManagerCompat.from(this).cancel(NOTIFY_AUTOSTART);
         NotificationManagerCompat.from(this).cancel(NOTIFY_ERROR);
+        NotificationManagerCompat.from(this).cancel(NOTIFY_DOH_ERROR);
     }
 
     private class Builder extends VpnService.Builder {
@@ -3597,6 +3623,30 @@ public class ServiceSinkhole extends VpnService {
                 } catch (Throwable exex) {
                     Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
                 }
+        }
+    }
+
+    public static void dohError(Context context) {
+        Intent intent = new Intent(context, ServiceSinkhole.class);
+        intent.putExtra(EXTRA_COMMAND, Command.doh_error);
+        try {
+            ContextCompat.startForegroundService(context, intent);
+        } catch (Throwable ex) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    ex instanceof ForegroundServiceStartNotAllowedException)
+                try {
+                    context.startService(intent);
+                } catch (Throwable exex) {
+                    Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
+                }
+        }
+    }
+
+    public static boolean isValidated(Network network) {
+        if (network == null)
+            return false;
+        synchronized (mapValidated) {
+            return mapValidated.containsKey(network);
         }
     }
 }

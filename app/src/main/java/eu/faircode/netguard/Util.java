@@ -26,7 +26,6 @@ import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -38,13 +37,9 @@ import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.net.VpnService;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -59,17 +54,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.net.ConnectivityManagerCompat;
-import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -81,7 +72,6 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -177,9 +167,6 @@ public class Util {
             return true;
 
         Network[] networks = cm.getAllNetworks();
-        if (networks == null)
-            return false;
-
         for (Network network : networks) {
             ni = cm.getNetworkInfo(network);
             if (ni != null && ni.getType() != ConnectivityManager.TYPE_VPN && ni.isConnected())
@@ -187,6 +174,24 @@ public class Util {
         }
 
         return false;
+    }
+
+    public static boolean isInternetWorking(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null)
+            return false;
+
+        Network activeNetwork = cm.getActiveNetwork();
+        if (activeNetwork == null)
+            return false;
+
+        android.net.NetworkCapabilities caps = cm.getNetworkCapabilities(activeNetwork);
+        if (caps == null)
+            return false;
+
+        return caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                (caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED) ||
+                        ServiceSinkhole.isValidated(activeNetwork));
     }
 
     public static boolean isWifiActive(Context context) {
@@ -215,7 +220,8 @@ public class Util {
     public static String getNetworkGeneration(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
-        return (ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE ? getNetworkGeneration(ni.getSubtype()) : null);
+        return (ni != null && ni.getType() == ConnectivityManager.TYPE_MOBILE ? getNetworkGeneration(ni.getSubtype())
+                : null);
     }
 
     public static boolean isRoaming(Context context) {
@@ -227,7 +233,8 @@ public class Util {
     public static boolean isNational(Context context) {
         try {
             TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            return (tm != null && tm.getSimCountryIso() != null && tm.getSimCountryIso().equals(tm.getNetworkCountryIso()));
+            return (tm != null && tm.getSimCountryIso() != null
+                    && tm.getSimCountryIso().equals(tm.getNetworkCountryIso()));
         } catch (Throwable ignored) {
             return false;
         }
@@ -287,7 +294,8 @@ public class Util {
 
     public static boolean hasPhoneStatePermission(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            return (context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
+            return (context
+                    .checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
         else
             return true;
     }
@@ -346,13 +354,16 @@ public class Util {
         try {
             PackageManager pm = context.getPackageManager();
             PackageInfo info = pm.getPackageInfo(packageName, 0);
-            return ((info.applicationInfo.flags & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0);
+            return ((info.applicationInfo.flags
+                    & (ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0);
             /*
-            PackageInfo pkg = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
-            PackageInfo sys = pm.getPackageInfo("android", PackageManager.GET_SIGNATURES);
-            return (pkg != null && pkg.signatures != null && pkg.signatures.length > 0 &&
-                    sys.signatures.length > 0 && sys.signatures[0].equals(pkg.signatures[0]));
-            */
+             * PackageInfo pkg = pm.getPackageInfo(packageName,
+             * PackageManager.GET_SIGNATURES);
+             * PackageInfo sys = pm.getPackageInfo("android",
+             * PackageManager.GET_SIGNATURES);
+             * return (pkg != null && pkg.signatures != null && pkg.signatures.length > 0 &&
+             * sys.signatures.length > 0 && sys.signatures[0].equals(pkg.signatures[0]));
+             */
         } catch (PackageManager.NameNotFoundException ignore) {
             return false;
         }
@@ -644,7 +655,8 @@ public class Util {
         StringBuilder sb = new StringBuilder(2048);
         char[] read = new char[128];
         try {
-            for (int i; (i = reader.read(read)) >= 0; sb.append(read, 0, i)) ;
+            for (int i; (i = reader.read(read)) >= 0; sb.append(read, 0, i))
+                ;
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
@@ -701,29 +713,50 @@ public class Util {
         sb.append(String.format("Roaming %B\r\n", isRoaming(context)));
 
         if (tm.getSimState() == TelephonyManager.SIM_STATE_READY)
-            sb.append(String.format("SIM %s/%s/%s\r\n", tm.getSimCountryIso(), tm.getSimOperatorName(), tm.getSimOperator()));
-        //if (tm.getNetworkType() != TelephonyManager.NETWORK_TYPE_UNKNOWN)
+            sb.append(String.format("SIM %s/%s/%s\r\n", tm.getSimCountryIso(), tm.getSimOperatorName(),
+                    tm.getSimOperator()));
+        // if (tm.getNetworkType() != TelephonyManager.NETWORK_TYPE_UNKNOWN)
         try {
-            sb.append(String.format("Network %s/%s/%s\r\n", tm.getNetworkCountryIso(), tm.getNetworkOperatorName(), tm.getNetworkOperator()));
+            sb.append(String.format("Network %s/%s/%s\r\n", tm.getNetworkCountryIso(), tm.getNetworkOperatorName(),
+                    tm.getNetworkOperator()));
         } catch (Throwable ex) {
-        /*
-            06-14 13:02:41.331 19703 19703 W ircode.netguar: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (greylist, reflection, allowed)
-            06-14 13:02:41.332 19703 19703 W ircode.netguar: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (greylist, reflection, allowed)
-            06-14 13:02:41.495 19703 19703 I TetheringManager: registerTetheringEventCallback:eu.faircode.netguard
-            06-14 13:02:41.518 19703 19703 E AndroidRuntime: Process: eu.faircode.netguard, PID: 19703
-            06-14 13:02:41.518 19703 19703 E AndroidRuntime:        at eu.faircode.netguard.Util.getGeneralInfo(SourceFile:744)
-            06-14 13:02:41.518 19703 19703 E AndroidRuntime:        at eu.faircode.netguard.ActivitySettings.updateTechnicalInfo(SourceFile:858)
-            06-14 13:02:41.518 19703 19703 E AndroidRuntime:        at eu.faircode.netguard.ActivitySettings.onPostCreate(SourceFile:425)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App: java.lang.SecurityException: getDataNetworkTypeForSubscriber
-            06-14 13:02:41.520 19703 19703 W NetGuard.App: java.lang.SecurityException: getDataNetworkTypeForSubscriber
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at android.os.Parcel.createExceptionOrNull(Parcel.java:2373)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at android.os.Parcel.createException(Parcel.java:2357)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at android.os.Parcel.readException(Parcel.java:2340)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at android.os.Parcel.readException(Parcel.java:2282)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at com.android.internal.telephony.ITelephony$Stub$Proxy.getNetworkTypeForSubscriber(ITelephony.java:8711)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at android.telephony.TelephonyManager.getNetworkType(TelephonyManager.java:2945)
-            06-14 13:02:41.520 19703 19703 W NetGuard.App:  at android.telephony.TelephonyManager.getNetworkType(TelephonyManager.java:2909)
-         */
+            /*
+             * 06-14 13:02:41.331 19703 19703 W ircode.netguar: Accessing hidden method
+             * Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/
+             * graphics/Rect;)Z (greylist, reflection, allowed)
+             * 06-14 13:02:41.332 19703 19703 W ircode.netguar: Accessing hidden method
+             * Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (greylist,
+             * reflection, allowed)
+             * 06-14 13:02:41.495 19703 19703 I TetheringManager:
+             * registerTetheringEventCallback:eu.faircode.netguard
+             * 06-14 13:02:41.518 19703 19703 E AndroidRuntime: Process:
+             * eu.faircode.netguard, PID: 19703
+             * 06-14 13:02:41.518 19703 19703 E AndroidRuntime: at
+             * eu.faircode.netguard.Util.getGeneralInfo(SourceFile:744)
+             * 06-14 13:02:41.518 19703 19703 E AndroidRuntime: at
+             * eu.faircode.netguard.ActivitySettings.updateTechnicalInfo(SourceFile:858)
+             * 06-14 13:02:41.518 19703 19703 E AndroidRuntime: at
+             * eu.faircode.netguard.ActivitySettings.onPostCreate(SourceFile:425)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: java.lang.SecurityException:
+             * getDataNetworkTypeForSubscriber
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: java.lang.SecurityException:
+             * getDataNetworkTypeForSubscriber
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * android.os.Parcel.createExceptionOrNull(Parcel.java:2373)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * android.os.Parcel.createException(Parcel.java:2357)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * android.os.Parcel.readException(Parcel.java:2340)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * android.os.Parcel.readException(Parcel.java:2282)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * com.android.internal.telephony.ITelephony$Stub$Proxy.
+             * getNetworkTypeForSubscriber(ITelephony.java:8711)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * android.telephony.TelephonyManager.getNetworkType(TelephonyManager.java:2945)
+             * 06-14 13:02:41.520 19703 19703 W NetGuard.App: at
+             * android.telephony.TelephonyManager.getNetworkType(TelephonyManager.java:2909)
+             */
         }
 
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
@@ -760,9 +793,12 @@ public class Util {
             sb.append(ni.getTypeName()).append('/').append(ni.getSubtypeName())
                     .append(' ').append(ni.getDetailedState())
                     .append(TextUtils.isEmpty(ni.getExtraInfo()) ? "" : " " + ni.getExtraInfo())
-                    .append(ni.getType() == ConnectivityManager.TYPE_MOBILE ? " " + Util.getNetworkGeneration(ni.getSubtype()) : "")
+                    .append(ni.getType() == ConnectivityManager.TYPE_MOBILE
+                            ? " " + Util.getNetworkGeneration(ni.getSubtype())
+                            : "")
                     .append(ni.isRoaming() ? " R" : "")
-                    .append(ani != null && ni.getType() == ani.getType() && ni.getSubtype() == ani.getSubtype() ? " *" : "")
+                    .append(ani != null && ni.getType() == ani.getType() && ni.getSubtype() == ani.getSubtype() ? " *"
+                            : "")
                     .append("\r\n");
         }
 
