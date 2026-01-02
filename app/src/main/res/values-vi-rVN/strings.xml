@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl cho phép người dùng giám sát và kiểm soát sự thu thập thông tin lan rộng, liên tục, không thể thấy trong các ứng dụng di động về hành vi người dùng (\'theo dõi\').</string>
-    <string name="app_copyright">Bản quyền \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl được dựa trên NetGuard, được Marcel Bokhorst (M66B) phát triển.</string>
     <string name="app_android">TrackerControl yêu cầu Android 5.1 hoặc cao hơn</string>
     <string name="app_xposed">Xposed gây ra quá nhiều lỗi, điều đó có thể dẫn đến TrackerControl bị gỡ bỏ khỏi cửa hàng Google Play, do đó TrackerControl không được hỗ trợ khi Xposed được cài đặt</string>
     <string name="app_eula">Bạn tự chịu rủi ro khi sử dụng ứng dụng này. Không ứng dụng nào có thể bảo vệ bạn 100% khỏi việc theo dõi.</string>
@@ -118,7 +117,6 @@
     <string name="msg_error">Một lỗi không mong đợi đã xảy ra: \'%s\'</string>
     <string name="msg_start_failed">Android đã từ chối khởi động dịch vụ VPN tại lúc này. Điều này có khá năng là do một lỗi trong phiên bản Android của bạn.</string>
     <string name="msg_try">Thử TrackerControl</string>
-    <string name="msg_doze">Để có kết quả liên tục chính xác, tối ưu hóa pin Android nên được tắt cho TrackerControl. \n\nTrong hộp thoại kế tiếp, chọn \"Tất cả ứng dụng\" ở phía trên cùng, bấm vào TrackerControl trong danh sách và chọn và xác nhận \"Không tối ưu hoá\".</string>
     <string name="msg_datasaving">Để có kết quả liên tục chính xác, tùy chọn tiết kiệm dữ liệu của Android nên được tắt cho TrackerControl\n\nTrong hộp thoại tiếp theo, hãy bật tùy chọn \"Dữ liệu nền\" và \"Sử dụng dữ liệu không hạn chế\"</string>
     <string name="msg_filter">Việc sử dụng lọc sẽ làm cho Android hiểu lầm TrackerControl sử dụng dữ liệu và năng lượng - Android giả định dữ liệu và năng lượng đang được sử dụng bởi TrackerControl, thay vì các ứng dụng ban đầu</string>
     <string name="msg_filter4">Android 4 yêu cầu việc lọc được bật</string>
@@ -311,4 +309,5 @@
     <string name="browsers_not_supported">Trình duyệt không được hỗ trợ ⚠️</string>
     <string name="static_analysis">Phát hiện trình theo dõi trong mã ứng dụng</string>
     <string name="failed_loading_cached_analysis">Tải kết quả trình theo dõi trong bộ nhớ đệm thất bại. Vui lòng báo cáo điều này đến nhà phát triển tại hello@trackercontrol.org</string>
+    <!-- Onboarding -->
 </resources>
