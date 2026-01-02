@@ -50,8 +50,6 @@
     <string name="setting_ip6">啟用 IPv6 流量</string>
     <string name="setting_call">在通話期間停用</string>
     <string name="setting_reload_onconnectivity">每當連線改變時均重新載入</string>
-    <string name="setting_advanced_options">進階選項</string>
-    <string name="setting_system">管理系統應用程式</string>
     <string name="setting_log_app">搜尋新的追蹤器</string>
     <string name="setting_log_logcat">將日誌記錄傳輸至 ADB</string>
     <string name="setting_filter">阻擋追蹤器</string>
@@ -80,7 +78,6 @@
     <string name="setting_stats_frequency">取樣間隔：%s ms</string>
     <string name="setting_stats_samples">取樣數：%s s</string>
     <string name="setting_backup">備份</string>
-    <string name="setting_export">匯出設定（不適用裝置重置）</string>
     <string name="setting_import">匯入設定</string>
     <string name="setting_hosts">匯入 hosts 檔案</string>
     <string name="setting_hosts_append">匯入 hosts 檔案（附加）</string>
