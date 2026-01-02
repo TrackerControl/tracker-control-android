@@ -874,6 +874,11 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             holder.lvAccess.setAdapter(badapter);
         } else {
+            // Close any existing cursor before setting adapter to null
+            CursorAdapter existingAdapter = (CursorAdapter) holder.lvAccess.getAdapter();
+            if (existingAdapter != null) {
+                existingAdapter.changeCursor(null);
+            }
             holder.lvAccess.setAdapter(null);
             holder.lvAccess.setOnItemClickListener(null);
         }
