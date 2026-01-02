@@ -40,14 +40,28 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import eu.faircode.netguard.Rule;
 
 public class TrackerLibraryAnalyser {
+    /**
+     * Number of concurrent DEX files to process. Limited to control memory usage.
+     * Each DEX file can use significant heap space when loaded.
+     */
+    private static final int MAX_CONCURRENT_DEX = 2;
+
     private final Context mContext;
     private AnalysisProgressCallback mProgressCallback;
+
+    // Pre-built trie for fast signature matching (lazy initialized)
+    private SignatureTrie mSignatureTrie;
 
     public TrackerLibraryAnalyser(Context mContext) {
         this.mContext = mContext;
@@ -63,14 +77,65 @@ public class TrackerLibraryAnalyser {
     }
 
     /**
-     * Does the tracker library analysis, processing DEX files one at a time to
-     * reduce memory usage.
+     * Builds and caches the signature trie from resources.
+     * Thread-safe lazy initialization.
+     */
+    private synchronized SignatureTrie getSignatureTrie() {
+        if (mSignatureTrie == null) {
+            String[] signatures = mContext.getResources().getStringArray(R.array.trackers);
+            String[] names = mContext.getResources().getStringArray(R.array.tname);
+            String[] webs = mContext.getResources().getStringArray(R.array.tweb);
+
+            mSignatureTrie = new SignatureTrie();
+            for (int i = 0; i < signatures.length; i++) {
+                mSignatureTrie.insert(signatures[i], names[i], webs[i], i);
+            }
+        }
+        return mSignatureTrie;
+    }
+
+    /**
+     * Processes a single DEX file and returns found trackers.
+     *
+     * @param apkPath  Path to the APK
+     * @param dexEntry The DEX entry name within the APK
+     * @param trie     Pre-built signature trie
+     * @return Set of found trackers in this DEX
+     */
+    private Set<TrackerLibrary> processSingleDex(String apkPath, String dexEntry, SignatureTrie trie)
+            throws IOException {
+        Set<TrackerLibrary> trackers = new HashSet<>();
+
+        DexFile dx = DexFileFactory.loadDexEntry(new File(apkPath), dexEntry, true, Opcodes.getDefault())
+                .getDexFile();
+
+        for (ClassDef classDef : dx.getClasses()) {
+            String className = classDef.getType();
+            className = className.replace('/', '.');
+            className = className.substring(1, className.length() - 1);
+
+            // Skip short class names or those without packages
+            if (className.length() <= 8 || !className.contains(".")) {
+                continue;
+            }
+
+            // O(k) trie lookup instead of O(n*k) linear scan
+            SignatureTrie.TrackerInfo match = trie.findMatch(className);
+            if (match != null) {
+                trackers.add(new TrackerLibrary(match.name, match.web, match.id, match.signature));
+            }
+        }
+
+        return trackers;
+    }
+
+    /**
+     * Does the tracker library analysis with parallel DEX processing.
+     * Uses bounded concurrency to limit memory usage while improving speed.
      * <p>
      * Matches class names of the app to be analysed against the Exodus tracker
-     * database, which
-     * contains information on known class of tracker libraries.
+     * database using a Trie for O(k) lookups.
      *
-     * @param c        Context
      * @param apk      Path to apk to analyse
      * @param callback Optional progress callback to report progress
      * @return Found trackers
@@ -78,14 +143,12 @@ public class TrackerLibraryAnalyser {
      * @throws RuntimeException Non I/O errors
      */
     @NonNull
-    private static Set<TrackerLibrary> findTrackers(Context c, String apk, AnalysisProgressCallback callback)
-            throws IOException, RuntimeException {
-        String[] Sign = c.getResources().getStringArray(R.array.trackers);
-        String[] Names = c.getResources().getStringArray(R.array.tname);
-        String[] Web = c.getResources().getStringArray(R.array.tweb);
-        Set<TrackerLibrary> trackers = new HashSet<>();
+    private Set<TrackerLibrary> findTrackers(String apk, AnalysisProgressCallback callback)
+            throws IOException, InterruptedException {
+        // Build trie once, reuse for all lookups
+        SignatureTrie trie = getSignatureTrie();
 
-        // Count DEX files for progress
+        // Collect DEX file entries
         List<String> dexEntries = new ArrayList<>();
         try (ZipFile zipFile = new ZipFile(apk)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -98,37 +161,50 @@ public class TrackerLibraryAnalyser {
         }
 
         int totalDex = dexEntries.size();
-        int processedDex = 0;
 
-        // Process each DEX file individually to reduce memory usage
-        for (String dexEntry : dexEntries) {
-            processedDex++;
-
-            // Report progress per DEX file
+        // For single DEX, skip thread pool overhead
+        if (totalDex == 1) {
             if (callback != null) {
-                callback.onProgress(processedDex, totalDex);
+                callback.onProgress(1, 1);
+            }
+            return processSingleDex(apk, dexEntries.get(0), trie);
+        }
+
+        // Parallel processing with bounded concurrency
+        Set<TrackerLibrary> trackers = ConcurrentHashMap.newKeySet();
+        AtomicInteger processedCount = new AtomicInteger(0);
+
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_CONCURRENT_DEX);
+        List<Future<?>> futures = new ArrayList<>();
+
+        try {
+            for (String dexEntry : dexEntries) {
+                futures.add(executor.submit(() -> {
+                    try {
+                        Set<TrackerLibrary> dexTrackers = processSingleDex(apk, dexEntry, trie);
+                        trackers.addAll(dexTrackers);
+
+                        // Report progress
+                        int processed = processedCount.incrementAndGet();
+                        if (callback != null) {
+                            callback.onProgress(processed, totalDex);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to process " + dexEntry, e);
+                    }
+                }));
             }
 
-            // Load and process one DEX at a time
-            DexFile dx = DexFileFactory.loadDexEntry(new File(apk), dexEntry, true, Opcodes.getDefault()).getDexFile();
-            for (ClassDef classDef : dx.getClasses()) {
-                String className = classDef.getType();
-                className = className.replace('/', '.');
-                className = className.substring(1, className.length() - 1);
-
-                if (className.length() > 8 && className.contains(".")) {
-                    for (int Signz = 0; Signz < Sign.length; Signz++) {
-                        if (className.contains(Sign[Signz])) {
-                            if (Names[Signz].startsWith("µ?")) // exclude "good" trackers
-                                continue;
-
-                            trackers.add(new TrackerLibrary(Names[Signz], Web[Signz], Signz, Sign[Signz]));
-                            break;
-                        }
-                    }
+            // Wait for all DEX files to be processed
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (Exception e) {
+                    throw new IOException("DEX processing failed", e);
                 }
             }
-            // DEX is eligible for GC here before loading next one
+        } finally {
+            executor.shutdownNow();
         }
 
         return trackers;
@@ -162,7 +238,7 @@ public class TrackerLibraryAnalyser {
 
             Set<TrackerLibrary> trackers = new HashSet<>();
             for (String apk : apkPaths) {
-                trackers.addAll(findTrackers(mContext, apk, mProgressCallback));
+                trackers.addAll(findTrackers(apk, mProgressCallback));
             }
 
             final List<TrackerLibrary> sortedTrackers = new ArrayList<>(trackers);
@@ -176,7 +252,7 @@ public class TrackerLibraryAnalyser {
 
         } catch (OutOfMemoryError e) {
             throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_ram));
-        } catch (IOException | PackageManager.NameNotFoundException e) {
+        } catch (IOException | PackageManager.NameNotFoundException | InterruptedException e) {
             throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed));
         } catch (Throwable e) {
             if (Rule.isSystem(packageName, mContext))
