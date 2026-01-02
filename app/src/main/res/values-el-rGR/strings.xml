@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">PCAP μέγεθος εγγραφής: %s B</string>
     <string name="setting_pcap_file_size">PCAP μέγιστο μέγεθος αρχείου: %s MB</string>
     <string name="setting_watchdog">Παρακολούθηση: κάθε %s λεπτά</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Δείγμα διαστήματος: %s ms</string>
     <string name="setting_stats_samples">Αριθμός δειγμάτων: %s s</string>
     <string name="setting_backup">Αντίγραφο Ασφαλείας</string>
@@ -151,8 +152,6 @@
     <string name="msg_vpn_cancelled">Η VPN σύνδεση ακυρώθηκε\n Έχετε ρυθμίσει μια άλλη VPN σύνδεση να είναι πάντα ενεργή;</string>
     <string name="msg_unavailable">Αυτή η δυνατότητα δεν είναι διαθέσιμη σε αυτήν την έκδοση του Android</string>
     <string name="msg_always_on">Ένα άλλο VPN έχει οριστεί ως μόνιμα ενεργοποιημένο VPN</string>
-    <string name="msg_always_on_lockdown">Απενεργοποιήστε την επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις του VPN Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
-    <string name="msg_private_dns">Απενεργοποιήστε το \"Ιδιωτικό DNS\" στις ρυθμίσεις δικτύου του Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
     <string name="msg_start_forward">Ξεκίνησε προώθηση από %1$s θύρα %2$d εως %3$s:%4$d απο %5$s\';</string>
     <string name="msg_stop_forward">Σταμάτημα προώθησης της %1$s θύρας %2$d;</string>
     <string name="msg_log_logcat">Προειδοποίηση: Το μπλοκάρισμα απενεργοποιήθηκε λόγω καταγραφής ADB.</string>
@@ -246,7 +245,6 @@
     <string name="tab_actions">Τα δεδομένα μου</string>
     <string name="tracker_name">Όνομα ιχνηλάτη</string>
     <string name="internet_access">Πρόσβαση στο διαδίκτυο</string>
-    <string name="internet_access_explanation">Πρέπει να είναι ενεργοποιημένο για να έχετε πρόσβαση στο Διαδίκτυο. \n\nΣυμβουλή: Μπορείτε επίσης να πατήσετε το εικονίδιο της εφαρμογής στην κυρίως οθόνη.</string>
     <string name="app_info">Διαχείριση Εφαρμογής</string>
     <!-- Actions -->
     <string name="block_tracking">Αποκλεισμός Ιχνηλατών</string>
@@ -324,7 +322,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Αυστηρός Αποκλεισμός</string>
     <string name="summary_strict_blocking">Για νέες εφαρμογές, αποκλείστε όσο το δυνατόν περισσότερα δεδομένα μοιράζονται με εταιρείες. Περισσότερες εφαρμογές θα έχουν προβλήματα.</string>
     <string name="strict_blocking_explanation">Συνιστάται για μη ειδικούς η απενεργοποίηση αυτής της επιλογής για τη μείωση προβλημάτων στις εφαρμογές. Ωστόσο, αυτό επιτρέπει ουσιαστική κοινή χρήση δεδομένων με εταιρείες.</string>
-    <string name="exclude_vpn_explanation">Πρέπει να είναι ενεργό για τον εντοπισμό ή τον αποκλεισμό των ιχνηλατών. \n\nΣυμβουλή: Απενεργοποιήστε το εάν αντιμετωπίζετε προβλήματα.</string>
     <string name="uninstall">Απεγκατάσταση</string>
     <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
     <string name="no_trackers_found_message_disabled">Ενεργοποιήστε το διακόπτη στην κύρια οθόνη και στη συνέχεια ανοίξτε την εφαρμογή για να εντοπίστε ιχνηλάτες</string>
