@@ -81,6 +81,7 @@
     <string name="setting_pcap_record_size">PCAP 记录大小: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">采样间隔： %s 毫秒</string>
     <string name="setting_stats_samples">样本数: %s s</string>
     <string name="setting_backup">备份</string>
@@ -152,8 +153,6 @@
     <string name="msg_vpn_cancelled">VPN 连接已取消\n您是否对另一个 VPN 设置了始终启用?</string>
     <string name="msg_unavailable">该特性在这个Android版本中不可用</string>
     <string name="msg_always_on">已将另一个 VPN 设置为始终启用</string>
-    <string name="msg_always_on_lockdown">要在过滤模式下使用TrackerControl，请在Android VPN设置中关闭“阻塞无VPN连接”，</string>
-    <string name="msg_private_dns">要在过滤模式下使用TrackerControl，请在Android网络设置中关闭“私人DNS”，</string>
     <string name="msg_start_forward">停止从%1$s端口%2$d转发流量到\'%5$s\'的%3$s:%4$d？</string>
     <string name="msg_stop_forward">停止%1$s端口%2$d的流量转发？</string>
     <string name="msg_log_logcat">警告：因 ADB 日志记录，已禁用拦截。</string>
@@ -245,7 +244,6 @@
     <string name="tab_actions">我的数据</string>
     <string name="tracker_name">追踪器名称</string>
     <string name="internet_access">互联网访问</string>
-    <string name="internet_access_explanation">必须打开才能访问互联网。\n\n提示：你也可以点击主屏幕上的应用图标</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
     <string name="block_tracking">屏蔽追踪器</string>
@@ -322,7 +320,6 @@
     <string name="setting_strict_blocking">严格屏蔽</string>
     <string name="summary_strict_blocking">对于新安装的应用程序，尽可能多地阻止与公司共享数据。更多的应用程序将无法正常工作。</string>
     <string name="strict_blocking_explanation">建议非专家禁用此选项，以减少应用程序使用碰到的问题。然而，这允许与公司进行一些必要的数据共享。</string>
-    <string name="exclude_vpn_explanation">必须开启以检测或拦截跟踪器。\n\n提示：如果遇到问题就禁用它。</string>
     <string name="uninstall">卸载</string>
     <string name="settings_uninstall">应用设置 &amp; 卸载</string>
     <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
