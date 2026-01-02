@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permite aos usuários monitorar e controlar a coleta de dados global, contínua e oculta em aplicativos móveis sobre o comportamento do usuário (\"tracking\").</string>
-    <string name="app_copyright">Direitos autorais \u00A9 2019-2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nTrackerControl é baseado no NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou posterior</string>
     <string name="app_xposed">O Xposed provoca muitos travamentos, o que pode levar à remoção do TrackerControl da Google Play Store, logo, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_eula">O uso deste app está por sua própria conta e risco. Nenhum app pode oferecer 100% de proteção contra rastreamento.</string>
@@ -122,7 +121,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_error">Um erro inesperado ocorreu: \'%s\'</string>
     <string name="msg_start_failed">Android recusou-se a iniciar o serviço VPN nesse momento. A causa mais provável seria um bug na sua versão do Android.</string>
     <string name="msg_try">Experimente o TrackerControl</string>
-    <string name="msg_doze">Para resultados consistentes, as otimizações de bateria Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, selecione \"Todos os apps\" na parte superior, toque no TrackerControl na lista e selecione e confirme \"Não otimizar\".</string>
     <string name="msg_datasaving">Para resultados consistentes, as opções de economia de dados do Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, habilite as opções \"Dados em segundo plano\" e \"Uso de dados sem restrições\"</string>
     <string name="msg_filter">Usar filtragem pode fazer com que o Android atribua uso de dados e consumo de energia ao TrackerControl - o Android assume que o uso de dados e consumo de bateria são usados pelo TrackerControl e não pelas aplicações originais</string>
     <string name="msg_filter4">Android 4 requer que filtragem esteja ativada</string>
@@ -356,4 +354,5 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Detectar rastreadores no código do aplicativo</string>
     <string name="failed_loading_cached_analysis">Falha ao carregar resultados do rastreador em cache. Por favor reporte isto para o desenvolvedor em hello@trackercontrol.org</string>
     <string name="msg_notifications">Toque para conceder permissões de notificação (para mensagens de erro, etc.)</string>
+    <!-- Onboarding -->
 </resources>
