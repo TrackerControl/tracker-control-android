@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">PCAP rekord mérete: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. fájlméret: %s MB</string>
     <string name="setting_watchdog">Watchdog: minden %s percben</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Mintavétel időköze: %s ms</string>
     <string name="setting_stats_samples">Minták száma: %s s</string>
     <string name="setting_backup">Biztonsági mentés</string>
@@ -151,8 +152,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_vpn_cancelled">A VPN kapcsolat meg lett szüntetve.\nBeállít másik VPN kapcsolatot, hogy a VPN csatlakozás állandó legyen?</string>
     <string name="msg_unavailable">Ez a funkció nem érhető el ezen az android verzión</string>
     <string name="msg_always_on">Másik VPN beállítása állandó VPN-nek</string>
-    <string name="msg_always_on_lockdown">Kapcsold ki a „A VPN nélküli kapcsolatok blokkolását” Az android VPN beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
-    <string name="msg_private_dns">Kapcsold ki a „Privát DNS”-t az android hálózati beállításaiban, hogy szűrés módban használhasd a TrackerControlt</string>
     <string name="msg_start_forward">Port forwarding indítás %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
     <string name="msg_stop_forward">Port forwarding leállítás %1$s port %2$d?</string>
     <string name="msg_log_logcat">Figyelem: A blokkolás letiltva az ADB naplózás miatt.</string>
@@ -246,7 +245,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tab_actions">Adataim</string>
     <string name="tracker_name">Nyomkövető neve</string>
     <string name="internet_access">Internet-hozzáférés</string>
-    <string name="internet_access_explanation">Be kell kapcsolnia az internet-hozzáféréshez.\n\nTipp: A főképernyőn megérintheti az alkalmazás ikont is.</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
     <string name="block_tracking">Nyomkövetők blokkolása</string>
@@ -324,7 +322,6 @@ Tisztelettel,\n\n]]></string>
     <string name="setting_strict_blocking">Szigorú blokkolás</string>
     <string name="summary_strict_blocking">Az újonnan telepített alkalmazások esetén blokkolja a lehető legtöbb adatmegosztást. Több alkalmazás meg fog törni.</string>
     <string name="strict_blocking_explanation">Ha nem szakértő akkor ajánlott letiltani ezt az opciót az alkalmazások törésének csökkentése érdekében. Ez azonban lehetővé teszi az alapvető adatmegosztást a vállalatokkal.</string>
-    <string name="exclude_vpn_explanation">Kapcsolja be a nyomkövetők észleléséhez vagy blokkolásához.\n\nTipp: Tiltsa le ha problémákba ütközik.</string>
     <string name="uninstall">Eltávolítás</string>
     <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
     <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
