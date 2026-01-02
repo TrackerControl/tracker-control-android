@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">A TrackerControl lehetővé teszi a felhasználók számára, hogy figyelemmel kísérjék és ellenőrizzék az almazásokban a felhasználói viselkedéssel kapcsolatos széles körű, folyamatos és rejtett adatgyűjtést (nyomkövetés).</string>
-    <string name="app_copyright">Szerzői Jog \u00A9 2019–2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, University of Oxford)\n\nA TrackerControl a NetGuardon alapul, amelyet a Marcel Bokhorst fejlesztett.(M66B).</string>
     <string name="app_android">A TrackerControl Android 5.1-et vagy újabbat igényel</string>
     <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Áruházból, ezért a TrackerControl nem támogatott amíg az Xposed telepítve van</string>
     <string name="app_eula">Az alkalmazás használata a saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
@@ -123,7 +122,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_error">Váratlan hiba történt: \'%s\'</string>
     <string name="msg_start_failed">Az android nem volt hajlandó elindítani a VPN szolgáltatást. Ez valószínűleg Az androidjának hibája miatt következett be.</string>
     <string name="msg_try">Próbálja ki a TrackerControlt</string>
-    <string name="msg_doze">A következetes eredményekhez az androidos akkumulátor-optimalizálásban a TrackerControlt kivétellé kell tenni.\n\nA következő párbeszédablakban válassza ki felül az „Összes alkalmazás”-t, érintse meg a TrackerControl feliratot és válassza a „Ne optimalizálja” lehetőséget.</string>
     <string name="msg_datasaving">A következetes eredmény érdekében az android adatforgalom-csökkentő bekapcsolásakor is biztosítani kell az adathasználatot a TrackerControl számára.\n\nA következő párbeszédablakban engedélyeznie kell a „Háttér adat” és a „Korlátlan adathasználat” lehetőséget.</string>
     <string name="msg_filter">A szűrés használatával az adat és energia használat attributumait a TrackerControlhoz sorolja. Az android azt feltételezi, hogy ezeket a TrackerControl használta fel és nem az eredeti alkalmazás.</string>
     <string name="msg_filter4">A szűrés engedélyezéséhez legalább Android 4 szükséges</string>
@@ -357,4 +355,5 @@ Tisztelettel,\n\n]]></string>
     <string name="static_analysis">A nyomkövetők észlelése az alkalmazáskódban</string>
     <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen</string>
     <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
+    <!-- Onboarding -->
 </resources>
