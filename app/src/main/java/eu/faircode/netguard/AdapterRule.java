@@ -118,12 +118,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             "com.skype.raider",
             "com.snapchat.android",
             "com.whatsapp",
-            "com.whatsapp.w4b"
-    );
+            "com.whatsapp.w4b");
 
     private List<String> download = Arrays.asList(
-            "com.google.android.youtube"
-    );
+            "com.google.android.youtube");
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View view;
@@ -282,11 +280,12 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         this.inflater = LayoutInflater.from(context);
 
         if (Common.isNight(context))
-            colorChanged = Color.argb(128, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY), Color.blue(Color.DKGRAY));
+            colorChanged = Color.argb(128, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY),
+                    Color.blue(Color.DKGRAY));
         else
             colorChanged = Color.argb(128, 230, 230, 230);
 
-        TypedArray ta = context.getTheme().obtainStyledAttributes(new int[]{android.R.attr.textColorPrimary});
+        TypedArray ta = context.getTheme().obtainStyledAttributes(new int[] { android.R.attr.textColorPrimary });
         try {
             colorText = ta.getColor(0, 0);
         } finally {
@@ -303,7 +302,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(android.R.attr.listPreferredItemHeight, typedValue, true);
-        int height = TypedValue.complexToDimensionPixelSize(typedValue.data, context.getResources().getDisplayMetrics());
+        int height = TypedValue.complexToDimensionPixelSize(typedValue.data,
+                context.getResources().getDisplayMetrics());
         this.iconSize = Math.round(height * context.getResources().getDisplayMetrics().density + 0.5f);
 
         setHasStableIds(true);
@@ -361,6 +361,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Get rule
         final Rule rule = listFiltered.get(position);
+        final boolean active = rule.apply && !rule.vpn_exclude;
 
         // Handle expanding/collapsing
         holder.llApplication.setOnClickListener(new View.OnClickListener() {
@@ -385,8 +386,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             GlideApp.with(holder.itemView.getContext())
                     .applyDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565))
                     .load(uri)
-                    //.diskCacheStrategy(DiskCacheStrategy.NONE)
-                    //.skipMemoryCache(true)
+                    // .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    // .skipMemoryCache(true)
                     .override(iconSize, iconSize)
                     .into(holder.ivIcon);
         }
@@ -408,22 +409,22 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             lockdown = false;
 
         holder.rlLockdown.setVisibility(lockdown && !rule.lockdown ? View.VISIBLE : View.GONE);
-        holder.ivLockdown.setEnabled(rule.apply);
+        holder.ivLockdown.setEnabled(active);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable wrap = DrawableCompat.wrap(holder.ivLockdown.getDrawable());
-            DrawableCompat.setTint(wrap, rule.apply ? colorOff : colorGrayed);
+            DrawableCompat.setTint(wrap, active ? colorOff : colorGrayed);
         }
 
         boolean screen_on = prefs.getBoolean("screen_on", true);
 
         // Wi-Fi settings
-        holder.cbWifi.setEnabled(rule.apply);
+        holder.cbWifi.setEnabled(active);
         holder.cbWifi.setAlpha(wifiActive ? 1 : 0.5f);
         holder.cbWifi.setOnCheckedChangeListener(null);
         holder.cbWifi.setChecked(rule.wifi_blocked);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable wrap = DrawableCompat.wrap(CompoundButtonCompat.getButtonDrawable(holder.cbWifi));
-            DrawableCompat.setTint(wrap, rule.apply ? (rule.wifi_blocked ? colorOff : colorOn) : colorGrayed);
+            DrawableCompat.setTint(wrap, active ? (rule.wifi_blocked ? colorOff : colorOn) : colorGrayed);
         }
         holder.cbWifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -433,22 +434,22 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
-        holder.ivScreenWifi.setEnabled(rule.apply);
+        holder.ivScreenWifi.setEnabled(active);
         holder.ivScreenWifi.setAlpha(wifiActive ? 1 : 0.5f);
         holder.ivScreenWifi.setVisibility(rule.screen_wifi && rule.wifi_blocked ? View.VISIBLE : View.INVISIBLE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable wrap = DrawableCompat.wrap(holder.ivScreenWifi.getDrawable());
-            DrawableCompat.setTint(wrap, rule.apply ? colorOn : colorGrayed);
+            DrawableCompat.setTint(wrap, active ? colorOn : colorGrayed);
         }
 
         // Mobile settings
-        holder.cbOther.setEnabled(rule.apply);
+        holder.cbOther.setEnabled(active);
         holder.cbOther.setAlpha(otherActive ? 1 : 0.5f);
         holder.cbOther.setOnCheckedChangeListener(null);
         holder.cbOther.setChecked(rule.other_blocked);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable wrap = DrawableCompat.wrap(CompoundButtonCompat.getButtonDrawable(holder.cbOther));
-            DrawableCompat.setTint(wrap, rule.apply ? (rule.other_blocked ? colorOff : colorOn) : colorGrayed);
+            DrawableCompat.setTint(wrap, active ? (rule.other_blocked ? colorOff : colorOn) : colorGrayed);
         }
         holder.cbOther.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -458,17 +459,18 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
-        holder.ivScreenOther.setEnabled(rule.apply);
+        holder.ivScreenOther.setEnabled(active);
         holder.ivScreenOther.setAlpha(otherActive ? 1 : 0.5f);
         holder.ivScreenOther.setVisibility(rule.screen_other && rule.other_blocked ? View.VISIBLE : View.INVISIBLE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable wrap = DrawableCompat.wrap(holder.ivScreenOther.getDrawable());
-            DrawableCompat.setTint(wrap, rule.apply ? colorOn : colorGrayed);
+            DrawableCompat.setTint(wrap, active ? colorOn : colorGrayed);
         }
 
-        holder.tvRoaming.setTextColor(rule.apply ? colorOff : colorGrayed);
+        holder.tvRoaming.setTextColor(active ? colorOff : colorGrayed);
         holder.tvRoaming.setAlpha(otherActive ? 1 : 0.5f);
-        holder.tvRoaming.setVisibility(rule.roaming && (!rule.other_blocked || rule.screen_other) ? View.VISIBLE : View.INVISIBLE);
+        holder.tvRoaming.setVisibility(
+                rule.roaming && (!rule.other_blocked || rule.screen_other) ? View.VISIBLE : View.INVISIBLE);
 
         holder.tvRemarkMessaging.setVisibility(messaging.contains(rule.packageName) ? View.VISIBLE : View.GONE);
         holder.tvRemarkDownload.setVisibility(download.contains(rule.packageName) ? View.VISIBLE : View.GONE);
@@ -528,12 +530,12 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         // Show if Internet access blocked
         final ImageView iv = holder.ivIcon;
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
-        setGreyscale(iv, rule.internet && rule.apply && internetBlocklist.blockedInternet(rule.uid));
+        setGreyscale(iv, rule.internet && active && internetBlocklist.blockedInternet(rule.uid));
         holder.ivIcon.setOnClickListener(view -> {
             if (!rule.internet)
                 return;
 
-            if (!rule.apply) {
+            if (!active) {
                 Snackbar s = Common.getSnackbar((Activity) context, R.string.bypass_vpn_error);
                 if (s != null)
                     s.show();
@@ -571,9 +573,11 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         } else if (!rule.internet) {
             holder.tvDetails.setVisibility(View.VISIBLE);
             holder.tvDetails.setText(R.string.no_internet);
-        /*} else if (!rule.apply) {
-            holder.tvDetails.setVisibility(View.VISIBLE);
-            holder.tvDetails.setText(R.string.bypass_vpn);*/
+            /*
+             * } else if (!rule.apply) {
+             * holder.tvDetails.setVisibility(View.VISIBLE);
+             * holder.tvDetails.setText(R.string.bypass_vpn);
+             */
         } else
             holder.tvDetails.setVisibility(View.GONE);
 
@@ -582,8 +586,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 Snackbar s = Common.getSnackbar((Activity) context, R.string.no_internet_message);
                 if (s != null)
                     s.show();
-            }
-            else {
+            } else {
                 final Intent settings = new Intent(context, DetailsActivity.class);
                 settings.putExtra(INTENT_EXTRA_APP_NAME, rule.name);
                 settings.putExtra(INTENT_EXTRA_APP_PACKAGENAME, rule.packageName);
@@ -594,7 +597,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Show Wi-Fi screen on condition
         holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);
-        holder.cbScreenWifi.setEnabled(rule.wifi_blocked && rule.apply);
+        holder.cbScreenWifi.setEnabled(rule.wifi_blocked && active);
         holder.cbScreenWifi.setOnCheckedChangeListener(null);
         holder.cbScreenWifi.setChecked(rule.screen_wifi);
 
@@ -613,7 +616,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Show mobile screen on condition
         holder.llScreenOther.setVisibility(screen_on ? View.VISIBLE : View.GONE);
-        holder.cbScreenOther.setEnabled(rule.other_blocked && rule.apply);
+        holder.cbScreenOther.setEnabled(rule.other_blocked && active);
         holder.cbScreenOther.setOnCheckedChangeListener(null);
         holder.cbScreenOther.setChecked(rule.screen_other);
 
@@ -631,7 +634,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         });
 
         // Show roaming condition
-        holder.cbRoaming.setEnabled((!rule.other_blocked || rule.screen_other) && rule.apply);
+        holder.cbRoaming.setEnabled((!rule.other_blocked || rule.screen_other) && active);
         holder.cbRoaming.setOnCheckedChangeListener(null);
         holder.cbRoaming.setChecked(rule.roaming);
         holder.cbRoaming.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -644,7 +647,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         });
 
         // Show lockdown
-        holder.cbLockdown.setEnabled(rule.apply);
+        holder.cbLockdown.setEnabled(active);
         holder.cbLockdown.setOnCheckedChangeListener(null);
         holder.cbLockdown.setChecked(rule.lockdown);
 
@@ -712,7 +715,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 cbLogging.setChecked(log_app);
                 cbFiltering.setChecked(filter);
                 cbFiltering.setEnabled(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-                tvFilter4.setVisibility(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? View.GONE : View.VISIBLE);
+                tvFilter4.setVisibility(
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? View.GONE : View.VISIBLE);
                 cbNotify.setChecked(notify_access);
                 cbNotify.setEnabled(log_app);
 
@@ -799,18 +803,22 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     popup.getMenu().findItem(R.id.menu_host).setEnabled(multiple);
 
                     // Whois
-                    final Intent lookupIP = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.dnslytics.com/whois-lookup/" + daddr));
+                    final Intent lookupIP = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://www.dnslytics.com/whois-lookup/" + daddr));
                     if (pm.resolveActivity(lookupIP, 0) == null)
                         popup.getMenu().removeItem(R.id.menu_whois);
                     else
-                        popup.getMenu().findItem(R.id.menu_whois).setTitle(context.getString(R.string.title_log_whois, daddr));
+                        popup.getMenu().findItem(R.id.menu_whois)
+                                .setTitle(context.getString(R.string.title_log_whois, daddr));
 
                     // Lookup port
-                    final Intent lookupPort = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.speedguide.net/port.php?port=" + dport));
+                    final Intent lookupPort = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("https://www.speedguide.net/port.php?port=" + dport));
                     if (dport <= 0 || pm.resolveActivity(lookupPort, 0) == null)
                         popup.getMenu().removeItem(R.id.menu_port);
                     else
-                        popup.getMenu().findItem(R.id.menu_port).setTitle(context.getString(R.string.title_log_port, dport));
+                        popup.getMenu().findItem(R.id.menu_port)
+                                .setTitle(context.getString(R.string.title_log_port, dport));
 
                     popup.getMenu().findItem(R.id.menu_time).setTitle(
                             SimpleDateFormat.getDateTimeInstance().format(time));
@@ -839,7 +847,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                                 ServiceSinkhole.reload("reset host", context, false);
                                 result = true;
                             } else if (menu == R.id.menu_copy) {
-                                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipboardManager clipboard = (ClipboardManager) context
+                                        .getSystemService(Context.CLIPBOARD_SERVICE);
                                 ClipData clip = ClipData.newPlainText("netguard", daddr);
                                 clipboard.setPrimaryClip(clip);
                                 return true;
@@ -913,13 +922,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         });
     }
 
-    private void setGreyscale(ImageView iv, boolean on){
+    private void setGreyscale(ImageView iv, boolean on) {
         if (on) {
             ColorMatrix matrix = new ColorMatrix();
-            matrix.setSaturation(0);  //0 means grayscale
+            matrix.setSaturation(0); // 0 means grayscale
             ColorMatrixColorFilter cf = new ColorMatrixColorFilter(matrix);
             iv.setColorFilter(cf);
-            iv.setImageAlpha(128);   // 128 = 0.5
+            iv.setImageAlpha(128); // 128 = 0.5
         } else {
             iv.setColorFilter(null);
             iv.setImageAlpha(255);
@@ -930,8 +939,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
 
-        //Context context = holder.itemView.getContext();
-        //GlideApp.with(context).clear(holder.ivIcon);
+        // Context context = holder.itemView.getContext();
+        // GlideApp.with(context).clear(holder.ivIcon);
 
         CursorAdapter adapter = (CursorAdapter) holder.lvAccess.getAdapter();
         if (adapter != null) {

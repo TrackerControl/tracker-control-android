@@ -527,7 +527,7 @@ public class Rule {
                 (wifi_blocked && screen_wifi != screen_wifi_default) ||
                 (other_blocked && screen_other != screen_other_default) ||
                 ((!other_blocked || screen_other) && roaming != default_roaming) ||
-                hosts > 0 || lockdown || !apply);
+                hosts > 0 || lockdown || vpn_exclude || !apply);
     }
 
     public void updateChanged(Context context) {
