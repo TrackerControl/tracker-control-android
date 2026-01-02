@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl bewaakt en controleert het wijdverbreid, voortdurend, en verborgen verzamelen van informatie over het gebruikersgedrag in mobiele apps (\'tracking\').</string>
-    <string name="app_copyright">Copyright \u00A9 2019-2022 Konrad Kollnig (Human-Centred Computing, Department of Computer Science, Universiteit van Oxford)\n\nTrackerControl is gebaseerd op NetGuard, ontwikkeld door Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl vereist Android 5.1 of nieuwer</string>
     <string name="app_xposed">Xposed veroorzaakt te veel crashes, wat ertoe kan leiden dat TrackerControl uit de Google Play Store wordt verwijderd, daarom wordt TrackerControl niet ondersteund zolang Xposed is geïnstalleerd.</string>
     <string name="app_eula">Het gebruik van deze app is op eigen risico. Geen enkele app kan 100% bescherming bieden tegen tracking.</string>
@@ -123,8 +122,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_error">Een onverwachte fout: \'%s\'</string>
     <string name="msg_start_failed">Android weigert nu de VPN-service te starten. Dit komt waarschijnlijk door een bug in uw Android-versie.</string>
     <string name="msg_try">Probeer TrackerControl</string>
-    <string name="msg_doze">Voor consistente resultaten moet de Android batterij-optimalisatie worden uitgeschakeld voor TrackerControl.
-\n\nIn het volgende dialoogvenster, kies \"Alle apps\" bovenaan, tik op TrackerControl in de lijst en selecteer en bevestig \"Niet optimaliseren\".</string>
     <string name="msg_datasaving">Voor consistente resultaten moet de Android optie Databeperking voor TrackerControl uit staan.
 \n\nIn Schakel daarvoor in het volgende dialoogvenster de opties \"Achtergrondgegevens\" en \"Onbeperkt gebruik van gegevens\" in.</string>
     <string name="msg_filter">Het gebruik van filtering zal ervoor zorgen dat Android data en stroomverbruik toeschrijft aan TrackerControl in plaats van aan de originele apps.</string>
@@ -360,4 +357,5 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Trackers detecteren in app code</string>
     <string name="failed_loading_cached_analysis">Het laden van tracker resultaten in de cache is mislukt. Graag dit melden aan de ontwikkelaar op hello@trackercontrol.org</string>
     <string name="msg_notifications">Tic hier om meldingen toe te staan (voor foutmeldingen, enz.)</string>
+    <!-- Onboarding -->
 </resources>
