@@ -56,8 +56,6 @@
     <string name="setting_ip6">Habilitar tráfego IPv6</string>
     <string name="setting_call">Desativar durante ligações</string>
     <string name="setting_reload_onconnectivity">Atualizar a cada alteração de conectividade</string>
-    <string name="setting_advanced_options">Opções avançadas</string>
-    <string name="setting_system">Gerenciar apps do sistema</string>
     <string name="setting_log_app">Buscar novos rastreadores</string>
     <string name="setting_log_logcat">Registrar transmissões para o ADB</string>
     <string name="setting_filter">Bloquear rastreadores</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Intervalo de amostra: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Exportar configurações</string>
     <string name="setting_import">Importar configurações</string>
     <string name="setting_hosts">Importar arquivo de hosts</string>
     <string name="setting_hosts_append">Importar arquivo hosts (anexar)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Permitir que apps se conectem a endereços de rede local, como 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16</string>
     <string name="summary_ip6">Rotear o tráfego IP versão 6 para o TrackerControl para, então, seletivamente, ser permitido ou bloqueado</string>
     <string name="summary_call">Desabilite o TrackerControl ao receber ou realizar chamadas. Isso pode ser usado para contornar problemas em chamadas IP/Wi-Fi.</string>
-    <string name="summary_system">Definir regras para apps do sistema (para usuários experientes)</string>
     <string name="summary_log_app">Desative para diminuir o consumo da bateria. Novos rastreadores ainda serão bloqueados, mas não serão exibidos.</string>
     <string name="summary_track_usage">Monitorar o número de bytes enviados e recebidos para cada app e endereço. Isto pode resultar no uso extra de bateria.</string>
     <string name="summary_block_domains">AVISO: Hosts bloqueados não são exibidos na UI.</string>
