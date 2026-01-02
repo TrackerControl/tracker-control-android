@@ -147,13 +147,20 @@ public class ApplicationEx extends Application {
                             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
 
                             // Apply padding to android.R.id.content for system bars
-                            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                            // We do NOT apply bottom padding here, so the content background (White/Black)
+                            // extends to the bottom
+                            v.setPadding(bars.left, bars.top, bars.right, 0);
 
                             // Set background on the actual layout (first child), not on the content frame
                             // This way the padding area shows the window background (primary color)
                             if (content.getChildCount() > 0) {
                                 View child = content.getChildAt(0);
                                 child.setBackgroundColor(Common.isNight(activity) ? Color.BLACK : Color.WHITE);
+
+                                // Apply the bottom padding to the child instead, so the content is safe but the
+                                // background extends
+                                child.setPadding(child.getPaddingLeft(), child.getPaddingTop(), child.getPaddingRight(),
+                                        bars.bottom);
                             }
 
                             return insets;
