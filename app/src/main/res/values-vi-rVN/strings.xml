@@ -80,6 +80,7 @@
     <string name="setting_pcap_record_size">Kích cỡ bản ghi PCAP: %s B</string>
     <string name="setting_pcap_file_size">Kích thước tệp PCAP lớn nhất: %s MB</string>
     <string name="setting_watchdog">Giám sát: mỗi %s phút</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Thời gian giữa mỗi lần lấy mẫu: %s ms</string>
     <string name="setting_stats_samples">Số lượng các mẫu: %s s</string>
     <string name="setting_backup">Sao lưu</string>
@@ -146,8 +147,6 @@
     <string name="msg_vpn_cancelled">Đã hủy kết nối VPN\nBạn đã thiết lập một VPN khác làm VPN luôn bật à?</string>
     <string name="msg_unavailable">Tính năng này không có sẵn trong phiên bản Android này</string>
     <string name="msg_always_on">Một VPN khác được đặt là VPN luôn bật</string>
-    <string name="msg_always_on_lockdown">Tắt \"Chặn các kết nối mà không cần VPN\" trong cài đặt VPN của Android để sử dụng TrackerControl ở chế độ lọc</string>
-    <string name="msg_private_dns">Tắt \"DNS riêng\" trong cài đặt mạng của Android để sử dụng TrackerControl ở chế độ lọc</string>
     <string name="msg_start_forward">Bắt đầu chuyển tiếp từ cổng %1$s %2$d đến %3$s:%4$d của \'%5$s\'?</string>
     <string name="msg_stop_forward">Dừng chuyển tiếp cổng %1$s %2$d?</string>
     <string name="msg_log_logcat">Cảnh báo: Việc chặn đã bị tắt vì ghi nhật ký ADB.</string>
@@ -239,7 +238,6 @@
     <string name="tab_actions">Dữ liệu của tôi</string>
     <string name="tracker_name">Tên trình theo dõi</string>
     <string name="internet_access">Truy cập Internet</string>
-    <string name="internet_access_explanation">Phải được bật để có quyền truy cập Internet.\n\nMẹo: Bạn cũng có thể nhấn vào biểu tượng ứng dụng trong màn hình chính.</string>
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
     <string name="block_tracking">Chặn trình theo dõi</string>
@@ -280,7 +278,6 @@
     <string name="setting_strict_blocking">Chặn chặt chẽ</string>
     <string name="summary_strict_blocking">Đối với các ứng dụng mới cài đặt, chặn việc chia sẻ dữ liệu với các công ty nhiều nhất có thể. Nhiều ứng dụng hơn sẽ bị hỏng.</string>
     <string name="strict_blocking_explanation">Chúng tôi khuyên những người không phải chuyên gia tắt tuỳ chọn này để giảm sự hỏng hóc trong các ứng dụng. Tuy nhiên, việc này sẽ cho phép một ít sự chia sẻ cần thiết với các công ty.</string>
-    <string name="exclude_vpn_explanation">Phải được bật để dò tìm hoặc chặn trình theo dõi.\n\nMẹo: Tắt nếu bạn gặp vấn đề.</string>
     <string name="uninstall">Gỡ cài đặt</string>
     <string name="settings_uninstall">Cài đặt của ứng dụng &amp; Gỡ cài đặt</string>
     <string name="no_trackers_found_message_disabled">Bật công tắc trong màn hình chính, sau đó chạy ứng dụng để tìm trình theo dõi</string>
