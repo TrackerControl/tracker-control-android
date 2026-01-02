@@ -94,7 +94,7 @@ import java.util.List;
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
 
-    private static int[] TITLES = new int[]{
+    private static int[] TITLES = new int[] {
             R.string.app_name,
             R.string.control_trackers,
             R.string.forever_free,
@@ -273,7 +273,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
                             final View view = inflater.inflate(R.layout.vpn, null, false);
                             final SwitchCompat swStrictMode = view.findViewById(R.id.swStrictBlocking);
-                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode", Util.isPlayStoreInstall());
+                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode",
+                                    Util.isPlayStoreInstall());
                             if (initializedStrictMode) {
                                 swStrictMode.setVisibility(View.GONE);
                                 view.findViewById(R.id.tvStrictBlocking).setVisibility(View.GONE);
@@ -353,7 +354,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvNotifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_NOTIFICATIONS);
+                    requestPermissions(new String[] { Manifest.permission.POST_NOTIFICATIONS }, REQUEST_NOTIFICATIONS);
                 }
             });
 
@@ -478,11 +479,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (adapter != null)
             adapter.notifyDataSetChanged();
 
-        boolean canNotify =
-                (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                        (ContextCompat.checkSelfPermission(this,
-                                android.Manifest.permission.POST_NOTIFICATIONS) ==
-                                PackageManager.PERMISSION_GRANTED));
+        boolean canNotify = (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                (ContextCompat.checkSelfPermission(this,
+                        android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED));
         TextView tvNotifications = findViewById(R.id.tvNotifications);
         if (tvNotifications != null)
             tvNotifications.setVisibility(canNotify ? View.GONE : View.VISIBLE);
@@ -550,7 +549,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok=" + (resultCode == RESULT_OK));
+        Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok="
+                + (resultCode == RESULT_OK));
         Util.logExtras(data);
 
         if (requestCode == REQUEST_VPN) {
@@ -560,9 +560,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (resultCode == RESULT_OK) {
                 ServiceSinkhole.start("prepared", this);
 
-                /*Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on, Toast.LENGTH_LONG);
-                on.setGravity(Gravity.CENTER, 0, 0);
-                on.show();*/
+                /*
+                 * Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on,
+                 * Toast.LENGTH_LONG);
+                 * on.setGravity(Gravity.CENTER, 0, 0);
+                 * on.show();
+                 */
 
                 checkDoze();
             } else if (resultCode == RESULT_CANCELED)
@@ -596,10 +599,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             protected Throwable doInBackground(Object... objects) {
                 Uri target = data.getData();
                 if (data.hasExtra("org.openintents.extra.DIR_PATH"))
-                    target = Uri.parse(target + "/trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                    target = Uri.parse(target + "/trackercontrol_log_"
+                            + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
                 Log.i(TAG, "Writing URI=" + target);
 
-                try (OutputStream out = getContentResolver().openOutputStream(target)){
+                try (OutputStream out = getContentResolver().openOutputStream(target)) {
                     csvExport(out);
                     return null;
                 } catch (Throwable ex) {
@@ -629,7 +633,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 CSVWriter.RFC4180_LINE_END)) {
 
             try (Cursor data = DatabaseHelper.getInstance(this).getHosts()) {
-                if (data == null) throw new IOException("Could not read hosts.");
+                if (data == null)
+                    throw new IOException("Could not read hosts.");
 
                 List<String> columnNames = new ArrayList<>();
                 Collections.addAll(columnNames, data.getColumnNames());
@@ -674,7 +679,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_ROAMING) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -728,7 +734,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             boolean whitelist_wifi = prefs.getBoolean("whitelist_wifi", false);
             boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
             boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
-            llWhitelist.setVisibility(!(whitelist_wifi || whitelist_other) && screen_on && hintWhitelist ? View.VISIBLE : View.GONE);
+            llWhitelist.setVisibility(
+                    !(whitelist_wifi || whitelist_other) && screen_on && hintWhitelist ? View.VISIBLE : View.GONE);
 
         } else if ("manage_system".equals(name)) {
             invalidateOptionsMenu();
@@ -770,7 +777,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             adapter.setMobileActive();
                         else
                             adapter.setWifiActive();
-                        ivMetered.setVisibility(Util.isMeteredNetwork(ActivityMain.this) ? View.VISIBLE : View.INVISIBLE);
+                        ivMetered.setVisibility(
+                                Util.isMeteredNetwork(ActivityMain.this) ? View.VISIBLE : View.INVISIBLE);
                     } else {
                         adapter.setDisconnected();
                         ivMetered.setVisibility(View.INVISIBLE);
@@ -975,7 +983,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_TITLE, "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+        intent.putExtra(Intent.EXTRA_TITLE,
+                "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
         return intent;
     }
 
@@ -989,7 +998,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         boolean whitelist_wifi = prefs.getBoolean("whitelist_wifi", false);
         boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
         boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
-        llWhitelist.setVisibility(!(whitelist_wifi || whitelist_other) && hintWhitelist && !hintUsage ? View.VISIBLE : View.GONE);
+        llWhitelist.setVisibility(
+                !(whitelist_wifi || whitelist_other) && hintWhitelist && !hintUsage ? View.VISIBLE : View.GONE);
         btnWhitelist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1216,7 +1226,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             DrawableCompat.setTint(wrapHostBlocked, colorOff);
         }
 
-
         // Show dialog
         dialogLegend = new AlertDialog.Builder(this)
                 .setView(view)
@@ -1257,7 +1266,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         tvPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
 
         // Handle rate
-        btnRate.setVisibility(getIntentRate(this).resolveActivity(getPackageManager()) == null ? View.GONE : View.VISIBLE);
+        btnRate.setVisibility(
+                getIntentRate(this).resolveActivity(getPackageManager()) == null ? View.GONE : View.VISIBLE);
         btnRate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1287,22 +1297,26 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name));
-        intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.msg_try) + "\n\nhttps://github.com/TrackerControl/tracker-control-android\n\n");
+        intent.putExtra(Intent.EXTRA_TEXT, context.getString(R.string.msg_try)
+                + "\n\nhttps://github.com/TrackerControl/tracker-control-android\n\n");
         return intent;
     }
 
     private static Intent getIntentApps(Context context) {
-        return new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/dev?id=8420080860664580239"));
+        return new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/dev?id=8420080860664580239"));
     }
 
     private static Intent getIntentRate(Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + context.getPackageName()));
         if (intent.resolveActivity(context.getPackageManager()) == null)
-            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + context.getPackageName()));
+            intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://play.google.com/store/apps/details?id=" + context.getPackageName()));
         return intent;
     }
 
     private static Intent getIntentSupport(Context context) {
-        return new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
+        return new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
     }
 }

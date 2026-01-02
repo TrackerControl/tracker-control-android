@@ -293,7 +293,6 @@ public class Rule {
                             pre_system.put(pkg, system);
                         }
 
-
                     eventType = xml.next();
                 }
             } catch (Throwable ex) {
@@ -377,24 +376,34 @@ public class Rule {
 
                     if (pre_system.containsKey(info.packageName))
                         rule.system = pre_system.get(info.packageName);
-                    //if (info.applicationInfo.uid == Process.myUid())
-                    //    rule.system = true;
+                    // if (info.applicationInfo.uid == Process.myUid())
+                    // rule.system = true;
 
                     if (all ||
                             ((rule.system ? show_system : show_user) &&
                                     (show_nointernet || rule.internet) &&
                                     rule.enabled)) {
 
-                        rule.wifi_default = (pre_wifi_blocked.containsKey(info.packageName) ? pre_wifi_blocked.get(info.packageName) : default_wifi);
-                        rule.other_default = (pre_other_blocked.containsKey(info.packageName) ? pre_other_blocked.get(info.packageName) : default_other);
+                        rule.wifi_default = (pre_wifi_blocked.containsKey(info.packageName)
+                                ? pre_wifi_blocked.get(info.packageName)
+                                : default_wifi);
+                        rule.other_default = (pre_other_blocked.containsKey(info.packageName)
+                                ? pre_other_blocked.get(info.packageName)
+                                : default_other);
                         rule.screen_wifi_default = default_screen_wifi;
                         rule.screen_other_default = default_screen_other;
-                        rule.roaming_default = (pre_roaming.containsKey(info.packageName) ? pre_roaming.get(info.packageName) : default_roaming);
+                        rule.roaming_default = (pre_roaming.containsKey(info.packageName)
+                                ? pre_roaming.get(info.packageName)
+                                : default_roaming);
 
-                        rule.wifi_blocked = (!(rule.system && !manage_system) && wifi.getBoolean(info.packageName, rule.wifi_default));
-                        rule.other_blocked = (!(rule.system && !manage_system) && other.getBoolean(info.packageName, rule.other_default));
-                        rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default) && screen_on;
-                        rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default) && screen_on;
+                        rule.wifi_blocked = (!(rule.system && !manage_system)
+                                && wifi.getBoolean(info.packageName, rule.wifi_default));
+                        rule.other_blocked = (!(rule.system && !manage_system)
+                                && other.getBoolean(info.packageName, rule.other_default));
+                        rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default)
+                                && screen_on;
+                        rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default)
+                                && screen_on;
                         rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
@@ -425,8 +434,8 @@ public class Rule {
 
             // Load tracking counts
             TrackerList trackerList = TrackerList.getInstance(context);
-            Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>>
-                    trackerCountsAndTotal = trackerList.getTrackerCountsAndTotal();
+            Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> trackerCountsAndTotal = trackerList
+                    .getTrackerCountsAndTotal();
 
             Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotalAll = trackerCountsAndTotal.first();
             Pair<Map<Integer, Integer>, Integer> trackerCountsAndTotalPastWeek = trackerCountsAndTotal.second();
@@ -436,11 +445,10 @@ public class Rule {
             int trackerTotal = trackerCountsAndTotalAll.second();
 
             if (trackerTotal == 0
-                && context instanceof Activity) {
-                int instructionsString =
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ?
-                                R.string.instructions_monitoring_private_dns :
-                                R.string.instructions_monitoring;
+                    && context instanceof Activity) {
+                int instructionsString = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
+                        ? R.string.instructions_monitoring_private_dns
+                        : R.string.instructions_monitoring;
 
                 Snackbar s = Common.getSnackbar((Activity) context, instructionsString);
                 if (s != null) {
@@ -495,7 +503,6 @@ public class Rule {
                         }
                     }
                 });
-
 
             return listRules;
         }
