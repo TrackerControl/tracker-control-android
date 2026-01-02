@@ -198,9 +198,13 @@ public class ServiceSinkhole extends VpnService {
     private static final int MSG_PACKET = 4;
     private static final int MSG_USAGE = 5;
 
-    private enum State {none, waiting, enforcing, stats}
+    private enum State {
+        none, waiting, enforcing, stats
+    }
 
-    public enum Command {run, start, reload, stop, stats, set, householding, watchdog}
+    public enum Command {
+        run, start, reload, stop, stats, set, householding, watchdog
+    }
 
     private static volatile PowerManager.WakeLock wlInstance = null;
 
@@ -260,7 +264,8 @@ public class ServiceSinkhole extends VpnService {
     synchronized private static PowerManager.WakeLock getLock(Context context) {
         if (wlInstance == null) {
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            wlInstance = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, context.getString(R.string.app_name) + " wakelock");
+            wlInstance = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    context.getString(R.string.app_name) + " wakelock");
             wlInstance.setReferenceCounted(true);
         }
         return wlInstance;
@@ -360,7 +365,8 @@ public class ServiceSinkhole extends VpnService {
                     ifInteractive.addAction(Intent.ACTION_SCREEN_ON);
                     ifInteractive.addAction(Intent.ACTION_SCREEN_OFF);
                     ifInteractive.addAction(ACTION_SCREEN_OFF_DELAYED);
-                    ContextCompat.registerReceiver(ServiceSinkhole.this, interactiveStateReceiver, ifInteractive, ContextCompat.RECEIVER_NOT_EXPORTED);
+                    ContextCompat.registerReceiver(ServiceSinkhole.this, interactiveStateReceiver, ifInteractive,
+                            ContextCompat.RECEIVER_NOT_EXPORTED);
                     registeredInteractiveState = true;
                 }
             } else {
@@ -405,9 +411,11 @@ public class ServiceSinkhole extends VpnService {
                 watchdogIntent.setAction(ACTION_WATCHDOG);
                 PendingIntent pi;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    pi = PendingIntentCompat.getForegroundService(ServiceSinkhole.this, 1, watchdogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    pi = PendingIntentCompat.getForegroundService(ServiceSinkhole.this, 1, watchdogIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
                 else
-                    pi = PendingIntentCompat.getService(ServiceSinkhole.this, 1, watchdogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    pi = PendingIntentCompat.getService(ServiceSinkhole.this, 1, watchdogIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
 
                 AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 am.cancel(pi);
@@ -416,7 +424,8 @@ public class ServiceSinkhole extends VpnService {
                     int watchdog = Integer.parseInt(prefs.getString("watchdog", "0"));
                     if (watchdog > 0) {
                         Log.i(TAG, "Watchdog " + watchdog + " minutes");
-                        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + watchdog * 60 * 1000, watchdog * 60 * 1000, pi);
+                        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + watchdog * 60 * 1000,
+                                watchdog * 60 * 1000, pi);
                     }
                 }
             }
@@ -492,7 +501,7 @@ public class ServiceSinkhole extends VpnService {
                     if (VpnService.prepare(ServiceSinkhole.this) == null) {
                         Log.w(TAG, "VPN prepared connected=" + last_connected);
                         if (last_connected && !(ex instanceof StartFailedException)) {
-                            //showAutoStartNotification();
+                            // showAutoStartNotification();
                             if (!Util.isPlayStoreInstall(ServiceSinkhole.this))
                                 showErrorNotification(ex.toString());
                         }
@@ -680,7 +689,8 @@ public class ServiceSinkhole extends VpnService {
 
             // Keep log records for three days, only wipe if logging on
             if (prefs.getBoolean("log", false))
-                DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupLog(new Date().getTime() - 3 * 24 * 3600 * 1000L);
+                DatabaseHelper.getInstance(ServiceSinkhole.this)
+                        .cleanupLog(new Date().getTime() - 3 * 24 * 3600 * 1000L);
 
             // Clear expired DNS records
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
@@ -737,7 +747,7 @@ public class ServiceSinkhole extends VpnService {
                 if (jarray.length() < 1)
                     return;
                 JSONObject jroot = jarray.getJSONObject(0);
-                //JSONObject jroot = new JSONObject(json.toString());
+                // JSONObject jroot = new JSONObject(json.toString());
                 if (jroot.has("tag_name") && jroot.has("html_url") && jroot.has("assets")) {
                     String url = jroot.getString("html_url");
                     JSONArray jassets = jroot.getJSONArray("assets");
@@ -852,7 +862,7 @@ public class ServiceSinkhole extends VpnService {
 
             int uncertain = 0;
             boolean isTracker = false;
-            try(Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false)) {
+            try (Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false)) {
                 uncertain = (lookup != null
                         && lookup.getCount() > 1) ? 1 : 0;
 
@@ -862,7 +872,7 @@ public class ServiceSinkhole extends VpnService {
 
                     while (lookup.moveToNext()) {
                         dname = lookup.getString(lookup.getColumnIndex("qname"));
-                        if (dname != null)  {
+                        if (dname != null) {
                             originalDname = dname;
 
                             String aname = lookup.getString(lookup.getColumnIndex("aname"));
@@ -875,8 +885,12 @@ public class ServiceSinkhole extends VpnService {
                             }
 
                             if (foundTracker.first != NO_TRACKER
-                                    && (p.first == null // could have uncertain tracker company if no company found for an observed domain
-                                    || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an uncertain tracker company
+                                    && (p.first == null // could have uncertain tracker company if no company found for
+                                                        // an observed domain
+                                            || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an
+                                                                                                       // uncertain
+                                                                                                       // tracker
+                                                                                                       // company
                                     && uncertain == 1) {
                                 uncertain = 2;
                                 break;
@@ -1087,7 +1101,8 @@ public class ServiceSinkhole extends VpnService {
                 if (mapUidBytes.size() == 0) {
                     for (ApplicationInfo ainfo : getPackageManager().getInstalledApplications(0))
                         if (ainfo.uid != Process.myUid())
-                            mapUidBytes.put(ainfo.uid, TrafficStats.getUidTxBytes(ainfo.uid) + TrafficStats.getUidRxBytes(ainfo.uid));
+                            mapUidBytes.put(ainfo.uid,
+                                    TrafficStats.getUidTxBytes(ainfo.uid) + TrafficStats.getUidRxBytes(ainfo.uid));
 
                 } else if (t > 0) {
                     TreeMap<Float, Integer> mapSpeedUid = new TreeMap<>(new Comparator<Float>() {
@@ -1221,7 +1236,8 @@ public class ServiceSinkhole extends VpnService {
 
             // Show notification
             Intent main = new Intent(ServiceSinkhole.this, ActivityMain.class);
-            PendingIntent pi = PendingIntentCompat.getActivity(ServiceSinkhole.this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pi = PendingIntentCompat.getActivity(ServiceSinkhole.this, 0, main,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(ServiceSinkhole.this, "notify");
             builder.setWhen(when)
@@ -1299,9 +1315,9 @@ public class ServiceSinkhole extends VpnService {
         // Remove local DNS servers when not routing LAN
         int count = listDns.size();
         boolean lan = prefs.getBoolean("lan", false);
-        //boolean use_hosts = prefs.getBoolean("use_hosts", false);
+        // boolean use_hosts = prefs.getBoolean("use_hosts", false);
         if (lan
-                //&& use_hosts
+                // && use_hosts
                 && filter)
             try {
                 List<Pair<InetAddress, Integer>> subnets = new ArrayList<>();
@@ -1359,7 +1375,7 @@ public class ServiceSinkhole extends VpnService {
                 Network active = (cm == null ? null : cm.getActiveNetwork());
                 if (active != null) {
                     Log.i(TAG, "Setting underlying network=" + active + " " + cm.getNetworkInfo(active));
-                    setUnderlyingNetworks(new Network[]{active});
+                    setUnderlyingNetworks(new Network[] { active });
                 }
             }
 
@@ -1496,13 +1512,15 @@ public class ServiceSinkhole extends VpnService {
                             config.mnc == 590 ||
                             config.mnc == 820 ||
                             config.mnc == 890 ||
-                            config.mnc == 910)) ||
+                            config.mnc == 910))
+                    ||
                     (config.mcc == 311 && (config.mnc == 12 ||
                             config.mnc == 110 ||
                             (config.mnc >= 270 && config.mnc <= 289) ||
                             config.mnc == 390 ||
                             (config.mnc >= 480 && config.mnc <= 489) ||
-                            config.mnc == 590)) ||
+                            config.mnc == 590))
+                    ||
                     (config.mcc == 312 && (config.mnc == 770))) {
                 listExclude.add(new IPUtil.CIDR("66.174.0.0", 16)); // 66.174.0.0 - 66.174.255.255
                 listExclude.add(new IPUtil.CIDR("66.82.0.0", 15)); // 69.82.0.0 - 69.83.255.255
@@ -1527,7 +1545,8 @@ public class ServiceSinkhole extends VpnService {
             try {
                 InetAddress start = InetAddress.getByName("0.0.0.0");
                 for (IPUtil.CIDR exclude : listExclude) {
-                    Log.i(TAG, "Exclude " + exclude.getStart().getHostAddress() + "..." + exclude.getEnd().getHostAddress());
+                    Log.i(TAG, "Exclude " + exclude.getStart().getHostAddress() + "..."
+                            + exclude.getEnd().getHostAddress());
                     for (IPUtil.CIDR include : IPUtil.toCIDR(start, IPUtil.minus1(exclude.getStart())))
                         try {
                             builder.addRoute(include.address, include.prefix);
@@ -1640,7 +1659,7 @@ public class ServiceSinkhole extends VpnService {
                         tunnelThread = null;
                     }
                 });
-                //tunnelThread.setPriority(Thread.MAX_PRIORITY);
+                // tunnelThread.setPriority(Thread.MAX_PRIORITY);
                 tunnelThread.start();
 
                 Log.i(TAG, "Started tunnel thread");
@@ -2062,9 +2081,9 @@ public class ServiceSinkhole extends VpnService {
                 // Check if tracker is known
                 if ((!Util.isPlayStoreInstall()
                         || prefs.getBoolean("log_logcat", false))
-                    && blockKnownTracker(packet.daddr, packet.uid)) {
-                        filtered = true;
-                        packet.allowed = false;
+                        && blockKnownTracker(packet.daddr, packet.uid)) {
+                    filtered = true;
+                    packet.allowed = false;
                 }
 
                 InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
@@ -2073,7 +2092,7 @@ public class ServiceSinkhole extends VpnService {
                     packet.allowed = false;
                 }
 
-	            if (!filtered)
+                if (!filtered)
                     packet.allowed = true;
             }
         }
@@ -2221,7 +2240,8 @@ public class ServiceSinkhole extends VpnService {
                     AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                     Intent i = new Intent(ACTION_SCREEN_OFF_DELAYED);
                     i.setPackage(context.getPackageName());
-                    PendingIntent pi = PendingIntentCompat.getBroadcast(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent pi = PendingIntentCompat.getBroadcast(context, 0, i,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
                     am.cancel(pi);
 
                     try {
@@ -2291,7 +2311,8 @@ public class ServiceSinkhole extends VpnService {
         public void onReceive(Context context, Intent intent) {
             // Filter VPN connectivity changes
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE, ConnectivityManager.TYPE_DUMMY);
+                int networkType = intent.getIntExtra(ConnectivityManager.EXTRA_NETWORK_TYPE,
+                        ConnectivityManager.TYPE_DUMMY);
                 if (networkType == ConnectivityManager.TYPE_VPN)
                     return;
             }
@@ -2462,10 +2483,14 @@ public class ServiceSinkhole extends VpnService {
                         Log.i(TAG, "Deleting settings package=" + packageName);
                         context.getSharedPreferences("wifi", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                         context.getSharedPreferences("other", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("screen_other", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("roaming", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("lockdown", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+                        context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE).edit().remove(packageName)
+                                .apply();
+                        context.getSharedPreferences("screen_other", Context.MODE_PRIVATE).edit().remove(packageName)
+                                .apply();
+                        context.getSharedPreferences("roaming", Context.MODE_PRIVATE).edit().remove(packageName)
+                                .apply();
+                        context.getSharedPreferences("lockdown", Context.MODE_PRIVATE).edit().remove(packageName)
+                                .apply();
                         context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                         context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
 
@@ -2527,7 +2552,8 @@ public class ServiceSinkhole extends VpnService {
             // Add uninstall action
             Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             intent.setData(Uri.parse("package:" + packageName));
-            PendingIntent piUninstall = PendingIntentCompat.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent piUninstall = PendingIntentCompat.getActivity(this, 0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
             builder.addAction(0, getString(R.string.uninstall), piUninstall);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -2613,9 +2639,12 @@ public class ServiceSinkhole extends VpnService {
         Util.setTheme(this);
         super.onCreate();
 
-        HandlerThread commandThread = new HandlerThread(getString(R.string.app_name) + " command", Process.THREAD_PRIORITY_FOREGROUND);
-        HandlerThread logThread = new HandlerThread(getString(R.string.app_name) + " log", Process.THREAD_PRIORITY_BACKGROUND);
-        HandlerThread statsThread = new HandlerThread(getString(R.string.app_name) + " stats", Process.THREAD_PRIORITY_BACKGROUND);
+        HandlerThread commandThread = new HandlerThread(getString(R.string.app_name) + " command",
+                Process.THREAD_PRIORITY_FOREGROUND);
+        HandlerThread logThread = new HandlerThread(getString(R.string.app_name) + " log",
+                Process.THREAD_PRIORITY_BACKGROUND);
+        HandlerThread statsThread = new HandlerThread(getString(R.string.app_name) + " stats",
+                Process.THREAD_PRIORITY_BACKGROUND);
         commandThread.start();
         logThread.start();
         statsThread.start();
@@ -2680,7 +2709,8 @@ public class ServiceSinkhole extends VpnService {
             pi = PendingIntentCompat.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + 60 * 1000, AlarmManager.INTERVAL_HALF_DAY, pi);
+        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + 60 * 1000,
+                AlarmManager.INTERVAL_HALF_DAY, pi);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -2806,7 +2836,8 @@ public class ServiceSinkhole extends VpnService {
         Log.i(TAG, "Starting listening to connectivity changes");
         IntentFilter ifConnectivity = new IntentFilter();
         ifConnectivity.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        ContextCompat.registerReceiver(this, connectivityChangedReceiver, ifConnectivity, ContextCompat.RECEIVER_NOT_EXPORTED);
+        ContextCompat.registerReceiver(this, connectivityChangedReceiver, ifConnectivity,
+                ContextCompat.RECEIVER_NOT_EXPORTED);
         registeredConnectivityChanged = true;
 
         // Listen for phone state changes
@@ -3056,7 +3087,8 @@ public class ServiceSinkhole extends VpnService {
         int pause = Integer.parseInt(prefs.getString("pause", "10"));
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
-        builder.setSmallIcon(isLockedDown(last_metered) ? R.drawable.ic_lock_outline_white_24dp : R.drawable.ic_rocket_white)
+        builder.setSmallIcon(
+                isLockedDown(last_metered) ? R.drawable.ic_lock_outline_white_24dp : R.drawable.ic_rocket_white)
                 .setContentIntent(pi)
                 .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(true)
@@ -3090,18 +3122,25 @@ public class ServiceSinkhole extends VpnService {
 
         if (allowed >= 0 || blocked >= 0 || hosts >= 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                /*if (Util.isPlayStoreInstall(this))
-                    builder.setContentText(getString(R.string.msg_packages, allowed, blocked));
-                else
-                    builder.setContentText(getString(R.string.msg_hosts, allowed, blocked, hosts));*/
+                /*
+                 * if (Util.isPlayStoreInstall(this))
+                 * builder.setContentText(getString(R.string.msg_packages, allowed, blocked));
+                 * else
+                 * builder.setContentText(getString(R.string.msg_hosts, allowed, blocked,
+                 * hosts));
+                 */
                 return builder.build();
             } else {
                 NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
                 notification.bigText(getString(R.string.msg_started));
-                /*if (Util.isPlayStoreInstall(this))
-                    notification.setSummaryText(getString(R.string.msg_packages, allowed, blocked));
-                else
-                    notification.setSummaryText(getString(R.string.msg_hosts, allowed, blocked, hosts));*/
+                /*
+                 * if (Util.isPlayStoreInstall(this))
+                 * notification.setSummaryText(getString(R.string.msg_packages, allowed,
+                 * blocked));
+                 * else
+                 * notification.setSummaryText(getString(R.string.msg_hosts, allowed, blocked,
+                 * hosts));
+                 */
                 return notification.build();
             }
         } else
@@ -3162,7 +3201,8 @@ public class ServiceSinkhole extends VpnService {
 
     private void showLockdownNotification() {
         Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
-        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_LOCKDOWN, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_LOCKDOWN, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(R.attr.colorOff, tv, true);
@@ -3194,7 +3234,8 @@ public class ServiceSinkhole extends VpnService {
     private void showAutoStartNotification() {
         Intent main = new Intent(this, ActivityMain.class);
         main.putExtra(ActivityMain.EXTRA_APPROVE, true);
-        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_AUTOSTART, main, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_AUTOSTART, main,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
@@ -3323,7 +3364,9 @@ public class ServiceSinkhole extends VpnService {
         }
 
         /**
-         * Excludes apps, such as system apps if disabled, as well as deactivated apps by user
+         * Excludes apps, such as system apps if disabled, as well as deactivated apps
+         * by user
+         *
          * @param packageName
          * @return
          * @throws PackageManager.NameNotFoundException
