@@ -61,48 +61,47 @@ public class ApplicationEx extends Application {
     private static final String TAG = "TrackerControl.App";
 
     @Override
-    protected void attachBaseContext (Context base) {
+    protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
         try {
             CoreConfigurationBuilder builder = new CoreConfigurationBuilder();
             builder
-                .withReportContent( // limit collected data
-                    ReportField.USER_COMMENT,
-                    ReportField.USER_APP_START_DATE,
-                    ReportField.USER_CRASH_DATE,
-                    ReportField.ANDROID_VERSION,
-                    ReportField.BUILD_CONFIG,
-                    ReportField.STACK_TRACE,
-                    ReportField.STACK_TRACE_HASH,
-                    ReportField.AVAILABLE_MEM_SIZE,
-                    ReportField.TOTAL_MEM_SIZE)
-                .withReportFormat(KEY_VALUE_LIST)
-                .withPluginConfigurations(
-                        new MailSenderConfigurationBuilder()
-                            .withMailTo("crash@trackercontrol.org")
-                            .withBody(getString(R.string.crash_body))
-                            .withReportAsFile(true)
-                            .withReportFileName("tracker-control-crash.json")
-                            .withEnabled(true)
-                            .build(),
-                        new DialogConfigurationBuilder()
-                            .withText(getString(R.string.crash_dialog_text))
-                            .withCommentPrompt(getString(R.string.crash_dialog_comment))
-                            .withEnabled(true)
-                            .build()
-                );
+                    .withReportContent( // limit collected data
+                            ReportField.USER_COMMENT,
+                            ReportField.USER_APP_START_DATE,
+                            ReportField.USER_CRASH_DATE,
+                            ReportField.ANDROID_VERSION,
+                            ReportField.BUILD_CONFIG,
+                            ReportField.STACK_TRACE,
+                            ReportField.STACK_TRACE_HASH,
+                            ReportField.AVAILABLE_MEM_SIZE,
+                            ReportField.TOTAL_MEM_SIZE)
+                    .withReportFormat(KEY_VALUE_LIST)
+                    .withPluginConfigurations(
+                            new MailSenderConfigurationBuilder()
+                                    .withMailTo("crash@trackercontrol.org")
+                                    .withBody(getString(R.string.crash_body))
+                                    .withReportAsFile(true)
+                                    .withReportFileName("tracker-control-crash.json")
+                                    .withEnabled(true)
+                                    .build(),
+                            new DialogConfigurationBuilder()
+                                    .withText(getString(R.string.crash_dialog_text))
+                                    .withCommentPrompt(getString(R.string.crash_dialog_comment))
+                                    .withEnabled(true)
+                                    .build());
 
             ACRA.init(this, builder);
 
-            if(BuildConfig.DEBUG) {
-                //StrictMode.enableDefaults();
-                //StrictMode.allowThreadDiskReads();
+            if (BuildConfig.DEBUG) {
+                // StrictMode.enableDefaults();
+                // StrictMode.allowThreadDiskReads();
                 StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                         .detectLeakedSqlLiteObjects()
                         .detectLeakedClosableObjects()
                         .penaltyLog()
-                        //.penaltyDeath()
+                        // .penaltyDeath()
                         .build());
                 StrictMode.allowThreadDiskReads();
             }
@@ -138,13 +137,16 @@ public class ApplicationEx extends Application {
                     // Set status bar icons to light (white) since our background is dark
                     View decor = activity.getWindow().getDecorView();
                     WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightStatusBars(false);
-                    WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightNavigationBars(!isNight);
+                    WindowCompat.getInsetsController(activity.getWindow(), decor)
+                            .setAppearanceLightNavigationBars(!isNight);
 
                     ViewCompat.setOnApplyWindowInsetsListener(content, new OnApplyWindowInsetsListener() {
                         @NonNull
                         @Override
-                        public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
-                            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
+                        public WindowInsetsCompat onApplyWindowInsets(@NonNull View v,
+                                @NonNull WindowInsetsCompat insets) {
+                            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                                    | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
 
                             // Apply padding to android.R.id.content for system bars
                             // We do NOT apply bottom padding here, so the content background (White/Black)
@@ -205,16 +207,19 @@ public class ApplicationEx extends Application {
     private void createNotificationChannels() {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationChannel foreground = new NotificationChannel("foreground", getString(R.string.channel_foreground), NotificationManager.IMPORTANCE_MIN);
+        NotificationChannel foreground = new NotificationChannel("foreground", getString(R.string.channel_foreground),
+                NotificationManager.IMPORTANCE_MIN);
         foreground.setSound(null, Notification.AUDIO_ATTRIBUTES_DEFAULT);
         nm.createNotificationChannel(foreground);
 
-        NotificationChannel notify = new NotificationChannel("notify", getString(R.string.channel_notify), NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel notify = new NotificationChannel("notify", getString(R.string.channel_notify),
+                NotificationManager.IMPORTANCE_DEFAULT);
         notify.setSound(null, Notification.AUDIO_ATTRIBUTES_DEFAULT);
         notify.setBypassDnd(true);
         nm.createNotificationChannel(notify);
 
-        NotificationChannel access = new NotificationChannel("access", getString(R.string.channel_access), NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel access = new NotificationChannel("access", getString(R.string.channel_access),
+                NotificationManager.IMPORTANCE_DEFAULT);
         access.setSound(null, Notification.AUDIO_ATTRIBUTES_DEFAULT);
         notify.setBypassDnd(true);
         nm.createNotificationChannel(access);
