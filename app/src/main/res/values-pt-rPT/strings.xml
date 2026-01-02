@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">Tamanho de registro PCAP: %s B</string>
     <string name="setting_pcap_file_size">PCAP tamanho máximo do arquivo: %s MB</string>
     <string name="setting_watchdog">Watchdog: a cada %s de minutos</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Intervalo de amostragem: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Cópia de segurança</string>
@@ -152,8 +153,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_vpn_cancelled">Conexão VPN cancelada\nVocê configurou outra VPN para ser uma VPN sempre ativa?</string>
     <string name="msg_unavailable">Este recurso não está disponível nesta versão do Android</string>
     <string name="msg_always_on">Outra VPN é configurada como VPN sempre ativa</string>
-    <string name="msg_always_on_lockdown">Desligar \"Bloquear conexões sem VPN\" nas configurações VPN do Android para usar o TrackerControl no modo de filtragem</string>
-    <string name="msg_private_dns">Desligue o \"DNS privado\" nas configurações de rede do Android para usar o TrackerControl no modo de filtragem</string>
     <string name="msg_start_forward">Iniciar encaminhamento da porta %1$s %2$d para %3$s:%4$d de \'%5$s\'?</string>
     <string name="msg_stop_forward">Parar o encaminhamento da porta %1$s %2$d?</string>
     <string name="msg_log_logcat">Aviso: Bloqueio desativado por causa do registro do ADB.</string>
@@ -237,7 +236,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="tab_actions">Meus dados</string>
     <string name="tracker_name">Nome do Tracker</string>
     <string name="internet_access">Acesso de Internet</string>
-    <string name="internet_access_explanation">Deve estar ligado para acesso à Internet.\n\nDica: você também pode tocar no ícone do aplicativo na tela principal.</string>
     <string name="app_info">Gerenciar o aplicativo</string>
     <!-- Actions -->
     <string name="block_tracking">Rastreadores de bloqueio</string>
@@ -310,7 +308,6 @@ disso,\n\n]]></string>
     <string name="tracker_fingerprinting">Impressão digital</string>
     <string name="tracker_social">Sociais</string>
     <string name="tracker_uncategorised">Não categorizado</string>
-    <string name="exclude_vpn_explanation">É necessário estar disponível para detectar ou bloquear rastreadores.\n\nDica: Desative se você tiver problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilitar interruptor na tela principal, depois lançar aplicativo para encontrar rastreadores</string>
     <string name="no_trackers_found_message">Lançar aplicativo para encontrar rastreadores</string>
