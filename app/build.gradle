@@ -28,7 +28,7 @@ android {
 
     packagingOptions {
         jniLibs {
-            useLegacyPackaging true
+            useLegacyPackaging = true
         }
     }
 
@@ -89,16 +89,16 @@ android {
 
     signingConfigs {
         release {
-            enableV1Signing true
-            enableV2Signing true
+            enableV1Signing = true
+            enableV2Signing = true
         }
     }
 
     compileOptions {
-        encoding "UTF-8"
+        encoding = "UTF-8"
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
     }
 
     packagingOptions {
@@ -110,13 +110,13 @@ android {
     lint {
         disable 'MissingTranslation'
     }
-    namespace 'net.kollnig.missioncontrol'
+    namespace = 'net.kollnig.missioncontrol'
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 
     androidResources {
-        generateLocaleConfig true
+        generateLocaleConfig = true
     }
 }
 
