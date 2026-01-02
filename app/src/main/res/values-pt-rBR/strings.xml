@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">Tamanho do registro PCAP: %s B</string>
     <string name="setting_pcap_file_size">Tamanho máx. do arquivo PCAP: %s MB</string>
     <string name="setting_watchdog">Monitoramento: a cada %s minutos</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Intervalo de amostra: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Backup</string>
@@ -150,8 +151,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_vpn_cancelled">Conexão VPN cancelada\nVocê configurou outra VPN para ser uma VPN sempre ativa?</string>
     <string name="msg_unavailable">Este recurso não está disponível nesta versão do Android</string>
     <string name="msg_always_on">Outra aplicação VPN está definida como VPN sempre ativa</string>
-    <string name="msg_always_on_lockdown">Desabilite a opção \"Bloquear conexões sem VPN\" nas configurações de VPN do Android para usar o TrackerControl em modo filtro</string>
-    <string name="msg_private_dns">Desabilite \"DNS privado\" nas configurações de rede do Android para usar o TrackerControl em modo filtro</string>
     <string name="msg_start_forward">Iniciar encaminhamento de %1$s porta %2$d para %3$s:%4$d de \'%5$s\'?</string>
     <string name="msg_stop_forward">Parar encaminhamento de %1$s porta %2$d?</string>
     <string name="msg_log_logcat">Aviso: Bloqueio desativado por causa do log do ADB.</string>
@@ -245,7 +244,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="tab_actions">Meus dados</string>
     <string name="tracker_name">Nome do rastreador</string>
     <string name="internet_access">Acesso à Internet</string>
-    <string name="internet_access_explanation">Deve estar ativado para permitir o acesso à Internet.\n\nDica: Você também pode tocar no ícone do app na tela principal.</string>
     <string name="app_info">Gerenciar app</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
@@ -323,7 +321,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Bloqueio rigoroso</string>
     <string name="summary_strict_blocking">Para aplicativos recém-instalados, bloqueie o máximo possível de compartilhamento de dados com empresas. A tendência é que mais aplicativos irão quebrar.</string>
     <string name="strict_blocking_explanation">Recomenda-se que não especialistas desativem essa opção para reduzir a quebra do aplicativo. No entanto, isso permite alguns compartilhamentos essenciais com empresas.</string>
-    <string name="exclude_vpn_explanation">Deve estar ativado para detectar ou bloquear rastreadores.\n\nDica: Desative se você tiver problemas.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Configurações do app &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilite o interruptor na tela principal e inicie o app para encontrar rastreadores</string>
