@@ -58,8 +58,6 @@
     <string name="setting_ip6">Włącz ruch IPv6</string>
     <string name="setting_call">Wyłączanie na wezwanie</string>
     <string name="setting_reload_onconnectivity">Przeładowanie przy każdej zmianie łączności</string>
-    <string name="setting_advanced_options">Opcje zaawansowane</string>
-    <string name="setting_system">Zarządzanie aplikacjami systemowymi</string>
     <string name="setting_log_app">Szukaj nowych skryptów śledzących</string>
     <string name="setting_log_logcat">Rejestruj ruch do ADB</string>
     <string name="setting_filter">Blokuj skrypty śledzące</string>
@@ -88,7 +86,6 @@
     <string name="setting_stats_frequency">Przedział czasowy próby: %s ms</string>
     <string name="setting_stats_samples">Liczba próbek: %s s</string>
     <string name="setting_backup">Kopia zapasowa</string>
-    <string name="setting_export">Eksportuj ustawienia (nie w celu wyzerowania urządzenia)</string>
     <string name="setting_import">Importuj ustawienia</string>
     <string name="setting_hosts">Importuj plik hosts</string>
     <string name="setting_hosts_append">Importuj plik hosts (dodaj)</string>
@@ -103,7 +100,6 @@
     <string name="summary_lan">Zezwolić aplikacjom na łączenie się z adresami sieci lokalnej, takimi jak 10.0.0.0/8, 172.16.0.0/12 i 192.168.0.0/16</string>
     <string name="summary_ip6">Kieruj ruch IP w wersji 6 do TrackerControl, aby mógł być selektywnie dopuszczony lub zablokowany</string>
     <string name="summary_call">Wyłączenie TrackerControl przy przychodzącym lub wychodzącym połączeniu telefonicznym. Można go używać do rozwiązywania problemów z połączeniami IP/Wi-Fi.</string>
-    <string name="summary_system">Określanie zasad dotyczących aplikacji systemowych (dla ekspertów)</string>
     <string name="summary_log_app">Wyłącz, aby zmniejszyć zużycie baterii. Nowe trackery będą nadal blokowane, ale nie będą wyświetlane.</string>
     <string name="summary_track_usage">Śledzenie liczby bajtów wysłanych i otrzymanych dla każdej aplikacji i adresu. Może to skutkować dodatkowym zużyciem baterii.</string>
     <string name="summary_block_domains">OSTRZEŻENIE: Zablokowane hosty nie są wyświetlane w UI.</string>
