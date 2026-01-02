@@ -30,8 +30,6 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
-import java.util.UUID;
-
 /**
  * Manager class that handles caching and scheduling of tracker library analysis
  * via WorkManager.
@@ -39,6 +37,8 @@ import java.util.UUID;
 public class TrackerAnalysisManager {
     private static final int EXODUS_DATABASE_VERSION = 423;
     private static final String PREFS_NAME = "library_analysis";
+    // Single work name ensures only one analysis runs at a time (prevents OOM)
+    private static final String WORK_NAME = "tracker_analysis";
 
     private static TrackerAnalysisManager instance;
     private final Context mContext;
@@ -65,11 +65,12 @@ public class TrackerAnalysisManager {
 
     /**
      * Starts an analysis for the given package using WorkManager.
+     * Only one analysis runs at a time to prevent OOM; others are queued.
+     * Observe progress via {@link #getWorkInfoByPackageLiveData(String)}.
      *
      * @param packageName The package to analyze
-     * @return The UUID of the work request, which can be used to observe progress
      */
-    public UUID startAnalysis(String packageName) {
+    public void startAnalysis(String packageName) {
         Data inputData = new Data.Builder()
                 .putString(TrackerAnalysisWorker.KEY_PACKAGE_NAME, packageName)
                 .build();
@@ -79,20 +80,12 @@ public class TrackerAnalysisManager {
                 .addTag(packageName)
                 .build();
 
-        // KEEP policy: if work already running for this package, don't start another
+        // Use global work name + APPEND to serialize all analyses (prevents OOM from
+        // concurrent scans)
         workManager.enqueueUniqueWork(
-                packageName,
-                ExistingWorkPolicy.KEEP,
+                WORK_NAME,
+                ExistingWorkPolicy.APPEND,
                 workRequest);
-
-        return workRequest.getId();
-    }
-
-    /**
-     * Observe work status for a given work ID.
-     */
-    public LiveData<WorkInfo> getWorkInfoLiveData(UUID workId) {
-        return workManager.getWorkInfoByIdLiveData(workId);
     }
 
     /**

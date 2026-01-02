@@ -19,7 +19,6 @@ package net.kollnig.missioncontrol.details;
 
 import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,8 +41,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
+
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.work.Data;
@@ -62,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
@@ -81,6 +78,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Context mContext;
     private final SharedPreferences apply;
     private List<TrackerCategory> mValues = new ArrayList<>();
+
+    // Analysis UI elements (populated when header is created)
+    private TextView mBtnAnalyze;
+    private TextView mTvDetectedTrackers;
+    private View mLayoutProgress;
+    private TextView mTvAnalysisProgress;
+    private ProgressBar mPbTrackerDetection;
 
     public TrackersListAdapter(Context c,
             RecyclerView v,
@@ -130,130 +134,104 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Setup button for on-demand tracker library analysis
+     * Setup button for on-demand tracker library analysis.
+     * The Fragment is responsible for observing WorkManager and calling update
+     * methods.
      *
      * @param view The tracker view to add the button handler to
      */
     private void setupTrackerAnalysisButton(View view) {
-        TextView btnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
-        TextView tvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
-        View layoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
-        TextView tvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
-        ProgressBar pbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
+        mBtnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
+        mTvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+        mLayoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
+        mTvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
+        mPbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
 
         TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
 
         // Show cached results initially
         String cachedResults = manager.getCachedResult(mAppId);
-        if (cachedResults != null && mContext instanceof Activity) {
+        if (cachedResults != null) {
             String res = String.format(mContext.getString(R.string.detected_trackers), cachedResults);
             if (manager.isCacheStale(mAppId)) {
                 res += mContext.getString(R.string.analysis_outdated_version);
-                btnAnalyze.setText(R.string.update_analysis);
+                mBtnAnalyze.setText(R.string.update_analysis);
             }
-            tvDetectedTrackers.setText(res);
-            tvDetectedTrackers.setVisibility(View.VISIBLE);
+            mTvDetectedTrackers.setText(res);
+            mTvDetectedTrackers.setVisibility(View.VISIBLE);
         }
 
-        // Observer for WorkInfo updates (handles both new and existing work)
-        Observer<java.util.List<WorkInfo>> workInfoListObserver = workInfoList -> {
-            if (workInfoList == null || workInfoList.isEmpty()) {
-                // No work running, show cached results or default state
-                return;
-            }
-
-            // Find the most recent non-terminal work
-            WorkInfo activeWork = null;
-            for (WorkInfo info : workInfoList) {
-                if (!info.getState().isFinished()) {
-                    activeWork = info;
-                    break;
-                }
-            }
-
-            // If no active work, check for most recently finished
-            if (activeWork == null) {
-                activeWork = workInfoList.get(0);
-            }
-
-            WorkInfo workInfo = activeWork;
-
-            switch (workInfo.getState()) {
-                case ENQUEUED:
-                    btnAnalyze.setEnabled(false);
-                    layoutProgress.setVisibility(View.VISIBLE);
-                    tvAnalysisProgress.setText(R.string.analysis_queued);
-                    pbTrackerDetection.setIndeterminate(true);
-                    tvDetectedTrackers.setVisibility(View.GONE);
-                    break;
-
-                case RUNNING:
-                    btnAnalyze.setEnabled(false);
-                    layoutProgress.setVisibility(View.VISIBLE);
-                    pbTrackerDetection.setIndeterminate(false);
-                    tvDetectedTrackers.setVisibility(View.GONE);
-
-                    Data progress = workInfo.getProgress();
-                    int percent = progress.getInt(TrackerAnalysisWorker.KEY_PROGRESS, 0);
-                    pbTrackerDetection.setProgress(percent);
-                    if (mContext instanceof Activity) {
-                        tvAnalysisProgress.setText(String.format(
-                                mContext.getString(R.string.analyzing_classes_progress), percent));
-                    }
-                    break;
-
-                case SUCCEEDED:
-                    layoutProgress.setVisibility(View.GONE);
-                    btnAnalyze.setEnabled(true);
-                    btnAnalyze.setText(R.string.analyze_tracker_libraries);
-
-                    String result = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_RESULT);
-                    if (result != null && mContext instanceof Activity) {
-                        String res = String.format(mContext.getString(R.string.detected_trackers), result);
-                        tvDetectedTrackers.setText(res);
-                        tvDetectedTrackers.setVisibility(View.VISIBLE);
-                    }
-                    break;
-
-                case FAILED:
-                    layoutProgress.setVisibility(View.GONE);
-                    btnAnalyze.setEnabled(true);
-
-                    String error = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_ERROR);
-                    if (error != null) {
-                        tvDetectedTrackers.setText(error);
-                        tvDetectedTrackers.setVisibility(View.VISIBLE);
-                    }
-                    break;
-
-                case CANCELLED:
-                    layoutProgress.setVisibility(View.GONE);
-                    btnAnalyze.setEnabled(true);
-                    break;
-
-                case BLOCKED:
-                    // Waiting for constraints, treat like ENQUEUED
-                    btnAnalyze.setEnabled(false);
-                    layoutProgress.setVisibility(View.VISIBLE);
-                    tvAnalysisProgress.setText(R.string.analysis_queued);
-                    pbTrackerDetection.setIndeterminate(true);
-                    tvDetectedTrackers.setVisibility(View.GONE);
-                    break;
-            }
-        };
-
-        // Observe existing work for this package (if any is running)
-        if (mContext instanceof LifecycleOwner) {
-            manager.getWorkInfoByPackageLiveData(mAppId)
-                    .observe((LifecycleOwner) mContext, workInfoListObserver);
-        }
-
-        btnAnalyze.setOnClickListener(v -> {
-            if (mContext instanceof LifecycleOwner) {
-                manager.startAnalysis(mAppId);
-                // Observer above will automatically pick up the new work
-            }
+        mBtnAnalyze.setOnClickListener(v -> {
+            manager.startAnalysis(mAppId);
+            // Fragment's observer will pick up the work state changes
         });
+    }
+
+    /**
+     * Called by Fragment when analysis state changes.
+     */
+    public void updateAnalysisState(WorkInfo workInfo) {
+        if (mBtnAnalyze == null)
+            return; // Header not yet created
+
+        if (workInfo == null) {
+            mLayoutProgress.setVisibility(View.GONE);
+            mBtnAnalyze.setEnabled(true);
+            return;
+        }
+
+        switch (workInfo.getState()) {
+            case ENQUEUED:
+            case BLOCKED:
+                mBtnAnalyze.setEnabled(false);
+                mLayoutProgress.setVisibility(View.VISIBLE);
+                mTvAnalysisProgress.setText(R.string.analysis_queued);
+                mPbTrackerDetection.setIndeterminate(true);
+                mTvDetectedTrackers.setVisibility(View.GONE);
+                break;
+
+            case RUNNING:
+                mBtnAnalyze.setEnabled(false);
+                mLayoutProgress.setVisibility(View.VISIBLE);
+                mPbTrackerDetection.setIndeterminate(false);
+                mTvDetectedTrackers.setVisibility(View.GONE);
+
+                Data progress = workInfo.getProgress();
+                int percent = progress.getInt(TrackerAnalysisWorker.KEY_PROGRESS, 0);
+                mPbTrackerDetection.setProgress(percent);
+                mTvAnalysisProgress.setText(String.format(
+                        mContext.getString(R.string.analyzing_classes_progress), percent));
+                break;
+
+            case SUCCEEDED:
+                mLayoutProgress.setVisibility(View.GONE);
+                mBtnAnalyze.setEnabled(true);
+                mBtnAnalyze.setText(R.string.analyze_tracker_libraries);
+
+                String result = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_RESULT);
+                if (result != null) {
+                    String res = String.format(mContext.getString(R.string.detected_trackers), result);
+                    mTvDetectedTrackers.setText(res);
+                    mTvDetectedTrackers.setVisibility(View.VISIBLE);
+                }
+                break;
+
+            case FAILED:
+                mLayoutProgress.setVisibility(View.GONE);
+                mBtnAnalyze.setEnabled(true);
+
+                String error = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_ERROR);
+                if (error != null) {
+                    mTvDetectedTrackers.setText(error);
+                    mTvDetectedTrackers.setVisibility(View.VISIBLE);
+                }
+                break;
+
+            case CANCELLED:
+                mLayoutProgress.setVisibility(View.GONE);
+                mBtnAnalyze.setEnabled(true);
+                break;
+        }
     }
 
     @Override

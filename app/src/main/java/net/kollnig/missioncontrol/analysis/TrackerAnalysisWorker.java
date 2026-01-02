@@ -26,6 +26,8 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class TrackerAnalysisWorker extends Worker {
     public static final String KEY_PACKAGE_NAME = "package_name";
     public static final String KEY_RESULT = "result";
@@ -52,11 +54,10 @@ public class TrackerAnalysisWorker extends Worker {
 
             // Perform analysis with progress reporting
             TrackerLibraryAnalyser analyser = new TrackerLibraryAnalyser(context);
-            final int[] lastProgress = { -1 };
+            AtomicInteger lastProgress = new AtomicInteger(-1);
             analyser.setProgressCallback((current, total) -> {
                 int percent = (int) ((current / (float) total) * 100);
-                if (percent != lastProgress[0]) {
-                    lastProgress[0] = percent;
+                if (lastProgress.getAndSet(percent) != percent) {
                     setProgressAsync(new Data.Builder()
                             .putInt(KEY_PROGRESS, percent)
                             .build());

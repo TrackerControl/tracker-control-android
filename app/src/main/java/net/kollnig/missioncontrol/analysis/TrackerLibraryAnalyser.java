@@ -27,25 +27,23 @@ import androidx.annotation.NonNull;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.TrackerLibrary;
 
+import org.jf.dexlib2.DexFileFactory;
+import org.jf.dexlib2.Opcodes;
 import org.jf.dexlib2.iface.ClassDef;
 import org.jf.dexlib2.iface.DexFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import eu.faircode.netguard.Rule;
-import lanchon.multidexlib2.BasicDexFileNamer;
-import lanchon.multidexlib2.DuplicateEntryNameException;
-import lanchon.multidexlib2.DuplicateTypeException;
-import lanchon.multidexlib2.EmptyMultiDexContainerException;
-import lanchon.multidexlib2.MultiDexDetectedException;
-import lanchon.multidexlib2.MultiDexIO;
 
 public class TrackerLibraryAnalyser {
     private final Context mContext;
@@ -65,9 +63,11 @@ public class TrackerLibraryAnalyser {
     }
 
     /**
-     * Does the tracker library analysis.
+     * Does the tracker library analysis, processing DEX files one at a time to
+     * reduce memory usage.
      * <p>
-     * Matches class names of the app to be analysed against the Exodus tracker database, which
+     * Matches class names of the app to be analysed against the Exodus tracker
+     * database, which
      * contains information on known class of tracker libraries.
      *
      * @param c        Context
@@ -78,38 +78,45 @@ public class TrackerLibraryAnalyser {
      * @throws RuntimeException Non I/O errors
      */
     @NonNull
-    private static Set<TrackerLibrary> findTrackers(Context c, String apk, AnalysisProgressCallback callback) throws IOException, RuntimeException {
-        DexFile dx = MultiDexIO.readDexFile(true, new File(apk), new BasicDexFileNamer(), null, null);
-
+    private static Set<TrackerLibrary> findTrackers(Context c, String apk, AnalysisProgressCallback callback)
+            throws IOException, RuntimeException {
         String[] Sign = c.getResources().getStringArray(R.array.trackers);
         String[] Names = c.getResources().getStringArray(R.array.tname);
         String[] Web = c.getResources().getStringArray(R.array.tweb);
         Set<TrackerLibrary> trackers = new HashSet<>();
 
-        // Get the classes as a collection to determine total count
-        Collection<? extends ClassDef> classes = dx.getClasses();
-        int totalClasses = classes.size();
-        int processedClasses = 0;
-        int lastReportedPercent = -1;
-
-        for (ClassDef classDef : classes) {
-            processedClasses++;
-            
-            // Report progress (limit updates to avoid UI flooding)
-            if (callback != null) {
-                int currentPercent = (processedClasses * 100) / totalClasses;
-                if (currentPercent != lastReportedPercent) {
-                    lastReportedPercent = currentPercent;
-                    callback.onProgress(processedClasses, totalClasses);
+        // Count DEX files for progress
+        List<String> dexEntries = new ArrayList<>();
+        try (ZipFile zipFile = new ZipFile(apk)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().endsWith(".dex")) {
+                    dexEntries.add(entry.getName());
                 }
             }
-            
-            String className = classDef.getType();
-            className = className.replace('/', '.');
-            className = className.substring(1, className.length() - 1);
+        }
 
-            if (className.length() > 8) {
-                if (className.contains(".")) {
+        int totalDex = dexEntries.size();
+        int processedDex = 0;
+
+        // Process each DEX file individually to reduce memory usage
+        for (String dexEntry : dexEntries) {
+            processedDex++;
+
+            // Report progress per DEX file
+            if (callback != null) {
+                callback.onProgress(processedDex, totalDex);
+            }
+
+            // Load and process one DEX at a time
+            DexFile dx = DexFileFactory.loadDexEntry(new File(apk), dexEntry, true, Opcodes.getDefault()).getDexFile();
+            for (ClassDef classDef : dx.getClasses()) {
+                String className = classDef.getType();
+                className = className.replace('/', '.');
+                className = className.substring(1, className.length() - 1);
+
+                if (className.length() > 8 && className.contains(".")) {
                     for (int Signz = 0; Signz < Sign.length; Signz++) {
                         if (className.contains(Sign[Signz])) {
                             if (Names[Signz].startsWith("µ?")) // exclude "good" trackers
@@ -121,6 +128,7 @@ public class TrackerLibraryAnalyser {
                     }
                 }
             }
+            // DEX is eligible for GC here before loading next one
         }
 
         return trackers;
@@ -128,7 +136,9 @@ public class TrackerLibraryAnalyser {
 
     /**
      * Performs tracker library analysis on an app (no caching).
-     * This method should be called through TrackerAnalysisManager for proper caching and thread safety.
+     * Scans both base APK and split APKs (for App Bundles).
+     * This method should be called through TrackerAnalysisManager for proper
+     * caching and thread safety.
      *
      * @param packageName The package name of the app to analyse
      * @return A string with the analysis results
@@ -137,29 +147,40 @@ public class TrackerLibraryAnalyser {
     public String analyseApp(String packageName) throws AnalysisException {
         try {
             PackageInfo pkg = mContext.getPackageManager().getPackageInfo(packageName, 0);
-            String apk = pkg.applicationInfo.publicSourceDir;
-            
-            Set<TrackerLibrary> trackers = findTrackers(mContext, apk, mProgressCallback);
-            
+
+            // Collect all APK paths (base + splits)
+            List<String> apkPaths = new ArrayList<>();
+            apkPaths.add(pkg.applicationInfo.publicSourceDir);
+
+            // Add split APKs if present (App Bundles)
+            String[] splits = pkg.applicationInfo.splitSourceDirs;
+            if (splits != null) {
+                for (String split : splits) {
+                    apkPaths.add(split);
+                }
+            }
+
+            Set<TrackerLibrary> trackers = new HashSet<>();
+            for (String apk : apkPaths) {
+                trackers.addAll(findTrackers(mContext, apk, mProgressCallback));
+            }
+
             final List<TrackerLibrary> sortedTrackers = new ArrayList<>(trackers);
             Collections.sort(sortedTrackers);
-            
+
             if (!sortedTrackers.isEmpty()) {
                 return "\n• " + TextUtils.join("\n• ", sortedTrackers);
             } else {
                 return mContext.getString(R.string.none);
             }
-            
+
+        } catch (OutOfMemoryError e) {
+            throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_ram));
+        } catch (IOException | PackageManager.NameNotFoundException e) {
+            throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed));
         } catch (Throwable e) {
-            if (e instanceof EmptyMultiDexContainerException
-                    || e instanceof MultiDexDetectedException
-                    || e instanceof DuplicateTypeException
-                    || e instanceof DuplicateEntryNameException
-                    || e instanceof PackageManager.NameNotFoundException
-                    || Rule.isSystem(packageName, mContext))
+            if (Rule.isSystem(packageName, mContext))
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed));
-            else if (e instanceof OutOfMemoryError)
-                throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_ram));
             else
                 throw new AnalysisException(mContext.getString(R.string.tracking_detection_failed_report));
         }

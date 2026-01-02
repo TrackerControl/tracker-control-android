@@ -1,20 +1,3 @@
-/*
- * TrackerControl is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * TrackerControl is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
- */
-
 package net.kollnig.missioncontrol.details;
 
 import android.app.Activity;
@@ -32,17 +15,18 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.work.WorkInfo;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.List;
-
 
 /**
  * A fragment representing a list of Items.
@@ -88,7 +72,7 @@ public class TrackersFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_trackers, container, false);
 
         running = true;
@@ -97,13 +81,46 @@ public class TrackersFragment extends Fragment {
         trackerList = TrackerList.getInstance(c);
         RecyclerView recyclerView = v.findViewById(R.id.transmissions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(c));
-        adapter = new TrackersListAdapter(getActivity(), recyclerView, mAppUid, mAppId); // Activity is needed here
+        adapter = new TrackersListAdapter(getActivity(), recyclerView, mAppUid, mAppId);
         recyclerView.setAdapter(adapter);
 
         swipeRefresh = v.findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this::updateTrackerList);
 
+        // Observe analysis work status and update adapter
+        setupAnalysisObserver();
+
         return v;
+    }
+
+    /**
+     * Sets up WorkManager observer for tracker analysis.
+     * The observer is tied to the Fragment's lifecycle.
+     */
+    private void setupAnalysisObserver() {
+        TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(requireContext());
+        manager.getWorkInfoByPackageLiveData(mAppId).observe(getViewLifecycleOwner(), workInfoList -> {
+            if (workInfoList == null || workInfoList.isEmpty()) {
+                adapter.updateAnalysisState(null);
+                return;
+            }
+
+            // Find active (non-finished) work first
+            WorkInfo activeWork = null;
+            for (WorkInfo info : workInfoList) {
+                if (!info.getState().isFinished()) {
+                    activeWork = info;
+                    break;
+                }
+            }
+
+            // Fall back to most recent finished work
+            if (activeWork == null) {
+                activeWork = workInfoList.get(0);
+            }
+
+            adapter.updateAnalysisState(activeWork);
+        });
     }
 
     @Override
@@ -113,7 +130,8 @@ public class TrackersFragment extends Fragment {
     }
 
     /**
-     * Communicate with tracker database to show information about tracking in a given app
+     * Communicate with tracker database to show information about tracking in a
+     * given app
      */
     public void updateTrackerList() {
         new AsyncTask<Object, Object, List<TrackerCategory>>() {
@@ -158,7 +176,8 @@ public class TrackersFragment extends Fragment {
     }
 
     /**
-     * Remind user to start app to create some network traffic for analysis by TrackerControl
+     * Remind user to start app to create some network traffic for analysis by
+     * TrackerControl
      */
     private void suggestLaunchingApp() {
         Activity activity = getActivity();
