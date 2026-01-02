@@ -82,6 +82,7 @@
     <string name="setting_pcap_record_size">PCAP-recordgrootte: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. bestandsgrootte: %s MB</string>
     <string name="setting_watchdog">Bewaken: elke %s minuten</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
     <string name="setting_backup">Backup</string>
@@ -153,8 +154,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_vpn_cancelled">VPN verbinding geannuleerd. \nIs een andere VPN geconfigureerd om een \"altijd-aan\" VPN te zijn?</string>
     <string name="msg_unavailable">Deze functie is niet beschikbaar op deze Android-versie</string>
     <string name="msg_always_on">Een ander VPN is ingesteld als \"altijd-aan\" VPN</string>
-    <string name="msg_always_on_lockdown">Schakel \"Verbindingen zonder VPN blokkeren\" uitzetten in Android VPN-instellingen om TrackerControl te gebruiken in de filtermodus</string>
-    <string name="msg_private_dns">Schakel \"Privé-DNS\" uit in de Android netwerkinstellingen om TrackerControl te gebruiken in de filtermodus</string>
     <string name="msg_start_forward">Beginnen met doorsturen van %1$s poort %2$d naar %3$s:%4$d van \'%5$s\'?</string>
     <string name="msg_stop_forward">Stoppen met doorsturen van %1$s poort %2$d?</string>
     <string name="msg_log_logcat">Waarschuwing: Blokkeren uitgeschakeld vanwege ADB loggen.</string>
@@ -248,7 +247,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tab_actions">Mijn gegevens</string>
     <string name="tracker_name">Tracker naam</string>
     <string name="internet_access">Internettoegang</string>
-    <string name="internet_access_explanation">Moet aanstaan voor internettoegang.\n\nTip: Of op de miniatuur van de app in het hoofdscherm tikken.</string>
     <string name="app_info">App beheren</string>
     <!-- Actions -->
     <string name="block_tracking">Trackers blokkeren</string>
@@ -326,7 +324,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strikt Blokkeren</string>
     <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps: probeer zoveel als mogelijk het delen van data met bedrijven te blokkeren. Meer apps zullen falen.</string>
     <string name="strict_blocking_explanation">Het is aan te bevelen dat niet-experts deze optie uitschakelen. Apps lopen dan minder vaak vast. Maar dat staat delen van belangrijke informatie met bedrijven wel toe.</string>
-    <string name="exclude_vpn_explanation">Moet ingeschakeld zijn om trackers op te sporen of te blokkeren: \n\nUitschakelen als problemen optreden.</string>
     <string name="uninstall">Deïnstalleren</string>
     <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Zet de schakelaar in het hoofdscherm op aan en start de app om trackers op te sporen</string>
