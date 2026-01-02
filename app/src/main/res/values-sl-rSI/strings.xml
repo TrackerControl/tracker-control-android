@@ -357,6 +357,7 @@ Sincerely,\n\n]]></string>
     <string name="tracking_detection_failed_ram">Zaznavanje sledilnih knjižnic je spodletelo.  Ni dovolj pomnilnika.</string>
     <string name="tracking_detection_failed_report">Zaznavanje sledilnih knjižnic je spodletelo.  Prosimo, sporočite to težavo razvijalcu.</string>
     <string name="detected_trackers">Zaznane sledilne knjižnice: %s</string>
+    <string name="analyzing_classes">Preučevanje razredov …</string>
     <string name="none">Brez</string>
     <string name="trackers_static">Sledilne knjižnice</string>
     <string name="trackers_static_explanation">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.\n\nSledenje, ki je zaznano v omrežnem prometu, lahko TrackerControl blokira.</string>
