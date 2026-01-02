@@ -29,10 +29,10 @@
     <string name="setting_tethering">Permite partajarea conexiunii</string>
     <string name="setting_lan">Permite acces LAN</string>
     <string name="setting_call">Dezactivare în timpul apelului</string>
-    <string name="setting_advanced_options">Opțiuni avansate</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
     <string name="setting_vpn6">VPN IPv6: %s</string>
     <string name="setting_dns">VPN DNS: %s</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_import">Importă setări</string>
     <string name="summary_ip6">Rutează traficul IPv6 în TrackerControl pentru a putea fi permis sau blocat selectiv</string>
     <string name="msg_sure">Ești sigur?</string>

@@ -58,8 +58,6 @@
     <string name="setting_ip6">אפשר תעבורת IPv6</string>
     <string name="setting_call">השבת במהלך שיחה</string>
     <string name="setting_reload_onconnectivity">טען מחדש בכל שינוי קישוריות</string>
-    <string name="setting_advanced_options">אפשרויות מתקדמות</string>
-    <string name="setting_system">נהל אפליקציות מערכת</string>
     <string name="setting_log_app">חפש עוקבים חדשים</string>
     <string name="setting_log_logcat">יומן שידורים ל-ADB</string>
     <string name="setting_filter">חסימת עוקבים</string>
@@ -84,10 +82,10 @@
     <string name="setting_pcap_record_size">גודל רשומת PCAP: %s B</string>
     <string name="setting_pcap_file_size">גודל מקסימלי של קובץ PCAP: %s MB</string>
     <string name="setting_watchdog">כלב שמירה: כל %s דקות</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">מרווח הדגימה: %s מ\"ש</string>
     <string name="setting_stats_samples">מספר דגימות: %s s</string>
     <string name="setting_backup">גיבוי</string>
-    <string name="setting_export">ייצוא הגדרות (לא לאיפוס מכשיר)</string>
     <string name="setting_import">ייבוא הגדרות</string>
     <string name="setting_hosts">ייבוא קובץ מארחים</string>
     <string name="setting_hosts_append">יבא קובץ מארחים (הוספה)</string>
@@ -102,7 +100,6 @@
     <string name="summary_lan">אפשר ליישומים להתחבר לכתובות רשת מקומית, כגון 10.0.0.0/8, 172.16.0.0/12 ו- 192.168.0.0/16</string>
     <string name="summary_ip6">נתב תעבורת IP גרסת 6 אל TrackerControl כך שניתן יהיה לאפשר או לחסום אותה באופן סלקטיבי</string>
     <string name="summary_call">השבת את TrackerControl בשיחת טלפון נכנסת או יוצאת. זה יכול לשמש כדי לעקוף בעיות שיחות IP/Wi-Fi.</string>
-    <string name="summary_system">הגדר כללים עבור אפליקציות מערכת (עבור מומחים)</string>
     <string name="summary_log_app">השבת כדי להפחית את השימוש בסוללה. עוקבים חדשים עדיין ייחסמו, אך לא יוצגו.</string>
     <string name="summary_track_usage">עקוב אחר מספר הבתים שנשלחו והתקבלו עבור כל אפליקציה וכתובת. זה עלול לגרום לשימוש נוסף בסוללה.</string>
     <string name="summary_block_domains">אזהרה: מארחים חסומים אינם מוצגים בממשק המשתמש.</string>
@@ -154,8 +151,6 @@
     <string name="msg_vpn_cancelled">חיבור VPN בוטל\nהאם הגדרת VPN אחר להיות VPN תמידי?</string>
     <string name="msg_unavailable">תכונה זו אינה זמינה בגרסת אנדרואיד זו</string>
     <string name="msg_always_on">VPN אחר מוגדר כ-VPN תמידי</string>
-    <string name="msg_always_on_lockdown">כבה את \"חסום חיבורים ללא VPN\" בהגדרות VPN של אנדרואיד כדי להשתמש ב-TrackerControl במצב סינון</string>
-    <string name="msg_private_dns">כבה את \"DNS פרטי\" בהגדרות רשת אנדרואיד כדי להשתמש ב-TrackerControl במצב סינון</string>
     <string name="msg_start_forward">האם להתחיל להעביר מ-%1$s יציאה %2$d ל-%3$s:%4$d של \'%5$s\'?</string>
     <string name="msg_stop_forward">להפסיק את ההעברה של יציאה %1$s %2$d?</string>
     <string name="msg_log_logcat">אזהרה: החסימה מושבתת בגלל רישום ADB.</string>
@@ -253,7 +248,6 @@
     <string name="tab_actions">הנתונים שלי</string>
     <string name="tracker_name">שם עוקב</string>
     <string name="internet_access">גישה לאינטרנט</string>
-    <string name="internet_access_explanation">חייב להיות פועל עבור גישה לאינטרנט.\n\nטיפ: תוכל גם להקיש על סמל האפליקציה במסך הראשי.</string>
     <string name="app_info">ניהול אפליקציה</string>
     <!-- Actions -->
     <string name="block_tracking">חסימת עוקבים</string>
@@ -309,7 +303,6 @@
     <string name="setting_strict_blocking">חסימה קפדנית</string>
     <string name="summary_strict_blocking">עבור אפליקציות שהותקנו לאחרונה, חסום כמה שיותר שיתוף נתונים עם חברות. אפליקציות נוספות יישברו.</string>
     <string name="strict_blocking_explanation">מומלץ למי שאינם מומחים להשבית אפשרות זו כדי להפחית את שבירת האפליקציה. עם זאת, זה מאפשר שיתוף חיוני עם חברות.</string>
-    <string name="exclude_vpn_explanation">חייב להיות פועל כדי לזהות או לחסום עוקבים.\n\nטיפ: השבת אם נתקלת בבעיות.</string>
     <string name="uninstall">הסר את ההתקנה</string>
     <string name="settings_uninstall">הגדרות אפליקציה &amp; הסר את ההתקנה</string>
     <string name="no_trackers_found_message_disabled">הפעל את המתג במסך הראשי, ולאחר מכן הפעל את האפליקציה כדי למצוא עוקבים</string>

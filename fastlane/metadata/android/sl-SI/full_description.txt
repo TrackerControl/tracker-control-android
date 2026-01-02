@@ -1,6 +1,6 @@
 TrackerControl uporabnikom omogoča nadzirati razširjeno in prikrito zbiranje podatkov v programih o uporabnikovem vedenju ('sledenje').
 
-Za zaznavanje sledenja TrackerControl združuje moč blokirnih seznamov Disconnect, ki jih uporablja Firefox, in našega lastnega blokirnega seznama, ki smo ga ustvarili z preučevanjem okoli <i>2.000.000</i> programov! Poleg tega TrackerControl podpira blokirne sezname po meri.
+Za zaznavanje sledenja TrackerControl združuje moč blokirnih seznamov Disconnect, ki jih uporablja Firefox, in našega lastnega blokirnega seznama, ki smo ga ustvarili s preučevanjem okoli <i>2.000.000</i> programov! Poleg tega TrackerControl podpira blokirne sezname po meri.
 
 Ta pristop
 

@@ -56,8 +56,6 @@
     <string name="setting_ip6">Включить IPv6-трафик</string>
     <string name="setting_call">Отключить при звонке</string>
     <string name="setting_reload_onconnectivity">Перезапуск при каждой смене подключения</string>
-    <string name="setting_advanced_options">Расширенные настройки</string>
-    <string name="setting_system">Управлять системными приложениями</string>
     <string name="setting_log_app">Искать новые трекеры</string>
     <string name="setting_log_logcat">Выводить лог соединений в ADB</string>
     <string name="setting_filter">Блокировать трекеры</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">Размер записи PCAP: %s Б</string>
     <string name="setting_pcap_file_size">Макс. размер PCAP файла: %s МБ</string>
     <string name="setting_watchdog">Сторожевой таймер: каждые %s минут</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Частота замеров: %s мс</string>
     <string name="setting_stats_samples">Число замеров: %s с</string>
     <string name="setting_backup">Резервное копирование</string>
-    <string name="setting_export">Экспорт настроек (не для сброса устройства)</string>
     <string name="setting_import">Импорт настроек</string>
     <string name="setting_hosts">Импорт hosts-файла</string>
     <string name="setting_hosts_append">Импорт hosts-файла (присоединить)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Разрешить приложениям подключаться к локальным сетевым адресам таким, как 10.0.0.0/8, 172.16.0.0/12 и 192.168.0.0/16</string>
     <string name="summary_ip6">Направлять IPv6 трафик в TrackerControl, чтобы его можно было выборочно разрешать или блокировать</string>
     <string name="summary_call">Отключить TrackerControl при входящем или исходящем телефонном звонке. Эту опцию можно использовать для решения проблем с IP/Wi-Fi звонками.</string>
-    <string name="summary_system">Определить правила для системных приложений (для экспертов)</string>
     <string name="summary_log_app">Отключите, чтобы уменьшить расход батареи. Новые трекеры по-прежнему будут блокироваться, но не отображаться.</string>
     <string name="summary_track_usage">Отслеживать количество отправленных и полученных байт для каждого приложения и адресов. Это может привести к большему расходу батареи.</string>
     <string name="summary_block_domains">ВНИМАНИЕ: Заблокированные узлы не отображаются в интерфейсе.</string>
@@ -149,8 +146,6 @@
     <string name="msg_vpn_cancelled">VPN соединение отменено\nВы настроили другой VPN в режиме «Постоянная VPN»?</string>
     <string name="msg_unavailable">Эта функция недоступна в этой версии Android</string>
     <string name="msg_always_on">Другой VPN установлен в режиме «Постоянная VPN»</string>
-    <string name="msg_always_on_lockdown">Отключите «Блокировать подключения без VPN» в настройках Android VPN, чтобы использовать TrackerControl в режиме фильтрации</string>
-    <string name="msg_private_dns">Отключите «Частный DNS» в настройках сети Android, чтобы использовать TrackerControl в режиме фильтрации</string>
     <string name="msg_start_forward">Начать перенаправление с %1$s порта %2$d до %3$s:%4$d из \'%5$s\'?</string>
     <string name="msg_stop_forward">Остановить перенаправление из %1$s порта %2$d?</string>
     <string name="msg_log_logcat">Внимание: Блокировка отключена из-за логирования в ADB.</string>
@@ -248,7 +243,6 @@
     <string name="tab_actions">Мои данные</string>
     <string name="tracker_name">Название трекера</string>
     <string name="internet_access">Интернет-доступ</string>
-    <string name="internet_access_explanation">Должен быть включён для доступа в Интернет.\n\nСовет: Вы также можете нажать значок приложения на главном экране.</string>
     <string name="app_info">Управление приложением</string>
     <!-- Actions -->
     <string name="block_tracking">Блокировать трекеры</string>
@@ -324,7 +318,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Строгая блокировка</string>
     <string name="summary_strict_blocking">Максимально блокировать обмен данными с компаниями для новых приложений. Больше приложений будет ломаться.</string>
     <string name="strict_blocking_explanation">Неспециалистам рекомендуется отключить эту опцию, чтобы приложения работали нормально. Однако, это разрешит слив основной необходимой для работы информации компаниям.</string>
-    <string name="exclude_vpn_explanation">Должно быть включено для обнаружения или блокировки трекеров.\n\nСовет: Отключите, если столкнулись с проблемами.</string>
     <string name="uninstall">Удаление</string>
     <string name="settings_uninstall">Настройки приложения и деинсталляция</string>
     <string name="no_trackers_found_message_disabled">Включите переключатель на главном экране, затем запустите приложение, чтобы найти трекеры</string>

@@ -56,8 +56,6 @@
     <string name="setting_ip6">Gaitu IPv6 trafikoa</string>
     <string name="setting_call">Desgaitu deietan</string>
     <string name="setting_reload_onconnectivity">Birkargatu konektibitate aldaketa bakoitzean</string>
-    <string name="setting_advanced_options">Aukera aurreratuak</string>
-    <string name="setting_system">Kudeatu sistemako aplikazioak</string>
     <string name="setting_log_app">Aztarnari berriak bilatu</string>
     <string name="setting_log_logcat">Erregistratu transmisioak ADBra</string>
     <string name="setting_filter">Aztarnariak blokeatu</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">PCAP grabazioaren tamaina: %s B</string>
     <string name="setting_pcap_file_size">PCAP gehieneko fitxategi-tamaina: %s MB</string>
     <string name="setting_watchdog">Watchdog: %s minutuero</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Laginaren tartea: %s ms</string>
     <string name="setting_stats_samples">Lagin kopurua: %s s</string>
     <string name="setting_backup">Segurtasun kopia</string>
-    <string name="setting_export">Esportatu ezarpenak (ez da gailua berrezartzeko)</string>
     <string name="setting_import">Inportatu ezarpenak</string>
     <string name="setting_hosts">Inportatu ostalarien fitxategia</string>
     <string name="setting_hosts_append">Inportatu ostalarien fitxategia (gehitu)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Baimendu aplikazioei sare lokaleko helbideetara konektatzea, adibidez 10.0.0.0/8, 172.16.0.0/12 eta 192.168.0.0/16</string>
     <string name="summary_ip6">Bideratu IPv6 trafikoa TrackerControlera, selektiboki baimendu edo blokeatzeko</string>
     <string name="summary_call">Desgaitu TrackerControl telefono deiak jaso edo egitean. Hau IP/Wi-Fi deiekin arazoak daudenean erabili daiteke.</string>
-    <string name="summary_system">Zehaztu sistemako aplikazioen arauak (adituentzat)</string>
     <string name="summary_log_app">Desaktibatu bateria gutxiago erabiltzeko. Aztarnari berriak blokeatuta jarraituko dute, baina ez dira erakutsiko.</string>
     <string name="summary_track_usage">Monitorizatu aplikazio eta helbide bakoitzak bidali eta jasotako byte kopurua. Honek bateria kontsumoa areagotzea ekar lezake.</string>
     <string name="summary_block_domains">OHARRA: blokeatutako ostalariak ez dira UIan agertzen.</string>
@@ -152,8 +149,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_vpn_cancelled">VPN konexioa ezeztatuta\nBeste VPN bat ezarri duzu beti gaituta dagoen VPN gisa?</string>
     <string name="msg_unavailable">Ezaugarri hau ez dago eskuragarri Android bertsio honetan</string>
     <string name="msg_always_on">Beste VPN bat ezarri da beti gaituta dagoen VPN gisa</string>
-    <string name="msg_always_on_lockdown">Itzali \'Blokeatu VPN gabeko konexioak\' Android VPN ezarpenetan TrackerControl iragazte moduan erabiltzeko</string>
-    <string name="msg_private_dns">Itzali \'DNS pribatua\' Android sare ezarpenetan TrackerControl iragazte moduan erabiltzeko</string>
     <string name="msg_start_forward">Hasi birbidalketa, hemendik %1$s ataka %2$d hona %3$s:%4$d - \'%5$s\'?</string>
     <string name="msg_stop_forward">Utzi %1$s ataka %2$d birbidaltzeari?</string>
     <string name="msg_log_logcat">Abisua: blokeatzea desgaituta dago ADB erregistroa dela eta.</string>
@@ -247,7 +242,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="tab_actions">Nire datuak</string>
     <string name="tracker_name">Aztarnariaren izena</string>
     <string name="internet_access">Internet sarbidea</string>
-    <string name="internet_access_explanation">Aktibatuta egon behar da Internet sarbidea izateko.\n\nAholkua: pantaila nagusiko aplikazioaren ikonoa ere sakatu dezakezu.</string>
     <string name="app_info">Aplikazioa kudeatu</string>
     <!-- Actions -->
     <string name="block_tracking">Aztarnariak blokeatu</string>
@@ -327,7 +321,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Blokeatze zurruna</string>
     <string name="summary_strict_blocking">Instalatutako aplikazio berrientzat, blokeatu ahalik eta datu partekatze gehien konpainiekin. Aplikazio gehiago hautsiko ditu.</string>
     <string name="strict_blocking_explanation">Erabiltzaile ez adituentzako aukera hau ezgaitzea aholkatzen da, aplikazioen haustura ekiditeko. Hala ere, honek ezinbesteko partekatze batzuk onartzen ditu konpainiekin.</string>
-    <string name="exclude_vpn_explanation">Aktibo egon behar da aztarnariak detektatu edo blokeatzeko.\n\nAholkua: desaktibatu arazoak badituzu.</string>
     <string name="uninstall">Desinstalatu</string>
     <string name="settings_uninstall">Aplikazioaren ezarpenak eta desinstalatzea</string>
     <string name="no_trackers_found_message_disabled">Aktibatu pantaila nagusiko aukera, ondoren abiarazi aplikazioa aztarnariak bilatzeko</string>

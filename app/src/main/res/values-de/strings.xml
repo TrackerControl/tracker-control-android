@@ -56,8 +56,6 @@
     <string name="setting_ip6">IPv6-Datenverkehr aktivieren</string>
     <string name="setting_call">Bei Anruf deaktivieren</string>
     <string name="setting_reload_onconnectivity">Bei jeder Verbindungsänderung neu laden</string>
-    <string name="setting_advanced_options">Erweiterte Einstellungen</string>
-    <string name="setting_system">Systemanwendungen verwalten</string>
     <string name="setting_log_app">Neue Tracker suchen</string>
     <string name="setting_log_logcat">Übertragungen an ADB protokollieren</string>
     <string name="setting_filter">Tracker blockieren</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">PCAP Aufnahmegröße: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. Dateigröße: %s MB</string>
     <string name="setting_watchdog">Watchdog: alle %s Minuten</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Abtastfrequenz: %s ms</string>
     <string name="setting_stats_samples">Anzahl Samples: %s s</string>
     <string name="setting_backup">Sicherung</string>
-    <string name="setting_export">Einstellungen exportieren (nicht für das Zurücksetzen des Geräts)</string>
     <string name="setting_import">Einstellungen importieren</string>
     <string name="setting_hosts">Hosts-Datei importieren</string>
     <string name="setting_hosts_append">Hosts-Datei importieren (anhängen)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Apps den Zugriff auf lokale Netzwerkadressen wie 10.0.0.0/8, 172.16.0.0/12 und 192.168.0.0/16 erlauben</string>
     <string name="summary_ip6">IP6-Datenverkehr an TrackerControl weiterleiten, so dass er selektiv erlaubt oder blockiert werden kann</string>
     <string name="summary_call">TrackerControl bei eingehenden oder ausgehenden Anrufen deaktivieren. Dadurch können Probleme mit IP/WLAN-Telefonie gelöst werden.</string>
-    <string name="summary_system">Regeln für System-Apps festlegen (für Experten)</string>
     <string name="summary_log_app">Deaktivieren, um den Akkuverbrauch zu verringern. Neue Tracker werden weiterhin blockiert, aber nicht angezeigt.</string>
     <string name="summary_track_usage">Die Anzahl der gesendeten und empfangenen Bytes für jede App und Adresse verfolgen. Dies kann zu einem erhöhten Akkuverbrauch führen.</string>
     <string name="summary_block_domains">WARNUNG: Blockierte Hosts werden nicht in der Benutzeroberfläche angezeigt.</string>
@@ -149,8 +146,6 @@
     <string name="msg_vpn_cancelled">VPN-Verbindung abgebrochen\nHaben Sie ein anderes VPN als \'immer eingeschaltet\' konfiguriert?</string>
     <string name="msg_unavailable">Diese Funktion ist in dieser Android-Version nicht verfügbar</string>
     <string name="msg_always_on">Ein anderes VPN ist als \'immer eingeschaltet\' konfiguriert</string>
-    <string name="msg_always_on_lockdown">Um TrackerControl im Filtermodus benutzen zu können, müssen Sie in den Android-VPN-Einstellungen \"Verbindungen ohne VPN blockieren\" deaktivieren</string>
-    <string name="msg_private_dns">\"Privates DNS\" in Android Netzwerkeinstellungen deaktivieren um TrackerControl im Filtermodus zu verwenden</string>
     <string name="msg_start_forward">Weiterleitung von %1$s Port %2$d nach %3$s:%4$d von \'%5$s\' starten?</string>
     <string name="msg_stop_forward">Weiterleitung von %1$s Port %2$d stoppen?</string>
     <string name="msg_log_logcat">Warnung: Blockierung wegen ADB-Protokollierung deaktiviert.</string>
@@ -244,7 +239,6 @@
     <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
     <string name="internet_access">Internetzugang</string>
-    <string name="internet_access_explanation">Muss für den Internetzugang eingeschaltet sein.\n\nTipp: Sie können auch auf das App-Symbol im Hauptbildschirm tippen.</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
@@ -322,7 +316,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strenges Blockieren</string>
     <string name="summary_strict_blocking">Bei neu installierten Apps so viel Datenübermittlung mit Unternehmen wie möglich blockieren. Es werden mehr Apps nicht richtig funktionieren.</string>
     <string name="strict_blocking_explanation">Es wird empfohlen, diese Option für Normalbenutzer zu deaktivieren, um App-Fehler zu vermeiden. Dies ermöglicht jedoch den Austausch einiger wichtiger Daten mit Unternehmen.</string>
-    <string name="exclude_vpn_explanation">Muss eingeschaltet sein, um Tracker aufzuspüren oder zu blockieren.\n\nTipp: Deaktivieren Sie sie, wenn Sie auf Probleme stoßen.</string>
     <string name="uninstall">Deinstallieren</string>
     <string name="settings_uninstall">App-Einstellungen &amp; Deinstallation</string>
     <string name="no_trackers_found_message_disabled">Den Hauptbildschirm aktivieren und die App starten um Tracker zu finden</string>

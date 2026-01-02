@@ -56,8 +56,6 @@
     <string name="setting_ip6">Ενεργοποιήστε κυκλοφορία IPv6</string>
     <string name="setting_call">Απενεργοποίηση κατά τη διάρκεια κλήσης</string>
     <string name="setting_reload_onconnectivity">Φορτώστε ξανά σε κάθε αλλαγή συνδεσιμότητας</string>
-    <string name="setting_advanced_options">Προηγμένες επιλογές</string>
-    <string name="setting_system">Διαχείριση εφαρμογών του συστήματος</string>
     <string name="setting_log_app">Αναζήτηση νέων ιχνηλατών</string>
     <string name="setting_log_logcat">Καταγράψτε τις μεταδόσεις στο ADB</string>
     <string name="setting_filter">Αποκλεισμός Ιχνηλατών</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">PCAP μέγεθος εγγραφής: %s B</string>
     <string name="setting_pcap_file_size">PCAP μέγιστο μέγεθος αρχείου: %s MB</string>
     <string name="setting_watchdog">Παρακολούθηση: κάθε %s λεπτά</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Δείγμα διαστήματος: %s ms</string>
     <string name="setting_stats_samples">Αριθμός δειγμάτων: %s s</string>
     <string name="setting_backup">Αντίγραφο Ασφαλείας</string>
-    <string name="setting_export">Εξαγωγή ρυθμίσεων (όχι για επαναφορά συσκευής)</string>
     <string name="setting_import">Εισαγωγή ρυθμίσεων</string>
     <string name="setting_hosts">Εισαγωγή αρχείου hosts</string>
     <string name="setting_hosts_append">Εισαγωγή αρχείου hosts (προσθήκη)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Επιτρέπει στις εφαρμογές να συνδεθούν σε διευθύνσεις του τοπικό δίκτυο, όπως 10.0.0.0/8, 172.16.0.0/12 και 192.168.0.0/16</string>
     <string name="summary_ip6">Δρομολογήστε την κυκλοφορία IP έκδοσης 6 στο TrackerControl έτσι ώστε να επιτρέπεται ή να αποκλείεται επιλεκτικά</string>
     <string name="summary_call">Απενεργοποιήστε το TrackerControl σε εισερχόμενες ή εξερχόμενες τηλεφωνικές κλήσεις. Αυτό μπορεί να χρησιμοποιηθεί για την αντιμετώπιση προβλημάτων κλήσεων IP / Wi-Fi.</string>
-    <string name="summary_system">Ορίστε κανόνες για εφαρμογές συστήματος (για ειδικούς)</string>
     <string name="summary_log_app">Απενεργοποίηση για μείωση της χρήσης της μπαταρίας. Οι νέοι ιχνηλάτες θα εξακολουθούν να αποκλείονται, αλλά δεν εμφανίζονται.</string>
     <string name="summary_track_usage">Παρακολουθείστε τον αριθμό των bytes που αποστέλλονται και λαμβάνονται για κάθε εφαρμογή και κάθε διεύθυνση. Αυτό μπορεί να οδηγήσει σε περισσότερη κατανάλωση μπαταρίας.</string>
     <string name="summary_block_domains">ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Οι αποκλεισμένοι hosts δεν εμφανίζονται στη διεπαφή χρήστη.</string>
@@ -151,8 +148,6 @@
     <string name="msg_vpn_cancelled">Η VPN σύνδεση ακυρώθηκε\n Έχετε ρυθμίσει μια άλλη VPN σύνδεση να είναι πάντα ενεργή;</string>
     <string name="msg_unavailable">Αυτή η δυνατότητα δεν είναι διαθέσιμη σε αυτήν την έκδοση του Android</string>
     <string name="msg_always_on">Ένα άλλο VPN έχει οριστεί ως μόνιμα ενεργοποιημένο VPN</string>
-    <string name="msg_always_on_lockdown">Απενεργοποιήστε την επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις του VPN Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
-    <string name="msg_private_dns">Απενεργοποιήστε το \"Ιδιωτικό DNS\" στις ρυθμίσεις δικτύου του Android για να χρησιμοποιήσετε το TrackerControl σε λειτουργία φιλτραρίσματος</string>
     <string name="msg_start_forward">Ξεκίνησε προώθηση από %1$s θύρα %2$d εως %3$s:%4$d απο %5$s\';</string>
     <string name="msg_stop_forward">Σταμάτημα προώθησης της %1$s θύρας %2$d;</string>
     <string name="msg_log_logcat">Προειδοποίηση: Το μπλοκάρισμα απενεργοποιήθηκε λόγω καταγραφής ADB.</string>
@@ -246,7 +241,6 @@
     <string name="tab_actions">Τα δεδομένα μου</string>
     <string name="tracker_name">Όνομα ιχνηλάτη</string>
     <string name="internet_access">Πρόσβαση στο διαδίκτυο</string>
-    <string name="internet_access_explanation">Πρέπει να είναι ενεργοποιημένο για να έχετε πρόσβαση στο Διαδίκτυο. \n\nΣυμβουλή: Μπορείτε επίσης να πατήσετε το εικονίδιο της εφαρμογής στην κυρίως οθόνη.</string>
     <string name="app_info">Διαχείριση Εφαρμογής</string>
     <!-- Actions -->
     <string name="block_tracking">Αποκλεισμός Ιχνηλατών</string>
@@ -324,7 +318,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Αυστηρός Αποκλεισμός</string>
     <string name="summary_strict_blocking">Για νέες εφαρμογές, αποκλείστε όσο το δυνατόν περισσότερα δεδομένα μοιράζονται με εταιρείες. Περισσότερες εφαρμογές θα έχουν προβλήματα.</string>
     <string name="strict_blocking_explanation">Συνιστάται για μη ειδικούς η απενεργοποίηση αυτής της επιλογής για τη μείωση προβλημάτων στις εφαρμογές. Ωστόσο, αυτό επιτρέπει ουσιαστική κοινή χρήση δεδομένων με εταιρείες.</string>
-    <string name="exclude_vpn_explanation">Πρέπει να είναι ενεργό για τον εντοπισμό ή τον αποκλεισμό των ιχνηλατών. \n\nΣυμβουλή: Απενεργοποιήστε το εάν αντιμετωπίζετε προβλήματα.</string>
     <string name="uninstall">Απεγκατάσταση</string>
     <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
     <string name="no_trackers_found_message_disabled">Ενεργοποιήστε το διακόπτη στην κύρια οθόνη και στη συνέχεια ανοίξτε την εφαρμογή για να εντοπίστε ιχνηλάτες</string>

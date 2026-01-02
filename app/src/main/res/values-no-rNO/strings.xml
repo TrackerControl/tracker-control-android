@@ -56,8 +56,6 @@
     <string name="setting_ip6">Skru på IPv6-trafikk</string>
     <string name="setting_call">Deaktiver ved anrop</string>
     <string name="setting_reload_onconnectivity">Last inn på nytt ved tilkoblingsendring</string>
-    <string name="setting_advanced_options">Avanserte innstillinger</string>
-    <string name="setting_system">Administrer systemapper</string>
     <string name="setting_log_app">Søk etter nye sporere</string>
     <string name="setting_log_logcat">Logg overføringer til ADB</string>
     <string name="setting_filter">Blokker sporing</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">PCAP-loggstørrelse: %s B</string>
     <string name="setting_pcap_file_size">Maks PCAP-filstørrelse: %s MB</string>
     <string name="setting_watchdog">Watchdog: hvert %s. minutt</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Utdragsintervall: %s ms</string>
     <string name="setting_stats_samples">Antall utdrag: %s s</string>
     <string name="setting_backup">Sikkerhetskopi</string>
-    <string name="setting_export">Eksporter innstillinger (ikke for tilbakestilling av enheten)</string>
     <string name="setting_import">Importer innstillinger</string>
     <string name="setting_hosts">Importer «hosts»-fil</string>
     <string name="setting_hosts_append">Importer «hosts»-fil (legges til)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Tillat apper å koble seg til lokale nettverksadresser, for eksempel 10.0.0.0/8, 172.16.0.0/12 og 192.168.0.0/16</string>
     <string name="summary_ip6">Rute IP versjon 6-trafikk til TrackerControl slik at den selektivt kan tillates eller blokkeres</string>
     <string name="summary_call">Deaktiver TrackerControl for innkommende eller utgående telefonsamtaler. Dette kan brukes til å komme rundt IP/Wi-Fi ringeproblemer.</string>
-    <string name="summary_system">Definer regler for systemapper (for eksperter)</string>
     <string name="summary_log_app">Deaktiver for å redusere batteribruk. Nye sporere vil fremdeles bli blokkert, men ikke vist.</string>
     <string name="summary_track_usage">Registrer antall bytes som er sendt og mottatt for hver app og adresse. Dette kan føre til ekstra batteribruk.</string>
     <string name="summary_block_domains">ADVARSEL: Blokkerte verter er ikke vist i brukergrensesnittet.</string>
@@ -151,8 +148,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="msg_vpn_cancelled">VPN-tilkobling avbrutt\nkonfigurerte du en annen VPN til å være en alltid-på VPN?</string>
     <string name="msg_unavailable">Denne funksjonen er ikke tilgjengelig på denne Android-versjonen</string>
     <string name="msg_always_on">En annen VPN er satt som alltid-på VPN</string>
-    <string name="msg_always_on_lockdown">Slå av \"Blokker forbindelser uten VPN\" i Android VPN-innstillingene for å bruke TrackerControl i filtreringsmodus</string>
-    <string name="msg_private_dns">Slå av \"Privat DNS\" i Android nettverksinnstillinger for å bruke TrackerControl i filtreringsmodus</string>
     <string name="msg_start_forward">Start videresending fra %1$s port %2$d til %3$s:%4$d av \'%5$s\'?</string>
     <string name="msg_stop_forward">Vil du avslutte videresending av %1$s port %2$d?</string>
     <string name="msg_log_logcat">Advarsel: Blokkering deaktivert på grunn av ADB-logging.</string>
@@ -246,7 +241,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="tab_actions">Mine data</string>
     <string name="tracker_name">Sporernavn</string>
     <string name="internet_access">Internett-tilgang</string>
-    <string name="internet_access_explanation">Må være på for internettilgang.\n\nTips: Du kan også trykke på appikonet på hovedskjermen.</string>
     <string name="app_info">Behandle app</string>
     <!-- Actions -->
     <string name="block_tracking">Block sporere</string>
@@ -324,7 +318,6 @@ Vennlig hilsen,\n\n]]></string>
     <string name="setting_strict_blocking">Streng blokkering</string>
     <string name="summary_strict_blocking">For nylig installerte apper kan du blokkere så mye datadeling med bedrifter som mulig. Flere apper vil slutte å fungere.</string>
     <string name="strict_blocking_explanation">Det anbefales at ikke-eksperter deaktiverer denne instillingen for å redusere appfeil. Dette tillater imidlertid noe grunnleggende deling med selskaper.</string>
-    <string name="exclude_vpn_explanation">Må være på for å oppdage eller blokkere sporinger.\n\nTips: Deaktiver hvis du møter på problemer.</string>
     <string name="uninstall">Avinstaller</string>
     <string name="settings_uninstall">Appinnstillinger &amp; Avinstaller</string>
     <string name="no_trackers_found_message_disabled">Aktiver bryter på hovedskjermen, så start appen for å finne sporere</string>

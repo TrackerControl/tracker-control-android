@@ -54,8 +54,6 @@
     <string name="setting_ip6">Ota IPv6-liikenne käyttöön</string>
     <string name="setting_call">Poista käytöstä puhelun aikana</string>
     <string name="setting_reload_onconnectivity">Lataa jokainen yhteysmuutos uudelleen</string>
-    <string name="setting_advanced_options">Edistyneet asetukset</string>
-    <string name="setting_system">Hallitse järjestelmäsovelluksia</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
     <string name="setting_filter">Estä seuraimet</string>
     <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
@@ -79,10 +77,10 @@
     <string name="setting_pcap_record_size">PCAP-tietueen koko: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. tiedostokoko: %s MB</string>
     <string name="setting_watchdog">Watchdog: %s minuutin välein</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Näyteväli: %s ms</string>
     <string name="setting_stats_samples">Näytteiden lukumäärä: %s s</string>
     <string name="setting_backup">Varmuuskopioi</string>
-    <string name="setting_export">Vie asetukset (ei laitteen palauttamista varten)</string>
     <string name="setting_import">Tuo asetukset</string>
     <string name="setting_hosts">Tuo isäntätiedosto</string>
     <string name="setting_hosts_append">Tuo isäntätiedosto (lisäys)</string>
@@ -97,7 +95,6 @@
     <string name="summary_lan">Salli sovellusten muodostaa yhteys lähiverkko-osoitteisiin, kuten 10.0.0.0/8, 172.16.0.0/12 ja 192.168.0.0/16</string>
     <string name="summary_ip6">Reititä IP-version 6 liikenne TrackerControliin, jotta se voidaan valikoivasti sallia tai estää</string>
     <string name="summary_call">Poista TrackerControl käytöstä saapuvassa tai lähtevässä puhelussa. Tätä voidaan käyttää IP / Wi-Fi-puheluiden ongelmien kiertämiseen.</string>
-    <string name="summary_system">Määritä säännöt järjestelmäsovelluksille (asiantuntijoille)</string>
     <string name="summary_log_app">Poista käytöstä vähentääksesi akun käyttöä. Uudet seuraimet estetään edelleen, mutta niitä ei näytetä.</string>
     <string name="summary_track_usage">Mukana lähetettyjen ja vastaanotettujen tavujen asettamiseksi kustakin sovelluksesta ja osoitteesta. Tämä voi johtaa ylimääräiseen akun käyttöön.</string>
     <string name="summary_block_domains">VAROITUS: Estettyjä isäntiä ei näytetä käyttöliittymässä.</string>
@@ -148,8 +145,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_vpn_cancelled">VPN-yhteys peruutettu\nOletko määrittänyt toisen VPN: n aina käytössä olevaksi VPN: ksi?</string>
     <string name="msg_unavailable">Tämä ominaisuus ei ole käytettävissä tässä Android-versiossa</string>
     <string name="msg_always_on">Toinen VPN on asetettu \"Aina käytössä \"-tilaan</string>
-    <string name="msg_always_on_lockdown">Poista Estä yhteydet ilman VPN: ää käytöstä Android VPN -asetuksissa, jotta voit käyttää TrackerControlia suodatustilassa</string>
-    <string name="msg_private_dns">Poista yksityinen DNS käytöstä Android-verkkoasetuksissa, jotta voit käyttää TrackerControlia suodatustilassa</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -238,7 +233,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tab_actions">Omat tiedot</string>
     <string name="tracker_name">Seuraimen nimi</string>
     <string name="internet_access">Internet-yhteys</string>
-    <string name="internet_access_explanation">Internet-yhteyden on oltava päällä.\n\nVinkki: Voit myös napauttaa sovelluskuvaketta päänäytössä.</string>
     <string name="app_info">Hallitse sovellusta</string>
     <!-- Actions -->
     <string name="block_tracking">Estä seuraimet</string>
@@ -279,7 +273,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tracker_email">Sähköposti</string>
     <string name="tracker_uncategorised">Luokittelemattomat</string>
     <string name="setting_strict_blocking">Tiukka Esto</string>
-    <string name="exclude_vpn_explanation">Seurannan on oltava päällä havaikseen tai estääkseen seuraimet.\n\nVinkki: Poista käytöstä, jos kohtaat ongelmia.</string>
     <string name="uninstall">Poista asennus</string>
     <string name="settings_uninstall">Sovelluksen tiedot</string>
     <string name="no_trackers_found_message_disabled">Ota käyttöön päänäytön kytkimestä ja käynnistä sitten sovellus löytääksesi seuraimia</string>

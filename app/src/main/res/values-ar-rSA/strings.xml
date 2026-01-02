@@ -60,8 +60,6 @@
     <string name="setting_ip6">تمكين حركة مرور IPv6</string>
     <string name="setting_call">تعطيل أثناء المكالمة</string>
     <string name="setting_reload_onconnectivity">إعادة التحميل عند كل تغيير في الاتصال</string>
-    <string name="setting_advanced_options">خيارات متقدمة</string>
-    <string name="setting_system">إدارة تطبيقات النظام</string>
     <string name="setting_log_app">البحث عن أدوات التتبع الجديدة</string>
     <string name="setting_log_logcat">تسجيل عمليات النقل إلى ADB</string>
     <string name="setting_filter">حظر أدوات التتبع</string>
@@ -86,10 +84,10 @@
     <string name="setting_pcap_record_size">حجم سجل PCAP: %s بايت</string>
     <string name="setting_pcap_file_size">الحد الأقصى لحجم ملف PCAP: %s ميجابايت</string>
     <string name="setting_watchdog">المراقب: كل %s دقيقة</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">فاصل العينة: %s مللي ثانية</string>
     <string name="setting_stats_samples">عدد العينات: %s ثانية</string>
     <string name="setting_backup">نسخ احتياطي</string>
-    <string name="setting_export">تصدير الإعدادات (ليس لإعادة تعيين الجهاز)</string>
     <string name="setting_import">استيراد الإعدادات</string>
     <string name="setting_hosts">استيراد ملف المضيفين</string>
     <string name="setting_hosts_append">استيراد ملف المضيفين (إلحاق)</string>
@@ -104,7 +102,6 @@
     <string name="summary_lan">السماح للتطبيقات بالاتصال بعناوين الشبكة المحلية، مثل 10.0.0.0/8 و 172.16.0.0/12 و 192.168.0.0/16</string>
     <string name="summary_ip6">توجيه حركة مرور IP الإصدار 6 إلى التحكم في التتبع بحيث يمكن السماح بها أو حظرها بشكل انتقائي</string>
     <string name="summary_call">تعطيل التحكم في التتبع عند المكالمات الهاتفية الواردة أو الصادرة. يمكن استخدام هذا للتحايل على مشاكل مكالمات IP/Wi-Fi.</string>
-    <string name="summary_system">تحديد قواعد لتطبيقات النظام (للخبراء)</string>
     <string name="summary_log_app">تعطيل لتقليل استهلاك البطارية. سيستمر حظر أدوات التتبع الجديدة، ولكن لن يتم عرضها.</string>
     <string name="summary_track_usage">تتبع عدد البايتات المرسلة والمستقبلة لكل تطبيق وعنوان. قد يؤدي هذا إلى زيادة استهلاك البطارية.</string>
     <string name="summary_block_domains">تحذير: المضيفون المحظورون غير معروضين في واجهة المستخدم.</string>
@@ -153,8 +150,6 @@
     <string name="msg_vpn_cancelled">تم إلغاء اتصال VPN\nهل قمت بتكوين VPN آخر ليكون VPN يعمل دائمًا؟</string>
     <string name="msg_unavailable">هذه الميزة غير متاحة في إصدار Android هذا</string>
     <string name="msg_always_on">تم تعيين VPN آخر كـ VPN يعمل دائمًا</string>
-    <string name="msg_always_on_lockdown">أوقف تشغيل \"حظر الاتصالات بدون VPN\" في إعدادات VPN في Android لاستخدام التحكم في التتبع في وضع التصفية</string>
-    <string name="msg_private_dns">أوقف تشغيل \"DNS الخاص\" في إعدادات شبكة Android لاستخدام التحكم في التتبع في وضع التصفية</string>
     <string name="msg_start_forward">بدء إعادة التوجيه من منفذ %2$d الخاص بـ %1$s إلى %4$d:%3$s الخاص بـ \'%5$s\'؟</string>
     <string name="msg_stop_forward">إيقاف إعادة توجيه منفذ %2$d الخاص بـ %1$s؟</string>
     <string name="msg_log_logcat">تحذير: تم تعطيل الحظر بسبب تسجيل ADB.</string>
@@ -256,7 +251,6 @@
     <string name="tab_actions">بياناتي</string>
     <string name="tracker_name">اسم أداة التتبع</string>
     <string name="internet_access">الوصول إلى الإنترنت</string>
-    <string name="internet_access_explanation">يجب أن يكون قيد التشغيل للوصول إلى الإنترنت.\n\nنصيحة: يمكنك أيضًا النقر على أيقونة التطبيق في الشاشة الرئيسية.</string>
     <string name="app_info">إدارة التطبيق</string>
     <!-- Actions -->
     <string name="block_tracking">حظر أدوات التتبع</string>
@@ -334,7 +328,6 @@
     <string name="setting_strict_blocking">حظر صارم</string>
     <string name="summary_strict_blocking">بالنسبة للتطبيقات المثبتة حديثًا، قم بحظر أكبر قدر ممكن من مشاركة البيانات مع الشركات. سيتم كسر المزيد من التطبيقات.</string>
     <string name="strict_blocking_explanation">يوصى بغير الخبراء بتعطيل هذا الخيار لتقليل تعطل التطبيق. ومع ذلك، فإن هذا يسمح ببعض المشاركة الأساسية مع الشركات.</string>
-    <string name="exclude_vpn_explanation">يجب أن يكون قيد التشغيل للكشف عن أدوات التتبع أو حظرها.\n\nنصيحة: قم بالتعطيل إذا واجهت مشاكل.</string>
     <string name="uninstall">إلغاء التثبيت</string>
     <string name="settings_uninstall">إعدادات التطبيق وإلغاء التثبيت</string>
     <string name="no_trackers_found_message_disabled">قم بتمكين المفتاح في الشاشة الرئيسية، ثم قم بتشغيل التطبيق للعثور على أدوات التتبع</string>

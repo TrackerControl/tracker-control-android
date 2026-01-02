@@ -58,8 +58,6 @@
     <string name="setting_ip6">Omogoči promet IPv6</string>
     <string name="setting_call">Onemogoči ob klicu</string>
     <string name="setting_reload_onconnectivity">Ponovno naloži ob vsaki spremembi povezljivosti</string>
-    <string name="setting_advanced_options">Napredne možnosti</string>
-    <string name="setting_system">Upravljaj s sistemskimi programi</string>
     <string name="setting_log_app">Poišči nove sledilce</string>
     <string name="setting_log_logcat">Zabeleži prenose v ADB</string>
     <string name="setting_filter">Blokiraj sledilce</string>
@@ -84,10 +82,10 @@
     <string name="setting_pcap_record_size">Velikost zapisa PCAP: %s B</string>
     <string name="setting_pcap_file_size">Najv. velikost datoteke PCAP: %s MB</string>
     <string name="setting_watchdog">Pes čuvaj: vsakih %s min.</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Vzorčni razmik: %s ms</string>
     <string name="setting_stats_samples">Št. vzorcev: %s s</string>
     <string name="setting_backup">Varnostno kopiranje</string>
-    <string name="setting_export">Izvozi nastavitve (ni za ponastavitev naprave)</string>
     <string name="setting_import">Uvozi nastavitve</string>
     <string name="setting_hosts">Uvozi datoteko gostiteljev</string>
     <string name="setting_hosts_append">Uvozi datoteko gostiteljev (pripni)</string>
@@ -102,7 +100,6 @@
     <string name="summary_lan">Dovoli programom, da se povežejo na krajevne omrežne naslove, kot so 10.0.0.0/8, 172.16.0.0/12 in 192.168.0.0/16.</string>
     <string name="summary_ip6">Preusmeri promet IP različice 6 v TrackerControl, da se ga lahko izbirno dovoli ali blokira.</string>
     <string name="summary_call">Onemogoči TrackerControl ob dohodnih ali odhodnih klicih.  To se lahko uporabi, da se zaobide težave pri klicanju IP/Wi-Fi.</string>
-    <string name="summary_system">Določi pravila za sistemske programe (za napredne uporabnike).</string>
     <string name="summary_log_app">Onemogočite za zmanjšanje porabe energije.  Novi sledilci bodo še vedno blokirani, vendar ne bodo prikazani.</string>
     <string name="summary_track_usage">Sledi številu poslanih in prejetih bajtov za vsak program in naslov.  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_block_domains">OPOZORILO: blokirani gostitelji niso prikazani v up. vmesniku.</string>
@@ -155,8 +152,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
     <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
     <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
-    <string name="msg_always_on_lockdown">Izklopite \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN, da TrackerControl uporabite v filtrirnem načinu.</string>
-    <string name="msg_private_dns">Izklopite \"Zasebni DNS\" v Androidovih omrežnih nastavitvah, da TrackerControl uporabite v filtrirnem načinu.</string>
     <string name="msg_start_forward">Začni posredovati iz %1$s, vrata %2$d v %3$s:%4$d od%5$s?</string>
     <string name="msg_stop_forward">Ustavi posredovati %1$s, vrata %2$d?</string>
     <string name="msg_log_logcat">Opozorilo: blokiranje je onemogočeno zaradi beleženja ADB.</string>
@@ -254,7 +249,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tab_actions">Moji podatki</string>
     <string name="tracker_name">Ime sledilca</string>
     <string name="internet_access">Dostop do interneta</string>
-    <string name="internet_access_explanation">Za dostop do interneta mora biti to vklopljeno.\n\nNasvet: lahko se tudi dotaknete ikone programa na glavnem zaslonu.</string>
     <string name="app_info">Upravljanje programa</string>
     <!-- Actions -->
     <string name="block_tracking">Blokiraj sledilce</string>
@@ -332,7 +326,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strogo blokiranje</string>
     <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
     <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
-    <string name="exclude_vpn_explanation">Mora biti vklopljeno za zaznavanje ali blokiranje sledilcev.\n\nNasvet: onemogočite, če naletite na težave.</string>
     <string name="uninstall">Odstrani</string>
     <string name="settings_uninstall">Nastavitve programa in odstranitev</string>
     <string name="no_trackers_found_message_disabled">Omogočite stikalo na glavnem zaslonu, nato zaženite program, da poiščete sledilce.</string>
@@ -357,10 +350,17 @@ Sincerely,\n\n]]></string>
     <string name="tracking_detection_failed_ram">Zaznavanje sledilnih knjižnic je spodletelo.  Ni dovolj pomnilnika.</string>
     <string name="tracking_detection_failed_report">Zaznavanje sledilnih knjižnic je spodletelo.  Prosimo, sporočite to težavo razvijalcu.</string>
     <string name="detected_trackers">Zaznane sledilne knjižnice: %s</string>
+    <string name="analyzing_classes">Preučevanje razredov …</string>
+    <string name="analyzing_classes_progress">Preučevanje razredov … %d%%</string>
+    <string name="analysis_already_running">Preučevanje se že izvaja.</string>
     <string name="none">Brez</string>
     <string name="trackers_static">Sledilne knjižnice</string>
     <string name="trackers_static_explanation">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.\n\nSledenje, ki je zaznano v omrežnem prometu, lahko TrackerControl blokira.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.</string>
+    <string name="analyze_tracker_libraries">Preuči knjižnice sledilcev</string>
+    <string name="update_analysis">Posodobi preučitev</string>
+    <string name="analysis_outdated_version">\n\nOpomba: preučevanje je od prejšnje različice programa.  To je lahko spremenilo vgrajene knjižnice sledilcev.</string>
+    <string name="analysis_queued">Preučitev je bila dodana v čakalno vrsto …</string>
     <string name="blocked">BLOKIRANO</string>
     <string name="allowed">DOVOLJENO</string>
     <string name="setting_domain_based_blocked">Blokiranje glede na domeno</string>

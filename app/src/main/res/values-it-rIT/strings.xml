@@ -56,8 +56,6 @@
     <string name="setting_ip6">Abilita il traffico IPv6</string>
     <string name="setting_call">Disabilita durante le chiamate</string>
     <string name="setting_reload_onconnectivity">Ricarica ad ogni cambio di connessione</string>
-    <string name="setting_advanced_options">Opzioni avanzate</string>
-    <string name="setting_system">Gestisci applicazioni di sistema</string>
     <string name="setting_log_app">Ricerca nuovi tracker</string>
     <string name="setting_log_logcat">Log trasmissioni ad ADB</string>
     <string name="setting_filter">Blocca tracker</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">Dimensioni record PCAP: %s B</string>
     <string name="setting_pcap_file_size">Dimensione max. file PCAP: %s MB</string>
     <string name="setting_watchdog">Watchdog: ogni %s minuti</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Intervallo di campionamento: %s ms</string>
     <string name="setting_stats_samples">Numero di campioni: %s s</string>
     <string name="setting_backup">Backup</string>
-    <string name="setting_export">Esporta impostazioni (non utilizzabile in caso di ripristino del dispositivo)</string>
     <string name="setting_import">Importa impostazioni</string>
     <string name="setting_hosts">Importa file hosts</string>
     <string name="setting_hosts_append">Importa file hosts (aggiungi)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Consenti alle applicazioni di connettersi ad indirizzi della rete locale, come, ad esempio, 10.0.0.0/8, 172.16.0.0/12 e 192.168.0.0/16</string>
     <string name="summary_ip6">Indirizza il traffico IP versione 6 verso TrackerControl così da consentirlo o bloccarlo selettivamente</string>
     <string name="summary_call">Disattiva TrackerControl durante le chiamate telefoniche. Può essere utile per risolvere problemi legati alle chiamate IP/Wi-Fi.</string>
-    <string name="summary_system">Definisci regole per le applicazioni di sistema (per esperti)</string>
     <string name="summary_log_app">Disabilita per diminuire il consumo della batteria. I nuovi tracker verranno comunque bloccati, ma non saranno mostrati.</string>
     <string name="summary_track_usage">Tieni traccia del numero di byte inviati e ricevuti per ogni applicazione e indirizzo. Questo potrebbe aumentare il consumo della batteria.</string>
     <string name="summary_block_domains">ATTENZIONE: Gli hosts bloccati non sono mostrati nell\'interfaccia utente.</string>
@@ -152,8 +149,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_vpn_cancelled">Connessione VPN annullata\nHai configurato un\'altra VPN in modalità sempre attiva?</string>
     <string name="msg_unavailable">Questa funzione non è disponibile in questa versione di Android</string>
     <string name="msg_always_on">Un\'altra VPN è impostata come sempre attiva</string>
-    <string name="msg_always_on_lockdown">Disattiva \"Blocca connessioni senza VPN\" nelle impostazioni VPN di Android per utilizzare TrackerControl in modalità filtro</string>
-    <string name="msg_private_dns">Disattiva \"DNS privato\" nelle impostazioni di rete di Android per utilizzare TrackerControl in modalità filtro</string>
     <string name="msg_start_forward">Inizia l\'inoltro da %1$s porta %2$d a %3$s:%4$d di \'%5$s\'?</string>
     <string name="msg_stop_forward">Interrompere l\'inoltro di %1$s porta %2$d?</string>
     <string name="msg_log_logcat">Attenzione: Blocco disabilitato a causa del logging ADB.</string>
@@ -247,7 +242,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="tab_actions">I miei dati</string>
     <string name="tracker_name">Nome del tracker</string>
     <string name="internet_access">Accesso ad internet</string>
-    <string name="internet_access_explanation">Deve essere attiva per avere accesso ad Internet.\n\nSuggerimento: Puoi anche toccare l\'icona dell\'applicazione nella schermata principale.</string>
     <string name="app_info">Gestisci l\'applicazione</string>
     <!-- Actions -->
     <string name="block_tracking">Blocca i tracker</string>
@@ -325,7 +319,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="setting_strict_blocking">Blocco rigoroso</string>
     <string name="summary_strict_blocking">Per le applicazioni appena installate, blocca quante più comunicazioni con aziende possibile. Un maggior numero di applicazioni non funzioneranno.</string>
     <string name="strict_blocking_explanation">Si consiglia agli utenti non esperti di disabilitare questa opzione per ridurre i malfunzionamenti nelle app. Tuttavia, questo permetterà alcune comunicazione essenziali con le aziende.</string>
-    <string name="exclude_vpn_explanation">Deve essere attivo per rilevare o bloccare i tracker.\n\nSuggerimento: disabilita se si verificano problemi.</string>
     <string name="uninstall">Disinstalla</string>
     <string name="settings_uninstall">Impostazioni dell\'applicazione &amp; Disinstalla</string>
     <string name="no_trackers_found_message_disabled">Attiva l\'interruttore nella schermata principale, poi avvia l\'applicazione per trovare i tracker</string>

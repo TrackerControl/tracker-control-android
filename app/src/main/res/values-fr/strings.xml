@@ -56,8 +56,6 @@
     <string name="setting_ip6">Activer le trafic IPv6</string>
     <string name="setting_call">Désactiver lors des appels</string>
     <string name="setting_reload_onconnectivity">Recharger à chaque changement de type de connexion</string>
-    <string name="setting_advanced_options">Paramètres avancés</string>
-    <string name="setting_system">Gérer les applications système</string>
     <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
     <string name="setting_log_logcat">Journaliser les transmissions via ADB</string>
     <string name="setting_filter">Bloquer les traqueurs</string>
@@ -82,10 +80,10 @@
     <string name="setting_pcap_record_size">Taille d’enregistrement PCAP : %s B</string>
     <string name="setting_pcap_file_size">Taille max. du fichier PCAP: %s MB</string>
     <string name="setting_watchdog">Chien de garde : toutes les %s minutes</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">Intervalle d\'échantillonnage : %s ms</string>
     <string name="setting_stats_samples">Nombre d\'échantillons: %s s</string>
     <string name="setting_backup">Sauvegarde</string>
-    <string name="setting_export">Exporter les paramètres (pas pour la réinitialisation de l\'appareil)</string>
     <string name="setting_import">Importer les paramètres</string>
     <string name="setting_hosts">Importer un fichier hosts</string>
     <string name="setting_hosts_append">Importer un fichier hosts (ajouter)</string>
@@ -100,7 +98,6 @@
     <string name="summary_lan">Autoriser les applications à se connecter à des adresses de réseau local, comme 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16</string>
     <string name="summary_ip6">Diriger le trafic IP version 6 vers TrackerControl pour qu\'il puisse être autorisé ou bloqué sélectivement</string>
     <string name="summary_call">Désactivez TrackerControl sur les appels téléphoniques entrants ou sortants. Cela peut être utilisé pour contourner les problèmes d\'appel IP/Wi-Fi.</string>
-    <string name="summary_system">Définir des règles pour les applications système (pour experts)</string>
     <string name="summary_log_app">Désactiver pour diminuer la consommation de la batterie. Les nouveaux traqueurs seront toujours bloqués, mais ne seront pas affichés.</string>
     <string name="summary_track_usage">Surveiller le nombre d\'octets envoyés et reçus pour chaque application et adresse. Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="summary_block_domains">AVERTISSEMENT : Les hôtes bloqués ne sont pas affichés dans l\'interface utilisateur.</string>
@@ -150,8 +147,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_vpn_cancelled">Connexion VPN a été arrêtée\nAvez-vous configuré un autre VPN en mode permanent ?</string>
     <string name="msg_unavailable">Cette fonctionnalité n’est pas disponible sur cette version d’Android</string>
     <string name="msg_always_on">Un autre VPN est défini comme toujours actif</string>
-    <string name="msg_always_on_lockdown">Désactiver \"Bloquer les connexions sans VPN\" dans les paramètres VPN d\'Android pour utiliser TrackerControl en mode filtrage</string>
-    <string name="msg_private_dns">Désactivez l’option « DNS privé » dans les paramètres réseau Android pour utiliser TrackerControl en mode filtrage</string>
     <string name="msg_start_forward">Lancer la redirection du %1$s port %2$d au %3$s:%4$d de \'%5$s\' ?</string>
     <string name="msg_stop_forward">Arrêter la redirection du %1$s port %2$d ?</string>
     <string name="msg_log_logcat">Attention, le blocage est désactivé car la journalisation ADB est activée.</string>
@@ -245,7 +240,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="tab_actions">Mes données</string>
     <string name="tracker_name">Nom du traqueur</string>
     <string name="internet_access">Accès à internet</string>
-    <string name="internet_access_explanation">Doit être activé pour accéder à Internet.\n\nAstuce : vous pouvez également appuyer sur l\'icône de l\'application sur l\'écran principal.</string>
     <string name="app_info">Gérer l\'application</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquer les traqueurs</string>
@@ -323,7 +317,6 @@ Cordialement,\n\n]]></string>
     <string name="setting_strict_blocking">Blocage strict</string>
     <string name="summary_strict_blocking">Pour les nouvelles applications installées, bloque le partage des données avec autant d\'entreprise que possible. Plus d\'applications dysfonctionneront.</string>
     <string name="strict_blocking_explanation">Pour les non experts, il est recommandé de désactiver cette fonction pour réduire les dysfonctionnements. Même si cela autorise le partage de données essentielles avec des entreprises.</string>
-    <string name="exclude_vpn_explanation">Doit être activé pour détecter ou bloquer les traqueurs.\n\nAstuce: Désactiver si vous rencontrez des problèmes.</string>
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>

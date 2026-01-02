@@ -50,8 +50,6 @@
     <string name="setting_ip6">啟用 IPv6 流量</string>
     <string name="setting_call">在通話期間停用</string>
     <string name="setting_reload_onconnectivity">每當連線改變時均重新載入</string>
-    <string name="setting_advanced_options">進階選項</string>
-    <string name="setting_system">管理系統應用程式</string>
     <string name="setting_log_app">搜尋新的追蹤器</string>
     <string name="setting_log_logcat">將日誌記錄傳輸至 ADB</string>
     <string name="setting_filter">阻擋追蹤器</string>
@@ -76,10 +74,10 @@
     <string name="setting_pcap_record_size">PCAP 記錄大小：%s B</string>
     <string name="setting_pcap_file_size">PCAP 最大檔案大小：%s MB</string>
     <string name="setting_watchdog">監控：每 %s 分鐘</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">取樣間隔：%s ms</string>
     <string name="setting_stats_samples">取樣數：%s s</string>
     <string name="setting_backup">備份</string>
-    <string name="setting_export">匯出設定（不適用裝置重置）</string>
     <string name="setting_import">匯入設定</string>
     <string name="setting_hosts">匯入 hosts 檔案</string>
     <string name="setting_hosts_append">匯入 hosts 檔案（附加）</string>
@@ -108,7 +106,6 @@
     <string name="msg_vpn_cancelled">VPN 連線已取消\n您是否把另一個 VPN 配置為「永遠連線的 VPN」？</string>
     <string name="msg_unavailable">此功能無法在這個版本的 Android 上執行</string>
     <string name="msg_always_on">另一個 VPN 連線被設定成 「永遠連線的 VPN」</string>
-    <string name="msg_private_dns">在 Android 網路設定中關閉「私人 DNS」功能，即可啟用 TrackerControl 的過濾模式</string>
     <string name="msg_log_logcat">警告：因 ADB 日誌記錄功能，阻擋機制已停用。</string>
     <string-array name="protocolNames">
         <item>UDP</item>
@@ -130,7 +127,6 @@
     <string name="tab_actions">我的資料</string>
     <string name="tracker_name">追蹤器名稱</string>
     <string name="internet_access">網際網路連線</string>
-    <string name="internet_access_explanation">必須打開才能連線網路\n\n提示：您也可以在主畫面輕按一下 app 圖案。</string>
     <string name="app_info">管理應用程式</string>
     <!-- Actions -->
     <string name="block_tracking">阻擋追蹤器</string>
@@ -194,7 +190,6 @@ Sincerely,\n\n]]></string>
     <string name="countries_explanation">查看您的手機資料會被傳送到哪裡。\n\n地理資訊基於 DNS lookups 和 IP 資料，有可能不準確。</string>
     <string name="countries_loading_failed">糟糕.. 國家地圖載入失敗。請告訴 tc@kollnig.net 怎麼會這樣。</string>
     <string name="tracker_content">基本</string>
-    <string name="exclude_vpn_explanation">必須打開才能偵測或阻擋追蹤器\n\n提示：如果遇到問題時可以試著關閉。</string>
     <string name="uninstall">解除安裝</string>
     <string name="no_internet">沒有網際網路連線</string>
     <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>

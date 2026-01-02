@@ -55,8 +55,6 @@
     <string name="setting_ip6">IPv6 トラフィックを有効にする</string>
     <string name="setting_call">着信時は無効にする</string>
     <string name="setting_reload_onconnectivity">接続の変更時に再読み込み</string>
-    <string name="setting_advanced_options">高度な設定</string>
-    <string name="setting_system">システムアプリを対象にする</string>
     <string name="setting_log_app">新しいトラッカーを検出する</string>
     <string name="setting_log_logcat">ADB にログを送信</string>
     <string name="setting_filter">トラッカーをブロック</string>
@@ -81,10 +79,10 @@
     <string name="setting_pcap_record_size">PCAP レコードサイズ: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大ファイルサイズ: %s MB</string>
     <string name="setting_watchdog">監視タイマー: %s分毎</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_stats_frequency">サンプリング間隔: %s ミリ秒</string>
     <string name="setting_stats_samples">サンプル数: %s 秒</string>
     <string name="setting_backup">バックアップ</string>
-    <string name="setting_export">設定をエクスポート (デバイスのリセットは不可)</string>
     <string name="setting_import">設定をインポート</string>
     <string name="setting_hosts">ホストファイルをインポート</string>
     <string name="setting_hosts_append">ホストファイルをインポート (追加)</string>
@@ -99,7 +97,6 @@
     <string name="summary_lan">10.0.0.0/8、172.16.0.0/12、192.168.0.0/16 のような、ローカル エリア ネットワークのアドレスに接続するアプリケーションを許可します</string>
     <string name="summary_ip6">TrackerControl に IP バージョン 6 トラフィックをルーティングして、許可かブロックを選択することができます</string>
     <string name="summary_call">電話の着信または発信時に TrackerControl を無効にします。これは、IP/Wi-Fi 電話の問題を回避するために使用できます。</string>
-    <string name="summary_system">システムアプリケーションのルールを定義します (エキスパート向け)</string>
     <string name="summary_log_app">バッテリー使用量を減らしたい場合に無効にします。新しいトラッカーはブロックされますが、表示されません。</string>
     <string name="summary_track_usage">各アプリとアドレスごとの送受信バイト数を追跡します。バッテリー使用量が増えることがあります。</string>
     <string name="summary_block_domains">警告: ブロックされたホストはUIに表示されません。</string>
@@ -148,8 +145,6 @@
     <string name="msg_vpn_cancelled">VPN接続 がキャンセルされました\n別の VPN を 常時接続VPN に設定していませんか？</string>
     <string name="msg_unavailable">この機能はこのAndroidのバージョンでは利用できません。</string>
     <string name="msg_always_on">別のVPN が 常時接続VPN に設定されています</string>
-    <string name="msg_always_on_lockdown">フィルタリングモードで TrackerControl を使用するには、Android のVPN設定で「 VPN 以外の接続のブロック」をオフにします</string>
-    <string name="msg_private_dns">フィルタ リングモードで TrackerControl を使用するには Android のネットワーク設定で「プライベート DNS」をオフにしてください</string>
     <string name="msg_start_forward">%1$s のポート %2$d からの \'%5$s\' の %3$s:%4$d への転送を開始しますか？</string>
     <string name="msg_stop_forward">%1$s のポート %2$d への転送を停止しますか？</string>
     <string name="msg_log_logcat">警告:  ADB ログ記録のためブロックは無効になっています。</string>
@@ -241,7 +236,6 @@
     <string name="tab_actions">自分のデータ</string>
     <string name="tracker_name">トラッカー名</string>
     <string name="internet_access">インターネットアクセス</string>
-    <string name="internet_access_explanation">インターネットにアクセスするにはオンである必要があります。\n\nヒント: メイン画面でアプリのアイコンをタップしてもオンにできます。</string>
     <string name="app_info">アプリの管理</string>
     <!-- Actions -->
     <string name="block_tracking">トラッカーをブロック</string>
@@ -285,7 +279,6 @@
     <string name="setting_strict_blocking">厳格なブロッキング</string>
     <string name="summary_strict_blocking">新しくインストールされたアプリの場合、できるかぎり多くのデータシェアリングをブロックます。アプリが動かなくなる可能性が高くなります。</string>
     <string name="strict_blocking_explanation">十分な知識がある方以外は、アプリの破損を減らすためにこのオプションを無効にすることをお勧めします。ただし、これにより、企業へのいくつかのデータが送信可能になります。</string>
-    <string name="exclude_vpn_explanation">トラッカーを検出またはブロックするにはオンである必要があります。\n\nヒント: 問題が発生した場合は無効にします。</string>
     <string name="uninstall">アンインストール</string>
     <string name="settings_uninstall">アプリの設定やアンインストール</string>
     <string name="no_trackers_found_message_disabled">メイン画面でスイッチを有効にしてから、アプリを起動してトラッカーを検出します</string>

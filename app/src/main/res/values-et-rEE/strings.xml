@@ -36,8 +36,6 @@
     <string name="setting_network_options">Võrgueelistused</string>
     <string name="setting_lan">Luba ligipääs kohtvõrku</string>
     <string name="setting_reload_onconnectivity">Laadi uuesti igal välisühenduse muutumisel</string>
-    <string name="setting_advanced_options">Täiendavad eelistused</string>
-    <string name="setting_system">Halda süsteemi rakendusi</string>
     <string name="setting_log_app">Otsi uusi jälitajaid</string>
     <string name="setting_filter">Blokeeri jälitajaid</string>
     <string name="setting_filter_udp">Blokeeri jälitajaid UDP-protokolli alusel</string>
@@ -51,8 +49,8 @@
     <string name="setting_socks5_port">SOCKS5 serveri port: %s</string>
     <string name="setting_socks5_username">SOCKS5 kasutajanimi: %s</string>
     <string name="setting_socks5_password">SOCKS5 salasõna: %s</string>
+    <!-- Secure DNS (DoH) -->
     <string name="setting_backup">Varundus</string>
-    <string name="setting_export">Ekspordi seadistused (mitte seadme lähtestamiseks)</string>
     <string name="setting_import">Impordi seadistused</string>
     <string name="setting_hosts">Impordi hosts fail</string>
     <string name="setting_hosts_append">Impordi hosts fail (lisades olemasolevale)</string>

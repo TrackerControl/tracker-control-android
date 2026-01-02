@@ -58,8 +58,6 @@
     <string name="setting_ip6">Povolit IPv6 přenosy</string>
     <string name="setting_call">Vypnout během hovoru</string>
     <string name="setting_reload_onconnectivity">Načíst znovu při každé změně připojení</string>
-    <string name="setting_advanced_options">Pokročilé nastavení</string>
-    <string name="setting_system">Spravovat systémové aplikace</string>
     <string name="setting_log_app">Hledat nové trackery</string>
     <string name="setting_log_logcat">Záznamy přenosů do ADB</string>
     <string name="setting_filter">Blokovat trackery</string>
@@ -84,16 +82,23 @@
     <string name="setting_pcap_record_size">Velikost záznamu PCAP: %s B</string>
     <string name="setting_pcap_file_size">Max. velikost souboru PCAP: %s MB</string>
     <string name="setting_watchdog">Hlídač: každých %s minut</string>
+    <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Zabezpečený DNS (DoH)</string>
+    <string name="summary_doh_enabled">Šifrujte dotazy DNS pomocí protokolu DNS-over-HTTPS. Platí pro všechny aplikace.</string>
+    <string name="warning_beta">Beta funkce. Nemusí fungovat podle očekávání.</string>
+    <string name="setting_doh_endpoint">Koncový bod DoH URL</string>
+    <string name="summary_doh_endpoint">HTTPS URL pro dotazy DNS-overHTTPS</string>
     <string name="setting_stats_frequency">Interval vzorkování: %s ms</string>
     <string name="setting_stats_samples">Počet vzorků: %s</string>
     <string name="setting_backup">Záloha</string>
-    <string name="setting_export">Export nastavení (ne pro reset zařízení)</string>
     <string name="setting_import">Import nastavení</string>
     <string name="setting_hosts">Importovat soubor hosts</string>
     <string name="setting_hosts_append">Importovat soubor hosts (připojit)</string>
     <string name="setting_hosts_url">URL souborů hosts</string>
     <string name="setting_hosts_download">Stáhnout soubor hosts</string>
     <string name="setting_hosts_update">Aktualizovat soubor hosts</string>
+    <string name="setting_hosts_auto_update">Automatická aktualizace hostitelů</string>
+    <string name="summary_hosts_auto_update">Automaticky aktualizovat soubor hosts na pozadí</string>
     <string name="summary_install">Zobrazit oznámení ve stavovém řádku pro nově nainstalované aplikace</string>
     <string name="summary_pause">Po pozastavení z oznámení znovu automaticky povolí TrackerControl po zvoleném počtu minut. (zadáním 0 tuto možnost zakážete).</string>
     <string name="summary_update">Kontrolovat nové verze v GitHub dvakrát denně</string>
@@ -102,7 +107,6 @@
     <string name="summary_lan">Povolit aplikacím připojení k adresám místní sítě, např. 10.0.0.0/8, 172.16.0.0/12 a 192.168.0.0/16</string>
     <string name="summary_ip6">Přesměrovat IPv6 přenosy do TrackerControl, aby je bylo možné selektivně zakázat nebo povolit</string>
     <string name="summary_call">Zakázat TrackerControl při příchozím nebo odchozím telefonním hovoru. Může vyřešit problémy s IP/Wi-Fi voláním.</string>
-    <string name="summary_system">Definovat pravidla pro systémové aplikace (pro odborníky)</string>
     <string name="summary_log_app">Zakázáním snížíte spotřebu baterie. Nové trackery budou stále blokovány, nebudou se zobrazovat.</string>
     <string name="summary_track_usage">Sledovat počet odeslaných a přijatých bytů pro každou aplikaci a adresu. Může mít vliv na spotřebu baterie.</string>
     <string name="summary_block_domains">VAROVÁNÍ: Blokovaní hostitelé nejsou zobrazeni v UI.</string>
@@ -112,19 +116,19 @@
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
     <string name="summary_log_logcat">Zakáže blokování. Komunikace (a rozpoznané trackery) jsou zaznamenány do logu zařízení. Získej záznam přes adb logcat s tagem \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
-    <string name="msg_started">Vyhledávání slídičů...</string>
+    <string name="msg_started">Vyhledávání trackerů...</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
     <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
     <string name="msg_installed">Problémy s %1$s?</string>
     <string name="msg_installed_description">Umožnit aplikaci kontaktovat společnosti</string>
-    <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven sledování: %d</string>
+    <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven trackerů: %d</string>
     <string name="msg_installed_n">Instalace dokončena</string>
     <string name="msg_completed">Akce dokončena</string>
     <string name="msg_vpn">TrackerControl používá lokální VPN pro filtrování internetového provozu.
 Z tohoto důvodu prosím povolte VPN připojení v následujícím dialogu.
 Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.</string>
-    <string name="msg_autostart">TrackerControl nemůže být spuštěn automaticky při startu zařízení kvůli chybě ve Vaší verzi Androidu.</string>
+    <string name="msg_autostart">TrackerControl nemůže být spuštěn automaticky při startu zařízení kvůli chybě ve vaší verzi Androidu.</string>
     <string name="msg_error">Došlo k neočekávané chybě: \'%s\'</string>
     <string name="msg_start_failed">Android odmítl spustit službu VPN. Může to být způsobeno chybou ve vaší verzi Androidu.</string>
     <string name="msg_try">Vyzkoušejte TrackerControl</string>
@@ -155,8 +159,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_vpn_cancelled">VPN spojení ukončeno\nNenastavili jste jinou VPN jako trvalou síť VPN?</string>
     <string name="msg_unavailable">Tato funkce není na této verzi Androidu k dispozici</string>
     <string name="msg_always_on">Jiná VPN je nastavena jako Trvalá síť VPN</string>
-    <string name="msg_always_on_lockdown">Vypněte \"Blokovat připojení bez VPN\" v Android VPN nastavení pro použití TrackerControl filtrovacího režimu</string>
-    <string name="msg_private_dns">Vypněte \"Soukromé DNS\" v nastavení sítě androidu pro použití TrackerControl v režimu filtrování</string>
+    <string name="msg_private_dns">V nastavení sítě Android vypněte \"Private DNS\". TrackerControl nabízí vlastní funkci Secure DNS v nastavení.</string>
     <string name="msg_start_forward">Začít přesměrovávat z %1$s port %2$d na %3$s:%4$d z \'%5$s\'?</string>
     <string name="msg_stop_forward">Přestat přesměrovávat %1$s port %2$d?</string>
     <string name="msg_log_logcat">Varování: Blokování zakázáno z důvodu ADB záznamů.</string>
@@ -254,7 +257,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="tab_actions">Moje data</string>
     <string name="tracker_name">Název trackeru</string>
     <string name="internet_access">Přístup k internetu</string>
-    <string name="internet_access_explanation">Musí být zapnutý přístup k internetu.\n\nTip: Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
+    <string name="internet_access_explanation">Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
     <string name="app_info">Spravovat aplikace</string>
     <!-- Actions -->
     <string name="block_tracking">Blokovat trackery</string>
@@ -267,7 +270,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="contacts_description">Pokud se domníváte, že aplikace porušuje zásady ochrany osobních údajů, můžete se obrátit přímo na odpovědné subjekty.</string>
     <string name="play_services_required">Toto je nastavení služeb Google Play, které nebyly ve vašem zařízení nalezeny.</string>
     <string name="no_mail_service">Nainstalujte si e-mailového klienta.</string>
-    <string name="blocking_settings">Označ trackery</string>
+    <string name="blocking_settings">Označit trackery</string>
     <string name="ad_settings">Změnit</string>
     <string name="request_data">Vyžádat data</string>
     <string name="request_deletion">Žádost o odstranění</string>
@@ -318,7 +321,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="instructions_monitoring">Přepni switch a interaguj s aplikacemi.</string>
     <string name="device_not_supported_title">Toto zařízení není podporováno</string>
     <string name="device_not_supported_msg">Operační systém Vašeho zařízení neumožňuje monitorování a filtrování síťových komunikací. To je vyžadováno pro TrackerControl.</string>
-    <string name="launch_app">Spustit &amp; Najít trackery</string>
+    <string name="launch_app">Spustit a najít trackery</string>
     <string name="countries">Cílové země</string>
     <string name="countries_explanation">Zjisti kam jsou tracking data posílána. \n\nInformace jsou založeny na DNS vyhledáváních a IP informacích a můžou být nepřesné.</string>
     <string name="countries_loading_failed">Mapu se nepodařilo načíst. Prosím napište tc@kollnig.net jak se to stalo.</string>
@@ -333,7 +336,8 @@ Privátní DNS musí být vypnutá.</string>
     <string name="setting_strict_blocking">Přísné blokování</string>
     <string name="summary_strict_blocking">Blokovat skoro všechno sdílení dat nově nainstalovaných aplikací. Aplikace nemusí fungovat.</string>
     <string name="strict_blocking_explanation">Je doporučeno vypnout tuto možnost pro snížení počtu nefungujících aplikací. Je ale třeba k zakázání veškerého sdílení.</string>
-    <string name="exclude_vpn_explanation">Musí být zapnuté pro detekci a blokování trackerů. \n\nTip: Vypni, pokud narazíš na chyby.</string>
+    <string name="exclude_vpn_explanation">Detekuje a blokuje trackery pro tuto aplikaci.</string>
+    <string name="vpn_exclude">Vyloučit z VPN</string>
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
@@ -358,10 +362,17 @@ Privátní DNS musí být vypnutá.</string>
     <string name="tracking_detection_failed_ram">Detekce tracker library se nepovedla. Nedostatek RAM.</string>
     <string name="tracking_detection_failed_report">Detekce tracker library se nepovedla. Nahlaš chybu vývojáři.</string>
     <string name="detected_trackers">Detekovány knihovny trackerů: %s</string>
+    <string name="analyzing_classes">Analyzuji třídy…</string>
+    <string name="analyzing_classes_progress">Analyzuji třídy… %d%%</string>
+    <string name="analysis_already_running">Analýza již probíhá</string>
     <string name="none">Nic</string>
     <string name="trackers_static">Knihovny trackerů</string>
     <string name="trackers_static_explanation">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.\n\nTracking, které je detekováno v síti může být zablokováno s TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detekuje tracking v kódu (\'libraries\') a síťovém provozu aplikací.</string>
+    <string name="analyze_tracker_libraries">Analýza knihoven trackerů</string>
+    <string name="update_analysis">Aktualizovat analýzu</string>
+    <string name="analysis_outdated_version">\n\nNote: Analýza se týká předchozí verze aplikace. Mohlo dojít ke změně integrovaných knihoven pro sledování.</string>
+    <string name="analysis_queued">Analýza ve frontě…</string>
     <string name="blocked">BLOKOVÁNO</string>
     <string name="allowed">POVOLENO</string>
     <string name="setting_domain_based_blocked">Blokování na základě domény</string>
