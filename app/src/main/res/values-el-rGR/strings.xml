@@ -56,8 +56,6 @@
     <string name="setting_ip6">Ενεργοποιήστε κυκλοφορία IPv6</string>
     <string name="setting_call">Απενεργοποίηση κατά τη διάρκεια κλήσης</string>
     <string name="setting_reload_onconnectivity">Φορτώστε ξανά σε κάθε αλλαγή συνδεσιμότητας</string>
-    <string name="setting_advanced_options">Προηγμένες επιλογές</string>
-    <string name="setting_system">Διαχείριση εφαρμογών του συστήματος</string>
     <string name="setting_log_app">Αναζήτηση νέων ιχνηλατών</string>
     <string name="setting_log_logcat">Καταγράψτε τις μεταδόσεις στο ADB</string>
     <string name="setting_filter">Αποκλεισμός Ιχνηλατών</string>
@@ -86,7 +84,6 @@
     <string name="setting_stats_frequency">Δείγμα διαστήματος: %s ms</string>
     <string name="setting_stats_samples">Αριθμός δειγμάτων: %s s</string>
     <string name="setting_backup">Αντίγραφο Ασφαλείας</string>
-    <string name="setting_export">Εξαγωγή ρυθμίσεων (όχι για επαναφορά συσκευής)</string>
     <string name="setting_import">Εισαγωγή ρυθμίσεων</string>
     <string name="setting_hosts">Εισαγωγή αρχείου hosts</string>
     <string name="setting_hosts_append">Εισαγωγή αρχείου hosts (προσθήκη)</string>
@@ -101,7 +98,6 @@
     <string name="summary_lan">Επιτρέπει στις εφαρμογές να συνδεθούν σε διευθύνσεις του τοπικό δίκτυο, όπως 10.0.0.0/8, 172.16.0.0/12 και 192.168.0.0/16</string>
     <string name="summary_ip6">Δρομολογήστε την κυκλοφορία IP έκδοσης 6 στο TrackerControl έτσι ώστε να επιτρέπεται ή να αποκλείεται επιλεκτικά</string>
     <string name="summary_call">Απενεργοποιήστε το TrackerControl σε εισερχόμενες ή εξερχόμενες τηλεφωνικές κλήσεις. Αυτό μπορεί να χρησιμοποιηθεί για την αντιμετώπιση προβλημάτων κλήσεων IP / Wi-Fi.</string>
-    <string name="summary_system">Ορίστε κανόνες για εφαρμογές συστήματος (για ειδικούς)</string>
     <string name="summary_log_app">Απενεργοποίηση για μείωση της χρήσης της μπαταρίας. Οι νέοι ιχνηλάτες θα εξακολουθούν να αποκλείονται, αλλά δεν εμφανίζονται.</string>
     <string name="summary_track_usage">Παρακολουθείστε τον αριθμό των bytes που αποστέλλονται και λαμβάνονται για κάθε εφαρμογή και κάθε διεύθυνση. Αυτό μπορεί να οδηγήσει σε περισσότερη κατανάλωση μπαταρίας.</string>
     <string name="summary_block_domains">ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Οι αποκλεισμένοι hosts δεν εμφανίζονται στη διεπαφή χρήστη.</string>
