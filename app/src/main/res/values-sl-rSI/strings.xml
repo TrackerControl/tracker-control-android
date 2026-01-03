@@ -147,7 +147,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_clear_rules">To bo ponastavilo pravila in pogoje na privzete vrednosti.</string>
     <string name="msg_reset_access">To bo izbrisalo dnevniške vrstice poizkusov dostopa, ki so brez pravil za dovolitev/blokiranje.</string>
     <string name="msg_import_last">Zadnji uvoz: %s</string>
-    <string name="msg_downloading">Prejemanje\n%1s</string>
+    <string name="msg_downloading">Prejemanje …</string>
     <string name="msg_downloaded">Datoteka gostiteljev je bila prejeta.</string>
     <string name="msg_updated">Datoteka gostiteljev je bila posodobljena in uveljavljena!</string>
     <string name="msg_download_last">Zadnji prejem: %s</string>
@@ -416,4 +416,14 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_privatedns_action">Odpri nastavitve DNS</string>
     <string name="onboarding_privatedns_skip_title">Preskoči onemogočanje zasebnega DNS-a?</string>
     <string name="onboarding_privatedns_skip_msg">Če nadaljujete z omogočenim zasebnim DNS-om, bo to znatno omejilo TrackerControl.  Večina sledenja ne bo blokirana – program bo zmožen samo preučevanja sledilnih knjižnic.  Poleg tega bo filter VPN onemogočen, da se zagotovi osnovno delovanje.</string>
+    <string name="onboarding_network_title">Neomejeno omrežje</string>
+    <string name="onboarding_network_desc">Možnosti varčevanja podatkov lahko TrackerControlu onemogočijo pravilno delovanje v ozadju.  Za najzanesljivejšo zaščito mu omogočite neomejen dostop.</string>
+    <string name="onboarding_network_action">Odobri neomejen dostop</string>
+    <string name="onboarding_network_sure">Omejevanje prenašanja podatkov v ozadju lahko povzroči nedelovanje TrackerControla.  Ali res želite nadaljevati brez odobritve neomejenega dostopa?</string>
+    <string name="onboarding_dns_title">Varen DNS (značilnost beta; morda ne bo delovalo po pričakovanjih)</string>
+    <string name="onboarding_dns_desc">Zaščitite svojo zasebnost pred vašim ponudnikom s šifriranjem prometa DNS z uporabo DNS-a preko HTTPS-a (DoH).\n\nTo prepreči \"ugrabitev DNS\" in ščiti vaše navade brskanja pred ponudnikom interneta.</string>
+    <string name="onboarding_dns_action">Omogoči varen DNS</string>
+    <string name="onboarding_dns_action_disable">Onemogoči varen DNS</string>
+    <string name="onboarding_blocking_title">Blokiraj sledilce</string>
+    <!-- Insights Screen -->
 </resources>
