@@ -425,6 +425,16 @@ jboolean handle_udp(const struct arguments *args,
                     int uid, struct allowed *redirect,
                     const int epoll_fd);
 
+int has_udp_session(const struct arguments *args, const uint8_t *pkt,
+                    const uint8_t *payload);
+
+void block_udp(const struct arguments *args, const uint8_t *pkt, size_t length,
+               const uint8_t *payload, int uid);
+
+jboolean handle_udp(const struct arguments *args, const uint8_t *pkt,
+                    size_t length, const uint8_t *payload, int uid,
+                    struct allowed *redirect, const int epoll_fd);
+
 int check_dhcp(const struct arguments *args, const struct udp_session *u,
                const uint8_t *data, const size_t datalen);
 
@@ -510,8 +520,13 @@ void log_android(int prio, const char *fmt, ...);
 
 void log_packet(const struct arguments *args, jobject jpacket);
 
-void dns_resolved(const struct arguments *args,
-                  const char *qname, const char *aname, const char *resource, int ttl);
+void dns_resolved(const struct arguments *args, const char *qname,
+                  const char *aname, const char *resource, int ttl);
+
+void on_native_dns_request(const struct arguments *args, const uint8_t *query,
+                           size_t query_len, int version, int protocol,
+                           const char *source, int sport, const char *dest,
+                           int dport, int uid);
 
 jboolean is_domain_blocked(const struct arguments *args, const char *name);
 

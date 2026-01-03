@@ -802,6 +802,108 @@ struct allowed *is_address_allowed(const struct arguments *args, jobject jpacket
     return (jallowed == NULL ? NULL : &allowed);
 }
 
+static jmethodID midOnNativeDnsRequest = NULL;
+
+void on_native_dns_request(const struct arguments *args, const uint8_t *query,
+                           size_t query_len, int version, int protocol,
+                           const char *source, int sport, const char *dest,
+                           int dport, int uid) {
+  jclass clsService = (*args->env)->GetObjectClass(args->env, args->instance);
+  ng_add_alloc(clsService, "clsService");
+
+  const char *signature = "([BIILjava/lang/String;ILjava/lang/String;II)V";
+  if (midOnNativeDnsRequest == NULL)
+    midOnNativeDnsRequest =
+        jniGetMethodID(args->env, clsService, "onNativeDnsRequest", signature);
+
+  jbyteArray jQuery = (*args->env)->NewByteArray(args->env, query_len);
+  if (jQuery == NULL) {
+    (*args->env)->ExceptionClear(args->env); // Clear OOM if any
+    log_android(ANDROID_LOG_ERROR, "on_native_dns_request: OOM jQuery");
+    return;
+  }
+  (*args->env)
+      ->SetByteArrayRegion(args->env, jQuery, 0, query_len,
+                           (const jbyte *)query);
+  ng_add_alloc(jQuery, "jQuery");
+
+  jstring jsource = (*args->env)->NewStringUTF(args->env, source);
+  if (jsource == NULL) {
+    (*args->env)->ExceptionClear(args->env);
+    log_android(ANDROID_LOG_ERROR, "on_native_dns_request: OOM jsource");
+    (*args->env)->DeleteLocalRef(args->env, jQuery);
+    ng_delete_alloc(jQuery, __FILE__, __LINE__);
+    return;
+  }
+  jstring jdest = (*args->env)->NewStringUTF(args->env, dest);
+  if (jdest == NULL) {
+    (*args->env)->ExceptionClear(args->env);
+    log_android(ANDROID_LOG_ERROR, "on_native_dns_request: OOM jdest");
+    (*args->env)->DeleteLocalRef(args->env, jsource);
+    (*args->env)->DeleteLocalRef(args->env, jQuery);
+    ng_delete_alloc(jsource, __FILE__, __LINE__);
+    ng_delete_alloc(jQuery, __FILE__, __LINE__);
+    return;
+  }
+  ng_add_alloc(jsource, "jsource");
+  ng_add_alloc(jdest, "jdest");
+
+  (*args->env)
+      ->CallVoidMethod(args->env, args->instance, midOnNativeDnsRequest, jQuery,
+                       version, protocol, jsource, sport, jdest, dport, uid);
+  jniCheckException(args->env);
+
+  (*args->env)->DeleteLocalRef(args->env, jdest);
+  (*args->env)->DeleteLocalRef(args->env, jsource);
+  (*args->env)->DeleteLocalRef(args->env, jQuery);
+  (*args->env)->DeleteLocalRef(args->env, clsService);
+  ng_delete_alloc(jdest, __FILE__, __LINE__);
+  ng_delete_alloc(jsource, __FILE__, __LINE__);
+  ng_delete_alloc(jQuery, __FILE__, __LINE__);
+  ng_delete_alloc(clsService, __FILE__, __LINE__);
+}
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1inject_1dns(
+    JNIEnv *env, jobject instance, jint tun, jbyteArray response_, jint version,
+    jint protocol, jstring source_, jint sport, jstring dest_, jint dport,
+    jint uid) {
+  // Get headers
+  const char *source = (*env)->GetStringUTFChars(env, source_, 0);
+  const char *dest = (*env)->GetStringUTFChars(env, dest_, 0);
+  jbyte *response = (*env)->GetByteArrayElements(env, response_, NULL);
+  jsize len = (*env)->GetArrayLength(env, response_);
+
+  struct udp_session u;
+  memset(&u, 0, sizeof(struct udp_session));
+  u.version = version;
+  u.source = htons(sport);
+  u.dest = htons(dport);
+  u.uid = uid;
+
+  if (version == 4) {
+    inet_pton(AF_INET, source, &u.saddr.ip4);
+    inet_pton(AF_INET, dest, &u.daddr.ip4);
+  } else {
+    inet_pton(AF_INET6, source, &u.saddr.ip6);
+    inet_pton(AF_INET6, dest, &u.daddr.ip6);
+  }
+
+  struct arguments args;
+  memset(&args, 0, sizeof(struct arguments));
+  args.env = env;
+  args.tun = tun;
+
+  // Direct write to the TUN interface using existing write_udp helper
+  // write_udp constructs the IP and UDP headers around the payload
+  // and writes to args->tun
+  write_udp(&args, &u, (uint8_t *)response, (size_t)len);
+
+  (*env)->ReleaseByteArrayElements(env, response_, response, JNI_ABORT);
+  (*env)->ReleaseStringUTFChars(env, dest_, dest);
+  (*env)->ReleaseStringUTFChars(env, source_, source);
+}
+
 jmethodID midInitPacket = NULL;
 
 jfieldID fidTime = NULL;
