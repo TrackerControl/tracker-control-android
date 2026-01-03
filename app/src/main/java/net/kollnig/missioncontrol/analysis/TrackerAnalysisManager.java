@@ -35,7 +35,6 @@ import androidx.work.WorkManager;
  * via WorkManager.
  */
 public class TrackerAnalysisManager {
-    private static final int EXODUS_DATABASE_VERSION = 423;
     private static final String PREFS_NAME = "library_analysis";
     // Single work name ensures only one analysis runs at a time (prevents OOM)
     private static final String WORK_NAME = "tracker_analysis";
@@ -48,12 +47,16 @@ public class TrackerAnalysisManager {
         this.mContext = context.getApplicationContext();
         this.workManager = WorkManager.getInstance(mContext);
 
-        // Initialize/update database version - clears cache if Exodus DB updated
-        SharedPreferences prefs = getPrefs();
-        int current = prefs.getInt("version", Integer.MIN_VALUE);
-        if (current < EXODUS_DATABASE_VERSION) {
-            prefs.edit().clear().putInt("version", EXODUS_DATABASE_VERSION).apply();
-        }
+        // Trigger signature update in background
+        new Thread(() -> {
+            SharedPreferences prefs = getPrefs();
+            long lastUpdate = prefs.getLong("last_signature_update", 0);
+            if (System.currentTimeMillis() - lastUpdate >= 24 * 60 * 60 * 1000) {
+                new TrackerSignatureManager(mContext).updateSignatures();
+                long now = System.currentTimeMillis();
+                prefs.edit().putLong("last_signature_update", now).apply();
+            }
+        }).start();
     }
 
     public static synchronized TrackerAnalysisManager getInstance(Context context) {

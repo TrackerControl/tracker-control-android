@@ -42,11 +42,6 @@ class SignatureTrie {
      * @param id        Tracker ID in database
      */
     void insert(String signature, String name, String web, int id) {
-        // Skip "good" trackers (marked with µ?)
-        if (name.startsWith("µ?")) {
-            return;
-        }
-
         TrieNode current = root;
         for (char c : signature.toCharArray()) {
             current = current.children.computeIfAbsent(c, k -> new TrieNode());

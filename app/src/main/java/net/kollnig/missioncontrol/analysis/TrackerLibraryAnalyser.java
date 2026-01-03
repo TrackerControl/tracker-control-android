@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.ExodusTracker;
 import net.kollnig.missioncontrol.data.TrackerLibrary;
 
 import org.jf.dexlib2.DexFileFactory;
@@ -83,13 +84,24 @@ public class TrackerLibraryAnalyser {
      */
     private synchronized SignatureTrie getSignatureTrie() {
         if (mSignatureTrie == null) {
-            String[] signatures = mContext.getResources().getStringArray(R.array.trackers);
-            String[] names = mContext.getResources().getStringArray(R.array.tname);
-            String[] webs = mContext.getResources().getStringArray(R.array.tweb);
-
             mSignatureTrie = new SignatureTrie();
-            for (int i = 0; i < signatures.length; i++) {
-                mSignatureTrie.insert(signatures[i], names[i], webs[i], i);
+            TrackerSignatureManager manager = new TrackerSignatureManager(mContext);
+            List<ExodusTracker> trackers = manager.getTrackers();
+
+            if (trackers != null) {
+                for (ExodusTracker tracker : trackers) {
+                    if (tracker.codeSignature == null)
+                        continue;
+
+                    // Exodus signatures are regex-like.
+                    // 1. Split alternatives "com.foo|com.bar"
+                    // 2. Unescape dots "com\.foo" -> "com.foo"
+                    String[] variations = tracker.codeSignature.split("\\|");
+                    for (String variation : variations) {
+                        String cleanSignature = variation.replace("\\.", ".");
+                        mSignatureTrie.insert(cleanSignature, tracker.name, tracker.website, tracker.id);
+                    }
+                }
             }
         }
         return mSignatureTrie;
