@@ -129,7 +129,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_clear_rules">Honek arauak eta baldintzak lehenetsitako balioetara berrezarriko ditu</string>
     <string name="msg_reset_access">Honek baimendu/ukatu araurik gabeko sarbide saiakeren erregistroa ezabatuko du</string>
     <string name="msg_import_last">Azken inportazioa: %s</string>
-    <string name="msg_downloading">Deskargatzen\n%1s</string>
     <string name="msg_downloaded">Ostalarien fitxategia deskargatuta</string>
     <string name="msg_updated">Ostalarien fitxategia eguneratu eta aplikatu da!</string>
     <string name="msg_download_last">Azken deskarga: %s</string>
@@ -358,4 +357,5 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="static_analysis">Aztarnariak antzeman aplikazioaren kodea</string>
     <string name="failed_loading_cached_analysis">Cacheatutako aztarnarien emaitzak kargatzeak huts egin du. Mesedez eman honen berri garatzaileari hemen: hello@trackercontrol.org</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>
