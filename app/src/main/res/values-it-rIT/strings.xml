@@ -129,7 +129,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_clear_rules">Questo reimposterà le regole e le condizioni ai valori predefiniti</string>
     <string name="msg_reset_access">Questo cancellerà le registrazioni riguardanti i tentativi di accesso senza regole di tipo consenti/blocca</string>
     <string name="msg_import_last">Ultima importazione: %s</string>
-    <string name="msg_downloading">Scaricando\n%1s</string>
     <string name="msg_downloaded">File hosts scaricato</string>
     <string name="msg_updated">File host aggiornato ed applicato!</string>
     <string name="msg_download_last">Ultimo download: %s</string>
@@ -354,4 +353,5 @@ Cordiali saluti,\n\n]]></string>
     <string name="static_analysis">Rilevati tracker nel codice dell\'app</string>
     <string name="failed_loading_cached_analysis">Caricamento dei risultati del tracker nella cache fallito. Per favore segnalalo allo sviluppatore su hello@trackercontrol.org</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>
