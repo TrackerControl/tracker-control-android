@@ -397,4 +397,12 @@ Sincerely,\n\n]]></string>
     <string name="title_previous">Nazaj</string>
     <string name="title_finish">Začni</string>
     <string name="onboarding_welcome_title">Prevzemite nadzor nad svojo zasebnostjo</string>
+    <string name="onboarding_welcome_desc">TrackerControl je raziskovalni projekt, ki ga poganja skupnost in omogoča:\n\n• <b>nadzor</b> prikritega zbiranja podatkov, ki ga izvajajo programi v resničnem času,\n• <b>blokiranje</b> sledilcev in oglasov z uporabo podatkovne zbirke <b>2.000.000-ov preučenih programov</b>,\n• <b>prepoznavanje</b> ciljnih podjetij in držav, ki prejemajo vaše podatke.\n\nVse preučevanje se dogaja <b>krajevno na vaši napravi</b> - promet nikoli ne uide iz vašega nadzora.</string>
+    <string name="onboarding_vpn_title">Omogoči zaščito</string>
+    <string name="onboarding_vpn_desc">TrackerControl uporablja Androidov krajevni vmesnik VPN-a, da preuči vaš internetni promet.\n\n<b>Pomembno:</b> vpleten ni noben zunanji strežnik VPN.  Vaših podatkov ne vidimo.</string>
+    <string name="onboarding_vpn_action">Omogoči VPN na napravi</string>
+    <string name="onboarding_vpn_sure">TrackerControl ne more filtrirati prometa brez uporabe krajevnega VPN-a.  Ali res želite nadaljevati, ne da bi ga omogočili?</string>
+    <string name="onboarding_battery_title">Prepreči motnje</string>
+    <string name="onboarding_battery_desc">Android lahko uniči opravila v ozadju, da prihrani energijo.  Da zagotovite neprekinjeno zaščito pred sledilci, onemogočite optimizacije za TrackerControl.</string>
+    <string name="onboarding_battery_action">Onemogoči optimizacijo</string>
 </resources>
