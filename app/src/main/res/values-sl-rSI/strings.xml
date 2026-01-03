@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl uporabnikom omogoča nadzirati razširjeno in prikrito zbiranje podatkov v programih o uporabnikovem vedenju (\'sledenje\').</string>
+    <string name="app_copyright">Avtorske pravice \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl je osnovan na NetGuardu, ki ga je razvil Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl zahteva Android 5.1 ali novejšega</string>
     <string name="app_xposed">Xposed povzroča preveč zrušitev, ki lahko vodijo k odstranitvi programa iz Trgovine Play, zato TrackerControl ni podprt, ko je nameščen Xposed.</string>
     <string name="app_eula">Ta program uporabljate na svojo odgovornost.  Noben program ne zagotavlja 100 % zaščite pred sledenjem.</string>
@@ -57,6 +58,8 @@
     <string name="setting_ip6">Omogoči promet IPv6</string>
     <string name="setting_call">Onemogoči ob klicu</string>
     <string name="setting_reload_onconnectivity">Ponovno naloži ob vsaki spremembi povezljivosti</string>
+    <string name="setting_advanced_options">Napredne nastavitve</string>
+    <string name="setting_system">Prikaži sistemske programe</string>
     <string name="setting_log_app">Poišči nove sledilce</string>
     <string name="setting_log_logcat">Zabeleži prenose v ADB</string>
     <string name="setting_filter">Blokiraj sledilce</string>
@@ -82,6 +85,9 @@
     <string name="setting_pcap_file_size">Najv. velikost datoteke PCAP: %s MB</string>
     <string name="setting_watchdog">Pes čuvaj: vsakih %s min.</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Varen DNS (DoH)</string>
+    <string name="summary_doh_enabled">Šifriraj poizvedbe DNS z DNS-om preko HTTP-ja.  Velja za vse programe.</string>
+    <string name="warning_beta">Značilnost Beta.  Morda ne bo delovala po pričakovanjih.</string>
     <string name="setting_stats_frequency">Vzorčni razmik: %s ms</string>
     <string name="setting_stats_samples">Št. vzorcev: %s s</string>
     <string name="setting_backup">Varnostno kopiranje</string>
