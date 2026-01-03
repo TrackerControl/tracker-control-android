@@ -145,10 +145,10 @@ object Common {
     }
 
     /**
-     * Retrieves the name of the app based on the given uid
+     * Retrieves the display name of the app based on the given uid
      *
      * @param uid - of the app
-     * @return the name of the package of the app with the given uid, or "Unknown" if
+     * @return the display name of the app with the given uid, or "Unknown" if
      * no name could be found for the uid.
      */
     @JvmStatic
@@ -165,12 +165,18 @@ object Common {
          */
 
         // See if this is root
-
         if (uid == 0) return "System"
 
-        // If we can't find a running app, just get a list of packages that map to the uid
+        // Get packages for this UID and return the app label (not package name)
         val packages = pm.getPackagesForUid(uid)
-        if (packages != null && packages.size > 0) return packages[0]
+        if (packages != null && packages.isNotEmpty()) {
+            try {
+                val appInfo = pm.getApplicationInfo(packages[0], 0)
+                return pm.getApplicationLabel(appInfo).toString()
+            } catch (e: PackageManager.NameNotFoundException) {
+                return packages[0]  // Fallback to package name
+            }
+        }
 
         return "Unknown"
     }

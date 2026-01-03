@@ -56,7 +56,8 @@ class InsightsActivity : AppCompatActivity() {
     private lateinit var tvAppsCount: TextView
     private lateinit var llTopApps: LinearLayout
     private lateinit var llTopCompanies: LinearLayout
-    private lateinit var llDailyChart: LinearLayout
+    private lateinit var llPervasiveTrackers: LinearLayout
+    private lateinit var llTopDomains: LinearLayout
     private lateinit var llNoData: LinearLayout
     private lateinit var progressBar: ProgressBar
 
@@ -83,7 +84,8 @@ class InsightsActivity : AppCompatActivity() {
         tvAppsCount = findViewById(R.id.tvAppsCount)
         llTopApps = findViewById(R.id.llTopApps)
         llTopCompanies = findViewById(R.id.llTopCompanies)
-        llDailyChart = findViewById(R.id.llDailyChart)
+        llPervasiveTrackers = findViewById(R.id.llPervasiveTrackers)
+        llTopDomains = findViewById(R.id.llTopDomains)
         llNoData = findViewById(R.id.llNoData)
         progressBar = findViewById(R.id.progressBar)
 
@@ -146,13 +148,16 @@ class InsightsActivity : AppCompatActivity() {
         animateNumber(tvAppsCount, 0, data.appsWithTrackers)
 
         // Populate top apps
-        populateTopList(llTopApps, data.topTrackingApps)
+        populateTopList(llTopApps, data.topTrackingApps, false)
 
         // Populate top companies
-        populateTopList(llTopCompanies, data.topTrackerCompanies)
+        populateTopList(llTopCompanies, data.topTrackerCompanies, false)
 
-        // Draw daily chart
-        drawDailyChart(data.trackingByDay, data.blockedByDay)
+        // Populate pervasive trackers (with "in X apps" format)
+        populateTopList(llPervasiveTrackers, data.pervasiveTrackers, true)
+
+        // Populate top domains (with "in X apps" format)
+        populateTopList(llTopDomains, data.topDomains, true)
     }
 
     private fun animateNumber(textView: TextView, start: Int, end: Int) {
@@ -167,7 +172,7 @@ class InsightsActivity : AppCompatActivity() {
         }
     }
 
-    private fun populateTopList(container: LinearLayout, items: List<Pair<String, Int>>) {
+    private fun populateTopList(container: LinearLayout, items: List<Pair<String, Int>>, showAsAppCount: Boolean) {
         container.removeAllViews()
 
         if (items.isEmpty()) {
@@ -182,25 +187,30 @@ class InsightsActivity : AppCompatActivity() {
         val maxCount = items.firstOrNull()?.second ?: 1
 
         for (item in items) {
+            // Use vertical layout: name on top, bar+count below
             val row = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
+                orientation = LinearLayout.VERTICAL
                 setPadding(0, 8, 0, 8)
-                gravity = Gravity.CENTER_VERTICAL
             }
 
-            // Name
+            // Name (on top)
             val nameView = TextView(this).apply {
                 text = item.first
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 maxLines = 1
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             }
             row.addView(nameView)
 
-            // Bar + Count wrapper
+            // Bar + Count wrapper (below)
             val barWrapper = LinearLayout(this).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER_VERTICAL
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics).toInt()
+                }
             }
 
             // Progress bar visualization
@@ -222,9 +232,13 @@ class InsightsActivity : AppCompatActivity() {
             }
             barWrapper.addView(bar)
 
-            // Count
+            // Count - format differently for app counts
             val countView = TextView(this).apply {
-                text = NumberFormat.getNumberInstance(Locale.getDefault()).format(item.second)
+                text = if (showAsAppCount) {
+                    getString(R.string.insights_in_apps, item.second)
+                } else {
+                    NumberFormat.getNumberInstance(Locale.getDefault()).format(item.second)
+                }
                 textSize = 12f
             }
             barWrapper.addView(countView)
@@ -233,82 +247,5 @@ class InsightsActivity : AppCompatActivity() {
             container.addView(row)
         }
     }
-
-    private fun drawDailyChart(trackingByDay: Map<String, Int>, blockedByDay: Map<String, Int>) {
-        llDailyChart.removeAllViews()
-
-        if (trackingByDay.isEmpty()) return
-
-        // Find max for scaling
-        val maxValue = trackingByDay.values.maxOrNull() ?: 1
-
-        val colorPrimary = ContextCompat.getColor(this, R.color.colorPrimary)
-        val colorAllowed = ContextCompat.getColor(this, R.color.colorGrayed)
-
-        for ((dayLabel, total) in trackingByDay) {
-            val dayColumn = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
-                    setMargins(4, 0, 4, 0)
-                }
-            }
-
-            val blocked = blockedByDay[dayLabel] ?: 0
-            val allowed = total - blocked
-
-            // Calculate bar heights
-            val maxBarHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60f, resources.displayMetrics).toInt()
-            val blockedHeight = if (maxValue > 0) (maxBarHeight * (blocked.toFloat() / maxValue)).toInt() else 0
-            val allowedHeight = if (maxValue > 0) (maxBarHeight * (allowed.toFloat() / maxValue)).toInt() else 0
-
-            // Stacked bar (allowed on top, blocked on bottom)
-            val stackedBar = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                gravity = Gravity.BOTTOM
-            }
-
-            // Allowed part (on top, lighter color)
-            if (allowedHeight > 0) {
-                val allowedBar = View(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, allowedHeight)
-                    background = GradientDrawable().apply {
-                        shape = GradientDrawable.RECTANGLE
-                        cornerRadii = floatArrayOf(8f, 8f, 8f, 8f, 0f, 0f, 0f, 0f)
-                        setColor(colorAllowed)
-                    }
-                }
-                stackedBar.addView(allowedBar)
-            }
-
-            // Blocked part (on bottom, primary color)
-            if (blockedHeight > 0) {
-                val blockedBar = View(this).apply {
-                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, blockedHeight)
-                    background = GradientDrawable().apply {
-                        shape = GradientDrawable.RECTANGLE
-                        cornerRadii = if (allowedHeight == 0) {
-                            floatArrayOf(8f, 8f, 8f, 8f, 8f, 8f, 8f, 8f)
-                        } else {
-                            floatArrayOf(0f, 0f, 0f, 0f, 8f, 8f, 8f, 8f)
-                        }
-                        setColor(colorPrimary)
-                    }
-                }
-                stackedBar.addView(blockedBar)
-            }
-
-            dayColumn.addView(stackedBar)
-
-            // Day label
-            val labelView = TextView(this).apply {
-                text = dayLabel
-                textSize = 10f
-                gravity = Gravity.CENTER
-            }
-            dayColumn.addView(labelView)
-
-            llDailyChart.addView(dayColumn)
-        }
-    }
 }
+

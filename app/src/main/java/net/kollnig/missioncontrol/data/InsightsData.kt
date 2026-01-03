@@ -21,7 +21,7 @@ import android.util.Pair
 
 /**
  * Data model holding aggregated tracking statistics for the Insights screen.
- * Contains 7-day statistics about tracking attempts, blocks, and top offenders.
+ * Contains 7-day statistics about trackers contacted and blocking effectiveness.
  */
 data class InsightsData(
     // Overall 7-day summary
@@ -35,13 +35,15 @@ data class InsightsData(
     var topTrackingApps: MutableList<Pair<String, Int>> = mutableListOf(),
     var topTrackerCompanies: MutableList<Pair<String, Int>> = mutableListOf(),
 
-    // Daily breakdown (ordered by date)
-    var trackingByDay: MutableMap<String, Int> = mutableMapOf(),
-    var blockedByDay: MutableMap<String, Int> = mutableMapOf()
+    // Pervasive trackers - companies found in multiple apps (company name, app count)
+    var pervasiveTrackers: MutableList<Pair<String, Int>> = mutableListOf(),
+
+    // Top domains contacted (domain, number of apps)
+    var topDomains: MutableList<Pair<String, Int>> = mutableListOf()
 ) {
     /**
      * Calculate the blocking percentage.
-     * @return Percentage of tracking attempts that were blocked (0-100)
+     * @return Percentage of trackers that were blocked (0-100)
      */
     fun getBlockedPercentage(): Int {
         if (totalTrackingAttempts == 0) return 0
@@ -56,3 +58,4 @@ data class InsightsData(
         return totalTrackingAttempts > 0 || uniqueTrackerCompanies > 0
     }
 }
+

@@ -822,7 +822,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // Query access table for last 7 days, aggregating connections
             String query = "SELECT uid, daddr, block, " +
-                    "COALESCE(connections, 1) as connections, time " +
+                    "COALESCE(connections, 1) as connections, time, uncertain " +
                     "FROM access " +
                     "WHERE time >= ? " +
                     "ORDER BY time DESC";

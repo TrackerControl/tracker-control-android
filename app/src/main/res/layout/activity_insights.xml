@@ -239,7 +239,7 @@
 
         </LinearLayout>
 
-        <!-- Top Tracking Apps Section -->
+        <!-- Top Tracking Apps Section (hidden - unclear metric) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -247,13 +247,15 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:elevation="4dp"
+            android:visibility="gone"
             style="@style/CardView">
 
             <LinearLayout
@@ -268,20 +270,22 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Top Tracker Companies Section -->
+        <!-- Top Tracker Companies Section (hidden - unclear metric) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/insights_top_companies"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:elevation="4dp"
+            android:visibility="gone"
             style="@style/CardView">
 
             <LinearLayout
@@ -296,11 +300,11 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Daily Activity Section -->
+        <!-- Pervasive Trackers Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/insights_daily_activity"
+            android:text="@string/insights_pervasive_trackers"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -313,14 +317,41 @@
             style="@style/CardView">
 
             <LinearLayout
-                android:id="@+id/llDailyChart"
+                android:id="@+id/llPervasiveTrackers"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="bottom">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
 
-                <!-- Bar chart will be populated dynamically -->
+                <!-- Will be populated dynamically -->
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Top Domains Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/insights_top_domains"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"
+            style="@style/CardView">
+
+            <LinearLayout
+                android:id="@+id/llTopDomains"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <!-- Will be populated dynamically -->
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
