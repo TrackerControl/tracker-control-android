@@ -84,7 +84,7 @@ public class TrackerAnalysisManager {
         // concurrent scans)
         workManager.enqueueUniqueWork(
                 WORK_NAME,
-                ExistingWorkPolicy.APPEND,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 workRequest);
     }
 
