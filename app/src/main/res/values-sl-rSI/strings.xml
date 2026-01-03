@@ -405,4 +405,15 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_battery_title">Prepreči motnje</string>
     <string name="onboarding_battery_desc">Android lahko uniči opravila v ozadju, da prihrani energijo.  Da zagotovite neprekinjeno zaščito pred sledilci, onemogočite optimizacije za TrackerControl.</string>
     <string name="onboarding_battery_action">Onemogoči optimizacijo</string>
+    <string name="onboarding_battery_sure">Če ne onemogočite optimizacijo baterije, lahko Android TrackerControl kadarkoli ustavi.  Ali res želite nadaljevati?</string>
+    <string name="onboarding_notify_title">Ostanite na tekočem</string>
+    <string name="onboarding_notify_desc">Dovoli obvestila, da si ogledate posodobitve v resničnem času in nadzirate zaščito neposredno iz vrstice stanja.</string>
+    <string name="onboarding_notify_action">Dovoli obvestila</string>
+    <string name="onboarding_notify_sure">Brez dovoljenj za obvestila si ne boste mogli ogledati posodobitev v resničnem času ali nadzirati zaščite iz vrstice stanja.  Ali ste prepričani?</string>
+    <string name="onboarding_privatedns_title">Onemogoči zasebni DNS</string>
+    <string name="onboarding_privatedns_desc">Androidova značilnost \"Zasebni DNS\" moti TrackerControljevo zmožnost blokiranja sledilcev.  Če želite nadaljevati,  <b>morate</b> to nastavitev izklopiti.</string>
+    <string name="onboarding_privatedns_instruction">Nastavitve -&gt; Omrežje in internet -&gt; Zasebni DNS -&gt; Izklopi</string>
+    <string name="onboarding_privatedns_action">Odpri nastavitve DNS</string>
+    <string name="onboarding_privatedns_skip_title">Preskoči onemogočanje zasebnega DNS-a?</string>
+    <string name="onboarding_privatedns_skip_msg">Če nadaljujete z omogočenim zasebnim DNS-om, bo to znatno omejilo TrackerControl.  Večina sledenja ne bo blokirana – program bo zmožen samo preučevanja sledilnih knjižnic.  Poleg tega bo filter VPN onemogočen, da se zagotovi osnovno delovanje.</string>
 </resources>
