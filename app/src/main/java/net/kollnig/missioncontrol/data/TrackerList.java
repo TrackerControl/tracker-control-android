@@ -65,6 +65,11 @@ public class TrackerList {
     private static boolean domainBasedBlocking;
     private final DatabaseHelper databaseHelper;
 
+    // Performance: Cache tracker counts to avoid full DB scans on every refresh
+    private Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> cachedTrackerCounts;
+    private long lastTrackerCountComputeTime = 0;
+    private static final long TRACKER_COUNT_CACHE_TTL_MS = 2000; // 2 second cache
+
     private TrackerList(Context c) {
         databaseHelper = DatabaseHelper.getInstance(c);
         loadTrackers(c);
@@ -160,11 +165,18 @@ public class TrackerList {
     }
 
     /**
-     * Retrieves information about number of contacted tracking companies, for all apps
+     * Retrieves information about number of contacted tracking companies, for all
+     * apps
      *
      * @return Number of contacted tracking companies, for all apps
      */
     public synchronized Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> getTrackerCountsAndTotal() {
+        // Performance: Return cached result if still valid
+        long now = System.currentTimeMillis();
+        if (cachedTrackerCounts != null && (now - lastTrackerCountComputeTime) < TRACKER_COUNT_CACHE_TTL_MS) {
+            return cachedTrackerCounts;
+        }
+
         Map<Integer, Set<String>> trackers = new ArrayMap<>();
         Map<Integer, Set<String>> trackersWeek = new ArrayMap<>();
 
@@ -184,7 +196,17 @@ public class TrackerList {
             }
         }
 
-        return new Pair<>(countTrackers(trackers), countTrackers(trackersWeek));
+        cachedTrackerCounts = new Pair<>(countTrackers(trackers), countTrackers(trackersWeek));
+        lastTrackerCountComputeTime = now;
+        return cachedTrackerCounts;
+    }
+
+    /**
+     * Invalidate the cached tracker counts. Should be called when host data
+     * changes.
+     */
+    public synchronized void invalidateTrackerCountCache() {
+        cachedTrackerCounts = null;
     }
 
     /**
@@ -242,8 +264,7 @@ public class TrackerList {
 
         try (Cursor cursor = databaseHelper.getHosts(uid)) {
             if (cursor.moveToFirst()) {
-                outer:
-                do {
+                outer: do {
                     String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
                     long lastSeen = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
                     boolean uncertain = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain")) == 2;
@@ -366,10 +387,13 @@ public class TrackerList {
      * @param c Context
      */
     private void loadDisconnectTrackers(Context c) {
-        /* Read domain list:
+        /*
+         * Read domain list:
          *
-         * File is a reversed string, because some anti-virus scanners found the list suspicious
-         * More here: https://github.com/TrackerControl/tracker-control-android/issues/30
+         * File is a reversed string, because some anti-virus scanners found the list
+         * suspicious
+         * More here:
+         * https://github.com/TrackerControl/tracker-control-android/issues/30
          */
         try (InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json")) {
             int size = is.available();
@@ -383,7 +407,7 @@ public class TrackerList {
             // Parse Disconnect.me list
             JSONObject disconnect = new JSONObject(json);
             JSONObject categories = (JSONObject) disconnect.get("categories");
-            for (Iterator<String> it = categories.keys(); it.hasNext(); ) {
+            for (Iterator<String> it = categories.keys(); it.hasNext();) {
                 String categoryName = it.next();
                 JSONArray category = (JSONArray) categories.get(categoryName);
                 for (int i = 0; i < category.length(); i++) {
@@ -409,7 +433,7 @@ public class TrackerList {
 
                     // Parse tracker domains
                     JSONObject trackerHomeUrls = (JSONObject) jsonTracker.get(trackerName);
-                    for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext(); ) {
+                    for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext();) {
                         String trackerHomeUrl = iter.next();
 
                         // Skip non-domains fields
@@ -434,7 +458,8 @@ public class TrackerList {
     }
 
     /**
-     * Internal method to add tracker to the tracker database that is used at runtime
+     * Internal method to add tracker to the tracker database that is used at
+     * runtime
      *
      * @param tracker Tracker to be added
      * @param dom     Domain to be added

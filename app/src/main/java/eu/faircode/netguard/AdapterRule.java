@@ -25,7 +25,6 @@ import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAG
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
 import static eu.faircode.netguard.ActivityMain.REQUEST_DETAILS_UPDATED;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -73,7 +72,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.core.widget.CompoundButtonCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -417,63 +415,85 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         boolean screen_on = prefs.getBoolean("screen_on", true);
 
-        // Wi-Fi settings
-        holder.cbWifi.setEnabled(active);
-        holder.cbWifi.setAlpha(wifiActive ? 1 : 0.5f);
-        holder.cbWifi.setOnCheckedChangeListener(null);
-        holder.cbWifi.setChecked(rule.wifi_blocked);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(CompoundButtonCompat.getButtonDrawable(holder.cbWifi));
-            DrawableCompat.setTint(wrap, active ? (rule.wifi_blocked ? colorOff : colorOn) : colorGrayed);
-        }
-        holder.cbWifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                rule.wifi_blocked = isChecked;
-                updateRule(context, rule, true, listAll);
-            }
-        });
-
-        holder.ivScreenWifi.setEnabled(active);
-        holder.ivScreenWifi.setAlpha(wifiActive ? 1 : 0.5f);
-        holder.ivScreenWifi.setVisibility(rule.screen_wifi && rule.wifi_blocked ? View.VISIBLE : View.INVISIBLE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(holder.ivScreenWifi.getDrawable());
-            DrawableCompat.setTint(wrap, active ? colorOn : colorGrayed);
-        }
-
-        // Mobile settings
-        holder.cbOther.setEnabled(active);
-        holder.cbOther.setAlpha(otherActive ? 1 : 0.5f);
-        holder.cbOther.setOnCheckedChangeListener(null);
-        holder.cbOther.setChecked(rule.other_blocked);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(CompoundButtonCompat.getButtonDrawable(holder.cbOther));
-            DrawableCompat.setTint(wrap, active ? (rule.other_blocked ? colorOff : colorOn) : colorGrayed);
-        }
-        holder.cbOther.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                rule.other_blocked = isChecked;
-                updateRule(context, rule, true, listAll);
-            }
-        });
-
-        holder.ivScreenOther.setEnabled(active);
-        holder.ivScreenOther.setAlpha(otherActive ? 1 : 0.5f);
-        holder.ivScreenOther.setVisibility(rule.screen_other && rule.other_blocked ? View.VISIBLE : View.INVISIBLE);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(holder.ivScreenOther.getDrawable());
-            DrawableCompat.setTint(wrap, active ? colorOn : colorGrayed);
-        }
-
-        holder.tvRoaming.setTextColor(active ? colorOff : colorGrayed);
-        holder.tvRoaming.setAlpha(otherActive ? 1 : 0.5f);
-        holder.tvRoaming.setVisibility(
-                rule.roaming && (!rule.other_blocked || rule.screen_other) ? View.VISIBLE : View.INVISIBLE);
-
-        holder.tvRemarkMessaging.setVisibility(messaging.contains(rule.packageName) ? View.VISIBLE : View.GONE);
-        holder.tvRemarkDownload.setVisibility(download.contains(rule.packageName) ? View.VISIBLE : View.GONE);
+        // BEGIN TRACKERCONTROL: Skipped - parent views are GONE in rule.xml (legacy
+        // NetGuard UI)
+        // These views are hidden in TrackerControl but code is kept for upstream merge
+        // compatibility
+        /*
+         * // Wi-Fi settings
+         * holder.cbWifi.setEnabled(active);
+         * holder.cbWifi.setAlpha(wifiActive ? 1 : 0.5f);
+         * holder.cbWifi.setOnCheckedChangeListener(null);
+         * holder.cbWifi.setChecked(rule.wifi_blocked);
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap =
+         * DrawableCompat.wrap(CompoundButtonCompat.getButtonDrawable(holder.cbWifi));
+         * DrawableCompat.setTint(wrap, active ? (rule.wifi_blocked ? colorOff :
+         * colorOn) : colorGrayed);
+         * }
+         * holder.cbWifi.setOnCheckedChangeListener(new
+         * CompoundButton.OnCheckedChangeListener() {
+         * 
+         * @Override
+         * public void onCheckedChanged(CompoundButton compoundButton, boolean
+         * isChecked) {
+         * rule.wifi_blocked = isChecked;
+         * updateRule(context, rule, true, listAll);
+         * }
+         * });
+         * 
+         * holder.ivScreenWifi.setEnabled(active);
+         * holder.ivScreenWifi.setAlpha(wifiActive ? 1 : 0.5f);
+         * holder.ivScreenWifi.setVisibility(rule.screen_wifi && rule.wifi_blocked ?
+         * View.VISIBLE : View.INVISIBLE);
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap = DrawableCompat.wrap(holder.ivScreenWifi.getDrawable());
+         * DrawableCompat.setTint(wrap, active ? colorOn : colorGrayed);
+         * }
+         * 
+         * // Mobile settings
+         * holder.cbOther.setEnabled(active);
+         * holder.cbOther.setAlpha(otherActive ? 1 : 0.5f);
+         * holder.cbOther.setOnCheckedChangeListener(null);
+         * holder.cbOther.setChecked(rule.other_blocked);
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap =
+         * DrawableCompat.wrap(CompoundButtonCompat.getButtonDrawable(holder.cbOther));
+         * DrawableCompat.setTint(wrap, active ? (rule.other_blocked ? colorOff :
+         * colorOn) : colorGrayed);
+         * }
+         * holder.cbOther.setOnCheckedChangeListener(new
+         * CompoundButton.OnCheckedChangeListener() {
+         * 
+         * @Override
+         * public void onCheckedChanged(CompoundButton compoundButton, boolean
+         * isChecked) {
+         * rule.other_blocked = isChecked;
+         * updateRule(context, rule, true, listAll);
+         * }
+         * });
+         * 
+         * holder.ivScreenOther.setEnabled(active);
+         * holder.ivScreenOther.setAlpha(otherActive ? 1 : 0.5f);
+         * holder.ivScreenOther.setVisibility(rule.screen_other && rule.other_blocked ?
+         * View.VISIBLE : View.INVISIBLE);
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap = DrawableCompat.wrap(holder.ivScreenOther.getDrawable());
+         * DrawableCompat.setTint(wrap, active ? colorOn : colorGrayed);
+         * }
+         * 
+         * holder.tvRoaming.setTextColor(active ? colorOff : colorGrayed);
+         * holder.tvRoaming.setAlpha(otherActive ? 1 : 0.5f);
+         * holder.tvRoaming.setVisibility(
+         * rule.roaming && (!rule.other_blocked || rule.screen_other) ? View.VISIBLE :
+         * View.INVISIBLE);
+         * 
+         * holder.tvRemarkMessaging.setVisibility(messaging.contains(rule.packageName) ?
+         * View.VISIBLE : View.GONE);
+         * holder.tvRemarkDownload.setVisibility(download.contains(rule.packageName) ?
+         * View.VISIBLE : View.GONE);
+         */
+        // END TRACKERCONTROL
 
         // Expanded configuration section
         holder.llConfiguration.setVisibility(rule.expanded ? View.VISIBLE : View.GONE);
@@ -595,94 +615,113 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             }
         });
 
-        // Show Wi-Fi screen on condition
-        holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);
-        holder.cbScreenWifi.setEnabled(rule.wifi_blocked && active);
-        holder.cbScreenWifi.setOnCheckedChangeListener(null);
-        holder.cbScreenWifi.setChecked(rule.screen_wifi);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(holder.ivWifiLegend.getDrawable());
-            DrawableCompat.setTint(wrap, colorOn);
-        }
-
-        holder.cbScreenWifi.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rule.screen_wifi = isChecked;
-                updateRule(context, rule, true, listAll);
-            }
-        });
-
-        // Show mobile screen on condition
-        holder.llScreenOther.setVisibility(screen_on ? View.VISIBLE : View.GONE);
-        holder.cbScreenOther.setEnabled(rule.other_blocked && active);
-        holder.cbScreenOther.setOnCheckedChangeListener(null);
-        holder.cbScreenOther.setChecked(rule.screen_other);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(holder.ivOtherLegend.getDrawable());
-            DrawableCompat.setTint(wrap, colorOn);
-        }
-
-        holder.cbScreenOther.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rule.screen_other = isChecked;
-                updateRule(context, rule, true, listAll);
-            }
-        });
-
-        // Show roaming condition
-        holder.cbRoaming.setEnabled((!rule.other_blocked || rule.screen_other) && active);
-        holder.cbRoaming.setOnCheckedChangeListener(null);
-        holder.cbRoaming.setChecked(rule.roaming);
-        holder.cbRoaming.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            @TargetApi(Build.VERSION_CODES.M)
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rule.roaming = isChecked;
-                updateRule(context, rule, true, listAll);
-            }
-        });
-
-        // Show lockdown
-        holder.cbLockdown.setEnabled(active);
-        holder.cbLockdown.setOnCheckedChangeListener(null);
-        holder.cbLockdown.setChecked(rule.lockdown);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrap = DrawableCompat.wrap(holder.ivLockdownLegend.getDrawable());
-            DrawableCompat.setTint(wrap, colorOn);
-        }
-
-        holder.cbLockdown.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            @TargetApi(Build.VERSION_CODES.M)
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                rule.lockdown = isChecked;
-                updateRule(context, rule, true, listAll);
-            }
-        });
-
-        // Reset rule
-        holder.btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Util.areYouSure(view.getContext(), R.string.msg_clear_rules, new Util.DoubtListener() {
-                    @Override
-                    public void onSure() {
-                        holder.cbApply.setChecked(true);
-                        holder.cbWifi.setChecked(rule.wifi_default);
-                        holder.cbOther.setChecked(rule.other_default);
-                        holder.cbScreenWifi.setChecked(rule.screen_wifi_default);
-                        holder.cbScreenOther.setChecked(rule.screen_other_default);
-                        holder.cbRoaming.setChecked(rule.roaming_default);
-                        holder.cbLockdown.setChecked(false);
-                    }
-                });
-            }
-        });
+        // BEGIN TRACKERCONTROL: Skipped - parent views are GONE in rule.xml (legacy
+        // NetGuard UI)
+        /*
+         * // Show Wi-Fi screen on condition
+         * holder.llScreenWifi.setVisibility(screen_on ? View.VISIBLE : View.GONE);
+         * holder.cbScreenWifi.setEnabled(rule.wifi_blocked && active);
+         * holder.cbScreenWifi.setOnCheckedChangeListener(null);
+         * holder.cbScreenWifi.setChecked(rule.screen_wifi);
+         * 
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap = DrawableCompat.wrap(holder.ivWifiLegend.getDrawable());
+         * DrawableCompat.setTint(wrap, colorOn);
+         * }
+         * 
+         * holder.cbScreenWifi.setOnCheckedChangeListener(new
+         * CompoundButton.OnCheckedChangeListener() {
+         * 
+         * @Override
+         * public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+         * rule.screen_wifi = isChecked;
+         * updateRule(context, rule, true, listAll);
+         * }
+         * });
+         * 
+         * // Show mobile screen on condition
+         * holder.llScreenOther.setVisibility(screen_on ? View.VISIBLE : View.GONE);
+         * holder.cbScreenOther.setEnabled(rule.other_blocked && active);
+         * holder.cbScreenOther.setOnCheckedChangeListener(null);
+         * holder.cbScreenOther.setChecked(rule.screen_other);
+         * 
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap = DrawableCompat.wrap(holder.ivOtherLegend.getDrawable());
+         * DrawableCompat.setTint(wrap, colorOn);
+         * }
+         * 
+         * holder.cbScreenOther.setOnCheckedChangeListener(new
+         * CompoundButton.OnCheckedChangeListener() {
+         * 
+         * @Override
+         * public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+         * rule.screen_other = isChecked;
+         * updateRule(context, rule, true, listAll);
+         * }
+         * });
+         * 
+         * // Show roaming condition
+         * holder.cbRoaming.setEnabled((!rule.other_blocked || rule.screen_other) &&
+         * active);
+         * holder.cbRoaming.setOnCheckedChangeListener(null);
+         * holder.cbRoaming.setChecked(rule.roaming);
+         * holder.cbRoaming.setOnCheckedChangeListener(new
+         * CompoundButton.OnCheckedChangeListener() {
+         * 
+         * @Override
+         * 
+         * @TargetApi(Build.VERSION_CODES.M)
+         * public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+         * rule.roaming = isChecked;
+         * updateRule(context, rule, true, listAll);
+         * }
+         * });
+         * 
+         * // Show lockdown
+         * holder.cbLockdown.setEnabled(active);
+         * holder.cbLockdown.setOnCheckedChangeListener(null);
+         * holder.cbLockdown.setChecked(rule.lockdown);
+         * 
+         * if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+         * Drawable wrap = DrawableCompat.wrap(holder.ivLockdownLegend.getDrawable());
+         * DrawableCompat.setTint(wrap, colorOn);
+         * }
+         * 
+         * holder.cbLockdown.setOnCheckedChangeListener(new
+         * CompoundButton.OnCheckedChangeListener() {
+         * 
+         * @Override
+         * 
+         * @TargetApi(Build.VERSION_CODES.M)
+         * public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+         * rule.lockdown = isChecked;
+         * updateRule(context, rule, true, listAll);
+         * }
+         * });
+         * 
+         * // Reset rule
+         * holder.btnClear.setOnClickListener(new View.OnClickListener() {
+         * 
+         * @Override
+         * public void onClick(View view) {
+         * Util.areYouSure(view.getContext(), R.string.msg_clear_rules, new
+         * Util.DoubtListener() {
+         * 
+         * @Override
+         * public void onSure() {
+         * holder.cbApply.setChecked(true);
+         * holder.cbWifi.setChecked(rule.wifi_default);
+         * holder.cbOther.setChecked(rule.other_default);
+         * holder.cbScreenWifi.setChecked(rule.screen_wifi_default);
+         * holder.cbScreenOther.setChecked(rule.screen_other_default);
+         * holder.cbRoaming.setChecked(rule.roaming_default);
+         * holder.cbLockdown.setChecked(false);
+         * }
+         * });
+         * }
+         * });
+         */
+        // END TRACKERCONTROL
 
         holder.llFilter.setVisibility(Util.canFilter(context) ? View.VISIBLE : View.GONE);
 
