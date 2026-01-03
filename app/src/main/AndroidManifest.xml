@@ -157,6 +157,16 @@
         </activity>
 
         <activity
+            android:name="net.kollnig.missioncontrol.ActivityBlocklists"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/title_blocklists"
+            android:parentActivityName="eu.faircode.netguard.ActivitySettings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.faircode.netguard.ActivitySettings" />
+        </activity>
+
+        <activity
             android:name="net.kollnig.missioncontrol.DetailsActivity"
             android:exported="true"
             android:label="@string/title_activity_detail"

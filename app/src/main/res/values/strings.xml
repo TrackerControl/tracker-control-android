@@ -167,7 +167,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_clear_rules">This will reset the rules and conditions to their default values</string>
     <string name="msg_reset_access">This will delete access attempt log lines without allow/block rules</string>
     <string name="msg_import_last">Last import: %s</string>
-    <string name="msg_downloading">Downloading\n%1s</string>
+    <string name="msg_downloading">Downloading…</string>
     <string name="msg_downloaded">Hosts file downloaded</string>
     <string name="msg_updated">Hosts file updated and applied!</string>
     <string name="msg_download_last">Last download: %s</string>
@@ -538,5 +538,12 @@ Sincerely,\n\n]]></string>
     <string name="insights_no_data">No tracking data yet. Use your apps and check back!</string>
     <string name="insights_shocking_fact">Your apps tried to contact %1$d tracking companies %2$d times this week!</string>
 
+    <string name="title_blocklists">Additional host files</string>
+    <string name="summary_manage_blocklists">These are only for fallback. TrackerControl includes its own host lists that give insights on the companies behind tracking.</string>
+    <string name="title_add_blocklist">Add host file</string>
+    <string name="title_delete_blocklist">Delete host file</string>
+    <string name="msg_delete_blocklist_confirm">Are you sure you want to delete this host file?</string>
+    <string name="msg_invalid_url">Invalid URL</string>
+    <string name="msg_last_update">Last update: %s</string>
 </resources>
 

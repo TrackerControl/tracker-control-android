@@ -12,8 +12,6 @@ android {
         versionCode 2026010204
         versionName "2026.01.02"
 
-        buildConfigField "String", "HOSTS_FILE_URI", "\"https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts\""
-
         // Secure DNS (DoH) configuration
         buildConfigField "String", "DEFAULT_DOH_ENDPOINT", "\"https://dns.quad9.net/dns-query\""
         buildConfigField "String", "DEFAULT_DNS_IPV4", "\"9.9.9.9\""

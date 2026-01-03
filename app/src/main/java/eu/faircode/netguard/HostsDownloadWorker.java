@@ -21,7 +21,6 @@
 package eu.faircode.netguard;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,18 +28,21 @@ import androidx.preference.PreferenceManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.Blocklist;
+import net.kollnig.missioncontrol.data.BlocklistManager;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class HostsDownloadWorker extends Worker {
@@ -56,83 +58,137 @@ public class HostsDownloadWorker extends Worker {
         Log.i(TAG, "Starting hosts download");
 
         Context context = getApplicationContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String urlString = prefs.getString("hosts_url_new", net.kollnig.missioncontrol.BuildConfig.HOSTS_FILE_URI);
+        BlocklistManager manager = BlocklistManager.getInstance(context);
+        List<Blocklist> lists = manager.getBlocklists();
+        boolean anySuccess = false;
+        boolean allSuccess = true;
 
-        File file = new File(context.getFilesDir(), "hosts.txt");
-        File tmp = new File(context.getFilesDir(), "hosts.tmp");
+        for (Blocklist item : lists) {
+            if (!item.enabled)
+                continue;
 
-        InputStream in = null;
-        OutputStream out = null;
-        URLConnection connection = null;
+            Log.i(TAG, "Downloading " + item.url);
+            File tmp = new File(context.getFilesDir(), "blocklist_" + item.uuid + ".tmp");
+            File target = manager.getBlocklistFile(item.uuid);
 
-        try {
-            URL url = new URL(urlString);
-            Log.i(TAG, "Downloading " + url + " into " + tmp);
+            InputStream in = null;
+            OutputStream out = null;
+            URLConnection connection = null;
 
-            connection = url.openConnection();
-            connection.setRequestProperty("Accept-Encoding", "gzip");
-            connection.connect();
+            try {
+                URL url = new URL(item.url);
+                connection = url.openConnection();
+                connection.setRequestProperty("Accept-Encoding", "gzip");
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.connect();
 
-            if (connection instanceof HttpURLConnection) {
-                HttpURLConnection httpConnection = (HttpURLConnection) connection;
-                if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_OK)
-                    throw new IOException(httpConnection.getResponseCode() + " " + httpConnection.getResponseMessage());
-            }
-
-            if ("gzip".equals(connection.getContentEncoding()))
-                in = new GZIPInputStream(connection.getInputStream());
-            else
-                in = connection.getInputStream();
-
-            out = new FileOutputStream(tmp);
-
-            byte[] buffer = new byte[4096];
-            int bytes;
-            while ((bytes = in.read(buffer)) != -1) {
-                if (isStopped()) {
-                    return Result.failure();
+                if (connection instanceof HttpURLConnection) {
+                    HttpURLConnection httpConnection = (HttpURLConnection) connection;
+                    if (httpConnection.getResponseCode() != HttpURLConnection.HTTP_OK)
+                        throw new IOException(
+                                httpConnection.getResponseCode() + " " + httpConnection.getResponseMessage());
                 }
-                out.write(buffer, 0, bytes);
-            }
 
-            if (file.exists()) {
-                file.delete();
-            }
-            if (tmp.renameTo(file)) {
-                String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
-                prefs.edit().putString("hosts_last_download", last).apply();
-                Log.i(TAG, "Hosts downloaded successfully");
+                if ("gzip".equals(connection.getContentEncoding()))
+                    in = new GZIPInputStream(connection.getInputStream());
+                else
+                    in = connection.getInputStream();
 
-                ServiceSinkhole.reload("hosts file download", context, false);
-                return Result.success();
-            } else {
-                Log.e(TAG, "Failed to rename temp file");
-                return Result.failure();
-            }
+                out = new FileOutputStream(tmp);
 
-        } catch (Throwable ex) {
-            Log.e(TAG, ex + "\n" + Log.getStackTraceString(ex));
-            return Result.failure();
-        } finally {
-            if (tmp.exists()) {
-                tmp.delete();
-            }
-            try {
-                if (out != null)
-                    out.close();
-            } catch (IOException ex) {
-                Log.e(TAG, ex.toString());
-            }
-            try {
-                if (in != null)
-                    in.close();
-            } catch (IOException ex) {
-                Log.e(TAG, ex.toString());
-            }
-            if (connection instanceof HttpURLConnection) {
-                ((HttpURLConnection) connection).disconnect();
+                byte[] buffer = new byte[4096];
+                int bytes;
+                while ((bytes = in.read(buffer)) != -1) {
+                    if (isStopped()) {
+                        return Result.failure();
+                    }
+                    out.write(buffer, 0, bytes);
+                }
+
+                if (target.exists()) {
+                    target.delete();
+                }
+                if (tmp.renameTo(target)) {
+                    item.lastModified = new Date().getTime();
+                    item.lastDownloadSuccess = true;
+                    item.lastErrorMessage = null;
+                    manager.updateBlocklist(item);
+                    anySuccess = true;
+                } else {
+                    Log.e(TAG, "Failed to rename temp file for " + item.url);
+                    item.lastDownloadSuccess = false;
+                    item.lastErrorMessage = "Failed to save file";
+                    manager.updateBlocklist(item);
+                    allSuccess = false;
+                }
+
+            } catch (Throwable ex) {
+                Log.e(TAG, "Failed to download " + item.url + ": " + ex.toString());
+                item.lastDownloadSuccess = false;
+                item.lastErrorMessage = ex.getMessage();
+                manager.updateBlocklist(item);
+                allSuccess = false;
+            } finally {
+                if (tmp.exists()) {
+                    tmp.delete();
+                }
+                try {
+                    if (out != null)
+                        out.close();
+                } catch (IOException ex) {
+                    Log.e(TAG, ex.toString());
+                }
+                try {
+                    if (in != null)
+                        in.close();
+                } catch (IOException ex) {
+                    Log.e(TAG, ex.toString());
+                }
+                if (connection instanceof HttpURLConnection) {
+                    ((HttpURLConnection) connection).disconnect();
+                }
             }
         }
+
+        if (anySuccess) {
+            if (manager.mergeBlocklists()) {
+                String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
+                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                        .putString("hosts_last_download", last).apply();
+
+                Log.i(TAG, "Hosts downloaded and merged successfully");
+                ServiceSinkhole.reload("hosts file download", context, false);
+
+                return allSuccess ? Result.success() : Result.success();
+            } else {
+                Log.e(TAG, "Merge failed");
+                showNotification(context, "Hosts merge failed");
+                return Result.failure();
+            }
+        } else {
+            showNotification(context, "Hosts download failed");
+            return Result.failure();
+        }
+    }
+
+    private void showNotification(Context context, String message) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            android.app.NotificationManager nm = (android.app.NotificationManager) context
+                    .getSystemService(Context.NOTIFICATION_SERVICE);
+            android.app.NotificationChannel channel = new android.app.NotificationChannel("notify",
+                    context.getString(R.string.channel_notify), android.app.NotificationManager.IMPORTANCE_DEFAULT);
+            nm.createNotificationChannel(channel);
+        }
+
+        androidx.core.app.NotificationCompat.Builder builder = new androidx.core.app.NotificationCompat.Builder(context,
+                "notify")
+                .setSmallIcon(R.drawable.ic_shield_off)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(message)
+                .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        androidx.core.app.NotificationManagerCompat.from(context).notify(2024, builder.build());
     }
 }

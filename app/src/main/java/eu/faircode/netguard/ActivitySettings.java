@@ -64,9 +64,6 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
@@ -82,7 +79,6 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,11 +87,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -273,8 +271,13 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Hosts file settings
         cat_advanced.removePreference(screen.findPreference("use_hosts"));
         EditTextPreference pref_rcode = (EditTextPreference) screen.findPreference("rcode");
-        EditTextPreference pref_hosts_url = (EditTextPreference) screen.findPreference("hosts_url_new");
         final Preference pref_hosts_download = screen.findPreference("hosts_download");
+
+        Preference pref_manage_blocklists = screen.findPreference("manage_blocklists");
+        pref_manage_blocklists.setOnPreferenceClickListener(preference -> {
+            startActivity(new Intent(ActivitySettings.this, net.kollnig.missioncontrol.ActivityBlocklists.class));
+            return true;
+        });
 
         pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
         cat_advanced.removePreference(pref_rcode);
@@ -300,7 +303,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (last_download != null)
             pref_hosts_download.setSummary(getString(R.string.msg_update_last, last_download));
 
-        pref_hosts_url.setSummary(pref_hosts_url.getText());
         pref_hosts_download.setOnPreferenceClickListener(preference -> {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -311,8 +313,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     .addTag("ManualHostsDownload")
                     .build();
             WorkManager.getInstance(ActivitySettings.this).enqueue(downloadWork);
-            Toast.makeText(ActivitySettings.this, getString(R.string.msg_downloading, pref_hosts_url.getText()),
-                    Toast.LENGTH_SHORT).show();
             return true;
         });
 
@@ -689,9 +689,14 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             getPreferenceScreen().findPreference(name)
                     .setTitle(getString(R.string.setting_stats_samples, prefs.getString(name, "90")));
 
-        else if ("hosts_url_new".equals(name))
-            getPreferenceScreen().findPreference(name).setSummary(
-                    prefs.getString(name, BuildConfig.HOSTS_FILE_URI));
+        else if ("hosts_last_download".equals(name)) {
+            String last = prefs.getString(name, null);
+            if (last != null) {
+                Preference pref = getPreferenceScreen().findPreference("hosts_download");
+                if (pref != null)
+                    pref.setSummary(getString(R.string.msg_update_last, last));
+            }
+        }
 
         else if ("loglevel".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
