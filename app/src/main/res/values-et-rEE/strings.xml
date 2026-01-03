@@ -64,7 +64,6 @@
     <string name="msg_installed_n">On paigaldatud</string>
     <string name="msg_error">Tekkis ootamatu viga: „%s“</string>
     <string name="msg_import_last">Viimane import: %s</string>
-    <string name="msg_downloading">Allalaadimisel\n%1s</string>
     <string name="msg_downloaded">Hosts-fail on allalaaditud</string>
     <string name="msg_updated">Hosts-fail on uuendatud ja kasutusel!</string>
     <string name="msg_download_last">Viimati allalaaditud: %s</string>
@@ -161,4 +160,5 @@
     <string name="static_analysis">Tuvasta jälitajaid rakenduse koodist</string>
     <string name="msg_notifications">Teavituste õiguste lubamiseks klõpsi (näiteks veasõnumite jaoks)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>
