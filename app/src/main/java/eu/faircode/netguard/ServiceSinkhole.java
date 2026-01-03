@@ -170,6 +170,10 @@ public class ServiceSinkhole extends VpnService {
     private volatile LogHandler logHandler;
     private volatile StatsHandler statsHandler;
 
+    // Cached preferences for shouldTrackApp() - refreshed in reload()
+    private volatile SharedPreferences cachedApplyPrefs;
+    private volatile boolean cachedManageSystem;
+
     private static final int NOTIFY_ENFORCING = 1;
     private static final int NOTIFY_WAITING = 2;
     private static final int NOTIFY_DISABLED = 3;
@@ -565,6 +569,10 @@ public class ServiceSinkhole extends VpnService {
             }
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+
+            // Refresh cached preferences for shouldTrackApp()
+            cachedApplyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+            cachedManageSystem = prefs.getBoolean("manage_system", false);
 
             if (state != State.enforcing) {
                 if (state != State.none) {
@@ -2150,14 +2158,16 @@ public class ServiceSinkhole extends VpnService {
         String packageName = packages[0];
 
         // Check if tracker protection is enabled for this app
-        SharedPreferences applyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+        SharedPreferences applyPrefs = cachedApplyPrefs;
+        if (applyPrefs == null) {
+            applyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+        }
         if (!applyPrefs.getBoolean(packageName, true)) {
             return false;
         }
 
         // Check if system app with manage_system disabled
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean("manage_system", false) && Rule.isSystem(packageName, this)) {
+        if (!cachedManageSystem && Rule.isSystem(packageName, this)) {
             return false;
         }
 
