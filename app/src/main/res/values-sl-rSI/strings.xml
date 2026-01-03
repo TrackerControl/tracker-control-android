@@ -141,7 +141,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
 \n\nV naslednjem pogovornem oknu na vrhu izberite \"Vsi Programi\", na seznamu se dotaknite \"TrackerControl\" in izberite in potrdite \"Ne optimiziraj\".</string>
     <string name="msg_datasaving">Za dosledne rezultate onemogočite Androidovo varčevanje s podatki za TrackerControl.
 \n\nV naslednjem pogovornem oknu omogočite možnosti \"Podatki v ozadju\" in \"Neomejena poraba podatkov\".</string>
-    <string name="msg_filter">Če boste uporabljali filtriranje, bo Android porabo podatkov in energije dodelil TrackerControlu (Android bo mislil, da podatke in energijo porablja TrackerControl in ne izvirni programi).</string>
+    <string name="msg_filter">Če boste uporabljali filtriranje, bo Android porabo podatkov in energije dodelil programu TrackerControl (Android bo mislil, da podatke in energijo porablja TrackerControl in ne izvirni programi).</string>
     <string name="msg_filter4">Android 4 zahteva, da je filtriranje omogočeno.</string>
     <string name="msg_log_disabled">Beleženje prometa je onemogočeno.  Uporabite zgornje stikalo, da ga omogočite.  Beleženje prometa lahko povzroči dodatno porabo energije.</string>
     <string name="msg_clear_rules">To bo ponastavilo pravila in pogoje na privzete vrednosti.</string>
@@ -350,7 +350,7 @@ Sincerely,\n\n]]></string>
     <string name="no_trackers_found_action">Zaženi</string>
     <string name="no_internet_message">"Ta program nima dostopa do interneta.  Lahko vam še vedno sledi tako, da izmenjuje podatke z drugimi programi."</string>
     <string name="no_internet">Ni dostopa do interneta</string>
-    <string name="bypass_vpn_error">"Ne more blokirati interneta.  Program je izključen iz TrackerControla."</string>
+    <string name="bypass_vpn_error">"Ne more blokirati interneta.  Program je izključen iz programa TrackerControl."</string>
     <string name="back">Nazaj</string>
     <string name="forever_free">Vedno brezplačen</string>
     <string name="your_privacy">Vaša zasebnost</string>
@@ -411,19 +411,51 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_notify_action">Dovoli obvestila</string>
     <string name="onboarding_notify_sure">Brez dovoljenj za obvestila si ne boste mogli ogledati posodobitev v resničnem času ali nadzirati zaščite iz vrstice stanja.  Ali ste prepričani?</string>
     <string name="onboarding_privatedns_title">Onemogoči zasebni DNS</string>
-    <string name="onboarding_privatedns_desc">Androidova značilnost \"Zasebni DNS\" moti TrackerControljevo zmožnost blokiranja sledilcev.  Če želite nadaljevati,  <b>morate</b> to nastavitev izklopiti.</string>
-    <string name="onboarding_privatedns_instruction">Nastavitve -&gt; Omrežje in internet -&gt; Zasebni DNS -&gt; Izklopi</string>
+    <string name="onboarding_privatedns_desc">Androidova značilnost \"Zasebni DNS\" moti zmožnost blokiranja sledilcev programa TrackerControl.  Če želite nadaljevati,  <b>morate</b> to nastavitev izklopiti.</string>
+    <string name="onboarding_privatedns_instruction">Nastavitve –&gt; Omrežje in internet –&gt; Zasebni DNS –&gt; Izklopi.</string>
     <string name="onboarding_privatedns_action">Odpri nastavitve DNS</string>
     <string name="onboarding_privatedns_skip_title">Preskoči onemogočanje zasebnega DNS-a?</string>
     <string name="onboarding_privatedns_skip_msg">Če nadaljujete z omogočenim zasebnim DNS-om, bo to znatno omejilo TrackerControl.  Večina sledenja ne bo blokirana – program bo zmožen samo preučevanja sledilnih knjižnic.  Poleg tega bo filter VPN onemogočen, da se zagotovi osnovno delovanje.</string>
     <string name="onboarding_network_title">Neomejeno omrežje</string>
-    <string name="onboarding_network_desc">Možnosti varčevanja podatkov lahko TrackerControlu onemogočijo pravilno delovanje v ozadju.  Za najzanesljivejšo zaščito mu omogočite neomejen dostop.</string>
+    <string name="onboarding_network_desc">Možnosti varčevanja podatkov lahko programu TrackerControl onemogočijo pravilno delovanje v ozadju.  Za najzanesljivejšo zaščito mu omogočite neomejen dostop.</string>
     <string name="onboarding_network_action">Odobri neomejen dostop</string>
-    <string name="onboarding_network_sure">Omejevanje prenašanja podatkov v ozadju lahko povzroči nedelovanje TrackerControla.  Ali res želite nadaljevati brez odobritve neomejenega dostopa?</string>
+    <string name="onboarding_network_sure">Omejevanje prenašanja podatkov v ozadju lahko povzroči nedelovanje programa TrackerControl.  Ali res želite nadaljevati brez odobritve neomejenega dostopa?</string>
     <string name="onboarding_dns_title">Varen DNS (značilnost beta; morda ne bo delovalo po pričakovanjih)</string>
     <string name="onboarding_dns_desc">Zaščitite svojo zasebnost pred vašim ponudnikom s šifriranjem prometa DNS z uporabo DNS-a preko HTTPS-a (DoH).\n\nTo prepreči \"ugrabitev DNS\" in ščiti vaše navade brskanja pred ponudnikom interneta.</string>
     <string name="onboarding_dns_action">Omogoči varen DNS</string>
     <string name="onboarding_dns_action_disable">Onemogoči varen DNS</string>
     <string name="onboarding_blocking_title">Blokiraj sledilce</string>
+    <string name="onboarding_blocking_desc">Odkrij in blokiraj razširjeno sledenje v vaših programih.\n\n• Seznami blokiranja&lt;/b&gt;: združuje Firefox Disconnect z našim edinstvenim preučevanjem &lt;b&gt;2.000.000-ov programov&lt;/b&gt;.\n• &lt;b&gt;GDPR&lt;/b&gt;: izkoristite svoje pravice z &lt;b&gt;zahtevami za brisanje z enim klikom&lt;/b&gt;.\n• &lt;b&gt;Preglednost&lt;/b&gt;: odkrijte, katera podjetja in države natančno pridobivajo vaše podatke.</string>
+    <string name="onboarding_blocking_action">Omogoči blokiranje</string>
+    <string name="onboarding_blocking_action_disable">Onemogoči blokiranje</string>
+    <string name="onboarding_blocking_sure">Blokiranje sledilcev je glavna značilnost programa TrackerControl.  Ali ga res želite onemogočiti?</string>
+    <string name="onboarding_action_enabled">Omogočeno</string>
+    <string name="onboarding_action_disabled">Onemogočeno</string>
+    <string name="onboarding_action_granted">Odobreno</string>
+    <string name="onboarding_action_optimized">Optimizirano</string>
+    <string name="onboarding_action_unrestricted">Neomejeno</string>
     <!-- Insights Screen -->
+    <string name="menu_insights">Podatki</string>
+    <string name="insights_title">Podatki o vaši zasebnosti</string>
+    <string name="insights_subtitle_7days">Zadnjih 7 dni</string>
+    <string name="insights_tracking_attempts">Št. navez. stikov z gostitelji sledilcev</string>
+    <string name="insights_blocked">Blokiranih</string>
+    <string name="insights_allowed">Dovoljenih</string>
+    <string name="insights_tracker_companies">Sledilna podjetja</string>
+    <string name="insights_apps_with_trackers">Programi s sledilci</string>
+    <string name="insights_top_tracking_apps">Najbolj agresivni programi</string>
+    <string name="insights_top_companies">Podjetja z največ dejavnih sledilcev</string>
+    <string name="insights_pervasive_trackers">Najbolj prodorni sledilci</string>
+    <string name="insights_top_domains">Domene z največ sledilci</string>
+    <string name="insights_in_apps">v %d-ih programih</string>
+    <string name="insights_protected">Ščiti TrackerControl</string>
+    <string name="insights_no_data">Podatki o sledenju še niso na voljo.  Uporabljajte svoje programe in zopet preverite!</string>
+    <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
+    <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
+    <string name="summary_manage_blocklists">Ti so samo za izhod v sili.  TrackerControl vključuje svoje sezname gostiteljev, ki nudijo podatke o sledilnih podjetjih.</string>
+    <string name="title_add_blocklist">Dodaj datoteko gostiteljev</string>
+    <string name="title_delete_blocklist">Izbriši datoteko gostiteljev</string>
+    <string name="msg_delete_blocklist_confirm">Ali res želite izbrisati to datoteko gostiteljev?</string>
+    <string name="msg_invalid_url">Neveljaven URL</string>
+    <string name="msg_last_update">Zadnja posodobitev: %s</string>
 </resources>
