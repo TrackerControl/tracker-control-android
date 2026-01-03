@@ -14,64 +14,56 @@
  *
  * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
  */
+package net.kollnig.missioncontrol
 
-package net.kollnig.missioncontrol;
+import android.app.Activity
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.net.Uri
+import android.view.View
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.Calendar
+import java.util.zip.GZIPInputStream
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.net.Uri;
-import android.view.View;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-
-public class Common {
+object Common {
     /**
      * Downloads content from a provided URL
      *
      * @param url URL for download
      * @return Downloaded content
      */
-    @Nullable
-    public static String fetch(String url) {
+    @JvmStatic
+    fun fetch(url: String?): String? {
         try {
-            StringBuilder html = new StringBuilder();
+            val html = StringBuilder()
 
-            HttpURLConnection conn = (HttpURLConnection) (new URL(url)).openConnection();
-            conn.setRequestProperty("Accept-Encoding", "gzip");
-            conn.setConnectTimeout(5000);
-            BufferedReader in;
-            if ("gzip".equals(conn.getContentEncoding()))
-                in = new BufferedReader(new InputStreamReader(new GZIPInputStream(conn.getInputStream())));
-            else
-                in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            val conn = (URL(url)).openConnection() as HttpURLConnection
+            conn.setRequestProperty("Accept-Encoding", "gzip")
+            conn.setConnectTimeout(5000)
+            val `in`: BufferedReader?
+            if ("gzip" == conn.getContentEncoding()) `in` =
+                BufferedReader(InputStreamReader(GZIPInputStream(conn.getInputStream())))
+            else `in` = BufferedReader(InputStreamReader(conn.getInputStream()))
 
-            String str;
-            while ((str = in.readLine()) != null)
-                html.append(str);
+            var str: String?
+            while ((`in`.readLine().also { str = it }) != null) html.append(str)
 
-            in.close();
+            `in`.close()
 
-            return html.toString();
-        } catch (IOException | OutOfMemoryError e) {
-            return null;
+            return html.toString()
+        } catch (e: IOException) {
+            return null
+        } catch (e: OutOfMemoryError) {
+            return null
         }
     }
 
@@ -80,9 +72,15 @@ public class Common {
      *
      * @return Intent to open system ad settings
      */
-    public static Intent adSettings() {
-        Intent intent = new Intent();
-        return intent.setComponent(new ComponentName("com.google.android.gms", "com.google.android.gms.ads.settings.AdsSettingsActivity"));
+    @JvmStatic
+    fun adSettings(): Intent {
+        val intent = Intent()
+        return intent.setComponent(
+            ComponentName(
+                "com.google.android.gms",
+                "com.google.android.gms.ads.settings.AdsSettingsActivity"
+            )
+        )
     }
 
     /**
@@ -91,11 +89,12 @@ public class Common {
      * @param url A URL to be opened
      * @return An intent to open the provided URL
      */
-    public static Intent browse(String url) {
-        if (!url.startsWith("http://") && !url.startsWith("https://"))
-            url = "http://" + url;
+    @JvmStatic
+    fun browse(url: String): Intent {
+        var url = url
+        if (!url.startsWith("http://") && !url.startsWith("https://")) url = "http://" + url
 
-        return new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        return Intent(Intent.ACTION_VIEW, Uri.parse(url))
     }
 
     /**
@@ -104,8 +103,9 @@ public class Common {
      * @param c Context
      * @return Information if system ad settings exist
      */
-    public static boolean hasAdSettings(Context c) {
-        return isCallable(c, adSettings());
+    @JvmStatic
+    fun hasAdSettings(c: Context): Boolean {
+        return isCallable(c, adSettings())
     }
 
     /**
@@ -116,15 +116,16 @@ public class Common {
      * @param body    The email body
      * @return The intent
      */
-    public static Intent emailIntent(@Nullable String email, String subject, String body) {
-        Intent i = new Intent(Intent.ACTION_SEND);
-        i.setType("message/rfc822");
+    @JvmStatic
+    fun emailIntent(email: String?, subject: String?, body: String?): Intent {
+        val i = Intent(Intent.ACTION_SEND)
+        i.setType("message/rfc822")
         if (email != null) {
-            i.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+            i.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(email))
         }
-        i.putExtra(Intent.EXTRA_SUBJECT, subject);
-        i.putExtra(Intent.EXTRA_TEXT, body);
-        return i;
+        i.putExtra(Intent.EXTRA_SUBJECT, subject)
+        i.putExtra(Intent.EXTRA_TEXT, body)
+        return i
     }
 
     /**
@@ -134,10 +135,13 @@ public class Common {
      * @param intent Intent
      * @return Information if intent exists
      */
-    public static boolean isCallable(Context c, Intent intent) {
-        List<ResolveInfo> list = c.getPackageManager().queryIntentActivities(intent,
-                PackageManager.MATCH_DEFAULT_ONLY);
-        return list.size() > 0;
+    @JvmStatic
+    fun isCallable(c: Context, intent: Intent): Boolean {
+        val list = c.getPackageManager().queryIntentActivities(
+            intent,
+            PackageManager.MATCH_DEFAULT_ONLY
+        )
+        return list.size > 0
     }
 
     /**
@@ -147,7 +151,8 @@ public class Common {
      * @return the name of the package of the app with the given uid, or "Unknown" if
      * no name could be found for the uid.
      */
-    public static String getAppName(PackageManager pm, int uid) {
+    @JvmStatic
+    fun getAppName(pm: PackageManager, uid: Int): String? {
         /* IMPORTANT NOTE:
          * From https://source.android.com/devices/tech/security/ : "The Android
          * system assigns a unique user ID (UID) to each Android application and
@@ -160,15 +165,14 @@ public class Common {
          */
 
         // See if this is root
-        if (uid == 0)
-            return "System";
+
+        if (uid == 0) return "System"
 
         // If we can't find a running app, just get a list of packages that map to the uid
-        String[] packages = pm.getPackagesForUid(uid);
-        if (packages != null && packages.length > 0)
-            return packages[0];
+        val packages = pm.getPackagesForUid(uid)
+        if (packages != null && packages.size > 0) return packages[0]
 
-        return "Unknown";
+        return "Unknown"
     }
 
     /**
@@ -178,10 +182,12 @@ public class Common {
      * @param appId    Package name of the app to be launched
      * @return An intent
      */
-    public static Intent getLaunchIntent(Activity activity, String appId) {
-        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(appId);
-        return intent == null ||
-                intent.resolveActivity(activity.getPackageManager()) == null ? null : intent;
+    @JvmStatic
+    fun getLaunchIntent(activity: Activity, appId: String): Intent? {
+        val intent = activity.getPackageManager().getLaunchIntentForPackage(appId)
+        return if (intent == null ||
+            intent.resolveActivity(activity.getPackageManager()) == null
+        ) null else intent
     }
 
     /**
@@ -191,16 +197,17 @@ public class Common {
      * @param msg      The message to be shown
      * @return The computed snackbar. Displayed with .show()
      */
-    @Nullable
-    public static Snackbar getSnackbar(Activity activity, int msg) {
-        View v = activity.getWindow().getDecorView().findViewById(android.R.id.content);
-        if (v == null)
-            return null;
-        Snackbar s = Snackbar.make(v,
-                msg,
-                Snackbar.LENGTH_LONG);
-        s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary));
-        return s;
+    @JvmStatic
+    fun getSnackbar(activity: Activity, msg: Int): Snackbar? {
+        val v = activity.getWindow().getDecorView().findViewById<View?>(android.R.id.content)
+        if (v == null) return null
+        val s = Snackbar.make(
+            v,
+            msg,
+            Snackbar.LENGTH_LONG
+        )
+        s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary))
+        return s
     }
 
     /**
@@ -208,9 +215,10 @@ public class Common {
      *
      * @return The current day of year
      */
-    public static int dayOfYear() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.DAY_OF_YEAR);
+    @JvmStatic
+    fun dayOfYear(): Int {
+        val calendar = Calendar.getInstance()
+        return calendar.get(Calendar.DAY_OF_YEAR)
     }
 
     /**
@@ -219,17 +227,20 @@ public class Common {
      * @param ints Set of integers
      * @return Set of strings
      */
-    static Set<String> intToStringSet(Set<Integer> ints) {
-        Set<String> strings = new HashSet<>();
+    @JvmStatic
+    fun intToStringSet(ints: MutableSet<Int?>): MutableSet<String?> {
+        val strings: MutableSet<String?> = HashSet<String?>()
 
-        for (Integer _int : ints) {
-            strings.add(String.valueOf(_int));
+        for (_int in ints) {
+            strings.add(_int.toString())
         }
 
-        return strings;
+        return strings
     }
 
-    public static boolean isNight(Context context) {
-        return (context.getResources().getConfiguration().uiMode & android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+    @JvmStatic
+    fun isNight(context: Context): Boolean {
+        return (context.getResources()
+            .getConfiguration().uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 }
