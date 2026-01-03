@@ -930,7 +930,7 @@ public class ServiceSinkhole extends VpnService {
                 dh.insertLog(packet, dname, connection, interactive);
 
             // Application log
-            if (log_app && isTracker && packet.uid >= 0 &&
+            if (log_app && isTracker && shouldTrackApp(packet.uid) && packet.uid >= 0 &&
                     !(packet.uid == 0 && (packet.protocol == 6 || packet.protocol == 17) && packet.dport == 53)) {
                 if (!(packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */))
                     packet.dport = 0;
@@ -2136,7 +2136,39 @@ public class ServiceSinkhole extends VpnService {
         return allowed;
     }
 
+    /**
+     * Check if tracking should be applied to this app (blocking/logging).
+     * Returns false if:
+     * - Tracker Protection (apply) is disabled for this app
+     * - It's a system app and manage_system is disabled
+     */
+    private boolean shouldTrackApp(int uid) {
+        String[] packages = getPackageManager().getPackagesForUid(uid);
+        if (packages == null || packages.length == 0) {
+            return true; // Unknown UID, default to tracking
+        }
+        String packageName = packages[0];
+
+        // Check if tracker protection is enabled for this app
+        SharedPreferences applyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+        if (!applyPrefs.getBoolean(packageName, true)) {
+            return false;
+        }
+
+        // Check if system app with manage_system disabled
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.getBoolean("manage_system", false) && Rule.isSystem(packageName, this)) {
+            return false;
+        }
+
+        return true;
+    }
+
     private boolean blockKnownTracker(String daddr, int uid) {
+        if (!shouldTrackApp(uid)) {
+            return false;
+        }
+
         Tracker tracker = null;
         Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
         if (expiringTracker != null) {
