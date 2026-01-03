@@ -167,7 +167,18 @@
                 android:value="eu.faircode.netguard.ActivityMain" />
         </activity>
 
+        <activity
+            android:name="net.kollnig.missioncontrol.InsightsActivity"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/insights_title"
+            android:parentActivityName="eu.faircode.netguard.ActivityMain">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.faircode.netguard.ActivityMain" />
+        </activity>
+
         <service
+
             android:name="eu.faircode.netguard.ServiceSinkhole"
             android:exported="true"
             android:foregroundServiceType="specialUse"

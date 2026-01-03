@@ -57,6 +57,10 @@
         android:id="@+id/menu_log"
         android:title="@string/menu_log"/>
     <item
+        android:id="@+id/menu_insights"
+        android:title="@string/menu_insights"/>
+    <item
+
         android:id="@+id/menu_settings"
         android:visible="true"
         android:title="@string/menu_settings"/>

@@ -522,4 +522,21 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_action_optimized">Optimised</string>
     <string name="onboarding_action_unrestricted">Unrestricted</string>
 
+    <!-- Insights Screen -->
+    <string name="menu_insights">Insights</string>
+    <string name="insights_title">Your Privacy Insights</string>
+    <string name="insights_subtitle_7days">Last 7 Days</string>
+    <string name="insights_tracking_attempts">Tracking Attempts</string>
+    <string name="insights_blocked">Blocked</string>
+    <string name="insights_allowed">Allowed Through</string>
+    <string name="insights_tracker_companies">Tracking Companies</string>
+    <string name="insights_apps_with_trackers">Apps with Trackers</string>
+    <string name="insights_top_tracking_apps">Worst Offending Apps</string>
+    <string name="insights_top_companies">Most Active Trackers</string>
+    <string name="insights_daily_activity">Daily Tracking Activity</string>
+    <string name="insights_protected">Protected by TrackerControl</string>
+    <string name="insights_no_data">No tracking data yet. Use your apps and check back!</string>
+    <string name="insights_shocking_fact">Your apps tried to contact %1$d tracking companies %2$d times this week!</string>
+
 </resources>
+

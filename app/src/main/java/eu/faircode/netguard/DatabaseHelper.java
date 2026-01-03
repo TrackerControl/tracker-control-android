@@ -50,7 +50,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            return db.query(true, "access", new String[]{"daddr", "time", "uncertain"}, "uid = ?", new String[]{Integer.toString(uid)}, null, null, null, null);
+            return db.query(true, "access", new String[] { "daddr", "time", "uncertain" }, "uid = ?",
+                    new String[] { Integer.toString(uid) }, null, null, null, null);
         } finally {
             lock.readLock().unlock();
         }
@@ -62,7 +63,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            return db.query(true, "access", new String[]{"uid", "daddr", "time", "uncertain"}, null, null, null, null, null, null);
+            return db.query(true, "access", new String[] { "uid", "daddr", "time", "uncertain" }, null, null, null,
+                    null, null, null);
         } finally {
             lock.readLock().unlock();
         }
@@ -377,7 +379,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 db.setTransactionSuccessful();
                 Log.i(TAG, DB_NAME + " upgraded to " + DB_VERSION);
             } else
-                throw new IllegalArgumentException(DB_NAME + " upgraded to " + oldVersion + " but required " + DB_VERSION);
+                throw new IllegalArgumentException(
+                        DB_NAME + " upgraded to " + oldVersion + " but required " + DB_VERSION);
 
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
@@ -454,9 +457,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.beginTransactionNonExclusive();
             try {
                 if (uid < 0)
-                    db.delete("log", null, new String[]{});
+                    db.delete("log", null, new String[] {});
                 else
-                    db.delete("log", "uid = ?", new String[]{Integer.toString(uid)});
+                    db.delete("log", "uid = ?", new String[] { Integer.toString(uid) });
 
                 db.setTransactionSuccessful();
             } finally {
@@ -478,7 +481,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.beginTransactionNonExclusive();
             try {
                 // There an index on time
-                int rows = db.delete("log", "time < ?", new String[]{Long.toString(time)});
+                int rows = db.delete("log", "time < ?", new String[] { Long.toString(time) });
                 Log.i(TAG, "Cleanup log" +
                         " before=" + SimpleDateFormat.getDateTimeInstance().format(new Date(time)) +
                         " rows=" + rows);
@@ -514,7 +517,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 query += " OR allowed = 0";
             query += ")";
             query += " ORDER BY time DESC";
-            return db.rawQuery(query, new String[]{});
+            return db.rawQuery(query, new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -529,7 +532,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " FROM log";
             query += " WHERE daddr LIKE ? OR dname LIKE ? OR dport = ? OR uid = ?";
             query += " ORDER BY time DESC";
-            return db.rawQuery(query, new String[]{"%" + find + "%", "%" + find + "%", find, find});
+            return db.rawQuery(query, new String[] { "%" + find + "%", "%" + find + "%", find, find });
         } finally {
             lock.readLock().unlock();
         }
@@ -554,12 +557,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 // There is a segmented index on uid, version, protocol, daddr and dport
                 rows = db.update("access", cv, "uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?",
-                        new String[]{
+                        new String[] {
                                 Integer.toString(packet.uid),
                                 Integer.toString(packet.version),
                                 Integer.toString(packet.protocol),
                                 dname == null ? packet.daddr : dname,
-                                Integer.toString(packet.dport)});
+                                Integer.toString(packet.dport) });
 
                 if (rows == 0) {
                     cv.put("uid", packet.uid);
@@ -595,7 +598,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 // There is a segmented index on uid, version, protocol, daddr and dport
                 String selection = "uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?";
-                String[] selectionArgs = new String[]{
+                String[] selectionArgs = new String[] {
                         Integer.toString(usage.Uid),
                         Integer.toString(usage.Version),
                         Integer.toString(usage.Protocol),
@@ -603,7 +606,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Integer.toString(usage.DPort)
                 };
 
-                try (Cursor cursor = db.query("access", new String[]{"sent", "received", "connections"}, selection, selectionArgs, null, null, null)) {
+                try (Cursor cursor = db.query("access", new String[] { "sent", "received", "connections" }, selection,
+                        selectionArgs, null, null, null)) {
                     long sent = 0;
                     long received = 0;
                     int connections = 0;
@@ -647,7 +651,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cv.put("block", block);
                 cv.put("allowed", -1);
 
-                if (db.update("access", cv, "ID = ?", new String[]{Long.toString(id)}) != 1)
+                if (db.update("access", cv, "ID = ?", new String[] { Long.toString(id) }) != 1)
                     Log.e(TAG, "Set access failed");
 
                 db.setTransactionSuccessful();
@@ -689,9 +693,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // There is a segmented index on uid
                 // There is an index on block
                 if (keeprules)
-                    db.delete("access", "uid = ? AND block < 0", new String[]{Integer.toString(uid)});
+                    db.delete("access", "uid = ? AND block < 0", new String[] { Integer.toString(uid) });
                 else
-                    db.delete("access", "uid = ?", new String[]{Integer.toString(uid)});
+                    db.delete("access", "uid = ?", new String[] { Integer.toString(uid) });
 
                 db.setTransactionSuccessful();
             } finally {
@@ -717,7 +721,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cv.putNull("connections");
                 db.update("access", cv,
                         (uid < 0 ? null : "uid = ?"),
-                        (uid < 0 ? null : new String[]{Integer.toString(uid)}));
+                        (uid < 0 ? null : new String[] { Integer.toString(uid) }));
 
                 db.setTransactionSuccessful();
             } finally {
@@ -742,7 +746,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " WHERE a.uid = ?";
             query += " ORDER BY a.time DESC";
             query += " LIMIT 250";
-            return db.rawQuery(query, new String[]{Integer.toString(uid)});
+            return db.rawQuery(query, new String[] { Integer.toString(uid) });
         } finally {
             lock.readLock().unlock();
         }
@@ -775,7 +779,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " ORDER BY time DESC";
             if (limit > 0)
                 query += " LIMIT " + limit;
-            return db.rawQuery(query, new String[]{Integer.toString(uid), Long.toString(since)});
+            return db.rawQuery(query, new String[] { Integer.toString(uid), Long.toString(since) });
         } finally {
             lock.readLock().unlock();
         }
@@ -793,11 +797,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is an index on block
-            long hosts = db.compileStatement("SELECT COUNT(*) FROM access WHERE block >= 0 AND uid =" + uid).simpleQueryForLong();
+            long hosts = db.compileStatement("SELECT COUNT(*) FROM access WHERE block >= 0 AND uid =" + uid)
+                    .simpleQueryForLong();
             synchronized (mapUidHosts) {
                 mapUidHosts.put(uid, hosts);
             }
             return hosts;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Get tracking statistics for the past 7 days for the Insights screen.
+     * Returns aggregated data including blocked/allowed counts per uid and daddr.
+     * 
+     * @return Cursor with columns: uid, daddr, block, connections, time
+     */
+    public Cursor getInsightsData7Days() {
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            long sevenDaysAgo = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
+
+            // Query access table for last 7 days, aggregating connections
+            String query = "SELECT uid, daddr, block, " +
+                    "COALESCE(connections, 1) as connections, time " +
+                    "FROM access " +
+                    "WHERE time >= ? " +
+                    "ORDER BY time DESC";
+
+            return db.rawQuery(query, new String[] { Long.toString(sevenDaysAgo) });
         } finally {
             lock.readLock().unlock();
         }
@@ -822,7 +852,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cv.put("ttl", ttl * 1000L);
 
                 int rows = db.update("dns", cv, "qname = ? AND aname = ? AND resource = ?",
-                        new String[]{rr.QName, rr.AName, rr.Resource});
+                        new String[] { rr.QName, rr.AName, rr.Resource });
 
                 if (rows == 0) {
                     cv.put("qname", rr.QName);
@@ -873,7 +903,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getWritableDatabase();
             db.beginTransactionNonExclusive();
             try {
-                db.delete("dns", null, new String[]{});
+                db.delete("dns", null, new String[] {});
 
                 db.setTransactionSuccessful();
             } finally {
@@ -898,7 +928,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += " WHERE d.resource = '" + ip.replace("'", "''") + "'";
             query += " ORDER BY d.qname";
             query += " LIMIT 1";
-            // There is no way to known for sure which domain name an app used, so just pick the first one
+            // There is no way to known for sure which domain name an app used, so just pick
+            // the first one
             return db.compileStatement(query).simpleQueryForString();
         } catch (SQLiteDoneException ignored) {
             // Not found
@@ -923,7 +954,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
             query += " GROUP BY d.qname"; // remove duplicates
             query += " ORDER BY d.qname";
-            return db.rawQuery(query, new String[]{});
+            return db.rawQuery(query, new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -939,7 +970,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query += "   ON d2.resource = d1.resource AND d2.id <> d1.id";
             query += " WHERE d1.qname = ?";
             query += " ORDER BY d2.qname";
-            return db.rawQuery(query, new String[]{qname});
+            return db.rawQuery(query, new String[] { qname });
         } finally {
             lock.readLock().unlock();
         }
@@ -956,7 +987,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (alive)
                 query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
             query += " LIMIT 1";
-            return db.rawQuery(query, new String[]{qname});
+            return db.rawQuery(query, new String[] { qname });
         } finally {
             lock.readLock().unlock();
         }
@@ -971,7 +1002,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String query = "SELECT ID AS _id, *";
             query += " FROM dns";
             query += " ORDER BY resource, qname";
-            return db.rawQuery(query, new String[]{});
+            return db.rawQuery(query, new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -994,7 +1025,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (dname != null)
                 query += " AND a.daddr = ?";
 
-            return db.rawQuery(query, dname == null ? new String[]{} : new String[]{dname});
+            return db.rawQuery(query, dname == null ? new String[] {} : new String[] { dname });
         } finally {
             lock.readLock().unlock();
         }
@@ -1055,7 +1086,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.beginTransactionNonExclusive();
             try {
                 db.delete("forward", "protocol = ? AND dport = ?",
-                        new String[]{Integer.toString(protocol), Integer.toString(dport)});
+                        new String[] { Integer.toString(protocol), Integer.toString(dport) });
 
                 db.setTransactionSuccessful();
             } finally {
@@ -1075,7 +1106,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String query = "SELECT ID AS _id, *";
             query += " FROM forward";
             query += " ORDER BY dport";
-            return db.rawQuery(query, new String[]{});
+            return db.rawQuery(query, new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -1117,7 +1148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // There is an index on package
             String query = "SELECT * FROM app WHERE package = ?";
 
-            return db.rawQuery(query, new String[]{packageName});
+            return db.rawQuery(query, new String[] { packageName });
         } finally {
             lock.readLock().unlock();
         }
