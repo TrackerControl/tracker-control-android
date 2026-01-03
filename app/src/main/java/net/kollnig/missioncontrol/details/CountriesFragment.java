@@ -97,29 +97,30 @@ public class CountriesFragment extends Fragment {
         DatabaseHelper dh = DatabaseHelper.getInstance(getContext());
         try (Cursor cursor = dh.getHosts(uid)) {
             InputStream database = context.getAssets().open("GeoLite2-Country.mmdb");
-            DatabaseReader reader = new DatabaseReader.Builder(database).withCache(new CHMCache()).build();
+            try (DatabaseReader reader = new DatabaseReader.Builder(database).withCache(new CHMCache()).build()) {
 
-            if (cursor.moveToFirst()) {
-                do {
-                    String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
-                    if (findTracker(host) == null)
-                        continue;
+                if (cursor.moveToFirst()) {
+                    do {
+                        String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+                        if (findTracker(host) == null)
+                            continue;
 
-                    InetAddress ipAddress = InetAddress.getByName(host);
-                    CountryResponse response = reader.country(ipAddress);
+                        InetAddress ipAddress = InetAddress.getByName(host);
+                        CountryResponse response = reader.country(ipAddress);
 
-                    Country country = response.getCountry();
-                    String code = country.getIsoCode();
-                    if (code == null)
-                        continue;
+                        Country country = response.getCountry();
+                        String code = country.getIsoCode();
+                        if (code == null)
+                            continue;
 
-                    Integer count = countryToCount.get(code);
-                    if (count == null) {
-                        countryToCount.put(code, 1);
-                    } else {
-                        countryToCount.put(code, count + 1);
-                    }
-                } while (cursor.moveToNext());
+                        Integer count = countryToCount.get(code);
+                        if (count == null) {
+                            countryToCount.put(code, 1);
+                        } else {
+                            countryToCount.put(code, count + 1);
+                        }
+                    } while (cursor.moveToNext());
+                }
             }
         } catch (IOException | GeoIp2Exception e) {
             e.printStackTrace();
