@@ -125,7 +125,6 @@
     <string name="msg_clear_rules">ルールと条件をデフォルトの値にリセットします</string>
     <string name="msg_reset_access">アクセス試行ログの内、許可/ブロック ルールのない行を削除します。</string>
     <string name="msg_import_last">最後のインポート: %s</string>
-    <string name="msg_downloading">%1s\nをダウンロード中</string>
     <string name="msg_downloaded">ホストファイルをダウンロードしました</string>
     <string name="msg_updated">ホストファイルが更新、適用されました！</string>
     <string name="msg_download_last">前回のダウンロード: %s</string>
@@ -314,4 +313,5 @@
     <string name="static_analysis">アプリコード内にトラッカーを検出しました</string>
     <string name="failed_loading_cached_analysis">キャッシュされたトラッカーの結果の読み込みに失敗しました。 hello@trackercontrol.orgで開発者にこれを報告してください</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

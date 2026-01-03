@@ -129,7 +129,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_clear_rules">Isto irá redefinir as regras e condições para seus valores padrão</string>
     <string name="msg_reset_access">Isto eliminará as linhas de registro de tentativas de acesso sem regras de permissão/bloqueio</string>
     <string name="msg_import_last">Última importação: %s</string>
-    <string name="msg_downloading">Download\n%1s</string>
     <string name="msg_downloaded">Arquivo de anfitriões baixado</string>
     <string name="msg_updated">Arquivo de hosts atualizado e aplicado!</string>
     <string name="msg_download_last">Último download: %s</string>
@@ -317,4 +316,5 @@ disso,\n\n]]></string>
     <string name="internet_blocked">Acesso à Internet bloqueado</string>
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

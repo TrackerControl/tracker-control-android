@@ -129,7 +129,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_clear_rules">Ez alaphelyzetbe állítja a szabályok és a feltételek értékeit</string>
     <string name="msg_reset_access">Ez törli az elérési kísérleteket a naplóból az engedélyezés/tiltás szabályok nélkül</string>
     <string name="msg_import_last">Utolsó importálás: %s</string>
-    <string name="msg_downloading">Letöltés\n%1s</string>
     <string name="msg_downloaded">Hosts fájl letöltve</string>
     <string name="msg_updated">A hosts fájl frissítve és alkalmazva van!</string>
     <string name="msg_download_last">Legutóbbi letöltés: %s</string>
@@ -356,4 +355,5 @@ Tisztelettel,\n\n]]></string>
     <string name="failed_loading_cached_analysis">A nyomkövető gyorsítótárazott eredményeinek betöltése nem sikerült. Kérjük jelentse ezt a fejlesztőnek a hello@trackercontrol.org címen</string>
     <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

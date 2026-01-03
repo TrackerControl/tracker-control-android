@@ -129,7 +129,6 @@
     <string name="msg_clear_rules">这将把规则和条件重置为它们的默认值</string>
     <string name="msg_reset_access">这将删除没有允许/拦截规则的访问尝试日志行</string>
     <string name="msg_import_last">上次导入： %s</string>
-    <string name="msg_downloading">正在下载\n%1s</string>
     <string name="msg_downloaded">已下载主机文件</string>
     <string name="msg_updated">已更新并应用 Hosts 文件！</string>
     <string name="msg_download_last">上次下载： %s</string>
@@ -360,4 +359,5 @@
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

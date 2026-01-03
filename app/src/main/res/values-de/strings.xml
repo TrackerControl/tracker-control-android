@@ -127,7 +127,6 @@
     <string name="msg_clear_rules">Dadurch werden die Regeln und Bedingungen auf ihre Standardwerte zurückgesetzt</string>
     <string name="msg_reset_access">Dadurch werden alle Zugriffsversuche im Protokoll ohne Erlaubt-/Blockier-Regeln gelöscht</string>
     <string name="msg_import_last">Letzter Import: %s</string>
-    <string name="msg_downloading">%1s wird\nheruntergeladen</string>
     <string name="msg_downloaded">Hosts-Datei heruntergeladen</string>
     <string name="msg_updated">Hosts-Datei wurde aktualisiert und angewendet!</string>
     <string name="msg_download_last">Letzter Download: %s</string>
@@ -354,4 +353,5 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Laden der zwischengespeicherten Tracker-Ergebnisse fehlgeschlagen. Bitte melden Sie dies dem Entwickler unter hello@trackercontrol.org</string>
     <string name="msg_notifications">Tippen, um Benachrichtigungen zu erlauben (für Fehlermeldungen, etc.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

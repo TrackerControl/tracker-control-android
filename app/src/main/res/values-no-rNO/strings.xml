@@ -128,7 +128,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="msg_clear_rules">Dette vil tilbakestille reglene og betingelsene til sine standardverdier</string>
     <string name="msg_reset_access">Dette vil slette log-linjer med tilgangsforsøk uten tillat/blokker regler</string>
     <string name="msg_import_last">Siste importering: %s</string>
-    <string name="msg_downloading">Laster ned\n%1s</string>
     <string name="msg_downloaded">«hosts»-filen har blitt lastet ned</string>
     <string name="msg_updated">Hosts-filen er oppdatert og lagt til!</string>
     <string name="msg_download_last">Siste nedlastning: %s</string>
@@ -355,4 +354,5 @@ Vennlig hilsen,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Lasting av bufret sporer-resultat mislyktes. Vennligst rapporter dette til utvikleren på hello@trackercontrol.org</string>
     <string name="msg_notifications">Trykk for å gi varslingsrettigheter (for feilmeldinger osv.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

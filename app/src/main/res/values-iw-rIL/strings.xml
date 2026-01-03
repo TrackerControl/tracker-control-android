@@ -131,7 +131,6 @@
     <string name="msg_clear_rules">זה יאפס את הכללים והתנאים לערכי ברירת המחדל שלהם</string>
     <string name="msg_reset_access">פעולה זו תמחק שורות יומן נסיונות גישה ללא חוקי אישור/חסימה</string>
     <string name="msg_import_last">הייבוא האחרון: %s</string>
-    <string name="msg_downloading">מוריד\n%1s</string>
     <string name="msg_downloaded">הורדת קובץ מארחים</string>
     <string name="msg_updated">קובץ המארחים עודכן והוחל!</string>
     <string name="msg_download_last">הורדה אחרונה: %s</string>
@@ -338,4 +337,5 @@
     <string name="static_analysis">זיהוי עוקבים בקוד האפליקציה</string>
     <string name="failed_loading_cached_analysis">טעינת תוצאות המעקב בקובץ השמור נכשלה. אנא דווח על כך למפתח בכתובת hello@trackercontrol.org</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

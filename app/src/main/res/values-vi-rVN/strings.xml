@@ -124,7 +124,6 @@
     <string name="msg_clear_rules">Việc này sẽ đặt lại các quy tắc và điều kiện về giá trị mặc định</string>
     <string name="msg_reset_access">Việc này sẽ xóa các dòng nhật ký cố gắng truy cập mà không có quy tắc cho phép/chặn</string>
     <string name="msg_import_last">Lần nhập cuối: %s</string>
-    <string name="msg_downloading">Đang tải xuống\n%1s</string>
     <string name="msg_downloaded">Đã tải xuống tệp máy chủ</string>
     <string name="msg_updated">Đã cập nhật và áp dụng tệp máy chủ!</string>
     <string name="msg_download_last">Lần tải xuống cuối: %s</string>
@@ -310,4 +309,5 @@
     <string name="static_analysis">Phát hiện trình theo dõi trong mã ứng dụng</string>
     <string name="failed_loading_cached_analysis">Tải kết quả trình theo dõi trong bộ nhớ đệm thất bại. Vui lòng báo cáo điều này đến nhà phát triển tại hello@trackercontrol.org</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

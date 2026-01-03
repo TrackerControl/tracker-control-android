@@ -136,7 +136,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_clear_rules">Cela réinitialisera les règles et conditions à leurs valeurs par défaut</string>
     <string name="msg_reset_access">Cela supprimera les lignes du journal concernant les tentatives d\'accès sans règles d\'autorisation ou de blocage</string>
     <string name="msg_import_last">Dernière importation : %s</string>
-    <string name="msg_downloading">Téléchargement\n%1s</string>
     <string name="msg_downloaded">Fichier hosts téléchargé</string>
     <string name="msg_updated">Fichier hosts mis à jour et appliqué !</string>
     <string name="msg_download_last">Dernier téléchargement : %s</string>
@@ -367,4 +366,5 @@ Cordialement,\n\n]]></string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
     <string name="setting_exclude_system_vpn">Exclure les applications système</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>
