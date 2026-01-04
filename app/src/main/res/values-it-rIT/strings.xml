@@ -354,4 +354,5 @@ Cordiali saluti,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Caricamento dei risultati del tracker nella cache fallito. Per favore segnalalo allo sviluppatore su hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>
