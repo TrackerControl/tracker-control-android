@@ -540,6 +540,9 @@ public class ServiceSinkhole extends VpnService {
 
                 startNative(vpn, listAllowed, listRule);
 
+                // Start DoH proxy if enabled
+                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).start();
+
                 removeWarningNotifications();
                 updateEnforcingNotification(listAllowed.size(), listRule.size());
             }
@@ -661,6 +664,9 @@ public class ServiceSinkhole extends VpnService {
                 stopVPN(vpn);
                 vpn = null;
                 unprepare();
+
+                // Stop DoH proxy
+                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).stop();
             }
             if (state == State.enforcing && !temporary) {
                 Log.d(TAG, "Stop foreground state=" + state.toString());
@@ -1616,77 +1622,6 @@ public class ServiceSinkhole extends VpnService {
         return builder;
     }
 
-    private native void jni_inject_dns(int tun, byte[] queryData, int version, int protocol, String source, int sport,
-            String dest, int dport, int uid);
-
-    private java.util.concurrent.atomic.AtomicInteger dohFailures = new java.util.concurrent.atomic.AtomicInteger(0);
-
-    private byte[] createServFail(byte[] queryData) {
-        if (queryData.length < 12)
-            return null;
-        byte[] response = new byte[queryData.length];
-        System.arraycopy(queryData, 0, response, 0, queryData.length);
-        // Set QR bit (response) and RCODE to SERVFAIL (2)
-        response[2] = (byte) ((queryData[2] | 0x80) & 0xFB); // QR=1
-        response[3] = (byte) ((queryData[3] & 0xF0) | 0x02); // RCODE = SERVFAIL
-        return response;
-    }
-
-    private void onNativeDnsRequest(byte[] queryData, int version, int protocol, String source, int sport, String dest,
-            int dport, int uid) {
-        if (dohExecutor == null) {
-            dohExecutor = Executors.newFixedThreadPool(4);
-        }
-
-        // Capture VPN FD in main thread (thread-safe access to vpn variable)
-        final int tunFd = (vpn != null) ? vpn.getFd() : -1;
-
-        dohExecutor.submit(() -> {
-            if (tunFd == -1) {
-                return;
-            }
-
-            try {
-                // Get the DoH client
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                net.kollnig.missioncontrol.dns.DnsOverHttpsClient dohClient = net.kollnig.missioncontrol.dns.DnsOverHttpsClient
-                        .getInstance(endpoint);
-
-                // Forward the query via DoH
-                byte[] responseData = dohClient.resolve(queryData);
-
-                if (responseData != null) {
-                    dohFailures.set(0);
-                    jni_inject_dns(tunFd, responseData, version, protocol, source, sport, dest, dport, uid);
-                } else {
-                    int failures = dohFailures.incrementAndGet();
-                    if (failures >= 10) {
-                        if (Util.isInternetWorking(this)) {
-                            dohError(this);
-                            dohFailures.set(0);
-                        }
-                    }
-
-                    // Inject SERVFAIL
-                    byte[] servfail = createServFail(queryData);
-                    if (servfail != null) {
-                        jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
-                    }
-                }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex + "\n" + Log.getStackTraceString(ex));
-                // Try to inject SERVFAIL on exception too
-                byte[] servfail = createServFail(queryData);
-                if (servfail != null) {
-                    jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
-                }
-            }
-        });
-    }
-
-    private ExecutorService dohExecutor;
-
     private void startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
@@ -1731,8 +1666,7 @@ public class ServiceSinkhole extends VpnService {
                     @Override
                     public void run() {
                         Log.i(TAG, "Running tunnel context=" + jni_context);
-                        boolean dohEnabled = prefs.getBoolean("doh_enabled", false);
-                        jni_run(jni_context, vpn.getFd(), dohEnabled, rcode);
+                        jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
                         Log.i(TAG, "Tunnel exited");
                         tunnelThread = null;
                     }
@@ -1960,6 +1894,18 @@ public class ServiceSinkhole extends VpnService {
                     mapForward.put(fwd.dport, fwd);
                     Log.i(TAG, "Forward " + fwd);
                 }
+            }
+
+            // Add DoH DNS forwarding when enabled
+            if (prefs.getBoolean("doh_enabled", false)) {
+                Forward dnsFwd = new Forward();
+                dnsFwd.protocol = 17; // UDP
+                dnsFwd.dport = 53;
+                dnsFwd.raddr = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_ADDRESS;
+                dnsFwd.rport = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_PORT;
+                dnsFwd.ruid = android.os.Process.myUid(); // Our app's UID - so our own queries pass through
+                mapForward.put(dnsFwd.dport, dnsFwd);
+                Log.i(TAG, "DoH Forward " + dnsFwd);
             }
         }
         lock.writeLock().unlock();

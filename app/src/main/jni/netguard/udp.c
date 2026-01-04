@@ -154,19 +154,8 @@ int has_udp_session(const struct arguments *args, const uint8_t *pkt, const uint
     const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
     const struct udphdr *udphdr = (struct udphdr *) payload;
 
-  // Intercept DNS for Hybrid DoH
-  // If destination is port 53 and we are not forwarding 53 (fwd53=false)
-  // Note: fwd53 is usually true if we want to intercept?
-  // Let's check logic: 'fwd53' means "forward to 5353" or "forward to system"?
-  // The current logic says: if (dest==53 && !args->fwd53) return 1;
-  // args->fwd53 comes from Java 'fwd53' arg in jni_run.
-  // In ServiceSinkhole.java, 'fwd53' is passed as true if filter is enabled?
-  // Let's assume we want to intercept ALL port 53 if DoH is enabled.
-  // We'll trust that the Java side handles the logic of when to enable this via
-  // the callback. For now, let's inject our interception here.
-
-  if (ntohs(udphdr->dest) == 53 && !args->fwd53)
-    return 1;
+    if (ntohs(udphdr->dest) == 53 && !args->fwd53)
+        return 1;
 
     // Search session
     struct ng_session *cur = args->ctx->ng_session;
@@ -231,50 +220,30 @@ void block_udp(const struct arguments *args,
     args->ctx->ng_session = s;
 }
 
-jboolean handle_udp(const struct arguments *args, const uint8_t *pkt,
-                    size_t length, const uint8_t *payload, int uid,
-                    struct allowed *redirect, const int epoll_fd) {
-  // Get headers
-  const uint8_t version = (*pkt) >> 4;
-  const struct iphdr *ip4 = (struct iphdr *)pkt;
-  const struct ip6_hdr *ip6 = (struct ip6_hdr *)pkt;
-  const struct udphdr *udphdr = (struct udphdr *)payload;
-  const uint8_t *data = payload + sizeof(struct udphdr);
-  if (length < (size_t)(data - pkt)) {
-    log_android(ANDROID_LOG_WARN, "handle_udp: packet too short");
-    return 0;
-  }
-  const size_t datalen = length - (data - pkt);
+jboolean handle_udp(const struct arguments *args,
+                    const uint8_t *pkt, size_t length,
+                    const uint8_t *payload,
+                    int uid, struct allowed *redirect,
+                    const int epoll_fd) {
+    // Get headers
+    const uint8_t version = (*pkt) >> 4;
+    const struct iphdr *ip4 = (struct iphdr *) pkt;
+    const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+    const struct udphdr *udphdr = (struct udphdr *) payload;
+    const uint8_t *data = payload + sizeof(struct udphdr);
+    const size_t datalen = length - (data - pkt);
 
-  // New Hybrid DoH Interception
-  if (ntohs(udphdr->dest) == 53 && args->fwd53) {
-    char source[INET6_ADDRSTRLEN + 1];
-    char dest[INET6_ADDRSTRLEN + 1];
-    if (version == 4) {
-      inet_ntop(AF_INET, &ip4->saddr, source, sizeof(source));
-      inet_ntop(AF_INET, &ip4->daddr, dest, sizeof(dest));
-    } else {
-      inet_ntop(AF_INET6, &ip6->ip6_src, source, sizeof(source));
-      inet_ntop(AF_INET6, &ip6->ip6_dst, dest, sizeof(dest));
-    }
-
-    on_native_dns_request(args, data, datalen, version, IPPROTO_UDP, source,
-                          ntohs(udphdr->source), dest, ntohs(udphdr->dest),
-                          uid);
-    return 1; // Consumed
-  }
-
-  // Search session
-  struct ng_session *cur = args->ctx->ng_session;
-  while (cur != NULL &&
-         !(cur->protocol == IPPROTO_UDP && cur->udp.version == version &&
-           cur->udp.source == udphdr->source && cur->udp.dest == udphdr->dest &&
-           (version == 4
-                ? cur->udp.saddr.ip4 == ip4->saddr &&
-                      cur->udp.daddr.ip4 == ip4->daddr
-                : memcmp(&cur->udp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
-                      memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
-    cur = cur->next;
+    // Search session
+    struct ng_session *cur = args->ctx->ng_session;
+    while (cur != NULL &&
+           !(cur->protocol == IPPROTO_UDP &&
+             cur->udp.version == version &&
+             cur->udp.source == udphdr->source && cur->udp.dest == udphdr->dest &&
+             (version == 4 ? cur->udp.saddr.ip4 == ip4->saddr &&
+                             cur->udp.daddr.ip4 == ip4->daddr
+                           : memcmp(&cur->udp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                             memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
+        cur = cur->next;
 
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
