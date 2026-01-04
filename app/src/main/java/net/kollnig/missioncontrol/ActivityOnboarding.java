@@ -411,10 +411,12 @@ public class ActivityOnboarding extends AppCompatActivity {
     }
 
     private void finishOnboarding() {
+        boolean vpnPrepared = VpnService.prepare(this) == null;
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit()
                 .putBoolean("onboarding_complete", true)
-                .putBoolean("enabled", true)
+                .putBoolean("enabled", vpnPrepared)
                 .apply();
 
         ServiceSinkhole.start("onboarding", this);
