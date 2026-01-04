@@ -564,5 +564,15 @@ Sincerely,\n\n]]></string>
     <string name="msg_delete_blocklist_confirm">Are you sure you want to delete this host file?</string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_last_update">Last update: %s</string>
+
+    <!-- App Shortcuts -->
+    <string name="shortcut_enable_label">Enable TrackerControl</string>
+    <string name="shortcut_enable_short_label">Enable</string>
+    <string name="shortcut_enable_long_label">Enable TrackerControl</string>
+    <string name="shortcut_enable_disabled">TrackerControl is already enabled</string>
+    <string name="shortcut_disable_label">Disable TrackerControl</string>
+    <string name="shortcut_disable_short_label">Disable</string>
+    <string name="shortcut_disable_long_label">Disable TrackerControl</string>
+    <string name="shortcut_disable_disabled">TrackerControl is already disabled</string>
 </resources>
 

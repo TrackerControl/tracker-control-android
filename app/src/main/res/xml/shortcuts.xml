@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="enable"
+        android:enabled="true"
+        android:icon="@drawable/ic_rocket_colour"
+        android:shortcutShortLabel="@string/shortcut_enable_short_label"
+        android:shortcutLongLabel="@string/shortcut_enable_long_label"
+        android:shortcutDisabledMessage="@string/shortcut_enable_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="net.kollnig.missioncontrol"
+            android:targetClass="eu.faircode.netguard.ActivityShortcut">
+            <extra android:name="action" android:value="enable" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="disable"
+        android:enabled="true"
+        android:icon="@drawable/ic_rocket_white_60"
+        android:shortcutShortLabel="@string/shortcut_disable_short_label"
+        android:shortcutLongLabel="@string/shortcut_disable_long_label"
+        android:shortcutDisabledMessage="@string/shortcut_disable_disabled">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="net.kollnig.missioncontrol"
+            android:targetClass="eu.faircode.netguard.ActivityShortcut">
+            <extra android:name="action" android:value="disable" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>
