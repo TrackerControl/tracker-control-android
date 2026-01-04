@@ -43,6 +43,7 @@
     int getUidQ(int, int, java.lang.String, int, java.lang.String, int);
     eu.faircode.netguard.Allowed isAddressAllowed(eu.faircode.netguard.Packet);
     void accountUsage(eu.faircode.netguard.Usage);
+    void onNativeDnsRequest(byte[], int, int, java.lang.String, int, java.lang.String, int, int);
 }
 
 #AndroidX
