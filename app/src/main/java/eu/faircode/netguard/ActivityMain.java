@@ -541,11 +541,27 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         running = false;
         adapter = null;
 
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        try {
+            PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onRulesChanged);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(onQueueChanged);
-        unregisterReceiver(packageChangedReceiver);
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(onRulesChanged);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(onQueueChanged);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+        try {
+            unregisterReceiver(packageChangedReceiver);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
 
         if (dialogVpn != null) {
             dialogVpn.dismiss();
