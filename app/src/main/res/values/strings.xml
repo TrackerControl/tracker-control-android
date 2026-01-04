@@ -184,6 +184,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_vpn_cancelled">VPN connection cancelled\nDid you configure another VPN to be an always-on VPN?</string>
     <string name="msg_unavailable">This feature is not available on this Android version</string>
     <string name="msg_always_on">Another VPN is set as Always-on VPN</string>
+    <string name="msg_always_on_lockdown">Turn off "Block connections without VPN" in Android VPN settings to use TrackerControl</string>
 
     <string name="msg_private_dns">Turn off "Private DNS" in Android network settings. TrackerControl provides its own Secure DNS feature in Settings.</string>
     <string name="msg_start_forward">Start forwarding from %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>

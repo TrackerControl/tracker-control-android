@@ -65,11 +65,13 @@ import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
@@ -177,7 +179,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_ENFORCING = 1;
     private static final int NOTIFY_WAITING = 2;
     private static final int NOTIFY_DISABLED = 3;
-
+    private static final int NOTIFY_LOCKDOWN = 4;
     private static final int NOTIFY_AUTOSTART = 5;
     private static final int NOTIFY_ERROR = 6;
     private static final int NOTIFY_TRAFFIC = 7;
@@ -471,7 +473,13 @@ public class ServiceSinkhole extends VpnService {
                 }
 
                 if (cmd == Command.start || cmd == Command.reload) {
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        boolean filter = prefs.getBoolean("filter", false);
+                        if (filter && isLockdownEnabled())
+                            showLockdownNotification();
+                        else
+                            removeLockdownNotification();
+                    }
                 }
 
                 if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
@@ -3254,6 +3262,38 @@ public class ServiceSinkhole extends VpnService {
 
         if (Util.canNotify(this))
             NotificationManagerCompat.from(this).notify(NOTIFY_DISABLED, notification.build());
+    }
+
+    private void showLockdownNotification() {
+        Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_LOCKDOWN, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        TypedValue tv = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.msg_always_on_lockdown))
+                .setContentIntent(pi)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setColor(tv.data)
+                .setOngoing(false)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(getString(R.string.msg_always_on_lockdown));
+
+        if (Util.canNotify(this))
+            NotificationManagerCompat.from(this).notify(NOTIFY_LOCKDOWN, notification.build());
+    }
+
+    private void removeLockdownNotification() {
+        NotificationManagerCompat.from(this).cancel(NOTIFY_LOCKDOWN);
     }
 
     private void showAutoStartNotification() {
