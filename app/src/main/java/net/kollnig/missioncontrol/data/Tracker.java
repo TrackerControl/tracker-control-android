@@ -20,6 +20,7 @@ package net.kollnig.missioncontrol.data;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +34,7 @@ public class Tracker {
     public String category;
     public Long lastSeen;
     public String country;
-    private List<String> dataTypes = new ArrayList<>();
+    private List<String> dataTypes;
 
     /**
      * Creates class for tracker seen in apps' network traffic
@@ -117,7 +118,7 @@ public class Tracker {
      * @param dataTypes List of data types
      */
     public void setDataTypes(List<String> dataTypes) {
-        this.dataTypes = dataTypes;
+        this.dataTypes = dataTypes != null ? new ArrayList<>(dataTypes) : new ArrayList<>();
     }
 
     /**
@@ -126,6 +127,6 @@ public class Tracker {
      * @return List of data types
      */
     public List<String> getDataTypes() {
-        return dataTypes;
+        return dataTypes != null ? Collections.unmodifiableList(dataTypes) : Collections.emptyList();
     }
 }

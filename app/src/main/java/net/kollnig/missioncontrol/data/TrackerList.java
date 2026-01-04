@@ -546,7 +546,7 @@ public class TrackerList {
     private void addTrackerDomain(Tracker tracker, String dom) {
         // Check if we have DDG data types for this domain
         List<String> dataTypes = domainToDataTypes.get(dom);
-        if (dataTypes != null && !dataTypes.isEmpty()) {
+        if (dataTypes != null) {
             tracker.setDataTypes(dataTypes);
         }
 
