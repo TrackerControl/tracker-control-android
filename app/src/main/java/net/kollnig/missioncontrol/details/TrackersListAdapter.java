@@ -365,9 +365,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             // Explain blocking, except in Play Store version
             if (Util.isPlayStoreInstall())
-                holder.mLibraryExplanation.setText(mContext.getText(R.string.trackers_static_explanation_playstore));
+                holder.mLibraryExplanation.setText(android.text.Html.fromHtml(
+                        mContext.getString(R.string.trackers_static_explanation_playstore)));
             else
-                holder.mLibraryExplanation.setText(mContext.getText(R.string.trackers_static_explanation));
+                holder.mLibraryExplanation.setText(android.text.Html.fromHtml(
+                        mContext.getString(R.string.trackers_static_explanation)));
 
             // Exclusion from VPN
             holder.mSwitchVPN.setChecked(apply.getBoolean(mAppId, true));
