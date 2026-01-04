@@ -338,4 +338,5 @@
     <string name="failed_loading_cached_analysis">טעינת תוצאות המעקב בקובץ השמור נכשלה. אנא דווח על כך למפתח בכתובת hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>
