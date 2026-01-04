@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControlin avulla käyttäjät voivat seurata ja hallita mobiilisovellusten taustalla toimivaa jatkuvaa tiedonkeruuta käyttäjän käyttäytymisestä (\'seuraimet\').</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2025 Konrad Kollnig\n\nTrackerControl perustuu Marcel Bokhorstin (M66B) kehittämään NetGuardiin.</string>
     <string name="app_android">TrackerControl edellyttää vähintään Androidin versiota 5.1</string>
     <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play Kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
     <string name="app_eula">Sovelluksen käyttö omalla vastuullasi. Mikään sovellus ei voi tarjota 100% suojaa seurantaa vastaan.</string>
+    <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Yksityisyydensuoja</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Evästekäytäntö</a></string>
     <string name="channel_foreground">Käynnissä olevat palvelut</string>
     <string name="channel_notify">Yleiset ilmoitukset</string>
     <string name="channel_access">Pääsy ilmoituksiin</string>
@@ -54,6 +56,8 @@
     <string name="setting_ip6">Ota IPv6-liikenne käyttöön</string>
     <string name="setting_call">Poista käytöstä puhelun aikana</string>
     <string name="setting_reload_onconnectivity">Lataa jokainen yhteysmuutos uudelleen</string>
+    <string name="setting_advanced_options">Edistyneet asetukset (asiantuntijoille)</string>
+    <string name="setting_system">Näytä järjestelmäsovellukset</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
     <string name="setting_filter">Estä seuraimet</string>
     <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
