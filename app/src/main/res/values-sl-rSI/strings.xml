@@ -442,13 +442,12 @@ Sincerely,\n\n]]></string>
     <string name="insights_tracker_companies">Sledilna podjetja</string>
     <string name="insights_apps_with_trackers">Programi s sledilci</string>
     <string name="insights_top_tracking_apps">Najbolj agresivni programi</string>
-    <string name="insights_top_companies">Podjetja z največ dejavnih sledilcev</string>
     <string name="insights_pervasive_trackers">Najbolj prodorni sledilci</string>
     <string name="insights_top_domains">Domene z največ sledilci</string>
     <string name="insights_in_apps">v %d-ih programih</string>
-    <string name="insights_protected">Ščiti TrackerControl</string>
     <string name="insights_no_data">Podatki o sledenju še niso na voljo.  Uporabljajte svoje programe in zopet preverite!</string>
     <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
     <string name="summary_manage_blocklists">Ti so samo za izhod v sili.  TrackerControl vključuje svoje sezname gostiteljev, ki nudijo podatke o sledilnih podjetjih.</string>
     <string name="title_add_blocklist">Dodaj datoteko gostiteljev</string>
