@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl umožňuje uživatelům sledovat a kontrolovat rozsáhlý, průběžný a skrytý sběr dat o chování uživatelů v mobilních aplikacích (\"sledování\").</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl je založen na NetGuard, vyvinutém Marcelem Bokhorstem (M66B).</string>
     <string name="app_android">TrackerControl vyžaduje Android 5.1 nebo novější</string>
     <string name="app_xposed">Xposed způsobuje příliš mnoho pádů, což by mohlo vést k odstranění aplikace TrackerControl z Obchodu Google Play. TrackerControl proto není podporován, pokud je nainstalován Xposed</string>
     <string name="app_eula">Tuto aplikaci používáte na vlastní nebezpečí. Žádná aplikace nemůže nabídnout 100% ochranu před sledováním.</string>
@@ -57,6 +58,8 @@
     <string name="setting_ip6">Povolit IPv6 přenosy</string>
     <string name="setting_call">Vypnout během hovoru</string>
     <string name="setting_reload_onconnectivity">Načíst znovu při každé změně připojení</string>
+    <string name="setting_advanced_options">Pokročilé možnosti (pro experty)</string>
+    <string name="setting_system">Zobrazit systémové aplikace</string>
     <string name="setting_log_app">Hledat nové trackery</string>
     <string name="setting_log_logcat">Záznamy přenosů do ADB</string>
     <string name="setting_filter">Blokovat trackery</string>
@@ -90,6 +93,7 @@
     <string name="setting_stats_frequency">Interval vzorkování: %s ms</string>
     <string name="setting_stats_samples">Počet vzorků: %s</string>
     <string name="setting_backup">Záloha</string>
+    <string name="setting_export">Export nastavení</string>
     <string name="setting_import">Import nastavení</string>
     <string name="setting_hosts">Importovat soubor hosts</string>
     <string name="setting_hosts_append">Importovat soubor hosts (připojit)</string>
@@ -106,6 +110,7 @@
     <string name="summary_lan">Povolit aplikacím připojení k adresám místní sítě, např. 10.0.0.0/8, 172.16.0.0/12 a 192.168.0.0/16</string>
     <string name="summary_ip6">Přesměrovat IPv6 přenosy do TrackerControl, aby je bylo možné selektivně zakázat nebo povolit</string>
     <string name="summary_call">Zakázat TrackerControl při příchozím nebo odchozím telefonním hovoru. Může vyřešit problémy s IP/Wi-Fi voláním.</string>
+    <string name="summary_system">Zobrazit systémové aplikace v seznamu aplikací</string>
     <string name="summary_log_app">Zakázáním snížíte spotřebu baterie. Nové trackery budou stále blokovány, nebudou se zobrazovat.</string>
     <string name="summary_track_usage">Sledovat počet odeslaných a přijatých bytů pro každou aplikaci a adresu. Může mít vliv na spotřebu baterie.</string>
     <string name="summary_block_domains">VAROVÁNÍ: Blokovaní hostitelé nejsou zobrazeni v UI.</string>
