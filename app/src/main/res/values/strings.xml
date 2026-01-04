@@ -564,5 +564,6 @@ Sincerely,\n\n]]></string>
     <string name="msg_delete_blocklist_confirm">Are you sure you want to delete this host file?</string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_last_update">Last update: %s</string>
+    <string name="data_collected">Data collected:</string>
 </resources>
 

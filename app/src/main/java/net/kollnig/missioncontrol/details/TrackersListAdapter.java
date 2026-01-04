@@ -276,6 +276,16 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (t.lastSeen != 0)
                         title += " (" + Util.relativeTime(t.lastSeen) + ")";
 
+                    // Add DDG data types if available
+                    StringBuilder dataTypesText = new StringBuilder();
+                    List<String> dataTypes = t.getDataTypes();
+                    if (dataTypes != null && !dataTypes.isEmpty()) {
+                        dataTypesText.append("\n");
+                        dataTypesText.append(getContext().getString(R.string.data_collected));
+                        dataTypesText.append(" ");
+                        dataTypesText.append(TextUtils.join(", ", dataTypes));
+                    }
+
                     List<String> sortedHosts = new ArrayList<>(t.getHosts());
                     Collections.sort(sortedHosts);
                     String hosts = TextUtils.join("\n• ", sortedHosts);
@@ -283,7 +293,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                     Spannable spannable;
                     if (!categoryBlocked || Util.isPlayStoreInstall()) {
-                        String text = String.format("%s\n• %s", title, hosts);
+                        String text = String.format("%s%s\n• %s", title, dataTypesText, hosts);
                         spannable = new SpannableString(text);
                     } else {
                         boolean companyBlocked = b.blocked(mAppUid,
@@ -292,7 +302,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         int color = ContextCompat.getColor(getContext(),
                                 companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
 
-                        String text = String.format("%s %s\n• %s", title, status, hosts);
+                        String text = String.format("%s %s%s\n• %s", title, status, dataTypesText, hosts);
 
                         spannable = new SpannableString(text);
 

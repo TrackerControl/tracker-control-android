@@ -238,7 +238,7 @@ that is distributed with the Firefox browser.
 
 *Peter Lowe's Blocklist*: TrackerControl uses the IP blocklist provided by [Peter Lowe](https://pgl.yoyo.org/adservers/iplist.php). Note that this bans anyone from making money from this, see the [license](https://pgl.yoyo.org/license/).
 
-*DuckDuckGo Tracker Radar*: TrackerControl uses some (but not all) [information](https://github.com/duckduckgo/tracker-radar) that lies at the heart of DuckDuckGo's tracking analysis technologies.
+*DuckDuckGo Tracker Radar*: TrackerControl uses some (but not all) [information](https://github.com/duckduckgo/tracker-radar) that lies at the heart of DuckDuckGo's tracking analysis technologies. This includes the categorized list of data types collected by trackers, which helps users understand what kind of data is being collected from their apps.
 
 ## License
 Except where indicated otherwise, this project is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
