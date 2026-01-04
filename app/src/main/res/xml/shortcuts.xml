@@ -9,7 +9,6 @@
         android:shortcutDisabledMessage="@string/shortcut_enable_disabled">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="net.kollnig.missioncontrol"
             android:targetClass="eu.faircode.netguard.ActivityShortcut">
             <extra android:name="action" android:value="enable" />
         </intent>
@@ -24,7 +23,6 @@
         android:shortcutDisabledMessage="@string/shortcut_disable_disabled">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="net.kollnig.missioncontrol"
             android:targetClass="eu.faircode.netguard.ActivityShortcut">
             <extra android:name="action" android:value="disable" />
         </intent>
