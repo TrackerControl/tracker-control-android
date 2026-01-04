@@ -128,7 +128,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_clear_rules">Isto irá redefinir as regras e condições para os seus valores padrão</string>
     <string name="msg_reset_access">Isso excluirá as linhas de log de tentativas de acesso que não possuam regras de permissão/bloqueio</string>
     <string name="msg_import_last">Última importação: %s</string>
-    <string name="msg_downloading">Baixando\n%1s</string>
     <string name="msg_downloaded">Arquivo de hosts baixado</string>
     <string name="msg_updated">Arquivo de hosts atualizado e aplicado!</string>
     <string name="msg_download_last">Último download: %s</string>
@@ -355,4 +354,5 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Falha ao carregar resultados do rastreador em cache. Por favor reporte isto para o desenvolvedor em hello@trackercontrol.org</string>
     <string name="msg_notifications">Toque para conceder permissões de notificação (para mensagens de erro, etc.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

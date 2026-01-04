@@ -129,7 +129,6 @@
     <string name="msg_clear_rules">Це призведе до скидання правил та умов до значень за замовчуванням</string>
     <string name="msg_reset_access">Це видалить рядки журналу спроб доступу, що не містять правил дозволу/блокування</string>
     <string name="msg_import_last">Останній імпорт: %s</string>
-    <string name="msg_downloading">Завантаження\n%1s</string>
     <string name="msg_downloaded">Host-файл завантажено</string>
     <string name="msg_updated">Файл hosts оновлено та застосовано!</string>
     <string name="msg_download_last">Останнє завантаження: %s</string>
@@ -360,4 +359,5 @@
     <string name="failed_loading_cached_analysis">Не вдалося завантажити кешовані результати трекера. Повідомте про це розробника за адресою hello@trackercontrol.org</string>
     <string name="msg_notifications">Натисніть, щоб надати дозволи на сповіщення (для повідомлень про помилки тощо)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

@@ -130,7 +130,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_clear_rules">Esto restablecerá las reglas y condiciones a sus valores por defecto</string>
     <string name="msg_reset_access">Esto borrará las líneas de registro de intentos de acceso sin las reglas de permiso/bloqueo</string>
     <string name="msg_import_last">Última importación: %s</string>
-    <string name="msg_downloading">Descargando\n%1s</string>
     <string name="msg_downloaded">Archivo de hosts descargado</string>
     <string name="msg_updated">¡Archivo de hosts actualizado y aplicado!</string>
     <string name="msg_download_last">Última descarga: %s</string>
@@ -357,4 +356,5 @@ Atentamente,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Error al cargar resultados de rastreadores en caché. Por favor, reporta esto al desarrollador en hello@trackercontrol.org</string>
     <string name="msg_notifications">Toca para conceder permisos de notificación</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

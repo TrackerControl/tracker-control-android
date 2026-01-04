@@ -128,7 +128,6 @@
     <string name="msg_clear_rules">Αυτό θα επαναφέρει τους κανόνες και τους όρους στις προεπιλεγμένες τιμές τους</string>
     <string name="msg_reset_access">Αυτό θα διαγράψει τις γραμμές καταγραφής, της προσπάθειας πρόσβασης των εκτός κανόνων, αποδοχής/αποκλεισμού</string>
     <string name="msg_import_last">Τελευταία εισαγωγή: %s</string>
-    <string name="msg_downloading">Ταχύτητα κατεβάσματος\n%1s</string>
     <string name="msg_downloaded">Ολοκλήρωση κατεβάσματος αρχείου Hosts</string>
     <string name="msg_updated">Το αρχείο Hosts ενημερώθηκε και εφαρμόστηκε!</string>
     <string name="msg_download_last">Τελευταία λήψη: %s</string>
@@ -353,4 +352,5 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Εντοπισμός ιχνηλατών στον κώδικα εφαρμογής</string>
     <string name="failed_loading_cached_analysis">Η φόρτωση αποτελεσμάτων cached tracker απέτυχε. Παρακαλώ αναφέρετε το στον προγραμματιστή στο hello@trackercontrol.org</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

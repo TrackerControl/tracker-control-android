@@ -126,7 +126,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_clear_rules">Tämä palauttaa säännöt ja ehdot oletusarvoihinsa</string>
     <string name="msg_reset_access">Tämä poistaa pääsyyrityslokirivit ilman sallimis- / estosääntöjä</string>
     <string name="msg_import_last">Viimeisin tuonti: %s</string>
-    <string name="msg_downloading">Ladataan\n%1s</string>
     <string name="msg_downloaded">Isäntätiedosto ladattu</string>
     <string name="msg_updated">Isäntätiedosto päivitetty ja otettu käyttöön!</string>
     <string name="msg_download_last">Viimeisin lataus: %s</string>
@@ -302,4 +301,5 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="browsers_not_supported">Selaimia ei tueta ⚠️</string>
     <string name="static_analysis">Tunnista sovelluskoodissa olevat seuraimet</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

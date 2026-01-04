@@ -131,7 +131,6 @@
     <string name="msg_clear_rules">سيؤدي هذا إلى إعادة تعيين القواعد والشروط إلى قيمها الافتراضية</string>
     <string name="msg_reset_access">سيؤدي هذا إلى حذف خطوط سجل محاولات الوصول بدون قواعد السماح/الحظر</string>
     <string name="msg_import_last">آخر استيراد: %s</string>
-    <string name="msg_downloading">جاري التنزيل\n%1s</string>
     <string name="msg_downloaded">تم تنزيل ملف المضيفين</string>
     <string name="msg_updated">تم تحديث ملف المضيفين وتطبيقه!</string>
     <string name="msg_download_last">آخر تنزيل: %s</string>
@@ -366,4 +365,5 @@
     <string name="failed_loading_cached_analysis">فشل تحميل نتائج التتبع المخزنة مؤقتًا. يرجى الإبلاغ عن ذلك للمطور على hello@trackercontrol.org</string>
     <string name="msg_notifications">انقر لمنح أذونات الإشعارات (لرسائل الخطأ، إلخ.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>
