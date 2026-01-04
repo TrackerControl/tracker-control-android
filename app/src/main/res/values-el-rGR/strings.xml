@@ -353,4 +353,5 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Η φόρτωση αποτελεσμάτων cached tracker απέτυχε. Παρακαλώ αναφέρετε το στον προγραμματιστή στο hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>
