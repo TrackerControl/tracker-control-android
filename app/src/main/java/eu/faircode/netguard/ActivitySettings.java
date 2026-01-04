@@ -455,10 +455,23 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("use_metered".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("unmetered_2g".equals(name) ||
+        else if ("include_system_vpn".equals(name)) {
+            boolean includeSystem = prefs.getBoolean(name, false);
+            if (!includeSystem) {
+                // When disabling include_system_vpn, also disable manage_system and show_system
+                prefs.edit().putBoolean("manage_system", false).apply();
+                prefs.edit().putBoolean("show_system", false).apply();
+                // Update the UI toggle
+                TwoStatePreference pref_manage_system = (TwoStatePreference) getPreferenceScreen()
+                        .findPreference("manage_system");
+                if (pref_manage_system != null)
+                    pref_manage_system.setChecked(false);
+            }
+            ServiceSinkhole.reload("changed " + name, this, false);
+
+        } else if ("unmetered_2g".equals(name) ||
                 "unmetered_3g".equals(name) ||
                 "unmetered_4g".equals(name) ||
-                "exclude_system_vpn".equals(name) ||
                 "wifi_only".equals(name) ||
                 "screen_delay".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);

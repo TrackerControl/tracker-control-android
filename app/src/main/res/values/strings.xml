@@ -467,8 +467,8 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
 
-    <string name="setting_exclude_system_vpn">Exclude system apps</string>
-    <string name="summary_exclude_system_vpn">Exclude all system apps from the VPN to prevent connectivity issues.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
+    <string name="setting_include_system_vpn">Include system apps</string>
+    <string name="summary_include_system_vpn">Include all system apps in the VPN and DoH.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
 
     <!-- Onboarding -->
     <string name="title_next">Next</string>

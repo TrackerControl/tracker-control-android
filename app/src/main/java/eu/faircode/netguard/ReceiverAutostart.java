@@ -114,6 +114,16 @@ public class ReceiverAutostart extends BroadcastReceiver {
                     apply_editor.apply();
                 }
 
+                if (oldVersion < 2026010401) {
+                    // Migrate manage_system to include_system_vpn
+                    // Users who had manage_system enabled should also have include_system_vpn
+                    // enabled
+                    if (prefs.getBoolean("manage_system", false)) {
+                        Log.i(TAG, "Migrating manage_system=true to include_system_vpn=true");
+                        editor.putBoolean("include_system_vpn", true);
+                    }
+                }
+
             } else {
                 Log.i(TAG, "Initializing sdk=" + Build.VERSION.SDK_INT);
                 editor.putBoolean("filter_udp", true);
