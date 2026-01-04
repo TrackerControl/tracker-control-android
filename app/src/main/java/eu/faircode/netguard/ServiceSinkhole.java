@@ -2539,7 +2539,7 @@ public class ServiceSinkhole extends VpnService {
                         if (uid > -1) {
                             // Check strict blocking
                             TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                            if (!prefs.getBoolean("strict_blocking", true))
+                            if (!prefs.getBoolean("strict_blocking", false))
                                 b.unblock(uid, NECESSARY_CATEGORY);
 
                             // Show install notification

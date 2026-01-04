@@ -41,25 +41,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/msg_vpn"
                 android:textAppearance="@style/TextMedium" />
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/swStrictBlocking"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:checked="false"
-                android:text="@string/switch_strict_blocking"
-                android:textAppearance="@style/TextSmall"
-                android:textColor="?android:textColorTertiary" />
-
-            <TextView
-                android:id="@+id/tvStrictBlocking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/strict_blocking_explanation"
-                android:textAppearance="@style/TextSmall"
-                android:textStyle="italic" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

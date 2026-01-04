@@ -20,8 +20,6 @@
 
 package eu.faircode.netguard;
 
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
-
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,7 +28,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -40,7 +37,6 @@ import android.net.VpnService;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Process;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -84,7 +80,6 @@ import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.InsightsData;
 import net.kollnig.missioncontrol.data.InsightsDataProvider;
 import net.kollnig.missioncontrol.data.Tracker;
-import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.io.IOException;
@@ -299,13 +294,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             // Show dialog
                             LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
                             final View view = inflater.inflate(R.layout.vpn, null, false);
-                            final SwitchCompat swStrictMode = view.findViewById(R.id.swStrictBlocking);
-                            final boolean initializedStrictMode = prefs.getBoolean("initialized_strict_mode",
-                                    Util.isPlayStoreInstall());
-                            if (initializedStrictMode) {
-                                swStrictMode.setVisibility(View.GONE);
-                                view.findViewById(R.id.tvStrictBlocking).setVisibility(View.GONE);
-                            }
 
                             dialogVpn = new AlertDialog.Builder(ActivityMain.this)
                                     .setView(view)
@@ -314,9 +302,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if (running) {
-                                                if (!initializedStrictMode)
-                                                    initialiseStrictMode(swStrictMode.isChecked());
-
                                                 Log.i(TAG, "Start intent=" + prepare);
                                                 try {
                                                     // com.android.vpndialogs.ConfirmDialog required
@@ -459,25 +444,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Warn about disabled blocking if ADB logging is on
         if (!Util.isPlayStoreInstall() && prefs.getBoolean("log_logcat", false))
             Toast.makeText(this, R.string.msg_log_logcat, Toast.LENGTH_SHORT).show();
-    }
-
-    private void initialiseStrictMode(boolean strictMode) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean("initialized_strict_mode", true).apply();
-        prefs.edit().putBoolean("strict_blocking", strictMode).apply();
-        if (!strictMode) {
-            new Thread(() -> {
-                TrackerBlocklist b = TrackerBlocklist.getInstance(this);
-                for (PackageInfo info : Rule.getPackages(this))
-                    try {
-                        if (info.applicationInfo.uid == Process.myUid())
-                            continue;
-                        b.unblock(info.applicationInfo.uid, NECESSARY_CATEGORY);
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }
-            }).start();
-        }
     }
 
     @Override
