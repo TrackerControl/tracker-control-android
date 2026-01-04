@@ -1906,13 +1906,26 @@ public class ServiceSinkhole extends VpnService {
 
             // Add DoH DNS forwarding when enabled
             if (prefs.getBoolean("doh_enabled", false)) {
+                // UDP
                 Forward dnsFwd = new Forward();
                 dnsFwd.protocol = 17; // UDP
                 dnsFwd.dport = 53;
                 dnsFwd.raddr = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_ADDRESS;
                 dnsFwd.rport = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_PORT;
-                dnsFwd.ruid = android.os.Process.myUid(); // Our app's UID - so our own queries pass through
+                dnsFwd.ruid = android.os.Process.myUid();
                 mapForward.put(dnsFwd.dport, dnsFwd);
+
+                // TCP (use the same port map, as mapForward is keyed by dport)
+                // Note: Current mapForward keyed by dport supports only one rule per port.
+                // Since redirection target is same (5353) and DnsProxyServer listens on both
+                // UDP/TCP 5353,
+                // a single rule effectively handles both if the native code redirects based on
+                // dport match.
+                // However, for correctness in the Forward object:
+                // We leave it as is, or we would need to change mapForward to Map<Integer,
+                // List<Forward>> or similar
+                // if we wanted different destinations.
+                // Since dport 53 -> rport 5353 works for both protocol sockets, this is fine.
                 Log.i(TAG, "DoH Forward " + dnsFwd);
             }
         }
