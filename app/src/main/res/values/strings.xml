@@ -538,13 +538,20 @@ Sincerely,\n\n]]></string>
     <string name="insights_tracker_companies">Tracking Companies</string>
     <string name="insights_apps_with_trackers">Apps with Trackers</string>
     <string name="insights_top_tracking_apps">Worst Offending Apps</string>
-    <string name="insights_top_companies">Most Active Trackers</string>
+    <string name="insights_top_companies">Most Active Tracking Companies</string>
     <string name="insights_pervasive_trackers">Most Pervasive Trackers</string>
     <string name="insights_top_domains">Top Tracker Domains</string>
     <string name="insights_in_apps">in %d apps</string>
-    <string name="insights_protected">Protected by TrackerControl</string>
     <string name="insights_no_data">No tracking data yet. Use your apps and check back!</string>
     <string name="insights_shocking_fact">Your apps contacted %1$d tracking companies via %2$d tracker hosts this week!</string>
+    <string name="insights_shocking_fact_playstore">Your apps contacted %1$d tracking companies this week!</string>
+    <string name="insights_share">Share with Friends</string>
+    <string name="insights_share_trackers_blocked">Trackers Blocked</string>
+    <string name="insights_share_trackers_detected">Trackers Detected</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">I blocked %1$d trackers from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">I detected %1$d trackers from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
+    <string name="insights_see_more">See More →</string>
 
     <!-- What's New onboarding slide (not translated) -->
     <string name="onboarding_whatsnew_title" translatable="false">Major update ahead!</string>

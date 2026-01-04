@@ -70,6 +70,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -78,7 +79,10 @@ import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.Common;
+import net.kollnig.missioncontrol.InsightsHeaderAdapter;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.InsightsData;
+import net.kollnig.missioncontrol.data.InsightsDataProvider;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -91,6 +95,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
@@ -109,6 +115,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private SwitchCompat swEnabled;
     private ImageView ivMetered;
     private SwipeRefreshLayout swipeRefresh;
+    private InsightsHeaderAdapter headerAdapter;
     private AdapterRule adapter = null;
     private MenuItem menuSearch = null;
     private AlertDialog dialogVpn = null;
@@ -260,11 +267,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         if (!TextUtils.isEmpty(alwaysOn))
                             if (getPackageName().equals(alwaysOn)) {
                                 if (prefs.getBoolean("filter", true)) {
-                                    int lockdown = Settings.Secure.getInt(getContentResolver(), "always_on_vpn_lockdown", 0);
+                                    int lockdown = Settings.Secure.getInt(getContentResolver(),
+                                            "always_on_vpn_lockdown", 0);
                                     Log.i(TAG, "Lockdown=" + lockdown);
                                     if (lockdown != 0) {
                                         swEnabled.setChecked(false);
-                                        Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown, Toast.LENGTH_LONG).show();
+                                        Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown,
+                                                Toast.LENGTH_LONG).show();
                                         return;
                                     }
                                 }
@@ -383,7 +392,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         llm.setAutoMeasureEnabled(true);
         rvApplication.setLayoutManager(llm);
         adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
-        rvApplication.setAdapter(adapter);
+        rvApplication.setLayoutManager(llm);
+        headerAdapter = new InsightsHeaderAdapter(this);
+        adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
+        ConcatAdapter concatAdapter = new ConcatAdapter(headerAdapter, adapter);
+        rvApplication.setAdapter(concatAdapter);
+
+        loadInsightsData();
 
         // Swipe to refresh
         swipeRefresh = findViewById(R.id.swipeRefresh);
@@ -393,6 +408,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Rule.clearCache(ActivityMain.this);
                 ServiceSinkhole.reload("pull", ActivityMain.this, false);
                 updateApplicationList(null);
+                loadInsightsData();
             }
         });
 
@@ -492,6 +508,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             super.onResume();
             return;
         }
+
+        loadInsightsData();
 
         DatabaseHelper.getInstance(this).addAccessChangedListener(accessChangedListener);
         if (adapter != null)
@@ -805,8 +823,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
             if (adapter != null)
                 if (intent.hasExtra(EXTRA_CONNECTED) && intent.hasExtra(EXTRA_METERED)) {
-                    ivIcon.setImageResource(Util.isNetworkActive(ActivityMain.this)
-                            ? R.drawable.ic_rocket_white
+                    ivIcon.setImageResource(Util.isNetworkActive(ActivityMain.this) ? R.drawable.ic_rocket_white
                             : R.drawable.ic_rocket_white_60);
                     if (intent.getBooleanExtra(EXTRA_CONNECTED, false)) {
                         if (intent.getBooleanExtra(EXTRA_METERED, false))
@@ -1357,5 +1374,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static Intent getIntentSupport(Context context) {
         return new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
+    }
+
+    private void loadInsightsData() {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            InsightsDataProvider provider = new InsightsDataProvider(this);
+            InsightsData data = provider.computeInsights();
+            runOnUiThread(() -> {
+                if (headerAdapter != null) {
+                    headerAdapter.setData(data);
+                }
+            });
+        });
     }
 }
