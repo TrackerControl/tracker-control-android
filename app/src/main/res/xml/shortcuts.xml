@@ -12,7 +12,6 @@
             android:targetClass="eu.faircode.netguard.ActivityShortcut">
             <extra android:name="action" android:value="enable" />
         </intent>
-        <categories android:name="android.shortcut.conversation" />
     </shortcut>
     <shortcut
         android:shortcutId="disable"
@@ -26,6 +25,5 @@
             android:targetClass="eu.faircode.netguard.ActivityShortcut">
             <extra android:name="action" android:value="disable" />
         </intent>
-        <categories android:name="android.shortcut.conversation" />
     </shortcut>
 </shortcuts>
