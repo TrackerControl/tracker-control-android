@@ -116,6 +116,22 @@ public class ActivityOnboarding extends AppCompatActivity {
                 null,
                 null));
 
+        // 1b. What's New (for returning users only, shown once)
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int oldVersion = prefs.getInt("version", -1);
+        boolean hasSeenWhatsNew = prefs.getBoolean("whatsnew_seen_2026", false);
+        if (oldVersion != -1 && !hasSeenWhatsNew) {
+            slides.add(new Slide(
+                    R.string.onboarding_whatsnew_title,
+                    getText(R.string.onboarding_whatsnew_title),
+                    getText(R.string.onboarding_whatsnew_desc),
+                    R.drawable.ic_rocket2,
+                    null,
+                    null));
+            // Mark as seen
+            prefs.edit().putBoolean("whatsnew_seen_2026", true).apply();
+        }
+
         // 2. VPN (Only if not already prepared)
         boolean vpnPrepared = VpnService.prepare(this) == null;
         if (!vpnPrepared) {

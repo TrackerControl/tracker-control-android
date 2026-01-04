@@ -546,6 +546,9 @@ Sincerely,\n\n]]></string>
     <string name="insights_no_data">No tracking data yet. Use your apps and check back!</string>
     <string name="insights_shocking_fact">Your apps contacted %1$d tracking companies via %2$d tracker hosts this week!</string>
 
+    <!-- What's New onboarding slide (not translated) -->
+    <string name="onboarding_whatsnew_title" translatable="false">Major update ahead!</string>
+    <string name="onboarding_whatsnew_desc" translatable="false">• New Insights: View statistics on blocked trackers and tracking companies.\n• Secure DNS: added support for Encrypted DNS (DoH) for better privacy.\n• Enhanced Blocking: Support for multiple blocklists and auto-updates.\n• Simpler Settings: \"Monitor\" is now \"Exclude from VPN\" for clarity.\n• Performance: 50% smaller app size, faster startup, and improved battery life.\n• Revamped Analysis: Faster and cleaner tracker library scanner.\n• Improved Stability: Fixed bugs, crashes, and improved backups.</string>
 
     <string name="title_blocklists">Additional host files</string>
     <string name="summary_manage_blocklists">These are only for fallback. TrackerControl includes its own host lists that give insights on the companies behind tracking.</string>
