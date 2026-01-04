@@ -448,8 +448,8 @@ Sincerely,\n\n]]></string>
     <string name="analysis_already_running">Analysis already in progress</string>
     <string name="none">None</string>
     <string name="trackers_static">Tracker libraries</string>
-    <string name="trackers_static_explanation">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.\n\nTracking that is detected in the network traffic can be blocked with TrackerControl.</string>
-    <string name="trackers_static_explanation_playstore">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.</string>
+    <string name="trackers_static_explanation">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.\n\nTracking that is detected in the network traffic can be blocked with TrackerControl.\n\n<b>Note:</b> Detection of tracker library code does not mean it is actively being used. Some apps may have removed or disabled these libraries, but traces can still be detected. Take these results with a grain of salt.</string>
+    <string name="trackers_static_explanation_playstore">TrackerControl detects tracking in the code (\'libraries\') and network traffic of apps.\n\n<b>Note:</b> Detection of tracker library code does not mean it is actively being used. Some apps may have removed or disabled these libraries, but traces can still be detected. Take these results with a grain of salt.</string>
     <string name="analyze_tracker_libraries">Analyse tracker libraries</string>
     <string name="update_analysis">Update analysis</string>
     <string name="analysis_outdated_version">\n\nNote: Analysis is of a previous app version. This might have changed integrated tracking libraries.</string>
