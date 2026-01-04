@@ -139,7 +139,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_clear_rules">Resetuje pravidla a podmínky do výchozího nastavení</string>
     <string name="msg_reset_access">Smaže protokol pokusů o přístup, pravidla povolení/blokování zůstanou nedotčena</string>
     <string name="msg_import_last">Poslední import: %s</string>
-    <string name="msg_downloading">Stahování\n%1s</string>
     <string name="msg_downloaded">Soubor hosts úspěšně stažen</string>
     <string name="msg_updated">Soubor hosts aktualizován a použit!</string>
     <string name="msg_download_last">Poslední stažení: %s</string>
@@ -382,4 +381,5 @@ Privátní DNS musí být vypnutá.</string>
     <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
     <string name="msg_notifications">Klepnutím udělíte oprávnění k oznámením (pro chybové zprávy atd.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

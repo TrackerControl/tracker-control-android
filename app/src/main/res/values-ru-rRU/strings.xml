@@ -128,7 +128,6 @@
     <string name="msg_clear_rules">Это сбросит правила и условия на значения по умолчанию</string>
     <string name="msg_reset_access">Это удалит только лог попыток доступа, не меняя правил доступа/блокировки</string>
     <string name="msg_import_last">Последний импорт: %s</string>
-    <string name="msg_downloading">Скачивание\n%1s</string>
     <string name="msg_downloaded">Файл hosts загружен</string>
     <string name="msg_updated">Файл hosts обновлён и применён!</string>
     <string name="msg_download_last">Последняя загрузка: %s</string>
@@ -353,4 +352,5 @@ Sincerely,\n\n]]></string>
     <string name="browsers_not_supported">Браузеры не поддерживаются ⚠️</string>
     <string name="static_analysis">Обнаружить трекеры в коде приложения</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

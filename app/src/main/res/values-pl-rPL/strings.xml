@@ -132,7 +132,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_clear_rules">W ten sposób zasady i warunki zostaną przywrócone do wartości domyślnych</string>
     <string name="msg_reset_access">Spowoduje to usunięcie prób dostępu do linii logu bez reguł zezwalania/blokowania</string>
     <string name="msg_import_last">Ostatni import: %s</string>
-    <string name="msg_downloading">Pobieranie\n%1s</string>
     <string name="msg_downloaded">Plik hosta pobrany</string>
     <string name="msg_updated">Plik hostów zaktualizowany i zastosowany!</string>
     <string name="msg_download_last">Ostatnie pobranie: %s</string>
@@ -363,4 +362,5 @@ Z poważaniem,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Ładowanie informacji o trackerach z pamięci cache nie powiodło się. Proszę zgłosić to deweloperowi na hello@trackercontrol.org</string>
     <string name="msg_notifications">Dotknij, aby przyznać uprawnienia do powiadomień (dla komunikatów o błędach itp.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>

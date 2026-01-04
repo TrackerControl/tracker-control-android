@@ -130,7 +130,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_clear_rules">Dit zal de regels en voorwaarden terugzetten naar hun standaardwaarden</string>
     <string name="msg_reset_access">Dit zal de gelogde regels van toegangspogingen verwijderen zonder regels voor toestaan/blokkeren</string>
     <string name="msg_import_last">Laatste import: %s</string>
-    <string name="msg_downloading">Downloaden\n%1s</string>
     <string name="msg_downloaded">Hosts-bestand gedownload</string>
     <string name="msg_updated">Hosts-bestand bijgewerkt en toegepast!</string>
     <string name="msg_download_last">Laatste download: %s</string>
@@ -358,4 +357,5 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Het laden van tracker resultaten in de cache is mislukt. Graag dit melden aan de ontwikkelaar op hello@trackercontrol.org</string>
     <string name="msg_notifications">Tic hier om meldingen toe te staan (voor foutmeldingen, enz.)</string>
     <!-- Onboarding -->
+    <!-- Insights Screen -->
 </resources>
