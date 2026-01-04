@@ -353,4 +353,5 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Обнаружить трекеры в коде приложения</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>
