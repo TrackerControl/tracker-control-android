@@ -863,7 +863,7 @@ void on_native_dns_request(const struct arguments *args, const uint8_t *query,
   ng_delete_alloc(clsService, __FILE__, __LINE__);
 }
 
-JNIEXPORT void JNICALL
+    JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1inject_1dns(
     JNIEnv *env, jobject instance, jint tun, jbyteArray response_, jint version,
     jint protocol, jstring source_, jint sport, jstring dest_, jint dport,
@@ -874,30 +874,37 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1inject_1dns(
   jbyte *response = (*env)->GetByteArrayElements(env, response_, NULL);
   jsize len = (*env)->GetArrayLength(env, response_);
 
-  struct udp_session u;
-  memset(&u, 0, sizeof(struct udp_session));
-  u.version = version;
-  u.source = htons(sport);
-  u.dest = htons(dport);
-  u.uid = uid;
+  struct ng_session s;
+  memset(&s, 0, sizeof(struct ng_session));
+  s.protocol = protocol;
+  s.udp.version = version;
+  s.udp.source = htons(sport);
+  s.udp.dest = htons(dport);
+  s.udp.uid = uid;
 
   if (version == 4) {
-    inet_pton(AF_INET, source, &u.saddr.ip4);
-    inet_pton(AF_INET, dest, &u.daddr.ip4);
+    inet_pton(AF_INET, source, &s.udp.saddr.ip4);
+    inet_pton(AF_INET, dest, &s.udp.daddr.ip4);
   } else {
-    inet_pton(AF_INET6, source, &u.saddr.ip6);
-    inet_pton(AF_INET6, dest, &u.daddr.ip6);
+    inet_pton(AF_INET6, source, &s.udp.saddr.ip6);
+    inet_pton(AF_INET6, dest, &s.udp.daddr.ip6);
   }
 
   struct arguments args;
   memset(&args, 0, sizeof(struct arguments));
   args.env = env;
+  args.instance = instance;
   args.tun = tun;
+
+  // Log/Parse the response (this inserts into DB via Java callback)
+  // We use a local copy of len because parse_dns_response might modify it (though unlikely for DoH)
+  size_t parsed_len = (size_t)len;
+  parse_dns_response(&args, &s, (uint8_t *)response, &parsed_len);
 
   // Direct write to the TUN interface using existing write_udp helper
   // write_udp constructs the IP and UDP headers around the payload
   // and writes to args->tun
-  write_udp(&args, &u, (uint8_t *)response, (size_t)len);
+  write_udp(&args, &s.udp, (uint8_t *)response, parsed_len);
 
   (*env)->ReleaseByteArrayElements(env, response_, response, JNI_ABORT);
   (*env)->ReleaseStringUTFChars(env, dest_, dest);
