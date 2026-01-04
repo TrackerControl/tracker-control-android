@@ -19,7 +19,9 @@ package net.kollnig.missioncontrol.data;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,6 +33,7 @@ public class Tracker {
     public String category;
     public Long lastSeen;
     public String country;
+    private List<String> dataTypes = new ArrayList<>();
 
     /**
      * Creates class for tracker seen in apps' network traffic
@@ -106,5 +109,23 @@ public class Tracker {
      */
     public Set<String> getHosts() {
         return hosts;
+    }
+
+    /**
+     * Set data types collected by this tracker (from DuckDuckGo Tracker Radar)
+     *
+     * @param dataTypes List of data types
+     */
+    public void setDataTypes(List<String> dataTypes) {
+        this.dataTypes = dataTypes;
+    }
+
+    /**
+     * Get data types collected by this tracker (from DuckDuckGo Tracker Radar)
+     *
+     * @return List of data types
+     */
+    public List<String> getDataTypes() {
+        return dataTypes;
     }
 }

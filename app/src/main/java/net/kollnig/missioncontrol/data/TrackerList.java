@@ -64,6 +64,7 @@ public class TrackerList {
     private static TrackerList instance;
     private static boolean domainBasedBlocking;
     private final DatabaseHelper databaseHelper;
+    private static final Map<String, List<String>> domainToDataTypes = new ConcurrentHashMap<>();
 
     // Performance: Cache tracker counts to avoid full DB scans on every refresh
     private Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> cachedTrackerCounts;
@@ -142,6 +143,7 @@ public class TrackerList {
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
         loadIpBlocklist(c);
+        loadDdgDataTypes(c); // load DDG data types
     }
 
     /**
@@ -162,6 +164,83 @@ public class TrackerList {
         } catch (IOException e) {
             Log.e(TAG, "Loading IP blocklist failed.. ", e);
         }
+    }
+
+    /**
+     * Load DuckDuckGo data types from categorized_trackers.csv
+     *
+     * @param c Context
+     */
+    private void loadDdgDataTypes(Context c) {
+        try {
+            InputStream is = c.getAssets().open("ddg-data-types.csv");
+            BufferedReader bfr = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String headerLine = bfr.readLine();
+            if (headerLine == null) {
+                Log.w(TAG, "Empty DDG data types file");
+                return;
+            }
+
+            // Parse header to get column names
+            String[] headers = parseCSVLine(headerLine);
+            
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                String[] values = parseCSVLine(line);
+                if (values.length == 0) continue;
+                
+                String domain = values[0];
+                List<String> dataTypes = new ArrayList<>();
+                
+                // Start from index 1 to skip domain column
+                for (int i = 1; i < Math.min(values.length, headers.length); i++) {
+                    if (values[i].equals("1")) {
+                        dataTypes.add(headers[i]);
+                    }
+                }
+                
+                if (!dataTypes.isEmpty()) {
+                    domainToDataTypes.put(domain, dataTypes);
+                    
+                    // Also apply data types to any tracker that matches this domain
+                    Tracker tracker = hostnameToTracker.get(domain);
+                    if (tracker != null) {
+                        tracker.setDataTypes(dataTypes);
+                    }
+                }
+            }
+            Log.d(TAG, "Loaded DDG data types for " + domainToDataTypes.size() + " domains");
+        } catch (IOException e) {
+            Log.e(TAG, "Loading DDG data types failed.. ", e);
+        }
+    }
+
+    /**
+     * Parse a CSV line, handling quoted fields
+     *
+     * @param line CSV line
+     * @return Array of field values
+     */
+    private String[] parseCSVLine(String line) {
+        List<String> result = new ArrayList<>();
+        boolean inQuotes = false;
+        StringBuilder field = new StringBuilder();
+        
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                result.add(field.toString().trim());
+                field = new StringBuilder();
+            } else {
+                field.append(c);
+            }
+        }
+        result.add(field.toString().trim());
+        
+        return result.toArray(new String[0]);
     }
 
     /**
@@ -465,9 +544,16 @@ public class TrackerList {
      * @param dom     Domain to be added
      */
     private void addTrackerDomain(Tracker tracker, String dom) {
+        // Check if we have DDG data types for this domain
+        List<String> dataTypes = domainToDataTypes.get(dom);
+        if (dataTypes != null && !dataTypes.isEmpty()) {
+            tracker.setDataTypes(dataTypes);
+        }
+
         if (domainBasedBlocking) {
             Tracker t = new Tracker(dom + " (" + tracker.getName() + ")", tracker.category);
             t.country = tracker.country;
+            t.setDataTypes(tracker.getDataTypes());
             hostnameToTracker.put(dom, t);
         } else
             hostnameToTracker.put(dom, tracker);
