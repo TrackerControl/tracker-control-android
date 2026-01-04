@@ -1641,52 +1641,48 @@ public class ServiceSinkhole extends VpnService {
         // Capture VPN FD in main thread (thread-safe access to vpn variable)
         final int tunFd = (vpn != null) ? vpn.getFd() : -1;
 
-        try {
-            dohExecutor.submit(() -> {
-                if (tunFd == -1) {
-                    return;
-                }
+        dohExecutor.submit(() -> {
+            if (tunFd == -1) {
+                return;
+            }
 
-                try {
-                    // Get the DoH client
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                    String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                    net.kollnig.missioncontrol.dns.DnsOverHttpsClient dohClient = net.kollnig.missioncontrol.dns.DnsOverHttpsClient
-                            .getInstance(endpoint);
+            try {
+                // Get the DoH client
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
+                net.kollnig.missioncontrol.dns.DnsOverHttpsClient dohClient = net.kollnig.missioncontrol.dns.DnsOverHttpsClient
+                        .getInstance(endpoint);
 
-                    // Forward the query via DoH
-                    byte[] responseData = dohClient.resolve(queryData);
+                // Forward the query via DoH
+                byte[] responseData = dohClient.resolve(queryData);
 
-                    if (responseData != null) {
-                        dohFailures.set(0);
-                        jni_inject_dns(tunFd, responseData, version, protocol, source, sport, dest, dport, uid);
-                    } else {
-                        int failures = dohFailures.incrementAndGet();
-                        if (failures >= 10) {
-                            if (Util.isInternetWorking(this)) {
-                                dohError(this);
-                                dohFailures.set(0);
-                            }
-                        }
-
-                        // Inject SERVFAIL
-                        byte[] servfail = createServFail(queryData);
-                        if (servfail != null) {
-                            jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
+                if (responseData != null) {
+                    dohFailures.set(0);
+                    jni_inject_dns(tunFd, responseData, version, protocol, source, sport, dest, dport, uid);
+                } else {
+                    int failures = dohFailures.incrementAndGet();
+                    if (failures >= 10) {
+                        if (Util.isInternetWorking(this)) {
+                            dohError(this);
+                            dohFailures.set(0);
                         }
                     }
-                } catch (Throwable ex) {
-                    Log.e(TAG, ex + "\n" + Log.getStackTraceString(ex));
-                    // Try to inject SERVFAIL on exception too
+
+                    // Inject SERVFAIL
                     byte[] servfail = createServFail(queryData);
                     if (servfail != null) {
                         jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
                     }
                 }
-            });
-        } catch (java.util.concurrent.RejectedExecutionException ex) {
-            Log.e(TAG, "DoH executor rejected task: " + ex.getMessage());
-        }
+            } catch (Throwable ex) {
+                Log.e(TAG, ex + "\n" + Log.getStackTraceString(ex));
+                // Try to inject SERVFAIL on exception too
+                byte[] servfail = createServFail(queryData);
+                if (servfail != null) {
+                    jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
+                }
+            }
+        });
     }
 
     private ExecutorService dohExecutor;
@@ -3109,14 +3105,9 @@ public class ServiceSinkhole extends VpnService {
         super.onRevoke();
     }
 
+    @Override
     public void onDestroy() {
         synchronized (this) {
-            if (dohExecutor != null) {
-                Log.i(TAG, "Shutting down DoH executor");
-                dohExecutor.shutdownNow();
-                dohExecutor = null;
-            }
-
             Log.i(TAG, "Destroy");
             commandLooper.quit();
             logLooper.quit();

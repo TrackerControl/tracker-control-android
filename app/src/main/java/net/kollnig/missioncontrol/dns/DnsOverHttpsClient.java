@@ -20,6 +20,7 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -126,12 +127,8 @@ public class DnsOverHttpsClient {
                 Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes");
                 return dnsResponse;
             }
-        } catch (Exception e) {
-            String msg = e.getMessage();
-            if (msg == null) {
-                msg = e.toString();
-            }
-            Log.e(TAG, "DoH request failed: " + msg);
+        } catch (IOException e) {
+            Log.e(TAG, "DoH request failed: " + e.getMessage());
             return null;
         }
     }
