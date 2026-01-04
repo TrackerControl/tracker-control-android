@@ -310,4 +310,5 @@
     <string name="failed_loading_cached_analysis">Tải kết quả trình theo dõi trong bộ nhớ đệm thất bại. Vui lòng báo cáo điều này đến nhà phát triển tại hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>
