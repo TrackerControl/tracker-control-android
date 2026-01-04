@@ -389,8 +389,6 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
-    <string name="setting_exclude_system_vpn">Izključi sistemske programe</string>
-    <string name="summary_exclude_system_vpn">Iz VPN-a izključi vse sistemske programe, da se preprečijo težave s povezljivostjo.\n\nOpomba: v Androidovih nastavitvah VPN-a morate ONEMOGOČITI \"Blokiraj povezave brez VPN-a\".</string>
     <!-- Onboarding -->
     <string name="title_next">Naprej</string>
     <string name="title_skip">Preskoči</string>
