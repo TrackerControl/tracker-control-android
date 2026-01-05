@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_description">TrackerControlin avulla käyttäjät voivat seurata ja hallita mobiilisovellusten taustalla toimivaa jatkuvaa tiedonkeruuta käyttäjän käyttäytymisestä (\'seuraimet\').</string>
+    <string name="app_description">TrackerControlin avulla käyttäjät voivat seurata ja hallita mobiilisovellusten taustalla toimivaa jatkuvaa tiedonkeruuta käyttäjän käyttäytymisestä (\'seuranta\').</string>
     <string name="app_copyright">Copyright \u00A9 2019–2025 Konrad Kollnig\n\nTrackerControl perustuu Marcel Bokhorstin (M66B) kehittämään NetGuardiin.</string>
-    <string name="app_android">TrackerControl edellyttää vähintään Androidin versiota 5.1</string>
-    <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play Kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
-    <string name="app_eula">Sovelluksen käyttö omalla vastuullasi. Mikään sovellus ei voi tarjota 100% suojaa seurantaa vastaan.</string>
+    <string name="app_android">TrackerControl vaatii Android 5,1 tai uudemman</string>
+    <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
+    <string name="app_eula">Tämän sovelluksen käyttö on omalla vastuullasi. Mikään sovellus ei voi tarjota 100% suojaa seurantaa vastaan.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Yksityisyydensuoja</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Evästekäytäntö</a></string>
     <string name="channel_foreground">Käynnissä olevat palvelut</string>
     <string name="channel_notify">Yleiset ilmoitukset</string>
     <string name="channel_access">Pääsy ilmoituksiin</string>
     <string name="menu_search">Etsi sovellusta</string>
     <string name="menu_filter">Suodata sovelluksia</string>
-    <string name="menu_app_user">Näytä käyttäjän sovellukset</string>
+    <string name="menu_app_user">Näytä käyttäjäsovellukset</string>
     <string name="menu_app_system">Näytä järjestelmäsovellukset</string>
     <string name="menu_app_nointernet">Näytä sovellukset ilman internetyhteyttä</string>
     <string name="menu_sort">Järjestä sovellukset</string>
@@ -55,7 +55,7 @@
     <string name="setting_lan">Salli lähiverkkoyhteys</string>
     <string name="setting_ip6">Ota IPv6-liikenne käyttöön</string>
     <string name="setting_call">Poista käytöstä puhelun aikana</string>
-    <string name="setting_reload_onconnectivity">Lataa jokainen yhteysmuutos uudelleen</string>
+    <string name="setting_reload_onconnectivity">Lataa uudelleen aina yhteyden vaihtuessa</string>
     <string name="setting_advanced_options">Edistyneet asetukset (asiantuntijoille)</string>
     <string name="setting_system">Näytä järjestelmäsovellukset</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
@@ -390,5 +390,29 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="insights_tracking_attempts">Seuranta‑palvelimet joihin on otettu yhteys</string>
     <string name="insights_blocked">Estetty</string>
     <string name="insights_allowed">Sallittu yhteys</string>
+    <string name="insights_tracker_companies">Seurantatahoja</string>
+    <string name="insights_apps_with_trackers">Sovellusta seurannalla</string>
+    <string name="insights_top_tracking_apps">Pahimmat seurantasovellukset</string>
+    <string name="insights_top_companies">Aktiivisimmat seurantatahot</string>
+    <string name="insights_pervasive_trackers">Yleisimmin esiintyvät seuraimet</string>
+    <string name="insights_top_domains">Yleisimmät seuranta-verkkotunnukset</string>
+    <string name="insights_in_apps">%d sovelluksessa</string>
+    <string name="insights_no_data">Seurantatietoja ei vielä ole. Käytä sovelluksiasi ja tarkista myöhemmin!</string>
+    <string name="insights_shocking_fact">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon %2$d seuranta-verkkotunnukseen kautta tällä viikolla!</string>
+    <string name="insights_shocking_fact_playstore">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon tällä viikolla!</string>
+    <string name="insights_share">Jaa ystävillesi</string>
+    <string name="insights_share_trackers_blocked">Seurantaa estetty</string>
+    <string name="insights_share_trackers_detected">Seurantaa havaittu</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Estin tällä viikolla %1$d seurantaa %2$d taholtaTrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Havaitsin tällä viikolla %1$d seurainta %2$d taholtaTrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
+    <string name="insights_see_more">Katso lisää →</string>
     <!-- What's New onboarding slide (not translated) -->
+    <string name="title_blocklists">Lisähosts-tiedostot</string>
+    <string name="summary_manage_blocklists">Nämä ovat vain varalla. TrackerControl sisältää omat hosts-listansa, jotka antavat tietoa seurannan takana olevista yrityksistä.</string>
+    <string name="title_add_blocklist">Lisää hosts-tiedosto</string>
+    <string name="title_delete_blocklist">Poista hosts-tiedosto</string>
+    <string name="msg_delete_blocklist_confirm">Oletko varma, että haluat poistaa tämän hosts-tiedoston?</string>
+    <string name="msg_invalid_url">Virheellinen URL-osoite</string>
+    <string name="msg_last_update">Päivitetty viimeksi: %s</string>
 </resources>
