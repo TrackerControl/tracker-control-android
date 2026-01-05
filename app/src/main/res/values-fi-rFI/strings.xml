@@ -59,6 +59,7 @@
     <string name="setting_advanced_options">Edistyneet asetukset (asiantuntijoille)</string>
     <string name="setting_system">Näytä järjestelmäsovellukset</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
+    <string name="setting_log_logcat">Loki lähetykset ADB:lle</string>
     <string name="setting_filter">Estä seuraimet</string>
     <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
     <string name="setting_handover">Saumaton VPN-kanavanvaihto ladattaessa</string>
@@ -82,15 +83,23 @@
     <string name="setting_pcap_file_size">PCAP max. tiedostokoko: %s MB</string>
     <string name="setting_watchdog">Watchdog: %s minuutin välein</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Suojattu DNS (DoH)</string>
+    <string name="summary_doh_enabled">Salaa DNS-kyselyt DNS-over-HTTPS: llä. Koskee kaikkia sovelluksia.</string>
+    <string name="warning_beta">Beta-ominaisuus. Ei välttämättä toimi odotetusti.</string>
+    <string name="setting_doh_endpoint">DoH-palvelimen URL</string>
+    <string name="summary_doh_endpoint">HTTPS URL DNS-over-HTTPS kyselyille</string>
     <string name="setting_stats_frequency">Näyteväli: %s ms</string>
     <string name="setting_stats_samples">Näytteiden lukumäärä: %s s</string>
     <string name="setting_backup">Varmuuskopioi</string>
+    <string name="setting_export">Vie asetukset</string>
     <string name="setting_import">Tuo asetukset</string>
     <string name="setting_hosts">Tuo isäntätiedosto</string>
     <string name="setting_hosts_append">Tuo isäntätiedosto (lisäys)</string>
     <string name="setting_hosts_url">Isäntätiedoston URL</string>
     <string name="setting_hosts_download">Lataa isäntätiedosto</string>
     <string name="setting_hosts_update">Päivitä isäntätiedosto</string>
+    <string name="setting_hosts_auto_update">Päivitä hosts-tiedosto automaattisesti</string>
+    <string name="summary_hosts_auto_update">Päivitä hosts-tiedosto automaattisesti taustalla</string>
     <string name="summary_install">Näytä tilapalkin ilmoitus uusille asennetuille sovelluksille</string>
     <string name="summary_pause">Kun olet keskeyttänyt ohjelman ilmoituksesta, ota TrackerControl käyttöön automaattisesti uudelleen valitun minuutin jälkeen (poista käytöstä kirjoittamalla 0).</string>
     <string name="summary_update">Tarkista uudet versiot GitHubista kahdesti päivässä</string>
@@ -99,6 +108,7 @@
     <string name="summary_lan">Salli sovellusten muodostaa yhteys lähiverkko-osoitteisiin, kuten 10.0.0.0/8, 172.16.0.0/12 ja 192.168.0.0/16</string>
     <string name="summary_ip6">Reititä IP-version 6 liikenne TrackerControliin, jotta se voidaan valikoivasti sallia tai estää</string>
     <string name="summary_call">Poista TrackerControl käytöstä saapuvassa tai lähtevässä puhelussa. Tätä voidaan käyttää IP / Wi-Fi-puheluiden ongelmien kiertämiseen.</string>
+    <string name="summary_system">Näytä järjestelmäsovellukset sovellusluettelossa</string>
     <string name="summary_log_app">Poista käytöstä vähentääksesi akun käyttöä. Uudet seuraimet estetään edelleen, mutta niitä ei näytetä.</string>
     <string name="summary_track_usage">Mukana lähetettyjen ja vastaanotettujen tavujen asettamiseksi kustakin sovelluksesta ja osoitteesta. Tämä voi johtaa ylimääräiseen akun käyttöön.</string>
     <string name="summary_block_domains">VAROITUS: Estettyjä isäntiä ei näytetä käyttöliittymässä.</string>
@@ -106,12 +116,14 @@
     <string name="summary_validate">Verkkotunnus, jota käytetään internet-yhteyden vahvistamiseen portissa 443 (https).</string>
     <string name="summary_socks5_enabled">Vain TCP-liikenne lähetetään välityspalvelimeen</string>
     <string name="summary_watchdog">Tarkista ajoittain, onko TrackerControl edelleen käynnissä (poista tämä vaihtoehto kirjoittamalla nolla). Tämä voi johtaa ylimääräiseen akun käyttöön.</string>
+    <string name="summary_log_logcat">Poistaa eston käytöstä. Viestintä (ja tunnistetut seuraimet) kirjataan laitteen lokiin. Hae adb logcat -komennolla tunnisteella ‘TC-Log’.</string>
     <string name="msg_sure">Oletko varma?</string>
     <string name="msg_started">Etsitään seuraimia...</string>
     <string name="msg_waiting">Odottaa tapahtumaa</string>
     <string name="msg_disabled">Ota yllä olevalla kytkimellä TrackerControl käyttöön.</string>
     <string name="msg_revoked">TrackerControl on poistettu käytöstä, todennäköisesti käyttämällä toista VPN-pohjaista sovellusta</string>
     <string name="msg_installed">Ongelmia %1$s kanssa?</string>
+    <string name="msg_installed_description">Salli sovelluksen ottaa yhteyttä yrityksiin</string>
     <string name="msg_installed_tracker_libraries_found">Sisältää %d seurainkirjastoa</string>
     <string name="msg_installed_n">On asennettu</string>
     <string name="msg_completed">Toiminto valmis</string>
@@ -120,8 +132,11 @@ Tästä syystä salli VPN-yhteys seuraavassa valintaikkunassa.
 Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_autostart">TrackerControl ei käynnistynyt automaattisesti. Tämä johtuu todennäköisesti Android-version virheestä.</string>
     <string name="msg_error">Tapahtui odottamaton virhe: \'%s\'</string>
+    <string name="msg_doh_unreachable">Suojattua DNS-yhteyttä (DoH) ei voi käyttää, vaikka internetyhteys on aktiivinen. Jos tämä tapahtuu toistuvasti, harkitse sen poistamista käytöstä verkkoasetuksissa.</string>
     <string name="msg_start_failed">Android kieltäytyi käynnistämästä VPN-palvelua tällä hetkellä. Tämä johtuu todennäköisesti Android-version virheestä.</string>
     <string name="msg_try">Kokeile TrackerControlia</string>
+    <string name="msg_doze">Jotta tulokset olisivat johdonmukaisia, Androidin akun optimoinnit tulisi poistaa käytöstä TrackerControl-sovellukselta.
+\n\nValitse seuraavassa valintaikkunassa yläreunasta ”Kaikki sovellukset”, napauta luettelosta TrackerControl-sovellusta ja valitse ja vahvista ”Älä optimoi”.</string>
     <string name="msg_datasaving">Yhdenmukaisten tulosten saavuttamiseksi Android-tietojen tallennusasetukset on poistettava käytöstä TrackerControlissa
 \n\nOta seuraavassa valintaikkunassa käyttöön vaihtoehdot \"Taustatiedot\" ja \"Rajoittamaton tiedon käyttö\"</string>
     <string name="msg_filter">Suodatuksen käyttö saa Androidin määrittelemään tiedot ja virrankulutuksen TrackerControlille - Android olettaa, että TrackerControl käyttää tietoja ja virtaa alkuperäisten sovellusten sijaan</string>
@@ -130,6 +145,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_clear_rules">Tämä palauttaa säännöt ja ehdot oletusarvoihinsa</string>
     <string name="msg_reset_access">Tämä poistaa pääsyyrityslokirivit ilman sallimis- / estosääntöjä</string>
     <string name="msg_import_last">Viimeisin tuonti: %s</string>
+    <string name="msg_downloading">Ladataan…</string>
     <string name="msg_downloaded">Isäntätiedosto ladattu</string>
     <string name="msg_updated">Isäntätiedosto päivitetty ja otettu käyttöön!</string>
     <string name="msg_download_last">Viimeisin lataus: %s</string>
@@ -146,6 +162,11 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_vpn_cancelled">VPN-yhteys peruutettu\nOletko määrittänyt toisen VPN: n aina käytössä olevaksi VPN: ksi?</string>
     <string name="msg_unavailable">Tämä ominaisuus ei ole käytettävissä tässä Android-versiossa</string>
     <string name="msg_always_on">Toinen VPN on asetettu \"Aina käytössä \"-tilaan</string>
+    <string name="msg_always_on_lockdown">Poista Androidin VPN-asetuksista valinta ”Estä yhteydet ilman VPN: ää”, jotta voit käyttää TrackerControlia</string>
+    <string name="msg_private_dns">Poista ”Yksityinen DNS” käytöstä Android-verkon asetuksissa. TrackerControl tarjoaa oman Suojattu DNS -ominaisuuden Asetuksissa.</string>
+    <string name="msg_start_forward">Aloita uudelleenohjaus osoitteen %1$s portista %2$d osoitteeseen %3$s:%4$d sovelluksille \'%5$s\'?</string>
+    <string name="msg_stop_forward">Lopeta uudelleenohjaus osoitteen %1$s portista %2$d?</string>
+    <string name="msg_log_logcat">Varoitus: Estäminen poistettu käytöstä ADB-loggauksen vuoksi.</string>
     <string-array name="protocolNames">
         <item>UDP</item>
         <item>TCP</item>
@@ -158,6 +179,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="title_raddr">Kohdeosoite</string>
     <string name="title_rport">Kohdeportti</string>
     <string name="title_ruid">Kohdesovellus</string>
+    <string name="title_external">Valitse ulkoiselle palvelimelle \'nobody\'</string>
     <string name="title_lockdown_enabled">Liikenne on lukittu</string>
     <string name="title_unmetered_allowed">Liikenne, joka ei ole käytön mukaan laskutettava, on sallittu</string>
     <string name="title_unmetered_blocked">Liikenne, joka ei ole käytön mukaan laskutettava, on estetty</string>
@@ -170,6 +192,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="title_interactive_allowed">Salli, kun näyttö on päällä</string>
     <string name="title_roaming_blocked">Estä verkkovierailun aikana</string>
     <string name="title_metered">Oletusarvoisesti Wi-Fi-yhteyttä ei katsota ja matkapuhelinyhteyttä mitataan</string>
+    <string name="title_internet">internetyhteyttä ei voi käyttää</string>
     <string name="title_disabled">on poistettu käytöstä</string>
     <string name="title_messaging">Saapuvat viestit vastaanotetaan Google Play -palveluista eikä tästä sovelluksesta, joten niitä ei voida estää estämällä tätä sovellusta</string>
     <string name="title_download">Lataukset suorittaa latausten hallinta eikä tämä sovellus, joten niitä ei voida estää estämällä tätä sovellusta</string>
@@ -234,6 +257,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tab_actions">Omat tiedot</string>
     <string name="tracker_name">Seuraimen nimi</string>
     <string name="internet_access">Internet-yhteys</string>
+    <string name="internet_access_explanation">Voit myös napauttaa sovelluksen kuvaketta päänäytöllä.</string>
     <string name="app_info">Hallitse sovellusta</string>
     <!-- Actions -->
     <string name="block_tracking">Estä seuraimet</string>
@@ -244,6 +268,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="data_management_description">EU: n yleisen tietosuoja-asetuksen (GDPR) avulla EU: n käyttäjät voivat hallita kaikkia niihin liittyviä tietoja. Tämä sovellus tarjoaa sähköpostimallit kehittäjän tavoittamiseksi. Kehittäjän on vastattava kuukauden kuluessa.</string>
     <string name="contacts">Ota yhteyttä </string>
     <string name="contacts_description">Jos uskot sovelluksen olevan tietosuojaperiaatteiden vastainen, kannattaa ehkä ottaa yhteyttä suoraan vastuuhenkilöihin.</string>
+    <string name="play_services_required">Tämä on Google Play -palveluiden asetus, jota ei löytynyt laitteestasi.</string>
     <string name="no_mail_service">Asenna sähköpostiohjelma.</string>
     <string name="blocking_settings">Valitse seuraimet</string>
     <string name="ad_settings">Vaihda nyt</string>
@@ -255,6 +280,40 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR-aihepyyntö</string>
+    <string name="body_request_data"><![CDATA[Arvoisa vastaanottaja:\n
+\n
+\n
+Pyydän teitä, Android-sovelluksen %s (ID: %s), tietojen valvojana, vahvistamaan, käsitteleekö sovellus minua koskevia henkilötietoja.\n
+Jos näin on, toimittakaa minulle kaikki EU:n yleisen tietosuoja-asetuksen (GDPR) 15 artiklassa vaaditut tiedot, mukaan lukien:\n
+\n
+• kopio henkilötiedoistani;\n
+• käsittelyn tarkoitukset;\n
+• kyseessä olevien henkilötietojen luokat;\n
+• vastaanottajat, joille luovutatte henkilötietojani, ja tarjoamanne suojatoimet;\n
+• henkilötietojeni säilytysaika tai tämän ajan määrittämisessä käytetyt kriteerit;\n
+•tiedot henkilötietojeni lähteestä; ja\n
+•automaattisen päätöksenteon (mukaan lukien profilointi) olemassaolo ja, jos on:\n
+    - päätöksentekoprosessissa käytetty logiikka;\n
+    - merkitys ja minulle aiheutuvat ennakoidut seuraukset;\n
+    -toimenpiteet, joihin olette ryhtyneet virheiden, puolueellisuuden ja syrjinnän estämiseksi; ja\n
+    - selitys siitä, miten voin ilmaista näkemykseni ja riitauttaa päätöksen.\n
+\n
+Tämä pyyntö koskee kaikkia henkilötietojeni käsittelyä, mukaan lukien kaikki henkilötietojen käsittelyn suorittajat, jotka käsittelevät henkilötietoja puolestanne.\n
+\n
+Vastatkaa pyyntööni turvallisella tavalla sähköpostitse. Odotan vastausta kuukauden kuluessa pyyntöni vastaanottamisesta.\n
+\n
+Ystävällisin terveisin,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Arvoisa vastaanottaja:\n
+\n
+\n
+Käytän EU:n yleisen tietosuoja-asetuksen (GDPR) 17 artiklassa määriteltyä oikeuttani tietojen poistamiseen. Pyydän teitä, Android-sovelluksen %s (tunnus: %s) rekisterinpitäjänä, poistamaan seuraavat minua koskevat henkilötiedot viipymättä:\n
+• Kaikki tiedot.\n
+\n
+Pyydän tietojen poistamista, koska peruutan tai olen peruuttanut suostumukseni henkilötietojeni käsittelyyn. Tämä pyyntö koskee kaikkia henkilötietojeni käsittelyjä, mukaan lukien kaikki teidän puolestanne henkilötietoja käsittelevät alihankkijat.\n
+\n
+Pyydän teitä vastaamaan turvallisella tavalla sähköpostitse. Odotan vastausta kuukauden kuluessa pyyntöni vastaanottamisesta.\n
+\n
+Ystävällisin terveisin,\n\n]]></string>
     <string name="crash_dialog_text">Anteeksi. TrackerControl kaatui juuri. Haluaisitko lähettää meille sähköpostia yksityiskohdilla?</string>
     <string name="crash_dialog_comment">Kommentteja?</string>
     <string name="instructions_monitoring_private_dns">Vaihda kytkintä ja ole vuorovaikutuksessa joidenkin sovellusten kanssa. Yksityinen DNS on poistettava käytöstä.</string>
@@ -274,6 +333,11 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tracker_email">Sähköposti</string>
     <string name="tracker_uncategorised">Luokittelemattomat</string>
     <string name="setting_strict_blocking">Tiukka Esto</string>
+    <string name="summary_strict_blocking">Estä juuri asennettujen sovellusten tietojen jakamista yritysten kanssa mahdollisimman paljon. Useampi sovelluksista lakkaa toimimasta.</string>
+    <string name="strict_blocking_explanation">On suositeltavaa, että muut kuin asiantuntijat poistavat tämän vaihtoehdon käytöstä sovelluksten toimintahäiriöiden vähentämiseksi. Tämä kuitenkin mahdollistaa joitain olennaisia tiedonvaihtoja yritysten kanssa.</string>
+    <string name="exclude_vpn_explanation">Havaitsee ja estää tämän sovelluksen seuraimet.</string>
+    <string name="vpn_exclude">Ohita VPN-yhteys</string>
+    <string name="vpn_exclude_explanation">Ota käyttöön, jos kohtaat ongelmia. Sovellus ohittaa TrackerControlin kokonaan.\n\nHuomaa: Jotta tämä toimisi, Android-VPN-asetusten kohta ”Estä yhteydet ilman VPN: ää” on oltava POISSA KÄYTÖSTÄ.</string>
     <string name="uninstall">Poista asennus</string>
     <string name="settings_uninstall">Sovelluksen tiedot</string>
     <string name="no_trackers_found_message_disabled">Ota käyttöön päänäytön kytkimestä ja käynnistä sitten sovellus löytääksesi seuraimia</string>
@@ -292,19 +356,39 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="internet_unblocked">Internet-yhteys sallitti</string>
     <string name="category_blocked">Estetyt seuraimet</string>
     <string name="category_unblocked">Sallitut seuraimet</string>
+    <string name="category_unblocked_warning">Ensimmäinen estoluokka!</string>
+    <string name="switch_strict_blocking">Estä olennaisten tietojen jakaminen</string>
     <string name="tracking_detection_failed">Seurainkirjastojen tunnistus epäonnistui.</string>
     <string name="tracking_detection_failed_ram">Seurainkirjastojen tunnistus epäonnistui. Ei tarpeeksi muistia.</string>
     <string name="tracking_detection_failed_report">Seurainkirjastojen tunnistus epäonnistui. Ilmoita tämä virhe kehittäjälle.</string>
     <string name="detected_trackers">Tunnistetut seurainkirjastot: %s</string>
+    <string name="analyzing_classes">Analysoidaan luokkia…</string>
+    <string name="analyzing_classes_progress">Analysoidaan luokkia… %d%%</string>
+    <string name="analysis_already_running">Analyysi on jo käynnissä</string>
     <string name="none">Ei mitään</string>
     <string name="trackers_static">Seurainkirjastot</string>
     <string name="trackers_static_explanation">TrackerControl tunnistaa seuraimia koodista (\"kirjastot\") ja sovelluksen verkkoliikenteestä.\n\nSeuraimet jotka tunnistetaan verkkoliikenteestä, voidaan estää TrackerControlin avulla.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl tunnistaa seuraimia koodista (\"kirjastot\") ja sovelluksen verkkoliikenteestä.</string>
+    <string name="analyze_tracker_libraries">Analysoi seurantakirjastot</string>
+    <string name="update_analysis">Päivitä analyysi</string>
+    <string name="analysis_outdated_version">\n\nHuomautus: Analyysi koskee aiempaa sovellusversiota. Tämä saattaa olla muuttanut integroituja seurantakirjastoja.</string>
+    <string name="analysis_queued">Analyysi jonossa…</string>
     <string name="blocked">ESTETTY</string>
     <string name="allowed">SALLITTU</string>
+    <string name="setting_domain_based_blocked">Verkkotunnuspohjainen estäminen</string>
+    <string name="summary_domain_based_blocking">Mahdollistaa tarkemman estämisen. Vielä kehitysvaiheessa.</string>
+    <string name="untap_unblock">Vinkki: Voit poistaa yksittäisten kohteiden eston napauttamalla niitä.</string>
+    <string name="uncertain_entry">Android-käyttöjärjestelmän rajoitusten vuoksi tähdellä \'*\' merkityt tiedot voivat olla epätarkkoja. Tämä tarkoittaa yleensä, että sama yritys käyttää samaa IP-osoitetta eri verkkotunnuksissa, mutta se voi tarkoittaa myös, että sama IP-osoite on eri yritysten käytössä (esim. jos ne käyttävät sisällönjakeluverkkoa).</string>
     <string name="browsers_not_supported">Selaimia ei tueta ⚠️</string>
+    <string name="browsers_not_supported_explanation">Tämä näyttää olevan selainohjelma.\n\nTrackerControl ei tue seurainten estämistä selaimissa. Käytä sen sijaan selainta, jossa on integroitu seurannanesto-ominaisuus, jotta seuranta estetään paremmin.\n\nEsimerkiksi: Mozilla Fennec</string>
     <string name="static_analysis">Tunnista sovelluskoodissa olevat seuraimet</string>
+    <string name="failed_loading_cached_analysis">Välimuistissa olevien seurainten tulosten lataaminen epäonnistui. Ilmoita tästä kehittäjälle osoitteessa hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <string name="insights_title">Yksityisyysnäkymäsi</string>
+    <string name="insights_subtitle_7days">Viimeiset 7 päivää</string>
+    <string name="insights_tracking_attempts">Seuranta‑palvelimet joihin on otettu yhteys</string>
+    <string name="insights_blocked">Estetty</string>
+    <string name="insights_allowed">Sallittu yhteys</string>
     <!-- What's New onboarding slide (not translated) -->
 </resources>
