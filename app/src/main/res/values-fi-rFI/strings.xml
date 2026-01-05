@@ -385,6 +385,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Välimuistissa olevien seurainten tulosten lataaminen epäonnistui. Ilmoita tästä kehittäjälle osoitteessa hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <string name="menu_insights">Katsaus</string>
     <string name="insights_title">Yksityisyysnäkymäsi</string>
     <string name="insights_subtitle_7days">Viimeiset 7 päivää</string>
     <string name="insights_tracking_attempts">Seuranta‑palvelimet joihin on otettu yhteys</string>
