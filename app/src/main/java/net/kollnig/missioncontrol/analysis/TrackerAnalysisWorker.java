@@ -52,6 +52,10 @@ public class TrackerAnalysisWorker extends Worker {
     public static final String KEY_RESULT = "result";
     public static final String KEY_ERROR = "error";
     public static final String KEY_PROGRESS = "progress";
+    
+    // Base notification ID for analysis completion notifications
+    // Use package hash offset to avoid conflicts with other notification IDs
+    private static final int NOTIFICATION_ID_BASE = 20000;
 
     public TrackerAnalysisWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -134,6 +138,8 @@ public class TrackerAnalysisWorker extends Worker {
             String appName = pm.getApplicationLabel(appInfo).toString();
 
             // Count trackers found
+            // Note: This uses the same bullet character counting method as ServiceSinkhole
+            // for consistency with the existing notification system
             int trackerCount = StringUtils.countMatches(result, "•");
 
             // Build notification
@@ -152,7 +158,7 @@ public class TrackerAnalysisWorker extends Worker {
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
             // Show notification with unique ID based on package hash
-            int notificationId = 20000 + packageName.hashCode();
+            int notificationId = NOTIFICATION_ID_BASE + packageName.hashCode();
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.notify(notificationId, builder.build());
 
