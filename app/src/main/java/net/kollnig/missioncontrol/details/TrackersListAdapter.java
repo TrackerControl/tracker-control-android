@@ -163,7 +163,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         mBtnAnalyze.setOnClickListener(v -> {
-            manager.startAnalysis(mAppId);
+            // Allow manual analysis to run on battery
+            manager.startAnalysis(mAppId, true);
             // Fragment's observer will pick up the work state changes
         });
     }

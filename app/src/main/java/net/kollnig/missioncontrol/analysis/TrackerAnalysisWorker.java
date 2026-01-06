@@ -17,16 +17,35 @@
 
 package net.kollnig.missioncontrol.analysis;
 
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
+import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import net.kollnig.missioncontrol.DetailsActivity;
+import net.kollnig.missioncontrol.R;
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.concurrent.atomic.AtomicInteger;
+
+import eu.faircode.netguard.PendingIntentCompat;
+import eu.faircode.netguard.ServiceSinkhole;
 
 public class TrackerAnalysisWorker extends Worker {
     public static final String KEY_PACKAGE_NAME = "package_name";
@@ -59,6 +78,9 @@ public class TrackerAnalysisWorker extends Worker {
             TrackerAnalysisManager.getInstance(context)
                     .cacheResult(packageName, result, pkg.versionCode);
 
+            // Show notification when analysis is finished
+            showCompletionNotification(context, packageName, result, pkg);
+
             return Result.success(new Data.Builder()
                     .putString(KEY_RESULT, result)
                     .build());
@@ -90,5 +112,50 @@ public class TrackerAnalysisWorker extends Worker {
             }
         });
         return analyser.analyseApp(packageName);
+    }
+
+    private void showCompletionNotification(Context context, String packageName, String result, PackageInfo pkg) {
+        try {
+            // Create notification channel for Android O+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationChannel channel = new NotificationChannel("analysis",
+                        context.getString(R.string.static_analysis),
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                nm.createNotificationChannel(channel);
+            }
+
+            // Get app name
+            PackageManager pm = context.getPackageManager();
+            ApplicationInfo appInfo = pm.getApplicationInfo(packageName, 0);
+            String appName = pm.getApplicationLabel(appInfo).toString();
+
+            // Count trackers found
+            int trackerCount = StringUtils.countMatches(result, "•");
+
+            // Build notification
+            Intent main = new Intent(context, DetailsActivity.class);
+            main.putExtra(INTENT_EXTRA_APP_NAME, appName);
+            main.putExtra(INTENT_EXTRA_APP_PACKAGENAME, packageName);
+            main.putExtra(INTENT_EXTRA_APP_UID, pkg.applicationInfo.uid);
+            PendingIntent pi = PendingIntentCompat.getActivity(context, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "analysis")
+                    .setSmallIcon(R.drawable.ic_rocket_white)
+                    .setContentTitle(context.getString(R.string.static_analysis))
+                    .setContentText(context.getString(R.string.msg_installed_tracker_libraries_found, trackerCount))
+                    .setContentIntent(pi)
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            // Show notification with unique ID based on package hash
+            int notificationId = 20000 + packageName.hashCode();
+            NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.notify(notificationId, builder.build());
+
+        } catch (Exception e) {
+            // Don't fail the worker if notification fails
+            e.printStackTrace();
+        }
     }
 }

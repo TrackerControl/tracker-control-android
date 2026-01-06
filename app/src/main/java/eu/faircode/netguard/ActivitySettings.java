@@ -335,6 +335,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 if (enabled) {
                     Constraints constraints = new Constraints.Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .setRequiresCharging(true)
                             .build();
 
                     PeriodicWorkRequest saveRequest = new PeriodicWorkRequest.Builder(HostsDownloadWorker.class, 24,

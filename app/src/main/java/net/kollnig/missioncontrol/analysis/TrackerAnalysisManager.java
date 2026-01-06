@@ -24,6 +24,7 @@ import android.content.pm.PackageManager;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -74,14 +75,35 @@ public class TrackerAnalysisManager {
      * @param packageName The package to analyze
      */
     public void startAnalysis(String packageName) {
+        startAnalysis(packageName, false);
+    }
+
+    /**
+     * Starts an analysis for the given package using WorkManager.
+     * Only one analysis runs at a time to prevent OOM; others are queued.
+     * Observe progress via {@link #getWorkInfoByPackageLiveData(String)}.
+     *
+     * @param packageName The package to analyze
+     * @param allowOnBattery If true, analysis can run on battery; if false, requires charging
+     */
+    public void startAnalysis(String packageName, boolean allowOnBattery) {
         Data inputData = new Data.Builder()
                 .putString(TrackerAnalysisWorker.KEY_PACKAGE_NAME, packageName)
                 .build();
 
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
+        OneTimeWorkRequest.Builder workRequestBuilder = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
                 .setInputData(inputData)
-                .addTag(packageName)
-                .build();
+                .addTag(packageName);
+
+        // Add constraint to only run when device is charging to save battery (unless explicitly allowed on battery)
+        if (!allowOnBattery) {
+            Constraints constraints = new Constraints.Builder()
+                    .setRequiresCharging(true)
+                    .build();
+            workRequestBuilder.setConstraints(constraints);
+        }
+
+        OneTimeWorkRequest workRequest = workRequestBuilder.build();
 
         // Use global work name + APPEND to serialize all analyses (prevents OOM from
         // concurrent scans)
