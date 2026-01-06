@@ -164,6 +164,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
     <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
     <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
+    <string name="msg_always_on_lockdown">Če želite uporabljati TrackerControl, izklopite \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN.</string>
     <string name="msg_private_dns">V Androidovih nastavitvah omrežja izklopite \"Zasebni DNS\".  TrackerControl v svojih nastavitvah nudi svojo značilnost \"Varen DNS\".</string>
     <string name="msg_start_forward">Začni posredovati iz %1$s, vrata %2$d v %3$s:%4$d od%5$s?</string>
     <string name="msg_stop_forward">Ustavi posredovati %1$s, vrata %2$d?</string>
