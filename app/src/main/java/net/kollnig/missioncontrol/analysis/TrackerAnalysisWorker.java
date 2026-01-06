@@ -78,8 +78,11 @@ public class TrackerAnalysisWorker extends Worker {
             TrackerAnalysisManager.getInstance(context)
                     .cacheResult(packageName, result, pkg.versionCode);
 
-            // Show notification when analysis is finished
-            showCompletionNotification(context, packageName, result, pkg);
+            // Show notification when analysis is finished successfully
+            // Only show if result is not null (analysis completed successfully)
+            if (result != null) {
+                showCompletionNotification(context, packageName, result, pkg);
+            }
 
             return Result.success(new Data.Builder()
                     .putString(KEY_RESULT, result)
