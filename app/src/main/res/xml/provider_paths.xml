@@ -2,4 +2,7 @@
     <external-path
         name="external_files"
         path="trackercontrol/" />
+    <cache-path
+        name="share_images"
+        path="share/" />
 </paths>

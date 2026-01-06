@@ -65,11 +65,13 @@ import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import androidx.core.app.NotificationCompat;
@@ -177,7 +179,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_ENFORCING = 1;
     private static final int NOTIFY_WAITING = 2;
     private static final int NOTIFY_DISABLED = 3;
-
+    private static final int NOTIFY_LOCKDOWN = 4;
     private static final int NOTIFY_AUTOSTART = 5;
     private static final int NOTIFY_ERROR = 6;
     private static final int NOTIFY_TRAFFIC = 7;
@@ -471,7 +473,13 @@ public class ServiceSinkhole extends VpnService {
                 }
 
                 if (cmd == Command.start || cmd == Command.reload) {
-
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        boolean filter = prefs.getBoolean("filter", false);
+                        if (filter && isLockdownEnabled())
+                            showLockdownNotification();
+                        else
+                            removeLockdownNotification();
+                    }
                 }
 
                 if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
@@ -539,6 +547,9 @@ public class ServiceSinkhole extends VpnService {
                     throw new StartFailedException(getString((R.string.msg_start_failed)));
 
                 startNative(vpn, listAllowed, listRule);
+
+                // Start DoH proxy if enabled
+                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).start();
 
                 removeWarningNotifications();
                 updateEnforcingNotification(listAllowed.size(), listRule.size());
@@ -661,6 +672,9 @@ public class ServiceSinkhole extends VpnService {
                 stopVPN(vpn);
                 vpn = null;
                 unprepare();
+
+                // Stop DoH proxy
+                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).stop();
             }
             if (state == State.enforcing && !temporary) {
                 Log.d(TAG, "Stop foreground state=" + state.toString());
@@ -1399,7 +1413,7 @@ public class ServiceSinkhole extends VpnService {
         boolean lan = prefs.getBoolean("lan", false);
         boolean ip6 = prefs.getBoolean("ip6", true);
         boolean filter = prefs.getBoolean("filter", true);
-        boolean excludeSystem = prefs.getBoolean("exclude_system_vpn", false);
+        boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
 
         // Build VPN service
         Builder builder = new Builder();
@@ -1597,9 +1611,9 @@ public class ServiceSinkhole extends VpnService {
                     }
             else if (filter)
                 for (Rule rule : listRule)
-                    // Only exclude if explicitly set to exclude from VPN
-                    // This ensures system apps still get secure DNS even when manage_system=false
-                    if (rule.vpn_exclude || (excludeSystem && rule.system))
+                    // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
+                    // false
+                    if (rule.vpn_exclude || (!includeSystem && rule.system))
                         try {
                             Log.i(TAG, "Not routing " + rule.packageName);
                             builder.addDisallowedApplication(rule.packageName);
@@ -1615,81 +1629,6 @@ public class ServiceSinkhole extends VpnService {
 
         return builder;
     }
-
-    private native void jni_inject_dns(int tun, byte[] queryData, int version, int protocol, String source, int sport,
-            String dest, int dport, int uid);
-
-    private java.util.concurrent.atomic.AtomicInteger dohFailures = new java.util.concurrent.atomic.AtomicInteger(0);
-
-    private byte[] createServFail(byte[] queryData) {
-        if (queryData.length < 12)
-            return null;
-        byte[] response = new byte[queryData.length];
-        System.arraycopy(queryData, 0, response, 0, queryData.length);
-        // Set QR bit (response) and RCODE to SERVFAIL (2)
-        response[2] = (byte) ((queryData[2] | 0x80) & 0xFB); // QR=1
-        response[3] = (byte) ((queryData[3] & 0xF0) | 0x02); // RCODE = SERVFAIL
-        return response;
-    }
-
-    private void onNativeDnsRequest(byte[] queryData, int version, int protocol, String source, int sport, String dest,
-            int dport, int uid) {
-        if (dohExecutor == null) {
-            dohExecutor = Executors.newFixedThreadPool(4);
-        }
-
-        // Capture VPN FD in main thread (thread-safe access to vpn variable)
-        final int tunFd = (vpn != null) ? vpn.getFd() : -1;
-
-        try {
-            dohExecutor.submit(() -> {
-                if (tunFd == -1) {
-                    return;
-                }
-
-                try {
-                    // Get the DoH client
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                    String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                    net.kollnig.missioncontrol.dns.DnsOverHttpsClient dohClient = net.kollnig.missioncontrol.dns.DnsOverHttpsClient
-                            .getInstance(endpoint);
-
-                    // Forward the query via DoH
-                    byte[] responseData = dohClient.resolve(queryData);
-
-                    if (responseData != null) {
-                        dohFailures.set(0);
-                        jni_inject_dns(tunFd, responseData, version, protocol, source, sport, dest, dport, uid);
-                    } else {
-                        int failures = dohFailures.incrementAndGet();
-                        if (failures >= 10) {
-                            if (Util.isInternetWorking(this)) {
-                                dohError(this);
-                                dohFailures.set(0);
-                            }
-                        }
-
-                        // Inject SERVFAIL
-                        byte[] servfail = createServFail(queryData);
-                        if (servfail != null) {
-                            jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
-                        }
-                    }
-                } catch (Throwable ex) {
-                    Log.e(TAG, ex + "\n" + Log.getStackTraceString(ex));
-                    // Try to inject SERVFAIL on exception too
-                    byte[] servfail = createServFail(queryData);
-                    if (servfail != null) {
-                        jni_inject_dns(tunFd, servfail, version, protocol, source, sport, dest, dport, uid);
-                    }
-                }
-            });
-        } catch (java.util.concurrent.RejectedExecutionException ex) {
-            Log.e(TAG, "DoH executor rejected task: " + ex.getMessage());
-        }
-    }
-
-    private ExecutorService dohExecutor;
 
     private void startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
@@ -1735,8 +1674,7 @@ public class ServiceSinkhole extends VpnService {
                     @Override
                     public void run() {
                         Log.i(TAG, "Running tunnel context=" + jni_context);
-                        boolean dohEnabled = prefs.getBoolean("doh_enabled", false);
-                        jni_run(jni_context, vpn.getFd(), dohEnabled, rcode);
+                        jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
                         Log.i(TAG, "Tunnel exited");
                         tunnelThread = null;
                     }
@@ -1964,6 +1902,31 @@ public class ServiceSinkhole extends VpnService {
                     mapForward.put(fwd.dport, fwd);
                     Log.i(TAG, "Forward " + fwd);
                 }
+            }
+
+            // Add DoH DNS forwarding when enabled
+            if (prefs.getBoolean("doh_enabled", false)) {
+                // UDP
+                Forward dnsFwd = new Forward();
+                dnsFwd.protocol = 17; // UDP
+                dnsFwd.dport = 53;
+                dnsFwd.raddr = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_ADDRESS;
+                dnsFwd.rport = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_PORT;
+                dnsFwd.ruid = android.os.Process.myUid();
+                mapForward.put(dnsFwd.dport, dnsFwd);
+
+                // TCP (use the same port map, as mapForward is keyed by dport)
+                // Note: Current mapForward keyed by dport supports only one rule per port.
+                // Since redirection target is same (5353) and DnsProxyServer listens on both
+                // UDP/TCP 5353,
+                // a single rule effectively handles both if the native code redirects based on
+                // dport match.
+                // However, for correctness in the Forward object:
+                // We leave it as is, or we would need to change mapForward to Map<Integer,
+                // List<Forward>> or similar
+                // if we wanted different destinations.
+                // Since dport 53 -> rport 5353 works for both protocol sockets, this is fine.
+                Log.i(TAG, "DoH Forward " + dnsFwd);
             }
         }
         lock.writeLock().unlock();
@@ -2576,7 +2539,7 @@ public class ServiceSinkhole extends VpnService {
                         if (uid > -1) {
                             // Check strict blocking
                             TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                            if (!prefs.getBoolean("strict_blocking", true))
+                            if (!prefs.getBoolean("strict_blocking", false))
                                 b.unblock(uid, NECESSARY_CATEGORY);
 
                             // Show install notification
@@ -3109,14 +3072,9 @@ public class ServiceSinkhole extends VpnService {
         super.onRevoke();
     }
 
+    @Override
     public void onDestroy() {
         synchronized (this) {
-            if (dohExecutor != null) {
-                Log.i(TAG, "Shutting down DoH executor");
-                dohExecutor.shutdownNow();
-                dohExecutor = null;
-            }
-
             Log.i(TAG, "Destroy");
             commandLooper.quit();
             logLooper.quit();
@@ -3317,6 +3275,38 @@ public class ServiceSinkhole extends VpnService {
 
         if (Util.canNotify(this))
             NotificationManagerCompat.from(this).notify(NOTIFY_DISABLED, notification.build());
+    }
+
+    private void showLockdownNotification() {
+        Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_LOCKDOWN, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        TypedValue tv = new TypedValue();
+        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.msg_always_on_lockdown))
+                .setContentIntent(pi)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setColor(tv.data)
+                .setOngoing(false)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(getString(R.string.msg_always_on_lockdown));
+
+        if (Util.canNotify(this))
+            NotificationManagerCompat.from(this).notify(NOTIFY_LOCKDOWN, notification.build());
+    }
+
+    private void removeLockdownNotification() {
+        NotificationManagerCompat.from(this).cancel(NOTIFY_LOCKDOWN);
     }
 
     private void showAutoStartNotification() {

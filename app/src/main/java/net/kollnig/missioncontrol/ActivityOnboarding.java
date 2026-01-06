@@ -3,11 +3,11 @@ package net.kollnig.missioncontrol;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.net.VpnService;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +36,15 @@ public class ActivityOnboarding extends AppCompatActivity {
     private List<Slide> slides = new ArrayList<>();
     private OnboardingAdapter adapter;
     private boolean slidesInitialized = false;
+
+    private boolean isLockdownEnabled() {
+        try {
+            int lockdown = Settings.Secure.getInt(getContentResolver(), "always_on_vpn_lockdown", 0);
+            return lockdown != 0;
+        } catch (Throwable ex) {
+            return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +116,22 @@ public class ActivityOnboarding extends AppCompatActivity {
                 null,
                 null));
 
+        // 1b. What's New (for returning users only, shown once)
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int oldVersion = prefs.getInt("version", -1);
+        boolean hasSeenWhatsNew = prefs.getBoolean("whatsnew_seen_2026", false);
+        if (oldVersion != -1 && !hasSeenWhatsNew) {
+            slides.add(new Slide(
+                    R.string.onboarding_whatsnew_title,
+                    getText(R.string.onboarding_whatsnew_title),
+                    getText(R.string.onboarding_whatsnew_desc),
+                    R.drawable.ic_rocket2,
+                    null,
+                    null));
+            // Mark as seen
+            prefs.edit().putBoolean("whatsnew_seen_2026", true).apply();
+        }
+
         // 2. VPN (Only if not already prepared)
         boolean vpnPrepared = VpnService.prepare(this) == null;
         if (!vpnPrepared) {
@@ -117,6 +142,21 @@ public class ActivityOnboarding extends AppCompatActivity {
                     R.drawable.lockdown,
                     getString(R.string.onboarding_vpn_action),
                     R.string.onboarding_vpn_sure,
+                    null)); // Listener set in refreshSlides
+        }
+
+        // 3. VPN Lockdown Warning (Android P+)
+        // Always show this slide - we can only check lockdown status after VPN is
+        // enabled (and only on Q+),
+        // so we check it dynamically in refreshSlides() or just show the button on P
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            slides.add(new Slide(
+                    R.string.onboarding_lockdown_title,
+                    getText(R.string.onboarding_lockdown_title),
+                    getText(R.string.onboarding_lockdown_desc),
+                    R.drawable.lockdown,
+                    getString(R.string.onboarding_lockdown_action),
+                    R.string.onboarding_lockdown_sure,
                     null)); // Listener set in refreshSlides
         }
 
@@ -135,33 +175,33 @@ public class ActivityOnboarding extends AppCompatActivity {
             }
         }
 
-        // 5. Battery Optimization
-        boolean batteryOptimized = Util.batteryOptimizing(this);
-        if (batteryOptimized) {
-            slides.add(new Slide(
-                    R.string.onboarding_battery_title,
-                    getText(R.string.onboarding_battery_title),
-                    getText(R.string.onboarding_battery_desc),
-                    R.drawable.ic_scan_code,
-                    getString(R.string.onboarding_battery_action),
-                    R.string.onboarding_battery_sure,
-                    null));
-        }
+        // 5. Battery Optimization - Disabled for now to simplify onboarding
+        // boolean batteryOptimized = Util.batteryOptimizing(this);
+        // if (batteryOptimized) {
+        // slides.add(new Slide(
+        // R.string.onboarding_battery_title,
+        // getText(R.string.onboarding_battery_title),
+        // getText(R.string.onboarding_battery_desc),
+        // R.drawable.ic_scan_code,
+        // getString(R.string.onboarding_battery_action),
+        // R.string.onboarding_battery_sure,
+        // null));
+        // }
 
-        // 6. Unrestricted Network (Optional but recommended)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            boolean dataSaving = Util.dataSaving(this);
-            if (dataSaving) {
-                slides.add(new Slide(
-                        R.string.onboarding_network_title,
-                        getText(R.string.onboarding_network_title),
-                        getText(R.string.onboarding_network_desc),
-                        R.drawable.wifi,
-                        getString(R.string.onboarding_network_action),
-                        R.string.onboarding_network_sure,
-                        null));
-            }
-        }
+        // 6. Unrestricted Network - Disabled for now to simplify onboarding
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        // boolean dataSaving = Util.dataSaving(this);
+        // if (dataSaving) {
+        // slides.add(new Slide(
+        // R.string.onboarding_network_title,
+        // getText(R.string.onboarding_network_title),
+        // getText(R.string.onboarding_network_desc),
+        // R.drawable.wifi,
+        // getString(R.string.onboarding_network_action),
+        // R.string.onboarding_network_sure,
+        // null));
+        // }
+        // }
 
         // 7. Private DNS (Mandatory)
         boolean privateDnsEnabled = Util.isPrivateDns(this);
@@ -178,18 +218,19 @@ public class ActivityOnboarding extends AppCompatActivity {
                     null));
         }
 
-        // 8. Secure DNS
-        final SharedPreferences prefsDns = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean dohEnabled = prefsDns.getBoolean("doh_enabled", false);
-        if (!dohEnabled) {
-            slides.add(new Slide(
-                    R.string.onboarding_dns_title,
-                    getText(R.string.onboarding_dns_title),
-                    getText(R.string.onboarding_dns_desc),
-                    R.drawable.lockdown,
-                    getString(R.string.onboarding_dns_action),
-                    null));
-        }
+        // 8. Secure DNS - Disabled for now to simplify onboarding
+        // final SharedPreferences prefsDns =
+        // PreferenceManager.getDefaultSharedPreferences(this);
+        // boolean dohEnabled = prefsDns.getBoolean("doh_enabled", false);
+        // if (!dohEnabled) {
+        // slides.add(new Slide(
+        // R.string.onboarding_dns_title,
+        // getText(R.string.onboarding_dns_title),
+        // getText(R.string.onboarding_dns_desc),
+        // R.drawable.lockdown,
+        // getString(R.string.onboarding_dns_action),
+        // null));
+        // }
 
         slidesInitialized = true;
 
@@ -240,41 +281,46 @@ public class ActivityOnboarding extends AppCompatActivity {
                 };
             }
 
-            // 5. Battery Optimization
-            if (slide.titleResId == R.string.onboarding_battery_title) {
-                boolean batteryOptimized = Util.batteryOptimizing(this);
-                slide.actionButtonText = batteryOptimized ? getString(R.string.onboarding_battery_action)
-                        : getString(R.string.onboarding_action_unrestricted);
-                slide.warningResId = batteryOptimized ? R.string.onboarding_battery_sure : 0;
-                slide.actionListener = v -> {
-                    if (batteryOptimized) {
-                        try {
-                            Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                                    .setData(Uri.parse("package:" + getPackageName()));
-                            startActivity(intent);
-                        } catch (Throwable ex) {
-                            startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
-                        }
-                    }
-                };
-            }
+            // 5. Battery Optimization - Disabled for now
+            // if (slide.titleResId == R.string.onboarding_battery_title) {
+            // boolean batteryOptimized = Util.batteryOptimizing(this);
+            // slide.actionButtonText = batteryOptimized ?
+            // getString(R.string.onboarding_battery_action)
+            // : getString(R.string.onboarding_action_unrestricted);
+            // slide.warningResId = batteryOptimized ? R.string.onboarding_battery_sure : 0;
+            // slide.actionListener = v -> {
+            // if (batteryOptimized) {
+            // try {
+            // Intent intent = new
+            // Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+            // .setData(Uri.parse("package:" + getPackageName()));
+            // startActivity(intent);
+            // } catch (Throwable ex) {
+            // startActivity(new
+            // Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+            // }
+            // }
+            // };
+            // }
 
-            // 6. Unrestricted Network
-            if (slide.titleResId == R.string.onboarding_network_title) {
-                boolean dataSaving = Util.dataSaving(this);
-                slide.actionButtonText = dataSaving ? getString(R.string.onboarding_network_action)
-                        : getString(R.string.onboarding_action_unrestricted);
-                slide.warningResId = dataSaving ? R.string.onboarding_network_sure : 0;
-                slide.actionListener = v -> {
-                    if (dataSaving) {
-                        Intent intent = new Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
-                                Uri.parse("package:" + getPackageName()));
-                        if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
-                        }
-                    }
-                };
-            }
+            // 6. Unrestricted Network - Disabled for now
+            // if (slide.titleResId == R.string.onboarding_network_title) {
+            // boolean dataSaving = Util.dataSaving(this);
+            // slide.actionButtonText = dataSaving ?
+            // getString(R.string.onboarding_network_action)
+            // : getString(R.string.onboarding_action_unrestricted);
+            // slide.warningResId = dataSaving ? R.string.onboarding_network_sure : 0;
+            // slide.actionListener = v -> {
+            // if (dataSaving) {
+            // Intent intent = new
+            // Intent(Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
+            // Uri.parse("package:" + getPackageName()));
+            // if (intent.resolveActivity(getPackageManager()) != null) {
+            // startActivity(intent);
+            // }
+            // }
+            // };
+            // }
 
             // 7. Private DNS
             if (slide.titleResId == R.string.onboarding_privatedns_title) {
@@ -293,17 +339,51 @@ public class ActivityOnboarding extends AppCompatActivity {
                 };
             }
 
-            // 8. Secure DNS
-            if (slide.titleResId == R.string.onboarding_dns_title) {
-                final SharedPreferences prefsDns = PreferenceManager.getDefaultSharedPreferences(this);
-                boolean dohEnabled = prefsDns.getBoolean("doh_enabled", false);
-                slide.actionButtonText = dohEnabled ? getString(R.string.onboarding_dns_action_disable)
-                        : getString(R.string.onboarding_dns_action);
-                slide.actionListener = v -> {
-                    prefsDns.edit().putBoolean("doh_enabled", !dohEnabled).apply();
-                    refreshSlides(); // Refresh status
-                };
+            // Lockdown
+            if (slide.titleResId == R.string.onboarding_lockdown_title) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    boolean lockdownEnabled = isLockdownEnabled();
+                    slide.actionButtonText = lockdownEnabled ? getString(R.string.onboarding_lockdown_action)
+                            : getString(R.string.onboarding_action_disabled);
+                    slide.warningResId = lockdownEnabled ? R.string.onboarding_lockdown_sure : 0;
+                    slide.actionListener = v -> {
+                        if (lockdownEnabled) {
+                            try {
+                                Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
+                                startActivity(intent);
+                            } catch (Throwable ex) {
+                                Log.e("Onboarding", ex.toString());
+                            }
+                        }
+                    };
+                } else {
+                    // Android 9 (Pie): Cannot check status, so always show button and no warning
+                    slide.actionButtonText = getString(R.string.onboarding_lockdown_action);
+                    slide.warningResId = 0;
+                    slide.actionListener = v -> {
+                        try {
+                            Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
+                            startActivity(intent);
+                        } catch (Throwable ex) {
+                            Log.e("Onboarding", ex.toString());
+                        }
+                    };
+                }
             }
+
+            // 8. Secure DNS - Disabled for now
+            // if (slide.titleResId == R.string.onboarding_dns_title) {
+            // final SharedPreferences prefsDns =
+            // PreferenceManager.getDefaultSharedPreferences(this);
+            // boolean dohEnabled = prefsDns.getBoolean("doh_enabled", false);
+            // slide.actionButtonText = dohEnabled ?
+            // getString(R.string.onboarding_dns_action_disable)
+            // : getString(R.string.onboarding_dns_action);
+            // slide.actionListener = v -> {
+            // prefsDns.edit().putBoolean("doh_enabled", !dohEnabled).apply();
+            // refreshSlides(); // Refresh status
+            // };
+            // }
         }
 
         if (adapter != null) {
@@ -331,10 +411,12 @@ public class ActivityOnboarding extends AppCompatActivity {
     }
 
     private void finishOnboarding() {
+        boolean vpnPrepared = VpnService.prepare(this) == null;
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit()
                 .putBoolean("onboarding_complete", true)
-                .putBoolean("enabled", true)
+                .putBoolean("enabled", vpnPrepared)
                 .apply();
 
         ServiceSinkhole.start("onboarding", this);

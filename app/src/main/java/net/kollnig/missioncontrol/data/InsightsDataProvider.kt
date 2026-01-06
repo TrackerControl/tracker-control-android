@@ -45,6 +45,9 @@ class InsightsDataProvider(context: Context) {
     fun computeInsights(): InsightsData {
         val data = InsightsData()
 
+        // Ensure TrackerList is initialized (loads trackers from assets if needed)
+        TrackerList.getInstance(context)
+
         // Load filtering preferences
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val showSystem = prefs.getBoolean("show_system", false)

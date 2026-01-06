@@ -7,11 +7,6 @@
             android:layout="@layout/pref_cat"
             android:title="@string/setting_options">
             <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="false"
-                android:key="strict_blocking"
-                android:summary="@string/summary_strict_blocking"
-                android:title="@string/setting_strict_blocking" />
-            <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="true"
                 android:key="installed"
                 android:summary="@string/summary_install"
@@ -87,25 +82,29 @@
             android:title="@string/setting_advanced_options">
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
+                android:key="strict_blocking"
+                android:summary="@string/summary_strict_blocking"
+                android:title="@string/setting_strict_blocking" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
                 android:key="domain_based_blocking"
                 android:summary="@string/summary_domain_based_blocking"
                 android:title="@string/setting_domain_based_blocked" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
-                android:key="exclude_system_vpn"
-                android:summary="@string/summary_exclude_system_vpn"
-                android:title="@string/setting_exclude_system_vpn" />
+                android:key="include_system_vpn"
+                android:summary="@string/summary_include_system_vpn"
+                android:title="@string/setting_include_system_vpn" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
+                android:dependency="include_system_vpn"
                 android:key="manage_system"
                 android:summary="@string/summary_system"
                 android:title="@string/setting_system" />
-
             <Preference
                 android:key="manage_blocklists"
                 android:summary="@string/summary_manage_blocklists"
                 android:title="@string/title_blocklists" />
-
             <Preference
                 android:key="hosts_download"
                 android:title="@string/setting_hosts_update" />

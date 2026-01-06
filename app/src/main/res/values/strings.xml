@@ -184,6 +184,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_vpn_cancelled">VPN connection cancelled\nDid you configure another VPN to be an always-on VPN?</string>
     <string name="msg_unavailable">This feature is not available on this Android version</string>
     <string name="msg_always_on">Another VPN is set as Always-on VPN</string>
+    <string name="msg_always_on_lockdown">Turn off "Block connections without VPN" in Android VPN settings to use TrackerControl</string>
 
     <string name="msg_private_dns">Turn off "Private DNS" in Android network settings. TrackerControl provides its own Secure DNS feature in Settings.</string>
     <string name="msg_start_forward">Start forwarding from %1$s port %2$d to %3$s:%4$d of \'%5$s\'?</string>
@@ -466,8 +467,8 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
 
-    <string name="setting_exclude_system_vpn">Exclude system apps</string>
-    <string name="summary_exclude_system_vpn">Exclude all system apps from the VPN to prevent connectivity issues.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
+    <string name="setting_include_system_vpn">Include system apps</string>
+    <string name="summary_include_system_vpn">Include all system apps in the VPN and DoH.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
 
     <!-- Onboarding -->
     <string name="title_next">Next</string>
@@ -505,6 +506,11 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_network_action">Grant Unrestricted Access</string>
     <string name="onboarding_network_sure">Restricted background data can cause TrackerControl to fail. Are you sure you want to proceed without granting unrestricted access?</string>
 
+    <string name="onboarding_lockdown_title">VPN Lockdown Setting</string>
+    <string name="onboarding_lockdown_desc">Android has a setting called \"Block connections without VPN\" that prevents apps from connecting before TrackerControl is ready.\n\nIf enabled, this can cause apps to fail to load. We recommend keeping this setting <b>disabled</b> for the best experience.</string>
+    <string name="onboarding_lockdown_action">Open VPN Settings</string>
+    <string name="onboarding_lockdown_sure">Proceeding with lockdown enabled may cause connectivity issues. Are you sure?</string>
+
     <string name="onboarding_dns_title">Secure DNS (Beta feature; may not work as expected)</string>
     <string name="onboarding_dns_desc">Protect your privacy from your ISP by encrypting your DNS traffic using DNS-over-HTTPS (DoH).\n\nThis prevents "DNS hijacking" and keeps your browsing habits private from your network provider.</string>
     <string name="onboarding_dns_action">Enable Secure DNS</string>
@@ -532,14 +538,24 @@ Sincerely,\n\n]]></string>
     <string name="insights_tracker_companies">Tracking Companies</string>
     <string name="insights_apps_with_trackers">Apps with Trackers</string>
     <string name="insights_top_tracking_apps">Worst Offending Apps</string>
-    <string name="insights_top_companies">Most Active Trackers</string>
+    <string name="insights_top_companies">Most Active Tracking Companies</string>
     <string name="insights_pervasive_trackers">Most Pervasive Trackers</string>
     <string name="insights_top_domains">Top Tracker Domains</string>
     <string name="insights_in_apps">in %d apps</string>
-    <string name="insights_protected">Protected by TrackerControl</string>
     <string name="insights_no_data">No tracking data yet. Use your apps and check back!</string>
     <string name="insights_shocking_fact">Your apps contacted %1$d tracking companies via %2$d tracker hosts this week!</string>
+    <string name="insights_shocking_fact_playstore">Your apps contacted %1$d tracking companies this week!</string>
+    <string name="insights_share">Share with Friends</string>
+    <string name="insights_share_trackers_blocked">Trackers Blocked</string>
+    <string name="insights_share_trackers_detected">Trackers Detected</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">I blocked %1$d trackers from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">I detected %1$d trackers from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
+    <string name="insights_see_more">See More →</string>
 
+    <!-- What's New onboarding slide (not translated) -->
+    <string name="onboarding_whatsnew_title" translatable="false">Major update ahead!</string>
+    <string name="onboarding_whatsnew_desc" translatable="false">• New Insights: View statistics on blocked trackers and tracking companies.\n• Secure DNS: added support for Encrypted DNS (DoH) for better privacy.\n• Enhanced Blocking: Support for multiple blocklists and auto-updates.\n• Simpler Settings: \"Monitor\" is now \"Exclude from VPN\" for clarity.\n• Performance: 50% smaller app size, faster startup, and improved battery life.\n• Revamped Analysis: Faster and cleaner tracker library scanner.\n• Improved Stability: Fixed bugs, crashes, and improved backups.</string>
 
     <string name="title_blocklists">Additional host files</string>
     <string name="summary_manage_blocklists">These are only for fallback. TrackerControl includes its own host lists that give insights on the companies behind tracking.</string>

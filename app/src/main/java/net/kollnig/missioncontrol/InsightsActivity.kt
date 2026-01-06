@@ -18,25 +18,38 @@
 package net.kollnig.missioncontrol
 
 import android.animation.ValueAnimator
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.util.Pair
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import eu.faircode.netguard.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.kollnig.missioncontrol.data.InsightsData
 import net.kollnig.missioncontrol.data.InsightsDataProvider
+import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -59,9 +72,12 @@ class InsightsActivity : AppCompatActivity() {
     private lateinit var llPervasiveTrackers: LinearLayout
     private lateinit var llTopDomains: LinearLayout
     private lateinit var llNoData: LinearLayout
+    private lateinit var llBlockedAllowed: LinearLayout
     private lateinit var progressBar: ProgressBar
+    private lateinit var fabShare: FloatingActionButton
 
     private lateinit var dataProvider: InsightsDataProvider
+    private var currentData: InsightsData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +103,13 @@ class InsightsActivity : AppCompatActivity() {
         llPervasiveTrackers = findViewById(R.id.llPervasiveTrackers)
         llTopDomains = findViewById(R.id.llTopDomains)
         llNoData = findViewById(R.id.llNoData)
+        llBlockedAllowed = findViewById(R.id.llBlockedAllowed)
         progressBar = findViewById(R.id.progressBar)
+        fabShare = findViewById(R.id.fabShare)
+
+        fabShare.setOnClickListener {
+            shareInsights()
+        }
 
         dataProvider = InsightsDataProvider(this)
 
@@ -119,20 +141,34 @@ class InsightsActivity : AppCompatActivity() {
     private fun displayData(data: InsightsData) {
         if (!data.hasData()) {
             llNoData.visibility = View.VISIBLE
+            fabShare.visibility = View.GONE
             return
         }
 
         llNoData.visibility = View.GONE
+        currentData = data
+        fabShare.visibility = View.VISIBLE
 
         // Animate main number
         animateNumber(tvTotalAttempts, 0, data.totalTrackingAttempts)
 
-        // Set shocking fact
-        tvShockingFact.text = getString(
-            R.string.insights_shocking_fact,
-            data.uniqueTrackerCompanies,
-            data.totalTrackingAttempts
-        )
+        // Hide blocked/allowed stats for Play Store version
+        val isPlayStore = Util.isPlayStoreInstall()
+        llBlockedAllowed.visibility = if (isPlayStore) View.GONE else View.VISIBLE
+
+        // Set shocking fact - different text for Play Store
+        if (isPlayStore) {
+            tvShockingFact.text = getString(
+                R.string.insights_shocking_fact_playstore,
+                data.uniqueTrackerCompanies
+            )
+        } else {
+            tvShockingFact.text = getString(
+                R.string.insights_shocking_fact,
+                data.uniqueTrackerCompanies,
+                data.totalTrackingAttempts
+            )
+        }
 
         // Blocked/Allowed stats
         animateNumber(tvBlockedCount, 0, data.blockedTrackingAttempts)
@@ -246,6 +282,147 @@ class InsightsActivity : AppCompatActivity() {
             row.addView(barWrapper)
             container.addView(row)
         }
+    }
+
+    /**
+     * Share privacy insights as an image with text.
+     */
+    private fun shareInsights() {
+        val data = currentData ?: return
+
+        lifecycleScope.launch {
+            try {
+                val imageFile = withContext(Dispatchers.IO) {
+                    generateShareImage(data)
+                }
+
+                if (imageFile != null) {
+                    val uri = FileProvider.getUriForFile(
+                        this@InsightsActivity,
+                        "${packageName}.provider",
+                        imageFile
+                    )
+
+                    val isPlayStore = Util.isPlayStoreInstall()
+                    val shareMsgRes = if (isPlayStore) R.string.insights_share_message_playstore else R.string.insights_share_message
+
+                    val shareText = getString(
+                        shareMsgRes,
+                        if (isPlayStore) data.totalTrackingAttempts else data.blockedTrackingAttempts,
+                        data.uniqueTrackerCompanies
+                    )
+
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "image/png"
+                        putExtra(Intent.EXTRA_STREAM, uri)
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+
+                    startActivity(Intent.createChooser(intent, getString(R.string.insights_share)))
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to share insights", e)
+                Toast.makeText(this@InsightsActivity, R.string.export_failed, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun generateShareImage(data: InsightsData): File? {
+        return try {
+            // Inflate and populate view
+            val inflater = LayoutInflater.from(this)
+            val shareView = inflater.inflate(R.layout.layout_insights_share, null)
+
+            val tvTotalBlocked = shareView.findViewById<TextView>(R.id.tvShareTotalBlocked)
+            val llBlockedStat = shareView.findViewById<LinearLayout>(R.id.llShareBlockedStat)
+            val tvBlockedCount = shareView.findViewById<TextView>(R.id.tvShareBlockedCount)
+            val tvCompanies = shareView.findViewById<TextView>(R.id.tvShareCompanies)
+            val llTopCompanies = shareView.findViewById<LinearLayout>(R.id.llShareTopCompanies)
+
+            val nf = NumberFormat.getNumberInstance(Locale.getDefault())
+            
+            // Hero stat: Total Hosts
+            tvTotalBlocked.text = nf.format(data.totalTrackingAttempts)
+
+            // Blocked stat: hide on Play Store
+            if (Util.isPlayStoreInstall()) {
+                llBlockedStat.visibility = View.GONE
+            } else {
+                llBlockedStat.visibility = View.VISIBLE
+                tvBlockedCount.text = nf.format(data.blockedTrackingAttempts)
+            }
+
+            // Companies count
+            tvCompanies.text = data.uniqueTrackerCompanies.toString()
+            
+            // Top 3 Companies (dynamically added)
+            val top3 = data.topTrackerCompanies.take(3)
+            val density = resources.displayMetrics.density
+            
+            for (company in top3) {
+                val row = LinearLayout(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        topMargin = (4 * density).toInt()
+                    }
+                    orientation = LinearLayout.HORIZONTAL
+                }
+                
+                val nameView = TextView(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    text = company.first
+                    setTextColor(Color.WHITE)
+                    textSize = 12f
+                }
+                
+                val countView = TextView(this).apply {
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                    text = getString(R.string.insights_in_apps, company.second)
+                    setTextColor(Color.WHITE)
+                    textSize = 12f
+                    setTypeface(null, Typeface.BOLD)
+                }
+                
+                row.addView(nameView)
+                row.addView(countView)
+                llTopCompanies.addView(row)
+            }
+
+            // Measure and layout
+            val width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, resources.displayMetrics).toInt()
+            val widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
+            val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            
+            shareView.measure(widthSpec, heightSpec)
+            shareView.layout(0, 0, shareView.measuredWidth, shareView.measuredHeight)
+
+            // Draw to bitmap
+            val bitmap = Bitmap.createBitmap(shareView.measuredWidth, shareView.measuredHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            shareView.draw(canvas)
+
+            // Save
+            val shareDir = File(cacheDir, "share")
+            if (!shareDir.exists()) shareDir.mkdirs()
+            
+            val imageFile = File(shareDir, "trackercontrol_insights.png")
+            FileOutputStream(imageFile).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            }
+            bitmap.recycle()
+            
+            imageFile
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to generate share image", e)
+            null
+        }
+    }
+
+    companion object {
+        private const val TAG = "InsightsActivity"
     }
 }
 
