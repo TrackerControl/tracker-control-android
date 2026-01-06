@@ -314,4 +314,5 @@
     <string name="failed_loading_cached_analysis">キャッシュされたトラッカーの結果の読み込みに失敗しました。 hello@trackercontrol.orgで開発者にこれを報告してください</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>

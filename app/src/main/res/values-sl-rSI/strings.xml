@@ -164,6 +164,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_vpn_cancelled">Povezava VPN je bila preklicana.\nAli ste nastavili drug VPN kot vedno dejavnega?</string>
     <string name="msg_unavailable">Ta značilnost ni na voljo v tej različici Androida.</string>
     <string name="msg_always_on">Drug VPN je nastavljen kot vedno dejaven.</string>
+    <string name="msg_always_on_lockdown">Če želite uporabljati TrackerControl, izklopite \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN.</string>
     <string name="msg_private_dns">V Androidovih nastavitvah omrežja izklopite \"Zasebni DNS\".  TrackerControl v svojih nastavitvah nudi svojo značilnost \"Varen DNS\".</string>
     <string name="msg_start_forward">Začni posredovati iz %1$s, vrata %2$d v %3$s:%4$d od%5$s?</string>
     <string name="msg_stop_forward">Ustavi posredovati %1$s, vrata %2$d?</string>
@@ -390,7 +391,7 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
     <string name="setting_include_system_vpn">Vključi sistemske programe</string>
-    <string name="summary_include_system_vpn">Vključi vse sistemske programe v VPN in DoH.\n\nOpomba: v Androidovih nastavitvah VPN-a morate ONEMOGOČITI \"Blokiraj povezave brez VPN-a\".</string>
+    <string name="summary_include_system_vpn">V VPN in DoH vključi vse sistemske programe.\n\nOpomba: v Androidovih nastavitvah VPN-a morate ONEMOGOČITI \"Blokiraj povezave brez VPN-a\".</string>
     <!-- Onboarding -->
     <string name="title_next">Naprej</string>
     <string name="title_skip">Preskoči</string>
@@ -420,6 +421,10 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_network_desc">Možnosti varčevanja podatkov lahko programu TrackerControl onemogočijo pravilno delovanje v ozadju.  Za najzanesljivejšo zaščito mu omogočite neomejen dostop.</string>
     <string name="onboarding_network_action">Odobri neomejen dostop</string>
     <string name="onboarding_network_sure">Omejevanje prenašanja podatkov v ozadju lahko povzroči nedelovanje programa TrackerControl.  Ali res želite nadaljevati brez odobritve neomejenega dostopa?</string>
+    <string name="onboarding_lockdown_title">Nastavitev blokiranja povezav brez VPN-a</string>
+    <string name="onboarding_lockdown_desc">Android ima nastavitev \"Blokiraj povezave brez VPN-a\", ki programom preprečuje povezavo z internetom, dokler TrackerControl ni pripravljen.\n\nČe je ta nastavitev omogočena, lahko programom prepreči njihovo nalaganje.  Priporočamo, da za najboljšo izkušnjo to nastavitev <b>onemogočite</b>.</string>
+    <string name="onboarding_lockdown_action">Odpri nastavitve VPN</string>
+    <string name="onboarding_lockdown_sure">Če nadaljujete z omogočenim blokiranjem, lahko to povzroči težave.  Ste prepričani?</string>
     <string name="onboarding_dns_title">Varen DNS (značilnost beta; morda ne bo delovalo po pričakovanjih)</string>
     <string name="onboarding_dns_desc">Zaščitite svojo zasebnost pred vašim ponudnikom s šifriranjem prometa DNS z uporabo DNS-a preko HTTPS-a (DoH).\n\nTo prepreči \"ugrabitev DNS\" in ščiti vaše navade brskanja pred ponudnikom interneta.</string>
     <string name="onboarding_dns_action">Omogoči varen DNS</string>
@@ -444,13 +449,21 @@ Sincerely,\n\n]]></string>
     <string name="insights_tracker_companies">Sledilna podjetja</string>
     <string name="insights_apps_with_trackers">Programi s sledilci</string>
     <string name="insights_top_tracking_apps">Najbolj agresivni programi</string>
-    <string name="insights_top_companies">Podjetja z največ dejavnih sledilcev</string>
+    <string name="insights_top_companies">Najbolj dejavna sledilna podjetja</string>
     <string name="insights_pervasive_trackers">Najbolj prodorni sledilci</string>
     <string name="insights_top_domains">Domene z največ sledilci</string>
     <string name="insights_in_apps">v %d-ih programih</string>
-    <string name="insights_protected">Ščiti TrackerControl</string>
     <string name="insights_no_data">Podatki o sledenju še niso na voljo.  Uporabljajte svoje programe in zopet preverite!</string>
     <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
+    <string name="insights_shocking_fact_playstore">Vaši programi so ta teden navezali stik s/z %1$d-imi sledilnimi podjetji!</string>
+    <string name="insights_share">Deli s priijatelji</string>
+    <string name="insights_share_trackers_blocked">Blokiranih sledilcev</string>
+    <string name="insights_share_trackers_detected">Zaznanih sledilcev</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Ta teden sem z uporabo programa TrackerControl blokiral %1$d sledilcev od %2$d-ih podjetij!  Prevzemite nazaj nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
+    <string name="insights_share_message_playstore">Ta teden sem z uporabo programa TrackerControl zaznal %1$d sledilcev od %2$d-ih podjetij!  Prevzemite nazaj nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
+    <string name="insights_see_more">Več →</string>
+    <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
     <string name="summary_manage_blocklists">Ti so samo za izhod v sili.  TrackerControl vključuje svoje sezname gostiteljev, ki nudijo podatke o sledilnih podjetjih.</string>
     <string name="title_add_blocklist">Dodaj datoteko gostiteljev</string>

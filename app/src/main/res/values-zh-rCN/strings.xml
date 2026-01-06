@@ -360,4 +360,5 @@
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>

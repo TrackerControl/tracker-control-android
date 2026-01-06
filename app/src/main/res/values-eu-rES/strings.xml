@@ -358,4 +358,5 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="failed_loading_cached_analysis">Cacheatutako aztarnarien emaitzak kargatzeak huts egin du. Mesedez eman honen berri garatzaileari hemen: hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
 </resources>
