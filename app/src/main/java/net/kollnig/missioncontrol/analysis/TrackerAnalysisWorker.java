@@ -30,6 +30,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -48,6 +49,8 @@ import eu.faircode.netguard.PendingIntentCompat;
 import eu.faircode.netguard.ServiceSinkhole;
 
 public class TrackerAnalysisWorker extends Worker {
+    private static final String TAG = "TrackerControl.Analysis";
+    
     public static final String KEY_PACKAGE_NAME = "package_name";
     public static final String KEY_RESULT = "result";
     public static final String KEY_ERROR = "error";
@@ -157,14 +160,18 @@ public class TrackerAnalysisWorker extends Worker {
                     .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-            // Show notification with unique ID based on package hash
-            int notificationId = NOTIFICATION_ID_BASE + packageName.hashCode();
+            // Show notification with unique ID based on package name
+            // Using hashCode may have collisions but is acceptable since:
+            // 1. Package names are unique per device
+            // 2. Collision only affects notification grouping, not functionality
+            // 3. Adding base offset reduces collision risk with other notification IDs
+            int notificationId = NOTIFICATION_ID_BASE + Math.abs(packageName.hashCode());
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             nm.notify(notificationId, builder.build());
 
         } catch (Exception e) {
             // Don't fail the worker if notification fails
-            e.printStackTrace();
+            Log.e(TAG, "Failed to show completion notification: " + e.getMessage(), e);
         }
     }
 }
