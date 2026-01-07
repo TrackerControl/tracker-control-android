@@ -64,6 +64,9 @@ public class TrackerList {
     private static TrackerList instance;
     private static boolean domainBasedBlocking;
     private final DatabaseHelper databaseHelper;
+    
+    // Lock for synchronizing tracker data reload operations
+    private static final Object reloadLock = new Object();
 
     // Performance: Cache tracker counts to avoid full DB scans on every refresh
     private Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> cachedTrackerCounts;
@@ -140,15 +143,18 @@ public class TrackerList {
     public static void reloadTrackerData(Context c) {
         Log.i(TAG, "Reloading tracker data");
         
-        // Clear existing data (both are thread-safe collections)
-        hostnameToTracker.clear();
-        trackingIps.clear();
-        
-        // Ensure instance exists and reload trackers from assets
-        TrackerList trackerList = getInstance(c);
-        trackerList.loadTrackers(c);
-        // Invalidate cached tracker counts since tracker data has changed
-        trackerList.invalidateTrackerCountCache();
+        // Synchronize the entire reload operation to prevent race conditions
+        synchronized (reloadLock) {
+            // Clear existing data (both are thread-safe collections)
+            hostnameToTracker.clear();
+            trackingIps.clear();
+            
+            // Ensure instance exists and reload trackers from assets
+            TrackerList trackerList = getInstance(c);
+            trackerList.loadTrackers(c);
+            // Invalidate cached tracker counts since tracker data has changed
+            trackerList.invalidateTrackerCountCache();
+        }
     }
 
     /**
