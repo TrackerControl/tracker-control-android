@@ -58,7 +58,7 @@ public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
     private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
-    public static Set<String> trackingIps = new HashSet<>();
+    public static Set<String> trackingIps = ConcurrentHashMap.newKeySet();
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
     private static TrackerList instance;
@@ -128,6 +128,28 @@ public class TrackerList {
             }
 
         return t;
+    }
+
+    /**
+     * Reload tracker data by clearing all existing data and reloading from assets.
+     * This should be called when the hosts blocklist is updated to ensure TrackerList
+     * stays in sync with the updated hosts.
+     *
+     * @param c Context
+     */
+    public static void reloadTrackerData(Context c) {
+        Log.i(TAG, "Reloading tracker data");
+        
+        // Clear existing data (both are thread-safe collections)
+        hostnameToTracker.clear();
+        trackingIps.clear();
+        
+        // Reload trackers from assets
+        if (instance != null) {
+            instance.loadTrackers(c);
+            // Invalidate cached tracker counts since tracker data has changed
+            instance.invalidateTrackerCountCache();
+        }
     }
 
     /**

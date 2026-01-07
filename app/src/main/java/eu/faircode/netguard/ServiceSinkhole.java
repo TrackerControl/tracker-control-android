@@ -1799,6 +1799,9 @@ public class ServiceSinkhole extends VpnService {
         }
 
         lock.writeLock().unlock();
+        
+        // Reload TrackerList to ensure it stays in sync with updated hosts
+        TrackerList.reloadTrackerData(c);
     }
 
     private void prepareUidIPFilters(String dname) {
