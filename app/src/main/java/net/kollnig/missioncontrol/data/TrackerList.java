@@ -144,12 +144,11 @@ public class TrackerList {
         hostnameToTracker.clear();
         trackingIps.clear();
         
-        // Reload trackers from assets
-        if (instance != null) {
-            instance.loadTrackers(c);
-            // Invalidate cached tracker counts since tracker data has changed
-            instance.invalidateTrackerCountCache();
-        }
+        // Ensure instance exists and reload trackers from assets
+        TrackerList trackerList = getInstance(c);
+        trackerList.loadTrackers(c);
+        // Invalidate cached tracker counts since tracker data has changed
+        trackerList.invalidateTrackerCountCache();
     }
 
     /**
