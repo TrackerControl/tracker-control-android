@@ -715,8 +715,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("domain_based_blocked".equals(name)) {
-            TrackerList ts = TrackerList.getInstance(this);
-            ts.loadTrackers(this);
+            TrackerList.reloadTrackerData(this);
         }
 
     }

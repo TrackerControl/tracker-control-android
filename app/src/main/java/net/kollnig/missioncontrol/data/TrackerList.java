@@ -58,12 +58,15 @@ public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
     private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
-    public static Set<String> trackingIps = new HashSet<>();
+    public static Set<String> trackingIps = ConcurrentHashMap.newKeySet();
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
     private static TrackerList instance;
     private static boolean domainBasedBlocking;
     private final DatabaseHelper databaseHelper;
+    
+    // Lock for synchronizing tracker data reload operations
+    private static final Object reloadLock = new Object();
 
     // Performance: Cache tracker counts to avoid full DB scans on every refresh
     private Pair<Pair<Map<Integer, Integer>, Integer>, Pair<Map<Integer, Integer>, Integer>> cachedTrackerCounts;
@@ -128,6 +131,30 @@ public class TrackerList {
             }
 
         return t;
+    }
+
+    /**
+     * Reload tracker data by clearing all existing data and reloading from assets.
+     * This should be called when the hosts blocklist is updated to ensure TrackerList
+     * stays in sync with the updated hosts.
+     *
+     * @param c Context
+     */
+    public static void reloadTrackerData(Context c) {
+        Log.i(TAG, "Reloading tracker data");
+        
+        // Synchronize the entire reload operation to prevent race conditions
+        synchronized (reloadLock) {
+            // Clear existing data (both are thread-safe collections)
+            hostnameToTracker.clear();
+            trackingIps.clear();
+            
+            // Ensure instance exists and reload trackers from assets
+            TrackerList trackerList = getInstance(c);
+            trackerList.loadTrackers(c);
+            // Invalidate cached tracker counts since tracker data has changed
+            trackerList.invalidateTrackerCountCache();
+        }
     }
 
     /**
