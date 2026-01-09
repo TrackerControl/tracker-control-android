@@ -359,6 +359,7 @@
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
     <!-- Onboarding -->
+    <string name="onboarding_network_sure">受限制的后台数据可能导致 TrackerControl 失败。确定要在不允许无限制访问的情况下继续吗？</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
 </resources>
