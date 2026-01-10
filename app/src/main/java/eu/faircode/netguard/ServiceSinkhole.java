@@ -2140,6 +2140,25 @@ public class ServiceSinkhole extends VpnService {
                     packet.allowed = false;
                 }
 
+                // Check if app has foreground-only restriction
+                if (!filtered) {
+                    SharedPreferences foregroundPrefs = getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
+                    String[] packages = getPackageManager().getPackagesForUid(packet.uid);
+                    if (packages != null && packages.length > 0) {
+                        String packageName = packages[0];
+                        boolean isForegroundOnly = foregroundPrefs.getBoolean(packageName, false);
+                        
+                        if (isForegroundOnly) {
+                            ForegroundTracker foregroundTracker = ForegroundTracker.getInstance(ServiceSinkhole.this);
+                            if (!foregroundTracker.isAppInForeground(packet.uid)) {
+                                filtered = true;
+                                packet.allowed = false;
+                                Log.d(TAG, "Blocking background traffic for foreground-only app: " + packageName);
+                            }
+                        }
+                    }
+                }
+
                 if (!filtered)
                     packet.allowed = true;
             }

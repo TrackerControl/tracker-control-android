@@ -170,6 +170,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         public CheckBox cbLockdown;
         public ImageView ivLockdownLegend;
 
+        public LinearLayout llForegroundOnly;
+        public CheckBox cbForegroundOnly;
+        public ImageView ivForegroundOnlyLegend;
+
         public ImageButton btnClear;
 
         public LinearLayout llFilter;
@@ -234,6 +238,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             cbLockdown = itemView.findViewById(R.id.cbLockdown);
             ivLockdownLegend = itemView.findViewById(R.id.ivLockdownLegend);
+
+            llForegroundOnly = itemView.findViewById(R.id.llForegroundOnly);
+            cbForegroundOnly = itemView.findViewById(R.id.cbForegroundOnly);
+            ivForegroundOnlyLegend = itemView.findViewById(R.id.ivForegroundOnlyLegend);
 
             btnClear = itemView.findViewById(R.id.btnClear);
 
@@ -544,6 +552,25 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 rule.apply = isChecked;
                 updateRule(context, rule, true, listAll);
+            }
+        });
+
+        // Show foreground-only checkbox
+        holder.llForegroundOnly.setVisibility(rule.expanded ? View.VISIBLE : View.GONE);
+        holder.cbForegroundOnly.setEnabled(rule.pkg && filter && active);
+        holder.cbForegroundOnly.setOnCheckedChangeListener(null);
+        holder.cbForegroundOnly.setChecked(rule.foreground_only);
+        holder.cbForegroundOnly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                rule.foreground_only = isChecked;
+                
+                // Save to shared preferences
+                SharedPreferences foregroundPrefs = context.getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
+                foregroundPrefs.edit().putBoolean(rule.packageName, isChecked).apply();
+                
+                // Reload rules
+                ServiceSinkhole.reload("foreground changed", context, false);
             }
         });
 

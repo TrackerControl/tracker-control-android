@@ -1,0 +1,147 @@
+/*
+ * TrackerControl is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * TrackerControl is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
+ */
+package eu.faircode.netguard;
+
+import android.app.usage.UsageEvents;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.util.Log;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * Tracks which apps are currently in the foreground.
+ * Uses UsageStatsManager to monitor app lifecycle events.
+ */
+public class ForegroundTracker {
+    private static final String TAG = "TrackerControl.Foreground";
+    private static ForegroundTracker instance;
+    private final Context context;
+    private final ConcurrentHashMap<Integer, Boolean> foregroundApps = new ConcurrentHashMap<>();
+    private long lastCheckTime = 0;
+
+    private ForegroundTracker(Context c) {
+        this.context = c.getApplicationContext();
+    }
+
+    /**
+     * Get the singleton instance of ForegroundTracker
+     *
+     * @param c context used to access system services
+     * @return The current instance of ForegroundTracker
+     */
+    public static synchronized ForegroundTracker getInstance(Context c) {
+        if (instance == null)
+            instance = new ForegroundTracker(c);
+        return instance;
+    }
+
+    /**
+     * Check if an app with the given UID is currently in the foreground.
+     *
+     * @param uid UID of the app to check
+     * @return true if the app is in foreground, false otherwise
+     */
+    public boolean isAppInForeground(int uid) {
+        updateForegroundApps();
+        Boolean isForeground = foregroundApps.get(uid);
+        return isForeground != null && isForeground;
+    }
+
+    /**
+     * Update the list of foreground apps by querying UsageStatsManager.
+     * This is throttled to avoid excessive system calls.
+     */
+    private void updateForegroundApps() {
+        long currentTime = System.currentTimeMillis();
+        
+        // Throttle updates to once per 500ms to reduce overhead
+        if (currentTime - lastCheckTime < 500) {
+            return;
+        }
+        
+        lastCheckTime = currentTime;
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            // UsageStatsManager not available on older versions
+            return;
+        }
+
+        try {
+            UsageStatsManager usageStatsManager = (UsageStatsManager) 
+                context.getSystemService(Context.USAGE_STATS_SERVICE);
+            
+            if (usageStatsManager == null) {
+                return;
+            }
+
+            // Query events from the last 2 seconds
+            long startTime = currentTime - 2000;
+            UsageEvents usageEvents = usageStatsManager.queryEvents(startTime, currentTime);
+
+            // Clear previous state
+            Set<Integer> newForegroundApps = new HashSet<>();
+
+            // Process usage events
+            while (usageEvents.hasMoreEvents()) {
+                UsageEvents.Event event = new UsageEvents.Event();
+                usageEvents.getNextEvent(event);
+
+                String packageName = event.getPackageName();
+                int eventType = event.getEventType();
+
+                try {
+                    int uid = context.getPackageManager()
+                        .getApplicationInfo(packageName, 0).uid;
+
+                    if (eventType == UsageEvents.Event.ACTIVITY_RESUMED ||
+                        eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                        newForegroundApps.add(uid);
+                    } else if (eventType == UsageEvents.Event.ACTIVITY_PAUSED ||
+                               eventType == UsageEvents.Event.MOVE_TO_BACKGROUND) {
+                        newForegroundApps.remove(uid);
+                    }
+                } catch (PackageManager.NameNotFoundException e) {
+                    // Package not found, skip
+                }
+            }
+
+            // Update the concurrent map
+            foregroundApps.clear();
+            for (Integer uid : newForegroundApps) {
+                foregroundApps.put(uid, true);
+            }
+
+        } catch (SecurityException e) {
+            Log.w(TAG, "No permission to access usage stats: " + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "Error updating foreground apps: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Clear cached foreground state.
+     */
+    public void clear() {
+        foregroundApps.clear();
+        lastCheckTime = 0;
+    }
+}

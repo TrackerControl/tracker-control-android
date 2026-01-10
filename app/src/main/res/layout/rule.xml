@@ -433,6 +433,28 @@
                         android:textAppearance="@style/TextSmall" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/llForegroundOnly"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivForegroundOnlyLegend"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/screen_on" />
+
+                    <CheckBox
+                        android:id="@+id/cbForegroundOnly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_foreground_only"
+                        android:textAppearance="@style/TextSmall" />
+                </LinearLayout>
+
                 <ImageButton
                     android:id="@+id/btnClear"
                     android:layout_width="wrap_content"

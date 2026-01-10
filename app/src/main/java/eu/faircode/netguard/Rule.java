@@ -80,6 +80,7 @@ public class Rule {
     public boolean screen_other = false;
     public boolean roaming = false;
     public boolean lockdown = false;
+    public boolean foreground_only = false;
 
     public boolean apply = true;
     public boolean vpn_exclude = false; // If true, completely exclude from VPN (no DNS, no routing)
@@ -239,6 +240,7 @@ public class Rule {
             SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
             SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
             SharedPreferences lockdown = context.getSharedPreferences("lockdown", Context.MODE_PRIVATE);
+            SharedPreferences foreground_only = context.getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
             SharedPreferences vpn_exclude_prefs = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
@@ -406,6 +408,7 @@ public class Rule {
                                 && screen_on;
                         rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
+                        rule.foreground_only = foreground_only.getBoolean(info.packageName, false);
 
                         rule.apply = apply.getBoolean(info.packageName, true);
                         rule.vpn_exclude = vpn_exclude_prefs.getBoolean(info.packageName, false);

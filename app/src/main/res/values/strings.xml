@@ -235,6 +235,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_roaming_symbol" translatable="false">R</string>
     <string name="title_roaming">Block when roaming</string>
     <string name="title_lockdown">Allow in lockdown mode</string>
+    <string name="title_foreground_only">Allow only when in use</string>
     <string name="title_related">Filter related</string>
     <string name="title_access">Access attempts</string>
     <string name="title_precedence">Access rules take precedence over other rules</string>
