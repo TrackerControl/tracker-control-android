@@ -717,6 +717,7 @@ public class ServiceSinkhole extends VpnService {
             ipToHost.clear();
             ipToTracker.clear();
             uidToApp.clear();
+            foregroundOnlyCache.clear();
 
             // Check for update
             if (!Util.isPlayStoreInstall(ServiceSinkhole.this)
@@ -2095,6 +2096,7 @@ public class ServiceSinkhole extends VpnService {
     static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
+    static ConcurrentHashMap<Integer, Boolean> foregroundOnlyCache = new ConcurrentHashMap<>();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
 
@@ -2142,25 +2144,36 @@ public class ServiceSinkhole extends VpnService {
 
                 // Check if app has foreground-only restriction
                 if (!filtered) {
-                    SharedPreferences foregroundPrefs = getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
-                    String[] packages = getPackageManager().getPackagesForUid(packet.uid);
-                    if (packages != null && packages.length > 0) {
-                        String packageName = packages[0];
-                        boolean isForegroundOnly = foregroundPrefs.getBoolean(packageName, false);
-                        
-                        if (isForegroundOnly) {
-                            // Only enforce if we have permission to check foreground status
-                            if (ForegroundTracker.hasUsageStatsPermission(ServiceSinkhole.this)) {
-                                ForegroundTracker foregroundTracker = ForegroundTracker.getInstance(ServiceSinkhole.this);
-                                if (!foregroundTracker.isAppInForeground(packet.uid)) {
-                                    filtered = true;
-                                    packet.allowed = false;
-                                    Log.d(TAG, "Blocking background traffic for foreground-only app: " + packageName);
-                                }
-                            } else {
-                                // Permission not granted, allow traffic but log warning
-                                Log.w(TAG, "Foreground-only enabled for " + packageName + " but usage stats permission not granted");
+                    // Check cache first
+                    Boolean isForegroundOnly = foregroundOnlyCache.get(packet.uid);
+                    if (isForegroundOnly == null) {
+                        // Not in cache, load from preferences
+                        SharedPreferences foregroundPrefs = getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
+                        String[] packages = getPackageManager().getPackagesForUid(packet.uid);
+                        if (packages != null && packages.length > 0) {
+                            // Use first package name as representative for this UID
+                            // Note: Multiple packages can share a UID, but they share permissions
+                            String packageName = packages[0];
+                            isForegroundOnly = foregroundPrefs.getBoolean(packageName, false);
+                            foregroundOnlyCache.put(packet.uid, isForegroundOnly);
+                        } else {
+                            isForegroundOnly = false;
+                            foregroundOnlyCache.put(packet.uid, false);
+                        }
+                    }
+                    
+                    if (isForegroundOnly) {
+                        // Only enforce if we have permission to check foreground status
+                        if (ForegroundTracker.hasUsageStatsPermission(ServiceSinkhole.this)) {
+                            ForegroundTracker foregroundTracker = ForegroundTracker.getInstance(ServiceSinkhole.this);
+                            if (!foregroundTracker.isAppInForeground(packet.uid)) {
+                                filtered = true;
+                                packet.allowed = false;
+                                Log.d(TAG, "Blocking background traffic for foreground-only app (UID: " + packet.uid + ")");
                             }
+                        } else {
+                            // Permission not granted, allow traffic but log warning once
+                            Log.w(TAG, "Foreground-only enabled for UID " + packet.uid + " but usage stats permission not granted");
                         }
                     }
                 }
