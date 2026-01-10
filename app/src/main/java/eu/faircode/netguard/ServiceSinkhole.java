@@ -2147,14 +2147,15 @@ public class ServiceSinkhole extends VpnService {
 
                 // Check if app has foreground-only restriction
                 if (!filtered) {
-                    // Check cache first
+                    // Check cache first (cache hit avoids expensive operations)
                     Boolean isForegroundOnly = foregroundOnlyCache.get(packet.uid);
                     if (isForegroundOnly == null) {
                         // Not in cache, load from preferences
+                        // Note: This path is only hit once per UID, then cached
                         SharedPreferences foregroundPrefs = getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
                         String[] packages = getPackageManager().getPackagesForUid(packet.uid);
                         if (packages != null && packages.length > 0) {
-                            // Sort packages to ensure deterministic selection
+                            // Sort packages to ensure deterministic selection across app restarts
                             java.util.Arrays.sort(packages);
                             // Use first package name after sorting as representative for this UID
                             // Note: Multiple packages can share a UID, but they share permissions

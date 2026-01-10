@@ -36,6 +36,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ForegroundTracker {
     private static final String TAG = "TrackerControl.Foreground";
+    private static final long THROTTLE_INTERVAL_MS = 500;
+    private static final long QUERY_WINDOW_MS = 2000;
+    
     private static ForegroundTracker instance;
     private final Context context;
     private final ConcurrentHashMap<Integer, Boolean> foregroundApps = new ConcurrentHashMap<>();
@@ -76,8 +79,8 @@ public class ForegroundTracker {
     private void updateForegroundApps() {
         long currentTime = System.currentTimeMillis();
         
-        // Throttle updates to once per 500ms to reduce overhead
-        if (currentTime - lastCheckTime < 500) {
+        // Throttle updates to reduce overhead
+        if (currentTime - lastCheckTime < THROTTLE_INTERVAL_MS) {
             return;
         }
         
@@ -96,17 +99,17 @@ public class ForegroundTracker {
                 return;
             }
 
-            // Query events from the last 2 seconds
-            long startTime = currentTime - 2000;
+            // Query events from recent past
+            long startTime = currentTime - QUERY_WINDOW_MS;
             UsageEvents usageEvents = usageStatsManager.queryEvents(startTime, currentTime);
 
             // Track the latest state for each UID
             Set<Integer> newForegroundApps = new HashSet<>();
             
-            // Start with existing state
-            for (Integer uid : foregroundApps.keySet()) {
-                if (foregroundApps.get(uid)) {
-                    newForegroundApps.add(uid);
+            // Start with existing state - use entrySet to avoid race conditions
+            for (Map.Entry<Integer, Boolean> entry : foregroundApps.entrySet()) {
+                if (entry.getValue()) {
+                    newForegroundApps.add(entry.getKey());
                 }
             }
 
@@ -134,10 +137,8 @@ public class ForegroundTracker {
                 }
             }
 
-            // Update the concurrent map efficiently using retainAll
-            foregroundApps.keySet().retainAll(newForegroundApps);
-            
-            // Add new foreground UIDs
+            // Update the concurrent map - clear and rebuild to handle background transitions
+            foregroundApps.clear();
             for (Integer uid : newForegroundApps) {
                 foregroundApps.put(uid, true);
             }
