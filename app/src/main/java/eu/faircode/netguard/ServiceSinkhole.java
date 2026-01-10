@@ -116,6 +116,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -718,6 +719,7 @@ public class ServiceSinkhole extends VpnService {
             ipToTracker.clear();
             uidToApp.clear();
             foregroundOnlyCache.clear();
+            permissionWarningLogged.clear();
 
             // Check for update
             if (!Util.isPlayStoreInstall(ServiceSinkhole.this)
@@ -2097,6 +2099,7 @@ public class ServiceSinkhole extends VpnService {
     static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
     static ConcurrentHashMap<Integer, Boolean> foregroundOnlyCache = new ConcurrentHashMap<>();
+    static Set<Integer> permissionWarningLogged = ConcurrentHashMap.newKeySet();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
 
@@ -2151,7 +2154,9 @@ public class ServiceSinkhole extends VpnService {
                         SharedPreferences foregroundPrefs = getSharedPreferences("foreground_only", Context.MODE_PRIVATE);
                         String[] packages = getPackageManager().getPackagesForUid(packet.uid);
                         if (packages != null && packages.length > 0) {
-                            // Use first package name as representative for this UID
+                            // Sort packages to ensure deterministic selection
+                            java.util.Arrays.sort(packages);
+                            // Use first package name after sorting as representative for this UID
                             // Note: Multiple packages can share a UID, but they share permissions
                             String packageName = packages[0];
                             isForegroundOnly = foregroundPrefs.getBoolean(packageName, false);
@@ -2172,8 +2177,10 @@ public class ServiceSinkhole extends VpnService {
                                 Log.d(TAG, "Blocking background traffic for foreground-only app (UID: " + packet.uid + ")");
                             }
                         } else {
-                            // Permission not granted, allow traffic but log warning once
-                            Log.w(TAG, "Foreground-only enabled for UID " + packet.uid + " but usage stats permission not granted");
+                            // Permission not granted, allow traffic but log warning once per UID
+                            if (permissionWarningLogged.add(packet.uid)) {
+                                Log.w(TAG, "Foreground-only enabled for UID " + packet.uid + " but usage stats permission not granted");
+                            }
                         }
                     }
                 }

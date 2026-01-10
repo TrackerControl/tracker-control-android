@@ -134,9 +134,8 @@ public class ForegroundTracker {
                 }
             }
 
-            // Update the concurrent map efficiently
-            // Remove UIDs that are no longer in foreground
-            foregroundApps.entrySet().removeIf(entry -> !newForegroundApps.contains(entry.getKey()));
+            // Update the concurrent map efficiently using retainAll
+            foregroundApps.keySet().retainAll(newForegroundApps);
             
             // Add new foreground UIDs
             for (Integer uid : newForegroundApps) {
