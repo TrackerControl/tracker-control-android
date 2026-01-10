@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl允许用户监视和控制移动应用程序中有关用户行为的广泛的、正在进行的隐藏数据收集(‘跟踪’)。</string>
+    <string name="app_copyright">版权所有 \u00A9 2019-2022 Konrad Kollnig\n\nTrackerControl 基于 NetGuard, 由 Marcel Bokhorst (M66B) 开发。</string>
     <string name="app_android">TrackerControl需要Android 5.1或更高版本</string>
     <string name="app_xposed">Xposed会造成过多的崩溃，这可能导致TrackerControl从GooglePlay商店被移除，因此在安装xposed情况下不支持使用TrackerControl</string>
     <string name="app_eula">使用本应用程序的风险由您自行承担。没有应用程序可以提供对网络跟踪100%的保护。</string>
@@ -54,6 +55,8 @@
     <string name="setting_ip6">允许 IPv6 流量</string>
     <string name="setting_call">在通话期间禁用</string>
     <string name="setting_reload_onconnectivity">在每次连接更改时重新加载</string>
+    <string name="setting_advanced_options">高级选项(供专家使用)</string>
+    <string name="setting_system">显示系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
     <string name="setting_log_logcat">记录到ADB的传输</string>
     <string name="setting_filter">屏蔽跟踪器</string>
@@ -79,15 +82,23 @@
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">安全DNS (DoH)</string>
+    <string name="summary_doh_enabled">使用 DNS-overHTTPS 的加密DNS 查询。应用于所有应用。</string>
+    <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
+    <string name="setting_doh_endpoint">DoH 端点 URL</string>
+    <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
     <string name="setting_stats_frequency">采样间隔： %s 毫秒</string>
     <string name="setting_stats_samples">样本数: %s s</string>
     <string name="setting_backup">备份</string>
+    <string name="setting_export">导出设置</string>
     <string name="setting_import">导入设定</string>
     <string name="setting_hosts">导入 hosts 文件</string>
     <string name="setting_hosts_append">导入 hosts 文件 (追加)</string>
     <string name="setting_hosts_url">Hosts 文件 URL</string>
     <string name="setting_hosts_download">下载 hosts 文件</string>
     <string name="setting_hosts_update">更新 hosts 文件</string>
+    <string name="setting_hosts_auto_update">自动更新主机文件</string>
+    <string name="summary_hosts_auto_update">在后台自动更新主机文件</string>
     <string name="summary_install">为新安装的应用程序显示状态栏通知</string>
     <string name="summary_pause">从通知栏暂停软件运作后，在选定的分钟数后重新自动启用TrackerControl(输入0禁用此选项)。</string>
     <string name="summary_update">每日两次检查 GitHub 上的新版本</string>
@@ -96,6 +107,7 @@
     <string name="summary_lan">允许应用连接至局域网，比如 10.0.0.0/8，172.16.0.0/12和 192.168.0.0/16</string>
     <string name="summary_ip6">将 IPv6 流量导至TrackerControl，进行选择性地允许或屏蔽</string>
     <string name="summary_call">在来电或来电时禁用TrackerControl 。这可以用来解决IP/Wi-Fi 通话问题。</string>
+    <string name="summary_system">在应用列表中显示系统应用</string>
     <string name="summary_log_app">禁用以减少电池使用量。新的跟踪器仍将被屏蔽，但不会显示。</string>
     <string name="summary_track_usage">跟踪每个应用程序和地址发送和接收的字节数。这可能会导致额外的电池使用。</string>
     <string name="summary_block_domains">警告: 被屏蔽的主机未在用户界面中显示。</string>
@@ -119,8 +131,11 @@
 您的互联网流量没有被发送到远程VPN服务器。</string>
     <string name="msg_autostart">TrackerControl 无法自动启动。这可能是由于您 Android 版本中的一个错误。</string>
     <string name="msg_error">发生一个未知错误: \'%s\'</string>
+    <string name="msg_doh_unreachable">即使您有活跃的互联网连接，也无法连接到安全的DNS(DoH)。如果反复发生这种情况，请考虑在网络设置中禁用它。</string>
     <string name="msg_start_failed">Android此时拒绝启动VPN服务。这可能你的Android版本中的一个bug造成的。</string>
     <string name="msg_try">尝试TrackerControl</string>
+    <string name="msg_doze">为了获得一致的结果，应该禁用对TrackerControl的Android电池优化。
+\n\n在下一个对话框中，选择顶部的“全部应用”，轻按列表中的TrackerControl，选择并确认“不优化”。</string>
     <string name="msg_datasaving">为了得到一致的结果，对TrackerControl的Android数据节省选项应该被禁用
 \n\n在下一个对话框中，启用“后台数据”和“不受限制的数据使用”选项</string>
     <string name="msg_filter">使用过滤会使Android把数据和电量使用归于TrackerControl——Android假设数据和电量是由TrackerControl使用的，而不是原来的应用程序</string>
@@ -129,6 +144,7 @@
     <string name="msg_clear_rules">这将把规则和条件重置为它们的默认值</string>
     <string name="msg_reset_access">这将删除没有允许/拦截规则的访问尝试日志行</string>
     <string name="msg_import_last">上次导入： %s</string>
+    <string name="msg_downloading">正在下载…</string>
     <string name="msg_downloaded">已下载主机文件</string>
     <string name="msg_updated">已更新并应用 Hosts 文件！</string>
     <string name="msg_download_last">上次下载： %s</string>
@@ -145,6 +161,8 @@
     <string name="msg_vpn_cancelled">VPN 连接已取消\n您是否对另一个 VPN 设置了始终启用?</string>
     <string name="msg_unavailable">该特性在这个Android版本中不可用</string>
     <string name="msg_always_on">已将另一个 VPN 设置为始终启用</string>
+    <string name="msg_always_on_lockdown">在 Android VPN 设置中关闭\"屏蔽不使用VPN的所有连接\"以使用 TrackerControl</string>
+    <string name="msg_private_dns">在 Android 网络设置中关闭 \"Private DNS\"。TrackerControl 在设置中提供它自己的安全DNS 功能。</string>
     <string name="msg_start_forward">停止从%1$s端口%2$d转发流量到\'%5$s\'的%3$s:%4$d？</string>
     <string name="msg_stop_forward">停止%1$s端口%2$d的流量转发？</string>
     <string name="msg_log_logcat">警告：因 ADB 日志记录，已禁用拦截。</string>
@@ -236,6 +254,7 @@
     <string name="tab_actions">我的数据</string>
     <string name="tracker_name">追踪器名称</string>
     <string name="internet_access">互联网访问</string>
+    <string name="internet_access_explanation">您也可以点击主屏幕上的应用图标。</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
     <string name="block_tracking">屏蔽追踪器</string>
@@ -312,6 +331,9 @@
     <string name="setting_strict_blocking">严格屏蔽</string>
     <string name="summary_strict_blocking">对于新安装的应用程序，尽可能多地阻止与公司共享数据。更多的应用程序将无法正常工作。</string>
     <string name="strict_blocking_explanation">建议非专家禁用此选项，以减少应用程序使用碰到的问题。然而，这允许与公司进行一些必要的数据共享。</string>
+    <string name="exclude_vpn_explanation">检测并阻止此应用的跟踪器。</string>
+    <string name="vpn_exclude">从 VPN 中排除</string>
+    <string name="vpn_exclude_explanation">如果您遇到问题，请启用。应用将完全绕过 TrackerControl。\n\n注意：在Android VPN 设置中\"屏蔽不使用VPN的所有连接\"必须禁用才能让这个选项正常工作。</string>
     <string name="uninstall">卸载</string>
     <string name="settings_uninstall">应用设置 &amp; 卸载</string>
     <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
@@ -358,7 +380,85 @@
     <string name="static_analysis">检测应用代码中的跟踪器</string>
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
+    <string name="setting_include_system_vpn">包含系统应用</string>
+    <string name="summary_include_system_vpn">将所有系统应用包含在 VPN 和 DoH 中。\n\n注意：必须禁用 Android VPN 设置中的“拦截所有不使用 VPN 的连接”。</string>
     <!-- Onboarding -->
+    <string name="title_next">下一步</string>
+    <string name="title_skip">跳过</string>
+    <string name="title_previous">上一步</string>
+    <string name="title_finish">开始</string>
+    <string name="onboarding_welcome_title">控制您的隐私</string>
+    <string name="onboarding_welcome_desc">TrackerControl 是社区驱动的研究项目，使您能够：:\n\n• 实时<b>监控</b> 移动应用隐蔽的数据收集。\n• 用我们 <b>2,000,000 已分析应用</b>的数据库 <b>拦截</b>跟踪器和广告。\n• <b>识别</b> 接收数据的目的地企业和国家/地区。\n\n所有分析均发生在 <b>本地设备上</b> – 你的流量从未脱离你的控制。</string>
+    <string name="onboarding_vpn_title">开启防护</string>
+    <string name="onboarding_vpn_desc">TrackerControl 使用 Android 的本地VPN 接口来分析您的网络流量。\n\n<b>重要：</b> 不涉及外部 VPN 服务器。我们看不到您的数据。</string>
+    <string name="onboarding_vpn_action">启用设备上的 VPN</string>
+    <string name="onboarding_vpn_sure">TrackerControl 无法在没有本地的 VPN的情况下过滤任何流量。您确定要继续而不启用它吗？</string>
+    <string name="onboarding_battery_title">防止中断</string>
+    <string name="onboarding_battery_desc">Android 可能会停止后台应用程序以节省电量。为了确保对跟踪器的持续保护，请禁用对于 TrackerControl 的优化。</string>
+    <string name="onboarding_battery_action">禁用优化</string>
+    <string name="onboarding_battery_sure">在不禁用电池优化的情况下，TrackerControl 可能会随时被Android 停止。您确定要继续吗？</string>
+    <string name="onboarding_notify_title">接收通知</string>
+    <string name="onboarding_notify_desc">允许通知以直接从状态栏查看实时更新并控制保护。</string>
+    <string name="onboarding_notify_action">允许通知</string>
+    <string name="onboarding_notify_sure">没有通知权限，您将无法从状态栏查看实时更新或控制保护。您确定吗？</string>
+    <string name="onboarding_privatedns_title">禁用私人DNS</string>
+    <string name="onboarding_privatedns_desc">Android 的 Private DNS 功能会妨碍 TrackerControl 拦截跟踪器的能力。要继续此设置 <b>必须</b>设为“关闭”。</string>
+    <string name="onboarding_privatedns_instruction">设置 -&gt; 网络 &amp; 互联网 -&gt; Private DNS -&gt; 关闭。</string>
+    <string name="onboarding_privatedns_action">打开 DNS 设置</string>
+    <string name="onboarding_privatedns_skip_title">跳过私人DNS禁用？</string>
+    <string name="onboarding_privatedns_skip_msg">在开启 Private DNS 情况下继续会极大限制 TrackControl 的运行。多数跟踪不会被拦截，只剩下跟踪库分析。另外， VPN 过滤器会被禁用来确保基础功能。</string>
+    <string name="onboarding_network_title">不受限制的网络</string>
+    <string name="onboarding_network_desc">数据节省选项可能阻止TrackerControl在后台正常工作，允许无限制访问以获得最可靠的保护。</string>
+    <string name="onboarding_network_action">授予无限制访问</string>
+    <string name="onboarding_network_sure">受限制的后台数据可能导致 TrackerControl 失败。确定要在不允许无限制访问的情况下继续吗？</string>
+    <string name="onboarding_lockdown_title">VPN 锁定设置</string>
+    <string name="onboarding_lockdown_desc">安卓系统有一个叫“屏蔽未使用 VPN 的所有连接 ”的设置，它阻止应用在 TrackerControl 就绪之前连接。\n\n如果启用，这可能导致应用程序加载失败。 我们建议<b>禁用</b>此设置获取最佳体验。</string>
+    <string name="onboarding_lockdown_action">打开 VPN 设置</string>
+    <string name="onboarding_lockdown_sure">锁定启用情况下继续可能导致连接问题。您确定吗？</string>
+    <string name="onboarding_dns_title">安全 DNS (Beta 功能；可能无法按预期工作)</string>
+    <string name="onboarding_dns_desc">用 DNS-over-HTTPS (DoH) 加密 DNS 流量保护隐私不受 ISP 侵害。\n\n这防止“DNS 劫持”，使网络提供商无法知晓浏览习惯。</string>
+    <string name="onboarding_dns_action">启用安全DNS</string>
+    <string name="onboarding_dns_action_disable">禁用安全DNS</string>
+    <string name="onboarding_blocking_title">屏蔽追踪器</string>
+    <string name="onboarding_blocking_desc">揭示并拦截应用中普遍存在的跟踪。\n\n• <b>拦截列表</b>：结合 Firefox Disconnect 和独一无二的对 <b>2,000,000 个应用</b> 分析。\n • <b>GDPR</b>：用 <b>一键擦除请求</b>行使权利。\n• <b>透明性</b>：发现究竟是哪些企业和国家/地区搜集你的数据。</string>
+    <string name="onboarding_blocking_action">启用屏蔽</string>
+    <string name="onboarding_blocking_action_disable">禁用屏蔽</string>
+    <string name="onboarding_blocking_sure">跟踪器屏蔽是TrackerControl的核心功能。您确定要禁用它吗？</string>
+    <string name="onboarding_action_enabled">已启用</string>
+    <string name="onboarding_action_disabled">已禁用</string>
+    <string name="onboarding_action_granted">已授权</string>
+    <string name="onboarding_action_optimized">已优化</string>
+    <string name="onboarding_action_unrestricted">不受限制</string>
     <!-- Insights Screen -->
+    <string name="menu_insights">洞察分析</string>
+    <string name="insights_title">您的隐私洞察</string>
+    <string name="insights_subtitle_7days">最近 7 天</string>
+    <string name="insights_tracking_attempts">联系的跟踪主机</string>
+    <string name="insights_blocked">已屏蔽</string>
+    <string name="insights_allowed">允许通过</string>
+    <string name="insights_tracker_companies">跟踪公司</string>
+    <string name="insights_apps_with_trackers">带跟踪器的应用</string>
+    <string name="insights_top_tracking_apps">最恶劣的违规应用</string>
+    <string name="insights_top_companies">最活跃的跟踪公司</string>
+    <string name="insights_pervasive_trackers">最常见的跟踪器</string>
+    <string name="insights_top_domains">顶级跟踪域名</string>
+    <string name="insights_in_apps">在 %d 个应用中</string>
+    <string name="insights_no_data">尚无跟踪数据。继续使用您的应用，之后回来看看！</string>
+    <string name="insights_shocking_fact">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>
+    <string name="insights_shocking_fact_playstore">您的应用本周联系了 %1$d 家追踪公司！</string>
+    <string name="insights_share">分享给好友</string>
+    <string name="insights_share_trackers_blocked">追踪器被阻止</string>
+    <string name="insights_share_trackers_detected">检测到追踪器</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">我本周用TrackerControl屏蔽了 来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">我本周用TrackerControl检测到来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
+    <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
+    <string name="title_blocklists">额外的主机文件</string>
+    <string name="summary_manage_blocklists">这些只是备用。TrackerControl 包括其自己的主机名单，让人们了解跟踪背后的公司。</string>
+    <string name="title_add_blocklist">新增主机文件</string>
+    <string name="title_delete_blocklist">删除主机文件</string>
+    <string name="msg_delete_blocklist_confirm">您确定要删除此主机文件吗？</string>
+    <string name="msg_invalid_url">URL 无效</string>
+    <string name="msg_last_update">上次更新：%s</string>
 </resources>
