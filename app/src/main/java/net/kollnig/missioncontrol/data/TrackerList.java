@@ -168,6 +168,7 @@ public class TrackerList {
 
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+        loadDuckDuckGoTrackers(c); // DuckDuckGo tracker list for additional mobile-specific trackers
         loadIpBlocklist(c);
     }
 
@@ -405,6 +406,57 @@ public class TrackerList {
             }
         } catch (IOException | JSONException e) {
             Log.e(TAG, "Loading X-Ray list failed.. ", e);
+        }
+    }
+
+    /**
+     * Load DuckDuckGo tracker list
+     *
+     * @param c Context
+     */
+    private void loadDuckDuckGoTrackers(Context c) {
+        try (InputStream is = c.getAssets().open("duckduckgo-android-tds.json")) {
+            // Read JSON
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
+            String json = new String(buffer, StandardCharsets.UTF_8);
+
+            // Parse DuckDuckGo list
+            JSONObject duckduckgo = new JSONObject(json);
+            JSONObject trackers = duckduckgo.getJSONObject("trackers");
+
+            // Iterate through all tracker domains
+            for (Iterator<String> it = trackers.keys(); it.hasNext();) {
+                String domain = it.next();
+                JSONObject trackerInfo = trackers.getJSONObject(domain);
+
+                // Get owner information
+                JSONObject owner = trackerInfo.getJSONObject("owner");
+                String displayName = owner.getString("displayName");
+
+                // Determine category based on default action
+                String defaultAction = trackerInfo.getString("default");
+                String category;
+                if ("ignore".equals(defaultAction)) {
+                    category = "Content"; // Similar to necessary trackers
+                } else {
+                    category = "Advertisement"; // Default category for blocked trackers
+                }
+
+                // Create tracker with owner's display name
+                Tracker tracker = new Tracker(displayName, category);
+
+                // Add domain to tracker map
+                if (ignoreDomains.contains(domain))
+                    continue;
+
+                addTrackerDomain(tracker, domain);
+            }
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "Loading DuckDuckGo list failed.. ", e);
         }
     }
 
