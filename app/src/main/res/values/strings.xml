@@ -143,6 +143,7 @@
     <string name="msg_installed_tracker_libraries_found">Contains %d tracker libraries</string>
     <string name="msg_installed_n">Has been installed</string>
     <string name="msg_completed">Action completed</string>
+    <string name="msg_usage_stats_permission">To restrict internet access to when an app is in use, TrackerControl needs permission to access usage statistics. This allows the app to detect which apps are currently active. Grant permission in the next screen?</string>
     <string name="msg_vpn">TrackerControl uses a local VPN to filter internet traffic.
 For this reason, please allow a VPN connection in the next dialog.
 Your internet traffic is not being sent to a remote VPN server.</string>

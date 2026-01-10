@@ -563,6 +563,20 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         holder.cbForegroundOnly.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                // Check if permission is granted when enabling foreground-only mode
+                if (isChecked && !ForegroundTracker.hasUsageStatsPermission(context)) {
+                    // Uncheck the box and show permission request
+                    compoundButton.setChecked(false);
+                    
+                    Util.areYouSure(context, R.string.msg_usage_stats_permission, new Util.DoubtListener() {
+                        @Override
+                        public void onSure() {
+                            ForegroundTracker.requestUsageStatsPermission(context);
+                        }
+                    });
+                    return;
+                }
+                
                 rule.foreground_only = isChecked;
                 
                 // Save to shared preferences

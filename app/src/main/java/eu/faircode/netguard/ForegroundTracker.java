@@ -16,11 +16,14 @@
  */
 package eu.faircode.netguard;
 
+import android.app.AppOpsManager;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.util.HashSet;
@@ -143,5 +146,55 @@ public class ForegroundTracker {
     public void clear() {
         foregroundApps.clear();
         lastCheckTime = 0;
+    }
+
+    /**
+     * Check if the app has permission to access usage stats.
+     *
+     * @param context Context
+     * @return true if permission is granted
+     */
+    public static boolean hasUsageStatsPermission(Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return false;
+        }
+
+        try {
+            AppOpsManager appOps = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            if (appOps == null) {
+                return false;
+            }
+
+            int mode;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mode = appOps.unsafeCheckOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    context.getPackageName()
+                );
+            } else {
+                mode = appOps.checkOpNoThrow(
+                    AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    context.getPackageName()
+                );
+            }
+
+            return mode == AppOpsManager.MODE_ALLOWED;
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking usage stats permission: " + e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Open the system settings to request usage stats permission.
+     *
+     * @param context Context
+     */
+    public static void requestUsageStatsPermission(Context context) {
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }
