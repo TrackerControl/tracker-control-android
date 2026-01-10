@@ -1039,10 +1039,19 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         rule.updateChanged(context);
         Log.i(TAG, "Updated " + rule);
 
+        // Optimize: Use HashMap to avoid O(n*m) nested loop complexity
         List<Rule> listModified = new ArrayList<>();
-        for (String pkg : rule.related) {
-            for (Rule related : listAll)
-                if (related.packageName.equals(pkg)) {
+        if (!rule.related.isEmpty()) {
+            // Build a map for O(1) lookup
+            java.util.HashMap<String, Rule> packageMap = new java.util.HashMap<>();
+            for (Rule r : listAll) {
+                packageMap.put(r.packageName, r);
+            }
+            
+            // Find and update related rules in O(n) time
+            for (String pkg : rule.related) {
+                Rule related = packageMap.get(pkg);
+                if (related != null) {
                     related.wifi_blocked = rule.wifi_blocked;
                     related.other_blocked = rule.other_blocked;
                     related.apply = rule.apply;
@@ -1053,6 +1062,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     related.notify = rule.notify;
                     listModified.add(related);
                 }
+            }
         }
 
         List<Rule> listSearch = (root ? new ArrayList<>(listAll) : listAll);

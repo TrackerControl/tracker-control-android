@@ -41,16 +41,16 @@ public class BlocklistManager {
         if (files == null)
             return;
 
+        // Optimize: Use HashSet to avoid O(n*m) nested loop complexity
         List<Blocklist> list = getBlocklists();
+        java.util.HashSet<String> validFiles = new java.util.HashSet<>();
+        for (Blocklist item : list) {
+            validFiles.add("blocklist_" + item.uuid + ".txt");
+        }
+        
+        // Check each file in O(1) time using HashSet
         for (File file : files) {
-            boolean found = false;
-            for (Blocklist item : list) {
-                if (file.getName().equals("blocklist_" + item.uuid + ".txt")) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
+            if (!validFiles.contains(file.getName())) {
                 Log.i(TAG, "Deleting orphaned file " + file.getName());
                 file.delete();
             }
