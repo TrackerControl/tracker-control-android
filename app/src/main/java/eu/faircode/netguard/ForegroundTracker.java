@@ -100,10 +100,17 @@ public class ForegroundTracker {
             long startTime = currentTime - 2000;
             UsageEvents usageEvents = usageStatsManager.queryEvents(startTime, currentTime);
 
-            // Clear previous state
+            // Track the latest state for each UID
             Set<Integer> newForegroundApps = new HashSet<>();
+            
+            // Start with existing state
+            for (Integer uid : foregroundApps.keySet()) {
+                if (foregroundApps.get(uid)) {
+                    newForegroundApps.add(uid);
+                }
+            }
 
-            // Process usage events
+            // Process usage events to update state
             while (usageEvents.hasMoreEvents()) {
                 UsageEvents.Event event = new UsageEvents.Event();
                 usageEvents.getNextEvent(event);

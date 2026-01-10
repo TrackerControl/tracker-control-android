@@ -2149,11 +2149,17 @@ public class ServiceSinkhole extends VpnService {
                         boolean isForegroundOnly = foregroundPrefs.getBoolean(packageName, false);
                         
                         if (isForegroundOnly) {
-                            ForegroundTracker foregroundTracker = ForegroundTracker.getInstance(ServiceSinkhole.this);
-                            if (!foregroundTracker.isAppInForeground(packet.uid)) {
-                                filtered = true;
-                                packet.allowed = false;
-                                Log.d(TAG, "Blocking background traffic for foreground-only app: " + packageName);
+                            // Only enforce if we have permission to check foreground status
+                            if (ForegroundTracker.hasUsageStatsPermission(ServiceSinkhole.this)) {
+                                ForegroundTracker foregroundTracker = ForegroundTracker.getInstance(ServiceSinkhole.this);
+                                if (!foregroundTracker.isAppInForeground(packet.uid)) {
+                                    filtered = true;
+                                    packet.allowed = false;
+                                    Log.d(TAG, "Blocking background traffic for foreground-only app: " + packageName);
+                                }
+                            } else {
+                                // Permission not granted, allow traffic but log warning
+                                Log.w(TAG, "Foreground-only enabled for " + packageName + " but usage stats permission not granted");
                             }
                         }
                     }
