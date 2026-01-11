@@ -356,8 +356,8 @@ class InsightsActivity : AppCompatActivity() {
             // Companies count
             tvCompanies.text = data.uniqueTrackerCompanies.toString()
             
-            // Top 3 Companies (dynamically added)
-            val top3 = data.topTrackerCompanies.take(3)
+            // Top 3 Companies (dynamically added) - use pervasiveTrackers for correct app counts
+            val top3 = data.pervasiveTrackers.take(3)
             val density = resources.displayMetrics.density
             
             for (company in top3) {
