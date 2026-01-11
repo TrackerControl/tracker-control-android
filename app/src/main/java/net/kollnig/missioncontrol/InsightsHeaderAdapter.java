@@ -62,6 +62,7 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
     private static final String TAG = "InsightsHeaderAdapter";
     private final Context context;
     private InsightsData data;
+    private boolean visible = true;
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     public InsightsHeaderAdapter(Context context) {
@@ -73,8 +74,13 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         notifyDataSetChanged();
     }
 
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+        notifyDataSetChanged();
+    }
+
     public int getItemCount() {
-        return 1;
+        return visible ? 1 : 0;
     }
 
     @NonNull
@@ -87,14 +93,15 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.llContent.setVisibility(View.VISIBLE);
+        holder.pbLoading.setVisibility(View.GONE);
+
         if (data == null) {
-            holder.pbLoading.setVisibility(View.VISIBLE);
-            holder.llContent.setVisibility(View.GONE);
+            // Show placeholder values until data loads
+            holder.tvBlocked.setText("--");
+            holder.tvCompanies.setText("--");
             return;
         }
-
-        holder.pbLoading.setVisibility(View.GONE);
-        holder.llContent.setVisibility(View.VISIBLE);
 
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
         holder.tvBlocked.setText(nf.format(data.getTotalTrackingAttempts()));
@@ -185,9 +192,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             // Companies count
             tvCompanies.setText(String.valueOf(data.getUniqueTrackerCompanies()));
 
-            // Top 3 Companies (dynamically added)
-            List<Pair<String, Integer>> top3 = data.getTopTrackerCompanies().subList(0,
-                    Math.min(data.getTopTrackerCompanies().size(), 3));
+            // Top 3 Companies - use pervasiveTrackers for correct app counts
+            List<Pair<String, Integer>> top3 = data.getPervasiveTrackers().subList(0,
+                    Math.min(data.getPervasiveTrackers().size(), 3));
             float density = context.getResources().getDisplayMetrics().density;
 
             for (Pair<String, Integer> company : top3) {

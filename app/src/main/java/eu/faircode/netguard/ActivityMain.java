@@ -867,6 +867,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             public boolean onQueryTextChange(String newText) {
                 if (adapter != null)
                     adapter.getFilter().filter(newText);
+                if (headerAdapter != null)
+                    headerAdapter.setVisible(TextUtils.isEmpty(newText));
                 return true;
             }
         });
@@ -878,6 +880,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
                 if (adapter != null)
                     adapter.getFilter().filter(null);
+                if (headerAdapter != null)
+                    headerAdapter.setVisible(true);
                 return true;
             }
         });
