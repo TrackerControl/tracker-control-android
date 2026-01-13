@@ -10,7 +10,7 @@ TrackerControl is an Android app that allows users to monitor and control the wi
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
-used by Firefox, and of our in-house blocklist, created *from analysing ~2&nbsp;000&nbsp;000 apps*! **To protect your privacy from your ISP, you can also optionally encrypt your DNS traffic using DNS-over-HTTPS (DoH).**
+used by Firefox, the *DuckDuckGo Tracker Radar* for mobile apps, and of our in-house blocklist, created *from analysing ~2&nbsp;000&nbsp;000 apps*! **To protect your privacy from your ISP, you can also optionally encrypt your DNS traffic using DNS-over-HTTPS (DoH).**
 Additionally, TrackerControl supports custom blocklists and uses the signatures from [ClassyShark3xodus](https://f-droid.org/en/packages/com.oF2pks.classyshark3xodus/)/[Exodus Privacy](https://exodus-privacy.eu.org/) for the analysis of tracker libraries within app code.
 
 This approach
@@ -223,6 +223,8 @@ The original data can be retrieved [here](https://osf.io/4nu9e/).
 
 *Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
+
+*DuckDuckGo Tracker Blocklist:* TrackerControl includes the [DuckDuckGo Tracker Radar](https://github.com/duckduckgo/tracker-blocklists) tracker blocklist, specifically designed for mobile apps. This list provides information about known tracking domains and their owners.
 
 *Steven Black's Blocklist*: A state-of-the-art blocklist. This is used as fallback, if no company information is known from the other tracker lists. More [here](https://github.com/StevenBlack/hosts).
 

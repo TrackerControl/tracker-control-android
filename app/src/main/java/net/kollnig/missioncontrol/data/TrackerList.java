@@ -168,6 +168,7 @@ public class TrackerList {
 
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+        loadDuckDuckGoTrackers(c); // DuckDuckGo tracker list for additional mobile-specific trackers
         loadIpBlocklist(c);
     }
 
@@ -405,6 +406,69 @@ public class TrackerList {
             }
         } catch (IOException | JSONException e) {
             Log.e(TAG, "Loading X-Ray list failed.. ", e);
+        }
+    }
+
+    /**
+     * Load DuckDuckGo tracker list
+     *
+     * @param c Context
+     */
+    private void loadDuckDuckGoTrackers(Context c) {
+        try (InputStream is = c.getAssets().open("duckduckgo-android-tds.json")) {
+            // Read JSON
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
+            String json = new String(buffer, StandardCharsets.UTF_8);
+
+            // Parse DuckDuckGo list
+            JSONObject duckduckgo = new JSONObject(json);
+            JSONObject trackers = duckduckgo.getJSONObject("trackers");
+
+            // Iterate through all tracker domains
+            for (Iterator<String> it = trackers.keys(); it.hasNext();) {
+                String domain = it.next();
+                JSONObject trackerInfo = trackers.getJSONObject(domain);
+
+                // Skip if domain is in ignore list
+                if (ignoreDomains.contains(domain))
+                    continue;
+
+                // Check if tracker already exists (e.g., from Disconnect list)
+                Tracker existingTracker = hostnameToTracker.get(domain);
+                
+                // Only add/overwrite if:
+                // 1. Tracker doesn't exist yet, OR
+                // 2. Existing tracker has "Content" category (which can be overwritten)
+                if (existingTracker != null && !"Content".equals(existingTracker.category)) {
+                    // Don't overwrite non-Content categories from Disconnect
+                    continue;
+                }
+
+                // Get owner information
+                JSONObject owner = trackerInfo.getJSONObject("owner");
+                String displayName = owner.getString("displayName");
+
+                // Determine category based on default action
+                String defaultAction = trackerInfo.getString("default");
+                String category;
+                if ("ignore".equals(defaultAction)) {
+                    category = "Content"; // Similar to necessary trackers
+                } else {
+                    category = UNCATEGORISED; // Default to uncategorised instead of Advertisement
+                }
+
+                // Create tracker with owner's display name
+                Tracker tracker = new Tracker(displayName, category);
+
+                // Add domain to tracker map
+                addTrackerDomain(tracker, domain);
+            }
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "Loading DuckDuckGo list failed.. ", e);
         }
     }
 
