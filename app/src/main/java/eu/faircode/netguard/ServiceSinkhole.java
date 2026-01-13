@@ -662,6 +662,9 @@ public class ServiceSinkhole extends VpnService {
 
             startNative(vpn, listAllowed, listRule);
 
+            // Update DoH proxy state based on current settings
+            net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).checkAndUpdateState();
+
             removeWarningNotifications();
             updateEnforcingNotification(listAllowed.size(), listRule.size());
         }
@@ -1799,7 +1802,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         lock.writeLock().unlock();
-        
+
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
     }

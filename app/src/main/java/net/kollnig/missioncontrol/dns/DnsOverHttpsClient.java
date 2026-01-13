@@ -23,6 +23,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.ConnectionPool;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -53,6 +54,7 @@ public class DnsOverHttpsClient {
                 .connectTimeout(CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .readTimeout(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
                 .retryOnConnectionFailure(true)
                 .build();
 
@@ -66,6 +68,7 @@ public class DnsOverHttpsClient {
                 .connectTimeout(CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .readTimeout(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
                 .retryOnConnectionFailure(true)
                 .build();
 
@@ -90,7 +93,22 @@ public class DnsOverHttpsClient {
     }
 
     public static synchronized void resetInstance() {
+        if (instance != null) {
+            instance.shutdown();
+        }
         instance = null;
+    }
+
+    /**
+     * Shutdown the OkHttpClient and release resources.
+     * Call this when DoH is disabled to prevent idle connections from draining
+     * battery.
+     */
+    public void shutdown() {
+        Log.i(TAG, "Shutting down DoH client");
+        client.dispatcher().cancelAll();
+        client.connectionPool().evictAll();
+        client.dispatcher().executorService().shutdown();
     }
 
     /**

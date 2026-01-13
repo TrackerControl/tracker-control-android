@@ -139,7 +139,27 @@ public class DnsProxyServer {
             executor.shutdownNow();
         }
 
+        // Also reset the DoH client to close idle HTTPS connections
+        DnsOverHttpsClient.resetInstance();
+
         Log.i(TAG, "DNS proxy server stopped");
+    }
+
+    /**
+     * Check DoH enabled state and start/stop the proxy accordingly.
+     * Call this from ServiceSinkhole.reload() to handle settings changes.
+     */
+    public synchronized void checkAndUpdateState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean dohEnabled = prefs.getBoolean("doh_enabled", false);
+
+        if (dohEnabled && !running.get()) {
+            Log.i(TAG, "DoH enabled but proxy not running, starting");
+            start();
+        } else if (!dohEnabled && running.get()) {
+            Log.i(TAG, "DoH disabled but proxy running, stopping");
+            stop();
+        }
     }
 
     /**
