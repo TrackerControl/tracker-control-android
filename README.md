@@ -224,7 +224,7 @@ The original data can be retrieved [here](https://osf.io/4nu9e/).
 *Disconnect Tracker List:* TrackerControl integrates the [Disconnect list](https://github.com/mozilla-services/shavar-prod-lists) of known tracker domains,
 that is distributed with the Firefox browser.
 
-*DuckDuckGo Tracker Blocklist:* TrackerControl includes the [DuckDuckGo Tracker Radar](https://github.com/duckduckgo/tracker-blocklists) tracker blocklist, specifically designed for mobile apps. This list provides information about known tracking domains and their owners.
+*DuckDuckGo Tracker Blocklist:* TrackerControl includes the [DuckDuckGo Tracker Radar](https://raw.githubusercontent.com/duckduckgo/tracker-blocklists/main/app/android-tds.json) tracker blocklist, specifically designed for mobile apps. This list provides information about known tracking domains and their owners.
 
 *Steven Black's Blocklist*: A state-of-the-art blocklist. This is used as fallback, if no company information is known from the other tracker lists. More [here](https://github.com/StevenBlack/hosts).
 
