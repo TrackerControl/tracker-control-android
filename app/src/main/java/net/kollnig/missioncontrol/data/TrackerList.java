@@ -433,7 +433,7 @@ public class TrackerList {
                 String domain = it.next();
                 JSONObject trackerInfo = trackers.getJSONObject(domain);
 
-                // Skip if domain is in ignore list
+                // Skip CDN domains that would cause false positives
                 if (ignoreDomains.contains(domain))
                     continue;
 
