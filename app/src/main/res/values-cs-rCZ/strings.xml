@@ -134,8 +134,11 @@ Z tohoto důvodu prosím povolte VPN připojení v následujícím dialogu.
 Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.</string>
     <string name="msg_autostart">TrackerControl nemůže být spuštěn automaticky při startu zařízení kvůli chybě ve vaší verzi Androidu.</string>
     <string name="msg_error">Došlo k neočekávané chybě: \'%s\'</string>
+    <string name="msg_doh_unreachable">Zabezpečený DNS (DoH) není dostupný, i když máte aktivní připojení k internetu. Pokud se to opakuje, zvažte jeho deaktivaci v nastavení sítě.</string>
     <string name="msg_start_failed">Android odmítl spustit službu VPN. Může to být způsobeno chybou ve vaší verzi Androidu.</string>
     <string name="msg_try">Vyzkoušejte TrackerControl</string>
+    <string name="msg_doze">Pro optimální výsledky by pro TrackerControl měla být vypnuta optimalizace spotřeby baterie.
+\n\nV následujícím dialogu nahoře se přepněte na \"Všechny aplikace\", v seznamu vyberte TrackerControl a označte a potvrďte volbu \"Neoptimalizovat\".</string>
     <string name="msg_datasaving">Pro optimální výsledky by pro TrackerControl měly být vypnuty funkce úspory dat systému Android
 \n\nV následujícím dialogu povolte možnosti \"Data na pozadí\" a \"Neomezené využití dat\"</string>
     <string name="msg_filter">Použití filtrování způsobí, že systém Android přiřadí využití dat a baterie aplikaci TrackerControl, namísto původním aplikacím</string>
@@ -144,6 +147,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_clear_rules">Resetuje pravidla a podmínky do výchozího nastavení</string>
     <string name="msg_reset_access">Smaže protokol pokusů o přístup, pravidla povolení/blokování zůstanou nedotčena</string>
     <string name="msg_import_last">Poslední import: %s</string>
+    <string name="msg_downloading">Stahování…</string>
     <string name="msg_downloaded">Soubor hosts úspěšně stažen</string>
     <string name="msg_updated">Soubor hosts aktualizován a použit!</string>
     <string name="msg_download_last">Poslední stažení: %s</string>
@@ -160,6 +164,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_vpn_cancelled">VPN spojení ukončeno\nNenastavili jste jinou VPN jako trvalou síť VPN?</string>
     <string name="msg_unavailable">Tato funkce není na této verzi Androidu k dispozici</string>
     <string name="msg_always_on">Jiná VPN je nastavena jako Trvalá síť VPN</string>
+    <string name="msg_always_on_lockdown">Vypněte \"Blokovat připojení bez VPN\" v Android VPN nastavení pro použití TrackerControl</string>
     <string name="msg_private_dns">V nastavení sítě Android vypněte \"Private DNS\". TrackerControl nabízí vlastní funkci Secure DNS v nastavení.</string>
     <string name="msg_start_forward">Začít přesměrovávat z %1$s port %2$d na %3$s:%4$d z \'%5$s\'?</string>
     <string name="msg_stop_forward">Přestat přesměrovávat %1$s port %2$d?</string>
@@ -339,6 +344,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="strict_blocking_explanation">Je doporučeno vypnout tuto možnost pro snížení počtu nefungujících aplikací. Je ale třeba k zakázání veškerého sdílení.</string>
     <string name="exclude_vpn_explanation">Detekuje a blokuje trackery pro tuto aplikaci.</string>
     <string name="vpn_exclude">Vyloučit z VPN</string>
+    <string name="vpn_exclude_explanation">Povolte tuto funkci, pokud narazíte na problémy. Aplikace zcela obejde TrackerControl.\n\nPoznámka: Aby tato funkce fungovala, musí být v nastavení VPN pro Android VYPNUTA možnost \"Blokovat připojení bez VPN\".</string>
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
@@ -385,7 +391,15 @@ Privátní DNS musí být vypnutá.</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
     <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
     <string name="msg_notifications">Klepnutím udělíte oprávnění k oznámením (pro chybové zprávy atd.)</string>
+    <string name="setting_include_system_vpn">Zahrnout systémové aplikace</string>
+    <string name="summary_include_system_vpn">Zahrňte všechny systémové aplikace do VPN a DoH.\n\nPoznámka: V nastavení VPN pro Android musí být možnost \"Blokovat připojení bez VPN\" VYPNUTÁ.</string>
     <!-- Onboarding -->
+    <string name="title_next">Další</string>
+    <string name="title_skip">Přeskočit</string>
+    <string name="title_previous">Předchozí</string>
+    <string name="title_finish">Začínáme</string>
+    <string name="onboarding_welcome_title">Převezměte kontrolu nad svým soukromím</string>
+    <string name="onboarding_blocking_title">Blokovat trackery</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
 </resources>
