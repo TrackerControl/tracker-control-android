@@ -108,7 +108,8 @@ public class DnsOverHttpsClient {
         Log.i(TAG, "Shutting down DoH client");
         client.dispatcher().cancelAll();
         client.connectionPool().evictAll();
-        client.dispatcher().executorService().shutdown();
+        // Note: We don't call executorService().shutdown() because it would
+        // make the client unusable if a new instance isn't created in time
     }
 
     /**

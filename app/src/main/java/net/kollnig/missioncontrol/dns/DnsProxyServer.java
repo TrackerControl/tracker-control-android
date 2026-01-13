@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -81,9 +82,16 @@ public class DnsProxyServer {
             return;
         }
 
+        // Close any existing socket first (safety for app restart scenarios)
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            Log.w(TAG, "Closing stale socket before starting");
+            serverSocket.close();
+        }
+
         try {
-            serverSocket = new DatagramSocket(DNS_PROXY_PORT, InetAddress.getByName(DNS_PROXY_ADDRESS));
+            serverSocket = new DatagramSocket(null); // Create unbound first
             serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(DNS_PROXY_ADDRESS, DNS_PROXY_PORT));
             running.set(true);
 
             // Use a thread pool for handling queries concurrently
