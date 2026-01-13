@@ -501,23 +501,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is an index on time
             // There is no index on protocol/allowed for write performance
-            String query = "SELECT ID AS _id, *";
-            query += " FROM log";
-            query += " WHERE (0 = 1";
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT ID AS _id, *");
+            query.append(" FROM log");
+            query.append(" WHERE (0 = 1");
             if (udp)
-                query += " OR protocol = 17";
+                query.append(" OR protocol = 17");
             if (tcp)
-                query += " OR protocol = 6";
+                query.append(" OR protocol = 6");
             if (other)
-                query += " OR (protocol <> 6 AND protocol <> 17)";
-            query += ") AND (0 = 1";
+                query.append(" OR (protocol <> 6 AND protocol <> 17)");
+            query.append(") AND (0 = 1");
             if (allowed)
-                query += " OR allowed = 1";
+                query.append(" OR allowed = 1");
             if (blocked)
-                query += " OR allowed = 0";
-            query += ")";
-            query += " ORDER BY time DESC";
-            return db.rawQuery(query, new String[] {});
+                query.append(" OR allowed = 0");
+            query.append(")");
+            query.append(" ORDER BY time DESC");
+            return db.rawQuery(query.toString(), new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -528,11 +529,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is an index on daddr, dname, dport and uid
-            String query = "SELECT ID AS _id, *";
-            query += " FROM log";
-            query += " WHERE daddr LIKE ? OR dname LIKE ? OR dport = ? OR uid = ?";
-            query += " ORDER BY time DESC";
-            return db.rawQuery(query, new String[] { "%" + find + "%", "%" + find + "%", find, find });
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT ID AS _id, *");
+            query.append(" FROM log");
+            query.append(" WHERE daddr LIKE ? OR dname LIKE ? OR dport = ? OR uid = ?");
+            query.append(" ORDER BY time DESC");
+            return db.rawQuery(query.toString(), new String[] { "%" + find + "%", "%" + find + "%", find, find });
         } finally {
             lock.readLock().unlock();
         }
@@ -740,13 +742,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid
             // There is no index on time for write performance
-            String query = "SELECT a.ID AS _id, a.*";
-            query += ", (SELECT COUNT(DISTINCT d.qname) FROM dns d WHERE d.resource IN (SELECT d1.resource FROM dns d1 WHERE d1.qname = a.daddr)) count";
-            query += " FROM access a";
-            query += " WHERE a.uid = ?";
-            query += " ORDER BY a.time DESC";
-            query += " LIMIT 250";
-            return db.rawQuery(query, new String[] { Integer.toString(uid) });
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT a.ID AS _id, a.*");
+            query.append(", (SELECT COUNT(DISTINCT d.qname) FROM dns d WHERE d.resource IN (SELECT d1.resource FROM dns d1 WHERE d1.qname = a.daddr)) count");
+            query.append(" FROM access a");
+            query.append(" WHERE a.uid = ?");
+            query.append(" ORDER BY a.time DESC");
+            query.append(" LIMIT 250");
+            return db.rawQuery(query.toString(), new String[] { Integer.toString(uid) });
         } finally {
             lock.readLock().unlock();
         }
@@ -770,16 +773,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is a segmented index on uid, block and daddr
             // There is no index on allowed and time for write performance
-            String query = "SELECT MAX(time) AS time, daddr, allowed";
-            query += " FROM access";
-            query += " WHERE uid = ?";
-            query += " AND block < 0";
-            query += " AND time >= ?";
-            query += " GROUP BY daddr, allowed";
-            query += " ORDER BY time DESC";
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT MAX(time) AS time, daddr, allowed");
+            query.append(" FROM access");
+            query.append(" WHERE uid = ?");
+            query.append(" AND block < 0");
+            query.append(" AND time >= ?");
+            query.append(" GROUP BY daddr, allowed");
+            query.append(" ORDER BY time DESC");
             if (limit > 0)
-                query += " LIMIT " + limit;
-            return db.rawQuery(query, new String[] { Integer.toString(uid), Long.toString(since) });
+                query.append(" LIMIT ").append(limit);
+            return db.rawQuery(query.toString(), new String[] { Integer.toString(uid), Long.toString(since) });
         } finally {
             lock.readLock().unlock();
         }
@@ -923,14 +927,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
             // There is a segmented index on resource
-            String query = "SELECT d.qname";
-            query += " FROM dns AS d";
-            query += " WHERE d.resource = '" + ip.replace("'", "''") + "'";
-            query += " ORDER BY d.qname";
-            query += " LIMIT 1";
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT d.qname");
+            query.append(" FROM dns AS d");
+            query.append(" WHERE d.resource = '").append(ip.replace("'", "''")).append("'");
+            query.append(" ORDER BY d.qname");
+            query.append(" LIMIT 1");
             // There is no way to known for sure which domain name an app used, so just pick
             // the first one
-            return db.compileStatement(query).simpleQueryForString();
+            return db.compileStatement(query.toString()).simpleQueryForString();
         } catch (SQLiteDoneException ignored) {
             // Not found
             return null;
@@ -947,14 +952,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
             // There is a segmented index on resource
-            String query = "SELECT d.qname, d.aname, d.time, d.ttl";
-            query += " FROM dns AS d";
-            query += " WHERE d.resource = '" + ip.replace("'", "''") + "'";
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT d.qname, d.aname, d.time, d.ttl");
+            query.append(" FROM dns AS d");
+            query.append(" WHERE d.resource = '").append(ip.replace("'", "''")).append("'");
             if (alive)
-                query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
-            query += " GROUP BY d.qname"; // remove duplicates
-            query += " ORDER BY d.qname";
-            return db.rawQuery(query, new String[] {});
+                query.append(" AND (d.time IS NULL OR d.time + d.ttl >= ").append(now).append(")");
+            query.append(" GROUP BY d.qname"); // remove duplicates
+            query.append(" ORDER BY d.qname");
+            return db.rawQuery(query.toString(), new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -964,13 +970,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            String query = "SELECT DISTINCT d2.qname";
-            query += " FROM dns d1";
-            query += " JOIN dns d2";
-            query += "   ON d2.resource = d1.resource AND d2.id <> d1.id";
-            query += " WHERE d1.qname = ?";
-            query += " ORDER BY d2.qname";
-            return db.rawQuery(query, new String[] { qname });
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT DISTINCT d2.qname");
+            query.append(" FROM dns d1");
+            query.append(" JOIN dns d2");
+            query.append("   ON d2.resource = d1.resource AND d2.id <> d1.id");
+            query.append(" WHERE d1.qname = ?");
+            query.append(" ORDER BY d2.qname");
+            return db.rawQuery(query.toString(), new String[] { qname });
         } finally {
             lock.readLock().unlock();
         }
@@ -981,13 +988,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            String query = "SELECT d.qname, d.aname, d.time, d.ttl";
-            query += " FROM dns d";
-            query += " WHERE d.qname = ?";
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT d.qname, d.aname, d.time, d.ttl");
+            query.append(" FROM dns d");
+            query.append(" WHERE d.qname = ?");
             if (alive)
-                query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
-            query += " LIMIT 1";
-            return db.rawQuery(query, new String[] { qname });
+                query.append(" AND (d.time IS NULL OR d.time + d.ttl >= ").append(now).append(")");
+            query.append(" LIMIT 1");
+            return db.rawQuery(query.toString(), new String[] { qname });
         } finally {
             lock.readLock().unlock();
         }
@@ -999,10 +1007,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             // There is an index on resource
             // There is a segmented index on qname
-            String query = "SELECT ID AS _id, *";
-            query += " FROM dns";
-            query += " ORDER BY resource, qname";
-            return db.rawQuery(query, new String[] {});
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT ID AS _id, *");
+            query.append(" FROM dns");
+            query.append(" ORDER BY resource, qname");
+            return db.rawQuery(query.toString(), new String[] {});
         } finally {
             lock.readLock().unlock();
         }
@@ -1016,16 +1025,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // There is a segmented index on dns.qname
             // There is an index on access.daddr and access.block
-            String query = "SELECT a.uid, a.version, a.protocol, a.daddr, d.resource, a.dport, a.block, d.time, d.ttl";
-            query += " FROM access AS a";
-            query += " LEFT JOIN dns AS d";
-            query += "   ON d.qname = a.daddr";
-            query += " WHERE a.block >= 0";
-            query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT a.uid, a.version, a.protocol, a.daddr, d.resource, a.dport, a.block, d.time, d.ttl");
+            query.append(" FROM access AS a");
+            query.append(" LEFT JOIN dns AS d");
+            query.append("   ON d.qname = a.daddr");
+            query.append(" WHERE a.block >= 0");
+            query.append(" AND (d.time IS NULL OR d.time + d.ttl >= ").append(now).append(")");
             if (dname != null)
-                query += " AND a.daddr = ?";
+                query.append(" AND a.daddr = ?");
 
-            return db.rawQuery(query, dname == null ? new String[] {} : new String[] { dname });
+            return db.rawQuery(query.toString(), dname == null ? new String[] {} : new String[] { dname });
         } finally {
             lock.readLock().unlock();
         }
@@ -1103,10 +1113,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
-            String query = "SELECT ID AS _id, *";
-            query += " FROM forward";
-            query += " ORDER BY dport";
-            return db.rawQuery(query, new String[] {});
+            // Optimize: Use StringBuilder for efficient string concatenation
+            StringBuilder query = new StringBuilder("SELECT ID AS _id, *");
+            query.append(" FROM forward");
+            query.append(" ORDER BY dport");
+            return db.rawQuery(query.toString(), new String[] {});
         } finally {
             lock.readLock().unlock();
         }

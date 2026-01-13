@@ -19,7 +19,10 @@ package net.kollnig.missioncontrol.data;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -27,6 +30,7 @@ import java.util.Set;
  */
 public class Tracker {
     private final Set<String> hosts = new HashSet<>();
+    private List<String> sortedHostsCache = null; // Cache sorted hosts for performance
     public String name;
     public String category;
     public Long lastSeen;
@@ -97,6 +101,8 @@ public class Tracker {
      */
     void addHost(String host) {
         this.hosts.add(host);
+        // Invalidate cache when host is added
+        sortedHostsCache = null;
     }
 
     /**
@@ -106,5 +112,19 @@ public class Tracker {
      */
     public Set<String> getHosts() {
         return hosts;
+    }
+
+    /**
+     * Get sorted list of hosts. This method caches the sorted result for performance.
+     * Calling this repeatedly is more efficient than sorting in UI code.
+     *
+     * @return Sorted list of hosts
+     */
+    public List<String> getSortedHosts() {
+        if (sortedHostsCache == null) {
+            sortedHostsCache = new ArrayList<>(hosts);
+            Collections.sort(sortedHostsCache);
+        }
+        return sortedHostsCache;
     }
 }

@@ -282,8 +282,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     if (t.lastSeen != 0)
                         title += " (" + Util.relativeTime(t.lastSeen) + ")";
 
-                    List<String> sortedHosts = new ArrayList<>(t.getHosts());
-                    Collections.sort(sortedHosts);
+                    // Optimize: Use cached sorted hosts instead of creating new list and sorting every time
+                    List<String> sortedHosts = t.getSortedHosts();
                     String hosts = TextUtils.join("\n• ", sortedHosts);
 
                     boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
