@@ -82,14 +82,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     // Analysis UI elements (populated when header is created)
     private TextView mBtnAnalyze;
     private TextView mTvDetectedTrackers;
+    private TextView mTvDisclaimer;
     private View mLayoutProgress;
     private TextView mTvAnalysisProgress;
     private ProgressBar mPbTrackerDetection;
 
     public TrackersListAdapter(Context c,
-                               RecyclerView v,
-                               Integer appUid,
-                               String appId) {
+            RecyclerView v,
+            Integer appUid,
+            String appId) {
         mContext = c;
         mAppUid = appUid;
         mAppId = appId;
@@ -144,6 +145,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void setupTrackerAnalysisButton(View view) {
         mBtnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
         mTvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
+        mTvDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
         mLayoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
         mTvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
         mPbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
@@ -160,6 +162,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             mTvDetectedTrackers.setText(res);
             mTvDetectedTrackers.setVisibility(View.VISIBLE);
+            mTvDisclaimer.setVisibility(View.VISIBLE);
         }
 
         mBtnAnalyze.setOnClickListener(v -> {
@@ -189,6 +192,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mTvAnalysisProgress.setText(R.string.analysis_queued);
                 mPbTrackerDetection.setIndeterminate(true);
                 mTvDetectedTrackers.setVisibility(View.GONE);
+                mTvDisclaimer.setVisibility(View.GONE);
                 break;
 
             case RUNNING:
@@ -196,6 +200,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mLayoutProgress.setVisibility(View.VISIBLE);
                 mPbTrackerDetection.setIndeterminate(false);
                 mTvDetectedTrackers.setVisibility(View.GONE);
+                mTvDisclaimer.setVisibility(View.GONE);
 
                 Data progress = workInfo.getProgress();
                 int percent = progress.getInt(TrackerAnalysisWorker.KEY_PROGRESS, 0);
@@ -214,6 +219,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     String res = String.format(mContext.getString(R.string.detected_trackers), result);
                     mTvDetectedTrackers.setText(res);
                     mTvDetectedTrackers.setVisibility(View.VISIBLE);
+                    mTvDisclaimer.setVisibility(View.VISIBLE);
                 }
                 break;
 
@@ -259,7 +265,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
                 @Override
                 public @NonNull View getView(int pos, @Nullable View convertView,
-                                             @NonNull ViewGroup parent) {
+                        @NonNull ViewGroup parent) {
                     TextView tv = (TextView) super.getView(pos, convertView, parent);
                     Tracker t = getItem(pos);
                     if (t != null)
@@ -459,6 +465,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     static class VHHeader extends RecyclerView.ViewHolder {
         final TextView mLibraryExplanation;
+        final TextView mLibraryDisclaimer;
         final Switch mSwitchInternet;
         final Switch mSwitchVPN;
         final Switch mSwitchVpnExclude;
@@ -466,6 +473,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         VHHeader(View view) {
             super(view);
             mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
+            mLibraryDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
             mSwitchInternet = view.findViewById(R.id.switch_internet);
             mSwitchVPN = view.findViewById(R.id.switch_vpn);
             mSwitchVpnExclude = view.findViewById(R.id.switch_vpn_exclude);

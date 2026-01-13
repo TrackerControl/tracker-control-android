@@ -101,6 +101,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvLibraryExplanation" />
 
+            <TextView
+                android:id="@+id/tvLibraryDisclaimer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="1dp"
+                android:text="@string/trackers_static_disclaimer"
+                android:textColor="?android:textColorSecondary"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvDetectedTrackers" />
+
             <LinearLayout
                 android:id="@+id/layoutAnalysisProgress"
                 android:layout_width="match_parent"
@@ -138,7 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="tvLibraryExplanation,tvDetectedTrackers,layoutAnalysisProgress" />
+                app:constraint_referenced_ids="tvLibraryExplanation,tvLibraryDisclaimer,tvDetectedTrackers,layoutAnalysisProgress" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAnalyzeTrackers"
