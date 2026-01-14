@@ -252,7 +252,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="exported">Viety tallennustilaan!</string>
     <!-- App Details -->
     <string name="title_activity_detail">Yksityiskohdat</string>
-    <string name="tab_trackers">Seurantalaitteet</string>
+    <string name="tab_trackers">Seuraimet</string>
     <string name="tab_countries">Maat</string>
     <string name="tab_actions">Omat tiedot</string>
     <string name="tracker_name">Seuraimen nimi</string>
@@ -393,6 +393,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="title_previous">Edellinen</string>
     <string name="title_finish">Aloita</string>
     <string name="onboarding_welcome_title">Ota yksityisyytesi hallintaasi</string>
+    <string name="onboarding_welcome_desc">TrackerControl on yhteisöpohjainen tutkimusprojekti, jonka avulla voit:\n\n• <b>Seurata</b> mobiilisovellusten piilotettua tiedonkeruuta reaaliajassa.\n• <b>Estää</b> seurantalaitteita ja mainoksia käyttämällä <b>2 000 000 analysoidun sovelluksen</b> tietokantaamme.\n• <b>Tunnistaa</b> yritykset ja maat, joille tietosi lähetetään.\n\nKaikki analysointi tapahtuu <b>paikallisesti laitteellasi</b> – liikenteesi pysyy aina sinun hallinnassasi.</string>
     <string name="onboarding_vpn_title">Ota suojaus käyttöön</string>
     <string name="onboarding_vpn_desc">TrackerControl käyttää Androidin paikallista VPN-rajapintaa verkkoliikenteen analysointiin.\n\n<b>Tärkeää:</b> Ulkoista VPN-palvelinta ei ole mukana. Emme näe tietojasi.</string>
     <string name="onboarding_vpn_action">Ota käyttöön laitteen sisäinen VPN</string>
@@ -441,7 +442,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="insights_blocked">Estetty</string>
     <string name="insights_allowed">Sallittu yhteys</string>
     <string name="insights_tracker_companies">Seurantatahoja</string>
-    <string name="insights_apps_with_trackers">Sovellusta seurannalla</string>
+    <string name="insights_apps_with_trackers">Sovellusta joissa seuraimia</string>
     <string name="insights_top_tracking_apps">Pahimmat seurantasovellukset</string>
     <string name="insights_top_companies">Aktiivisimmat seurantatahot</string>
     <string name="insights_pervasive_trackers">Yleisimmin esiintyvät seuraimet</string>
@@ -455,7 +456,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="insights_share_trackers_detected">Seurantaa havaittu</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_share_message">Estin tällä viikolla %1$d seurantaa %2$d taholta TrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">Havaitsin tällä viikolla %1$d seurainta %2$d taholtaTrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Havaitsin tällä viikolla %1$d seurainta %2$d taholta TrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
     <string name="insights_see_more">Katso lisää →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Lisähosts-tiedostot</string>
