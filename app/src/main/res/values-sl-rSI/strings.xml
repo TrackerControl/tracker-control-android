@@ -375,6 +375,7 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static">Sledilne knjižnice</string>
     <string name="trackers_static_explanation">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.\n\nSledenje, ki je zaznano v omrežnem prometu, lahko TrackerControl blokira.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.</string>
+    <string name="trackers_static_disclaimer">Opomba: zaznavanje kode sledilnih knjižnic še ne pomeni, da se dejavno uporabljajo.  Nekateri programi so lahko te knjižnice odstranili ali onemogočili, vendar je še vedno mogoče zaznati njihove sledi.</string>
     <string name="analyze_tracker_libraries">Preuči knjižnice sledilcev</string>
     <string name="update_analysis">Posodobi preučitev</string>
     <string name="analysis_outdated_version">\n\nOpomba: preučevanje je od prejšnje različice programa.  To je lahko spremenilo vgrajene knjižnice sledilcev.</string>
