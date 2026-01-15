@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.10.2)
 
 project(netguard)
 
+# Use relative paths for __FILE__ macro to ensure reproducible builds
+# This remaps absolute paths to relative paths in the compiled binaries
+add_compile_options("-ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")
+
 add_library( netguard
              SHARED
              src/main/jni/netguard/netguard.c
