@@ -24,6 +24,10 @@
                 android:id="@+id/menu_app_nointernet"
                 android:checkable="true"
                 android:title="@string/menu_app_nointernet"/>
+            <item
+                android:id="@+id/menu_app_unprotected"
+                android:checkable="true"
+                android:title="@string/menu_app_unprotected"/>
         </menu>
     </item>
     <item

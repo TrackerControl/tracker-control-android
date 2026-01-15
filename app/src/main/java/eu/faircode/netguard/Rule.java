@@ -255,6 +255,7 @@ public class Rule {
             boolean show_user = prefs.getBoolean("show_user", true);
             boolean show_system = prefs.getBoolean("show_system", false);
             boolean show_nointernet = prefs.getBoolean("show_nointernet", true);
+            boolean show_unprotected = prefs.getBoolean("show_unprotected", false);
 
             default_screen_wifi = default_screen_wifi && screen_on;
             default_screen_other = default_screen_other && screen_on;
@@ -426,7 +427,11 @@ public class Rule {
 
                         rule.updateChanged(default_wifi, default_other, default_roaming);
 
-                        listRules.add(rule);
+                        // Check unprotected filter: when enabled, only show apps that are not protected
+                        boolean isUnprotected = !rule.apply || rule.vpn_exclude;
+                        if (!show_unprotected || isUnprotected) {
+                            listRules.add(rule);
+                        }
                     }
                 } catch (Throwable ex) {
                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));

@@ -15,6 +15,7 @@
     <string name="menu_app_user">Show user apps</string>
     <string name="menu_app_system">Show system apps</string>
     <string name="menu_app_nointernet">Show apps without internet</string>
+    <string name="menu_app_unprotected">Show unprotected apps only</string>
     <string name="menu_sort">Sort apps</string>
     <string name="menu_sort_name">Sort by name</string>
     <string name="menu_sort_uid">Sort by uid</string>
