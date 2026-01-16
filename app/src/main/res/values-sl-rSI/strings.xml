@@ -14,6 +14,7 @@
     <string name="menu_app_user">Prikaži uporabniške programe</string>
     <string name="menu_app_system">Prikaži sistemske programe</string>
     <string name="menu_app_nointernet">Prikaži programe brez interneta</string>
+    <string name="menu_app_unprotected">Prikaži samo nezaščitene programe</string>
     <string name="menu_sort">Razvrsti programe</string>
     <string name="menu_sort_name">Razvrsti po imenu</string>
     <string name="menu_sort_uid">Razvrsti po UID-ju</string>
@@ -375,6 +376,7 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static">Sledilne knjižnice</string>
     <string name="trackers_static_explanation">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.\n\nSledenje, ki je zaznano v omrežnem prometu, lahko TrackerControl blokira.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl sledenje zazna v kodi (\'knjižnicah\') in omrežnem prometu programov.</string>
+    <string name="trackers_static_disclaimer">Opomba: zaznavanje kode sledilnih knjižnic še ne pomeni, da se dejavno uporabljajo.  Nekateri programi so lahko te knjižnice odstranili ali onemogočili, vendar je še vedno mogoče zaznati njihove sledi.</string>
     <string name="analyze_tracker_libraries">Preuči knjižnice sledilcev</string>
     <string name="update_analysis">Posodobi preučitev</string>
     <string name="analysis_outdated_version">\n\nOpomba: preučevanje je od prejšnje različice programa.  To je lahko spremenilo vgrajene knjižnice sledilcev.</string>
