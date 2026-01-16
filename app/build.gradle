@@ -9,8 +9,8 @@ android {
         minSdk 23
         targetSdk 36
         //noinspection HighAppVersionCode
-        versionCode 2026010301
-        versionName "2026.01.03"
+        versionCode 2026011401
+        versionName "2026.01.14"
 
         // Secure DNS (DoH) configuration
         buildConfigField "String", "DEFAULT_DOH_ENDPOINT", "\"https://dns.quad9.net/dns-query\""
@@ -27,7 +27,8 @@ android {
             }
         }
 
-        //ndkVersion "27.2.12479018"
+        ndkVersion "27.2.12479018"
+        
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
