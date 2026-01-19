@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">A TrackerControl lehetővé teszi a felhasználók számára, hogy figyelemmel kísérjék és ellenőrizzék az almazásokban a felhasználói viselkedéssel kapcsolatos széles körű, folyamatos és rejtett adatgyűjtést (nyomkövetés).</string>
+    <string name="app_copyright">Szerzői jog \u00A9 2019–2022 Konrad Kollnig\n\nA TrackerControl a NetGuardon alapul, amelyet Marcel Bokhorst (M66B) fejlesztett.</string>
     <string name="app_android">A TrackerControl Android 5.1-et vagy újabbat igényel</string>
     <string name="app_xposed">Az Xposed túl sok összeomlást okoz, ami a TrackerControl eltávolítását eredményezheti a Google Play Áruházból, ezért a TrackerControl nem támogatott amíg az Xposed telepítve van</string>
     <string name="app_eula">Az alkalmazás használata a saját felelősségére történik. Egyetlen alkalmazás sem kínál 100%-os védelmet a követés ellen.</string>
