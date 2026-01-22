@@ -2107,6 +2107,22 @@ public class ServiceSinkhole extends VpnService {
 
         lock.readLock().lock();
 
+        // Block Private DNS (DNS over TLS) on port 853
+        // Android's built-in Private DNS should not be used when TC is active
+        // TC has its own DNS implementation (DoH via port 53 forwarding)
+        if (packet.dport == 853 && (packet.protocol == 6 /* TCP */ || packet.protocol == 17 /* UDP */)) {
+            packet.allowed = false;
+            lock.readLock().unlock();
+            Log.i(TAG, "Blocking Private DNS (port 853) " + packet);
+            
+            // Log the blocked packet if logging is enabled
+            if (prefs.getBoolean("log", false) || prefs.getBoolean("log_app", true))
+                if (packet.uid != Process.myUid())
+                    logPacket(packet);
+            
+            return null; // Block the packet
+        }
+
         packet.allowed = false;
         if (prefs.getBoolean("filter", true)) {
             // https://android.googlesource.com/platform/system/core/+/master/include/private/android_filesystem_config.h
