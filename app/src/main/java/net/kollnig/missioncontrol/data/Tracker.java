@@ -31,6 +31,7 @@ import java.util.Set;
 public class Tracker {
     private final Set<String> hosts = new HashSet<>();
     private List<String> sortedHostsCache = null; // Cache sorted hosts for performance
+    private int cachedHostsSize = -1; // Track size to detect external modifications
     public String name;
     public String category;
     public Long lastSeen;
@@ -103,6 +104,7 @@ public class Tracker {
         this.hosts.add(host);
         // Invalidate cache when host is added
         sortedHostsCache = null;
+        cachedHostsSize = -1;
     }
 
     /**
@@ -117,13 +119,20 @@ public class Tracker {
     /**
      * Get sorted list of hosts. This method caches the sorted result for performance.
      * Calling this repeatedly is more efficient than sorting in UI code.
+     * The cache is automatically invalidated if hosts are modified.
      *
      * @return Sorted list of hosts
      */
     public List<String> getSortedHosts() {
+        // Invalidate cache if hosts size changed (detects external modifications)
+        if (sortedHostsCache != null && hosts.size() != cachedHostsSize) {
+            sortedHostsCache = null;
+        }
+        
         if (sortedHostsCache == null) {
             sortedHostsCache = new ArrayList<>(hosts);
             Collections.sort(sortedHostsCache);
+            cachedHostsSize = hosts.size();
         }
         return sortedHostsCache;
     }
