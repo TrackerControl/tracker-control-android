@@ -82,6 +82,11 @@
                 android:summary="@string/summary_doh_endpoint"
                 android:title="@string/setting_doh_endpoint" />
             <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="true"
+                android:key="block_dot"
+                android:summary="@string/summary_block_dot"
+                android:title="@string/setting_block_dot" />
+            <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
                 android:key="strict_blocking"
                 android:summary="@string/summary_strict_blocking"

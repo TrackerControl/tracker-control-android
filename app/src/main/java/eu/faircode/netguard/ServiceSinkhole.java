@@ -2148,6 +2148,12 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
+        // Block DNS-over-TLS (DoT) on port 853 to prevent bypassing DNS filtering
+        if (packet.allowed && packet.dport == 853 && prefs.getBoolean("block_dot", true)) {
+            Log.i(TAG, "Blocking DoT " + packet);
+            packet.allowed = false;
+        }
+
         Allowed allowed = null;
         if (packet.allowed)
             if (mapForward.containsKey(packet.dport)) {

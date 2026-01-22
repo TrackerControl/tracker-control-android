@@ -100,6 +100,10 @@
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL for DNS-over-HTTPS queries</string>
 
+    <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Block Android\'s Private DNS</string>
+    <string name="summary_block_dot">With Android\'s Private DNS enabled, TC cannot detect any tracking and does not work properly.</string>
+
     <string name="setting_stats_frequency">Sample interval: %s ms</string>
     <string name="setting_stats_samples">Number of samples: %s s</string>
 
