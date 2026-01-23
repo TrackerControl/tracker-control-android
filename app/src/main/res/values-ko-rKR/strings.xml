@@ -61,6 +61,7 @@
     <string name="setting_reset_usage">네트워크 사용량 초기화</string>
     <string name="setting_block_domains">hosts 파일 활성화</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_backup">백업</string>
     <string name="setting_import">설정 불러오기</string>
     <string name="setting_hosts">hosts 파일 불러오기</string>
