@@ -92,6 +92,8 @@
     <string name="setting_doh_endpoint">URL končne točke DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS za poizvedbe DNS preko HTTPS-a</string>
     <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Blokiraj Androidov zasebni DNS</string>
+    <string name="summary_block_dot">Če je Androidova možnost \"Zasebni DNS\" omogočena, TC ne more zaznati sledenja in ne deluje pravilno.</string>
     <string name="setting_stats_frequency">Vzorčni razmik: %s ms</string>
     <string name="setting_stats_samples">Št. vzorcev: %s s</string>
     <string name="setting_backup">Varnostno kopiranje</string>
