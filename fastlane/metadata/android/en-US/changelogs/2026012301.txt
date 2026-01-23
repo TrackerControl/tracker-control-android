@@ -1,0 +1,8 @@
+- New Insights: View statistics on blocked trackers and tracking companies, directly from the main screen.
+- DuckDuckGo Tracker Radar: Added DDG's mobile-specific tracker detection for even better coverage.
+- Secure DNS: Added support for Encrypted DNS (DoH) for better privacy, and block Android Private DNS.
+- Enhanced Blocking: Support for multiple blocklists and auto-updates.
+- Simpler Settings: "Monitor" is now "Exclude from VPN" for clarity.
+- Performance: 50% smaller app size, faster startup, and improved battery life.
+- Revamped Analysis: Faster and cleaner tracker library scanner.
+- Improved Stability: Fixed bugs, crashes, and improved backups.
