@@ -84,6 +84,7 @@
     <string name="setting_pcap_file_size">الحد الأقصى لحجم ملف PCAP: %s ميجابايت</string>
     <string name="setting_watchdog">المراقب: كل %s دقيقة</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">فاصل العينة: %s مللي ثانية</string>
     <string name="setting_stats_samples">عدد العينات: %s ثانية</string>
     <string name="setting_backup">نسخ احتياطي</string>
