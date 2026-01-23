@@ -45,6 +45,7 @@
     <string name="setting_subnet">সাবনেট রাউটিং</string>
     <string name="setting_lan">অনুপ্রবেশ অধিকার দিন</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="summary_update">প্রতিদিন ২ বার নতুন এপপ্স এর update চেক করুন</string>
     <string name="summary_block_domains">সতর্কতা : Blocked hosts UI এ দেখানো হবেনা </string>
     <string name="msg_sure">আপনি কি নিশ্চিত?</string>
