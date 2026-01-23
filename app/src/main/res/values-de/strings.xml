@@ -80,6 +80,7 @@
     <string name="setting_pcap_file_size">PCAP max. Dateigröße: %s MB</string>
     <string name="setting_watchdog">Watchdog: alle %s Minuten</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Abtastfrequenz: %s ms</string>
     <string name="setting_stats_samples">Anzahl Samples: %s s</string>
     <string name="setting_backup">Sicherung</string>
