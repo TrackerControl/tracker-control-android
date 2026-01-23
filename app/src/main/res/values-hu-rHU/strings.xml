@@ -82,6 +82,7 @@
     <string name="setting_pcap_file_size">PCAP max. fájlméret: %s MB</string>
     <string name="setting_watchdog">Watchdog: minden %s percben</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Mintavétel időköze: %s ms</string>
     <string name="setting_stats_samples">Minták száma: %s s</string>
     <string name="setting_backup">Biztonsági mentés</string>
