@@ -90,6 +90,7 @@
     <string name="warning_beta">Beta funkce. Nemusí fungovat podle očekávání.</string>
     <string name="setting_doh_endpoint">Koncový bod DoH URL</string>
     <string name="summary_doh_endpoint">HTTPS URL pro dotazy DNS-overHTTPS</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Interval vzorkování: %s ms</string>
     <string name="setting_stats_samples">Počet vzorků: %s</string>
     <string name="setting_backup">Záloha</string>

@@ -74,6 +74,7 @@
     <string name="setting_pcap_file_size">PCAP 最大檔案大小：%s MB</string>
     <string name="setting_watchdog">監控：每 %s 分鐘</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">取樣間隔：%s ms</string>
     <string name="setting_stats_samples">取樣數：%s s</string>
     <string name="setting_backup">備份</string>

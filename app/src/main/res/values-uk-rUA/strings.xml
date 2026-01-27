@@ -82,6 +82,7 @@
     <string name="setting_pcap_file_size">Макс. розмір файлу PCAP: %s МБ</string>
     <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
     <string name="setting_stats_samples">Кількість зразків: %s s</string>
     <string name="setting_backup">Резервне копіювання</string>

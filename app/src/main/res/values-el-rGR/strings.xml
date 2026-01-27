@@ -80,6 +80,7 @@
     <string name="setting_pcap_file_size">PCAP μέγιστο μέγεθος αρχείου: %s MB</string>
     <string name="setting_watchdog">Παρακολούθηση: κάθε %s λεπτά</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Δείγμα διαστήματος: %s ms</string>
     <string name="setting_stats_samples">Αριθμός δειγμάτων: %s s</string>
     <string name="setting_backup">Αντίγραφο Ασφαλείας</string>

@@ -88,6 +88,7 @@
     <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">采样间隔： %s 毫秒</string>
     <string name="setting_stats_samples">样本数: %s s</string>
     <string name="setting_backup">备份</string>

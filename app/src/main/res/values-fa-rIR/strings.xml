@@ -5,6 +5,7 @@
     <string name="app_eula">https://github.com/TrackerControl/tracker-control-android#privacy-notice</string>
     <string name="app_privacy">&lt;a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"&gt;</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->

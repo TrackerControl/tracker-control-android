@@ -80,6 +80,7 @@
     <string name="setting_pcap_file_size">Maks PCAP-filstørrelse: %s MB</string>
     <string name="setting_watchdog">Watchdog: hvert %s. minutt</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Utdragsintervall: %s ms</string>
     <string name="setting_stats_samples">Antall utdrag: %s s</string>
     <string name="setting_backup">Sikkerhetskopi</string>

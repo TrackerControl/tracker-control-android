@@ -87,6 +87,7 @@
     <string name="warning_beta">Fonctionnalité bêta. Peut ne pas fonctionner comme attendu.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">URL HTTPS pour les requêtes DNS-sur-HTTPS</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Intervalle d\'échantillonnage : %s ms</string>
     <string name="setting_stats_samples">Nombre d\'échantillons: %s s</string>
     <string name="setting_backup">Sauvegarde</string>

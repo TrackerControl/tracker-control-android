@@ -80,6 +80,7 @@
     <string name="setting_pcap_file_size">PCAP gehieneko fitxategi-tamaina: %s MB</string>
     <string name="setting_watchdog">Watchdog: %s minutuero</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Laginaren tartea: %s ms</string>
     <string name="setting_stats_samples">Lagin kopurua: %s s</string>
     <string name="setting_backup">Segurtasun kopia</string>

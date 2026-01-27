@@ -88,6 +88,7 @@
     <string name="warning_beta">Beta-ominaisuus. Ei välttämättä toimi odotetusti.</string>
     <string name="setting_doh_endpoint">DoH-palvelimen URL</string>
     <string name="summary_doh_endpoint">HTTPS URL DNS-over-HTTPS kyselyille</string>
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Näyteväli: %s ms</string>
     <string name="setting_stats_samples">Näytteiden lukumäärä: %s s</string>
     <string name="setting_backup">Varmuuskopioi</string>

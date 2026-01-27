@@ -80,6 +80,7 @@
     <string name="setting_pcap_file_size">PCAP max. bestandsgrootte: %s MB</string>
     <string name="setting_watchdog">Bewaken: elke %s minuten</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
     <string name="setting_backup">Backup</string>

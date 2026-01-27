@@ -79,6 +79,7 @@
     <string name="setting_pcap_file_size">PCAP 最大ファイルサイズ: %s MB</string>
     <string name="setting_watchdog">監視タイマー: %s分毎</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">サンプリング間隔: %s ミリ秒</string>
     <string name="setting_stats_samples">サンプル数: %s 秒</string>
     <string name="setting_backup">バックアップ</string>
