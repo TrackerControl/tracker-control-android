@@ -53,7 +53,7 @@
     <string name="setting_tethering">Tillad tethering</string>
     <string name="setting_lan">Tillad LAN-adgang</string>
     <string name="setting_ip6">Aktivér IPv6-trafik</string>
-    <string name="setting_call">Deaktivér ved opkald</string>
+    <string name="setting_call">Deaktiver ved opkald</string>
     <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
     <string name="setting_log_app">Søg efter nye trackere</string>
     <string name="setting_log_logcat">Log overførsler til ADB</string>
@@ -79,7 +79,7 @@
     <string name="msg_installed_tracker_libraries_found">Indeholder %d tracker-biblioteker</string>
     <string name="msg_installed_n">Er blevet installeret</string>
     <string name="msg_try">Prøv TrackerControl</string>
-    <string name="msg_import_last">Sidste import: %s</string>
+    <string name="msg_import_last">Seneste import: %s</string>
     <string name="msg_download_last">Seneste download: %s</string>
     <string name="msg_update_last">Seneste opdatering: %s</string>
     <string name="msg_inactive">Ingen aktiv internetforbindelse</string>
