@@ -75,9 +75,8 @@
 #define SOCKS5_CONNECT 4
 #define SOCKS5_CONNECTED 5
 
-// SNI interception states - used to catch TLS SNI without connecting to remote server
+// SNI interception state - used to catch TLS SNI without connecting to remote server
 #define SNI_PENDING 1    // Waiting for ClientHello with SNI
-#define SNI_RECEIVED 2   // SNI extracted, ready to check or connect
 
 struct context {
     pthread_mutex_t lock;

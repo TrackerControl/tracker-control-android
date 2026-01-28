@@ -788,10 +788,17 @@ jboolean handle_tcp(const struct arguments *args,
                     s->tcp.time = time(NULL);
                     s->tcp.local_seq++; // local SYN
                     s->tcp.state = TCP_SYN_RECV;
+                    
+                    // Add session to list only on success
+                    s->next = args->ctx->ng_session;
+                    args->ctx->ng_session = s;
+                } else {
+                    // Failed to send fake SYN-ACK, clean up
+                    log_android(ANDROID_LOG_ERROR, "%s failed to send fake SYN-ACK", packet);
+                    clear_tcp_data(&s->tcp);
+                    ng_free(s, __FILE__, __LINE__);
+                    return 0;
                 }
-
-                s->next = args->ctx->ng_session;
-                args->ctx->ng_session = s;
             } else {
                 // Normal flow: open socket immediately
                 s->socket = open_tcp_socket(args, &s->tcp, redirect);
@@ -894,15 +901,9 @@ jboolean handle_tcp(const struct arguments *args,
                            cur->socket, get_local_port(cur->socket));
                 
                 // Queue the ClientHello data to be sent when socket connects
+                // Note: queue_tcp uses the TCP sequence number from tcphdr
+                // remote_seq should NOT be updated here - it will be updated when data is forwarded
                 queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
-                
-                // Update remote_seq to account for received data
-                cur->tcp.remote_seq += datalen;
-                
-                // Send ACK for the received data
-                if (write_ack(args, &cur->tcp) < 0) {
-                    return 0;
-                }
                 
                 // Monitor events for the new socket
                 memset(&cur->ev, 0, sizeof(struct epoll_event));
@@ -912,16 +913,17 @@ jboolean handle_tcp(const struct arguments *args,
                     log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s (after SNI)",
                                errno, strerror(errno));
                 
-                // Reset to normal flow - socket will complete handshake
-                cur->tcp.state = TCP_LISTEN;  // Reset to LISTEN to wait for socket connect
-                cur->tcp.sni_state = 0;  // Clear SNI state
+                // Clear SNI state - connection will proceed as normal
+                // State remains TCP_ESTABLISHED, queued data will be sent when socket connects
+                // remote_seq will be updated and ACK sent when data is forwarded in check_tcp_socket
+                cur->tcp.sni_state = 0;
                 
                 return 1;
             }
 
-            // Queue data to forward
+            // Queue data to forward (only for non-SNI_PENDING sessions)
             if (datalen) {
-                if (cur->socket < 0 && cur->tcp.sni_state != SNI_PENDING) {
+                if (cur->socket < 0) {
                     log_android(ANDROID_LOG_ERROR, "%s data while local closed", session);
                     write_rst(args, &cur->tcp);
                     return 0;
@@ -931,9 +933,7 @@ jboolean handle_tcp(const struct arguments *args,
                     write_rst(args, &cur->tcp);
                     return 0;
                 }
-                if (cur->tcp.sni_state != SNI_PENDING) {
-                    queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
-                }
+                queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
             }
 
             if (tcphdr->rst /* +ACK */) {
