@@ -689,6 +689,9 @@ jboolean handle_tcp(const struct arguments *args,
     if (tcphdr->urg)
         return 1;
 
+    // Check if this is a TLS connection (port 443) that needs SNI interception
+    int is_tls_sni = (ntohs(tcphdr->dest) == 443);
+
     // Check session
     if (cur == NULL) {
         if (tcphdr->syn) {
@@ -755,6 +758,7 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.dest = tcphdr->dest;
             s->tcp.state = TCP_LISTEN;
             s->tcp.socks5 = SOCKS5_NONE;
+            s->tcp.sni_state = 0;
             s->tcp.forward = NULL;
             s->next = NULL;
 
@@ -770,33 +774,53 @@ jboolean handle_tcp(const struct arguments *args,
                 s->tcp.forward->next = NULL;
             }
 
-            // Open socket
-            s->socket = open_tcp_socket(args, &s->tcp, redirect);
-            if (s->socket < 0) {
-                // Remote might retry
-                ng_free(s, __FILE__, __LINE__);
-                return 0;
-            }
+            // For TLS connections: delay socket opening until SNI is extracted
+            // This allows us to detect trackers before connecting to them
+            if (is_tls_sni && allowed) {
+                log_android(ANDROID_LOG_INFO, "%s SNI pending - fake SYN-ACK without connecting", packet);
+                s->socket = -1;  // No socket yet
+                s->tcp.sni_state = SNI_PENDING;
+                s->tcp.recv_window = s->tcp.send_window;
+                
+                // Send fake SYN-ACK to the app
+                s->tcp.remote_seq++; // remote SYN
+                if (write_syn_ack(args, &s->tcp) >= 0) {
+                    s->tcp.time = time(NULL);
+                    s->tcp.local_seq++; // local SYN
+                    s->tcp.state = TCP_SYN_RECV;
+                }
 
-            s->tcp.recv_window = get_receive_window(s);
+                s->next = args->ctx->ng_session;
+                args->ctx->ng_session = s;
+            } else {
+                // Normal flow: open socket immediately
+                s->socket = open_tcp_socket(args, &s->tcp, redirect);
+                if (s->socket < 0) {
+                    // Remote might retry
+                    ng_free(s, __FILE__, __LINE__);
+                    return 0;
+                }
 
-            log_android(ANDROID_LOG_DEBUG, "TCP socket %d lport %d",
-                        s->socket, get_local_port(s->socket));
+                s->tcp.recv_window = get_receive_window(s);
 
-            // Monitor events
-            memset(&s->ev, 0, sizeof(struct epoll_event));
-            s->ev.events = EPOLLOUT | EPOLLERR;
-            s->ev.data.ptr = s;
-            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
-                log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s",
-                            errno, strerror(errno));
+                log_android(ANDROID_LOG_DEBUG, "TCP socket %d lport %d",
+                            s->socket, get_local_port(s->socket));
 
-            s->next = args->ctx->ng_session;
-            args->ctx->ng_session = s;
+                // Monitor events
+                memset(&s->ev, 0, sizeof(struct epoll_event));
+                s->ev.events = EPOLLOUT | EPOLLERR;
+                s->ev.data.ptr = s;
+                if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
+                    log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s",
+                                errno, strerror(errno));
 
-            if (!allowed) {
-                log_android(ANDROID_LOG_WARN, "%s resetting blocked session", packet);
-                write_rst(args, &s->tcp);
+                s->next = args->ctx->ng_session;
+                args->ctx->ng_session = s;
+
+                if (!allowed) {
+                    log_android(ANDROID_LOG_WARN, "%s resetting blocked session", packet);
+                    write_rst(args, &s->tcp);
+                }
             }
         } else {
             log_android(ANDROID_LOG_WARN, "%s unknown session", packet);
@@ -850,9 +874,54 @@ jboolean handle_tcp(const struct arguments *args,
 
             // Do not change the order of the conditions
 
+            // Handle SNI interception for TLS connections
+            // When in SNI_PENDING state and allowed (SNI was checked in ip.c), open real socket
+            if (cur->tcp.sni_state == SNI_PENDING && datalen > 0) {
+                // SNI was allowed in ip.c (otherwise we wouldn't get here)
+                // Now open the real connection to the server
+                log_android(ANDROID_LOG_INFO, "%s SNI allowed - connecting to real server after fake handshake", 
+                           session);
+                
+                cur->socket = open_tcp_socket(args, &cur->tcp, redirect);
+                if (cur->socket < 0) {
+                    log_android(ANDROID_LOG_ERROR, "%s failed to open socket after SNI check", session);
+                    write_rst(args, &cur->tcp);
+                    return 0;
+                }
+                
+                cur->tcp.recv_window = get_receive_window(cur);
+                log_android(ANDROID_LOG_DEBUG, "TCP socket %d lport %d (after SNI)",
+                           cur->socket, get_local_port(cur->socket));
+                
+                // Queue the ClientHello data to be sent when socket connects
+                queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
+                
+                // Update remote_seq to account for received data
+                cur->tcp.remote_seq += datalen;
+                
+                // Send ACK for the received data
+                if (write_ack(args, &cur->tcp) < 0) {
+                    return 0;
+                }
+                
+                // Monitor events for the new socket
+                memset(&cur->ev, 0, sizeof(struct epoll_event));
+                cur->ev.events = EPOLLOUT | EPOLLERR;
+                cur->ev.data.ptr = cur;
+                if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, cur->socket, &cur->ev))
+                    log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s (after SNI)",
+                               errno, strerror(errno));
+                
+                // Reset to normal flow - socket will complete handshake
+                cur->tcp.state = TCP_LISTEN;  // Reset to LISTEN to wait for socket connect
+                cur->tcp.sni_state = 0;  // Clear SNI state
+                
+                return 1;
+            }
+
             // Queue data to forward
             if (datalen) {
-                if (cur->socket < 0) {
+                if (cur->socket < 0 && cur->tcp.sni_state != SNI_PENDING) {
                     log_android(ANDROID_LOG_ERROR, "%s data while local closed", session);
                     write_rst(args, &cur->tcp);
                     return 0;
@@ -862,7 +931,9 @@ jboolean handle_tcp(const struct arguments *args,
                     write_rst(args, &cur->tcp);
                     return 0;
                 }
-                queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
+                if (cur->tcp.sni_state != SNI_PENDING) {
+                    queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
+                }
             }
 
             if (tcphdr->rst /* +ACK */) {
