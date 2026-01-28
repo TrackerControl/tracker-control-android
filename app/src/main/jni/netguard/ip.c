@@ -384,6 +384,37 @@ void handle_ip(const struct arguments *args,
     } else {
         if (protocol == IPPROTO_UDP)
             block_udp(args, pkt, length, payload, uid);
+        else if (protocol == IPPROTO_TCP) {
+            // For TLS connections with SNI_PENDING state, send RST to close the fake connection
+            // This ensures the app knows the connection is blocked, without ever connecting to tracker
+            const uint8_t pkt_version = (*pkt) >> 4;
+            const struct iphdr *ip4 = (struct iphdr *) pkt;
+            const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+            const struct tcphdr *tcphdr = (struct tcphdr *) payload;
+            
+            // Search for SNI_PENDING session to send RST
+            struct ng_session *cur = args->ctx->ng_session;
+            while (cur != NULL &&
+                   !(cur->protocol == IPPROTO_TCP &&
+                     cur->tcp.version == pkt_version &&
+                     cur->tcp.source == tcphdr->source && cur->tcp.dest == tcphdr->dest &&
+                     (pkt_version == 4 ? cur->tcp.saddr.ip4 == ip4->saddr &&
+                                     cur->tcp.daddr.ip4 == ip4->daddr
+                                   : memcmp(&cur->tcp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                                     memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
+                cur = cur->next;
+            
+            if (cur != NULL && cur->tcp.sni_state == SNI_PENDING) {
+                log_android(ANDROID_LOG_WARN, "Blocked tracker via SNI - no connection made to %s/%u",
+                           dest, dport);
+                // Account for received data in sequence numbers before RST
+                const uint8_t tcpoptlen = (uint8_t) ((tcphdr->doff - 5) * 4);
+                const uint8_t *data_ptr = payload + sizeof(struct tcphdr) + tcpoptlen;
+                const uint16_t datalen = (const uint16_t) (length - (data_ptr - pkt));
+                cur->tcp.remote_seq += datalen;
+                write_rst(args, &cur->tcp);
+            }
+        }
 
         log_android(ANDROID_LOG_WARN, "Address v%d p%d %s/%u syn %d not allowed",
                     version, protocol, dest, dport, syn);

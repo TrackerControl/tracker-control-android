@@ -104,3 +104,6 @@ lint/tmp/
 .DS_Store
 
 /crowdin.properties
+
+# CodeQL temporary files
+_codeql_detected_source_root
