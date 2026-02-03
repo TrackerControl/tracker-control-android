@@ -116,8 +116,6 @@ public class DnsProxyServer {
 
         } catch (SocketException e) {
             Log.e(TAG, "Failed to start DNS proxy: " + e.getMessage());
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to bind DNS proxy: " + e.getMessage());
         }
     }
 
