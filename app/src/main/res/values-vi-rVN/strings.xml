@@ -78,6 +78,7 @@
     <string name="setting_pcap_file_size">Kích thước tệp PCAP lớn nhất: %s MB</string>
     <string name="setting_watchdog">Giám sát: mỗi %s phút</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Thời gian giữa mỗi lần lấy mẫu: %s ms</string>
     <string name="setting_stats_samples">Số lượng các mẫu: %s s</string>
     <string name="setting_backup">Sao lưu</string>

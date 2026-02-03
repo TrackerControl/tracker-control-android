@@ -49,6 +49,9 @@
     <string name="setting_socks5_username">SOCKS5 kasutajanimi: %s</string>
     <string name="setting_socks5_password">SOCKS5 salasõna: %s</string>
     <!-- Secure DNS (DoH) -->
+    <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Blokeeri Androidi privaatne nimelahendus</string>
+    <string name="summary_block_dot">Kui Androidi privaatne nimelahendus on kasutusel, siis TrackerControl ei suuda ühtegi jälitamist tuvastada ega seega tööta korralikult.</string>
     <string name="setting_backup">Varundus</string>
     <string name="setting_import">Impordi seadistused</string>
     <string name="setting_hosts">Impordi hosts fail</string>
