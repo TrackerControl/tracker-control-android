@@ -90,6 +90,7 @@
     <string name="summary_doh_enabled">Шифрувати DNS-запити за допомогою DNS-over-HTTPS. Стосується всіх програм.</string>
     <string name="warning_beta">Бета-функція. Може працювати не так, як очікується.</string>
     <!-- Block DNS-over-TLS (DoT) -->
+    <string name="summary_block_dot">Якщо увімкнено приватний DNS Android, TC не може виявити жодного відстеження і не працює належним чином.</string>
     <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
     <string name="setting_stats_samples">Кількість зразків: %s s</string>
     <string name="setting_backup">Резервне копіювання</string>
@@ -156,6 +157,7 @@
     <string name="msg_vpn_cancelled">VPN-з’єднання скасовано\nВи налаштували інший VPN як постійно активний VPN?</string>
     <string name="msg_unavailable">Ця функція недоступна в цій версії Android</string>
     <string name="msg_always_on">Інша VPN налаштована як VPN з постійним підключенням</string>
+    <string name="msg_always_on_lockdown">Вимкніть опцію «Блокування з’єднань без VPN» у налаштуваннях VPN для Android, щоб використовувати TrackerControl</string>
     <string name="msg_private_dns">Вимкніть «Приватний DNS» в налаштуваннях мережі Android. TrackerControl надає власну функцію Secure DNS в налаштуваннях.</string>
     <string name="msg_start_forward">Розпочати переадресацію з порту %1$s %2$d на порт %3$s:%4$d з \'%5$s\'?</string>
     <string name="msg_stop_forward">Зупинити переадресацію порту %2$d на %1$s?</string>
@@ -378,11 +380,20 @@
     <string name="onboarding_welcome_desc">TrackerControl — це дослідницький проект, що реалізується силами спільноти та надає вам такі можливості:\n\n• <b>Моніторинг</b> прихованого збору даних мобільними додатками в режимі реального часу.\n• <b>Блокування</b> трекерів та реклами за допомогою нашої бази даних, що містить <b>2,000,000 проаналізованих додатків</b>.\n• <b>Ідентифікація</b> компаній та країн, які отримують ваші дані.\n\nВесь аналіз відбувається <b>локально на вашому пристрої</b> — ви завжди контролюєте свій трафік.</string>
     <string name="onboarding_vpn_desc">TrackerControl використовує локальний VPN-інтерфейс Android для аналізу вашого інтернет-трафіку.\n\n<b>Важливо:</b> Зовнішній VPN-сервер не використовується. Ми не бачимо ваших даних.</string>
     <string name="onboarding_vpn_action">Увімкнути VPN на пристрої</string>
+    <string name="onboarding_vpn_sure">TrackerControl не може фільтрувати трафік без локального VPN. Ви впевнені, що хочете продовжити без його увімкнення?</string>
     <string name="onboarding_battery_desc">Android може закривати фонові програми для економії заряду акумулятора. Щоб забезпечити безперервний захист від трекерів, вимкніть оптимізацію для TrackerControl.</string>
     <string name="onboarding_battery_sure">Без вимкнення оптимізації батареї TrackerControl може бути зупинений Android в будь-який момент. Ви впевнені, що хочете продовжити?</string>
     <string name="onboarding_notify_desc">Дозвольте сповіщення, щоб бачити оновлення в режимі реального часу та керувати захистом безпосередньо зі смуги стану.</string>
+    <string name="onboarding_notify_sure">Без дозволу на отримання сповіщень ви не зможете бачити оновлення в режимі реального часу та керувати захистом із панелі стану. Ви впевнені?</string>
+    <string name="onboarding_privatedns_desc">Функція «Приватний DNS» в Android заважає TrackerControl блокувати трекери. Щоб продовжити, це налаштування <b>необхідно</b> встановити в положення «Вимкнено».</string>
     <string name="onboarding_privatedns_skip_msg">Продовження роботи з увімкненим приватним DNS значно обмежить роботу TrackerControl. Більшість відстежень не буде заблоковано, залишиться лише аналіз бібліотеки трекерів. Крім того, фільтр VPN буде вимкнено, щоб забезпечити базову функціональність.</string>
+    <string name="onboarding_network_desc">Параметри збереження даних можуть перешкоджати нормальній роботі TrackerControl у фоновому режимі. Надайте необмежений доступ для найнадійнішого захисту.</string>
+    <string name="onboarding_network_sure">Обмежений доступ до фонових даних може призвести до збою TrackerControl. Ви впевнені, що хочете продовжити без надання необмеженого доступу?</string>
+    <string name="onboarding_lockdown_desc">Android має налаштування під назвою «Блокувати з\'єднання без VPN», яке запобігає підключенню додатків до того, як TrackerControl буде готовий.\n\nЯкщо це налаштування увімкнено, додатки можуть не завантажуватися. Для найкращого досвіду використання ми рекомендуємо залишити це налаштування <b>вимкненим</b>.</string>
     <string name="onboarding_dns_desc">Захистіть свою конфіденційність від вашого інтернет-провайдера, шифруючи DNS-трафік за допомогою DNS-over-HTTPS (DoH).\n\nЦе запобігає \"викраденню DNS\" та зберігає конфіденційність ваших звичок перегляду від вашого мережевого провайдера.</string>
     <!-- Insights Screen -->
+    <string name="insights_share_message">Цього тижня я заблокував %1$d трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі приватність: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Цього тижня я виявив %1$d трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі приватність: https://trackercontrol.org</string>
     <!-- What's New onboarding slide (not translated) -->
+    <string name="summary_manage_blocklists">Вони призначені лише для резервного використання. TrackerControl містить власні списки хостів, які дають уявлення про компанії, що стоять за відстеженням.</string>
 </resources>
