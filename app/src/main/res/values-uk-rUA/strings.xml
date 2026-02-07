@@ -96,12 +96,14 @@
     <string name="setting_stats_frequency">Інтервал вибірки: %s мс</string>
     <string name="setting_stats_samples">Кількість зразків: %s s</string>
     <string name="setting_backup">Резервне копіювання</string>
+    <string name="setting_export">Експорт налаштувань</string>
     <string name="setting_import">Імпортувати параметри</string>
     <string name="setting_hosts">Імпортувати host-файл</string>
     <string name="setting_hosts_append">Імпортувати host-файл (додати)</string>
     <string name="setting_hosts_url">URL-адреса hosts-файла</string>
     <string name="setting_hosts_download">Завантажити hosts-файл</string>
     <string name="setting_hosts_update">Оновити hosts-файл</string>
+    <string name="setting_hosts_auto_update">Автоматичне оновлення хостів</string>
     <string name="summary_hosts_auto_update">Автоматично оновлювати файл hosts у фоновому режимі</string>
     <string name="summary_install">Показувати сповіщення в рядку стану для щойно встановлених програм</string>
     <string name="summary_pause">Після паузи від сповіщення автоматично знову вмикати TrackerControl через вибрану кількість хвилин (введіть 0, щоб вимкнути цю опцію).</string>
@@ -111,6 +113,7 @@
     <string name="summary_lan">Дозволити програмам підключатися до адрес локальної мережі, таких як 10.0.0.0/8, 172.16.0.0/12 та 192.168.0.0/16</string>
     <string name="summary_ip6">Спрямовувати трафік IP версії 6 до TrackerControl, щоб його можна було вибірково дозволяти або блокувати</string>
     <string name="summary_call">Вимкніть TrackerControl для вхідних або вихідних телефонних дзвінків. Це можна використовувати для вирішення проблем із дзвінками через IP/Wi-Fi.</string>
+    <string name="summary_system">Показати системні програми у списку програм</string>
     <string name="summary_log_app">Вимкніть для зменшення споживання батареї. Нові трекери будуть заблоковані, але не будуть показані.</string>
     <string name="summary_track_usage">Відслідковувати кількість надісланих і отриманих байтів для кожної програми й адреси. Це може збільшити витрату заряду батареї.</string>
     <string name="summary_block_domains">УВАГА: Заблоковані хости не відображаються в інтерфейсі користувача.</string>
