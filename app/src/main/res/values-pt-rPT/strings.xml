@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">O TrackerControl permite que os utilizadores monitorem e controlem a coleta de dados generalizada, contínua e oculta em aplicativos móveis sobre o comportamento do utilizador (\'rastreamento\').</string>
+    <string name="app_copyright">Direitos de autor \u00A9 2019-2022 Konrad Kollnig\n\nTrackerControl é baseado em NetGuard, desenvolvido por Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl requer Android 5.1 ou superior</string>
     <string name="app_xposed">Xposed causa muitos erros, que podem resultar na remoção do TrackerControl da Google Play Store, portanto, TrackerControl não é suportado enquanto o Xposed está instalado</string>
     <string name="app_eula">O uso desta aplicação está no seu próprio risco. Nenhuma aplicação pode oferecer 100% de proteção contra rastreamento.</string>
@@ -13,6 +14,7 @@
     <string name="menu_app_user">Mostrar aplicativos do usuário</string>
     <string name="menu_app_system">Mostrar aplicações de sistema</string>
     <string name="menu_app_nointernet">Mostrar aplicativos sem internet</string>
+    <string name="menu_app_unprotected">Apenas mostrar aplicações não protegidas</string>
     <string name="menu_sort">Classificar aplicações</string>
     <string name="menu_sort_name">Classificar no nome</string>
     <string name="menu_sort_uid">Ordenar em uid</string>
@@ -55,6 +57,8 @@
     <string name="setting_ip6">Habilitar o tráfego IPv6</string>
     <string name="setting_call">Desativar em plantão</string>
     <string name="setting_reload_onconnectivity">Recarregar em cada mudança de conectividade</string>
+    <string name="setting_advanced_options">Opções avançadas (para experientes)</string>
+    <string name="setting_system">Mostrar aplicações do sistema</string>
     <string name="setting_log_app">Pesquisar novos rastreadores</string>
     <string name="setting_log_logcat">Registrar transmissões para o ADB</string>
     <string name="setting_filter">Bloquear rastreadores</string>
@@ -80,16 +84,25 @@
     <string name="setting_pcap_file_size">PCAP tamanho máximo do arquivo: %s MB</string>
     <string name="setting_watchdog">Watchdog: a cada %s de minutos</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">DNS seguro (DoH)</string>
+    <string name="summary_doh_enabled">Encriptar consultas DNS utilizando DNS por HTTPS. Aplica-se a todas as aplicações.</string>
+    <string name="warning_beta">Funcionalidade beta. Pode não funcionar como esperado.</string>
+    <string name="setting_doh_endpoint">DoH Endpoint URL</string>
+    <string name="summary_doh_endpoint">URL HTTPS para consultas DNS por HTTPS</string>
     <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Bloquear DNS privado do Android</string>
+    <string name="summary_block_dot">Com o DNS privado do Android ativado, o TC não consegue detetar nenhum rastreamento e não funciona corretamente.</string>
     <string name="setting_stats_frequency">Intervalo de amostragem: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Cópia de segurança</string>
+    <string name="setting_export">Exportar definições</string>
     <string name="setting_import">Configurações de importação</string>
     <string name="setting_hosts">Arquivo de anfitriões de importação</string>
     <string name="setting_hosts_append">Importar arquivo de anfitriões (anexo)</string>
     <string name="setting_hosts_url">Hosts URL do arquivo</string>
     <string name="setting_hosts_download">Download do arquivo de hospedagem</string>
     <string name="setting_hosts_update">Atualizar arquivo de hosts</string>
+    <string name="setting_hosts_auto_update">Auto-atualizar hosts</string>
     <string name="summary_install">Mostrar notificação na barra de status para apps recém-instalados</string>
     <string name="summary_pause">Após a pausa da notificação, ative automaticamente o TrackerControl novamente após o número de minutos selecionado (digite 0 para desativar esta opção).</string>
     <string name="summary_update">Verifique duas vezes por dia se há novos lançamentos no GitHub</string>
