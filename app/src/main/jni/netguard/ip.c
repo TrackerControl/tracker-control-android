@@ -361,6 +361,10 @@ void handle_ip(const struct arguments *args, const uint8_t *pkt,
       if (allowed) {
         // Open real socket now that we know the destination is allowed
         // Keep state as TCP_ESTABLISHED — don't reset to TCP_LISTEN
+        // Update TCP state from latest packet so get_send_window works
+        cur->tcp.acked = ntohl(tcphdr->ack_seq);
+        cur->tcp.send_window = ntohs(tcphdr->window) << cur->tcp.send_scale;
+        cur->tcp.unconfirmed = 0;
         cur->socket = open_tcp_socket(args, &cur->tcp, redirect);
         if (cur->socket < 0) {
           log_android(ANDROID_LOG_ERROR,
@@ -396,6 +400,9 @@ void handle_ip(const struct arguments *args, const uint8_t *pkt,
       // State 2: Pure ACK completing fake handshake
       cur->tcp.state = TCP_ESTABLISHED;
       cur->tcp.remote_seq = ntohl(tcphdr->seq);
+      cur->tcp.acked = ntohl(tcphdr->ack_seq);
+      cur->tcp.send_window = ntohs(tcphdr->window) << cur->tcp.send_scale;
+      cur->tcp.unconfirmed = 0;
     } else if (cur != NULL && cur->socket >= 0) {
       // State 3: Real socket exists — normal TCP forwarding
       allowed = 1;
@@ -504,7 +511,8 @@ jint get_uid_sub(const int version, const int protocol, const void *saddr,
                  const char *source, const char *dest, long now) {
   // NETLINK is not available on Android due to SELinux policies :-(
   // http://stackoverflow.com/questions/27148536/netlink-implementation-for-the-android-ndk
-    // https://android.googlesource.com/platform/system/sepolicy/+/master/private/app.te (netlink_tcpdiag_socket)
+  // https://android.googlesource.com/platform/system/sepolicy/+/master/private/app.te
+  // (netlink_tcpdiag_socket)
 
   static uint8_t zero[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -521,8 +529,9 @@ jint get_uid_sub(const int version, const int protocol, const void *saddr,
         (memcmp(uid_cache[i].daddr, daddr, (size_t)(ws * 4)) == 0 ||
          memcmp(uid_cache[i].daddr, zero, (size_t)(ws * 4)) == 0)) {
 
-            log_android(ANDROID_LOG_INFO, "uid v%d p%d %s/%u > %s/%u => %d (from cache)",
-                        version, protocol, source, sport, dest, dport, uid_cache[i].uid);
+      log_android(ANDROID_LOG_INFO,
+                  "uid v%d p%d %s/%u > %s/%u => %d (from cache)", version,
+                  protocol, source, sport, dest, dport, uid_cache[i].uid);
 
       return uid_cache[i].uid;
     }
@@ -602,9 +611,9 @@ jint get_uid_sub(const int version, const int protocol, const void *saddr,
           uid_cache =
               ng_malloc(sizeof(struct uid_cache_entry), "uid_cache init");
         else
-                    uid_cache = ng_realloc(uid_cache,
-                                           sizeof(struct uid_cache_entry) *
-                                           (uid_cache_size + 1), "uid_cache extend");
+          uid_cache = ng_realloc(
+              uid_cache, sizeof(struct uid_cache_entry) * (uid_cache_size + 1),
+              "uid_cache extend");
         c = uid_cache_size;
         uid_cache_size++;
       }

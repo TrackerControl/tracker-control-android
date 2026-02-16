@@ -117,6 +117,10 @@ int check_tcp_session(const struct arguments *args, struct ng_session *s,
 
 int monitor_tcp_session(const struct arguments *args, struct ng_session *s,
                         int epoll_fd) {
+  // SNI intercept sessions have no real socket — nothing to monitor
+  if (s->socket == -1)
+    return 0;
+
   int recheck = 0;
   unsigned int events = EPOLLERR;
 
@@ -236,8 +240,9 @@ uint32_t get_receive_window(const struct ng_session *cur) {
 
   uint32_t total = (toforward < window ? window - toforward : 0);
 
-    log_android(ANDROID_LOG_DEBUG, "Receive window toforward %u window %u total %u",
-                toforward, window, total);
+  log_android(ANDROID_LOG_DEBUG,
+              "Receive window toforward %u window %u total %u", toforward,
+              window, total);
 
   return total;
 }
@@ -343,8 +348,9 @@ void check_tcp_socket(const struct arguments *args,
                 s->tcp.socks5 = SOCKS5_AUTH;
               else {
                 s->tcp.socks5 = 0;
-                                log_android(ANDROID_LOG_ERROR, "%s SOCKS5 auth %d not supported",
-                                            session, buffer[1]);
+                log_android(ANDROID_LOG_ERROR,
+                            "%s SOCKS5 auth %d not supported", session,
+                            buffer[1]);
                 write_rst(args, &s->tcp);
               }
 
@@ -509,9 +515,8 @@ void check_tcp_socket(const struct arguments *args,
               ng_free(p->data, __FILE__, __LINE__);
               ng_free(p, __FILE__, __LINE__);
             } else {
-                            log_android(ANDROID_LOG_WARN,
-                                        "%s partial send %u/%u",
-                                        session, s->tcp.forward->sent, s->tcp.forward->len);
+              log_android(ANDROID_LOG_WARN, "%s partial send %u/%u", session,
+                          s->tcp.forward->sent, s->tcp.forward->len);
               break;
             }
           }
