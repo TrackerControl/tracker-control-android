@@ -82,10 +82,18 @@ public class DnsProxyServer {
             return;
         }
 
-        // Close any existing socket first (safety for app restart scenarios)
+        // Close any existing sockets first (safety for app restart scenarios)
         if (serverSocket != null && !serverSocket.isClosed()) {
-            Log.w(TAG, "Closing stale socket before starting");
+            Log.w(TAG, "Closing stale UDP socket before starting");
             serverSocket.close();
+        }
+        if (tcpServerSocket != null && !tcpServerSocket.isClosed()) {
+            Log.w(TAG, "Closing stale TCP socket before starting");
+            try {
+                tcpServerSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Error closing stale TCP socket: " + e.getMessage());
+            }
         }
 
         try {
@@ -105,8 +113,9 @@ public class DnsProxyServer {
             // Start TCP server only if enabled (still in testing)
             if (TCP_ENABLED) {
                 try {
-                    tcpServerSocket = new ServerSocket(DNS_PROXY_PORT, 0, InetAddress.getByName(DNS_PROXY_ADDRESS));
+                    tcpServerSocket = new ServerSocket();
                     tcpServerSocket.setReuseAddress(true);
+                    tcpServerSocket.bind(new InetSocketAddress(DNS_PROXY_ADDRESS, DNS_PROXY_PORT));
                     new Thread(this::runTcpServer, "DnsProxyServer-TCP").start();
                     Log.i(TAG, "DNS TCP proxy server started on " + DNS_PROXY_ADDRESS + ":" + DNS_PROXY_PORT);
                 } catch (IOException e) {
@@ -221,9 +230,11 @@ public class DnsProxyServer {
             if (responseData != null) {
                 dohFailures.set(0);
                 // Send response back to client
+                DatagramSocket socket = serverSocket;
+                if (socket == null || socket.isClosed()) return;
                 DatagramPacket response = new DatagramPacket(
                         responseData, responseData.length, clientAddress, clientPort);
-                serverSocket.send(response);
+                socket.send(response);
                 Log.d(TAG, "DoH query successful, response sent to " + clientAddress + ":" + clientPort);
             } else {
                 int failures = dohFailures.incrementAndGet();
@@ -259,6 +270,10 @@ public class DnsProxyServer {
         if (queryData.length < 12)
             return;
 
+        DatagramSocket socket = serverSocket;
+        if (socket == null || socket.isClosed())
+            return;
+
         // Copy the query and modify it to be a SERVFAIL response
         byte[] response = new byte[queryData.length];
         System.arraycopy(queryData, 0, response, 0, queryData.length);
@@ -268,7 +283,7 @@ public class DnsProxyServer {
         response[3] = (byte) ((queryData[3] & 0xF0) | 0x02); // RCODE = SERVFAIL
 
         DatagramPacket packet = new DatagramPacket(response, response.length, clientAddress, clientPort);
-        serverSocket.send(packet);
+        socket.send(packet);
     }
 
     private void runTcpServer() {

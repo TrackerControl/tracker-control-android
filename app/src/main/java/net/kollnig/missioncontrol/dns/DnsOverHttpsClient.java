@@ -46,21 +46,6 @@ public class DnsOverHttpsClient {
     private final OkHttpClient client;
     private final String endpoint;
 
-    private DnsOverHttpsClient(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        this.endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-
-        this.client = new OkHttpClient.Builder()
-                .connectTimeout(CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                .readTimeout(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
-                .retryOnConnectionFailure(true)
-                .build();
-
-        Log.i(TAG, "DoH client initialized with endpoint: " + endpoint);
-    }
-
     private DnsOverHttpsClient(String endpoint) {
         this.endpoint = endpoint;
 
@@ -76,10 +61,9 @@ public class DnsOverHttpsClient {
     }
 
     public static synchronized DnsOverHttpsClient getInstance(Context context) {
-        if (instance == null) {
-            instance = new DnsOverHttpsClient(context);
-        }
-        return instance;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
+        return getInstance(endpoint);
     }
 
     /**
@@ -87,6 +71,9 @@ public class DnsOverHttpsClient {
      */
     public static synchronized DnsOverHttpsClient getInstance(String endpoint) {
         if (instance == null || !instance.endpoint.equals(endpoint)) {
+            if (instance != null) {
+                instance.shutdown();
+            }
             instance = new DnsOverHttpsClient(endpoint);
         }
         return instance;
@@ -131,7 +118,6 @@ public class DnsOverHttpsClient {
                     .url(endpoint)
                     .post(body)
                     .header("Accept", "application/dns-message")
-                    .header("Content-Type", "application/dns-message")
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
@@ -141,6 +127,10 @@ public class DnsOverHttpsClient {
                 }
 
                 ResponseBody responseBody = response.body();
+                if (responseBody == null) {
+                    Log.w(TAG, "DoH response body is null");
+                    return null;
+                }
 
                 byte[] dnsResponse = responseBody.bytes();
                 Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes");
