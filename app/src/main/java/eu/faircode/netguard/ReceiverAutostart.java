@@ -94,24 +94,37 @@ public class ReceiverAutostart extends BroadcastReceiver {
                 } else if (oldVersion <= 2017032112)
                     editor.remove("ip6");
 
-                if (oldVersion < 2026010203) {
-                    Log.i(TAG, "Migrating Tracker Protection to VPN Exclusion");
+                // Migrate beta builds that had vpn_exclude and repurposed apply
+                // Step 1: current apply values were used for tracker protection → move to tracker_protect
+                // Step 2: vpn_exclude=true → restore apply=false (VPN exclusion)
+                SharedPreferences vpn_exclude = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
+                Map<String, ?> allVpnExclude = vpn_exclude.getAll();
+                if (!allVpnExclude.isEmpty()) {
+                    Log.i(TAG, "Migrating beta vpn_exclude/apply to new scheme");
                     SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
-                    SharedPreferences vpn_exclude = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor vpn_exclude_editor = vpn_exclude.edit();
-                    SharedPreferences.Editor apply_editor = apply.edit();
+                    SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
 
-                    Map<String, ?> allApply = apply.getAll();
-                    for (Map.Entry<String, ?> entry : allApply.entrySet()) {
-                        if (entry.getValue() instanceof Boolean && !((Boolean) entry.getValue())) {
-                            String packageName = entry.getKey();
-                            Log.i(TAG, "Excluding package=" + packageName);
-                            vpn_exclude_editor.putBoolean(packageName, true);
-                            apply_editor.putBoolean(packageName, true);
+                    // Step 1: move current apply values to tracker_protect and reset apply
+                    // (beta repurposed apply for tracker protection, so copy those values out)
+                    SharedPreferences.Editor tp_editor = tracker_protect.edit();
+                    SharedPreferences.Editor apply_editor = apply.edit();
+                    for (Map.Entry<String, ?> entry : apply.getAll().entrySet()) {
+                        if (entry.getValue() instanceof Boolean) {
+                            tp_editor.putBoolean(entry.getKey(), (Boolean) entry.getValue());
+                            apply_editor.putBoolean(entry.getKey(), true); // reset to default
                         }
                     }
-                    vpn_exclude_editor.apply();
+                    tp_editor.apply();
+
+                    // Step 2: vpn_exclude=true → apply=false (VPN exclusion)
+                    for (Map.Entry<String, ?> entry : allVpnExclude.entrySet()) {
+                        if (entry.getValue() instanceof Boolean && (Boolean) entry.getValue()) {
+                            Log.i(TAG, "Setting apply=false for " + entry.getKey());
+                            apply_editor.putBoolean(entry.getKey(), false);
+                        }
+                    }
                     apply_editor.apply();
+                    vpn_exclude.edit().clear().apply();
                 }
 
                 if (oldVersion < 2026010401) {

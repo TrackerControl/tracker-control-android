@@ -51,8 +51,8 @@ class InsightsDataProvider(context: Context) {
         // Load filtering preferences
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         val showSystem = prefs.getBoolean("show_system", false)
-        val vpnExcludePrefs = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE)
         val applyPrefs = context.getSharedPreferences("apply", Context.MODE_PRIVATE)
+        val trackerProtectPrefs = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE)
 
         // Cache for UID -> package info lookups
         val uidPackageCache = mutableMapOf<Int, String?>()
@@ -94,10 +94,10 @@ class InsightsDataProvider(context: Context) {
                     if (isSystem && !showSystem) continue
 
                     // Check if excluded from VPN
-                    if (vpnExcludePrefs.getBoolean(packageName, false)) continue
+                    if (!applyPrefs.getBoolean(packageName, true)) continue
 
                     // Check if tracker protection is disabled for this app
-                    if (!applyPrefs.getBoolean(packageName, true)) continue
+                    if (!trackerProtectPrefs.getBoolean(packageName, true)) continue
 
                     // Find tracker company for this hostname
                     val tracker = TrackerList.findTracker(daddr) ?: continue

@@ -948,6 +948,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlExport(getSharedPreferences("apply", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "apply");
 
+        serializer.startTag(null, "tracker_protect");
+        xmlExport(getSharedPreferences("tracker_protect", Context.MODE_PRIVATE), serializer);
+        serializer.endTag(null, "tracker_protect");
+
         serializer.startTag(null, "notify");
         xmlExport(getSharedPreferences("notify", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "notify");
@@ -1131,6 +1135,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.roaming, getSharedPreferences("roaming", Context.MODE_PRIVATE));
         xmlImport(handler.lockdown, getSharedPreferences("lockdown", Context.MODE_PRIVATE));
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
+        xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
         xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
 
@@ -1185,6 +1190,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> roaming = new HashMap<>();
         public Map<String, Object> lockdown = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
+        public Map<String, Object> tracker_protect = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
         public Map<String, Object> blocklist = new HashMap<>();
         private Map<String, Object> current = null;
@@ -1222,6 +1228,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             else if (qName.equals("apply"))
                 current = apply;
+
+            else if (qName.equals("tracker_protect"))
+                current = tracker_protect;
 
             else if (qName.equals("notify"))
                 current = notify;
