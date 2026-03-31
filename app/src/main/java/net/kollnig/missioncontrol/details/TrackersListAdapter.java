@@ -76,7 +76,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final String mAppId;
     private final Context mContext;
     private final SharedPreferences apply;
-    private final SharedPreferences vpn_exclude_prefs;
+    private final SharedPreferences tracker_protect;
     private List<TrackerCategory> mValues = new ArrayList<>();
 
     // Analysis UI elements (populated when header is created)
@@ -96,7 +96,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mAppId = appId;
 
         apply = mContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
-        vpn_exclude_prefs = mContext.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
+        tracker_protect = mContext.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
 
         // Removes blinks
         ((SimpleItemAnimator) Objects.requireNonNull(v.getItemAnimator())).setSupportsChangeAnimations(false);
@@ -375,12 +375,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             else
                 holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
 
-            // Exclusion from VPN
-            holder.mSwitchVPN.setChecked(apply.getBoolean(mAppId, true));
+            // Tracker protection toggle
+            holder.mSwitchVPN.setChecked(tracker_protect.getBoolean(mAppId, true));
             holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed())
                     return; // to fix errors
-                apply.edit().putBoolean(mAppId, isChecked).apply();
+                tracker_protect.edit().putBoolean(mAppId, isChecked).apply();
 
                 // Move expensive operations off the main thread to prevent UI freezing
                 // Rule.clearCache() can block waiting for a lock held by Rule.getRules()
@@ -409,11 +409,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             });
 
             // Exclude from VPN toggle (completely bypasses TrackerControl)
-            holder.mSwitchVpnExclude.setChecked(vpn_exclude_prefs.getBoolean(mAppId, false));
+            holder.mSwitchVpnExclude.setChecked(!apply.getBoolean(mAppId, true));
             holder.mSwitchVpnExclude.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!buttonView.isPressed())
                     return;
-                vpn_exclude_prefs.edit().putBoolean(mAppId, isChecked).apply();
+                apply.edit().putBoolean(mAppId, !isChecked).apply();
 
                 AsyncTask.execute(() -> {
                     Rule.clearCache(mContext);

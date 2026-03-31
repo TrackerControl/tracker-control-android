@@ -81,8 +81,8 @@ public class Rule {
     public boolean roaming = false;
     public boolean lockdown = false;
 
-    public boolean apply = true;
-    public boolean vpn_exclude = false; // If true, completely exclude from VPN (no DNS, no routing)
+    public boolean apply = true; // If false, completely exclude from VPN (no DNS, no routing)
+    public boolean tracker_protect = true; // If false, don't block trackers (but still route through VPN)
     public boolean notify = true;
 
     public boolean relateduids = false;
@@ -240,7 +240,7 @@ public class Rule {
             SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
             SharedPreferences lockdown = context.getSharedPreferences("lockdown", Context.MODE_PRIVATE);
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
-            SharedPreferences vpn_exclude_prefs = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
+            SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
 
             // Get settings
@@ -409,7 +409,7 @@ public class Rule {
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
                         rule.apply = apply.getBoolean(info.packageName, true);
-                        rule.vpn_exclude = vpn_exclude_prefs.getBoolean(info.packageName, false);
+                        rule.tracker_protect = tracker_protect.getBoolean(info.packageName, true);
                         rule.notify = notify.getBoolean(info.packageName, true);
 
                         // Related packages
@@ -428,7 +428,7 @@ public class Rule {
                         rule.updateChanged(default_wifi, default_other, default_roaming);
 
                         // Check unprotected filter: when enabled, only show apps that are not protected
-                        boolean isUnprotected = !rule.apply || rule.vpn_exclude;
+                        boolean isUnprotected = !rule.apply || !rule.tracker_protect;
                         if (!show_unprotected || isUnprotected) {
                             listRules.add(rule);
                         }
@@ -532,7 +532,7 @@ public class Rule {
                 (wifi_blocked && screen_wifi != screen_wifi_default) ||
                 (other_blocked && screen_other != screen_other_default) ||
                 ((!other_blocked || screen_other) && roaming != default_roaming) ||
-                hosts > 0 || lockdown || vpn_exclude || !apply);
+                hosts > 0 || lockdown || !tracker_protect || !apply);
     }
 
     public void updateChanged(Context context) {

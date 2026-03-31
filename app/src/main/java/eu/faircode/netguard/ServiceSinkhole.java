@@ -173,7 +173,7 @@ public class ServiceSinkhole extends VpnService {
     private volatile StatsHandler statsHandler;
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
-    private volatile SharedPreferences cachedApplyPrefs;
+    private volatile SharedPreferences cachedTrackerProtectPrefs;
     private volatile boolean cachedManageSystem;
 
     private static final int NOTIFY_ENFORCING = 1;
@@ -579,7 +579,7 @@ public class ServiceSinkhole extends VpnService {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
 
             // Refresh cached preferences for shouldTrackApp()
-            cachedApplyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+            cachedTrackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
             cachedManageSystem = prefs.getBoolean("manage_system", false);
 
             if (state != State.enforcing) {
@@ -1616,7 +1616,7 @@ public class ServiceSinkhole extends VpnService {
                 for (Rule rule : listRule)
                     // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
                     // false
-                    if (rule.vpn_exclude || (!includeSystem && rule.system))
+                    if (!rule.apply || (!includeSystem && rule.system))
                         try {
                             Log.i(TAG, "Not routing " + rule.packageName);
                             builder.addDisallowedApplication(rule.packageName);
@@ -2191,11 +2191,11 @@ public class ServiceSinkhole extends VpnService {
         String packageName = packages[0];
 
         // Check if tracker protection is enabled for this app
-        SharedPreferences applyPrefs = cachedApplyPrefs;
-        if (applyPrefs == null) {
-            applyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+        SharedPreferences trackerProtectPrefs = cachedTrackerProtectPrefs;
+        if (trackerProtectPrefs == null) {
+            trackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         }
-        if (!applyPrefs.getBoolean(packageName, true)) {
+        if (!trackerProtectPrefs.getBoolean(packageName, true)) {
             return false;
         }
 
@@ -2581,6 +2581,7 @@ public class ServiceSinkhole extends VpnService {
                         context.getSharedPreferences("lockdown", Context.MODE_PRIVATE).edit().remove(packageName)
                                 .apply();
                         context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+                        context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                         context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
 
                         int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);

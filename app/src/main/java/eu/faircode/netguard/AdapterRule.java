@@ -359,7 +359,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Get rule
         final Rule rule = listFiltered.get(position);
-        final boolean active = rule.apply && !rule.vpn_exclude;
+        final boolean active = rule.apply && rule.tracker_protect;
 
         // Handle expanding/collapsing
         holder.llApplication.setOnClickListener(new View.OnClickListener() {
@@ -993,6 +993,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         SharedPreferences wifi = context.getSharedPreferences("wifi", Context.MODE_PRIVATE);
         SharedPreferences other = context.getSharedPreferences("other", Context.MODE_PRIVATE);
         SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
+        SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         SharedPreferences screen_wifi = context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE);
         SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
         SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
@@ -1010,6 +1011,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             other.edit().putBoolean(rule.packageName, rule.other_blocked).apply();
 
         apply.edit().putBoolean(rule.packageName, rule.apply).apply();
+        tracker_protect.edit().putBoolean(rule.packageName, rule.tracker_protect).apply();
 
         if (rule.screen_wifi == rule.screen_wifi_default)
             screen_wifi.edit().remove(rule.packageName).apply();
@@ -1046,6 +1048,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     related.wifi_blocked = rule.wifi_blocked;
                     related.other_blocked = rule.other_blocked;
                     related.apply = rule.apply;
+                    related.tracker_protect = rule.tracker_protect;
                     related.screen_wifi = rule.screen_wifi;
                     related.screen_other = rule.screen_other;
                     related.roaming = rule.roaming;
