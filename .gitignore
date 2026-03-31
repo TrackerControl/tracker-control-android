@@ -1,3 +1,6 @@
+.claude/
+fdroidserver/
+
 output-metadata.json
 
 *.jks
