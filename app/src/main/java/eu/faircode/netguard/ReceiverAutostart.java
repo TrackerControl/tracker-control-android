@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Process;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
@@ -95,23 +96,39 @@ public class ReceiverAutostart extends BroadcastReceiver {
                     editor.remove("ip6");
 
                 if (oldVersion < 2026010203) {
-                    Log.i(TAG, "Migrating Tracker Protection to VPN Exclusion");
-                    SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
-                    SharedPreferences vpn_exclude = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor vpn_exclude_editor = vpn_exclude.edit();
-                    SharedPreferences.Editor apply_editor = apply.edit();
+                    // Only migrate in main profile. In work profile (e.g. Shelter), skip so we don't
+                    // inherit main profile's apply=false as vpn_exclude=true (which would exclude
+                    // most apps from VPN and hide all traffic).
+                    int userId = Process.myUid() / 100000;
+                    if (userId == 0) {
+                        Log.i(TAG, "Migrating Tracker Protection to VPN Exclusion");
+                        SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
+                        SharedPreferences vpn_exclude = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor vpn_exclude_editor = vpn_exclude.edit();
+                        SharedPreferences.Editor apply_editor = apply.edit();
 
-                    Map<String, ?> allApply = apply.getAll();
-                    for (Map.Entry<String, ?> entry : allApply.entrySet()) {
-                        if (entry.getValue() instanceof Boolean && !((Boolean) entry.getValue())) {
-                            String packageName = entry.getKey();
-                            Log.i(TAG, "Excluding package=" + packageName);
-                            vpn_exclude_editor.putBoolean(packageName, true);
-                            apply_editor.putBoolean(packageName, true);
+                        Map<String, ?> allApply = apply.getAll();
+                        for (Map.Entry<String, ?> entry : allApply.entrySet()) {
+                            if (entry.getValue() instanceof Boolean && !((Boolean) entry.getValue())) {
+                                String packageName = entry.getKey();
+                                Log.i(TAG, "Excluding package=" + packageName);
+                                vpn_exclude_editor.putBoolean(packageName, true);
+                                apply_editor.putBoolean(packageName, true);
+                            }
                         }
+                        vpn_exclude_editor.apply();
+                        apply_editor.apply();
+                    } else {
+                        Log.i(TAG, "Skipping apply->vpn_exclude migration in work profile (user=" + userId + ")");
                     }
-                    vpn_exclude_editor.apply();
-                    apply_editor.apply();
+                }
+
+                // One-time: clear vpn_exclude in work profile so traffic is visible again (migration
+                // may have excluded most apps when run in work profile or with cloned prefs).
+                int userId = Process.myUid() / 100000;
+                if (userId != 0 && oldVersion < 2026012501) {
+                    Log.i(TAG, "Clearing vpn_exclude in work profile (user=" + userId + ") so traffic is visible");
+                    context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE).edit().clear().apply();
                 }
 
                 if (oldVersion < 2026010401) {
