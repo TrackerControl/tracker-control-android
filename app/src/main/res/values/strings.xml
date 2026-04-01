@@ -619,8 +619,8 @@ Sincerely,\n\n]]></string>
     <string name="insights_see_more">See More →</string>
 
     <!-- What's New onboarding slide (not translated) -->
-    <string name="onboarding_whatsnew_title" translatable="false">Major update ahead!</string>
-    <string name="onboarding_whatsnew_desc" translatable="false">• New Insights: View statistics on blocked trackers and tracking companies, directly from the main screen.\n• DuckDuckGo Tracker Radar: Added mobile-specific tracker detection for even better coverage.\n• Secure DNS: Added support for Encrypted DNS (DoH) for better privacy.\n• Enhanced Blocking: Support for multiple blocklists and auto-updates.\n• Simpler Settings: \"Monitor\" is now \"Exclude from VPN\" for clarity.\n• Performance: 50% smaller app size, faster startup, and improved battery life.\n• Revamped Analysis: Faster and cleaner tracker library scanner.\n• Improved Stability: Fixed bugs, crashes, and improved backups.</string>
+    <string name="onboarding_whatsnew_title" translatable="false">What\'s New</string>
+    <string name="onboarding_whatsnew_desc" translatable="false">• Blocking Modes: Choose between Minimal, Standard, or Strict blocking to balance privacy and app compatibility.\n• Minimal Mode: DuckDuckGo-compatible blocking that avoids app breakage. Browsers and known incompatible apps are automatically excluded.\n• Privacy Fix: SNI extraction is now off by default — it was leaking your IP address to tracker servers.\n• Improved Performance: Faster scrolling, reduced memory usage, and better battery life.\n• Troubleshooting: New troubleshooting screen in settings to diagnose common issues.\n• Better Tracker Detection: Improved handling of shared IPs and DNS-cloaked trackers.</string>
 
     <string name="title_blocklists">Additional host files</string>
     <string name="summary_manage_blocklists">These are only for fallback. TrackerControl includes its own host lists that give insights on the companies behind tracking.</string>

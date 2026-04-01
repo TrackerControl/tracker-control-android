@@ -136,6 +136,14 @@ public class ApplicationEx extends Application {
             } else {
                 prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
             }
+
+            // Re-trigger onboarding for existing users so they see What's New
+            // and the blocking mode selection. VPN/notification slides are
+            // conditional and will be skipped if already configured.
+            if (prefs.getBoolean("onboarding_complete", false)) {
+                prefs.edit().putBoolean("onboarding_complete", false).apply();
+                Log.i(TAG, "Re-triggering onboarding for blocking mode selection");
+            }
         }
 
         // Apply minimal mode VPN exclusions on startup (for DDG-compatible blocking)
