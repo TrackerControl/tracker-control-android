@@ -62,7 +62,6 @@
     <string name="setting_advanced_options">Napredne nastavitve</string>
     <string name="setting_system">Prikaži sistemske programe</string>
     <string name="setting_log_app">Poišči nove sledilce</string>
-    <string name="setting_log_logcat">Zabeleži prenose v ADB</string>
     <string name="setting_filter">Blokiraj sledilce</string>
     <string name="setting_filter_udp">Blokiraj sledilce na UDP-ju</string>
     <string name="setting_handover">Nemoten preklop VPN-a ob ponovnem nalaganju</string>
@@ -122,7 +121,6 @@
     <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
     <string name="summary_socks5_enabled">Posredniškemu strežniku bo poslan samo promet TCP.</string>
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
-    <string name="summary_log_logcat">Onemogoči blokiranje.  Komunikacija (in prepoznani sledilci) se beleži v dnevnik naprave.  Pridobite jo lahko z adb logcat z oznako \'TC-log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
     <string name="msg_started">Iskanje sledilcev …</string>
     <string name="msg_waiting">Čakanje na dogodek</string>
