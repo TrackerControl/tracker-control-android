@@ -1,5 +1,15 @@
 # TODO
 
+## ParcelFileDescriptor Race Fix
+
+The VPN file descriptor can be closed by `stopVPN()` while native code in `jni_run()` is still using it, causing EBADF errors and VPN tunnel failures — typically triggered by network transitions (WiFi/mobile).
+
+**Root cause:** `stopNative()` calls `jni_stop()` + `thread.join()`, then `stopVPN()` immediately closes the FD. There is no guarantee native code has fully released the FD when `join()` returns. A 500ms `Thread.sleep()` in one reload path (ServiceSinkhole.java:607) is evidence of this race.
+
+**Proposed fix:** Move the FD close into `stopNative()`, after `jni_clear()`, so the sequence becomes: `jni_stop()` -> `join thread` -> `jni_clear()` -> `close FD`. Then `stopVPN()` no longer closes the FD. Each callsite of `stopVPN()` needs auditing to prevent double-close or missed-close.
+
+**Risk:** High — touches the critical VPN path. A bug here makes the VPN completely non-functional rather than occasionally racy. Needs careful testing on real devices across network transitions.
+
 ## System apps VPN routing
 
 Including system apps in the VPN (`include_system_vpn`) causes noticeable download speed slowdowns (e.g. Play Store). Unclear if this is inherent tun overhead or a fixable implementation issue.
