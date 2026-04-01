@@ -58,7 +58,6 @@
     <string name="setting_call">השבת במהלך שיחה</string>
     <string name="setting_reload_onconnectivity">טען מחדש בכל שינוי קישוריות</string>
     <string name="setting_log_app">חפש עוקבים חדשים</string>
-    <string name="setting_log_logcat">יומן שידורים ל-ADB</string>
     <string name="setting_filter">חסימת עוקבים</string>
     <string name="setting_filter_udp">חסום עוקבים ב-UDP</string>
     <string name="setting_handover">העברה חלקה של ה-VPN בטעינה מחדש</string>
@@ -107,7 +106,6 @@
     <string name="summary_validate">שם הדומיין המשמש לאימות חיבור האינטרנט ביציאה 443 (https).</string>
     <string name="summary_socks5_enabled">רק תעבורת TCP תישלח לשרת ה-proxy</string>
     <string name="summary_watchdog">בדוק מעת לעת אם TrackerControl עדיין פועל (הזן אפס כדי להשבית אפשרות זו). זה עלול לגרום לשימוש נוסף בסוללה.</string>
-    <string name="summary_log_logcat">משבית את החסימה. תקשורת (וגששים מזוהים) נרשמות ביומן המכשיר. אחזר עם adb logcat עם התג \'TC-Log\'.</string>
     <string name="msg_sure">אתה בטוח?</string>
     <string name="msg_waiting">ממתין לאירוע</string>
     <string name="msg_disabled">השתמש במתג למעלה כדי להפעיל את TrackerControl.</string>
