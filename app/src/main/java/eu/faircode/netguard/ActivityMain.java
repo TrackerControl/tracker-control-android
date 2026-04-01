@@ -790,6 +790,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         adapter.setDisconnected();
                         ivMetered.setVisibility(View.INVISIBLE);
                     }
+                    if (intent.getBooleanExtra(EXTRA_REFRESH, false)) {
+                        updateApplicationList(null);
+                        loadInsightsData();
+                    }
                 } else
                     updateApplicationList(null);
         }

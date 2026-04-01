@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 public class ActivityBlocklists extends AppCompatActivity {
@@ -86,9 +87,16 @@ public class ActivityBlocklists extends AppCompatActivity {
                         Blocklist newItem = new Blocklist(url, true);
                         manager.addBlocklist(newItem);
                     } else {
+                        if (!url.equals(item.url)) {
+                            item.lastModified = 0;
+                            item.lastDownloadSuccess = true;
+                            item.lastErrorMessage = null;
+                            manager.getBlocklistFile(item.uuid).delete();
+                        }
                         item.url = url;
                         manager.updateBlocklist(item);
                     }
+                    applyBlocklists();
                     adapter.refresh();
                 } catch (MalformedURLException e) {
                     Toast.makeText(ActivityBlocklists.this, R.string.msg_invalid_url, Toast.LENGTH_SHORT).show();
@@ -147,6 +155,7 @@ public class ActivityBlocklists extends AppCompatActivity {
             holder.switchEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 item.enabled = isChecked;
                 manager.updateBlocklist(item);
+                applyBlocklists();
             });
 
             // Edit on click
@@ -158,6 +167,7 @@ public class ActivityBlocklists extends AppCompatActivity {
                         .setMessage(R.string.msg_delete_blocklist_confirm)
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                             manager.removeBlocklist(item.uuid);
+                            applyBlocklists();
                             refresh();
                         })
                         .setNegativeButton(android.R.string.no, null)
@@ -186,5 +196,14 @@ public class ActivityBlocklists extends AppCompatActivity {
                 btnDelete = itemView.findViewById(R.id.btnDelete);
             }
         }
+    }
+
+    private void applyBlocklists() {
+        if (!manager.mergeBlocklists()) {
+            Toast.makeText(this, R.string.msg_apply_blocklists_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ServiceSinkhole.reload("blocklist changed", this, false);
     }
 }

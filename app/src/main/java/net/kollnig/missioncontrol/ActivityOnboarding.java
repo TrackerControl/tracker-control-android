@@ -434,7 +434,8 @@ public class ActivityOnboarding extends AppCompatActivity {
                 .putBoolean("enabled", vpnPrepared)
                 .apply();
 
-        ServiceSinkhole.start("onboarding", this);
+        if (vpnPrepared)
+            ServiceSinkhole.start("onboarding", this);
 
         startActivity(new Intent(this, ActivityMain.class));
         finish();

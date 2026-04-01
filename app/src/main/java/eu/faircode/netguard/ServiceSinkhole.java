@@ -488,6 +488,10 @@ public class ServiceSinkhole extends VpnService {
                 if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
                     // Update main view
                     Intent ruleset = new Intent(ActivityMain.ACTION_RULES_CHANGED);
+                    boolean refreshRules = "changed blocking_mode".equals(reason)
+                            || "blocklist changed".equals(reason)
+                            || "hosts file download".equals(reason);
+                    ruleset.putExtra(ActivityMain.EXTRA_REFRESH, refreshRules);
                     ruleset.putExtra(ActivityMain.EXTRA_CONNECTED, cmd == Command.stop ? false : last_connected);
                     ruleset.putExtra(ActivityMain.EXTRA_METERED, cmd == Command.stop ? false : last_metered);
                     LocalBroadcastManager.getInstance(ServiceSinkhole.this).sendBroadcast(ruleset);

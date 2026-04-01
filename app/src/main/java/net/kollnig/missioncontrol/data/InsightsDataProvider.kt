@@ -106,7 +106,7 @@ class InsightsDataProvider(context: Context) {
                     uniqueCompanies.add(companyName)
                     appsWithTrackers.add(uid)
 
-                    // Count total trackers contacted (each row = 1 unique host)
+                    // Count tracker hosts seen over the last 7 days.
                     data.totalTrackingAttempts += 1
 
                     // Check if this tracker is currently blocked
