@@ -460,11 +460,7 @@ Sincerely,\n\n]]></string>
     <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
     <string name="insights_shocking_fact_playstore">Vaši programi so ta teden navezali stik s/z %1$d-imi sledilnimi podjetji!</string>
     <string name="insights_share">Deli s priijatelji</string>
-    <string name="insights_share_trackers_blocked">Blokiranih sledilcev</string>
-    <string name="insights_share_trackers_detected">Zaznanih sledilcev</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Ta teden sem z uporabo programa TrackerControl blokiral %1$d sledilcev od %2$d-ih podjetij!  Prevzemite nazaj nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
-    <string name="insights_share_message_playstore">Ta teden sem z uporabo programa TrackerControl zaznal %1$d sledilcev od %2$d-ih podjetij!  Prevzemite nazaj nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
     <string name="insights_see_more">Več →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
