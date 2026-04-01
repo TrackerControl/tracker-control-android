@@ -80,6 +80,9 @@
         android:id="@+id/menu_csv"
         android:title="@string/menu_csv"/>
     <item
+        android:id="@+id/menu_troubleshooting"
+        android:title="@string/menu_troubleshooting"/>
+    <item
         android:id="@+id/menu_about"
         android:title="@string/menu_about"/>
     <item
