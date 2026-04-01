@@ -33,6 +33,13 @@ import net.kollnig.missioncontrol.data.BlockingMode;
 
 public class ActivityOnboarding extends AppCompatActivity {
 
+    /**
+     * Bump this to re-trigger onboarding for existing users.
+     * 1 = original onboarding (pre-2026 Q2)
+     * 2 = blocking modes, SNI privacy fix, performance improvements
+     */
+    public static final int ONBOARDING_VERSION = 2;
+
     private ViewPager2 viewPager;
     private Button btnNext;
     private Button btnPrevious;
@@ -119,11 +126,10 @@ public class ActivityOnboarding extends AppCompatActivity {
                 null,
                 null));
 
-        // 1b. What's New (for returning users only, shown once)
+        // 1b. What's New (for returning users who haven't seen the latest onboarding)
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int oldVersion = prefs.getInt("version", -1);
-        boolean hasSeenWhatsNew = prefs.getBoolean("whatsnew_seen_2026q2", false);
-        if (oldVersion != -1 && !hasSeenWhatsNew) {
+        int seenVersion = prefs.getInt("onboarding_version", 0);
+        if (seenVersion > 0 && seenVersion < ONBOARDING_VERSION) {
             slides.add(new Slide(
                     R.string.onboarding_whatsnew_title,
                     getText(R.string.onboarding_whatsnew_title),
@@ -131,8 +137,6 @@ public class ActivityOnboarding extends AppCompatActivity {
                     R.drawable.ic_rocket2,
                     null,
                     null));
-            // Mark as seen
-            prefs.edit().putBoolean("whatsnew_seen_2026q2", true).apply();
         }
 
         // 2. Blocking Mode Selection
@@ -426,7 +430,7 @@ public class ActivityOnboarding extends AppCompatActivity {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.edit()
-                .putBoolean("onboarding_complete", true)
+                .putInt("onboarding_version", ONBOARDING_VERSION)
                 .putBoolean("enabled", vpnPrepared)
                 .apply();
 

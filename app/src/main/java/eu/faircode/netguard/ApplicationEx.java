@@ -119,8 +119,18 @@ public class ApplicationEx extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             createNotificationChannels();
 
-        // Migrate old strict_blocking pref to blocking_mode
+        // Migrate onboarding_complete boolean to onboarding_version int
         android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.contains("onboarding_complete") && !prefs.contains("onboarding_version")) {
+            boolean completed = prefs.getBoolean("onboarding_complete", false);
+            prefs.edit()
+                    .remove("onboarding_complete")
+                    .putInt("onboarding_version", completed ? 1 : 0)
+                    .apply();
+            Log.i(TAG, "Migrated onboarding_complete=" + completed + " -> onboarding_version=" + (completed ? 1 : 0));
+        }
+
+        // Migrate old strict_blocking pref to blocking_mode
         if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
             String migratedMode = BlockingMode.getDefaultMode();
 
@@ -135,14 +145,6 @@ public class ApplicationEx extends Application {
                 Log.i(TAG, "Migrated strict_blocking=" + oldStrict + " -> mode=" + migratedMode);
             } else {
                 prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
-            }
-
-            // Re-trigger onboarding for existing users so they see What's New
-            // and the blocking mode selection. VPN/notification slides are
-            // conditional and will be skipped if already configured.
-            if (prefs.getBoolean("onboarding_complete", false)) {
-                prefs.edit().putBoolean("onboarding_complete", false).apply();
-                Log.i(TAG, "Re-triggering onboarding for blocking mode selection");
             }
         }
 

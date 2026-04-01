@@ -153,7 +153,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Check Onboarding
         SharedPreferences prefsOnboarding = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefsOnboarding.getBoolean("onboarding_complete", false)) {
+        if (prefsOnboarding.getInt("onboarding_version", 0) < ActivityOnboarding.ONBOARDING_VERSION) {
             super.onCreate(savedInstanceState);
             startActivity(new Intent(this, ActivityOnboarding.class));
             finish();
@@ -519,7 +519,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this) || !Util.canFilter(this)
-                || !prefs.getBoolean("onboarding_complete", false)) {
+                || prefs.getInt("onboarding_version", 0) < ActivityOnboarding.ONBOARDING_VERSION) {
             super.onDestroy();
             return;
         }
