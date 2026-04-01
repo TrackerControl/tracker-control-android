@@ -1075,9 +1075,15 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void updateStats() {
+            // Skip stats updates when screen is off to save battery
+            if (!last_interactive) {
+                this.sendEmptyMessageDelayed(MSG_STATS_UPDATE, 10000);
+                return;
+            }
+
             RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.traffic);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-            long frequency = Long.parseLong(prefs.getString("stats_frequency", "1000"));
+            long frequency = Long.parseLong(prefs.getString("stats_frequency", "2000"));
             long samples = Long.parseLong(prefs.getString("stats_samples", "90"));
             boolean filter = prefs.getBoolean("filter", true);
             boolean show_top = prefs.getBoolean("show_top", false);
@@ -3125,6 +3131,12 @@ public class ServiceSinkhole extends VpnService {
     public void onDestroy() {
         synchronized (this) {
             Log.i(TAG, "Destroy");
+
+            // Flush any pending log entries before shutdown
+            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+            if (dh != null)
+                dh.flushLogBatch();
+
             commandLooper.quit();
             logLooper.quit();
             statsLooper.quit();
