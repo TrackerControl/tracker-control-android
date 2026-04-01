@@ -119,10 +119,35 @@ public class ApplicationEx extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             createNotificationChannels();
 
-        // Set default blocking mode for TC Slim (Play Store) to minimal
+        // Migrate old strict_blocking / block_ambiguous_trackers prefs to blocking_mode
         android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
-            prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, BlockingMode.getDefaultMode()).apply();
+            String migratedMode = BlockingMode.getDefaultMode();
+
+            if (prefs.contains("strict_blocking") || prefs.contains("block_ambiguous_trackers")) {
+                boolean oldStrict = prefs.getBoolean("strict_blocking", false);
+                boolean oldAmbiguous = prefs.getBoolean("block_ambiguous_trackers", true);
+
+                if (oldStrict) {
+                    migratedMode = BlockingMode.MODE_STRICT;
+                } else if (!oldAmbiguous) {
+                    // User explicitly chose less blocking — map to minimal
+                    migratedMode = BlockingMode.MODE_MINIMAL;
+                } else {
+                    migratedMode = BlockingMode.MODE_STANDARD;
+                }
+
+                // Clean up old prefs
+                prefs.edit()
+                        .remove("strict_blocking")
+                        .remove("block_ambiguous_trackers")
+                        .putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode)
+                        .apply();
+                Log.i(TAG, "Migrated blocking settings: strict=" + oldStrict
+                        + " ambiguous=" + oldAmbiguous + " -> mode=" + migratedMode);
+            } else {
+                prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
+            }
         }
 
         // Apply minimal mode VPN exclusions on startup (for DDG-compatible blocking)
