@@ -144,6 +144,26 @@ public class TrackerBlocklist {
         return true;
     }
 
+    /**
+     * Update all existing apps' Content category whitelist based on blocking mode.
+     * In strict mode, remove Content from whitelist (block it).
+     * In standard/minimal mode, add Content to whitelist (allow it).
+     *
+     * @return true if any changes were made
+     */
+    public synchronized boolean applyStrictModeToAll(boolean strictBlocking) {
+        boolean changed = false;
+        for (Map.Entry<Integer, Set<String>> entry : blockmap.entrySet()) {
+            Set<String> subset = entry.getValue();
+            if (strictBlocking) {
+                changed |= subset.remove(NECESSARY_CATEGORY);
+            } else {
+                changed |= subset.add(NECESSARY_CATEGORY);
+            }
+        }
+        return changed;
+    }
+
     public synchronized void saveSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
