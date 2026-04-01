@@ -92,6 +92,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private SharedPreferences prefs;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
+    // Log batching to reduce per-packet database I/O
+    private static final int LOG_BATCH_SIZE = 50;
+    private static final long LOG_BATCH_FLUSH_MS = 5000;
+    private final List<ContentValues> logBatch = new ArrayList<>();
+    private long lastLogFlush = System.currentTimeMillis();
+
     static {
         hthread = new HandlerThread("DatabaseHelper");
         hthread.start();
@@ -391,54 +397,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Log
     public void insertLog(Packet packet, String dname, int connection, boolean interactive) {
+        ContentValues cv = new ContentValues();
+        cv.put("time", packet.time);
+        cv.put("version", packet.version);
+
+        if (packet.protocol < 0)
+            cv.putNull("protocol");
+        else
+            cv.put("protocol", packet.protocol);
+
+        cv.put("flags", packet.flags);
+
+        cv.put("saddr", packet.saddr);
+        if (packet.sport < 0)
+            cv.putNull("sport");
+        else
+            cv.put("sport", packet.sport);
+
+        cv.put("daddr", packet.daddr);
+        if (packet.dport < 0)
+            cv.putNull("dport");
+        else
+            cv.put("dport", packet.dport);
+
+        if (dname == null)
+            cv.putNull("dname");
+        else
+            cv.put("dname", dname);
+
+        cv.put("data", packet.data);
+
+        if (packet.uid < 0)
+            cv.putNull("uid");
+        else
+            cv.put("uid", packet.uid);
+
+        cv.put("allowed", packet.allowed ? 1 : 0);
+
+        cv.put("connection", connection);
+        cv.put("interactive", interactive ? 1 : 0);
+
+        synchronized (logBatch) {
+            logBatch.add(cv);
+            long now = System.currentTimeMillis();
+            if (logBatch.size() >= LOG_BATCH_SIZE || now - lastLogFlush >= LOG_BATCH_FLUSH_MS)
+                flushLogBatch();
+        }
+    }
+
+    private void flushLogBatch() {
+        List<ContentValues> batch;
+        synchronized (logBatch) {
+            if (logBatch.isEmpty())
+                return;
+            batch = new ArrayList<>(logBatch);
+            logBatch.clear();
+            lastLogFlush = System.currentTimeMillis();
+        }
+
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             db.beginTransactionNonExclusive();
             try {
-                ContentValues cv = new ContentValues();
-                cv.put("time", packet.time);
-                cv.put("version", packet.version);
-
-                if (packet.protocol < 0)
-                    cv.putNull("protocol");
-                else
-                    cv.put("protocol", packet.protocol);
-
-                cv.put("flags", packet.flags);
-
-                cv.put("saddr", packet.saddr);
-                if (packet.sport < 0)
-                    cv.putNull("sport");
-                else
-                    cv.put("sport", packet.sport);
-
-                cv.put("daddr", packet.daddr);
-                if (packet.dport < 0)
-                    cv.putNull("dport");
-                else
-                    cv.put("dport", packet.dport);
-
-                if (dname == null)
-                    cv.putNull("dname");
-                else
-                    cv.put("dname", dname);
-
-                cv.put("data", packet.data);
-
-                if (packet.uid < 0)
-                    cv.putNull("uid");
-                else
-                    cv.put("uid", packet.uid);
-
-                cv.put("allowed", packet.allowed ? 1 : 0);
-
-                cv.put("connection", connection);
-                cv.put("interactive", interactive ? 1 : 0);
-
-                if (db.insert("log", null, cv) == -1)
-                    Log.e(TAG, "Insert log failed");
-
+                for (ContentValues cv : batch) {
+                    if (db.insert("log", null, cv) == -1)
+                        Log.e(TAG, "Insert log failed");
+                }
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
@@ -451,6 +476,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void clearLog(int uid) {
+        flushLogBatch();
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -496,6 +522,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getLog(boolean udp, boolean tcp, boolean other, boolean allowed, boolean blocked) {
+        flushLogBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();

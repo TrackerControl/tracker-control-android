@@ -157,6 +157,10 @@ public class ServiceSinkhole extends VpnService {
     private boolean temporarilyStopped = false;
 
     private static long last_hosts_modified = 0;
+    private long lastReloadTime = 0;
+    private static final long RELOAD_DEBOUNCE_MS = 1000;
+    private final Handler reloadHandler = new Handler(Looper.getMainLooper());
+    private Runnable pendingReload = null;
     public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
     private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
@@ -1070,9 +1074,15 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void updateStats() {
+            // Skip stats updates when screen is off to save battery
+            if (!last_interactive) {
+                this.sendEmptyMessageDelayed(MSG_STATS_UPDATE, 10000);
+                return;
+            }
+
             RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.traffic);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-            long frequency = Long.parseLong(prefs.getString("stats_frequency", "1000"));
+            long frequency = Long.parseLong(prefs.getString("stats_frequency", "2000"));
             long samples = Long.parseLong(prefs.getString("stats_samples", "90"));
             boolean filter = prefs.getBoolean("filter", true);
             boolean show_top = prefs.getBoolean("show_top", false);
@@ -2822,7 +2832,7 @@ public class ServiceSinkhole extends VpnService {
                 last_active = network;
                 last_connected = Util.isConnected(ServiceSinkhole.this);
                 last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
-                reload("network available", ServiceSinkhole.this, false);
+                debouncedReload("network available");
             }
 
             @Override
@@ -2841,7 +2851,7 @@ public class ServiceSinkhole extends VpnService {
                             "DNS cur=" + TextUtils.join(",", dns) +
                             "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)));
                     last_dns = dns;
-                    reload("link properties changed", ServiceSinkhole.this, false);
+                    debouncedReload("link properties changed");
                 }
             }
 
@@ -2878,7 +2888,7 @@ public class ServiceSinkhole extends VpnService {
                 }
 
                 if (reason != null)
-                    reload(reason, ServiceSinkhole.this, false);
+                    debouncedReload(reason);
 
                 last_network = network;
                 last_connected = connected;
@@ -2894,7 +2904,7 @@ public class ServiceSinkhole extends VpnService {
 
                 last_active = null;
                 last_connected = Util.isConnected(ServiceSinkhole.this);
-                reload("network lost", ServiceSinkhole.this, false);
+                debouncedReload("network lost");
             }
 
             boolean same(List<InetAddress> last, List<InetAddress> current) {
@@ -3670,6 +3680,29 @@ public class ServiceSinkhole extends VpnService {
                 } catch (Throwable exex) {
                     Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
                 }
+        }
+    }
+
+    private void debouncedReload(final String reason) {
+        long now = System.currentTimeMillis();
+        if (pendingReload != null)
+            reloadHandler.removeCallbacks(pendingReload);
+
+        long elapsed = now - lastReloadTime;
+        if (elapsed >= RELOAD_DEBOUNCE_MS) {
+            lastReloadTime = now;
+            reload(reason, ServiceSinkhole.this, false);
+        } else {
+            pendingReload = new Runnable() {
+                @Override
+                public void run() {
+                    lastReloadTime = System.currentTimeMillis();
+                    pendingReload = null;
+                    reload(reason, ServiceSinkhole.this, false);
+                }
+            };
+            reloadHandler.postDelayed(pendingReload, RELOAD_DEBOUNCE_MS - elapsed);
+            Log.i(TAG, "Debounced reload for reason: " + reason);
         }
     }
 
