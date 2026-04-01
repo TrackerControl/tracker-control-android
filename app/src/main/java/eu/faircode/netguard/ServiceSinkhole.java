@@ -24,7 +24,6 @@ import static android.app.Activity.RESULT_OK;
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_NAME;
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME;
 import static net.kollnig.missioncontrol.DetailsActivity.INTENT_EXTRA_APP_UID;
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.NECESSARY_CATEGORY;
 import static eu.faircode.netguard.WidgetAdmin.INTENT_PAUSE;
 
 import android.annotation.TargetApi;
@@ -2096,6 +2095,11 @@ public class ServiceSinkhole extends VpnService {
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
 
+    static void clearTrackerCaches() {
+        ipToHost.clear();
+        ipToTracker.clear();
+    }
+
     // Called from native code
     private Allowed isAddressAllowed(Packet packet) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -2207,6 +2211,8 @@ public class ServiceSinkhole extends VpnService {
             return false;
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean blockAmbiguousTrackers = prefs.getBoolean("block_ambiguous_trackers", true);
         Tracker tracker = null;
         Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
         if (expiringTracker != null) {
@@ -2232,11 +2238,14 @@ public class ServiceSinkhole extends VpnService {
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                 long time;
                 long ttl;
+                boolean sawTrackerEvidence = false;
+                boolean sawNonTrackerEvidence = false;
                 try (Cursor lookup = dh.getQAName(uid, daddr, true)) {
                     time = new Date().getTime();
                     ttl = 7 * 24 * 3600 * 1000L;
 
-                    // Loop through entries and pick the one that is related to tracking
+                    // Loop through all fresh DNS candidates for this IP and only fail closed
+                    // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
                     if (lookup != null) {
                         while (lookup.moveToNext()) {
                             // Get DNS expiry details
@@ -2249,25 +2258,39 @@ public class ServiceSinkhole extends VpnService {
 
                             // Check tracker
                             String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                            dname = lookup.getString(lookup.getColumnIndex("qname"));
-                            tracker = TrackerList.findTracker(dname);
+                            String qname = lookup.getString(lookup.getColumnIndex("qname"));
+                            String candidateDname = qname;
+                            Tracker candidateTracker = TrackerList.findTracker(qname);
+
+                            if (dname == null && qname != null)
+                                dname = qname;
 
                             // If no tracker found, try DNS uncloaking
-                            if (tracker == null
+                            if (candidateTracker == null
                                     && aname != null) {
-                                tracker = TrackerList.findTracker(aname);
+                                candidateTracker = TrackerList.findTracker(aname);
 
-                                if (tracker != null) {
-                                    dname = aname;
-                                    Log.d(TAG, "Uncloaked: " + dname + " -> " + aname);
+                                if (candidateTracker != null) {
+                                    candidateDname = aname;
+                                    Log.d(TAG, "Uncloaked: " + qname + " -> " + aname);
                                 }
                             }
 
-                            // If tracker found, seek no further
-                            if (tracker != null)
-                                break;
+                            if (candidateTracker != null) {
+                                sawTrackerEvidence = true;
+                                if (tracker == null) {
+                                    tracker = candidateTracker;
+                                    dname = candidateDname;
+                                }
+                            } else if (qname != null || aname != null)
+                                sawNonTrackerEvidence = true;
                         }
                     }
+                }
+
+                if (sawTrackerEvidence && sawNonTrackerEvidence && !blockAmbiguousTrackers) {
+                    Log.d(TAG, "Allowing mixed tracker evidence for " + daddr);
+                    tracker = NO_TRACKER;
                 }
 
                 // No success in finding dname or tracker?
@@ -2286,7 +2309,6 @@ public class ServiceSinkhole extends VpnService {
         }
 
         // Log or block?
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("log_logcat", false)) {
             String app = uidToApp.get(uid);
             if (app == null) {
@@ -2544,8 +2566,8 @@ public class ServiceSinkhole extends VpnService {
                         if (uid > -1) {
                             // Check strict blocking
                             TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                            if (!prefs.getBoolean("strict_blocking", false))
-                                b.unblock(uid, NECESSARY_CATEGORY);
+                            if (b.ensureDefaults(uid, prefs.getBoolean("strict_blocking", false)))
+                                b.saveSettings(context);
 
                             // Show install notification
                             if (prefs.getBoolean("installed", true))

@@ -437,6 +437,8 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strict Blocking</string>
     <string name="summary_strict_blocking">For newly installed apps, block as much data sharing with companies as possible. More apps will break.</string>
     <string name="strict_blocking_explanation">It is recommended for non-experts to disable this option to reduce app breakage. However, this allows some essential sharing with companies.</string>
+    <string name="setting_block_ambiguous_trackers">Block ambiguous trackers</string>
+    <string name="summary_block_ambiguous_trackers">When an IP has both tracker and non-tracker hostname evidence, still block it. Disable this to reduce app breakage.</string>
 
     <string name="exclude_vpn" translatable="false">Tracker Protection</string>
     <string name="exclude_vpn_explanation">Detects and blocks trackers for this app.</string>
@@ -596,4 +598,3 @@ Sincerely,\n\n]]></string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_last_update">Last update: %s</string>
 </resources>
-

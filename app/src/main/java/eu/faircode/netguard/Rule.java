@@ -41,6 +41,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Pair;
+import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -256,6 +257,7 @@ public class Rule {
             boolean show_system = prefs.getBoolean("show_system", false);
             boolean show_nointernet = prefs.getBoolean("show_nointernet", true);
             boolean show_unprotected = prefs.getBoolean("show_unprotected", false);
+            boolean strict_blocking = prefs.getBoolean("strict_blocking", false);
 
             default_screen_wifi = default_screen_wifi && screen_on;
             default_screen_other = default_screen_other && screen_on;
@@ -367,6 +369,8 @@ public class Rule {
             listPI.add(nobody);
 
             DatabaseHelper dh = DatabaseHelper.getInstance(context);
+            TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(context);
+            boolean trackerDefaultsChanged = false;
             for (PackageInfo info : listPI)
                 try {
                     // Skip self
@@ -374,6 +378,8 @@ public class Rule {
                         continue;
 
                     Rule rule = new Rule(dh, info, context);
+
+                    trackerDefaultsChanged |= trackerBlocklist.ensureDefaults(rule.uid, strict_blocking);
 
                     if (pre_system.containsKey(info.packageName))
                         rule.system = pre_system.get(info.packageName);
@@ -436,6 +442,9 @@ public class Rule {
                 } catch (Throwable ex) {
                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                 }
+
+            if (trackerDefaultsChanged)
+                trackerBlocklist.saveSettings(context);
 
             // Load tracking counts
             TrackerList trackerList = TrackerList.getInstance(context);

@@ -93,20 +93,13 @@ public class DetailsActivity extends AppCompatActivity {
      */
     public static void savePrefs(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
 
         // Tracker settings
         TrackerBlocklist b = TrackerBlocklist.getInstance(c);
-        Set<Integer> trackerIntSet = b.getBlocklist();
-        Set<String> trackerSet = Common.intToStringSet(trackerIntSet);
-        editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
-        for (Integer uid : trackerIntSet) {
-            Set<String> subset = b.getSubset(uid);
-            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, subset);
-        }
+        b.saveSettings(c);
 
         // Internet settings
+        SharedPreferences.Editor editor = prefs.edit();
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(c);
         Set<String> internetSet = Common.intToStringSet(internetBlocklist.getBlocklist());
         editor.putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, internetSet);
