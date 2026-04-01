@@ -50,7 +50,6 @@
     <string name="setting_call">在通話期間停用</string>
     <string name="setting_reload_onconnectivity">每當連線改變時均重新載入</string>
     <string name="setting_log_app">搜尋新的追蹤器</string>
-    <string name="setting_log_logcat">將日誌記錄傳輸至 ADB</string>
     <string name="setting_filter">阻擋追蹤器</string>
     <string name="setting_filter_udp">在 UDP 上阻擋追蹤器</string>
     <string name="setting_handover">重新載入時無縫 VPN 交接</string>
