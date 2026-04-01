@@ -515,13 +515,20 @@ public class ActivityOnboarding extends AppCompatActivity {
                 holder.tvStandardDesc.setText(R.string.onboarding_blockingmode_standard_desc);
                 holder.rbStrict.setText(R.string.onboarding_blockingmode_strict_label);
                 holder.tvStrictDesc.setText(R.string.onboarding_blockingmode_strict_desc);
+                holder.rbResearch.setText(R.string.onboarding_blockingmode_research_label);
+                holder.tvResearchDesc.setText(R.string.onboarding_blockingmode_research_desc);
 
                 // Set current selection
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
                         holder.itemView.getContext());
+                boolean researchPreset = prefs.getBoolean("log_logcat", false)
+                        || !prefs.getBoolean("filter", true);
                 String currentMode = prefs.getString(BlockingMode.PREF_BLOCKING_MODE,
                         BlockingMode.getDefaultMode());
-                if (BlockingMode.MODE_MINIMAL.equals(currentMode))
+                holder.rgBlockingMode.setOnCheckedChangeListener(null);
+                if (researchPreset)
+                    holder.rbResearch.setChecked(true);
+                else if (BlockingMode.MODE_MINIMAL.equals(currentMode))
                     holder.rbMinimal.setChecked(true);
                 else if (BlockingMode.MODE_STRICT.equals(currentMode))
                     holder.rbStrict.setChecked(true);
@@ -529,20 +536,33 @@ public class ActivityOnboarding extends AppCompatActivity {
                     holder.rbStandard.setChecked(true);
 
                 holder.rgBlockingMode.setOnCheckedChangeListener((group, checkedId) -> {
-                    String mode;
+                    String mode = BlockingMode.MODE_STANDARD;
+                    boolean enableFilter = true;
+                    boolean enableSni = false;
+                    boolean enableAdbLogging = false;
+                    boolean enableDotBlocking = true;
+
                     if (checkedId == R.id.rbMinimal)
                         mode = BlockingMode.MODE_MINIMAL;
                     else if (checkedId == R.id.rbStrict)
                         mode = BlockingMode.MODE_STRICT;
-                    else
-                        mode = BlockingMode.MODE_STANDARD;
+                    else if (checkedId == R.id.rbResearch) {
+                        mode = BlockingMode.MODE_MINIMAL;
+                        enableSni = true;
+                        enableAdbLogging = true;
+                        enableDotBlocking = false;
+                    }
 
                     PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext())
                             .edit()
                             .putString(BlockingMode.PREF_BLOCKING_MODE, mode)
+                            .putBoolean("filter", enableFilter)
+                            .putBoolean("sni_enabled", enableSni)
+                            .putBoolean("log_logcat", enableAdbLogging)
+                            .putBoolean("block_dot", enableDotBlocking)
                             .apply();
 
-                    if (BlockingMode.MODE_MINIMAL.equals(mode)) {
+                    if (enableFilter && BlockingMode.MODE_MINIMAL.equals(mode)) {
                         BlockingMode.applyMinimalModeExclusions(holder.itemView.getContext());
                     }
                 });
@@ -585,8 +605,8 @@ public class ActivityOnboarding extends AppCompatActivity {
             TextView tvTitle, tvDescription;
             android.widget.ImageView ivIcon;
             RadioGroup rgBlockingMode;
-            RadioButton rbMinimal, rbStandard, rbStrict;
-            TextView tvMinimalDesc, tvStandardDesc, tvStrictDesc;
+            RadioButton rbMinimal, rbStandard, rbStrict, rbResearch;
+            TextView tvMinimalDesc, tvStandardDesc, tvStrictDesc, tvResearchDesc;
 
             BlockingModeViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -597,9 +617,11 @@ public class ActivityOnboarding extends AppCompatActivity {
                 rbMinimal = itemView.findViewById(R.id.rbMinimal);
                 rbStandard = itemView.findViewById(R.id.rbStandard);
                 rbStrict = itemView.findViewById(R.id.rbStrict);
+                rbResearch = itemView.findViewById(R.id.rbResearch);
                 tvMinimalDesc = itemView.findViewById(R.id.tvMinimalDesc);
                 tvStandardDesc = itemView.findViewById(R.id.tvStandardDesc);
                 tvStrictDesc = itemView.findViewById(R.id.tvStrictDesc);
+                tvResearchDesc = itemView.findViewById(R.id.tvResearchDesc);
             }
         }
     }

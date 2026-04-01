@@ -61,14 +61,6 @@
         android:id="@+id/menu_log"
         android:title="@string/menu_log"/>
     <item
-        android:id="@+id/menu_insights"
-        android:title="@string/menu_insights"/>
-    <item
-
-        android:id="@+id/menu_settings"
-        android:visible="true"
-        android:title="@string/menu_settings"/>
-    <item
         android:id="@+id/menu_invite"
         android:visible="false"
         android:title="@string/menu_invite"/>
@@ -78,18 +70,25 @@
         android:visible="false"/>
     <item
         android:id="@+id/menu_csv"
-        android:title="@string/menu_csv"/>
+        android:title="@string/menu_csv"
+        android:visible="false"/>
     <item
         android:id="@+id/menu_troubleshooting"
         android:title="@string/menu_troubleshooting"/>
     <item
         android:id="@+id/menu_about"
-        android:title="@string/menu_about"/>
+        android:title="@string/menu_about"
+        android:visible="false"/>
     <item
         android:id="@+id/menu_support"
-        android:title="@string/menu_support" />
+        android:title="@string/menu_support"
+        android:visible="false" />
     <item
         android:id="@+id/menu_apps"
         android:title="@string/menu_apps"
         android:visible="false" />
+    <item
+        android:id="@+id/menu_settings"
+        android:visible="true"
+        android:title="@string/menu_settings"/>
 </menu>

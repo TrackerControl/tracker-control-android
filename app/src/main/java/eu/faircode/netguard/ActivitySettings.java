@@ -132,8 +132,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         PreferenceGroup cat_options = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_options"))
                 .findPreference("category_options");
-        PreferenceGroup cat_network = (PreferenceGroup) ((PreferenceGroup) screen
-                .findPreference("screen_network_options")).findPreference("category_network_options");
         PreferenceGroup cat_advanced = (PreferenceGroup) ((PreferenceGroup) screen
                 .findPreference("screen_advanced_options")).findPreference("category_advanced_options");
         PreferenceGroup cat_backup = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_backup"))
@@ -534,6 +532,13 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.clearTrackerCaches();
             // Reload tracker data and VPN rules
             TrackerList.reloadTrackerData(this);
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
+
+        else if ("log_logcat".equals(name)) {
+            boolean research = prefs.getBoolean(name, false);
+            if (prefs.getBoolean("sni_enabled", false) != research)
+                prefs.edit().putBoolean("sni_enabled", research).apply();
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 
