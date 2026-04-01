@@ -21,6 +21,13 @@
                 android:key="update_check"
                 android:summary="@string/summary_update"
                 android:title="@string/setting_update" />
+            <ListPreference
+                android:defaultValue="standard"
+                android:entries="@array/blockingModeNames"
+                android:entryValues="@array/blockingModeValues"
+                android:key="blocking_mode"
+                android:summary="@string/summary_blocking_mode_standard"
+                android:title="@string/setting_blocking_mode" />
         </PreferenceCategory>
     </PreferenceScreen>
 
@@ -94,14 +101,9 @@
                 android:title="@string/setting_block_dot" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
-                android:key="strict_blocking"
-                android:summary="@string/summary_strict_blocking"
-                android:title="@string/setting_strict_blocking" />
-            <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="true"
-                android:key="block_ambiguous_trackers"
-                android:summary="@string/summary_block_ambiguous_trackers"
-                android:title="@string/setting_block_ambiguous_trackers" />
+                android:key="sni_enabled"
+                android:summary="@string/summary_sni_enabled"
+                android:title="@string/setting_sni_enabled" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
                 android:key="domain_based_blocking"

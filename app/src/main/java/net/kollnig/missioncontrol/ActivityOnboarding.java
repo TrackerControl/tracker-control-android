@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ import java.util.List;
 import eu.faircode.netguard.ActivityMain;
 import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
+import net.kollnig.missioncontrol.data.BlockingMode;
 
 public class ActivityOnboarding extends AppCompatActivity {
 
@@ -132,7 +135,15 @@ public class ActivityOnboarding extends AppCompatActivity {
             prefs.edit().putBoolean("whatsnew_seen_2026", true).apply();
         }
 
-        // 2. VPN (Only if not already prepared)
+        // 2. Blocking Mode Selection
+        slides.add(new Slide(
+                R.string.onboarding_blockingmode_title,
+                getText(R.string.onboarding_blockingmode_title),
+                getText(R.string.onboarding_blockingmode_desc),
+                R.drawable.ic_rocket2,
+                null, 0, null, true));
+
+        // 3. VPN (Only if not already prepared)
         boolean vpnPrepared = VpnService.prepare(this) == null;
         if (!vpnPrepared) {
             slides.add(new Slide(
@@ -433,14 +444,20 @@ public class ActivityOnboarding extends AppCompatActivity {
         String actionButtonText;
         int warningResId;
         View.OnClickListener actionListener;
+        boolean isBlockingModeSlide;
 
         Slide(int titleResId, CharSequence title, CharSequence desc, int iconResId, String actionButtonText,
                 View.OnClickListener actionListener) {
-            this(titleResId, title, desc, iconResId, actionButtonText, 0, actionListener);
+            this(titleResId, title, desc, iconResId, actionButtonText, 0, actionListener, false);
         }
 
         Slide(int titleResId, CharSequence title, CharSequence desc, int iconResId, String actionButtonText,
                 int warningResId, View.OnClickListener actionListener) {
+            this(titleResId, title, desc, iconResId, actionButtonText, warningResId, actionListener, false);
+        }
+
+        Slide(int titleResId, CharSequence title, CharSequence desc, int iconResId, String actionButtonText,
+                int warningResId, View.OnClickListener actionListener, boolean isBlockingModeSlide) {
             this.titleResId = titleResId;
             this.title = title;
             this.desc = desc;
@@ -448,36 +465,96 @@ public class ActivityOnboarding extends AppCompatActivity {
             this.actionButtonText = actionButtonText;
             this.warningResId = warningResId;
             this.actionListener = actionListener;
+            this.isBlockingModeSlide = isBlockingModeSlide;
         }
     }
 
-    private class OnboardingAdapter extends RecyclerView.Adapter<OnboardingAdapter.SlideViewHolder> {
+    private class OnboardingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int TYPE_STANDARD = 0;
+        private static final int TYPE_BLOCKING_MODE = 1;
         private List<Slide> slides;
 
         OnboardingAdapter(List<Slide> slides) {
             this.slides = slides;
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            return slides.get(position).isBlockingModeSlide ? TYPE_BLOCKING_MODE : TYPE_STANDARD;
+        }
+
         @NonNull
         @Override
-        public SlideViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == TYPE_BLOCKING_MODE) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_onboarding_blocking_mode, parent, false);
+                return new BlockingModeViewHolder(view);
+            }
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_onboarding, parent, false);
             return new SlideViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull SlideViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder vh, int position) {
             Slide slide = slides.get(position);
-            holder.tvTitle.setText(slide.title);
-            holder.tvDescription.setText(slide.desc);
-            holder.ivIcon.setImageResource(slide.iconResId);
 
-            if (slide.actionButtonText != null) {
-                holder.btnAction.setVisibility(View.VISIBLE);
-                holder.btnAction.setText(slide.actionButtonText);
-                holder.btnAction.setOnClickListener(slide.actionListener);
+            if (vh instanceof BlockingModeViewHolder) {
+                BlockingModeViewHolder holder = (BlockingModeViewHolder) vh;
+                holder.tvTitle.setText(slide.title);
+                holder.tvDescription.setText(slide.desc);
+                holder.ivIcon.setImageResource(slide.iconResId);
+
+                holder.rbMinimal.setText(R.string.onboarding_blockingmode_minimal_label);
+                holder.tvMinimalDesc.setText(R.string.onboarding_blockingmode_minimal_desc);
+                holder.rbStandard.setText(R.string.onboarding_blockingmode_standard_label);
+                holder.tvStandardDesc.setText(R.string.onboarding_blockingmode_standard_desc);
+                holder.rbStrict.setText(R.string.onboarding_blockingmode_strict_label);
+                holder.tvStrictDesc.setText(R.string.onboarding_blockingmode_strict_desc);
+
+                // Set current selection
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+                        holder.itemView.getContext());
+                String currentMode = prefs.getString(BlockingMode.PREF_BLOCKING_MODE,
+                        BlockingMode.getDefaultMode());
+                if (BlockingMode.MODE_MINIMAL.equals(currentMode))
+                    holder.rbMinimal.setChecked(true);
+                else if (BlockingMode.MODE_STRICT.equals(currentMode))
+                    holder.rbStrict.setChecked(true);
+                else
+                    holder.rbStandard.setChecked(true);
+
+                holder.rgBlockingMode.setOnCheckedChangeListener((group, checkedId) -> {
+                    String mode;
+                    if (checkedId == R.id.rbMinimal)
+                        mode = BlockingMode.MODE_MINIMAL;
+                    else if (checkedId == R.id.rbStrict)
+                        mode = BlockingMode.MODE_STRICT;
+                    else
+                        mode = BlockingMode.MODE_STANDARD;
+
+                    PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext())
+                            .edit()
+                            .putString(BlockingMode.PREF_BLOCKING_MODE, mode)
+                            .apply();
+
+                    if (BlockingMode.MODE_MINIMAL.equals(mode)) {
+                        BlockingMode.applyMinimalModeExclusions(holder.itemView.getContext());
+                    }
+                });
             } else {
-                holder.btnAction.setVisibility(View.GONE);
+                SlideViewHolder holder = (SlideViewHolder) vh;
+                holder.tvTitle.setText(slide.title);
+                holder.tvDescription.setText(slide.desc);
+                holder.ivIcon.setImageResource(slide.iconResId);
+
+                if (slide.actionButtonText != null) {
+                    holder.btnAction.setVisibility(View.VISIBLE);
+                    holder.btnAction.setText(slide.actionButtonText);
+                    holder.btnAction.setOnClickListener(slide.actionListener);
+                } else {
+                    holder.btnAction.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -497,6 +574,28 @@ public class ActivityOnboarding extends AppCompatActivity {
                 tvDescription = itemView.findViewById(R.id.tvDescription);
                 btnAction = itemView.findViewById(R.id.btnAction);
                 ivIcon = itemView.findViewById(R.id.ivIcon);
+            }
+        }
+
+        class BlockingModeViewHolder extends RecyclerView.ViewHolder {
+            TextView tvTitle, tvDescription;
+            android.widget.ImageView ivIcon;
+            RadioGroup rgBlockingMode;
+            RadioButton rbMinimal, rbStandard, rbStrict;
+            TextView tvMinimalDesc, tvStandardDesc, tvStrictDesc;
+
+            BlockingModeViewHolder(@NonNull View itemView) {
+                super(itemView);
+                tvTitle = itemView.findViewById(R.id.tvTitle);
+                tvDescription = itemView.findViewById(R.id.tvDescription);
+                ivIcon = itemView.findViewById(R.id.ivIcon);
+                rgBlockingMode = itemView.findViewById(R.id.rgBlockingMode);
+                rbMinimal = itemView.findViewById(R.id.rbMinimal);
+                rbStandard = itemView.findViewById(R.id.rbStandard);
+                rbStrict = itemView.findViewById(R.id.rbStrict);
+                tvMinimalDesc = itemView.findViewById(R.id.tvMinimalDesc);
+                tvStandardDesc = itemView.findViewById(R.id.tvStandardDesc);
+                tvStrictDesc = itemView.findViewById(R.id.tvStrictDesc);
             }
         }
     }

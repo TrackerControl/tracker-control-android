@@ -84,6 +84,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -234,6 +235,8 @@ public class ServiceSinkhole extends VpnService {
     private static native void jni_pcap(String name, int record_size, int file_size);
 
     private native void jni_socks5(String addr, int port, String username, String password);
+
+    private native void jni_sni(boolean enabled);
 
     private native void jni_done(long context);
 
@@ -923,11 +926,14 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            // Check if we have additional information from SNI
-            if (packet.data != null
+            // SNI extraction: disabled by default because connecting to tracker IPs
+            // to read TLS ClientHello leaks the user's IP address to the tracker server.
+            // Can be enabled via Settings > Advanced > SNI extraction for research.
+            // The native side (ip.c) is controlled via jni_sni().
+            if (prefs.getBoolean("sni_enabled", false)
+                    && packet.data != null
                     && !packet.data.isEmpty()) {
                 uncertain = 0;
-
                 if (!packet.data.equals(originalDname)) {
                     Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
                     dname = packet.data;
@@ -1663,6 +1669,8 @@ public class ServiceSinkhole extends VpnService {
             else
                 jni_socks5("", 0, "", "");
 
+            jni_sni(prefs.getBoolean("sni_enabled", false));
+
             if (tunnelThread == null) {
                 Log.i(TAG, "Starting tunnel thread context=" + jni_context);
                 jni_start(jni_context, prio);
@@ -2129,9 +2137,8 @@ public class ServiceSinkhole extends VpnService {
                     Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
 
                 // Check if tracker is known
-                if ((!Util.isPlayStoreInstall()
-                        || prefs.getBoolean("log_logcat", false))
-                        && blockKnownTracker(packet.daddr, packet.uid)) {
+                // In minimal mode (including TC Slim), always enable blocking
+                if (blockKnownTracker(packet.daddr, packet.uid)) {
                     filtered = true;
                     packet.allowed = false;
                 }
@@ -2212,7 +2219,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean blockAmbiguousTrackers = prefs.getBoolean("block_ambiguous_trackers", true);
+        boolean blockAmbiguousTrackers = BlockingMode.isStrictMode(this);
         Tracker tracker = null;
         Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
         if (expiringTracker != null) {
@@ -2320,9 +2327,23 @@ public class ServiceSinkhole extends VpnService {
             Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr).getOrExpired() + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
-                TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                return tracker != null
-                        && b.blockedTracker(uid, tracker);
+                if (BlockingMode.isMinimalMode(ServiceSinkhole.this)) {
+                    // Minimal mode: block all non-Content DDG trackers, no granular control
+                    return tracker != null
+                            && TrackerBlocklist.blockedTrackerMinimal(tracker);
+                } else if (BlockingMode.isStrictMode(ServiceSinkhole.this)) {
+                    // Strict mode: block everything including Content category,
+                    // but still respect per-app granular controls
+                    TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                    return tracker != null
+                            && b.blockedTracker(uid, tracker);
+                } else {
+                    // Standard mode: block trackers with granular control,
+                    // Content category allowed by default
+                    TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                    return tracker != null
+                            && b.blockedTracker(uid, tracker);
+                }
             }
         }
 
@@ -2564,9 +2585,9 @@ public class ServiceSinkhole extends VpnService {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                         int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
                         if (uid > -1) {
-                            // Check strict blocking
+                            // Set tracker defaults based on blocking mode
                             TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                            if (b.ensureDefaults(uid, prefs.getBoolean("strict_blocking", false)))
+                            if (b.ensureDefaults(uid, BlockingMode.isStrictMode(context)))
                                 b.saveSettings(context);
 
                             // Show install notification

@@ -50,6 +50,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisWorker;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -318,8 +319,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             };
             holder.mCompaniesList.setAdapter(trackersAdapter);
 
-            if (Util.isPlayStoreInstall(mContext)) {
+            if (Util.isPlayStoreInstall(mContext) || BlockingMode.isMinimalMode(mContext)) {
+                // In TC Slim or minimal mode: no granular per-category/per-company tracker control
                 holder.mSwitchTracker.setVisibility(View.GONE);
+                holder.mCompaniesList.setOnItemClickListener(null);
             } else {
                 boolean enabled = apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid);
                 holder.mSwitchTracker.setEnabled(enabled);
@@ -375,22 +378,27 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             else
                 holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
 
-            // Tracker protection toggle
-            holder.mSwitchVPN.setChecked(tracker_protect.getBoolean(mAppId, true));
-            holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (!buttonView.isPressed())
-                    return; // to fix errors
-                tracker_protect.edit().putBoolean(mAppId, isChecked).apply();
+            // Tracker protection toggle (hidden in minimal mode - only VPN include/exclude)
+            if (BlockingMode.isMinimalMode(mContext)) {
+                holder.mSwitchVPN.setVisibility(View.GONE);
+            } else {
+                holder.mSwitchVPN.setVisibility(View.VISIBLE);
+                holder.mSwitchVPN.setChecked(tracker_protect.getBoolean(mAppId, true));
+                holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    if (!buttonView.isPressed())
+                        return; // to fix errors
+                    tracker_protect.edit().putBoolean(mAppId, isChecked).apply();
 
-                // Move expensive operations off the main thread to prevent UI freezing
-                // Rule.clearCache() can block waiting for a lock held by Rule.getRules()
-                AsyncTask.execute(() -> {
-                    Rule.clearCache(mContext);
-                    ServiceSinkhole.reload("app blocking changed", mContext, false);
+                    // Move expensive operations off the main thread to prevent UI freezing
+                    // Rule.clearCache() can block waiting for a lock held by Rule.getRules()
+                    AsyncTask.execute(() -> {
+                        Rule.clearCache(mContext);
+                        ServiceSinkhole.reload("app blocking changed", mContext, false);
+                    });
+
+                    notifyDataSetChanged();
                 });
-
-                notifyDataSetChanged();
-            });
+            }
 
             // Blocking of Internet
             holder.mSwitchInternet.setEnabled(apply.getBoolean(mAppId, true));

@@ -50,6 +50,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.BlockingMode;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -117,6 +118,28 @@ public class ApplicationEx extends Application {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             createNotificationChannels();
+
+        // Migrate old strict_blocking pref to blocking_mode
+        android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
+            String migratedMode = BlockingMode.getDefaultMode();
+
+            if (prefs.contains("strict_blocking")) {
+                boolean oldStrict = prefs.getBoolean("strict_blocking", false);
+                migratedMode = oldStrict ? BlockingMode.MODE_STRICT : BlockingMode.MODE_STANDARD;
+
+                prefs.edit()
+                        .remove("strict_blocking")
+                        .putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode)
+                        .apply();
+                Log.i(TAG, "Migrated strict_blocking=" + oldStrict + " -> mode=" + migratedMode);
+            } else {
+                prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
+            }
+        }
+
+        // Apply minimal mode VPN exclusions on startup (for DDG-compatible blocking)
+        BlockingMode.applyMinimalModeExclusions(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

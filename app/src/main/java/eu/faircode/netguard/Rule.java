@@ -41,6 +41,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Pair;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
@@ -257,7 +258,7 @@ public class Rule {
             boolean show_system = prefs.getBoolean("show_system", false);
             boolean show_nointernet = prefs.getBoolean("show_nointernet", true);
             boolean show_unprotected = prefs.getBoolean("show_unprotected", false);
-            boolean strict_blocking = prefs.getBoolean("strict_blocking", false);
+            boolean strict_blocking = BlockingMode.isStrictMode(context);
 
             default_screen_wifi = default_screen_wifi && screen_on;
             default_screen_other = default_screen_other && screen_on;

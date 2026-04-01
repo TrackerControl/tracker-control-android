@@ -66,6 +66,7 @@ import androidx.work.WorkManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -286,8 +287,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 || Util.isPlayStoreInstall(this))
             cat_options.removePreference(screen.findPreference("update_check"));
 
-        if (Util.isPlayStoreInstall())
-            cat_advanced.removePreference(screen.findPreference("strict_blocking"));
+        // Blocking mode preference setup
+        Preference pref_blocking_mode = screen.findPreference("blocking_mode");
+        if (pref_blocking_mode != null) {
+            String currentMode = prefs.getString("blocking_mode", BlockingMode.getDefaultMode());
+            updateBlockingModeSummary(pref_blocking_mode, currentMode);
+        }
 
         if (Util.isPlayStoreInstall(this)) {
             Log.i(TAG, "Play store install");
@@ -297,6 +302,18 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             cat_advanced.removePreference(cat_advanced.findPreference("log_app"));
             cat_advanced.removePreference(cat_advanced.findPreference("filter_udp"));
             cat_advanced.findPreference("filter").setEnabled(false);
+        }
+
+        // In minimal mode, hide hosts/blocklist management (not used) and strict_blocking
+        if (BlockingMode.isMinimalMode(this)) {
+            Preference manageBlocklists = cat_advanced.findPreference("manage_blocklists");
+            if (manageBlocklists != null) cat_advanced.removePreference(manageBlocklists);
+            Preference hostsDownload = cat_advanced.findPreference("hosts_download");
+            if (hostsDownload != null) cat_advanced.removePreference(hostsDownload);
+            Preference hostsAutoUpdate = cat_advanced.findPreference("hosts_auto_update");
+            if (hostsAutoUpdate != null) cat_advanced.removePreference(hostsAutoUpdate);
+            Preference domainBlocking = cat_advanced.findPreference("domain_based_blocking");
+            if (domainBlocking != null) cat_advanced.removePreference(domainBlocking);
         }
 
         String last_download = prefs.getString("hosts_last_download", null);
@@ -491,6 +508,31 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         } else if ("lockdown_wifi".equals(name) || "lockdown_other".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
+
+        else if ("blocking_mode".equals(name)) {
+            String mode = prefs.getString(name, BlockingMode.MODE_STANDARD);
+            Preference pref = getPreferenceScreen().findPreference(name);
+            if (pref != null)
+                updateBlockingModeSummary(pref, mode);
+            // Apply VPN exclusions for minimal mode
+            if (BlockingMode.MODE_MINIMAL.equals(mode)) {
+                BlockingMode.applyMinimalModeExclusions(this);
+            }
+            // Update Content category whitelist for all existing apps
+            boolean isStrict = BlockingMode.MODE_STRICT.equals(mode);
+            TrackerBlocklist b = TrackerBlocklist.getInstance(this);
+            if (b.applyStrictModeToAll(isStrict))
+                b.saveSettings(this);
+            // Clear cached tracker lookups (ambiguous IP decisions depend on mode)
+            ServiceSinkhole.clearTrackerCaches();
+            // Reload tracker data and VPN rules
+            TrackerList.reloadTrackerData(this);
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
+
+        else if ("sni_enabled".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
 
         else if ("manage_system".equals(name)) {
             boolean manage = prefs.getBoolean(name, false);
@@ -714,15 +756,19 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("loglevel".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("block_ambiguous_trackers".equals(name)) {
-            ServiceSinkhole.clearTrackerCaches();
-            ServiceSinkhole.reload("changed " + name, this, false);
-        }
-
         else if ("domain_based_blocked".equals(name)) {
             TrackerList.reloadTrackerData(this);
         }
 
+    }
+
+    private void updateBlockingModeSummary(Preference pref, String mode) {
+        if (BlockingMode.MODE_MINIMAL.equals(mode))
+            pref.setSummary(R.string.summary_blocking_mode_minimal);
+        else if (BlockingMode.MODE_STRICT.equals(mode))
+            pref.setSummary(R.string.summary_blocking_mode_strict);
+        else
+            pref.setSummary(R.string.summary_blocking_mode_standard);
     }
 
     @TargetApi(Build.VERSION_CODES.M)

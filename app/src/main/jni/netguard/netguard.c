@@ -31,6 +31,7 @@ char socks5_password[127 + 1];
 int loglevel = ANDROID_LOG_WARN;
 
 extern int max_tun_msg;
+extern int is_play;
 
 extern FILE *pcap_file;
 extern size_t pcap_record_size;
@@ -329,6 +330,12 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1socks5(JNIEnv *env, jobject insta
     ng_delete_alloc(addr, __FILE__, __LINE__);
     ng_delete_alloc(username, __FILE__, __LINE__);
     ng_delete_alloc(password, __FILE__, __LINE__);
+}
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1sni(JNIEnv *env, jobject instance, jboolean enabled) {
+    is_play = (enabled ? 1 : 0);
+    log_android(ANDROID_LOG_WARN, "SNI extraction %s", is_play ? "enabled" : "disabled");
 }
 
 JNIEXPORT void JNICALL

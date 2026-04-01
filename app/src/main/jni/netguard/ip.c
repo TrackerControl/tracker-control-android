@@ -117,11 +117,10 @@ int is_upper_layer(int protocol) {
             protocol == IPPROTO_ICMPV6);
 }
 
-#ifdef PLAY
-int is_play = 1;
-#else
+// SNI extraction disabled by default: connecting to tracker IPs to read TLS
+// ClientHello leaks the user's IP address to the tracker server.
+// Can be enabled at runtime via jni_sni() for research purposes.
 int is_play = 0;
-#endif
 
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
