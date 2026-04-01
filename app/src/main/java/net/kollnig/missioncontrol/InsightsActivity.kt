@@ -152,23 +152,12 @@ class InsightsActivity : AppCompatActivity() {
         // Animate main number
         animateNumber(tvTotalAttempts, 0, data.totalTrackingAttempts)
 
-        // Hide blocked/allowed stats for Play Store version
-        val isPlayStore = Util.isPlayStoreInstall()
-        llBlockedAllowed.visibility = if (isPlayStore) View.GONE else View.VISIBLE
-
-        // Set shocking fact - different text for Play Store
-        if (isPlayStore) {
-            tvShockingFact.text = getString(
-                R.string.insights_shocking_fact_playstore,
-                data.uniqueTrackerCompanies
-            )
-        } else {
-            tvShockingFact.text = getString(
-                R.string.insights_shocking_fact,
-                data.uniqueTrackerCompanies,
-                data.totalTrackingAttempts
-            )
-        }
+        llBlockedAllowed.visibility = View.VISIBLE
+        tvShockingFact.text = getString(
+            R.string.insights_shocking_fact,
+            data.uniqueTrackerCompanies,
+            data.totalTrackingAttempts
+        )
 
         // Blocked/Allowed stats
         animateNumber(tvBlockedCount, 0, data.blockedTrackingAttempts)
@@ -303,12 +292,9 @@ class InsightsActivity : AppCompatActivity() {
                         imageFile
                     )
 
-                    val isPlayStore = Util.isPlayStoreInstall()
-                    val shareMsgRes = if (isPlayStore) R.string.insights_share_message_playstore else R.string.insights_share_message
-
                     val shareText = getString(
-                        shareMsgRes,
-                        if (isPlayStore) data.totalTrackingAttempts else data.blockedTrackingAttempts,
+                        R.string.insights_share_message,
+                        data.blockedTrackingAttempts,
                         data.uniqueTrackerCompanies
                     )
 
@@ -345,13 +331,8 @@ class InsightsActivity : AppCompatActivity() {
             // Hero stat: Total Hosts
             tvTotalBlocked.text = nf.format(data.totalTrackingAttempts)
 
-            // Blocked stat: hide on Play Store
-            if (Util.isPlayStoreInstall()) {
-                llBlockedStat.visibility = View.GONE
-            } else {
-                llBlockedStat.visibility = View.VISIBLE
-                tvBlockedCount.text = nf.format(data.blockedTrackingAttempts)
-            }
+            llBlockedStat.visibility = View.VISIBLE
+            tvBlockedCount.text = nf.format(data.blockedTrackingAttempts)
 
             // Companies count
             tvCompanies.text = data.uniqueTrackerCompanies.toString()
@@ -425,4 +406,3 @@ class InsightsActivity : AppCompatActivity() {
         private const val TAG = "InsightsActivity"
     }
 }
-

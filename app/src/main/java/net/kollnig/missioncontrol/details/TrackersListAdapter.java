@@ -249,8 +249,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (_holder instanceof VHItem) {
             VHItem holder = (VHItem) _holder;
 
-            // Hide blocking tips on Play Store
-            holder.mBlockingTip.setVisibility(Util.isPlayStoreInstall() ? View.GONE : View.VISIBLE);
+            boolean allowGranularControl = !BlockingMode.isMinimalMode(mContext);
+            holder.mBlockingTip.setVisibility(allowGranularControl ? View.VISIBLE : View.GONE);
 
             // Load data
             final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
@@ -287,14 +287,32 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     Collections.sort(sortedHosts);
                     String hosts = TextUtils.join("\n• ", sortedHosts);
 
-                    boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                     Spannable spannable;
-                    if (!categoryBlocked || Util.isPlayStoreInstall()) {
+                    boolean showStatus;
+                    boolean companyBlocked;
+
+                    if (BlockingMode.isMinimalMode(getContext())) {
+                        showStatus = true;
+                        companyBlocked = TrackerBlocklist.blockedTrackerMinimal(t);
+                    } else {
+                        boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
+                        showStatus = true;
+                        companyBlocked = categoryBlocked && b.blocked(mAppUid,
+                                TrackerBlocklist.getBlockingKey(t));
+
+                        // In standard mode, ambiguous trackers are allowed at runtime
+                        // even if configured as blocked — reflect that in the UI
+                        if (companyBlocked
+                                && !BlockingMode.isStrictMode(getContext())
+                                && t.isAllowedInStandardMode()) {
+                            companyBlocked = false;
+                        }
+                    }
+
+                    if (!showStatus) {
                         String text = String.format("%s\n• %s", title, hosts);
                         spannable = new SpannableString(text);
                     } else {
-                        boolean companyBlocked = b.blocked(mAppUid,
-                                TrackerBlocklist.getBlockingKey(t));
                         String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
                         int color = ContextCompat.getColor(getContext(),
                                 companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
@@ -319,9 +337,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             };
             holder.mCompaniesList.setAdapter(trackersAdapter);
 
-            if (Util.isPlayStoreInstall(mContext) || BlockingMode.isMinimalMode(mContext)) {
-                // In TC Slim or minimal mode: no granular per-category/per-company tracker control
-                holder.mSwitchTracker.setVisibility(View.GONE);
+            if (BlockingMode.isMinimalMode(mContext)) {
+                // Minimal mode: show read-only blocking status (no granular control)
+                holder.mSwitchTracker.setVisibility(View.VISIBLE);
+                holder.mSwitchTracker.setEnabled(false);
+                holder.mSwitchTracker.setChecked(
+                        !TrackerBlocklist.NECESSARY_CATEGORY.equals(trackerCategoryName));
+                holder.mSwitchTracker.setOnCheckedChangeListener(null);
                 holder.mCompaniesList.setOnItemClickListener(null);
             } else {
                 boolean enabled = apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid);
@@ -372,16 +394,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
-            // Explain blocking, except in Play Store version
-            if (Util.isPlayStoreInstall())
-                holder.mLibraryExplanation.setText(R.string.trackers_static_explanation_playstore);
-            else
-                holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
+            holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
 
-            // Tracker protection toggle (hidden in minimal mode - only VPN include/exclude)
-            if (BlockingMode.isMinimalMode(mContext)) {
-                holder.mSwitchVPN.setVisibility(View.GONE);
-            } else {
+            boolean showTrackerProtection = !BlockingMode.isMinimalMode(mContext);
+            holder.mTrackerProtectionRow.setVisibility(showTrackerProtection ? View.VISIBLE : View.GONE);
+            holder.mTrackerProtectionDivider.setVisibility(showTrackerProtection ? View.VISIBLE : View.GONE);
+            holder.mSwitchVPN.setOnCheckedChangeListener(null);
+
+            // Tracker protection toggle (not available in minimal mode)
+            if (showTrackerProtection) {
                 holder.mSwitchVPN.setVisibility(View.VISIBLE);
                 holder.mSwitchVPN.setChecked(tracker_protect.getBoolean(mAppId, true));
                 holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -398,6 +419,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     notifyDataSetChanged();
                 });
+            } else {
+                holder.mSwitchVPN.setVisibility(View.GONE);
             }
 
             // Blocking of Internet
@@ -477,6 +500,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final Switch mSwitchInternet;
         final Switch mSwitchVPN;
         final Switch mSwitchVpnExclude;
+        final View mTrackerProtectionRow;
+        final View mTrackerProtectionDivider;
 
         VHHeader(View view) {
             super(view);
@@ -485,6 +510,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mSwitchInternet = view.findViewById(R.id.switch_internet);
             mSwitchVPN = view.findViewById(R.id.switch_vpn);
             mSwitchVpnExclude = view.findViewById(R.id.switch_vpn_exclude);
+            mTrackerProtectionRow = view.findViewById(R.id.rowTrackerProtection);
+            mTrackerProtectionDivider = view.findViewById(R.id.dividerTrackerProtection);
         }
     }
 }

@@ -239,6 +239,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View
+                android:id="@+id/dividerTrackerProtection"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginVertical="12dp"
@@ -246,6 +247,7 @@
 
             <!-- Tracker Protection Toggle -->
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/rowTrackerProtection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

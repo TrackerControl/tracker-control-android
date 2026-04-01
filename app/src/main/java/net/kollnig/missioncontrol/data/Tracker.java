@@ -27,6 +27,8 @@ import java.util.Set;
  */
 public class Tracker {
     private final Set<String> hosts = new HashSet<>();
+    private boolean uncertain;
+    private boolean allowedInStandardMode;
     public String name;
     public String category;
     public Long lastSeen;
@@ -106,5 +108,28 @@ public class Tracker {
      */
     public Set<String> getHosts() {
         return hosts;
+    }
+
+    /**
+     * Whether any of this tracker's hosts are uncertain/ambiguous.
+     */
+    public boolean isUncertain() {
+        return uncertain;
+    }
+
+    void setUncertain(boolean uncertain) {
+        this.uncertain = uncertain;
+    }
+
+    /**
+     * Whether any observed host would be allowed in standard mode because
+     * the same IP also had non-tracker evidence.
+     */
+    public boolean isAllowedInStandardMode() {
+        return allowedInStandardMode;
+    }
+
+    void setAllowedInStandardMode(boolean allowedInStandardMode) {
+        this.allowedInStandardMode = allowedInStandardMode;
     }
 }

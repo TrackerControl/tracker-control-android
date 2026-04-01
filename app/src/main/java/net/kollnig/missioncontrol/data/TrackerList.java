@@ -28,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import androidx.preference.PreferenceManager;
 
+import eu.faircode.netguard.DatabaseHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -271,7 +273,10 @@ public class TrackerList {
                 outer: do {
                     String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
                     long lastSeen = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
-                    boolean uncertain = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain")) == 2;
+                    int uncertainty = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain"));
+                    boolean uncertain = uncertainty >= DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER;
+                    boolean allowedInStandardMode =
+                            uncertainty == DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER;
 
                     Tracker tracker = findTracker(host);
                     if (tracker == null)
@@ -301,6 +306,10 @@ public class TrackerList {
                         if (child.name != null
                                 && child.name.equals(name)) {
                             child.addHost(host);
+                            if (uncertain)
+                                child.setUncertain(true);
+                            if (allowedInStandardMode)
+                                child.setAllowedInStandardMode(true);
 
                             if (child.lastSeen < lastSeen)
                                 child.lastSeen = lastSeen;
@@ -311,6 +320,8 @@ public class TrackerList {
 
                     Tracker child = new Tracker(name, category, lastSeen);
                     child.addHost(host);
+                    child.setUncertain(uncertain);
+                    child.setAllowedInStandardMode(allowedInStandardMode);
                     categoryCompany.getChildren().add(child);
                 } while (cursor.moveToNext());
             }

@@ -416,7 +416,8 @@ public class Rule {
                         rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
                         rule.apply = apply.getBoolean(info.packageName, true);
-                        rule.tracker_protect = tracker_protect.getBoolean(info.packageName, true);
+                        rule.tracker_protect = BlockingMode.isTrackerProtectionEnabled(
+                                context, tracker_protect, info.packageName);
                         rule.notify = notify.getBoolean(info.packageName, true);
 
                         // Related packages

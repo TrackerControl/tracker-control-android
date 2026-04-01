@@ -78,6 +78,16 @@ public class BlockingMode {
     }
 
     /**
+     * Minimal mode does not support per-app tracker protection toggles.
+     * Apps are either included in the VPN or excluded from it entirely.
+     */
+    public static boolean isTrackerProtectionEnabled(Context c,
+            SharedPreferences trackerProtectPrefs,
+            String packageName) {
+        return !isMinimalMode(c) || trackerProtectPrefs.getBoolean(packageName, true);
+    }
+
+    /**
      * Get the default blocking mode for new users.
      * Minimal is the safest default — least app breakage.
      */

@@ -44,6 +44,11 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+    public static final int ACCESS_UNCERTAIN_NONE = 0;
+    public static final int ACCESS_UNCERTAIN_SHARED_IP = 1;
+    public static final int ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER = 2;
+    public static final int ACCESS_UNCERTAIN_MULTIPLE_TRACKERS = 3;
+
     public Cursor getHosts(int uid) {
         lock.readLock().lock();
         try {

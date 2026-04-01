@@ -102,9 +102,6 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         if (!Common.hasAdSettings(getContext()))
             v.findViewById(R.id.adsettings_card).setVisibility(View.GONE);
 
-        if (Util.isPlayStoreInstall(getContext())) {
-            v.findViewById(R.id.tracker_card).setVisibility(View.GONE);
-        }
     }
 
     @Override

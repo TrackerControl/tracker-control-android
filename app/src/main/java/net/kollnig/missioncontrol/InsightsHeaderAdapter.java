@@ -137,13 +137,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
                                     context.getPackageName() + ".provider",
                                     imageFile);
 
-                            boolean isPlayStore = Util.isPlayStoreInstall();
-                            int shareMsgRes = isPlayStore ? R.string.insights_share_message_playstore
-                                    : R.string.insights_share_message;
-
                             String shareText = context.getString(
-                                    shareMsgRes,
-                                    isPlayStore ? data.getTotalTrackingAttempts() : data.getBlockedTrackingAttempts(),
+                                    R.string.insights_share_message,
+                                    data.getBlockedTrackingAttempts(),
                                     data.getUniqueTrackerCompanies());
 
                             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -186,13 +182,8 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             // Hero stat: Total Hosts
             tvTotalBlocked.setText(nf.format(data.getTotalTrackingAttempts()));
 
-            // Blocked stat: hide on Play Store
-            if (Util.isPlayStoreInstall()) {
-                llBlockedStat.setVisibility(View.GONE);
-            } else {
-                llBlockedStat.setVisibility(View.VISIBLE);
-                tvBlockedCount.setText(nf.format(data.getBlockedTrackingAttempts()));
-            }
+            llBlockedStat.setVisibility(View.VISIBLE);
+            tvBlockedCount.setText(nf.format(data.getBlockedTrackingAttempts()));
 
             // Companies count
             tvCompanies.setText(String.valueOf(data.getUniqueTrackerCompanies()));

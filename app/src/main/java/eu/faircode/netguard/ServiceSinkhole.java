@@ -883,15 +883,18 @@ public class ServiceSinkhole extends VpnService {
             String dname = null;
             String originalDname = null;
 
-            int uncertain = 0;
+            int uncertain = DatabaseHelper.ACCESS_UNCERTAIN_NONE;
             boolean isTracker = false;
             try (Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false)) {
                 uncertain = (lookup != null
-                        && lookup.getCount() > 1) ? 1 : 0;
+                        && lookup.getCount() > 1) ? DatabaseHelper.ACCESS_UNCERTAIN_SHARED_IP
+                                : DatabaseHelper.ACCESS_UNCERTAIN_NONE;
 
                 // Loop until we find tracker or reach last entry
                 if (lookup != null) {
                     Pair<Tracker, String> foundTracker = new Pair<>(NO_TRACKER, null);
+                    boolean sawNonTrackerEvidence = false;
+                    boolean sawDifferentTrackerEvidence = false;
 
                     while (lookup.moveToNext()) {
                         dname = lookup.getString(lookup.getColumnIndex("qname"));
@@ -908,16 +911,20 @@ public class ServiceSinkhole extends VpnService {
                             }
 
                             if (foundTracker.first != NO_TRACKER
-                                    && (p.first == null // could have uncertain tracker company if no company found for
-                                                        // an observed domain
-                                            || !Objects.equals(foundTracker.first.name, p.first.name)) // we have an
-                                                                                                       // uncertain
-                                                                                                       // tracker
-                                                                                                       // company
-                                    && uncertain == 1) {
-                                uncertain = 2;
-                                break;
+                                    && p.first != null
+                                    && !Objects.equals(foundTracker.first.name, p.first.name)) {
+                                sawDifferentTrackerEvidence = true;
+                            } else if (p.first == null) {
+                                sawNonTrackerEvidence = true;
                             }
+                        }
+                    }
+
+                    if (uncertain == DatabaseHelper.ACCESS_UNCERTAIN_SHARED_IP && foundTracker.first != NO_TRACKER) {
+                        if (sawNonTrackerEvidence) {
+                            uncertain = DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER;
+                        } else if (sawDifferentTrackerEvidence) {
+                            uncertain = DatabaseHelper.ACCESS_UNCERTAIN_MULTIPLE_TRACKERS;
                         }
                     }
 
@@ -933,7 +940,7 @@ public class ServiceSinkhole extends VpnService {
             if (prefs.getBoolean("sni_enabled", false)
                     && packet.data != null
                     && !packet.data.isEmpty()) {
-                uncertain = 0;
+                uncertain = DatabaseHelper.ACCESS_UNCERTAIN_NONE;
                 if (!packet.data.equals(originalDname)) {
                     Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
                     dname = packet.data;
@@ -941,7 +948,7 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            if (uncertain == 1) // multiple dnames correspond to same IP address
+            if (uncertain == DatabaseHelper.ACCESS_UNCERTAIN_SHARED_IP) // multiple dnames correspond to same IP address
                 Log.d(TAG, "Found uncertain entry: " + dname);
 
             // Traffic log
@@ -2207,7 +2214,7 @@ public class ServiceSinkhole extends VpnService {
         if (trackerProtectPrefs == null) {
             trackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         }
-        if (!trackerProtectPrefs.getBoolean(packageName, true)) {
+        if (!BlockingMode.isTrackerProtectionEnabled(this, trackerProtectPrefs, packageName)) {
             return false;
         }
 

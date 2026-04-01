@@ -97,7 +97,7 @@ class InsightsDataProvider(context: Context) {
                     if (!applyPrefs.getBoolean(packageName, true)) continue
 
                     // Check if tracker protection is disabled for this app
-                    if (!trackerProtectPrefs.getBoolean(packageName, true)) continue
+                    if (!BlockingMode.isTrackerProtectionEnabled(context, trackerProtectPrefs, packageName)) continue
 
                     // Find tracker company for this hostname
                     val tracker = TrackerList.findTracker(daddr) ?: continue
