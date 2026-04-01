@@ -452,6 +452,9 @@ Sincerely,\n\n]]></string>
     <string name="setting_block_ambiguous_trackers">Block ambiguous trackers</string>
     <string name="summary_block_ambiguous_trackers">When an IP has both tracker and non-tracker hostname evidence, still block it. Disable this to reduce app breakage.</string>
 
+    <string name="setting_sni_enabled">SNI extraction (research)</string>
+    <string name="summary_sni_enabled">Extract hostnames from TLS connections for more accurate tracker detection. Warning: this leaks your IP address to tracker servers. Only enable for research.</string>
+
     <string name="setting_blocking_mode">Blocking Mode</string>
     <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers and known incompatible apps are automatically excluded. Fewest app issues.</string>
     <string name="summary_blocking_mode_standard">Standard: Blocks all known trackers from multiple lists (X-Ray, Disconnect, DuckDuckGo). Essential services (e.g. content delivery) are allowed. Good balance of privacy and compatibility.</string>

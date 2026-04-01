@@ -67,12 +67,22 @@ There are multiple versions of TrackerControl:
 | :--- |:----------------------:| :---: |
 | **Tracker Analysis** |           ✅            | ✅ |
 | **Traffic Log** |           ✅            | ✅ |
-| **Tracker & Ad Blocking** | ❌ (Google Restriction) | ✅ |
+| **Tracker & Ad Blocking** |     ✅ (Minimal mode)     | ✅ (All modes) |
 | **Secure DNS (DoH)** |           ✅            | ✅ |
+
+TrackerControl offers three **Blocking Modes**:
+
+| | Minimal | Standard | Strict |
+| :--- | :---: | :---: | :---: |
+| **Tracker lists** | DuckDuckGo only | All (X-Ray, Disconnect, DDG) | All |
+| **Essential services** | Allowed | Allowed | Blocked |
+| **Ambiguous shared IPs** | Allowed | Allowed | Blocked |
+| **Granular per-tracker control** | No | Yes | Yes |
+| **Default for** | Play Store (Slim) | F-Droid / GitHub | — |
 
 If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
-If you're interested in *analysing* tracking and generating factual evidence of it (e.g. for research), then choose the version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play). The analysis results from this version will usually be more accurate.
+The version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) defaults to Minimal blocking mode (DuckDuckGo-compatible) for maximum app compatibility. All versions allow you to change the blocking mode in Settings.
 
 ## Example Use
 
@@ -82,7 +92,7 @@ TrackerControl is mainly designed to help you investigate the tracking practices
 
 Mobile trackers rely on the sending of personal data over the internet. This is why tracking can be detected and analysed from apps' network traffic. This is the core functionality of TrackerControl. The advantage of this approach over tracker library analysis is that actual evidence of data sharing is gathered; by contrast, when analysing solely the presence of tracking libraries in apps, some of these libraries may never be activated by an app at run-time.
 
-At the moment, TrackerControl Slim, available on the [Google Play Store](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) is the preferred tool for tracking analysis, because this version of TrackerControl does not block network traffic and additionally resolves contacted domains using TLS Server Name Indication.
+TrackerControl analyses network traffic locally on the device using DNS-based detection. TLS Server Name Indication (SNI) extraction is disabled by default because it requires connecting to tracker servers, leaking the user's IP address. SNI can be re-enabled from the advanced settings for research purposes.
 
 You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
 
@@ -241,6 +251,8 @@ that is distributed with the Firefox browser.
 *Peter Lowe's Blocklist*: TrackerControl uses the IP blocklist provided by [Peter Lowe](https://pgl.yoyo.org/adservers/iplist.php). Note that this bans anyone from making money from this, see the [license](https://pgl.yoyo.org/license/).
 
 *DuckDuckGo Tracker Radar*: TrackerControl uses some (but not all) [information](https://github.com/duckduckgo/tracker-radar) that lies at the heart of DuckDuckGo's tracking analysis technologies.
+
+*DuckDuckGo App Exclusions*: TrackerControl's Minimal blocking mode uses a list of excluded apps (browsers, system services, known incompatible apps) derived from DuckDuckGo's [privacy-configuration](https://github.com/duckduckgo/privacy-configuration) (Apache 2.0).
 
 ## License
 Except where indicated otherwise, this project is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
