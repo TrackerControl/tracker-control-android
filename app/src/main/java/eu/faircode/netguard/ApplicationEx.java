@@ -148,8 +148,8 @@ public class ApplicationEx extends Application {
             }
         }
 
-        // Apply minimal mode VPN exclusions on startup (for DDG-compatible blocking)
-        BlockingMode.applyMinimalModeExclusions(this);
+        // Keep VPN exclusions aligned with the selected blocking mode on startup.
+        BlockingMode.syncModeExclusions(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

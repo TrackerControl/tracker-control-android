@@ -30,8 +30,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import eu.faircode.netguard.Util;
@@ -49,9 +51,10 @@ import eu.faircode.netguard.Util;
 public class BlockingMode {
     private static final String TAG = BlockingMode.class.getSimpleName();
     public static final String PREF_BLOCKING_MODE = "blocking_mode";
-    public static final String MODE_MINIMAL = "minimal";
-    public static final String MODE_STANDARD = "standard";
-    public static final String MODE_STRICT = "strict";
+    private static final String PREF_MINIMAL_AUTO_EXCLUDED_APPS = "minimal_auto_excluded_apps";
+    public static final String MODE_MINIMAL = BlockingModeLogic.MODE_MINIMAL;
+    public static final String MODE_STANDARD = BlockingModeLogic.MODE_STANDARD;
+    public static final String MODE_STRICT = BlockingModeLogic.MODE_STRICT;
 
     private static Set<String> excludedApps;
 
@@ -149,26 +152,59 @@ public class BlockingMode {
     }
 
     /**
-     * Apply minimal mode exclusions to the apply SharedPreferences.
-     * Called when switching to minimal mode or on first run with minimal mode default.
+     * Synchronize auto-managed VPN exclusions with the selected blocking mode.
+     * Minimal mode auto-excludes known incompatible apps; standard/strict restore
+     * any exclusions that were added automatically when minimal mode was active.
+     */
+    public static void syncModeExclusions(Context c) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences apply = c.getSharedPreferences("apply", Context.MODE_PRIVATE);
+        BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
+                getMode(c),
+                getExcludedApps(c),
+                getBooleanPrefs(apply),
+                getAutoExcludedApps(prefs));
+
+        if (!result.applyFalsePackages.isEmpty() || !result.applyRemovals.isEmpty()) {
+            SharedPreferences.Editor applyEditor = apply.edit();
+            for (String packageName : result.applyRemovals)
+                applyEditor.remove(packageName);
+            for (String packageName : result.applyFalsePackages)
+                applyEditor.putBoolean(packageName, false);
+            applyEditor.apply();
+        }
+
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        if (result.autoExcludedApps.isEmpty())
+            prefsEditor.remove(PREF_MINIMAL_AUTO_EXCLUDED_APPS);
+        else
+            prefsEditor.putStringSet(PREF_MINIMAL_AUTO_EXCLUDED_APPS, result.autoExcludedApps);
+        prefsEditor.apply();
+
+        Log.i(TAG, (isMinimalMode(c) ? "Applied" : "Restored") + " mode-managed VPN exclusions");
+    }
+
+    /**
+     * Backwards-compatible entry point for callers that only knew about applying
+     * minimal mode exclusions.
      */
     public static void applyMinimalModeExclusions(Context c) {
-        if (!isMinimalMode(c))
+        syncModeExclusions(c);
+    }
+
+    public static void clearAutoExcludedApp(Context c, String packageName) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        Set<String> autoExcludedApps = getAutoExcludedApps(prefs);
+        Set<String> updatedAutoExcludedApps = BlockingModeLogic.clearAutoExcludedApp(autoExcludedApps, packageName);
+        if (autoExcludedApps.equals(updatedAutoExcludedApps))
             return;
 
-        Set<String> excluded = getExcludedApps(c);
-        SharedPreferences apply = c.getSharedPreferences("apply", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = apply.edit();
-
-        for (String packageName : excluded) {
-            // Only set to false if not already explicitly configured by user
-            if (!apply.contains(packageName)) {
-                editor.putBoolean(packageName, false);
-            }
-        }
+        SharedPreferences.Editor editor = prefs.edit();
+        if (updatedAutoExcludedApps.isEmpty())
+            editor.remove(PREF_MINIMAL_AUTO_EXCLUDED_APPS);
+        else
+            editor.putStringSet(PREF_MINIMAL_AUTO_EXCLUDED_APPS, updatedAutoExcludedApps);
         editor.apply();
-
-        Log.i(TAG, "Applied minimal mode VPN exclusions");
     }
 
     /**
@@ -176,5 +212,17 @@ public class BlockingMode {
      */
     public static void invalidateCache() {
         excludedApps = null;
+    }
+
+    private static Set<String> getAutoExcludedApps(SharedPreferences prefs) {
+        return new HashSet<>(prefs.getStringSet(PREF_MINIMAL_AUTO_EXCLUDED_APPS, Collections.emptySet()));
+    }
+
+    private static Map<String, Boolean> getBooleanPrefs(SharedPreferences prefs) {
+        Map<String, Boolean> values = new HashMap<>();
+        for (Map.Entry<String, ?> entry : prefs.getAll().entrySet())
+            if (entry.getValue() instanceof Boolean)
+                values.put(entry.getKey(), (Boolean) entry.getValue());
+        return values;
     }
 }

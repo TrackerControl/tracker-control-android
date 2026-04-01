@@ -85,6 +85,7 @@ import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.BlockingMode;
+import net.kollnig.missioncontrol.data.BlockingModeLogic;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -2232,7 +2233,8 @@ public class ServiceSinkhole extends VpnService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean blockAmbiguousTrackers = BlockingMode.isStrictMode(this);
+        String blockingMode = BlockingMode.getMode(this);
+        boolean blockAmbiguousTrackers = BlockingModeLogic.blocksAmbiguousTrackerIp(blockingMode);
         Tracker tracker = null;
         Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
         if (expiringTracker != null) {
@@ -2340,23 +2342,16 @@ public class ServiceSinkhole extends VpnService {
             Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr).getOrExpired() + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
-                if (BlockingMode.isMinimalMode(ServiceSinkhole.this)) {
-                    // Minimal mode: block all non-Content DDG trackers, no granular control
-                    return tracker != null
-                            && TrackerBlocklist.blockedTrackerMinimal(tracker);
-                } else if (BlockingMode.isStrictMode(ServiceSinkhole.this)) {
-                    // Strict mode: block everything including Content category,
-                    // but still respect per-app granular controls
+                boolean blockedByGranularRule = false;
+                if (!BlockingMode.MODE_MINIMAL.equals(blockingMode)) {
                     TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                    return tracker != null
-                            && b.blockedTracker(uid, tracker);
-                } else {
-                    // Standard mode: block trackers with granular control,
-                    // Content category allowed by default
-                    TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                    return tracker != null
-                            && b.blockedTracker(uid, tracker);
+                    blockedByGranularRule = b.blockedTracker(uid, tracker);
                 }
+
+                return BlockingModeLogic.shouldBlockKnownTracker(
+                        blockingMode,
+                        tracker.category,
+                        blockedByGranularRule);
             }
         }
 
@@ -2630,6 +2625,7 @@ public class ServiceSinkhole extends VpnService {
                         context.getSharedPreferences("lockdown", Context.MODE_PRIVATE).edit().remove(packageName)
                                 .apply();
                         context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+                        BlockingMode.clearAutoExcludedApp(context, packageName);
                         context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                         context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
 

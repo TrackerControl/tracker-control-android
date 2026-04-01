@@ -445,6 +445,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 if (!buttonView.isPressed())
                     return;
                 apply.edit().putBoolean(mAppId, !isChecked).apply();
+                BlockingMode.clearAutoExcludedApp(mContext, mAppId);
 
                 AsyncTask.execute(() -> {
                     Rule.clearCache(mContext);

@@ -515,14 +515,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("blocking_mode".equals(name)) {
-            String mode = prefs.getString(name, BlockingMode.MODE_STANDARD);
+            String mode = prefs.getString(name, BlockingMode.getDefaultMode());
             Preference pref = getPreferenceScreen().findPreference(name);
             if (pref != null)
                 updateBlockingModeSummary(pref, mode);
-            // Apply VPN exclusions for minimal mode
-            if (BlockingMode.MODE_MINIMAL.equals(mode)) {
-                BlockingMode.applyMinimalModeExclusions(this);
-            }
+            BlockingMode.syncModeExclusions(this);
             // Update Content category whitelist for all existing apps
             boolean isStrict = BlockingMode.MODE_STRICT.equals(mode);
             TrackerBlocklist b = TrackerBlocklist.getInstance(this);

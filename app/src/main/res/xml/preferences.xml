@@ -7,11 +7,11 @@
             android:layout="@layout/pref_cat"
             android:title="@string/setting_options">
             <ListPreference
-                android:defaultValue="standard"
+                android:defaultValue="minimal"
                 android:entries="@array/blockingModeNames"
                 android:entryValues="@array/blockingModeValues"
                 android:key="blocking_mode"
-                android:summary="@string/summary_blocking_mode_standard"
+                android:summary="@string/summary_blocking_mode_minimal"
                 android:title="@string/setting_blocking_mode" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"

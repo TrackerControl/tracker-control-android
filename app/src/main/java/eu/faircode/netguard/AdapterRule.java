@@ -515,6 +515,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             other.edit().putBoolean(rule.packageName, rule.other_blocked).apply();
 
         apply.edit().putBoolean(rule.packageName, rule.apply).apply();
+        BlockingMode.clearAutoExcludedApp(context, rule.packageName);
         tracker_protect.edit().putBoolean(rule.packageName, rule.tracker_protect).apply();
 
         if (rule.screen_wifi == rule.screen_wifi_default)

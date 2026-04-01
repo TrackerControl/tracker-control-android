@@ -78,11 +78,18 @@ TrackerControl offers three **Blocking Modes**:
 | **Essential services** | Allowed | Allowed | Blocked |
 | **Ambiguous shared IPs** | Allowed | Allowed | Blocked |
 | **Granular per-tracker control** | No | Yes | Yes |
-| **Default for** | Play Store (Slim) | F-Droid / GitHub | — |
+| **Auto-exclude known incompatible apps from VPN** | Yes | No | No |
+| **Current default for new installs** | Yes | No | No |
+
+In practice, the modes differ as follows:
+
+- **Minimal** uses only DuckDuckGo's mobile tracker list, blocks only trackers that DuckDuckGo marks as safe to block, does not offer per-tracker toggles, and automatically excludes known incompatible apps such as browsers from the VPN for compatibility.
+- **Standard** uses all tracker sources, keeps per-app and per-tracker controls enabled, and allows the `Content` category by default to reduce breakage.
+- **Strict** uses the same tracker sources as Standard, but also blocks the `Content` category and blocks ambiguous mixed shared-IP cases where a tracker hostname and a non-tracker hostname resolve to the same IP.
 
 If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
-The version from [Google Play](https://play.google.com/store/apps/details?id=net.kollnig.missioncontrol.play) defaults to Minimal blocking mode (DuckDuckGo-compatible) for maximum app compatibility. All versions allow you to change the blocking mode in Settings.
+TrackerControl currently defaults to Minimal blocking mode for new installs. All versions allow you to change the blocking mode in Settings.
 
 ## Example Use
 
