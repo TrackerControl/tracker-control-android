@@ -23,10 +23,6 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 /**
@@ -87,7 +84,7 @@ public class BlockingMode {
     public static boolean isTrackerProtectionEnabled(Context c,
             SharedPreferences trackerProtectPrefs,
             String packageName) {
-        return !isMinimalMode(c) || trackerProtectPrefs.getBoolean(packageName, true);
+        return isMinimalMode(c) || trackerProtectPrefs.getBoolean(packageName, true);
     }
 
     /**
@@ -131,21 +128,10 @@ public class BlockingMode {
                 throw new IOException("No bytes read.");
 
             String json = new String(buffer, StandardCharsets.UTF_8);
-            JSONObject root = new JSONObject(json);
-
-            // Load all categories
-            String[] categories = {"browsers", "system_ims", "vpn_incompatible", "user_reported"};
-            for (String category : categories) {
-                if (root.has(category)) {
-                    JSONArray arr = root.getJSONArray(category);
-                    for (int i = 0; i < arr.length(); i++) {
-                        apps.add(arr.getString(i));
-                    }
-                }
-            }
+            apps.addAll(BlockingModeLogic.parseExcludedAppsJson(json));
 
             Log.i(TAG, "Loaded " + apps.size() + " excluded apps for minimal mode");
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to load excluded apps", e);
         }
         return Collections.unmodifiableSet(apps);
@@ -182,6 +168,21 @@ public class BlockingMode {
         prefsEditor.apply();
 
         Log.i(TAG, (isMinimalMode(c) ? "Applied" : "Restored") + " mode-managed VPN exclusions");
+    }
+
+    /**
+     * Apply all runtime side effects of the current blocking mode.
+     */
+    public static void applyMode(Context c) {
+        syncModeExclusions(c);
+
+        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(c);
+        if (trackerBlocklist.applyStrictModeToAll(isStrictMode(c)))
+            trackerBlocklist.saveSettings(c);
+
+        ServiceSinkhole.clearTrackerCaches();
+        TrackerList.reloadTrackerData(c);
+        ServiceSinkhole.reload("changed " + PREF_BLOCKING_MODE, c, false);
     }
 
     /**

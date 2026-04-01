@@ -108,4 +108,26 @@ public class BlockingModeLogicTest {
         assertTrue(result.applyRemovals.isEmpty());
         assertTrue(result.autoExcludedApps.isEmpty());
     }
+
+    @Test
+    public void staleAutoExcludedAppIsRemovedWhenNoLongerManaged() {
+        Map<String, Boolean> applyPrefs = new HashMap<>();
+        applyPrefs.put("browser", false);
+
+        BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
+                BlockingModeLogic.MODE_MINIMAL,
+                Collections.emptySet(),
+                applyPrefs,
+                Set.of("browser"));
+
+        assertTrue(result.applyFalsePackages.isEmpty());
+        assertEquals(Set.of("browser"), result.applyRemovals);
+        assertTrue(result.autoExcludedApps.isEmpty());
+    }
+
+    @Test
+    public void clearingAutoExcludedAppRemovesItFromManagedSet() {
+        assertEquals(Set.of("browser"),
+                BlockingModeLogic.clearAutoExcludedApp(Set.of("browser", "other"), "other"));
+    }
 }

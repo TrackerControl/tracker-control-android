@@ -2117,7 +2117,7 @@ public class ServiceSinkhole extends VpnService {
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
 
-    static void clearTrackerCaches() {
+    public static void clearTrackerCaches() {
         ipToHost.clear();
         ipToTracker.clear();
     }

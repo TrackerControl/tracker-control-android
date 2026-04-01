@@ -562,7 +562,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                             .putBoolean("block_dot", enableDotBlocking)
                             .apply();
 
-                    BlockingMode.syncModeExclusions(holder.itemView.getContext());
+                    BlockingMode.applyMode(holder.itemView.getContext());
                 });
             } else {
                 SlideViewHolder holder = (SlideViewHolder) vh;

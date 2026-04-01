@@ -61,6 +61,10 @@ public class TrackerBlocklist {
         return instance;
     }
 
+    static synchronized void resetForTests() {
+        instance = null;
+    }
+
     /**
      * For a given tracker company, this computes a key to store the blocking state
      * of this tracker.

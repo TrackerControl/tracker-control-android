@@ -519,17 +519,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             Preference pref = getPreferenceScreen().findPreference(name);
             if (pref != null)
                 updateBlockingModeSummary(pref, mode);
-            BlockingMode.syncModeExclusions(this);
-            // Update Content category whitelist for all existing apps
-            boolean isStrict = BlockingMode.MODE_STRICT.equals(mode);
-            TrackerBlocklist b = TrackerBlocklist.getInstance(this);
-            if (b.applyStrictModeToAll(isStrict))
-                b.saveSettings(this);
-            // Clear cached tracker lookups (ambiguous IP decisions depend on mode)
-            ServiceSinkhole.clearTrackerCaches();
-            // Reload tracker data and VPN rules
-            TrackerList.reloadTrackerData(this);
-            ServiceSinkhole.reload("changed " + name, this, false);
+            BlockingMode.applyMode(this);
         }
 
         else if ("log_logcat".equals(name)) {

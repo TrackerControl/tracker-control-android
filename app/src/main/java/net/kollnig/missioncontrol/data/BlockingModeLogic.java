@@ -17,6 +17,8 @@ package net.kollnig.missioncontrol.data;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Pure helpers for mode-specific blocking behavior and VPN exclusion syncing.
@@ -82,6 +84,24 @@ public final class BlockingModeLogic {
         Set<String> nextAutoExcludedApps = new HashSet<>(autoExcludedApps);
         nextAutoExcludedApps.remove(packageName);
         return nextAutoExcludedApps;
+    }
+
+    static Set<String> parseExcludedAppsJson(String json) {
+        Set<String> apps = new HashSet<>();
+        for (String category : new String[] { "browsers", "system_ims", "vpn_incompatible", "user_reported" }) {
+            Matcher categoryMatcher = Pattern.compile(
+                    "\"" + Pattern.quote(category) + "\"\\s*:\\s*\\[(.*?)]",
+                    Pattern.DOTALL)
+                    .matcher(json);
+            if (!categoryMatcher.find())
+                continue;
+
+            Matcher valueMatcher = Pattern.compile("\"([^\"]+)\"").matcher(categoryMatcher.group(1));
+            while (valueMatcher.find())
+                apps.add(valueMatcher.group(1));
+        }
+
+        return apps;
     }
 
     public static final class ExclusionSyncResult {

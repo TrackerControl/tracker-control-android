@@ -29,6 +29,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -119,34 +120,8 @@ public class ApplicationEx extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             createNotificationChannels();
 
-        // Migrate onboarding_complete boolean to onboarding_version int
-        android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.contains("onboarding_complete") && !prefs.contains("onboarding_version")) {
-            boolean completed = prefs.getBoolean("onboarding_complete", false);
-            prefs.edit()
-                    .remove("onboarding_complete")
-                    .putInt("onboarding_version", completed ? 1 : 0)
-                    .apply();
-            Log.i(TAG, "Migrated onboarding_complete=" + completed + " -> onboarding_version=" + (completed ? 1 : 0));
-        }
-
-        // Migrate old strict_blocking pref to blocking_mode
-        if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
-            String migratedMode = BlockingMode.getDefaultMode();
-
-            if (prefs.contains("strict_blocking")) {
-                boolean oldStrict = prefs.getBoolean("strict_blocking", false);
-                migratedMode = oldStrict ? BlockingMode.MODE_STRICT : BlockingMode.MODE_STANDARD;
-
-                prefs.edit()
-                        .remove("strict_blocking")
-                        .putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode)
-                        .apply();
-                Log.i(TAG, "Migrated strict_blocking=" + oldStrict + " -> mode=" + migratedMode);
-            } else {
-                prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
-            }
-        }
+        SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        migratePreferences(prefs);
 
         // Keep VPN exclusions aligned with the selected blocking mode on startup.
         BlockingMode.syncModeExclusions(this);
@@ -229,6 +204,51 @@ public class ApplicationEx extends Application {
 
             }
         });
+    }
+
+    static void migratePreferences(SharedPreferences prefs) {
+        if (prefs.contains("onboarding_complete") && !prefs.contains("onboarding_version")) {
+            boolean completed = prefs.getBoolean("onboarding_complete", false);
+            prefs.edit()
+                    .remove("onboarding_complete")
+                    .putInt("onboarding_version", completed ? 1 : 0)
+                    .apply();
+            Log.i(TAG, "Migrated onboarding_complete=" + completed + " -> onboarding_version=" + (completed ? 1 : 0));
+        }
+
+        if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
+            Boolean oldStrict = prefs.contains("strict_blocking")
+                    ? prefs.getBoolean("strict_blocking", false)
+                    : null;
+            int installedVersion = prefs.getInt("version", -1);
+            String migratedMode = resolveBlockingModeMigration(null, oldStrict, installedVersion);
+
+            if (oldStrict != null) {
+                prefs.edit()
+                        .remove("strict_blocking")
+                        .putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode)
+                        .apply();
+                Log.i(TAG, "Migrated strict_blocking=" + oldStrict + " -> mode=" + migratedMode);
+            } else {
+                prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
+            }
+        }
+    }
+
+    static String resolveBlockingModeMigration(@Nullable String existingMode, @Nullable Boolean legacyStrict) {
+        return resolveBlockingModeMigration(existingMode, legacyStrict, -1);
+    }
+
+    static String resolveBlockingModeMigration(@Nullable String existingMode,
+            @Nullable Boolean legacyStrict,
+            int installedVersion) {
+        if (existingMode != null)
+            return existingMode;
+        if (legacyStrict != null)
+            return legacyStrict ? BlockingMode.MODE_STRICT : BlockingMode.MODE_STANDARD;
+        if (installedVersion >= 0)
+            return BlockingMode.MODE_STANDARD;
+        return BlockingMode.getDefaultMode();
     }
 
     @TargetApi(Build.VERSION_CODES.O)
