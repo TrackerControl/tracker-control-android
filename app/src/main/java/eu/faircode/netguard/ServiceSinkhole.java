@@ -157,10 +157,6 @@ public class ServiceSinkhole extends VpnService {
     private boolean temporarilyStopped = false;
 
     private static long last_hosts_modified = 0;
-    private long lastReloadTime = 0;
-    private static final long RELOAD_DEBOUNCE_MS = 1000;
-    private final Handler reloadHandler = new Handler(Looper.getMainLooper());
-    private Runnable pendingReload = null;
     public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
     private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
@@ -2832,7 +2828,7 @@ public class ServiceSinkhole extends VpnService {
                 last_active = network;
                 last_connected = Util.isConnected(ServiceSinkhole.this);
                 last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
-                debouncedReload("network available");
+                reload("network available", ServiceSinkhole.this, false);
             }
 
             @Override
@@ -2851,7 +2847,7 @@ public class ServiceSinkhole extends VpnService {
                             "DNS cur=" + TextUtils.join(",", dns) +
                             "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)));
                     last_dns = dns;
-                    debouncedReload("link properties changed");
+                    reload("link properties changed", ServiceSinkhole.this, false);
                 }
             }
 
@@ -2888,7 +2884,7 @@ public class ServiceSinkhole extends VpnService {
                 }
 
                 if (reason != null)
-                    debouncedReload(reason);
+                    reload(reason, ServiceSinkhole.this, false);
 
                 last_network = network;
                 last_connected = connected;
@@ -2904,7 +2900,7 @@ public class ServiceSinkhole extends VpnService {
 
                 last_active = null;
                 last_connected = Util.isConnected(ServiceSinkhole.this);
-                debouncedReload("network lost");
+                reload("network lost", ServiceSinkhole.this, false);
             }
 
             boolean same(List<InetAddress> last, List<InetAddress> current) {
@@ -3092,6 +3088,12 @@ public class ServiceSinkhole extends VpnService {
     public void onDestroy() {
         synchronized (this) {
             Log.i(TAG, "Destroy");
+
+            // Flush any pending log entries before shutdown
+            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+            if (dh != null)
+                dh.flushLogBatch();
+
             commandLooper.quit();
             logLooper.quit();
             statsLooper.quit();
@@ -3680,29 +3682,6 @@ public class ServiceSinkhole extends VpnService {
                 } catch (Throwable exex) {
                     Log.e(TAG, exex + "\n" + Log.getStackTraceString(exex));
                 }
-        }
-    }
-
-    private void debouncedReload(final String reason) {
-        long now = System.currentTimeMillis();
-        if (pendingReload != null)
-            reloadHandler.removeCallbacks(pendingReload);
-
-        long elapsed = now - lastReloadTime;
-        if (elapsed >= RELOAD_DEBOUNCE_MS) {
-            lastReloadTime = now;
-            reload(reason, ServiceSinkhole.this, false);
-        } else {
-            pendingReload = new Runnable() {
-                @Override
-                public void run() {
-                    lastReloadTime = System.currentTimeMillis();
-                    pendingReload = null;
-                    reload(reason, ServiceSinkhole.this, false);
-                }
-            };
-            reloadHandler.postDelayed(pendingReload, RELOAD_DEBOUNCE_MS - elapsed);
-            Log.i(TAG, "Debounced reload for reason: " + reason);
         }
     }
 

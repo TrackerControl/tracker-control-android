@@ -445,7 +445,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    private void flushLogBatch() {
+    public void flushLogBatch() {
         List<ContentValues> batch;
         synchronized (logBatch) {
             if (logBatch.isEmpty())
