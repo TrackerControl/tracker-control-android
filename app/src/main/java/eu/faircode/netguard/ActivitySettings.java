@@ -66,6 +66,7 @@ import androidx.work.WorkManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -289,6 +290,16 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (Util.isPlayStoreInstall())
             cat_options.removePreference(screen.findPreference("strict_blocking"));
 
+        // Blocking mode preference setup
+        Preference pref_blocking_mode = screen.findPreference("blocking_mode");
+        if (pref_blocking_mode != null) {
+            String currentMode = prefs.getString("blocking_mode", BlockingMode.getDefaultMode());
+            if (BlockingMode.MODE_MINIMAL.equals(currentMode))
+                pref_blocking_mode.setSummary(R.string.summary_blocking_mode_minimal);
+            else
+                pref_blocking_mode.setSummary(R.string.summary_blocking_mode_standard);
+        }
+
         if (Util.isPlayStoreInstall(this)) {
             Log.i(TAG, "Play store install");
             cat_advanced.removePreference(pref_forwarding);
@@ -297,6 +308,18 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             cat_advanced.removePreference(cat_advanced.findPreference("log_app"));
             cat_advanced.removePreference(cat_advanced.findPreference("filter_udp"));
             cat_advanced.findPreference("filter").setEnabled(false);
+        }
+
+        // In minimal mode, hide hosts/blocklist management (not used) and strict_blocking
+        if (BlockingMode.isMinimalMode(this)) {
+            Preference manageBlocklists = cat_advanced.findPreference("manage_blocklists");
+            if (manageBlocklists != null) cat_advanced.removePreference(manageBlocklists);
+            Preference hostsDownload = cat_advanced.findPreference("hosts_download");
+            if (hostsDownload != null) cat_advanced.removePreference(hostsDownload);
+            Preference hostsAutoUpdate = cat_advanced.findPreference("hosts_auto_update");
+            if (hostsAutoUpdate != null) cat_advanced.removePreference(hostsAutoUpdate);
+            Preference domainBlocking = cat_advanced.findPreference("domain_based_blocking");
+            if (domainBlocking != null) cat_advanced.removePreference(domainBlocking);
         }
 
         String last_download = prefs.getString("hosts_last_download", null);
@@ -491,6 +514,24 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         } else if ("lockdown_wifi".equals(name) || "lockdown_other".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
+
+        else if ("blocking_mode".equals(name)) {
+            String mode = prefs.getString(name, BlockingMode.MODE_STANDARD);
+            Preference pref = getPreferenceScreen().findPreference(name);
+            if (pref != null) {
+                if (BlockingMode.MODE_MINIMAL.equals(mode))
+                    pref.setSummary(R.string.summary_blocking_mode_minimal);
+                else
+                    pref.setSummary(R.string.summary_blocking_mode_standard);
+            }
+            // Apply VPN exclusions for minimal mode
+            if (BlockingMode.MODE_MINIMAL.equals(mode)) {
+                BlockingMode.applyMinimalModeExclusions(this);
+            }
+            // Reload tracker data and VPN rules
+            TrackerList.reloadTrackerData(this);
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
 
         else if ("manage_system".equals(name)) {
             boolean manage = prefs.getBoolean(name, false);

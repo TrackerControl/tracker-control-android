@@ -241,4 +241,14 @@ public class TrackerBlocklist {
         return blocked(uid, t.category)
                 && blocked(uid, getBlockingKey(t));
     }
+
+    /**
+     * In minimal (DDG-compatible) mode, block all trackers except those in
+     * the "Content" category (which maps to DDG's "ignore" action).
+     * No granular per-app per-tracker control — just block or don't.
+     */
+    public static boolean blockedTrackerMinimal(Tracker t) {
+        // "Content" category = DDG "ignore" action = essential services, don't block
+        return !NECESSARY_CATEGORY.equals(t.category);
+    }
 }

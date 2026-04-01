@@ -85,6 +85,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -925,7 +926,9 @@ public class ServiceSinkhole extends VpnService {
             }
 
             // Check if we have additional information from SNI
-            if (packet.data != null
+            // Skip SNI-based detection in minimal mode to avoid false positives
+            if (!BlockingMode.isMinimalMode(ServiceSinkhole.this)
+                    && packet.data != null
                     && !packet.data.isEmpty()) {
                 uncertain = 0;
 
@@ -2125,7 +2128,9 @@ public class ServiceSinkhole extends VpnService {
                     Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
 
                 // Check if tracker is known
+                // In minimal mode (including TC Slim), always enable blocking
                 if ((!Util.isPlayStoreInstall()
+                        || BlockingMode.isMinimalMode(ServiceSinkhole.this)
                         || prefs.getBoolean("log_logcat", false))
                         && blockKnownTracker(packet.daddr, packet.uid)) {
                     filtered = true;
@@ -2298,9 +2303,15 @@ public class ServiceSinkhole extends VpnService {
             Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr).getOrExpired() + " " + tracker.getName());
         } else {
             if (tracker != NO_TRACKER) {
-                TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                return tracker != null
-                        && b.blockedTracker(uid, tracker);
+                if (BlockingMode.isMinimalMode(ServiceSinkhole.this)) {
+                    // Minimal mode: block all non-Content DDG trackers, no granular control
+                    return tracker != null
+                            && TrackerBlocklist.blockedTrackerMinimal(tracker);
+                } else {
+                    TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                    return tracker != null
+                            && b.blockedTracker(uid, tracker);
+                }
             }
         }
 

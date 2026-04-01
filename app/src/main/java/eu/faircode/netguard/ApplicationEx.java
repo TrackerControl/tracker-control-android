@@ -50,6 +50,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.BlockingMode;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
@@ -117,6 +118,15 @@ public class ApplicationEx extends Application {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             createNotificationChannels();
+
+        // Set default blocking mode for TC Slim (Play Store) to minimal
+        android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
+            prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, BlockingMode.getDefaultMode()).apply();
+        }
+
+        // Apply minimal mode VPN exclusions on startup (for DDG-compatible blocking)
+        BlockingMode.applyMinimalModeExclusions(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

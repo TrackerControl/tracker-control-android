@@ -82,6 +82,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 
 import java.text.SimpleDateFormat;
@@ -359,7 +360,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Get rule
         final Rule rule = listFiltered.get(position);
-        final boolean active = rule.apply && rule.tracker_protect;
+        // In minimal mode, tracker_protect is not user-controllable
+        final boolean active = BlockingMode.isMinimalMode(context)
+                ? rule.apply
+                : rule.apply && rule.tracker_protect;
 
         // Handle expanding/collapsing
         holder.llApplication.setOnClickListener(new View.OnClickListener() {

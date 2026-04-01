@@ -60,6 +60,7 @@ public class TrackerList {
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
     private static TrackerList instance;
     private static boolean domainBasedBlocking;
+    private static boolean minimalBlockingMode;
     private final DatabaseHelper databaseHelper;
     
     // Lock for synchronizing tracker data reload operations
@@ -109,7 +110,8 @@ public class TrackerList {
             }
         }
 
-        if (t == null
+        // In minimal mode, skip hosts-file based lookups (only use DDG tracker list)
+        if (t == null && !minimalBlockingMode
                 && ServiceSinkhole.mapHostsBlocked.containsKey(hostname))
             if (domainBasedBlocking)
                 return hostlistTracker;
@@ -153,10 +155,17 @@ public class TrackerList {
     public void loadTrackers(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         domainBasedBlocking = prefs.getBoolean("domain_based_blocked", false);
+        minimalBlockingMode = BlockingMode.isMinimalMode(c);
 
-        loadXrayTrackers(c);
-        loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
-        loadDuckDuckGoTrackers(c); // DuckDuckGo tracker list for additional mobile-specific trackers
+        if (minimalBlockingMode) {
+            // In minimal mode, only load DDG trackers (skip X-Ray and Disconnect)
+            // This ensures only confirmed, breakage-tested trackers are blocked
+            loadDuckDuckGoTrackers(c);
+        } else {
+            loadXrayTrackers(c);
+            loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
+            loadDuckDuckGoTrackers(c); // DuckDuckGo tracker list for additional mobile-specific trackers
+        }
     }
 
     /**

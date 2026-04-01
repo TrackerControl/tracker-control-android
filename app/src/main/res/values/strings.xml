@@ -277,6 +277,16 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Copy</string>
 
+    <string-array name="blockingModeNames">
+        <item>@string/blocking_mode_standard</item>
+        <item>@string/blocking_mode_minimal</item>
+    </string-array>
+
+    <string-array name="blockingModeValues" translatable="false">
+        <item>standard</item>
+        <item>minimal</item>
+    </string-array>
+
     <string-array name="logLevelNames" translatable="false">
         <item>Verbose</item>
         <item>Debug</item>
@@ -414,6 +424,12 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strict Blocking</string>
     <string name="summary_strict_blocking">For newly installed apps, block as much data sharing with companies as possible. More apps will break.</string>
     <string name="strict_blocking_explanation">It is recommended for non-experts to disable this option to reduce app breakage. However, this allows some essential sharing with companies.</string>
+
+    <string name="setting_blocking_mode">Blocking Mode</string>
+    <string name="summary_blocking_mode_standard">Standard: Block all known trackers with full granular control.</string>
+    <string name="summary_blocking_mode_minimal">Minimal (DDG-compatible): Only block confirmed trackers without app breakage. Browsers and incompatible apps are excluded from VPN.</string>
+    <string name="blocking_mode_standard">Standard</string>
+    <string name="blocking_mode_minimal">Minimal (DDG-compatible)</string>
 
     <string name="exclude_vpn" translatable="false">Tracker Protection</string>
     <string name="exclude_vpn_explanation">Detects and blocks trackers for this app.</string>

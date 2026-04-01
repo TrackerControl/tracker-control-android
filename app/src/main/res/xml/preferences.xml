@@ -21,6 +21,13 @@
                 android:key="update_check"
                 android:summary="@string/summary_update"
                 android:title="@string/setting_update" />
+            <ListPreference
+                android:defaultValue="standard"
+                android:entries="@array/blockingModeNames"
+                android:entryValues="@array/blockingModeValues"
+                android:key="blocking_mode"
+                android:summary="@string/summary_blocking_mode_standard"
+                android:title="@string/setting_blocking_mode" />
         </PreferenceCategory>
     </PreferenceScreen>
 
