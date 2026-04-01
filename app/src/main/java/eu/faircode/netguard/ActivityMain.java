@@ -116,7 +116,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private AdapterRule adapter = null;
     private MenuItem menuSearch = null;
     private AlertDialog dialogVpn = null;
-    private AlertDialog dialogDoze = null;
     private AlertDialog dialogLegend = null;
     private AlertDialog dialogAbout = null;
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -132,7 +131,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private static final int REQUEST_EXPORT = 10;
 
-    public static final int REQUEST_BATTERY_OPTIMIZATION = 20;
+    private AlertDialog dialogTroubleshooting = null;
 
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
 
@@ -341,9 +340,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     ServiceSinkhole.stop("switch off", ActivityMain.this, false);
             }
         });
-        if (enabled)
-            checkDoze();
-
         // Network is metered
         ivMetered.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -559,9 +555,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             dialogVpn.dismiss();
             dialogVpn = null;
         }
-        if (dialogDoze != null) {
-            dialogDoze.dismiss();
-            dialogDoze = null;
+        if (dialogTroubleshooting != null) {
+            dialogTroubleshooting.dismiss();
+            dialogTroubleshooting = null;
         }
         if (dialogLegend != null) {
             dialogLegend.dismiss();
@@ -587,15 +583,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             prefs.edit().putBoolean("enabled", resultCode == RESULT_OK).apply();
             if (resultCode == RESULT_OK) {
                 ServiceSinkhole.start("prepared", this);
-
-                /*
-                 * Toast on = Toast.makeText(ActivityMain.this, R.string.msg_on,
-                 * Toast.LENGTH_LONG);
-                 * on.setGravity(Gravity.CENTER, 0, 0);
-                 * on.show();
-                 */
-
-                checkDoze();
             } else if (resultCode == RESULT_CANCELED)
                 Toast.makeText(this, R.string.msg_vpn_cancelled, Toast.LENGTH_LONG).show();
 
@@ -608,12 +595,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null)
                 handleExport(data);
-
-        } else if (requestCode == REQUEST_BATTERY_OPTIMIZATION) {
-            if (resultCode != RESULT_OK)
-                checkDoze();
-            else
-                checkDataSaving();
 
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
@@ -1018,6 +999,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (itemId == R.id.menu_csv) {
             startActivityForResult(getIntentCreateExport(), REQUEST_EXPORT);
             return true;
+        } else if (itemId == R.id.menu_troubleshooting) {
+            menu_troubleshooting();
+            return true;
         } else if (itemId == R.id.menu_about) {
             menu_about();
             return true;
@@ -1146,96 +1130,79 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
     }
 
-    private void checkDoze() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            final Intent doze = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-            if (Util.batteryOptimizing(this) && getPackageManager().resolveActivity(doze, 0) != null) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                if (!prefs.getBoolean("nodoze", false)) {
-                    LayoutInflater inflater = LayoutInflater.from(this);
-                    View view = inflater.inflate(R.layout.doze, null, false);
-                    final CheckBox cbDontAsk = view.findViewById(R.id.cbDontAsk);
-                    dialogDoze = new AlertDialog.Builder(this)
-                            .setView(view)
-                            .setCancelable(true)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (!Util.isPlayStoreInstall()) {
-                                        Intent i = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                                                .setData(Uri.parse("package:" + getPackageName()));
-                                        startActivityForResult(i, REQUEST_BATTERY_OPTIMIZATION);
-                                    } else {
-                                        startActivity(doze);
+    private void menu_troubleshooting() {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.troubleshooting, null, false);
 
-                                    }
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    prefs.edit().putBoolean("nodoze", cbDontAsk.isChecked()).apply();
-                                    checkDataSaving();
-                                }
-                            })
-                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialogInterface) {
-                                    dialogDoze = null;
-                                    if (Util.isPlayStoreInstall())
-                                        checkDataSaving();
-                                }
-                            })
-                            .create();
-                    dialogDoze.show();
-                } else
-                    checkDataSaving();
-            } else
-                checkDataSaving();
-        }
-    }
-
-    private void checkDataSaving() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            final Intent settings = new Intent(
-                    Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            if (Util.dataSaving(this) && getPackageManager().resolveActivity(settings, 0) != null)
-                try {
-                    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                    if (!prefs.getBoolean("nodata", false)) {
-                        LayoutInflater inflater = LayoutInflater.from(this);
-                        View view = inflater.inflate(R.layout.datasaving, null, false);
-                        final CheckBox cbDontAsk = view.findViewById(R.id.cbDontAsk);
-                        dialogDoze = new AlertDialog.Builder(this)
-                                .setView(view)
-                                .setCancelable(true)
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        prefs.edit().putBoolean("nodata", cbDontAsk.isChecked()).apply();
-                                        startActivity(settings);
-                                    }
-                                })
-                                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        prefs.edit().putBoolean("nodata", cbDontAsk.isChecked()).apply();
-                                    }
-                                })
-                                .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                    @Override
-                                    public void onDismiss(DialogInterface dialogInterface) {
-                                        dialogDoze = null;
-                                    }
-                                })
-                                .create();
-                        dialogDoze.show();
+        // Battery optimization button
+        View btnBattery = view.findViewById(R.id.btnBattery);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Util.batteryOptimizing(this)) {
+            btnBattery.setVisibility(View.VISIBLE);
+            btnBattery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        if (!Util.isPlayStoreInstall()) {
+                            startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                                    .setData(Uri.parse("package:" + getPackageName())));
+                        } else {
+                            startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
+                        }
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.toString());
                     }
-                } catch (Throwable ex) {
-                    Log.e(TAG, ex + "\n" + ex.getStackTrace());
                 }
+            });
+        } else {
+            btnBattery.setVisibility(View.GONE);
+            view.findViewById(R.id.tvBatteryStatus).setVisibility(View.VISIBLE);
         }
+
+        // Data saver button
+        View btnDataSaver = view.findViewById(R.id.btnDataSaver);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && Util.dataSaving(this)) {
+            btnDataSaver.setVisibility(View.VISIBLE);
+            btnDataSaver.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        startActivity(new Intent(
+                                Settings.ACTION_IGNORE_BACKGROUND_DATA_RESTRICTIONS_SETTINGS,
+                                Uri.parse("package:" + getPackageName())));
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.toString());
+                    }
+                }
+            });
+        } else {
+            btnDataSaver.setVisibility(View.GONE);
+            view.findViewById(R.id.tvDataSaverStatus).setVisibility(View.VISIBLE);
+        }
+
+        // VPN settings button
+        view.findViewById(R.id.btnVpnSettings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(Settings.ACTION_VPN_SETTINGS));
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString());
+                }
+            }
+        });
+
+        dialogTroubleshooting = new AlertDialog.Builder(this)
+                .setView(view)
+                .setCancelable(true)
+                .setPositiveButton(android.R.string.ok, null)
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        dialogTroubleshooting = null;
+                    }
+                })
+                .create();
+        dialogTroubleshooting.show();
     }
 
     private void menu_legend() {
