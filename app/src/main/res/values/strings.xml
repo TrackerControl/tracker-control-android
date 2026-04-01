@@ -465,7 +465,7 @@ Sincerely,\n\n]]></string>
 
     <string name="onboarding_blockingmode_title">Choose Blocking Mode</string>
     <string name="onboarding_blockingmode_desc">How aggressively should TrackerControl block trackers? Higher modes block more but will require you to manually exclude some apps. You can change this later in Settings, and find help under Troubleshooting in the app menu.</string>
-    <string name="onboarding_blockingmode_minimal_label">Minimal</string>
+    <string name="onboarding_blockingmode_minimal_label">Minimal (Recommended for new users)</string>
     <string name="onboarding_blockingmode_minimal_desc">Blocks only confirmed trackers that are safe to block. Limited app breakage. Good for most users.</string>
     <string name="onboarding_blockingmode_standard_label">Standard</string>
     <string name="onboarding_blockingmode_standard_desc">Blocks all known trackers from multiple lists. Some apps will break and need to be manually excluded.</string>
