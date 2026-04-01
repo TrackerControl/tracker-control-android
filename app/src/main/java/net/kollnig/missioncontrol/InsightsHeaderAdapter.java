@@ -75,8 +75,13 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
     }
 
     public void setVisible(boolean visible) {
+        if (this.visible == visible)
+            return;
         this.visible = visible;
-        notifyDataSetChanged();
+        if (visible)
+            notifyItemInserted(0);
+        else
+            notifyItemRemoved(0);
     }
 
     public int getItemCount() {

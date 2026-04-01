@@ -288,7 +288,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             cat_options.removePreference(screen.findPreference("update_check"));
 
         if (Util.isPlayStoreInstall())
-            cat_options.removePreference(screen.findPreference("strict_blocking"));
+            cat_advanced.removePreference(screen.findPreference("strict_blocking"));
 
         // Blocking mode preference setup
         Preference pref_blocking_mode = screen.findPreference("blocking_mode");
@@ -754,6 +754,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("loglevel".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
+
+        else if ("block_ambiguous_trackers".equals(name)) {
+            ServiceSinkhole.clearTrackerCaches();
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
 
         else if ("domain_based_blocked".equals(name)) {
             TrackerList.reloadTrackerData(this);

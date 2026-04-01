@@ -81,8 +81,8 @@ public class TrackerBlocklist {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
 
+        blockmap.clear();
         if (set != null) {
-            blockmap.clear();
             for (String appUid : set) {
                 // Get saved blocklist for UID
                 Set<String> prefset = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
@@ -127,6 +127,41 @@ public class TrackerBlocklist {
                     blockmap.put(uid, subset);
             }
         }
+    }
+
+    public synchronized boolean hasSubset(int uid) {
+        return blockmap.containsKey(uid);
+    }
+
+    public synchronized boolean ensureDefaults(int uid, boolean strictBlocking) {
+        if (blockmap.containsKey(uid))
+            return false;
+
+        Set<String> subset = new HashSet<>();
+        if (!strictBlocking)
+            subset.add(NECESSARY_CATEGORY);
+        blockmap.put(uid, subset);
+        return true;
+    }
+
+    public synchronized void saveSettings(Context c) {
+        SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        for (String key : prefs.getAll().keySet())
+            if (SHARED_PREFS_BLOCKLIST_APPS_KEY.equals(key) ||
+                    key.startsWith(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_"))
+                editor.remove(key);
+
+        Set<String> trackerSet = new HashSet<>();
+        for (Integer uid : blockmap.keySet())
+            trackerSet.add(Integer.toString(uid));
+        editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
+
+        for (Map.Entry<Integer, Set<String>> entry : blockmap.entrySet())
+            editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + entry.getKey(), new HashSet<>(entry.getValue()));
+
+        editor.apply();
     }
 
     /**

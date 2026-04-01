@@ -1,0 +1,163 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_rocket_colour" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/troubleshooting_title"
+            android:textAppearance="@style/TextLarge"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Battery Optimisation -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/troubleshooting_battery_title"
+                android:textAppearance="@style/TextMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_battery_desc"
+                android:textAppearance="@style/TextSmall" />
+
+            <Button
+                android:id="@+id/btnBattery"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/troubleshooting_battery_action"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvBatteryStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_battery_ok"
+                android:textAppearance="@style/TextSmall"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <!-- Data Saver -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/troubleshooting_datasaver_title"
+                android:textAppearance="@style/TextMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_datasaver_desc"
+                android:textAppearance="@style/TextSmall" />
+
+            <Button
+                android:id="@+id/btnDataSaver"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/troubleshooting_datasaver_action"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvDataSaverStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_datasaver_ok"
+                android:textAppearance="@style/TextSmall"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <!-- Excluding Apps -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/troubleshooting_exclude_title"
+                android:textAppearance="@style/TextMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_exclude_desc"
+                android:textAppearance="@style/TextSmall" />
+
+            <!-- Tracker Categories -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/troubleshooting_categories_title"
+                android:textAppearance="@style/TextMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_categories_desc"
+                android:textAppearance="@style/TextSmall" />
+
+            <!-- Always-on VPN -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/troubleshooting_alwayson_title"
+                android:textAppearance="@style/TextMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_alwayson_desc"
+                android:textAppearance="@style/TextSmall" />
+
+            <Button
+                android:id="@+id/btnVpnSettings"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/troubleshooting_alwayson_action" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

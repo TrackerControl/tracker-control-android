@@ -27,7 +27,30 @@
     <string name="menu_legend">Legend</string>
     <string name="menu_support">Support this app</string>
     <string name="menu_log_support">Explanation</string>
+    <string name="menu_troubleshooting">Troubleshooting</string>
     <string name="menu_about">About</string>
+
+    <string name="troubleshooting_title">Troubleshooting</string>
+
+    <string name="troubleshooting_battery_title">Battery optimisation</string>
+    <string name="troubleshooting_battery_desc">If TrackerControl stops working in the background, disable Android\'s battery optimisation for TrackerControl. Select \"All apps\", tap TrackerControl, and select \"Don\'t optimise\".</string>
+    <string name="troubleshooting_battery_action">Disable battery optimisation</string>
+    <string name="troubleshooting_battery_ok">Battery optimisation is already disabled.</string>
+
+    <string name="troubleshooting_datasaver_title">Data saver</string>
+    <string name="troubleshooting_datasaver_desc">If TrackerControl cannot connect when Data Saver is on, allow unrestricted data usage for TrackerControl. Enable \"Background data\" and \"Unrestricted data usage\".</string>
+    <string name="troubleshooting_datasaver_action">Allow unrestricted data</string>
+    <string name="troubleshooting_datasaver_ok">Data saver is not restricting TrackerControl.</string>
+
+    <string name="troubleshooting_exclude_title">Excluding apps from VPN</string>
+    <string name="troubleshooting_exclude_desc">If an app does not work correctly with TrackerControl, you can exclude it: tap the app in the main list, then disable the VPN toggle for that app.</string>
+
+    <string name="troubleshooting_categories_title">Blocking specific tracker categories</string>
+    <string name="troubleshooting_categories_desc">You can fine-tune blocking for each app by tapping it and toggling individual tracker categories (e.g. Analytics, Ads) on or off in the Trackers tab.</string>
+
+    <string name="troubleshooting_alwayson_title">Always-on VPN</string>
+    <string name="troubleshooting_alwayson_desc">If \"Block connections without VPN\" (lockdown) is enabled in Android VPN settings, TrackerControl cannot work correctly. Disable this option. A notification will appear if this is detected.</string>
+    <string name="troubleshooting_alwayson_action">Open VPN settings</string>
     <string name="menu_apps">Other apps</string>
 
     <string name="menu_protocol_udp" translatable="false">UDP</string>
@@ -424,6 +447,8 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Strict Blocking</string>
     <string name="summary_strict_blocking">For newly installed apps, block as much data sharing with companies as possible. More apps will break.</string>
     <string name="strict_blocking_explanation">It is recommended for non-experts to disable this option to reduce app breakage. However, this allows some essential sharing with companies.</string>
+    <string name="setting_block_ambiguous_trackers">Block ambiguous trackers</string>
+    <string name="summary_block_ambiguous_trackers">When an IP has both tracker and non-tracker hostname evidence, still block it. Disable this to reduce app breakage.</string>
 
     <string name="setting_blocking_mode">Blocking Mode</string>
     <string name="summary_blocking_mode_standard">Standard: Block all known trackers with full granular control.</string>
@@ -589,4 +614,3 @@ Sincerely,\n\n]]></string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_last_update">Last update: %s</string>
 </resources>
-
