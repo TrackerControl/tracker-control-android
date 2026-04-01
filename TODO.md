@@ -38,3 +38,70 @@ Currently we identify trackers purely through DNS interception. Parsing the TLS 
 - SNI should be a secondary/fallback layer only
 - Need to handle fragmented ClientHello messages across multiple TCP segments
 - Consider whether the IP exposure trade-off is acceptable given TC's threat model (local VPN, no remote proxy to hide behind)
+
+## Tracker blocking ambiguity: global DNS evidence vs per-app decisions
+
+Tracker detection currently relies on two separate data stores with different levels of attribution:
+
+- The `access` table stores `uid`, destination IP, block decision, and the `uncertain` flag.
+- The `dns` table stores only `qname`, `aname`, `resource`, `time`, and `ttl`. It does **not** store `uid`.
+
+That means `ServiceSinkhole` can ask `getQAName(uid, ip, ...)`, but the current implementation cannot truly answer "which hostname did this app resolve for this IP?". It can only answer "which hostnames have recently been seen for this IP globally?". The `uid` parameter is accepted by the method, but it is not used in the SQL query.
+
+### Why this matters
+
+Tracker blocking is applied per app, but the DNS evidence used to infer whether an IP belongs to a tracker is global. This creates two related ambiguity problems:
+
+1. **Shared-IP ambiguity**
+   - Multiple unrelated hostnames can legitimately resolve to the same IP.
+   - Some of those hostnames may be trackers; some may not.
+   - The current code already models this via the `uncertain` states and blocking-mode policy.
+
+2. **Cross-app attribution ambiguity**
+   - Even if app A triggered the DNS observation, app B may later connect to the same IP.
+   - The code may then reuse the global hostname evidence when deciding whether to block app B.
+   - This is conceptually consistent with the current database model, but it can still lead to surprising per-app blocking decisions.
+
+### Possible low-risk improvement
+
+A relatively small runtime-only change would be to make the in-memory tracker verdict cache UID-aware:
+
+- current shape: cache by destination IP only
+- safer shape: cache by `(uid, destination IP)`
+
+This would reduce cross-app cache contamination, because one app's inferred tracker verdict would no longer automatically carry over to another app. Importantly, this would **not** change the underlying database model and would **not** make DNS attribution truly app-specific. It would only make cache reuse more conservative.
+
+### Why this is still not a full fix
+
+Even with a UID-aware cache:
+
+- the DNS table would still be global
+- `getQAName(...)` would still return globally observed hostnames for an IP
+- uncertainty handling would still be necessary
+
+So a UID-aware cache is only a partial correctness improvement. It does not solve the deeper attribution problem.
+
+### Real fix if stronger attribution is desired
+
+If the goal is to make per-app tracker blocking decisions rest on genuinely per-app DNS evidence, the persistence model would need redesign. Options include:
+
+- storing DNS observations with a UID
+- linking DNS evidence to specific access observations
+- moving to a different attribution model entirely
+
+This is a larger change because it affects schema, collection logic, query logic, migration, and likely the semantics of `uncertain`.
+
+### Current decision
+
+Do **not** change this yet.
+
+Reasoning:
+
+- The current behavior matches the limitations of the existing database design.
+- A UID-aware runtime cache would be easy to add, but it only partially addresses the issue.
+- A true attribution fix is more invasive and needs a deliberate product decision: how conservative should `standard` be when evidence is global and ambiguous?
+
+If revisited later, start by deciding whether the desired goal is:
+
+- just to reduce cross-app cache bleed, or
+- to redesign tracker attribution so "per-app blocking" is backed by per-app evidence.
