@@ -924,19 +924,8 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            // Check if we have additional information from SNI
-            // Skip SNI-based detection in minimal mode to avoid false positives
-            if (!BlockingMode.isMinimalMode(ServiceSinkhole.this)
-                    && packet.data != null
-                    && !packet.data.isEmpty()) {
-                uncertain = 0;
-
-                if (!packet.data.equals(originalDname)) {
-                    Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
-                    dname = packet.data;
-                    isTracker = getDecloakedTracker(dname, dh).first != null;
-                }
-            }
+            // SNI extraction disabled globally: connecting to tracker IPs to read
+            // TLS ClientHello leaks the user's IP address to the tracker server.
 
             if (uncertain == 1) // multiple dnames correspond to same IP address
                 Log.d(TAG, "Found uncertain entry: " + dname);
@@ -2133,10 +2122,7 @@ public class ServiceSinkhole extends VpnService {
 
                 // Check if tracker is known
                 // In minimal mode (including TC Slim), always enable blocking
-                if ((!Util.isPlayStoreInstall()
-                        || BlockingMode.isMinimalMode(ServiceSinkhole.this)
-                        || prefs.getBoolean("log_logcat", false))
-                        && blockKnownTracker(packet.daddr, packet.uid)) {
+                if (blockKnownTracker(packet.daddr, packet.uid)) {
                     filtered = true;
                     packet.allowed = false;
                 }
@@ -2217,7 +2203,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean blockAmbiguousTrackers = prefs.getBoolean("block_ambiguous_trackers", true);
+        boolean blockAmbiguousTrackers = BlockingMode.isStrictMode(this);
         Tracker tracker = null;
         Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
         if (expiringTracker != null) {
@@ -2329,7 +2315,15 @@ public class ServiceSinkhole extends VpnService {
                     // Minimal mode: block all non-Content DDG trackers, no granular control
                     return tracker != null
                             && TrackerBlocklist.blockedTrackerMinimal(tracker);
+                } else if (BlockingMode.isStrictMode(ServiceSinkhole.this)) {
+                    // Strict mode: block everything including Content category,
+                    // but still respect per-app granular controls
+                    TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                    return tracker != null
+                            && b.blockedTracker(uid, tracker);
                 } else {
+                    // Standard mode: block trackers with granular control,
+                    // Content category allowed by default
                     TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
                     return tracker != null
                             && b.blockedTracker(uid, tracker);
@@ -2575,9 +2569,9 @@ public class ServiceSinkhole extends VpnService {
                         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                         int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
                         if (uid > -1) {
-                            // Check strict blocking
+                            // Set tracker defaults based on blocking mode
                             TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                            if (b.ensureDefaults(uid, prefs.getBoolean("strict_blocking", false)))
+                            if (b.ensureDefaults(uid, BlockingMode.isStrictMode(context)))
                                 b.saveSettings(context);
 
                             // Show install notification

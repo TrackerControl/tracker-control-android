@@ -301,13 +301,15 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_log_copy">Copy</string>
 
     <string-array name="blockingModeNames">
-        <item>@string/blocking_mode_standard</item>
         <item>@string/blocking_mode_minimal</item>
+        <item>@string/blocking_mode_standard</item>
+        <item>@string/blocking_mode_strict</item>
     </string-array>
 
     <string-array name="blockingModeValues" translatable="false">
-        <item>standard</item>
         <item>minimal</item>
+        <item>standard</item>
+        <item>strict</item>
     </string-array>
 
     <string-array name="logLevelNames" translatable="false">
@@ -451,10 +453,21 @@ Sincerely,\n\n]]></string>
     <string name="summary_block_ambiguous_trackers">When an IP has both tracker and non-tracker hostname evidence, still block it. Disable this to reduce app breakage.</string>
 
     <string name="setting_blocking_mode">Blocking Mode</string>
-    <string name="summary_blocking_mode_standard">Standard: Block all known trackers with full granular control.</string>
-    <string name="summary_blocking_mode_minimal">Minimal (DDG-compatible): Only block confirmed trackers without app breakage. Browsers and incompatible apps are excluded from VPN.</string>
+    <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers and known incompatible apps are automatically excluded. Fewest app issues.</string>
+    <string name="summary_blocking_mode_standard">Standard: Blocks all known trackers from multiple lists (X-Ray, Disconnect, DuckDuckGo). Essential services (e.g. content delivery) are allowed. Good balance of privacy and compatibility.</string>
+    <string name="summary_blocking_mode_strict">Strict: Blocks all known trackers including essential services and ambiguous shared-IP domains. Maximum privacy but some apps may break.</string>
+    <string name="blocking_mode_minimal">Minimal</string>
     <string name="blocking_mode_standard">Standard</string>
-    <string name="blocking_mode_minimal">Minimal (DDG-compatible)</string>
+    <string name="blocking_mode_strict">Strict</string>
+
+    <string name="onboarding_blockingmode_title">Choose Blocking Mode</string>
+    <string name="onboarding_blockingmode_desc">How aggressively should TrackerControl block trackers? You can change this later in Settings.</string>
+    <string name="onboarding_blockingmode_minimal_label">Minimal</string>
+    <string name="onboarding_blockingmode_minimal_desc">Blocks only confirmed trackers that are safe to block. Fewest app issues. Good for most users.</string>
+    <string name="onboarding_blockingmode_standard_label">Standard (Recommended)</string>
+    <string name="onboarding_blockingmode_standard_desc">Blocks all known trackers from multiple lists. Essential services are allowed. Good balance of privacy and compatibility.</string>
+    <string name="onboarding_blockingmode_strict_label">Strict</string>
+    <string name="onboarding_blockingmode_strict_desc">Blocks everything including essential services and ambiguous domains. Maximum privacy but some apps may break.</string>
 
     <string name="exclude_vpn" translatable="false">Tracker Protection</string>
     <string name="exclude_vpn_explanation">Detects and blocks trackers for this app.</string>

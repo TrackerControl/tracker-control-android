@@ -287,17 +287,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 || Util.isPlayStoreInstall(this))
             cat_options.removePreference(screen.findPreference("update_check"));
 
-        if (Util.isPlayStoreInstall())
-            cat_advanced.removePreference(screen.findPreference("strict_blocking"));
-
         // Blocking mode preference setup
         Preference pref_blocking_mode = screen.findPreference("blocking_mode");
         if (pref_blocking_mode != null) {
             String currentMode = prefs.getString("blocking_mode", BlockingMode.getDefaultMode());
-            if (BlockingMode.MODE_MINIMAL.equals(currentMode))
-                pref_blocking_mode.setSummary(R.string.summary_blocking_mode_minimal);
-            else
-                pref_blocking_mode.setSummary(R.string.summary_blocking_mode_standard);
+            updateBlockingModeSummary(pref_blocking_mode, currentMode);
         }
 
         if (Util.isPlayStoreInstall(this)) {
@@ -518,12 +512,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("blocking_mode".equals(name)) {
             String mode = prefs.getString(name, BlockingMode.MODE_STANDARD);
             Preference pref = getPreferenceScreen().findPreference(name);
-            if (pref != null) {
-                if (BlockingMode.MODE_MINIMAL.equals(mode))
-                    pref.setSummary(R.string.summary_blocking_mode_minimal);
-                else
-                    pref.setSummary(R.string.summary_blocking_mode_standard);
-            }
+            if (pref != null)
+                updateBlockingModeSummary(pref, mode);
             // Apply VPN exclusions for minimal mode
             if (BlockingMode.MODE_MINIMAL.equals(mode)) {
                 BlockingMode.applyMinimalModeExclusions(this);
@@ -755,15 +745,19 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("loglevel".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("block_ambiguous_trackers".equals(name)) {
-            ServiceSinkhole.clearTrackerCaches();
-            ServiceSinkhole.reload("changed " + name, this, false);
-        }
-
         else if ("domain_based_blocked".equals(name)) {
             TrackerList.reloadTrackerData(this);
         }
 
+    }
+
+    private void updateBlockingModeSummary(Preference pref, String mode) {
+        if (BlockingMode.MODE_MINIMAL.equals(mode))
+            pref.setSummary(R.string.summary_blocking_mode_minimal);
+        else if (BlockingMode.MODE_STRICT.equals(mode))
+            pref.setSummary(R.string.summary_blocking_mode_strict);
+        else
+            pref.setSummary(R.string.summary_blocking_mode_standard);
     }
 
     @TargetApi(Build.VERSION_CODES.M)

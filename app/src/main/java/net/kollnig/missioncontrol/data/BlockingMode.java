@@ -49,17 +49,32 @@ import eu.faircode.netguard.Util;
 public class BlockingMode {
     private static final String TAG = BlockingMode.class.getSimpleName();
     public static final String PREF_BLOCKING_MODE = "blocking_mode";
-    public static final String MODE_STANDARD = "standard";
     public static final String MODE_MINIMAL = "minimal";
+    public static final String MODE_STANDARD = "standard";
+    public static final String MODE_STRICT = "strict";
 
     private static Set<String> excludedApps;
+
+    /**
+     * Get the current blocking mode string.
+     */
+    public static String getMode(Context c) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        return prefs.getString(PREF_BLOCKING_MODE, getDefaultMode());
+    }
 
     /**
      * Check if the app is in DDG minimal blocking mode.
      */
     public static boolean isMinimalMode(Context c) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        return MODE_MINIMAL.equals(prefs.getString(PREF_BLOCKING_MODE, getDefaultMode()));
+        return MODE_MINIMAL.equals(getMode(c));
+    }
+
+    /**
+     * Check if the app is in strict blocking mode.
+     */
+    public static boolean isStrictMode(Context c) {
+        return MODE_STRICT.equals(getMode(c));
     }
 
     /**
