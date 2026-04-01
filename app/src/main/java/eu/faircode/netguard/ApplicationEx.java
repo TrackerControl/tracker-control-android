@@ -119,32 +119,20 @@ public class ApplicationEx extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             createNotificationChannels();
 
-        // Migrate old strict_blocking / block_ambiguous_trackers prefs to blocking_mode
+        // Migrate old strict_blocking pref to blocking_mode
         android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         if (!prefs.contains(BlockingMode.PREF_BLOCKING_MODE)) {
             String migratedMode = BlockingMode.getDefaultMode();
 
-            if (prefs.contains("strict_blocking") || prefs.contains("block_ambiguous_trackers")) {
+            if (prefs.contains("strict_blocking")) {
                 boolean oldStrict = prefs.getBoolean("strict_blocking", false);
-                boolean oldAmbiguous = prefs.getBoolean("block_ambiguous_trackers", true);
+                migratedMode = oldStrict ? BlockingMode.MODE_STRICT : BlockingMode.MODE_STANDARD;
 
-                if (oldStrict) {
-                    migratedMode = BlockingMode.MODE_STRICT;
-                } else if (!oldAmbiguous) {
-                    // User explicitly chose less blocking — map to minimal
-                    migratedMode = BlockingMode.MODE_MINIMAL;
-                } else {
-                    migratedMode = BlockingMode.MODE_STANDARD;
-                }
-
-                // Clean up old prefs
                 prefs.edit()
                         .remove("strict_blocking")
-                        .remove("block_ambiguous_trackers")
                         .putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode)
                         .apply();
-                Log.i(TAG, "Migrated blocking settings: strict=" + oldStrict
-                        + " ambiguous=" + oldAmbiguous + " -> mode=" + migratedMode);
+                Log.i(TAG, "Migrated strict_blocking=" + oldStrict + " -> mode=" + migratedMode);
             } else {
                 prefs.edit().putString(BlockingMode.PREF_BLOCKING_MODE, migratedMode).apply();
             }
