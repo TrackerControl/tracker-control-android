@@ -376,12 +376,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Application list
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
-        rvApplication.setHasFixedSize(true);
+        rvApplication.setHasFixedSize(false);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvApplication.setLayoutManager(llm);
         rvApplication.setItemViewCacheSize(20);
-        rvApplication.setDrawingCacheEnabled(true);
-        rvApplication.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         headerAdapter = new InsightsHeaderAdapter(this);
         adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
         ConcatAdapter concatAdapter = new ConcatAdapter(headerAdapter, adapter);
