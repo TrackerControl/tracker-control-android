@@ -32,10 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +56,6 @@ public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
     private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
-    public static Set<String> trackingIps = ConcurrentHashMap.newKeySet();
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
     private static TrackerList instance;
@@ -122,14 +119,6 @@ public class TrackerList {
                 return t;
             }
 
-        if (t == null
-                && trackingIps.contains(hostname))
-            if (domainBasedBlocking)
-                return hostlistTracker;
-            else {
-                return new Tracker(hostname, UNCATEGORISED);
-            }
-
         return t;
     }
 
@@ -147,7 +136,6 @@ public class TrackerList {
         synchronized (reloadLock) {
             // Clear existing data (both are thread-safe collections)
             hostnameToTracker.clear();
-            trackingIps.clear();
             
             // Ensure instance exists and reload trackers from assets
             TrackerList trackerList = getInstance(c);
@@ -169,27 +157,6 @@ public class TrackerList {
         loadXrayTrackers(c);
         loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
         loadDuckDuckGoTrackers(c); // DuckDuckGo tracker list for additional mobile-specific trackers
-        loadIpBlocklist(c);
-    }
-
-    /**
-     * Load database of tracker IPs
-     *
-     * @param c Context
-     */
-    private void loadIpBlocklist(Context c) {
-        try {
-            InputStream is = c.getAssets().open("ip_blocklist.txt");
-            BufferedReader bfr = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.startsWith("#"))
-                    continue;
-                trackingIps.add(line);
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Loading IP blocklist failed.. ", e);
-        }
     }
 
     /**
