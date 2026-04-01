@@ -37,6 +37,8 @@ import android.net.VpnService;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -117,6 +119,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private AlertDialog dialogDoze = null;
     private AlertDialog dialogLegend = null;
     private AlertDialog dialogAbout = null;
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
+    private static final long SEARCH_DEBOUNCE_MS = 300;
 
     private static final int REQUEST_VPN = 1;
     private static final int REQUEST_INVITE = 2;
@@ -375,12 +380,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Application list
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
-        rvApplication.setHasFixedSize(false);
+        rvApplication.setHasFixedSize(true);
         LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setAutoMeasureEnabled(true);
         rvApplication.setLayoutManager(llm);
-        adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
-        rvApplication.setLayoutManager(llm);
+        rvApplication.setItemViewCacheSize(20);
+        rvApplication.setDrawingCacheEnabled(true);
+        rvApplication.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         headerAdapter = new InsightsHeaderAdapter(this);
         adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
         ConcatAdapter concatAdapter = new ConcatAdapter(headerAdapter, adapter);
@@ -861,6 +866,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                if (searchRunnable != null)
+                    searchHandler.removeCallbacks(searchRunnable);
                 if (adapter != null)
                     adapter.getFilter().filter(query);
                 searchView.clearFocus();
@@ -868,11 +875,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                if (adapter != null)
-                    adapter.getFilter().filter(newText);
-                if (headerAdapter != null)
-                    headerAdapter.setVisible(TextUtils.isEmpty(newText));
+            public boolean onQueryTextChange(final String newText) {
+                if (searchRunnable != null)
+                    searchHandler.removeCallbacks(searchRunnable);
+                searchRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter != null)
+                            adapter.getFilter().filter(newText);
+                        if (headerAdapter != null)
+                            headerAdapter.setVisible(TextUtils.isEmpty(newText));
+                    }
+                };
+                searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_MS);
                 return true;
             }
         });
