@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -56,7 +57,9 @@ import eu.faircode.netguard.ServiceSinkhole;
  */
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
-    private static final List<String> ignoreDomains = Collections.singletonList("cloudfront.net, fastly.net");
+    private static final Set<String> ignoreDomains = new HashSet<>(Arrays.asList(
+            "cloudfront.net",
+            "fastly.net"));
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
@@ -89,6 +92,10 @@ public class TrackerList {
             instance = new TrackerList(c);
 
         return instance;
+    }
+
+    static boolean isIgnoredDomain(String domain) {
+        return ignoreDomains.contains(domain);
     }
 
     /**
@@ -385,7 +392,7 @@ public class TrackerList {
                 for (int j = 0; j < domains.length(); j++) {
                     String dom = domains.getString(j);
 
-                    if (ignoreDomains.contains(dom))
+                    if (isIgnoredDomain(dom))
                         continue;
 
                     addTrackerDomain(tracker, dom);
@@ -421,7 +428,7 @@ public class TrackerList {
                 JSONObject trackerInfo = trackers.getJSONObject(domain);
 
                 // Skip CDN domains that would cause false positives
-                if (ignoreDomains.contains(domain))
+                if (isIgnoredDomain(domain))
                     continue;
 
                 // Check if tracker already exists (e.g., from Disconnect list)
@@ -522,7 +529,7 @@ public class TrackerList {
                         for (int j = 0; j < urls.length(); j++) {
                             String dom = urls.getString(j);
 
-                            if (ignoreDomains.contains(dom))
+                            if (isIgnoredDomain(dom))
                                 continue;
 
                             addTrackerDomain(tracker, dom);

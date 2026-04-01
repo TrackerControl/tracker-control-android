@@ -93,4 +93,32 @@ public class TrackerBlocklistTest {
         assertTrue(TrackerBlocklist.blockedTrackerMinimal(
                 new Tracker("Branch", "Advertising")));
     }
+
+    @Test
+    public void resolveStoredUidParsesNumericIdsWithoutResolver() {
+        assertEquals(UID, TrackerBlocklist.resolveStoredUid(Integer.toString(UID), null));
+    }
+
+    @Test
+    public void resolveStoredUidMigratesLegacyPackageNames() {
+        assertEquals(UID, TrackerBlocklist.resolveStoredUid("com.example.app",
+                new TrackerBlocklist.PackageUidResolver() {
+                    @Override
+                    public Integer resolve(String packageName) {
+                        assertEquals("com.example.app", packageName);
+                        return UID;
+                    }
+                }));
+    }
+
+    @Test
+    public void resolveStoredUidDropsUnknownLegacyPackageNames() {
+        assertEquals(-1, TrackerBlocklist.resolveStoredUid("com.example.missing",
+                new TrackerBlocklist.PackageUidResolver() {
+                    @Override
+                    public Integer resolve(String packageName) {
+                        return null;
+                    }
+                }));
+    }
 }

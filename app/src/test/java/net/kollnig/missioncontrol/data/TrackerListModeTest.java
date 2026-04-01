@@ -65,6 +65,13 @@ public class TrackerListModeTest {
         assertFalse(duckDuckGo.contains("\"branch.io\""));
     }
 
+    @Test
+    public void ignoredCdnParentDomainsAreMatchedSeparately() {
+        assertTrue(TrackerList.isIgnoredDomain("cloudfront.net"));
+        assertTrue(TrackerList.isIgnoredDomain("fastly.net"));
+        assertFalse(TrackerList.isIgnoredDomain("cloudfront.net, fastly.net"));
+    }
+
     private static String readAsset(String assetName) throws IOException {
         return new String(Files.readAllBytes(assetPath(assetName)), StandardCharsets.UTF_8);
     }

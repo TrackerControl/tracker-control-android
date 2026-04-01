@@ -41,6 +41,10 @@ public class TrackerBlocklist {
      */
     private final Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
 
+    interface PackageUidResolver {
+        Integer resolve(String packageName);
+    }
+
     private TrackerBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
         if (c != null)
@@ -84,6 +88,16 @@ public class TrackerBlocklist {
     public void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
+        PackageUidResolver resolver = new PackageUidResolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                try {
+                    return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
+                } catch (PackageManager.NameNotFoundException ignored) {
+                    return null;
+                }
+            }
+        };
 
         blockmap.clear();
         if (set != null) {
@@ -123,14 +137,23 @@ public class TrackerBlocklist {
                 }
 
                 // Retrieve uid
-                int uid = -1;
-                if (StringUtils.isNumeric(appUid))
-                    uid = Integer.parseInt(appUid);
+                int uid = resolveStoredUid(appUid, resolver);
 
                 if (uid >= 0)
                     blockmap.put(uid, subset);
             }
         }
+    }
+
+    static int resolveStoredUid(String storedUid, PackageUidResolver resolver) {
+        if (StringUtils.isNumeric(storedUid))
+            return Integer.parseInt(storedUid);
+
+        if (resolver == null)
+            return -1;
+
+        Integer uid = resolver.resolve(storedUid);
+        return uid == null ? -1 : uid;
     }
 
     public synchronized boolean hasSubset(int uid) {
