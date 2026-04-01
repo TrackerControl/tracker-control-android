@@ -450,11 +450,7 @@
     <string name="insights_shocking_fact">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>
     <string name="insights_shocking_fact_playstore">您的应用本周联系了 %1$d 家追踪公司！</string>
     <string name="insights_share">分享给好友</string>
-    <string name="insights_share_trackers_blocked">追踪器被阻止</string>
-    <string name="insights_share_trackers_detected">检测到追踪器</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">我本周用TrackerControl屏蔽了 来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">我本周用TrackerControl检测到来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">额外的主机文件</string>
