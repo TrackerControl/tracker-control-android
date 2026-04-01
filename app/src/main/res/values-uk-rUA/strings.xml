@@ -457,11 +457,7 @@
     <string name="insights_shocking_fact">Ваші програми зв’язалися з %1$d компаніями відстеження через %2$d хостів відстеження цього тижня!</string>
     <string name="insights_shocking_fact_playstore">Ваші програми зв\'язалися з %1$d компаніями, що займаються відстеженням, цього тижня!</string>
     <string name="insights_share">Поділитися з друзями</string>
-    <string name="insights_share_trackers_blocked">Трекери заблоковано</string>
-    <string name="insights_share_trackers_detected">Виявлено трекери</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Цього тижня я заблокував %1$d трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі приватність: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">Цього тижня я виявив %1$d трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі приватність: https://trackercontrol.org</string>
     <string name="insights_see_more">Дивитися більше →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Додаткові файли хоста</string>
