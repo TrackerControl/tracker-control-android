@@ -22,6 +22,8 @@ import net.kollnig.missioncontrol.BuildConfig;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.ConnectionPool;
@@ -43,6 +45,11 @@ public class DnsOverHttpsClient {
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 5000;
     private static final int WRITE_TIMEOUT_MS = 5000;
+    private static final ExecutorService SHUTDOWN_EXECUTOR = Executors.newSingleThreadExecutor(r -> {
+        Thread thread = new Thread(r, "DoH-shutdown");
+        thread.setDaemon(true);
+        return thread;
+    });
     private static DnsOverHttpsClient instance;
     private final OkHttpClient client;
     private final String endpoint;
@@ -95,8 +102,10 @@ public class DnsOverHttpsClient {
      */
     public void shutdown() {
         Log.i(TAG, "Shutting down DoH client");
-        client.dispatcher().cancelAll();
-        new Thread(() -> client.connectionPool().evictAll(), "DoH-shutdown").start();
+        SHUTDOWN_EXECUTOR.execute(() -> {
+            client.dispatcher().cancelAll();
+            client.connectionPool().evictAll();
+        });
     }
 
     /**

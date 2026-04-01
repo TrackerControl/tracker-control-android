@@ -317,61 +317,68 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         String last_download = prefs.getString("hosts_last_download", null);
-        if (last_download != null)
-            pref_hosts_download.setSummary(getString(R.string.msg_update_last, last_download));
+        if (pref_hosts_download != null) {
+            if (last_download != null)
+                pref_hosts_download.setSummary(getString(R.string.msg_update_last, last_download));
 
-        pref_hosts_download.setOnPreferenceClickListener(preference -> {
-            Constraints constraints = new Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build();
+            pref_hosts_download.setOnPreferenceClickListener(preference -> {
+                Constraints constraints = new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
 
-            OneTimeWorkRequest downloadWork = new OneTimeWorkRequest.Builder(HostsDownloadWorker.class)
-                    .setConstraints(constraints)
-                    .addTag("ManualHostsDownload")
-                    .build();
-            WorkManager.getInstance(ActivitySettings.this).enqueue(downloadWork);
-            return true;
-        });
+                OneTimeWorkRequest downloadWork = new OneTimeWorkRequest.Builder(HostsDownloadWorker.class)
+                        .setConstraints(constraints)
+                        .addTag("ManualHostsDownload")
+                        .build();
+                WorkManager.getInstance(ActivitySettings.this).enqueue(downloadWork);
+                return true;
+            });
 
-        WorkManager.getInstance(this).getWorkInfosByTagLiveData("ManualHostsDownload").observe(this, workInfos -> {
-            if (workInfos != null && !workInfos.isEmpty()) {
-                androidx.work.WorkInfo workInfo = workInfos.get(0);
-                if (workInfo.getState() == androidx.work.WorkInfo.State.SUCCEEDED) {
-                    String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
-                    pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
+            WorkManager.getInstance(this).getWorkInfosByTagLiveData("ManualHostsDownload").observe(this, workInfos -> {
+                if (workInfos != null && !workInfos.isEmpty()) {
+                    androidx.work.WorkInfo workInfo = workInfos.get(0);
+                    if (workInfo.getState() == androidx.work.WorkInfo.State.SUCCEEDED) {
+                        String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
+                        pref_hosts_download.setSummary(getString(R.string.msg_update_last, last));
+                    }
                 }
-            }
-        });
+            });
+        }
 
         eu.faircode.netguard.SwitchPreference pref_hosts_auto_update = (eu.faircode.netguard.SwitchPreference) screen
                 .findPreference("hosts_auto_update");
-        pref_hosts_auto_update.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean enabled = (Boolean) newValue;
-                if (enabled) {
-                    Constraints constraints = new Constraints.Builder()
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build();
+        if (pref_hosts_auto_update != null) {
+            pref_hosts_auto_update.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean enabled = (Boolean) newValue;
+                    if (enabled) {
+                        Constraints constraints = new Constraints.Builder()
+                                .setRequiredNetworkType(NetworkType.CONNECTED)
+                                .build();
 
-                    PeriodicWorkRequest saveRequest = new PeriodicWorkRequest.Builder(HostsDownloadWorker.class, 24,
-                            TimeUnit.HOURS)
-                            .setConstraints(constraints)
-                            .build();
-                    WorkManager.getInstance(ActivitySettings.this).enqueueUniquePeriodicWork(
-                            "HostsUpdate",
-                            ExistingPeriodicWorkPolicy.UPDATE,
-                            saveRequest);
-                } else {
-                    WorkManager.getInstance(ActivitySettings.this).cancelUniqueWork("HostsUpdate");
+                        PeriodicWorkRequest saveRequest = new PeriodicWorkRequest.Builder(HostsDownloadWorker.class, 24,
+                                TimeUnit.HOURS)
+                                .setConstraints(constraints)
+                                .build();
+                        WorkManager.getInstance(ActivitySettings.this).enqueueUniquePeriodicWork(
+                                "HostsUpdate",
+                                ExistingPeriodicWorkPolicy.UPDATE,
+                                saveRequest);
+                    } else {
+                        WorkManager.getInstance(ActivitySettings.this).cancelUniqueWork("HostsUpdate");
+                    }
+                    return true;
                 }
-                return true;
-            }
-        });
+            });
+        }
 
         // Development
-        if (!Util.isDebuggable(this))
-            screen.removePreference(screen.findPreference("screen_development"));
+        if (!Util.isDebuggable(this)) {
+            Preference screenDevelopment = screen.findPreference("screen_development");
+            if (screenDevelopment != null)
+                screen.removePreference(screenDevelopment);
+        }
 
         /*
          * cat_network.removePreference(screen.findPreference("use_metered"));
