@@ -451,11 +451,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="insights_shocking_fact">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon %2$d seuranta-verkkotunnukseen kautta tällä viikolla!</string>
     <string name="insights_shocking_fact_playstore">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon tällä viikolla!</string>
     <string name="insights_share">Jaa ystävillesi</string>
-    <string name="insights_share_trackers_blocked">Seurantaa estetty</string>
-    <string name="insights_share_trackers_detected">Seurantaa havaittu</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Estin tällä viikolla %1$d seurantaa %2$d taholta TrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">Havaitsin tällä viikolla %1$d seurainta %2$d taholta TrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
     <string name="insights_see_more">Katso lisää →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Lisähosts-tiedostot</string>
