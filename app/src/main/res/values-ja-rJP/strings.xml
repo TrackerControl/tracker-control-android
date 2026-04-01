@@ -55,7 +55,6 @@
     <string name="setting_call">着信時は無効にする</string>
     <string name="setting_reload_onconnectivity">接続の変更時に再読み込み</string>
     <string name="setting_log_app">新しいトラッカーを検出する</string>
-    <string name="setting_log_logcat">ADB にログを送信</string>
     <string name="setting_filter">トラッカーをブロック</string>
     <string name="setting_filter_udp">UDP のトラッカーをブロック</string>
     <string name="setting_handover">再読み込み時に VPN接続 を維持</string>
@@ -104,7 +103,6 @@
     <string name="summary_validate">ポート 443 (https) でインターネット接続の検証に使用するドメイン名。</string>
     <string name="summary_socks5_enabled">プロキシサーバーに送信されるのはTCPトラフィックのみです</string>
     <string name="summary_watchdog">TrackerControl が動作しているか定期的にチェックします(このオプションを無効にするには0を入力してください)。バッテリー使用量が増えることがあります。</string>
-    <string name="summary_log_logcat">ブロックを無効にします。通信(および識別されたトラッカー)はデバイスログに記録されます。adb logcatでタグ「TC-Log」を付けて取得できます。</string>
     <string name="msg_sure">よろしいですか？</string>
     <string name="msg_waiting">イベントの待機中</string>
     <string name="msg_disabled">上のスイッチを使用して、TrackerControl を有効にします。</string>
