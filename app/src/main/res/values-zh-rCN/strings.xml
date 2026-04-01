@@ -59,7 +59,6 @@
     <string name="setting_advanced_options">高级选项(供专家使用)</string>
     <string name="setting_system">显示系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
-    <string name="setting_log_logcat">记录到ADB的传输</string>
     <string name="setting_filter">屏蔽跟踪器</string>
     <string name="setting_filter_udp">屏蔽UDP上的跟踪器</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
@@ -119,7 +118,6 @@
     <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
-    <string name="summary_log_logcat">禁用拦截。网络通信(和识别的跟踪器) 会被记录到设备日志中。通过 adb logcat 标签 TC-Log\' 检索。</string>
     <string name="msg_sure">你确定吗？</string>
     <string name="msg_started">正在查找追踪器...</string>
     <string name="msg_waiting">等待事件</string>
