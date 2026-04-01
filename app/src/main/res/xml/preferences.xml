@@ -82,6 +82,12 @@
                 android:summary="@string/summary_doh_endpoint"
                 android:title="@string/setting_doh_endpoint" />
             <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
+                android:dependency="doh_enabled"
+                android:key="doh_dns_fallback"
+                android:summary="@string/summary_doh_dns_fallback"
+                android:title="@string/setting_doh_dns_fallback" />
+            <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="true"
                 android:key="block_dot"
                 android:summary="@string/summary_block_dot"

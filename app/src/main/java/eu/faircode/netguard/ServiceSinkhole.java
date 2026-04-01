@@ -803,7 +803,7 @@ public class ServiceSinkhole extends VpnService {
     private final class LogHandler extends Handler {
         public int queue = 0;
 
-        private static final int MAX_QUEUE = 250;
+        private static final int MAX_QUEUE = 1000;
 
         public LogHandler(Looper looper) {
             super(looper);
@@ -3151,6 +3151,8 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
+        executor.shutdownNow();
+
         super.onDestroy();
     }
 
@@ -3614,7 +3616,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         public boolean isExpired() {
-            return System.currentTimeMillis() > (this.time + this.ttl * 2);
+            return System.currentTimeMillis() > (this.time + this.ttl);
         }
 
         public void updateExpires(long time, long ttl) {

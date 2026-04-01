@@ -99,6 +99,8 @@
     <string name="warning_beta">Beta feature. May not work as expected.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL for DNS-over-HTTPS queries</string>
+    <string name="setting_doh_dns_fallback">DNS fallback</string>
+    <string name="summary_doh_dns_fallback">Use standard (unencrypted) DNS when DoH is unavailable. Disabling may break apps if the DoH server is down.</string>
 
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Block Android\'s Private DNS</string>

@@ -111,7 +111,7 @@ public class InternetBlocklist {
      * @param uid Uid of app to check
      * @return If internet is blocked for given app
      */
-    public boolean blockedInternet(int uid) {
+    public synchronized boolean blockedInternet(int uid) {
         return blockmap.contains(uid);
     }
 }

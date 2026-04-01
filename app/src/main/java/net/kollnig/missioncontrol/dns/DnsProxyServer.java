@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -27,6 +28,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -248,8 +250,23 @@ public class DnsProxyServer {
                     }
                 }
 
-                // Send SERVFAIL response
-                sendServFailResponse(queryData, clientAddress, clientPort);
+                // Fallback to standard DNS if enabled
+                boolean dnsFallback = prefs.getBoolean("doh_dns_fallback", false);
+                if (dnsFallback) {
+                    byte[] fallbackResponse = resolveViaStandardDns(queryData);
+                    DatagramSocket socket = serverSocket;
+                    if (socket == null || socket.isClosed()) return;
+                    if (fallbackResponse != null) {
+                        Log.w(TAG, "DoH failed, used standard DNS fallback");
+                        DatagramPacket response = new DatagramPacket(
+                                fallbackResponse, fallbackResponse.length, clientAddress, clientPort);
+                        socket.send(response);
+                    } else {
+                        sendServFailResponse(queryData, clientAddress, clientPort);
+                    }
+                } else {
+                    sendServFailResponse(queryData, clientAddress, clientPort);
+                }
             }
 
         } catch (Exception e) {
@@ -336,13 +353,62 @@ public class DnsProxyServer {
                     eu.faircode.netguard.ServiceSinkhole.dohError(context);
                     dohFailures.set(0);
                 }
-                // SERVFAIL
-                sendTcpServFail(out, queryData);
+
+                // Fallback to standard DNS if enabled
+                boolean dnsFallback = prefs.getBoolean("doh_dns_fallback", false);
+                if (dnsFallback) {
+                    byte[] fallbackResponse = resolveViaStandardDns(queryData);
+                    if (fallbackResponse != null) {
+                        Log.w(TAG, "DoH failed, used standard DNS fallback (TCP)");
+                        out.writeShort(fallbackResponse.length);
+                        out.write(fallbackResponse);
+                        out.flush();
+                    } else {
+                        sendTcpServFail(out, queryData);
+                    }
+                } else {
+                    sendTcpServFail(out, queryData);
+                }
             }
 
         } catch (Exception e) {
             Log.e(TAG, "Error handling TCP DNS query: " + e.getMessage());
         }
+    }
+
+    /**
+     * Fallback: forward the raw DNS query to the system's DNS server via plain UDP.
+     */
+    @Nullable
+    private byte[] resolveViaStandardDns(byte[] queryData) {
+        List<InetAddress> dnsServers = eu.faircode.netguard.ServiceSinkhole.getDns(context);
+        if (dnsServers.isEmpty()) {
+            Log.w(TAG, "No fallback DNS servers available");
+            return null;
+        }
+
+        for (InetAddress dnsServer : dnsServers) {
+            try (DatagramSocket socket = new DatagramSocket()) {
+                socket.setSoTimeout(5000);
+
+                DatagramPacket request = new DatagramPacket(
+                        queryData, queryData.length, dnsServer, 53);
+                socket.send(request);
+
+                byte[] buffer = new byte[4096];
+                DatagramPacket response = new DatagramPacket(buffer, buffer.length);
+                socket.receive(response);
+
+                byte[] responseData = new byte[response.getLength()];
+                System.arraycopy(response.getData(), 0, responseData, 0, response.getLength());
+                return responseData;
+            } catch (IOException e) {
+                Log.w(TAG, "Fallback DNS query to " + dnsServer + " failed: " + e.getMessage());
+            }
+        }
+
+        Log.e(TAG, "All fallback DNS servers failed");
+        return null;
     }
 
     private void sendTcpServFail(DataOutputStream out, byte[] queryData) throws IOException {

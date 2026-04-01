@@ -105,6 +105,9 @@ public class DnsOverHttpsClient {
      * @param dnsQuery Raw DNS wire format query bytes
      * @return DNS wire format response bytes, or null on failure
      */
+    private static final int MAX_RETRIES = 2;
+    private static final long RETRY_DELAY_MS = 200;
+
     @Nullable
     public byte[] resolve(@NonNull byte[] dnsQuery) {
         if (dnsQuery.length == 0) {
@@ -112,34 +115,47 @@ public class DnsOverHttpsClient {
             return null;
         }
 
-        try {
-            RequestBody body = RequestBody.create(dnsQuery, DNS_MESSAGE);
-            Request request = new Request.Builder()
-                    .url(endpoint)
-                    .post(body)
-                    .header("Accept", "application/dns-message")
-                    .build();
-
-            try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful()) {
-                    Log.w(TAG, "DoH request failed with code: " + response.code());
+        for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+            if (attempt > 0) {
+                try {
+                    Thread.sleep(RETRY_DELAY_MS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     return null;
                 }
-
-                ResponseBody responseBody = response.body();
-                if (responseBody == null) {
-                    Log.w(TAG, "DoH response body is null");
-                    return null;
-                }
-
-                byte[] dnsResponse = responseBody.bytes();
-                Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes");
-                return dnsResponse;
+                Log.d(TAG, "DoH retry attempt " + attempt);
             }
-        } catch (IOException e) {
-            Log.e(TAG, "DoH request failed: " + e.getMessage());
-            return null;
+
+            try {
+                RequestBody body = RequestBody.create(dnsQuery, DNS_MESSAGE);
+                Request request = new Request.Builder()
+                        .url(endpoint)
+                        .post(body)
+                        .header("Accept", "application/dns-message")
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful()) {
+                        Log.w(TAG, "DoH request failed with code: " + response.code());
+                        continue;
+                    }
+
+                    ResponseBody responseBody = response.body();
+                    if (responseBody == null) {
+                        Log.w(TAG, "DoH response body is null");
+                        continue;
+                    }
+
+                    byte[] dnsResponse = responseBody.bytes();
+                    Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes");
+                    return dnsResponse;
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "DoH request failed: " + e.getMessage());
+            }
         }
+
+        return null;
     }
 
     /**
