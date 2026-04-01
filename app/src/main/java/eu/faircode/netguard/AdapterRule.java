@@ -73,6 +73,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.load.DecodeFormat;
@@ -106,6 +107,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private boolean live = true;
     private List<Rule> listAll = new ArrayList<>();
     private List<Rule> listFiltered = new ArrayList<>();
+    private final RequestOptions glideOptions;
 
     private List<String> messaging = Arrays.asList(
             "com.discord",
@@ -276,6 +278,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     public AdapterRule(Context context, View anchor) {
         this.anchor = anchor;
         this.inflater = LayoutInflater.from(context);
+        this.glideOptions = new RequestOptions().format(DecodeFormat.PREFER_RGB_565);
 
         if (Common.isNight(context))
             colorChanged = Color.argb(128, Color.red(Color.DKGRAY), Color.green(Color.DKGRAY),
@@ -309,9 +312,49 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
     public void set(List<Rule> listRule) {
         listAll = listRule;
-        listFiltered = new ArrayList<>();
-        listFiltered.addAll(listRule);
-        notifyDataSetChanged();
+        List<Rule> oldList = listFiltered;
+        listFiltered = new ArrayList<>(listRule);
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(new RuleDiffCallback(oldList, listFiltered));
+        result.dispatchUpdatesTo(this);
+    }
+
+    private static class RuleDiffCallback extends DiffUtil.Callback {
+        private final List<Rule> oldList;
+        private final List<Rule> newList;
+
+        RuleDiffCallback(List<Rule> oldList, List<Rule> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
+        }
+
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        @Override
+        public int getNewListSize() {
+            return newList.size();
+        }
+
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            Rule oldRule = oldList.get(oldItemPosition);
+            Rule newRule = newList.get(newItemPosition);
+            return oldRule.uid == newRule.uid && oldRule.packageName.equals(newRule.packageName);
+        }
+
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            Rule oldRule = oldList.get(oldItemPosition);
+            Rule newRule = newList.get(newItemPosition);
+            return oldRule.uid == newRule.uid
+                    && oldRule.packageName.equals(newRule.packageName)
+                    && oldRule.expanded == newRule.expanded
+                    && oldRule.changed == newRule.changed
+                    && oldRule.apply == newRule.apply
+                    && oldRule.hosts == newRule.hosts;
+        }
     }
 
     public void setWifiActive() {
@@ -382,10 +425,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         else {
             Uri uri = Uri.parse("android.resource://" + rule.packageName + "/" + rule.icon);
             GlideApp.with(holder.itemView.getContext())
-                    .applyDefaultRequestOptions(new RequestOptions().format(DecodeFormat.PREFER_RGB_565))
+                    .applyDefaultRequestOptions(glideOptions)
                     .load(uri)
-                    // .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    // .skipMemoryCache(true)
                     .override(iconSize, iconSize)
                     .into(holder.ivIcon);
         }
@@ -1081,17 +1122,17 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 if (query == null)
                     listResult.addAll(listAll);
                 else {
-                    query = query.toString().toLowerCase().trim();
+                    String queryStr = query.toString().toLowerCase().trim();
                     int uid;
                     try {
-                        uid = Integer.parseInt(query.toString());
+                        uid = Integer.parseInt(queryStr);
                     } catch (NumberFormatException ignore) {
                         uid = -1;
                     }
                     for (Rule rule : listAll)
                         if (rule.uid == uid ||
-                                rule.packageName.toLowerCase().contains(query) ||
-                                (rule.name != null && rule.name.toLowerCase().contains(query)))
+                                rule.packageName.toLowerCase().contains(queryStr) ||
+                                (rule.name != null && rule.name.toLowerCase().contains(queryStr)))
                             listResult.add(rule);
                 }
 
@@ -1103,15 +1144,18 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             @Override
             protected void publishResults(CharSequence query, FilterResults result) {
-                listFiltered.clear();
+                List<Rule> oldList = listFiltered;
+                List<Rule> newFiltered = new ArrayList<>();
                 if (result == null)
-                    listFiltered.addAll(listAll);
+                    newFiltered.addAll(listAll);
                 else {
-                    listFiltered.addAll((List<Rule>) result.values);
-                    if (listFiltered.size() == 1)
-                        listFiltered.get(0).expanded = true;
+                    newFiltered.addAll((List<Rule>) result.values);
+                    if (newFiltered.size() == 1)
+                        newFiltered.get(0).expanded = true;
                 }
-                notifyDataSetChanged();
+                listFiltered = newFiltered;
+                DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new RuleDiffCallback(oldList, listFiltered));
+                diffResult.dispatchUpdatesTo(AdapterRule.this);
             }
         };
     }
