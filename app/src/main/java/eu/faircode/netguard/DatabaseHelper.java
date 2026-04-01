@@ -841,10 +841,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Get tracking statistics for the past 7 days for the Insights screen.
-     * Returns aggregated data including blocked/allowed counts per uid and daddr.
-     * 
-     * @return Cursor with columns: uid, daddr, block, connections, time
+     * Get recent tracker access rows for the Insights screen.
+     * The provider deduplicates these rows into the latest app-host contact.
+     *
+     * @return Cursor with columns: uid, daddr, allowed, time, uncertain
      */
     public Cursor getInsightsData7Days() {
         lock.readLock().lock();
@@ -852,12 +852,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getReadableDatabase();
             long sevenDaysAgo = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
 
-            // Query access table for last 7 days, aggregating connections
-            String query = "SELECT uid, daddr, block, " +
-                    "COALESCE(connections, 1) as connections, time, uncertain " +
+            String query = "SELECT uid, daddr, allowed, time, uncertain " +
                     "FROM access " +
                     "WHERE time >= ? " +
-                    "ORDER BY time DESC";
+                    "ORDER BY time DESC, ID DESC";
 
             return db.rawQuery(query, new String[] { Long.toString(sevenDaysAgo) });
         } finally {

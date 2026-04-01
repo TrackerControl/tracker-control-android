@@ -21,7 +21,7 @@ import android.util.Pair
 
 /**
  * Data model holding aggregated tracking statistics for the Insights screen.
- * Contains 7-day statistics about trackers contacted and blocking effectiveness.
+ * Contains 7-day statistics about observed tracker-host contacts and blocking effectiveness.
  */
 data class InsightsData(
     // Overall 7-day summary
@@ -58,4 +58,3 @@ data class InsightsData(
         return totalTrackingAttempts > 0 || uniqueTrackerCompanies > 0
     }
 }
-

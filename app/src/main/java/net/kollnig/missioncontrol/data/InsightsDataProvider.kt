@@ -24,6 +24,7 @@ import android.util.Pair
 import androidx.preference.PreferenceManager
 import eu.faircode.netguard.DatabaseHelper
 import net.kollnig.missioncontrol.Common
+import java.util.Locale
 
 /**
  * Provider class that computes InsightsData from the database.
@@ -53,10 +54,12 @@ class InsightsDataProvider(context: Context) {
         val showSystem = prefs.getBoolean("show_system", false)
         val applyPrefs = context.getSharedPreferences("apply", Context.MODE_PRIVATE)
         val trackerProtectPrefs = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE)
+        val blockingMode = BlockingMode.getMode(context)
 
         // Cache for UID -> package info lookups
         val uidPackageCache = mutableMapOf<Int, String?>()
         val uidSystemCache = mutableMapOf<Int, Boolean>()
+        val seenContacts = mutableSetOf<String>()
 
         // Maps for aggregation
         val appTrackerCounts = mutableMapOf<Int, Int>()  // uid -> unique tracker hosts
@@ -69,15 +72,21 @@ class InsightsDataProvider(context: Context) {
         
         // Top domains: domain -> set of UIDs
         val domainToApps = mutableMapOf<String, MutableSet<Int>>()
+        val uncertainDomains = mutableSetOf<String>()
 
         databaseHelper.getInsightsData7Days().use { cursor ->
             if (cursor != null && cursor.moveToFirst()) {
                 val uidIndex = cursor.getColumnIndexOrThrow("uid")
                 val daddrIndex = cursor.getColumnIndexOrThrow("daddr")
+                val allowedIndex = cursor.getColumnIndex("allowed")
+                val uncertainIndex = cursor.getColumnIndex("uncertain")
 
                 do {
                     val uid = cursor.getInt(uidIndex)
                     val daddr = cursor.getString(daddrIndex)
+                    val contactKey = "$uid|$daddr"
+
+                    if (!seenContacts.add(contactKey)) continue
 
                     // Get package name (cached)
                     val packageName = uidPackageCache.getOrPut(uid) {
@@ -101,16 +110,29 @@ class InsightsDataProvider(context: Context) {
 
                     // Find tracker company for this hostname
                     val tracker = TrackerList.findTracker(daddr) ?: continue
+                    val allowed = if (allowedIndex >= 0 && !cursor.isNull(allowedIndex))
+                        cursor.getInt(allowedIndex)
+                    else
+                        -1
+                    val uncertainty = if (uncertainIndex >= 0 && !cursor.isNull(uncertainIndex))
+                        cursor.getInt(uncertainIndex)
+                    else
+                        DatabaseHelper.ACCESS_UNCERTAIN_NONE
 
                     val companyName = tracker.name ?: daddr
                     uniqueCompanies.add(companyName)
                     appsWithTrackers.add(uid)
 
-                    // Count tracker hosts seen over the last 7 days.
+                    // Count latest unique app-host contacts seen over the last 7 days.
                     data.totalTrackingAttempts += 1
 
-                    // Check if this tracker is currently blocked
-                    val isBlocked = trackerBlocklist.blockedTracker(uid, tracker)
+                    val isBlocked = isTrackerContactBlocked(
+                        uid,
+                        tracker,
+                        allowed,
+                        uncertainty,
+                        blockingMode
+                    )
                     if (isBlocked) {
                         data.blockedTrackingAttempts += 1
                     } else {
@@ -125,9 +147,11 @@ class InsightsDataProvider(context: Context) {
 
                     // Track which apps contact each company
                     companyToApps.getOrPut(companyName) { mutableSetOf() }.add(uid)
-                    
+
                     // Track which apps contact each domain
                     domainToApps.getOrPut(daddr) { mutableSetOf() }.add(uid)
+                    if (uncertainty > DatabaseHelper.ACCESS_UNCERTAIN_NONE)
+                        uncertainDomains.add(daddr)
 
                 } while (cursor.moveToNext())
             }
@@ -164,26 +188,7 @@ class InsightsDataProvider(context: Context) {
         // Group by TLD+1 (e.g., ads.google.com -> google.com) to reduce clutter
         // For uncertain entries, show alternate tracker domains inline
         val tldPlusOneToApps = mutableMapOf<String, MutableSet<Int>>()
-        
-        // Track which domains are uncertain (need to show alternates)
-        val uncertainDomains = mutableSetOf<String>()
-        
-        // First pass: collect all uncertain domains from the cursor data
-        // Re-query to get uncertain info (since we need fresh cursor)
-        databaseHelper.getInsightsData7Days().use { cursor ->
-            if (cursor != null && cursor.moveToFirst()) {
-                val daddrIndex = cursor.getColumnIndexOrThrow("daddr")
-                val uncertainIndex = cursor.getColumnIndex("uncertain")
-                
-                do {
-                    val daddr = cursor.getString(daddrIndex)
-                    if (uncertainIndex >= 0 && cursor.getInt(uncertainIndex) > 0) {
-                        uncertainDomains.add(daddr)
-                    }
-                } while (cursor.moveToNext())
-            }
-        }
-        
+
         for ((daddr, uids) in domainToApps) {
             val tldPlusOne = extractTldPlusOne(daddr)
             
@@ -235,12 +240,16 @@ class InsightsDataProvider(context: Context) {
      * Extract TLD+1 from a domain name (e.g., ads.google.com -> google.com)
      */
     private fun extractTldPlusOne(domain: String): String {
-        val parts = domain.split(".")
-        return if (parts.size >= 2) {
-            "${parts[parts.size - 2]}.${parts[parts.size - 1]}"
-        } else {
-            domain
-        }
+        val normalized = domain.trim('.').lowercase(Locale.ROOT)
+        val parts = normalized.split(".").filter { it.isNotEmpty() }
+        if (parts.size < 2)
+            return normalized
+
+        val suffix = parts.takeLast(2).joinToString(".")
+        return if (parts.size >= 3 && MULTI_LABEL_PUBLIC_SUFFIXES.contains(suffix))
+            "${parts[parts.size - 3]}.$suffix"
+        else
+            suffix
     }
     
     /**
@@ -269,5 +278,45 @@ class InsightsDataProvider(context: Context) {
         } else {
             tldPlusOne
         }
+    }
+
+    private fun isTrackerContactBlocked(
+        uid: Int,
+        tracker: Tracker,
+        allowed: Int,
+        uncertainty: Int,
+        blockingMode: String
+    ): Boolean {
+        if (allowed >= 0)
+            return allowed == 0
+
+        if (!BlockingMode.isStrictMode(context)
+            && uncertainty == DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER) {
+            return false
+        }
+
+        val blockedByGranularRule = if (BlockingMode.MODE_MINIMAL == blockingMode) {
+            false
+        } else {
+            trackerBlocklist.blockedTracker(uid, tracker)
+        }
+
+        return BlockingModeLogic.shouldBlockKnownTracker(
+            blockingMode,
+            tracker.category,
+            blockedByGranularRule
+        )
+    }
+
+    companion object {
+        private val MULTI_LABEL_PUBLIC_SUFFIXES = setOf(
+            "ac.uk", "co.uk", "gov.uk", "org.uk",
+            "co.jp", "ne.jp", "or.jp",
+            "com.au", "edu.au", "gov.au", "net.au", "org.au",
+            "ac.nz", "co.nz", "govt.nz", "org.nz",
+            "co.in", "firm.in", "gen.in", "ind.in", "net.in", "org.in",
+            "com.br", "com.cn", "com.hk", "com.mx", "com.my", "com.sg",
+            "com.tr", "com.tw", "net.cn", "org.cn"
+        )
     }
 }

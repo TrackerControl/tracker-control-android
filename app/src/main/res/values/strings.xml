@@ -613,11 +613,11 @@ Sincerely,\n\n]]></string>
     <string name="insights_shocking_fact">Your apps contacted %1$d tracking companies via %2$d tracker hosts this week!</string>
     <string name="insights_shocking_fact_playstore">Your apps contacted %1$d tracking companies this week!</string>
     <string name="insights_share">Share with Friends</string>
-    <string name="insights_share_trackers_blocked">Trackers Blocked</string>
-    <string name="insights_share_trackers_detected">Trackers Detected</string>
+    <string name="insights_share_trackers_blocked">Tracker Hosts Blocked</string>
+    <string name="insights_share_trackers_detected">Tracker Hosts Detected</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">I blocked %1$d trackers from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">I detected %1$d trackers from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
+    <string name="insights_share_message">I blocked %1$d tracker hosts from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">I detected %1$d tracker hosts from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
     <string name="insights_see_more">See More →</string>
 
     <!-- What's New onboarding slide (not translated) -->
