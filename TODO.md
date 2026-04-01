@@ -6,9 +6,9 @@ The VPN file descriptor can be closed by `stopVPN()` while native code in `jni_r
 
 **Root cause:** `stopNative()` calls `jni_stop()` + `thread.join()`, then `stopVPN()` immediately closes the FD. There is no guarantee native code has fully released the FD when `join()` returns. A 500ms `Thread.sleep()` in one reload path (ServiceSinkhole.java:607) is evidence of this race.
 
-**Proposed fix:** Move the FD close into `stopNative()`, after `jni_clear()`, so the sequence becomes: `jni_stop()` -> `join thread` -> `jni_clear()` -> `close FD`. Then `stopVPN()` no longer closes the FD. Each callsite of `stopVPN()` needs auditing to prevent double-close or missed-close.
+**Current status: Do not fix.** The race is theoretically real but has never been observed in practice — no user reports and the maintainer has never seen the error. The existing 500ms sleep appears to be a sufficient mitigation. If the race does hit, `nativeExit()` surfaces it as an error notification and disables the VPN, so it would not go unnoticed.
 
-**Risk:** High — touches the critical VPN path. A bug here makes the VPN completely non-functional rather than occasionally racy. Needs careful testing on real devices across network transitions.
+**If revisited:** The proposed fix would move the FD close into `stopNative()`, after `jni_clear()`, so the sequence becomes: `jni_stop()` -> `join thread` -> `jni_clear()` -> `close FD`. Risk is high — touches the critical VPN path, and the likely failure modes (double-close, FD leak) are harder to detect than the original race. Only worth pursuing if user reports indicate the race is actually happening.
 
 ## System apps VPN routing
 
