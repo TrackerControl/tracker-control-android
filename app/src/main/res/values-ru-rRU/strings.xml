@@ -57,7 +57,6 @@
     <string name="setting_call">Отключить при звонке</string>
     <string name="setting_reload_onconnectivity">Перезапуск при каждой смене подключения</string>
     <string name="setting_log_app">Искать новые трекеры</string>
-    <string name="setting_log_logcat">Выводить лог соединений в ADB</string>
     <string name="setting_filter">Блокировать трекеры</string>
     <string name="setting_filter_udp">Блокировать трекеры на UDP</string>
     <string name="setting_handover">Бесшовная передача VPN при перезагрузке</string>
@@ -106,7 +105,6 @@
     <string name="summary_validate">Доменное имя, используемое для проверки интернет-соединения через порт 443 (https).</string>
     <string name="summary_socks5_enabled">На прокси-сервер будет направляться только TCP трафик</string>
     <string name="summary_watchdog">Периодически проверять, запущен ли TrackerControl (введите ноль, чтобы отключить эту опцию). Это может привести к большему расходу батареи.</string>
-    <string name="summary_log_logcat">Отключает блокировку. Соединения (и идентифицированные трекеры) записываются в журнал устройства. Извлечение через adb logcat с тегом \'TC-Log\'.</string>
     <string name="msg_sure">Вы уверены?</string>
     <string name="msg_waiting">Ожидание события</string>
     <string name="msg_disabled">Для включения TrackerControl используйте переключатель выше.</string>
