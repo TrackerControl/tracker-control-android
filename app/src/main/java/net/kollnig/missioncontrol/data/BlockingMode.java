@@ -78,14 +78,11 @@ public class BlockingMode {
     }
 
     /**
-     * Get the default blocking mode based on build flavor.
-     * TC Slim (play flavor) defaults to minimal mode.
+     * Get the default blocking mode for new users.
+     * Minimal is the safest default — least app breakage.
      */
     public static String getDefaultMode() {
-        if (Util.isPlayStoreInstall()) {
-            return MODE_MINIMAL;
-        }
-        return MODE_STANDARD;
+        return MODE_MINIMAL;
     }
 
     /**
