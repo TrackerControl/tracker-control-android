@@ -58,7 +58,6 @@
     <string name="setting_call">Wyłączanie na wezwanie</string>
     <string name="setting_reload_onconnectivity">Przeładowanie przy każdej zmianie łączności</string>
     <string name="setting_log_app">Szukaj nowych skryptów śledzących</string>
-    <string name="setting_log_logcat">Rejestruj ruch do ADB</string>
     <string name="setting_filter">Blokuj skrypty śledzące</string>
     <string name="setting_filter_udp">Blokuj skrypty śledzące z UDP</string>
     <string name="setting_handover">Bezszwowe przekazanie VPN przy przeładowaniu</string>
@@ -107,7 +106,6 @@
     <string name="summary_validate">Nazwa domeny używana do walidacji połączenia internetowego na porcie 443 (https).</string>
     <string name="summary_socks5_enabled">Tylko ruch TCP będzie wysyłany do serwera proxy</string>
     <string name="summary_watchdog">Okresowo sprawdzać, czy TrackerControl nadal działa (wpisać zero, aby wyłączyć tę opcję). Może to spowodować dodatkowe zużycie baterii.</string>
-    <string name="summary_log_logcat">Wyłącza blokowanie. Łączność (i zidentyfikowane tracky) są rejestrowane do dziennika urządzenia. Pobierz z adb logcat z tagiem \'TC-Log\'.</string>
     <string name="msg_sure">Jesteś pewien?</string>
     <string name="msg_started">Wyszukiwanie trackerów...</string>
     <string name="msg_waiting">Oczekiwanie na zdarzenie</string>
