@@ -56,7 +56,6 @@
     <string name="setting_call">Desgaitu deietan</string>
     <string name="setting_reload_onconnectivity">Birkargatu konektibitate aldaketa bakoitzean</string>
     <string name="setting_log_app">Aztarnari berriak bilatu</string>
-    <string name="setting_log_logcat">Erregistratu transmisioak ADBra</string>
     <string name="setting_filter">Aztarnariak blokeatu</string>
     <string name="setting_filter_udp">UDP bidezko aztarnariak blokeatu</string>
     <string name="setting_handover">Pasatu VPNra etenik gabe birkargatzean</string>
@@ -105,7 +104,6 @@
     <string name="summary_validate">Internet konexioa 443 atakan (https) balioztatzeko erabilitako domeinuaren izena.</string>
     <string name="summary_socks5_enabled">TCP trafikoa besterik ez da bidaliko proxy zerbitzarira</string>
     <string name="summary_watchdog">Egiaztatu aldiro TrackerControl oraindik martxan dagoen (idatzi 0 ezaugarri hau desgaitzeko). Honek bateria gehiago erabiltzea ekar lezake.</string>
-    <string name="summary_log_logcat">Blokeatzea desgaitzen du. Komunikazioak (eta identifikatutako jarraitzaileak) gailuaren erregistroan erregistratzen dira. Berreskuratu adb logcat-ekin \'TC-Log\' etiketarekin.</string>
     <string name="msg_sure">Ziur zaude?</string>
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
