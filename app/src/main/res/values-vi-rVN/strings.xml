@@ -54,7 +54,6 @@
     <string name="setting_call">Tắt khi có cuộc gọi</string>
     <string name="setting_reload_onconnectivity">Tải lại mỗi lần đổi kết nối</string>
     <string name="setting_log_app">Tìm kiếm trình theo dõi mới</string>
-    <string name="setting_log_logcat">Ghi lại các sự truyền tải ra ADB</string>
     <string name="setting_filter">Chặn trình theo dõi</string>
     <string name="setting_filter_udp">Chặn trình theo dõi trên UDP</string>
     <string name="setting_handover">Chuyển giao VPN liền mạch khi tải lại</string>
@@ -103,7 +102,6 @@
     <string name="summary_validate">Tên miền được sử dụng để xác thực kết nối internet tại cổng 443 (https).</string>
     <string name="summary_socks5_enabled">Chỉ có lưu lượng TCP sẽ được gửi đến máy chủ proxy</string>
     <string name="summary_watchdog">Kiểm tra định kỳ xem TrackerControl có vẫn chạy không (nhập 0 để tắt tùy chọn này). Điều này có thể dẫn đến sử dụng thêm pin.</string>
-    <string name="summary_log_logcat">Tắt việc chặn. Những sự giao tiếp (và các trình theo dõi đã nhận dạng) được ghi lại vào nhật ký thiết bị. Lấy bằng adb logcat với thẻ \'TC-Log\'.</string>
     <string name="msg_sure">Bạn có chắc không?</string>
     <string name="msg_waiting">Đang đợi sự kiện</string>
     <string name="msg_disabled">Sử dụng công tắc ở trên để bật TrackerControl.</string>
