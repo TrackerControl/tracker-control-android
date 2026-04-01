@@ -21,6 +21,7 @@ import androidx.preference.PreferenceManager;
 import net.kollnig.missioncontrol.BuildConfig;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.ConnectionPool;
@@ -70,7 +71,7 @@ public class DnsOverHttpsClient {
      * Get instance with specific endpoint (used by DnsProxyServer).
      */
     public static synchronized DnsOverHttpsClient getInstance(String endpoint) {
-        if (instance == null || !instance.endpoint.equals(endpoint)) {
+        if (instance == null || !Objects.equals(instance.endpoint, endpoint)) {
             if (instance != null) {
                 instance.shutdown();
             }
@@ -89,14 +90,13 @@ public class DnsOverHttpsClient {
     /**
      * Shutdown the OkHttpClient and release resources.
      * Call this when DoH is disabled to prevent idle connections from draining
-     * battery.
+     * battery. Runs on a background thread to avoid NetworkOnMainThreadException
+     * when closing sockets.
      */
     public void shutdown() {
         Log.i(TAG, "Shutting down DoH client");
         client.dispatcher().cancelAll();
-        client.connectionPool().evictAll();
-        // Note: We don't call executorService().shutdown() because it would
-        // make the client unusable if a new instance isn't created in time
+        new Thread(() -> client.connectionPool().evictAll(), "DoH-shutdown").start();
     }
 
     /**
@@ -137,6 +137,7 @@ public class DnsOverHttpsClient {
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
+                        if (response.code() < 500) return null; // Don't retry client errors
                         continue;
                     }
 
@@ -147,6 +148,10 @@ public class DnsOverHttpsClient {
                     }
 
                     byte[] dnsResponse = responseBody.bytes();
+                    if (dnsResponse.length < 12) {
+                        Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
+                        continue;
+                    }
                     Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes");
                     return dnsResponse;
                 }

@@ -55,6 +55,9 @@ public class DnsProxyServer {
     private ServerSocket tcpServerSocket;
     private ExecutorService executor;
     private final AtomicInteger dohFailures = new AtomicInteger(0);
+    private static final int CIRCUIT_BREAKER_THRESHOLD = 10;
+    private static final long CIRCUIT_BREAKER_COOLDOWN_MS = 60_000;
+    private volatile long circuitOpenUntil = 0;
 
     private DnsProxyServer(Context context) {
         this.context = context.getApplicationContext();
@@ -221,17 +224,20 @@ public class DnsProxyServer {
      */
     private void handleQuery(byte[] queryData, InetAddress clientAddress, int clientPort) {
         try {
-            // Get the DoH client
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-            DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+            byte[] responseData = null;
 
-            // Forward the query via DoH (the query is already in DNS wire format)
-            byte[] responseData = dohClient.resolve(queryData);
+            // Circuit breaker: skip DoH if we recently had too many failures
+            boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
+            if (!circuitOpen) {
+                String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+                responseData = dohClient.resolve(queryData);
+            }
 
             if (responseData != null) {
                 dohFailures.set(0);
-                // Send response back to client
+                circuitOpenUntil = 0;
                 DatagramSocket socket = serverSocket;
                 if (socket == null || socket.isClosed()) return;
                 DatagramPacket response = new DatagramPacket(
@@ -239,14 +245,17 @@ public class DnsProxyServer {
                 socket.send(response);
                 Log.d(TAG, "DoH query successful, response sent to " + clientAddress + ":" + clientPort);
             } else {
-                int failures = dohFailures.incrementAndGet();
-                Log.w(TAG, "DoH query returned null response, failures=" + failures);
+                if (!circuitOpen) {
+                    int failures = dohFailures.incrementAndGet();
+                    Log.w(TAG, "DoH query returned null response, failures=" + failures);
 
-                if (failures >= 10) {
-                    if (eu.faircode.netguard.Util.isInternetWorking(context)) {
-                        Log.w(TAG, "DoH server unreachable even though internet is working, showing notification");
-                        eu.faircode.netguard.ServiceSinkhole.dohError(context);
-                        dohFailures.set(0); // Reset to wait for the next 10 failures
+                    if (failures >= CIRCUIT_BREAKER_THRESHOLD) {
+                        circuitOpenUntil = System.currentTimeMillis() + CIRCUIT_BREAKER_COOLDOWN_MS;
+                        dohFailures.set(0);
+                        if (eu.faircode.netguard.Util.isInternetWorking(context)) {
+                            Log.w(TAG, "DoH circuit breaker tripped, skipping DoH for 60s");
+                            eu.faircode.netguard.ServiceSinkhole.dohError(context);
+                        }
                     }
                 }
 
@@ -335,26 +344,35 @@ public class DnsProxyServer {
             // Let's copy the resolution logic here for safety.
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-            DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+            byte[] responseData = null;
 
-            byte[] responseData = dohClient.resolve(queryData);
+            boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
+            if (!circuitOpen) {
+                String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+                responseData = dohClient.resolve(queryData);
+            }
 
             if (responseData != null) {
                 dohFailures.set(0);
-                // Write response with 2-byte length prefix
+                circuitOpenUntil = 0;
                 out.writeShort(responseData.length);
                 out.write(responseData);
                 out.flush();
                 Log.d(TAG, "DoH TCP query successful");
             } else {
-                int failures = dohFailures.incrementAndGet();
-                if (failures >= 10 && eu.faircode.netguard.Util.isInternetWorking(context)) {
-                    eu.faircode.netguard.ServiceSinkhole.dohError(context);
-                    dohFailures.set(0);
+                if (!circuitOpen) {
+                    int failures = dohFailures.incrementAndGet();
+                    if (failures >= CIRCUIT_BREAKER_THRESHOLD) {
+                        circuitOpenUntil = System.currentTimeMillis() + CIRCUIT_BREAKER_COOLDOWN_MS;
+                        dohFailures.set(0);
+                        if (eu.faircode.netguard.Util.isInternetWorking(context)) {
+                            Log.w(TAG, "DoH circuit breaker tripped (TCP), skipping DoH for 60s");
+                            eu.faircode.netguard.ServiceSinkhole.dohError(context);
+                        }
+                    }
                 }
 
-                // Fallback to standard DNS if enabled
                 boolean dnsFallback = prefs.getBoolean("doh_dns_fallback", false);
                 if (dnsFallback) {
                     byte[] fallbackResponse = resolveViaStandardDns(queryData);
