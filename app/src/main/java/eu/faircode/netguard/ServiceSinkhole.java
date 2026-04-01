@@ -924,8 +924,19 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            // SNI extraction disabled globally: connecting to tracker IPs to read
-            // TLS ClientHello leaks the user's IP address to the tracker server.
+            // SNI extraction disabled: connecting to tracker IPs to read TLS
+            // ClientHello leaks the user's IP address to the tracker server.
+            // The native side (ip.c) also has SNI disabled via is_play=0.
+            // To re-enable, also set is_play=1 in ip.c for the relevant build.
+            //
+            // if (packet.data != null && !packet.data.isEmpty()) {
+            //     uncertain = 0;
+            //     if (!packet.data.equals(originalDname)) {
+            //         Log.d(TAG, "Using SNI " + packet.data + " instead of originalDname " + originalDname);
+            //         dname = packet.data;
+            //         isTracker = getDecloakedTracker(dname, dh).first != null;
+            //     }
+            // }
 
             if (uncertain == 1) // multiple dnames correspond to same IP address
                 Log.d(TAG, "Found uncertain entry: " + dname);
