@@ -1,0 +1,10 @@
+- Tracker Blocking Modes: Choose between minimal, standard, and strict blocking to balance privacy and app compatibility.
+- DuckDuckGo Tracker Radar: Integrated DDG's mobile-specific tracker detection for better coverage.
+- Improved DNS/DoH: Better reliability, safer defaults, and support for Encrypted DNS.
+- Show Unprotected Apps: New option to easily see which apps are not yet protected.
+- Default Minimal Mode: New users start in minimal mode to reduce app breakage.
+- Replaced Battery/Data Saver Popups: Intrusive popups replaced with a streamlined troubleshooting flow.
+- Removed IP-Based Blocking: Removed faulty IP-based tracker blocking for improved reliability.
+- UI Cleanup: Cleaner interface with improved scrolling and search performance.
+- New Translations: Added new translations and updated "What's New" section.
+- Bug Fixes: Fixed app migration issues, several crashes, and improved stability.
