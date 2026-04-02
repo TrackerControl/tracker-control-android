@@ -1879,7 +1879,13 @@ public class ServiceSinkhole extends VpnService {
                 long ttl = (cursor.isNull(colTTL) ? 7 * 24 * 3600 * 1000L : cursor.getLong(colTTL));
 
                 if (isLockedDown(last_metered)) {
-                    String[] pkg = getPackageManager().getPackagesForUid(uid);
+                    String[] pkg;
+                    try {
+                        pkg = getPackageManager().getPackagesForUid(uid);
+                    } catch (SecurityException ignored) {
+                        // Work profile cross-user UID
+                        pkg = null;
+                    }
                     if (pkg != null && pkg.length > 0) {
                         if (!lockdown.getBoolean(pkg[0], false))
                             continue;
@@ -2230,7 +2236,16 @@ public class ServiceSinkhole extends VpnService {
      * - It's a system app and manage_system is disabled
      */
     private boolean shouldTrackApp(int uid) {
-        String[] packages = getPackageManager().getPackagesForUid(uid);
+        String[] packages;
+        try {
+            packages = getPackageManager().getPackagesForUid(uid);
+        } catch (SecurityException ex) {
+            // In work profiles, getPackagesForUid throws SecurityException for
+            // cross-user UIDs (requires INTERACT_ACROSS_USERS_FULL permission).
+            // Default to tracking so blocking/logging still works.
+            Log.w(TAG, "SecurityException in shouldTrackApp for uid " + uid + ": " + ex.getMessage());
+            return true;
+        }
         if (packages == null || packages.length == 0) {
             return true; // Unknown UID, default to tracking
         }
@@ -2743,6 +2758,9 @@ public class ServiceSinkhole extends VpnService {
 
         } catch (PackageManager.NameNotFoundException ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        } catch (SecurityException ex) {
+            // Work profile cross-user UID
+            Log.w(TAG, "SecurityException showing install notification for uid " + uid + ": " + ex.getMessage());
         }
     }
 
