@@ -541,6 +541,9 @@ public class ServiceSinkhole extends VpnService {
 
         private void start() {
             if (vpn == null) {
+                WorkProfileDiagnostics diag = WorkProfileDiagnostics.getInstance();
+                diag.log("VPN", "start() called, userId=" + (android.os.Process.myUid() / 100000));
+
                 if (state != State.none) {
                     Log.d(TAG, "Stop foreground state=" + state.toString());
                     stopForeground(true);
@@ -552,15 +555,23 @@ public class ServiceSinkhole extends VpnService {
                 List<Rule> listRule = Rule.getRules(true, ServiceSinkhole.this);
                 List<Rule> listAllowed = getAllowedRules(listRule);
 
+                diag.log("VPN", "Rules: total=" + listRule.size() + " allowed=" + listAllowed.size());
+
                 last_builder = getBuilder(listAllowed, listRule);
                 vpn = startVPN(last_builder);
-                if (vpn == null)
+                if (vpn == null) {
+                    diag.log("VPN", "startVPN returned null - VPN failed to establish!");
                     throw new StartFailedException(getString((R.string.msg_start_failed)));
+                }
+
+                diag.log("VPN", "VPN established, fd=" + vpn.getFd());
 
                 startNative(vpn, listAllowed, listRule);
 
                 // Start DoH proxy if enabled
                 net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).start();
+
+                diag.log("VPN", "Native started, DoH proxy checked");
 
                 removeWarningNotifications();
                 updateEnforcingNotification(listAllowed.size(), listRule.size());
@@ -972,7 +983,19 @@ public class ServiceSinkhole extends VpnService {
 
                 dh.updateAccess(packet, dname, -1, uncertain);
             }
+
+            // Periodic diagnostic: log pipeline health
+            logPipelineCount++;
+            if (logPipelineCount % 100 == 1) {
+                WorkProfileDiagnostics.getInstance().log("LogPipeline",
+                        "count=" + logPipelineCount
+                        + " log=" + log + " log_app=" + log_app
+                        + " dname=" + dname + " isTracker=" + isTracker
+                        + " uid=" + packet.uid + " daddr=" + packet.daddr
+                        + " dport=" + packet.dport);
+            }
         }
+        private long logPipelineCount = 0;
 
         private Pair<Tracker, String> getDecloakedTracker(String qname, DatabaseHelper dh) {
             Cursor lookup = dh.getAName(qname, false);
@@ -1440,6 +1463,10 @@ public class ServiceSinkhole extends VpnService {
         boolean filter = prefs.getBoolean("filter", true);
         boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
 
+        WorkProfileDiagnostics diag = WorkProfileDiagnostics.getInstance();
+        diag.log("Builder", "filter=" + filter + " ip6=" + ip6 + " subnet=" + subnet
+                + " includeSystem=" + includeSystem + " lan=" + lan);
+
         // Build VPN service
         Builder builder = new Builder();
         builder.setSession(getString(R.string.app_name));
@@ -1640,6 +1667,8 @@ public class ServiceSinkhole extends VpnService {
 
         // Add list of allowed applications
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int excludedCount = 0;
+            int routedCount = 0;
             try {
                 builder.addDisallowedApplication(getPackageName());
             } catch (PackageManager.NameNotFoundException ex) {
@@ -1649,20 +1678,28 @@ public class ServiceSinkhole extends VpnService {
                 for (Rule rule : listAllowed)
                     try {
                         builder.addDisallowedApplication(rule.packageName);
+                        excludedCount++;
                     } catch (PackageManager.NameNotFoundException ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }
             else if (filter)
-                for (Rule rule : listRule)
+                for (Rule rule : listRule) {
                     // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
                     // false
-                    if (!rule.apply || (!includeSystem && rule.system))
+                    if (!rule.apply || (!includeSystem && rule.system)) {
                         try {
                             Log.i(TAG, "Not routing " + rule.packageName);
                             builder.addDisallowedApplication(rule.packageName);
+                            excludedCount++;
                         } catch (PackageManager.NameNotFoundException ex) {
                             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                         }
+                    } else {
+                        routedCount++;
+                    }
+                }
+            diag.log("Builder", "VPN routing: " + routedCount + " apps routed, "
+                    + excludedCount + " excluded (last_connected=" + last_connected + ")");
         }
 
         // Build configure intent
@@ -1678,6 +1715,13 @@ public class ServiceSinkhole extends VpnService {
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
         boolean filter = prefs.getBoolean("filter", true);
+
+        WorkProfileDiagnostics diag = WorkProfileDiagnostics.getInstance();
+        diag.log("Native", "startNative log=" + log + " log_app=" + log_app
+                + " filter=" + filter + " block_dot=" + prefs.getBoolean("block_dot", true)
+                + " sni_enabled=" + prefs.getBoolean("sni_enabled", false)
+                + " doh_enabled=" + prefs.getBoolean("doh_enabled", false)
+                + " loglevel=" + prefs.getString("loglevel", Integer.toString(Log.WARN)));
 
         Log.i(TAG, "Start native log=" + log + "/" + log_app + " filter=" + filter);
 
@@ -2073,6 +2117,7 @@ public class ServiceSinkhole extends VpnService {
     // Called from native code
     private void nativeExit(String reason) {
         Log.w(TAG, "Native exit reason=" + reason);
+        WorkProfileDiagnostics.getInstance().log("Native", "EXIT reason=" + reason);
         if (reason != null) {
             showErrorNotification(reason);
 
@@ -2085,6 +2130,7 @@ public class ServiceSinkhole extends VpnService {
     // Called from native code
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
+        WorkProfileDiagnostics.getInstance().log("Native", "ERROR " + error + ": " + message);
         showErrorNotification(message);
     }
 
@@ -2094,6 +2140,7 @@ public class ServiceSinkhole extends VpnService {
     }
 
     // Called from native code
+    private long dnsResolvedCount = 0;
     private void dnsResolved(ResourceRecord rr) {
         if (DatabaseHelper.getInstance(ServiceSinkhole.this).insertDns(rr)) {
             Log.i(TAG, "New IP " + rr);
@@ -2103,6 +2150,12 @@ public class ServiceSinkhole extends VpnService {
                 ipToHost.remove(rr.Resource);
                 ipToTracker.remove(rr.Resource);
             }
+        }
+        dnsResolvedCount++;
+        if (dnsResolvedCount % 50 == 1) {
+            WorkProfileDiagnostics.getInstance().log("DNS",
+                    "resolved #" + dnsResolvedCount + " qname=" + rr.QName
+                    + " resource=" + rr.Resource + " aname=" + rr.AName);
         }
     }
 
@@ -2149,10 +2202,17 @@ public class ServiceSinkhole extends VpnService {
     }
 
     // Called from native code
+    private long diagPacketCount = 0;
+    private long diagBlockedCount = 0;
+    private long diagLoggedCount = 0;
+    private long diagLastSummary = 0;
+
     private Allowed isAddressAllowed(Packet packet) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         lock.readLock().lock();
+
+        diagPacketCount++;
 
         packet.allowed = false;
         if (prefs.getBoolean("filter", true)) {
@@ -2217,8 +2277,25 @@ public class ServiceSinkhole extends VpnService {
 
         if (prefs.getBoolean("log", false) || prefs.getBoolean("log_app", true))
             if (packet.protocol != 6 /* TCP */ || !"".equals(packet.flags))
-                if (packet.uid != Process.myUid())
+                if (packet.uid != Process.myUid()) {
                     logPacket(packet);
+                    diagLoggedCount++;
+                }
+
+        if (!packet.allowed)
+            diagBlockedCount++;
+
+        // Periodic summary every 60 seconds
+        long now = System.currentTimeMillis();
+        if (now - diagLastSummary > 60000) {
+            diagLastSummary = now;
+            WorkProfileDiagnostics.getInstance().log("Packets",
+                    "total=" + diagPacketCount + " blocked=" + diagBlockedCount
+                    + " logged=" + diagLoggedCount
+                    + " filter=" + prefs.getBoolean("filter", true)
+                    + " log=" + prefs.getBoolean("log", false)
+                    + " log_app=" + prefs.getBoolean("log_app", true));
+        }
 
         return allowed;
     }
@@ -2778,12 +2855,23 @@ public class ServiceSinkhole extends VpnService {
     @Override
     public void onCreate() {
         Log.i(TAG, "Create version=" + Util.getSelfVersionName(this) + "/" + Util.getSelfVersionCode(this));
+
+        WorkProfileDiagnostics diag = WorkProfileDiagnostics.getInstance();
+        int userId = android.os.Process.myUid() / 100000;
+        diag.log("Lifecycle", "onCreate version=" + Util.getSelfVersionName(this)
+                + " userId=" + userId + " isWorkProfile=" + (userId != 0)
+                + " SDK=" + Build.VERSION.SDK_INT
+                + " dataDir=" + getFilesDir().getAbsolutePath());
+
         try {
             startForeground(NOTIFY_WAITING, getWaitingNotification());
+            diag.log("Lifecycle", "startForeground succeeded");
         } catch (Exception ex) {
+            diag.log("Lifecycle", "startForeground FAILED: " + ex);
             Log.e(TAG, "Failed to start foreground service", ex);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                     ex instanceof android.app.ForegroundServiceStartNotAllowedException) {
+                diag.log("Lifecycle", "ForegroundServiceStartNotAllowedException - stopping self");
                 stopSelf();
                 return;
             }

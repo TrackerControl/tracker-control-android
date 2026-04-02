@@ -106,6 +106,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private static final int REQUEST_EXPORT = 1;
     private static final int REQUEST_IMPORT = 2;
+    private static final int REQUEST_DEBUG_EXPORT = 3;
     private static final int REQUEST_CALL = 5;
 
     private AlertDialog dialogFilter = null;
@@ -266,6 +267,18 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 return true;
             }
         });
+
+        // Handle debug diagnostics export
+        Preference pref_debug_export = screen.findPreference("debug_export");
+        if (pref_debug_export != null) {
+            pref_debug_export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(getIntentCreateDebugExport(), ActivitySettings.REQUEST_DEBUG_EXPORT);
+                    return true;
+                }
+            });
+        }
 
         // Hosts file settings
         cat_advanced.removePreference(screen.findPreference("use_hosts"));
@@ -846,6 +859,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (resultCode == RESULT_OK && data != null)
                 handleImport(data);
 
+        } else if (requestCode == REQUEST_DEBUG_EXPORT) {
+            if (resultCode == RESULT_OK && data != null)
+                handleDebugExport(data);
+
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
@@ -871,6 +888,51 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
         return intent;
+    }
+
+    private Intent getIntentCreateDebugExport() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TITLE,
+                "tc_diagnostics_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".txt");
+        return intent;
+    }
+
+    private void handleDebugExport(final Intent data) {
+        new AsyncTask<Object, Object, Throwable>() {
+            @Override
+            protected Throwable doInBackground(Object... objects) {
+                OutputStream out = null;
+                try {
+                    Uri target = data.getData();
+                    Log.i(TAG, "Writing diagnostics to URI=" + target);
+                    out = getContentResolver().openOutputStream(target);
+                    WorkProfileDiagnostics.getInstance().exportDiagnostics(ActivitySettings.this, out);
+                    return null;
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    return ex;
+                } finally {
+                    if (out != null)
+                        try {
+                            out.close();
+                        } catch (IOException ex) {
+                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable ex) {
+                if (running) {
+                    if (ex == null)
+                        Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void handleExport(final Intent data) {

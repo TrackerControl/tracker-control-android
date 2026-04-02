@@ -64,6 +64,13 @@ public class ReceiverAutostart extends BroadcastReceiver {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             int oldVersion = prefs.getInt("version", -1);
             int newVersion = Util.getSelfVersionCode(context);
+
+            WorkProfileDiagnostics diag = WorkProfileDiagnostics.getInstance();
+            int userId = android.os.Process.myUid() / 100000;
+            diag.log("Upgrade", "initialized=" + initialized + " oldVersion=" + oldVersion
+                    + " newVersion=" + newVersion + " userId=" + userId
+                    + " isWorkProfile=" + (userId != 0));
+
             if (oldVersion == newVersion)
                 return;
             Log.i(TAG, "Upgrading from version " + oldVersion + " to " + newVersion);
@@ -99,6 +106,9 @@ public class ReceiverAutostart extends BroadcastReceiver {
                 // Step 2: vpn_exclude=true → restore apply=false (VPN exclusion)
                 SharedPreferences vpn_exclude = context.getSharedPreferences("vpn_exclude", Context.MODE_PRIVATE);
                 Map<String, ?> allVpnExclude = vpn_exclude.getAll();
+                diag.log("Upgrade", "vpn_exclude entries=" + allVpnExclude.size()
+                        + " apply entries=" + context.getSharedPreferences("apply", Context.MODE_PRIVATE).getAll().size()
+                        + " tracker_protect entries=" + context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).getAll().size());
                 if (!allVpnExclude.isEmpty()) {
                     Log.i(TAG, "Migrating beta vpn_exclude/apply to new scheme");
                     SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);

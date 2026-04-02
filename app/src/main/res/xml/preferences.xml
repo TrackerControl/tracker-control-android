@@ -266,5 +266,19 @@
                 android:summary="@string/summary_ip6"
                 android:title="@string/setting_ip6" />
         </PreferenceCategory>
+        <PreferenceCategory
+            android:key="category_diagnostics"
+            android:layout="@layout/pref_cat"
+            android:title="@string/setting_diagnostics_title">
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
+                android:key="log"
+                android:summary="@string/summary_debug_traffic_log"
+                android:title="@string/setting_debug_traffic_log" />
+            <Preference
+                android:key="debug_export"
+                android:summary="@string/summary_debug_export"
+                android:title="@string/setting_debug_export" />
+        </PreferenceCategory>
     </PreferenceScreen>
 </PreferenceScreen>

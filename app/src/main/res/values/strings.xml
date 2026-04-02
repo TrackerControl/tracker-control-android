@@ -356,6 +356,13 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="export_failed">Export failed</string>
     <string name="exported">Exported to storage!</string>
 
+    <!-- Debug Diagnostics -->
+    <string name="setting_diagnostics_title">Debug Diagnostics</string>
+    <string name="setting_debug_export">Export diagnostics</string>
+    <string name="summary_debug_export">Export system info, preferences, VPN state, DNS config, app routing, and event log for debugging work profile and logging issues.</string>
+    <string name="setting_debug_traffic_log">Enable traffic log</string>
+    <string name="summary_debug_traffic_log">Log all connections (not just trackers) to the traffic log. Useful for diagnosing whether the VPN sees any traffic at all. Uses more battery.</string>
+
     <!-- App Details -->
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Trackers</string>
