@@ -927,6 +927,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             menu.findItem(R.id.menu_sort_name).setChecked(true);
         else if ("trackers_all".equals(sort))
             menu.findItem(R.id.menu_sort_trackers_all).setChecked(true);
+        else if ("trackers_recent".equals(sort))
+            menu.findItem(R.id.menu_sort_by_latest_detected_tracker).setChecked(true);
         else
             menu.findItem(R.id.menu_sort_trackers_week).setChecked(true);
 
@@ -969,6 +971,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (itemId == R.id.menu_sort_trackers_all) {
             item.setChecked(true);
             prefs.edit().putString("sort", "trackers_all").apply();
+            return true;
+        } else if (itemId == R.id.menu_sort_by_latest_detected_tracker) {
+            item.setChecked(true);
+            prefs.edit().putString("sort", "trackers_recent").apply();
             return true;
         } else if (itemId == R.id.menu_sort_uid) {
             item.setChecked(true);
