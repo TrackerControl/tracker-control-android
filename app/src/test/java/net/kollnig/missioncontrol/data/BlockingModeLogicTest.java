@@ -130,4 +130,123 @@ public class BlockingModeLogicTest {
         assertEquals(Set.of("browser"),
                 BlockingModeLogic.clearAutoExcludedApp(Set.of("browser", "other"), "other"));
     }
+
+    @Test
+    public void minimalIgnoresGranularRuleParameter() {
+        // Even when blockedByGranularRule is false, minimal still blocks non-Content
+        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_MINIMAL,
+                "Advertising",
+                false));
+        // Even when blockedByGranularRule is true, minimal still allows Content
+        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_MINIMAL,
+                BlockingModeLogic.CONTENT_CATEGORY,
+                true));
+    }
+
+    @Test
+    public void minimalBlocksAllNonContentCategories() {
+        for (String category : new String[]{
+                "Advertising", "Analytics", "Social", "Fingerprinting",
+                "Email", "Uncategorised"}) {
+            assertTrue("Should block " + category,
+                    BlockingModeLogic.shouldBlockKnownTracker(
+                            BlockingModeLogic.MODE_MINIMAL, category, false));
+        }
+    }
+
+    @Test
+    public void standardWithGranularFalseDoesNotBlock() {
+        // In standard mode, if granular rule says not blocked, it's not blocked
+        // regardless of category
+        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_STANDARD,
+                "Advertising",
+                false));
+        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_STANDARD,
+                "Analytics",
+                false));
+    }
+
+    @Test
+    public void strictWithGranularTrueBlocksContent() {
+        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_STRICT,
+                BlockingModeLogic.CONTENT_CATEGORY,
+                true));
+    }
+
+    @Test
+    public void endToEndMinimalBlocksAdvertisingTrackerRegardlessOfBlocklist() {
+        // Simulates the full decision chain for minimal mode:
+        // TrackerBlocklist is not consulted, only category matters
+        TrackerBlocklist.resetForTests();
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker tracker = new Tracker("Branch", "Advertising");
+
+        // Even if user hasn't set up any rules (no ensureDefaults), minimal blocks
+        boolean blockedByGranular = blocklist.blockedTracker(1001, tracker);
+        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_MINIMAL,
+                tracker.category,
+                blockedByGranular));
+    }
+
+    @Test
+    public void endToEndStandardContentTrackerAllowedByDefault() {
+        // Simulates: standard mode + default blocklist = Content trackers pass through
+        TrackerBlocklist.resetForTests();
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker contentTracker = new Tracker("Akamai", "Content");
+        int uid = 1001;
+
+        blocklist.ensureDefaults(uid, false);
+        boolean blockedByGranular = blocklist.blockedTracker(uid, contentTracker);
+        assertFalse("Content should not be blocked by granular rule in standard defaults",
+                blockedByGranular);
+        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_STANDARD,
+                contentTracker.category,
+                blockedByGranular));
+    }
+
+    @Test
+    public void endToEndStrictContentTrackerBlocked() {
+        // Simulates: strict mode + strict blocklist = Content trackers blocked
+        TrackerBlocklist.resetForTests();
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker contentTracker = new Tracker("Akamai", "Content");
+        int uid = 1001;
+
+        blocklist.ensureDefaults(uid, true);
+        boolean blockedByGranular = blocklist.blockedTracker(uid, contentTracker);
+        assertTrue("Content should be blocked by granular rule in strict defaults",
+                blockedByGranular);
+        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_STRICT,
+                contentTracker.category,
+                blockedByGranular));
+    }
+
+    @Test
+    public void endToEndStandardUserUnblocksSpecificTracker() {
+        // User unblocks a specific tracker in standard mode -> it passes through
+        TrackerBlocklist.resetForTests();
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker tracker = new Tracker("Branch", "Advertising");
+        int uid = 1001;
+
+        blocklist.ensureDefaults(uid, false);
+        assertTrue(blocklist.blockedTracker(uid, tracker));
+
+        // User unblocks Branch specifically
+        blocklist.unblock(uid, tracker);
+        boolean blockedByGranular = blocklist.blockedTracker(uid, tracker);
+        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
+                BlockingModeLogic.MODE_STANDARD,
+                tracker.category,
+                blockedByGranular));
+    }
 }

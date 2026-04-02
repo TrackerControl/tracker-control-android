@@ -121,4 +121,85 @@ public class TrackerBlocklistTest {
                     }
                 }));
     }
+
+    @Test
+    public void blockedReturnsTrueForUnknownUid() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        assertTrue(blocklist.blocked(9999, "Advertising"));
+        assertTrue(blocklist.blocked(9999, "Advertising | Branch"));
+    }
+
+    @Test
+    public void blockOnNonexistentUidIsNoOp() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        blocklist.block(9999, "Advertising");
+        assertFalse(blocklist.hasSubset(9999));
+        assertTrue(blocklist.blocked(9999, "Advertising"));
+    }
+
+    @Test
+    public void unblockOnNonexistentUidCreatesEntry() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        blocklist.unblock(9999, "Advertising");
+        assertTrue(blocklist.hasSubset(9999));
+        assertFalse(blocklist.blocked(9999, "Advertising"));
+    }
+
+    @Test
+    public void contentTrackerNotBlockedWithNonStrictDefaults() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker contentTracker = new Tracker("Akamai", "Content");
+        blocklist.ensureDefaults(UID, false);
+
+        assertFalse(blocklist.blockedTracker(UID, contentTracker));
+    }
+
+    @Test
+    public void contentTrackerBlockedWithStrictDefaults() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker contentTracker = new Tracker("Akamai", "Content");
+        blocklist.ensureDefaults(UID, true);
+
+        assertTrue(blocklist.blockedTracker(UID, contentTracker));
+    }
+
+    @Test
+    public void multipleUidsHaveIndependentBlockingRules() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker tracker = new Tracker("Branch", "Advertising");
+
+        blocklist.ensureDefaults(UID, false);
+        blocklist.ensureDefaults(UID + 1, false);
+
+        blocklist.unblock(UID, tracker);
+        assertFalse(blocklist.blockedTracker(UID, tracker));
+        assertTrue(blocklist.blockedTracker(UID + 1, tracker));
+    }
+
+    @Test
+    public void blockedTrackerRequiresBothCategoryAndKeyBlocked() {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        Tracker tracker = new Tracker("Branch", "Advertising");
+        blocklist.ensureDefaults(UID, false);
+
+        assertTrue(blocklist.blockedTracker(UID, tracker));
+
+        // Unblock category only -> tracker unblocked
+        blocklist.unblock(UID, tracker.category);
+        assertFalse(blocklist.blockedTracker(UID, tracker));
+
+        // Re-block category, unblock specific tracker -> still unblocked
+        blocklist.block(UID, tracker.category);
+        blocklist.unblock(UID, tracker);
+        assertFalse(blocklist.blockedTracker(UID, tracker));
+
+        // Unblock both -> definitely unblocked
+        blocklist.unblock(UID, tracker.category);
+        assertFalse(blocklist.blockedTracker(UID, tracker));
+
+        // Re-block both -> blocked again
+        blocklist.block(UID, tracker.category);
+        blocklist.block(UID, tracker);
+        assertTrue(blocklist.blockedTracker(UID, tracker));
+    }
 }
