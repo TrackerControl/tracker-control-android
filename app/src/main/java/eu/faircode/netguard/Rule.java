@@ -100,6 +100,12 @@ public class Rule {
     private static Map<String, Boolean> cacheSystem = new HashMap<>();
     private static Map<String, Boolean> cacheInternet = new HashMap<>();
     private static Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
+    private static Map<Integer, Long> trackerRecent = new HashMap<>();
+
+    public long getLastTrackerTime() {
+        Long time = trackerRecent.get(uid);
+        return time == null ? 0L : time;
+    }
 
     static List<PackageInfo> getPackages(Context context) {
         if (cachePackageInfo == null) {
@@ -458,6 +464,7 @@ public class Rule {
 
             trackerCounts = trackerCountsAndTotalAll.first();
             trackerCountsPastWeek = trackerCountsAndTotalPastWeek.first();
+            trackerRecent = trackerList.getLastTrackerTimes();
             int trackerTotal = trackerCountsAndTotalAll.second();
 
             if (trackerTotal == 0
@@ -503,6 +510,9 @@ public class Rule {
                         return (rule.changed ? -1 : 1);
                     }
                 });
+            else if ("trackers_recent".equals(sort))
+                Collections.sort(listRules, (a, b) ->
+                        Long.compare(b.getLastTrackerTime(), a.getLastTrackerTime()));
             else
                 Collections.sort(listRules, new Comparator<Rule>() {
                     @Override
