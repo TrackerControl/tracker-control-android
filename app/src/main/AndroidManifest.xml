@@ -100,6 +100,7 @@
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/menu_settings"
+            android:theme="@style/AppThemeRed.NoActionBar"
             android:parentActivityName="eu.faircode.netguard.ActivityMain">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />

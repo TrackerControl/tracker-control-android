@@ -1,7 +1,7 @@
 <!-- The header bar of the main screen -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorPrimary"
     android:orientation="horizontal">
@@ -31,7 +31,7 @@
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/swEnabled"
         style="@style/RocketSwitch"
         android:layout_width="wrap_content"
@@ -39,13 +39,16 @@
         android:layout_gravity="center_vertical"
         android:saveEnabled="false" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
         android:id="@+id/tvTitle"
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        style="@style/TextAppearance.Material3.TitleLarge"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:text="@string/control_trackers"
         android:textColor="@android:color/white" />
 

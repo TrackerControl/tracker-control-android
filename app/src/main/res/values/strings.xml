@@ -70,7 +70,8 @@
 
     <string name="menu_cleanup">Cleanup</string>
 
-    <string name="setting_options">Options</string>
+    <string name="setting_options">General</string>
+    <string name="setting_further_options">Further options</string>
     <string name="setting_dark">Dark theme</string>
     <string name="setting_install">Notify on new install</string>
     <string name="setting_pause">Auto enable after %1$s minutes</string>

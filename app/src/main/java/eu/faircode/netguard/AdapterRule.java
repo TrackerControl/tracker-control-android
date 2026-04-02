@@ -51,7 +51,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -142,7 +142,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         public ImageButton ibSettings;
         public ImageButton ibLaunch;
 
-        public Switch cbApply;
+        public MaterialSwitch cbApply;
 
         public LinearLayout llScreenWifi;
         public ImageView ivWifiLegend;

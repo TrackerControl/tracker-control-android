@@ -36,12 +36,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
-import android.preference.TwoStatePreference;
+import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
+import androidx.preference.PreferenceScreen;
+import androidx.preference.TwoStatePreference;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
@@ -55,6 +55,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
 import androidx.core.util.PatternsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
@@ -99,7 +101,7 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class ActivitySettings extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener, PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
     private static final String TAG = "TrackerControl.Settings";
 
     private boolean running = false;
@@ -113,121 +115,186 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private static final Intent INTENT_VPN_SETTINGS = new Intent("android.net.vpn.SETTINGS");
 
     protected void onCreate(Bundle savedInstanceState) {
-        Util.setTheme(this);
+        setTheme(R.style.AppThemeRed_NoActionBar);
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new FragmentSettings()).commit();
-        getSupportActionBar().setTitle(R.string.menu_settings);
+        setContentView(R.layout.activity_settings);
+
+        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+            @Override
+            public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
+                super.onFragmentResumed(fm, f);
+                if (f instanceof FragmentSettings) {
+                    configurePreferences();
+                }
+            }
+        }, false);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.settings_container, new FragmentSettings())
+                    .commit();
+        }
         running = true;
     }
 
     private PreferenceScreen getPreferenceScreen() {
-        return ((PreferenceFragment) getFragmentManager().findFragmentById(android.R.id.content)).getPreferenceScreen();
+        return ((PreferenceFragmentCompat) getSupportFragmentManager().findFragmentById(R.id.settings_container)).getPreferenceScreen();
+    }
+
+    @Override
+    public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
+        FragmentSettings fragment = new FragmentSettings();
+        Bundle args = new Bundle();
+        args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey());
+        fragment.setArguments(args);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.settings_container, fragment)
+                .addToBackStack(pref.getKey())
+                .commit();
+        return true;
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+        configurePreferences();
+    }
+
+    private void configurePreferences() {
         final PreferenceScreen screen = getPreferenceScreen();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        PreferenceGroup cat_options = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_options"))
-                .findPreference("category_options");
-        PreferenceGroup cat_advanced = (PreferenceGroup) ((PreferenceGroup) screen
-                .findPreference("screen_advanced_options")).findPreference("category_advanced_options");
-        PreferenceGroup cat_backup = (PreferenceGroup) ((PreferenceGroup) screen.findPreference("screen_backup"))
-                .findPreference("category_backup");
+        // Find category groups (may be null depending on which sub-screen is showing)
+        PreferenceGroup cat_options = (PreferenceGroup) screen.findPreference("category_options");
+
+        PreferenceGroup screenAdvanced = (PreferenceGroup) screen.findPreference("screen_advanced_options");
+        PreferenceGroup cat_advanced = screenAdvanced != null
+                ? (PreferenceGroup) screenAdvanced.findPreference("category_advanced_options") : null;
+        if (cat_advanced == null)
+            cat_advanced = (PreferenceGroup) screen.findPreference("category_advanced_options");
+
+        PreferenceGroup cat_backup = (PreferenceGroup) screen.findPreference("category_backup");
 
         // Handle pause
         Preference pref_pause = screen.findPreference("pause");
-        pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "10")));
+        if (pref_pause != null)
+            pref_pause.setTitle(getString(R.string.setting_pause, prefs.getString("pause", "10")));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && cat_advanced != null) {
             TwoStatePreference pref_handover = (TwoStatePreference) screen.findPreference("handover");
-            cat_advanced.removePreference(pref_handover);
+            if (pref_handover != null)
+                cat_advanced.removePreference(pref_handover);
         }
 
         Preference pref_reset_usage = screen.findPreference("reset_usage");
-        pref_reset_usage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Util.areYouSure(ActivitySettings.this, R.string.setting_reset_usage, new Util.DoubtListener() {
-                    @Override
-                    public void onSure() {
-                        new AsyncTask<Object, Object, Throwable>() {
-                            @Override
-                            protected Throwable doInBackground(Object... objects) {
-                                try {
-                                    DatabaseHelper.getInstance(ActivitySettings.this).resetUsage(-1);
-                                    return null;
-                                } catch (Throwable ex) {
-                                    return ex;
+        if (pref_reset_usage != null) {
+            pref_reset_usage.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Util.areYouSure(ActivitySettings.this, R.string.setting_reset_usage, new Util.DoubtListener() {
+                        @Override
+                        public void onSure() {
+                            new AsyncTask<Object, Object, Throwable>() {
+                                @Override
+                                protected Throwable doInBackground(Object... objects) {
+                                    try {
+                                        DatabaseHelper.getInstance(ActivitySettings.this).resetUsage(-1);
+                                        return null;
+                                    } catch (Throwable ex) {
+                                        return ex;
+                                    }
                                 }
-                            }
 
-                            @Override
-                            protected void onPostExecute(Throwable ex) {
-                                if (ex == null)
-                                    Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG)
-                                            .show();
-                                else
-                                    Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
-                            }
-                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                });
-                return false;
-            }
-        });
+                                @Override
+                                protected void onPostExecute(Throwable ex) {
+                                    if (ex == null)
+                                        Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG)
+                                                .show();
+                                    else
+                                        Toast.makeText(ActivitySettings.this, ex.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        }
+                    });
+                    return false;
+                }
+            });
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             TwoStatePreference pref_reload_onconnectivity = (TwoStatePreference) screen
                     .findPreference("reload_onconnectivity");
-            pref_reload_onconnectivity.setChecked(true);
-            pref_reload_onconnectivity.setEnabled(false);
+            if (pref_reload_onconnectivity != null) {
+                pref_reload_onconnectivity.setChecked(true);
+                pref_reload_onconnectivity.setEnabled(false);
+            }
         }
 
         // Handle port forwarding
         Preference pref_forwarding = screen.findPreference("forwarding");
-        pref_forwarding.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(ActivitySettings.this, ActivityForwarding.class));
-                return true;
-            }
-        });
+        if (pref_forwarding != null) {
+            pref_forwarding.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivity(new Intent(ActivitySettings.this, ActivityForwarding.class));
+                    return true;
+                }
+            });
+        }
 
         // VPN parameters
-        screen.findPreference("vpn4").setTitle(getString(R.string.setting_vpn4, prefs.getString("vpn4", "10.1.10.1")));
-        screen.findPreference("vpn6")
-                .setTitle(getString(R.string.setting_vpn6, prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1")));
+        Preference pref_vpn4 = screen.findPreference("vpn4");
+        if (pref_vpn4 != null)
+            pref_vpn4.setTitle(getString(R.string.setting_vpn4, prefs.getString("vpn4", "10.1.10.1")));
+        Preference pref_vpn6 = screen.findPreference("vpn6");
+        if (pref_vpn6 != null)
+            pref_vpn6.setTitle(getString(R.string.setting_vpn6, prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1")));
         EditTextPreference pref_dns1 = (EditTextPreference) screen.findPreference("dns");
         EditTextPreference pref_dns2 = (EditTextPreference) screen.findPreference("dns2");
         EditTextPreference pref_validate = (EditTextPreference) screen.findPreference("validate");
         EditTextPreference pref_ttl = (EditTextPreference) screen.findPreference("ttl");
-        pref_dns1.setTitle(getString(R.string.setting_dns, prefs.getString("dns", "-")));
-        pref_dns2.setTitle(getString(R.string.setting_dns, prefs.getString("dns2", "-")));
-        pref_validate.setTitle(getString(R.string.setting_validate, prefs.getString("validate", "www.f-droid.org")));
-        pref_ttl.setTitle(getString(R.string.setting_ttl, prefs.getString("ttl", "259200")));
+        if (pref_dns1 != null)
+            pref_dns1.setTitle(getString(R.string.setting_dns, prefs.getString("dns", "-")));
+        if (pref_dns2 != null)
+            pref_dns2.setTitle(getString(R.string.setting_dns, prefs.getString("dns2", "-")));
+        if (pref_validate != null)
+            pref_validate.setTitle(getString(R.string.setting_validate, prefs.getString("validate", "www.f-droid.org")));
+        if (pref_ttl != null)
+            pref_ttl.setTitle(getString(R.string.setting_ttl, prefs.getString("ttl", "259200")));
 
         // SOCKS5 parameters
-        screen.findPreference("socks5_addr")
-                .setTitle(getString(R.string.setting_socks5_addr, prefs.getString("socks5_addr", "-")));
-        screen.findPreference("socks5_port")
-                .setTitle(getString(R.string.setting_socks5_port, prefs.getString("socks5_port", "-")));
-        screen.findPreference("socks5_username")
-                .setTitle(getString(R.string.setting_socks5_username, prefs.getString("socks5_username", "-")));
-        screen.findPreference("socks5_password").setTitle(getString(R.string.setting_socks5_password,
-                TextUtils.isEmpty(prefs.getString("socks5_username", "")) ? "-" : "*****"));
+        Preference pref;
+        pref = screen.findPreference("socks5_addr");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_socks5_addr, prefs.getString("socks5_addr", "-")));
+        pref = screen.findPreference("socks5_port");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_socks5_port, prefs.getString("socks5_port", "-")));
+        pref = screen.findPreference("socks5_username");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_socks5_username, prefs.getString("socks5_username", "-")));
+        pref = screen.findPreference("socks5_password");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_socks5_password,
+                    TextUtils.isEmpty(prefs.getString("socks5_username", "")) ? "-" : "*****"));
 
         // PCAP parameters
-        screen.findPreference("pcap_record_size")
-                .setTitle(getString(R.string.setting_pcap_record_size, prefs.getString("pcap_record_size", "64")));
-        screen.findPreference("pcap_file_size")
-                .setTitle(getString(R.string.setting_pcap_file_size, prefs.getString("pcap_file_size", "2")));
+        pref = screen.findPreference("pcap_record_size");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_pcap_record_size, prefs.getString("pcap_record_size", "64")));
+        pref = screen.findPreference("pcap_file_size");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_pcap_file_size, prefs.getString("pcap_file_size", "2")));
 
         // Watchdog
-        screen.findPreference("watchdog")
-                .setTitle(getString(R.string.setting_watchdog, prefs.getString("watchdog", "0")));
+        pref = screen.findPreference("watchdog");
+        if (pref != null)
+            pref.setTitle(getString(R.string.setting_watchdog, prefs.getString("watchdog", "0")));
 
         // DoH endpoint
         EditTextPreference pref_doh_endpoint = (EditTextPreference) screen.findPreference("doh_endpoint");
@@ -237,53 +304,71 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Show resolved
         Preference pref_show_resolved = screen.findPreference("show_resolved");
-        pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
-                return true;
-            }
-        });
+        if (pref_show_resolved != null) {
+            pref_show_resolved.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivity(new Intent(ActivitySettings.this, ActivityDns.class));
+                    return true;
+                }
+            });
+        }
 
         // Handle export
         Preference pref_export = screen.findPreference("export");
-        pref_export.setEnabled(getIntentCreateExport().resolveActivity(getPackageManager()) != null);
-        pref_export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivityForResult(getIntentCreateExport(), ActivitySettings.REQUEST_EXPORT);
-                return true;
-            }
-        });
+        if (pref_export != null) {
+            pref_export.setEnabled(getIntentCreateExport().resolveActivity(getPackageManager()) != null);
+            pref_export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(getIntentCreateExport(), ActivitySettings.REQUEST_EXPORT);
+                    return true;
+                }
+            });
+        }
 
         // Handle import
         Preference pref_import = screen.findPreference("import");
-        pref_import.setEnabled(getIntentOpenExport().resolveActivity(getPackageManager()) != null);
-        pref_import.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
-                return true;
-            }
-        });
+        if (pref_import != null) {
+            pref_import.setEnabled(getIntentOpenExport().resolveActivity(getPackageManager()) != null);
+            pref_import.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
+                    return true;
+                }
+            });
+        }
 
         // Hosts file settings
-        cat_advanced.removePreference(screen.findPreference("use_hosts"));
+        if (cat_advanced != null) {
+            Preference pref_use_hosts = screen.findPreference("use_hosts");
+            if (pref_use_hosts != null)
+                cat_advanced.removePreference(pref_use_hosts);
+        }
         EditTextPreference pref_rcode = (EditTextPreference) screen.findPreference("rcode");
         final Preference pref_hosts_download = screen.findPreference("hosts_download");
 
         Preference pref_manage_blocklists = screen.findPreference("manage_blocklists");
-        pref_manage_blocklists.setOnPreferenceClickListener(preference -> {
-            startActivity(new Intent(ActivitySettings.this, net.kollnig.missioncontrol.ActivityBlocklists.class));
-            return true;
-        });
+        if (pref_manage_blocklists != null) {
+            pref_manage_blocklists.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(ActivitySettings.this, net.kollnig.missioncontrol.ActivityBlocklists.class));
+                return true;
+            });
+        }
 
-        pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
-        cat_advanced.removePreference(pref_rcode);
+        if (pref_rcode != null && cat_advanced != null) {
+            pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
+            cat_advanced.removePreference(pref_rcode);
+        }
 
-        if (Util.isFDroidInstall()
-                || Util.isPlayStoreInstall(this))
-            cat_options.removePreference(screen.findPreference("update_check"));
+        if (cat_options != null) {
+            if (Util.isFDroidInstall() || Util.isPlayStoreInstall(this)) {
+                Preference pref_update = screen.findPreference("update_check");
+                if (pref_update != null)
+                    cat_options.removePreference(pref_update);
+            }
+        }
 
         // Blocking mode preference setup
         Preference pref_blocking_mode = screen.findPreference("blocking_mode");
@@ -292,18 +377,24 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             updateBlockingModeSummary(pref_blocking_mode, currentMode);
         }
 
-        if (Util.isPlayStoreInstall(this)) {
+        if (Util.isPlayStoreInstall(this) && cat_advanced != null) {
             Log.i(TAG, "Play store install");
-            cat_advanced.removePreference(pref_forwarding);
+            if (pref_forwarding != null)
+                cat_advanced.removePreference(pref_forwarding);
 
-            cat_advanced.removePreference(cat_advanced.findPreference("domain_based_blocking"));
-            cat_advanced.removePreference(cat_advanced.findPreference("log_app"));
-            cat_advanced.removePreference(cat_advanced.findPreference("filter_udp"));
-            cat_advanced.findPreference("filter").setEnabled(false);
+            Preference p;
+            p = cat_advanced.findPreference("domain_based_blocking");
+            if (p != null) cat_advanced.removePreference(p);
+            p = cat_advanced.findPreference("log_app");
+            if (p != null) cat_advanced.removePreference(p);
+            p = cat_advanced.findPreference("filter_udp");
+            if (p != null) cat_advanced.removePreference(p);
+            p = cat_advanced.findPreference("filter");
+            if (p != null) p.setEnabled(false);
         }
 
         // In minimal mode, hide hosts/blocklist management (not used) and strict_blocking
-        if (BlockingMode.isMinimalMode(this)) {
+        if (BlockingMode.isMinimalMode(this) && cat_advanced != null) {
             Preference manageBlocklists = cat_advanced.findPreference("manage_blocklists");
             if (manageBlocklists != null) cat_advanced.removePreference(manageBlocklists);
             Preference hostsDownload = cat_advanced.findPreference("hosts_download");
@@ -377,18 +468,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (screenDevelopment != null)
                 screen.removePreference(screenDevelopment);
         }
-
-        /*
-         * cat_network.removePreference(screen.findPreference("use_metered"));
-         * cat_network.removePreference(screen.findPreference("unmetered_2g"));
-         * cat_network.removePreference(screen.findPreference("unmetered_3g"));
-         * cat_network.removePreference(screen.findPreference("unmetered_4g"));
-         * cat_network.removePreference(screen.findPreference("national_roaming"));
-         * cat_network.removePreference(screen.findPreference("eu_roaming"));
-         * cat_network.removePreference(screen.findPreference("lockdown_wifi"));
-         * cat_network.removePreference(screen.findPreference("lockdown_other"));
-         * cat_network.removePreference(screen.findPreference("reload_onconnectivity"));
-         */
     }
 
     @Override

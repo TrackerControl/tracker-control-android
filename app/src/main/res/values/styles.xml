@@ -11,7 +11,7 @@
     <attr name="iconPlay" format="reference" />
     <attr name="iconPause" format="reference" />
 
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppTheme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -20,7 +20,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar"/>
 
     <!-- Edge-to-edge variant for DetailsActivity -->
     <style name="AppTheme.EdgeToEdge" parent="AppTheme.NoActionBar">
@@ -30,14 +30,13 @@
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
 
-    <style name="PrimaryFlatButton" parent="Theme.AppCompat.Light">
-        <item name="android:buttonStyle">
-            @style/Widget.AppCompat.Button.Borderless.Colored
-        </item>
-        <item name="colorAccent">@color/colorPrimary</item>
+    <style name="PrimaryFlatButton" parent="Theme.Material3.Light">
+        <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 
-    <style name="BaseThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="BaseThemeDark" parent="Theme.Material3.Light">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
         <item name="expander">@drawable/expander_black</item>
         <item name="iconQueue">@drawable/ic_hourglass_empty_black_24dp</item>
         <item name="iconMetered">@drawable/ic_attach_money_black_24dp</item>
@@ -48,9 +47,14 @@
         <item name="iconPlay">@drawable/ic_play_arrow_black_24dp</item>
         <item name="iconPause">@drawable/ic_pause_black_24dp</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="actionBarStyle">@style/ActionBar.Red</item>
+        <item name="actionBarTheme">@style/ActionBarTheme.Red</item>
+        <item name="toolbarStyle">@style/Toolbar.Red</item>
     </style>
 
-    <style name="BaseThemeLight" parent="Theme.AppCompat">
+    <style name="BaseThemeLight" parent="Theme.Material3.DayNight">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
         <item name="expander">@drawable/expander_white</item>
         <item name="iconQueue">@drawable/ic_hourglass_empty_white_24dp</item>
         <item name="iconMetered">@drawable/ic_attach_money_white_24dp</item>
@@ -61,6 +65,9 @@
         <item name="iconPlay">@drawable/ic_play_arrow_white_24dp</item>
         <item name="iconPause">@drawable/ic_pause_white_24dp</item>
         <item name="android:windowDisablePreview">true</item>
+        <item name="actionBarStyle">@style/ActionBar.Red</item>
+        <item name="actionBarTheme">@style/ActionBarTheme.Red</item>
+        <item name="toolbarStyle">@style/Toolbar.Red</item>
     </style>
 
     <style name="AppThemeRed" parent="BaseThemeDark">
@@ -71,15 +78,51 @@
         <item name="colorOff">@color/colorRedOn</item>
     </style>
 
-    <style name="AppDialog" parent="Theme.AppCompat.Dialog">
+    <style name="AppThemeRed.NoActionBar" parent="AppThemeRed">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppDialog" parent="Theme.Material3.DayNight.Dialog">
         <item name="windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!-- Rocket Switch -->
-    <style name="RocketSwitch">
-        <item name="android:thumb">@drawable/switch_rocket</item>
-        <item name="trackTint">@color/switch_rocket_color</item>
+    <!-- Rocket Switch: Material 3 MaterialSwitch with rocket icon as thumbIcon -->
+    <style name="RocketSwitch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="thumbIcon">@drawable/ic_rocket2</item>
+        <item name="thumbIconTint">@color/switch_rocket_thumb_icon_color</item>
+        <item name="thumbTint">@color/switch_rocket_thumb_color</item>
+        <item name="trackTint">@color/switch_rocket_track_color</item>
+        <item name="trackDecorationTint">@android:color/transparent</item>
+    </style>
+
+    <!-- ActionBar with colorPrimary background and white icons/text -->
+    <style name="ActionBar.Red" parent="Widget.AppCompat.ActionBar.Solid">
+        <item name="background">@color/colorPrimary</item>
+        <item name="backgroundTint">@color/colorPrimary</item>
+        <item name="titleTextStyle">@style/ActionBarTitleText</item>
+    </style>
+
+    <style name="ActionBarTheme.Red" parent="ThemeOverlay.Material3.Dark.ActionBar">
+        <item name="colorSurface">@color/colorPrimary</item>
+        <item name="colorOnSurface">@android:color/white</item>
+        <item name="colorOnSurfaceVariant">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
+
+    <style name="Toolbar.Red" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <item name="subtitleTextColor">@android:color/white</item>
+        <item name="navigationIconTint">@android:color/white</item>
+        <item name="materialThemeOverlay">@style/ActionBarTheme.Red</item>
+    </style>
+
+    <style name="ActionBarTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="TextLarge" parent="@android:style/TextAppearance.Material.Large" />

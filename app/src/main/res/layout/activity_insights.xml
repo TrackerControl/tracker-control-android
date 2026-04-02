@@ -414,6 +414,7 @@
         android:contentDescription="@string/insights_share"
         android:src="@android:drawable/ic_menu_share"
         android:visibility="gone"
+        app:backgroundTint="@color/colorPrimary"
         app:tint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

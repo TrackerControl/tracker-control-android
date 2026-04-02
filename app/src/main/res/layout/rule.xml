@@ -60,7 +60,7 @@
          The outer LinearLayout and its children are never displayed in TrackerControl;
          detail views open via DetailsActivity instead. Using minimal placeholder views
          avoids inflating ~480 lines of unused layout per item. -->
-    <Switch
+    <com.google.android.material.materialswitch.MaterialSwitch
         android:visibility="gone"
         android:id="@+id/cbApply"
         android:layout_width="0dp"

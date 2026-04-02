@@ -15,7 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -184,7 +184,7 @@ public class ActivityBlocklists extends AppCompatActivity {
             TextView textUrl;
             TextView textLastUpdate;
             TextView textError;
-            SwitchCompat switchEnabled;
+            MaterialSwitch switchEnabled;
             ImageButton btnDelete;
 
             public ViewHolder(View itemView) {

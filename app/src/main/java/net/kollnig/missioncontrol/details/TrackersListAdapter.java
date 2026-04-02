@@ -34,7 +34,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -481,7 +481,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHItem extends RecyclerView.ViewHolder {
         final TextView mTrackerCategoryName;
         final ListView mCompaniesList;
-        final Switch mSwitchTracker;
+        final MaterialSwitch mSwitchTracker;
         final TextView mBlockingTip;
         final TextView mUncertain;
 
@@ -498,9 +498,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHHeader extends RecyclerView.ViewHolder {
         final TextView mLibraryExplanation;
         final TextView mLibraryDisclaimer;
-        final Switch mSwitchInternet;
-        final Switch mSwitchVPN;
-        final Switch mSwitchVpnExclude;
+        final MaterialSwitch mSwitchInternet;
+        final MaterialSwitch mSwitchVPN;
+        final MaterialSwitch mSwitchVpnExclude;
         final View mTrackerProtectionRow;
         final View mTrackerProtectionDivider;
 

@@ -18,6 +18,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         app:srcCompat="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/colorPrimary"
+        app:tint="@android:color/white"
         android:contentDescription="@string/title_add_blocklist" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

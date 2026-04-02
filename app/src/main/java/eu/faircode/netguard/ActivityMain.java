@@ -62,7 +62,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.SwitchCompat;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -109,7 +109,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private ImageView ivIcon;
     private TextView tvTitle;
     private ImageView ivQueue;
-    private SwitchCompat swEnabled;
+    private MaterialSwitch swEnabled;
     private ImageView ivMetered;
     private SwipeRefreshLayout swipeRefresh;
     private InsightsHeaderAdapter headerAdapter;
@@ -719,7 +719,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvDisabled.setVisibility(enabled ? View.GONE : View.VISIBLE);
 
             // Check switch state
-            SwitchCompat swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
+            MaterialSwitch swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
             if (swEnabled.isChecked() != enabled)
                 swEnabled.setChecked(enabled);
 

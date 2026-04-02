@@ -43,7 +43,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.SwitchCompat;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.core.app.NavUtils;
 import androidx.preference.PreferenceManager;
 
@@ -85,7 +85,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
 
         // Action bar
         View actionView = getLayoutInflater().inflate(R.layout.actionlog, null, false);
-        SwitchCompat swEnabled = actionView.findViewById(R.id.swEnabled);
+        MaterialSwitch swEnabled = actionView.findViewById(R.id.swEnabled);
 
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
@@ -277,7 +277,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
             tvDisabled.setVisibility(log ? View.GONE : View.VISIBLE);
 
             // Check switch state
-            SwitchCompat swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
+            MaterialSwitch swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
             if (swEnabled.isChecked() != log)
                 swEnabled.setChecked(log);
 

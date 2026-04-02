@@ -227,12 +227,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/vpn_exclude_name" />
 
-                <Switch
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switch_vpn_exclude"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minHeight="0dp"
                     android:textColor="?android:textColorPrimary"
-                    app:layout_constraintBottom_toBottomOf="@+id/vpn_exclude_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/vpn_exclude_name" />
 
@@ -275,12 +275,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/root_name" />
 
-                <Switch
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switch_vpn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minHeight="0dp"
                     android:textColor="?android:textColorPrimary"
-                    app:layout_constraintBottom_toBottomOf="@+id/root_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/root_name" />
 
@@ -321,12 +321,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/root_name2" />
 
-                <Switch
+                <com.google.android.material.materialswitch.MaterialSwitch
                     android:id="@+id/switch_internet"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minHeight="0dp"
                     android:textColor="?android:textColorPrimary"
-                    app:layout_constraintBottom_toBottomOf="@+id/root_name2"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/root_name2" />
 

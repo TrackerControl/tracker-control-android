@@ -21,21 +21,51 @@
 package eu.faircode.netguard;
 
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
+import androidx.preference.PreferenceScreen;
 
 import net.kollnig.missioncontrol.R;
 
-public class FragmentSettings extends PreferenceFragment {
+public class FragmentSettings extends PreferenceFragmentCompat
+        implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
+
+        setIconSpaceReservedRecursively(getPreferenceScreen(), false);
 
         Preference doh = findPreference("doh_enabled");
         if (doh != null) {
             doh.setSummary(doh.getSummary() + " (" + getString(R.string.warning_beta) + ")");
         }
+    }
+
+    private void setIconSpaceReservedRecursively(PreferenceGroup group, boolean reserved) {
+        group.setIconSpaceReserved(reserved);
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference pref = group.getPreference(i);
+            pref.setIconSpaceReserved(reserved);
+            if (pref instanceof PreferenceGroup) {
+                setIconSpaceReservedRecursively((PreferenceGroup) pref, reserved);
+            }
+        }
+    }
+
+    @Override
+    public boolean onPreferenceStartScreen(PreferenceFragmentCompat caller, PreferenceScreen pref) {
+        FragmentSettings fragment = new FragmentSettings();
+        Bundle args = new Bundle();
+        args.putString(PreferenceFragmentCompat.ARG_PREFERENCE_ROOT, pref.getKey());
+        fragment.setArguments(args);
+
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.settings_container, fragment)
+                .addToBackStack(pref.getKey())
+                .commit();
+        return true;
     }
 }

@@ -9,8 +9,7 @@
     <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter_list_white_24dp"
-        android:title="@string/menu_filter"
-        netguard:showAsAction="always|collapseActionView">
+        android:title="@string/menu_filter">
         <menu>
             <item
                 android:id="@+id/menu_app_user"
@@ -32,8 +31,7 @@
     </item>
     <item
         android:icon="@drawable/ic_sort_white_24dp"
-        android:title="@string/menu_sort"
-        netguard:showAsAction="always|collapseActionView">
+        android:title="@string/menu_sort">
         <menu>
             <group android:checkableBehavior="single">
                 <item
