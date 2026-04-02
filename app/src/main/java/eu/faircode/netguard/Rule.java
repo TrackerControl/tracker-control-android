@@ -509,9 +509,13 @@ public class Rule {
                         return (rule.changed ? -1 : 1);
                     }
                 });
-            else if ("menu_sort_by_latest_detected_tracker".equals(sort))
-                Collections.sort(listRules, (a, b) ->
-                        Long.compare(b.getLastTrackerTime(), a.getLastTrackerTime()));
+            else if ("trackers_recent".equals(sort))
+                Collections.sort(listRules, (a, b) -> {
+                    int cmp = Long.compare(b.getLastTrackerTime(), a.getLastTrackerTime());
+                    if (cmp != 0) return cmp;
+                    int i = collator.compare(a.name, b.name);
+                    return (i == 0 ? a.packageName.compareTo(b.packageName) : i);
+                });
             else
                 Collections.sort(listRules, new Comparator<Rule>() {
                     @Override
