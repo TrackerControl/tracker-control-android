@@ -56,7 +56,6 @@
     <string name="setting_call">Çağrı sırasında devre dışı bırak</string>
     <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
     <string name="setting_log_app">Yeni izleyiciler ara</string>
-    <string name="setting_log_logcat">ADB\'ye aktarımları günlüğe kaydet</string>
     <string name="setting_filter">İzleyicileri engelle</string>
     <string name="setting_filter_udp">UDP\'de izleyicileri engelle</string>
     <string name="setting_handover">Yeniden yüklemede kesintisiz VPN devredilmesi</string>
@@ -105,7 +104,6 @@
     <string name="summary_validate">443 (https) bağlantı noktasındaki internet bağlantısını doğrulamak için kullanılan alan adı.</string>
     <string name="summary_socks5_enabled">Sadece TCP trafiği vekil sunucuya gönderilecek</string>
     <string name="summary_watchdog">TrackerControl\'ün hala çalışıp çalışmadığını periyodik olarak kontrol edin (bu seçeneği devre dışı bırakmak için sıfır girin). Bu, fazladan pil kullanımına neden olabilir.</string>
-    <string name="summary_log_logcat">Engellemeyi devre dışı bırakır. İletişimler (ve tanımlanan izleyiciler) cihaz günlüğüne kaydedilir. \'TC-Log\' etiketli adb logcat ile alın.</string>
     <string name="msg_sure">Emin misiniz?</string>
     <string name="msg_started">Takipçiler aranıyor...</string>
     <string name="msg_waiting">Eylem bekleniyor</string>

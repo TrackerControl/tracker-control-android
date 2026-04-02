@@ -60,7 +60,6 @@
     <string name="setting_advanced_options">Opções avançadas (para experientes)</string>
     <string name="setting_system">Mostrar aplicações do sistema</string>
     <string name="setting_log_app">Pesquisar novos rastreadores</string>
-    <string name="setting_log_logcat">Registrar transmissões para o ADB</string>
     <string name="setting_filter">Bloquear rastreadores</string>
     <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_handover">Entrega de VPN sem emendas na recarga</string>
@@ -118,7 +117,6 @@
     <string name="summary_validate">Nome de domínio utilizado para validar a conexão de Internet na porta 443 (https).</string>
     <string name="summary_socks5_enabled">Somente o tráfego TCP será enviado para o servidor proxy</string>
     <string name="summary_watchdog">Verifique periodicamente se o TrackerControl ainda está funcionando (digite zero para desativar esta opção). Isto pode resultar no uso de bateria extra.</string>
-    <string name="summary_log_logcat">Desativa bloqueio. As comunicações (e rastreadores identificados) são registados no log do dispositivo. Recupere com adb logcat com a etiqueta \'TC-Log\'.</string>
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_waiting">À espera do evento</string>
     <string name="msg_disabled">Use o interruptor acima para ativar o TrackerControl.</string>

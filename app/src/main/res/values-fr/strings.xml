@@ -24,7 +24,13 @@
     <string name="menu_legend">Légende</string>
     <string name="menu_support">Soutenir cette application</string>
     <string name="menu_log_support">Explications</string>
+    <string name="menu_troubleshooting">Diagnostic des anomalies</string>
     <string name="menu_about">À propos</string>
+    <string name="troubleshooting_battery_title">Optimisation de batterie</string>
+    <string name="troubleshooting_battery_desc">Si TrackerControl cesse de fonctionner en arrière-plan, désactivez l\'optimisation de la batterie d\'Android pour TrackerControl. Sélectionnez « Toutes les applications », appuyez sur TrackerControl, puis sélectionnez « Ne pas optimiser ».</string>
+    <string name="troubleshooting_battery_action">Désactiver l\'optimisation de la batterie</string>
+    <string name="troubleshooting_battery_ok">L\'optimisation de la batterie est déjà désactivée.</string>
+    <string name="troubleshooting_datasaver_title">Sauvegarde des données</string>
     <string name="menu_apps">Autres applications</string>
     <string name="menu_protocol_other">Autres</string>
     <string name="menu_traffic_allowed">Autorisé</string>
@@ -58,7 +64,6 @@
     <string name="setting_advanced_options">Options avancées (pour les experts)</string>
     <string name="setting_system">Afficher les applications système</string>
     <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
-    <string name="setting_log_logcat">Journaliser les transmissions via ADB</string>
     <string name="setting_filter">Bloquer les traqueurs</string>
     <string name="setting_filter_udp">Bloquer les traqueurs sur UDP</string>
     <string name="setting_handover">Passage au VPN sans interruption lors du rechargement</string>
@@ -113,7 +118,6 @@
     <string name="summary_validate">Nom de domaine utilisé pour valider la connexion internet sur le port 443 (https).</string>
     <string name="summary_socks5_enabled">Seul le trafic TCP sera envoyé au serveur proxy</string>
     <string name="summary_watchdog">Vérifiez périodiquement si TrackerControl est toujours en cours d\'exécution (saisir zéro pour désactiver cette option). Cela peut entraîner une surconsommation de la batterie.</string>
-    <string name="summary_log_logcat">Désactive le blocage. Les communications (et les traqueurs identifiés) sont enregistrées dans le journal de l\'appareil. Récupérer avec le log adb et l\'étiquette \'TC-Log\'.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
     <string name="msg_waiting">En attente d\'évènement</string>
     <string name="msg_disabled">Utilisez l\'interrupteur ci-dessus pour activer TrackerControl.</string>

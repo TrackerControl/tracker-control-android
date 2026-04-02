@@ -60,7 +60,6 @@
     <string name="setting_call">تعطيل أثناء المكالمة</string>
     <string name="setting_reload_onconnectivity">إعادة التحميل عند كل تغيير في الاتصال</string>
     <string name="setting_log_app">البحث عن أدوات التتبع الجديدة</string>
-    <string name="setting_log_logcat">تسجيل عمليات النقل إلى ADB</string>
     <string name="setting_filter">حظر أدوات التتبع</string>
     <string name="setting_filter_udp">حظر أدوات التتبع على UDP</string>
     <string name="setting_handover">تسليم VPN سلس عند إعادة التحميل</string>
@@ -109,7 +108,6 @@
     <string name="summary_validate">اسم المجال المستخدم للتحقق من صحة الاتصال بالإنترنت على المنفذ 443 (https).</string>
     <string name="summary_socks5_enabled">سيتم إرسال حركة مرور TCP فقط إلى خادم الوكيل</string>
     <string name="summary_watchdog">تحقق دوريًا مما إذا كان التحكم في التتبع لا يزال قيد التشغيل (أدخل صفرًا لتعطيل هذا الخيار). قد يؤدي هذا إلى زيادة استهلاك البطارية.</string>
-    <string name="summary_log_logcat">تعطيل الحظر. يتم تسجيل الاتصالات (وأدوات التتبع المحددة) في سجل الجهاز. استرجاع باستخدام adb logcat مع العلامة \'TC-Log\'.</string>
     <string name="msg_sure">هل أنت متأكد؟</string>
     <string name="msg_started">البحث عن أدوات التتبع...</string>
     <string name="msg_waiting">انتظار الحدث</string>

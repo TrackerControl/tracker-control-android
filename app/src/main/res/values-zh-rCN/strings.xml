@@ -59,7 +59,6 @@
     <string name="setting_advanced_options">高级选项(供专家使用)</string>
     <string name="setting_system">显示系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
-    <string name="setting_log_logcat">记录到ADB的传输</string>
     <string name="setting_filter">屏蔽跟踪器</string>
     <string name="setting_filter_udp">屏蔽UDP上的跟踪器</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
@@ -119,7 +118,6 @@
     <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
-    <string name="summary_log_logcat">禁用拦截。网络通信(和识别的跟踪器) 会被记录到设备日志中。通过 adb logcat 标签 TC-Log\' 检索。</string>
     <string name="msg_sure">你确定吗？</string>
     <string name="msg_started">正在查找追踪器...</string>
     <string name="msg_waiting">等待事件</string>
@@ -452,11 +450,7 @@
     <string name="insights_shocking_fact">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>
     <string name="insights_shocking_fact_playstore">您的应用本周联系了 %1$d 家追踪公司！</string>
     <string name="insights_share">分享给好友</string>
-    <string name="insights_share_trackers_blocked">追踪器被阻止</string>
-    <string name="insights_share_trackers_detected">检测到追踪器</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">我本周用TrackerControl屏蔽了 来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">我本周用TrackerControl检测到来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">额外的主机文件</string>

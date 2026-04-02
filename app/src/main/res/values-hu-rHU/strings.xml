@@ -58,7 +58,6 @@
     <string name="setting_reload_onconnectivity">Újratöltés minden kapcsolatváltozáskor</string>
     <string name="setting_system">Rendszeralkalmazások megjelenítése</string>
     <string name="setting_log_app">Új nyomkövetők keresése</string>
-    <string name="setting_log_logcat">Napló továbbítása az ADB-nek</string>
     <string name="setting_filter">Nyomkövetők blokkolása</string>
     <string name="setting_filter_udp">Nyomkövetők blokkolása UDP-n</string>
     <string name="setting_handover">Zökkenőmentes VPN átadás újratöltéskor</string>
@@ -107,7 +106,6 @@
     <string name="summary_validate">A használandó tartománynév az internetkapcsolat ellenőrzéséhez a 443 (https) porton.</string>
     <string name="summary_socks5_enabled">Csak a TCP forgalom küldése a proxy-szerverre</string>
     <string name="summary_watchdog">Rendszeresen ellenőrzi, ha a TrackerControl fut (a 0 beírása letiltja az opciót). Ez extra akkumulátor használattal járhat.</string>
-    <string name="summary_log_logcat">Letiltja a blokkolást. A kommunikációt (és az azonosított nyomkövetőket) naplózza az eszköznaplóba. Letöltés az adb logcat segítségével a „TC-Log” címkével.</string>
     <string name="msg_sure">Biztos benne?</string>
     <string name="msg_started">Nyomkövetők keresése...</string>
     <string name="msg_waiting">Várakozás eseményre</string>

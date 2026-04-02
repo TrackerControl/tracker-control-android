@@ -59,7 +59,6 @@
     <string name="setting_advanced_options">Edistyneet asetukset (asiantuntijoille)</string>
     <string name="setting_system">Näytä järjestelmäsovellukset</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
-    <string name="setting_log_logcat">Loki lähetykset ADB:lle</string>
     <string name="setting_filter">Estä seuraimet</string>
     <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
     <string name="setting_handover">Saumaton VPN-kanavanvaihto ladattaessa</string>
@@ -117,7 +116,6 @@
     <string name="summary_validate">Verkkotunnus, jota käytetään internet-yhteyden vahvistamiseen portissa 443 (https).</string>
     <string name="summary_socks5_enabled">Vain TCP-liikenne lähetetään välityspalvelimeen</string>
     <string name="summary_watchdog">Tarkista säännöllisesti, onko TrackerControl edelleen käynnissä (kirjoita nolla poistaaksesi tämän vaihtoehdon käytöstä). Tämä voi lisätä akun kulutusta.</string>
-    <string name="summary_log_logcat">Poistaa eston käytöstä. Viestintä (ja tunnistetut seuraimet) kirjataan laitteen lokiin. Hae adb logcat -komennolla tunnisteella ‘TC-Log’.</string>
     <string name="msg_sure">Oletko varma?</string>
     <string name="msg_started">Etsitään seuraimia...</string>
     <string name="msg_waiting">Odottaa tapahtumaa</string>
@@ -453,11 +451,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="insights_shocking_fact">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon %2$d seuranta-verkkotunnukseen kautta tällä viikolla!</string>
     <string name="insights_shocking_fact_playstore">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon tällä viikolla!</string>
     <string name="insights_share">Jaa ystävillesi</string>
-    <string name="insights_share_trackers_blocked">Seurantaa estetty</string>
-    <string name="insights_share_trackers_detected">Seurantaa havaittu</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Estin tällä viikolla %1$d seurantaa %2$d taholta TrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
-    <string name="insights_share_message_playstore">Havaitsin tällä viikolla %1$d seurainta %2$d taholta TrackerControlilla! Ota yksityisyytesi takaisin: https://trackercontrol.org</string>
     <string name="insights_see_more">Katso lisää →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Lisähosts-tiedostot</string>

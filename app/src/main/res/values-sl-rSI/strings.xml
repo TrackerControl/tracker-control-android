@@ -62,7 +62,6 @@
     <string name="setting_advanced_options">Napredne nastavitve</string>
     <string name="setting_system">Prikaži sistemske programe</string>
     <string name="setting_log_app">Poišči nove sledilce</string>
-    <string name="setting_log_logcat">Zabeleži prenose v ADB</string>
     <string name="setting_filter">Blokiraj sledilce</string>
     <string name="setting_filter_udp">Blokiraj sledilce na UDP-ju</string>
     <string name="setting_handover">Nemoten preklop VPN-a ob ponovnem nalaganju</string>
@@ -122,7 +121,6 @@
     <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
     <string name="summary_socks5_enabled">Posredniškemu strežniku bo poslan samo promet TCP.</string>
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
-    <string name="summary_log_logcat">Onemogoči blokiranje.  Komunikacija (in prepoznani sledilci) se beleži v dnevnik naprave.  Pridobite jo lahko z adb logcat z oznako \'TC-log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
     <string name="msg_started">Iskanje sledilcev …</string>
     <string name="msg_waiting">Čakanje na dogodek</string>
@@ -462,11 +460,7 @@ Sincerely,\n\n]]></string>
     <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
     <string name="insights_shocking_fact_playstore">Vaši programi so ta teden navezali stik s/z %1$d-imi sledilnimi podjetji!</string>
     <string name="insights_share">Deli s priijatelji</string>
-    <string name="insights_share_trackers_blocked">Blokiranih sledilcev</string>
-    <string name="insights_share_trackers_detected">Zaznanih sledilcev</string>
     <string name="insights_share_url">TrackerControl.org</string>
-    <string name="insights_share_message">Ta teden sem z uporabo programa TrackerControl blokiral %1$d sledilcev od %2$d-ih podjetij!  Prevzemite nazaj nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
-    <string name="insights_share_message_playstore">Ta teden sem z uporabo programa TrackerControl zaznal %1$d sledilcev od %2$d-ih podjetij!  Prevzemite nazaj nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
     <string name="insights_see_more">Več →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>

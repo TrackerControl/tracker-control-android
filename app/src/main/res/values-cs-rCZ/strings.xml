@@ -61,7 +61,6 @@
     <string name="setting_advanced_options">Pokročilé možnosti (pro experty)</string>
     <string name="setting_system">Zobrazit systémové aplikace</string>
     <string name="setting_log_app">Hledat nové trackery</string>
-    <string name="setting_log_logcat">Záznamy přenosů do ADB</string>
     <string name="setting_filter">Blokovat trackery</string>
     <string name="setting_filter_udp">Blokovat trackery na UDP</string>
     <string name="setting_handover">Plynulé předání VPN při znovunačtení</string>
@@ -119,7 +118,6 @@
     <string name="summary_validate">Název domény použitý pro validaci internetového spojení na portu 443 (https).</string>
     <string name="summary_socks5_enabled">Pouze TCP přenosy budou přenášeny skrze proxy server</string>
     <string name="summary_watchdog">Pravidelně kontrolovat, zda TrackerControl stále běží (zadejte nulu pro vypnutí). Toto nastavení může mít vliv na spotřebu.</string>
-    <string name="summary_log_logcat">Zakáže blokování. Komunikace (a rozpoznané trackery) jsou zaznamenány do logu zařízení. Získej záznam přes adb logcat s tagem \'TC-Log\'.</string>
     <string name="msg_sure">Jste si jistí?</string>
     <string name="msg_started">Vyhledávání trackerů...</string>
     <string name="msg_waiting">Čekání na událost</string>

@@ -56,7 +56,6 @@
     <string name="setting_call">Deaktiver ved opkald</string>
     <string name="setting_reload_onconnectivity">Genindlæs ved hver forbindelsesændring</string>
     <string name="setting_log_app">Søg efter nye trackere</string>
-    <string name="setting_log_logcat">Log overførsler til ADB</string>
     <string name="setting_filter">Bloker trackere</string>
     <string name="setting_filter_udp">Bloker trackere på UDP</string>
     <string name="setting_track_usage">Spor netværksforbrug</string>
