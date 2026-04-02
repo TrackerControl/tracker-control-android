@@ -105,3 +105,25 @@ If revisited later, start by deciding whether the desired goal is:
 
 - just to reduce cross-app cache bleed, or
 - to redesign tracker attribution so "per-app blocking" is backed by per-app evidence.
+
+## Remaining Material 3 migration items
+
+The core M3 migration is complete (themes, switches, settings with MaterialToolbar, FABs, tabs). The following are cosmetic items that still reference AppCompat/MaterialComponents but work correctly:
+
+### TextAppearance references (~16 occurrences)
+- `traffic.xml` — 8 uses of `Base.TextAppearance.AppCompat.Small` → should be `TextAppearance.Material3.BodySmall`
+- `item_onboarding.xml` / `item_onboarding_blocking_mode.xml` — uses of `TextAppearance.AppCompat.Large`, `.Body1`, `.Caption` → should be `TextAppearance.Material3.HeadlineSmall`, `.BodyLarge`, `.LabelSmall`
+
+### Button styles (4 buttons)
+- `activity_onboarding.xml:28` — `Widget.AppCompat.Button.Borderless` → `Widget.Material3.Button.TextButton`
+- `troubleshooting.xml:56,90,156` — `Widget.AppCompat.Button.Borderless.Colored` → `Widget.Material3.Button.TextButton`
+
+### Layout-level theme references
+- `traffic.xml:5` — `Theme.AppCompat.Light.DarkActionBar` on a RelativeLayout
+- `list_item_trackers_header.xml:158-159` — `Theme.MaterialComponents.DayNight` and `Widget.MaterialComponents.Button.OutlinedButton` → `Theme.Material3.DayNight` and `Widget.Material3.Button.OutlinedButton`
+
+### AlertDialog → MaterialAlertDialogBuilder (12 occurrences)
+Uses of `androidx.appcompat.app.AlertDialog.Builder` across ActivityMain, ActivityLog, ActivitySettings, ActivityForwarding, ActivityBlocklists, ActionsFragment, and Util. Migrating to `com.google.android.material.dialog.MaterialAlertDialogBuilder` would give M3-styled dialogs (rounded corners, M3 color tokens).
+
+### Action bar styles in styles.xml
+`ActionBar.Red`, `ActionBarTheme.Red`, `Toolbar.Red`, `ActionBarTitleText` still reference AppCompat parents (`Widget.AppCompat.ActionBar.Solid`, `TextAppearance.AppCompat.Widget.ActionBar.Title`). These are used by the main screen's legacy action bar and work correctly but aren't pure M3.
