@@ -2360,9 +2360,13 @@ public class ServiceSinkhole extends VpnService {
             Util.logExtras(intent);
 
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            // TrackerControl: skip VPN rebuild on idle state changes.
-            // TC's tracker blocking doesn't change based on Doze mode.
-            Log.i(TAG, "Device idle=" + pm.isDeviceIdleMode() + " (skipping reload)");
+            Log.i(TAG, "device idle=" + pm.isDeviceIdleMode());
+
+            // Reload rules when coming from idle mode
+            // This ensures the native tunnel thread is healthy after Doze
+            // network restrictions are lifted
+            if (!pm.isDeviceIdleMode())
+                reload("idle state changed", ServiceSinkhole.this, false);
         }
     };
 
