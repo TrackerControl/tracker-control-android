@@ -37,7 +37,6 @@
     <string name="menu_export">내보내기</string>
     <string name="menu_reset">재설정</string>
     <string name="menu_cleanup">비우기</string>
-    <string name="setting_options">옵션</string>
     <string name="setting_dark">다크 테마</string>
     <string name="setting_install">새 앱 설치할 때 알림</string>
     <string name="setting_pause">%1$s분 후 다시 활성화</string>
