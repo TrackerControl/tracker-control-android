@@ -1,4 +1,4 @@
-# Design: Timeline-Based Main Activity
+# Design: Tracker Activity Timeline
 
 ## Problem
 
@@ -8,58 +8,75 @@ The current main activity is a flat app list sorted by tracker count. It tells u
 - **What's happening now?** Which apps are actively being tracked?
 - **What did blocking break?** Which apps have mixed blocked/allowed connections
   where user adjustment would help?
-- **What should I do?** Where does intervention have the most impact?
+- **Should I be worried?** Showing unblocked tracker contacts is arguably the most
+  important thing — the whole point of the app is to make tracking visible and
+  educate users.
 
-Users who want to unblock a specific tracker category must remember the affected app,
-find it in the list, tap into DetailsActivity, and locate the category. There's no
-signal about recency or active blocking impact.
+## Proposal: Separate Timeline Activity
 
-## Proposal: Timeline with Active Blocking Surface
-
-Replace the default main screen with a tracker activity timeline grouped by app and
-time. Keep the current app list available as a toggle.
+A new `ActivityTimeline`, reachable from the main activity's menu. The main activity
+stays unchanged — this is an optional, additive feature. If the timeline proves
+useful, it could replace the main activity later (at which point the main activity
+would need a search feature to find any installed app).
 
 ### Layout
 
+A single flat list sorted by recency, with time-bucket section headers:
+
 ```
 +--------------------------------------+
-| [Insights Hero Card - unchanged]     |
-| 847 tracking attempts - 23 companies |
+|  [Toolbar: "Tracker Activity"]       |
 +--------------------------------------+
 |                                      |
-| ACTIVE BLOCKING              last 1h |  <- section header
+|  LAST HOUR                           |  <- section header
 |                                      |
-| [icon] WhatsApp              3m ago  |  <- mixed: user action useful
-|   X  Facebook Analytics, Crashlytics |
-|   OK Graph API                       |
-|   Tap to manage ->                   |
+|  [icon] WhatsApp             3m ago  |
+|    X  Facebook Analytics             |  <- blocked
+|    X  Crashlytics                    |  <- blocked
+|    OK Graph API                      |  <- allowed (not a tracker? or unblocked)
 |                                      |
-| [icon] Instagram             8m ago  |  <- fully blocked, working
-|   X  4 trackers blocked              |
+|  [icon] Instagram            8m ago  |
+|    X  Facebook Analytics             |
+|    X  Firebase, Adjust               |
 |                                      |
-| TODAY                                |  <- time divider
+|  TODAY                               |  <- section header
 |                                      |
-| [icon] Chrome                2h ago  |
-|   X  Google Analytics, DoubleClick   |
-|   OK Google APIs                     |
+|  [icon] Chrome               2h ago  |
+|    X  Google Analytics               |
+|    X  DoubleClick                    |
+|    OK Google APIs                    |
 |                                      |
-| [icon] Twitter               4h ago  |
-|   OK 2 trackers (no blocking)        |
+|  [icon] Twitter              4h ago  |
+|    OK 3 tracker companies contacted  |  <- no blocking active — scary
+|                                      |
+|  YESTERDAY                           |
+|                                      |
+|  [icon] TikTok             18h ago   |
+|    OK 7 tracker companies contacted  |  <- very scary
+|                                      |
 +--------------------------------------+
 ```
 
-### Sections
+No separate "active blocking" section — it's just the timeline sorted by recency.
+Entries where blocking is active have X/OK indicators per company. Entries with
+no blocking at all show the total count of tracker companies contacted, which is
+deliberately alarming.
 
-1. **Active blocking** (top, always visible when VPN on):
-   Apps with blocked connections in the last hour. Mixed entries (some blocked +
-   some allowed) are highlighted -- these are where user adjustment matters most.
-   Capped at ~10 entries.
+### Visual treatment
 
-2. **Time-bucketed history** (scrollable):
-   "Today" / "Yesterday" / "This week". Same per-app grouping, less prominent.
+Each timeline entry shows:
 
-3. **All apps fallback** (menu toggle):
-   The current AdapterRule list, for users who prefer it or when VPN is off.
+- **App icon + name + relative time** (top line)
+- **Tracker companies with blocked/allowed indicator** (body)
+  - Blocked: red X or shield icon + company name
+  - Allowed: green checkmark + company name
+  - If many companies: show first 3, then "+N more"
+- **Mixed entries** (some blocked, some allowed): no special treatment needed —
+  the per-company indicators make it obvious
+- **Fully unblocked entries**: show company count with no shield — "5 tracker
+  companies contacted" — this is the scary/educational case
+
+Tapping any entry navigates to DetailsActivity for that app.
 
 ### Data model
 
@@ -69,16 +86,14 @@ class TimelineEntry {
     String appName;
     String packageName;
     long mostRecentTime;
-    List<TrackerContact> blocked;   // blocked tracker companies
-    List<TrackerContact> allowed;   // allowed tracker companies
-    boolean hasMixed;               // both blocked and allowed exist
+    List<TrackerContact> trackers;  // all tracker contacts, each with blocked/allowed
 }
 
 class TrackerContact {
     String companyName;
     String category;
-    String hostname;
-    long time;
+    boolean blocked;
+    long lastTime;
 }
 ```
 
@@ -97,67 +112,72 @@ ORDER BY last_time DESC
 
 Then in Java:
 1. Resolve each `daddr` to a Tracker via `TrackerList.findTracker()`
-2. Filter out non-tracker destinations (this is a tracker timeline, not a log)
-3. Group by (uid, time bucket)
-4. Partition each group into blocked/allowed lists
-5. Sort by `mostRecentTime` DESC
+2. Filter out non-tracker destinations (this is a tracker timeline, not a connection log)
+3. Group by uid — each uid becomes one TimelineEntry
+4. Within each entry, deduplicate by company name, track blocked/allowed per company
+5. Sort entries by `mostRecentTime` DESC
+6. Insert section headers at time-bucket boundaries
 
-Uses the existing `idx_access` index. The TrackerList lookup is a HashMap -- fast.
+Uses the existing `idx_access` index. TrackerList lookup is a HashMap.
 
-### What changes
+### New files
 
-| Component | Change |
-|-----------|--------|
-| `TimelineAdapter` | New -- RecyclerView adapter for timeline entries |
-| `TimelineEntry` | New -- data model for grouped tracker activity |
-| `item_timeline.xml` | New -- timeline row layout |
-| `item_timeline_section.xml` | New -- section header layout |
+| File | Purpose |
+|------|---------|
+| `ActivityTimeline.java` | New activity with RecyclerView + toolbar |
+| `TimelineAdapter.java` | Adapter handling both entry rows and section headers |
+| `TimelineEntry.java` | Data model for grouped tracker activity per app |
+| `TrackerContact.java` | Data model for a single tracker company contact |
+| `activity_timeline.xml` | Layout: toolbar + recyclerview |
+| `item_timeline_entry.xml` | Layout: app row with tracker list |
+| `item_timeline_section.xml` | Layout: section header ("Today", "Yesterday") |
 | `DatabaseHelper` | Add `getRecentTrackerActivityGrouped()` method |
-| `ActivityMain` | Default to timeline; menu toggle to switch to app list |
+| `ActivityMain` | Add menu item to open ActivityTimeline |
+| `AndroidManifest.xml` | Register ActivityTimeline |
 
 ### What stays the same
 
-| Component | Reason |
-|-----------|--------|
-| `InsightsHeaderAdapter` | Hero card at top, works with both views |
-| `AdapterRule` | Still used for app-list toggle, and as VPN-off fallback |
-| `Rule.java`, `TrackerList.java` | No model changes needed |
-| `DetailsActivity` | Navigation target -- unchanged |
-| VPN toggle, search, filters | Menu stays, search filters timeline entries |
+Everything in the main activity. This is purely additive.
 
-### Navigation flow
+### Navigation
 
 ```
-Timeline entry (tap)
-  -> DetailsActivity for that app
-    -> Trackers tab shows categories
-      -> User toggles blocking per category
-        -> Back to timeline, entry updates on next refresh
+ActivityMain menu -> "Tracker Activity"
+  -> ActivityTimeline
+    -> tap entry -> DetailsActivity (same extras as current)
+      -> user adjusts blocking
+        -> back to timeline (refreshes on resume)
 ```
 
-The "Tap to manage" affordance on mixed entries (some blocked, some allowed)
-creates a clear action path. Users see "WhatsApp has 2 blocked trackers" and
-can immediately go fix it if WhatsApp is misbehaving.
-
-### Empty / edge states
+### Empty states
 
 | State | Behavior |
 |-------|----------|
-| VPN off | Show app list with prompt "Enable TrackerControl to see tracker activity" |
-| VPN on, no data yet | Show app list with message "Monitoring... timeline will appear as apps connect" |
-| Search active | Filter timeline entries by app name (same as current) |
-| Very old data only | Time sections collapse; "This week" catches everything |
+| VPN off, no data | Message: "Enable TrackerControl to see which apps track you" |
+| VPN on, no tracker data yet | Message: "Monitoring... activity will appear as apps connect" |
+| All entries older than 7 days | Message: "No recent tracker activity" |
 
 ### Risks
 
-1. **Performance** -- access table can be large with heavy users. The grouped query
-   and 7-day time filter bound the scan. Can add LIMIT as safety valve.
+1. **Performance** — access table can be large. The 7-day filter and GROUP BY
+   bound the result set. Add LIMIT 500 as safety valve on the raw query.
 
-2. **Visual noise** -- too many entries becomes a log. Active blocking section caps
-   at 10; history section should paginate or lazy-load.
+2. **Visual noise** — cap displayed tracker companies at 3 per entry with
+   "+N more" overflow. Paginate the list if > 50 entries.
 
-3. **Tracker resolution misses** -- some `daddr` values won't map to known trackers.
-   Filter these out; the connection log (ActivityLog) already covers raw traffic.
+3. **Tracker resolution misses** — some `daddr` won't map to known trackers.
+   Filter these out; the connection log (ActivityLog) covers raw traffic.
 
-4. **User expectations** -- some users may prefer the app list. The menu toggle
-   preserves it. Could also remember the user's preference in SharedPreferences.
+### Future: replacing the main activity
+
+If the timeline proves useful, it could become the default main screen. For that
+to work, two things are needed:
+
+1. **App search** — users need to find any installed app, not just those with
+   recent activity. A search bar that falls through to the full app list
+   (current AdapterRule) would cover this.
+
+2. **VPN toggle** — the main activity's MaterialSwitch for enabling/disabling
+   the VPN would need to move into the timeline activity's toolbar.
+
+These are not needed for the initial standalone version.
