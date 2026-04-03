@@ -589,8 +589,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     ServiceSinkhole.reload("changed " + name, this, false);
             } else
                 ServiceSinkhole.reload("changed " + name, this, false);
-
-
+        }
 
         else if ("blocking_mode".equals(name)) {
             String mode = prefs.getString(name, BlockingMode.getDefaultMode());
