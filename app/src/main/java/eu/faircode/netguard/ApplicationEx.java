@@ -125,6 +125,8 @@ public class ApplicationEx extends Application {
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
                 if (activity instanceof ComponentActivity) {
                     int statusBarColor = ContextCompat.getColor(activity, R.color.colorPrimaryDark);
+                    // SystemBarStyle.dark() is critical: without it, EdgeToEdge defaults to
+                    // transparent, and M3's light theme produces white-on-white status bar icons.
                     EdgeToEdge.enable(
                             (ComponentActivity) activity,
                             SystemBarStyle.dark(statusBarColor),

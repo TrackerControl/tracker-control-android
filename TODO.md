@@ -105,15 +105,3 @@ If revisited later, start by deciding whether the desired goal is:
 
 - just to reduce cross-app cache bleed, or
 - to redesign tracker attribution so "per-app blocking" is backed by per-app evidence.
-
-## Material 3 migration — completed
-
-The M3 migration is complete. All themes, components, text appearances, button styles, dialog builders, and layout-level theme references use Material 3 equivalents.
-
-### Edge-to-edge
-Edge-to-edge is handled globally via `EdgeToEdge.enable()` in `ApplicationEx`, applied to all activities via lifecycle callbacks. Uses `SystemBarStyle.dark(colorPrimaryDark)` for the status bar (red/dark red scrim with white icons) and `SystemBarStyle.auto(transparent, transparent)` for the navigation bar. The old `AppTheme.EdgeToEdge` style and per-activity manual insets handling in `DetailsActivity` have been removed.
-
-**Important:** The `SystemBarStyle.dark(colorPrimaryDark)` parameter is critical. Without it, `EdgeToEdge.enable()` defaults to a transparent status bar, and M3's light theme produces white status bar icons on a white surface — making the status bar invisible. If the edge-to-edge call is ever changed, ensure a dark status bar style is always specified.
-
-### Remaining AppCompat reference
-`ActionBar.Red` in `styles.xml` still uses `Widget.AppCompat.ActionBar.Solid` as parent — there is no Material 3 equivalent for the framework ActionBar widget style. This is cosmetic; the action bar renders correctly with M3 theming applied via `ActionBarTheme.Red` (which uses `ThemeOverlay.Material3.Dark.ActionBar`).
