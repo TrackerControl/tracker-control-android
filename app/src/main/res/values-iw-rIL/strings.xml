@@ -39,7 +39,6 @@
     <string name="menu_export">ייצא</string>
     <string name="menu_reset">אפס</string>
     <string name="menu_cleanup">לנקות</string>
-    <string name="setting_options">אפשרויות</string>
     <string name="setting_dark">ערכת נושא כהה</string>
     <string name="setting_install">הודע על התקנה חדשה</string>
     <string name="setting_pause">הפעלה אוטומטית לאחר %1$s דקות</string>

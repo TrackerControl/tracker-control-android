@@ -39,7 +39,6 @@
     <string name="menu_export">Exporteren</string>
     <string name="menu_reset">Resetten</string>
     <string name="menu_cleanup">Opschonen</string>
-    <string name="setting_options">Opties</string>
     <string name="setting_dark">Donker thema</string>
     <string name="setting_install">Melden bij nieuwe installatie</string>
     <string name="setting_pause">Automatisch activeren na %1$s minuten</string>

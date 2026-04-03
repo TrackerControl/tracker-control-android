@@ -39,7 +39,6 @@
     <string name="menu_export">Eksporter</string>
     <string name="menu_reset">Nullstill</string>
     <string name="menu_cleanup">Opprydding</string>
-    <string name="setting_options">Innstillinger</string>
     <string name="setting_dark">Mørkt tema</string>
     <string name="setting_install">Gi beskjed etter nye appinstallasjoner</string>
     <string name="setting_pause">Skru på automatisk etter %1$s minutter</string>

@@ -39,7 +39,6 @@
     <string name="menu_export">エクスポート</string>
     <string name="menu_reset">リセット</string>
     <string name="menu_cleanup">クリーンアップ</string>
-    <string name="setting_options">一般設定</string>
     <string name="setting_dark">ダークテーマ</string>
     <string name="setting_install">新しいアプリのインストール時に通知</string>
     <string name="setting_pause">%1$s分後に自動的に有効にする</string>

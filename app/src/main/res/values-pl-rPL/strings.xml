@@ -39,7 +39,6 @@
     <string name="menu_export">Eksportuj</string>
     <string name="menu_reset">Wyzeruj</string>
     <string name="menu_cleanup">Wyczyść</string>
-    <string name="setting_options">Ustawienia</string>
     <string name="setting_dark">Tryb ciemny</string>
     <string name="setting_install">Powiadamiaj o nowej instalacji</string>
     <string name="setting_pause">Automatyczne włączenie po %1$s minutach</string>

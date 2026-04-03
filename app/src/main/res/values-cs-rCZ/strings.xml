@@ -40,7 +40,6 @@
     <string name="menu_export">Export</string>
     <string name="menu_reset">Resetovat</string>
     <string name="menu_cleanup">Vyčistit</string>
-    <string name="setting_options">Nastavení</string>
     <string name="setting_dark">Tmavý motiv</string>
     <string name="setting_install">Upozornit na novou instalaci</string>
     <string name="setting_pause">Automaticky povolit po %1$s minutách</string>

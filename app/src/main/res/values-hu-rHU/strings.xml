@@ -40,7 +40,6 @@
     <string name="menu_export">Exportálás</string>
     <string name="menu_reset">Visszaállítás</string>
     <string name="menu_cleanup">Takarítás</string>
-    <string name="setting_options">Beállítások</string>
     <string name="setting_dark">Sötét téma</string>
     <string name="setting_install">Értesítés új telepítés esetén</string>
     <string name="setting_pause">Automatikus engedélyezés %1$s perc után</string>

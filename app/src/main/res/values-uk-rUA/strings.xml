@@ -41,7 +41,6 @@
     <string name="menu_export">Експортувати</string>
     <string name="menu_reset">Скинути</string>
     <string name="menu_cleanup">Очищення</string>
-    <string name="setting_options">Параметри</string>
     <string name="setting_dark">Темна тема</string>
     <string name="setting_install">Сповіщати про нові додатки</string>
     <string name="setting_pause">Автоматично увімкнути через %1$s хв.</string>

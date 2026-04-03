@@ -39,7 +39,6 @@
     <string name="menu_export">Esportatu</string>
     <string name="menu_reset">Berrezarri</string>
     <string name="menu_cleanup">Garbitu</string>
-    <string name="setting_options">Aukerak</string>
     <string name="setting_dark">Gai iluna</string>
     <string name="setting_install">Jakinarazi instalazio berria</string>
     <string name="setting_pause">Automatikoki gaitu %1$s minutura</string>

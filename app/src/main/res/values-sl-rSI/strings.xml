@@ -41,7 +41,6 @@
     <string name="menu_export">Izvozi</string>
     <string name="menu_reset">Ponastavi</string>
     <string name="menu_cleanup">Počisti</string>
-    <string name="setting_options">Možnosti</string>
     <string name="setting_dark">Temna tema</string>
     <string name="setting_install">Obvesti ob novi namestitvi</string>
     <string name="setting_pause">Samodejno omogoči po %1$s-h minutah</string>

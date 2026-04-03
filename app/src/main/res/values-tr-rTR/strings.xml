@@ -39,7 +39,6 @@
     <string name="menu_export">Dışarı aktar</string>
     <string name="menu_reset">Sıfırla</string>
     <string name="menu_cleanup">Temizle</string>
-    <string name="setting_options">Ayarlar</string>
     <string name="setting_dark">Karanlık tema</string>
     <string name="setting_install">Yeni uygulamaları bildir</string>
     <string name="setting_pause">%1$s dakika sonra otomatik etkinleştir</string>

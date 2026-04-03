@@ -27,7 +27,6 @@
     <string name="menu_organization">Näita organisatsiooni</string>
     <string name="menu_pcap_enabled">PCAP on kasutusel</string>
     <string name="menu_export">Ekspordi</string>
-    <string name="setting_options">Üldised eelistused</string>
     <string name="setting_dark">Tume kujundus</string>
     <string name="setting_install">Teavitu uue paigalduse puhul</string>
     <string name="setting_pause">Lülita automaatselt sisse %1$s minuti pärast</string>

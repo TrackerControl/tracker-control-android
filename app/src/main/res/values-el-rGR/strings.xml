@@ -39,7 +39,6 @@
     <string name="menu_export">Εξαγωγή</string>
     <string name="menu_reset">Επαναφορά</string>
     <string name="menu_cleanup">Καθαρισμός</string>
-    <string name="setting_options">Ρυθμίσεις</string>
     <string name="setting_dark">Σκοτεινό θέμα</string>
     <string name="setting_install">Ειδοποίηση για νέα εγκατάσταση</string>
     <string name="setting_pause">Αυτόματη ενεργοποίηση μετά από %1$s λεπτά</string>

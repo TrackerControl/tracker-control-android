@@ -41,7 +41,6 @@
     <string name="menu_export">Exportação</string>
     <string name="menu_reset">Reinicialização</string>
     <string name="menu_cleanup">Limpeza</string>
-    <string name="setting_options">Opções</string>
     <string name="setting_dark">Tema sombrio</string>
     <string name="setting_install">Notificar em nova instalação</string>
     <string name="setting_pause">Habilitação automática após %1$s minutos</string>

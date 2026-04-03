@@ -38,7 +38,6 @@
     <string name="menu_export">Xuất</string>
     <string name="menu_reset">Đặt lại</string>
     <string name="menu_cleanup">Dọn dẹp</string>
-    <string name="setting_options">Tùy chọn</string>
     <string name="setting_dark">Chủ đề tối</string>
     <string name="setting_install">Thông báo khi có cài đặt mới</string>
     <string name="setting_pause">Tự động bật sau %1$s phút</string>

@@ -38,7 +38,6 @@
     <string name="menu_export">Экспорт</string>
     <string name="menu_reset">Сброс</string>
     <string name="menu_cleanup">Очистить устаревшие</string>
-    <string name="setting_options">Опции</string>
     <string name="setting_dark">Тёмная тема</string>
     <string name="setting_install">Уведомлять о новой установке</string>
     <string name="setting_pause">Автозапуск через %1$s минут</string>
