@@ -33,25 +33,15 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.TouchDelegate;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +62,6 @@ import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> implements Filterable {
@@ -86,177 +75,32 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private int colorOn;
     private int colorOff;
     private int colorGrayed;
-    private int iconSize;
     private boolean wifiActive = true;
     private boolean otherActive = true;
     private boolean live = true;
     private List<Rule> listAll = new ArrayList<>();
     private List<Rule> listFiltered = new ArrayList<>();
+    private int iconSize;
     private final RequestOptions glideOptions;
+    private String cachedSort;
 
-    private List<String> messaging = Arrays.asList(
-            "com.discord",
-            "com.facebook.mlite",
-            "com.facebook.orca",
-            "com.instagram.android",
-            "com.Slack",
-            "com.skype.raider",
-            "com.snapchat.android",
-            "com.whatsapp",
-            "com.whatsapp.w4b");
-
-    private List<String> download = Arrays.asList(
-            "com.google.android.youtube");
+    private static final ColorMatrixColorFilter GREYSCALE_FILTER;
+    static {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        GREYSCALE_FILTER = new ColorMatrixColorFilter(matrix);
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public View view;
-
-        public LinearLayout llApplication;
-        public ImageView ivIcon;
-        public ImageView ivExpander;
-        public TextView tvName;
-
-        public TextView tvHosts;
-
-        public RelativeLayout rlLockdown;
-        public ImageView ivLockdown;
-
-        public CheckBox cbWifi;
-        public ImageView ivScreenWifi;
-
-        public CheckBox cbOther;
-        public ImageView ivScreenOther;
-        public TextView tvRoaming;
-
-        public TextView tvRemarkMessaging;
-        public TextView tvRemarkDownload;
-
-        public LinearLayout llConfiguration;
-        public TextView tvUid;
-        public TextView tvPackage;
-        public TextView tvVersion;
-        public TextView tvInternet;
-        public TextView tvDisabled;
-
-        public Button btnRelated;
-        public ImageButton ibSettings;
-        public ImageButton ibLaunch;
-
-        public MaterialSwitch cbApply;
-
-        public LinearLayout llScreenWifi;
-        public ImageView ivWifiLegend;
-        public CheckBox cbScreenWifi;
-
-        public LinearLayout llScreenOther;
-        public ImageView ivOtherLegend;
-        public CheckBox cbScreenOther;
-
-        public CheckBox cbRoaming;
-
-        public CheckBox cbLockdown;
-        public ImageView ivLockdownLegend;
-
-        public ImageButton btnClear;
-
-        public LinearLayout llFilter;
-        public ImageView ivLive;
-        public TextView tvLogging;
-        public Button btnLogging;
-        public ListView lvAccess;
-        public ImageButton btnClearAccess;
-        public CheckBox cbNotify;
-
-        // Custom code
-        private final TextView tvDetails;
+        public final ImageView ivIcon;
+        public final TextView tvName;
+        public final TextView tvDetails;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            view = itemView;
-
-            llApplication = itemView.findViewById(R.id.llApplication);
             ivIcon = itemView.findViewById(R.id.ivIcon);
-
-            ivExpander = itemView.findViewById(R.id.ivExpander);
             tvName = itemView.findViewById(R.id.tvName);
-
-            tvHosts = itemView.findViewById(R.id.tvHosts);
-
-            rlLockdown = itemView.findViewById(R.id.rlLockdown);
-            ivLockdown = itemView.findViewById(R.id.ivLockdown);
-
-            cbWifi = itemView.findViewById(R.id.cbWifi);
-            ivScreenWifi = itemView.findViewById(R.id.ivScreenWifi);
-
-            cbOther = itemView.findViewById(R.id.cbOther);
-            ivScreenOther = itemView.findViewById(R.id.ivScreenOther);
-            tvRoaming = itemView.findViewById(R.id.tvRoaming);
-
-            tvRemarkMessaging = itemView.findViewById(R.id.tvRemarkMessaging);
-            tvRemarkDownload = itemView.findViewById(R.id.tvRemarkDownload);
-
-            llConfiguration = itemView.findViewById(R.id.llConfiguration);
-            tvUid = itemView.findViewById(R.id.tvUid);
-            tvPackage = itemView.findViewById(R.id.tvPackage);
-            tvVersion = itemView.findViewById(R.id.tvVersion);
-            tvInternet = itemView.findViewById(R.id.tvInternet);
-            tvDisabled = itemView.findViewById(R.id.tvDisabled);
-
-            btnRelated = itemView.findViewById(R.id.btnRelated);
-            ibSettings = itemView.findViewById(R.id.ibSettings);
-            ibLaunch = itemView.findViewById(R.id.ibLaunch);
-
-            cbApply = itemView.findViewById(R.id.cbApply);
             tvDetails = itemView.findViewById(R.id.app_details);
-
-            llScreenWifi = itemView.findViewById(R.id.llScreenWifi);
-            ivWifiLegend = itemView.findViewById(R.id.ivWifiLegend);
-            cbScreenWifi = itemView.findViewById(R.id.cbScreenWifi);
-
-            llScreenOther = itemView.findViewById(R.id.llScreenOther);
-            ivOtherLegend = itemView.findViewById(R.id.ivOtherLegend);
-            cbScreenOther = itemView.findViewById(R.id.cbScreenOther);
-
-            cbRoaming = itemView.findViewById(R.id.cbRoaming);
-
-            cbLockdown = itemView.findViewById(R.id.cbLockdown);
-            ivLockdownLegend = itemView.findViewById(R.id.ivLockdownLegend);
-
-            btnClear = itemView.findViewById(R.id.btnClear);
-
-            llFilter = itemView.findViewById(R.id.llFilter);
-            ivLive = itemView.findViewById(R.id.ivLive);
-            tvLogging = itemView.findViewById(R.id.tvLogging);
-            btnLogging = itemView.findViewById(R.id.btnLogging);
-            lvAccess = itemView.findViewById(R.id.lvAccess);
-            btnClearAccess = itemView.findViewById(R.id.btnClearAccess);
-            cbNotify = itemView.findViewById(R.id.cbNotify);
-
-            final View wifiParent = (View) cbWifi.getParent();
-            wifiParent.post(new Runnable() {
-                public void run() {
-                    Rect rect = new Rect();
-                    cbWifi.getHitRect(rect);
-                    rect.bottom += rect.top;
-                    rect.right += rect.left;
-                    rect.top = 0;
-                    rect.left = 0;
-                    wifiParent.setTouchDelegate(new TouchDelegate(rect, cbWifi));
-                }
-            });
-
-            final View otherParent = (View) cbOther.getParent();
-            otherParent.post(new Runnable() {
-                public void run() {
-                    Rect rect = new Rect();
-                    cbOther.getHitRect(rect);
-                    rect.bottom += rect.top;
-                    rect.right += rect.left;
-                    rect.top = 0;
-                    rect.left = 0;
-                    otherParent.setTouchDelegate(new TouchDelegate(rect, cbOther));
-                }
-            });
         }
     }
 
@@ -288,11 +132,17 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(android.R.attr.listPreferredItemHeight, typedValue, true);
-        int height = TypedValue.complexToDimensionPixelSize(typedValue.data,
+        this.iconSize = TypedValue.complexToDimensionPixelSize(typedValue.data,
                 context.getResources().getDisplayMetrics());
-        this.iconSize = Math.round(height * context.getResources().getDisplayMetrics().density + 0.5f);
+
+        this.cachedSort = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString("sort", "trackers_week");
 
         setHasStableIds(true);
+    }
+
+    public void updateSortPreference(String sort) {
+        this.cachedSort = sort;
     }
 
     public void set(List<Rule> listRule) {
@@ -395,7 +245,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             holder.ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
         else {
             Uri uri = Uri.parse("android.resource://" + rule.packageName + "/" + rule.icon);
-            GlideApp.with(holder.itemView.getContext())
+            GlideApp.with(context)
                     .applyDefaultRequestOptions(glideOptions)
                     .load(uri)
                     .override(iconSize, iconSize)
@@ -434,10 +284,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             setGreyscale(iv, !wasBlocked);
         });
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String sort = prefs.getString("sort", "trackers_week");
-
-        boolean pastWeekOnly = !("trackers_all".equals(sort));
+        boolean pastWeekOnly = !("trackers_all".equals(cachedSort));
         final int trackerCount = rule.getTrackerCount(pastWeekOnly);
         if (trackerCount > 0) {
             holder.tvDetails.setVisibility(View.VISIBLE);
@@ -477,11 +324,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
     private void setGreyscale(ImageView iv, boolean on) {
         if (on) {
-            ColorMatrix matrix = new ColorMatrix();
-            matrix.setSaturation(0); // 0 means grayscale
-            ColorMatrixColorFilter cf = new ColorMatrixColorFilter(matrix);
-            iv.setColorFilter(cf);
-            iv.setImageAlpha(128); // 128 = 0.5
+            iv.setColorFilter(GREYSCALE_FILTER);
+            iv.setImageAlpha(128);
         } else {
             iv.setColorFilter(null);
             iv.setImageAlpha(255);

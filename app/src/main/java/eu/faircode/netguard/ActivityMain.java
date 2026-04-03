@@ -588,7 +588,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             // Do nothing
 
         } else if (requestCode == REQUEST_DETAILS_UPDATED) {
-            updateApplicationList(null);
+            // Only rebind visible items to reflect any state changes (e.g. internet
+            // blocking, tracker protection). A full updateApplicationList reload is
+            // unnecessary since SharedPreferences listeners already handle data changes.
+            if (adapter != null)
+                adapter.notifyDataSetChanged();
 
         } else if (requestCode == REQUEST_EXPORT) {
             if (resultCode == RESULT_OK && data != null)
@@ -735,6 +739,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 "show_unprotected".equals(name) ||
                 "sort".equals(name) ||
                 "imported".equals(name)) {
+            if ("sort".equals(name))
+                adapter.updateSortPreference(prefs.getString("sort", "trackers_week"));
             updateApplicationList(null);
 
             final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);

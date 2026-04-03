@@ -21,8 +21,6 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toStartOf="@+id/cbApply"
         android:layout_toEndOf="@+id/ivIcon"
         android:layout_marginEnd="8dp"
         android:gravity="bottom"
@@ -56,86 +54,4 @@
 
     </LinearLayout>
 
-    <!-- Legacy NetGuard UI elements - kept as hidden stubs for ViewHolder compatibility.
-         The outer LinearLayout and its children are never displayed in TrackerControl;
-         detail views open via DetailsActivity instead. Using minimal placeholder views
-         avoids inflating ~480 lines of unused layout per item. -->
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:visibility="gone"
-        android:id="@+id/cbApply"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <LinearLayout
-        android:id="@+id/llApplication"
-        android:visibility="gone"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <ImageView
-        android:id="@+id/ivExpander"
-        android:visibility="gone"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <TextView
-        android:id="@+id/tvHosts"
-        android:visibility="gone"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
-
-    <RelativeLayout
-        android:id="@+id/rlLockdown"
-        android:visibility="gone"
-        android:layout_width="0dp"
-        android:layout_height="0dp">
-        <ImageView
-            android:id="@+id/ivLockdown"
-            android:layout_width="0dp"
-            android:layout_height="0dp" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/llConfiguration"
-        android:visibility="gone"
-        android:layout_width="0dp"
-        android:layout_height="0dp">
-
-        <TextView android:id="@+id/tvUid" android:layout_width="0dp" android:layout_height="0dp" />
-        <TextView android:id="@+id/tvPackage" android:layout_width="0dp" android:layout_height="0dp" />
-        <TextView android:id="@+id/tvVersion" android:layout_width="0dp" android:layout_height="0dp" />
-        <TextView android:id="@+id/tvInternet" android:layout_width="0dp" android:layout_height="0dp" />
-        <TextView android:id="@+id/tvDisabled" android:layout_width="0dp" android:layout_height="0dp" />
-        <Button android:id="@+id/btnRelated" android:layout_width="0dp" android:layout_height="0dp" />
-        <ImageButton android:id="@+id/ibLaunch" android:layout_width="0dp" android:layout_height="0dp" />
-        <ImageButton android:id="@+id/ibSettings" android:layout_width="0dp" android:layout_height="0dp" />
-    </LinearLayout>
-
-    <!-- Legacy hidden views kept for ViewHolder ID references -->
-    <CheckBox android:id="@+id/cbWifi" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <ImageView android:id="@+id/ivScreenWifi" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <CheckBox android:id="@+id/cbOther" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <ImageView android:id="@+id/ivScreenOther" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <TextView android:id="@+id/tvRoaming" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <TextView android:id="@+id/tvRemarkMessaging" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <TextView android:id="@+id/tvRemarkDownload" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <LinearLayout android:id="@+id/llScreenWifi" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp">
-        <ImageView android:id="@+id/ivWifiLegend" android:layout_width="0dp" android:layout_height="0dp" />
-        <CheckBox android:id="@+id/cbScreenWifi" android:layout_width="0dp" android:layout_height="0dp" />
-    </LinearLayout>
-    <LinearLayout android:id="@+id/llScreenOther" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp">
-        <ImageView android:id="@+id/ivOtherLegend" android:layout_width="0dp" android:layout_height="0dp" />
-        <CheckBox android:id="@+id/cbScreenOther" android:layout_width="0dp" android:layout_height="0dp" />
-    </LinearLayout>
-    <CheckBox android:id="@+id/cbRoaming" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <CheckBox android:id="@+id/cbLockdown" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <ImageView android:id="@+id/ivLockdownLegend" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <ImageButton android:id="@+id/btnClear" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <LinearLayout android:id="@+id/llFilter" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <ImageView android:id="@+id/ivLive" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <TextView android:id="@+id/tvLogging" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <Button android:id="@+id/btnLogging" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <eu.faircode.netguard.ExpandedListView android:id="@+id/lvAccess" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <ImageButton android:id="@+id/btnClearAccess" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
-    <CheckBox android:id="@+id/cbNotify" android:visibility="gone" android:layout_width="0dp" android:layout_height="0dp" />
 </RelativeLayout>
