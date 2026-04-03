@@ -45,7 +45,6 @@
     <string name="menu_export">Exporter</string>
     <string name="menu_reset">Réinitialiser</string>
     <string name="menu_cleanup">Nettoyer</string>
-    <string name="setting_options">Paramètres</string>
     <string name="setting_dark">Thème sombre</string>
     <string name="setting_install">Notifier lors d\'une nouvelle installation</string>
     <string name="setting_pause">Activer automatiquement après %1$s minutes</string>
