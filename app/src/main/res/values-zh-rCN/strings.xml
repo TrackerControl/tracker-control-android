@@ -26,12 +26,24 @@
     <string name="menu_legend">图例</string>
     <string name="menu_support">支持本应用</string>
     <string name="menu_log_support">解释</string>
+    <string name="menu_troubleshooting">故障排除</string>
     <string name="menu_about">关于</string>
+    <string name="troubleshooting_title">故障排除</string>
+    <string name="troubleshooting_battery_title">电池优化</string>
     <string name="troubleshooting_battery_desc">如果TrackerControl 停止在后台工作，禁用Android针对TrackerControl的电池优化。选择\"所有应用程序\"，点击TrackerControl，并选择\"不优化\"。</string>
+    <string name="troubleshooting_battery_action">禁用电池优化</string>
+    <string name="troubleshooting_battery_ok">电池优化已禁用。</string>
+    <string name="troubleshooting_datasaver_title">流量节省程序</string>
     <string name="troubleshooting_datasaver_desc">如果在流量节省器开启时TrackControl无法连接，请允许TrackerControl不受限制地使用数据。启用“后台数据”和“不受限制的数据使用”。</string>
     <string name="troubleshooting_datasaver_action">允许不受限制的数据</string>
+    <string name="troubleshooting_datasaver_ok">流量节省程序没有在限制TrackerControl。</string>
+    <string name="troubleshooting_exclude_title">将应用排除在VPN之外</string>
     <string name="troubleshooting_exclude_desc">如果某个应用在 TrackerControl 中无法正常工作，您可以排除它：点击主列表中的应用，然后关闭有问题应用的VPN开关。</string>
+    <string name="troubleshooting_categories_title">阻止特定的跟踪器类别</string>
     <string name="troubleshooting_categories_desc">您可以微调每个应用的拦截，方法时点击应用并在跟踪器选项卡中开启/关闭单个跟踪器类别（如分析、广告）。</string>
+    <string name="troubleshooting_alwayson_title">始终开启的 VPN</string>
+    <string name="troubleshooting_alwayson_desc">如果在 Android VPN 设置中启用了\"拦截不使用VPN的连接\"(锁定)，TrackerControl 无法正常工作。 禁用此选项。检测到此设置将显示通知。</string>
+    <string name="troubleshooting_alwayson_action">打开 VPN 设置</string>
     <string name="menu_apps">其他应用</string>
     <string name="menu_protocol_other">其他</string>
     <string name="menu_traffic_allowed">已允许</string>
@@ -46,6 +58,8 @@
     <string name="menu_export">导出</string>
     <string name="menu_reset">重置</string>
     <string name="menu_cleanup">清理</string>
+    <string name="setting_options">常规</string>
+    <string name="setting_further_options">更多选项</string>
     <string name="setting_dark">深色主题</string>
     <string name="setting_install">有新软件安装时通知我</string>
     <string name="setting_pause">%1$s 分钟后自动启用</string>
@@ -63,6 +77,7 @@
     <string name="setting_advanced_options">高级选项(供专家使用)</string>
     <string name="setting_system">显示系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
+    <string name="setting_log_logcat">研究</string>
     <string name="setting_filter">屏蔽跟踪器</string>
     <string name="setting_filter_udp">屏蔽UDP上的跟踪器</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
@@ -91,6 +106,8 @@
     <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
+    <string name="setting_doh_dns_fallback">DNS 回退</string>
+    <string name="summary_doh_dns_fallback">当DoH不可用时，使用标准 (未加密) DNS。如果DoH服务器出现故障，禁用此选项可能会让应用无法联网。</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">阻止Android的私人DNS</string>
     <string name="summary_block_dot">启用Android的私人DNS后，TC 无法检测到任何跟踪，无法正常工作。</string>
@@ -122,6 +139,7 @@
     <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
+    <string name="summary_log_logcat">研究模式：已识别的追踪器会记录到 ADB 并启用 SNI 提取以更好地检测主机名。用 TC-Log 标签通过 adb logcat 获取日志。</string>
     <string name="msg_sure">你确定吗？</string>
     <string name="msg_started">正在查找追踪器...</string>
     <string name="msg_waiting">等待事件</string>
@@ -232,6 +250,11 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">端口 %1$d</string>
     <string name="title_log_copy">复制</string>
+    <string-array name="blockingModeNames">
+        <item>最小</item>
+        <item>标准</item>
+        <item>严格</item>
+    </string-array>
     <!-- App Overview -->
     <string name="tracked_app_icon">禁止此应用访问互联网</string>
     <string name="tracked_app_name">应用程序名称</string>
@@ -337,6 +360,27 @@
     <string name="setting_strict_blocking">严格屏蔽</string>
     <string name="summary_strict_blocking">对于新安装的应用程序，尽可能多地阻止与公司共享数据。更多的应用程序将无法正常工作。</string>
     <string name="strict_blocking_explanation">建议非专家禁用此选项，以减少应用程序使用碰到的问题。然而，这允许与公司进行一些必要的数据共享。</string>
+    <string name="setting_block_ambiguous_trackers">屏蔽模棱两可的追踪器</string>
+    <string name="summary_block_ambiguous_trackers">当一个 IP 同时有追踪器和非追踪器主机名的证据时，仍然屏蔽它。禁用它以减少应用程序无法正常工作。</string>
+    <string name="setting_sni_enabled">SNI 提取(研究)</string>
+    <string name="summary_sni_enabled">从 TLS 连接中提取主机名以更准确地检测到跟踪器。警告：这将泄漏您的 IP 地址到跟踪服务器。仅出于研究目的启用它。</string>
+    <string name="setting_blocking_mode">屏蔽模式</string>
+    <string name="summary_blocking_mode_minimal">最小：只屏蔽可安全屏蔽的来自DuckGo列表的跟踪器。浏览器和已知不兼容的应用将被自动排除。有限的应用不正常。</string>
+    <string name="summary_blocking_mode_standard">标准：阻止来自多个列表的所有已知跟踪器 (X-Ray, Disconnect, DuckDuckGo)。允许必要的服务。 某些应用无法正常工作，可能需要手动排除(见应用菜单中的故障排除)。</string>
+    <string name="summary_blocking_mode_strict">严格：阻止所有已知的追踪器，包括基本服务和模糊的共享IP域。 许多应用无法正常工作，需要手动排除(见应用菜单中的故障排除)。</string>
+    <string name="blocking_mode_minimal">最小</string>
+    <string name="blocking_mode_standard">标准</string>
+    <string name="blocking_mode_strict">严格</string>
+    <string name="onboarding_blockingmode_title">选择屏蔽模式</string>
+    <string name="onboarding_blockingmode_desc">选择 Tracker Control 如何处理跟踪器。 拦截模式以不同激进程度阻止追踪器； 研究模式不拦截，仅启用SNI提取用于测量。 您可以稍后在设置中修改此项。</string>
+    <string name="onboarding_blockingmode_minimal_label">最小(推荐给新用户)</string>
+    <string name="onboarding_blockingmode_minimal_desc">只屏蔽可安全屏蔽的已确认跟踪器。有限的应用不正常。适多数用户。</string>
+    <string name="onboarding_blockingmode_standard_label">标准</string>
+    <string name="onboarding_blockingmode_standard_desc">屏蔽来自多个列表的所有已知跟踪器。一些应用无法正常工作，需要手动排除。</string>
+    <string name="onboarding_blockingmode_strict_label">严格</string>
+    <string name="onboarding_blockingmode_strict_desc">屏蔽一切，包括基本服务和模糊域。严重的应用程序异常 — 需手动排除众多应用。</string>
+    <string name="onboarding_blockingmode_research_label">研究</string>
+    <string name="onboarding_blockingmode_research_desc">无跟踪器屏蔽。传输日志到 ADB 并允许提取SNI以更好地检测主机名。仅研究：这将泄漏您的 IP 地址到跟踪服务器。</string>
     <string name="exclude_vpn_explanation">检测并阻止此应用的跟踪器。</string>
     <string name="vpn_exclude">从 VPN 中排除</string>
     <string name="vpn_exclude_explanation">如果您遇到问题，请启用。应用将完全绕过 TrackerControl。\n\n注意：在Android VPN 设置中\"屏蔽不使用VPN的所有连接\"必须禁用才能让这个选项正常工作。</string>
@@ -454,7 +498,10 @@
     <string name="insights_shocking_fact">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>
     <string name="insights_shocking_fact_playstore">您的应用本周联系了 %1$d 家追踪公司！</string>
     <string name="insights_share">分享给好友</string>
+    <string name="insights_share_trackers_blocked">屏蔽的跟踪主机</string>
+    <string name="insights_share_trackers_detected">检测到的跟踪主机</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">我本周用TrackerControl屏蔽了来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_share_message_playstore">我本周用TrackerControl检测到来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
