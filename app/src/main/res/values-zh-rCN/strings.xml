@@ -450,6 +450,7 @@
     <string name="insights_shocking_fact_playstore">您的应用本周联系了 %1$d 家追踪公司！</string>
     <string name="insights_share">分享给好友</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message_playstore">我本周用TrackerControl检测到来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_see_more">查看更多 →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">额外的主机文件</string>
@@ -458,5 +459,6 @@
     <string name="title_delete_blocklist">删除主机文件</string>
     <string name="msg_delete_blocklist_confirm">您确定要删除此主机文件吗？</string>
     <string name="msg_invalid_url">URL 无效</string>
+    <string name="msg_apply_blocklists_failed">应用主机文件失败</string>
     <string name="msg_last_update">上次更新：%s</string>
 </resources>
