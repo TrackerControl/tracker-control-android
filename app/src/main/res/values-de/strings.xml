@@ -39,7 +39,6 @@
     <string name="menu_export">Exportieren</string>
     <string name="menu_reset">Zurücksetzen</string>
     <string name="menu_cleanup">Bereinigen</string>
-    <string name="setting_options">Optionen</string>
     <string name="setting_dark">Dunkles Design</string>
     <string name="setting_install">Benachrichtung bei neu installierter App</string>
     <string name="setting_pause">Automatisch nach %1$s Minuten aktivieren</string>
