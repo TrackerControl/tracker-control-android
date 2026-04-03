@@ -559,23 +559,6 @@ public class ServiceSinkhole extends VpnService {
         private void reload(boolean interactive) {
             List<Rule> listRule = Rule.getRules(true, ServiceSinkhole.this);
 
-            // Check if rules needs to be reloaded
-            if (interactive) {
-                boolean process = false;
-                for (Rule rule : listRule) {
-                    boolean blocked = (last_metered ? rule.other_blocked : rule.wifi_blocked);
-                    boolean screen = (last_metered ? rule.screen_other : rule.screen_wifi);
-                    if (blocked && screen) {
-                        process = true;
-                        break;
-                    }
-                }
-                if (!process) {
-                    Log.i(TAG, "No changed rules on interactive state change");
-                    return;
-                }
-            }
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
 
             // Refresh cached preferences for shouldTrackApp()
@@ -1965,69 +1948,18 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private List<Rule> getAllowedRules(List<Rule> listRule) {
-        List<Rule> listAllowed = new ArrayList<>();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Check state
-        boolean wifi = Util.isWifiActive(this);
-        boolean metered = Util.isMeteredNetwork(this);
-        boolean useMetered = prefs.getBoolean("use_metered", false);
-        String ssidNetwork = Util.getWifiSSID(this);
-        String generation = Util.getNetworkGeneration(this);
-        boolean unmetered_2g = prefs.getBoolean("unmetered_2g", false);
-        boolean unmetered_3g = prefs.getBoolean("unmetered_3g", false);
-        boolean unmetered_4g = prefs.getBoolean("unmetered_4g", false);
-        boolean roaming = Util.isRoaming(ServiceSinkhole.this);
-        boolean national = prefs.getBoolean("national_roaming", false);
-        boolean eu = prefs.getBoolean("eu_roaming", false);
-        boolean tethering = prefs.getBoolean("tethering", false);
-        boolean filter = prefs.getBoolean("filter", true);
-
-        // Update connected state
+        // TrackerControl: In filter mode (always on for TC), the allowed rules list
+        // doesn't affect VPN routing or tracker blocking. The VPN builder uses rule.apply
+        // (network-independent) and tracker blocking is handled dynamically in
+        // blockKnownTracker(). We just return all rules for the notification count.
         last_connected = Util.isConnected(ServiceSinkhole.this);
+        last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
 
-        boolean org_metered = metered;
-        boolean org_roaming = roaming;
+        Log.i(TAG, "Get allowed connected=" + last_connected +
+                " metered=" + last_metered +
+                " rules=" + listRule.size());
 
-        // Update metered state
-        if (wifi && !useMetered)
-            metered = false;
-        if (unmetered_2g && "2G".equals(generation))
-            metered = false;
-        if (unmetered_3g && "3G".equals(generation))
-            metered = false;
-        if (unmetered_4g && "4G".equals(generation))
-            metered = false;
-        last_metered = metered;
-
-        // Update roaming state
-        if (roaming && eu)
-            roaming = !Util.isEU(this);
-        if (roaming && national)
-            roaming = !Util.isNational(this);
-
-        Log.i(TAG, "Get allowed" +
-                " connected=" + last_connected +
-                " wifi=" + wifi +
-                " network=" + ssidNetwork +
-                " metered=" + metered + "/" + org_metered +
-                " generation=" + generation +
-                " roaming=" + roaming + "/" + org_roaming +
-                " interactive=" + last_interactive +
-                " tethering=" + tethering +
-                " filter=" + filter);
-
-        if (last_connected)
-            for (Rule rule : listRule) {
-                boolean blocked = (metered ? rule.other_blocked : rule.wifi_blocked);
-                boolean screen = (metered ? rule.screen_other : rule.screen_wifi);
-                if ((!blocked || (screen && last_interactive)) &&
-                        (!metered || !(rule.roaming && roaming)))
-                    listAllowed.add(rule);
-            }
-
-        Log.i(TAG, "Allowed " + listAllowed.size() + " of " + listRule.size());
-        return listAllowed;
+        return new ArrayList<>(listRule);
     }
 
     private void stopVPN(ParcelFileDescriptor pfd) {
@@ -2378,33 +2310,14 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
 
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                    Intent i = new Intent(ACTION_SCREEN_OFF_DELAYED);
-                    i.setPackage(context.getPackageName());
-                    PendingIntent pi = PendingIntentCompat.getBroadcast(context, 0, i,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-                    am.cancel(pi);
+            // TrackerControl: skip VPN rebuild on screen on/off.
+            // TC doesn't use screen-based per-network blocking rules (screen_wifi/screen_other).
+            // Just update the interactive state for stats handling.
+            last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
 
-                    try {
-                        last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-                        reload("interactive state changed", ServiceSinkhole.this, true);
-
-                        // Start/stop stats
-                        statsHandler.sendEmptyMessage(
-                                Util.isInteractive(ServiceSinkhole.this) ? MSG_STATS_START : MSG_STATS_STOP);
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                            am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
-                        else
-                            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
-                    }
-                }
-            });
+            // Start/stop stats
+            statsHandler.sendEmptyMessage(
+                    Util.isInteractive(ServiceSinkhole.this) ? MSG_STATS_START : MSG_STATS_STOP);
         }
     };
 
@@ -2442,11 +2355,9 @@ public class ServiceSinkhole extends VpnService {
             Util.logExtras(intent);
 
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            Log.i(TAG, "device idle=" + pm.isDeviceIdleMode());
-
-            // Reload rules when coming from idle mode
-            if (!pm.isDeviceIdleMode())
-                reload("idle state changed", ServiceSinkhole.this, false);
+            // TrackerControl: skip VPN rebuild on idle state changes.
+            // TC's tracker blocking doesn't change based on Doze mode.
+            Log.i(TAG, "Device idle=" + pm.isDeviceIdleMode() + " (skipping reload)");
         }
     };
 
