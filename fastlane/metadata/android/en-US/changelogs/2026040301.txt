@@ -1,0 +1,15 @@
+- Tracker Blocking Modes: Choose between minimal, standard, and strict blocking to balance privacy and app compatibility.
+- DuckDuckGo Tracker Radar: Integrated DDG's mobile-specific tracker detection for better coverage.
+- Improved DNS: Better reliability, safer defaults, and support for Encrypted DNS.
+- New Insights: View statistics on blocked trackers and tracking companies, directly from the main screen.
+- Enhanced Blocking: Support for multiple blocklists and auto-updates.
+- Show Unprotected Apps: New option to easily see which apps are not yet protected.
+- Removed IP-Based Blocking: Removed faulty IP-based tracker blocking for improved reliability.
+- Replaced Battery/Data Saver Popups: Intrusive popups replaced with a streamlined troubleshooting flow.
+- Simpler Settings: "Monitor" is now "Exclude from VPN" for clarity.
+- UI Cleanup: Cleaner interface with improved scrolling and search performance.
+- Performance: 50% smaller app size, faster startup, and improved battery life.
+- Revamped Analysis: Faster and cleaner tracker library scanner.
+- New Translations: Added new translations.
+- Bug Fixes: Fixed several crashes and improved stability.
+- Start migration to new Android Material 3 design
