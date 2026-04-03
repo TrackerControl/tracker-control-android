@@ -81,7 +81,6 @@ public class Rule {
     public boolean screen_wifi = false;
     public boolean screen_other = false;
     public boolean roaming = false;
-    public boolean lockdown = false;
 
     public boolean apply = true; // If false, completely exclude from VPN (no DNS, no routing)
     public boolean tracker_protect = true; // If false, don't block trackers (but still route through VPN)
@@ -240,7 +239,6 @@ public class Rule {
             SharedPreferences screen_wifi = context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE);
             SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
             SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
-            SharedPreferences lockdown = context.getSharedPreferences("lockdown", Context.MODE_PRIVATE);
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
             SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
@@ -413,7 +411,6 @@ public class Rule {
                         rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default)
                                 && screen_on;
                         rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
-                        rule.lockdown = lockdown.getBoolean(info.packageName, false);
 
                         rule.apply = apply.getBoolean(info.packageName, true);
                         rule.tracker_protect = BlockingMode.isTrackerProtectionEnabled(
@@ -543,7 +540,7 @@ public class Rule {
                 (wifi_blocked && screen_wifi != screen_wifi_default) ||
                 (other_blocked && screen_other != screen_other_default) ||
                 ((!other_blocked || screen_other) && roaming != default_roaming) ||
-                hosts > 0 || lockdown || !tracker_protect || !apply);
+                hosts > 0 || !tracker_protect || !apply);
     }
 
     public void updateChanged(Context context) {

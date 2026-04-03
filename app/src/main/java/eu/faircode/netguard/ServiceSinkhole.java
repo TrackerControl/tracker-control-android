@@ -184,7 +184,6 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_ENFORCING = 1;
     private static final int NOTIFY_WAITING = 2;
     private static final int NOTIFY_DISABLED = 3;
-    private static final int NOTIFY_LOCKDOWN = 4;
     private static final int NOTIFY_AUTOSTART = 5;
     private static final int NOTIFY_ERROR = 6;
     private static final int NOTIFY_TRAFFIC = 7;
@@ -477,16 +476,6 @@ public class ServiceSinkhole extends VpnService {
 
                     default:
                         Log.e(TAG, "Unknown command=" + cmd);
-                }
-
-                if (cmd == Command.start || cmd == Command.reload) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        boolean filter = prefs.getBoolean("filter", false);
-                        if (filter && isLockdownEnabled())
-                            showLockdownNotification();
-                        else
-                            removeLockdownNotification();
-                    }
                 }
 
                 if (cmd == Command.start || cmd == Command.reload || cmd == Command.stop) {
@@ -1850,8 +1839,6 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void prepareUidIPFilters(String dname) {
-        SharedPreferences lockdown = getSharedPreferences("lockdown", Context.MODE_PRIVATE);
-
         lock.writeLock().lock();
 
         if (dname == null) // reset mechanism, called from startNative()
@@ -1877,20 +1864,6 @@ public class ServiceSinkhole extends VpnService {
                 boolean block = (cursor.getInt(colBlock) > 0);
                 long time = (cursor.isNull(colTime) ? new Date().getTime() : cursor.getLong(colTime));
                 long ttl = (cursor.isNull(colTTL) ? 7 * 24 * 3600 * 1000L : cursor.getLong(colTTL));
-
-                if (isLockedDown(last_metered)) {
-                    String[] pkg;
-                    try {
-                        pkg = getPackageManager().getPackagesForUid(uid);
-                    } catch (SecurityException ignored) {
-                        // Work profile cross-user UID
-                        pkg = null;
-                    }
-                    if (pkg != null && pkg.length > 0) {
-                        if (!lockdown.getBoolean(pkg[0], false))
-                            continue;
-                    }
-                }
 
                 IPKey key = new IPKey(version, protocol, dport, uid);
                 synchronized (mapUidIPFilters) {
@@ -1986,17 +1959,6 @@ public class ServiceSinkhole extends VpnService {
         lock.writeLock().unlock();
     }
 
-    private boolean isLockedDown(boolean metered) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-        boolean lockdown = prefs.getBoolean("lockdown", false);
-        boolean lockdown_wifi = prefs.getBoolean("lockdown_wifi", true);
-        boolean lockdown_other = prefs.getBoolean("lockdown_other", true);
-        if (metered ? !lockdown_other : !lockdown_wifi)
-            lockdown = false;
-
-        return lockdown;
-    }
-
     private List<Rule> getAllowedRules(List<Rule> listRule) {
         List<Rule> listAllowed = new ArrayList<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -2033,8 +1995,6 @@ public class ServiceSinkhole extends VpnService {
             metered = false;
         last_metered = metered;
 
-        boolean lockdown = isLockedDown(last_metered);
-
         // Update roaming state
         if (roaming && eu)
             roaming = !Util.isEU(this);
@@ -2050,16 +2010,14 @@ public class ServiceSinkhole extends VpnService {
                 " roaming=" + roaming + "/" + org_roaming +
                 " interactive=" + last_interactive +
                 " tethering=" + tethering +
-                " filter=" + filter +
-                " lockdown=" + lockdown);
+                " filter=" + filter);
 
         if (last_connected)
             for (Rule rule : listRule) {
                 boolean blocked = (metered ? rule.other_blocked : rule.wifi_blocked);
                 boolean screen = (metered ? rule.screen_other : rule.screen_wifi);
                 if ((!blocked || (screen && last_interactive)) &&
-                        (!metered || !(rule.roaming && roaming)) &&
-                        (!lockdown || rule.lockdown))
+                        (!metered || !(rule.roaming && roaming)))
                     listAllowed.add(rule);
             }
 
@@ -2672,8 +2630,6 @@ public class ServiceSinkhole extends VpnService {
                         context.getSharedPreferences("screen_other", Context.MODE_PRIVATE).edit().remove(packageName)
                                 .apply();
                         context.getSharedPreferences("roaming", Context.MODE_PRIVATE).edit().remove(packageName)
-                                .apply();
-                        context.getSharedPreferences("lockdown", Context.MODE_PRIVATE).edit().remove(packageName)
                                 .apply();
                         context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                         BlockingMode.clearAutoExcludedApp(context, packageName);
@@ -3294,8 +3250,7 @@ public class ServiceSinkhole extends VpnService {
         int pause = Integer.parseInt(prefs.getString("pause", "10"));
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
-        builder.setSmallIcon(
-                isLockedDown(last_metered) ? R.drawable.ic_lock_outline_white_24dp : R.drawable.ic_rocket_white)
+        builder.setSmallIcon(R.drawable.ic_rocket_white)
                 .setContentIntent(pi)
                 .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(true)
@@ -3406,37 +3361,7 @@ public class ServiceSinkhole extends VpnService {
             NotificationManagerCompat.from(this).notify(NOTIFY_DISABLED, notification.build());
     }
 
-    private void showLockdownNotification() {
-        Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
-        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_LOCKDOWN, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
 
-        TypedValue tv = new TypedValue();
-        getTheme().resolveAttribute(R.attr.colorOff, tv, true);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
-        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.msg_always_on_lockdown))
-                .setContentIntent(pi)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setColor(tv.data)
-                .setOngoing(false)
-                .setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
-                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
-
-        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
-        notification.bigText(getString(R.string.msg_always_on_lockdown));
-
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_LOCKDOWN, notification.build());
-    }
-
-    private void removeLockdownNotification() {
-        NotificationManagerCompat.from(this).cancel(NOTIFY_LOCKDOWN);
-    }
 
     private void showAutoStartNotification() {
         Intent main = new Intent(this, ActivityMain.class);

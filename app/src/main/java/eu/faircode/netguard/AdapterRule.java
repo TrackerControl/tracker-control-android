@@ -345,7 +345,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         SharedPreferences screen_wifi = context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE);
         SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
         SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
-        SharedPreferences lockdown = context.getSharedPreferences("lockdown", Context.MODE_PRIVATE);
         SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
 
         if (rule.wifi_blocked == rule.wifi_default)
@@ -377,10 +376,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         else
             roaming.edit().putBoolean(rule.packageName, rule.roaming).apply();
 
-        if (rule.lockdown)
-            lockdown.edit().putBoolean(rule.packageName, rule.lockdown).apply();
-        else
-            lockdown.edit().remove(rule.packageName).apply();
 
         if (rule.notify)
             notify.edit().remove(rule.packageName).apply();
@@ -401,7 +396,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     related.screen_wifi = rule.screen_wifi;
                     related.screen_other = rule.screen_other;
                     related.roaming = rule.roaming;
-                    related.lockdown = rule.lockdown;
                     related.notify = rule.notify;
                     listModified.add(related);
                 }
