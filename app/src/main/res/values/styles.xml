@@ -22,14 +22,6 @@
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar"/>
 
-    <!-- Edge-to-edge variant for DetailsActivity -->
-    <style name="AppTheme.EdgeToEdge" parent="AppTheme.NoActionBar">
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-    </style>
-
     <style name="PrimaryFlatButton" parent="Theme.Material3.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
@@ -121,12 +113,12 @@
         <item name="materialThemeOverlay">@style/ActionBarTheme.Red</item>
     </style>
 
-    <style name="ActionBarTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <style name="ActionBarTitleText" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="TextLarge" parent="@android:style/TextAppearance.Material.Large" />
-    <style name="TextMedium" parent="@android:style/TextAppearance.Material.Medium" />
-    <style name="TextSmall" parent="@android:style/TextAppearance.Material.Small" />
-    <style name="TextTitle" parent="@android:style/TextAppearance.Material.Title" />
+    <style name="TextLarge" parent="TextAppearance.Material3.HeadlineSmall" />
+    <style name="TextMedium" parent="TextAppearance.Material3.BodyLarge" />
+    <style name="TextSmall" parent="TextAppearance.Material3.BodyMedium" />
+    <style name="TextTitle" parent="TextAppearance.Material3.TitleLarge" />
 </resources>

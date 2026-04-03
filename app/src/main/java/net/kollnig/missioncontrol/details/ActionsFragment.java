@@ -30,6 +30,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -136,7 +138,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
             Context c = getContext();
             if (c == null)
                 return;
-            AlertDialog.Builder builder = new AlertDialog.Builder(c)
+            AlertDialog.Builder builder = new MaterialAlertDialogBuilder(c)
                     .setTitle(R.string.external_servers)
                     .setMessage(R.string.confirm_google_info)
                     .setPositiveButton(R.string.yes, (dialog, id2) -> {
