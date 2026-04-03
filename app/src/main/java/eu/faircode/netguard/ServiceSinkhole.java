@@ -2454,9 +2454,10 @@ public class ServiceSinkhole extends VpnService {
         @Override
         @TargetApi(Build.VERSION_CODES.M)
         public void onReceive(Context context, Intent intent) {
-            Log.i(TAG, "Received " + intent);
+            // TrackerControl: skip VPN rebuild on hotspot state changes.
+            // TC's tracker blocking is independent of tethering/AP state.
+            Log.i(TAG, "AP state changed (skipping reload): " + intent);
             Util.logExtras(intent);
-            reload("AP state changed", ServiceSinkhole.this, false);
         }
     };
 
@@ -2471,10 +2472,12 @@ public class ServiceSinkhole extends VpnService {
                     return;
             }
 
-            // Reload rules
-            Log.i(TAG, "Received " + intent);
+            // TrackerControl: skip VPN rebuild on network changes.
+            // Unlike NetGuard, TC doesn't apply different blocking rules per network type
+            // (WiFi vs mobile). Tracker blocking is handled dynamically in blockKnownTracker()
+            // and the VPN app routing (filter mode) is network-independent.
+            Log.i(TAG, "Connectivity changed (skipping reload): " + intent);
             Util.logExtras(intent);
-            reload("connectivity changed", ServiceSinkhole.this, false);
         }
     };
 
@@ -2581,17 +2584,11 @@ public class ServiceSinkhole extends VpnService {
         public void onDataConnectionStateChanged(int state, int networkType) {
             if (state == TelephonyManager.DATA_CONNECTED) {
                 String current_generation = Util.getNetworkGeneration(ServiceSinkhole.this);
-                Log.i(TAG, "Data connected generation=" + current_generation);
-
+                // TrackerControl: skip VPN rebuild on network generation changes.
+                // TC doesn't differentiate blocking by 2G/3G/4G network type.
                 if (last_generation == null || !last_generation.equals(current_generation)) {
-                    Log.i(TAG, "New network generation=" + current_generation);
+                    Log.i(TAG, "Network generation changed to " + current_generation + " (skipping reload)");
                     last_generation = current_generation;
-
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                    if (prefs.getBoolean("unmetered_2g", false) ||
-                            prefs.getBoolean("unmetered_3g", false) ||
-                            prefs.getBoolean("unmetered_4g", false))
-                        reload("data connection state changed", ServiceSinkhole.this, false);
                 }
             }
         }
