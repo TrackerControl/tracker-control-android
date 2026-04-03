@@ -43,27 +43,30 @@ object Common {
      */
     @JvmStatic
     fun fetch(url: String?): String? {
+        var conn: HttpURLConnection? = null
         try {
             val html = StringBuilder()
 
-            val conn = (URL(url)).openConnection() as HttpURLConnection
+            conn = (URL(url)).openConnection() as HttpURLConnection
             conn.setRequestProperty("Accept-Encoding", "gzip")
             conn.setConnectTimeout(5000)
-            val `in`: BufferedReader?
-            if ("gzip" == conn.getContentEncoding()) `in` =
+            val reader: BufferedReader = if ("gzip" == conn.getContentEncoding())
                 BufferedReader(InputStreamReader(GZIPInputStream(conn.getInputStream())))
-            else `in` = BufferedReader(InputStreamReader(conn.getInputStream()))
+            else
+                BufferedReader(InputStreamReader(conn.getInputStream()))
 
-            var str: String?
-            while ((`in`.readLine().also { str = it }) != null) html.append(str)
-
-            `in`.close()
+            reader.use { r ->
+                var str: String?
+                while ((r.readLine().also { str = it }) != null) html.append(str)
+            }
 
             return html.toString()
         } catch (e: IOException) {
             return null
         } catch (e: OutOfMemoryError) {
             return null
+        } finally {
+            conn?.disconnect()
         }
     }
 
