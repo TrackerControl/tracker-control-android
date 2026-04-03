@@ -40,7 +40,6 @@
     <string name="menu_export">Vie</string>
     <string name="menu_reset">Nollaa</string>
     <string name="menu_cleanup">Tyhjennä</string>
-    <string name="setting_options">Vaihtoehdot</string>
     <string name="setting_dark">Tumma teema</string>
     <string name="setting_install">Ilmoita uudesta asennuksesta</string>
     <string name="setting_pause">Automaattinen käyttöönotto %1$s minuutin kuluttua</string>
