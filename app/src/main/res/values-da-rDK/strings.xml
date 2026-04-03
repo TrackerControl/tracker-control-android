@@ -39,7 +39,6 @@
     <string name="menu_export">Eksportér</string>
     <string name="menu_reset">Nulstil</string>
     <string name="menu_cleanup">Ryd op</string>
-    <string name="setting_options">Indstillinger</string>
     <string name="setting_dark">Mørkt tema</string>
     <string name="setting_install">Underret ved ny installation</string>
     <string name="setting_pause">Auto-aktivér efter %1$s minutter</string>
