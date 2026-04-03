@@ -27,6 +27,11 @@
     <string name="menu_support">支持本应用</string>
     <string name="menu_log_support">解释</string>
     <string name="menu_about">关于</string>
+    <string name="troubleshooting_battery_desc">如果TrackerControl 停止在后台工作，禁用Android针对TrackerControl的电池优化。选择\"所有应用程序\"，点击TrackerControl，并选择\"不优化\"。</string>
+    <string name="troubleshooting_datasaver_desc">如果在流量节省器开启时TrackControl无法连接，请允许TrackerControl不受限制地使用数据。启用“后台数据”和“不受限制的数据使用”。</string>
+    <string name="troubleshooting_datasaver_action">允许不受限制的数据</string>
+    <string name="troubleshooting_exclude_desc">如果某个应用在 TrackerControl 中无法正常工作，您可以排除它：点击主列表中的应用，然后关闭有问题应用的VPN开关。</string>
+    <string name="troubleshooting_categories_desc">您可以微调每个应用的拦截，方法时点击应用并在跟踪器选项卡中开启/关闭单个跟踪器类别（如分析、广告）。</string>
     <string name="menu_apps">其他应用</string>
     <string name="menu_protocol_other">其他</string>
     <string name="menu_traffic_allowed">已允许</string>
