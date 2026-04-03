@@ -33,7 +33,6 @@
     <string name="menu_export">রপ্তানি</string>
     <string name="menu_reset">পুন:স্থাপন</string>
     <string name="menu_cleanup">পরিষ্কার করা</string>
-    <string name="setting_options">বিকল্পসমূহ</string>
     <string name="setting_dark">অন্ধকার থিম</string>
     <string name="setting_install">নতুন এপপ্স ইনস্টলেশন এ জানান</string>
     <string name="setting_update">হালনাগাদের জন্য পরীক্ষা করুন</string>
