@@ -39,7 +39,6 @@
     <string name="menu_export">تصدير</string>
     <string name="menu_reset">إعادة تعيين</string>
     <string name="menu_cleanup">تنظيف</string>
-    <string name="setting_options">خيارات</string>
     <string name="setting_dark">مظهر داكن</string>
     <string name="setting_install">الإشعار عند التثبيت الجديد</string>
     <string name="setting_pause">تمكين تلقائيًا بعد %1$s دقيقة</string>
