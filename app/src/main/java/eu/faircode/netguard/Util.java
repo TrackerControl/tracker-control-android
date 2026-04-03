@@ -50,7 +50,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.net.ConnectivityManagerCompat;
@@ -560,7 +560,7 @@ public class Util {
         View view = inflater.inflate(R.layout.sure, null, false);
         TextView tvExplanation = view.findViewById(R.id.tvExplanation);
         tvExplanation.setText(explanation);
-        new AlertDialog.Builder(context)
+        new MaterialAlertDialogBuilder(context)
                 .setView(view)
                 .setCancelable(true)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
