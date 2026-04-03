@@ -39,7 +39,6 @@
     <string name="menu_export">Esporta</string>
     <string name="menu_reset">Resetta</string>
     <string name="menu_cleanup">Ripulisci</string>
-    <string name="setting_options">Generale</string>
     <string name="setting_dark">Tema scuro</string>
     <string name="setting_install">Notifica all\'installazione di nuove applicazioni</string>
     <string name="setting_pause">Attiva automaticamente dopo %1$s minuti</string>
