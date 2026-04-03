@@ -122,8 +122,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
@@ -216,7 +214,7 @@ public class ServiceSinkhole extends VpnService {
 
     private static volatile PowerManager.WakeLock wlInstance = null;
 
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    // executor removed: was only used by old interactiveStateReceiver reload logic
 
     private static final String ACTION_HOUSE_HOLDING = "eu.faircode.netguard.HOUSE_HOLDING";
     private static final String ACTION_SCREEN_OFF_DELAYED = "eu.faircode.netguard.SCREEN_OFF_DELAYED";
@@ -1953,7 +1951,14 @@ public class ServiceSinkhole extends VpnService {
         // (network-independent) and tracker blocking is handled dynamically in
         // blockKnownTracker(). We just return all rules for the notification count.
         last_connected = Util.isConnected(ServiceSinkhole.this);
-        last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
+
+        // Preserve metered override: treat WiFi as unmetered unless use_metered is set.
+        // This affects isLockedDown() which is still used for IP filter rules.
+        boolean metered = Util.isMeteredNetwork(this);
+        if (Util.isWifiActive(this) &&
+                !PreferenceManager.getDefaultSharedPreferences(this).getBoolean("use_metered", false))
+            metered = false;
+        last_metered = metered;
 
         Log.i(TAG, "Get allowed connected=" + last_connected +
                 " metered=" + last_metered +
@@ -3147,7 +3152,7 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
-        executor.shutdownNow();
+        // executor.shutdownNow() removed: executor no longer used
 
         super.onDestroy();
     }
