@@ -986,6 +986,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             item.setChecked(true);
             prefs.edit().putString("sort", "uid").apply();
             return true;
+        } else if (itemId == R.id.menu_timeline) {
+            startActivity(new Intent(this, net.kollnig.missioncontrol.ActivityTimeline.class));
+            return true;
         } else if (itemId == R.id.menu_log) {
             if (Util.canFilter(this))
                 startActivity(new Intent(this, ActivityLog.class));

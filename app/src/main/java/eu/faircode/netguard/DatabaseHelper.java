@@ -863,6 +863,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getRecentTrackerActivity() {
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            long sevenDaysAgo = System.currentTimeMillis() - (7L * 24 * 60 * 60 * 1000);
+
+            String query = "SELECT uid, daddr, allowed, MAX(time) as last_time, " +
+                    "COUNT(*) as attempts, uncertain " +
+                    "FROM access " +
+                    "WHERE time >= ? " +
+                    "GROUP BY uid, daddr, allowed " +
+                    "ORDER BY last_time DESC " +
+                    "LIMIT 500";
+
+            return db.rawQuery(query, new String[] { Long.toString(sevenDaysAgo) });
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
     // DNS
 
     public boolean insertDns(ResourceRecord rr) {
