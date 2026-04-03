@@ -22,7 +22,6 @@
     <string name="menu_traffic_blocked">Blocat</string>
     <string name="menu_live">Actualizare în timp real</string>
     <string name="menu_export">Export</string>
-    <string name="setting_options">Opțiuni</string>
     <string name="setting_dark">Temă întunecată</string>
     <string name="setting_network_options">Opțiuni rețea</string>
     <string name="setting_tethering">Permite partajarea conexiunii</string>
