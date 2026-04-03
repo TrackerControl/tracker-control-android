@@ -41,7 +41,6 @@
     <string name="menu_export">导出</string>
     <string name="menu_reset">重置</string>
     <string name="menu_cleanup">清理</string>
-    <string name="setting_options">选项</string>
     <string name="setting_dark">深色主题</string>
     <string name="setting_install">有新软件安装时通知我</string>
     <string name="setting_pause">%1$s 分钟后自动启用</string>
