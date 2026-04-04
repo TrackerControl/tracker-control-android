@@ -509,13 +509,17 @@ public class Rule {
                         return (rule.changed ? -1 : 1);
                     }
                 });
-            else if ("trackers_recent".equals(sort))
+            else if ("trackers_recent".equals(sort)) {
                 Collections.sort(listRules, (a, b) -> {
-                    int cmp = Long.compare(b.getLastTrackerTime(), a.getLastTrackerTime());
-                    if (cmp != 0) return cmp;
-                    int i = collator.compare(a.name, b.name);
-                    return (i == 0 ? a.packageName.compareTo(b.packageName) : i);
+                    // Most recent tracker contact first
+                    int timeCmp = Long.compare(b.getLastTrackerTime(), a.getLastTrackerTime());
+                    if (timeCmp != 0) return timeCmp;
+
+                    // Tiebreak: alphabetical by app name, then package name
+                    int nameCmp = collator.compare(a.name, b.name);
+                    return nameCmp != 0 ? nameCmp : a.packageName.compareTo(b.packageName);
                 });
+            }
             else
                 Collections.sort(listRules, new Comparator<Rule>() {
                     @Override
