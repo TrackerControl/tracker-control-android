@@ -1472,8 +1472,8 @@ public class ServiceSinkhole extends VpnService {
         if (ip6)
             builder.addRoute("2000::", 3); // unicast
 
-        // Conservative MTU to reduce fragmentation overhead
-        int mtu = 1280;
+        // MTU
+        int mtu = jni_get_mtu();
         Log.i(TAG, "MTU=" + mtu);
         builder.setMtu(mtu);
 
