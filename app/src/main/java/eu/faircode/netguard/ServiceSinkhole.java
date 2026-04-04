@@ -1471,7 +1471,9 @@ public class ServiceSinkhole extends VpnService {
 
         // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
         // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
-        // Resolved before establish() using the carrier's own DNS, avoiding geo-fencing issues.
+        // TC excludes itself from the VPN (addDisallowedApplication), so this DNS resolution
+        // goes through the physical network — using the carrier's own DNS on cellular,
+        // which avoids geo-fencing issues. Re-resolved on each VPN rebuild (network switch).
         // Requires Android 13+ (API 33) for excludeRoute().
         if (Build.VERSION.SDK_INT >= 33)
             try {
