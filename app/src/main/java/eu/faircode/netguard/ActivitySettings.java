@@ -357,6 +357,32 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             });
         }
 
+        Preference pref_exclude_all = screen.findPreference("exclude_all_tracking");
+        if (pref_exclude_all != null) {
+            pref_exclude_all.setOnPreferenceClickListener(preference -> {
+                Util.areYouSure(ActivitySettings.this, R.string.summary_exclude_all_tracking, new Util.DoubtListener() {
+                    @Override
+                    public void onSure() {
+                        setTrackerProtectionForAll(false);
+                    }
+                });
+                return true;
+            });
+        }
+
+        Preference pref_include_all = screen.findPreference("include_all_tracking");
+        if (pref_include_all != null) {
+            pref_include_all.setOnPreferenceClickListener(preference -> {
+                Util.areYouSure(ActivitySettings.this, R.string.summary_include_all_tracking, new Util.DoubtListener() {
+                    @Override
+                    public void onSure() {
+                        setTrackerProtectionForAll(true);
+                    }
+                });
+                return true;
+            });
+        }
+
         if (pref_rcode != null && cat_advanced != null) {
             pref_rcode.setTitle(getString(R.string.setting_rcode, prefs.getString("rcode", "3")));
             cat_advanced.removePreference(pref_rcode);
@@ -393,8 +419,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (p != null) p.setEnabled(false);
         }
 
-        // In minimal mode, hide hosts/blocklist management (not used) and strict_blocking
+        // In minimal mode, hide hosts/blocklist management (not used) and per-app tracker options
         if (BlockingMode.isMinimalMode(this) && cat_advanced != null) {
+            Preference excludeAll = cat_advanced.findPreference("exclude_all_tracking");
+            if (excludeAll != null) cat_advanced.removePreference(excludeAll);
+            Preference includeAll = cat_advanced.findPreference("include_all_tracking");
+            if (includeAll != null) cat_advanced.removePreference(includeAll);
             Preference manageBlocklists = cat_advanced.findPreference("manage_blocklists");
             if (manageBlocklists != null) cat_advanced.removePreference(manageBlocklists);
             Preference hostsDownload = cat_advanced.findPreference("hosts_download");
@@ -847,6 +877,17 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             pref.setSummary(R.string.summary_blocking_mode_strict);
         else
             pref.setSummary(R.string.summary_blocking_mode_standard);
+    }
+
+    private void setTrackerProtectionForAll(boolean enabled) {
+        SharedPreferences tracker_protect = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = tracker_protect.edit();
+
+        for (android.content.pm.PackageInfo pkg : Rule.getPackages(this))
+            editor.putBoolean(pkg.packageName, enabled);
+
+        editor.apply();
+        ServiceSinkhole.reload("bulk tracker protect changed", this, false);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
