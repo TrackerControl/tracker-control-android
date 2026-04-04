@@ -15,9 +15,9 @@ android {
         // Secure DNS (DoH) configuration
         buildConfigField "String", "DEFAULT_DOH_ENDPOINT", "\"https://dns.quad9.net/dns-query\""
         buildConfigField "String", "DEFAULT_DNS_IPV4", "\"9.9.9.9\""
-        buildConfigField "String", "DEFAULT_DNS_IPV4_2", "\"149.112.112.112\""
+        buildConfigField "String", "DEFAULT_DNS_IPV4_2", "\"194.242.2.2\""
         buildConfigField "String", "DEFAULT_DNS_IPV6", "\"2620:fe::fe\""
-        buildConfigField "String", "DEFAULT_DNS_IPV6_2", "\"2620:fe::9\""
+        buildConfigField "String", "DEFAULT_DNS_IPV6_2", "\"2a07:e340::2\""
 
         externalNativeBuild {
             cmake {

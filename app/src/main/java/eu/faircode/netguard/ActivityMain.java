@@ -933,10 +933,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             menu.findItem(R.id.menu_sort_name).setChecked(true);
         else if ("trackers_all".equals(sort))
             menu.findItem(R.id.menu_sort_trackers_all).setChecked(true);
+        else if ("trackers_recent".equals(sort))
+            menu.findItem(R.id.menu_sort_by_latest_detected_tracker).setChecked(true);
         else
             menu.findItem(R.id.menu_sort_trackers_week).setChecked(true);
-
-        menu.findItem(R.id.menu_lockdown).setChecked(prefs.getBoolean("lockdown", false));
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -976,12 +976,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             item.setChecked(true);
             prefs.edit().putString("sort", "trackers_all").apply();
             return true;
+        } else if (itemId == R.id.menu_sort_by_latest_detected_tracker) {
+            item.setChecked(true);
+            prefs.edit().putString("sort", "trackers_recent").apply();
+            return true;
         } else if (itemId == R.id.menu_sort_uid) {
             item.setChecked(true);
             prefs.edit().putString("sort", "uid").apply();
-            return true;
-        } else if (itemId == R.id.menu_lockdown) {
-            menu_lockdown(item);
             return true;
         } else if (itemId == R.id.menu_log) {
             if (Util.canFilter(this))
@@ -1220,7 +1221,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // Create view
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.legend, null, false);
-        ImageView ivLockdownOn = view.findViewById(R.id.ivLockdownOn);
         ImageView ivWifiOn = view.findViewById(R.id.ivWifiOn);
         ImageView ivWifiOff = view.findViewById(R.id.ivWifiOff);
         ImageView ivOtherOn = view.findViewById(R.id.ivOtherOn);
@@ -1229,7 +1229,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         ImageView ivHostAllowed = view.findViewById(R.id.ivHostAllowed);
         ImageView ivHostBlocked = view.findViewById(R.id.ivHostBlocked);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            Drawable wrapLockdownOn = DrawableCompat.wrap(ivLockdownOn.getDrawable());
             Drawable wrapWifiOn = DrawableCompat.wrap(ivWifiOn.getDrawable());
             Drawable wrapWifiOff = DrawableCompat.wrap(ivWifiOff.getDrawable());
             Drawable wrapOtherOn = DrawableCompat.wrap(ivOtherOn.getDrawable());
@@ -1238,7 +1237,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Drawable wrapHostAllowed = DrawableCompat.wrap(ivHostAllowed.getDrawable());
             Drawable wrapHostBlocked = DrawableCompat.wrap(ivHostBlocked.getDrawable());
 
-            DrawableCompat.setTint(wrapLockdownOn, colorOff);
             DrawableCompat.setTint(wrapWifiOn, colorOn);
             DrawableCompat.setTint(wrapWifiOff, colorOff);
             DrawableCompat.setTint(wrapOtherOn, colorOn);
@@ -1260,13 +1258,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 })
                 .create();
         dialogLegend.show();
-    }
-
-    private void menu_lockdown(MenuItem item) {
-        item.setChecked(!item.isChecked());
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean("lockdown", item.isChecked()).apply();
-        ServiceSinkhole.reload("lockdown", this, false);
     }
 
     private void menu_about() {
