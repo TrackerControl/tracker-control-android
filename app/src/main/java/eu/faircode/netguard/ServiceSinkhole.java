@@ -46,6 +46,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.net.ConnectivityManager;
+import android.net.IpPrefix;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -1467,6 +1468,32 @@ public class ServiceSinkhole extends VpnService {
                     } catch (Throwable ex) {
                         Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                     }
+
+        // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
+        // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
+        // Resolved before establish() using the carrier's own DNS, avoiding geo-fencing issues.
+        // Requires Android 13+ (API 33) for excludeRoute().
+        if (Build.VERSION.SDK_INT >= 33)
+            try {
+                TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                String simOperator = (tm == null ? null : tm.getSimOperator());
+                if (simOperator != null && simOperator.length() >= 5) {
+                    String mcc = simOperator.substring(0, 3);
+                    String mnc = simOperator.substring(3);
+                    // Pad MNC to 3 digits per 3GPP TS 23.003
+                    if (mnc.length() == 2)
+                        mnc = "0" + mnc;
+                    String epdgDomain = "epdg.epc.mnc" + mnc + ".mcc" + mcc + ".pub.3gppnetwork.org";
+                    Log.i(TAG, "Resolving ePDG domain=" + epdgDomain);
+                    for (InetAddress addr : InetAddress.getAllByName(epdgDomain)) {
+                        Log.i(TAG, "Excluding ePDG address=" + addr.getHostAddress());
+                        builder.excludeRoute(new IpPrefix(addr, addr instanceof Inet4Address ? 32 : 128));
+                    }
+                }
+            } catch (Throwable ex) {
+                // Resolution may fail (no SIM, airplane mode, non-standard carrier) — not fatal
+                Log.i(TAG, "ePDG resolution skipped: " + ex.getMessage());
+            }
 
         Log.i(TAG, "IPv6=" + ip6);
         if (ip6)
