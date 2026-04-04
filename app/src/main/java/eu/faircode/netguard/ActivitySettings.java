@@ -419,22 +419,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (p != null) p.setEnabled(false);
         }
 
-        // In minimal mode, hide hosts/blocklist management (not used) and per-app tracker options
-        if (BlockingMode.isMinimalMode(this) && cat_advanced != null) {
-            Preference excludeAll = cat_advanced.findPreference("exclude_all_tracking");
-            if (excludeAll != null) cat_advanced.removePreference(excludeAll);
-            Preference includeAll = cat_advanced.findPreference("include_all_tracking");
-            if (includeAll != null) cat_advanced.removePreference(includeAll);
-            Preference manageBlocklists = cat_advanced.findPreference("manage_blocklists");
-            if (manageBlocklists != null) cat_advanced.removePreference(manageBlocklists);
-            Preference hostsDownload = cat_advanced.findPreference("hosts_download");
-            if (hostsDownload != null) cat_advanced.removePreference(hostsDownload);
-            Preference hostsAutoUpdate = cat_advanced.findPreference("hosts_auto_update");
-            if (hostsAutoUpdate != null) cat_advanced.removePreference(hostsAutoUpdate);
-            Preference domainBlocking = cat_advanced.findPreference("domain_based_blocking");
-            if (domainBlocking != null) cat_advanced.removePreference(domainBlocking);
-        }
-
         String last_download = prefs.getString("hosts_last_download", null);
         if (pref_hosts_download != null) {
             if (last_download != null)
@@ -619,9 +603,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     ServiceSinkhole.reload("changed " + name, this, false);
             } else
                 ServiceSinkhole.reload("changed " + name, this, false);
-
-        } else if ("lockdown_wifi".equals(name) || "lockdown_other".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
+        }
 
         else if ("blocking_mode".equals(name)) {
             String mode = prefs.getString(name, BlockingMode.getDefaultMode());
@@ -1110,10 +1092,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlExport(getSharedPreferences("roaming", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "roaming");
 
-        serializer.startTag(null, "lockdown");
-        xmlExport(getSharedPreferences("lockdown", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "lockdown");
-
         serializer.startTag(null, "apply");
         xmlExport(getSharedPreferences("apply", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "apply");
@@ -1303,7 +1281,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.screen_wifi, getSharedPreferences("screen_wifi", Context.MODE_PRIVATE));
         xmlImport(handler.screen_other, getSharedPreferences("screen_other", Context.MODE_PRIVATE));
         xmlImport(handler.roaming, getSharedPreferences("roaming", Context.MODE_PRIVATE));
-        xmlImport(handler.lockdown, getSharedPreferences("lockdown", Context.MODE_PRIVATE));
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
@@ -1358,7 +1335,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> screen_wifi = new HashMap<>();
         public Map<String, Object> screen_other = new HashMap<>();
         public Map<String, Object> roaming = new HashMap<>();
-        public Map<String, Object> lockdown = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
         public Map<String, Object> tracker_protect = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
@@ -1393,8 +1369,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             else if (qName.equals("roaming"))
                 current = roaming;
 
-            else if (qName.equals("lockdown"))
-                current = lockdown;
+
 
             else if (qName.equals("apply"))
                 current = apply;

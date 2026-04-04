@@ -21,6 +21,7 @@
     <string name="menu_sort_uid">Sort by uid</string>
     <string name="menu_sort_companies_week">Sort by companies (week)</string>
     <string name="menu_sort_companies">Sort by companies</string>
+    <string name="menu_sort_by_latest_detected_tracker">Sort by latest detected tracker</string>
     <string name="menu_log">Traffic log</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_invite">Invite</string>

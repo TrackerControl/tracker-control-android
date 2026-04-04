@@ -259,6 +259,38 @@ public class TrackerList {
     }
 
     /**
+     * Iterate through all recorded host contacts and identify those that belong to known trackers,
+     * For each app, only the most recent tracker contact time is stored in the hashmap. Used to
+     * sort by most recent tracker detection in the main app list.
+     *
+     * @return A map of app UIDs to their most recent tracker contact timestamp in milliseconds
+     * since epoch. Apps with no tracker contacts are not included in the map.
+     */
+    public synchronized Map<Integer, Long> getLastTrackerTimes() {
+        Map<Integer, Long> result = new HashMap<>();
+
+        try (Cursor cursor = databaseHelper.getHosts()) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int uid = cursor.getInt(cursor.getColumnIndexOrThrow("uid"));
+                    String hostname = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+                    long time = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
+
+                    Tracker tracker = findTracker(hostname);
+                    if (tracker == null)
+                        continue;
+
+                    Long existing = result.get(uid);
+                    if (existing == null || time > existing)
+                        result.put(uid, time);
+
+                } while (cursor.moveToNext());
+            }
+        }
+
+        return result;
+    }
+    /**
      * Retrieve info for CSV export
      *
      * @return All logged communications about app
