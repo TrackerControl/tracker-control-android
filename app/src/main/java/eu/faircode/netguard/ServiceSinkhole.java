@@ -1390,7 +1390,7 @@ public class ServiceSinkhole extends VpnService {
             }
 
         // Always set DNS servers
-        if (listDns.size() == 0 || listDns.size() < count)
+        if (listDns.size() == 0)
             try {
                 listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4));
                 listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4_2));
