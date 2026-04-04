@@ -1412,13 +1412,15 @@ public class ServiceSinkhole extends VpnService {
         try {
             ParcelFileDescriptor pfd = builder.establish();
 
-            // Set underlying network
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && false) {
+            // Set underlying network so Android can correctly assess connectivity,
+            // metering, and network scoring for the VPN.
+            // Mirrors DuckDuckGo ATP approach (Apache 2.0).
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                 Network active = (cm == null ? null : cm.getActiveNetwork());
                 if (active != null) {
-                    Log.i(TAG, "Setting underlying network=" + active + " " + cm.getNetworkInfo(active));
-                    setUnderlyingNetworks(new Network[] { active });
+                    Log.i(TAG, "Setting underlying network=" + active);
+                    setUnderlyingNetworks(new Network[]{active});
                 }
             }
 
@@ -1446,6 +1448,10 @@ public class ServiceSinkhole extends VpnService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             builder.setMetered(Util.isMeteredNetwork(this));
+
+        // Use blocking I/O on the TUN file descriptor for CPU efficiency
+        // (avoids polling when there is no traffic)
+        builder.setBlocking(true);
 
         // VPN address
         String vpn4 = prefs.getString("vpn4", "10.1.10.1");
