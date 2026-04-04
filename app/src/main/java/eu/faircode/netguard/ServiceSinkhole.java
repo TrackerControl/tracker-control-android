@@ -1434,10 +1434,10 @@ public class ServiceSinkhole extends VpnService {
         Builder builder = new Builder();
         builder.setSession(getString(R.string.app_name));
 
-        // Always mark VPN as unmetered to prevent Android from restricting
-        // background sync. Mirrors DuckDuckGo ATP approach (Apache 2.0).
+        // Match the physical network's metered status so apps behave the
+        // same as without the VPN. (Android defaults VPNs to metered.)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            builder.setMetered(false);
+            builder.setMetered(Util.isMeteredNetwork(this));
 
         // Use blocking I/O on the TUN file descriptor for CPU efficiency
         // (avoids polling when there is no traffic)
