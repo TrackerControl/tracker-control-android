@@ -261,6 +261,8 @@ that is distributed with the Firefox browser.
 
 *DuckDuckGo App Exclusions*: TrackerControl's Minimal blocking mode uses a list of excluded apps (browsers, system services, known incompatible apps) derived from DuckDuckGo's [privacy-configuration](https://github.com/duckduckgo/privacy-configuration) (Apache 2.0).
 
+*DuckDuckGo App Tracking Protection*: TrackerControl's VPN battery optimizations (`setBlocking`, `setUnderlyingNetworks`) are informed by DuckDuckGo's [App Tracking Protection](https://github.com/duckduckgo/Android) implementation (Apache 2.0).
+
 ## License
 Except where indicated otherwise, this project is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html).
 
