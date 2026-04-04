@@ -100,7 +100,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -1350,38 +1349,8 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
 
-        // Remove local DNS servers since LAN is always excluded from VPN routing
-        int count = listDns.size();
-        if (filter)
-            try {
-                List<Pair<InetAddress, Integer>> subnets = new ArrayList<>();
-                subnets.add(new Pair<>(InetAddress.getByName("10.0.0.0"), 8));
-                subnets.add(new Pair<>(InetAddress.getByName("172.16.0.0"), 12));
-                subnets.add(new Pair<>(InetAddress.getByName("192.168.0.0"), 16));
-
-                for (Pair<InetAddress, Integer> subnet : subnets) {
-                    InetAddress hostAddress = subnet.first;
-                    BigInteger host = new BigInteger(1, hostAddress.getAddress());
-
-                    int prefix = subnet.second;
-                    BigInteger mask = BigInteger.valueOf(-1).shiftLeft(hostAddress.getAddress().length * 8 - prefix);
-
-                    for (InetAddress dns : new ArrayList<>(listDns))
-                        if (hostAddress.getAddress().length == dns.getAddress().length) {
-                            BigInteger ip = new BigInteger(1, dns.getAddress());
-
-                            if (host.and(mask).equals(ip.and(mask))) {
-                                Log.i(TAG, "Local DNS server host=" + hostAddress + "/" + prefix + " dns=" + dns);
-                                listDns.remove(dns);
-                            }
-                        }
-                }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
-
-        // Always set DNS servers
-        if (listDns.size() == 0 || listDns.size() < count)
+        // Fallback DNS servers if none found
+        if (listDns.isEmpty())
             try {
                 listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4));
                 listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4_2));
@@ -1485,6 +1454,19 @@ public class ServiceSinkhole extends VpnService {
             } catch (Throwable ex) {
                 Log.e(TAG, "addRoute " + route + ": " + ex);
             }
+
+        // Add /32 host routes for local DNS servers so their traffic enters the
+        // tunnel (where TC can filter it) even though LAN is otherwise excluded.
+        // This preserves compatibility with local DNS setups like Pi-hole.
+        if (filter)
+            for (InetAddress dns : getDns(ServiceSinkhole.this))
+                if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
+                    try {
+                        Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
+                        builder.addRoute(dns, 32);
+                    } catch (Throwable ex) {
+                        Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
+                    }
 
         Log.i(TAG, "IPv6=" + ip6);
         if (ip6)
