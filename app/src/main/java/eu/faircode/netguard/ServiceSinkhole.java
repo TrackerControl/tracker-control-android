@@ -1091,9 +1091,13 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void updateStats() {
+            // Stop the stats loop if stats were stopped (e.g. screen turned off)
+            if (!stats) {
+                return;
+            }
+
             // Skip stats updates when screen is off to save battery
             if (!last_interactive) {
-                this.sendEmptyMessageDelayed(MSG_STATS_UPDATE, 10000);
                 return;
             }
 
