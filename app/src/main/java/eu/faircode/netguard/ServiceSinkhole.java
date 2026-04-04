@@ -731,6 +731,7 @@ public class ServiceSinkhole extends VpnService {
             ipToHost.clear();
             ipToTracker.clear();
             uidToApp.clear();
+            uidToPackage.clear();
 
             // Check for update
             if (!Util.isPlayStoreInstall(ServiceSinkhole.this)
@@ -2148,6 +2149,7 @@ public class ServiceSinkhole extends VpnService {
     }
 
     static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, String> uidToPackage = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
     static String NO_DNAME = "null"; // use a String, unequal the real null
@@ -2240,20 +2242,24 @@ public class ServiceSinkhole extends VpnService {
      * - It's a system app and manage_system is disabled
      */
     private boolean shouldTrackApp(int uid) {
-        String[] packages;
-        try {
-            packages = getPackageManager().getPackagesForUid(uid);
-        } catch (SecurityException ex) {
-            // In work profiles, getPackagesForUid throws SecurityException for
-            // cross-user UIDs (requires INTERACT_ACROSS_USERS_FULL permission).
-            // Default to tracking so blocking/logging still works.
-            Log.w(TAG, "SecurityException in shouldTrackApp for uid " + uid + ": " + ex.getMessage());
-            return true;
+        String packageName = uidToPackage.get(uid);
+        if (packageName == null) {
+            String[] packages;
+            try {
+                packages = getPackageManager().getPackagesForUid(uid);
+            } catch (SecurityException ex) {
+                // In work profiles, getPackagesForUid throws SecurityException for
+                // cross-user UIDs (requires INTERACT_ACROSS_USERS_FULL permission).
+                // Default to tracking so blocking/logging still works.
+                Log.w(TAG, "SecurityException in shouldTrackApp for uid " + uid + ": " + ex.getMessage());
+                return true;
+            }
+            if (packages == null || packages.length == 0) {
+                return true; // Unknown UID, default to tracking
+            }
+            packageName = packages[0];
+            uidToPackage.put(uid, packageName);
         }
-        if (packages == null || packages.length == 0) {
-            return true; // Unknown UID, default to tracking
-        }
-        String packageName = packages[0];
 
         // Check if tracker protection is enabled for this app
         SharedPreferences trackerProtectPrefs = cachedTrackerProtectPrefs;
@@ -2690,6 +2696,7 @@ public class ServiceSinkhole extends VpnService {
                             dh.clearLog(uid);
                             dh.clearAccess(uid, false);
                             uidToApp.remove(uid);
+                            uidToPackage.remove(uid);
 
                             NotificationManagerCompat.from(context).cancel(uid); // installed notification
                             NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
