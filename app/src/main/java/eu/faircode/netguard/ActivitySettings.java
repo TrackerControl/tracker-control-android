@@ -393,14 +393,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (p != null) p.setEnabled(false);
         }
 
-        // In minimal mode, hide hosts/blocklist management (not used) and strict_blocking
+        // In minimal mode, hide domain_based_blocking (not used)
         if (BlockingMode.isMinimalMode(this) && cat_advanced != null) {
-            Preference manageBlocklists = cat_advanced.findPreference("manage_blocklists");
-            if (manageBlocklists != null) cat_advanced.removePreference(manageBlocklists);
-            Preference hostsDownload = cat_advanced.findPreference("hosts_download");
-            if (hostsDownload != null) cat_advanced.removePreference(hostsDownload);
-            Preference hostsAutoUpdate = cat_advanced.findPreference("hosts_auto_update");
-            if (hostsAutoUpdate != null) cat_advanced.removePreference(hostsAutoUpdate);
             Preference domainBlocking = cat_advanced.findPreference("domain_based_blocking");
             if (domainBlocking != null) cat_advanced.removePreference(domainBlocking);
         }
