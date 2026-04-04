@@ -1474,6 +1474,7 @@ public class ServiceSinkhole extends VpnService {
         // TC excludes itself from the VPN (addDisallowedApplication), so this DNS resolution
         // goes through the physical network — using the carrier's own DNS on cellular,
         // which avoids geo-fencing issues. Re-resolved on each VPN rebuild (network switch).
+        // Uses a short timeout to avoid blocking VPN startup if resolution is slow.
         // Requires Android 13+ (API 33) for excludeRoute().
         if (Build.VERSION.SDK_INT >= 33)
             try {
@@ -1482,16 +1483,24 @@ public class ServiceSinkhole extends VpnService {
                 if (simOperator != null && simOperator.length() >= 5) {
                     String mcc = simOperator.substring(0, 3);
                     String mnc = simOperator.substring(3);
-                    // Pad MNC to 3 digits per 3GPP TS 23.003
                     if (mnc.length() == 2)
                         mnc = "0" + mnc;
                     String epdgDomain = "epdg.epc.mnc" + mnc + ".mcc" + mcc + ".pub.3gppnetwork.org";
                     Log.i(TAG, "Resolving ePDG domain=" + epdgDomain);
-                    for (InetAddress addr : InetAddress.getAllByName(epdgDomain)) {
+
+                    // Resolve with 1.5s timeout to avoid blocking VPN startup
+                    final String domain = epdgDomain;
+                    java.util.concurrent.Future<InetAddress[]> future =
+                            java.util.concurrent.Executors.newSingleThreadExecutor()
+                                    .submit(() -> InetAddress.getAllByName(domain));
+                    InetAddress[] addrs = future.get(1500, java.util.concurrent.TimeUnit.MILLISECONDS);
+                    for (InetAddress addr : addrs) {
                         Log.i(TAG, "Excluding ePDG address=" + addr.getHostAddress());
                         builder.excludeRoute(new IpPrefix(addr, addr instanceof Inet4Address ? 32 : 128));
                     }
                 }
+            } catch (java.util.concurrent.TimeoutException ex) {
+                Log.i(TAG, "ePDG resolution timed out, skipping");
             } catch (Throwable ex) {
                 // Resolution may fail (no SIM, airplane mode, non-standard carrier) — not fatal
                 Log.i(TAG, "ePDG resolution skipped: " + ex.getMessage());
