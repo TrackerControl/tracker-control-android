@@ -31,10 +31,12 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
 
 import androidx.activity.ComponentActivity;
 import androidx.activity.EdgeToEdge;
@@ -42,8 +44,12 @@ import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
 
@@ -131,6 +137,37 @@ public class ApplicationEx extends Application {
                             (ComponentActivity) activity,
                             SystemBarStyle.dark(statusBarColor),
                             SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
+
+                    // Activities with windowActionBar=true use the theme's ActionBar
+                    // and need manual inset handling: set the window background to the
+                    // status bar color (visible through the transparent status bar on
+                    // API 35+) and pad android.R.id.content to avoid drawing behind it.
+                    // Activities with their own Toolbar (NoActionBar themes) handle
+                    // insets themselves via AppBarLayout padding.
+                    android.content.res.TypedArray a = activity.obtainStyledAttributes(
+                            new int[]{androidx.appcompat.R.attr.windowActionBar});
+                    boolean hasThemeActionBar = a.getBoolean(0, false);
+                    a.recycle();
+
+                    if (hasThemeActionBar) {
+                        activity.getWindow().setBackgroundDrawable(new ColorDrawable(statusBarColor));
+
+                        android.widget.FrameLayout content = activity.findViewById(android.R.id.content);
+                        ViewCompat.setOnApplyWindowInsetsListener(content, (v, insets) -> {
+                            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                                    | WindowInsetsCompat.Type.displayCutout());
+                            v.setPadding(bars.left, bars.top, bars.right, 0);
+
+                            // Set the actual layout background so only the status bar area
+                            // shows the window background (primary dark color)
+                            if (content.getChildCount() > 0) {
+                                View child = content.getChildAt(0);
+                                child.setBackgroundColor(
+                                        Common.isNight(activity) ? Color.BLACK : Color.WHITE);
+                            }
+                            return insets;
+                        });
+                    }
                 }
             }
 

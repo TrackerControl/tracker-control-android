@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +45,16 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Pad the AppBarLayout so its colored background extends behind the status bar
+        com.google.android.material.appbar.AppBarLayout appBar = findViewById(R.id.appbar);
+        final int appBarInitialTop = appBar.getPaddingTop();
+        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), appBarInitialTop + sysBars.top,
+                    v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
 
         tvEmpty = findViewById(R.id.tvEmpty);
         rvTimeline = findViewById(R.id.rvTimeline);

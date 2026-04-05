@@ -33,7 +33,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -153,25 +153,19 @@ public class DetailsActivity extends AppCompatActivity {
         toolbar.setTitle(getString(R.string.app_info));
         toolbar.setSubtitle(appName);
 
-        // Apply window insets so content avoids status/navigation bars
+        // Apply window insets so content avoids status/navigation bars.
+        // Use padding (not margin) so the AppBarLayout's colored background
+        // extends behind the transparent status bar on API 35+.
         AppBarLayout appBar = findViewById(R.id.appbar);
         final int appBarInitialLeft = appBar.getPaddingLeft();
         final int appBarInitialTop = appBar.getPaddingTop();
         final int appBarInitialRight = appBar.getPaddingRight();
         final int appBarInitialBottom = appBar.getPaddingBottom();
-        final ViewGroup.MarginLayoutParams appBarParams = (ViewGroup.MarginLayoutParams) appBar.getLayoutParams();
-        final int appBarInitialMarginTop = appBarParams.topMargin;
 
         ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
             Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-
-            // Use margin instead of padding for the top inset so the window background
-            // shows through
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-            params.topMargin = appBarInitialMarginTop + sysBars.top;
-            v.setLayoutParams(params);
-
-            v.setPadding(appBarInitialLeft, appBarInitialTop, appBarInitialRight, appBarInitialBottom);
+            v.setPadding(appBarInitialLeft, appBarInitialTop + sysBars.top,
+                    appBarInitialRight, appBarInitialBottom);
             return insets;
         });
 

@@ -470,7 +470,9 @@ public class Util {
     }
 
     public static void setTheme(Context context) {
-        context.setTheme(R.style.AppThemeRed);
+        // Theme is set via the manifest (application-level AppThemeRed, or per-activity
+        // overrides like AppThemeRed.NoActionBar). No setTheme() call here so that
+        // manifest themes are respected.
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     }
 

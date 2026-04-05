@@ -61,13 +61,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ConcatAdapter;
@@ -181,6 +186,21 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        // Set up toolbar
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Apply window insets so the AppBarLayout's colored background extends
+        // behind the transparent status bar on API 35+
+        AppBarLayout appBar = findViewById(R.id.appbar);
+        final int appBarInitialTop = appBar.getPaddingTop();
+        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), appBarInitialTop + sysBars.top,
+                    v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
 
         // Check for filtering
         if (!Util.canFilter(this)) {
