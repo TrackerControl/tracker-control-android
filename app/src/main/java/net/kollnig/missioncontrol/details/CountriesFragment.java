@@ -163,8 +163,8 @@ public class CountriesFragment extends Fragment {
             String countries = TextUtils.join(",#", hostCountriesCount.keySet());
             renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
 
+            Picture picture = svg.renderToPicture(renderOptions);
             mv.post(() -> {
-                Picture picture = svg.renderToPicture(renderOptions);
                 mv.setImageDrawable(new PictureDrawable(picture));
                 pbLoading.setVisibility(View.GONE);
             });

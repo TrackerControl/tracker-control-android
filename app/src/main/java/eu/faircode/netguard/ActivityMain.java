@@ -571,7 +571,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-        Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + requestCode + " ok="
+        Log.i(TAG, "onActivityResult request=" + requestCode + " result=" + resultCode + " ok="
                 + (resultCode == RESULT_OK));
         Util.logExtras(data);
 
