@@ -33,6 +33,15 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:key="category_help"
+        android:title="@string/setting_help">
+        <Preference
+            android:key="reintroduction"
+            android:title="@string/setting_reintroduction" 
+            android:summary="@string/summary_reintroduction"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/setting_further_options">
 
     <PreferenceScreen
@@ -258,6 +267,5 @@
                 android:title="@string/setting_ip6" />
         </PreferenceCategory>
     </PreferenceScreen>
-
     </PreferenceCategory>
 </PreferenceScreen>

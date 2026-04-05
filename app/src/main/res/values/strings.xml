@@ -30,6 +30,15 @@
     <string name="menu_log_support">Explanation</string>
     <string name="menu_troubleshooting">Troubleshooting</string>
     <string name="menu_about">About</string>
+    <string name="menu_timeline">Tracker activity</string>
+
+    <string name="title_tracker_activity">Tracker Activity</string>
+    <string name="timeline_empty">No recent tracker activity.\n\nEnable TrackerControl to see which apps track you.</string>
+    <string name="timeline_section_last_hour">Last hour</string>
+    <string name="timeline_section_today">Today</string>
+    <string name="timeline_section_yesterday">Yesterday</string>
+    <string name="timeline_section_this_week">This week</string>
+    <string name="timeline_more_trackers">+%d more</string>
 
     <string name="troubleshooting_title">Troubleshooting</string>
 
@@ -137,6 +146,8 @@
     <string name="setting_backup">Backup</string>
     <string name="setting_export">Export settings</string>
     <string name="setting_import">Import settings</string>
+    <string name="setting_help">Help</string>
+    <string name="setting_reintroduction">Restart introduction</string>
     <string name="setting_hosts">Import hosts file</string>
     <string name="setting_hosts_append">Import hosts file (append)</string>
     <string name="setting_hosts_url">Hosts file URL</string>
@@ -154,6 +165,7 @@
     <string name="summary_lan">Allow apps to connect to local area network addresses, like 10.0.0.0/8, 172.16.0.0/12 and 192.168.0.0/16</string>
     <string name="summary_ip6">Route IP version 6 traffic to TrackerControl so it can selectively be allowed or blocked</string>
     <string name="summary_call">Disable TrackerControl on incoming or outgoing telephone call. This can be used to work around IP/Wi-Fi calling problems.</string>
+    <string name="summary_reintroduction">View the getting started guide again</string>
 
     <string name="summary_system">Show system apps in the app list</string>
     <string name="summary_log_app">Disable to decrease battery usage. New trackers will still be blocked, but not shown.</string>

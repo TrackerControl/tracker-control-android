@@ -66,6 +66,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
@@ -337,6 +338,16 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
                     return true;
                 }
+            });
+        }
+
+        // Handle reintroduction
+        Preference pref_restart_intro = screen.findPreference("reintroduction");
+        if (pref_restart_intro != null) {
+            pref_restart_intro.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(ActivitySettings.this,
+                        ActivityOnboarding.class));
+                return true;
             });
         }
 
@@ -725,7 +736,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("validate".equals(name)) {
-            String host = prefs.getString(name, "www.f-droid.org");
+            String host = prefs.getString(name, "wpref_ww.f-droid.org");
             try {
                 checkDomain(host);
                 prefs.edit().putString(name, host.trim()).apply();
