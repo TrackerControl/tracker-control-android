@@ -39,6 +39,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.kollnig.missioncontrol.R;
@@ -183,7 +185,7 @@ public class ActivityForwarding extends AppCompatActivity {
                 };
                 task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-                dialog = new AlertDialog.Builder(this)
+                dialog = new MaterialAlertDialogBuilder(this)
                         .setView(view)
                         .setCancelable(true)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
