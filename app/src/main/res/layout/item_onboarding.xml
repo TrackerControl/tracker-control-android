@@ -28,7 +28,7 @@
             android:layout_marginBottom="16dp"
             android:text="Title"
             android:gravity="start"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
             android:textStyle="bold" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_marginBottom="32dp"
             android:gravity="start"
             android:text="Description"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         <Button
             android:id="@+id/btnAction"

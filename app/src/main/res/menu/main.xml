@@ -54,6 +54,9 @@
         </menu>
     </item>
     <item
+        android:id="@+id/menu_timeline"
+        android:title="@string/menu_timeline"/>
+    <item
         android:id="@+id/menu_log"
         android:title="@string/menu_log"/>
     <item

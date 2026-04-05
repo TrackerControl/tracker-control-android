@@ -60,6 +60,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import com.google.android.material.materialswitch.MaterialSwitch;
@@ -182,7 +184,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Check for filtering
         if (!Util.canFilter(this)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this)
+            AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.device_not_supported_title)
                     .setMessage(R.string.device_not_supported_msg)
                     .setPositiveButton(R.string.ok, (dialog, id) -> {
@@ -302,7 +304,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             LayoutInflater inflater = LayoutInflater.from(ActivityMain.this);
                             final View view = inflater.inflate(R.layout.vpn, null, false);
 
-                            dialogVpn = new AlertDialog.Builder(ActivityMain.this)
+                            dialogVpn = new MaterialAlertDialogBuilder(ActivityMain.this)
                                     .setView(view)
                                     .setCancelable(false)
                                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -984,6 +986,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             item.setChecked(true);
             prefs.edit().putString("sort", "uid").apply();
             return true;
+        } else if (itemId == R.id.menu_timeline) {
+            startActivity(new Intent(this, net.kollnig.missioncontrol.ActivityTimeline.class));
+            return true;
         } else if (itemId == R.id.menu_log) {
             if (Util.canFilter(this))
                 startActivity(new Intent(this, ActivityLog.class));
@@ -1197,7 +1202,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         });
 
-        dialogTroubleshooting = new AlertDialog.Builder(this)
+        dialogTroubleshooting = new MaterialAlertDialogBuilder(this)
                 .setView(view)
                 .setCancelable(true)
                 .setPositiveButton(android.R.string.ok, null)
@@ -1247,7 +1252,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         }
 
         // Show dialog
-        dialogLegend = new AlertDialog.Builder(this)
+        dialogLegend = new MaterialAlertDialogBuilder(this)
                 .setView(view)
                 .setCancelable(true)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -1289,7 +1294,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         });
 
         // Show dialog
-        dialogAbout = new AlertDialog.Builder(this)
+        dialogAbout = new MaterialAlertDialogBuilder(this)
                 .setView(view)
                 .setCancelable(true)
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {

@@ -168,11 +168,21 @@
         </activity>
 
         <activity
+            android:name="net.kollnig.missioncontrol.ActivityTimeline"
+            android:label="@string/title_tracker_activity"
+            android:parentActivityName="eu.faircode.netguard.ActivityMain"
+            android:theme="@style/AppThemeRed.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.faircode.netguard.ActivityMain" />
+        </activity>
+
+        <activity
             android:name="net.kollnig.missioncontrol.DetailsActivity"
             android:exported="true"
             android:label="@string/title_activity_detail"
             android:parentActivityName="eu.faircode.netguard.ActivityMain"
-            android:theme="@style/AppTheme.EdgeToEdge">
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.faircode.netguard.ActivityMain" />
