@@ -142,7 +142,8 @@
             android:name="eu.faircode.netguard.ActivityLog"
             android:configChanges="orientation|screenSize"
             android:label="@string/menu_log"
-            android:parentActivityName="eu.faircode.netguard.ActivityMain">
+            android:parentActivityName="eu.faircode.netguard.ActivityMain"
+            android:theme="@style/AppThemeRed.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="eu.faircode.netguard.ActivityMain" />
