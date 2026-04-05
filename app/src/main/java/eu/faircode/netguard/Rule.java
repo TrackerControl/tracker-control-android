@@ -261,6 +261,7 @@ public class Rule {
             boolean show_system = prefs.getBoolean("show_system", false);
             boolean show_nointernet = prefs.getBoolean("show_nointernet", true);
             boolean show_unprotected = prefs.getBoolean("show_unprotected", false);
+            boolean show_frozen = prefs.getBoolean("show_frozen", false);
             boolean strict_blocking = BlockingMode.isStrictMode(context);
 
             default_screen_wifi = default_screen_wifi && screen_on;
@@ -393,8 +394,7 @@ public class Rule {
                     if (all ||
                             ((rule.system ? show_system : show_user) &&
                                     (show_nointernet || rule.internet) &&
-                                    rule.enabled)) {
-
+                                    (show_frozen || rule.enabled))) {
                         rule.wifi_default = (pre_wifi_blocked.containsKey(info.packageName)
                                 ? pre_wifi_blocked.get(info.packageName)
                                 : default_wifi);
