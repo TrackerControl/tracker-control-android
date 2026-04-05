@@ -53,7 +53,7 @@
 
             <Button
                 android:id="@+id/btnBattery"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/troubleshooting_battery_action"
@@ -87,7 +87,7 @@
 
             <Button
                 android:id="@+id/btnDataSaver"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/troubleshooting_datasaver_action"
@@ -153,7 +153,7 @@
 
             <Button
                 android:id="@+id/btnVpnSettings"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/troubleshooting_alwayson_action" />
