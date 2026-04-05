@@ -14,19 +14,37 @@
     <string name="menu_app_user">Gebruikers-apps weergeven</string>
     <string name="menu_app_system">Systeem-apps weergeven</string>
     <string name="menu_app_nointernet">Apps zonder internet weergeven</string>
+    <string name="menu_app_unprotected">Toon alleen onbeschermde apps</string>
     <string name="menu_sort">Apps sorteren</string>
     <string name="menu_sort_name">Op naam sorteren</string>
     <string name="menu_sort_uid">Op uid sorteren</string>
     <string name="menu_sort_companies_week">Op bedrijf (week) sorteren</string>
     <string name="menu_sort_companies">Op bedrijven sorteren</string>
+    <string name="menu_sort_by_latest_detected_tracker">Sorteer op laatst gedetecteerde tracker</string>
     <string name="menu_log">Netwerkverkeer log</string>
     <string name="menu_settings">Instellingen</string>
     <string name="menu_invite">Uitnodigen</string>
     <string name="menu_legend">Legenda</string>
     <string name="menu_support">Ondersteun deze app</string>
     <string name="menu_log_support">Toelichting</string>
+    <string name="menu_troubleshooting">Problemen oplossen</string>
     <string name="menu_about">Over</string>
+    <string name="troubleshooting_title">Problemen oplossen</string>
+    <string name="troubleshooting_battery_title">Batterijoptimalisatie</string>
+    <string name="troubleshooting_battery_desc">Als TrackerControl stopt met werken op de achtergrond, schakel dan de batterijoptimalisatie van Android uit voor TrackerControl. Selecteer \"Alle apps\", tik op TrackerControl en selecteer \"Niet optimaliseren\".</string>
     <string name="troubleshooting_battery_action">Batterijoptimalisatie uitschakelen</string>
+    <string name="troubleshooting_battery_ok">Batterijoptimalisatie is al uitgeschakeld.</string>
+    <string name="troubleshooting_datasaver_title">Databesparing</string>
+    <string name="troubleshooting_datasaver_desc">Als TrackerControl geen verbinding kan maken wanneer Databesparing is ingeschakeld, sta onbeperkt datagebruik toe voor TrackerControl. Schakel \"Achtergrondgegevens\" en \"Onbeperkt datagebruik\" in.</string>
+    <string name="troubleshooting_datasaver_action">Onbeperkte data toestaan</string>
+    <string name="troubleshooting_datasaver_ok">Databesparing beperkt TrackerControl niet.</string>
+    <string name="troubleshooting_exclude_title">Apps uitsluiten van VPN</string>
+    <string name="troubleshooting_exclude_desc">Als een app niet goed werkt met TrackerControl, kan je het uitsluiten: tik op de app in de hoofdlijst en schakel vervolgens de VPN-schakelaar voor die app uit.</string>
+    <string name="troubleshooting_categories_title">Blokkeren van specifieke trackercategorieën</string>
+    <string name="troubleshooting_categories_desc">U kunt blokkering voor elke app fine-tunen door erop te tikken en individuele trackercategorieën (bv. Analytics, Advertenties) uit te schakelen in het tabblad Trackers.</string>
+    <string name="troubleshooting_alwayson_title">Altijd-aan VPN</string>
+    <string name="troubleshooting_alwayson_desc">Als \"Blokkeren van verbindingen zonder VPN\" (lockdown) is ingeschakeld in Android VPN-instellingen, kan TrackerControl niet correct werken. Schakel deze optie uit. Een melding verschijnt als dit is gedetecteerd.</string>
+    <string name="troubleshooting_alwayson_action">VPN-instellingen openen</string>
     <string name="menu_apps">Andere apps</string>
     <string name="menu_protocol_other">Andere</string>
     <string name="menu_traffic_allowed">Toegestaan</string>
@@ -41,6 +59,8 @@
     <string name="menu_export">Exporteren</string>
     <string name="menu_reset">Resetten</string>
     <string name="menu_cleanup">Opschonen</string>
+    <string name="setting_options">Algemeen</string>
+    <string name="setting_further_options">Meer opties</string>
     <string name="setting_dark">Donker thema</string>
     <string name="setting_install">Melden bij nieuwe installatie</string>
     <string name="setting_pause">Automatisch activeren na %1$s minuten</string>
@@ -56,7 +76,10 @@
     <string name="setting_ip6">IPv6-verkeer inschakelen</string>
     <string name="setting_call">Uitschakelen bij bellen</string>
     <string name="setting_reload_onconnectivity">Herlaad bij elke wijziging van de verbinding</string>
+    <string name="setting_advanced_options">Geavanceerde opties (voor experts)</string>
+    <string name="setting_system">Toon systeemapps</string>
     <string name="setting_log_app">Nieuwe trackers zoeken</string>
+    <string name="setting_log_logcat">Onderzoek</string>
     <string name="setting_filter">Trackers blokkeren</string>
     <string name="setting_filter_udp">Trackers blokkeren op UDP</string>
     <string name="setting_handover">Naadloze VPN-overdracht bij herladen</string>
@@ -80,16 +103,28 @@
     <string name="setting_pcap_file_size">PCAP max. bestandsgrootte: %s MB</string>
     <string name="setting_watchdog">Bewaken: elke %s minuten</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Beveiligde DNS (DoH)</string>
+    <string name="summary_doh_enabled">Versleutel DNS-zoekopdrachten met behulp van DNS-over-HTTPS. Geldt voor alle apps.</string>
+    <string name="warning_beta">Bètafunctie. Werkt mogelijk niet zoals verwacht.</string>
+    <string name="setting_doh_endpoint">DoH Eindpunt URL</string>
+    <string name="summary_doh_endpoint">HTTPS URL voor DNS-over-HTTPS zoekopdrachten</string>
+    <string name="setting_doh_dns_fallback">DNS terugval</string>
+    <string name="summary_doh_dns_fallback">Gebruik standaard (onversleuteld) DNS als DoH niet beschikbaar is. Uitschakelen kan apps onbruikbaar maken als de DoH-server offline is.</string>
     <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Blokkeer Android\'s Privé DNS</string>
+    <string name="summary_block_dot">Als Android\'s Privé DNS ingeschakeld is, kan TC geen tracking detecteren en werkt het niet goed.</string>
     <string name="setting_stats_frequency">Voorbeeldinterval: %s ms</string>
     <string name="setting_stats_samples">Aantal monsters: %s s</string>
     <string name="setting_backup">Backup</string>
+    <string name="setting_export">Instellingen exporteren</string>
     <string name="setting_import">Instellingen importeren</string>
     <string name="setting_hosts">Hosts-bestand importeren</string>
     <string name="setting_hosts_append">Hosts-bestand importeren(toevoegen)</string>
     <string name="setting_hosts_url">URL van hosts-bestand</string>
     <string name="setting_hosts_download">Hosts-bestand downloaden</string>
     <string name="setting_hosts_update">Hosts-bestand updaten</string>
+    <string name="setting_hosts_auto_update">Hosts automatisch bijwerken</string>
+    <string name="summary_hosts_auto_update">Automatisch het hosts-bestand op de achtergrond bijwerken</string>
     <string name="summary_install">Statusbalk melding weergeven voor nieuw geïnstalleerde apps</string>
     <string name="summary_pause">Na het geselecteerde aantal minuten TrackerControl automatisch weer activeren (voer nul in om deze optie uit te schakelen).</string>
     <string name="summary_update">Controleer twee keer per dag op nieuwe releases op GitHub</string>
@@ -98,6 +133,7 @@
     <string name="summary_lan">Apps toestaan om verbinding te maken met lokale netwerkadressen, zoals 10.0.0.0/8, 172.16.0.0/12 en 192.168.0.0/16</string>
     <string name="summary_ip6">IPv6 verkeer naar TrackerControl routeren zodat het naar keuze kan worden toegestaan of geblokkeerd</string>
     <string name="summary_call">Schakel TrackerControl uit bij inkomende of uitgaande telefoongesprekken. Dit kan worden gebruikt om IP/Wi-Fi belproblemen te omzeilen.</string>
+    <string name="summary_system">Toon systeem apps in de applijst</string>
     <string name="summary_log_app">Uitschakelen om batterijverbruik te verminderen. Nieuwe trackers blijven geblokkeerd, maar worden niet getoond.</string>
     <string name="summary_track_usage">Volg het aantal verzonden en ontvangen bytes voor elke app en elk adres. Dit kan resulteren in extra batterijverbruik.</string>
     <string name="summary_block_domains">WAARSCHUWING: Geblokkeerde hosts worden niet getoond in de UI.</string>
@@ -105,6 +141,7 @@
     <string name="summary_validate">Domeinnaam gebruikt om de internetverbinding op poort 443 (https) te valideren.</string>
     <string name="summary_socks5_enabled">Alleen TCP-verkeer wordt naar de proxyserver gestuurd</string>
     <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
+    <string name="summary_log_logcat">Onderzoeksmodus: geïdentificeerde trackers worden gelogd naar ADB en SNI-extractie is ingeschakeld voor betere hostnamendetectie. Bekijk de logboeken met adb logcat met behulp van de tag \'TC-Log\'.</string>
     <string name="msg_sure">Weet je het zeker?</string>
     <string name="msg_started">Op zoek naar trackers...</string>
     <string name="msg_waiting">Wacht op gebeurtenis</string>
@@ -120,8 +157,11 @@ Sta daarom een VPN verbinding toe in het volgende dialoogvenster.
 Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_autostart">TrackerControl startte niet automatisch. Waarschijnlijk door een bug in uw Android-versie.</string>
     <string name="msg_error">Een onverwachte fout: \'%s\'</string>
+    <string name="msg_doh_unreachable">Beveiligde DNS (DoH) kan niet worden bereikt, ook al heeft u een actieve internetverbinding. Als dit herhaaldelijk gebeurt, kunt u het uitschakelen in de netwerkinstellingen.</string>
     <string name="msg_start_failed">Android weigert nu de VPN-service te starten. Dit komt waarschijnlijk door een bug in uw Android-versie.</string>
     <string name="msg_try">Probeer TrackerControl</string>
+    <string name="msg_doze">Voor consistente resultaten moet de Android batterijoptimalisatie worden uitgeschakeld voor TrackerControl.
+\n\nIn het volgende dialoogvenster, kies \"Alle apps\" bovenaan, tik op TrackerControl in de lijst en selecteer en bevestig \"Niet optimaliseren\".</string>
     <string name="msg_datasaving">Voor consistente resultaten moet de Android optie Databeperking voor TrackerControl uit staan.
 \n\nIn Schakel daarvoor in het volgende dialoogvenster de opties \"Achtergrondgegevens\" en \"Onbeperkt gebruik van gegevens\" in.</string>
     <string name="msg_filter">Het gebruik van filtering zal ervoor zorgen dat Android data en stroomverbruik toeschrijft aan TrackerControl in plaats van aan de originele apps.</string>
@@ -130,6 +170,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_clear_rules">Dit zal de regels en voorwaarden terugzetten naar hun standaardwaarden</string>
     <string name="msg_reset_access">Dit zal de gelogde regels van toegangspogingen verwijderen zonder regels voor toestaan/blokkeren</string>
     <string name="msg_import_last">Laatste import: %s</string>
+    <string name="msg_downloading">Downloaden…</string>
     <string name="msg_downloaded">Hosts-bestand gedownload</string>
     <string name="msg_updated">Hosts-bestand bijgewerkt en toegepast!</string>
     <string name="msg_download_last">Laatste download: %s</string>
