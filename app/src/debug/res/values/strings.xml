@@ -1,0 +1,5 @@
+<resources>
+    <!-- Launcher label override so debug (.test) builds can be distinguished
+         from release builds on the same device. -->
+    <string name="app_name_short" translatable="false">TC Test</string>
+</resources>
