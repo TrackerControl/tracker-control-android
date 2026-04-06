@@ -211,7 +211,19 @@ class InsightsActivity : AppCompatActivity() {
 
         val maxCount = items.firstOrNull()?.second ?: 1
 
-        for (item in items) {
+        // Gradient palette: darker red at top (most pervasive), tapering lighter
+        val palette = intArrayOf(
+            Color.parseColor("#8B0000"),  // dark red
+            Color.parseColor("#B71C1C"),
+            Color.parseColor("#C62828"),
+            Color.parseColor("#D32F2F"),
+            Color.parseColor("#E53935"),
+            Color.parseColor("#EF5350"),
+            Color.parseColor("#EF9A9A"),
+            Color.parseColor("#FFCDD2")
+        )
+
+        for ((index, item) in items.withIndex()) {
             // Use vertical layout: name on top, bar+count below
             val row = LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL
@@ -251,8 +263,8 @@ class InsightsActivity : AppCompatActivity() {
                 }
                 background = GradientDrawable().apply {
                     shape = GradientDrawable.RECTANGLE
-                    cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics)
-                    setColor(ContextCompat.getColor(this@InsightsActivity, R.color.colorPrimary))
+                    cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics)
+                    setColor(palette[index.coerceAtMost(palette.size - 1)])
                 }
             }
             barWrapper.addView(bar)

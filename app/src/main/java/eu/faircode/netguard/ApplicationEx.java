@@ -38,18 +38,18 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.EdgeToEdge;
+import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.Common;
-import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
 
@@ -129,79 +129,70 @@ public class ApplicationEx extends Application {
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-                if (activity.getClass() == DetailsActivity.class)
-                    return;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                    android.widget.FrameLayout content = activity.findViewById(android.R.id.content);
-
-                    // On Android 15+, setStatusBarColor is ignored
-                    // Set window background to primary color - this shows behind the status bar
+                if (activity instanceof ComponentActivity) {
                     int statusBarColor = ContextCompat.getColor(activity, R.color.colorPrimaryDark);
-                    activity.getWindow().setBackgroundDrawable(new ColorDrawable(statusBarColor));
+                    // SystemBarStyle.dark() is critical: without it, EdgeToEdge defaults to
+                    // transparent, and M3's light theme produces white-on-white status bar icons.
+                    EdgeToEdge.enable(
+                            (ComponentActivity) activity,
+                            SystemBarStyle.dark(statusBarColor),
+                            SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
 
-                    boolean isNight = Common.isNight(activity);
+                    // Activities with windowActionBar=true use the theme's ActionBar
+                    // and need manual inset handling: set the window background to the
+                    // status bar color (visible through the transparent status bar on
+                    // API 35+) and pad android.R.id.content to avoid drawing behind it.
+                    // Activities with their own Toolbar (NoActionBar themes) handle
+                    // insets themselves via AppBarLayout padding.
+                    android.content.res.TypedArray a = activity.obtainStyledAttributes(
+                            new int[]{androidx.appcompat.R.attr.windowActionBar});
+                    boolean hasThemeActionBar = a.getBoolean(0, false);
+                    a.recycle();
 
-                    // Set status bar icons to light (white) since our background is dark
-                    View decor = activity.getWindow().getDecorView();
-                    WindowCompat.getInsetsController(activity.getWindow(), decor).setAppearanceLightStatusBars(false);
-                    WindowCompat.getInsetsController(activity.getWindow(), decor)
-                            .setAppearanceLightNavigationBars(!isNight);
+                    if (hasThemeActionBar) {
+                        activity.getWindow().setBackgroundDrawable(new ColorDrawable(statusBarColor));
 
-                    ViewCompat.setOnApplyWindowInsetsListener(content, new OnApplyWindowInsetsListener() {
-                        @NonNull
-                        @Override
-                        public WindowInsetsCompat onApplyWindowInsets(@NonNull View v,
-                                @NonNull WindowInsetsCompat insets) {
+                        android.widget.FrameLayout content = activity.findViewById(android.R.id.content);
+                        ViewCompat.setOnApplyWindowInsetsListener(content, (v, insets) -> {
                             Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()
-                                    | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
-
-                            // Apply padding to android.R.id.content for system bars
-                            // We do NOT apply bottom padding here, so the content background (White/Black)
-                            // extends to the bottom
+                                    | WindowInsetsCompat.Type.displayCutout());
                             v.setPadding(bars.left, bars.top, bars.right, 0);
 
-                            // Set background on the actual layout (first child), not on the content frame
-                            // This way the padding area shows the window background (primary color)
+                            // Set the actual layout background so only the status bar area
+                            // shows the window background (primary dark color)
                             if (content.getChildCount() > 0) {
                                 View child = content.getChildAt(0);
-                                child.setBackgroundColor(Common.isNight(activity) ? Color.BLACK : Color.WHITE);
+                                child.setBackgroundColor(
+                                        Common.isNight(activity) ? Color.BLACK : Color.WHITE);
                             }
-
                             return insets;
-                        }
-                    });
+                        });
+                    }
                 }
             }
 
             @Override
             public void onActivityStarted(@NonNull Activity activity) {
-
             }
 
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
-
             }
 
             @Override
             public void onActivityPaused(@NonNull Activity activity) {
-
             }
 
             @Override
             public void onActivityStopped(@NonNull Activity activity) {
-
             }
 
             @Override
             public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
-
             }
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
-
             }
         });
     }

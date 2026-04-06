@@ -155,8 +155,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAnalyzeTrackers"
-                android:theme="@style/Theme.MaterialComponents.DayNight"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:theme="@style/Theme.Material3.DayNight"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"

@@ -21,4 +21,7 @@
     <color name="colorReceive">#0000FF</color>
 
     <color name="colorGrayed">#AAAAAA</color>
+
+    <color name="timeline_blocked">#C62828</color>
+    <color name="timeline_allowed">#2E7D32</color>
 </resources>
