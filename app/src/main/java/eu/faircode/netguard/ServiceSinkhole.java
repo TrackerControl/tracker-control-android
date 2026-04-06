@@ -39,7 +39,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -47,6 +46,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.net.ConnectivityManager;
+import android.net.IpPrefix;
 import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -101,21 +101,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1349,42 +1344,8 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
 
-        // Remove local DNS servers when not routing LAN
-        int count = listDns.size();
-        boolean lan = prefs.getBoolean("lan", false);
-        // boolean use_hosts = prefs.getBoolean("use_hosts", false);
-        if (lan
-                // && use_hosts
-                && filter)
-            try {
-                List<Pair<InetAddress, Integer>> subnets = new ArrayList<>();
-                subnets.add(new Pair<>(InetAddress.getByName("10.0.0.0"), 8));
-                subnets.add(new Pair<>(InetAddress.getByName("172.16.0.0"), 12));
-                subnets.add(new Pair<>(InetAddress.getByName("192.168.0.0"), 16));
-
-                for (Pair<InetAddress, Integer> subnet : subnets) {
-                    InetAddress hostAddress = subnet.first;
-                    BigInteger host = new BigInteger(1, hostAddress.getAddress());
-
-                    int prefix = subnet.second;
-                    BigInteger mask = BigInteger.valueOf(-1).shiftLeft(hostAddress.getAddress().length * 8 - prefix);
-
-                    for (InetAddress dns : new ArrayList<>(listDns))
-                        if (hostAddress.getAddress().length == dns.getAddress().length) {
-                            BigInteger ip = new BigInteger(1, dns.getAddress());
-
-                            if (host.and(mask).equals(ip.and(mask))) {
-                                Log.i(TAG, "Local DNS server host=" + hostAddress + "/" + prefix + " dns=" + dns);
-                                listDns.remove(dns);
-                            }
-                        }
-                }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
-
-        // Fallback to default DNS servers if none remain
-        if (listDns.size() == 0)
+        // Fallback DNS servers if none found
+        if (listDns.isEmpty())
             try {
                 listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4));
                 listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4_2));
@@ -1406,13 +1367,15 @@ public class ServiceSinkhole extends VpnService {
         try {
             ParcelFileDescriptor pfd = builder.establish();
 
-            // Set underlying network
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && false) {
+            // Set underlying network so Android can correctly assess connectivity,
+            // metering, and network scoring for the VPN.
+            // Mirrors DuckDuckGo ATP approach (Apache 2.0).
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                 Network active = (cm == null ? null : cm.getActiveNetwork());
                 if (active != null) {
-                    Log.i(TAG, "Setting underlying network=" + active + " " + cm.getNetworkInfo(active));
-                    setUnderlyingNetworks(new Network[] { active });
+                    Log.i(TAG, "Setting underlying network=" + active);
+                    setUnderlyingNetworks(new Network[]{active});
                 }
             }
 
@@ -1427,9 +1390,6 @@ public class ServiceSinkhole extends VpnService {
 
     private Builder getBuilder(List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean subnet = prefs.getBoolean("subnet", false);
-        boolean tethering = prefs.getBoolean("tethering", false);
-        boolean lan = prefs.getBoolean("lan", false);
         boolean ip6 = prefs.getBoolean("ip6", true);
         boolean filter = prefs.getBoolean("filter", true);
         boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
@@ -1438,8 +1398,14 @@ public class ServiceSinkhole extends VpnService {
         Builder builder = new Builder();
         builder.setSession(getString(R.string.app_name));
 
+        // Match the physical network's metered status so apps behave the
+        // same as without the VPN. (Android defaults VPNs to metered.)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             builder.setMetered(Util.isMeteredNetwork(this));
+
+        // Use blocking I/O on the TUN file descriptor for CPU efficiency
+        // (avoids polling when there is no traffic)
+        builder.setBlocking(true);
 
         // VPN address
         String vpn4 = prefs.getString("vpn4", "10.1.10.1");
@@ -1474,154 +1440,65 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
 
-        // Subnet routing
-        if (subnet) {
-            // Exclude IP ranges
-            List<IPUtil.CIDR> listExclude = new ArrayList<>();
-            listExclude.add(new IPUtil.CIDR("127.0.0.0", 8)); // localhost
-
-            if (tethering && !lan) {
-                // USB tethering 192.168.42.x
-                // Wi-Fi tethering 192.168.43.x
-                listExclude.add(new IPUtil.CIDR("192.168.42.0", 23));
-                // Bluetooth tethering 192.168.44.x
-                listExclude.add(new IPUtil.CIDR("192.168.44.0", 24));
-                // Wi-Fi direct 192.168.49.x
-                listExclude.add(new IPUtil.CIDR("192.168.49.0", 24));
-
-                try {
-                    Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
-                    if (nis != null)
-                        while (nis.hasMoreElements()) {
-                            NetworkInterface ni = nis.nextElement();
-                            if (ni != null && !ni.isLoopback() && ni.isUp() &&
-                                    ni.getName() != null && ni.getName().startsWith("ap_br_wlan")) {
-                                List<InterfaceAddress> ias = ni.getInterfaceAddresses();
-                                if (ias != null)
-                                    for (InterfaceAddress ia : ias)
-                                        if (ia.getAddress() instanceof Inet4Address)
-                                            listExclude.add(new IPUtil.CIDR(ia.getAddress().getHostAddress(), 24));
-                            }
-                        }
-                } catch (Throwable ex) {
-                    Log.e(TAG, ex.toString());
-                }
-            }
-
-            if (lan) {
-                // https://tools.ietf.org/html/rfc1918
-                listExclude.add(new IPUtil.CIDR("10.0.0.0", 8));
-                listExclude.add(new IPUtil.CIDR("172.16.0.0", 12));
-                listExclude.add(new IPUtil.CIDR("192.168.0.0", 16));
-            }
-
-            if (!filter) {
-                for (InetAddress dns : getDns(ServiceSinkhole.this))
-                    if (dns instanceof Inet4Address)
-                        listExclude.add(new IPUtil.CIDR(dns.getHostAddress(), 32));
-
-                String dns_specifier = Util.getPrivateDnsSpecifier(ServiceSinkhole.this);
-                if (!TextUtils.isEmpty(dns_specifier))
-                    try {
-                        Log.i(TAG, "Resolving private dns=" + dns_specifier);
-                        for (InetAddress pdns : InetAddress.getAllByName(dns_specifier))
-                            if (pdns instanceof Inet4Address)
-                                listExclude.add(new IPUtil.CIDR(pdns.getHostAddress(), 32));
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString());
-                    }
-            }
-
-            // https://en.wikipedia.org/wiki/Mobile_country_code
-            Configuration config = getResources().getConfiguration();
-
-            // T-Mobile Wi-Fi calling
-            if (config.mcc == 310 && (config.mnc == 160 ||
-                    config.mnc == 200 ||
-                    config.mnc == 210 ||
-                    config.mnc == 220 ||
-                    config.mnc == 230 ||
-                    config.mnc == 240 ||
-                    config.mnc == 250 ||
-                    config.mnc == 260 ||
-                    config.mnc == 270 ||
-                    config.mnc == 310 ||
-                    config.mnc == 490 ||
-                    config.mnc == 660 ||
-                    config.mnc == 800)) {
-                listExclude.add(new IPUtil.CIDR("66.94.2.0", 24));
-                listExclude.add(new IPUtil.CIDR("66.94.6.0", 23));
-                listExclude.add(new IPUtil.CIDR("66.94.8.0", 22));
-                listExclude.add(new IPUtil.CIDR("208.54.0.0", 16));
-            }
-
-            // Verizon wireless calling
-            if ((config.mcc == 310 &&
-                    (config.mnc == 4 ||
-                            config.mnc == 5 ||
-                            config.mnc == 6 ||
-                            config.mnc == 10 ||
-                            config.mnc == 12 ||
-                            config.mnc == 13 ||
-                            config.mnc == 350 ||
-                            config.mnc == 590 ||
-                            config.mnc == 820 ||
-                            config.mnc == 890 ||
-                            config.mnc == 910))
-                    ||
-                    (config.mcc == 311 && (config.mnc == 12 ||
-                            config.mnc == 110 ||
-                            (config.mnc >= 270 && config.mnc <= 289) ||
-                            config.mnc == 390 ||
-                            (config.mnc >= 480 && config.mnc <= 489) ||
-                            config.mnc == 590))
-                    ||
-                    (config.mcc == 312 && (config.mnc == 770))) {
-                listExclude.add(new IPUtil.CIDR("66.174.0.0", 16)); // 66.174.0.0 - 66.174.255.255
-                listExclude.add(new IPUtil.CIDR("66.82.0.0", 15)); // 69.82.0.0 - 69.83.255.255
-                listExclude.add(new IPUtil.CIDR("69.96.0.0", 13)); // 69.96.0.0 - 69.103.255.255
-                listExclude.add(new IPUtil.CIDR("70.192.0.0", 11)); // 70.192.0.0 - 70.223.255.255
-                listExclude.add(new IPUtil.CIDR("97.128.0.0", 9)); // 97.128.0.0 - 97.255.255.255
-                listExclude.add(new IPUtil.CIDR("174.192.0.0", 9)); // 174.192.0.0 - 174.255.255.255
-                listExclude.add(new IPUtil.CIDR("72.96.0.0", 9)); // 72.96.0.0 - 72.127.255.255
-                listExclude.add(new IPUtil.CIDR("75.192.0.0", 9)); // 75.192.0.0 - 75.255.255.255
-                listExclude.add(new IPUtil.CIDR("97.0.0.0", 10)); // 97.0.0.0 - 97.63.255.255
-            }
-
-            // SFR MMS
-            if (config.mnc == 10 && config.mcc == 208)
-                listExclude.add(new IPUtil.CIDR("10.151.0.0", 24));
-
-            // Broadcast
-            listExclude.add(new IPUtil.CIDR("224.0.0.0", 3));
-
-            Collections.sort(listExclude);
-
+        // Static routes covering all public IPv4 space, excluding private,
+        // reserved, and carrier Wi-Fi calling ranges.
+        // Mirrors DuckDuckGo ATP approach (Apache 2.0).
+        for (IPUtil.CIDR route : VpnRoutes.getRoutes())
             try {
-                InetAddress start = InetAddress.getByName("0.0.0.0");
-                for (IPUtil.CIDR exclude : listExclude) {
-                    Log.i(TAG, "Exclude " + exclude.getStart().getHostAddress() + "..."
-                            + exclude.getEnd().getHostAddress());
-                    for (IPUtil.CIDR include : IPUtil.toCIDR(start, IPUtil.minus1(exclude.getStart())))
-                        try {
-                            builder.addRoute(include.address, include.prefix);
-                        } catch (Throwable ex) {
-                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                        }
-                    start = IPUtil.plus1(exclude.getEnd());
-                }
-                String end = (lan ? "255.255.255.254" : "255.255.255.255");
-                for (IPUtil.CIDR include : IPUtil.toCIDR("224.0.0.0", end))
-                    try {
-                        builder.addRoute(include.address, include.prefix);
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }
-            } catch (UnknownHostException ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                builder.addRoute(route.address, route.prefix);
+            } catch (Throwable ex) {
+                Log.e(TAG, "addRoute " + route + ": " + ex);
             }
-        } else
-            builder.addRoute("0.0.0.0", 0);
+
+        // Add /32 host routes for local DNS servers so their traffic enters the
+        // tunnel (where TC can filter it) even though LAN is otherwise excluded.
+        // This preserves compatibility with local DNS setups like Pi-hole.
+        if (filter)
+            for (InetAddress dns : getDns(ServiceSinkhole.this))
+                if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
+                    try {
+                        Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
+                        builder.addRoute(dns, 32);
+                    } catch (Throwable ex) {
+                        Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
+                    }
+
+        // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
+        // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
+        // TC excludes itself from the VPN (addDisallowedApplication), so this DNS resolution
+        // goes through the physical network — using the carrier's own DNS on cellular,
+        // which avoids geo-fencing issues. Re-resolved on each VPN rebuild (network switch).
+        // Uses a short timeout to avoid blocking VPN startup if resolution is slow.
+        // Requires Android 13+ (API 33) for excludeRoute().
+        if (Build.VERSION.SDK_INT >= 33)
+            try {
+                TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                String simOperator = (tm == null ? null : tm.getSimOperator());
+                if (simOperator != null && simOperator.length() >= 5) {
+                    String mcc = simOperator.substring(0, 3);
+                    String mnc = simOperator.substring(3);
+                    if (mnc.length() == 2)
+                        mnc = "0" + mnc;
+                    String epdgDomain = "epdg.epc.mnc" + mnc + ".mcc" + mcc + ".pub.3gppnetwork.org";
+                    Log.i(TAG, "Resolving ePDG domain=" + epdgDomain);
+
+                    // Resolve with 1.5s timeout to avoid blocking VPN startup
+                    final String domain = epdgDomain;
+                    java.util.concurrent.Future<InetAddress[]> future =
+                            java.util.concurrent.Executors.newSingleThreadExecutor()
+                                    .submit(() -> InetAddress.getAllByName(domain));
+                    InetAddress[] addrs = future.get(1500, java.util.concurrent.TimeUnit.MILLISECONDS);
+                    for (InetAddress addr : addrs) {
+                        Log.i(TAG, "Excluding ePDG address=" + addr.getHostAddress());
+                        builder.excludeRoute(new IpPrefix(addr, addr instanceof Inet4Address ? 32 : 128));
+                    }
+                }
+            } catch (java.util.concurrent.TimeoutException ex) {
+                Log.i(TAG, "ePDG resolution timed out, skipping");
+            } catch (Throwable ex) {
+                // Resolution may fail (no SIM, airplane mode, non-standard carrier) — not fatal
+                Log.i(TAG, "ePDG resolution skipped: " + ex.getMessage());
+            }
 
         Log.i(TAG, "IPv6=" + ip6);
         if (ip6)

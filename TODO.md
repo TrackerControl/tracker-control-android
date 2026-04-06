@@ -10,13 +10,26 @@ The VPN file descriptor can be closed by `stopVPN()` while native code in `jni_r
 
 **If revisited:** The proposed fix would move the FD close into `stopNative()`, after `jni_clear()`, so the sequence becomes: `jni_stop()` -> `join thread` -> `jni_clear()` -> `close FD`. Risk is high — touches the critical VPN path, and the likely failure modes (double-close, FD leak) are harder to detect than the original race. Only worth pursuing if user reports indicate the race is actually happening.
 
+## LAN and tethering VPN routing (resolved knowledge)
+
+The `VpnRoutes` exclusions for RFC1918 / CGNAT / link-local are **defense-in-depth, not load-bearing**. On modern Android, LAN access and tethering already bypass the app's VPN tun for OS-level reasons:
+
+- **LAN access**: When Wi-Fi is on `192.168.x.0/24`, the kernel routing table has a more-specific connected route for that subnet via `wlan0`. It outranks the VPN's `0.0.0.0/0`, so local-subnet packets never hit the tun interface regardless of what the VPN advertises.
+- **Tethering (USB/hotspot)**: Tethered traffic is forwarded by `netd`/`iptables` in a separate routing context and does not traverse the owning app's `VpnService` tun at all.
+
+The old `lan`/`tethering`/`subnet` toggles in NetGuard were effectively no-ops on modern Android and were removed in PR #546. The new static excludes still matter for the edge case of reaching an RFC1918 destination that is *not* on the currently connected subnet (e.g. talking to `10.x` from a `192.168.x` Wi-Fi), where the kernel would otherwise prefer the VPN's default route.
+
+Don't re-litigate this when someone asks why LAN/tethering work without any toggle — it's intentional.
+
 ## System apps VPN routing
 
-Including system apps in the VPN (`include_system_vpn`) causes noticeable download speed slowdowns (e.g. Play Store). Unclear if this is inherent tun overhead or a fixable implementation issue.
+Routing system apps through the VPN (`include_system_vpn`) is a noticeable battery drain. The working hypothesis is **wakeup frequency**, not tun throughput: while TC runs permanently as a VPN, any system-app background activity (Play Store updates, Play Services sync, carrier services, etc.) has to traverse the tun and wakes the packet-processing threads. Excluding system apps lets those flows bypass TC entirely so the CPU can stay idle.
 
-- Investigate tun performance: profile packet processing path, test buffer size tuning
+Earlier framing as a "download speed slowdown" was likely a misread of the battery symptom — raw tun throughput is probably fine.
+
+- Investigate wakeup behaviour rather than throughput: count wakeups / time-in-packet-loop with system apps included vs excluded, not MB/s.
 - Consider simplifying UX: current flow requires three toggles (`include_system_vpn` -> `manage_system` -> `show_system`). Could consolidate to one toggle that drives both VPN routing and UI visibility.
-- Note: always routing system apps through VPN was rejected due to the performance impact, but excluding them breaks Android's "Block connections without VPN" setting.
+- Note: always routing system apps through VPN was rejected due to the battery impact, but excluding them breaks Android's "Block connections without VPN" setting.
 
 ## SNI inspection for tracker detection
 

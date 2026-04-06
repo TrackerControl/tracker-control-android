@@ -35,11 +35,15 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import eu.faircode.netguard.Util
@@ -109,6 +113,16 @@ class InsightsActivity : AppCompatActivity() {
 
         fabShare.setOnClickListener {
             shareInsights()
+        }
+
+        // Pad the scroll content so the last card isn't hidden behind the navigation bar.
+        val scroll = findViewById<ScrollView>(R.id.insightsScroll)
+        scroll.clipToPadding = false
+        val scrollInitialBottom = scroll.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(scroll) { v, insets ->
+            val sysBars: Insets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, scrollInitialBottom + sysBars.bottom)
+            insets
         }
 
         dataProvider = InsightsDataProvider(this)

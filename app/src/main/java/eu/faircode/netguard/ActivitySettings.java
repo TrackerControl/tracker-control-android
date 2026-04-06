@@ -550,15 +550,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             getPreferenceScreen().findPreference(name)
                     .setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
 
-        else if ("subnet".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("tethering".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("lan".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
         else if ("ip6".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
