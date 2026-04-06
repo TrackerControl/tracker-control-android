@@ -60,6 +60,9 @@ android {
             proguardFiles.add(file('proguard-rules.pro'))
         }
         debug {
+            // Install debug builds alongside release builds on the same device
+            applicationIdSuffix ".test"
+            versionNameSuffix "-test"
             //minifyEnabled = true
             //proguardFiles.add(file('proguard-rules.pro'))
         }
