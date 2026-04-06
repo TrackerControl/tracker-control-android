@@ -55,7 +55,6 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         long oneHourAgo = now - 60 * 60 * 1000L;
         long startOfToday = getStartOfDay(0);
         long startOfYesterday = getStartOfDay(1);
-        long startOfWeek = now - 7L * 24 * 60 * 60 * 1000;
 
         String currentSection = null;
         for (TimelineEntry entry : entries) {
@@ -140,6 +139,19 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE);
         holder.tvTime.setText(relativeTime);
 
+        // Summary line: blocked/allowed counts
+        int blockedCount = entry.getBlockedCount();
+        int allowedCount = entry.getAllowedCount();
+        String summary;
+        if (blockedCount > 0 && allowedCount > 0) {
+            summary = context.getString(R.string.timeline_summary_mixed, blockedCount, allowedCount);
+        } else if (blockedCount > 0) {
+            summary = context.getString(R.string.timeline_summary_all_blocked, blockedCount);
+        } else {
+            summary = context.getString(R.string.timeline_summary_none_blocked, allowedCount);
+        }
+        holder.tvSummary.setText(summary);
+
         // Tracker list
         holder.llTrackers.removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -152,19 +164,36 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 overflow.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
                 overflow.setTextColor(context.getColor(android.R.color.darker_gray));
                 overflow.setText(context.getString(R.string.timeline_more_trackers, remaining));
+                overflow.setPadding(dpToPx(18), 0, 0, 0);
                 holder.llTrackers.addView(overflow);
                 break;
             }
 
-            TextView tv = new TextView(context);
-            tv.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
+            View row = inflater.inflate(R.layout.item_timeline_tracker_row, holder.llTrackers, false);
+            ImageView ivIndicator = row.findViewById(R.id.ivIndicator);
+            TextView tvCompany = row.findViewById(R.id.tvCompany);
+            TextView tvState = row.findViewById(R.id.tvState);
 
-            String prefix = tc.blocked ? "\u26D4 " : "\u2705 ";
+            int color = context.getColor(tc.blocked
+                    ? R.color.timeline_blocked
+                    : R.color.timeline_allowed);
+
+            ivIndicator.setImageResource(tc.blocked
+                    ? R.drawable.ic_shield_check
+                    : R.drawable.ic_warning_amber);
+            ivIndicator.setColorFilter(color);
+
             String label = tc.companyName;
             if (tc.category != null)
                 label += " \u00B7 " + tc.category;
-            tv.setText(prefix + label);
-            holder.llTrackers.addView(tv);
+            tvCompany.setText(label);
+
+            tvState.setText(tc.blocked
+                    ? R.string.timeline_tracker_blocked
+                    : R.string.timeline_tracker_allowed);
+            tvState.setTextColor(color);
+
+            holder.llTrackers.addView(row);
             shown++;
         }
 
@@ -172,6 +201,10 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onEntryClick(entry);
         });
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
     static class SectionHolder extends RecyclerView.ViewHolder {
@@ -187,6 +220,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final ImageView ivAppIcon;
         final TextView tvAppName;
         final TextView tvTime;
+        final TextView tvSummary;
         final LinearLayout llTrackers;
 
         EntryHolder(View itemView) {
@@ -194,6 +228,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             ivAppIcon = itemView.findViewById(R.id.ivAppIcon);
             tvAppName = itemView.findViewById(R.id.tvAppName);
             tvTime = itemView.findViewById(R.id.tvTime);
+            tvSummary = itemView.findViewById(R.id.tvSummary);
             llTrackers = itemView.findViewById(R.id.llTrackers);
         }
     }

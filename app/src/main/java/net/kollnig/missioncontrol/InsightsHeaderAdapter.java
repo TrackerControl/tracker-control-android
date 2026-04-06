@@ -116,6 +116,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         holder.tvSeeMore.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
         });
+        holder.llTimelineAction.setOnClickListener(v -> {
+            context.startActivity(new Intent(context, ActivityTimeline.class));
+        });
         holder.itemView.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
         });
@@ -266,6 +269,7 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         TextView tvCompanies;
         ImageButton btnShare;
         TextView tvSeeMore;
+        LinearLayout llTimelineAction;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -275,6 +279,7 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             tvCompanies = itemView.findViewById(R.id.tvHeroCompanies);
             btnShare = itemView.findViewById(R.id.btnShare);
             tvSeeMore = itemView.findViewById(R.id.tvSeeMore);
+            llTimelineAction = itemView.findViewById(R.id.llTimelineAction);
         }
     }
 }

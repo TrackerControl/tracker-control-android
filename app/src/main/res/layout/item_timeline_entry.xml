@@ -43,6 +43,17 @@
             tools:text="3 min ago" />
     </LinearLayout>
 
+    <!-- Summary line: blocked/allowed counts -->
+    <TextView
+        android:id="@+id/tvSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="2dp"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+        android:textColor="?android:textColorSecondary"
+        tools:text="2 blocked · 1 allowed" />
+
     <!-- Tracker list (populated dynamically) -->
     <LinearLayout
         android:id="@+id/llTrackers"

@@ -39,6 +39,11 @@
     <string name="timeline_section_yesterday">Yesterday</string>
     <string name="timeline_section_this_week">This week</string>
     <string name="timeline_more_trackers">+%d more</string>
+    <string name="timeline_tracker_blocked">Blocked</string>
+    <string name="timeline_tracker_allowed">Allowed</string>
+    <string name="timeline_summary_all_blocked">%d trackers blocked</string>
+    <string name="timeline_summary_none_blocked">%d trackers allowed</string>
+    <string name="timeline_summary_mixed">%1$d blocked · %2$d allowed</string>
 
     <string name="troubleshooting_title">Troubleshooting</string>
 
@@ -630,6 +635,7 @@ Sincerely,\n\n]]></string>
     <string name="insights_share_message">I blocked %1$d tracker hosts from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
     <string name="insights_share_message_playstore">I detected %1$d tracker hosts from %2$d companies this week using TrackerControl! Take back your privacy: https://trackercontrol.org</string>
     <string name="insights_see_more">See More →</string>
+    <string name="insights_view_timeline">View recent tracker activity</string>
 
     <!-- What's New onboarding slide (not translated) -->
     <string name="onboarding_whatsnew_title" translatable="false">What\'s New</string>
