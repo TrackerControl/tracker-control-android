@@ -3,10 +3,12 @@ package net.kollnig.missioncontrol;
 import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface;
 import android.net.VpnService;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -274,9 +278,29 @@ public class ActivityOnboarding extends AppCompatActivity {
                 slide.warningResId = vpnPrepared ? 0 : R.string.onboarding_vpn_sure;
                 slide.actionListener = v -> {
                     if (!vpnPrepared) {
-                        Intent intent = VpnService.prepare(ActivityOnboarding.this);
-                        if (intent != null) {
-                            startActivityForResult(intent, 0);
+                        // Proactively detect another Always-on VPN on Android < S,
+                        // where the setting is still readable.
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                            try {
+                                String alwaysOn = Settings.Secure.getString(
+                                        getContentResolver(), "always_on_vpn_app");
+                                if (!TextUtils.isEmpty(alwaysOn)
+                                        && !getPackageName().equals(alwaysOn)) {
+                                    showAlwaysOnVpnBlockedDialog();
+                                    return;
+                                }
+                            } catch (Throwable ex) {
+                                Log.e("Onboarding", ex.toString());
+                            }
+                        }
+                        try {
+                            Intent intent = VpnService.prepare(ActivityOnboarding.this);
+                            if (intent != null) {
+                                startActivityForResult(intent, 0);
+                            }
+                        } catch (Throwable ex) {
+                            Log.e("Onboarding", ex.toString());
+                            showAlwaysOnVpnBlockedDialog();
                         }
                     }
                 };
@@ -423,6 +447,36 @@ public class ActivityOnboarding extends AppCompatActivity {
         } else {
             btnNext.setText(R.string.title_next);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0 && resultCode != RESULT_OK) {
+            // Consent was denied or silently blocked. If prepare() still returns a
+            // non-null intent, Android refused to show the consent dialog — most
+            // commonly because another app is set as Always-on VPN.
+            if (VpnService.prepare(this) != null) {
+                showAlwaysOnVpnBlockedDialog();
+            }
+        }
+    }
+
+    private void showAlwaysOnVpnBlockedDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.onboarding_vpn_blocked_title)
+                .setMessage(android.text.Html.fromHtml(
+                        getString(R.string.onboarding_vpn_blocked_desc)))
+                .setPositiveButton(R.string.onboarding_vpn_blocked_action,
+                        (DialogInterface.OnClickListener) (dialog, which) -> {
+                            try {
+                                startActivity(new Intent(Settings.ACTION_VPN_SETTINGS));
+                            } catch (Throwable ex) {
+                                Log.e("Onboarding", ex.toString());
+                            }
+                        })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void finishOnboarding() {
