@@ -19,13 +19,27 @@
             android:background="@color/colorPrimary"
             app:titleTextColor="@android:color/white"
             app:navigationIconTint="@android:color/white"
-            app:title="@string/menu_settings" />
+            app:title="@string/title_tracker_activity" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/settings_container"
+    <TextView
+        android:id="@+id/tvEmpty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="32dp"
+        android:text="@string/timeline_empty"
+        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+        android:textColor="?android:textColorSecondary"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTimeline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

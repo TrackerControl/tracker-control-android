@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,7 +70,7 @@ public class ActivityBlocklists extends AppCompatActivity {
     }
 
     private void showAddDialog(Blocklist item) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(item == null ? R.string.title_add_blocklist : R.string.title_blocklists);
 
         final EditText input = new EditText(this);
@@ -162,7 +164,7 @@ public class ActivityBlocklists extends AppCompatActivity {
             holder.itemView.setOnClickListener(v -> showAddDialog(item));
 
             holder.btnDelete.setOnClickListener(v -> {
-                new AlertDialog.Builder(context)
+                new MaterialAlertDialogBuilder(context)
                         .setTitle(R.string.title_delete_blocklist)
                         .setMessage(R.string.msg_delete_blocklist_confirm)
                         .setPositiveButton(android.R.string.yes, (dialog, which) -> {

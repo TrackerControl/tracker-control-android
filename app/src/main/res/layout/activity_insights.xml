@@ -22,16 +22,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="?attr/colorPrimary"
             android:elevation="8dp"
             style="@style/CardView">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_insights_hero"
                 android:orientation="vertical"
                 android:padding="24dp"
                 android:gravity="center">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="4dp"
+                    android:src="@drawable/ic_shield_check"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -81,90 +88,98 @@
             android:layout_marginBottom="16dp">
 
             <!-- Blocked Card -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:elevation="4dp"
-                style="@style/CardView">
+                android:background="@drawable/bg_stat_card_blocked"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_shield_check"
+                    android:tint="#C62828"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvBlockedCount"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:layout_marginTop="4dp"
+                    android:textColor="#C62828"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    tools:text="891" />
 
-                    <TextView
-                        android:id="@+id/tvBlockedCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        tools:text="891" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/insights_blocked"
+                    android:textSize="12sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/insights_blocked"
-                        android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvBlockedPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#C62828"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="(71%)" />
 
-                    <TextView
-                        android:id="@+id/tvBlockedPercent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        tools:text="(71%)" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <!-- Allowed Card -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:elevation="4dp"
-                style="@style/CardView">
+                android:background="@drawable/bg_stat_card_allowed"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_warning_amber"
+                    android:tint="#2E7D32"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvAllowedCount"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:layout_marginTop="4dp"
+                    android:textColor="#2E7D32"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    tools:text="356" />
 
-                    <TextView
-                        android:id="@+id/tvAllowedCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOff"
-                        android:textSize="32sp"
-                        android:textStyle="bold"
-                        tools:text="356" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/insights_allowed"
+                    android:textSize="12sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/insights_allowed"
-                        android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tvAllowedPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#2E7D32"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="(29%)" />
 
-                    <TextView
-                        android:id="@+id/tvAllowedPercent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOff"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        tools:text="(29%)" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -176,72 +191,78 @@
             android:layout_marginBottom="16dp">
 
             <!-- Tracker Companies Card -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:elevation="4dp"
-                style="@style/CardView">
+                android:background="@drawable/bg_stat_card_neutral"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_domain"
+                    android:tint="#546E7A"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvCompaniesCount"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:layout_marginTop="4dp"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    tools:text="34" />
 
-                    <TextView
-                        android:id="@+id/tvCompaniesCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        tools:text="34" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/insights_tracker_companies"
+                    android:textSize="11sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/insights_tracker_companies"
-                        android:textSize="11sp"
-                        android:gravity="center" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
             <!-- Apps with Trackers Card -->
-            <androidx.cardview.widget.CardView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:elevation="4dp"
-                style="@style/CardView">
+                android:background="@drawable/bg_stat_card_neutral"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_apps"
+                    android:tint="#546E7A"
+                    android:contentDescription="@null" />
+
+                <TextView
+                    android:id="@+id/tvAppsCount"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:gravity="center">
+                    android:layout_marginTop="4dp"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    tools:text="12" />
 
-                    <TextView
-                        android:id="@+id/tvAppsCount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="28sp"
-                        android:textStyle="bold"
-                        tools:text="12" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/insights_apps_with_trackers"
+                    android:textSize="11sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/insights_apps_with_trackers"
-                        android:textSize="11sp"
-                        android:gravity="center" />
-
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -412,7 +433,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/insights_share"
-        android:src="@android:drawable/ic_menu_share"
+        android:src="@drawable/ic_ios_share"
         android:visibility="gone"
         app:backgroundTint="@color/colorPrimary"
         app:tint="@android:color/white" />

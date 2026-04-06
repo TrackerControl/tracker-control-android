@@ -1,37 +1,66 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tvDisabled"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:padding="8dp"
-        android:text="@string/msg_log_disabled"
-        android:textAppearance="@style/TextMedium"
-        android:textColor="?attr/colorOff"
-        android:visibility="gone" />
+        android:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
+        app:liftOnScroll="false">
 
-    <ListView
-        android:id="@+id/lvLog"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.Material3.Light"
+            app:title="@string/menu_log"
+            app:titleTextColor="@android:color/white"
+            app:navigationIconTint="@android:color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tvDisabled"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbars="vertical" />
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <View
-        android:id="@+id/vwPopupAnchor"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvDisabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:text="@string/msg_log_disabled"
+            android:textAppearance="@style/TextMedium"
+            android:textColor="?attr/colorOff"
+            android:visibility="gone" />
+
+        <ListView
+            android:id="@+id/lvLog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tvDisabled"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical" />
+
+        <View
+            android:id="@+id/vwPopupAnchor"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -52,9 +52,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NavUtils;
+import androidx.core.graphics.Insets;
 import androidx.core.util.PatternsCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -123,6 +128,16 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Pad the AppBarLayout so its colored background extends behind the status bar
+        com.google.android.material.appbar.AppBarLayout appBar = findViewById(R.id.appbar);
+        final int appBarInitialTop = appBar.getPaddingTop();
+        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), appBarInitialTop + sysBars.top,
+                    v.getPaddingRight(), v.getPaddingBottom());
+            return insets;
+        });
 
         getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
             @Override
@@ -635,7 +650,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && prefs.getBoolean(name, true)) {
                 LayoutInflater inflater = LayoutInflater.from(ActivitySettings.this);
                 View view = inflater.inflate(R.layout.filter, null, false);
-                dialogFilter = new AlertDialog.Builder(ActivitySettings.this)
+                dialogFilter = new MaterialAlertDialogBuilder(ActivitySettings.this)
                         .setView(view)
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {

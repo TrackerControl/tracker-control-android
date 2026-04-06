@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:gravity="start"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
             android:textStyle="bold" />
 
         <TextView
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:gravity="start"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
         <RadioGroup
             android:id="@+id/rgBlockingMode"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginBottom="12dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
             <RadioButton
                 android:id="@+id/rbStandard"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginBottom="12dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
             <RadioButton
                 android:id="@+id/rbStrict"
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginBottom="12dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
             <RadioButton
                 android:id="@+id/rbResearch"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
                 android:layout_marginBottom="12dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
         </RadioGroup>
 

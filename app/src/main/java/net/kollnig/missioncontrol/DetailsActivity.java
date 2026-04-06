@@ -26,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,18 +33,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NavUtils;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -122,21 +118,8 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Enable edge-to-edge content
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        // Edge-to-edge is enabled globally by ApplicationEx via EdgeToEdge.enable()
         setContentView(R.layout.activity_details);
-
-        // Status bar appearance
-        WindowInsetsControllerCompat insetsController = new WindowInsetsControllerCompat(getWindow(),
-                getWindow().getDecorView());
-        insetsController.setAppearanceLightStatusBars(false);
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        }
-
-        // Set window background to primary dark color to show behind the transparent
-        // status bar
-        getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.colorPrimaryDark)));
 
         running = true;
 
@@ -170,25 +153,19 @@ public class DetailsActivity extends AppCompatActivity {
         toolbar.setTitle(getString(R.string.app_info));
         toolbar.setSubtitle(appName);
 
-        // Apply window insets so content avoids status/navigation bars
+        // Apply window insets so content avoids status/navigation bars.
+        // Use padding (not margin) so the AppBarLayout's colored background
+        // extends behind the transparent status bar on API 35+.
         AppBarLayout appBar = findViewById(R.id.appbar);
         final int appBarInitialLeft = appBar.getPaddingLeft();
         final int appBarInitialTop = appBar.getPaddingTop();
         final int appBarInitialRight = appBar.getPaddingRight();
         final int appBarInitialBottom = appBar.getPaddingBottom();
-        final ViewGroup.MarginLayoutParams appBarParams = (ViewGroup.MarginLayoutParams) appBar.getLayoutParams();
-        final int appBarInitialMarginTop = appBarParams.topMargin;
 
         ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
             Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-
-            // Use margin instead of padding for the top inset so the window background
-            // shows through
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-            params.topMargin = appBarInitialMarginTop + sysBars.top;
-            v.setLayoutParams(params);
-
-            v.setPadding(appBarInitialLeft, appBarInitialTop, appBarInitialRight, appBarInitialBottom);
+            v.setPadding(appBarInitialLeft, appBarInitialTop + sysBars.top,
+                    appBarInitialRight, appBarInitialBottom);
             return insets;
         });
 
