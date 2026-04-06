@@ -566,6 +566,9 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_vpn_desc">TrackerControl uses Android\'s local VPN interface to analyse your internet traffic.\n\n<b>Important:</b> No external VPN server is involved. We don\'t see your data.</string>
     <string name="onboarding_vpn_action">Enable On-Device VPN</string>
     <string name="onboarding_vpn_sure">TrackerControl cannot filter any traffic without the local VPN. Are you sure you want to proceed without enabling it?</string>
+    <string name="onboarding_vpn_blocked_title">Another VPN is active</string>
+    <string name="onboarding_vpn_blocked_desc">Android prevented TrackerControl from starting its local VPN because another app is set as <b>Always-on VPN</b>. Open VPN settings and disable Always-on for the other VPN, then try again.</string>
+    <string name="onboarding_vpn_blocked_action">Open VPN settings</string>
     
     <string name="onboarding_battery_title">Prevent Interruption</string>
     <string name="onboarding_battery_desc">Android may kill background apps to save battery. To ensure continuous protection against trackers, please disable optimisations for TrackerControl.</string>
