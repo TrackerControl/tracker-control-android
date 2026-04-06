@@ -164,24 +164,18 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 overflow.setTextAppearance(com.google.android.material.R.style.TextAppearance_Material3_BodySmall);
                 overflow.setTextColor(context.getColor(android.R.color.darker_gray));
                 overflow.setText(context.getString(R.string.timeline_more_trackers, remaining));
-                overflow.setPadding(dpToPx(18), 0, 0, 0);
+                overflow.setPadding(0, 0, 0, 0);
                 holder.llTrackers.addView(overflow);
                 break;
             }
 
             View row = inflater.inflate(R.layout.item_timeline_tracker_row, holder.llTrackers, false);
-            ImageView ivIndicator = row.findViewById(R.id.ivIndicator);
             TextView tvCompany = row.findViewById(R.id.tvCompany);
             TextView tvState = row.findViewById(R.id.tvState);
 
             int color = context.getColor(tc.blocked
                     ? R.color.timeline_blocked
                     : R.color.timeline_allowed);
-
-            ivIndicator.setImageResource(tc.blocked
-                    ? R.drawable.ic_shield_check
-                    : R.drawable.ic_warning_amber);
-            ivIndicator.setColorFilter(color);
 
             String label = tc.companyName;
             if (tc.category != null)
@@ -201,10 +195,6 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onEntryClick(entry);
         });
-    }
-
-    private int dpToPx(int dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
     static class SectionHolder extends RecyclerView.ViewHolder {

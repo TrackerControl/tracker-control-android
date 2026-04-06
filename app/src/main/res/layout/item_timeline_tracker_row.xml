@@ -6,13 +6,14 @@
     android:orientation="horizontal"
     android:paddingVertical="1dp">
 
-    <ImageView
-        android:id="@+id/ivIndicator"
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_marginEnd="6dp"
-        android:importantForAccessibility="no"
-        tools:src="@drawable/ic_shield_check" />
+    <TextView
+        android:id="@+id/tvState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+        android:textStyle="bold"
+        tools:text="Blocked" />
 
     <TextView
         android:id="@+id/tvCompany"
@@ -23,14 +24,5 @@
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
         tools:text="Google · Advertising" />
-
-    <TextView
-        android:id="@+id/tvState"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-        android:textStyle="bold"
-        tools:text="Blocked" />
 
 </LinearLayout>
