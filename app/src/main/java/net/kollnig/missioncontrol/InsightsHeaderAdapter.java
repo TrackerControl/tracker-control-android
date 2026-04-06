@@ -105,12 +105,25 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             // Show placeholder values until data loads
             holder.tvBlocked.setText("--");
             holder.tvCompanies.setText("--");
+            holder.tvBlockedPct.setText("--");
             return;
         }
 
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
         holder.tvBlocked.setText(nf.format(data.getTotalTrackingAttempts()));
         holder.tvCompanies.setText(String.valueOf(data.getUniqueTrackerCompanies()));
+
+        // Protection percentage + bar (weights divide the bar into blocked/allowed)
+        int pct = data.getBlockedPercentage();
+        holder.tvBlockedPct.setText(pct + "%");
+        LinearLayout.LayoutParams blockedLp =
+                (LinearLayout.LayoutParams) holder.vBlockedProgress.getLayoutParams();
+        blockedLp.weight = pct;
+        holder.vBlockedProgress.setLayoutParams(blockedLp);
+        LinearLayout.LayoutParams allowedLp =
+                (LinearLayout.LayoutParams) holder.vAllowedProgress.getLayoutParams();
+        allowedLp.weight = 100 - pct;
+        holder.vAllowedProgress.setLayoutParams(allowedLp);
 
         holder.btnShare.setOnClickListener(v -> shareInsights());
         holder.tvSeeMore.setOnClickListener(v -> {
@@ -270,6 +283,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         ImageButton btnShare;
         TextView tvSeeMore;
         LinearLayout llTimelineAction;
+        TextView tvBlockedPct;
+        View vBlockedProgress;
+        View vAllowedProgress;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -280,6 +296,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             btnShare = itemView.findViewById(R.id.btnShare);
             tvSeeMore = itemView.findViewById(R.id.tvSeeMore);
             llTimelineAction = itemView.findViewById(R.id.llTimelineAction);
+            tvBlockedPct = itemView.findViewById(R.id.tvHeroBlockedPct);
+            vBlockedProgress = itemView.findViewById(R.id.vBlockedProgress);
+            vAllowedProgress = itemView.findViewById(R.id.vAllowedProgress);
         }
     }
 }

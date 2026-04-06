@@ -8,15 +8,16 @@
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="12dp"
-    android:backgroundTint="?attr/colorPrimary"
     android:elevation="6dp"
-    app:cardCornerRadius="12dp">
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_insights_hero"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <ProgressBar
             android:id="@+id/pbLoading"
@@ -32,31 +33,51 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <!-- Header row: Title + See more -->
+            <!-- Header row: icon + Last 7 Days + Share -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="6dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_shield_check"
+                    app:tint="@android:color/white" />
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:alpha="0.9"
                     android:text="@string/insights_subtitle_7days"
                     android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:alpha="0.85" />
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvSeeMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:padding="4dp"
                     android:text="@string/insights_see_more"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:padding="4dp" />
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btnShare"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/insights_share"
+                    android:src="@drawable/ic_ios_share"
+                    app:tint="@android:color/white" />
 
             </LinearLayout>
 
@@ -64,11 +85,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="12dp"
+                android:gravity="bottom"
+                android:orientation="horizontal">
 
-                <!-- Blocked count -->
+                <!-- Hosts contacted -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -80,16 +101,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:alpha="0.85"
                         android:text="@string/insights_tracking_attempts"
                         android:textColor="@android:color/white"
-                        android:textSize="11sp"
-                        android:alpha="0.85" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
@@ -105,28 +126,66 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@android:color/white"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:alpha="0.85"
                         android:text="@string/insights_tracker_companies"
                         android:textColor="@android:color/white"
-                        android:textSize="11sp"
-                        android:alpha="0.85" />
+                        android:textSize="11sp" />
 
                 </LinearLayout>
 
-                <!-- Share button -->
-                <ImageButton
-                    android:id="@+id/btnShare"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/insights_share"
-                    android:src="@android:drawable/ic_menu_share"
-                    app:tint="@android:color/white" />
+                <!-- Protection % -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvHeroBlockedPct"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:textColor="#A5D6A7"
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:alpha="0.85"
+                        android:text="@string/insights_blocked"
+                        android:textColor="@android:color/white"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Blocked/Allowed progress bar (weights set dynamically) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_progress_track"
+                android:orientation="horizontal">
+
+                <View
+                    android:id="@+id/vBlockedProgress"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_progress_blocked" />
+
+                <View
+                    android:id="@+id/vAllowedProgress"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
@@ -134,9 +193,9 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="12dp"
-                android:background="@android:color/white"
-                android:alpha="0.25" />
+                android:layout_marginTop="14dp"
+                android:alpha="0.25"
+                android:background="@android:color/white" />
 
             <!-- Timeline entry point -->
             <LinearLayout
