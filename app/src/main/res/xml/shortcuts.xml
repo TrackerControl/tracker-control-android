@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="protection_on"
+        android:enabled="true"
+        android:icon="@drawable/ic_rocket_white"
+        android:shortcutShortLabel="@string/shortcut_on"
+        android:shortcutLongLabel="@string/shortcut_on">
+        <intent
+            android:action="eu.faircode.netguard.SHORTCUT_ON"
+            android:targetClass="eu.faircode.netguard.ActivityShortcut" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="protection_off"
+        android:enabled="true"
+        android:icon="@drawable/ic_rocket_white"
+        android:shortcutShortLabel="@string/shortcut_off"
+        android:shortcutLongLabel="@string/shortcut_off">
+        <intent
+            android:action="eu.faircode.netguard.SHORTCUT_OFF"
+            android:targetClass="eu.faircode.netguard.ActivityShortcut" />
+    </shortcut>
+</shortcuts>
