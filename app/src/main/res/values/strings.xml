@@ -116,6 +116,10 @@
     <string name="setting_track_usage">Track network usage</string>
     <string name="setting_reset_usage">Reset network usage</string>
     <string name="setting_show_resolved">Show resolved domain names</string>
+    <string name="setting_exclude_all_tracking">Exclude all apps from tracking</string>
+    <string name="summary_exclude_all_tracking">Disable tracker monitoring for all apps. You can then re-enable it for individual apps.</string>
+    <string name="setting_include_all_tracking">Include all apps in tracking</string>
+    <string name="summary_include_all_tracking">Re-enable tracker monitoring for all apps.</string>
     <string name="setting_block_domains">Enable hosts file</string>
     <string name="setting_rcode">Hosts blocking response: %s</string>
     <string name="setting_vpn4">VPN IPv4: %s</string>
