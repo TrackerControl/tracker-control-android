@@ -79,6 +79,8 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -291,5 +293,26 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <activity
+            android:name="eu.faircode.netguard.ActivityShortcut"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="eu.faircode.netguard.SHORTCUT_ON" />
+                <action android:name="eu.faircode.netguard.SHORTCUT_OFF" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name="eu.faircode.netguard.ReceiverShortcut"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="eu.faircode.netguard.SHORTCUT_ON" />
+                <action android:name="eu.faircode.netguard.SHORTCUT_OFF" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
