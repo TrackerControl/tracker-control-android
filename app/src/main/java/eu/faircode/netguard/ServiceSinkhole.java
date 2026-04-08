@@ -1560,12 +1560,15 @@ public class ServiceSinkhole extends VpnService {
             prepareForwarding();
         } else {
             lock.writeLock().lock();
-            mapUidAllowed.clear();
-            mapUidKnown.clear();
-            mapHostsBlocked.clear();
-            mapUidIPFilters.clear();
-            mapForward.clear();
-            lock.writeLock().unlock();
+            try {
+                mapUidAllowed.clear();
+                mapUidKnown.clear();
+                mapHostsBlocked.clear();
+                mapUidIPFilters.clear();
+                mapForward.clear();
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
 
         if (log || log_app || filter) {
@@ -1631,26 +1634,30 @@ public class ServiceSinkhole extends VpnService {
 
     private void unprepare() {
         lock.writeLock().lock();
-        mapUidAllowed.clear();
-        mapUidKnown.clear();
-        mapHostsBlocked.clear();
-        mapUidIPFilters.clear();
-        mapForward.clear();
-        lock.writeLock().unlock();
+        try {
+            mapUidAllowed.clear();
+            mapUidKnown.clear();
+            mapHostsBlocked.clear();
+            mapUidIPFilters.clear();
+            mapForward.clear();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private void prepareUidAllowed(List<Rule> listAllowed, List<Rule> listRule) {
         lock.writeLock().lock();
+        try {
+            mapUidAllowed.clear();
+            for (Rule rule : listAllowed)
+                mapUidAllowed.put(rule.uid, true);
 
-        mapUidAllowed.clear();
-        for (Rule rule : listAllowed)
-            mapUidAllowed.put(rule.uid, true);
-
-        mapUidKnown.clear();
-        for (Rule rule : listRule)
-            mapUidKnown.put(rule.uid, rule.uid);
-
-        lock.writeLock().unlock();
+            mapUidKnown.clear();
+            for (Rule rule : listRule)
+                mapUidKnown.put(rule.uid, rule.uid);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     public static void prepareHostsBlocked(Context c) {
@@ -1676,27 +1683,31 @@ public class ServiceSinkhole extends VpnService {
             }
 
             lock.writeLock().lock();
-            mapHostsBlocked.clear();
+            try {
+                mapHostsBlocked.clear();
 
-            int count = 0;
-            br = new BufferedReader(is);
-            String line;
-            while ((line = br.readLine()) != null) {
-                int hash = line.indexOf('#');
-                if (hash >= 0)
-                    line = line.substring(0, hash);
-                line = line.trim();
-                if (line.length() > 0) {
-                    String[] words = line.split("\\s+");
-                    if (words.length == 2) {
-                        count++;
-                        mapHostsBlocked.put(words[1], true);
-                    } else
-                        Log.i(TAG, "Invalid hosts file line: " + line);
+                int count = 0;
+                br = new BufferedReader(is);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    int hash = line.indexOf('#');
+                    if (hash >= 0)
+                        line = line.substring(0, hash);
+                    line = line.trim();
+                    if (line.length() > 0) {
+                        String[] words = line.split("\\s+");
+                        if (words.length == 2) {
+                            count++;
+                            mapHostsBlocked.put(words[1], true);
+                        } else
+                            Log.i(TAG, "Invalid hosts file line: " + line);
+                    }
                 }
+                mapHostsBlocked.put("test.netguard.me", true);
+                Log.i(TAG, count + " hosts read");
+            } finally {
+                lock.writeLock().unlock();
             }
-            mapHostsBlocked.put("test.netguard.me", true);
-            Log.i(TAG, count + " hosts read");
         } catch (IOException ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         } finally {
@@ -1714,19 +1725,17 @@ public class ServiceSinkhole extends VpnService {
                 }
         }
 
-        lock.writeLock().unlock();
-
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
     }
 
     private void prepareUidIPFilters(String dname) {
         lock.writeLock().lock();
+        try {
+            if (dname == null) // reset mechanism, called from startNative()
+                mapUidIPFilters.clear();
 
-        if (dname == null) // reset mechanism, called from startNative()
-            mapUidIPFilters.clear();
-
-        try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getAccessDns(dname)) {
+            try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getAccessDns(dname)) {
             int colUid = cursor.getColumnIndex("uid");
             int colVersion = cursor.getColumnIndex("version");
             int colProtocol = cursor.getColumnIndex("protocol");
@@ -1785,13 +1794,15 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
         }
-
-        lock.writeLock().unlock();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private void prepareForwarding() {
         lock.writeLock().lock();
-        mapForward.clear();
+        try {
+            mapForward.clear();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getBoolean("filter", true)) {
@@ -1838,7 +1849,9 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "DoH Forward " + dnsFwd);
             }
         }
-        lock.writeLock().unlock();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private List<Rule> getAllowedRules(List<Rule> listRule) {
@@ -1999,68 +2012,69 @@ public class ServiceSinkhole extends VpnService {
     private Allowed isAddressAllowed(Packet packet) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        lock.readLock().lock();
-
-        packet.allowed = false;
-        if (prefs.getBoolean("filter", true)) {
-            // https://android.googlesource.com/platform/system/core/+/master/include/private/android_filesystem_config.h
-            if (packet.protocol == 17 /* UDP */ && !prefs.getBoolean("filter_udp", true)) {
-                // Allow unfiltered UDP
-                packet.allowed = true;
-                Log.i(TAG, "Allowing UDP " + packet);
-            } else if ((packet.uid < 2000) &&
-                    !mapUidKnown.containsKey(packet.uid) && isSupported(packet.protocol)) {
-                // Allow unknown (system) traffic
-                packet.allowed = true;
-                Log.w(TAG, "Allowing unknown system " + packet);
-            } else if (packet.uid == Process.myUid()) {
-                // Allow self
-                packet.allowed = true;
-                Log.w(TAG, "Allowing self " + packet);
-            } else {
-                boolean filtered = false;
-
-                if (packet.data != null && !packet.data.isEmpty())
-                    Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
-
-                // Check if tracker is known
-                // In minimal mode (including TC Slim), always enable blocking
-                if (blockKnownTracker(packet.daddr, packet.uid)) {
-                    filtered = true;
-                    packet.allowed = false;
-                }
-
-                InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
-                if (internetBlocklist.blockedInternet(packet.uid)) {
-                    filtered = true;
-                    packet.allowed = false;
-                }
-
-                if (!filtered)
-                    packet.allowed = true;
-            }
-        }
-
-        // Block DNS-over-TLS (DoT) on port 853 to prevent bypassing DNS filtering
-        if (packet.allowed && packet.dport == 853 && prefs.getBoolean("block_dot", true)) {
-            Log.i(TAG, "Blocking DoT " + packet);
-            packet.allowed = false;
-        }
-
         Allowed allowed = null;
-        if (packet.allowed)
-            if (mapForward.containsKey(packet.dport)) {
-                Forward fwd = mapForward.get(packet.dport);
-                if (fwd.ruid == packet.uid) {
-                    allowed = new Allowed();
+        lock.readLock().lock();
+        try {
+            packet.allowed = false;
+            if (prefs.getBoolean("filter", true)) {
+                // https://android.googlesource.com/platform/system/core/+/master/include/private/android_filesystem_config.h
+                if (packet.protocol == 17 /* UDP */ && !prefs.getBoolean("filter_udp", true)) {
+                    // Allow unfiltered UDP
+                    packet.allowed = true;
+                    Log.i(TAG, "Allowing UDP " + packet);
+                } else if ((packet.uid < 2000) &&
+                        !mapUidKnown.containsKey(packet.uid) && isSupported(packet.protocol)) {
+                    // Allow unknown (system) traffic
+                    packet.allowed = true;
+                    Log.w(TAG, "Allowing unknown system " + packet);
+                } else if (packet.uid == Process.myUid()) {
+                    // Allow self
+                    packet.allowed = true;
+                    Log.w(TAG, "Allowing self " + packet);
                 } else {
-                    allowed = new Allowed(fwd.raddr, fwd.rport);
-                    packet.data = "> " + fwd.raddr + "/" + fwd.rport;
-                }
-            } else
-                allowed = new Allowed();
+                    boolean filtered = false;
 
-        lock.readLock().unlock();
+                    if (packet.data != null && !packet.data.isEmpty())
+                        Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
+
+                    // Check if tracker is known
+                    // In minimal mode (including TC Slim), always enable blocking
+                    if (blockKnownTracker(packet.daddr, packet.uid)) {
+                        filtered = true;
+                        packet.allowed = false;
+                    }
+
+                    InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
+                    if (internetBlocklist.blockedInternet(packet.uid)) {
+                        filtered = true;
+                        packet.allowed = false;
+                    }
+
+                    if (!filtered)
+                        packet.allowed = true;
+                }
+            }
+
+            // Block DNS-over-TLS (DoT) on port 853 to prevent bypassing DNS filtering
+            if (packet.allowed && packet.dport == 853 && prefs.getBoolean("block_dot", true)) {
+                Log.i(TAG, "Blocking DoT " + packet);
+                packet.allowed = false;
+            }
+
+            if (packet.allowed)
+                if (mapForward.containsKey(packet.dport)) {
+                    Forward fwd = mapForward.get(packet.dport);
+                    if (fwd.ruid == packet.uid) {
+                        allowed = new Allowed();
+                    } else {
+                        allowed = new Allowed(fwd.raddr, fwd.rport);
+                        packet.data = "> " + fwd.raddr + "/" + fwd.rport;
+                    }
+                } else
+                    allowed = new Allowed();
+        } finally {
+            lock.readLock().unlock();
+        }
 
         if (prefs.getBoolean("log", false) || prefs.getBoolean("log_app", true))
             if (packet.protocol != 6 /* TCP */ || !"".equals(packet.flags))
@@ -2224,8 +2238,11 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
-            assert tracker != null;
-            Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr).getOrExpired() + " " + tracker.getName());
+            if (tracker != null) {
+                Expiring<String> host = ipToHost.get(daddr);
+                String hostName = (host != null) ? host.getOrExpired() : null;
+                Log.i("TC-Log", app + " " + daddr + " " + hostName + " " + tracker.getName());
+            }
         } else {
             if (tracker != NO_TRACKER) {
                 boolean blockedByGranularRule = false;
