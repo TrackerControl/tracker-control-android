@@ -27,6 +27,10 @@
     <string name="menu_support">Підтримати проєкт</string>
     <string name="menu_log_support">Пояснення</string>
     <string name="menu_about">Про додаток</string>
+    <string name="troubleshooting_battery_desc">Якщо TrackerControl перестає працювати у фоновому режимі, вимкніть оптимізацію батареї Android для TrackerControl. Виберіть «Усі програми», натисніть TrackerControl і виберіть «Не оптимізувати».</string>
+    <string name="troubleshooting_datasaver_desc">Якщо TrackerControl не може підключитися, коли ввімкнено функцію «Економія даних», дозвольте необмежене використання даних для TrackerControl. Увімкніть «Фонові дані» та «Необмежене використання даних».</string>
+    <string name="troubleshooting_exclude_desc">Якщо програма не працює належним чином із TrackerControl, ви можете виключити її: натисніть на програму в головному списку, а потім вимкніть перемикач VPN для цієї програми.</string>
+    <string name="troubleshooting_categories_desc">Ви можете точно налаштувати блокування для кожного додатка, натиснувши на нього та увімкнувши або вимкнувши окремі категорії трекерів (наприклад, «Аналітика», «Реклама») на вкладці «Трекери».</string>
     <string name="menu_apps">Інші додатки</string>
     <string name="menu_protocol_other">Інше</string>
     <string name="menu_traffic_allowed">Дозволено</string>
@@ -339,6 +343,9 @@
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
     <string name="strict_blocking_explanation">Не експертам рекомендується вимкнути цю опцію, щоб зменшити кількість поломок програми. Однак це дозволяє ділитися деякими важливими даними з компаніями.</string>
+    <string name="summary_blocking_mode_minimal">Мінімальний: блокує лише ті трекери зі списку DuckDuckGo, які можна безпечно блокувати. Браузери та відомі несумісні програми автоматично виключаються. Мінімальні порушення роботи програм.</string>
+    <string name="summary_blocking_mode_standard">Стандартний: блокує всі відомі трекери з різних списків (X-Ray, Disconnect, DuckDuckGo). Доступ до основних служб залишається відкритим. Деякі програми можуть працювати з перебоями, і їх, можливо, доведеться виключити вручну (див. розділ «Усунення несправностей» у меню програми).</string>
+    <string name="onboarding_blockingmode_research_desc">Не блокує трекери. Реєструє передачу даних до ADB та вмикає вилучення SNI для кращого виявлення імені хоста. Тільки для дослідницьких цілей: це призводить до витоку вашої IP-адреси на сервери трекерів.</string>
     <string name="exclude_vpn_explanation">Виявляє та блокує трекери для цієї програми.</string>
     <string name="vpn_exclude">Виключити з VPN</string>
     <string name="vpn_exclude_explanation">Увімкніть, якщо виникнуть проблеми. Додаток повністю обійде TrackerControl.\n\nПримітка: щоб це працювало, у налаштуваннях VPN Android необхідно вимкнути опцію «Блокувати з\'єднання без VPN».</string>
@@ -402,6 +409,7 @@
     <string name="onboarding_vpn_desc">TrackerControl використовує локальний VPN-інтерфейс Android для аналізу вашого інтернет-трафіку.\n\n<b>Важливо:</b> Зовнішній VPN-сервер не використовується. Ми не бачимо ваших даних.</string>
     <string name="onboarding_vpn_action">Увімкнути VPN на пристрої</string>
     <string name="onboarding_vpn_sure">TrackerControl не може фільтрувати трафік без локального VPN. Ви впевнені, що хочете продовжити без його увімкнення?</string>
+    <string name="onboarding_vpn_blocked_desc">Android завадив TrackerControl запустити свою локальну VPN, оскільки інший додаток налаштовано як <b>Завжди увімкнену VPN</b>. Відкрийте налаштування VPN та вимкніть функцію «Завжди увімкнено» для іншої VPN, а потім повторіть спробу.</string>
     <string name="onboarding_battery_title">Запобігання перериванню</string>
     <string name="onboarding_battery_desc">Android може закривати фонові програми для економії заряду акумулятора. Щоб забезпечити безперервний захист від трекерів, вимкніть оптимізацію для TrackerControl.</string>
     <string name="onboarding_battery_action">Вимкнути оптимізацію</string>
@@ -457,6 +465,8 @@
     <string name="insights_shocking_fact_playstore">Ваші програми зв\'язалися з %1$d компаніями, що займаються відстеженням, цього тижня!</string>
     <string name="insights_share">Поділитися з друзями</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Цього тижня я заблокував %1$d хостів трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі конфіденційність: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Цього тижня я виявив %1$d хостів трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі конфіденційність: https://trackercontrol.org</string>
     <string name="insights_see_more">Дивитися більше →</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Додаткові файли хоста</string>
