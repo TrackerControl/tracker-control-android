@@ -56,7 +56,7 @@
     <string name="troubleshooting_categories_title">Блокування певних категорій трекерів</string>
     <string name="troubleshooting_categories_desc">Ви можете точно налаштувати блокування для кожного додатка, натиснувши на нього та увімкнувши або вимкнувши окремі категорії трекерів (наприклад, «Аналітика», «Реклама») на вкладці «Трекери».</string>
     <string name="troubleshooting_alwayson_title">Завжди увімкнений VPN</string>
-    <string name="troubleshooting_alwayson_desc">Якщо в налаштуваннях VPN для Android увімкнено опцію «Блокування з’єднань без VPN», TrackerControl не працюватиме належним чином. Вимкніть цю опцію. У разі виявлення цього з’явиться сповіщення.</string>
+    <string name="troubleshooting_alwayson_desc">Якщо в налаштуваннях VPN для Android увімкнено опцію «Блокування з’єднань без VPN» (блокування), TrackerControl не працюватиме належним чином. Вимкніть цю опцію. У разі виявлення цього з’явиться сповіщення.</string>
     <string name="troubleshooting_alwayson_action">Відкрити налаштування VPN</string>
     <string name="menu_apps">Інші додатки</string>
     <string name="menu_protocol_other">Інше</string>
