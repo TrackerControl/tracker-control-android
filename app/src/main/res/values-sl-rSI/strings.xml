@@ -20,13 +20,16 @@
     <string name="menu_sort_uid">Razvrsti po UID-ju</string>
     <string name="menu_sort_companies_week">Razvrsti po podjetjih (tedensko)</string>
     <string name="menu_sort_companies">Razvrsti po podjetjih</string>
+    <string name="menu_sort_by_latest_detected_tracker">Razvrsti po nazadnje zaznanih sledilcih</string>
     <string name="menu_log">Dnevnik prometa</string>
     <string name="menu_settings">Nastavitve</string>
     <string name="menu_invite">Povabi</string>
     <string name="menu_legend">Legenda</string>
     <string name="menu_support">Podpri ta program</string>
     <string name="menu_log_support">Razlaga</string>
+    <string name="menu_troubleshooting">Odpravljanje težav</string>
     <string name="menu_about">O programu</string>
+    <string name="menu_timeline">Dejavnost sledilcev</string>
     <string name="menu_apps">Drugi programi</string>
     <string name="menu_protocol_other">Drugo</string>
     <string name="menu_traffic_allowed">Dovoljeno</string>
