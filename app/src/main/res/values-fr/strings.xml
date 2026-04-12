@@ -20,6 +20,7 @@
     <string name="menu_sort_uid">Trier par uid</string>
     <string name="menu_sort_companies_week">Trier par entreprises (semaine)</string>
     <string name="menu_sort_companies">Trier par entreprises</string>
+    <string name="menu_sort_by_latest_detected_tracker">Trier par dernier traqueur détecté</string>
     <string name="menu_log">Journal du trafic</string>
     <string name="menu_settings">Paramètres</string>
     <string name="menu_invite">Inviter</string>
@@ -30,6 +31,7 @@
     <string name="menu_about">À propos</string>
     <string name="menu_timeline">Activité du traqueur</string>
     <string name="title_tracker_activity">Activité du traqueur</string>
+    <string name="timeline_empty">Aucune activité récente de traqueur.\n\nActivez TrackerControl pour voir quelles applications vous surveillent.</string>
     <string name="timeline_section_last_hour">Dernière heure</string>
     <string name="timeline_section_today">Aujourd’hui</string>
     <string name="timeline_section_yesterday">Hier</string>
@@ -37,6 +39,9 @@
     <string name="timeline_more_trackers">+%d en plus</string>
     <string name="timeline_tracker_blocked">Bloqué</string>
     <string name="timeline_tracker_allowed">Autorisé</string>
+    <string name="timeline_summary_all_blocked">%d traqueurs bloqués</string>
+    <string name="timeline_summary_none_blocked">%d traqueurs autorisés</string>
+    <string name="timeline_summary_mixed">%1$d bloqués · %2$d autorisés</string>
     <string name="troubleshooting_title">Diagnostic des anomalies</string>
     <string name="troubleshooting_battery_title">Optimisation de batterie</string>
     <string name="troubleshooting_battery_desc">Si TrackerControl cesse de fonctionner en arrière-plan, désactivez l\'optimisation de la batterie d\'Android pour TrackerControl. Sélectionnez « Toutes les applications », appuyez sur TrackerControl, puis sélectionnez « Ne pas optimiser ».</string>
@@ -47,6 +52,8 @@
     <string name="troubleshooting_datasaver_action">Autoriser les données illimitées</string>
     <string name="troubleshooting_datasaver_ok">L\'économiseur de données ne limite pas TrackerControl.</string>
     <string name="troubleshooting_exclude_title">Exclure des applications du VPN</string>
+    <string name="troubleshooting_exclude_desc">Si une application ne fonctionne pas correctement avec TrackerControl, vous pouvez l\'exclure : tapez sur l\'application dans la liste principale, puis désactivez le bouton VPN pour cette application.</string>
+    <string name="troubleshooting_categories_title">Bloquer des catégories de traqueurs spécifiques</string>
     <string name="troubleshooting_alwayson_title">VPN permanent</string>
     <string name="troubleshooting_alwayson_action">Ouvrir les paramètres VPN</string>
     <string name="menu_apps">Autres applications</string>
@@ -83,6 +90,7 @@
     <string name="setting_advanced_options">Options avancées (pour les experts)</string>
     <string name="setting_system">Afficher les applications système</string>
     <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
+    <string name="setting_log_logcat">Recherche</string>
     <string name="setting_filter">Bloquer les traqueurs</string>
     <string name="setting_filter_udp">Bloquer les traqueurs sur UDP</string>
     <string name="setting_handover">Passage au VPN sans interruption lors du rechargement</string>
@@ -111,7 +119,11 @@
     <string name="warning_beta">Fonctionnalité bêta. Peut ne pas fonctionner comme attendu.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">URL HTTPS pour les requêtes DNS-sur-HTTPS</string>
+    <string name="setting_doh_dns_fallback">DNS de secours</string>
+    <string name="summary_doh_dns_fallback">Utiliser le DNS standard (non chiffré) lorsque le DoH n\'est pas disponible. Désactiver ceci peut faire dysfonctionner les applications si le serveur DoH est hors service.</string>
     <!-- Block DNS-over-TLS (DoT) -->
+    <string name="setting_block_dot">Bloquer le DNS privé d\'Android</string>
+    <string name="summary_block_dot">Avec l\'activation du DNS privé d\'Android, TC ne peut détecter aucun traqueur et ne fonctionne pas correctement.</string>
     <string name="setting_stats_frequency">Intervalle d\'échantillonnage : %s ms</string>
     <string name="setting_stats_samples">Nombre d\'échantillons: %s s</string>
     <string name="setting_backup">Sauvegarde</string>
@@ -140,6 +152,7 @@
     <string name="summary_validate">Nom de domaine utilisé pour valider la connexion internet sur le port 443 (https).</string>
     <string name="summary_socks5_enabled">Seul le trafic TCP sera envoyé au serveur proxy</string>
     <string name="summary_watchdog">Vérifiez périodiquement si TrackerControl est toujours en cours d\'exécution (saisir zéro pour désactiver cette option). Cela peut entraîner une surconsommation de la batterie.</string>
+    <string name="summary_log_logcat">Mode recherche : les traqueurs identifiés sont enregistrés via ADB et l\'extraction SNI est activée pour une meilleure détection de nom d\'hôte. Récupérez les journaux avec la commande adb logcat en utilisant l\'étiquette \'TC-Log\'.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
     <string name="msg_started">Recherche de traqueurs...</string>
     <string name="msg_waiting">En attente d\'évènement</string>
@@ -353,6 +366,7 @@ Cordialement,\n\n]]></string>
     <string name="setting_strict_blocking">Blocage strict</string>
     <string name="summary_strict_blocking">Pour les nouvelles applications installées, bloque le partage des données avec autant d\'entreprise que possible. Plus d\'applications dysfonctionneront.</string>
     <string name="strict_blocking_explanation">Pour les non experts, il est recommandé de désactiver cette fonction pour réduire les dysfonctionnements. Même si cela autorise le partage de données essentielles avec des entreprises.</string>
+    <string name="setting_block_ambiguous_trackers">Bloquer les traqueurs ambigus</string>
     <string name="summary_blocking_mode_minimal">Minimum : bloque uniquement les traqueurs de la liste DuckDuckGo, dont le blocage est sûr. Les navigateurs et les applications incompatibles connues sont automatiquement exclus. Peu de dysfonctionnement dans les applications.</string>
     <string name="summary_blocking_mode_standard">Standard : bloque tous les traqueurs connus à partir de listes multiples (X-Ray, Disconnect, DuckDuckGo). Les services essentiels sont autorisés. Certaines applications vont dysfonctionner et devront peut-être être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
     <string name="summary_blocking_mode_strict">Strict : bloque tous les traqueurs connus, y compris les services essentiels et les domaines ambigus partageant la même IP. De nombreuses applications vont dysfonctionner et doivent être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
