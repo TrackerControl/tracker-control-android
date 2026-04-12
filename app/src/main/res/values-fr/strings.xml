@@ -367,6 +367,9 @@ Cordialement,\n\n]]></string>
     <string name="summary_strict_blocking">Pour les nouvelles applications installées, bloque le partage des données avec autant d\'entreprise que possible. Plus d\'applications dysfonctionneront.</string>
     <string name="strict_blocking_explanation">Pour les non experts, il est recommandé de désactiver cette fonction pour réduire les dysfonctionnements. Même si cela autorise le partage de données essentielles avec des entreprises.</string>
     <string name="setting_block_ambiguous_trackers">Bloquer les traqueurs ambigus</string>
+    <string name="summary_block_ambiguous_trackers">Lorsqu\'une IP a des preuves de nom d\'hôte à la fois de traqueur et de non-traqueur, la bloquer malgré tout. Désactivez ceci pour réduire les dysfonctionnements d\'\'applications.</string>
+    <string name="setting_sni_enabled">Extraction SNI (recherche)</string>
+    <string name="setting_blocking_mode">Mode de blocage</string>
     <string name="summary_blocking_mode_minimal">Minimum : bloque uniquement les traqueurs de la liste DuckDuckGo, dont le blocage est sûr. Les navigateurs et les applications incompatibles connues sont automatiquement exclus. Peu de dysfonctionnement dans les applications.</string>
     <string name="summary_blocking_mode_standard">Standard : bloque tous les traqueurs connus à partir de listes multiples (X-Ray, Disconnect, DuckDuckGo). Les services essentiels sont autorisés. Certaines applications vont dysfonctionner et devront peut-être être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
     <string name="summary_blocking_mode_strict">Strict : bloque tous les traqueurs connus, y compris les services essentiels et les domaines ambigus partageant la même IP. De nombreuses applications vont dysfonctionner et doivent être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
@@ -377,6 +380,7 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_blockingmode_minimal_label">Minimum (recommandé pour les nouveaux utilisateurs)</string>
     <string name="onboarding_blockingmode_standard_label">Standard</string>
     <string name="onboarding_blockingmode_strict_label">Strict</string>
+    <string name="onboarding_blockingmode_research_label">Recherche</string>
     <string name="exclude_vpn_explanation">Détecte et bloque les trackers pour cette application.</string>
     <string name="vpn_exclude">Exclure du VPN</string>
     <string name="uninstall">Désinstaller</string>
@@ -403,10 +407,16 @@ Cordialement,\n\n]]></string>
     <string name="tracking_detection_failed_ram">La détection de la librairie de traceur a échoué. Pas assez de RAM.</string>
     <string name="tracking_detection_failed_report">La détection de la librairie de traceur a échoué. Veuillez signaler ce problème au développeur.</string>
     <string name="detected_trackers">Librairies de traceurs détectées : %s</string>
+    <string name="analyzing_classes">Analyse des classes…</string>
+    <string name="analyzing_classes_progress">Analyse des classes… %d%%</string>
+    <string name="analysis_already_running">L\'analyse est déjà en cours</string>
     <string name="none">Aucune</string>
     <string name="trackers_static">Librairies de traceurs</string>
     <string name="trackers_static_explanation">TrackerControl détecte le traçage dans le code (\'librairies\') et le trafic réseau des applications.\n\nLes traceurs qui y sont détectés peuvent alors être bloqués.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl détecte le traçage dans le code (\'librairies\') et le trafic réseau des applications.</string>
+    <string name="analyze_tracker_libraries">Analyser les bibliothèques de traqueurs</string>
+    <string name="update_analysis">Mettre à jour l\'analyse</string>
+    <string name="analysis_outdated_version">\n\nNote : l\'analyse est d\'une version précédente de l\'application. Elle peut avoir changé les bibliothèques de traqueurs intégrées.</string>
     <string name="analysis_queued">Analyse en attente…</string>
     <string name="blocked">BLOQUÉ</string>
     <string name="allowed">AUTORISÉ</string>
@@ -420,14 +430,28 @@ Cordialement,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
     <string name="setting_include_system_vpn">Inclure les applications système</string>
+    <string name="summary_include_system_vpn">Inclure toutes les applications système dans le VPN et DoH.\n\nNote: \"Bloquer les connexions sans VPN\" dans les paramètres VPN Android doit être désactivé.</string>
     <!-- Onboarding -->
     <string name="title_next">Suivant</string>
     <string name="title_skip">Passer</string>
     <string name="title_previous">Précédent</string>
     <string name="title_finish">Commencer</string>
+    <string name="onboarding_welcome_title">Prenez le contrôle de votre vie privée</string>
+    <string name="onboarding_welcome_desc">TrackerControl est un projet de recherche porté par la communauté, qui vous permet de :\n\n• <b>Surveiller</b> la collecte cachée de données par les applications mobiles en temps réel.\n• <b>Bloquer</b> les traqueurs et les publicités, en utilisant notre base de données de <b>2 000 000 applications analysées</b>.\n• <b>Identifier</b> les entreprises et les pays de destination recevant vos données.\n\nToutes les analyses s\'effectuent <b>localement sur votre appareil</b> – votre trafic reste toujours sous votre contrôle.</string>
     <string name="onboarding_vpn_title">Activer la protection</string>
+    <string name="onboarding_vpn_blocked_action">Ouvrir les paramètres VPN</string>
     <!-- Insights Screen -->
+    <string name="insights_subtitle_7days">7 derniers jours</string>
+    <string name="insights_tracking_attempts">Hôtes du traqueur contactés</string>
+    <string name="insights_in_apps">dans %d applications</string>
     <string name="insights_share_trackers_detected">Hôtes du traqueur détectés</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_see_more">Voir plus →</string>
+    <string name="insights_view_timeline">Voir l\'activité récente du traqueur</string>
     <!-- What's New onboarding slide (not translated) -->
+    <string name="title_blocklists">Fichiers d\'hôtes supplémentaires</string>
+    <string name="summary_manage_blocklists">Ils sont uniquement pour un usage de secours. TrackerControl contient ses propres listes d\'hôtes, qui donnent un aperçu des entreprises derrière ces traqueurs.</string>
+    <string name="title_add_blocklist">Ajouter un fichier d\'hôtes</string>
+    <string name="title_delete_blocklist">Supprimer le fichier d\'hôtes</string>
+    <string name="msg_delete_blocklist_confirm">Êtes-vous sûr de vouloir supprimer ce fichier d\'hôtes ?</string>
 </resources>
