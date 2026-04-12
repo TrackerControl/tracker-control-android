@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl permet aux utilisateurs de surveiller et de contrôler la collecte (cachée et courante) des données relatives à leur comportement dans les applications mobiles (\"tracking\").</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl est basé sur NetGuard, développé par Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl nécessite Android 5.1 ou une version ultérieure</string>
     <string name="app_xposed">Xposed provoque trop de plantages, ce qui peut entraîner le retrait de TrackerControl de la boutique Google Play. TrackerControl n\'est donc pas pris en charge lorsque Xposed est installé</string>
     <string name="app_eula">L\'utilisation de cette application se fait à vos risques et périls. Aucune application ne peut garantir une protection complète contre le pistage.</string>
@@ -13,6 +14,7 @@
     <string name="menu_app_user">Afficher applications utilisateur</string>
     <string name="menu_app_system">Afficher applications système</string>
     <string name="menu_app_nointernet">Afficher applications sans accès à internet</string>
+    <string name="menu_app_unprotected">Afficher seulement les applications non protégées</string>
     <string name="menu_sort">Trier applications</string>
     <string name="menu_sort_name">Trier par nom</string>
     <string name="menu_sort_uid">Trier par uid</string>
@@ -26,6 +28,13 @@
     <string name="menu_log_support">Explications</string>
     <string name="menu_troubleshooting">Diagnostic des anomalies</string>
     <string name="menu_about">À propos</string>
+    <string name="timeline_section_last_hour">Dernière heure</string>
+    <string name="timeline_section_today">Aujourd’hui</string>
+    <string name="timeline_section_yesterday">Hier</string>
+    <string name="timeline_section_this_week">Cette semaine</string>
+    <string name="timeline_more_trackers">+%d en plus</string>
+    <string name="timeline_tracker_blocked">Bloqué</string>
+    <string name="timeline_tracker_allowed">Autorisé</string>
     <string name="troubleshooting_battery_title">Optimisation de batterie</string>
     <string name="troubleshooting_battery_desc">Si TrackerControl cesse de fonctionner en arrière-plan, désactivez l\'optimisation de la batterie d\'Android pour TrackerControl. Sélectionnez « Toutes les applications », appuyez sur TrackerControl, puis sélectionnez « Ne pas optimiser ».</string>
     <string name="troubleshooting_battery_action">Désactiver l\'optimisation de la batterie</string>
@@ -369,6 +378,7 @@ Cordialement,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
     <!-- Onboarding -->
+    <string name="onboarding_vpn_title">Activer la protection</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
 </resources>
