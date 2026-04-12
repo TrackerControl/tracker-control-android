@@ -28,6 +28,8 @@
     <string name="menu_log_support">Explications</string>
     <string name="menu_troubleshooting">Diagnostic des anomalies</string>
     <string name="menu_about">À propos</string>
+    <string name="menu_timeline">Activité du traqueur</string>
+    <string name="title_tracker_activity">Activité du traqueur</string>
     <string name="timeline_section_last_hour">Dernière heure</string>
     <string name="timeline_section_today">Aujourd’hui</string>
     <string name="timeline_section_yesterday">Hier</string>
@@ -35,11 +37,18 @@
     <string name="timeline_more_trackers">+%d en plus</string>
     <string name="timeline_tracker_blocked">Bloqué</string>
     <string name="timeline_tracker_allowed">Autorisé</string>
+    <string name="troubleshooting_title">Diagnostic des anomalies</string>
     <string name="troubleshooting_battery_title">Optimisation de batterie</string>
     <string name="troubleshooting_battery_desc">Si TrackerControl cesse de fonctionner en arrière-plan, désactivez l\'optimisation de la batterie d\'Android pour TrackerControl. Sélectionnez « Toutes les applications », appuyez sur TrackerControl, puis sélectionnez « Ne pas optimiser ».</string>
     <string name="troubleshooting_battery_action">Désactiver l\'optimisation de la batterie</string>
     <string name="troubleshooting_battery_ok">L\'optimisation de la batterie est déjà désactivée.</string>
     <string name="troubleshooting_datasaver_title">Sauvegarde des données</string>
+    <string name="troubleshooting_datasaver_desc">Si TrackerControl ne peut pas se connecter lorsque l\'économiseur de données est activé, autoriser l\'utilisation sans restriction des données pour TrackerControl. Activez \"Données en arrière-plan\" et \"Utilisation illimitée des données\".</string>
+    <string name="troubleshooting_datasaver_action">Autoriser les données illimitées</string>
+    <string name="troubleshooting_datasaver_ok">L\'économiseur de données ne limite pas TrackerControl.</string>
+    <string name="troubleshooting_exclude_title">Exclure des applications du VPN</string>
+    <string name="troubleshooting_alwayson_title">VPN permanent</string>
+    <string name="troubleshooting_alwayson_action">Ouvrir les paramètres VPN</string>
     <string name="menu_apps">Autres applications</string>
     <string name="menu_protocol_other">Autres</string>
     <string name="menu_traffic_allowed">Autorisé</string>
@@ -54,6 +63,8 @@
     <string name="menu_export">Exporter</string>
     <string name="menu_reset">Réinitialiser</string>
     <string name="menu_cleanup">Nettoyer</string>
+    <string name="setting_options">Général</string>
+    <string name="setting_further_options">Autres options</string>
     <string name="setting_dark">Thème sombre</string>
     <string name="setting_install">Notifier lors d\'une nouvelle installation</string>
     <string name="setting_pause">Activer automatiquement après %1$s minutes</string>
@@ -104,12 +115,15 @@
     <string name="setting_stats_frequency">Intervalle d\'échantillonnage : %s ms</string>
     <string name="setting_stats_samples">Nombre d\'échantillons: %s s</string>
     <string name="setting_backup">Sauvegarde</string>
+    <string name="setting_export">Exporter les paramètres</string>
     <string name="setting_import">Importer les paramètres</string>
     <string name="setting_hosts">Importer un fichier hosts</string>
     <string name="setting_hosts_append">Importer un fichier hosts (ajouter)</string>
     <string name="setting_hosts_url">URL du fichier hosts</string>
     <string name="setting_hosts_download">Télécharger le fichier hosts</string>
     <string name="setting_hosts_update">Mettre à jour le fichier hosts</string>
+    <string name="setting_hosts_auto_update">Mettre à jour automatiquement les hôtes</string>
+    <string name="summary_hosts_auto_update">Mettre à jour automatiquement le fichier hosts en arrière-plan</string>
     <string name="summary_install">Afficher la notification d\'état pour les nouvelles applications installées</string>
     <string name="summary_pause">Après avoir mis en pause TrackerControl via la barre des notifications, réactiver automatiquement TrackerControl après le nombre de minutes sélectionné (saisir 0 pour désactiver cette option).</string>
     <string name="summary_update">Vérifier les nouvelles versions sur GitHub deux fois par jour</string>
@@ -127,6 +141,7 @@
     <string name="summary_socks5_enabled">Seul le trafic TCP sera envoyé au serveur proxy</string>
     <string name="summary_watchdog">Vérifiez périodiquement si TrackerControl est toujours en cours d\'exécution (saisir zéro pour désactiver cette option). Cela peut entraîner une surconsommation de la batterie.</string>
     <string name="msg_sure">Êtes-vous sûr⋅e ?</string>
+    <string name="msg_started">Recherche de traqueurs...</string>
     <string name="msg_waiting">En attente d\'évènement</string>
     <string name="msg_disabled">Utilisez l\'interrupteur ci-dessus pour activer TrackerControl.</string>
     <string name="msg_revoked">TrackerControl a été désactivé, probablement en utilisant une autre application VPN</string>
@@ -140,6 +155,7 @@ Pour cette raison, veuillez autoriser une connexion VPN dans la fenêtre suivant
 Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_autostart">TrackerControl n\'a pas pu démarrer automatiquement. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_error">Une erreur inattendue s\'est produite: \'%s\'</string>
+    <string name="msg_doh_unreachable">Le DNS sécurisé (DoH) ne peut pas être atteint alors que vous avez une connexion internet active. Si cela se produit à plusieurs reprises, envisagez de le désactiver dans les paramètres du réseau.</string>
     <string name="msg_start_failed">Android vient refuser de démarrer le VPN. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_try">Essayez TrackerControl</string>
     <string name="msg_datasaving">Pour des résultats fiables, les options de limitation de données d\'Android doivent être désactivées pour TrackerControl \n\nDans la fenêtre suivante, activez les options « Données en arrière-plan » et « Utilisation de données sans restriction »</string>
@@ -149,6 +165,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_clear_rules">Cela réinitialisera les règles et conditions à leurs valeurs par défaut</string>
     <string name="msg_reset_access">Cela supprimera les lignes du journal concernant les tentatives d\'accès sans règles d\'autorisation ou de blocage</string>
     <string name="msg_import_last">Dernière importation : %s</string>
+    <string name="msg_downloading">Téléchargement…</string>
     <string name="msg_downloaded">Fichier hosts téléchargé</string>
     <string name="msg_updated">Fichier hosts mis à jour et appliqué !</string>
     <string name="msg_download_last">Dernier téléchargement : %s</string>
@@ -336,6 +353,16 @@ Cordialement,\n\n]]></string>
     <string name="setting_strict_blocking">Blocage strict</string>
     <string name="summary_strict_blocking">Pour les nouvelles applications installées, bloque le partage des données avec autant d\'entreprise que possible. Plus d\'applications dysfonctionneront.</string>
     <string name="strict_blocking_explanation">Pour les non experts, il est recommandé de désactiver cette fonction pour réduire les dysfonctionnements. Même si cela autorise le partage de données essentielles avec des entreprises.</string>
+    <string name="summary_blocking_mode_minimal">Minimum : bloque uniquement les traqueurs de la liste DuckDuckGo, dont le blocage est sûr. Les navigateurs et les applications incompatibles connues sont automatiquement exclus. Peu de dysfonctionnement dans les applications.</string>
+    <string name="summary_blocking_mode_standard">Standard : bloque tous les traqueurs connus à partir de listes multiples (X-Ray, Disconnect, DuckDuckGo). Les services essentiels sont autorisés. Certaines applications vont dysfonctionner et devront peut-être être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
+    <string name="summary_blocking_mode_strict">Strict : bloque tous les traqueurs connus, y compris les services essentiels et les domaines ambigus partageant la même IP. De nombreuses applications vont dysfonctionner et doivent être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
+    <string name="blocking_mode_minimal">Minimum</string>
+    <string name="blocking_mode_standard">Standard</string>
+    <string name="blocking_mode_strict">Strict</string>
+    <string name="onboarding_blockingmode_title">Choisir le mode de blocage</string>
+    <string name="onboarding_blockingmode_minimal_label">Minimum (recommandé pour les nouveaux utilisateurs)</string>
+    <string name="onboarding_blockingmode_standard_label">Standard</string>
+    <string name="onboarding_blockingmode_strict_label">Strict</string>
     <string name="exclude_vpn_explanation">Détecte et bloque les trackers pour cette application.</string>
     <string name="vpn_exclude">Exclure du VPN</string>
     <string name="uninstall">Désinstaller</string>
@@ -366,6 +393,7 @@ Cordialement,\n\n]]></string>
     <string name="trackers_static">Librairies de traceurs</string>
     <string name="trackers_static_explanation">TrackerControl détecte le traçage dans le code (\'librairies\') et le trafic réseau des applications.\n\nLes traceurs qui y sont détectés peuvent alors être bloqués.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl détecte le traçage dans le code (\'librairies\') et le trafic réseau des applications.</string>
+    <string name="analysis_queued">Analyse en attente…</string>
     <string name="blocked">BLOQUÉ</string>
     <string name="allowed">AUTORISÉ</string>
     <string name="setting_domain_based_blocked">Blocage basé sur les domaines</string>
@@ -377,8 +405,15 @@ Cordialement,\n\n]]></string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
+    <string name="setting_include_system_vpn">Inclure les applications système</string>
     <!-- Onboarding -->
+    <string name="title_next">Suivant</string>
+    <string name="title_skip">Passer</string>
+    <string name="title_previous">Précédent</string>
+    <string name="title_finish">Commencer</string>
     <string name="onboarding_vpn_title">Activer la protection</string>
     <!-- Insights Screen -->
+    <string name="insights_share_trackers_detected">Hôtes du traqueur détectés</string>
+    <string name="insights_share_url">TrackerControl.org</string>
     <!-- What's New onboarding slide (not translated) -->
 </resources>
