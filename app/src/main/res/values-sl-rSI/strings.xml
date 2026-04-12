@@ -380,6 +380,7 @@ Sincerely,\n\n]]></string>
     <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
     <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
     <string name="setting_block_ambiguous_trackers">Blokiraj nejasne sledilce</string>
+    <string name="setting_sni_enabled">Izločitev SNI (raziskovalno)</string>
     <string name="exclude_vpn_explanation">Zazna in blokira sledilce za ta program.</string>
     <string name="vpn_exclude">Izključi iz VPN-a</string>
     <string name="vpn_exclude_explanation">Omogočite, če naletite na težave.  Program bo v celoti zaobšel TrackerControl.\n\nOpomba: Da bi to delovalo, morate v Androidovih nastavitvah VPN-a ONEMOGOČITI \"Blokiraj povezave brez VPN-a\".</string>
