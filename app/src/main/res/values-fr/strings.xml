@@ -448,11 +448,24 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_notify_title">Restez informé</string>
     <string name="onboarding_privatedns_action">Ouvrir les paramètres DNS</string>
     <string name="onboarding_lockdown_action">Ouvrir les paramètres VPN</string>
+    <string name="onboarding_dns_action">Activer le DNS sécurisé</string>
+    <string name="onboarding_dns_action_disable">Désactiver le DNS sécurisé</string>
     <string name="onboarding_blocking_title">Bloquer les traqueurs</string>
+    <string name="onboarding_blocking_action">Activer le blocage</string>
+    <string name="onboarding_blocking_action_disable">Désactiver le blocage</string>
+    <string name="onboarding_action_enabled">Activé</string>
+    <string name="onboarding_action_disabled">Désactivé</string>
+    <string name="onboarding_action_granted">Autorisé</string>
+    <string name="onboarding_action_optimized">Optimisé</string>
     <!-- Insights Screen -->
     <string name="insights_subtitle_7days">7 derniers jours</string>
     <string name="insights_tracking_attempts">Hôtes du traqueur contactés</string>
     <string name="insights_in_apps">dans %d applications</string>
+    <string name="insights_no_data">Aucune donnée de traqueur pour le moment. Utilisez vos applications et revenez plus tard !</string>
+    <string name="insights_shocking_fact">Vos applications ont contacté %1$d sociétés de traqueurs via %2$d hôtes de traqueur cette semaine !</string>
+    <string name="insights_shocking_fact_playstore">Vos applications ont contacté %1$d sociétés de traqueurs cette semaine !</string>
+    <string name="insights_share">Partager avec vos amis</string>
+    <string name="insights_share_trackers_blocked">Hôtes du traqueur bloqués</string>
     <string name="insights_share_trackers_detected">Hôtes du traqueur détectés</string>
     <string name="insights_share_url">TrackerControl.org</string>
     <string name="insights_see_more">Voir plus →</string>
@@ -463,4 +476,7 @@ Cordialement,\n\n]]></string>
     <string name="title_add_blocklist">Ajouter un fichier d\'hôtes</string>
     <string name="title_delete_blocklist">Supprimer le fichier d\'hôtes</string>
     <string name="msg_delete_blocklist_confirm">Êtes-vous sûr de vouloir supprimer ce fichier d\'hôtes ?</string>
+    <string name="msg_invalid_url">URL invalide</string>
+    <string name="msg_apply_blocklists_failed">Échec de l\'application des fichiers hôtes</string>
+    <string name="msg_last_update">Dernière mise à jour : %s</string>
 </resources>
