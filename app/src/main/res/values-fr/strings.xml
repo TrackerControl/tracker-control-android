@@ -54,7 +54,9 @@
     <string name="troubleshooting_exclude_title">Exclure des applications du VPN</string>
     <string name="troubleshooting_exclude_desc">Si une application ne fonctionne pas correctement avec TrackerControl, vous pouvez l\'exclure : tapez sur l\'application dans la liste principale, puis désactivez le bouton VPN pour cette application.</string>
     <string name="troubleshooting_categories_title">Bloquer des catégories de traqueurs spécifiques</string>
+    <string name="troubleshooting_categories_desc">Vous pouvez affiner le blocage pour chaque application en la touchant et en basculant les catégories individuelles de traqueurs (par exemple Analytics, Pubs) sur l\'onglet Traqueurs.</string>
     <string name="troubleshooting_alwayson_title">VPN permanent</string>
+    <string name="troubleshooting_alwayson_desc">Si \"Bloquer les connexions sans VPN\" (verrouillage) est activé dans les paramètres VPN d\'Android, TrackerControl ne peut pas fonctionner correctement. Désactiver cette option. Une notification apparaîtra si elle est détectée.</string>
     <string name="troubleshooting_alwayson_action">Ouvrir les paramètres VPN</string>
     <string name="menu_apps">Autres applications</string>
     <string name="menu_protocol_other">Autres</string>
@@ -171,6 +173,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_doh_unreachable">Le DNS sécurisé (DoH) ne peut pas être atteint alors que vous avez une connexion internet active. Si cela se produit à plusieurs reprises, envisagez de le désactiver dans les paramètres du réseau.</string>
     <string name="msg_start_failed">Android vient refuser de démarrer le VPN. Ceci est probablement dû à un bogue dans votre version d\'Android.</string>
     <string name="msg_try">Essayez TrackerControl</string>
+    <string name="msg_doze">Pour des résultats fiables, les optimisations de la batterie d\'Android doivent être désactivées pour TrackerControl.\n\nDans la fenêtre suivante, sélectionnez « Toutes les applications » en haut, appuyez sur TrackerControl dans la liste, puis sélectionnez et confirmez « Ne pas optimiser ».</string>
     <string name="msg_datasaving">Pour des résultats fiables, les options de limitation de données d\'Android doivent être désactivées pour TrackerControl \n\nDans la fenêtre suivante, activez les options « Données en arrière-plan » et « Utilisation de données sans restriction »</string>
     <string name="msg_filter">Utiliser le filtrage fera qu\'Android attribuera l\'utilisation des données et de la batterie à TrackerControl - Android suppose que les données et la batterie sont utilisées par TrackerControl, plutôt que par les applications d\'origine</string>
     <string name="msg_filter4">Android 4 nécessite que le filtrage soit activé</string>
@@ -195,6 +198,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_vpn_cancelled">Connexion VPN a été arrêtée\nAvez-vous configuré un autre VPN en mode permanent ?</string>
     <string name="msg_unavailable">Cette fonctionnalité n’est pas disponible sur cette version d’Android</string>
     <string name="msg_always_on">Un autre VPN est défini comme toujours actif</string>
+    <string name="msg_always_on_lockdown">Désactiver \"Bloquer les connexions sans VPN\" dans les paramètres VPN d\'Android pour utiliser TrackerControl</string>
     <string name="msg_start_forward">Lancer la redirection du %1$s port %2$d au %3$s:%4$d de \'%5$s\' ?</string>
     <string name="msg_stop_forward">Arrêter la redirection du %1$s port %2$d ?</string>
     <string name="msg_log_logcat">Attention, le blocage est désactivé car la journalisation ADB est activée.</string>
@@ -440,6 +444,11 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_welcome_desc">TrackerControl est un projet de recherche porté par la communauté, qui vous permet de :\n\n• <b>Surveiller</b> la collecte cachée de données par les applications mobiles en temps réel.\n• <b>Bloquer</b> les traqueurs et les publicités, en utilisant notre base de données de <b>2 000 000 applications analysées</b>.\n• <b>Identifier</b> les entreprises et les pays de destination recevant vos données.\n\nToutes les analyses s\'effectuent <b>localement sur votre appareil</b> – votre trafic reste toujours sous votre contrôle.</string>
     <string name="onboarding_vpn_title">Activer la protection</string>
     <string name="onboarding_vpn_blocked_action">Ouvrir les paramètres VPN</string>
+    <string name="onboarding_battery_action">Désactiver l\'optimisation</string>
+    <string name="onboarding_notify_title">Restez informé</string>
+    <string name="onboarding_privatedns_action">Ouvrir les paramètres DNS</string>
+    <string name="onboarding_lockdown_action">Ouvrir les paramètres VPN</string>
+    <string name="onboarding_blocking_title">Bloquer les traqueurs</string>
     <!-- Insights Screen -->
     <string name="insights_subtitle_7days">7 derniers jours</string>
     <string name="insights_tracking_attempts">Hôtes du traqueur contactés</string>
