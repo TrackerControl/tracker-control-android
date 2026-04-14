@@ -50,7 +50,7 @@
     <string name="troubleshooting_datasaver_title">Varčevanje s podatki</string>
     <string name="troubleshooting_datasaver_desc">Če se TrackerControl ne more povezati, ko je vklopljeno varčevanje podatkov, za njega omogočite neomejeno porabo podatkov.  Omogočite \"Prenos podatkov v ozadju\" in \"Neomejen prenos podatkov\".</string>
     <string name="troubleshooting_datasaver_action">Omogoči neomejen prenos podatkov</string>
-    <string name="troubleshooting_datasaver_ok">Varčevanje s podatki ne omejuje TrackerControla.</string>
+    <string name="troubleshooting_datasaver_ok">Varčevanje s podatki ne omejuje programa TrackerControl.</string>
     <string name="troubleshooting_exclude_title">Izključitev programov in VPN-a</string>
     <string name="troubleshooting_exclude_desc">Če program s TrackerControlom ne deluje pravilno, ga lahko izključite.  Na glavnem seznamu se dotaknite programa in za njega onemogočite VPN.</string>
     <string name="troubleshooting_categories_title">Blokiranje določenih kategorij sledenja</string>
@@ -380,8 +380,9 @@ Sincerely,\n\n]]></string>
     <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
     <string name="strict_blocking_explanation">Nenaprednim uporabnikom je priporočljivo onemogočiti to možnost, da se zmanjšajo okvare programov.  Vendar to dovoli nekaj osnovnega deljenja s podjetji.</string>
     <string name="setting_block_ambiguous_trackers">Blokiraj nejasne sledilce</string>
+    <string name="summary_block_ambiguous_trackers">Kadar ima IP dokaze tako o sledilnih in nesledilnih gostiteljskih imenih, ga vseeno blokiraj.  Onemogočite to možnost, če želite zmanjšati prizadetost programov.</string>
     <string name="setting_sni_enabled">Izločitev SNI (raziskovalno)</string>
-    <string name="summary_sni_enabled">Izloči gostiteljska imena iz povezav TLS za natančnejše zaznavanje sledilcev.  Opozorilo: to sledilnim strežnikom izda vaš naslov IP.  Na voljo samo za raziskovalne namene.</string>
+    <string name="summary_sni_enabled">Izloči gostiteljska imena iz povezav TLS za natančnejše zaznavanje sledilcev.  Opozorilo: to sledilnim strežnikom razkrije vaš naslov IP.  Na voljo samo za raziskovalne namene.</string>
     <string name="setting_blocking_mode">Način blokiranja</string>
     <string name="summary_blocking_mode_minimal">Minimalno: blokira samo sledilce s seznama DuckDuckGo, ki jih je varno blokirati.  Brskalniki in znani nezdružljivi programi so izključeni.  Delovanje nekaterih programov bo morda prizadeto.</string>
     <string name="summary_blocking_mode_standard">Običajno: blokira vse znane sledilce z več seznamov (X-Ray, Disconnect, DuckDuckGo).  Osnovne storitve so dovoljene.  Delovanje nekaterih programov bo prizadeto in jih boste morda morali ročno izključiti (glejte \"Odpravljanje težav\" v programskem meniju).</string>
@@ -397,6 +398,8 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_blockingmode_standard_desc">Blokira vse znane sledilce z več seznamov.  Delovanje nekaterih programov bo prizadeto in jih je treba ročno izključiti.</string>
     <string name="onboarding_blockingmode_strict_label">Strogo</string>
     <string name="onboarding_blockingmode_strict_desc">Blokira vse, vključno z osnovnimi storitvami in nejasnimi domenami.  Delovanje nekaterih programov bo znatno prizadeto in jih boste morali ročno izključiti.</string>
+    <string name="onboarding_blockingmode_research_label">Raziskovalno</string>
+    <string name="onboarding_blockingmode_research_desc">Brez blokiranja sledilcev.  Beleži prenose v ADB in omogoči izločitev SNI za boljše zaznavanje gostiteljskih imen.  Samo za raziskave: to sledilnim strežnikom razkrije vaš naslov IP.</string>
     <string name="exclude_vpn_explanation">Zazna in blokira sledilce za ta program.</string>
     <string name="vpn_exclude">Izključi iz VPN-a</string>
     <string name="vpn_exclude_explanation">Omogočite, če naletite na težave.  Program bo v celoti zaobšel TrackerControl.\n\nOpomba: Da bi to delovalo, morate v Androidovih nastavitvah VPN-a ONEMOGOČITI \"Blokiraj povezave brez VPN-a\".</string>
@@ -460,6 +463,9 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_vpn_desc">TrackerControl uporablja Androidov krajevni vmesnik VPN-a, da preuči vaš internetni promet.\n\n<b>Pomembno:</b> vpleten ni noben zunanji strežnik VPN.  Vaših podatkov ne vidimo.</string>
     <string name="onboarding_vpn_action">Omogoči VPN na napravi</string>
     <string name="onboarding_vpn_sure">TrackerControl ne more filtrirati prometa brez uporabe krajevnega VPN-a.  Ali res želite nadaljevati, ne da bi ga omogočili?</string>
+    <string name="onboarding_vpn_blocked_title">Dejaven je drugi VPN</string>
+    <string name="onboarding_vpn_blocked_desc">Android je TrackerControlu preprečil zagon svojega krajevnega VPN-a, ker je drug program nastavljen kot <b>Vedno vklopljen VPN</b>.  Odprite nastavitve VPN in onemogočite \"Vedno vklopljen\" za drug VPN in poizkusite znova.</string>
+    <string name="onboarding_vpn_blocked_action">Odpri nastavitve VPN</string>
     <string name="onboarding_battery_title">Prepreči motnje</string>
     <string name="onboarding_battery_desc">Android lahko uniči opravila v ozadju, da prihrani energijo.  Da zagotovite neprekinjeno zaščito pred sledilci, onemogočite optimizacije za TrackerControl.</string>
     <string name="onboarding_battery_action">Onemogoči optimizacijo</string>
@@ -514,8 +520,13 @@ Sincerely,\n\n]]></string>
     <string name="insights_shocking_fact">Ta teden so vaši programi navezali stiki s/z %1$d-imi sledilnimi podjetji preko %2$d gostiteljev sledenja!</string>
     <string name="insights_shocking_fact_playstore">Vaši programi so ta teden navezali stik s/z %1$d-imi sledilnimi podjetji!</string>
     <string name="insights_share">Deli s priijatelji</string>
+    <string name="insights_share_trackers_blocked">Blokiranih sledilnih gostiteljev</string>
+    <string name="insights_share_trackers_detected">Zaznanih sledilnih gostiteljev</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">S programom TrackerControl sem ta teden blokiral %1$d sledilnih gostiteljev od %2$d podjetij!  Prevzemite nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
+    <string name="insights_share_message_playstore">S programom TrackerControl sem ta teden zaznal %1$d sledilnih gostiteljev od %2$d podjetij!  Prevzemite nadzor nad svojo zasebnostjo: https://trackercontrol.org.</string>
     <string name="insights_see_more">Več →</string>
+    <string name="insights_view_timeline">Pokaži nedavno sledilno dejavnost</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Dodatne datoteke gostiteljev</string>
     <string name="summary_manage_blocklists">Ti so samo za izhod v sili.  TrackerControl vključuje svoje sezname gostiteljev, ki nudijo podatke o sledilnih podjetjih.</string>
@@ -523,5 +534,6 @@ Sincerely,\n\n]]></string>
     <string name="title_delete_blocklist">Izbriši datoteko gostiteljev</string>
     <string name="msg_delete_blocklist_confirm">Ali res želite izbrisati to datoteko gostiteljev?</string>
     <string name="msg_invalid_url">Neveljaven URL</string>
+    <string name="msg_apply_blocklists_failed">Uporaba datotek z gostitelji je spodletela.</string>
     <string name="msg_last_update">Zadnja posodobitev: %s</string>
 </resources>
