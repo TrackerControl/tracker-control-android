@@ -387,6 +387,8 @@ Sincerely,\n\n]]></string>
     <string name="trackers_static">Bibliotecas de rastreadores</string>
     <string name="trackers_static_explanation">TrackerControl detecta o rastreamento no código (\'bibliotecas\') e tráfego de rede de aplicativos.\n\nO rastreamento que é detectado no tráfego de rede pode ser bloqueado com o TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecta o rastreamento no código (\'bibliotecas\') e tráfego de rede de aplicativos.</string>
+    <string name="trackers_static_disclaimer">Nota: Detecção do código da biblioteca de rastreadores não significa que ele está sendo ativamente usado. Alguns apps podem ter removido ou desabilitado essas bibliotecas, mas ainda é possível detectar rastros.</string>
+    <string name="analyze_tracker_libraries">Analise bibliotecas rastreadoras</string>
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
     <string name="setting_domain_based_blocked">Bloqueio baseado no domínio</string>
