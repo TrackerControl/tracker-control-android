@@ -416,6 +416,7 @@ Sincerely,\n\n]]></string>
     <!-- Insights Screen -->
     <string name="insights_subtitle_7days">Últimos 7 dias</string>
     <string name="insights_blocked">Bloqueados</string>
+    <string name="insights_allowed">Permitidos</string>
     <string name="insights_tracker_companies">Empresas de Rastreamento</string>
     <string name="insights_apps_with_trackers">Apps com Rastreadores</string>
     <string name="insights_top_companies">Empresas de rastreamento mais ativas</string>
