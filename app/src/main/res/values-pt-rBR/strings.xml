@@ -27,7 +27,7 @@
     <string name="menu_legend">Legenda</string>
     <string name="menu_support">Apoie este app</string>
     <string name="menu_log_support">Explicação</string>
-    <string name="menu_troubleshooting">Solução de problemas</string>
+    <string name="menu_troubleshooting">Soluções</string>
     <string name="menu_about">Sobre</string>
     <string name="timeline_section_last_hour">Última hora</string>
     <string name="timeline_section_today">Hoje</string>
@@ -37,7 +37,7 @@
     <string name="timeline_tracker_allowed">Permitidos</string>
     <string name="timeline_summary_all_blocked">%d rastreadores bloqueados</string>
     <string name="timeline_summary_none_blocked">%d rastreadores permitidos</string>
-    <string name="troubleshooting_title">Solução de problemas</string>
+    <string name="troubleshooting_title">Soluções</string>
     <string name="troubleshooting_battery_title">Otimização de bateria</string>
     <string name="troubleshooting_battery_desc">Se o TrackerControl parar de funcionar em segundo plano, desabilite a otimização de bateria do Android para o TrackerControl. Selecione \"Todos os apps\", toque em TrackerControl e selecione \"Não otimizar\".</string>
     <string name="troubleshooting_battery_action">Desativar otimização de bateria</string>
@@ -152,6 +152,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_error">Um erro inesperado ocorreu: \'%s\'</string>
     <string name="msg_start_failed">Android recusou-se a iniciar o serviço VPN nesse momento. A causa mais provável seria um bug na sua versão do Android.</string>
     <string name="msg_try">Experimente o TrackerControl</string>
+    <string name="msg_doze">Para resultados consistentes, as otimizações de bateria do Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, selecione \"Todos os apps\" na parte superior, toque no TrackerControl na lista e selecione e confirme \"Não otimizar\".</string>
     <string name="msg_datasaving">Para resultados consistentes, as opções de economia de dados do Android devem ser desabilitadas para o TrackerControl.\n\nNa próxima caixa de diálogo, habilite as opções \"Dados em segundo plano\" e \"Uso de dados sem restrições\"</string>
     <string name="msg_filter">Usar filtragem pode fazer com que o Android atribua uso de dados e consumo de energia ao TrackerControl - o Android assume que o uso de dados e consumo de bateria são usados pelo TrackerControl e não pelas aplicações originais</string>
     <string name="msg_filter4">Android 4 requer que filtragem esteja ativada</string>
@@ -176,6 +177,8 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_vpn_cancelled">Conexão VPN cancelada\nVocê configurou outra VPN para ser uma VPN sempre ativa?</string>
     <string name="msg_unavailable">Este recurso não está disponível nesta versão do Android</string>
     <string name="msg_always_on">Outra aplicação VPN está definida como VPN sempre ativa</string>
+    <string name="msg_always_on_lockdown">Desative a opção \"Bloquear conexões sem VPN\" nas configurações de VPN do Android para usar o TrackerControl</string>
+    <string name="msg_private_dns">Desative \"DNS privado\" nas configurações de rede do Android. O TrackerControl fornece seu próprio recurso de DNS seguro nas Configurações.</string>
     <string name="msg_start_forward">Iniciar encaminhamento de %1$s porta %2$d para %3$s:%4$d de \'%5$s\'?</string>
     <string name="msg_stop_forward">Parar encaminhamento de %1$s porta %2$d?</string>
     <string name="msg_log_logcat">Aviso: Bloqueio desativado por causa do log do ADB.</string>
@@ -269,6 +272,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="tab_actions">Meus dados</string>
     <string name="tracker_name">Nome do rastreador</string>
     <string name="internet_access">Acesso à Internet</string>
+    <string name="internet_access_explanation">Você também pode tocar no ícone do app na tela principal.</string>
     <string name="app_info">Gerenciar app</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
@@ -348,6 +352,8 @@ Sincerely,\n\n]]></string>
     <string name="strict_blocking_explanation">Recomenda-se que não especialistas desativem essa opção para reduzir a quebra do aplicativo. No entanto, isso permite alguns compartilhamentos essenciais com empresas.</string>
     <string name="setting_block_ambiguous_trackers">Bloquear rastreadores ambíguos</string>
     <string name="setting_blocking_mode">Modo de Bloqueio</string>
+    <string name="summary_blocking_mode_standard">Padrão: Bloqueia todos os rastreadores conhecidos de várias listas (X-Ray, Disconnect, DuckDuckGo). Serviços essenciais são permitidos. Alguns apps irão quebrar e podem ser excluídos manualmente (ver soluções no menu do app).</string>
+    <string name="summary_blocking_mode_strict">Rigoroso: Bloqueia todos os rastreadores conhecidos, incluindo serviços essenciais e domínios com IP compartilhado. Muitos apps irão falhar e precisam ser excluídos manualmente (ver soluções no menu do app).</string>
     <string name="blocking_mode_minimal">Mínimo</string>
     <string name="blocking_mode_standard">Padrão</string>
     <string name="blocking_mode_strict">Rigoroso</string>
@@ -359,6 +365,7 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_blockingmode_research_label">Pesquisa</string>
     <string name="exclude_vpn_explanation">Detecta e bloqueia rastreadores para este app.</string>
     <string name="vpn_exclude">Excluir da VPN</string>
+    <string name="vpn_exclude_explanation">Habilite se você se deparar com problemas. O aplicativo irá ignorar completamente o TrackerControl\n\nNota: \"Bloquear conexões sem VPN\" nas configurações de VPN do Android deve ser DESATIVADA para funcionar.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Configurações do app &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilite o interruptor na tela principal e inicie o app para encontrar rastreadores</string>
@@ -412,7 +419,16 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_vpn_blocked_title">Outra VPN está ativa</string>
     <string name="onboarding_vpn_blocked_action">Abrir configurações de VPN</string>
     <string name="onboarding_notify_title">Mantenha-se informado</string>
+    <string name="onboarding_notify_desc">Permite notificações para ver atualizações em tempo real e controlar a proteção diretamente na barra de status.</string>
     <string name="onboarding_notify_action">Permitir notificações</string>
+    <string name="onboarding_notify_sure">Sem permissões de notificação, você não poderá ver atualizações ou proteção de controle em tempo real na barra de status. Tem certeza?</string>
+    <string name="onboarding_privatedns_title">Desabilitar DNS privado</string>
+    <string name="onboarding_privatedns_desc">O recurso \"DNS privado\" do Android interfere com a capacidade do TrackerControl de bloquear rastreadores. Esta configuração <b>deve ser definida como</b> desativada para continuar.</string>
+    <string name="onboarding_network_action">Conceder acesso irrestrito</string>
+    <string name="onboarding_lockdown_action">Abrir Configurações de VPN</string>
+    <string name="onboarding_dns_desc">Proteja sua privacidade do seu provedor de internet criptografando seu tráfego DNS usando DNS-over-HTTPS (DoH).\n\nIsso evita o “sequestro de DNS” e mantém seus hábitos de navegação em sigilo do seu provedor de rede.</string>
+    <string name="onboarding_dns_action">Habilitar DNS seguro</string>
+    <string name="onboarding_dns_action_disable">Desabilitar o DNS seguro</string>
     <string name="onboarding_action_granted">Concedido</string>
     <string name="onboarding_action_optimized">Otimizado</string>
     <!-- Insights Screen -->
@@ -430,6 +446,7 @@ Sincerely,\n\n]]></string>
     <string name="insights_shocking_fact_playstore">Seus aplicativos entraram em contato com %1$d empresas de rastreamento esta semana!</string>
     <string name="insights_share">Compartilhe com Amigos</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message_playstore">Eu detectei %1$d hosts de rastreamento de %2$d empresas esta semana usando TrackerControl! Recupere sua privacidade: https://trackercontrol.org</string>
     <string name="insights_see_more">Ver Mais →</string>
     <string name="insights_view_timeline">Ver atividade recente de rastreadores</string>
     <!-- What's New onboarding slide (not translated) -->
