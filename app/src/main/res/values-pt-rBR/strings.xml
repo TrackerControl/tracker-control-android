@@ -29,6 +29,8 @@
     <string name="menu_log_support">Explicação</string>
     <string name="menu_troubleshooting">Soluções</string>
     <string name="menu_about">Sobre</string>
+    <string name="menu_timeline">Atividade de rastreamento</string>
+    <string name="timeline_empty">Nenhuma atividade recente de rastreadores.\n\nHabilitar o TrackerControl para ver quais apps te rastreiam.</string>
     <string name="timeline_section_last_hour">Última hora</string>
     <string name="timeline_section_today">Hoje</string>
     <string name="timeline_section_yesterday">Ontem</string>
@@ -49,6 +51,7 @@
     <string name="troubleshooting_datasaver_ok">A Economia de dados não está restringindo o TrackerControl.</string>
     <string name="troubleshooting_exclude_title">Excluindo apps da VPN</string>
     <string name="troubleshooting_categories_title">Bloqueando categorias específicas de rastreamento</string>
+    <string name="troubleshooting_alwayson_title">VPN sempre ativa</string>
     <string name="troubleshooting_alwayson_desc">Se \"Bloquear conexões sem VPN\" (lockdown) estiver ativado nas configurações de VPN do Android, o TrackerControl não pode funcionar corretamente. Desativar esta opção. Uma notificação aparecerá se for detectada.</string>
     <string name="troubleshooting_alwayson_action">Abrir configurações de VPN</string>
     <string name="menu_apps">Outros apps</string>
@@ -371,10 +374,12 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_blockingmode_title">Escolher Modo de Bloqueio</string>
     <string name="onboarding_blockingmode_desc">Escolha como o TrackerControl deve lidar com rastreadores. Bloqueio dos modos de bloqueio dos rastreadores a diferentes níveis de agressividade; O modo de pesquisa continua bloqueando e ativa a extração SNI somente para medição. Você pode alterar esta opção mais tarde em Configurações.</string>
     <string name="onboarding_blockingmode_minimal_label">Mínimo (recomendado para novos usuários)</string>
+    <string name="onboarding_blockingmode_minimal_desc">Bloqueia apenas rastreadores que são seguros para bloquear. Quebra de apps limitada. Bom para a maioria dos usuários.</string>
     <string name="onboarding_blockingmode_standard_label">Padrão</string>
     <string name="onboarding_blockingmode_strict_label">Rigoroso</string>
     <string name="onboarding_blockingmode_strict_desc">Bloqueia tudo, incluindo serviços essenciais e domínios ambíguos. Falhas significativas em aplicativos — muitos aplicativos precisarão ser excluídos manualmente.</string>
     <string name="onboarding_blockingmode_research_label">Pesquisa</string>
+    <string name="onboarding_blockingmode_research_desc">Sem bloqueio do rastreador. Transmissões de logs para ADB e permite a extração SNI para melhor detecção de nome de host. Apenas pesquisa: isso vaza seu endereço IP para servidores de rastreadores.</string>
     <string name="exclude_vpn_explanation">Detecta e bloqueia rastreadores para este app.</string>
     <string name="vpn_exclude">Excluir da VPN</string>
     <string name="vpn_exclude_explanation">Habilite se você se deparar com problemas. O aplicativo irá ignorar completamente o TrackerControl\n\nNota: \"Bloquear conexões sem VPN\" nas configurações de VPN do Android deve ser DESATIVADA para funcionar.</string>
@@ -432,25 +437,38 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_welcome_title">Assuma o controle de sua privacidade</string>
     <string name="onboarding_vpn_title">Ativar proteção</string>
     <string name="onboarding_vpn_blocked_title">Outra VPN está ativa</string>
+    <string name="onboarding_vpn_blocked_desc">O Android impediu o TrackerControl de iniciar sua VPN local porque outro app está definido como <b>VPN sempre ativa</b>. Abra as configurações de VPN e desative a opção VPN sempre ativa para a outra VPN e tente novamente.</string>
     <string name="onboarding_vpn_blocked_action">Abrir configurações de VPN</string>
     <string name="onboarding_battery_title">Impedir Interrupção</string>
+    <string name="onboarding_battery_desc">O Android pode encerrar aplicativos em segundo plano para economizar bateria. Para garantir uma proteção contínua contra rastreadores, desative as otimizações para TrackerControl.</string>
+    <string name="onboarding_battery_action">Desabilitar Otimização</string>
+    <string name="onboarding_battery_sure">Sem desativar as otimizações de bateria, o TrackerControl pode ser interrompido pelo Android a qualquer momento. Tem certeza de que deseja continuar?</string>
     <string name="onboarding_notify_title">Mantenha-se informado</string>
     <string name="onboarding_notify_desc">Permite notificações para ver atualizações em tempo real e controlar a proteção diretamente na barra de status.</string>
     <string name="onboarding_notify_action">Permitir notificações</string>
     <string name="onboarding_notify_sure">Sem permissões de notificação, você não poderá ver atualizações ou proteção de controle em tempo real na barra de status. Tem certeza?</string>
     <string name="onboarding_privatedns_title">Desabilitar DNS privado</string>
     <string name="onboarding_privatedns_desc">O recurso \"DNS privado\" do Android interfere com a capacidade do TrackerControl de bloquear rastreadores. Esta configuração <b>deve ser definida como</b> desativada para continuar.</string>
+    <string name="onboarding_privatedns_instruction">Configurações -&gt; Rede &amp; Internet -&gt; DNS privado -&gt; Desligado.</string>
     <string name="onboarding_privatedns_action">Abrir configurações de DNS</string>
+    <string name="onboarding_privatedns_skip_title">Ignorar o DNS privado desativado?</string>
     <string name="onboarding_privatedns_skip_msg">Prosseguir com DNS privado habilitado irá restringir fortemente o TrackerControl. A maioria do rastreamento não será bloqueada, deixando apenas a análise da biblioteca de rastreamento. Além disso, o filtro da VPN será desativado para garantir as funcionalidades básicas.</string>
     <string name="onboarding_network_title">Rede irrestrita</string>
+    <string name="onboarding_network_desc">A Economia de dados pode impedir que o TrackerControl funcione corretamente em segundo plano. Conceda acesso irrestrito para uma proteção mais confiável.</string>
     <string name="onboarding_network_action">Conceder acesso irrestrito</string>
     <string name="onboarding_lockdown_action">Abrir Configurações de VPN</string>
     <string name="onboarding_dns_title">DNS seguro (Recurso beta; pode não funcionar como esperado)</string>
     <string name="onboarding_dns_desc">Proteja sua privacidade do seu provedor de internet criptografando seu tráfego DNS usando DNS-over-HTTPS (DoH).\n\nIsso evita o “sequestro de DNS” e mantém seus hábitos de navegação em sigilo do seu provedor de rede.</string>
     <string name="onboarding_dns_action">Habilitar DNS seguro</string>
     <string name="onboarding_dns_action_disable">Desabilitar o DNS seguro</string>
+    <string name="onboarding_blocking_action">Habilitar bloqueio</string>
+    <string name="onboarding_blocking_action_disable">Desabilitar Bloqueio</string>
+    <string name="onboarding_blocking_sure">O bloqueio de rastreamento é um recurso central do TrackerControl. Tem certeza de que deseja desativá-lo?</string>
+    <string name="onboarding_action_enabled">Habilitado</string>
+    <string name="onboarding_action_disabled">Desabilitado</string>
     <string name="onboarding_action_granted">Concedido</string>
     <string name="onboarding_action_optimized">Otimizado</string>
+    <string name="onboarding_action_unrestricted">Irrestrito</string>
     <!-- Insights Screen -->
     <string name="insights_subtitle_7days">Últimos 7 dias</string>
     <string name="insights_blocked">Bloqueados</string>
@@ -473,10 +491,10 @@ Sincerely,\n\n]]></string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Arquivos de host adicionais</string>
     <string name="summary_manage_blocklists">Essas são apenas para fallback. O TrackerControl inclui suas próprias listas de host que dão informações sobre as empresas por trás do rastreador.</string>
-    <string name="title_add_blocklist">Adicionar arquivo de host</string>
-    <string name="title_delete_blocklist">Excluir arquivo de host</string>
-    <string name="msg_delete_blocklist_confirm">Tem certeza que deseja excluir este arquivo de host?</string>
+    <string name="title_add_blocklist">Adicionar arquivo host</string>
+    <string name="title_delete_blocklist">Excluir arquivo host</string>
+    <string name="msg_delete_blocklist_confirm">Tem certeza que deseja excluir este arquivo host?</string>
     <string name="msg_invalid_url">URL inválida</string>
-    <string name="msg_apply_blocklists_failed">Falha ao aplicar arquivos de host</string>
+    <string name="msg_apply_blocklists_failed">Falha ao aplicar arquivos host</string>
     <string name="msg_last_update">Última atualização: %s</string>
 </resources>
