@@ -37,6 +37,7 @@
     <string name="timeline_tracker_allowed">Permitidos</string>
     <string name="timeline_summary_all_blocked">%d rastreadores bloqueados</string>
     <string name="timeline_summary_none_blocked">%d rastreadores permitidos</string>
+    <string name="timeline_summary_mixed">%1$d bloqueado · %2$d permitido</string>
     <string name="troubleshooting_title">Soluções</string>
     <string name="troubleshooting_battery_title">Otimização de bateria</string>
     <string name="troubleshooting_battery_desc">Se o TrackerControl parar de funcionar em segundo plano, desabilite a otimização de bateria do Android para o TrackerControl. Selecione \"Todos os apps\", toque em TrackerControl e selecione \"Não otimizar\".</string>
@@ -45,7 +46,11 @@
     <string name="troubleshooting_datasaver_title">Economia de dados</string>
     <string name="troubleshooting_datasaver_desc">Se o TrackerControl não conseguir conectar quando a economia de dados estiver ativada, permita o uso irrestrito de dados para o TrackerControl. Ative \"Dados em segundo plano\" e \"Uso irrestrito de dados\".</string>
     <string name="troubleshooting_datasaver_action">Permitir dados irrestritos</string>
+    <string name="troubleshooting_datasaver_ok">A Economia de dados não está restringindo o TrackerControl.</string>
+    <string name="troubleshooting_exclude_title">Excluindo apps da VPN</string>
+    <string name="troubleshooting_categories_title">Bloqueando categorias específicas de rastreamento</string>
     <string name="troubleshooting_alwayson_desc">Se \"Bloquear conexões sem VPN\" (lockdown) estiver ativado nas configurações de VPN do Android, o TrackerControl não pode funcionar corretamente. Desativar esta opção. Uma notificação aparecerá se for detectada.</string>
+    <string name="troubleshooting_alwayson_action">Abrir configurações de VPN</string>
     <string name="menu_apps">Outros apps</string>
     <string name="menu_protocol_other">Outros</string>
     <string name="menu_traffic_allowed">Permitidos</string>
@@ -61,6 +66,7 @@
     <string name="menu_reset">Redefinir</string>
     <string name="menu_cleanup">Limpar logs</string>
     <string name="setting_options">Geral</string>
+    <string name="setting_further_options">Mais opções</string>
     <string name="setting_dark">Tema escuro</string>
     <string name="setting_install">Notificar sobre nova instalação</string>
     <string name="setting_pause">Auto-habilitar após %1$s minutos</string>
@@ -105,8 +111,11 @@
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS seguro (DoH)</string>
     <string name="warning_beta">Recurso beta. Pode não funcionar como esperado.</string>
+    <string name="setting_doh_dns_fallback">DNS fallback</string>
+    <string name="summary_doh_dns_fallback">Usar DNS padrão (não criptografado) quando DoH não estiver disponível. Desativar pode quebrar aplicativos se o servidor DoH estiver desligado.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquear DNS privado do Android</string>
+    <string name="summary_block_dot">Com o DNS privado do Android ativado, o TC não consegue detectar nenhum rastreador e não funciona corretamente.</string>
     <string name="setting_stats_frequency">Intervalo de amostra: %s ms</string>
     <string name="setting_stats_samples">Número de amostras: %s s</string>
     <string name="setting_backup">Backup</string>
@@ -351,13 +360,16 @@ Sincerely,\n\n]]></string>
     <string name="summary_strict_blocking">Para aplicativos recém-instalados, bloqueie o máximo possível de compartilhamento de dados com empresas. A tendência é que mais aplicativos irão quebrar.</string>
     <string name="strict_blocking_explanation">Recomenda-se que não especialistas desativem essa opção para reduzir a quebra do aplicativo. No entanto, isso permite alguns compartilhamentos essenciais com empresas.</string>
     <string name="setting_block_ambiguous_trackers">Bloquear rastreadores ambíguos</string>
+    <string name="setting_sni_enabled">Extração SNI (pesquisa)</string>
     <string name="setting_blocking_mode">Modo de Bloqueio</string>
+    <string name="summary_blocking_mode_minimal">Mínimo: Apenas bloqueia os rastreadores da lista DuckDuckGo que são seguros para bloquear. Navegadores e aplicativos incompatíveis conhecidos são automaticamente excluídos. Quebra de apps limitada.</string>
     <string name="summary_blocking_mode_standard">Padrão: Bloqueia todos os rastreadores conhecidos de várias listas (X-Ray, Disconnect, DuckDuckGo). Serviços essenciais são permitidos. Alguns apps irão quebrar e podem ser excluídos manualmente (ver soluções no menu do app).</string>
     <string name="summary_blocking_mode_strict">Rigoroso: Bloqueia todos os rastreadores conhecidos, incluindo serviços essenciais e domínios com IP compartilhado. Muitos apps irão falhar e precisam ser excluídos manualmente (ver soluções no menu do app).</string>
     <string name="blocking_mode_minimal">Mínimo</string>
     <string name="blocking_mode_standard">Padrão</string>
     <string name="blocking_mode_strict">Rigoroso</string>
     <string name="onboarding_blockingmode_title">Escolher Modo de Bloqueio</string>
+    <string name="onboarding_blockingmode_desc">Escolha como o TrackerControl deve lidar com rastreadores. Bloqueio dos modos de bloqueio dos rastreadores a diferentes níveis de agressividade; O modo de pesquisa continua bloqueando e ativa a extração SNI somente para medição. Você pode alterar esta opção mais tarde em Configurações.</string>
     <string name="onboarding_blockingmode_minimal_label">Mínimo (recomendado para novos usuários)</string>
     <string name="onboarding_blockingmode_standard_label">Padrão</string>
     <string name="onboarding_blockingmode_strict_label">Rigoroso</string>
@@ -390,6 +402,9 @@ Sincerely,\n\n]]></string>
     <string name="tracking_detection_failed_ram">A detecção da biblioteca do rastreador falhou. Não há RAM suficiente.</string>
     <string name="tracking_detection_failed_report">A detecção da biblioteca do rastreador falhou. Por favor, reporte este problema para o desenvolvedor.</string>
     <string name="detected_trackers">Bibliotecas de rastreadores detectadas: %s</string>
+    <string name="analyzing_classes">Analisando classes…</string>
+    <string name="analyzing_classes_progress">Analisando classes… %d%%</string>
+    <string name="analysis_already_running">Análise já em andamento</string>
     <string name="none">Nenhum</string>
     <string name="trackers_static">Bibliotecas de rastreadores</string>
     <string name="trackers_static_explanation">TrackerControl detecta o rastreamento no código (\'bibliotecas\') e tráfego de rede de aplicativos.\n\nO rastreamento que é detectado no tráfego de rede pode ser bloqueado com o TrackerControl.</string>
@@ -418,14 +433,19 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_vpn_title">Ativar proteção</string>
     <string name="onboarding_vpn_blocked_title">Outra VPN está ativa</string>
     <string name="onboarding_vpn_blocked_action">Abrir configurações de VPN</string>
+    <string name="onboarding_battery_title">Impedir Interrupção</string>
     <string name="onboarding_notify_title">Mantenha-se informado</string>
     <string name="onboarding_notify_desc">Permite notificações para ver atualizações em tempo real e controlar a proteção diretamente na barra de status.</string>
     <string name="onboarding_notify_action">Permitir notificações</string>
     <string name="onboarding_notify_sure">Sem permissões de notificação, você não poderá ver atualizações ou proteção de controle em tempo real na barra de status. Tem certeza?</string>
     <string name="onboarding_privatedns_title">Desabilitar DNS privado</string>
     <string name="onboarding_privatedns_desc">O recurso \"DNS privado\" do Android interfere com a capacidade do TrackerControl de bloquear rastreadores. Esta configuração <b>deve ser definida como</b> desativada para continuar.</string>
+    <string name="onboarding_privatedns_action">Abrir configurações de DNS</string>
+    <string name="onboarding_privatedns_skip_msg">Prosseguir com DNS privado habilitado irá restringir fortemente o TrackerControl. A maioria do rastreamento não será bloqueada, deixando apenas a análise da biblioteca de rastreamento. Além disso, o filtro da VPN será desativado para garantir as funcionalidades básicas.</string>
+    <string name="onboarding_network_title">Rede irrestrita</string>
     <string name="onboarding_network_action">Conceder acesso irrestrito</string>
     <string name="onboarding_lockdown_action">Abrir Configurações de VPN</string>
+    <string name="onboarding_dns_title">DNS seguro (Recurso beta; pode não funcionar como esperado)</string>
     <string name="onboarding_dns_desc">Proteja sua privacidade do seu provedor de internet criptografando seu tráfego DNS usando DNS-over-HTTPS (DoH).\n\nIsso evita o “sequestro de DNS” e mantém seus hábitos de navegação em sigilo do seu provedor de rede.</string>
     <string name="onboarding_dns_action">Habilitar DNS seguro</string>
     <string name="onboarding_dns_action_disable">Desabilitar o DNS seguro</string>
@@ -446,6 +466,7 @@ Sincerely,\n\n]]></string>
     <string name="insights_shocking_fact_playstore">Seus aplicativos entraram em contato com %1$d empresas de rastreamento esta semana!</string>
     <string name="insights_share">Compartilhe com Amigos</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Eu bloqueei %1$d rastreadores de %2$d empresas esta semana usando TrackerControl! Recupere sua privacidade: https://trackercontrol.org</string>
     <string name="insights_share_message_playstore">Eu detectei %1$d hosts de rastreamento de %2$d empresas esta semana usando TrackerControl! Recupere sua privacidade: https://trackercontrol.org</string>
     <string name="insights_see_more">Ver Mais →</string>
     <string name="insights_view_timeline">Ver atividade recente de rastreadores</string>
