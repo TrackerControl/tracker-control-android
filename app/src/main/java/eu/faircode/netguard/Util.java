@@ -588,9 +588,10 @@ public class Util {
                 return mapIPOrganization.get(ip);
         }
         BufferedReader reader = null;
+        HttpURLConnection connection = null;
         try {
             URL url = new URL("https://ipinfo.io/" + ip + "/org");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.setRequestMethod("GET");
             connection.setReadTimeout(15 * 1000);
@@ -609,6 +610,8 @@ public class Util {
         } finally {
             if (reader != null)
                 reader.close();
+            if (connection != null)
+                connection.disconnect();
         }
     }
 
