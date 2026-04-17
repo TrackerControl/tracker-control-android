@@ -27,6 +27,10 @@
                 android:id="@+id/menu_app_unprotected"
                 android:checkable="true"
                 android:title="@string/menu_app_unprotected"/>
+            <item
+                android:id="@+id/menu_app_frozen"
+                android:checkable="true"
+                android:title="@string/menu_app_frozen"/>
         </menu>
     </item>
     <item

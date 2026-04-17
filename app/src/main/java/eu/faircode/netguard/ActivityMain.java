@@ -759,6 +759,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 "show_system".equals(name) ||
                 "show_nointernet".equals(name) ||
                 "show_unprotected".equals(name) ||
+                "show_frozen".equals(name) ||
                 "sort".equals(name) ||
                 "imported".equals(name)) {
             if ("sort".equals(name))
@@ -947,6 +948,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         menu.findItem(R.id.menu_app_nointernet).setChecked(prefs.getBoolean("show_nointernet", true));
         menu.findItem(R.id.menu_app_unprotected).setChecked(prefs.getBoolean("show_unprotected", false));
+        menu.findItem(R.id.menu_app_frozen).setChecked(prefs.getBoolean("show_frozen", false));
 
         String sort = prefs.getString("sort", "trackers_week");
         if ("uid".equals(sort))
@@ -985,6 +987,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (itemId == R.id.menu_app_unprotected) {
             item.setChecked(!item.isChecked());
             prefs.edit().putBoolean("show_unprotected", item.isChecked()).apply();
+            return true;
+        } else if (itemId == R.id.menu_app_frozen) {
+            item.setChecked(!item.isChecked());
+            prefs.edit().putBoolean("show_frozen", item.isChecked()).apply();
             return true;
         } else if (itemId == R.id.menu_sort_name) {
             item.setChecked(true);
