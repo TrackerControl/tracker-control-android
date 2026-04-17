@@ -653,4 +653,7 @@ Sincerely,\n\n]]></string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_apply_blocklists_failed">Failed to apply host files</string>
     <string name="msg_last_update">Last update: %s</string>
+
+    <string name="shortcut_on">Protection ON</string>
+    <string name="shortcut_off">Protection OFF</string>
 </resources>
