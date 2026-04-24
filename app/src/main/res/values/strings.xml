@@ -35,6 +35,11 @@
 
     <string name="title_tracker_activity">Tracker Activity</string>
     <string name="timeline_empty">No recent tracker activity.\n\nEnable TrackerControl to see which apps track you.</string>
+    <string name="timeline_empty_disabled_title">TrackerControl is off</string>
+    <string name="timeline_empty_disabled_subtitle">Enable TrackerControl using the switch at the top right. Tracker activity from your apps will then appear here.</string>
+    <string name="timeline_empty_enabled_title">Watching for trackers…</string>
+    <string name="timeline_empty_enabled_subtitle">Most apps only contact trackers while you use them. Open an app, then come back — its tracker activity will appear here.</string>
+    <string name="timeline_open_app">Open an app</string>
     <string name="timeline_section_last_hour">Last hour</string>
     <string name="timeline_section_today">Today</string>
     <string name="timeline_section_yesterday">Yesterday</string>

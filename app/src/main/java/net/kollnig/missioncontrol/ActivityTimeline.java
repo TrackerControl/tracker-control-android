@@ -1,12 +1,16 @@
 package net.kollnig.missioncontrol;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,8 +18,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.button.MaterialButton;
 
 import net.kollnig.missioncontrol.data.TimelineEntry;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -32,9 +40,23 @@ import eu.faircode.netguard.DatabaseHelper;
 
 public class ActivityTimeline extends AppCompatActivity implements TimelineAdapter.OnEntryClickListener {
 
+    private static final long REFRESH_DEBOUNCE_MS = 500L;
+
     private TimelineAdapter adapter;
-    private TextView tvEmpty;
+    private LinearLayout llEmpty;
+    private TextView tvEmptyTitle;
+    private TextView tvEmptySubtitle;
+    private MaterialButton btnOpenApp;
     private RecyclerView rvTimeline;
+    private SwipeRefreshLayout swipeRefresh;
+
+    private final Handler refreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable refreshRunnable = this::loadTimeline;
+    private final DatabaseHelper.AccessChangedListener accessListener =
+            () -> {
+                refreshHandler.removeCallbacks(refreshRunnable);
+                refreshHandler.postDelayed(refreshRunnable, REFRESH_DEBOUNCE_MS);
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +78,39 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
             return insets;
         });
 
-        tvEmpty = findViewById(R.id.tvEmpty);
+        llEmpty = findViewById(R.id.llEmpty);
+        tvEmptyTitle = findViewById(R.id.tvEmptyTitle);
+        tvEmptySubtitle = findViewById(R.id.tvEmptySubtitle);
+        btnOpenApp = findViewById(R.id.btnOpenApp);
         rvTimeline = findViewById(R.id.rvTimeline);
-        rvTimeline.setLayoutManager(new LinearLayoutManager(this));
+        swipeRefresh = findViewById(R.id.swipeRefresh);
 
+        rvTimeline.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TimelineAdapter(this, this);
         rvTimeline.setAdapter(adapter);
+
+        swipeRefresh.setOnRefreshListener(this::loadTimeline);
+
+        btnOpenApp.setOnClickListener(v -> {
+            Intent home = new Intent(Intent.ACTION_MAIN);
+            home.addCategory(Intent.CATEGORY_HOME);
+            home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(home);
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        DatabaseHelper.getInstance(this).addAccessChangedListener(accessListener);
         loadTimeline();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DatabaseHelper.getInstance(this).removeAccessChangedListener(accessListener);
+        refreshHandler.removeCallbacks(refreshRunnable);
     }
 
     @Override
@@ -95,10 +138,32 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
             @Override
             protected void onPostExecute(List<TimelineEntry> entries) {
                 adapter.setEntries(entries);
-                tvEmpty.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
-                rvTimeline.setVisibility(entries.isEmpty() ? View.GONE : View.VISIBLE);
+                swipeRefresh.setRefreshing(false);
+                if (entries.isEmpty()) {
+                    showEmptyState();
+                } else {
+                    llEmpty.setVisibility(View.GONE);
+                    rvTimeline.setVisibility(View.VISIBLE);
+                }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void showEmptyState() {
+        rvTimeline.setVisibility(View.GONE);
+        llEmpty.setVisibility(View.VISIBLE);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean enabled = prefs.getBoolean("enabled", false);
+        if (enabled) {
+            tvEmptyTitle.setText(R.string.timeline_empty_enabled_title);
+            tvEmptySubtitle.setText(R.string.timeline_empty_enabled_subtitle);
+            btnOpenApp.setVisibility(View.VISIBLE);
+        } else {
+            tvEmptyTitle.setText(R.string.timeline_empty_disabled_title);
+            tvEmptySubtitle.setText(R.string.timeline_empty_disabled_subtitle);
+            btnOpenApp.setVisibility(View.GONE);
+        }
     }
 
     private List<TimelineEntry> buildTimeline() {

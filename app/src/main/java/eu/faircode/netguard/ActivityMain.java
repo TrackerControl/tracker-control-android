@@ -310,10 +310,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                         }
 
-                    boolean filter = prefs.getBoolean("filter", true);
-                    if (filter && Util.isPrivateDns(ActivityMain.this))
-                        Toast.makeText(ActivityMain.this, R.string.msg_private_dns, Toast.LENGTH_LONG).show();
-
                     try {
                         final Intent prepare = VpnService.prepare(ActivityMain.this);
                         if (prepare == null) {
@@ -418,20 +414,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 ServiceSinkhole.reload("pull", ActivityMain.this, false);
                 updateApplicationList(null);
                 loadInsightsData();
-            }
-        });
-
-        // Hint usage
-        final LinearLayout llUsage = findViewById(R.id.llUsage);
-        Button btnUsage = findViewById(R.id.btnUsage);
-        boolean hintUsage = prefs.getBoolean("hint_usage", true);
-        llUsage.setVisibility(hintUsage ? View.VISIBLE : View.GONE);
-        btnUsage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefs.edit().putBoolean("hint_usage", false).apply();
-                llUsage.setVisibility(View.GONE);
-                showHints();
             }
         });
 
@@ -1061,7 +1043,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void showHints() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean hintUsage = prefs.getBoolean("hint_usage", true);
 
         // Hint white listing
         final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);
@@ -1070,7 +1051,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
         boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
         llWhitelist.setVisibility(
-                !(whitelist_wifi || whitelist_other) && hintWhitelist && !hintUsage ? View.VISIBLE : View.GONE);
+                !(whitelist_wifi || whitelist_other) && hintWhitelist ? View.VISIBLE : View.GONE);
         btnWhitelist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1083,7 +1064,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         final LinearLayout llPush = findViewById(R.id.llPush);
         Button btnPush = findViewById(R.id.btnPush);
         boolean hintPush = prefs.getBoolean("hint_push", true);
-        llPush.setVisibility(hintPush && !hintUsage ? View.VISIBLE : View.GONE);
+        llPush.setVisibility(hintPush ? View.VISIBLE : View.GONE);
         btnPush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
