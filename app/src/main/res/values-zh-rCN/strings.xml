@@ -15,6 +15,7 @@
     <string name="menu_app_system">显示系统应用</string>
     <string name="menu_app_nointernet">显示非联网应用</string>
     <string name="menu_app_unprotected">仅显示未受保护的应用</string>
+    <string name="menu_app_frozen">显示已冻结的应用</string>
     <string name="menu_sort">排序应用</string>
     <string name="menu_sort_name">按名称排序</string>
     <string name="menu_sort_uid">按 UID 排序</string>
