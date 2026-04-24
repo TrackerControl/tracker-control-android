@@ -49,8 +49,6 @@ import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import eu.faircode.netguard.Util;
-
 /**
  * Adapter that displays the insights hero card as a header in the main
  * RecyclerView.
@@ -129,13 +127,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         holder.tvSeeMore.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
         });
-        holder.llTimelineAction.setOnClickListener(v -> {
-            if (context instanceof eu.faircode.netguard.ActivityMain) {
-                ((eu.faircode.netguard.ActivityMain) context).switchToTimeline();
-                return;
-            }
-            context.startActivity(new Intent(context, ActivityTimeline.class));
-        });
+        // The insights card now lives on the Timeline tab, so the legacy
+        // "open timeline" shortcut is redundant.
+        holder.llTimelineAction.setVisibility(View.GONE);
         holder.itemView.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
         });

@@ -75,7 +75,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -85,11 +84,8 @@ import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.Common;
-import net.kollnig.missioncontrol.InsightsHeaderAdapter;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.TimelineFragment;
-import net.kollnig.missioncontrol.data.InsightsData;
-import net.kollnig.missioncontrol.data.InsightsDataProvider;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
 
@@ -101,8 +97,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
@@ -121,7 +115,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private MaterialSwitch swEnabled;
     private ImageView ivMetered;
     private SwipeRefreshLayout swipeRefresh;
-    private InsightsHeaderAdapter headerAdapter;
     private AdapterRule adapter = null;
     private MenuItem menuSearch = null;
     private BottomNavigationView bottomNav;
@@ -434,12 +427,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvApplication.setLayoutManager(llm);
         rvApplication.setItemViewCacheSize(20);
-        headerAdapter = new InsightsHeaderAdapter(this);
         adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
-        ConcatAdapter concatAdapter = new ConcatAdapter(headerAdapter, adapter);
-        rvApplication.setAdapter(concatAdapter);
-
-        loadInsightsData();
+        rvApplication.setAdapter(adapter);
 
         // Swipe to refresh
         swipeRefresh = findViewById(R.id.swipeRefresh);
@@ -449,7 +438,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Rule.clearCache(ActivityMain.this);
                 ServiceSinkhole.reload("pull", ActivityMain.this, false);
                 updateApplicationList(null);
-                loadInsightsData();
             }
         });
 
@@ -516,8 +504,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             super.onResume();
             return;
         }
-
-        loadInsightsData();
 
         DatabaseHelper.getInstance(this).addAccessChangedListener(accessChangedListener);
         if (adapter != null)
@@ -839,7 +825,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     }
                     if (intent.getBooleanExtra(EXTRA_REFRESH, false)) {
                         updateApplicationList(null);
-                        loadInsightsData();
                     }
                 } else
                     updateApplicationList(null);
@@ -913,8 +898,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     public void run() {
                         if (adapter != null)
                             adapter.getFilter().filter(newText);
-                        if (headerAdapter != null)
-                            headerAdapter.setVisible(TextUtils.isEmpty(newText));
                     }
                 };
                 searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_MS);
@@ -929,8 +912,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
                 if (adapter != null)
                     adapter.getFilter().filter(null);
-                if (headerAdapter != null)
-                    headerAdapter.setVisible(true);
                 return true;
             }
         });
@@ -1082,11 +1063,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intent.putExtra(Intent.EXTRA_TITLE,
                 "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
         return intent;
-    }
-
-    public void switchToTimeline() {
-        if (bottomNav != null)
-            bottomNav.setSelectedItemId(R.id.nav_timeline);
     }
 
     private void selectTab(int itemId) {
@@ -1424,16 +1400,4 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
     }
 
-    private void loadInsightsData() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            InsightsDataProvider provider = new InsightsDataProvider(this);
-            InsightsData data = provider.computeInsights();
-            runOnUiThread(() -> {
-                if (headerAdapter != null) {
-                    headerAdapter.setData(data);
-                }
-            });
-        });
-    }
 }

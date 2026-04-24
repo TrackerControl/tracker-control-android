@@ -1,53 +1,13 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeRefreshTimeline"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/llEmpty"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTimeline"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="32dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/tvEmptyTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/timeline_empty_enabled_title"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
-
-        <TextView
-            android:id="@+id/tvEmptySubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:text="@string/timeline_empty_enabled_subtitle"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textColor="?android:textColorSecondary" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnOpenApp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/timeline_open_app" />
-    </LinearLayout>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshTimeline"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTimeline"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</FrameLayout>
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical" />
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

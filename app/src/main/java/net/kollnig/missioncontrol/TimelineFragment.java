@@ -12,19 +12,18 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.button.MaterialButton;
-
+import net.kollnig.missioncontrol.data.InsightsData;
+import net.kollnig.missioncontrol.data.InsightsDataProvider;
 import net.kollnig.missioncontrol.data.TimelineEntry;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerContact;
@@ -35,6 +34,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.faircode.netguard.DatabaseHelper;
 
@@ -42,21 +43,21 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
     private static final long REFRESH_DEBOUNCE_MS = 500L;
 
-    private TimelineAdapter adapter;
-    private LinearLayout llEmpty;
-    private TextView tvEmptyTitle;
-    private TextView tvEmptySubtitle;
-    private MaterialButton btnOpenApp;
+    private TimelineAdapter timelineAdapter;
+    private InsightsHeaderAdapter insightsAdapter;
+    private TimelineEmptyAdapter emptyAdapter;
     private RecyclerView rvTimeline;
     private SwipeRefreshLayout swipeRefresh;
 
     private final Handler refreshHandler = new Handler(Looper.getMainLooper());
-    private final Runnable refreshRunnable = this::loadTimeline;
+    private final Runnable refreshRunnable = this::refreshAll;
     private final DatabaseHelper.AccessChangedListener accessListener =
             () -> {
                 refreshHandler.removeCallbacks(refreshRunnable);
                 refreshHandler.postDelayed(refreshRunnable, REFRESH_DEBOUNCE_MS);
             };
+
+    private ExecutorService insightsExecutor;
 
     @Nullable
     @Override
@@ -69,32 +70,27 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        llEmpty = view.findViewById(R.id.llEmpty);
-        tvEmptyTitle = view.findViewById(R.id.tvEmptyTitle);
-        tvEmptySubtitle = view.findViewById(R.id.tvEmptySubtitle);
-        btnOpenApp = view.findViewById(R.id.btnOpenApp);
         rvTimeline = view.findViewById(R.id.rvTimeline);
         swipeRefresh = view.findViewById(R.id.swipeRefreshTimeline);
 
         rvTimeline.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new TimelineAdapter(requireContext(), this);
-        rvTimeline.setAdapter(adapter);
+        insightsAdapter = new InsightsHeaderAdapter(requireContext());
+        emptyAdapter = new TimelineEmptyAdapter();
+        timelineAdapter = new TimelineAdapter(requireContext(), this);
 
-        swipeRefresh.setOnRefreshListener(this::loadTimeline);
+        ConcatAdapter concat = new ConcatAdapter(insightsAdapter, emptyAdapter, timelineAdapter);
+        rvTimeline.setAdapter(concat);
 
-        btnOpenApp.setOnClickListener(v -> {
-            Intent home = new Intent(Intent.ACTION_MAIN);
-            home.addCategory(Intent.CATEGORY_HOME);
-            home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(home);
-        });
+        swipeRefresh.setOnRefreshListener(this::refreshAll);
+
+        insightsExecutor = Executors.newSingleThreadExecutor();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         DatabaseHelper.getInstance(requireContext()).addAccessChangedListener(accessListener);
-        loadTimeline();
+        refreshAll();
     }
 
     @Override
@@ -105,12 +101,26 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (insightsExecutor != null) {
+            insightsExecutor.shutdownNow();
+            insightsExecutor = null;
+        }
+    }
+
+    @Override
     public void onEntryClick(TimelineEntry entry) {
         Intent intent = new Intent(requireContext(), DetailsActivity.class);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, entry.appName);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, entry.packageName);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, entry.uid);
         startActivity(intent);
+    }
+
+    private void refreshAll() {
+        loadTimeline();
+        loadInsights();
     }
 
     private void loadTimeline() {
@@ -124,42 +134,36 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
             protected void onPostExecute(List<TimelineEntry> entries) {
                 if (!isAdded())
                     return;
-                adapter.setEntries(entries);
+                timelineAdapter.setEntries(entries);
                 swipeRefresh.setRefreshing(false);
-                if (entries.isEmpty()) {
-                    showEmptyState();
-                } else {
-                    llEmpty.setVisibility(View.GONE);
-                    rvTimeline.setVisibility(View.VISIBLE);
-                }
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                emptyAdapter.setTrackerControlEnabled(prefs.getBoolean("enabled", false));
+                emptyAdapter.setVisible(entries.isEmpty());
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void showEmptyState() {
-        rvTimeline.setVisibility(View.GONE);
-        llEmpty.setVisibility(View.VISIBLE);
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        boolean enabled = prefs.getBoolean("enabled", false);
-        if (enabled) {
-            tvEmptyTitle.setText(R.string.timeline_empty_enabled_title);
-            tvEmptySubtitle.setText(R.string.timeline_empty_enabled_subtitle);
-            btnOpenApp.setVisibility(View.VISIBLE);
-        } else {
-            tvEmptyTitle.setText(R.string.timeline_empty_disabled_title);
-            tvEmptySubtitle.setText(R.string.timeline_empty_disabled_subtitle);
-            btnOpenApp.setVisibility(View.GONE);
-        }
+    private void loadInsights() {
+        if (insightsExecutor == null || insightsExecutor.isShutdown())
+            return;
+        insightsExecutor.execute(() -> {
+            if (!isAdded())
+                return;
+            InsightsDataProvider provider = new InsightsDataProvider(requireContext());
+            InsightsData data = provider.computeInsights();
+            Handler main = new Handler(Looper.getMainLooper());
+            main.post(() -> {
+                if (isAdded() && insightsAdapter != null)
+                    insightsAdapter.setData(data);
+            });
+        });
     }
 
     private List<TimelineEntry> buildTimeline() {
         DatabaseHelper dh = DatabaseHelper.getInstance(requireContext());
         PackageManager pm = requireContext().getPackageManager();
 
-        // uid -> (companyName -> TrackerContact with latest time and blocked state)
-        // We use a compound key of "companyName|blocked" to keep separate entries
-        // for the same company when it has both blocked and allowed connections.
         Map<Integer, Map<String, TrackerContact>> uidTrackers = new LinkedHashMap<>();
         Map<Integer, Long> uidLatestTime = new LinkedHashMap<>();
         Map<Integer, String[]> uidAppInfo = new LinkedHashMap<>();
