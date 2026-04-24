@@ -130,6 +130,10 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             context.startActivity(new Intent(context, InsightsActivity.class));
         });
         holder.llTimelineAction.setOnClickListener(v -> {
+            if (context instanceof eu.faircode.netguard.ActivityMain) {
+                ((eu.faircode.netguard.ActivityMain) context).switchToTimeline();
+                return;
+            }
             context.startActivity(new Intent(context, ActivityTimeline.class));
         });
         holder.itemView.setOnClickListener(v -> {

@@ -40,6 +40,8 @@
     <string name="timeline_empty_enabled_title">Watching for trackers…</string>
     <string name="timeline_empty_enabled_subtitle">Most apps only contact trackers while you use them. Open an app, then come back — its tracker activity will appear here.</string>
     <string name="timeline_open_app">Open an app</string>
+    <string name="tab_timeline">Timeline</string>
+    <string name="tab_apps">Apps</string>
     <string name="timeline_section_last_hour">Last hour</string>
     <string name="timeline_section_today">Today</string>
     <string name="timeline_section_yesterday">Yesterday</string>

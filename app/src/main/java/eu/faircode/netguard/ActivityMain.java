@@ -80,12 +80,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.InsightsHeaderAdapter;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.TimelineFragment;
 import net.kollnig.missioncontrol.data.InsightsData;
 import net.kollnig.missioncontrol.data.InsightsDataProvider;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -122,6 +124,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private InsightsHeaderAdapter headerAdapter;
     private AdapterRule adapter = null;
     private MenuItem menuSearch = null;
+    private BottomNavigationView bottomNav;
+    private View llAppsContent;
+    private View timelineContainer;
+    private boolean showingTimeline = false;
     private AlertDialog dialogVpn = null;
     private AlertDialog dialogLegend = null;
     private AlertDialog dialogAbout = null;
@@ -376,6 +382,36 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
+
+        // Bottom navigation: Timeline / Apps
+        llAppsContent = findViewById(R.id.llApps);
+        timelineContainer = findViewById(R.id.timelineContainer);
+        bottomNav = findViewById(R.id.bottomNav);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.timelineContainer, new TimelineFragment())
+                    .commit();
+        }
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            selectTab(item.getItemId());
+            return true;
+        });
+
+        int initialTab;
+        if (savedInstanceState == null) {
+            // Land new users on Timeline; keep returning users there too — it is
+            // the "what's happening now" dashboard. Apps is one tap away.
+            initialTab = R.id.nav_timeline;
+        } else {
+            initialTab = bottomNav.getSelectedItemId();
+            if (initialTab == 0)
+                initialTab = R.id.nav_timeline;
+        }
+        bottomNav.setSelectedItemId(initialTab);
+        selectTab(initialTab);
 
         // Disabled warning
         TextView tvDisabled = findViewById(R.id.tvDisabled);
@@ -919,6 +955,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public boolean onPrepareOptionsMenu(Menu menu) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        // Hide app-list-specific toolbar items when on the Timeline tab
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        MenuItem filterItem = menu.findItem(R.id.menu_filter);
+        MenuItem sortItem = menu.findItem(R.id.menu_sort);
+        if (searchItem != null) searchItem.setVisible(!showingTimeline);
+        if (filterItem != null) filterItem.setVisible(!showingTimeline);
+        if (sortItem != null) sortItem.setVisible(!showingTimeline);
+        if (showingTimeline)
+            return super.onPrepareOptionsMenu(menu);
+
         if (prefs.getBoolean("manage_system", false)) {
             menu.findItem(R.id.menu_app_user).setChecked(prefs.getBoolean("show_user", true));
             menu.findItem(R.id.menu_app_system).setChecked(prefs.getBoolean("show_system", false));
@@ -994,9 +1040,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             item.setChecked(true);
             prefs.edit().putString("sort", "uid").apply();
             return true;
-        } else if (itemId == R.id.menu_timeline) {
-            startActivity(new Intent(this, net.kollnig.missioncontrol.ActivityTimeline.class));
-            return true;
         } else if (itemId == R.id.menu_log) {
             if (Util.canFilter(this))
                 startActivity(new Intent(this, ActivityLog.class));
@@ -1039,6 +1082,42 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intent.putExtra(Intent.EXTRA_TITLE,
                 "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
         return intent;
+    }
+
+    public void switchToTimeline() {
+        if (bottomNav != null)
+            bottomNav.setSelectedItemId(R.id.nav_timeline);
+    }
+
+    private void selectTab(int itemId) {
+        boolean timeline = itemId == R.id.nav_timeline;
+        showingTimeline = timeline;
+        llAppsContent.setVisibility(timeline ? View.GONE : View.VISIBLE);
+        timelineContainer.setVisibility(timeline ? View.VISIBLE : View.GONE);
+
+        androidx.appcompat.app.ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            // On Timeline the on/off switch custom view is hidden so the
+            // tab title reads as the screen heading. The switch remains
+            // reachable from the Apps tab.
+            ab.setDisplayShowCustomEnabled(!timeline);
+            ab.setTitle(timeline ? getString(R.string.title_tracker_activity) : null);
+        }
+
+        // Collapse SearchView if open, so switching away doesn't leave it visible
+        if (menuSearch != null && menuSearch.isActionViewExpanded())
+            menuSearch.collapseActionView();
+
+        invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (showingTimeline && bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_apps);
+            return;
+        }
+        super.onBackPressed();
     }
 
     private void showHints() {
