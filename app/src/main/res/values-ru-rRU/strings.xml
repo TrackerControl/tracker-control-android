@@ -24,7 +24,29 @@
     <string name="menu_legend">Обозначения</string>
     <string name="menu_support">Поддержать это приложение</string>
     <string name="menu_log_support">Пояснение</string>
+    <string name="menu_troubleshooting">Устранение неполадок</string>
     <string name="menu_about">О программе</string>
+    <string name="title_tracker_activity">Трекер активности</string>
+    <string name="timeline_empty">Нет активности трекера.\n\nВключите функцию TrackerControl, чтобы увидеть, какие приложения отслеживают Вас.</string>
+    <string name="timeline_section_last_hour">За последний час</string>
+    <string name="timeline_section_today">На сегодня</string>
+    <string name="timeline_section_yesterday">Вчера</string>
+    <string name="timeline_section_this_week">На этой неделе</string>
+    <string name="troubleshooting_battery_title">Оптимизация батареи</string>
+    <string name="troubleshooting_battery_desc">Если TrackerControl перестает работать в фоновом режиме, отключите оптимизацию заряда батареи для Android для TrackerControl. Выберите \"Все приложения\", нажмите кнопку TrackerControl, и выберите \"Не оптимизировать\".</string>
+    <string name="troubleshooting_battery_action">Отключить оптимизацию батареи</string>
+    <string name="troubleshooting_battery_ok">Оптимизация батареи уже отключена.</string>
+    <string name="troubleshooting_datasaver_title">Экономия трафика</string>
+    <string name="troubleshooting_datasaver_desc">Если TrackerControl не может подключаться, разрешите неограниченное использование данных для TrackerControl. Включите \"Фоновые данные\" и \"Неограниченное использование данных\".</string>
+    <string name="troubleshooting_datasaver_action">Разрешить неограниченный доступ к данным</string>
+    <string name="troubleshooting_datasaver_ok">Экономия трафика не ограничивает TrackerControl.</string>
+    <string name="troubleshooting_exclude_title">Исключение приложений из VPN</string>
+    <string name="troubleshooting_exclude_desc">Если приложение не работает корректно с TrackerControl, вы можете его исключить: коснитесь приложения в главном списке, затем отключите VPN переключатель для этого приложения.</string>
+    <string name="troubleshooting_categories_title">Блокировка определенных категорий трекера</string>
+    <string name="troubleshooting_categories_desc">Вы можете тонко настроить блокировку для каждого приложения, нажав на него и переключая отдельные категории трекеров (например, аналитика, реклама) во вкладке Трекеры.</string>
+    <string name="troubleshooting_alwayson_title">VPN всегда включен</string>
+    <string name="troubleshooting_alwayson_desc">Если в настройках Android VPN включено \"Блокировать соединения без VPN\" (блокировка), TrackerControl не может корректно работать. Отключите эту опцию. Если это будет обнаружено, то появится уведомление.</string>
+    <string name="troubleshooting_alwayson_action">Открыть настройки VPN</string>
     <string name="menu_apps">Другие приложения</string>
     <string name="menu_protocol_other">Прочие</string>
     <string name="menu_traffic_allowed">Разрешённые</string>
@@ -39,6 +61,8 @@
     <string name="menu_export">Экспорт</string>
     <string name="menu_reset">Сброс</string>
     <string name="menu_cleanup">Очистить устаревшие</string>
+    <string name="setting_options">Общее</string>
+    <string name="setting_further_options">Дополнительные опции</string>
     <string name="setting_dark">Тёмная тема</string>
     <string name="setting_install">Уведомлять о новой установке</string>
     <string name="setting_pause">Автозапуск через %1$s минут</string>
@@ -56,7 +80,10 @@
     <string name="setting_ip6">Включить IPv6-трафик</string>
     <string name="setting_call">Отключить при звонке</string>
     <string name="setting_reload_onconnectivity">Перезапуск при каждой смене подключения</string>
+    <string name="setting_advanced_options">Расширенные опции (для экспертов)</string>
+    <string name="setting_system">Показать системные приложения</string>
     <string name="setting_log_app">Искать новые трекеры</string>
+    <string name="setting_log_logcat">Исследовать</string>
     <string name="setting_filter">Блокировать трекеры</string>
     <string name="setting_filter_udp">Блокировать трекеры на UDP</string>
     <string name="setting_handover">Бесшовная передача VPN при перезагрузке</string>
@@ -80,10 +107,15 @@
     <string name="setting_pcap_file_size">Макс. размер PCAP файла: %s МБ</string>
     <string name="setting_watchdog">Сторожевой таймер: каждые %s минут</string>
     <!-- Secure DNS (DoH) -->
+    <string name="setting_doh_enabled">Защищенный DNS (DoH)</string>
+    <string name="summary_doh_enabled">Шифровать DNS запросы с помощью DNS-over-HTTPS. Применяется ко всем приложениям.</string>
+    <string name="warning_beta">Бета-функция. Может работать не так, как ожидалось.</string>
+    <string name="summary_doh_dns_fallback">Использовать стандартный (незашифрованный) DNS, когда DoH недоступен. Отключение может привести к поломке приложений, если сервер DoH недоступен.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_stats_frequency">Частота замеров: %s мс</string>
     <string name="setting_stats_samples">Число замеров: %s с</string>
     <string name="setting_backup">Резервное копирование</string>
+    <string name="setting_export">Экспорт настроек</string>
     <string name="setting_import">Импорт настроек</string>
     <string name="setting_hosts">Импорт hosts-файла</string>
     <string name="setting_hosts_append">Импорт hosts-файла (присоединить)</string>
@@ -351,6 +383,7 @@ Sincerely,\n\n]]></string>
     <string name="browsers_not_supported">Браузеры не поддерживаются ⚠️</string>
     <string name="static_analysis">Обнаружить трекеры в коде приложения</string>
     <!-- Onboarding -->
+    <string name="onboarding_network_title">Не ограничивать сеть</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
 </resources>
