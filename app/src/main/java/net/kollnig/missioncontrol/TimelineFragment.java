@@ -42,6 +42,9 @@ import eu.faircode.netguard.DatabaseHelper;
 public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntryClickListener {
 
     private static final long REFRESH_DEBOUNCE_MS = 500L;
+    // Catch stale relative timestamps and any missed AccessChangedListener
+    // callbacks by re-querying on a slow tick while the screen is open.
+    private static final long PERIODIC_REFRESH_MS = 30_000L;
 
     private TimelineAdapter timelineAdapter;
     private InsightsHeaderAdapter insightsAdapter;
@@ -51,6 +54,13 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
     private final Handler refreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable refreshRunnable = this::refreshAll;
+    private final Runnable periodicRunnable = new Runnable() {
+        @Override
+        public void run() {
+            refreshAll();
+            refreshHandler.postDelayed(this, PERIODIC_REFRESH_MS);
+        }
+    };
     private final DatabaseHelper.AccessChangedListener accessListener =
             () -> {
                 refreshHandler.removeCallbacks(refreshRunnable);
@@ -91,6 +101,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
         super.onResume();
         DatabaseHelper.getInstance(requireContext()).addAccessChangedListener(accessListener);
         refreshAll();
+        refreshHandler.postDelayed(periodicRunnable, PERIODIC_REFRESH_MS);
     }
 
     @Override
@@ -98,6 +109,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
         super.onPause();
         DatabaseHelper.getInstance(requireContext()).removeAccessChangedListener(accessListener);
         refreshHandler.removeCallbacks(refreshRunnable);
+        refreshHandler.removeCallbacks(periodicRunnable);
     }
 
     @Override
@@ -163,6 +175,12 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
     private List<TimelineEntry> buildTimeline() {
         DatabaseHelper dh = DatabaseHelper.getInstance(requireContext());
         PackageManager pm = requireContext().getPackageManager();
+        // findTracker() reads from a static map populated lazily by
+        // TrackerList.getInstance(). Without this call, opening the
+        // app on the Timeline tab races with insights initialization
+        // and every entry is silently dropped — appearing as an empty
+        // "Watching for trackers…" screen even when there is data.
+        TrackerList.getInstance(requireContext());
 
         Map<Integer, Map<String, TrackerContact>> uidTrackers = new LinkedHashMap<>();
         Map<Integer, Long> uidLatestTime = new LinkedHashMap<>();
