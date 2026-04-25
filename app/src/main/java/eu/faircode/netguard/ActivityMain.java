@@ -866,10 +866,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                // Search filters the app list, so jump to the Apps tab
-                // when the user expands it from the Timeline tab.
-                if (showingTimeline && bottomNav != null)
-                    bottomNav.setSelectedItemId(R.id.nav_apps);
+                // Search filters the app list, so jump to the Apps tab when
+                // the user expands it from Timeline. Post the switch so the
+                // SearchView finishes expanding (and grabs focus + opens
+                // the keyboard) on the current frame; otherwise the layout
+                // toggle in selectTab pre-empts focus before the IME shows.
+                if (showingTimeline && bottomNav != null) {
+                    final BottomNavigationView nav = bottomNav;
+                    nav.post(() -> nav.setSelectedItemId(R.id.nav_apps));
+                }
                 return true;
             }
 
@@ -1074,11 +1079,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         llAppsContent.setVisibility(timeline ? View.GONE : View.VISIBLE);
         timelineContainer.setVisibility(timeline ? View.VISIBLE : View.GONE);
 
-        // Collapse SearchView if open, so switching away doesn't leave it visible
-        if (menuSearch != null && menuSearch.isActionViewExpanded())
+        // Collapse SearchView only when leaving Apps for Timeline. When the
+        // user opens the SearchView from Timeline we switch *to* Apps; in
+        // that path we must NOT collapse, otherwise the freshly-expanded
+        // SearchView is torn down before it can take focus.
+        if (timeline && menuSearch != null && menuSearch.isActionViewExpanded())
             menuSearch.collapseActionView();
 
-        invalidateOptionsMenu();
+        // No invalidateOptionsMenu(): filter/sort live in the overflow,
+        // which calls onPrepareOptionsMenu the next time it is opened, so
+        // their visibility updates lazily — and we avoid rebuilding the
+        // SearchView mid-expand, which would also drop keyboard focus.
     }
 
     @Override
