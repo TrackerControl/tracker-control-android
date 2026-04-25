@@ -866,6 +866,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                // Search filters the app list, so jump to the Apps tab
+                // when the user expands it from the Timeline tab.
+                if (showingTimeline && bottomNav != null)
+                    bottomNav.setSelectedItemId(R.id.nav_apps);
                 return true;
             }
 
@@ -936,11 +940,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public boolean onPrepareOptionsMenu(Menu menu) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Hide app-list-specific toolbar items when on the Timeline tab
-        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        // Filter/sort are list-specific; hide them on the Timeline tab.
+        // Search stays visible — clicking it on Timeline jumps to the Apps tab.
         MenuItem filterItem = menu.findItem(R.id.menu_filter);
         MenuItem sortItem = menu.findItem(R.id.menu_sort);
-        if (searchItem != null) searchItem.setVisible(!showingTimeline);
         if (filterItem != null) filterItem.setVisible(!showingTimeline);
         if (sortItem != null) sortItem.setVisible(!showingTimeline);
         if (showingTimeline)
@@ -1070,15 +1073,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         showingTimeline = timeline;
         llAppsContent.setVisibility(timeline ? View.GONE : View.VISIBLE);
         timelineContainer.setVisibility(timeline ? View.VISIBLE : View.GONE);
-
-        androidx.appcompat.app.ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            // On Timeline the on/off switch custom view is hidden so the
-            // tab title reads as the screen heading. The switch remains
-            // reachable from the Apps tab.
-            ab.setDisplayShowCustomEnabled(!timeline);
-            ab.setTitle(timeline ? getString(R.string.title_tracker_activity) : null);
-        }
 
         // Collapse SearchView if open, so switching away doesn't leave it visible
         if (menuSearch != null && menuSearch.isActionViewExpanded())
