@@ -12,6 +12,7 @@
     <string name="menu_app_user">Пользовательские приложения</string>
     <string name="menu_app_system">Системные приложения</string>
     <string name="menu_app_nointernet">Приложения без интернета</string>
+    <string name="menu_app_unprotected">Показывать только незащищённые приложения</string>
     <string name="menu_sort">Сортировка приложений</string>
     <string name="menu_sort_name">По названию</string>
     <string name="menu_sort_uid">По uid</string>
