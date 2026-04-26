@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl võimaldab kasutajatel jälgida ja kontrollida laialt levinud, pidevalt toimuvat ja varjatud kasutajate käitumisega seotud andmekogumist nutirakendustes (tuntud ka kui „jälitamine“).</string>
+    <string name="app_copyright">Autoriõigused \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl põhineb NetGuardil, mille arendaja on Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl eeldab Androidi versiooni 5.1 või hilisema olemasolu</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privaatsusreeglid</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Küpsiste kasutamise reeglid</a></string>
     <string name="channel_foreground">Töötavad teenused</string>
@@ -11,13 +12,28 @@
     <string name="menu_app_user">Näita kasutaja rakendusi</string>
     <string name="menu_app_system">Näita süsteemirakendusi</string>
     <string name="menu_app_nointernet">Näita rakendusi, mis ei vaja internetiühendust</string>
+    <string name="menu_app_unprotected">Näita vaid kaitsmata rakendusi</string>
+    <string name="menu_app_frozen">Näita külmutatud rakendusi</string>
     <string name="menu_sort">Järjesta rakendusi</string>
     <string name="menu_sort_name">Järjesta nime alusel</string>
+    <string name="menu_sort_uid">Järjesta UID alusel</string>
     <string name="menu_log">Liikluse logi</string>
     <string name="menu_settings">Seadistused</string>
     <string name="menu_support">Toeta seda rakendust</string>
     <string name="menu_log_support">Selgitus</string>
     <string name="menu_about">Rakenduse teave</string>
+    <string name="timeline_section_last_hour">Viimase tunni jooksul</string>
+    <string name="timeline_section_today">Täna</string>
+    <string name="timeline_section_yesterday">Eile</string>
+    <string name="timeline_section_this_week">Sellel nädalal</string>
+    <string name="timeline_more_trackers">Veel %d</string>
+    <string name="timeline_tracker_blocked">Blokeeritud</string>
+    <string name="timeline_tracker_allowed">Lubatud</string>
+    <string name="timeline_summary_all_blocked">%d jälitajat on blokeeritud</string>
+    <string name="timeline_summary_none_blocked">%d jälitajat on lubatud</string>
+    <string name="timeline_summary_mixed">%1$d blokeeritud · %2$d lubatud</string>
+    <string name="troubleshooting_title">Veaotsing</string>
+    <string name="troubleshooting_battery_title">Akukasutuse optimeerimine</string>
     <string name="menu_apps">Muud rakendused</string>
     <string name="menu_traffic_allowed">Lubatud</string>
     <string name="menu_traffic_blocked">Blokeeritud</string>
