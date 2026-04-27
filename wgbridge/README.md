@@ -101,3 +101,14 @@ class Tunnel { void stop(); }
 
 `uapiConfig` is the wireguard-go IpcSet text. `WgConfig.toUapi()` on the
 Kotlin side produces it from a parsed `wg-quick` config.
+
+## Potential improvements
+
+- **DNS upstream privacy**: app DNS packets to port 53 currently stay on the
+  local NetGuard path so DNS forwarding, tracker lookup, and local resolvers
+  keep working. That is fine for interception, but the upstream resolver path
+  should be revisited when WireGuard is enabled. Ideally, TrackerControl would
+  still intercept app DNS locally while sending DoH/plain-DNS fallback upstream
+  through WireGuard, except for deliberately local-network DNS such as a router
+  or Pi-hole. This is not urgent, but it matters for a complete IP-privacy
+  story because TrackerControl itself is excluded from the VPN route.

@@ -249,6 +249,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (_holder instanceof VHItem) {
             VHItem holder = (VHItem) _holder;
 
+            boolean trackerProtectionEnabled = BlockingMode.isTrackerProtectionEnabled(
+                    mContext, tracker_protect, mAppId);
             boolean allowGranularControl = !BlockingMode.isMinimalMode(mContext);
             holder.mBlockingTip.setVisibility(allowGranularControl ? View.VISIBLE : View.GONE);
 
@@ -291,7 +293,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     boolean showStatus;
                     boolean companyBlocked;
 
-                    if (BlockingMode.isMinimalMode(getContext())) {
+                    if (!trackerProtectionEnabled) {
+                        showStatus = true;
+                        companyBlocked = false;
+                    } else if (BlockingMode.isMinimalMode(getContext())) {
                         showStatus = true;
                         companyBlocked = TrackerBlocklist.blockedTrackerMinimal(t);
                     } else {
@@ -341,7 +346,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 // Minimal mode: show read-only blocking status (no granular control)
                 holder.mSwitchTracker.setVisibility(View.VISIBLE);
                 holder.mSwitchTracker.setEnabled(false);
-                holder.mSwitchTracker.setChecked(
+                holder.mSwitchTracker.setChecked(trackerProtectionEnabled &&
                         !TrackerBlocklist.NECESSARY_CATEGORY.equals(trackerCategoryName));
                 holder.mSwitchTracker.setOnCheckedChangeListener(null);
                 holder.mCompaniesList.setOnItemClickListener(null);
@@ -396,15 +401,18 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
 
-            boolean showTrackerProtection = !BlockingMode.isMinimalMode(mContext);
+            boolean isBrowser = BlockingMode.isBrowserApp(mContext, mAppId);
+            boolean showTrackerProtection = !BlockingMode.isMinimalMode(mContext) || isBrowser;
             holder.mTrackerProtectionRow.setVisibility(showTrackerProtection ? View.VISIBLE : View.GONE);
             holder.mTrackerProtectionDivider.setVisibility(showTrackerProtection ? View.VISIBLE : View.GONE);
             holder.mSwitchVPN.setOnCheckedChangeListener(null);
 
-            // Tracker protection toggle (not available in minimal mode)
+            // Tracker protection toggle. In minimal mode this is only shown for
+            // browsers, where tracker blocking defaults off but can be opted in.
             if (showTrackerProtection) {
                 holder.mSwitchVPN.setVisibility(View.VISIBLE);
-                holder.mSwitchVPN.setChecked(tracker_protect.getBoolean(mAppId, true));
+                holder.mSwitchVPN.setChecked(BlockingMode.isTrackerProtectionEnabled(
+                        mContext, tracker_protect, mAppId));
                 holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     if (!buttonView.isPressed())
                         return; // to fix errors

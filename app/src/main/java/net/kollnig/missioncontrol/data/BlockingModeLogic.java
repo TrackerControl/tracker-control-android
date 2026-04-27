@@ -87,8 +87,16 @@ public final class BlockingModeLogic {
     }
 
     static Set<String> parseExcludedAppsJson(String json) {
+        return parseCategories(json, new String[] { "system_ims", "vpn_incompatible", "user_reported" });
+    }
+
+    static Set<String> parseBrowserAppsJson(String json) {
+        return parseCategories(json, new String[] { "browsers" });
+    }
+
+    private static Set<String> parseCategories(String json, String[] categories) {
         Set<String> apps = new HashSet<>();
-        for (String category : new String[] { "browsers", "system_ims", "vpn_incompatible", "user_reported" }) {
+        for (String category : categories) {
             Matcher categoryMatcher = Pattern.compile(
                     "\"" + Pattern.quote(category) + "\"\\s*:\\s*\\[(.*?)]",
                     Pattern.DOTALL)

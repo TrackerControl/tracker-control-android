@@ -317,6 +317,15 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             pref_doh_endpoint.setSummary(prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT));
         }
 
+        // WireGuard status
+        CharSequence wgStatus = getWireGuardStatusSummary(prefs);
+        pref = screen.findPreference("screen_wireguard");
+        if (pref != null)
+            pref.setSummary(wgStatus);
+        pref = screen.findPreference("wg_status");
+        if (pref != null)
+            pref.setSummary(wgStatus);
+
         // Show resolved
         Preference pref_show_resolved = screen.findPreference("show_resolved");
         if (pref_show_resolved != null) {
@@ -788,6 +797,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("wg_enabled".equals(name)) {
+            updateWireGuardStatus();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("wg_config".equals(name)) {
@@ -807,6 +817,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     if (enabledPref != null) enabledPref.setChecked(false);
                 }
             }
+            updateWireGuardStatus();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("pcap_record_size".equals(name) || "pcap_file_size".equals(name)) {
@@ -858,6 +869,37 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             TrackerList.reloadTrackerData(this);
         }
 
+    }
+
+    private CharSequence getWireGuardStatusSummary(SharedPreferences prefs) {
+        if (!prefs.getBoolean("wg_enabled", false))
+            return getString(R.string.summary_wg_status_off);
+
+        if (TextUtils.isEmpty(prefs.getString("wg_config", "")))
+            return getString(R.string.summary_wg_status_missing_config);
+
+        if (net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.isRunning())
+            return getString(R.string.summary_wg_status_connected);
+
+        String error = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
+        if (!TextUtils.isEmpty(error))
+            return getString(R.string.summary_wg_status_blocked, error);
+
+        return getString(R.string.summary_wg_status_starting);
+    }
+
+    private void updateWireGuardStatus() {
+        PreferenceScreen screen = getPreferenceScreen();
+        if (screen == null)
+            return;
+
+        CharSequence summary = getWireGuardStatusSummary(PreferenceManager.getDefaultSharedPreferences(this));
+        Preference pref = screen.findPreference("screen_wireguard");
+        if (pref != null)
+            pref.setSummary(summary);
+        pref = screen.findPreference("wg_status");
+        if (pref != null)
+            pref.setSummary(summary);
     }
 
     private void updateBlockingModeSummary(Preference pref, String mode) {
