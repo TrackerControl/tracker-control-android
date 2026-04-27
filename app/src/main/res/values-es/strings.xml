@@ -348,8 +348,6 @@ Atentamente,\n\n]]></string>
     <string name="summary_domain_based_blocking">Permite un bloqueo más granular. Aún en desarrollo.</string>
     <string name="untap_unblock">Tip: Puedes desbloquear entradas individuales tocándolas.</string>
     <string name="uncertain_entry">Las entradas marcadas con \'*\' pueden ser inexactas, debido a las limitaciones de Android. Esto suele significar que la misma compañía utiliza la misma dirección IP en diferentes dominios, pero también puede significar que diferentes empresas están detrás de la misma dirección IP (por ej. si utilizan una Red de entrega de contenidos).</string>
-    <string name="browsers_not_supported">Navegadores no soportados ⚠️</string>
-    <string name="browsers_not_supported_explanation">Esto parece ser un navegador web.\n\nBloquear rastreadores en un navegador web es incompatible con TrackerControl. Puedes usar un navegador web con funciones integradas contra rastreadores.\n\nPor ejemplo: IronFox, Fennec...</string>
     <string name="static_analysis">Detectar rastreadores en código de apps</string>
     <string name="failed_loading_cached_analysis">Error al cargar resultados de rastreadores en caché. Por favor, reporta esto al desarrollador en hello@trackercontrol.org</string>
     <string name="msg_notifications">Toca para conceder permisos de notificación</string>
