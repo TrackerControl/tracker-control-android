@@ -24,8 +24,8 @@ Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
 This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-No root is required. Other VPNs or Android's "Private DNS" feature are not supported (due to Android limitations), but TrackerControl provides its own **Secure DNS (DNS-over-HTTPS / DoH)** feature to protect your DNS traffic.
-No external VPN server is used, to keep your data safe! TrackerControl even protects you
+No root is required. Other VPNs or Android's "Private DNS" feature are not supported (due to Android limitations), but TrackerControl provides its own **Secure DNS (DNS-over-HTTPS / DoH)** feature to protect your DNS traffic. For users who want to combine tracker analysis with a remote VPN, TrackerControl also offers **experimental WireGuard support**, allowing filtered traffic to be tunnelled through a WireGuard endpoint of your choice.
+By default, no external VPN server is used, to keep your data safe! TrackerControl even protects you
 against *DNS cloaking*, a popular technique to hide trackers in websites and apps.
 
 TrackerControl will always be free and open source, being a research project.
@@ -69,6 +69,7 @@ There are multiple versions of TrackerControl:
 | **Traffic Log** |           ✅            | ✅ |
 | **Tracker & Ad Blocking** |     ✅ (Minimal mode)     | ✅ (All modes) |
 | **Secure DNS (DoH)** |           ✅            | ✅ |
+| **WireGuard tunnelling (experimental)** |           ✅            | ✅ |
 
 TrackerControl offers three **Blocking Modes**:
 
@@ -157,8 +158,9 @@ TrackerControl provides
 - *granular blocking* of app tracking,
 - *one-click data requests* as granted under EU Data Protection Legislation,
 - *ad-blocking* using widely available host files,
-- *tracker library analysis* of apps' code, and
-- *secure DNS* using DNS-over-HTTPS (DoH) (optional).
+- *tracker library analysis* of apps' code,
+- *secure DNS* using DNS-over-HTTPS (DoH) (optional), and
+- *experimental WireGuard tunnelling* for routing filtered traffic through a remote VPN endpoint (optional).
 
 <p align="center">
     <img alt="Screenshot of app overview" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" style="margin: 0 auto;" height="100%" width="25%" >
