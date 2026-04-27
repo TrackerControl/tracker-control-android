@@ -20,13 +20,44 @@
     <string name="menu_sort_uid">Сортувати за uid</string>
     <string name="menu_sort_companies_week">Сортувати по компаніям (тиждень)</string>
     <string name="menu_sort_companies">Сортувати за компаніями</string>
+    <string name="menu_sort_by_latest_detected_tracker">Сортувати за останнім виявленим трекером</string>
     <string name="menu_log">Журнал трафіку</string>
     <string name="menu_settings">Параметри</string>
     <string name="menu_invite">Запросити</string>
     <string name="menu_legend">Легенда</string>
     <string name="menu_support">Підтримати проєкт</string>
     <string name="menu_log_support">Пояснення</string>
+    <string name="menu_troubleshooting">Усунення несправностей</string>
     <string name="menu_about">Про додаток</string>
+    <string name="menu_timeline">Активність трекера</string>
+    <string name="title_tracker_activity">Активність трекера</string>
+    <string name="timeline_empty">Немає нещодавньої активності трекера.\n\nУвімкніть TrackerControl, щоб побачити, які програми відстежують вас.</string>
+    <string name="timeline_section_last_hour">Остання година</string>
+    <string name="timeline_section_today">Сьогодні</string>
+    <string name="timeline_section_yesterday">Вчора</string>
+    <string name="timeline_section_this_week">Цього тижня</string>
+    <string name="timeline_more_trackers">+ ще %d</string>
+    <string name="timeline_tracker_blocked">Заблоковано</string>
+    <string name="timeline_tracker_allowed">Дозволено</string>
+    <string name="timeline_summary_all_blocked">Заблоковано %d трекерів</string>
+    <string name="timeline_summary_none_blocked">Дозволено %d трекерів</string>
+    <string name="timeline_summary_mixed">%1$d заблоковано · %2$d дозволено</string>
+    <string name="troubleshooting_title">Усунення несправностей</string>
+    <string name="troubleshooting_battery_title">Оптимізація роботи батареї</string>
+    <string name="troubleshooting_battery_desc">Якщо TrackerControl перестає працювати у фоновому режимі, вимкніть оптимізацію батареї Android для TrackerControl. Виберіть «Усі програми», натисніть TrackerControl і виберіть «Не оптимізувати».</string>
+    <string name="troubleshooting_battery_action">Вимкнути оптимізацію батареї</string>
+    <string name="troubleshooting_battery_ok">Оптимізацію батареї вже вимкнено.</string>
+    <string name="troubleshooting_datasaver_title">Економія трафіку</string>
+    <string name="troubleshooting_datasaver_desc">Якщо TrackerControl не може підключитися, коли ввімкнено функцію «Економія даних», дозвольте необмежене використання даних для TrackerControl. Увімкніть «Фонові дані» та «Необмежене використання даних».</string>
+    <string name="troubleshooting_datasaver_action">Дозволити необмежений доступ до даних</string>
+    <string name="troubleshooting_datasaver_ok">Економія даних не обмежує TrackerControl.</string>
+    <string name="troubleshooting_exclude_title">Виключення додатків із VPN</string>
+    <string name="troubleshooting_exclude_desc">Якщо програма не працює належним чином із TrackerControl, ви можете виключити її: натисніть на програму в головному списку, а потім вимкніть перемикач VPN для цієї програми.</string>
+    <string name="troubleshooting_categories_title">Блокування певних категорій трекерів</string>
+    <string name="troubleshooting_categories_desc">Ви можете точно налаштувати блокування для кожного додатка, натиснувши на нього та увімкнувши або вимкнувши окремі категорії трекерів (наприклад, «Аналітика», «Реклама») на вкладці «Трекери».</string>
+    <string name="troubleshooting_alwayson_title">Завжди увімкнений VPN</string>
+    <string name="troubleshooting_alwayson_desc">Якщо в налаштуваннях VPN для Android увімкнено опцію «Блокування з’єднань без VPN» (блокування), TrackerControl не працюватиме належним чином. Вимкніть цю опцію. У разі виявлення цього з’явиться сповіщення.</string>
+    <string name="troubleshooting_alwayson_action">Відкрити налаштування VPN</string>
     <string name="menu_apps">Інші додатки</string>
     <string name="menu_protocol_other">Інше</string>
     <string name="menu_traffic_allowed">Дозволено</string>
@@ -41,6 +72,8 @@
     <string name="menu_export">Експортувати</string>
     <string name="menu_reset">Скинути</string>
     <string name="menu_cleanup">Очищення</string>
+    <string name="setting_options">Загальне</string>
+    <string name="setting_further_options">Додаткові опції</string>
     <string name="setting_dark">Темна тема</string>
     <string name="setting_install">Сповіщати про нові додатки</string>
     <string name="setting_pause">Автоматично увімкнути через %1$s хв.</string>
@@ -61,6 +94,7 @@
     <string name="setting_advanced_options">Розширені налаштування (для експертів)</string>
     <string name="setting_system">Показати системні програми</string>
     <string name="setting_log_app">Пошук нових трекерів</string>
+    <string name="setting_log_logcat">Дослідження</string>
     <string name="setting_filter">Блокувати трекери</string>
     <string name="setting_filter_udp">Блокувати трекери на UDP</string>
     <string name="setting_handover">Безперебійна передача VPN при перезавантаженні</string>
@@ -89,6 +123,8 @@
     <string name="warning_beta">Бета-функція. Може працювати не так, як очікується.</string>
     <string name="setting_doh_endpoint">URL-адреса кінцевої точки DoH</string>
     <string name="summary_doh_endpoint">URL-адреса HTTPS для запитів DNS через HTTPS</string>
+    <string name="setting_doh_dns_fallback">Резервний DNS</string>
+    <string name="summary_doh_dns_fallback">Використовуйте стандартний (незашифрований) DNS, коли DoH недоступний. Вимкнення може призвести до збою програм, якщо сервер DoH не працює.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Блокування приватного DNS Android</string>
     <string name="summary_block_dot">Якщо увімкнено приватний DNS Android, TC не може виявити жодного відстеження і не працює належним чином.</string>
@@ -120,6 +156,7 @@
     <string name="summary_validate">Доменне ім’я, що використовується для перевірки інтернет-з’єднання через порт 443 (https).</string>
     <string name="summary_socks5_enabled">На проксі-сервер направлятиметься лише TCP-трафік</string>
     <string name="summary_watchdog">Періодично перевіряйте, чи TrackerControl все ще працює (введіть нуль, щоб вимкнути цю опцію). Це може призвести до додаткового споживання заряду акумулятора.</string>
+    <string name="summary_log_logcat">Режим дослідження: виявлені трекери записуються в ADB, а для кращого виявлення імен хостів увімкнено вилучення SNI. Отримайте журнали за допомогою adb logcat, використовуючи тег «TC-Log».</string>
     <string name="msg_sure">Ви впевнені?</string>
     <string name="msg_started">Шукаю трекери...</string>
     <string name="msg_waiting">Очікування події</string>
@@ -227,6 +264,11 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Порт %1$d</string>
     <string name="title_log_copy">Копіювати</string>
+    <string-array name="blockingModeNames">
+        <item>@string/blocking_mode_minimal</item>
+        <item>@string/blocking_mode_standard</item>
+        <item>@string/blocking_mode_strict</item>
+    </string-array>
     <!-- App Overview -->
     <string name="tracked_app_icon">Вимкнути доступ до Інтернету для цієї програми</string>
     <string name="tracked_app_name">Назва програми</string>
@@ -339,6 +381,27 @@
     <string name="setting_strict_blocking">Жорстке блокування</string>
     <string name="summary_strict_blocking">Блокувати якомога більше даних для нових додатків. Буде більше збоїв у програмах.</string>
     <string name="strict_blocking_explanation">Не експертам рекомендується вимкнути цю опцію, щоб зменшити кількість поломок програми. Однак це дозволяє ділитися деякими важливими даними з компаніями.</string>
+    <string name="setting_block_ambiguous_trackers">Блокувати неоднозначні трекери</string>
+    <string name="summary_block_ambiguous_trackers">Якщо для IP-адреси є дані як про хост-імена з трекерами, так і без них, її все одно слід заблокувати. Вимкніть цю опцію, щоб зменшити кількість збоїв у роботі додатків.</string>
+    <string name="setting_sni_enabled">Витяг даних SNI (дослідження)</string>
+    <string name="summary_sni_enabled">Витягувати імена хостів із TLS-з’єднань для точнішого виявлення трекерів. Увага: це призводить до витоку вашої IP-адреси на сервери трекерів. Увімкнути лише для дослідження.</string>
+    <string name="setting_blocking_mode">Режим блокування</string>
+    <string name="summary_blocking_mode_minimal">Мінімальний: блокує лише ті трекери зі списку DuckDuckGo, які можна безпечно блокувати. Браузери та відомі несумісні програми автоматично виключаються. Мінімальні порушення роботи програм.</string>
+    <string name="summary_blocking_mode_standard">Стандартний: блокує всі відомі трекери з різних списків (X-Ray, Disconnect, DuckDuckGo). Доступ до основних служб залишається відкритим. Деякі програми можуть працювати з перебоями, і їх, можливо, доведеться виключити вручну (див. розділ «Усунення несправностей» у меню програми).</string>
+    <string name="summary_blocking_mode_strict">Суворий: блокує всі відомі трекери, включаючи необхідні служби та домени з неоднозначною спільною IP-адресою. Багато програм перестануть працювати, і їх доведеться вручну додати до списку винятків (див. розділ «Усунення несправностей» у меню програми).</string>
+    <string name="blocking_mode_minimal">Мінімальний</string>
+    <string name="blocking_mode_standard">Стандартний</string>
+    <string name="blocking_mode_strict">Суворий</string>
+    <string name="onboarding_blockingmode_title">Виберіть режим блокування</string>
+    <string name="onboarding_blockingmode_desc">Виберіть, як TrackerControl має обробляти трекери. Режими блокування зупиняють трекери на різних рівнях агресивності; режим дослідження постійно вимикає блокування та вмикає вилучення SNI лише для вимірювання. Ви можете змінити це пізніше в налаштуваннях.</string>
+    <string name="onboarding_blockingmode_minimal_label">Мінімальний (рекомендовано для нових користувачів)</string>
+    <string name="onboarding_blockingmode_minimal_desc">Блокує лише ті трекери, які безпечно блокувати. Мінімальний вплив на роботу додатків. Підходить для більшості користувачів.</string>
+    <string name="onboarding_blockingmode_standard_label">Стандартний</string>
+    <string name="onboarding_blockingmode_standard_desc">Блокує всі відомі трекери з різних списків. Деякі програми можуть перестати працювати, і їх доведеться виключити вручну.</string>
+    <string name="onboarding_blockingmode_strict_label">Суворий</string>
+    <string name="onboarding_blockingmode_strict_desc">Блокує все, включаючи важливі служби та неоднозначні домени. Значні пошкодження програм — багато програм потрібно буде виключити вручну.</string>
+    <string name="onboarding_blockingmode_research_label">Дослідження</string>
+    <string name="onboarding_blockingmode_research_desc">Не блокує трекери. Реєструє передачу даних до ADB та вмикає вилучення SNI для кращого виявлення імені хоста. Тільки для дослідницьких цілей: це призводить до витоку вашої IP-адреси на сервери трекерів.</string>
     <string name="exclude_vpn_explanation">Виявляє та блокує трекери для цієї програми.</string>
     <string name="vpn_exclude">Виключити з VPN</string>
     <string name="vpn_exclude_explanation">Увімкніть, якщо виникнуть проблеми. Додаток повністю обійде TrackerControl.\n\nПримітка: щоб це працювало, у налаштуваннях VPN Android необхідно вимкнути опцію «Блокувати з\'єднання без VPN».</string>
@@ -402,6 +465,9 @@
     <string name="onboarding_vpn_desc">TrackerControl використовує локальний VPN-інтерфейс Android для аналізу вашого інтернет-трафіку.\n\n<b>Важливо:</b> Зовнішній VPN-сервер не використовується. Ми не бачимо ваших даних.</string>
     <string name="onboarding_vpn_action">Увімкнути VPN на пристрої</string>
     <string name="onboarding_vpn_sure">TrackerControl не може фільтрувати трафік без локального VPN. Ви впевнені, що хочете продовжити без його увімкнення?</string>
+    <string name="onboarding_vpn_blocked_title">Інший VPN активний</string>
+    <string name="onboarding_vpn_blocked_desc">Android завадив TrackerControl запустити свою локальну VPN, оскільки інший додаток налаштовано як <b>Завжди увімкнену VPN</b>. Відкрийте налаштування VPN та вимкніть функцію «Завжди увімкнено» для іншої VPN, а потім повторіть спробу.</string>
+    <string name="onboarding_vpn_blocked_action">Відкрити налаштування VPN</string>
     <string name="onboarding_battery_title">Запобігання перериванню</string>
     <string name="onboarding_battery_desc">Android може закривати фонові програми для економії заряду акумулятора. Щоб забезпечити безперервний захист від трекерів, вимкніть оптимізацію для TrackerControl.</string>
     <string name="onboarding_battery_action">Вимкнути оптимізацію</string>
@@ -456,8 +522,13 @@
     <string name="insights_shocking_fact">Ваші програми зв’язалися з %1$d компаніями відстеження через %2$d хостів відстеження цього тижня!</string>
     <string name="insights_shocking_fact_playstore">Ваші програми зв\'язалися з %1$d компаніями, що займаються відстеженням, цього тижня!</string>
     <string name="insights_share">Поділитися з друзями</string>
+    <string name="insights_share_trackers_blocked">Хости трекерів заблоковано</string>
+    <string name="insights_share_trackers_detected">Виявлено хости трекерів</string>
     <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Цього тижня я заблокував %1$d хостів трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі конфіденційність: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Цього тижня я виявив %1$d хостів трекерів від %2$d компаній за допомогою TrackerControl! Поверніть собі конфіденційність: https://trackercontrol.org</string>
     <string name="insights_see_more">Дивитися більше →</string>
+    <string name="insights_view_timeline">Переглянути останню активність трекера</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">Додаткові файли хоста</string>
     <string name="summary_manage_blocklists">Вони призначені лише для резервного використання. TrackerControl містить власні списки хостів, які дають уявлення про компанії, що стоять за відстеженням.</string>
@@ -465,5 +536,6 @@
     <string name="title_delete_blocklist">Видалити файл хоста</string>
     <string name="msg_delete_blocklist_confirm">Ви впевнені, що хочете видалити цей файл хосту?</string>
     <string name="msg_invalid_url">Недійсна URL-адреса</string>
+    <string name="msg_apply_blocklists_failed">Не вдалося застосувати файли хосту</string>
     <string name="msg_last_update">Останнє оновлення: %s</string>
 </resources>

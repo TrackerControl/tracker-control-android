@@ -15,11 +15,13 @@
     <string name="menu_app_system">显示系统应用</string>
     <string name="menu_app_nointernet">显示非联网应用</string>
     <string name="menu_app_unprotected">仅显示未受保护的应用</string>
+    <string name="menu_app_frozen">显示已冻结的应用</string>
     <string name="menu_sort">排序应用</string>
     <string name="menu_sort_name">按名称排序</string>
     <string name="menu_sort_uid">按 UID 排序</string>
     <string name="menu_sort_companies_week">按公司排序(周)</string>
     <string name="menu_sort_companies">按公司排序</string>
+    <string name="menu_sort_by_latest_detected_tracker">按最新检测到的跟踪器排序</string>
     <string name="menu_log">流量日志</string>
     <string name="menu_settings">设置</string>
     <string name="menu_invite">邀请</string>
@@ -28,6 +30,19 @@
     <string name="menu_log_support">解释</string>
     <string name="menu_troubleshooting">故障排除</string>
     <string name="menu_about">关于</string>
+    <string name="menu_timeline">跟踪器活动</string>
+    <string name="title_tracker_activity">跟踪器活动</string>
+    <string name="timeline_empty">最近没有跟踪器活动。\n\n启用 TrackerControl 查看哪些应用跟踪您。</string>
+    <string name="timeline_section_last_hour">上个小时</string>
+    <string name="timeline_section_today">今天</string>
+    <string name="timeline_section_yesterday">昨天</string>
+    <string name="timeline_section_this_week">本周</string>
+    <string name="timeline_more_trackers">另 %d 个</string>
+    <string name="timeline_tracker_blocked">已拦截</string>
+    <string name="timeline_tracker_allowed">已放行</string>
+    <string name="timeline_summary_all_blocked">拦截了 %d 个跟踪器</string>
+    <string name="timeline_summary_none_blocked">放行了 %d 个跟踪器</string>
+    <string name="timeline_summary_mixed">%1$d 已拦截 · %2$d 已放行</string>
     <string name="troubleshooting_title">故障排除</string>
     <string name="troubleshooting_battery_title">电池优化</string>
     <string name="troubleshooting_battery_desc">如果TrackerControl 停止在后台工作，禁用Android针对TrackerControl的电池优化。选择\"所有应用程序\"，点击TrackerControl，并选择\"不优化\"。</string>
@@ -444,6 +459,9 @@
     <string name="onboarding_vpn_desc">TrackerControl 使用 Android 的本地VPN 接口来分析您的网络流量。\n\n<b>重要：</b> 不涉及外部 VPN 服务器。我们看不到您的数据。</string>
     <string name="onboarding_vpn_action">启用设备上的 VPN</string>
     <string name="onboarding_vpn_sure">TrackerControl 无法在没有本地的 VPN的情况下过滤任何流量。您确定要继续而不启用它吗？</string>
+    <string name="onboarding_vpn_blocked_title">另一个 VPN 已激活</string>
+    <string name="onboarding_vpn_blocked_desc">Android 阻止 TrackerControl 启动本地 VPN，因为另一个应用被设为 <b>始终开启的 VPN</b>。打开 VPN 设置禁用其他应用的始终开启设定后再试。</string>
+    <string name="onboarding_vpn_blocked_action">打开 VPN 设置</string>
     <string name="onboarding_battery_title">防止中断</string>
     <string name="onboarding_battery_desc">Android 可能会停止后台应用程序以节省电量。为了确保对跟踪器的持续保护，请禁用对于 TrackerControl 的优化。</string>
     <string name="onboarding_battery_action">禁用优化</string>
@@ -504,6 +522,7 @@
     <string name="insights_share_message">我本周用TrackerControl屏蔽了来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_share_message_playstore">我本周用TrackerControl检测到来自 %2$d 家企业的 %1$d 个追踪器！拿回您的隐私：https://trackercontrol.org</string>
     <string name="insights_see_more">查看更多 →</string>
+    <string name="insights_view_timeline">查看最近的跟踪器活动</string>
     <!-- What's New onboarding slide (not translated) -->
     <string name="title_blocklists">额外的主机文件</string>
     <string name="summary_manage_blocklists">这些只是备用。TrackerControl 包括其自己的主机名单，让人们了解跟踪背后的公司。</string>
