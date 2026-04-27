@@ -29,4 +29,7 @@ find_library( log-lib
 target_link_libraries( netguard
                        ${log-lib} )
 
-target_link_options(netguard PRIVATE "-Wl,-z,max-page-size=16384")
+target_link_options(netguard PRIVATE
+    "-Wl,-z,max-page-size=16384"
+    "-Wl,-z,common-page-size=16384"
+    "-Wl,--build-id=sha1")

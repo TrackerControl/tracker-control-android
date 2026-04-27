@@ -28,11 +28,14 @@ gomobile init
 
 # Produce the AAR consumed by the app. -javapkg places the generated Java
 # classes at net.kollnig.missioncontrol.wgbridge.* so they sit cleanly
-# alongside the rest of the app namespace.
+# alongside the rest of the app namespace. -ldflags forces the C linker
+# to use 16 KB max page size, required for Play Store compatibility on
+# Android 15+.
 gomobile bind \
     -target=android \
     -androidapi 23 \
     -javapkg=net.kollnig.missioncontrol \
+    -ldflags='-extldflags "-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"' \
     -o ../app/libs/wgbridge.aar \
     .
 ```
