@@ -265,9 +265,9 @@
     <string name="title_log_port">Порт %1$d</string>
     <string name="title_log_copy">Копіювати</string>
     <string-array name="blockingModeNames">
-        <item>@string/blocking_mode_minimal</item>
-        <item>@string/blocking_mode_standard</item>
-        <item>@string/blocking_mode_strict</item>
+        <item>@string/режим_блокування_мінімальний</item>
+        <item>@string/режим_блокування_стандартний</item>
+        <item>@string/режим_блокування_суворий</item>
     </string-array>
     <!-- App Overview -->
     <string name="tracked_app_icon">Вимкнути доступ до Інтернету для цієї програми</string>
