@@ -75,19 +75,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.Common;
-import net.kollnig.missioncontrol.InsightsHeaderAdapter;
 import net.kollnig.missioncontrol.R;
-import net.kollnig.missioncontrol.data.InsightsData;
-import net.kollnig.missioncontrol.data.InsightsDataProvider;
+import net.kollnig.missioncontrol.TimelineFragment;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
 
@@ -99,8 +97,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
@@ -119,9 +115,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private MaterialSwitch swEnabled;
     private ImageView ivMetered;
     private SwipeRefreshLayout swipeRefresh;
-    private InsightsHeaderAdapter headerAdapter;
     private AdapterRule adapter = null;
     private MenuItem menuSearch = null;
+    private BottomNavigationView bottomNav;
+    private View llAppsContent;
+    private View timelineContainer;
+    private boolean showingTimeline = false;
     private AlertDialog dialogVpn = null;
     private AlertDialog dialogLegend = null;
     private AlertDialog dialogAbout = null;
@@ -310,10 +309,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                         }
 
-                    boolean filter = prefs.getBoolean("filter", true);
-                    if (filter && Util.isPrivateDns(ActivityMain.this))
-                        Toast.makeText(ActivityMain.this, R.string.msg_private_dns, Toast.LENGTH_LONG).show();
-
                     try {
                         final Intent prepare = VpnService.prepare(ActivityMain.this);
                         if (prepare == null) {
@@ -381,6 +376,36 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
 
+        // Bottom navigation: Timeline / Apps
+        llAppsContent = findViewById(R.id.llApps);
+        timelineContainer = findViewById(R.id.timelineContainer);
+        bottomNav = findViewById(R.id.bottomNav);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.timelineContainer, new TimelineFragment())
+                    .commit();
+        }
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            selectTab(item.getItemId());
+            return true;
+        });
+
+        int initialTab;
+        if (savedInstanceState == null) {
+            // Land new users on Timeline; keep returning users there too — it is
+            // the "what's happening now" dashboard. Apps is one tap away.
+            initialTab = R.id.nav_timeline;
+        } else {
+            initialTab = bottomNav.getSelectedItemId();
+            if (initialTab == 0)
+                initialTab = R.id.nav_timeline;
+        }
+        bottomNav.setSelectedItemId(initialTab);
+        selectTab(initialTab);
+
         // Disabled warning
         TextView tvDisabled = findViewById(R.id.tvDisabled);
         tvDisabled.setVisibility(enabled ? View.GONE : View.VISIBLE);
@@ -402,12 +427,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvApplication.setLayoutManager(llm);
         rvApplication.setItemViewCacheSize(20);
-        headerAdapter = new InsightsHeaderAdapter(this);
         adapter = new AdapterRule(this, findViewById(R.id.vwPopupAnchor));
-        ConcatAdapter concatAdapter = new ConcatAdapter(headerAdapter, adapter);
-        rvApplication.setAdapter(concatAdapter);
-
-        loadInsightsData();
+        rvApplication.setAdapter(adapter);
 
         // Swipe to refresh
         swipeRefresh = findViewById(R.id.swipeRefresh);
@@ -417,21 +438,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Rule.clearCache(ActivityMain.this);
                 ServiceSinkhole.reload("pull", ActivityMain.this, false);
                 updateApplicationList(null);
-                loadInsightsData();
-            }
-        });
-
-        // Hint usage
-        final LinearLayout llUsage = findViewById(R.id.llUsage);
-        Button btnUsage = findViewById(R.id.btnUsage);
-        boolean hintUsage = prefs.getBoolean("hint_usage", true);
-        llUsage.setVisibility(hintUsage ? View.VISIBLE : View.GONE);
-        btnUsage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefs.edit().putBoolean("hint_usage", false).apply();
-                llUsage.setVisibility(View.GONE);
-                showHints();
             }
         });
 
@@ -498,8 +504,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             super.onResume();
             return;
         }
-
-        loadInsightsData();
 
         DatabaseHelper.getInstance(this).addAccessChangedListener(accessChangedListener);
         if (adapter != null)
@@ -821,7 +825,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     }
                     if (intent.getBooleanExtra(EXTRA_REFRESH, false)) {
                         updateApplicationList(null);
-                        loadInsightsData();
                     }
                 } else
                     updateApplicationList(null);
@@ -863,6 +866,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         menuSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                // Search filters the app list, so jump to the Apps tab when
+                // the user expands it from Timeline. Post the switch so the
+                // SearchView finishes expanding (and grabs focus + opens
+                // the keyboard) on the current frame; otherwise the layout
+                // toggle in selectTab pre-empts focus before the IME shows.
+                if (showingTimeline && bottomNav != null) {
+                    final BottomNavigationView nav = bottomNav;
+                    nav.post(() -> nav.setSelectedItemId(R.id.nav_apps));
+                }
                 return true;
             }
 
@@ -895,8 +907,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     public void run() {
                         if (adapter != null)
                             adapter.getFilter().filter(newText);
-                        if (headerAdapter != null)
-                            headerAdapter.setVisible(TextUtils.isEmpty(newText));
                     }
                 };
                 searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_MS);
@@ -911,8 +921,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
                 if (adapter != null)
                     adapter.getFilter().filter(null);
-                if (headerAdapter != null)
-                    headerAdapter.setVisible(true);
                 return true;
             }
         });
@@ -936,6 +944,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Filter/sort are list-specific; hide them on the Timeline tab.
+        // Search stays visible — clicking it on Timeline jumps to the Apps tab.
+        MenuItem filterItem = menu.findItem(R.id.menu_filter);
+        MenuItem sortItem = menu.findItem(R.id.menu_sort);
+        if (filterItem != null) filterItem.setVisible(!showingTimeline);
+        if (sortItem != null) sortItem.setVisible(!showingTimeline);
+        if (showingTimeline)
+            return super.onPrepareOptionsMenu(menu);
 
         if (prefs.getBoolean("manage_system", false)) {
             menu.findItem(R.id.menu_app_user).setChecked(prefs.getBoolean("show_user", true));
@@ -1012,9 +1029,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             item.setChecked(true);
             prefs.edit().putString("sort", "uid").apply();
             return true;
-        } else if (itemId == R.id.menu_timeline) {
-            startActivity(new Intent(this, net.kollnig.missioncontrol.ActivityTimeline.class));
-            return true;
         } else if (itemId == R.id.menu_log) {
             if (Util.canFilter(this))
                 startActivity(new Intent(this, ActivityLog.class));
@@ -1059,9 +1073,36 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         return intent;
     }
 
+    private void selectTab(int itemId) {
+        boolean timeline = itemId == R.id.nav_timeline;
+        showingTimeline = timeline;
+        llAppsContent.setVisibility(timeline ? View.GONE : View.VISIBLE);
+        timelineContainer.setVisibility(timeline ? View.VISIBLE : View.GONE);
+
+        // Collapse SearchView only when leaving Apps for Timeline. When the
+        // user opens the SearchView from Timeline we switch *to* Apps; in
+        // that path we must NOT collapse, otherwise the freshly-expanded
+        // SearchView is torn down before it can take focus.
+        if (timeline && menuSearch != null && menuSearch.isActionViewExpanded())
+            menuSearch.collapseActionView();
+
+        // No invalidateOptionsMenu(): filter/sort live in the overflow,
+        // which calls onPrepareOptionsMenu the next time it is opened, so
+        // their visibility updates lazily — and we avoid rebuilding the
+        // SearchView mid-expand, which would also drop keyboard focus.
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (showingTimeline && bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_apps);
+            return;
+        }
+        super.onBackPressed();
+    }
+
     private void showHints() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean hintUsage = prefs.getBoolean("hint_usage", true);
 
         // Hint white listing
         final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);
@@ -1070,7 +1111,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
         boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
         llWhitelist.setVisibility(
-                !(whitelist_wifi || whitelist_other) && hintWhitelist && !hintUsage ? View.VISIBLE : View.GONE);
+                !(whitelist_wifi || whitelist_other) && hintWhitelist ? View.VISIBLE : View.GONE);
         btnWhitelist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1083,7 +1124,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         final LinearLayout llPush = findViewById(R.id.llPush);
         Button btnPush = findViewById(R.id.btnPush);
         boolean hintPush = prefs.getBoolean("hint_push", true);
-        llPush.setVisibility(hintPush && !hintUsage ? View.VISIBLE : View.GONE);
+        llPush.setVisibility(hintPush ? View.VISIBLE : View.GONE);
         btnPush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1364,16 +1405,4 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Uri.parse("https://github.com/TrackerControl/tracker-control-android#support-trackercontrol"));
     }
 
-    private void loadInsightsData() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            InsightsDataProvider provider = new InsightsDataProvider(this);
-            InsightsData data = provider.computeInsights();
-            runOnUiThread(() -> {
-                if (headerAdapter != null) {
-                    headerAdapter.setData(data);
-                }
-            });
-        });
-    }
 }

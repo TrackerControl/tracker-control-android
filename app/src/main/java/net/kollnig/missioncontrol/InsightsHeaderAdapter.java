@@ -49,8 +49,6 @@ import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import eu.faircode.netguard.Util;
-
 /**
  * Adapter that displays the insights hero card as a header in the main
  * RecyclerView.
@@ -128,9 +126,6 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         holder.btnShare.setOnClickListener(v -> shareInsights());
         holder.tvSeeMore.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
-        });
-        holder.llTimelineAction.setOnClickListener(v -> {
-            context.startActivity(new Intent(context, ActivityTimeline.class));
         });
         holder.itemView.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
@@ -282,7 +277,6 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         TextView tvCompanies;
         ImageButton btnShare;
         TextView tvSeeMore;
-        LinearLayout llTimelineAction;
         TextView tvBlockedPct;
         View vBlockedProgress;
         View vAllowedProgress;
@@ -295,7 +289,6 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             tvCompanies = itemView.findViewById(R.id.tvHeroCompanies);
             btnShare = itemView.findViewById(R.id.btnShare);
             tvSeeMore = itemView.findViewById(R.id.tvSeeMore);
-            llTimelineAction = itemView.findViewById(R.id.llTimelineAction);
             tvBlockedPct = itemView.findViewById(R.id.tvHeroBlockedPct);
             vBlockedProgress = itemView.findViewById(R.id.vBlockedProgress);
             vAllowedProgress = itemView.findViewById(R.id.vAllowedProgress);

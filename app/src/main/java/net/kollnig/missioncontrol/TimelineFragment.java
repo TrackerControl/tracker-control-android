@@ -1,22 +1,29 @@
 package net.kollnig.missioncontrol;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import net.kollnig.missioncontrol.data.InsightsData;
+import net.kollnig.missioncontrol.data.InsightsDataProvider;
 import net.kollnig.missioncontrol.data.TimelineEntry;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerContact;
@@ -27,62 +34,105 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.faircode.netguard.DatabaseHelper;
 
-public class ActivityTimeline extends AppCompatActivity implements TimelineAdapter.OnEntryClickListener {
+public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntryClickListener {
 
-    private TimelineAdapter adapter;
-    private TextView tvEmpty;
+    private static final long REFRESH_DEBOUNCE_MS = 500L;
+    // Catch stale relative timestamps and any missed AccessChangedListener
+    // callbacks by re-querying on a slow tick while the screen is open.
+    private static final long PERIODIC_REFRESH_MS = 30_000L;
+
+    private TimelineAdapter timelineAdapter;
+    private InsightsHeaderAdapter insightsAdapter;
+    private TimelineEmptyAdapter emptyAdapter;
     private RecyclerView rvTimeline;
+    private SwipeRefreshLayout swipeRefresh;
 
+    private final Handler refreshHandler = new Handler(Looper.getMainLooper());
+    private final Runnable refreshRunnable = this::refreshAll;
+    private final Runnable periodicRunnable = new Runnable() {
+        @Override
+        public void run() {
+            refreshAll();
+            refreshHandler.postDelayed(this, PERIODIC_REFRESH_MS);
+        }
+    };
+    private final DatabaseHelper.AccessChangedListener accessListener =
+            () -> {
+                refreshHandler.removeCallbacks(refreshRunnable);
+                refreshHandler.postDelayed(refreshRunnable, REFRESH_DEBOUNCE_MS);
+            };
+
+    private ExecutorService insightsExecutor;
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Pad the AppBarLayout so its colored background extends behind the status bar
-        com.google.android.material.appbar.AppBarLayout appBar = findViewById(R.id.appbar);
-        final int appBarInitialTop = appBar.getPaddingTop();
-        ViewCompat.setOnApplyWindowInsetsListener(appBar, (v, insets) -> {
-            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(v.getPaddingLeft(), appBarInitialTop + sysBars.top,
-                    v.getPaddingRight(), v.getPaddingBottom());
-            return insets;
-        });
-
-        tvEmpty = findViewById(R.id.tvEmpty);
-        rvTimeline = findViewById(R.id.rvTimeline);
-        rvTimeline.setLayoutManager(new LinearLayoutManager(this));
-
-        adapter = new TimelineAdapter(this, this);
-        rvTimeline.setAdapter(adapter);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_timeline, container, false);
     }
 
     @Override
-    protected void onResume() {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        rvTimeline = view.findViewById(R.id.rvTimeline);
+        swipeRefresh = view.findViewById(R.id.swipeRefreshTimeline);
+
+        rvTimeline.setLayoutManager(new LinearLayoutManager(requireContext()));
+        insightsAdapter = new InsightsHeaderAdapter(requireContext());
+        emptyAdapter = new TimelineEmptyAdapter();
+        timelineAdapter = new TimelineAdapter(requireContext(), this);
+
+        ConcatAdapter concat = new ConcatAdapter(insightsAdapter, emptyAdapter, timelineAdapter);
+        rvTimeline.setAdapter(concat);
+
+        swipeRefresh.setOnRefreshListener(this::refreshAll);
+
+        insightsExecutor = Executors.newSingleThreadExecutor();
+    }
+
+    @Override
+    public void onResume() {
         super.onResume();
-        loadTimeline();
+        DatabaseHelper.getInstance(requireContext()).addAccessChangedListener(accessListener);
+        refreshAll();
+        refreshHandler.postDelayed(periodicRunnable, PERIODIC_REFRESH_MS);
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+    public void onPause() {
+        super.onPause();
+        DatabaseHelper.getInstance(requireContext()).removeAccessChangedListener(accessListener);
+        refreshHandler.removeCallbacks(refreshRunnable);
+        refreshHandler.removeCallbacks(periodicRunnable);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (insightsExecutor != null) {
+            insightsExecutor.shutdownNow();
+            insightsExecutor = null;
+        }
     }
 
     @Override
     public void onEntryClick(TimelineEntry entry) {
-        Intent intent = new Intent(this, DetailsActivity.class);
+        Intent intent = new Intent(requireContext(), DetailsActivity.class);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, entry.appName);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, entry.packageName);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, entry.uid);
         startActivity(intent);
+    }
+
+    private void refreshAll() {
+        loadTimeline();
+        loadInsights();
     }
 
     private void loadTimeline() {
@@ -94,20 +144,44 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
 
             @Override
             protected void onPostExecute(List<TimelineEntry> entries) {
-                adapter.setEntries(entries);
-                tvEmpty.setVisibility(entries.isEmpty() ? View.VISIBLE : View.GONE);
-                rvTimeline.setVisibility(entries.isEmpty() ? View.GONE : View.VISIBLE);
+                if (!isAdded())
+                    return;
+                timelineAdapter.setEntries(entries);
+                swipeRefresh.setRefreshing(false);
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+                emptyAdapter.setTrackerControlEnabled(prefs.getBoolean("enabled", false));
+                emptyAdapter.setVisible(entries.isEmpty());
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private List<TimelineEntry> buildTimeline() {
-        DatabaseHelper dh = DatabaseHelper.getInstance(this);
-        PackageManager pm = getPackageManager();
+    private void loadInsights() {
+        if (insightsExecutor == null || insightsExecutor.isShutdown())
+            return;
+        insightsExecutor.execute(() -> {
+            if (!isAdded())
+                return;
+            InsightsDataProvider provider = new InsightsDataProvider(requireContext());
+            InsightsData data = provider.computeInsights();
+            Handler main = new Handler(Looper.getMainLooper());
+            main.post(() -> {
+                if (isAdded() && insightsAdapter != null)
+                    insightsAdapter.setData(data);
+            });
+        });
+    }
 
-        // uid -> (companyName -> TrackerContact with latest time and blocked state)
-        // We use a compound key of "companyName|blocked" to keep separate entries
-        // for the same company when it has both blocked and allowed connections.
+    private List<TimelineEntry> buildTimeline() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(requireContext());
+        PackageManager pm = requireContext().getPackageManager();
+        // findTracker() reads from a static map populated lazily by
+        // TrackerList.getInstance(). Without this call, opening the
+        // app on the Timeline tab races with insights initialization
+        // and every entry is silently dropped — appearing as an empty
+        // "Watching for trackers…" screen even when there is data.
+        TrackerList.getInstance(requireContext());
+
         Map<Integer, Map<String, TrackerContact>> uidTrackers = new LinkedHashMap<>();
         Map<Integer, Long> uidLatestTime = new LinkedHashMap<>();
         Map<Integer, String[]> uidAppInfo = new LinkedHashMap<>();
@@ -127,7 +201,6 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
                 int allowed = cursor.getInt(colAllowed);
                 long lastTime = cursor.getLong(colLastTime);
 
-                // Resolve to tracker — skip non-tracker destinations
                 Tracker tracker = TrackerList.findTracker(daddr);
                 if (tracker == null)
                     continue;
@@ -139,27 +212,23 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
                 boolean blocked = allowed == 0;
                 String category = tracker.getCategory();
 
-                // Track per-uid
                 Map<String, TrackerContact> companyMap = uidTrackers.get(uid);
                 if (companyMap == null) {
                     companyMap = new LinkedHashMap<>();
                     uidTrackers.put(uid, companyMap);
                 }
 
-                // Key by company+blocked to keep blocked/allowed separate for same company
                 String key = companyName + "|" + blocked;
                 TrackerContact existing = companyMap.get(key);
                 if (existing == null || lastTime > existing.lastTime) {
                     companyMap.put(key, new TrackerContact(companyName, category, blocked, lastTime));
                 }
 
-                // Track latest time per uid
                 Long currentLatest = uidLatestTime.get(uid);
                 if (currentLatest == null || lastTime > currentLatest) {
                     uidLatestTime.put(uid, lastTime);
                 }
 
-                // Resolve app info once per uid
                 if (!uidAppInfo.containsKey(uid)) {
                     String appName = Integer.toString(uid);
                     String packageName = null;
@@ -177,7 +246,6 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
             }
         }
 
-        // Build entries
         List<TimelineEntry> entries = new ArrayList<>();
         for (Map.Entry<Integer, Map<String, TrackerContact>> e : uidTrackers.entrySet()) {
             int uid = e.getKey();
@@ -186,7 +254,6 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
                 continue;
 
             List<TrackerContact> trackers = new ArrayList<>(e.getValue().values());
-            // Sort: blocked first, then by most recent
             trackers.sort((a, b) -> {
                 if (a.blocked != b.blocked)
                     return a.blocked ? -1 : 1;
@@ -198,7 +265,6 @@ public class ActivityTimeline extends AppCompatActivity implements TimelineAdapt
                     latestTime != null ? latestTime : 0, trackers));
         }
 
-        // Sort by most recent first
         entries.sort((a, b) -> Long.compare(b.mostRecentTime, a.mostRecentTime));
         return entries;
     }
