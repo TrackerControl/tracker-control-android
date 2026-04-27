@@ -403,8 +403,15 @@ void handle_ip(const struct arguments *args,
         // WireGuard hijack: when enabled, hand the raw IP packet to the WG
         // bridge instead of running the userspace TCP/UDP state machines.
         // Per-app UID lookup and the block decision above still apply.
-        // Loopback/link-local/multicast are kept on the local path.
-        if (wg_enabled && wg_outbound_fd >= 0 && !is_local_dest(version, daddr)) {
+        // Loopback/link-local/multicast are kept on the local path. DNS
+        // (UDP/TCP port 53) also stays on the local path so NetGuard's
+        // port-53 forwarding to DnsProxyServer keeps working — the
+        // DnsProxyServer's own upstream (DoH on TCP/443) will itself
+        // traverse WG, so we keep both privacy AND tracker blocking.
+        int is_dns = (dport == 53 &&
+                      (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
+        if (wg_enabled && wg_outbound_fd >= 0
+                && !is_local_dest(version, daddr) && !is_dns) {
             ssize_t w = write(wg_outbound_fd, pkt, length);
             if (w != (ssize_t) length)
                 log_android(ANDROID_LOG_WARN, "wg write %zd/%zu errno %d: %s",
