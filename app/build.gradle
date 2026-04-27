@@ -1,6 +1,57 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 
+// --- WireGuard bridge (built from source via gomobile) ---
+// Produces app/build/wgbridge/wgbridge.aar from wgbridge/*.go on demand.
+// Only re-runs when the Go source, go.mod or go.sum change. Keeps the
+// build fully reproducible (no checked-in binary AAR) while remaining a
+// single `./gradlew assemble` for contributors.
+def wgbridgeSrcDir = file("$rootDir/wgbridge")
+def wgbridgeAar    = file("$buildDir/wgbridge/wgbridge.aar")
+
+tasks.register('wgbridgeBind') {
+    description = 'Builds wgbridge.aar via `gomobile bind`. Requires Go 1.25+, gomobile and the Android NDK on PATH.'
+    group       = 'build'
+
+    inputs.files(fileTree(wgbridgeSrcDir) {
+        include '**/*.go'
+        include 'go.mod'
+        include 'go.sum'
+    }).withPropertyName('wgbridgeSource').withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.file(wgbridgeAar).withPropertyName('wgbridgeAar')
+    outputs.cacheIf { true }
+
+    doLast {
+        wgbridgeAar.parentFile.mkdirs()
+
+        // Ensure $(go env GOPATH)/bin is on PATH so `gomobile` resolves
+        // even when contributors haven't added it to their shell rc.
+        def gopath = providers.exec {
+            commandLine 'go', 'env', 'GOPATH'
+        }.standardOutput.asText.get().trim()
+        def env = new HashMap<String, String>(System.getenv())
+        env['PATH'] = "${env['PATH']}${File.pathSeparator}${gopath}/bin"
+
+        exec {
+            workingDir wgbridgeSrcDir
+            environment env
+            commandLine 'gomobile', 'bind',
+                    '-target=android',
+                    '-androidapi', '23',
+                    '-javapkg=net.kollnig.missioncontrol',
+                    '-ldflags', '-extldflags "-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"',
+                    '-o', wgbridgeAar.absolutePath,
+                    '.'
+        }
+    }
+}
+
+// Force the AAR to be present before any Java/Kotlin compilation that
+// references its classes. preBuild runs before all variant compile tasks.
+afterEvaluate {
+    tasks.named('preBuild').configure { dependsOn 'wgbridgeBind' }
+}
+
 android {
     compileSdk 36
 
@@ -137,7 +188,8 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files(wgbridgeAar)
 
     // https://developer.android.com/jetpack/androidx/releases/
     implementation 'androidx.activity:activity:1.9.3'

@@ -20,38 +20,69 @@ implementation.
 
 ## Build
 
-```bash
-# Prerequisites: Go 1.25+ (required by current golang.org/x/mobile),
-# Android NDK 27+, gomobile.
-go install golang.org/x/mobile/cmd/gomobile@latest
-gomobile init
+The `wgbridgeBind` Gradle task runs `gomobile bind` automatically as part
+of the Android build, so once prerequisites are in place you don't need
+to invoke it directly:
 
-# Produce the AAR consumed by the app. -javapkg places the generated Java
-# classes at net.kollnig.missioncontrol.wgbridge.* so they sit cleanly
-# alongside the rest of the app namespace. -ldflags forces the C linker
-# to use 16 KB max page size, required for Play Store compatibility on
-# Android 15+.
+```bash
+./gradlew assembleGithubDebug   # bridge AAR is built on demand
+```
+
+The task tracks `*.go`, `go.mod` and `go.sum` as inputs and the produced
+AAR (`app/build/wgbridge/wgbridge.aar`) as its output, so it's skipped
+when the Go source hasn't changed.
+
+### Prerequisites
+
+- **Go ≥ 1.25** (current `golang.org/x/mobile` requires it).
+- **gomobile**: `go install golang.org/x/mobile/cmd/gomobile@latest`,
+  then `gomobile init` once.
+- **Android NDK ≥ 27** with `ANDROID_NDK_HOME` exported.
+
+`gomobile_tools.go` carries a build-tag-guarded import of
+`golang.org/x/mobile/bind` so that `go mod tidy` keeps `x/mobile` in
+`go.mod`. Without it, `gomobile bind` errors out with "no Go package
+in `golang.org/x/mobile/bind`".
+
+### Manual build (debugging)
+
+```bash
+cd wgbridge
 gomobile bind \
     -target=android \
     -androidapi 23 \
     -javapkg=net.kollnig.missioncontrol \
     -ldflags='-extldflags "-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"' \
-    -o ../app/libs/wgbridge.aar \
+    -o ../app/build/wgbridge/wgbridge.aar \
     .
 ```
 
-`gomobile_tools.go` carries a build-tag-guarded import of
-`golang.org/x/mobile/bind` so that `go mod tidy` keeps `x/mobile` in
-`go.mod`. Without that stub, `gomobile bind` errors out with "no Go
-package in golang.org/x/mobile/bind" before it gets to our code.
+## F-Droid build metadata
 
-The resulting `wgbridge.aar` is checked into `app/libs/` so contributors
-without the Go toolchain can still build the app.
+The F-Droid build server doesn't ship Go by default. Add the following
+to the `Builds:` entry in `metadata/net.kollnig.missioncontrol.yml`:
 
-## Java/Kotlin API surface (after `gomobile bind`)
+```yaml
+sudo:
+  - apt-get update
+  - apt-get install -y golang-1.25 build-essential
+  - update-alternatives --install /usr/local/bin/go go /usr/lib/go-1.25/bin/go 1
+prebuild:
+  - go install golang.org/x/mobile/cmd/gomobile@latest
+  - export PATH=$PATH:$(go env GOPATH)/bin
+  - gomobile init
+```
+
+(`golang-1.25` may not yet be in the build server's package cache —
+adjust the source list / version as needed.)
+
+## Java/Kotlin API surface
+
+After `gomobile bind`, the AAR exposes:
 
 ```java
-// package wgbridge produced by gomobile
+package net.kollnig.missioncontrol.wgbridge;
+
 class Wgbridge {
     static Tunnel startTunnel(
         String uapiConfig,
