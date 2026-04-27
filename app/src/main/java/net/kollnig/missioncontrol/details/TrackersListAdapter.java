@@ -351,7 +351,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.mSwitchTracker.setOnCheckedChangeListener(null);
                 holder.mCompaniesList.setOnItemClickListener(null);
             } else {
-                boolean enabled = apply.getBoolean(mAppId, true) && !w.blockedInternet(mAppUid);
+                boolean enabled = apply.getBoolean(mAppId, true)
+                        && !w.blockedInternet(mAppUid)
+                        && trackerProtectionEnabled;
                 holder.mSwitchTracker.setEnabled(enabled);
                 holder.mSwitchTracker.setChecked(
                         b.blocked(mAppUid, trackerCategoryName));
@@ -411,6 +413,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // browsers, where tracker blocking defaults off but can be opted in.
             if (showTrackerProtection) {
                 holder.mSwitchVPN.setVisibility(View.VISIBLE);
+                holder.mSwitchVPN.setEnabled(apply.getBoolean(mAppId, true)
+                        && !w.blockedInternet(mAppUid));
                 holder.mSwitchVPN.setChecked(BlockingMode.isTrackerProtectionEnabled(
                         mContext, tracker_protect, mAppId));
                 holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
