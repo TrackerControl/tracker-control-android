@@ -237,7 +237,16 @@ public class ActivityOnboarding extends AppCompatActivity {
                     null));
         }
 
-        // 8. Secure DNS - Disabled for now to simplify onboarding
+        // 8. Timeline
+        slides.add(new Slide(
+                R.string.onboarding_timeline_title,
+                getText(R.string.onboarding_timeline_title),
+                getText(R.string.onboarding_timeline_desc),
+                R.drawable.ic_history,
+                null,
+                null));
+
+        // 9. Secure DNS - Disabled for now to simplify onboarding
         // final SharedPreferences prefsDns =
         // PreferenceManager.getDefaultSharedPreferences(this);
         // boolean dohEnabled = prefsDns.getBoolean("doh_enabled", false);

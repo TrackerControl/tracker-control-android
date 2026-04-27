@@ -595,6 +595,9 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_privatedns_skip_title">Skip Private DNS Disabling?</string>
     <string name="onboarding_privatedns_skip_msg">Proceeding with Private DNS enabled will heavily restrict TrackerControl. Most tracking will not be blocked, leaving only the tracker library analysis. Additionally, the VPN filter will be disabled to ensure basic functionality.</string>
 
+    <string name="onboarding_timeline_title">Watch the Timeline Fill Up</string>
+    <string name="onboarding_timeline_desc">TrackerControl starts on the Timeline. At first it can be empty: apps usually contact trackers only while you use them.\n\nAfter finishing setup, open a few apps, then return to TrackerControl to see detected and blocked tracking activity.</string>
+
     <string name="onboarding_network_title">Unrestricted Network</string>
     <string name="onboarding_network_desc">Data Saving options can prevent TrackerControl from working properly in the background. Grant unrestricted access for the most reliable protection.</string>
     <string name="onboarding_network_action">Grant Unrestricted Access</string>
