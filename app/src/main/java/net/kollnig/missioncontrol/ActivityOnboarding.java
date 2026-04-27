@@ -588,14 +588,12 @@ public class ActivityOnboarding extends AppCompatActivity {
                 holder.tvStandardDesc.setVisibility(restrictedVisibility);
                 holder.rbStrict.setVisibility(restrictedVisibility);
                 holder.tvStrictDesc.setVisibility(restrictedVisibility);
-                holder.rbResearch.setVisibility(restrictedVisibility);
-                holder.tvResearchDesc.setVisibility(restrictedVisibility);
 
                 // Set current selection
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
                         holder.itemView.getContext());
-                boolean researchPreset = !playStoreBuild && (prefs.getBoolean("log_logcat", false)
-                        || !prefs.getBoolean("filter", true));
+                boolean researchPreset = prefs.getBoolean("log_logcat", false)
+                        || !prefs.getBoolean("filter", true);
                 String currentMode = BlockingMode.getMode(holder.itemView.getContext());
                 holder.rgBlockingMode.setOnCheckedChangeListener(null);
                 if (researchPreset)
@@ -614,7 +612,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                     boolean enableAdbLogging = false;
                     boolean enableDotBlocking = true;
 
-                    if (playStoreBuild || checkedId == R.id.rbMinimal)
+                    if (checkedId == R.id.rbMinimal)
                         mode = BlockingMode.MODE_MINIMAL;
                     else if (checkedId == R.id.rbStrict)
                         mode = BlockingMode.MODE_STRICT;

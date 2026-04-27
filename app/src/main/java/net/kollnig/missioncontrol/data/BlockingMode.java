@@ -122,28 +122,10 @@ public class BlockingMode {
             return;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        SharedPreferences.Editor editor = prefs.edit();
-        boolean changed = false;
+        if (MODE_MINIMAL.equals(prefs.getString(PREF_BLOCKING_MODE, getDefaultMode())))
+            return;
 
-        if (!MODE_MINIMAL.equals(prefs.getString(PREF_BLOCKING_MODE, getDefaultMode()))) {
-            editor.putString(PREF_BLOCKING_MODE, MODE_MINIMAL);
-            changed = true;
-        }
-        if (!prefs.getBoolean("filter", true)) {
-            editor.putBoolean("filter", true);
-            changed = true;
-        }
-        if (prefs.getBoolean("log_logcat", false)) {
-            editor.putBoolean("log_logcat", false);
-            changed = true;
-        }
-        if (prefs.getBoolean("sni_enabled", false)) {
-            editor.putBoolean("sni_enabled", false);
-            changed = true;
-        }
-
-        if (changed)
-            editor.apply();
+        prefs.edit().putString(PREF_BLOCKING_MODE, MODE_MINIMAL).apply();
     }
 
     /**
