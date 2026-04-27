@@ -185,6 +185,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_UPDATE = 8;
     public static final int NOTIFY_EXTERNAL = 9;
     private static final int NOTIFY_DOH_ERROR = 11;
+    private static final int NOTIFY_WG_ERROR = 12;
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -236,6 +237,13 @@ public class ServiceSinkhole extends VpnService {
     private native void jni_socks5(String addr, int port, String username, String password);
 
     private native void jni_sni(boolean enabled);
+
+    /** Allocate the WG egress socketpair; returns the read-end fd to hand to wgbridge,
+     *  or -1 on failure. The C side retains the write end and flips wg_enabled. */
+    private native int jni_wireguard_start();
+
+    /** Disable WG egress and close the socketpair write end. Idempotent. */
+    private native void jni_wireguard_stop();
 
     private native void jni_done(long context);
 
@@ -541,7 +549,8 @@ public class ServiceSinkhole extends VpnService {
                 if (vpn == null)
                     throw new StartFailedException(getString((R.string.msg_start_failed)));
 
-                startNative(vpn, listAllowed, listRule);
+                if (!startNative(vpn, listAllowed, listRule))
+                    return;
 
                 // Start DoH proxy if enabled
                 net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).start();
@@ -655,7 +664,8 @@ public class ServiceSinkhole extends VpnService {
             if (vpn == null)
                 throw new StartFailedException(getString((R.string.msg_start_failed)));
 
-            startNative(vpn, listAllowed, listRule);
+            if (!startNative(vpn, listAllowed, listRule))
+                return;
 
             // Update DoH proxy state based on current settings
             net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).checkAndUpdateState();
@@ -669,6 +679,10 @@ public class ServiceSinkhole extends VpnService {
                 stopNative(vpn);
                 stopVPN(vpn);
                 vpn = null;
+                // Final teardown — service is actually stopping (user toggled
+                // VPN off, OS is killing us, etc.) so WG should not survive.
+                net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
+                        () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
                 unprepare();
 
                 // Stop DoH proxy
@@ -1408,12 +1422,39 @@ public class ServiceSinkhole extends VpnService {
         builder.setBlocking(true);
 
         // VPN address
-        String vpn4 = prefs.getString("vpn4", "10.1.10.1");
-        Log.i(TAG, "Using VPN4=" + vpn4);
+        // When WG is on, prefer the addresses from [Interface] Address. Inner
+        // packets have to carry a source IP that matches what the WG peer
+        // accepts per its AllowedIPs for our peer entry — using the default
+        // 10.1.10.1 makes the peer drop everything (handshake works, but no
+        // data ever flows back).
+        String wgVpn4 = null;
+        String wgVpn6 = null;
+        if (prefs.getBoolean("wg_enabled", false)) {
+            String wgConfigText = prefs.getString("wg_config", "");
+            if (!TextUtils.isEmpty(wgConfigText)) {
+                try {
+                    net.kollnig.missioncontrol.wg.WgConfig parsed =
+                            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+                    for (String addr : parsed.getAddress()) {
+                        String ip = addr.split("/")[0].trim();
+                        if (ip.contains(":")) {
+                            if (wgVpn6 == null) wgVpn6 = ip;
+                        } else {
+                            if (wgVpn4 == null) wgVpn4 = ip;
+                        }
+                    }
+                } catch (Throwable ex) {
+                    Log.w(TAG, "WG addr parse failed: " + ex.getMessage());
+                }
+            }
+        }
+        String vpn4 = wgVpn4 != null ? wgVpn4 : prefs.getString("vpn4", "10.1.10.1");
+        Log.i(TAG, "Using VPN4=" + vpn4 + (wgVpn4 != null ? " (from WG config)" : ""));
         builder.addAddress(vpn4, 32);
         if (ip6) {
-            String vpn6 = prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1");
-            Log.i(TAG, "Using VPN6=" + vpn6);
+            String vpn6 = wgVpn6 != null ? wgVpn6
+                    : prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1");
+            Log.i(TAG, "Using VPN6=" + vpn6 + (wgVpn6 != null ? " (from WG config)" : ""));
             builder.addAddress(vpn6, 128);
         }
 
@@ -1506,6 +1547,24 @@ public class ServiceSinkhole extends VpnService {
 
         // MTU
         int mtu = jni_get_mtu();
+        if (prefs.getBoolean("wg_enabled", false)) {
+            // WG default is 1420 (1500 path MTU minus typical WG+UDP+IP overhead).
+            // Allow the config's [Interface] MTU to override but never exceed
+            // the safe default — going higher invites fragmentation.
+            int wgMtu = 1420;
+            String wgConfig = prefs.getString("wg_config", "");
+            if (!TextUtils.isEmpty(wgConfig)) {
+                try {
+                    net.kollnig.missioncontrol.wg.WgConfig parsed =
+                            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfig);
+                    if (parsed.getMtu() != null && parsed.getMtu() > 0 && parsed.getMtu() < wgMtu)
+                        wgMtu = parsed.getMtu();
+                } catch (Throwable ignored) {
+                    // Bad config — let the validation in ActivitySettings handle the user message.
+                }
+            }
+            if (wgMtu < mtu) mtu = wgMtu;
+        }
         Log.i(TAG, "MTU=" + mtu);
         builder.setMtu(mtu);
 
@@ -1544,7 +1603,7 @@ public class ServiceSinkhole extends VpnService {
         return builder;
     }
 
-    private void startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
+    private boolean startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
@@ -1582,6 +1641,24 @@ public class ServiceSinkhole extends VpnService {
 
             jni_sni(prefs.getBoolean("sni_enabled", false));
 
+            // WireGuard egress. startOrUpdate is idempotent: same config +
+            // same TUN fd is a no-op, so reload-induced "Native restart"
+            // calls (where the VPN PFD is reused) won't re-handshake WG.
+            // It also handles the disable case internally — no need to gate.
+            boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
+                    prefs.getBoolean("wg_enabled", false),
+                    prefs.getString("wg_config", ""),
+                    ServiceSinkhole.this,
+                    vpn,
+                    () -> jni_wireguard_start(),
+                    () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+            if (!wgOk) {
+                String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
+                Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
+                showWireGuardErrorNotification(wgError);
+                return false;
+            }
+
             if (tunnelThread == null) {
                 Log.i(TAG, "Starting tunnel thread context=" + jni_context);
                 jni_start(jni_context, prio);
@@ -1601,6 +1678,8 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "Started tunnel thread");
             }
         }
+
+        return true;
     }
 
     private void stopNative(ParcelFileDescriptor vpn) {
@@ -1627,6 +1706,13 @@ public class ServiceSinkhole extends VpnService {
 
             Log.i(TAG, "Stopped tunnel thread");
         }
+
+        // NOTE: WireGuard is intentionally NOT torn down here. NetGuard's
+        // reload() does a "Native restart" (stopNative + startNative on the
+        // same PFD) for transient events like DHCP/connectivity changes —
+        // tearing down WG every time would cause a fresh handshake every
+        // few seconds. WgEgress.stop() is invoked from the actual stop()
+        // path below.
     }
 
     private void unprepare() {
@@ -3327,6 +3413,35 @@ public class ServiceSinkhole extends VpnService {
             NotificationManagerCompat.from(this).notify(NOTIFY_DOH_ERROR, notification.build());
     }
 
+    private void showWireGuardErrorNotification(String message) {
+        Intent main = new Intent(this, ActivitySettings.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_WG_ERROR, main,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String detail = TextUtils.isEmpty(message)
+                ? getString(R.string.msg_wg_blocked)
+                : getString(R.string.msg_wg_blocked_detail, message);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.msg_wg_blocked_title))
+                .setContentText(detail)
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setOngoing(false)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(detail);
+
+        if (Util.canNotify(this))
+            NotificationManagerCompat.from(this).notify(NOTIFY_WG_ERROR, notification.build());
+    }
+
     private void showUpdateNotification(String name, String url) {
         if (Util.isFDroidInstall())
             return;
@@ -3356,6 +3471,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationManagerCompat.from(this).cancel(NOTIFY_AUTOSTART);
         NotificationManagerCompat.from(this).cancel(NOTIFY_ERROR);
         NotificationManagerCompat.from(this).cancel(NOTIFY_DOH_ERROR);
+        NotificationManagerCompat.from(this).cancel(NOTIFY_WG_ERROR);
     }
 
     private class Builder extends VpnService.Builder {

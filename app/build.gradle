@@ -1,6 +1,116 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 
+// --- WireGuard bridge (built from source via gomobile) ---
+// Produces app/build/wgbridge/wgbridge.aar from wgbridge/*.go on demand.
+// Only re-runs when the Go source, go.mod or go.sum change. Keeps the
+// build fully reproducible (no checked-in binary AAR) while remaining a
+// single `./gradlew assemble` for contributors.
+def wgbridgeSrcDir = file("$rootDir/wgbridge")
+def wgbridgeAar    = file("$buildDir/wgbridge/wgbridge.aar")
+def gomobileVersion = 'v0.0.0-20260410095206-2cfb76559b7b'
+
+// Locate the `go` binary. Android Studio launches Gradle with a sanitized
+// PATH that omits /usr/local/go/bin and Homebrew dirs, so falling back to
+// "just exec 'go'" produces "Cannot run program 'go'" on most macOS setups.
+// Order: explicit goBin Gradle property -> $GOROOT/bin -> common installs.
+def findGoBinary = { ->
+    def candidates = []
+    if (project.hasProperty('goBin')) candidates << project.property('goBin')
+    if (System.getenv('GOROOT')) candidates << "${System.getenv('GOROOT')}/bin/go"
+    candidates += [
+        '/usr/local/go/bin/go',          // official installer (Linux + macOS Intel)
+        '/opt/homebrew/bin/go',          // Homebrew on Apple Silicon
+        '/opt/homebrew/opt/go/bin/go',   // Homebrew keg-only
+        '/usr/local/bin/go',             // Homebrew on Intel
+        '/usr/bin/go',                   // distro packages
+        "${System.getProperty('user.home')}/sdk/go/bin/go",
+    ]
+    for (c in candidates) {
+        if (c != null && file(c).canExecute()) return c
+    }
+    // Last resort: hope it's on PATH (works on Linux usually).
+    return 'go'
+}
+
+tasks.register('wgbridgeBind') {
+    description = 'Builds wgbridge.aar via `gomobile bind`. Requires Go 1.25+, gomobile and the Android NDK.'
+    group       = 'build'
+
+    inputs.files(fileTree(wgbridgeSrcDir) {
+        include '**/*.go'
+        include 'go.mod'
+        include 'go.sum'
+    }).withPropertyName('wgbridgeSource').withPathSensitivity(PathSensitivity.RELATIVE)
+    outputs.file(wgbridgeAar).withPropertyName('wgbridgeAar')
+    outputs.cacheIf { true }
+
+    doLast {
+        wgbridgeAar.parentFile.mkdirs()
+
+        def goBin = findGoBinary()
+        if (goBin == 'go' && !System.getenv('PATH')?.split(File.pathSeparator)?.any { file("$it/go").canExecute() }) {
+            throw new GradleException("""
+                Could not find a `go` executable. Install Go 1.25+ from https://go.dev/dl/
+                or via Homebrew (`brew install go`), then either:
+                  - add Go's bin dir to PATH in your shell rc and restart Android Studio, or
+                  - pass -PgoBin=/path/to/go to Gradle, or
+                  - set GOROOT in your environment.
+            """.stripIndent())
+        }
+
+        // Ask Go for GOPATH so `gomobile` resolves; also add Go's own dir to
+        // PATH for downstream tools the binding might invoke (cgo, etc).
+        def gopathStream = new ByteArrayOutputStream()
+        exec {
+            commandLine goBin, 'env', 'GOPATH'
+            standardOutput = gopathStream
+        }
+        def gopath = gopathStream.toString().trim()
+        def goDir  = file(goBin).parent
+
+        def env = new HashMap<String, String>(System.getenv())
+        env['PATH'] = "${goDir}${File.pathSeparator}${gopath}/bin${File.pathSeparator}${env['PATH'] ?: ''}"
+
+        def gomobileBin = "${gopath}/bin/gomobile"
+        def gobindBin   = "${gopath}/bin/gobind"
+        if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
+            logger.lifecycle("Installing gomobile + gobind into ${gopath}/bin ...")
+            // Both binaries are needed: gomobile drives the build, gobind
+            // does the actual Java <-> Go interface generation. `gomobile
+            // init` used to install gobind for you but on recent versions
+            // we install it explicitly so the failure mode is clearer.
+            exec {
+                environment env
+                commandLine goBin, 'install',
+                        "golang.org/x/mobile/cmd/gomobile@${gomobileVersion}",
+                        "golang.org/x/mobile/cmd/gobind@${gomobileVersion}"
+            }
+            if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
+                throw new GradleException("Installed gomobile/gobind but ${gopath}/bin still missing one of them.")
+            }
+        }
+
+        exec {
+            workingDir wgbridgeSrcDir
+            environment env
+            commandLine gomobileBin, 'bind',
+                    '-target=android',
+                    '-androidapi', '23',
+                    '-javapkg=net.kollnig.missioncontrol',
+                    '-ldflags', '-extldflags "-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"',
+                    '-o', wgbridgeAar.absolutePath,
+                    '.'
+        }
+    }
+}
+
+// Force the AAR to be present before any Java/Kotlin compilation that
+// references its classes. preBuild runs before all variant compile tasks.
+afterEvaluate {
+    tasks.named('preBuild').configure { dependsOn 'wgbridgeBind' }
+}
+
 android {
     compileSdk 36
 
@@ -138,6 +248,7 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation files(wgbridgeAar)
 
     // https://developer.android.com/jetpack/androidx/releases/
     implementation 'androidx.activity:activity:1.9.3'

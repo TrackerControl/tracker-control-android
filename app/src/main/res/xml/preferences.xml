@@ -222,6 +222,31 @@
     </PreferenceScreen>
 
     <PreferenceScreen
+        android:key="screen_wireguard"
+        android:title="@string/setting_wireguard">
+        <PreferenceCategory
+            android:key="category_wireguard"
+            android:title="@string/setting_wireguard">
+            <Preference
+                android:key="wg_status"
+                android:summary="@string/summary_wg_status_off"
+                android:title="@string/setting_wg_status" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
+                android:dependency="filter"
+                android:key="wg_enabled"
+                android:summary="@string/summary_wg_enabled"
+                android:title="@string/setting_wg_enabled" />
+            <EditTextPreference
+                android:dependency="filter"
+                android:inputType="textMultiLine"
+                android:key="wg_config"
+                android:summary="@string/summary_wg_config"
+                android:title="@string/setting_wg_config" />
+        </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
         android:key="screen_development"
         android:title="Development">
         <PreferenceCategory

@@ -40,10 +40,11 @@ import net.kollnig.missioncontrol.BuildConfig;
  *
  * In minimal mode:
  * - Only DDG trackers with "block" action are blocked (not "ignore")
- * - Browsers and known incompatible apps are auto-excluded from VPN
+ * - Browsers stay routed through the VPN, but tracker protection defaults off
+ * - Known VPN-incompatible apps are auto-excluded from VPN
  * - Hosts-file based blocking is disabled
  * - The "Content" category is never blocked (no strict_blocking)
- * - No granular per-tracker controls (only VPN include/exclude per app)
+ * - No granular per-tracker controls
  */
 public class BlockingMode {
     private static final String TAG = BlockingMode.class.getSimpleName();
@@ -54,6 +55,7 @@ public class BlockingMode {
     public static final String MODE_STRICT = BlockingModeLogic.MODE_STRICT;
 
     private static Set<String> excludedApps;
+    private static Set<String> browserApps;
 
     /**
      * Get the current blocking mode string.
@@ -78,12 +80,16 @@ public class BlockingMode {
     }
 
     /**
-     * Minimal mode does not support per-app tracker protection toggles.
-     * Apps are either included in the VPN or excluded from it entirely.
+     * Minimal mode normally forces tracker protection on for apps that are in
+     * the VPN route. Browsers are the exception: they stay routed for VPN /
+     * WireGuard privacy, but app-level tracker blocking defaults off because
+     * browser-native blocking is usually more precise.
      */
     public static boolean isTrackerProtectionEnabled(Context c,
             SharedPreferences trackerProtectPrefs,
             String packageName) {
+        if (isBrowserApp(c, packageName))
+            return trackerProtectPrefs.getBoolean(packageName, false);
         return isMinimalMode(c) || trackerProtectPrefs.getBoolean(packageName, true);
     }
 
@@ -142,13 +148,14 @@ public class BlockingMode {
 
     /**
      * Get the set of package names that should be excluded from VPN in minimal mode.
-     * This includes browsers and known incompatible apps from DDG's list.
+     * Browser packages are deliberately excluded from this set; browser
+     * compatibility is handled by disabling tracker protection by default, not
+     * by bypassing the VPN route.
      */
     public static Set<String> getExcludedApps(Context c) {
-        if (excludedApps != null)
-            return excludedApps;
+        if (excludedApps == null)
+            excludedApps = loadExcludedApps(c);
 
-        excludedApps = loadExcludedApps(c);
         return excludedApps;
     }
 
@@ -164,6 +171,12 @@ public class BlockingMode {
     /**
      * Load excluded apps from the DDG excluded apps JSON asset.
      */
+    public static boolean isBrowserApp(Context c, String packageName) {
+        if (browserApps == null)
+            browserApps = loadBrowserApps(c);
+        return browserApps.contains(packageName);
+    }
+
     private static Set<String> loadExcludedApps(Context c) {
         Set<String> apps = new HashSet<>();
         try (InputStream is = c.getAssets().open("ddg-excluded-apps.json")) {
@@ -178,6 +191,24 @@ public class BlockingMode {
             Log.i(TAG, "Loaded " + apps.size() + " excluded apps for minimal mode");
         } catch (IOException e) {
             Log.e(TAG, "Failed to load excluded apps", e);
+        }
+        return Collections.unmodifiableSet(apps);
+    }
+
+    private static Set<String> loadBrowserApps(Context c) {
+        Set<String> apps = new HashSet<>();
+        try (InputStream is = c.getAssets().open("ddg-excluded-apps.json")) {
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            if (is.read(buffer) <= 0)
+                throw new IOException("No bytes read.");
+
+            String json = new String(buffer, StandardCharsets.UTF_8);
+            apps.addAll(BlockingModeLogic.parseBrowserAppsJson(json));
+
+            Log.i(TAG, "Loaded " + apps.size() + " browser apps");
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load browser apps", e);
         }
         return Collections.unmodifiableSet(apps);
     }
@@ -258,6 +289,7 @@ public class BlockingMode {
      */
     public static void invalidateCache() {
         excludedApps = null;
+        browserApps = null;
     }
 
     private static Set<String> getAutoExcludedApps(SharedPreferences prefs) {
