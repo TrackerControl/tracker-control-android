@@ -22,13 +22,35 @@ import android.content.Context;
 import net.kollnig.missioncontrol.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Categorises tracker companies into high-level categories
  */
 public class TrackerCategory {
     public static final String UNCATEGORISED = "Uncategorised";
+
+    // Single source of truth for recognised categories and their UI labels.
+    // Anything not in this map is folded into UNCATEGORISED at load time so
+    // raw category strings never leak into bucketing or blocking keys.
+    private static final Map<String, Integer> LABELS;
+    static {
+        Map<String, Integer> m = new LinkedHashMap<>();
+        m.put("Advertising", R.string.tracker_advertising);
+        m.put("Analytics", R.string.tracker_analytics);
+        m.put("Content", R.string.tracker_content);
+        m.put("Cryptomining", R.string.tracker_cryptomining);
+        m.put("Fingerprinting", R.string.tracker_fingerprinting);
+        m.put("Social", R.string.tracker_social);
+        m.put("Email", R.string.tracker_email);
+        m.put("ConsentManagers", R.string.tracker_consent);
+        m.put(UNCATEGORISED, R.string.tracker_uncategorised);
+        LABELS = Collections.unmodifiableMap(m);
+    }
+
     public String category;
     public Long lastSeen;
     private boolean uncertain = false;
@@ -70,25 +92,18 @@ public class TrackerCategory {
      * @return Name of tracker category to be shown in UI
      */
     public String getDisplayName(Context c) {
-        switch (category) {
-            case "Advertising":
-                return c.getString(R.string.tracker_advertising);
-            case "Analytics":
-                return c.getString(R.string.tracker_analytics);
-            case "Content":
-                return c.getString(R.string.tracker_content);
-            case "Cryptomining":
-                return c.getString(R.string.tracker_cryptomining);
-            case "Fingerprinting":
-                return c.getString(R.string.tracker_fingerprinting);
-            case "Social":
-                return c.getString(R.string.tracker_social);
-            case "Email":
-                return c.getString(R.string.tracker_email);
-            case UNCATEGORISED:
-            default:
-                return c.getString(R.string.tracker_uncategorised);
-        }
+        Integer res = LABELS.get(category);
+        return c.getString(res != null ? res : R.string.tracker_uncategorised);
+    }
+
+    /**
+     * Map any raw category string to its canonical form. Unknown categories
+     * collapse to {@link #UNCATEGORISED} so they can't masquerade as their own
+     * bucket while sharing the "Uncategorised" display label (#571).
+     */
+    public static String canonicalise(String category) {
+        if (category != null && LABELS.containsKey(category)) return category;
+        return UNCATEGORISED;
     }
 
     /**

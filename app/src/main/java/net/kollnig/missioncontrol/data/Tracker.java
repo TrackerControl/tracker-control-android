@@ -42,8 +42,8 @@ public class Tracker {
      * @param lastSeen Time when tracker was last seen in network traffic
      */
     public Tracker(String name, String category, long lastSeen) {
-        this.name = name;
-        this.category = category;
+        this.name = canonicaliseName(name);
+        this.category = TrackerCategory.canonicalise(category);
         this.lastSeen = lastSeen;
     }
 
@@ -54,8 +54,25 @@ public class Tracker {
      * @param category Category of tracker
      */
     public Tracker(String name, String category) {
-        this.name = name;
-        this.category = category;
+        this.name = canonicaliseName(name);
+        this.category = TrackerCategory.canonicalise(category);
+    }
+
+    /**
+     * Aliases for tracker companies that show up in source lists under multiple
+     * names. Applied at construction so dedup, display, and blocking keys all
+     * agree on a single canonical string per company (#571).
+     */
+    private static String canonicaliseName(String name) {
+        if (name == null) return null;
+        switch (name) {
+            case "Alphabet":
+                return "Google";
+            case "Adobe Systems":
+                return "Adobe";
+            default:
+                return name;
+        }
     }
 
     @Override
@@ -73,12 +90,6 @@ public class Tracker {
      * @return Name of tracker company
      */
     public String getName() {
-        if (name != null && name.equals("Alphabet"))
-            return "Google";
-
-        if (name != null && name.equals("Adobe Systems"))
-            return "Adobe";
-
         return name;
     }
 

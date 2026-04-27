@@ -321,10 +321,10 @@ public class TrackerList {
                     if (tracker == null)
                         continue;
 
-                    String category = tracker.category;
-                    String name = tracker.name;
-                    if (category == null || category.equals("null"))
-                        category = name;
+                    // Tracker constructor canonicalises both, but normalise
+                    // defensively in case stored objects pre-date that change.
+                    String category = TrackerCategory.canonicalise(tracker.category);
+                    String name = tracker.getName();
 
                     TrackerCategory categoryCompany = categoryToTracker.get(category);
                     if (categoryCompany == null) {
