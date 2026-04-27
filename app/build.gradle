@@ -73,11 +73,14 @@ tasks.register('wgbridgeBind') {
 
         def gomobileBin = "${gopath}/bin/gomobile"
         if (!file(gomobileBin).canExecute()) {
-            throw new GradleException("""
-                gomobile not found at ${gomobileBin}. Install it with:
-                  ${goBin} install golang.org/x/mobile/cmd/gomobile@latest
-                  ${gomobileBin} init
-            """.stripIndent())
+            logger.lifecycle("gomobile not found at ${gomobileBin}, installing...")
+            exec {
+                environment env
+                commandLine goBin, 'install', 'golang.org/x/mobile/cmd/gomobile@latest'
+            }
+            if (!file(gomobileBin).canExecute()) {
+                throw new GradleException("`go install gomobile` succeeded but ${gomobileBin} is still missing.")
+            }
         }
 
         exec {
