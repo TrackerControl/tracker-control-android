@@ -1415,12 +1415,39 @@ public class ServiceSinkhole extends VpnService {
         builder.setBlocking(true);
 
         // VPN address
-        String vpn4 = prefs.getString("vpn4", "10.1.10.1");
-        Log.i(TAG, "Using VPN4=" + vpn4);
+        // When WG is on, prefer the addresses from [Interface] Address. Inner
+        // packets have to carry a source IP that matches what the WG peer
+        // accepts per its AllowedIPs for our peer entry — using the default
+        // 10.1.10.1 makes the peer drop everything (handshake works, but no
+        // data ever flows back).
+        String wgVpn4 = null;
+        String wgVpn6 = null;
+        if (prefs.getBoolean("wg_enabled", false)) {
+            String wgConfigText = prefs.getString("wg_config", "");
+            if (!TextUtils.isEmpty(wgConfigText)) {
+                try {
+                    net.kollnig.missioncontrol.wg.WgConfig parsed =
+                            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+                    for (String addr : parsed.getAddress()) {
+                        String ip = addr.split("/")[0].trim();
+                        if (ip.contains(":")) {
+                            if (wgVpn6 == null) wgVpn6 = ip;
+                        } else {
+                            if (wgVpn4 == null) wgVpn4 = ip;
+                        }
+                    }
+                } catch (Throwable ex) {
+                    Log.w(TAG, "WG addr parse failed: " + ex.getMessage());
+                }
+            }
+        }
+        String vpn4 = wgVpn4 != null ? wgVpn4 : prefs.getString("vpn4", "10.1.10.1");
+        Log.i(TAG, "Using VPN4=" + vpn4 + (wgVpn4 != null ? " (from WG config)" : ""));
         builder.addAddress(vpn4, 32);
         if (ip6) {
-            String vpn6 = prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1");
-            Log.i(TAG, "Using VPN6=" + vpn6);
+            String vpn6 = wgVpn6 != null ? wgVpn6
+                    : prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1");
+            Log.i(TAG, "Using VPN6=" + vpn6 + (wgVpn6 != null ? " (from WG config)" : ""));
             builder.addAddress(vpn6, 128);
         }
 
