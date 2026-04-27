@@ -29,6 +29,14 @@ object WgEgress {
     private var currentConfig: String? = null
     private var currentTunFd: Int = -1
 
+    private val listeners = java.util.concurrent.CopyOnWriteArrayList<Runnable>()
+
+    fun addStateListener(l: Runnable) { listeners.add(l) }
+    fun removeStateListener(l: Runnable) { listeners.remove(l) }
+    private fun notifyStateChanged() {
+        for (l in listeners) try { l.run() } catch (e: Throwable) { Log.w(TAG, "listener threw", e) }
+    }
+
     /**
      * Bring the tunnel up, take it down, or leave it alone — whichever the
      * desired state requires. Idempotent: same config + same TUN fd is a
@@ -54,6 +62,7 @@ object WgEgress {
             if (tunnel != null) {
                 Log.i(TAG, "WG disabled — tearing down tunnel")
                 stopInternal(stopSocketpair)
+                notifyStateChanged()
             }
             return true
         }
@@ -73,6 +82,7 @@ object WgEgress {
         } catch (e: Exception) {
             lastError = "Invalid WireGuard config: ${e.message}"
             Log.e(TAG, "config parse: ${e.message}")
+            notifyStateChanged()
             return false
         }
 
@@ -81,6 +91,7 @@ object WgEgress {
         } catch (e: Exception) {
             lastError = "WireGuard endpoint resolution failed: ${e.message}"
             Log.e(TAG, "endpoint resolve: ${e.message}")
+            notifyStateChanged()
             return false
         }
 
@@ -88,6 +99,7 @@ object WgEgress {
         if (rxFd < 0) {
             lastError = "Could not create WireGuard packet socket"
             Log.e(TAG, "jni_wireguard_start failed")
+            notifyStateChanged()
             return false
         }
 
@@ -109,6 +121,7 @@ object WgEgress {
             Log.e(TAG, "Wgbridge.startTunnel failed", e)
             closeRawFd(rxFd)
             stopSocketpair()
+            notifyStateChanged()
             return false
         } finally {
             if (tunnel != null) closeRawFd(rxFd)
@@ -117,12 +130,16 @@ object WgEgress {
         currentConfig = configText
         currentTunFd = desiredFd
         Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
+        notifyStateChanged()
         return true
     }
 
     /** Tear down the tunnel completely. Called on actual service stop. */
     fun stop(stopSocketpair: () -> Unit) {
-        if (tunnel != null) stopInternal(stopSocketpair)
+        if (tunnel != null) {
+            stopInternal(stopSocketpair)
+            notifyStateChanged()
+        }
     }
 
     fun isRunning(): Boolean = tunnel != null

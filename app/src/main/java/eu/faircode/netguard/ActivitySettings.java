@@ -36,6 +36,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -111,6 +113,16 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private static final String TAG = "TrackerControl.Settings";
 
     private boolean running = false;
+    private final Handler wgStatusHandler = new Handler(Looper.getMainLooper());
+    private final Runnable wgStatusListener = new Runnable() {
+        @Override
+        public void run() {
+            // Posted from WgEgress on a non-UI thread; bounce to UI.
+            wgStatusHandler.post(() -> {
+                if (running) updateWireGuardStatus();
+            });
+        }
+    };
 
     private static final int REQUEST_EXPORT = 1;
     private static final int REQUEST_IMPORT = 2;
@@ -506,6 +518,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Listen for preference changes
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
+
+        net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStatusListener);
+        updateWireGuardStatus();
     }
 
     @Override
@@ -514,11 +529,14 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.unregisterOnSharedPreferenceChangeListener(this);
+
+        net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.removeStateListener(wgStatusListener);
     }
 
     @Override
     protected void onDestroy() {
         running = false;
+        wgStatusHandler.removeCallbacksAndMessages(null);
         if (dialogFilter != null) {
             dialogFilter.dismiss();
             dialogFilter = null;
@@ -531,7 +549,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         switch (item.getItemId()) {
             case android.R.id.home:
                 Log.i(TAG, "Up");
-                NavUtils.navigateUpFromSameTask(this);
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0)
+                    getSupportFragmentManager().popBackStack();
+                else
+                    NavUtils.navigateUpFromSameTask(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
