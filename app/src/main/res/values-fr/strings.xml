@@ -374,7 +374,6 @@ Cordialement,\n\n]]></string>
     <string name="summary_block_ambiguous_trackers">Lorsqu\'une IP a des preuves de nom d\'hôte à la fois de traqueur et de non-traqueur, la bloquer malgré tout. Désactivez ceci pour réduire les dysfonctionnements d\'\'applications.</string>
     <string name="setting_sni_enabled">Extraction SNI (recherche)</string>
     <string name="setting_blocking_mode">Mode de blocage</string>
-    <string name="summary_blocking_mode_minimal">Minimum : bloque uniquement les traqueurs de la liste DuckDuckGo, dont le blocage est sûr. Les navigateurs et les applications incompatibles connues sont automatiquement exclus. Peu de dysfonctionnement dans les applications.</string>
     <string name="summary_blocking_mode_standard">Standard : bloque tous les traqueurs connus à partir de listes multiples (X-Ray, Disconnect, DuckDuckGo). Les services essentiels sont autorisés. Certaines applications vont dysfonctionner et devront peut-être être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
     <string name="summary_blocking_mode_strict">Strict : bloque tous les traqueurs connus, y compris les services essentiels et les domaines ambigus partageant la même IP. De nombreuses applications vont dysfonctionner et doivent être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
     <string name="blocking_mode_minimal">Minimum</string>
@@ -428,8 +427,6 @@ Cordialement,\n\n]]></string>
     <string name="summary_domain_based_blocking">Permet un blocage plus ciblé. Encore en développement.</string>
     <string name="untap_unblock">Astuce : Vous pouvez débloquer des entrées individuelles en cliquant dessus.</string>
     <string name="uncertain_entry">Les entrées marquées par \'*\' peuvent être inexactes en raison des limitations d\'Android. Cela signifie généralement que la même entreprise utilise la même adresse IP sous différents domaines, mais cela peut aussi signifier que différentes entreprises sont derrière la même adresse IP (par exemple, s\'ils utilisent un réseau de distribution de contenu).</string>
-    <string name="browsers_not_supported">Navigateurs non pris en charge ⚠️</string>
-    <string name="browsers_not_supported_explanation">Cela semble être une application de navigateur.\n\nLe blocage des trackers dans les navigateurs n\'est pas pris en charge par TrackerControl.  Utilisez plutôt un navigateur doté d\'une fonctionnalité anti-pistage intégrée pour mieux bloquer le suivi.\n\nPar exemple : Mozilla Fennec</string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
