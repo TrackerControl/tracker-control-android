@@ -136,7 +136,7 @@
     <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">SOCKS5 username: %s</string>
     <string name="setting_socks5_password">SOCKS5 password: %s</string>
-    <string name="setting_wg_enabled">Tunnel egress through WireGuard</string>
+    <string name="setting_wg_enabled">Tunnel traffic through WireGuard</string>
     <string name="setting_wg_config">WireGuard config</string>
     <string name="setting_wireguard">WireGuard</string>
     <string name="setting_wg_status">Status</string>
