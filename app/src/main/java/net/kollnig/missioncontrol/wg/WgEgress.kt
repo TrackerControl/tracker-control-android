@@ -45,10 +45,20 @@ object WgEgress {
             return true
         }
 
-        val config = try {
+        val parsed = try {
             WgConfigParser.parse(configText)
         } catch (e: Exception) {
             Log.e(TAG, "config parse: ${e.message}")
+            return false
+        }
+
+        // Resolve any peer endpoint hostnames BEFORE the C-side hijack flag
+        // is flipped — otherwise this DNS query gets captured by NetGuard,
+        // handed to wireguard-go (which has no peer yet), and dropped.
+        val config = try {
+            withResolvedEndpoints(parsed)
+        } catch (e: Exception) {
+            Log.e(TAG, "endpoint resolve: ${e.message}")
             return false
         }
 
@@ -124,4 +134,34 @@ object WgEgress {
     }
 
     fun isRunning(): Boolean = tunnel != null
+
+    private fun withResolvedEndpoints(config: WgConfig): WgConfig {
+        return config.copy(peers = config.peers.map { peer ->
+            val ep = peer.endpoint
+            if (ep == null) peer else peer.copy(endpoint = resolveEndpoint(ep))
+        })
+    }
+
+    /**
+     * "host:port" or "[v6-host]:port" -> "ip:port" or "[ip]:port".
+     * Hostname is resolved synchronously; caller must run off the main thread.
+     */
+    private fun resolveEndpoint(endpoint: String): String {
+        val (host, port) = if (endpoint.startsWith("[")) {
+            val close = endpoint.indexOf(']')
+            require(close > 0 && endpoint.length > close + 2 && endpoint[close + 1] == ':') {
+                "malformed IPv6 endpoint: $endpoint"
+            }
+            endpoint.substring(1, close) to endpoint.substring(close + 2)
+        } else {
+            val colon = endpoint.lastIndexOf(':')
+            require(colon > 0 && colon < endpoint.length - 1) {
+                "missing :port in endpoint: $endpoint"
+            }
+            endpoint.substring(0, colon) to endpoint.substring(colon + 1)
+        }
+        val addr = java.net.InetAddress.getByName(host)
+        val ip = addr.hostAddress ?: throw IllegalStateException("getHostAddress null for $host")
+        return if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
+    }
 }

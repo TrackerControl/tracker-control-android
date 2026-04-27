@@ -1513,6 +1513,24 @@ public class ServiceSinkhole extends VpnService {
 
         // MTU
         int mtu = jni_get_mtu();
+        if (prefs.getBoolean("wg_enabled", false)) {
+            // WG default is 1420 (1500 path MTU minus typical WG+UDP+IP overhead).
+            // Allow the config's [Interface] MTU to override but never exceed
+            // the safe default — going higher invites fragmentation.
+            int wgMtu = 1420;
+            String wgConfig = prefs.getString("wg_config", "");
+            if (!TextUtils.isEmpty(wgConfig)) {
+                try {
+                    net.kollnig.missioncontrol.wg.WgConfig parsed =
+                            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfig);
+                    if (parsed.getMtu() != null && parsed.getMtu() > 0 && parsed.getMtu() < wgMtu)
+                        wgMtu = parsed.getMtu();
+                } catch (Throwable ignored) {
+                    // Bad config — let the validation in ActivitySettings handle the user message.
+                }
+            }
+            if (wgMtu < mtu) mtu = wgMtu;
+        }
         Log.i(TAG, "MTU=" + mtu);
         builder.setMtu(mtu);
 
