@@ -202,6 +202,18 @@
                 android:dependency="filter"
                 android:inputType="textPassword"
                 android:key="socks5_password" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
+                android:dependency="filter"
+                android:key="wg_enabled"
+                android:summary="@string/summary_wg_enabled"
+                android:title="@string/setting_wg_enabled" />
+            <EditTextPreference
+                android:dependency="filter"
+                android:inputType="textMultiLine"
+                android:key="wg_config"
+                android:summary="@string/summary_wg_config"
+                android:title="@string/setting_wg_config" />
             <EditTextPreference
                 android:defaultValue="64"
                 android:inputType="number"

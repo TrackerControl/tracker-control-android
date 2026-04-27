@@ -237,6 +237,13 @@ public class ServiceSinkhole extends VpnService {
 
     private native void jni_sni(boolean enabled);
 
+    /** Allocate the WG egress socketpair; returns the read-end fd to hand to wgbridge,
+     *  or -1 on failure. The C side retains the write end and flips wg_enabled. */
+    private native int jni_wireguard_start();
+
+    /** Disable WG egress and close the socketpair write end. Idempotent. */
+    private native void jni_wireguard_stop();
+
     private native void jni_done(long context);
 
     public static void setPcap(boolean enabled, Context context) {
@@ -1582,6 +1589,23 @@ public class ServiceSinkhole extends VpnService {
 
             jni_sni(prefs.getBoolean("sni_enabled", false));
 
+            // WireGuard egress (optional). Bring up before jni_start so the
+            // tunnel thread starts with wg_enabled / wg_outbound_fd already set.
+            // On failure we leave WG disabled and continue with direct egress
+            // — the parser already toasted the user; we don't want to fail the
+            // whole VPN service over a bad WG config.
+            if (prefs.getBoolean("wg_enabled", false)) {
+                String wgConfig = prefs.getString("wg_config", "");
+                boolean ok = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.start(
+                        wgConfig,
+                        ServiceSinkhole.this,
+                        vpn,
+                        () -> jni_wireguard_start(),
+                        () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+                if (!ok)
+                    Log.w(TAG, "WireGuard egress failed to start; falling back to direct");
+            }
+
             if (tunnelThread == null) {
                 Log.i(TAG, "Starting tunnel thread context=" + jni_context);
                 jni_start(jni_context, prio);
@@ -1626,6 +1650,13 @@ public class ServiceSinkhole extends VpnService {
             jni_clear(jni_context);
 
             Log.i(TAG, "Stopped tunnel thread");
+        }
+
+        // Tear down WireGuard last so any in-flight decrypted packets have
+        // already been consumed by the (now-stopped) tunnel thread.
+        if (net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.isRunning()) {
+            net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
+                    () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
         }
     }
 

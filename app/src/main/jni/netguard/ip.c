@@ -23,6 +23,32 @@
 int max_tun_msg = 0;
 extern int loglevel;
 extern FILE *pcap_file;
+extern int wg_enabled;
+extern int wg_outbound_fd;
+
+// Skip tunneling for addresses WireGuard cannot meaningfully forward
+// (multicast, link-local, loopback). Apps targeting these wouldn't gain
+// privacy from WG and the peer would likely drop them anyway.
+static int is_local_dest(int version, const void *daddr) {
+    if (version == 4) {
+        const uint8_t *b = (const uint8_t *) daddr;
+        if (b[0] == 127) return 1;                   // 127.0.0.0/8 loopback
+        if (b[0] == 169 && b[1] == 254) return 1;    // 169.254.0.0/16 link-local
+        if (b[0] >= 224) return 1;                   // 224.0.0.0/4 multicast + reserved
+        return 0;
+    } else {
+        const uint8_t *b = (const uint8_t *) daddr;
+        // ::1
+        int is_loopback = 1;
+        for (int i = 0; i < 15; i++) if (b[i] != 0) { is_loopback = 0; break; }
+        if (is_loopback && b[15] == 1) return 1;
+        // fe80::/10 link-local
+        if (b[0] == 0xfe && (b[1] & 0xc0) == 0x80) return 1;
+        // ff00::/8 multicast
+        if (b[0] == 0xff) return 1;
+        return 0;
+    }
+}
 
 uint16_t get_mtu() {
     return 10000;
@@ -374,6 +400,19 @@ void handle_ip(const struct arguments *args,
 
     // Handle allowed traffic
     if (allowed) {
+        // WireGuard hijack: when enabled, hand the raw IP packet to the WG
+        // bridge instead of running the userspace TCP/UDP state machines.
+        // Per-app UID lookup and the block decision above still apply.
+        // Loopback/link-local/multicast are kept on the local path.
+        if (wg_enabled && wg_outbound_fd >= 0 && !is_local_dest(version, daddr)) {
+            ssize_t w = write(wg_outbound_fd, pkt, length);
+            if (w != (ssize_t) length)
+                log_android(ANDROID_LOG_WARN, "wg write %zd/%zu errno %d: %s",
+                            w, length, errno, strerror(errno));
+            // Fail-closed: if the write fails, drop. Do not fall through to direct.
+            return;
+        }
+
         if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6)
             handle_icmp(args, pkt, length, payload, uid, epoll_fd);
         else if (protocol == IPPROTO_UDP)

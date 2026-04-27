@@ -129,6 +129,8 @@
     <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">SOCKS5 username: %s</string>
     <string name="setting_socks5_password">SOCKS5 password: %s</string>
+    <string name="setting_wg_enabled">Tunnel egress through WireGuard</string>
+    <string name="setting_wg_config">WireGuard config</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
     <string name="setting_watchdog">Watchdog: every %s minutes</string>
@@ -177,6 +179,9 @@
     <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
+    <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct.</string>
+    <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
+    <string name="msg_wg_config_invalid">Invalid WireGuard config: %s</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>
 

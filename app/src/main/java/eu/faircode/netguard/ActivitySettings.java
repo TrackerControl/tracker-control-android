@@ -787,6 +787,28 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     TextUtils.isEmpty(prefs.getString(name, "")) ? "-" : "*****"));
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if ("wg_enabled".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+
+        } else if ("wg_config".equals(name)) {
+            String wg_config = prefs.getString(name, null);
+            if (!TextUtils.isEmpty(wg_config)) {
+                try {
+                    net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wg_config);
+                } catch (Throwable ex) {
+                    Toast.makeText(ActivitySettings.this,
+                            getString(R.string.msg_wg_config_invalid, ex.getMessage()),
+                            Toast.LENGTH_LONG).show();
+                    // Force-disable to avoid silently running with a bad config.
+                    prefs.edit().putBoolean("wg_enabled", false).apply();
+                    eu.faircode.netguard.SwitchPreference enabledPref =
+                            (eu.faircode.netguard.SwitchPreference)
+                                    getPreferenceScreen().findPreference("wg_enabled");
+                    if (enabledPref != null) enabledPref.setChecked(false);
+                }
+            }
+            ServiceSinkhole.reload("changed " + name, this, false);
+
         } else if ("pcap_record_size".equals(name) || "pcap_file_size".equals(name)) {
             if ("pcap_record_size".equals(name))
                 getPreferenceScreen().findPreference(name)
