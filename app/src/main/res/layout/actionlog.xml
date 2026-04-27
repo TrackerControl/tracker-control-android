@@ -5,6 +5,7 @@
 
     <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/swEnabled"
+        style="@style/RocketSwitch.NoIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
