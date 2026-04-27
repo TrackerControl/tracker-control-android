@@ -69,6 +69,7 @@ public class ActivityOnboarding extends AppCompatActivity {
         btnNext = findViewById(R.id.btnNext);
         btnPrevious = findViewById(R.id.btnPrevious);
 
+        BlockingMode.enforcePlayStoreMode(this);
         setupSlides();
 
         btnNext.setOnClickListener(v -> {
@@ -581,14 +582,21 @@ public class ActivityOnboarding extends AppCompatActivity {
                 holder.tvStrictDesc.setText(R.string.onboarding_blockingmode_strict_desc);
                 holder.rbResearch.setText(R.string.onboarding_blockingmode_research_label);
                 holder.tvResearchDesc.setText(R.string.onboarding_blockingmode_research_desc);
+                boolean playStoreBuild = Util.isPlayStoreInstall(holder.itemView.getContext());
+                int restrictedVisibility = playStoreBuild ? View.GONE : View.VISIBLE;
+                holder.rbStandard.setVisibility(restrictedVisibility);
+                holder.tvStandardDesc.setVisibility(restrictedVisibility);
+                holder.rbStrict.setVisibility(restrictedVisibility);
+                holder.tvStrictDesc.setVisibility(restrictedVisibility);
+                holder.rbResearch.setVisibility(restrictedVisibility);
+                holder.tvResearchDesc.setVisibility(restrictedVisibility);
 
                 // Set current selection
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
                         holder.itemView.getContext());
-                boolean researchPreset = prefs.getBoolean("log_logcat", false)
-                        || !prefs.getBoolean("filter", true);
-                String currentMode = prefs.getString(BlockingMode.PREF_BLOCKING_MODE,
-                        BlockingMode.getDefaultMode());
+                boolean researchPreset = !playStoreBuild && (prefs.getBoolean("log_logcat", false)
+                        || !prefs.getBoolean("filter", true));
+                String currentMode = BlockingMode.getMode(holder.itemView.getContext());
                 holder.rgBlockingMode.setOnCheckedChangeListener(null);
                 if (researchPreset)
                     holder.rbResearch.setChecked(true);
@@ -606,7 +614,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                     boolean enableAdbLogging = false;
                     boolean enableDotBlocking = true;
 
-                    if (checkedId == R.id.rbMinimal)
+                    if (playStoreBuild || checkedId == R.id.rbMinimal)
                         mode = BlockingMode.MODE_MINIMAL;
                     else if (checkedId == R.id.rbStrict)
                         mode = BlockingMode.MODE_STRICT;
