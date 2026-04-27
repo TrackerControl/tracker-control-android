@@ -21,7 +21,8 @@ implementation.
 ## Build
 
 ```bash
-# Prerequisites: Go 1.22+, Android NDK, gomobile
+# Prerequisites: Go 1.25+ (required by current golang.org/x/mobile),
+# Android NDK 27+, gomobile.
 go install golang.org/x/mobile/cmd/gomobile@latest
 gomobile init
 
@@ -35,6 +36,11 @@ gomobile bind \
     -o ../app/libs/wgbridge.aar \
     .
 ```
+
+`gomobile_tools.go` carries a build-tag-guarded import of
+`golang.org/x/mobile/bind` so that `go mod tidy` keeps `x/mobile` in
+`go.mod`. Without that stub, `gomobile bind` errors out with "no Go
+package in golang.org/x/mobile/bind" before it gets to our code.
 
 The resulting `wgbridge.aar` is checked into `app/libs/` so contributors
 without the Go toolchain can still build the app.
