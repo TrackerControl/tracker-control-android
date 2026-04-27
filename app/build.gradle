@@ -9,8 +9,31 @@ apply plugin: 'org.jetbrains.kotlin.android'
 def wgbridgeSrcDir = file("$rootDir/wgbridge")
 def wgbridgeAar    = file("$buildDir/wgbridge/wgbridge.aar")
 
+// Locate the `go` binary. Android Studio launches Gradle with a sanitized
+// PATH that omits /usr/local/go/bin and Homebrew dirs, so falling back to
+// "just exec 'go'" produces "Cannot run program 'go'" on most macOS setups.
+// Order: explicit goBin Gradle property -> $GOROOT/bin -> common installs.
+def findGoBinary = { ->
+    def candidates = []
+    if (project.hasProperty('goBin')) candidates << project.property('goBin')
+    if (System.getenv('GOROOT')) candidates << "${System.getenv('GOROOT')}/bin/go"
+    candidates += [
+        '/usr/local/go/bin/go',          // official installer (Linux + macOS Intel)
+        '/opt/homebrew/bin/go',          // Homebrew on Apple Silicon
+        '/opt/homebrew/opt/go/bin/go',   // Homebrew keg-only
+        '/usr/local/bin/go',             // Homebrew on Intel
+        '/usr/bin/go',                   // distro packages
+        "${System.getProperty('user.home')}/sdk/go/bin/go",
+    ]
+    for (c in candidates) {
+        if (c != null && file(c).canExecute()) return c
+    }
+    // Last resort: hope it's on PATH (works on Linux usually).
+    return 'go'
+}
+
 tasks.register('wgbridgeBind') {
-    description = 'Builds wgbridge.aar via `gomobile bind`. Requires Go 1.25+, gomobile and the Android NDK on PATH.'
+    description = 'Builds wgbridge.aar via `gomobile bind`. Requires Go 1.25+, gomobile and the Android NDK.'
     group       = 'build'
 
     inputs.files(fileTree(wgbridgeSrcDir) {
@@ -24,18 +47,43 @@ tasks.register('wgbridgeBind') {
     doLast {
         wgbridgeAar.parentFile.mkdirs()
 
-        // Ensure $(go env GOPATH)/bin is on PATH so `gomobile` resolves
-        // even when contributors haven't added it to their shell rc.
-        def gopath = providers.exec {
-            commandLine 'go', 'env', 'GOPATH'
-        }.standardOutput.asText.get().trim()
+        def goBin = findGoBinary()
+        if (goBin == 'go' && !System.getenv('PATH')?.split(File.pathSeparator)?.any { file("$it/go").canExecute() }) {
+            throw new GradleException("""
+                Could not find a `go` executable. Install Go 1.25+ from https://go.dev/dl/
+                or via Homebrew (`brew install go`), then either:
+                  - add Go's bin dir to PATH in your shell rc and restart Android Studio, or
+                  - pass -PgoBin=/path/to/go to Gradle, or
+                  - set GOROOT in your environment.
+            """.stripIndent())
+        }
+
+        // Ask Go for GOPATH so `gomobile` resolves; also add Go's own dir to
+        // PATH for downstream tools the binding might invoke (cgo, etc).
+        def gopathStream = new ByteArrayOutputStream()
+        exec {
+            commandLine goBin, 'env', 'GOPATH'
+            standardOutput = gopathStream
+        }
+        def gopath = gopathStream.toString().trim()
+        def goDir  = file(goBin).parent
+
         def env = new HashMap<String, String>(System.getenv())
-        env['PATH'] = "${env['PATH']}${File.pathSeparator}${gopath}/bin"
+        env['PATH'] = "${goDir}${File.pathSeparator}${gopath}/bin${File.pathSeparator}${env['PATH'] ?: ''}"
+
+        def gomobileBin = "${gopath}/bin/gomobile"
+        if (!file(gomobileBin).canExecute()) {
+            throw new GradleException("""
+                gomobile not found at ${gomobileBin}. Install it with:
+                  ${goBin} install golang.org/x/mobile/cmd/gomobile@latest
+                  ${gomobileBin} init
+            """.stripIndent())
+        }
 
         exec {
             workingDir wgbridgeSrcDir
             environment env
-            commandLine 'gomobile', 'bind',
+            commandLine gomobileBin, 'bind',
                     '-target=android',
                     '-androidapi', '23',
                     '-javapkg=net.kollnig.missioncontrol',
