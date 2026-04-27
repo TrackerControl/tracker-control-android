@@ -331,7 +331,6 @@
     <string name="summary_domain_based_blocking">מאפשר חסימה ממוקדת יותר. עדיין בפיתוח.</string>
     <string name="untap_unblock">טיפ: אתה יכול לבטל חסימה של ערכים בודדים על ידי הקשה עליהם.</string>
     <string name="uncertain_entry">ערכים המסומנים ב-\'*\' עשויים להיות לא מדויקים, עקב המגבלות של אנדרואיד. זה בדרך כלל אומר שאותה חברה משתמשת באותה כתובת IP תחת דומיינים שונים, אבל יכול גם להיות שחברות שונות עומדות מאחורי אותה כתובת IP (למשל אם הן משתמשות ברשת להעברת תוכן).</string>
-    <string name="browsers_not_supported">דפדפנים לא נתמכים ⚠️</string>
     <string name="static_analysis">זיהוי עוקבים בקוד האפליקציה</string>
     <string name="failed_loading_cached_analysis">טעינת תוצאות המעקב בקובץ השמור נכשלה. אנא דווח על כך למפתח בכתובת hello@trackercontrol.org</string>
     <!-- Onboarding -->
