@@ -369,8 +369,6 @@
     <string name="summary_domain_based_blocking">يسمح بحظر أكثر دقة. لا يزال قيد التطوير.</string>
     <string name="untap_unblock">نصيحة: يمكنك إلغاء حظر الإدخالات الفردية عن طريق النقر عليها.</string>
     <string name="uncertain_entry">قد تكون الإدخالات التي تحمل علامة \"*\" غير دقيقة، نظرًا لقيود Android. يعني هذا عادةً أن الشركة نفسها تستخدم نفس عنوان IP ضمن نطاقات مختلفة، ولكن قد يعني أيضًا أن شركات مختلفة تقف وراء نفس عنوان IP (على سبيل المثال، إذا كانت تستخدم شبكة توصيل المحتوى).</string>
-    <string name="browsers_not_supported">المتصفحات غير مدعومة ⚠️</string>
-    <string name="browsers_not_supported_explanation">يبدو أن هذا تطبيق متصفح.\n\nلا يدعم التحكم في التتبع حظر أدوات التتبع في المتصفحات. بدلاً من ذلك، استخدم متصفحًا مزودًا بوظيفة مكافحة التتبع المدمجة للحصول على حظر أفضل للتتبع.\n\nعلى سبيل المثال: Mozilla Fennec</string>
     <string name="static_analysis">اكتشاف أدوات التتبع في كود التطبيق</string>
     <string name="failed_loading_cached_analysis">فشل تحميل نتائج التتبع المخزنة مؤقتًا. يرجى الإبلاغ عن ذلك للمطور على hello@trackercontrol.org</string>
     <string name="msg_notifications">انقر لمنح أذونات الإشعارات (لرسائل الخطأ، إلخ.)</string>
