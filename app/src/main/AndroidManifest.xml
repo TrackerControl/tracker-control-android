@@ -24,12 +24,12 @@
     </queries-->
 
     <permission
-        android:name="net.kollnig.missioncontrol.permission.ADMIN"
+        android:name="${applicationId}.permission.ADMIN"
         android:description="@string/app_description"
         android:label="@string/app_name"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="net.kollnig.missioncontrol.permission.ADMIN" />
+    <uses-permission android:name="${applicationId}.permission.ADMIN" />
 
     <uses-feature
         android:name="android.hardware.wifi"
@@ -265,7 +265,7 @@
             android:name="eu.faircode.netguard.WidgetAdmin"
             android:exported="true"
             android:label="@string/app_name"
-            android:permission="net.kollnig.missioncontrol.permission.ADMIN">
+            android:permission="${applicationId}.permission.ADMIN">
             <intent-filter>
                 <action android:name="net.kollnig.missioncontrol.ON" />
                 <action android:name="net.kollnig.missioncontrol.PAUSE" />
