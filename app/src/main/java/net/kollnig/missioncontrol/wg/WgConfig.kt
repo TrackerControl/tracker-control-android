@@ -1,5 +1,7 @@
 package net.kollnig.missioncontrol.wg
 
+import net.kollnig.missioncontrol.wg.WgConfigParser.base64ToHex
+
 /**
  * Minimal parser for the WireGuard `.conf` format (a subset of the
  * `wg-quick` syntax). We deliberately do not pull in
