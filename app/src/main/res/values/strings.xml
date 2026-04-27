@@ -182,6 +182,9 @@
     <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct.</string>
     <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
     <string name="msg_wg_config_invalid">Invalid WireGuard config: %s</string>
+    <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
+    <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
+    <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>
 

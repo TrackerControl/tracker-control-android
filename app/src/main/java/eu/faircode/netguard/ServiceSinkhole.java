@@ -185,6 +185,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_UPDATE = 8;
     public static final int NOTIFY_EXTERNAL = 9;
     private static final int NOTIFY_DOH_ERROR = 11;
+    private static final int NOTIFY_WG_ERROR = 12;
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -548,7 +549,8 @@ public class ServiceSinkhole extends VpnService {
                 if (vpn == null)
                     throw new StartFailedException(getString((R.string.msg_start_failed)));
 
-                startNative(vpn, listAllowed, listRule);
+                if (!startNative(vpn, listAllowed, listRule))
+                    return;
 
                 // Start DoH proxy if enabled
                 net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).start();
@@ -662,7 +664,8 @@ public class ServiceSinkhole extends VpnService {
             if (vpn == null)
                 throw new StartFailedException(getString((R.string.msg_start_failed)));
 
-            startNative(vpn, listAllowed, listRule);
+            if (!startNative(vpn, listAllowed, listRule))
+                return;
 
             // Update DoH proxy state based on current settings
             net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).checkAndUpdateState();
@@ -1600,7 +1603,7 @@ public class ServiceSinkhole extends VpnService {
         return builder;
     }
 
-    private void startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
+    private boolean startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
@@ -1649,8 +1652,12 @@ public class ServiceSinkhole extends VpnService {
                     vpn,
                     () -> jni_wireguard_start(),
                     () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
-            if (!wgOk)
-                Log.w(TAG, "WireGuard egress failed to start; falling back to direct");
+            if (!wgOk) {
+                String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
+                Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
+                showWireGuardErrorNotification(wgError);
+                return false;
+            }
 
             if (tunnelThread == null) {
                 Log.i(TAG, "Starting tunnel thread context=" + jni_context);
@@ -1671,6 +1678,8 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "Started tunnel thread");
             }
         }
+
+        return true;
     }
 
     private void stopNative(ParcelFileDescriptor vpn) {
@@ -3404,6 +3413,35 @@ public class ServiceSinkhole extends VpnService {
             NotificationManagerCompat.from(this).notify(NOTIFY_DOH_ERROR, notification.build());
     }
 
+    private void showWireGuardErrorNotification(String message) {
+        Intent main = new Intent(this, ActivitySettings.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_WG_ERROR, main,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String detail = TextUtils.isEmpty(message)
+                ? getString(R.string.msg_wg_blocked)
+                : getString(R.string.msg_wg_blocked_detail, message);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.msg_wg_blocked_title))
+                .setContentText(detail)
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setOngoing(false)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(detail);
+
+        if (Util.canNotify(this))
+            NotificationManagerCompat.from(this).notify(NOTIFY_WG_ERROR, notification.build());
+    }
+
     private void showUpdateNotification(String name, String url) {
         if (Util.isFDroidInstall())
             return;
@@ -3433,6 +3471,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationManagerCompat.from(this).cancel(NOTIFY_AUTOSTART);
         NotificationManagerCompat.from(this).cancel(NOTIFY_ERROR);
         NotificationManagerCompat.from(this).cancel(NOTIFY_DOH_ERROR);
+        NotificationManagerCompat.from(this).cancel(NOTIFY_WG_ERROR);
     }
 
     private class Builder extends VpnService.Builder {

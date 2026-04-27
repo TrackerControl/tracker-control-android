@@ -8,6 +8,7 @@ apply plugin: 'org.jetbrains.kotlin.android'
 // single `./gradlew assemble` for contributors.
 def wgbridgeSrcDir = file("$rootDir/wgbridge")
 def wgbridgeAar    = file("$buildDir/wgbridge/wgbridge.aar")
+def gomobileVersion = 'v0.0.0-20260410095206-2cfb76559b7b'
 
 // Locate the `go` binary. Android Studio launches Gradle with a sanitized
 // PATH that omits /usr/local/go/bin and Homebrew dirs, so falling back to
@@ -82,8 +83,8 @@ tasks.register('wgbridgeBind') {
             exec {
                 environment env
                 commandLine goBin, 'install',
-                        'golang.org/x/mobile/cmd/gomobile@latest',
-                        'golang.org/x/mobile/cmd/gobind@latest'
+                        "golang.org/x/mobile/cmd/gomobile@${gomobileVersion}",
+                        "golang.org/x/mobile/cmd/gobind@${gomobileVersion}"
             }
             if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
                 throw new GradleException("Installed gomobile/gobind but ${gopath}/bin still missing one of them.")

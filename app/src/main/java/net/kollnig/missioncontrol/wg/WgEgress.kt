@@ -25,6 +25,7 @@ object WgEgress {
     private const val DEFAULT_MTU = 1420
 
     @Volatile private var tunnel: WgTunnel? = null
+    @Volatile private var lastError: String? = null
     private var currentConfig: String? = null
     private var currentTunFd: Int = -1
 
@@ -34,9 +35,8 @@ object WgEgress {
      * no-op so reload-induced restarts don't re-handshake.
      *
      * Returns true on success or already-correct state. Returns false if
-     * WG was supposed to start but failed; in that case the C side is left
-     * with `wg_enabled = 0` so traffic isn't black-holed (fail-closed
-     * applies only when WG is *running* and traffic should be protected).
+     * WG was supposed to start but failed; in that case the caller must keep
+     * the VPN from forwarding direct traffic so the user remains fail-closed.
      */
     fun startOrUpdate(
         wgEnabled: Boolean,
@@ -48,6 +48,7 @@ object WgEgress {
     ): Boolean {
         val wantRunning = wgEnabled && !configText.isNullOrEmpty()
         val desiredFd = vpnFd.fd
+        lastError = null
 
         if (!wantRunning) {
             if (tunnel != null) {
@@ -70,6 +71,7 @@ object WgEgress {
         val parsed = try {
             WgConfigParser.parse(configText!!)
         } catch (e: Exception) {
+            lastError = "Invalid WireGuard config: ${e.message}"
             Log.e(TAG, "config parse: ${e.message}")
             return false
         }
@@ -77,12 +79,14 @@ object WgEgress {
         val resolved = try {
             withResolvedEndpoints(parsed)
         } catch (e: Exception) {
+            lastError = "WireGuard endpoint resolution failed: ${e.message}"
             Log.e(TAG, "endpoint resolve: ${e.message}")
             return false
         }
 
         val rxFd = startSocketpair()
         if (rxFd < 0) {
+            lastError = "Could not create WireGuard packet socket"
             Log.e(TAG, "jni_wireguard_start failed")
             return false
         }
@@ -101,9 +105,13 @@ object WgEgress {
                 resolved.toUapi(), rxFd, desiredFd, mtu, protector, logger
             )
         } catch (e: Throwable) {
+            lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"
             Log.e(TAG, "Wgbridge.startTunnel failed", e)
+            closeRawFd(rxFd)
             stopSocketpair()
             return false
+        } finally {
+            if (tunnel != null) closeRawFd(rxFd)
         }
 
         currentConfig = configText
@@ -118,6 +126,8 @@ object WgEgress {
     }
 
     fun isRunning(): Boolean = tunnel != null
+
+    fun getLastError(): String? = lastError
 
     private fun stopInternal(stopSocketpair: () -> Unit) {
         val t = tunnel
@@ -162,5 +172,13 @@ object WgEgress {
         val addr = java.net.InetAddress.getByName(host)
         val ip = addr.hostAddress ?: throw IllegalStateException("getHostAddress null for $host")
         return if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
+    }
+
+    private fun closeRawFd(fd: Int) {
+        try {
+            ParcelFileDescriptor.adoptFd(fd).close()
+        } catch (e: Throwable) {
+            Log.w(TAG, "close fd $fd failed", e)
+        }
     }
 }

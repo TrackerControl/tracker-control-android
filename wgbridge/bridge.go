@@ -10,14 +10,14 @@
 // would be re-captured by NetGuard's TUN and loop forever.
 //
 // Build:
-//   gomobile bind -target=android -androidapi 23 -o ../app/libs/wgbridge.aar .
+//
+//	gomobile bind -target=android -androidapi 23 -o ../app/libs/wgbridge.aar .
 package wgbridge
 
 import (
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 	"sync"
 
 	"golang.org/x/sys/unix"
@@ -86,13 +86,7 @@ func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu in
 	}
 	t.events <- tun.EventUp
 
-	// Snapshot UDP fds before wireguard-go opens its outer sockets, so we
-	// can identify exactly the new ones afterwards and protect those — and
-	// only those. Avoids accidentally protecting unrelated sockets that
-	// belong to anyone else in the process.
-	udpBefore := snapshotUdpFds()
-
-	dev := device.NewDevice(t, conn.NewStdNetBind(), newDeviceLogger(logger))
+	dev := device.NewDevice(t, newProtectedBind(protect), newDeviceLogger(logger))
 
 	if err := dev.IpcSet(uapiConfig); err != nil {
 		dev.Close()
@@ -105,20 +99,78 @@ func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu in
 		return nil, fmt.Errorf("device up: %w", err)
 	}
 
-	// Protect each new UDP socket so its egress bypasses the VpnService TUN.
-	udpAfter := snapshotUdpFds()
-	for fd := range udpAfter {
-		if _, existed := udpBefore[fd]; existed {
-			continue
-		}
-		if !protect.Protect(int32(fd)) {
-			dev.Close()
-			_ = t.Close()
-			return nil, fmt.Errorf("VpnService.protect(%d) failed", fd)
-		}
+	return &Tunnel{dev: dev, tunDev: t}, nil
+}
+
+type protectedBind struct {
+	inner   conn.Bind
+	protect Protector
+}
+
+func newProtectedBind(protect Protector) conn.Bind {
+	return &protectedBind{inner: conn.NewStdNetBind(), protect: protect}
+}
+
+func (b *protectedBind) Open(port uint16) ([]conn.ReceiveFunc, uint16, error) {
+	fns, actualPort, err := b.inner.Open(port)
+	if err != nil {
+		return nil, 0, err
+	}
+	if err := b.protectOpenSockets(); err != nil {
+		_ = b.inner.Close()
+		return nil, 0, err
+	}
+	return fns, actualPort, nil
+}
+
+func (b *protectedBind) Close() error              { return b.inner.Close() }
+func (b *protectedBind) SetMark(mark uint32) error { return b.inner.SetMark(mark) }
+func (b *protectedBind) Send(bufs [][]byte, ep conn.Endpoint) error {
+	return b.inner.Send(bufs, ep)
+}
+func (b *protectedBind) ParseEndpoint(s string) (conn.Endpoint, error) {
+	return b.inner.ParseEndpoint(s)
+}
+func (b *protectedBind) BatchSize() int { return b.inner.BatchSize() }
+
+func (b *protectedBind) protectOpenSockets() error {
+	peek, ok := b.inner.(conn.PeekLookAtSocketFd)
+	if !ok {
+		return errors.New("bind does not expose socket fds")
 	}
 
-	return &Tunnel{dev: dev, tunDev: t}, nil
+	fds := make(map[int]struct{}, 2)
+	for _, peekFn := range []func() (int, error){peek.PeekLookAtSocketFd4, peek.PeekLookAtSocketFd6} {
+		fd, ok, err := safePeekSocketFd(peekFn)
+		if err != nil {
+			return err
+		}
+		if ok && fd >= 0 {
+			fds[fd] = struct{}{}
+		}
+	}
+	if len(fds) == 0 {
+		return errors.New("bind opened no protectable UDP sockets")
+	}
+
+	for fd := range fds {
+		if !b.protect.Protect(int32(fd)) {
+			return fmt.Errorf("VpnService.protect(%d) failed", fd)
+		}
+	}
+	return nil
+}
+
+func safePeekSocketFd(peek func() (int, error)) (fd int, ok bool, err error) {
+	defer func() {
+		if recover() != nil {
+			fd = -1
+			ok = false
+			err = nil
+		}
+	}()
+	fd, err = peek()
+	return fd, err == nil, err
 }
 
 // Stop tears down wireguard-go and closes the duplicated fds.
@@ -179,40 +231,6 @@ func (t *socketpairTun) Close() error {
 		return err1
 	}
 	return err2
-}
-
-// snapshotUdpFds enumerates UDP sockets in the current process by reading
-// /proc/self/fd and filtering by readlink target prefix "socket:". A
-// secondary filter (SO_TYPE == SOCK_DGRAM) further narrows it to UDP. The
-// returned set's keys are the integer fds.
-func snapshotUdpFds() map[int]struct{} {
-	out := make(map[int]struct{})
-	entries, err := os.ReadDir("/proc/self/fd")
-	if err != nil {
-		return out
-	}
-	for _, e := range entries {
-		fd, err := strconv.Atoi(e.Name())
-		if err != nil {
-			continue
-		}
-		// Skip stdio.
-		if fd < 3 {
-			continue
-		}
-		// Filter by socket type.
-		stype, err := unix.GetsockoptInt(fd, unix.SOL_SOCKET, unix.SO_TYPE)
-		if err != nil || stype != unix.SOCK_DGRAM {
-			continue
-		}
-		// Filter by socket family.
-		family, err := unix.GetsockoptInt(fd, unix.SOL_SOCKET, unix.SO_DOMAIN)
-		if err != nil || (family != unix.AF_INET && family != unix.AF_INET6) {
-			continue
-		}
-		out[fd] = struct{}{}
-	}
-	return out
 }
 
 func newDeviceLogger(l Logger) *device.Logger {
