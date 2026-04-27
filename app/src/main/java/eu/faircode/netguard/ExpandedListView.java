@@ -22,38 +22,25 @@ package eu.faircode.netguard;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.widget.ListView;
 
 // This requires list view items with equal heights
 
 public class ExpandedListView extends ListView {
-    private int maxHeight;
-
     public ExpandedListView(Context context) {
         super(context);
-        init(context);
     }
 
     public ExpandedListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public ExpandedListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
-    }
-
-    private void init(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        maxHeight = dm.heightPixels;
-        setNestedScrollingEnabled(true);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 4, MeasureSpec.AT_MOST));
     }
 }
