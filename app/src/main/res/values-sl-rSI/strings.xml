@@ -385,7 +385,6 @@ Sincerely,\n\n]]></string>
     <string name="setting_sni_enabled">Izločitev SNI (raziskovalno)</string>
     <string name="summary_sni_enabled">Izloči gostiteljska imena iz povezav TLS za natančnejše zaznavanje sledilcev.  Opozorilo: to sledilnim strežnikom razkrije vaš naslov IP.  Na voljo samo za raziskovalne namene.</string>
     <string name="setting_blocking_mode">Način blokiranja</string>
-    <string name="summary_blocking_mode_minimal">Minimalno: blokira samo sledilce s seznama DuckDuckGo, ki jih je varno blokirati.  Brskalniki in znani nezdružljivi programi so izključeni.  Delovanje nekaterih programov bo morda prizadeto.</string>
     <string name="summary_blocking_mode_standard">Običajno: blokira vse znane sledilce z več seznamov (X-Ray, Disconnect, DuckDuckGo).  Osnovne storitve so dovoljene.  Delovanje nekaterih programov bo prizadeto in jih boste morda morali ročno izključiti (glejte \"Odpravljanje težav\" v programskem meniju).</string>
     <string name="summary_blocking_mode_strict">Strogo: blokira vse znane sledilce, vključno z osnovnimi storitvami in nejasnimi deljenimi domenami IP.  Delovanje mnogo programov bo prizadeto in jih boste morali ročno izključiti (glejte \"Odpravljanje težav\" v programskem meniju).</string>
     <string name="blocking_mode_minimal">Minimalno</string>
@@ -446,8 +445,6 @@ Sincerely,\n\n]]></string>
     <string name="summary_domain_based_blocking">Dovoli bolj prefinjeno blokiranje.  To je še vedno v razvoju.</string>
     <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
     <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
-    <string name="browsers_not_supported">⚠️ Brskalniki niso podprti.</string>
-    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nTrackerControl ne podpira blokiranje sledilcev v brskalnikih.  Za to lahko uporabite brskalnik z vgrajeno zmožnostjo blokiranja sledenja.\n\nNa primer Mozilla Fennec ali Bromite.</string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
