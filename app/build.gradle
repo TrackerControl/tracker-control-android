@@ -72,14 +72,21 @@ tasks.register('wgbridgeBind') {
         env['PATH'] = "${goDir}${File.pathSeparator}${gopath}/bin${File.pathSeparator}${env['PATH'] ?: ''}"
 
         def gomobileBin = "${gopath}/bin/gomobile"
-        if (!file(gomobileBin).canExecute()) {
-            logger.lifecycle("gomobile not found at ${gomobileBin}, installing...")
+        def gobindBin   = "${gopath}/bin/gobind"
+        if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
+            logger.lifecycle("Installing gomobile + gobind into ${gopath}/bin ...")
+            // Both binaries are needed: gomobile drives the build, gobind
+            // does the actual Java <-> Go interface generation. `gomobile
+            // init` used to install gobind for you but on recent versions
+            // we install it explicitly so the failure mode is clearer.
             exec {
                 environment env
-                commandLine goBin, 'install', 'golang.org/x/mobile/cmd/gomobile@latest'
+                commandLine goBin, 'install',
+                        'golang.org/x/mobile/cmd/gomobile@latest',
+                        'golang.org/x/mobile/cmd/gobind@latest'
             }
-            if (!file(gomobileBin).canExecute()) {
-                throw new GradleException("`go install gomobile` succeeded but ${gomobileBin} is still missing.")
+            if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
+                throw new GradleException("Installed gomobile/gobind but ${gopath}/bin still missing one of them.")
             }
         }
 
