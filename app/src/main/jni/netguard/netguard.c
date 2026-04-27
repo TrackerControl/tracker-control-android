@@ -28,6 +28,8 @@ char socks5_addr[INET6_ADDRSTRLEN + 1];
 int socks5_port = 0;
 char socks5_username[127 + 1];
 char socks5_password[127 + 1];
+int wg_enabled = 0;
+int wg_outbound_fd = -1;
 int loglevel = ANDROID_LOG_WARN;
 
 extern int max_tun_msg;
@@ -120,6 +122,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
     socks5_port = 0;
     *socks5_username = 0;
     *socks5_password = 0;
+    wg_enabled = 0;
+    wg_outbound_fd = -1;
     pcap_file = NULL;
 
     if (pthread_mutex_init(&ctx->lock, NULL))
@@ -336,6 +340,41 @@ JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1sni(JNIEnv *env, jobject instance, jboolean enabled) {
     is_play = (enabled ? 1 : 0);
     log_android(ANDROID_LOG_WARN, "SNI extraction %s", is_play ? "enabled" : "disabled");
+}
+
+// Allocate a SOCK_DGRAM socketpair: the C side keeps the write end (sv[0])
+// in wg_outbound_fd and atomically sets wg_enabled=1. The read end (sv[1]) is
+// returned to Java, which passes it to wgbridge.StartTunnel so wireguard-go
+// can pull outbound IP packets. SOCK_DGRAM preserves IP-packet boundaries.
+JNIEXPORT jint JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, jobject instance) {
+    if (wg_enabled) {
+        log_android(ANDROID_LOG_WARN, "WireGuard already started");
+        return -1;
+    }
+    int sv[2];
+    if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sv) < 0) {
+        log_android(ANDROID_LOG_ERROR, "wg socketpair errno %d: %s", errno, strerror(errno));
+        return -1;
+    }
+    int flags = fcntl(sv[0], F_GETFL, 0);
+    if (flags >= 0)
+        fcntl(sv[0], F_SETFL, flags | O_NONBLOCK);
+    wg_outbound_fd = sv[0];
+    wg_enabled = 1;
+    log_android(ANDROID_LOG_WARN, "WireGuard egress enabled tx=%d rx=%d", sv[0], sv[1]);
+    return sv[1];
+}
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1stop(JNIEnv *env, jobject instance) {
+    wg_enabled = 0;
+    int fd = wg_outbound_fd;
+    wg_outbound_fd = -1;
+    if (fd >= 0) {
+        close(fd);
+        log_android(ANDROID_LOG_WARN, "WireGuard egress disabled, closed tx=%d", fd);
+    }
 }
 
 JNIEXPORT void JNICALL

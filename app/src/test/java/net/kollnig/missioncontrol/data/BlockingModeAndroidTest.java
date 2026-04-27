@@ -33,8 +33,10 @@ public class BlockingModeAndroidTest {
     @Test
     public void bundledExcludedAppsAssetContainsRepresentativePackages() throws Exception {
         Set<String> excludedApps = BlockingModeLogic.parseExcludedAppsJson(readExcludedAppsAsset());
+        Set<String> browserApps = BlockingModeLogic.parseBrowserAppsJson(readExcludedAppsAsset());
 
-        assertTrue(excludedApps.contains("com.android.chrome"));
+        assertTrue(browserApps.contains("com.android.chrome"));
+        assertFalse(excludedApps.contains("com.android.chrome"));
         assertTrue(excludedApps.contains("com.whatsapp"));
         assertFalse(excludedApps.contains("com.example.app"));
     }
@@ -51,37 +53,38 @@ public class BlockingModeAndroidTest {
                 applyPrefs,
                 Collections.emptySet());
 
-        assertTrue(minimalResult.applyFalsePackages.contains("com.android.chrome"));
+        assertFalse(minimalResult.applyFalsePackages.contains("com.android.chrome"));
+        assertTrue(minimalResult.applyFalsePackages.contains("com.whatsapp"));
         assertFalse(minimalResult.applyRemovals.contains("manual.false"));
 
-        applyPrefs.put("com.android.chrome", false);
+        applyPrefs.put("com.whatsapp", false);
         BlockingModeLogic.ExclusionSyncResult standardResult = BlockingModeLogic.syncVpnExclusions(
                 BlockingMode.MODE_STANDARD,
                 excludedApps,
                 applyPrefs,
-                Set.of("com.android.chrome"));
+                Set.of("com.whatsapp"));
 
-        assertTrue(standardResult.applyRemovals.contains("com.android.chrome"));
+        assertTrue(standardResult.applyRemovals.contains("com.whatsapp"));
         assertFalse(standardResult.applyRemovals.contains("manual.false"));
     }
 
     @Test
     public void explicitVpnInclusionWithRealExcludedAppsStopsAutoManagement() throws Exception {
         Set<String> excludedApps = BlockingModeLogic.parseExcludedAppsJson(readExcludedAppsAsset());
-        assertTrue(excludedApps.contains("com.android.chrome"));
+        assertTrue(excludedApps.contains("com.whatsapp"));
 
         Map<String, Boolean> applyPrefs = new HashMap<>();
-        applyPrefs.put("com.android.chrome", true);
+        applyPrefs.put("com.whatsapp", true);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
                 BlockingMode.MODE_MINIMAL,
-                Set.of("com.android.chrome"),
+                Set.of("com.whatsapp"),
                 applyPrefs,
-                Set.of("com.android.chrome"));
+                Set.of("com.whatsapp"));
 
         assertTrue(result.applyFalsePackages.isEmpty());
         assertTrue(result.applyRemovals.isEmpty());
-        assertFalse(result.autoExcludedApps.contains("com.android.chrome"));
+        assertFalse(result.autoExcludedApps.contains("com.whatsapp"));
     }
 
     private static String readExcludedAppsAsset() throws IOException {

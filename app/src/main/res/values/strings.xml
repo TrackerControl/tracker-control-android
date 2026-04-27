@@ -136,6 +136,10 @@
     <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">SOCKS5 username: %s</string>
     <string name="setting_socks5_password">SOCKS5 password: %s</string>
+    <string name="setting_wg_enabled">Tunnel egress through WireGuard</string>
+    <string name="setting_wg_config">WireGuard config</string>
+    <string name="setting_wireguard">WireGuard</string>
+    <string name="setting_wg_status">Status</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
     <string name="setting_watchdog">Watchdog: every %s minutes</string>
@@ -184,6 +188,17 @@
     <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
+    <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct.</string>
+    <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
+    <string name="summary_wg_status_off">Off</string>
+    <string name="summary_wg_status_missing_config">Off — no config set</string>
+    <string name="summary_wg_status_connected">Connected</string>
+    <string name="summary_wg_status_blocked">Blocked — %s</string>
+    <string name="summary_wg_status_starting">Starting</string>
+    <string name="msg_wg_config_invalid">Invalid WireGuard config: %s</string>
+    <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
+    <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
+    <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>
 
@@ -480,7 +495,7 @@ Sincerely,\n\n]]></string>
     <string name="summary_sni_enabled">Extract hostnames from TLS connections for more accurate tracker detection. Warning: this leaks your IP address to tracker servers. Only enable for research.</string>
 
     <string name="setting_blocking_mode">Blocking Mode</string>
-    <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers and known incompatible apps are automatically excluded. Limited app breakage.</string>
+    <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers stay routed through the VPN, but tracker protection is off by default. Known incompatible apps are excluded. Limited app breakage.</string>
     <string name="summary_blocking_mode_standard">Standard: Blocks all known trackers from multiple lists (X-Ray, Disconnect, DuckDuckGo). Essential services are allowed. Some apps will break and may need to be manually excluded (see Troubleshooting in the app menu).</string>
     <string name="summary_blocking_mode_strict">Strict: Blocks all known trackers including essential services and ambiguous shared-IP domains. Many apps will break and need to be manually excluded (see Troubleshooting in the app menu).</string>
     <string name="blocking_mode_minimal">Minimal</string>
@@ -552,8 +567,8 @@ Sincerely,\n\n]]></string>
     <string name="summary_domain_based_blocking">Allows more granular blocking. Still in development.</string>
     <string name="untap_unblock">Tip: You can unblock individual entries by tapping on them.</string>
     <string name="uncertain_entry">Entries marked with \'*\' might be inaccurate, due to the limitations of Android. This usually means that the same company uses the same IP address under different domains, but can also mean that different companies are behind the same IP address (e.g. if they use a Content Delivery Network).</string>
-    <string name="browsers_not_supported">Browsers not supported ⚠️</string>
-    <string name="browsers_not_supported_explanation">This appears to be a browser app.\n\nThe blocking of trackers in browsers is not supported by TrackerControl. Instead, use a browser with integrated anti-tracking functionality to get better blocking of tracking.\n\nFor example: Mozilla Fennec</string>
+    <string name="browsers_not_supported">Browser detected ⚠️</string>
+    <string name="browsers_not_supported_explanation">This appears to be a browser app.\n\nBrowser tracking protection works best inside the browser, where trackers can be blocked at page and request level. TrackerControl keeps browser traffic routed through the VPN/WireGuard tunnel, but app-level tracker blocking is off by default and may cause site breakage if enabled.</string>
     <string name="static_analysis">Detect trackers in app code</string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
@@ -650,7 +665,7 @@ Sincerely,\n\n]]></string>
 
     <!-- What's New onboarding slide (not translated) -->
     <string name="onboarding_whatsnew_title" translatable="false">What\'s New</string>
-    <string name="onboarding_whatsnew_desc" translatable="false">• Blocking Modes: Choose between Minimal, Standard, or Strict blocking to balance privacy and app compatibility.\n• Minimal Mode: DuckDuckGo-compatible blocking that avoids app breakage. Browsers and known incompatible apps are automatically excluded.\n• Privacy Fix: SNI extraction is now off by default — it was leaking your IP address to tracker servers.\n• Improved Performance: Faster scrolling, reduced memory usage, and better battery life.\n• Troubleshooting: New troubleshooting screen in settings to diagnose common issues.\n• Better Tracker Detection: Improved handling of shared IPs and DNS-cloaked trackers.</string>
+    <string name="onboarding_whatsnew_desc" translatable="false">• Blocking Modes: Choose between Minimal, Standard, or Strict blocking to balance privacy and app compatibility.\n• Minimal Mode: DuckDuckGo-compatible blocking that avoids app breakage. Browsers stay routed through the VPN, but tracker protection is off by default; known incompatible apps are excluded.\n• Privacy Fix: SNI extraction is now off by default — it was leaking your IP address to tracker servers.\n• Improved Performance: Faster scrolling, reduced memory usage, and better battery life.\n• Troubleshooting: New troubleshooting screen in settings to diagnose common issues.\n• Better Tracker Detection: Improved handling of shared IPs and DNS-cloaked trackers.</string>
 
     <string name="title_blocklists">Additional host files</string>
     <string name="summary_manage_blocklists">These are only for fallback. TrackerControl includes its own host lists that give insights on the companies behind tracking.</string>

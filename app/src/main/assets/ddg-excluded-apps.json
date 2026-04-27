@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Apps excluded from VPN-based tracker blocking in DDG Minimal Blocking mode. Based on DuckDuckGo's unprotectedApps list from their privacy-configuration repository.",
+  "description": "Apps used for Minimal Blocking mode compatibility. Browser entries default to tracker protection off but remain in the VPN route; other categories are auto-excluded from the VPN.",
   "browsers": [
     "android.browser",
     "com.android.browser",

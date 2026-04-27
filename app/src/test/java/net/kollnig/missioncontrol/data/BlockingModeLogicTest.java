@@ -63,32 +63,32 @@ public class BlockingModeLogicTest {
     }
 
     @Test
-    public void enteringMinimalAutoExcludesUnsetApps() {
+    public void enteringMinimalAutoExcludesUnsetIncompatibleApps() {
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
                 BlockingModeLogic.MODE_MINIMAL,
-                Set.of("browser"),
+                Set.of("incompatible"),
                 Collections.emptyMap(),
                 Collections.emptySet());
 
-        assertEquals(Set.of("browser"), result.applyFalsePackages);
+        assertEquals(Set.of("incompatible"), result.applyFalsePackages);
         assertTrue(result.applyRemovals.isEmpty());
-        assertEquals(Set.of("browser"), result.autoExcludedApps);
+        assertEquals(Set.of("incompatible"), result.autoExcludedApps);
     }
 
     @Test
     public void leavingMinimalRestoresOnlyAutoExcludedApps() {
         Map<String, Boolean> applyPrefs = new HashMap<>();
-        applyPrefs.put("browser", false);
+        applyPrefs.put("incompatible", false);
         applyPrefs.put("manual", false);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
                 BlockingModeLogic.MODE_STANDARD,
-                Set.of("browser"),
+                Set.of("incompatible"),
                 applyPrefs,
-                Set.of("browser"));
+                Set.of("incompatible"));
 
         assertTrue(result.applyFalsePackages.isEmpty());
-        assertEquals(Set.of("browser"), result.applyRemovals);
+        assertEquals(Set.of("incompatible"), result.applyRemovals);
         assertTrue(result.autoExcludedApps.isEmpty());
         assertFalse(result.applyRemovals.contains("manual"));
     }
@@ -96,13 +96,13 @@ public class BlockingModeLogicTest {
     @Test
     public void explicitVpnInclusionStopsFutureAutoRestore() {
         Map<String, Boolean> applyPrefs = new HashMap<>();
-        applyPrefs.put("browser", true);
+        applyPrefs.put("incompatible", true);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
                 BlockingModeLogic.MODE_MINIMAL,
-                Set.of("browser"),
+                Set.of("incompatible"),
                 applyPrefs,
-                Set.of("browser"));
+                Set.of("incompatible"));
 
         assertTrue(result.applyFalsePackages.isEmpty());
         assertTrue(result.applyRemovals.isEmpty());
@@ -129,6 +129,26 @@ public class BlockingModeLogicTest {
     public void clearingAutoExcludedAppRemovesItFromManagedSet() {
         assertEquals(Set.of("browser"),
                 BlockingModeLogic.clearAutoExcludedApp(Set.of("browser", "other"), "other"));
+    }
+
+    @Test
+    public void browserCategoryIsNotParsedAsVpnExclusion() {
+        Set<String> excludedApps = BlockingModeLogic.parseExcludedAppsJson(
+                "{\"browsers\":[\"browser\"],\"vpn_incompatible\":[\"vpn.bad\"],\"user_reported\":[\"reported\"]}");
+
+        assertFalse(excludedApps.contains("browser"));
+        assertTrue(excludedApps.contains("vpn.bad"));
+        assertTrue(excludedApps.contains("reported"));
+    }
+
+    @Test
+    public void browserCategoryIsParsedSeparatelyForTrackerDefaults() {
+        Set<String> browserApps = BlockingModeLogic.parseBrowserAppsJson(
+                "{\"browsers\":[\"browser\"],\"vpn_incompatible\":[\"vpn.bad\"],\"user_reported\":[\"reported\"]}");
+
+        assertTrue(browserApps.contains("browser"));
+        assertFalse(browserApps.contains("vpn.bad"));
+        assertFalse(browserApps.contains("reported"));
     }
 
     @Test
