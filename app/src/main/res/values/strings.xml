@@ -188,7 +188,7 @@
     <string name="summary_rcode">The default value is 3 (NXDOMAIN), which means \'non-existent domain\'.</string>
     <string name="summary_validate">Domain name used to validate the internet connection at port 443 (https).</string>
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
-    <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct.</string>
+    <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct. Server-initiated connections to the phone may not work while the tunnel is idle (keepalive is disabled to save battery).</string>
     <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
     <string name="summary_wg_status_off">Off</string>
     <string name="summary_wg_status_missing_config">Off — no config set</string>

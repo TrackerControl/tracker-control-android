@@ -28,9 +28,6 @@ data class WgConfig(
                 sb.append("preshared_key=").append(base64ToHex(it)).append('\n')
             }
             peer.endpoint?.let { sb.append("endpoint=").append(it).append('\n') }
-            peer.persistentKeepalive?.let {
-                sb.append("persistent_keepalive_interval=").append(it).append('\n')
-            }
             sb.append("replace_allowed_ips=true\n")
             for (ip in peer.allowedIPs) sb.append("allowed_ip=").append(ip).append('\n')
         }
@@ -42,8 +39,7 @@ data class WgPeer(
     val publicKey: String,
     val presharedKey: String?,
     val allowedIPs: List<String>,
-    val endpoint: String?,        // host:port (host may need DNS resolution)
-    val persistentKeepalive: Int?
+    val endpoint: String?         // host:port (host may need DNS resolution)
 )
 
 class WgConfigException(message: String) : Exception(message)
@@ -61,7 +57,6 @@ object WgConfigParser {
         var peerPsk: String? = null
         val peerAllowed = mutableListOf<String>()
         var peerEndpoint: String? = null
-        var peerKeepalive: Int? = null
         val peers = mutableListOf<WgPeer>()
 
         fun flushPeer() {
@@ -71,15 +66,13 @@ object WgConfigParser {
                     publicKey = peerPub!!,
                     presharedKey = peerPsk,
                     allowedIPs = peerAllowed.toList(),
-                    endpoint = peerEndpoint,
-                    persistentKeepalive = peerKeepalive
+                    endpoint = peerEndpoint
                 )
             )
             peerPub = null
             peerPsk = null
             peerAllowed.clear()
             peerEndpoint = null
-            peerKeepalive = null
         }
 
         for (rawLine in text.lineSequence()) {
@@ -110,8 +103,11 @@ object WgConfigParser {
                     "presharedkey" -> peerPsk = requireBase64Key(value)
                     "allowedips" -> peerAllowed += value.split(',').map { it.trim() }.filter { it.isNotEmpty() }
                     "endpoint" -> peerEndpoint = value
-                    "persistentkeepalive" -> peerKeepalive = value.toIntOrNull()
-                        ?: throw WgConfigException("invalid PersistentKeepalive: $value")
+                    "persistentkeepalive" -> {
+                        // Intentionally ignored: this app's WG egress is outbound-only,
+                        // so NAT mappings are refreshed by real traffic. Keepalive would
+                        // wake the cellular radio on every interval for no benefit.
+                    }
                     else -> throw WgConfigException("unknown Peer key: $key")
                 }
                 else -> throw WgConfigException("data outside [Interface]/[Peer]")
