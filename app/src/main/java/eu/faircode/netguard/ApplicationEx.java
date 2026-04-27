@@ -122,6 +122,7 @@ public class ApplicationEx extends Application {
 
         SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         migratePreferences(prefs);
+        BlockingMode.enforcePlayStoreMode(this);
 
         // Keep VPN exclusions aligned with the selected blocking mode on startup.
         BlockingMode.syncModeExclusions(this);

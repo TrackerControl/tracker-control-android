@@ -62,6 +62,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.preference.ListPreference;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
@@ -183,6 +184,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private void configurePreferences() {
         final PreferenceScreen screen = getPreferenceScreen();
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        BlockingMode.enforcePlayStoreMode(this);
 
         // Find category groups (may be null depending on which sub-screen is showing)
         PreferenceGroup cat_options = (PreferenceGroup) screen.findPreference("category_options");
@@ -388,7 +390,14 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Blocking mode preference setup
         Preference pref_blocking_mode = screen.findPreference("blocking_mode");
         if (pref_blocking_mode != null) {
-            String currentMode = prefs.getString("blocking_mode", BlockingMode.getDefaultMode());
+            String currentMode = BlockingMode.getMode(this);
+            if (Util.isPlayStoreInstall(this) && pref_blocking_mode instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) pref_blocking_mode;
+                listPreference.setEntries(new CharSequence[]{getString(R.string.blocking_mode_minimal)});
+                listPreference.setEntryValues(new CharSequence[]{BlockingMode.MODE_MINIMAL});
+                listPreference.setValue(BlockingMode.MODE_MINIMAL);
+                listPreference.setEnabled(false);
+            }
             updateBlockingModeSummary(pref_blocking_mode, currentMode);
         }
 
@@ -592,7 +601,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         else if ("blocking_mode".equals(name)) {
-            String mode = prefs.getString(name, BlockingMode.getDefaultMode());
+            if (Util.isPlayStoreInstall(this))
+                BlockingMode.enforcePlayStoreMode(this);
+            String mode = BlockingMode.getMode(this);
             Preference pref = getPreferenceScreen().findPreference(name);
             if (pref != null)
                 updateBlockingModeSummary(pref, mode);

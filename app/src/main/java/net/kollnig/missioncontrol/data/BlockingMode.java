@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import eu.faircode.netguard.ServiceSinkhole;
-import eu.faircode.netguard.Util;
+import net.kollnig.missioncontrol.BuildConfig;
 
 /**
  * Manages the DDG Minimal Blocking mode.
@@ -60,7 +60,7 @@ public class BlockingMode {
      */
     public static String getMode(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        return prefs.getString(PREF_BLOCKING_MODE, getDefaultMode());
+        return normalizeModeForBuild(prefs.getString(PREF_BLOCKING_MODE, getDefaultMode()));
     }
 
     /**
@@ -93,6 +93,51 @@ public class BlockingMode {
      */
     public static String getDefaultMode() {
         return MODE_MINIMAL;
+    }
+
+    public static boolean isPlayStoreBuild() {
+        return "play".equals(BuildConfig.FLAVOR);
+    }
+
+    public static boolean isModeAvailable(String mode) {
+        return !isPlayStoreBuild() || MODE_MINIMAL.equals(mode);
+    }
+
+    public static String normalizeModeForBuild(String mode) {
+        if (isPlayStoreBuild())
+            return MODE_MINIMAL;
+        if (MODE_MINIMAL.equals(mode) || MODE_STANDARD.equals(mode) || MODE_STRICT.equals(mode))
+            return mode;
+        return getDefaultMode();
+    }
+
+    public static void enforcePlayStoreMode(Context c) {
+        if (!isPlayStoreBuild())
+            return;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor editor = prefs.edit();
+        boolean changed = false;
+
+        if (!MODE_MINIMAL.equals(prefs.getString(PREF_BLOCKING_MODE, getDefaultMode()))) {
+            editor.putString(PREF_BLOCKING_MODE, MODE_MINIMAL);
+            changed = true;
+        }
+        if (!prefs.getBoolean("filter", true)) {
+            editor.putBoolean("filter", true);
+            changed = true;
+        }
+        if (prefs.getBoolean("log_logcat", false)) {
+            editor.putBoolean("log_logcat", false);
+            changed = true;
+        }
+        if (prefs.getBoolean("sni_enabled", false)) {
+            editor.putBoolean("sni_enabled", false);
+            changed = true;
+        }
+
+        if (changed)
+            editor.apply();
     }
 
     /**
