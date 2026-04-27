@@ -138,7 +138,7 @@
     <string name="setting_socks5_password">SOCKS5 password: %s</string>
     <string name="setting_wg_enabled">Tunnel traffic through WireGuard</string>
     <string name="setting_wg_config">WireGuard config</string>
-    <string name="setting_wireguard">WireGuard</string>
+    <string name="setting_wireguard">WireGuard (experimental)</string>
     <string name="setting_wg_status">Status</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
