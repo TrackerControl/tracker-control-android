@@ -676,6 +676,10 @@ public class ServiceSinkhole extends VpnService {
                 stopNative(vpn);
                 stopVPN(vpn);
                 vpn = null;
+                // Final teardown — service is actually stopping (user toggled
+                // VPN off, OS is killing us, etc.) so WG should not survive.
+                net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
+                        () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
                 unprepare();
 
                 // Stop DoH proxy
@@ -1634,22 +1638,19 @@ public class ServiceSinkhole extends VpnService {
 
             jni_sni(prefs.getBoolean("sni_enabled", false));
 
-            // WireGuard egress (optional). Bring up before jni_start so the
-            // tunnel thread starts with wg_enabled / wg_outbound_fd already set.
-            // On failure we leave WG disabled and continue with direct egress
-            // — the parser already toasted the user; we don't want to fail the
-            // whole VPN service over a bad WG config.
-            if (prefs.getBoolean("wg_enabled", false)) {
-                String wgConfig = prefs.getString("wg_config", "");
-                boolean ok = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.start(
-                        wgConfig,
-                        ServiceSinkhole.this,
-                        vpn,
-                        () -> jni_wireguard_start(),
-                        () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
-                if (!ok)
-                    Log.w(TAG, "WireGuard egress failed to start; falling back to direct");
-            }
+            // WireGuard egress. startOrUpdate is idempotent: same config +
+            // same TUN fd is a no-op, so reload-induced "Native restart"
+            // calls (where the VPN PFD is reused) won't re-handshake WG.
+            // It also handles the disable case internally — no need to gate.
+            boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
+                    prefs.getBoolean("wg_enabled", false),
+                    prefs.getString("wg_config", ""),
+                    ServiceSinkhole.this,
+                    vpn,
+                    () -> jni_wireguard_start(),
+                    () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+            if (!wgOk)
+                Log.w(TAG, "WireGuard egress failed to start; falling back to direct");
 
             if (tunnelThread == null) {
                 Log.i(TAG, "Starting tunnel thread context=" + jni_context);
@@ -1697,12 +1698,12 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Stopped tunnel thread");
         }
 
-        // Tear down WireGuard last so any in-flight decrypted packets have
-        // already been consumed by the (now-stopped) tunnel thread.
-        if (net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.isRunning()) {
-            net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
-                    () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
-        }
+        // NOTE: WireGuard is intentionally NOT torn down here. NetGuard's
+        // reload() does a "Native restart" (stopNative + startNative on the
+        // same PFD) for transient events like DHCP/connectivity changes —
+        // tearing down WG every time would cause a fresh handshake every
+        // few seconds. WgEgress.stop() is invoked from the actual stop()
+        // path below.
     }
 
     private void unprepare() {
