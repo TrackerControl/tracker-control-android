@@ -55,6 +55,14 @@
     <string name="troubleshooting_battery_action">Desactivar optimización de batería</string>
     <string name="troubleshooting_battery_ok">Optimización de batería ya está desactivado.</string>
     <string name="troubleshooting_datasaver_title">Ahorro de datos</string>
+    <string name="troubleshooting_datasaver_desc">Si TrackerControl no puede conectarse cuando el Ahorro de datos está activado, permite el uso de datos sin restricciones para TrackerControl. Activa \"Datos en segundo plano\" y \"Uso de datos sin restricciones\".</string>
+    <string name="troubleshooting_datasaver_action">Permitir datos sin restricciones</string>
+    <string name="troubleshooting_datasaver_ok">Ahorro de datos no está restringiendo TrackerControl.</string>
+    <string name="troubleshooting_exclude_title">Excluyendo aplicaciones de la VPN</string>
+    <string name="troubleshooting_exclude_desc">Si una aplicación no funciona correctamente con TrackerControl, puedes excluirla: pulsa la aplicación en la lista principal, luego desactiva la opción VPN para esa aplicación.</string>
+    <string name="troubleshooting_categories_title">Bloqueando categorías específicas de rastreadores</string>
+    <string name="troubleshooting_categories_desc">Puedes ajustar el bloqueo para cada aplicación presionándola y activando o desactivando categorías individuales (p. ej., Análisis, Publicidad) en la pestaña de Rastreadores.</string>
+    <string name="troubleshooting_alwayson_title">VPN siempre activa</string>
     <string name="menu_apps">Otras aplicaciones</string>
     <string name="menu_protocol_other">Otro</string>
     <string name="menu_traffic_allowed">Permitido</string>
