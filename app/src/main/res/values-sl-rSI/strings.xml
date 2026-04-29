@@ -33,6 +33,13 @@
     <string name="menu_timeline">Dejavnost sledilcev</string>
     <string name="title_tracker_activity">Dejavnost sledilcev</string>
     <string name="timeline_empty">Ni nedavne dejavnosti sledilcev.\n\nOmogočite TrackerControl, če si želite ogledati, kateri programi vam sledijo.</string>
+    <string name="timeline_empty_disabled_title">TrackerControl je izklopljen.</string>
+    <string name="timeline_empty_disabled_subtitle">S stikalom zgoraj desno omogočite TrackerControl.  Dejavnost sledilcev iz vaših programov se bo nato pojavila tukaj.</string>
+    <string name="timeline_empty_enabled_title">Nadziranje sledilcev …</string>
+    <string name="timeline_empty_enabled_subtitle">Večina programov bo med njihovo uporabo stopila v stik s sledilci.  Odprite program in se nato vrnite sem — dejavnost njegovih sledilcev se bo pojavila tukaj.</string>
+    <string name="timeline_open_app">Odprite program</string>
+    <string name="tab_timeline">Časovnica</string>
+    <string name="tab_apps">Programi</string>
     <string name="timeline_section_last_hour">Zadnja ura</string>
     <string name="timeline_section_today">Danes</string>
     <string name="timeline_section_yesterday">Včeraj</string>
