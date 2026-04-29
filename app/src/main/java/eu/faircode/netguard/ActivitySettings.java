@@ -151,6 +151,17 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             return insets;
         });
 
+        // Pad the settings container by the bottom system bar inset so the last
+        // preference is reachable above the navigation bar.
+        View settingsContainer = findViewById(R.id.settings_container);
+        final int containerInitialBottom = settingsContainer.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(settingsContainer, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(),
+                    v.getPaddingRight(), containerInitialBottom + sysBars.bottom);
+            return insets;
+        });
+
         getSupportFragmentManager().registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
             @Override
             public void onFragmentResumed(@NonNull FragmentManager fm, @NonNull Fragment f) {
