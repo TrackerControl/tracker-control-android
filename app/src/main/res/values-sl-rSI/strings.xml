@@ -122,6 +122,10 @@
     <string name="setting_socks5_port">Vrata SOCKS5: %s</string>
     <string name="setting_socks5_username">Uporabniško ime SOCKS5: %s</string>
     <string name="setting_socks5_password">Geslo SOCKS5: %s</string>
+    <string name="setting_wg_enabled">Preusmeri promet preko WireGuarda</string>
+    <string name="setting_wg_config">Nastavitve WireGuard</string>
+    <string name="setting_wireguard">WireGuard (preizkusno)</string>
+    <string name="setting_wg_status">Stanje</string>
     <string name="setting_pcap_record_size">Velikost zapisa PCAP: %s B</string>
     <string name="setting_pcap_file_size">Najv. velikost datoteke PCAP: %s MB</string>
     <string name="setting_watchdog">Pes čuvaj: vsakih %s min.</string>
