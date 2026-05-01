@@ -1,6 +1,8 @@
 package net.kollnig.missioncontrol.wg
 
 import android.net.VpnService
+import android.os.Handler
+import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.util.Log
 import net.kollnig.missioncontrol.wgbridge.Logger as WgLogger
@@ -24,16 +26,22 @@ object WgEgress {
     private const val TAG = "WgEgress"
     private const val DEFAULT_MTU = 1420
     private const val WAKE_PROBE_RATE_LIMIT_MS = 30_000L
+    private const val POST_WAKE_VERIFY_DELAY_MS = 3_000L
+    private const val HANDSHAKE_DEAD_AFTER_MS = 180_000L
     private const val ENDPOINT_CACHE_TTL_MS = 5 * 60 * 1000L
+    // TODO follow-up: AlarmManager-driven idle watchdog and screen-off long-interval keepalive.
 
     @Volatile private var tunnel: WgTunnel? = null
     @Volatile private var lastError: String? = null
+    @Volatile private var verificationGeneration: Long = 0
     private var currentConfig: String? = null
     private var currentTunFd: Int = -1
     private var currentInteractive: Boolean = true
+    private var currentKeepaliveAlwaysOn: Boolean = false
     private var forceRestartPending: Boolean = false
     private var lastWakeProbeMillis: Long = 0
 
+    private val verifyHandler by lazy { Handler(Looper.getMainLooper()) }
     private val listeners = java.util.concurrent.CopyOnWriteArrayList<Runnable>()
     private val endpointCache = mutableMapOf<String, EndpointCacheEntry>()
     private val endpointCacheLock = Any()
@@ -59,9 +67,11 @@ object WgEgress {
         vpnService: VpnService,
         vpnFd: ParcelFileDescriptor,
         interactive: Boolean,
+        keepaliveAlwaysOn: Boolean,
         startSocketpair: () -> Int,
         stopSocketpair: () -> Unit
     ): Boolean {
+        verificationGeneration++
         val wantRunning = wgEnabled && !configText.isNullOrEmpty()
         val desiredFd = vpnFd.fd
         lastError = null
@@ -78,7 +88,10 @@ object WgEgress {
         }
 
         if (tunnel != null && currentConfig == configText && currentTunFd == desiredFd && !forceRestartPending) {
-            if (currentInteractive != interactive && !reapplyConfigOrError(configText!!, interactive))
+            val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
+            val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
+            if (oldKeepaliveEnabled != newKeepaliveEnabled &&
+                !reapplyConfigOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
                 return false
             Log.v(TAG, "startOrUpdate: same config + same TUN fd, no-op")
             return true
@@ -89,6 +102,7 @@ object WgEgress {
             stopInternal(stopSocketpair)
         }
         forceRestartPending = false
+        val keepaliveEnabled = interactive || keepaliveAlwaysOn
 
         val parsed = try {
             WgConfigParser.parse(configText!!)
@@ -127,7 +141,7 @@ object WgEgress {
 
         try {
             tunnel = Wgbridge.startTunnel(
-                resolved.toUapi(interactive), rxFd, desiredFd, mtu, protector, logger
+                resolved.toUapi(keepaliveEnabled), rxFd, desiredFd, mtu, protector, logger
             )
         } catch (e: Throwable) {
             lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"
@@ -143,8 +157,10 @@ object WgEgress {
         currentConfig = configText
         currentTunFd = desiredFd
         currentInteractive = interactive
+        currentKeepaliveAlwaysOn = keepaliveAlwaysOn
         Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
         notifyStateChanged()
+        scheduleFreshHandshakeNotificationCheck()
         return true
     }
 
@@ -162,10 +178,14 @@ object WgEgress {
 
     fun getLastError(): String? = lastError
 
+    fun latestHandshakeMillisOrNull(): Long? =
+        try { tunnel?.latestHandshakeMillis() } catch (_: Throwable) { null }
+
     fun onInteractiveStateChanged(
         wgEnabled: Boolean,
         configText: String?,
         interactive: Boolean,
+        keepaliveAlwaysOn: Boolean,
         requestReload: Runnable,
         notifyBroken: Runnable
     ) {
@@ -176,7 +196,7 @@ object WgEgress {
 
         if (!interactive) {
             try {
-                reapplyConfig(configText!!, false)
+                reapplyConfig(configText!!, keepaliveAlwaysOn, interactive, keepaliveAlwaysOn)
             } catch (e: Throwable) {
                 Log.w(TAG, "could not disable WG keepalive", e)
             }
@@ -191,9 +211,15 @@ object WgEgress {
         lastWakeProbeMillis = now
 
         try {
-            reapplyConfig(configText!!, true)
+            reapplyConfig(configText!!, true, interactive, keepaliveAlwaysOn)
+            val before = latestHandshakeMillisOrNull() ?: 0L
+            val gen = ++verificationGeneration
             tunnel?.sendKeepalive()
             Log.i(TAG, "WG wake keepalive sent")
+            verifyHandler.postDelayed(
+                { verifyHandshake(gen, before, requestReload, notifyBroken) },
+                POST_WAKE_VERIFY_DELAY_MS
+            )
         } catch (e: Throwable) {
             Log.w(TAG, "WG wake probe failed; requesting restart", e)
             lastError = "WireGuard wake recovery failed: ${e.message ?: e.javaClass.simpleName}"
@@ -210,6 +236,8 @@ object WgEgress {
         tunnel = null
         currentConfig = null
         currentTunFd = -1
+        currentKeepaliveAlwaysOn = false
+        verificationGeneration++
         if (t != null) {
             try {
                 t.stop()
@@ -224,9 +252,14 @@ object WgEgress {
         return wgEnabled && !configText.isNullOrEmpty() && tunnel != null
     }
 
-    private fun reapplyConfigOrError(configText: String, interactive: Boolean): Boolean {
+    private fun reapplyConfigOrError(
+        configText: String,
+        keepaliveEnabled: Boolean,
+        interactive: Boolean,
+        keepaliveAlwaysOn: Boolean
+    ): Boolean {
         return try {
-            reapplyConfig(configText, interactive)
+            reapplyConfig(configText, keepaliveEnabled, interactive, keepaliveAlwaysOn)
             true
         } catch (e: Throwable) {
             lastError = "WireGuard tunnel failed to update: ${e.message ?: e.javaClass.simpleName}"
@@ -236,18 +269,62 @@ object WgEgress {
         }
     }
 
-    private fun reapplyConfig(configText: String, interactive: Boolean) {
+    private fun reapplyConfig(
+        configText: String,
+        keepaliveEnabled: Boolean,
+        interactive: Boolean,
+        keepaliveAlwaysOn: Boolean
+    ) {
         val t = tunnel ?: return
         val resolved = withResolvedEndpoints(WgConfigParser.parse(configText))
-        t.setConfig(resolved.toUapi(interactive))
+        t.setConfig(resolved.toUapi(keepaliveEnabled))
         currentInteractive = interactive
+        currentKeepaliveAlwaysOn = keepaliveAlwaysOn
         lastError = null
         notifyStateChanged()
     }
 
     private fun clearRecoveryState() {
+        verificationGeneration++
         forceRestartPending = false
         lastWakeProbeMillis = 0
+    }
+
+    private fun verifyHandshake(
+        gen: Long,
+        before: Long,
+        requestReload: Runnable,
+        notifyBroken: Runnable
+    ) {
+        if (gen != verificationGeneration) return
+        if (tunnel == null) return
+        val latest = latestHandshakeMillisOrNull() ?: 0L
+        if (latest > before) {
+            lastError = null
+            notifyStateChanged()
+            return
+        }
+        val ageMs = if (latest == 0L) Long.MAX_VALUE else now() - latest
+        if (ageMs < HANDSHAKE_DEAD_AFTER_MS) return
+        Log.w(TAG, "post-wake verification: tunnel unresponsive (age=${ageMs}ms); restarting")
+        lastError = "WireGuard tunnel unresponsive after wake"
+        clearEndpointCache()
+        forceRestartPending = true
+        notifyStateChanged()
+        notifyBroken.run()
+        requestReload.run()
+    }
+
+    private fun scheduleFreshHandshakeNotificationCheck() {
+        val gen = verificationGeneration
+        verifyHandler.postDelayed({
+            if (gen != verificationGeneration) return@postDelayed
+            val latest = latestHandshakeMillisOrNull() ?: 0L
+            if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
+                lastError = null
+                notifyStateChanged()
+            }
+        }, POST_WAKE_VERIFY_DELAY_MS)
     }
 
     private fun now(): Long = System.currentTimeMillis()

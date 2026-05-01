@@ -133,6 +133,23 @@ public class ServiceSinkhole extends VpnService {
     private boolean registeredConnectivityChanged = false;
     private boolean registeredPackageChanged = false;
 
+    private final Runnable wgStateListener = () -> {
+        String err = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
+        if (err != null) {
+            showWireGuardErrorNotification(err);
+            return;
+        }
+
+        if (!net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.isRunning()) {
+            clearWireGuardErrorNotification();
+            return;
+        }
+
+        Long hs = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.latestHandshakeMillisOrNull();
+        if (hs != null && hs > 0 && System.currentTimeMillis() - hs < 180_000L)
+            clearWireGuardErrorNotification();
+    };
+
     private boolean phone_state = false;
     private Object networkCallback = null;
 
@@ -552,8 +569,8 @@ public class ServiceSinkhole extends VpnService {
                 if (!startNative(vpn, listAllowed, listRule))
                     return;
 
-                // Start DoH proxy if enabled
-                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).start();
+                // Start DoH proxy if enabled and not superseded by WireGuard DNS.
+                updateDnsProxyState();
 
                 removeWarningNotifications();
                 updateEnforcingNotification(listAllowed.size(), listRule.size());
@@ -667,8 +684,8 @@ public class ServiceSinkhole extends VpnService {
             if (!startNative(vpn, listAllowed, listRule))
                 return;
 
-            // Update DoH proxy state based on current settings
-            net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).checkAndUpdateState();
+            // Update DoH proxy state based on current settings.
+            updateDnsProxyState();
 
             removeWarningNotifications();
             updateEnforcingNotification(listAllowed.size(), listRule.size());
@@ -683,6 +700,7 @@ public class ServiceSinkhole extends VpnService {
                 // VPN off, OS is killing us, etc.) so WG should not survive.
                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
                         () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+                clearWireGuardErrorNotification();
                 unprepare();
 
                 // Stop DoH proxy
@@ -1360,16 +1378,7 @@ public class ServiceSinkhole extends VpnService {
 
         // Fallback DNS servers if none found
         if (listDns.isEmpty())
-            try {
-                listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4));
-                listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4_2));
-                if (ip6) {
-                    listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV6));
-                    listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV6_2));
-                }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
+            listDns.addAll(getDefaultDns(ip6));
 
         Log.i(TAG, "Get DNS=" + TextUtils.join(",", listDns));
 
@@ -1398,6 +1407,51 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
+        return listDns;
+    }
+
+    private static boolean hasActiveWireGuardDns(SharedPreferences prefs) {
+        if (!prefs.getBoolean("wg_enabled", false))
+            return false;
+
+        String wgConfigText = prefs.getString("wg_config", "");
+        if (TextUtils.isEmpty(wgConfigText))
+            return false;
+
+        try {
+            net.kollnig.missioncontrol.wg.WgConfig config =
+                    net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+            return !getWireGuardDns(config).isEmpty();
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private void updateDnsProxyState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        net.kollnig.missioncontrol.dns.DnsProxyServer proxy =
+                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(this);
+
+        if (prefs.getBoolean("doh_enabled", false) && hasActiveWireGuardDns(prefs)) {
+            Log.i(TAG, "Secure DNS proxy disabled while WireGuard DNS is active");
+            proxy.stop();
+        } else {
+            proxy.checkAndUpdateState();
+        }
+    }
+
+    private static List<InetAddress> getDefaultDns(boolean ip6) {
+        List<InetAddress> listDns = new ArrayList<>();
+        try {
+            listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4));
+            listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV4_2));
+            if (ip6) {
+                listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV6));
+                listDns.add(InetAddress.getByName(net.kollnig.missioncontrol.BuildConfig.DEFAULT_DNS_IPV6_2));
+            }
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
         return listDns;
     }
 
@@ -1457,6 +1511,7 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgConfig wgParsed = null;
         String wgVpn4 = null;
         String wgVpn6 = null;
+        List<InetAddress> dnsServers = null;
         if (wgEnabled && !TextUtils.isEmpty(wgConfigText)) {
             try {
                 wgParsed = net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
@@ -1467,6 +1522,11 @@ public class ServiceSinkhole extends VpnService {
                     } else {
                         if (wgVpn4 == null) wgVpn4 = ip;
                     }
+                }
+                dnsServers = getWireGuardDns(wgParsed);
+                if (dnsServers.isEmpty()) {
+                    Log.w(TAG, "WG config has no usable numeric DNS; using protected public fallback DNS");
+                    dnsServers = getDefaultDns(ip6);
                 }
             } catch (Throwable ex) {
                 Log.w(TAG, "WG config parse failed for builder: " + ex.getMessage());
@@ -1483,13 +1543,16 @@ public class ServiceSinkhole extends VpnService {
         }
 
         // DNS address
-        if (filter)
-            for (InetAddress dns : getDns(ServiceSinkhole.this)) {
+        if (filter) {
+            if (dnsServers == null)
+                dnsServers = getDns(ServiceSinkhole.this);
+            for (InetAddress dns : dnsServers) {
                 if (ip6 || dns instanceof Inet4Address) {
-                    Log.i(TAG, "Using DNS=" + dns);
+                    Log.i(TAG, "Using DNS=" + dns + (wgEnabled ? " (protected by WG)" : ""));
                     builder.addDnsServer(dns);
                 }
             }
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             try {
@@ -1519,7 +1582,7 @@ public class ServiceSinkhole extends VpnService {
         // tunnel (where TC can filter it) even though LAN is otherwise excluded.
         // This preserves compatibility with local DNS setups like Pi-hole.
         if (filter)
-            for (InetAddress dns : getDns(ServiceSinkhole.this))
+            for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
                 if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
                     try {
                         Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
@@ -1672,6 +1735,7 @@ public class ServiceSinkhole extends VpnService {
                     ServiceSinkhole.this,
                     vpn,
                     Util.isInteractive(ServiceSinkhole.this),
+                    prefs.getBoolean("wg_keepalive_when_screen_off", false),
                     () -> jni_wireguard_start(),
                     () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
             if (!wgOk) {
@@ -1740,6 +1804,7 @@ public class ServiceSinkhole extends VpnService {
     private void updateWireGuardInteractiveState(boolean interactive) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean wgEnabled = prefs.getBoolean("wg_enabled", false);
+        boolean keepaliveAlwaysOn = prefs.getBoolean("wg_keepalive_when_screen_off", false);
         String wgConfig = prefs.getString("wg_config", "");
         if (!wgEnabled || TextUtils.isEmpty(wgConfig))
             return;
@@ -1748,6 +1813,7 @@ public class ServiceSinkhole extends VpnService {
                 true,
                 wgConfig,
                 interactive,
+                keepaliveAlwaysOn,
                 () -> ServiceSinkhole.reload("wireguard wake repair", ServiceSinkhole.this, false),
                 () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
     }
@@ -1936,8 +2002,8 @@ public class ServiceSinkhole extends VpnService {
                 }
             }
 
-            // Add DoH DNS forwarding when enabled
-            if (prefs.getBoolean("doh_enabled", false)) {
+            // Add DoH DNS forwarding when enabled and not superseded by WireGuard DNS.
+            if (prefs.getBoolean("doh_enabled", false) && !hasActiveWireGuardDns(prefs)) {
                 // UDP
                 Forward dnsFwd = new Forward();
                 dnsFwd.protocol = 17; // UDP
@@ -2816,6 +2882,8 @@ public class ServiceSinkhole extends VpnService {
         logHandler = new LogHandler(logLooper);
         statsHandler = new StatsHandler(statsLooper);
 
+        net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStateListener);
+
         // Listen for user switches
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             IntentFilter ifUser = new IntentFilter();
@@ -3215,6 +3283,8 @@ public class ServiceSinkhole extends VpnService {
                 registeredConnectivityChanged = false;
             }
 
+            net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.removeStateListener(wgStateListener);
+
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             cm.unregisterNetworkCallback(networkMonitorCallback);
 
@@ -3468,8 +3538,8 @@ public class ServiceSinkhole extends VpnService {
                 .setContentText(detail)
                 .setContentIntent(pi)
                 .setColor(getResources().getColor(R.color.colorTrackerControl))
-                .setOngoing(false)
-                .setAutoCancel(true);
+                .setOngoing(true)
+                .setAutoCancel(false);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             builder.setCategory(NotificationCompat.CATEGORY_STATUS)
@@ -3480,6 +3550,10 @@ public class ServiceSinkhole extends VpnService {
 
         if (Util.canNotify(this))
             NotificationManagerCompat.from(this).notify(NOTIFY_WG_ERROR, notification.build());
+    }
+
+    private void clearWireGuardErrorNotification() {
+        NotificationManagerCompat.from(this).cancel(NOTIFY_WG_ERROR);
     }
 
     private void showUpdateNotification(String name, String url) {
@@ -3511,7 +3585,6 @@ public class ServiceSinkhole extends VpnService {
         NotificationManagerCompat.from(this).cancel(NOTIFY_AUTOSTART);
         NotificationManagerCompat.from(this).cancel(NOTIFY_ERROR);
         NotificationManagerCompat.from(this).cancel(NOTIFY_DOH_ERROR);
-        NotificationManagerCompat.from(this).cancel(NOTIFY_WG_ERROR);
     }
 
     private class Builder extends VpnService.Builder {

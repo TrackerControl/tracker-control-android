@@ -15,6 +15,7 @@ public class WgEgressRecoveryTest {
                 false,
                 validConfig(),
                 true,
+                false,
                 () -> reloadRequested.set(true),
                 () -> reloadRequested.set(true));
 
@@ -29,6 +30,7 @@ public class WgEgressRecoveryTest {
                 true,
                 "",
                 true,
+                false,
                 () -> reloadRequested.set(true),
                 () -> reloadRequested.set(true));
 

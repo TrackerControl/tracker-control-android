@@ -406,16 +406,16 @@ void handle_ip(const struct arguments *args,
         // WireGuard hijack: when enabled, hand the raw IP packet to the WG
         // bridge instead of running the userspace TCP/UDP state machines.
         // Per-app UID lookup and the block decision above still apply.
-        // Loopback/link-local/multicast are kept on the local path. DNS also
-        // stays local so NetGuard's configured resolver/proxy path remains
-        // reachable even when a WG config points DNS at a private tunnel-only
-        // address or the peer is still handshaking.
+        // Loopback/link-local/multicast are kept on the local path. DNS is
+        // intentionally protected by WG too: in WG mode the VPN builder uses
+        // WG DNS or public fallback DNS, and unprotected DNS would leak the
+        // user's physical network.
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
         int wg_is_enabled = atomic_load_explicit(&wg_enabled, memory_order_acquire);
         int wg_fd = atomic_load_explicit(&wg_outbound_fd, memory_order_acquire);
         if (wg_is_enabled && wg_fd >= 0
-                && !is_local_dest(version, daddr) && !is_dns) {
+                && (!is_local_dest(version, daddr) || is_dns)) {
             ssize_t w = write(wg_fd, pkt, length);
             if (w != (ssize_t) length) {
                 if (w < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {

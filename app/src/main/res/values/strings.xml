@@ -138,6 +138,11 @@
     <string name="setting_socks5_password">SOCKS5 password: %s</string>
     <string name="setting_wg_enabled">Tunnel traffic through WireGuard</string>
     <string name="setting_wg_config">WireGuard config</string>
+    <string name="setting_wg_profile">WireGuard profile</string>
+    <string name="setting_wg_profile_manage">Manage WireGuard profiles</string>
+    <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
+    <string name="setting_wg_profile_save">Save profile</string>
+    <string name="setting_wg_profile_delete">Delete profile</string>
     <string name="setting_wireguard">WireGuard (experimental)</string>
     <string name="setting_wg_status">Status</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
@@ -146,7 +151,7 @@
 
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Secure DNS (DoH)</string>
-    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Applies to all apps.</string>
+    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Automatically paused when WireGuard provides DNS, because those queries use the WireGuard tunnel instead.</string>
     <string name="warning_beta">Beta feature. May not work as expected.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL for DNS-over-HTTPS queries</string>
@@ -190,12 +195,26 @@
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
     <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct. Server-initiated connections to the phone may not work while the tunnel is idle (keepalive is disabled to save battery).</string>
     <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
+    <string name="summary_wg_profile">Choose a saved WireGuard config</string>
+    <string name="summary_wg_profile_none">No saved profiles</string>
+    <string name="summary_wg_profile_manage">Add, edit, or delete saved configs</string>
+    <string name="summary_wg_keepalive_when_screen_off">Sends keepalive packets at the interval set in your WireGuard config even when the screen is off. Improves reliability on networks where idle connections drop, but increases battery use.</string>
     <string name="summary_wg_status_off">Off</string>
     <string name="summary_wg_status_missing_config">Off — no config set</string>
     <string name="summary_wg_status_connected">Connected</string>
     <string name="summary_wg_status_blocked">Blocked — %s</string>
     <string name="summary_wg_status_starting">Starting</string>
     <string name="msg_wg_config_invalid">Invalid WireGuard config: %s</string>
+    <string name="msg_wg_profile_name">Profile name</string>
+    <string name="msg_wg_profile_default_name">Default</string>
+    <string name="msg_wg_profile_saved">WireGuard profile saved</string>
+    <string name="msg_wg_profile_deleted">WireGuard profile deleted</string>
+    <string name="msg_wg_profile_no_config">Paste a WireGuard config before saving a profile</string>
+    <string name="msg_wg_profile_empty">No profiles yet</string>
+    <string name="msg_wg_profile_active">Active</string>
+    <string name="msg_wg_profile_set_active">Set active</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_delete_confirm">Delete this WireGuard profile?</string>
     <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
     <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
     <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>

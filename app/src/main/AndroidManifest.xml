@@ -169,6 +169,16 @@
                 android:value="eu.faircode.netguard.ActivitySettings" />
         </activity>
 
+        <activity
+            android:name="net.kollnig.missioncontrol.ActivityWireGuardProfiles"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/setting_wg_profile_manage"
+            android:parentActivityName="eu.faircode.netguard.ActivitySettings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.faircode.netguard.ActivitySettings" />
+        </activity>
+
 
         <activity
             android:name="net.kollnig.missioncontrol.DetailsActivity"

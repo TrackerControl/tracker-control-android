@@ -112,7 +112,7 @@ afterEvaluate {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "net.kollnig.missioncontrol"

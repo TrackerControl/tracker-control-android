@@ -19,7 +19,7 @@ data class WgConfig(
     val mtu: Int?,               // optional override
     val peers: List<WgPeer>
 ) {
-    fun toUapi(interactive: Boolean = true): String {
+    fun toUapi(keepaliveEnabled: Boolean = true): String {
         val sb = StringBuilder()
         sb.append("private_key=").append(base64ToHex(privateKey)).append('\n')
         for (peer in peers) {
@@ -30,7 +30,7 @@ data class WgConfig(
             peer.endpoint?.let { sb.append("endpoint=").append(it).append('\n') }
             peer.persistentKeepalive?.let {
                 sb.append("persistent_keepalive_interval=")
-                    .append(if (interactive) it else 0)
+                    .append(if (keepaliveEnabled) it else 0)
                     .append('\n')
             }
             sb.append("replace_allowed_ips=true\n")

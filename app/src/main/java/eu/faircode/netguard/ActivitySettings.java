@@ -80,6 +80,7 @@ import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.wg.WgProfileManager;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -343,6 +344,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         // WireGuard status
+        new WgProfileManager(this).migrateIfNeeded();
+        configureWireGuardProfiles(screen, prefs);
         CharSequence wgStatus = getWireGuardStatusSummary(prefs);
         pref = screen.findPreference("screen_wireguard");
         if (pref != null)
@@ -520,6 +523,59 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
     }
 
+    private void configureWireGuardProfiles(PreferenceScreen screen, SharedPreferences prefs) {
+        WgProfileManager manager = new WgProfileManager(this);
+        manager.migrateIfNeeded();
+        java.util.List<WgProfileManager.Profile> profiles = manager.getProfiles();
+        WgProfileManager.Profile activeProfile = manager.getActiveProfile();
+        ListPreference profilePref = (ListPreference) screen.findPreference(WgProfileManager.PREF_WG_PROFILE);
+        Preference managePref = screen.findPreference("wg_profile_manage");
+
+        if (profilePref != null) {
+            if (profiles.isEmpty()) {
+                profilePref.setEnabled(false);
+                profilePref.setEntries(new CharSequence[0]);
+                profilePref.setEntryValues(new CharSequence[0]);
+                profilePref.setSummary(R.string.summary_wg_profile_none);
+            } else {
+                CharSequence[] entries = new CharSequence[profiles.size()];
+                CharSequence[] values = new CharSequence[profiles.size()];
+                for (int i = 0; i < profiles.size(); i++) {
+                    WgProfileManager.Profile profile = profiles.get(i);
+                    entries[i] = profile.name;
+                    values[i] = profile.id;
+                }
+                profilePref.setEnabled(true);
+                profilePref.setEntries(entries);
+                profilePref.setEntryValues(values);
+                profilePref.setValue(manager.getActiveProfileId());
+                profilePref.setSummary(activeProfile == null
+                        ? getString(R.string.summary_wg_profile)
+                        : activeProfile.name);
+                profilePref.setOnPreferenceChangeListener((preference, newValue) -> {
+                    applyWireGuardProfile((String) newValue);
+                    return false;
+                });
+            }
+        }
+
+        if (managePref != null) {
+            managePref.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(ActivitySettings.this,
+                        net.kollnig.missioncontrol.ActivityWireGuardProfiles.class));
+                return true;
+            });
+        }
+    }
+
+    private void applyWireGuardProfile(String id) {
+        WgProfileManager manager = new WgProfileManager(this);
+        manager.setActiveProfile(id);
+        configureWireGuardProfiles(getPreferenceScreen(), PreferenceManager.getDefaultSharedPreferences(this));
+        updateWireGuardStatus();
+        ServiceSinkhole.reload("changed " + WgProfileManager.PREF_WG_PROFILE, this, false);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -531,6 +587,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         prefs.registerOnSharedPreferenceChangeListener(this);
 
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStatusListener);
+        PreferenceScreen screen = getPreferenceScreen();
+        if (screen != null)
+            configureWireGuardProfiles(screen, prefs);
         updateWireGuardStatus();
     }
 
@@ -839,16 +898,27 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     TextUtils.isEmpty(prefs.getString(name, "")) ? "-" : "*****"));
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if (WgProfileManager.PREF_WG_PROFILE.equals(name) ||
+                WgProfileManager.PREF_WG_PROFILES.equals(name)) {
+            new WgProfileManager(this).migrateIfNeeded();
+            configureWireGuardProfiles(getPreferenceScreen(), prefs);
+            updateWireGuardStatus();
+
         } else if ("wg_enabled".equals(name)) {
             updateWireGuardStatus();
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if ("wg_keepalive_when_screen_off".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+
         } else if ("wg_config".equals(name)) {
             String wg_config = prefs.getString(name, null);
+            boolean valid = true;
             if (!TextUtils.isEmpty(wg_config)) {
                 try {
                     net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wg_config);
                 } catch (Throwable ex) {
+                    valid = false;
                     Toast.makeText(ActivitySettings.this,
                             getString(R.string.msg_wg_config_invalid, ex.getMessage()),
                             Toast.LENGTH_LONG).show();
@@ -860,6 +930,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     if (enabledPref != null) enabledPref.setChecked(false);
                 }
             }
+            if (valid)
+                new WgProfileManager(this).updateActiveProfileConfig(wg_config);
+            configureWireGuardProfiles(getPreferenceScreen(), prefs);
             updateWireGuardStatus();
             ServiceSinkhole.reload("changed " + name, this, false);
 

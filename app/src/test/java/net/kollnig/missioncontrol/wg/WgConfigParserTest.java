@@ -11,7 +11,7 @@ public class WgConfigParserTest {
     private static final String KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
 
     @Test
-    public void persistentKeepaliveIsParsedAndEmittedWhenInteractive() throws Exception {
+    public void persistentKeepaliveIsParsedAndEmittedWhenEnabled() throws Exception {
         WgConfig config = WgConfigParser.INSTANCE.parse(config("PersistentKeepalive = 25"));
 
         assertEquals(Integer.valueOf(25), config.getPeers().get(0).getPersistentKeepalive());
@@ -19,7 +19,7 @@ public class WgConfigParserTest {
     }
 
     @Test
-    public void persistentKeepaliveIsDisabledWhenNotInteractive() throws Exception {
+    public void persistentKeepaliveIsDisabledWhenNotEnabled() throws Exception {
         WgConfig config = WgConfigParser.INSTANCE.parse(config("PersistentKeepalive = 25"));
 
         assertTrue(config.toUapi(false).contains("persistent_keepalive_interval=0\n"));
