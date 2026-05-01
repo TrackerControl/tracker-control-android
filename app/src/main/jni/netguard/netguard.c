@@ -18,6 +18,7 @@
 */
 
 #include "netguard.h"
+#include <stdatomic.h>
 
 // It is assumed that no packets will get lost and that packets arrive in order
 // https://android.googlesource.com/platform/frameworks/base.git/+/master/services/core/jni/com_android_server_connectivity_Vpn.cpp
@@ -28,8 +29,8 @@ char socks5_addr[INET6_ADDRSTRLEN + 1];
 int socks5_port = 0;
 char socks5_username[127 + 1];
 char socks5_password[127 + 1];
-int wg_enabled = 0;
-int wg_outbound_fd = -1;
+_Atomic int wg_enabled = 0;
+_Atomic int wg_outbound_fd = -1;
 int loglevel = ANDROID_LOG_WARN;
 
 extern int max_tun_msg;
@@ -41,6 +42,24 @@ extern long pcap_file_size;
 
 extern int uid_cache_size;
 extern struct uid_cache_entry *uid_cache;
+
+#define WG_SOCKET_BUFFER_SIZE (4 * 1024 * 1024)
+
+static void set_wg_socket_buffer(int fd, int optname, const char *label) {
+    int requested = WG_SOCKET_BUFFER_SIZE;
+    if (setsockopt(fd, SOL_SOCKET, optname, &requested, sizeof(requested)) < 0)
+        log_android(ANDROID_LOG_WARN, "WireGuard %s buffer set failed fd=%d errno %d: %s",
+                    label, fd, errno, strerror(errno));
+
+    int actual = 0;
+    socklen_t actual_len = sizeof(actual);
+    if (getsockopt(fd, SOL_SOCKET, optname, &actual, &actual_len) == 0)
+        log_android(ANDROID_LOG_WARN, "WireGuard %s buffer fd=%d requested=%d actual=%d",
+                    label, fd, requested, actual);
+    else
+        log_android(ANDROID_LOG_WARN, "WireGuard %s buffer get failed fd=%d errno %d: %s",
+                    label, fd, errno, strerror(errno));
+}
 
 // JNI
 
@@ -122,8 +141,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
     socks5_port = 0;
     *socks5_username = 0;
     *socks5_password = 0;
-    wg_enabled = 0;
-    wg_outbound_fd = -1;
+    atomic_store_explicit(&wg_enabled, 0, memory_order_release);
+    atomic_store_explicit(&wg_outbound_fd, -1, memory_order_release);
     pcap_file = NULL;
 
     if (pthread_mutex_init(&ctx->lock, NULL))
@@ -348,7 +367,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1sni(JNIEnv *env, jobject instance
 // can pull outbound IP packets. SOCK_DGRAM preserves IP-packet boundaries.
 JNIEXPORT jint JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, jobject instance) {
-    if (wg_enabled) {
+    if (atomic_load_explicit(&wg_enabled, memory_order_acquire)) {
         log_android(ANDROID_LOG_WARN, "WireGuard already started");
         return -1;
     }
@@ -357,20 +376,21 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, job
         log_android(ANDROID_LOG_ERROR, "wg socketpair errno %d: %s", errno, strerror(errno));
         return -1;
     }
+    set_wg_socket_buffer(sv[0], SO_SNDBUF, "tx snd");
+    set_wg_socket_buffer(sv[1], SO_RCVBUF, "rx rcv");
     int flags = fcntl(sv[0], F_GETFL, 0);
     if (flags >= 0)
         fcntl(sv[0], F_SETFL, flags | O_NONBLOCK);
-    wg_outbound_fd = sv[0];
-    wg_enabled = 1;
+    atomic_store_explicit(&wg_outbound_fd, sv[0], memory_order_release);
+    atomic_store_explicit(&wg_enabled, 1, memory_order_release);
     log_android(ANDROID_LOG_WARN, "WireGuard egress enabled tx=%d rx=%d", sv[0], sv[1]);
     return sv[1];
 }
 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1stop(JNIEnv *env, jobject instance) {
-    wg_enabled = 0;
-    int fd = wg_outbound_fd;
-    wg_outbound_fd = -1;
+    atomic_store_explicit(&wg_enabled, 0, memory_order_release);
+    int fd = atomic_exchange_explicit(&wg_outbound_fd, -1, memory_order_acq_rel);
     if (fd >= 0) {
         close(fd);
         log_android(ANDROID_LOG_WARN, "WireGuard egress disabled, closed tx=%d", fd);

@@ -15,9 +15,12 @@
 package wgbridge
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
 
 	"golang.org/x/sys/unix"
@@ -44,6 +47,46 @@ type Tunnel struct {
 	dev    *device.Device
 	tunDev *socketpairTun
 	stop   sync.Once
+}
+
+// SendKeepalive sends one WireGuard keepalive on peers with an active keypair.
+func (t *Tunnel) SendKeepalive() {
+	t.dev.SendKeepalivesToPeersWithCurrentKeypair()
+}
+
+// SetConfig reapplies UAPI configuration to the running device.
+func (t *Tunnel) SetConfig(uapiConfig string) error {
+	return t.dev.IpcSet(uapiConfig)
+}
+
+// LatestHandshakeMillis returns the newest peer handshake timestamp in epoch millis.
+func (t *Tunnel) LatestHandshakeMillis() (int64, error) {
+	var buf bytes.Buffer
+	if err := t.dev.IpcGetOperation(&buf); err != nil {
+		return 0, err
+	}
+
+	var sec, nsec int64
+	var latest int64
+	for _, line := range strings.Split(buf.String(), "\n") {
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		switch key {
+		case "last_handshake_time_sec":
+			sec, _ = strconv.ParseInt(value, 10, 64)
+		case "last_handshake_time_nsec":
+			nsec, _ = strconv.ParseInt(value, 10, 64)
+			if sec > 0 {
+				if ts := sec*1000 + nsec/1000000; ts > latest {
+					latest = ts
+				}
+			}
+			sec, nsec = 0, 0
+		}
+	}
+	return latest, nil
 }
 
 // StartTunnel boots wireguard-go.
@@ -80,6 +123,7 @@ func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu in
 
 	t := &socketpairTun{
 		rxFile: os.NewFile(uintptr(rxDup), "wg-outbound-rx"),
+		rxFd:   rxDup,
 		txFd:   txDup,
 		mtu:    int(mtu),
 		events: make(chan tun.Event, 4),
@@ -186,6 +230,7 @@ func (t *Tunnel) Stop() {
 // the VpnService TUN fd.
 type socketpairTun struct {
 	rxFile *os.File // outbound: C side writes; we Read here
+	rxFd   int      // same fd as rxFile; used for opportunistic non-blocking drains
 	txFd   int      // inbound:  we write decrypted IP packets to the VpnService TUN
 	mtu    int
 	events chan tun.Event
@@ -197,7 +242,7 @@ func (t *socketpairTun) File() *os.File           { return nil }
 func (t *socketpairTun) MTU() (int, error)        { return t.mtu, nil }
 func (t *socketpairTun) Name() (string, error)    { return "wgbridge", nil }
 func (t *socketpairTun) Events() <-chan tun.Event { return t.events }
-func (t *socketpairTun) BatchSize() int           { return 1 }
+func (t *socketpairTun) BatchSize() int           { return conn.IdealBatchSize }
 
 func (t *socketpairTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) {
 	n, err := t.rxFile.Read(bufs[0][offset:])
@@ -205,7 +250,27 @@ func (t *socketpairTun) Read(bufs [][]byte, sizes []int, offset int) (int, error
 		return 0, err
 	}
 	sizes[0] = n
-	return 1, nil
+	count := 1
+
+	for count < len(bufs) {
+		n, err = unix.Read(t.rxFd, bufs[count][offset:])
+		if err != nil {
+			if isWouldBlock(err) {
+				break
+			}
+			// Preserve packets already read; the next blocking read will surface
+			// persistent fd errors to wireguard-go.
+			break
+		}
+		sizes[count] = n
+		count++
+	}
+
+	return count, nil
+}
+
+func isWouldBlock(err error) bool {
+	return errors.Is(err, unix.EAGAIN) || errors.Is(err, unix.EWOULDBLOCK)
 }
 
 func (t *socketpairTun) Write(bufs [][]byte, offset int) (int, error) {

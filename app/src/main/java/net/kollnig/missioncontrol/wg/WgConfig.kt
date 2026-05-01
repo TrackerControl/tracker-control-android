@@ -15,11 +15,11 @@ import net.kollnig.missioncontrol.wg.WgConfigParser.base64ToHex
 data class WgConfig(
     val privateKey: String,
     val address: List<String>,   // CIDR strings, e.g. "10.0.0.2/32"
-    val dns: List<String>,       // resolver IPs (informational; not yet honored)
+    val dns: List<String>,       // resolver IPs/search entries from wg-quick DNS
     val mtu: Int?,               // optional override
     val peers: List<WgPeer>
 ) {
-    fun toUapi(): String {
+    fun toUapi(interactive: Boolean = true): String {
         val sb = StringBuilder()
         sb.append("private_key=").append(base64ToHex(privateKey)).append('\n')
         for (peer in peers) {
@@ -28,6 +28,11 @@ data class WgConfig(
                 sb.append("preshared_key=").append(base64ToHex(it)).append('\n')
             }
             peer.endpoint?.let { sb.append("endpoint=").append(it).append('\n') }
+            peer.persistentKeepalive?.let {
+                sb.append("persistent_keepalive_interval=")
+                    .append(if (interactive) it else 0)
+                    .append('\n')
+            }
             sb.append("replace_allowed_ips=true\n")
             for (ip in peer.allowedIPs) sb.append("allowed_ip=").append(ip).append('\n')
         }
@@ -39,7 +44,8 @@ data class WgPeer(
     val publicKey: String,
     val presharedKey: String?,
     val allowedIPs: List<String>,
-    val endpoint: String?         // host:port (host may need DNS resolution)
+    val endpoint: String?,        // host:port (host may need DNS resolution)
+    val persistentKeepalive: Int?
 )
 
 class WgConfigException(message: String) : Exception(message)
@@ -57,6 +63,7 @@ object WgConfigParser {
         var peerPsk: String? = null
         val peerAllowed = mutableListOf<String>()
         var peerEndpoint: String? = null
+        var peerPersistentKeepalive: Int? = null
         val peers = mutableListOf<WgPeer>()
 
         fun flushPeer() {
@@ -66,13 +73,15 @@ object WgConfigParser {
                     publicKey = peerPub!!,
                     presharedKey = peerPsk,
                     allowedIPs = peerAllowed.toList(),
-                    endpoint = peerEndpoint
+                    endpoint = peerEndpoint,
+                    persistentKeepalive = peerPersistentKeepalive
                 )
             )
             peerPub = null
             peerPsk = null
             peerAllowed.clear()
             peerEndpoint = null
+            peerPersistentKeepalive = null
         }
 
         for (rawLine in text.lineSequence()) {
@@ -103,11 +112,7 @@ object WgConfigParser {
                     "presharedkey" -> peerPsk = requireBase64Key(value)
                     "allowedips" -> peerAllowed += value.split(',').map { it.trim() }.filter { it.isNotEmpty() }
                     "endpoint" -> peerEndpoint = value
-                    "persistentkeepalive" -> {
-                        // Intentionally ignored: this app's WG egress is outbound-only,
-                        // so NAT mappings are refreshed by real traffic. Keepalive would
-                        // wake the cellular radio on every interval for no benefit.
-                    }
+                    "persistentkeepalive" -> peerPersistentKeepalive = parseKeepalive(value)
                     else -> throw WgConfigException("unknown Peer key: $key")
                 }
                 else -> throw WgConfigException("data outside [Interface]/[Peer]")
@@ -129,7 +134,7 @@ object WgConfigParser {
 
     private fun requireBase64Key(s: String): String {
         val bytes = try {
-            android.util.Base64.decode(s, android.util.Base64.DEFAULT)
+            java.util.Base64.getDecoder().decode(s)
         } catch (e: IllegalArgumentException) {
             throw WgConfigException("invalid base64 key")
         }
@@ -137,8 +142,15 @@ object WgConfigParser {
         return s
     }
 
+    private fun parseKeepalive(s: String): Int {
+        val value = s.toIntOrNull() ?: throw WgConfigException("invalid PersistentKeepalive: $s")
+        if (value !in 0..65535)
+            throw WgConfigException("PersistentKeepalive out of range: $s")
+        return value
+    }
+
     internal fun base64ToHex(s: String): String {
-        val bytes = android.util.Base64.decode(s, android.util.Base64.DEFAULT)
+        val bytes = java.util.Base64.getDecoder().decode(s)
         val sb = StringBuilder(bytes.size * 2)
         for (b in bytes) {
             sb.append(Character.forDigit((b.toInt() ushr 4) and 0xF, 16))

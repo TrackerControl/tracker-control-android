@@ -1376,6 +1376,31 @@ public class ServiceSinkhole extends VpnService {
         return listDns;
     }
 
+    private static List<InetAddress> getWireGuardDns(net.kollnig.missioncontrol.wg.WgConfig config) {
+        List<InetAddress> listDns = new ArrayList<>();
+
+        for (String entry : config.getDns()) {
+            String dns = entry.trim();
+            if (dns.isEmpty())
+                continue;
+
+            if (!Util.isNumericAddress(dns)) {
+                Log.i(TAG, "Skipping non-numeric WG DNS/search entry=" + dns);
+                continue;
+            }
+
+            try {
+                InetAddress address = InetAddress.getByName(dns);
+                if (!(address.isLoopbackAddress() || address.isAnyLocalAddress()))
+                    listDns.add(address);
+            } catch (Throwable ex) {
+                Log.w(TAG, "Skipping invalid WG DNS=" + dns + ": " + ex.getMessage());
+            }
+        }
+
+        return listDns;
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
@@ -1427,25 +1452,24 @@ public class ServiceSinkhole extends VpnService {
         // accepts per its AllowedIPs for our peer entry — using the default
         // 10.1.10.1 makes the peer drop everything (handshake works, but no
         // data ever flows back).
+        boolean wgEnabled = prefs.getBoolean("wg_enabled", false);
+        String wgConfigText = wgEnabled ? prefs.getString("wg_config", "") : "";
+        net.kollnig.missioncontrol.wg.WgConfig wgParsed = null;
         String wgVpn4 = null;
         String wgVpn6 = null;
-        if (prefs.getBoolean("wg_enabled", false)) {
-            String wgConfigText = prefs.getString("wg_config", "");
-            if (!TextUtils.isEmpty(wgConfigText)) {
-                try {
-                    net.kollnig.missioncontrol.wg.WgConfig parsed =
-                            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
-                    for (String addr : parsed.getAddress()) {
-                        String ip = addr.split("/")[0].trim();
-                        if (ip.contains(":")) {
-                            if (wgVpn6 == null) wgVpn6 = ip;
-                        } else {
-                            if (wgVpn4 == null) wgVpn4 = ip;
-                        }
+        if (wgEnabled && !TextUtils.isEmpty(wgConfigText)) {
+            try {
+                wgParsed = net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+                for (String addr : wgParsed.getAddress()) {
+                    String ip = addr.split("/")[0].trim();
+                    if (ip.contains(":")) {
+                        if (wgVpn6 == null) wgVpn6 = ip;
+                    } else {
+                        if (wgVpn4 == null) wgVpn4 = ip;
                     }
-                } catch (Throwable ex) {
-                    Log.w(TAG, "WG addr parse failed: " + ex.getMessage());
                 }
+            } catch (Throwable ex) {
+                Log.w(TAG, "WG config parse failed for builder: " + ex.getMessage());
             }
         }
         String vpn4 = wgVpn4 != null ? wgVpn4 : prefs.getString("vpn4", "10.1.10.1");
@@ -1547,18 +1571,15 @@ public class ServiceSinkhole extends VpnService {
 
         // MTU
         int mtu = jni_get_mtu();
-        if (prefs.getBoolean("wg_enabled", false)) {
+        if (wgEnabled) {
             // WG default is 1420 (1500 path MTU minus typical WG+UDP+IP overhead).
             // Allow the config's [Interface] MTU to override but never exceed
             // the safe default — going higher invites fragmentation.
             int wgMtu = 1420;
-            String wgConfig = prefs.getString("wg_config", "");
-            if (!TextUtils.isEmpty(wgConfig)) {
+            if (wgParsed != null) {
                 try {
-                    net.kollnig.missioncontrol.wg.WgConfig parsed =
-                            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfig);
-                    if (parsed.getMtu() != null && parsed.getMtu() > 0 && parsed.getMtu() < wgMtu)
-                        wgMtu = parsed.getMtu();
+                    if (wgParsed.getMtu() != null && wgParsed.getMtu() > 0 && wgParsed.getMtu() < wgMtu)
+                        wgMtu = wgParsed.getMtu();
                 } catch (Throwable ignored) {
                     // Bad config — let the validation in ActivitySettings handle the user message.
                 }
@@ -1650,6 +1671,7 @@ public class ServiceSinkhole extends VpnService {
                     prefs.getString("wg_config", ""),
                     ServiceSinkhole.this,
                     vpn,
+                    Util.isInteractive(ServiceSinkhole.this),
                     () -> jni_wireguard_start(),
                     () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
             if (!wgOk) {
@@ -1713,6 +1735,21 @@ public class ServiceSinkhole extends VpnService {
         // tearing down WG every time would cause a fresh handshake every
         // few seconds. WgEgress.stop() is invoked from the actual stop()
         // path below.
+    }
+
+    private void updateWireGuardInteractiveState(boolean interactive) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+        boolean wgEnabled = prefs.getBoolean("wg_enabled", false);
+        String wgConfig = prefs.getString("wg_config", "");
+        if (!wgEnabled || TextUtils.isEmpty(wgConfig))
+            return;
+
+        net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onInteractiveStateChanged(
+                true,
+                wgConfig,
+                interactive,
+                () -> ServiceSinkhole.reload("wireguard wake repair", ServiceSinkhole.this, false),
+                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
     }
 
     private void unprepare() {
@@ -2354,6 +2391,7 @@ public class ServiceSinkhole extends VpnService {
                     try {
                         last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
                         reload("interactive state changed", ServiceSinkhole.this, true);
+                        updateWireGuardInteractiveState(last_interactive);
 
                         // Start/stop stats
                         statsHandler.sendEmptyMessage(
@@ -2408,8 +2446,10 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "device idle=" + pm.isDeviceIdleMode());
 
             // Reload rules when coming from idle mode
-            if (!pm.isDeviceIdleMode())
+            if (!pm.isDeviceIdleMode()) {
                 reload("idle state changed", ServiceSinkhole.this, false);
+                updateWireGuardInteractiveState(Util.isInteractive(ServiceSinkhole.this));
+            }
         }
     };
 

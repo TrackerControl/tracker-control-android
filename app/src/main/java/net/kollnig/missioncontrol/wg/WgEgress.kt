@@ -23,13 +23,20 @@ import net.kollnig.missioncontrol.wgbridge.Wgbridge
 object WgEgress {
     private const val TAG = "WgEgress"
     private const val DEFAULT_MTU = 1420
+    private const val WAKE_PROBE_RATE_LIMIT_MS = 30_000L
+    private const val ENDPOINT_CACHE_TTL_MS = 5 * 60 * 1000L
 
     @Volatile private var tunnel: WgTunnel? = null
     @Volatile private var lastError: String? = null
     private var currentConfig: String? = null
     private var currentTunFd: Int = -1
+    private var currentInteractive: Boolean = true
+    private var forceRestartPending: Boolean = false
+    private var lastWakeProbeMillis: Long = 0
 
     private val listeners = java.util.concurrent.CopyOnWriteArrayList<Runnable>()
+    private val endpointCache = mutableMapOf<String, EndpointCacheEntry>()
+    private val endpointCacheLock = Any()
 
     fun addStateListener(l: Runnable) { listeners.add(l) }
     fun removeStateListener(l: Runnable) { listeners.remove(l) }
@@ -51,6 +58,7 @@ object WgEgress {
         configText: String?,
         vpnService: VpnService,
         vpnFd: ParcelFileDescriptor,
+        interactive: Boolean,
         startSocketpair: () -> Int,
         stopSocketpair: () -> Unit
     ): Boolean {
@@ -59,6 +67,8 @@ object WgEgress {
         lastError = null
 
         if (!wantRunning) {
+            clearRecoveryState()
+            clearEndpointCache()
             if (tunnel != null) {
                 Log.i(TAG, "WG disabled — tearing down tunnel")
                 stopInternal(stopSocketpair)
@@ -67,15 +77,18 @@ object WgEgress {
             return true
         }
 
-        if (tunnel != null && currentConfig == configText && currentTunFd == desiredFd) {
+        if (tunnel != null && currentConfig == configText && currentTunFd == desiredFd && !forceRestartPending) {
+            if (currentInteractive != interactive && !reapplyConfigOrError(configText!!, interactive))
+                return false
             Log.v(TAG, "startOrUpdate: same config + same TUN fd, no-op")
             return true
         }
 
         if (tunnel != null) {
-            Log.i(TAG, "WG config or TUN fd changed — restarting")
+            Log.i(TAG, "WG config, TUN fd, or recovery state changed — restarting")
             stopInternal(stopSocketpair)
         }
+        forceRestartPending = false
 
         val parsed = try {
             WgConfigParser.parse(configText!!)
@@ -114,7 +127,7 @@ object WgEgress {
 
         try {
             tunnel = Wgbridge.startTunnel(
-                resolved.toUapi(), rxFd, desiredFd, mtu, protector, logger
+                resolved.toUapi(interactive), rxFd, desiredFd, mtu, protector, logger
             )
         } catch (e: Throwable) {
             lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"
@@ -129,6 +142,7 @@ object WgEgress {
 
         currentConfig = configText
         currentTunFd = desiredFd
+        currentInteractive = interactive
         Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
         notifyStateChanged()
         return true
@@ -136,6 +150,8 @@ object WgEgress {
 
     /** Tear down the tunnel completely. Called on actual service stop. */
     fun stop(stopSocketpair: () -> Unit) {
+        clearRecoveryState()
+        clearEndpointCache()
         if (tunnel != null) {
             stopInternal(stopSocketpair)
             notifyStateChanged()
@@ -145,6 +161,49 @@ object WgEgress {
     fun isRunning(): Boolean = tunnel != null
 
     fun getLastError(): String? = lastError
+
+    fun onInteractiveStateChanged(
+        wgEnabled: Boolean,
+        configText: String?,
+        interactive: Boolean,
+        requestReload: Runnable,
+        notifyBroken: Runnable
+    ) {
+        if (!hasRunningTunnel(wgEnabled, configText)) {
+            clearRecoveryState()
+            return
+        }
+
+        if (!interactive) {
+            try {
+                reapplyConfig(configText!!, false)
+            } catch (e: Throwable) {
+                Log.w(TAG, "could not disable WG keepalive", e)
+            }
+            return
+        }
+
+        val now = now()
+        if (now - lastWakeProbeMillis < WAKE_PROBE_RATE_LIMIT_MS) {
+            Log.v(TAG, "wake probe skipped by rate limit")
+            return
+        }
+        lastWakeProbeMillis = now
+
+        try {
+            reapplyConfig(configText!!, true)
+            tunnel?.sendKeepalive()
+            Log.i(TAG, "WG wake keepalive sent")
+        } catch (e: Throwable) {
+            Log.w(TAG, "WG wake probe failed; requesting restart", e)
+            lastError = "WireGuard wake recovery failed: ${e.message ?: e.javaClass.simpleName}"
+            clearEndpointCache()
+            forceRestartPending = true
+            notifyStateChanged()
+            notifyBroken.run()
+            requestReload.run()
+        }
+    }
 
     private fun stopInternal(stopSocketpair: () -> Unit) {
         val t = tunnel
@@ -160,6 +219,38 @@ object WgEgress {
         }
         stopSocketpair()
     }
+
+    private fun hasRunningTunnel(wgEnabled: Boolean, configText: String?): Boolean {
+        return wgEnabled && !configText.isNullOrEmpty() && tunnel != null
+    }
+
+    private fun reapplyConfigOrError(configText: String, interactive: Boolean): Boolean {
+        return try {
+            reapplyConfig(configText, interactive)
+            true
+        } catch (e: Throwable) {
+            lastError = "WireGuard tunnel failed to update: ${e.message ?: e.javaClass.simpleName}"
+            Log.e(TAG, "Wgbridge.setConfig failed", e)
+            notifyStateChanged()
+            false
+        }
+    }
+
+    private fun reapplyConfig(configText: String, interactive: Boolean) {
+        val t = tunnel ?: return
+        val resolved = withResolvedEndpoints(WgConfigParser.parse(configText))
+        t.setConfig(resolved.toUapi(interactive))
+        currentInteractive = interactive
+        lastError = null
+        notifyStateChanged()
+    }
+
+    private fun clearRecoveryState() {
+        forceRestartPending = false
+        lastWakeProbeMillis = 0
+    }
+
+    private fun now(): Long = System.currentTimeMillis()
 
     private fun withResolvedEndpoints(config: WgConfig): WgConfig {
         return config.copy(peers = config.peers.map { peer ->
@@ -186,9 +277,35 @@ object WgEgress {
             }
             endpoint.substring(0, colon) to endpoint.substring(colon + 1)
         }
+        val cacheKey = "$host:$port"
+        val cached = cachedEndpoint(cacheKey)
+        if (cached != null)
+            return cached
+
         val addr = java.net.InetAddress.getByName(host)
         val ip = addr.hostAddress ?: throw IllegalStateException("getHostAddress null for $host")
-        return if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
+        val resolved = if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
+        synchronized(endpointCacheLock) {
+            endpointCache[cacheKey] = EndpointCacheEntry(resolved, now())
+        }
+        return resolved
+    }
+
+    private fun cachedEndpoint(cacheKey: String): String? {
+        val now = now()
+        synchronized(endpointCacheLock) {
+            val cached = endpointCache[cacheKey] ?: return null
+            if (now - cached.resolvedAtMillis <= ENDPOINT_CACHE_TTL_MS)
+                return cached.endpoint
+            endpointCache.remove(cacheKey)
+            return null
+        }
+    }
+
+    private fun clearEndpointCache() {
+        synchronized(endpointCacheLock) {
+            endpointCache.clear()
+        }
     }
 
     private fun closeRawFd(fd: Int) {
@@ -198,4 +315,9 @@ object WgEgress {
             Log.w(TAG, "close fd $fd failed", e)
         }
     }
+
+    private data class EndpointCacheEntry(
+        val endpoint: String,
+        val resolvedAtMillis: Long
+    )
 }
