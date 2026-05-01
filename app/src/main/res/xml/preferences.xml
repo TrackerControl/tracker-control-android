@@ -96,6 +96,14 @@
                 android:summary="@string/summary_system"
                 android:title="@string/setting_system" />
             <Preference
+                android:key="exclude_all_tracking"
+                android:summary="@string/summary_exclude_all_tracking"
+                android:title="@string/setting_exclude_all_tracking" />
+            <Preference
+                android:key="include_all_tracking"
+                android:summary="@string/summary_include_all_tracking"
+                android:title="@string/setting_include_all_tracking" />
+            <Preference
                 android:key="manage_blocklists"
                 android:summary="@string/summary_manage_blocklists"
                 android:title="@string/title_blocklists" />
