@@ -38,6 +38,8 @@
     <string name="timeline_empty_enabled_title">正在观察追踪器…</string>
     <string name="timeline_empty_enabled_subtitle">多数应用只在您使用它们时联系跟踪服务器。打开一个应用，然后返回—它的跟踪活动将出现在这里。</string>
     <string name="timeline_open_app">打开应用</string>
+    <string name="tab_timeline">时间轴</string>
+    <string name="tab_apps">应用程序</string>
     <string name="timeline_section_last_hour">上个小时</string>
     <string name="timeline_section_today">今天</string>
     <string name="timeline_section_yesterday">昨天</string>
@@ -117,6 +119,10 @@
     <string name="setting_socks5_port">SOCKS5 端口: %s</string>
     <string name="setting_socks5_username">SOCKS5 用户名: %s</string>
     <string name="setting_socks5_password">SOCKS5 密码: %s</string>
+    <string name="setting_wg_enabled">经 WireGuard 隧道流量</string>
+    <string name="setting_wg_config">WireGuard 配置</string>
+    <string name="setting_wireguard">WireGuard (实验性)</string>
+    <string name="setting_wg_status">状态</string>
     <string name="setting_pcap_record_size">PCAP 记录大小: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
@@ -159,6 +165,14 @@
     <string name="summary_validate">用于在端口443 (https) 验证互联网连接的域名。</string>
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_wg_enabled">隐藏设备 IP。让 TCP 和 UDP 出口流量流经隧道。应用程序会在网络中断时看到网络错误 - fail-closed 状态，不会退回到直连。 当隧道闲置时服务器发起的到手机的连接可能无法正常工作(禁用 keepalive 以节省电量)。</string>
+    <string name="summary_wg_config">粘贴来自 VPN 服务提供商的 [Interface] / [Peer] 配置</string>
+    <string name="summary_wg_status_off">关</string>
+    <string name="summary_wg_status_missing_config">关闭 - 没有设定配置</string>
+    <string name="summary_wg_status_connected">已连接</string>
+    <string name="summary_wg_status_blocked">已阻止- %s</string>
+    <string name="summary_wg_status_starting">正在启动</string>
+    <string name="msg_wg_config_invalid">无效的 WireGuard 配置： %s</string>
+    <string name="msg_wg_blocked_title">WireGuard 隧道不可用</string>
     <string name="msg_wg_blocked">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。</string>
     <string name="msg_wg_blocked_detail">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。%s</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
@@ -379,6 +393,7 @@
     <string name="tracker_fingerprinting">指纹识别</string>
     <string name="tracker_social">社交</string>
     <string name="tracker_email">电子邮件</string>
+    <string name="tracker_consent">同意管理</string>
     <string name="tracker_uncategorised">未分类</string>
     <string name="setting_strict_blocking">严格屏蔽</string>
     <string name="summary_strict_blocking">对于新安装的应用程序，尽可能多地阻止与公司共享数据。更多的应用程序将无法正常工作。</string>
@@ -388,7 +403,7 @@
     <string name="setting_sni_enabled">SNI 提取(研究)</string>
     <string name="summary_sni_enabled">从 TLS 连接中提取主机名以更准确地检测到跟踪器。警告：这将泄漏您的 IP 地址到跟踪服务器。仅出于研究目的启用它。</string>
     <string name="setting_blocking_mode">屏蔽模式</string>
-    <string name="summary_blocking_mode_minimal">最小：只屏蔽DuckGo列表中可以安全拦截的跟踪器。 浏览器流量仍然通过 VPN 路由，但是跟踪器保护默认关闭。已知的不兼容应用被排除。有限度的应用无法正常工作。</string>
+    <string name="summary_blocking_mode_minimal">最小：只屏蔽DuckGo列表中可以安全拦截的跟踪器。 浏览器流量仍然通过 VPN 路由，但是跟踪器保护默认关闭。已知的不兼容应用被排除。有限度的应用功能不正常。</string>
     <string name="summary_blocking_mode_standard">标准：阻止来自多个列表的所有已知跟踪器 (X-Ray, Disconnect, DuckDuckGo)。允许必要的服务。 某些应用无法正常工作，可能需要手动排除(见应用菜单中的故障排除)。</string>
     <string name="summary_blocking_mode_strict">严格：阻止所有已知的追踪器，包括基本服务和模糊的共享IP域。 许多应用无法正常工作，需要手动排除(见应用菜单中的故障排除)。</string>
     <string name="blocking_mode_minimal">最小</string>
@@ -449,6 +464,7 @@
     <string name="summary_domain_based_blocking">允许进行更高数据粒度的阻止。 仍在开发中。</string>
     <string name="untap_unblock">提示：您可以轻按解除对单独条目的屏蔽。</string>
     <string name="uncertain_entry">由于 Android 的限制，标有“*”的条目可能不准确。 这通常意味着同一家公司在不同域下使用相同的 IP 地址，但也可能意味着不同的公司使用相同的 IP 地址(例如，如果他们使用内容交付网络)。</string>
+    <string name="browsers_not_supported">检测到浏览器 ⚠️</string>
     <string name="browsers_not_supported_explanation">这似乎是一个浏览器应用程序。\n\n浏览器跟踪保护在浏览器内最有效，可在页面和请求级别阻止跟踪器。 TrackerControl 让浏览器流量通过 VPN/WireGuard 隧道路由，但应用程序级别的跟踪器拦截默认关闭，如果启用可能导致网站无法正常工作。</string>
     <string name="static_analysis">检测应用代码中的跟踪器</string>
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
@@ -483,6 +499,8 @@
     <string name="onboarding_privatedns_action">打开 DNS 设置</string>
     <string name="onboarding_privatedns_skip_title">跳过私人DNS禁用？</string>
     <string name="onboarding_privatedns_skip_msg">在开启 Private DNS 情况下继续会极大限制 TrackControl 的运行。多数跟踪不会被拦截，只剩下跟踪库分析。另外， VPN 过滤器会被禁用来确保基础功能。</string>
+    <string name="onboarding_timeline_title">观看时间轴填充</string>
+    <string name="onboarding_timeline_desc">通过 TrackerControl 时间轴观察跟踪器活动 。时间轴一开始可能是空的：应用程序通常只在您使用时才与跟踪服务器联系。\n\n完成设置后，打开几个应用程序，然后返回到TrackerControl查看检测到和被阻止的跟踪活动。</string>
     <string name="onboarding_network_title">不受限制的网络</string>
     <string name="onboarding_network_desc">数据节省选项可能阻止TrackerControl在后台正常工作，允许无限制访问以获得最可靠的保护。</string>
     <string name="onboarding_network_action">授予无限制访问</string>
