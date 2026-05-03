@@ -405,6 +405,7 @@ Sincerely,\n\n]]></string>
     <string name="setting_sni_enabled">Izločitev SNI (raziskovalno)</string>
     <string name="summary_sni_enabled">Izloči gostiteljska imena iz povezav TLS za natančnejše zaznavanje sledilcev.  Opozorilo: to sledilnim strežnikom razkrije vaš naslov IP.  Na voljo samo za raziskovalne namene.</string>
     <string name="setting_blocking_mode">Način blokiranja</string>
+    <string name="summary_blocking_mode_minimal">Minimalno: blokira samo sledilce s seznama DuckDuckGo, ki jih je varno blokirati.  Brskalniki so še vedno preusmerjeni preko VPN-a, vendar je njihova zaščita pred sledenjem privzeto izklopljena.  Znani nezdružljivi programi so izključeni.  Omejena prizadetost programov.</string>
     <string name="summary_blocking_mode_standard">Običajno: blokira vse znane sledilce z več seznamov (X-Ray, Disconnect, DuckDuckGo).  Osnovne storitve so dovoljene.  Delovanje nekaterih programov bo prizadeto in jih boste morda morali ročno izključiti (glejte \"Odpravljanje težav\" v programskem meniju).</string>
     <string name="summary_blocking_mode_strict">Strogo: blokira vse znane sledilce, vključno z osnovnimi storitvami in nejasnimi deljenimi domenami IP.  Delovanje mnogo programov bo prizadeto in jih boste morali ročno izključiti (glejte \"Odpravljanje težav\" v programskem meniju).</string>
     <string name="blocking_mode_minimal">Minimalno</string>
