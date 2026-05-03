@@ -15,6 +15,7 @@
     <string name="menu_app_system">Afficher applications système</string>
     <string name="menu_app_nointernet">Afficher applications sans accès à internet</string>
     <string name="menu_app_unprotected">Afficher seulement les applications non protégées</string>
+    <string name="menu_app_frozen">Afficher les applications gelées</string>
     <string name="menu_sort">Trier applications</string>
     <string name="menu_sort_name">Trier par nom</string>
     <string name="menu_sort_uid">Trier par uid</string>
@@ -32,6 +33,11 @@
     <string name="menu_timeline">Activité du traqueur</string>
     <string name="title_tracker_activity">Activité du traqueur</string>
     <string name="timeline_empty">Aucune activité récente de traqueur.\n\nActivez TrackerControl pour voir quelles applications vous surveillent.</string>
+    <string name="timeline_empty_disabled_title">TrackerControl est désactivé</string>
+    <string name="timeline_empty_disabled_subtitle">Activez TrackerControl avec le bouton en haut à droite. L\'activité des trackers de vos applications apparaîtra alors ici.</string>
+    <string name="timeline_open_app">Ouvrir une application</string>
+    <string name="tab_timeline">Chronologie</string>
+    <string name="tab_apps">Applications</string>
     <string name="timeline_section_last_hour">Dernière heure</string>
     <string name="timeline_section_today">Aujourd’hui</string>
     <string name="timeline_section_yesterday">Hier</string>
@@ -112,6 +118,10 @@
     <string name="setting_socks5_port">SOCKS5 port: %s</string>
     <string name="setting_socks5_username">Nom d\'utilisateur SOCKS5: %s</string>
     <string name="setting_socks5_password">Mot de passe SOCKS5: %s</string>
+    <string name="setting_wg_enabled">Faire passer tout le trafic via WireGuard</string>
+    <string name="setting_wg_config">Configuration WireGuard</string>
+    <string name="setting_wireguard">WireGuard (expérimental)</string>
+    <string name="setting_wg_status">Statut</string>
     <string name="setting_pcap_record_size">Taille d’enregistrement PCAP : %s B</string>
     <string name="setting_pcap_file_size">Taille max. du fichier PCAP: %s MB</string>
     <string name="setting_watchdog">Chien de garde : toutes les %s minutes</string>
@@ -427,6 +437,7 @@ Cordialement,\n\n]]></string>
     <string name="summary_domain_based_blocking">Permet un blocage plus ciblé. Encore en développement.</string>
     <string name="untap_unblock">Astuce : Vous pouvez débloquer des entrées individuelles en cliquant dessus.</string>
     <string name="uncertain_entry">Les entrées marquées par \'*\' peuvent être inexactes en raison des limitations d\'Android. Cela signifie généralement que la même entreprise utilise la même adresse IP sous différents domaines, mais cela peut aussi signifier que différentes entreprises sont derrière la même adresse IP (par exemple, s\'ils utilisent un réseau de distribution de contenu).</string>
+    <string name="browsers_not_supported">Navigateur détecté ⚠️</string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
@@ -444,7 +455,9 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_battery_action">Désactiver l\'optimisation</string>
     <string name="onboarding_notify_title">Restez informé</string>
     <string name="onboarding_privatedns_action">Ouvrir les paramètres DNS</string>
+    <string name="onboarding_lockdown_title">Paramètres de verrouillage VPN</string>
     <string name="onboarding_lockdown_action">Ouvrir les paramètres VPN</string>
+    <string name="onboarding_dns_title">DNS sécurisé (fonctionnalité béta ; peut ne pas fonctionner comme prévu)</string>
     <string name="onboarding_dns_action">Activer le DNS sécurisé</string>
     <string name="onboarding_dns_action_disable">Désactiver le DNS sécurisé</string>
     <string name="onboarding_blocking_title">Bloquer les traqueurs</string>
@@ -454,9 +467,11 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_action_disabled">Désactivé</string>
     <string name="onboarding_action_granted">Autorisé</string>
     <string name="onboarding_action_optimized">Optimisé</string>
+    <string name="onboarding_action_unrestricted">Sans restriction</string>
     <!-- Insights Screen -->
     <string name="insights_subtitle_7days">7 derniers jours</string>
     <string name="insights_tracking_attempts">Hôtes du traqueur contactés</string>
+    <string name="insights_blocked">Bloqué</string>
     <string name="insights_in_apps">dans %d applications</string>
     <string name="insights_no_data">Aucune donnée de traqueur pour le moment. Utilisez vos applications et revenez plus tard !</string>
     <string name="insights_shocking_fact">Vos applications ont contacté %1$d sociétés de traqueurs via %2$d hôtes de traqueur cette semaine !</string>
