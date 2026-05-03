@@ -167,6 +167,14 @@
     <string name="summary_rcode">Privzeta vrednost je 3 (NXDOMAIN), kar pomeni \'neobstoječa domena\'.</string>
     <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
     <string name="summary_socks5_enabled">Posredniškemu strežniku bo poslan samo promet TCP.</string>
+    <string name="summary_wg_status_off">Izklopljeno</string>
+    <string name="summary_wg_status_missing_config">Izklopljeno — ni nastavljeno</string>
+    <string name="summary_wg_status_connected">Povezano</string>
+    <string name="summary_wg_status_blocked">Blokirano — %s</string>
+    <string name="summary_wg_status_starting">Začenjanje</string>
+    <string name="msg_wg_config_invalid">Neveljavne nastavitve WireGuard: %s</string>
+    <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene.</string>
+    <string name="msg_wg_blocked_detail">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene. %s</string>
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_log_logcat">Raziskovani način: prepoznani sledilce se beležijo v ADB in izločitev SNI je omogočena zaradi boljšega zaznavanja gostiteljskih imen.  Dnevnike lahko pridobite z \'adb logcat\' z uporabo oznake \'TC-Log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
@@ -387,6 +395,7 @@ Sincerely,\n\n]]></string>
     <string name="tracker_fingerprinting">Ustvarjanje oseb. odtisa</string>
     <string name="tracker_social">Družabno</string>
     <string name="tracker_email">E-pošta</string>
+    <string name="tracker_consent">Upravljanje s soglasji</string>
     <string name="tracker_uncategorised">Neuvrščeno</string>
     <string name="setting_strict_blocking">Strogo blokiranje</string>
     <string name="summary_strict_blocking">Za na novo nameščene program blokiraj kar največ deljenja podatkov s podjetji.  Več programov bo delovalo z napakami.</string>
@@ -456,6 +465,8 @@ Sincerely,\n\n]]></string>
     <string name="summary_domain_based_blocking">Dovoli bolj prefinjeno blokiranje.  To je še vedno v razvoju.</string>
     <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
     <string name="uncertain_entry">Vnosi, ki so označeni z \'*\', so lahko netočni zaradi omejitev Androida.  To običajno pomeni, da isto podjetje uporablja isti naslov IP pod različnimi domenami, lahko pa tudi, da so za istim naslovom IP različna podjetja (npr. če uporabljajo omrežje za dostavo vsebin).</string>
+    <string name="browsers_not_supported">Zaznan je bil brskalnik. ⚠️</string>
+    <string name="browsers_not_supported_explanation">Videti je, da je to brskalnik.\n\nZaščite pred sledenjem za brskalnike deluje najbolje znotraj brskalnika, kjer se sledilci blokirajo na ravni strani in zahtev.  TrackerControl preusmerja promet brskalnika skozi VPN/WireGuard, vendar je blokiranje sledilcev za brskalnik privzeto izklopljeno, ker lahko povzroči nedelovanje strani.</string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
@@ -489,6 +500,8 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_privatedns_action">Odpri nastavitve DNS</string>
     <string name="onboarding_privatedns_skip_title">Preskoči onemogočanje zasebnega DNS-a?</string>
     <string name="onboarding_privatedns_skip_msg">Če nadaljujete z omogočenim zasebnim DNS-om, bo to znatno omejilo TrackerControl.  Večina sledenja ne bo blokirana – program bo zmožen samo preučevanja sledilnih knjižnic.  Poleg tega bo filter VPN onemogočen, da se zagotovi osnovno delovanje.</string>
+    <string name="onboarding_timeline_title">Oglejte si, kako se časovnica napolni</string>
+    <string name="onboarding_timeline_desc">TrackerControl se zažene po časovnici.  Na začetku je lahko prazna — programi običajno stopijo v stik s sledilci šele med njihovo uporabo.\n\nKo končate z nastavitvijo odprite nekaj programov in se vrnite v TrackerControl, da si ogledate zaznano in blokirano sledilno dejavnost.</string>
     <string name="onboarding_network_title">Neomejeno omrežje</string>
     <string name="onboarding_network_desc">Možnosti varčevanja podatkov lahko programu TrackerControl onemogočijo pravilno delovanje v ozadju.  Za najzanesljivejšo zaščito mu omogočite neomejen dostop.</string>
     <string name="onboarding_network_action">Odobri neomejen dostop</string>
