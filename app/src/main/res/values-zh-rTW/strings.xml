@@ -193,8 +193,6 @@ Sincerely,\n\n]]></string>
     <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>
     <string name="internet_blocked">已封鎖網路連線</string>
     <string name="internet_unblocked">已解除封鎖網路連線</string>
-    <string name="browsers_not_supported">不支援瀏覽器 ⚠️</string>
-    <string name="browsers_not_supported_explanation">這似乎是一款瀏覽器應用程式。\n\n瀏覽器中的追蹤器封鎖功能不受 TrackerControl 支援。請改用具備整合式反追蹤功能的瀏覽器，以獲得更完善的追蹤封鎖效果。\n\n例如：Mozilla Fennec</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

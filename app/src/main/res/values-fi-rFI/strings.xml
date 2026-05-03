@@ -378,8 +378,6 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="summary_domain_based_blocking">Mahdollistaa tarkemman estämisen. Vielä kehitysvaiheessa.</string>
     <string name="untap_unblock">Vinkki: Voit poistaa yksittäisten kohteiden eston napauttamalla niitä.</string>
     <string name="uncertain_entry">Android-käyttöjärjestelmän rajoitusten vuoksi tähdellä \'*\' merkityt tiedot voivat olla epätarkkoja. Tämä tarkoittaa yleensä, että sama yritys käyttää samaa IP-osoitetta eri verkkotunnuksissa, mutta se voi tarkoittaa myös, että sama IP-osoite on eri yritysten käytössä (esim. jos ne käyttävät sisällönjakeluverkkoa).</string>
-    <string name="browsers_not_supported">Selaimia ei tueta ⚠️</string>
-    <string name="browsers_not_supported_explanation">Tämä näyttää olevan selainohjelma.\n\nTrackerControl ei tue seurainten estämistä selaimissa. Käytä sen sijaan selainta, jossa on integroitu seurannanesto-ominaisuus, jotta seuranta estetään paremmin.\n\nEsimerkiksi: Mozilla Fennec</string>
     <string name="static_analysis">Tunnista sovelluskoodissa olevat seuraimet</string>
     <string name="failed_loading_cached_analysis">Välimuistissa olevien seurainten tulosten lataaminen epäonnistui. Ilmoita tästä kehittäjälle osoitteessa hello@trackercontrol.org</string>
     <string name="msg_notifications">Napauta myöntääksesi ilmoitusten käyttöoikeudet (virheilmoitukset jne.)</string>

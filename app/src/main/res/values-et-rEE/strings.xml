@@ -174,7 +174,6 @@
     <string name="blocked">BLOKEERITUD</string>
     <string name="allowed">LUBATUD</string>
     <string name="setting_domain_based_blocked">Domeenipõhine blokeerimine</string>
-    <string name="browsers_not_supported">Veebibrauserid pole toetatud ⚠️</string>
     <string name="static_analysis">Tuvasta jälitajaid rakenduse koodist</string>
     <string name="msg_notifications">Teavituste õiguste lubamiseks klõpsi (näiteks veasõnumite jaoks)</string>
     <!-- Onboarding -->
