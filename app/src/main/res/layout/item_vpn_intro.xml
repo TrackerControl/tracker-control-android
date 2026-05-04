@@ -65,6 +65,43 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/vpnIntroIvpnTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/vpn_intro_ivpn_title"
+            android:textAppearance="@style/TextMedium" />
+
+        <TextView
+            android:id="@+id/vpnIntroIvpnBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_intro_ivpn_body"
+            android:textAppearance="@style/TextSmall" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/vpnIntroIvpnAccountAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vpn_get_ivpn_account" />
+
+            <Button
+                android:id="@+id/vpnIntroIvpnAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vpn_enter_ivpn_account" />
+        </LinearLayout>
+
+        <TextView
             android:id="@+id/vpnIntroWireGuardTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

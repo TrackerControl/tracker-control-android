@@ -22,6 +22,11 @@ public class WgProfileManager {
     public static final String PREF_WG_PROFILE = "wg_profile";
     public static final String PREF_WG_CONFIG = "wg_config";
     public static final String PREF_MULLVAD_ACCOUNT = "mullvad_account";
+    public static final String PREF_IVPN_ACCOUNT = "ivpn_account";
+    public static final String PREF_IVPN_SESSION_TOKEN = "ivpn_session_token";
+    public static final String PREF_IVPN_PRIVATE_KEY = "ivpn_private_key";
+    public static final String PREF_IVPN_PUBLIC_KEY = "ivpn_public_key";
+    public static final String PREF_IVPN_ADDRESS = "ivpn_address";
 
     private final Context context;
     private final SharedPreferences prefs;
@@ -67,6 +72,27 @@ public class WgProfileManager {
         public MullvadCountry(String code, String name) {
             this.code = normalizeCountry(code);
             this.name = name == null ? "" : name;
+        }
+    }
+
+    public static class IvpnSession {
+        public final String token;
+        public final String privateKey;
+        public final String publicKey;
+        public final String address;
+
+        public IvpnSession(String token, String privateKey, String publicKey, String address) {
+            this.token = token == null ? "" : token;
+            this.privateKey = privateKey == null ? "" : privateKey;
+            this.publicKey = publicKey == null ? "" : publicKey;
+            this.address = address == null ? "" : address;
+        }
+
+        public boolean isUsable() {
+            return !TextUtils.isEmpty(token) &&
+                    !TextUtils.isEmpty(privateKey) &&
+                    !TextUtils.isEmpty(publicKey) &&
+                    !TextUtils.isEmpty(address);
         }
     }
 
@@ -227,11 +253,19 @@ public class WgProfileManager {
     }
 
     public Profile findMullvadProfileForCountry(String code) {
+        return findProfileForProviderCountry("mullvad", code);
+    }
+
+    public Profile findIvpnProfileForCountry(String code) {
+        return findProfileForProviderCountry("ivpn", code);
+    }
+
+    private Profile findProfileForProviderCountry(String provider, String code) {
         String country = normalizeCountry(code);
         if (TextUtils.isEmpty(country))
             return null;
         for (Profile profile : getProfiles())
-            if ("mullvad".equals(profile.provider) && country.equals(profile.countryCode))
+            if (provider.equals(profile.provider) && country.equals(profile.countryCode))
                 return profile;
         return null;
     }
@@ -261,6 +295,62 @@ public class WgProfileManager {
                 .apply();
     }
 
+    public String getLastIvpnAccount() {
+        String saved = prefs.getString(PREF_IVPN_ACCOUNT, "");
+        if (!TextUtils.isEmpty(saved))
+            return saved;
+
+        Profile active = getActiveProfile();
+        if (isProviderProfileForAccount(active, "ivpn", null)) {
+            saveIvpnAccount(active.account);
+            return active.account;
+        }
+
+        for (Profile profile : getProfiles())
+            if (isProviderProfileForAccount(profile, "ivpn", null)) {
+                saveIvpnAccount(profile.account);
+                return profile.account;
+            }
+        return "";
+    }
+
+    public void saveIvpnAccount(String accountNumber) {
+        String next = accountNumber == null ? "" : accountNumber.trim();
+        String current = prefs.getString(PREF_IVPN_ACCOUNT, "");
+        SharedPreferences.Editor editor = prefs.edit()
+                .putString(PREF_IVPN_ACCOUNT, next);
+        if (!next.equals(current)) {
+            editor.remove(PREF_IVPN_SESSION_TOKEN);
+            editor.remove(PREF_IVPN_PRIVATE_KEY);
+            editor.remove(PREF_IVPN_PUBLIC_KEY);
+            editor.remove(PREF_IVPN_ADDRESS);
+        }
+        editor.apply();
+    }
+
+    public IvpnSession getIvpnSession(String accountNumber) {
+        String account = accountNumber == null ? "" : accountNumber.trim();
+        if (TextUtils.isEmpty(account) || !account.equals(getLastIvpnAccount()))
+            return null;
+        IvpnSession session = new IvpnSession(
+                prefs.getString(PREF_IVPN_SESSION_TOKEN, ""),
+                prefs.getString(PREF_IVPN_PRIVATE_KEY, ""),
+                prefs.getString(PREF_IVPN_PUBLIC_KEY, ""),
+                prefs.getString(PREF_IVPN_ADDRESS, ""));
+        return session.isUsable() ? session : null;
+    }
+
+    public void saveIvpnSession(IvpnSession session) {
+        if (session == null)
+            return;
+        prefs.edit()
+                .putString(PREF_IVPN_SESSION_TOKEN, session.token)
+                .putString(PREF_IVPN_PRIVATE_KEY, session.privateKey)
+                .putString(PREF_IVPN_PUBLIC_KEY, session.publicKey)
+                .putString(PREF_IVPN_ADDRESS, session.address)
+                .apply();
+    }
+
     public String getReusableMullvadConfig(String accountNumber) {
         String account = accountNumber == null ? "" : accountNumber.trim();
         Profile active = getActiveProfile();
@@ -274,8 +364,12 @@ public class WgProfileManager {
     }
 
     private boolean isMullvadProfileForAccount(Profile profile, String account) {
+        return isProviderProfileForAccount(profile, "mullvad", account);
+    }
+
+    private boolean isProviderProfileForAccount(Profile profile, String provider, String account) {
         if (profile == null ||
-                !"mullvad".equals(profile.provider) ||
+                !provider.equals(profile.provider) ||
                 TextUtils.isEmpty(profile.account) ||
                 TextUtils.isEmpty(profile.config))
             return false;
@@ -286,7 +380,7 @@ public class WgProfileManager {
         if (profile == null || TextUtils.isEmpty(profile.config))
             return "";
 
-        String relay = getMullvadRelaySummary(profile.config);
+        String relay = getRelaySummary(profile.config);
         if (!TextUtils.isEmpty(relay))
             return relay;
 
@@ -301,12 +395,15 @@ public class WgProfileManager {
         return "";
     }
 
-    private String getMullvadRelaySummary(String config) {
+    private String getRelaySummary(String config) {
         String[] lines = config.split("\\r?\\n");
         for (String line : lines) {
-            String prefix = "# Mullvad relay = ";
-            if (line.startsWith(prefix))
-                return line.substring(prefix.length()).trim();
+            String mullvad = "# Mullvad relay = ";
+            if (line.startsWith(mullvad))
+                return line.substring(mullvad.length()).trim();
+            String ivpn = "# IVPN relay = ";
+            if (line.startsWith(ivpn))
+                return line.substring(ivpn.length()).trim();
         }
         return "";
     }
