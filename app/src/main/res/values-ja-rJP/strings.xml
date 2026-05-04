@@ -55,7 +55,6 @@
     <string name="setting_reload_onconnectivity">接続の変更時に再読み込み</string>
     <string name="setting_log_app">新しいトラッカーを検出する</string>
     <string name="setting_filter">トラッカーをブロック</string>
-    <string name="setting_filter_udp">UDP のトラッカーをブロック</string>
     <string name="setting_handover">再読み込み時に VPN接続 を維持</string>
     <string name="setting_lockdown">トラフィックを封鎖</string>
     <string name="setting_track_usage">ネットワークの使用状況を追跡</string>
@@ -132,7 +131,6 @@
     <string name="msg_queue">TrackerControl はビジー状態です</string>
     <string name="msg_update">アップデートが利用できます。タップするとダウンロードします</string>
     <string name="msg_usage">アプリの横にあるアイコンをタップして、Wi-Fi またはモバイルインターネットアクセスを、許可 (緑) または拒否 (赤) することができます</string>
-    <string name="msg_whitelist">インターネットアクセスはデフォルトでは許可されています(ブラックリストモード)、これは設定で変更可能です</string>
     <string name="msg_push">着信(プッシュ)メッセージのほとんどは、システムコンポーネントであるPlayサービスによって処理され、デフォルトではインターネットアクセスが許可されています</string>
     <string name="msg_system">すべての(システム)アプリを管理することは、設定で有効にできます</string>
     <string name="msg_issue">問題の内容と発生した時刻を記述してください。</string>
