@@ -104,7 +104,6 @@
     <string name="setting_log_app">Poišči nove sledilce</string>
     <string name="setting_log_logcat">Raziskave</string>
     <string name="setting_filter">Blokiraj sledilce</string>
-    <string name="setting_filter_udp">Blokiraj sledilce na UDP-ju</string>
     <string name="setting_handover">Nemoten preklop VPN-a ob ponovnem nalaganju</string>
     <string name="setting_lockdown">Zakleni promet</string>
     <string name="setting_track_usage">Sledi porabi omrežja</string>
@@ -124,14 +123,12 @@
     <string name="setting_socks5_password">Geslo SOCKS5: %s</string>
     <string name="setting_wg_enabled">Preusmeri promet preko WireGuarda</string>
     <string name="setting_wg_config">Nastavitve WireGuard</string>
-    <string name="setting_wireguard">WireGuard (preizkusno)</string>
     <string name="setting_wg_status">Stanje</string>
     <string name="setting_pcap_record_size">Velikost zapisa PCAP: %s B</string>
     <string name="setting_pcap_file_size">Najv. velikost datoteke PCAP: %s MB</string>
     <string name="setting_watchdog">Pes čuvaj: vsakih %s min.</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Varen DNS (DoH)</string>
-    <string name="summary_doh_enabled">Šifriraj poizvedbe DNS z DNS-om preko HTTP-ja.  Velja za vse programe.</string>
     <string name="warning_beta">Značilnost Beta.  Morda ne bo delovala po pričakovanjih.</string>
     <string name="setting_doh_endpoint">URL končne točke DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS za poizvedbe DNS preko HTTPS-a</string>
@@ -215,7 +212,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_queue">TrackerControl je zaposlen.</string>
     <string name="msg_update">Na voljo je posodobitev, dotaknite za prejem.</string>
     <string name="msg_usage">Dostop do omrežja Wi-Fi ali mobilnega interneta lahko dovolite (zeleno) ali zavrnete (rdeče) z dotikom ikone poleg programa.</string>
-    <string name="msg_whitelist">Dostop do interneta je privzeto dovoljen (način črnega seznama).  To lahko spremenite v nastavitvah.</string>
     <string name="msg_push">Dohodna (potisna) sporočila v glavnem obdela sistemski sestavni del Storitve Play, ki mu je dostop do interneta privzeto dovoljen.</string>
     <string name="msg_system">Upravljanje z vsemi (sistemskimi) programi lahko omogočite v nastavitvah.</string>
     <string name="msg_issue">Prosimo, opišite težavo in čas njenega nastanka:</string>
@@ -344,40 +340,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/about-edpb/members_sl</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
-\n
-• a copy of my personal data;\n
-• the purposes of the processing;\n
-• the categories of personal data concerned;\n
-• the recipients you disclose my personal data to and the safeguards you provide;\n
-• the retention period for storing my personal data or the criteria used for determining this period;\n
-• information about the source of my personal data; and\n
-• the existence of automated decision-making (including profiling), and if so:\n
-    - the logic involved in the decision-making process;\n
-    - the significance and the envisaged consequences for me;\n
-    - the steps you have taken to prevent errors, bias and discrimination; and\n
-    - explain how I can express my point of view and challenge a decision.\n
-\n
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
-• All data.\n
-\n
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
     <string name="crash_dialog_text">Žal se je TrackerControl sesul.  Ali bi nam hoteli poslati e-pošto s podrobnostmi?</string>
     <string name="crash_dialog_comment">Opombe?</string>
     <string name="instructions_monitoring_private_dns">Preklopite stikalo in uporabljajte programe.  Zasebni DNS mora biti omogočen.</string>
