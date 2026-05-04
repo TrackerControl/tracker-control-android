@@ -26,7 +26,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -47,7 +46,6 @@ import androidx.preference.TwoStatePreference;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -80,6 +78,7 @@ import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.wg.WgProfileManager;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -127,8 +126,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private static final int REQUEST_EXPORT = 1;
     private static final int REQUEST_IMPORT = 2;
     private static final int REQUEST_CALL = 5;
-
-    private AlertDialog dialogFilter = null;
 
     private static final Intent INTENT_VPN_SETTINGS = new Intent("android.net.vpn.SETTINGS");
 
@@ -343,6 +340,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         // WireGuard status
+        new WgProfileManager(this).migrateIfNeeded();
+        configureWireGuardProfiles(screen, prefs);
         CharSequence wgStatus = getWireGuardStatusSummary(prefs);
         pref = screen.findPreference("screen_wireguard");
         if (pref != null)
@@ -443,10 +442,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (p != null) cat_advanced.removePreference(p);
             p = cat_advanced.findPreference("log_app");
             if (p != null) cat_advanced.removePreference(p);
-            p = cat_advanced.findPreference("filter_udp");
-            if (p != null) cat_advanced.removePreference(p);
-            p = cat_advanced.findPreference("filter");
-            if (p != null) p.setEnabled(false);
         }
 
         // In minimal mode, hide domain_based_blocking (not used)
@@ -517,7 +512,74 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             Preference screenDevelopment = screen.findPreference("screen_development");
             if (screenDevelopment != null)
                 screen.removePreference(screenDevelopment);
+        } else {
+            Preference rotateKeys = screen.findPreference("vpn_key_rotate_now");
+            if (rotateKeys != null)
+                rotateKeys.setOnPreferenceClickListener(preference -> {
+                    Toast.makeText(ActivitySettings.this,
+                            R.string.msg_vpn_key_rotation_started,
+                            Toast.LENGTH_LONG).show();
+                    net.kollnig.missioncontrol.wg.VpnKeyRotationManager.rotateAllForDebug(
+                            ActivitySettings.this,
+                            summary -> wgStatusHandler.post(() ->
+                                    Toast.makeText(ActivitySettings.this, summary,
+                                            Toast.LENGTH_LONG).show()));
+                    return true;
+                });
         }
+    }
+
+    private void configureWireGuardProfiles(PreferenceScreen screen, SharedPreferences prefs) {
+        WgProfileManager manager = new WgProfileManager(this);
+        manager.migrateIfNeeded();
+        java.util.List<WgProfileManager.Profile> profiles = manager.getProfiles();
+        WgProfileManager.Profile activeProfile = manager.getActiveProfile();
+        ListPreference profilePref = (ListPreference) screen.findPreference(WgProfileManager.PREF_WG_PROFILE);
+        Preference managePref = screen.findPreference("wg_profile_manage");
+
+        if (profilePref != null) {
+            if (profiles.isEmpty()) {
+                profilePref.setEnabled(false);
+                profilePref.setEntries(new CharSequence[0]);
+                profilePref.setEntryValues(new CharSequence[0]);
+                profilePref.setSummary(R.string.summary_wg_profile_none);
+            } else {
+                CharSequence[] entries = new CharSequence[profiles.size()];
+                CharSequence[] values = new CharSequence[profiles.size()];
+                for (int i = 0; i < profiles.size(); i++) {
+                    WgProfileManager.Profile profile = profiles.get(i);
+                    entries[i] = profile.name;
+                    values[i] = profile.id;
+                }
+                profilePref.setEnabled(true);
+                profilePref.setEntries(entries);
+                profilePref.setEntryValues(values);
+                profilePref.setValue(manager.getActiveProfileId());
+                profilePref.setSummary(activeProfile == null
+                        ? getString(R.string.summary_wg_profile)
+                        : activeProfile.name);
+                profilePref.setOnPreferenceChangeListener((preference, newValue) -> {
+                    applyWireGuardProfile((String) newValue);
+                    return false;
+                });
+            }
+        }
+
+        if (managePref != null) {
+            managePref.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(ActivitySettings.this,
+                        net.kollnig.missioncontrol.ActivityWireGuardProfiles.class));
+                return true;
+            });
+        }
+    }
+
+    private void applyWireGuardProfile(String id) {
+        WgProfileManager manager = new WgProfileManager(this);
+        manager.setActiveProfile(id);
+        configureWireGuardProfiles(getPreferenceScreen(), PreferenceManager.getDefaultSharedPreferences(this));
+        updateWireGuardStatus();
+        ServiceSinkhole.reload("changed " + WgProfileManager.PREF_WG_PROFILE, this, false);
     }
 
     @Override
@@ -531,6 +593,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         prefs.registerOnSharedPreferenceChangeListener(this);
 
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStatusListener);
+        PreferenceScreen screen = getPreferenceScreen();
+        if (screen != null)
+            configureWireGuardProfiles(screen, prefs);
         updateWireGuardStatus();
     }
 
@@ -548,10 +613,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     protected void onDestroy() {
         running = false;
         wgStatusHandler.removeCallbacksAndMessages(null);
-        if (dialogFilter != null) {
-            dialogFilter.dismiss();
-            dialogFilter = null;
-        }
         super.onDestroy();
     }
 
@@ -582,21 +643,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             prefs.edit().remove(name).apply();
 
         // Dependencies
-        if ("screen_on".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("whitelist_wifi".equals(name) ||
-                "screen_wifi".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("whitelist_other".equals(name) ||
-                "screen_other".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("whitelist_roaming".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("pause".equals(name))
+        if ("pause".equals(name))
             getPreferenceScreen().findPreference(name)
                     .setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
 
@@ -620,17 +667,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             }
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        } else if ("unmetered_2g".equals(name) ||
-                "unmetered_3g".equals(name) ||
-                "unmetered_4g".equals(name) ||
-                "wifi_only".equals(name) ||
+        } else if ("wifi_only".equals(name) ||
                 "screen_delay".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("national_roaming".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("eu_roaming".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("disable_on_call".equals(name)) {
@@ -677,38 +715,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         } else if ("notify_access".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("filter".equals(name)) {
-            // Show dialog
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && prefs.getBoolean(name, true)) {
-                LayoutInflater inflater = LayoutInflater.from(ActivitySettings.this);
-                View view = inflater.inflate(R.layout.filter, null, false);
-                dialogFilter = new MaterialAlertDialogBuilder(ActivitySettings.this)
-                        .setView(view)
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Do nothing
-                            }
-                        })
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                dialogFilter = null;
-                            }
-                        })
-                        .create();
-                dialogFilter.show();
-            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && !prefs.getBoolean(name, false)) {
-                prefs.edit().putBoolean(name, true).apply();
-                Toast.makeText(ActivitySettings.this, R.string.msg_filter4, Toast.LENGTH_SHORT).show();
-            }
-
-            ((TwoStatePreference) getPreferenceScreen().findPreference(name)).setChecked(prefs.getBoolean(name, false));
-
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        } else if ("use_hosts".equals(name))
+        else if ("use_hosts".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("vpn4".equals(name)) {
@@ -839,16 +846,27 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     TextUtils.isEmpty(prefs.getString(name, "")) ? "-" : "*****"));
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if (WgProfileManager.PREF_WG_PROFILE.equals(name) ||
+                WgProfileManager.PREF_WG_PROFILES.equals(name)) {
+            new WgProfileManager(this).migrateIfNeeded();
+            configureWireGuardProfiles(getPreferenceScreen(), prefs);
+            updateWireGuardStatus();
+
         } else if ("wg_enabled".equals(name)) {
             updateWireGuardStatus();
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if ("wg_keepalive_when_screen_off".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+
         } else if ("wg_config".equals(name)) {
             String wg_config = prefs.getString(name, null);
+            boolean valid = true;
             if (!TextUtils.isEmpty(wg_config)) {
                 try {
                     net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wg_config);
                 } catch (Throwable ex) {
+                    valid = false;
                     Toast.makeText(ActivitySettings.this,
                             getString(R.string.msg_wg_config_invalid, ex.getMessage()),
                             Toast.LENGTH_LONG).show();
@@ -860,6 +878,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     if (enabledPref != null) enabledPref.setChecked(false);
                 }
             }
+            if (valid)
+                new WgProfileManager(this).updateActiveProfileConfig(wg_config);
+            configureWireGuardProfiles(getPreferenceScreen(), prefs);
             updateWireGuardStatus();
             ServiceSinkhole.reload("changed " + name, this, false);
 
@@ -908,7 +929,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("loglevel".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("domain_based_blocked".equals(name)) {
+        else if ("domain_based_blocking".equals(name)) {
             TrackerList.reloadTrackerData(this);
         }
 
@@ -1153,27 +1174,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         serializer.endTag(null, "application");
         out.flush();
 
-        serializer.startTag(null, "wifi");
-        xmlExport(getSharedPreferences("wifi", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "wifi");
-        out.flush();
-
-        serializer.startTag(null, "mobile");
-        xmlExport(getSharedPreferences("other", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "mobile");
-
-        serializer.startTag(null, "screen_wifi");
-        xmlExport(getSharedPreferences("screen_wifi", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "screen_wifi");
-
-        serializer.startTag(null, "screen_other");
-        xmlExport(getSharedPreferences("screen_other", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "screen_other");
-
-        serializer.startTag(null, "roaming");
-        xmlExport(getSharedPreferences("roaming", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "roaming");
-
         serializer.startTag(null, "apply");
         xmlExport(getSharedPreferences("apply", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "apply");
@@ -1358,11 +1358,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         reader.parse(new InputSource(in));
 
         xmlImport(handler.application, prefs);
-        xmlImport(handler.wifi, getSharedPreferences("wifi", Context.MODE_PRIVATE));
-        xmlImport(handler.mobile, getSharedPreferences("other", Context.MODE_PRIVATE));
-        xmlImport(handler.screen_wifi, getSharedPreferences("screen_wifi", Context.MODE_PRIVATE));
-        xmlImport(handler.screen_other, getSharedPreferences("screen_other", Context.MODE_PRIVATE));
-        xmlImport(handler.roaming, getSharedPreferences("roaming", Context.MODE_PRIVATE));
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));

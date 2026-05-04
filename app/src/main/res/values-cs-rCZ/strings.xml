@@ -61,7 +61,6 @@
     <string name="setting_system">Zobrazit systémové aplikace</string>
     <string name="setting_log_app">Hledat nové trackery</string>
     <string name="setting_filter">Blokovat trackery</string>
-    <string name="setting_filter_udp">Blokovat trackery na UDP</string>
     <string name="setting_handover">Plynulé předání VPN při znovunačtení</string>
     <string name="setting_lockdown">Blokovat veškeré přenosy</string>
     <string name="setting_track_usage">Sledovat využití sítě</string>
@@ -155,7 +154,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_queue">TrackerControl je zaneprázdněn</string>
     <string name="msg_update">Aktualizace k dispozici, stiskněte pro stažení</string>
     <string name="msg_usage">Můžete povolit (zelená) nebo zakázat (červená) přístup k internetu pro Wi-Fi či mobilní připojení stisknutím ikon vedle aplikace</string>
-    <string name="msg_whitelist">Přístup k Internetu je ve výchozím stavu povolen (režim seznamu zakázaných), může být změněno v nastavení</string>
     <string name="msg_push">Příchozí (push) zprávy jsou většinou zpracovány systémovou součástí služeb Play, která má ve výchozím stavu internetový přístup povolený</string>
     <string name="msg_system">Správu všech (systémových) aplikací lze povolit v nastavení</string>
     <string name="msg_issue">Prosím, popište problém a uveďte čas kdy k němu došlo:</string>
@@ -287,7 +285,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="body_request_data"><![CDATA[Komu:\n
 \n
 \n
-Žádám vás, abyste jako správce údajů aplikace Android %s (ID: %s), potvrdil, zda o mně zpracovává nějaké osobní údaje.\n
+Žádám vás, abyste jako správce údajů aplikace Android %1$s (ID: %2$s), potvrdil, zda o mně zpracovává nějaké osobní údaje.\n
 Pokud ano, poskytněte mi prosím všechny požadované informace stanovené v článku 15 obecného nařízení EU o ochraně osobních údajů (GDPR), včetně:\n
 \n
 • kopie mých osobních údajů;\n
@@ -310,7 +308,7 @@ S pozdravem,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Komu:\n
 \n
 \n
-Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %s (ID: %s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
+Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %1$s (ID: %2$s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
 • Všechny údaje.\n
 \n
 Důvodem mé žádosti o odstranění je odvolání nebo odvolání mého souhlasu se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n

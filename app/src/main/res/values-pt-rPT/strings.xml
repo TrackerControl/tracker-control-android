@@ -60,7 +60,6 @@
     <string name="setting_system">Mostrar aplicações do sistema</string>
     <string name="setting_log_app">Pesquisar novos rastreadores</string>
     <string name="setting_filter">Bloquear rastreadores</string>
-    <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_handover">Entrega de VPN sem emendas na recarga</string>
     <string name="setting_lockdown">Bloqueio do tráfego</string>
     <string name="setting_track_usage">Rastrear a utilização da rede</string>
@@ -149,7 +148,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Atualização disponível, toque para baixar</string>
     <string name="msg_usage">Você pode permitir (esverdeado) ou negar (avermelhado) o acesso Wi-Fi ou internet móvel tocando nos ícones ao lado de um aplicativo</string>
-    <string name="msg_whitelist">O acesso à Internet é permitido por padrão (modo de lista negra), isto pode ser alterado nas configurações</string>
     <string name="msg_push">As mensagens recebidas (push) são, em sua maioria, tratadas pelo componente do sistema Serviços Play, que é permitido o acesso à Internet por padrão</string>
     <string name="msg_system">O gerenciamento de todos os aplicativos (sistema) pode ser habilitado nas configurações</string>
     <string name="msg_issue">Por favor, descreva o problema e indique a hora do problema:</string>
@@ -263,7 +261,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="body_request_data"><![CDATA[Para quem isso pode preocupar:\n
 \n
 \n
-estou te solicitando, como controlador de dados do app Android %s (ID: %s), para confirmar se está processando dados pessoais a meu respeito.\n
+estou te solicitando, como controlador de dados do app Android %1$s (ID: %2$s), para confirmar se está processando dados pessoais a meu respeito.\n
 caso positivo, por favor me forneça todas as informações necessárias estipuladas no Artigo 15 do Regulamento Geral de Proteção de Dados da UE (RGPD), incluindo:\n
 \n
 • uma cópia dos meus dados pessoais;\n
@@ -286,7 +284,7 @@ Atenciosamente,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Para quem pode preocupar:\n
 \n
 \n
-Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %s (ID: %s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
+Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %1$s (ID: %2$s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
 • Todos os dados.\n
 \n
 A razão da minha solicitação de remoção é que eu retiro ou retirei minha autorização para processar os dados pessoais. Esse pedido diz respeito a qualquer processamento dos meus dados pessoais por você, incluindo quaisquer processadores que processam dados pessoais em seu nome.\n

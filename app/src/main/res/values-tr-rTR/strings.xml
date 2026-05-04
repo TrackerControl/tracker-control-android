@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
     <string name="setting_log_app">Yeni izleyiciler ara</string>
     <string name="setting_filter">İzleyicileri engelle</string>
-    <string name="setting_filter_udp">UDP\'de izleyicileri engelle</string>
     <string name="setting_handover">Yeniden yüklemede kesintisiz VPN devredilmesi</string>
     <string name="setting_lockdown">Trafiği durdur</string>
     <string name="setting_track_usage">Veri kullanımını ölç</string>
@@ -137,7 +136,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_queue">TrackerControl meşgul</string>
     <string name="msg_update">Güncelleme mevcut, indirmek için dokunun</string>
     <string name="msg_usage">Uygulamanın yanındaki simgelere dokunarak kablosuz veya mobil veri erişimine izin verip (yeşil) engelleyebilirsiniz (kırmızı)</string>
-    <string name="msg_whitelist">İnternet erişimine varsayılan olarak izin verilir (karaliste), bu ayarlardan değiştirilebilir</string>
     <string name="msg_push">Gelen (anlık) iletiler genellikle internet erişimi varsayılan olarak verilen Play hizmetleri tarafından yönetilir</string>
     <string name="msg_system">Tüm uygulamaların (sistem) yönetimi ayarlardan etkinleştirilebilir</string>
     <string name="msg_issue">Lütfen sorunu açıklayın ve sorunun zamanını belirtin:</string>
@@ -262,7 +260,7 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="body_request_data"><![CDATA[İlgili makama:\n
 \n
 \n
-Android uygulamasının %s (ID: %s) veri denetleyicisi olarak, benim hakkımda herhangi bir kişisel veri işleyip işlemediğinizi onaylamanızı rica ediyorum.\n
+Android uygulamasının %1$s (ID: %2$s) veri denetleyicisi olarak, benim hakkımda herhangi bir kişisel veri işleyip işlemediğinizi onaylamanızı rica ediyorum.\n
 Öyleyse, lütfen aşağıdakiler dahil olmak üzere AB Genel Veri Koruma Yönetmeliği\'nin (GDPR) 15. Maddesinde belirtilen gerekli tüm bilgileri bana sağlayın:\n
 \n
 • kişisel verilerimin bir kopyası;\n
@@ -285,7 +283,7 @@ Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldık
     <string name="body_delete_data"><![CDATA[İlgili Makama:\n
 \n
 \n
-AB Genel Veri Koruma Yönetmeliği\'nin (GDPR) 17. Maddesinde belirtildiği şekilde silme hakkımı kullanıyorum. Android uygulaması olan %s (ID: %s) veri sorumlusu olarak sizden ricam, hakkımda işlediği aşağıdaki kişisel verileri gereksiz bir gecikme olmadan silmenizi rica ediyorum:\n
+AB Genel Veri Koruma Yönetmeliği\'nin (GDPR) 17. Maddesinde belirtildiği şekilde silme hakkımı kullanıyorum. Android uygulaması olan %1$s (ID: %2$s) veri sorumlusu olarak sizden ricam, hakkımda işlediği aşağıdaki kişisel verileri gereksiz bir gecikme olmadan silmenizi rica ediyorum:\n
 • Tüm veriler.\n
 \n
 Kaldırma talebimin nedeni, kişisel verilerimin işlenmesine ilişkin onayımı geri çekmem veya geri almış olmamdır. Bu talep, sizin adınıza kişisel verileri işleyen işleyiciler de dahil olmak üzere, kişisel verilerimin sizin tarafınızdan işlenmesiyle ilgilidir.\n

@@ -4,7 +4,7 @@
     <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl is gebaseerd op NetGuard, ontwikkeld door Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl vereist Android 5.1 of nieuwer</string>
     <string name="app_xposed">Xposed veroorzaakt te veel crashes, wat ertoe kan leiden dat TrackerControl uit de Google Play Store wordt verwijderd, daarom wordt TrackerControl niet ondersteund zolang Xposed is geïnstalleerd.</string>
-    <string name="app_eula">Het gebruik van deze app is op eigen risico. Geen enkele app kan 100% bescherming bieden tegen tracking.</string>
+    <string name="app_eula" formatted="false">Het gebruik van deze app is op eigen risico. Geen enkele app kan 100% bescherming bieden tegen tracking.</string>
     <string name="app_privacy">&lt;a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"&gt;&lt;a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"&gt;Privacybeleid&lt;/a&gt; &lt;a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy"&gt;Cookiebeleid&lt;/a&gt;</string>
     <string name="channel_foreground">Actieve services</string>
     <string name="channel_notify">Algemene meldingen</string>
@@ -81,7 +81,6 @@
     <string name="setting_log_app">Nieuwe trackers zoeken</string>
     <string name="setting_log_logcat">Onderzoek</string>
     <string name="setting_filter">Trackers blokkeren</string>
-    <string name="setting_filter_udp">Trackers blokkeren op UDP</string>
     <string name="setting_handover">Naadloze VPN-overdracht bij herladen</string>
     <string name="setting_lockdown">Netwerkverkeer vergrendelen</string>
     <string name="setting_track_usage">Netwerkgebruik volgen</string>
@@ -180,7 +179,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_queue">TrackerControl is bezig</string>
     <string name="msg_update">Update beschikbaar, tik om te downloaden</string>
     <string name="msg_usage">Toegang tot Wi-Fi of mobiel internet toestaan (\"groen\") of weigeren (\"rood\") door op de miniaturen naast een app te tikken</string>
-    <string name="msg_whitelist">Internettoegang is standaard toegestaan (blacklist-modus), te wijzigen in de instellingen</string>
     <string name="msg_push">De systeemcomponent Play Services, die standaard internettoegang heeft, verwerkt meestal inkomende (push) berichten.</string>
     <string name="msg_system">Het beheren van alle (systeem-) apps kan worden ingeschakeld in de instellingen</string>
     <string name="msg_issue">Beschrijf het probleem en het tijdstip van het probleem:</string>
@@ -308,7 +306,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
+I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to confirm whether it is processing any personal data about me.\n
 If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
 \n
 • a copy of my personal data;\n
@@ -331,7 +329,7 @@ Sincerely,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
+I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to erase the following personal data it processes about me without undue delay:\n
 • All data.\n
 \n
 The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n

@@ -71,27 +71,9 @@ public class ReceiverAutostart extends BroadcastReceiver {
             SharedPreferences.Editor editor = prefs.edit();
 
             if (initialized) {
-                if (oldVersion < 38) {
-                    Log.i(TAG, "Converting screen wifi/mobile");
-                    editor.putBoolean("screen_wifi", prefs.getBoolean("unused", false));
-                    editor.putBoolean("screen_other", prefs.getBoolean("unused", false));
+                if (oldVersion < 38)
                     editor.remove("unused");
-
-                    SharedPreferences unused = context.getSharedPreferences("unused", Context.MODE_PRIVATE);
-                    SharedPreferences screen_wifi = context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE);
-                    SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
-
-                    Map<String, ?> punused = unused.getAll();
-                    SharedPreferences.Editor edit_screen_wifi = screen_wifi.edit();
-                    SharedPreferences.Editor edit_screen_other = screen_other.edit();
-                    for (String key : punused.keySet()) {
-                        edit_screen_wifi.putBoolean(key, (Boolean) punused.get(key));
-                        edit_screen_other.putBoolean(key, (Boolean) punused.get(key));
-                    }
-                    edit_screen_wifi.apply();
-                    edit_screen_other.apply();
-
-                } else if (oldVersion <= 2017032112)
+                else if (oldVersion <= 2017032112)
                     editor.remove("ip6");
 
                 // Migrate beta builds that had vpn_exclude and repurposed apply
@@ -139,19 +121,12 @@ public class ReceiverAutostart extends BroadcastReceiver {
 
             } else {
                 Log.i(TAG, "Initializing sdk=" + Build.VERSION.SDK_INT);
-                editor.putBoolean("filter_udp", true);
-                editor.putBoolean("whitelist_wifi", false);
-                editor.putBoolean("whitelist_other", false);
-                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP)
-                    editor.putBoolean("filter", true); // Optional
             }
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-                editor.putBoolean("filter", true); // Mandatory
+            editor.putBoolean("filter", true);
 
             if (!Util.canFilter(context)) {
                 editor.putBoolean("log_app", false);
-                editor.putBoolean("filter", false);
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

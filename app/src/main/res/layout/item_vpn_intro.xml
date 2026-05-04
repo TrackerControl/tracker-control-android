@@ -1,0 +1,128 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <TextView
+            android:id="@+id/vpnIntroTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/vpn_intro_title"
+            android:textAppearance="@style/TextMedium" />
+
+        <TextView
+            android:id="@+id/vpnIntroBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/vpn_intro_body"
+            android:textAppearance="@style/TextSmall" />
+
+        <TextView
+            android:id="@+id/vpnIntroMullvadTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/vpn_intro_mullvad_title"
+            android:textAppearance="@style/TextMedium" />
+
+        <TextView
+            android:id="@+id/vpnIntroMullvadBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_intro_mullvad_body"
+            android:textAppearance="@style/TextSmall" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/vpnIntroMullvadAccountAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vpn_get_mullvad_account" />
+
+            <Button
+                android:id="@+id/vpnIntroMullvadAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vpn_enter_mullvad_account" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/vpnIntroIvpnTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/vpn_intro_ivpn_title"
+            android:textAppearance="@style/TextMedium" />
+
+        <TextView
+            android:id="@+id/vpnIntroIvpnBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_intro_ivpn_body"
+            android:textAppearance="@style/TextSmall" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/vpnIntroIvpnAccountAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vpn_get_ivpn_account" />
+
+            <Button
+                android:id="@+id/vpnIntroIvpnAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vpn_enter_ivpn_account" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/vpnIntroWireGuardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/vpn_intro_wireguard_title"
+            android:textAppearance="@style/TextMedium" />
+
+        <TextView
+            android:id="@+id/vpnIntroWireGuardBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_intro_wireguard_body"
+            android:textAppearance="@style/TextSmall" />
+
+        <Button
+            android:id="@+id/vpnIntroWireGuardAction"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_import_wireguard_profile" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

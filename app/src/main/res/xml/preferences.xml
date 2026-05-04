@@ -109,12 +109,10 @@
                 android:title="@string/setting_hosts_auto_update" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
-                android:dependency="filter"
                 android:key="use_hosts"
                 android:summary="@string/summary_block_domains"
                 android:title="@string/setting_block_domains" />
             <EditTextPreference
-                android:dependency="filter"
                 android:inputType="number"
                 android:key="rcode"
                 android:summary="@string/summary_rcode" />
@@ -124,23 +122,12 @@
                 android:summary="@string/summary_log_app"
                 android:title="@string/setting_log_app" />
             <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="true"
-                android:key="filter"
-                android:title="@string/setting_filter" />
-            <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="true"
-                android:dependency="filter"
-                android:key="filter_udp"
-                android:title="@string/setting_filter_udp" />
-            <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
-                android:dependency="filter"
                 android:key="handover"
                 android:title="@string/setting_handover" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
                 android:enabled="false"
-                android:dependency="filter"
                 android:key="track_usage"
                 android:summary="@string/summary_track_usage"
                 android:title="@string/setting_track_usage" />
@@ -149,7 +136,6 @@
                 android:key="reset_usage"
                 android:title="@string/setting_reset_usage" />
             <Preference
-                android:dependency="filter"
                 android:key="forwarding"
                 android:title="@string/setting_forwarding" />
             <EditTextPreference
@@ -162,11 +148,9 @@
                 android:inputType="text"
                 android:key="vpn6" />
             <EditTextPreference
-                android:dependency="filter"
                 android:inputType="text"
                 android:key="dns" />
             <EditTextPreference
-                android:dependency="filter"
                 android:inputType="text"
                 android:key="dns2" />
             <EditTextPreference
@@ -175,31 +159,25 @@
                 android:key="validate"
                 android:summary="@string/summary_validate" />
             <EditTextPreference
-                android:dependency="filter"
                 android:inputType="number"
                 android:key="ttl" />
             <eu.faircode.netguard.SwitchPreference
                 android:defaultValue="false"
-                android:dependency="filter"
                 android:key="socks5_enabled"
                 android:summary="@string/summary_socks5_enabled"
                 android:title="@string/setting_socks5_enabled" />
             <EditTextPreference
-                android:dependency="filter"
                 android:hint="127.0.0.1"
                 android:inputType="text"
                 android:key="socks5_addr" />
             <EditTextPreference
-                android:dependency="filter"
                 android:hint="1080"
                 android:inputType="number"
                 android:key="socks5_port" />
             <EditTextPreference
-                android:dependency="filter"
                 android:inputType="text"
                 android:key="socks5_username" />
             <EditTextPreference
-                android:dependency="filter"
                 android:inputType="textPassword"
                 android:key="socks5_password" />
             <EditTextPreference
@@ -236,11 +214,19 @@
                 android:key="wg_enabled"
                 android:summary="@string/summary_wg_enabled"
                 android:title="@string/setting_wg_enabled" />
-            <EditTextPreference
-                android:inputType="textMultiLine"
-                android:key="wg_config"
-                android:summary="@string/summary_wg_config"
-                android:title="@string/setting_wg_config" />
+            <ListPreference
+                android:key="wg_profile"
+                android:summary="@string/summary_wg_profile"
+                android:title="@string/setting_wg_profile" />
+            <Preference
+                android:key="wg_profile_manage"
+                android:summary="@string/summary_wg_profile_manage"
+                android:title="@string/setting_wg_profile_manage" />
+            <eu.faircode.netguard.SwitchPreference
+                android:defaultValue="false"
+                android:key="wg_keepalive_when_screen_off"
+                android:summary="@string/summary_wg_keepalive_when_screen_off"
+                android:title="@string/setting_wg_keepalive_when_screen_off" />
         </PreferenceCategory>
     </PreferenceScreen>
 
@@ -262,6 +248,10 @@
                 android:key="ip6"
                 android:summary="@string/summary_ip6"
                 android:title="@string/setting_ip6" />
+            <Preference
+                android:key="vpn_key_rotate_now"
+                android:summary="@string/summary_vpn_key_rotate_now"
+                android:title="@string/setting_vpn_key_rotate_now" />
         </PreferenceCategory>
     </PreferenceScreen>
 

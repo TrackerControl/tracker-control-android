@@ -42,6 +42,7 @@
     <string name="timeline_open_app">Open an app</string>
     <string name="tab_timeline">Timeline</string>
     <string name="tab_apps">Apps</string>
+    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Last hour</string>
     <string name="timeline_section_today">Today</string>
     <string name="timeline_section_yesterday">Yesterday</string>
@@ -118,7 +119,6 @@
     <string name="setting_log_app">Search new trackers</string>
     <string name="setting_log_logcat">Research</string>
     <string name="setting_filter">Block trackers</string>
-    <string name="setting_filter_udp">Block trackers on UDP</string>
     <string name="setting_handover">Seamless VPN handover on reload</string>
     <string name="setting_lockdown">Lockdown traffic</string>
     <string name="setting_track_usage">Track network usage</string>
@@ -138,15 +138,23 @@
     <string name="setting_socks5_password">SOCKS5 password: %s</string>
     <string name="setting_wg_enabled">Tunnel traffic through WireGuard</string>
     <string name="setting_wg_config">WireGuard config</string>
-    <string name="setting_wireguard">WireGuard (experimental)</string>
+    <string name="setting_wg_profile">WireGuard profile</string>
+    <string name="setting_wg_profile_manage">Custom WireGuard profiles</string>
+    <string name="setting_wg_profile_import">Import WireGuard config</string>
+    <string name="setting_wg_mullvad_setup">Set up Mullvad</string>
+    <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
+    <string name="setting_wg_profile_save">Save profile</string>
+    <string name="setting_wg_profile_delete">Delete profile</string>
+    <string name="setting_wireguard">WireGuard (preview)</string>
     <string name="setting_wg_status">Status</string>
+    <string name="setting_vpn_key_rotate_now">Rotate VPN provider keys now</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
     <string name="setting_watchdog">Watchdog: every %s minutes</string>
 
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Secure DNS (DoH)</string>
-    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Applies to all apps.</string>
+    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Automatically paused when WireGuard provides DNS, because those queries use the WireGuard tunnel instead.</string>
     <string name="warning_beta">Beta feature. May not work as expected.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL for DNS-over-HTTPS queries</string>
@@ -190,15 +198,98 @@
     <string name="summary_socks5_enabled">Only TCP traffic will be sent to the proxy server</string>
     <string name="summary_wg_enabled">Hides device IP. Tunnels TCP and UDP egress. Apps will see network errors during outages — fail-closed, no fall-through to direct. Server-initiated connections to the phone may not work while the tunnel is idle (keepalive is disabled to save battery).</string>
     <string name="summary_wg_config">Paste a [Interface] / [Peer] config from your provider</string>
+    <string name="summary_wg_profile">Choose a saved WireGuard config</string>
+    <string name="summary_wg_profile_none">No saved profiles</string>
+    <string name="summary_wg_profile_manage">Add, edit, or delete custom WireGuard configs</string>
+    <string name="summary_wg_keepalive_when_screen_off">Sends keepalive packets at the interval set in your WireGuard config even when the screen is off. Improves reliability on networks where idle connections drop, but increases battery use.</string>
     <string name="summary_wg_status_off">Off</string>
     <string name="summary_wg_status_missing_config">Off — no config set</string>
     <string name="summary_wg_status_connected">Connected</string>
     <string name="summary_wg_status_blocked">Blocked — %s</string>
     <string name="summary_wg_status_starting">Starting</string>
+    <string name="summary_vpn_key_rotate_now">Force Mullvad and IVPN WireGuard key rotation for debugging</string>
+    <string name="msg_vpn_key_rotation_started">VPN key rotation started</string>
     <string name="msg_wg_config_invalid">Invalid WireGuard config: %s</string>
+    <string name="msg_wg_profile_name">Profile name</string>
+    <string name="msg_wg_profile_default_name">Default</string>
+    <string name="msg_wg_profile_saved">WireGuard profile saved</string>
+    <string name="msg_wg_profile_deleted">WireGuard profile deleted</string>
+    <string name="msg_wg_profile_no_config">Paste a WireGuard config before saving a profile</string>
+    <string name="msg_wg_profile_empty">No profiles yet</string>
+    <string name="msg_wg_profile_active">Active</string>
+    <string name="msg_wg_profile_set_active">Set active</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_delete_confirm">Delete this WireGuard profile?</string>
+    <string name="msg_wg_mullvad_account">Mullvad account number</string>
+    <string name="msg_wg_mullvad_recommended">Recommended location</string>
+    <string name="msg_wg_mullvad_note">TrackerControl creates a Mullvad WireGuard profile. The account number is saved locally for future Mullvad profiles. Tokens are not stored, and deleting the profile here does not remove the device from Mullvad.</string>
+    <string name="msg_wg_mullvad_generating">Creating WireGuard profile…</string>
+    <string name="msg_wg_mullvad_failed">Mullvad setup failed: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">Could not load Mullvad countries: %s</string>
+    <string name="vpn_status_connected">%s</string>
+    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">Relay: %s</string>
+    <string name="vpn_status_mullvad_summary">Relay: %s</string>
+    <string name="vpn_status_wireguard_connected">WireGuard connected</string>
+    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
+    <string name="vpn_status_disconnected">Not connected</string>
+    <string name="vpn_choose_country">Choose country</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_title">VPN preview</string>
+    <string name="vpn_intro_body">A VPN sends your internet traffic through another server. This can hide your IP address from websites and your network provider, and lets you choose a country for your connection. This tab is new, so treat it as a preview.</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_mullvad_body">A privacy-focused VPN provider. It costs €5 per month and uses account numbers instead of email addresses. Enter an account number, then choose a country in TrackerControl.</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_ivpn_body">A privacy-focused VPN provider with WireGuard support. Enter an IVPN account ID, then choose a country in TrackerControl.</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_intro_wireguard_body">Use this if you already have a WireGuard config from another VPN provider, your own server, or your workplace.</string>
+    <string name="vpn_enter_mullvad_account">Enter account number</string>
+    <string name="vpn_enter_ivpn_account">Enter account ID</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_settings">Mullvad settings</string>
+    <string name="vpn_settings_title">Mullvad settings</string>
+    <string name="vpn_ivpn_settings">IVPN settings</string>
+    <string name="vpn_ivpn_settings_title">IVPN settings</string>
+    <string name="vpn_account_number">Account: %s</string>
+    <string name="vpn_account_not_set">Account: not set</string>
+    <string name="vpn_account_show">Show</string>
+    <string name="vpn_account_hide">Hide</string>
+    <string name="vpn_account_change">Change</string>
+    <string name="vpn_account_done">Done</string>
+    <string name="vpn_account_cancel">Cancel</string>
+    <string name="vpn_mullvad_intro">Enter your Mullvad account number. It is saved on this device.</string>
+    <string name="vpn_mullvad_account_note">This account is used for Mullvad country connections.</string>
+    <string name="vpn_get_mullvad_account">Get Mullvad account</string>
+    <string name="vpn_get_ivpn_account">Get IVPN account</string>
+    <string name="vpn_account_hint">Mullvad account number</string>
+    <string name="vpn_ivpn_intro">Enter your IVPN account ID. It is saved on this device.</string>
+    <string name="vpn_ivpn_captcha_intro">IVPN needs CAPTCHA verification before creating a WireGuard session.</string>
+    <string name="vpn_ivpn_account_hint">IVPN account ID</string>
+    <string name="vpn_ivpn_captcha_hint">CAPTCHA text</string>
+    <string name="vpn_account_save">Save</string>
+    <string name="vpn_account_saved">Account saved</string>
+    <string name="vpn_wireguard_profiles">WireGuard profiles</string>
+    <string name="vpn_no_wireguard_profiles">No custom WireGuard profiles yet</string>
+    <string name="vpn_import_wireguard_profile">Import WireGuard profile</string>
+    <string name="vpn_manage_wireguard_profiles">Manage WireGuard profiles</string>
+    <string name="vpn_country_load_failed">Could not load %1$s countries: %2$s</string>
+    <string name="vpn_country_load_failed_short">Could not load countries</string>
+    <string name="vpn_choose_country_first">Choose a country first</string>
+    <string name="vpn_choose_profile_first">Choose a WireGuard profile first</string>
+    <string name="vpn_setup_required">Set up Mullvad or import a WireGuard profile first</string>
+    <string name="vpn_loading_countries">Loading countries...</string>
+    <string name="vpn_generating">Creating WireGuard profile...</string>
+    <string name="vpn_generation_failed">VPN setup failed: %s</string>
+    <string name="vpn_retry">Retry</string>
+    <string name="vpn_country_selected">OK</string>
     <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
     <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
     <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>
+    <string name="msg_wg_recovery_failed">WireGuard stopped responding after wake. TrackerControl is trying to reconnect, and internet access may remain blocked until WireGuard recovers.</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>
 
@@ -246,7 +337,6 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_queue">TrackerControl is busy</string>
     <string name="msg_update">Update available, tap to download</string>
     <string name="msg_usage">You can allow (greenish) or deny (reddish) Wi-Fi or mobile internet access by tapping on the icons next to an app</string>
-    <string name="msg_whitelist">Internet access is allowed by default (blacklist mode), this can be changed in the settings</string>
     <string name="msg_push">Incoming (push) messages are mostly handled by the system component Play services, which is allowed internet access by default</string>
     <string name="msg_system">Managing all (system) apps can be enabled in the settings</string>
     <string name="msg_issue">Please describe the problem and indicate the time of the problem:</string>
@@ -429,7 +519,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
+I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to confirm whether it is processing any personal data about me.\n
 If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
 \n
 • a copy of my personal data;\n
@@ -452,7 +542,7 @@ Sincerely,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
+I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to erase the following personal data it processes about me without undue delay:\n
 • All data.\n
 \n
 The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n

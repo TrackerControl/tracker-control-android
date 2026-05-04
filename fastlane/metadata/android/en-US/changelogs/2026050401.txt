@@ -1,0 +1,5 @@
+- New VPN preview: Route filtered traffic through Mullvad, IVPN, or a custom WireGuard profile.
+- VPN tab: Choose a provider, select a country, and manage provider accounts from one place.
+- Custom WireGuard profiles: Import, save, select, and delete configs from other providers or your own server.
+- Improved privacy defaults: TrackerControl still filters locally first, with Secure DNS paused when WireGuard provides DNS.
+- Better reliability: Improved WireGuard egress, DNS handling, key rotation, and network reload behavior.

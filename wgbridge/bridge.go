@@ -15,9 +15,15 @@
 package wgbridge
 
 import (
+	"bytes"
+	"crypto/ecdh"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
 
 	"golang.org/x/sys/unix"
@@ -38,12 +44,81 @@ type Logger interface {
 	Errorf(format string)
 }
 
+// DnsRecorder receives DNS answers observed on decrypted inbound packets.
+// It is passive: TrackerControl uses this mapping later when deciding on app
+// connections, but the DNS response is not blocked or rewritten here.
+type DnsRecorder interface {
+	RecordDns(qname string, aname string, resource string, ttl int32)
+}
+
 // Tunnel is the gomobile-bound handle. Stop() must be called from Java when
 // the VpnService is torn down.
 type Tunnel struct {
 	dev    *device.Device
 	tunDev *socketpairTun
 	stop   sync.Once
+}
+
+// SendKeepalive sends one WireGuard keepalive on peers with an active keypair.
+func (t *Tunnel) SendKeepalive() {
+	t.dev.SendKeepalivesToPeersWithCurrentKeypair()
+}
+
+// SetConfig reapplies UAPI configuration to the running device.
+func (t *Tunnel) SetConfig(uapiConfig string) error {
+	return t.dev.IpcSet(uapiConfig)
+}
+
+// LatestHandshakeMillis returns the newest peer handshake timestamp in epoch millis.
+func (t *Tunnel) LatestHandshakeMillis() (int64, error) {
+	var buf bytes.Buffer
+	if err := t.dev.IpcGetOperation(&buf); err != nil {
+		return 0, err
+	}
+
+	var sec, nsec int64
+	var latest int64
+	for _, line := range strings.Split(buf.String(), "\n") {
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		switch key {
+		case "last_handshake_time_sec":
+			sec, _ = strconv.ParseInt(value, 10, 64)
+		case "last_handshake_time_nsec":
+			nsec, _ = strconv.ParseInt(value, 10, 64)
+			if sec > 0 {
+				if ts := sec*1000 + nsec/1000000; ts > latest {
+					latest = ts
+				}
+			}
+			sec, nsec = 0, 0
+		}
+	}
+	return latest, nil
+}
+
+// GeneratePrivateKey returns a base64 WireGuard private key.
+func GeneratePrivateKey() (string, error) {
+	key, err := ecdh.X25519().GenerateKey(rand.Reader)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(key.Bytes()), nil
+}
+
+// PublicKey derives the base64 WireGuard public key for a base64 private key.
+func PublicKey(privateKey string) (string, error) {
+	raw, err := base64.StdEncoding.DecodeString(privateKey)
+	if err != nil {
+		return "", fmt.Errorf("decode private key: %w", err)
+	}
+	key, err := ecdh.X25519().NewPrivateKey(raw)
+	if err != nil {
+		return "", fmt.Errorf("private key: %w", err)
+	}
+	return base64.StdEncoding.EncodeToString(key.PublicKey().Bytes()), nil
 }
 
 // StartTunnel boots wireguard-go.
@@ -55,10 +130,11 @@ type Tunnel struct {
 //	mtu           payload MTU (typically 1420).
 //	protect       Java callback to VpnService.protect(int).
 //	logger        Java callback for wireguard-go log lines (may be nil).
+//	dnsRecorder   Java callback for passive DNS answer recording (may be nil).
 //
 // The supplied fds are duplicated; Stop() closes only our duplicates.
 func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu int32,
-	protect Protector, logger Logger) (*Tunnel, error) {
+	protect Protector, logger Logger, dnsRecorder DnsRecorder) (*Tunnel, error) {
 
 	if protect == nil {
 		return nil, errors.New("protect must not be nil")
@@ -80,9 +156,11 @@ func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu in
 
 	t := &socketpairTun{
 		rxFile: os.NewFile(uintptr(rxDup), "wg-outbound-rx"),
+		rxFd:   rxDup,
 		txFd:   txDup,
 		mtu:    int(mtu),
 		events: make(chan tun.Event, 4),
+		dns:    dnsRecorder,
 	}
 	t.events <- tun.EventUp
 
@@ -186,9 +264,11 @@ func (t *Tunnel) Stop() {
 // the VpnService TUN fd.
 type socketpairTun struct {
 	rxFile *os.File // outbound: C side writes; we Read here
+	rxFd   int      // same fd as rxFile; used for opportunistic non-blocking drains
 	txFd   int      // inbound:  we write decrypted IP packets to the VpnService TUN
 	mtu    int
 	events chan tun.Event
+	dns    DnsRecorder
 	mu     sync.Mutex
 	closed bool
 }
@@ -197,7 +277,7 @@ func (t *socketpairTun) File() *os.File           { return nil }
 func (t *socketpairTun) MTU() (int, error)        { return t.mtu, nil }
 func (t *socketpairTun) Name() (string, error)    { return "wgbridge", nil }
 func (t *socketpairTun) Events() <-chan tun.Event { return t.events }
-func (t *socketpairTun) BatchSize() int           { return 1 }
+func (t *socketpairTun) BatchSize() int           { return conn.IdealBatchSize }
 
 func (t *socketpairTun) Read(bufs [][]byte, sizes []int, offset int) (int, error) {
 	n, err := t.rxFile.Read(bufs[0][offset:])
@@ -205,12 +285,34 @@ func (t *socketpairTun) Read(bufs [][]byte, sizes []int, offset int) (int, error
 		return 0, err
 	}
 	sizes[0] = n
-	return 1, nil
+	count := 1
+
+	for count < len(bufs) {
+		n, err = unix.Read(t.rxFd, bufs[count][offset:])
+		if err != nil {
+			if isWouldBlock(err) {
+				break
+			}
+			// Preserve packets already read; the next blocking read will surface
+			// persistent fd errors to wireguard-go.
+			break
+		}
+		sizes[count] = n
+		count++
+	}
+
+	return count, nil
+}
+
+func isWouldBlock(err error) bool {
+	return errors.Is(err, unix.EAGAIN) || errors.Is(err, unix.EWOULDBLOCK)
 }
 
 func (t *socketpairTun) Write(bufs [][]byte, offset int) (int, error) {
 	for i, b := range bufs {
-		if _, err := unix.Write(t.txFd, b[offset:]); err != nil {
+		packet := b[offset:]
+		inspectDNSResponse(packet, t.dns)
+		if _, err := unix.Write(t.txFd, packet); err != nil {
 			return i, err
 		}
 	}

@@ -7,4 +7,8 @@
         android:id="@+id/nav_apps"
         android:icon="@drawable/ic_apps"
         android:title="@string/tab_apps" />
+    <item
+        android:id="@+id/nav_vpn"
+        android:icon="@drawable/ic_shield_check"
+        android:title="@string/tab_vpn" />
 </menu>

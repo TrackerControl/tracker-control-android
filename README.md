@@ -9,6 +9,10 @@
 TrackerControl is an Android app that allows users to monitor and control the widespread,
 ongoing, hidden data collection in mobile apps about user behaviour ('tracking').
 
+TrackerControl can also route filtered traffic through a remote VPN endpoint using
+its experimental WireGuard support, with built-in setup for Mullvad and IVPN and
+support for custom WireGuard profiles.
+
 To detect tracking, TrackerControl combines the power of the *Disconnect blocklist*, 
 used by Firefox, the *DuckDuckGo Tracker Radar* for mobile apps, and of our in-house blocklist, created *from analysing ~2&nbsp;000&nbsp;000 apps*! **To protect your privacy from your ISP, you can also optionally encrypt your DNS traffic using DNS-over-HTTPS (DoH).**
 Additionally, TrackerControl supports custom blocklists and uses the signatures from [ClassyShark3xodus](https://f-droid.org/en/packages/com.oF2pks.classyshark3xodus/)/[Exodus Privacy](https://exodus-privacy.eu.org/) for the analysis of tracker libraries within app code.
@@ -24,13 +28,14 @@ Under the hood, TrackerControl uses Android's VPN functionality,
 to analyse apps' network communications *locally on the Android device*.
 This is accomplished through a local VPN server, to enable network traffic analysis by TrackerControl.
 
-No root is required. Other VPNs or Android's "Private DNS" feature are not supported (due to Android limitations), but TrackerControl provides its own **Secure DNS (DNS-over-HTTPS / DoH)** feature to protect your DNS traffic. For users who want to combine tracker analysis with a remote VPN, TrackerControl also offers **experimental WireGuard support**, allowing filtered traffic to be tunnelled through a WireGuard endpoint of your choice.
+No root is required. Other VPN apps or Android's "Private DNS" feature are not supported alongside TrackerControl due to Android limitations, but TrackerControl provides its own **Secure DNS (DNS-over-HTTPS / DoH)** feature and optional **WireGuard tunnelling** for users who want remote VPN routing.
 By default, no external VPN server is used, to keep your data safe! TrackerControl even protects you
 against *DNS cloaking*, a popular technique to hide trackers in websites and apps.
 
 TrackerControl will always be free and open source, being a research project.
 
 ## Contents
+- [VPN Support](#vpn-support)
 - [Download / Installation](#download--installation)
 - [Example Use](#example-use)
 - [Contributing](#contributing)
@@ -43,6 +48,22 @@ TrackerControl will always be free and open source, being a research project.
 - [Credits](#credits)
 - [License](#license)
 - [Citation](#citation)
+
+## VPN Support
+
+TrackerControl's built-in VPN remains local by default: it analyses and filters traffic on your device without sending traffic to an external VPN provider. The experimental WireGuard support adds an optional second step for users who also want remote VPN tunnelling after TrackerControl has applied its local tracker analysis and blocking.
+
+The VPN tab supports three modes:
+
+| Mode | What it does |
+| :--- | :--- |
+| **Mullvad** | Creates WireGuard profiles from a Mullvad account number, lets you choose a relay country, and stores only the account number and generated WireGuard profile data locally. |
+| **IVPN** | Creates WireGuard profiles from an IVPN account ID, including CAPTCHA handling when IVPN requires it, and lets you choose a relay country. |
+| **WireGuard** | Imports and manages custom WireGuard configurations from another VPN provider, your own server, or a workplace endpoint. |
+
+When WireGuard tunnelling is enabled, TrackerControl still uses Android's VPN service for local filtering, then routes allowed traffic through the selected WireGuard endpoint. Secure DNS (DoH) is automatically paused when the active WireGuard profile provides DNS, because DNS queries are then handled through the WireGuard tunnel instead. Provider-generated WireGuard keys can be rotated from advanced settings.
+
+This feature is experimental. Android only allows one active VPN service at a time, so TrackerControl cannot run alongside a separate VPN app.
 
 ## Download / Installation
 *Disclaimer: The usage of this app is at your own risk. No app can offer 100% protection against tracking. Analysis results shown within the app might be inaccurate.*
@@ -100,7 +121,7 @@ TrackerControl is mainly designed to help you investigate the tracking practices
 
 Mobile trackers rely on the sending of personal data over the internet. This is why tracking can be detected and analysed from apps' network traffic. This is the core functionality of TrackerControl. The advantage of this approach over tracker library analysis is that actual evidence of data sharing is gathered; by contrast, when analysing solely the presence of tracking libraries in apps, some of these libraries may never be activated by an app at run-time.
 
-TrackerControl analyses network traffic locally on the device using DNS-based detection. TLS Server Name Indication (SNI) extraction is disabled by default because it requires connecting to tracker servers, leaking the user's IP address. SNI can be re-enabled from the advanced settings for research purposes.
+TrackerControl analyses network traffic locally on the device using DNS-based detection. TLS Server Name Indication (SNI) extraction is disabled by default because it requires connecting to tracker servers, leaking the user's IP address. SNI is enabled only when Research mode is turned on for measurement purposes.
 
 You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
 

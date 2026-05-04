@@ -1,5 +1,21 @@
 # TODO
 
+## Secure DNS battery and simple protection health
+
+Secure DNS is currently Java-based and can make the phone warm while the screen is off. Do **not** make DoH a stronger default until its idle behavior is profiled and fixed.
+
+Investigate:
+- whether the local DNS proxy / DoH client stays active when there is no DNS traffic
+- whether retries, circuit-breaker checks, network-change handling, or idle HTTPS connections cause wakeups while the screen is off
+- whether DNS caching is effective enough to avoid repeated upstream DoH queries
+- whether DoH duplicates work or conflicts with WireGuard-provided DNS
+- whether system-app routing through TC/DoH is contributing to wakeups
+
+Desired product direction after the battery issue is fixed:
+- add a simple protection health screen showing tracker blocking, Secure DNS, WireGuard, Android Private DNS conflict, and battery/background permission status
+- keep recommended defaults simple: low-battery tracker blocking by default; Secure DNS as a clearly explained stronger privacy option until its screen-off cost is low
+- avoid exposing Rethink-style expert configuration unless it directly helps users recover from breakage
+
 ## ParcelFileDescriptor Race Fix
 
 The VPN file descriptor can be closed by `stopVPN()` while native code in `jni_run()` is still using it, causing EBADF errors and VPN tunnel failures — typically triggered by network transitions (WiFi/mobile).

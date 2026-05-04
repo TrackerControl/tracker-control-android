@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
+
+    <TextView
+        android:id="@+id/vpnCountryFlag"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textAppearance="@style/TextMedium" />
+
+    <TextView
+        android:id="@+id/vpnCountryName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextMedium" />
+
+    <ProgressBar
+        android:id="@+id/vpnCountryProgress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/vpnCountryCheck"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/vpn_country_selected"
+        android:textAppearance="@style/TextMedium"
+        android:textColor="?attr/colorAccent"
+        android:visibility="invisible" />
+</LinearLayout>

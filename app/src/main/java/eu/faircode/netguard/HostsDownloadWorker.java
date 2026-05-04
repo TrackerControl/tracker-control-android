@@ -77,6 +77,8 @@ public class HostsDownloadWorker extends Worker {
 
             try {
                 URL url = new URL(item.url);
+                if (!"https".equalsIgnoreCase(url.getProtocol()))
+                    throw new IOException("Only HTTPS blocklist URLs are supported");
                 connection = url.openConnection();
                 connection.setRequestProperty("Accept-Encoding", "gzip");
                 connection.setConnectTimeout(15000);
@@ -189,6 +191,6 @@ public class HostsDownloadWorker extends Worker {
                 .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true);
 
-        androidx.core.app.NotificationManagerCompat.from(context).notify(2024, builder.build());
+        Util.notify(context, 2024, builder.build());
     }
 }

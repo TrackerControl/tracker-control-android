@@ -59,6 +59,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -88,6 +89,7 @@ import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.TimelineFragment;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.vpn.VpnFragment;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -120,7 +122,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private BottomNavigationView bottomNav;
     private View llAppsContent;
     private View timelineContainer;
-    private boolean showingTimeline = false;
+    private View vpnContainer;
+    private int currentTab = R.id.nav_timeline;
+    private boolean vpnFragmentRequested = false;
     private AlertDialog dialogVpn = null;
     private AlertDialog dialogLegend = null;
     private AlertDialog dialogAbout = null;
@@ -289,16 +293,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             Log.i(TAG, "Always-on=" + alwaysOn);
                             if (!TextUtils.isEmpty(alwaysOn))
                                 if (getPackageName().equals(alwaysOn)) {
-                                    if (prefs.getBoolean("filter", true)) {
-                                        int lockdown = Settings.Secure.getInt(getContentResolver(),
-                                                "always_on_vpn_lockdown", 0);
-                                        Log.i(TAG, "Lockdown=" + lockdown);
-                                        if (lockdown != 0) {
-                                            swEnabled.setChecked(false);
-                                            Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown,
-                                                    Toast.LENGTH_LONG).show();
-                                            return;
-                                        }
+                                    int lockdown = Settings.Secure.getInt(getContentResolver(),
+                                            "always_on_vpn_lockdown", 0);
+                                    Log.i(TAG, "Lockdown=" + lockdown);
+                                    if (lockdown != 0) {
+                                        swEnabled.setChecked(false);
+                                        Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown,
+                                                Toast.LENGTH_LONG).show();
+                                        return;
                                     }
                                 } else {
                                     swEnabled.setChecked(false);
@@ -376,9 +378,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setCustomView(actionView);
 
-        // Bottom navigation: Timeline / Apps
+        // Bottom navigation: Timeline / Apps / VPN
         llAppsContent = findViewById(R.id.llApps);
         timelineContainer = findViewById(R.id.timelineContainer);
+        vpnContainer = findViewById(R.id.vpnContainer);
         bottomNav = findViewById(R.id.bottomNav);
 
         if (savedInstanceState == null) {
@@ -391,6 +394,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         bottomNav.setOnItemSelectedListener(item -> {
             selectTab(item.getItemId());
             return true;
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (currentTab != R.id.nav_apps && bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_apps);
+                    return;
+                }
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
         });
 
         int initialTab;
@@ -687,7 +702,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         row[i] = data.getString(i);
                     }
 
-                    String hostname = data.getString(data.getColumnIndex("daddr"));
+                    String hostname = data.getString(data.getColumnIndexOrThrow("daddr"));
                     Tracker tracker = TrackerList.findTracker(hostname);
                     if (tracker != null) {
                         row[data.getColumnNames().length] = tracker.getName();
@@ -698,7 +713,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     }
 
                     try {
-                        String pkg = pm.getNameForUid(data.getInt(data.getColumnIndex("uid")));
+                        String pkg = pm.getNameForUid(data.getInt(data.getColumnIndexOrThrow("uid")));
                         ApplicationInfo info = pm.getApplicationInfo(pkg, 0);
                         String name = pm.getApplicationLabel(info).toString();
 
@@ -753,13 +768,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (swEnabled.isChecked() != enabled)
                 swEnabled.setChecked(enabled);
 
-        } else if ("whitelist_wifi".equals(name) ||
-                "screen_on".equals(name) ||
-                "screen_wifi".equals(name) ||
-                "whitelist_other".equals(name) ||
-                "screen_other".equals(name) ||
-                "whitelist_roaming".equals(name) ||
-                "show_user".equals(name) ||
+        } else if ("show_user".equals(name) ||
                 "show_system".equals(name) ||
                 "show_nointernet".equals(name) ||
                 "show_unprotected".equals(name) ||
@@ -769,14 +778,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if ("sort".equals(name))
                 adapter.updateSortPreference(prefs.getString("sort", "trackers_week"));
             updateApplicationList(null);
-
-            final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);
-            boolean screen_on = prefs.getBoolean("screen_on", true);
-            boolean whitelist_wifi = prefs.getBoolean("whitelist_wifi", false);
-            boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
-            boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
-            llWhitelist.setVisibility(
-                    !(whitelist_wifi || whitelist_other) && screen_on && hintWhitelist ? View.VISIBLE : View.GONE);
 
         } else if ("manage_system".equals(name)) {
             invalidateOptionsMenu();
@@ -867,11 +868,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 // Search filters the app list, so jump to the Apps tab when
-                // the user expands it from Timeline. Post the switch so the
+                // the user expands it from another tab. Post the switch so the
                 // SearchView finishes expanding (and grabs focus + opens
                 // the keyboard) on the current frame; otherwise the layout
                 // toggle in selectTab pre-empts focus before the IME shows.
-                if (showingTimeline && bottomNav != null) {
+                if (currentTab != R.id.nav_apps && bottomNav != null) {
                     final BottomNavigationView nav = bottomNav;
                     nav.post(() -> nav.setSelectedItemId(R.id.nav_apps));
                 }
@@ -945,13 +946,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public boolean onPrepareOptionsMenu(Menu menu) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Filter/sort are list-specific; hide them on the Timeline tab.
-        // Search stays visible — clicking it on Timeline jumps to the Apps tab.
+        // Filter/sort are list-specific; hide them outside Apps. Search stays
+        // visible — clicking it on another tab jumps to Apps.
         MenuItem filterItem = menu.findItem(R.id.menu_filter);
         MenuItem sortItem = menu.findItem(R.id.menu_sort);
-        if (filterItem != null) filterItem.setVisible(!showingTimeline);
-        if (sortItem != null) sortItem.setVisible(!showingTimeline);
-        if (showingTimeline)
+        boolean showingApps = currentTab == R.id.nav_apps;
+        if (filterItem != null) filterItem.setVisible(showingApps);
+        if (sortItem != null) sortItem.setVisible(showingApps);
+        if (!showingApps)
             return super.onPrepareOptionsMenu(menu);
 
         if (prefs.getBoolean("manage_system", false)) {
@@ -1075,15 +1077,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void selectTab(int itemId) {
         boolean timeline = itemId == R.id.nav_timeline;
-        showingTimeline = timeline;
-        llAppsContent.setVisibility(timeline ? View.GONE : View.VISIBLE);
+        boolean vpn = itemId == R.id.nav_vpn;
+        currentTab = itemId;
+        if (vpn)
+            ensureVpnFragment();
+        llAppsContent.setVisibility(!timeline && !vpn ? View.VISIBLE : View.GONE);
         timelineContainer.setVisibility(timeline ? View.VISIBLE : View.GONE);
+        vpnContainer.setVisibility(vpn ? View.VISIBLE : View.GONE);
 
-        // Collapse SearchView only when leaving Apps for Timeline. When the
-        // user opens the SearchView from Timeline we switch *to* Apps; in
+        // Collapse SearchView only when leaving Apps. When the user opens the
+        // SearchView from another tab we switch *to* Apps; in
         // that path we must NOT collapse, otherwise the freshly-expanded
         // SearchView is torn down before it can take focus.
-        if (timeline && menuSearch != null && menuSearch.isActionViewExpanded())
+        if ((timeline || vpn) && menuSearch != null && menuSearch.isActionViewExpanded())
             menuSearch.collapseActionView();
 
         // No invalidateOptionsMenu(): filter/sort live in the overflow,
@@ -1092,33 +1098,20 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // SearchView mid-expand, which would also drop keyboard focus.
     }
 
-    @Override
-    public void onBackPressed() {
-        if (showingTimeline && bottomNav != null) {
-            bottomNav.setSelectedItemId(R.id.nav_apps);
+    private void ensureVpnFragment() {
+        if (getSupportFragmentManager().findFragmentById(R.id.vpnContainer) != null)
             return;
-        }
-        super.onBackPressed();
+        if (vpnFragmentRequested)
+            return;
+        vpnFragmentRequested = true;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.vpnContainer, new VpnFragment())
+                .commit();
     }
 
     private void showHints() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Hint white listing
-        final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);
-        Button btnWhitelist = findViewById(R.id.btnWhitelist);
-        boolean whitelist_wifi = prefs.getBoolean("whitelist_wifi", false);
-        boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
-        boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
-        llWhitelist.setVisibility(
-                !(whitelist_wifi || whitelist_other) && hintWhitelist ? View.VISIBLE : View.GONE);
-        btnWhitelist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefs.edit().putBoolean("hint_whitelist", false).apply();
-                llWhitelist.setVisibility(View.GONE);
-            }
-        });
 
         // Hint push messages
         final LinearLayout llPush = findViewById(R.id.llPush);

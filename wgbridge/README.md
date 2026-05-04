@@ -84,17 +84,21 @@ After `gomobile bind`, the AAR exposes:
 package net.kollnig.missioncontrol.wgbridge;
 
 class Wgbridge {
-    static Tunnel startTunnel(
-        String uapiConfig,
-        int outboundRxFd,
-        int tunWriteFd,
-        int mtu,
-        Protector protect,
-        Logger logger) throws Exception;
-}
-
-interface Protector { boolean protect(int fd); }
-interface Logger    { void verbosef(String s); void errorf(String s); }
+	    static Tunnel startTunnel(
+	        String uapiConfig,
+	        int outboundRxFd,
+	        int tunWriteFd,
+	        int mtu,
+	        Protector protect,
+	        Logger logger,
+	        DnsRecorder dnsRecorder) throws Exception;
+	    static String generatePrivateKey() throws Exception;
+	    static String publicKey(String privateKey) throws Exception;
+	}
+	
+	interface Protector { boolean protect(int fd); }
+	interface Logger    { void verbosef(String s); void errorf(String s); }
+	interface DnsRecorder { void recordDns(String qname, String aname, String resource, int ttl); }
 
 class Tunnel { void stop(); }
 ```

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.jetbrains.kotlin.android'
 
 // --- WireGuard bridge (built from source via gomobile) ---
 // Produces app/build/wgbridge/wgbridge.aar from wgbridge/*.go on demand.
@@ -61,12 +60,9 @@ tasks.register('wgbridgeBind') {
 
         // Ask Go for GOPATH so `gomobile` resolves; also add Go's own dir to
         // PATH for downstream tools the binding might invoke (cgo, etc).
-        def gopathStream = new ByteArrayOutputStream()
-        exec {
+        def gopath = providers.exec {
             commandLine goBin, 'env', 'GOPATH'
-            standardOutput = gopathStream
-        }
-        def gopath = gopathStream.toString().trim()
+        }.standardOutput.asText.get().trim()
         def goDir  = file(goBin).parent
 
         def env = new HashMap<String, String>(System.getenv())
@@ -80,18 +76,18 @@ tasks.register('wgbridgeBind') {
             // does the actual Java <-> Go interface generation. `gomobile
             // init` used to install gobind for you but on recent versions
             // we install it explicitly so the failure mode is clearer.
-            exec {
+            providers.exec {
                 environment env
                 commandLine goBin, 'install',
                         "golang.org/x/mobile/cmd/gomobile@${gomobileVersion}",
                         "golang.org/x/mobile/cmd/gobind@${gomobileVersion}"
-            }
+            }.result.get().assertNormalExitValue()
             if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
                 throw new GradleException("Installed gomobile/gobind but ${gopath}/bin still missing one of them.")
             }
         }
 
-        exec {
+        providers.exec {
             workingDir wgbridgeSrcDir
             environment env
             commandLine gomobileBin, 'bind',
@@ -101,7 +97,7 @@ tasks.register('wgbridgeBind') {
                     '-ldflags', '-extldflags "-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"',
                     '-o', wgbridgeAar.absolutePath,
                     '.'
-        }
+        }.result.get().assertNormalExitValue()
     }
 }
 
@@ -112,7 +108,7 @@ afterEvaluate {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
         applicationId "net.kollnig.missioncontrol"
@@ -137,7 +133,7 @@ android {
             }
         }
 
-        ndkVersion "27.2.12479018"
+        ndkVersion = "27.2.12479018"
         
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
@@ -199,12 +195,6 @@ android {
         }
     }
 
-    applicationVariants.configureEach { variant ->
-        variant.outputs.configureEach { output ->
-            outputFileName = "TrackerControl-${variant.name}-latest.apk"
-        }
-    }
-
     signingConfigs {
         release {
             enableV1Signing = true
@@ -237,21 +227,27 @@ android {
     androidResources {
         generateLocaleConfig = true
     }
-    kotlinOptions {
-        jvmTarget = '17'
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            output.outputFileName.set("TrackerControl-${variant.name}-latest.apk")
+        }
     }
 }
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.18.0'
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation files(wgbridgeAar)
 
     // https://developer.android.com/jetpack/androidx/releases/
-    implementation 'androidx.activity:activity:1.9.3'
+    implementation 'androidx.activity:activity:1.13.0'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
@@ -260,8 +256,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.work:work-runtime:2.11.2'
-    implementation 'com.google.guava:guava:33.5.0-android'
-    annotationProcessor 'androidx.annotation:annotation:1.9.1'
+    implementation 'com.google.guava:guava:33.6.0-android'
+    annotationProcessor 'androidx.annotation:annotation:1.10.0'
 
     // fix errors with libraries
     def lifecycle_version = '2.10.0'
@@ -269,7 +265,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     // https://bumptech.github.io/glide/
-    def glide_version = "5.0.5"
+    def glide_version = "5.0.7"
     implementation("com.github.bumptech.glide:glide:$glide_version") {
         exclude group: "com.android.support"
     }

@@ -52,7 +52,6 @@
     <string name="setting_reload_onconnectivity">Laadi uuesti igal välisühenduse muutumisel</string>
     <string name="setting_log_app">Otsi uusi jälitajaid</string>
     <string name="setting_filter">Blokeeri jälitajaid</string>
-    <string name="setting_filter_udp">Blokeeri jälitajaid UDP-protokolli alusel</string>
     <string name="setting_track_usage">Jälgi võrgukasutust</string>
     <string name="setting_reset_usage">Lähtesta võrgukasutuse andmed</string>
     <string name="setting_block_domains">Kasuta hosts-faili</string>
