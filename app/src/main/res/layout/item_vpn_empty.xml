@@ -1,0 +1,9 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vpnEmptyText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="24dp"
+    android:text="@string/vpn_no_wireguard_profiles"
+    android:textAppearance="@style/TextSmall"
+    android:textColor="?attr/colorOff" />
