@@ -47,6 +47,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import eu.faircode.netguard.ActivitySettings;
 import eu.faircode.netguard.ServiceSinkhole;
 
 public class VpnFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -580,7 +581,15 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 refreshUi();
             });
 
-            holder.settings.setOnClickListener(v -> showSettingsDialog());
+            holder.settings.setContentDescription(getString(isWireGuardMode()
+                    ? R.string.menu_settings
+                    : R.string.vpn_settings));
+            holder.settings.setOnClickListener(v -> {
+                if (isWireGuardMode())
+                    startActivity(new Intent(requireContext(), ActivitySettings.class));
+                else
+                    showSettingsDialog();
+            });
 
             if (enabled && activeMullvad && !TextUtils.isEmpty(countryName)) {
                 holder.flag.setText(flagEmoji(countryCode));
