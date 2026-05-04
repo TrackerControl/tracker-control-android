@@ -90,7 +90,6 @@
     <string name="setting_log_app">Buscar novos rastreadores</string>
     <string name="setting_log_logcat">Pesquisa</string>
     <string name="setting_filter">Bloquear rastreadores</string>
-    <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_handover">Transição VPN automática ao recarregar</string>
     <string name="setting_lockdown">Bloqueio total de tráfego</string>
     <string name="setting_track_usage">Rastrear uso da rede</string>
@@ -182,7 +181,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Atualização disponível, toque para baixar</string>
     <string name="msg_usage">Você pode permitir (verde) ou negar (vermelho) Wi-Fi ou acesso à internet móvel clicando nos ícones ao lado de um aplicativo</string>
-    <string name="msg_whitelist">O acesso à Internet é permitido por padrão (modo de lista negra), isso pode ser alterado nas configurações</string>
     <string name="msg_push">Mensagens recebidas (push) são normalmente controladas pelo componente do sistema Google Play Services, ao qual é permitido o acesso à Internet por padrão</string>
     <string name="msg_system">Gerenciar todos (sistema) os apps pode ser habilitado nas configurações</string>
     <string name="msg_issue">Por favor, descreva o problema e indique o momento em que ocorreu:</string>
@@ -307,40 +305,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Solicitação de acesso ao assunto GDPR</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
-\n
-• a copy of my personal data;\n
-• the purposes of the processing;\n
-• the categories of personal data concerned;\n
-• the recipients you disclose my personal data to and the safeguards you provide;\n
-• the retention period for storing my personal data or the criteria used for determining this period;\n
-• information about the source of my personal data; and\n
-• the existence of automated decision-making (including profiling), and if so:\n
-    - the logic involved in the decision-making process;\n
-    - the significance and the envisaged consequences for me;\n
-    - the steps you have taken to prevent errors, bias and discrimination; and\n
-    - explain how I can express my point of view and challenge a decision.\n
-\n
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
-• All data.\n
-\n
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
     <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de parar. Você se importaria em nos enviar um email com detalhes?</string>
     <string name="crash_dialog_comment">Algum comentário?</string>
     <string name="instructions_monitoring_private_dns">Alterne o interruptor e interaja com alguns aplicativos. O DNS privado deve estar desativado.</string>
