@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Last inn på nytt ved tilkoblingsendring</string>
     <string name="setting_log_app">Søk etter nye sporere</string>
     <string name="setting_filter">Blokker sporing</string>
-    <string name="setting_filter_udp">Blokker sporing på UDP</string>
     <string name="setting_handover">Sømløs VPN-overlevering ved omlasting</string>
     <string name="setting_lockdown">Blokker trafikk</string>
     <string name="setting_track_usage">Spor nettverksbruk</string>
@@ -135,7 +134,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="msg_queue">TrackerControl er opptatt</string>
     <string name="msg_update">En oppdatering er tilgjengelig, trykk for å laste ned</string>
     <string name="msg_usage">Du kan tillate (grønn) eller avslå (rød) tilgang til Wi-Fi eller mobilnett ved å trykke på ikonene ved siden av en app</string>
-    <string name="msg_whitelist">Som standard er internettilgang tillat (svarteliste-modus). Dette kan endres i instillingene</string>
     <string name="msg_push">Innkommende (push) meldinger er hovedsakelig håndtert av system-komponenten Google Play Services, som er tillatt internettilgang som standard</string>
     <string name="msg_system">Administrasjon av alle (system) apper kan aktiveres i innstillingene</string>
     <string name="msg_issue">Vennligst beskriv problemet og angi tidspunktet for problemet:</string>
@@ -257,40 +255,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Forespørsel om GDPR-datatilgang</string>
-    <string name="body_request_data"><![CDATA[Til de det måtte gjelde:\n
-\n
-\n
-Jeg ber deg, som datakontrolleren for Android-appen %s (ID: %s), å bekrefte om den behandler personopplysninger om meg.\n
-Dersom dette er tilfelle, vennligst oppgi alle påkrevde opplysninger angitt i artikkel 15 i EUs generelle personvernforordning (GDPR), inkludert:\n
-\n
-• En kopi av mine personopplysninger;\n
-• Formålene med behandlingen;\n
-• Kategoriene av personlige opplysninger.\n
-• Hvilke mottakerne du deler mine personopplysninger med og sikkerhetsanordningene du bruker.\n
-• Oppbevaringsperioden du lagrer mine personlige data eller kriteriene som brukes for å bestemme denne perioden.\n
-• informasjon om kilden til min personlige data; og\n
-• Om det finnes automatiserte beslutninger (inkludert profilering), og hvis det:\n
-    - logikken som er involvert i beslutningsprosessen;\n
-    - betydningen og den planlagte konsekvensen for meg;\n
-    - trinnene du har iverksatt for å forhindre feil, fornemmelse og diskriminering. og\n
-    - forklare hvordan jeg kan uttrykke mitt syn på og utfordre en avgjørelse.\n
-\n
-Denne forespørselen er knyttet til enhver behandling av mine personlige data fra deg, inkludert alle behandlere som behandler personopplysninger på vegne av deg.\n
-\n
-Oppgi ditt svar på en sikkert måte via e-post. Jeg ser frem til å motta svar innen en måned etter at du har mottatt min forespørsel.\n
-\n
-Vennlig hilsen\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Til den det måtte gjelde:\n
-\n
-\n
-Jeg påberoper meg retten til å slettes som angitt i artikkel 17 i EUs generelle personvernforordning (GDPR). Jeg ber deg, som datakontrolleren for Android-appen %s (ID: %s), å slette følgende personopplysninger den behandler om meg uten unødvendig forsinkelse:\n
-• Alle data.\n
-\n
-Bakgrunnen for min fjerning er at jeg trekker tilbake eller har trukket tilbake mitt samtykke til behandling av disse personlige dataene. Denne forespørselen omhandler all behandling av mine personlige opplysninger fra deg, inkludert eventuelle behandlere som behandler personopplysninger på vegne av deg.\n
-\n
-Vennligst oppgi ditt svar på en sikker måte via e-post. Jeg ser frem til å motta svar innen en måned etter at du har mottatt min forespørsel.\n
-\n
-Vennlig hilsen,\n\n]]></string>
     <string name="crash_dialog_text">Beklager. TrackerControl krasjet nettopp.. Kan du tenke deg å sende oss en e-post med detaljer?</string>
     <string name="crash_dialog_comment">Eventuelle kommentarer?</string>
     <string name="instructions_monitoring_private_dns">Slå av/på bryteren og bruk noen apper. Privat DNS må deaktiveres.</string>
