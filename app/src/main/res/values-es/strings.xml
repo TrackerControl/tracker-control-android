@@ -260,7 +260,7 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="body_request_data"><![CDATA[A quien corresponda:\n
 \n
 \n
-Le solicito, como controlador de datos de la aplicación %s de Android (ID: %s), para confirmar si está procesando alguno de mis datos personales.\n
+Le solicito, como controlador de datos de la aplicación %1$s de Android (ID: %2$s), para confirmar si está procesando alguno de mis datos personales.\n
 De ser así, por favor envíeme toda la información requerida en el artículo 15 del Reglamento general de protección de datos de la UE (RGPD), incluyendo:\n
 \n
 • una copia de mis datos personales;\n
@@ -283,7 +283,7 @@ Atentamente,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[A quien corresponda:\n
 \n
 \n
-Estoy invocando mi derecho a borrar como se especifica en el artículo 17 del Reglamento de Protección General de Datos de la UE (RGPD). Le solicito, como controlador de datos de la aplicación %s de Android (ID: %s), para borrar los siguientes datos personales que procesa sobre mí sin demora indebida:\n
+Estoy invocando mi derecho a borrar como se especifica en el artículo 17 del Reglamento de Protección General de Datos de la UE (RGPD). Le solicito, como controlador de datos de la aplicación %1$s de Android (ID: %2$s), para borrar los siguientes datos personales que procesa sobre mí sin demora indebida:\n
 • Todos los datos.\n
 \n
 La razón de mi solicitud de eliminación es que retiro o he retirado mi consentimiento para procesar los datos personales. Esta solicitud se refiere a cualquier tratamiento de mis datos personales por usted, incluyendo cualquier procesador que procese los datos personales en nombre de usted.\n

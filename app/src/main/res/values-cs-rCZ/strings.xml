@@ -285,7 +285,7 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="body_request_data"><![CDATA[Komu:\n
 \n
 \n
-Žádám vás, abyste jako správce údajů aplikace Android %s (ID: %s), potvrdil, zda o mně zpracovává nějaké osobní údaje.\n
+Žádám vás, abyste jako správce údajů aplikace Android %1$s (ID: %2$s), potvrdil, zda o mně zpracovává nějaké osobní údaje.\n
 Pokud ano, poskytněte mi prosím všechny požadované informace stanovené v článku 15 obecného nařízení EU o ochraně osobních údajů (GDPR), včetně:\n
 \n
 • kopie mých osobních údajů;\n
@@ -308,7 +308,7 @@ S pozdravem,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Komu:\n
 \n
 \n
-Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %s (ID: %s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
+Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %1$s (ID: %2$s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
 • Všechny údaje.\n
 \n
 Důvodem mé žádosti o odstranění je odvolání nebo odvolání mého souhlasu se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n

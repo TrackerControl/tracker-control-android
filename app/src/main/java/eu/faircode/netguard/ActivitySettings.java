@@ -512,6 +512,20 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             Preference screenDevelopment = screen.findPreference("screen_development");
             if (screenDevelopment != null)
                 screen.removePreference(screenDevelopment);
+        } else {
+            Preference rotateKeys = screen.findPreference("vpn_key_rotate_now");
+            if (rotateKeys != null)
+                rotateKeys.setOnPreferenceClickListener(preference -> {
+                    Toast.makeText(ActivitySettings.this,
+                            R.string.msg_vpn_key_rotation_started,
+                            Toast.LENGTH_LONG).show();
+                    net.kollnig.missioncontrol.wg.VpnKeyRotationManager.rotateAllForDebug(
+                            ActivitySettings.this,
+                            summary -> wgStatusHandler.post(() ->
+                                    Toast.makeText(ActivitySettings.this, summary,
+                                            Toast.LENGTH_LONG).show()));
+                    return true;
+                });
         }
     }
 

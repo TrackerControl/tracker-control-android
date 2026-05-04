@@ -3,7 +3,7 @@
     <string name="app_description">TrackerControl lader brugere overvåge og kontrollere den udbredte, løbende, og skjulte dataindsamling i mobilapps om brugeradfærd (\'tracking\').</string>
     <string name="app_android">TrackerControl kræver Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsager for mange nedbrud, hvilket kan medføre, at TrackerControl fjernes fra Google Play Butik. Derfor understøttes TrackerControl ikke, mens Xposed er installeret</string>
-    <string name="app_eula">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
+    <string name="app_eula" formatted="false">Brugen af denne app er på eget ansvar. Ingen app kan tilbyde 100% beskyttelse mod sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privatlivspolitik</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie-politik</a></string>
     <string name="channel_foreground">Kørende tjenester</string>
     <string name="channel_notify">Generelle notifikationer</string>

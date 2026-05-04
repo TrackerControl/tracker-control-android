@@ -76,6 +76,12 @@ public class IvpnProfileGenerator {
         }
     }
 
+    public static class ApiRejectedException extends IOException {
+        ApiRejectedException(String message) {
+            super(message);
+        }
+    }
+
     private static class Relay {
         String hostname;
         String countryCode;
@@ -124,6 +130,32 @@ public class IvpnProfileGenerator {
         String config = buildConfig(session.privateKey, session.address, relay);
         return new GeneratedProfile("IVPN - " + relay.countryName, config, account,
                 relay.countryCode, relay.countryName, relay.hostname, session);
+    }
+
+    public WgProfileManager.IvpnSession rotateSessionKey(WgProfileManager.IvpnSession session,
+                                                         String newPrivateKey,
+                                                         String newPublicKey,
+                                                         String connectedPublicKey)
+            throws Exception {
+        if (session == null || !session.isUsable())
+            throw new IllegalArgumentException("IVPN session is required");
+        if (TextUtils.isEmpty(newPrivateKey) || TextUtils.isEmpty(newPublicKey))
+            throw new IllegalArgumentException("IVPN key material is required");
+
+        JSONObject body = new JSONObject();
+        body.put("session_token", session.token);
+        body.put("public_key", newPublicKey);
+        body.put("connected_public_key", connectedPublicKey == null ? "" : connectedPublicKey);
+
+        JSONObject response = postJson(API + "/v4/session/wg/set", body);
+        int status = response.optInt("status", 0);
+        if (status != 200)
+            throw new ApiRejectedException(errorMessage(response,
+                    "IVPN WireGuard key update failed"));
+        String address = response.optString("ip_address", "");
+        if (TextUtils.isEmpty(address))
+            throw new IOException("IVPN did not return a WireGuard address");
+        return new WgProfileManager.IvpnSession(session.token, newPrivateKey, newPublicKey, address);
     }
 
     private WgProfileManager.IvpnSession createSession(String account, String privateKey,
@@ -278,7 +310,7 @@ public class IvpnProfileGenerator {
             String text = responseText(response);
             JSONObject json = TextUtils.isEmpty(text) ? new JSONObject() : new JSONObject(text);
             if (!response.isSuccessful() && json.optInt("status", 0) != 70001)
-                throw new IOException("IVPN request failed: " + response.code() + " " +
+                throw new ApiRejectedException("IVPN request failed: " + response.code() + " " +
                         errorMessage(json, text));
             return json;
         }

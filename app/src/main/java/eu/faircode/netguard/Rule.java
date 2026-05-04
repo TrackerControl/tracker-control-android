@@ -199,10 +199,10 @@ public class Rule {
             try {
                 cursor = dh.getApp(this.packageName);
                 if (cursor.moveToNext()) {
-                    this.name = cursor.getString(cursor.getColumnIndex("label"));
-                    this.system = cursor.getInt(cursor.getColumnIndex("system")) > 0;
-                    this.internet = cursor.getInt(cursor.getColumnIndex("internet")) > 0;
-                    this.enabled = cursor.getInt(cursor.getColumnIndex("enabled")) > 0;
+                    this.name = cursor.getString(cursor.getColumnIndexOrThrow("label"));
+                    this.system = cursor.getInt(cursor.getColumnIndexOrThrow("system")) > 0;
+                    this.internet = cursor.getInt(cursor.getColumnIndexOrThrow("internet")) > 0;
+                    this.enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0;
                 } else {
                     this.name = getLabel(info, context);
                     this.system = isSystem(info.packageName, context);

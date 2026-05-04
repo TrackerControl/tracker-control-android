@@ -308,7 +308,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
+I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to confirm whether it is processing any personal data about me.\n
 If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
 \n
 • a copy of my personal data;\n
@@ -331,7 +331,7 @@ Sincerely,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
 \n
 \n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
+I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to erase the following personal data it processes about me without undue delay:\n
 • All data.\n
 \n
 The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n

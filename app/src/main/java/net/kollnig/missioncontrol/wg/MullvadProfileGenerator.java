@@ -55,15 +55,29 @@ public class MullvadProfileGenerator {
         public final String countryCode;
         public final String countryName;
         public final String relayHostname;
+        public final String deviceId;
 
         public GeneratedProfile(String name, String config, String accountNumber,
-                                String countryCode, String countryName, String relayHostname) {
+                                String countryCode, String countryName, String relayHostname,
+                                String deviceId) {
             this.name = name;
             this.config = config;
             this.accountNumber = accountNumber;
             this.countryCode = normalizeCountry(countryCode);
             this.countryName = countryName == null ? "" : countryName;
             this.relayHostname = relayHostname == null ? "" : relayHostname;
+            this.deviceId = deviceId == null ? "" : deviceId;
+        }
+    }
+
+    public static class ApiRejectedException extends IOException {
+        ApiRejectedException(String message) {
+            super(message);
+        }
+
+        public boolean isPublicKeyInUse() {
+            String message = getMessage();
+            return message != null && message.contains("PUBKEY_IN_USE");
         }
     }
 
@@ -116,7 +130,44 @@ public class MullvadProfileGenerator {
 
         String config = buildConfig(privateKey, device, relay);
         return new GeneratedProfile("Mullvad - " + relay.countryName, config, account,
-                relay.countryCode, relay.countryName, relay.hostname);
+                relay.countryCode, relay.countryName, relay.hostname, device.optString("id", ""));
+    }
+
+    public String findDeviceIdForPubkey(String accountNumber, String publicKey) throws Exception {
+        if (TextUtils.isEmpty(publicKey))
+            return "";
+        String token = fetchWebToken(accountNumber);
+        for (JSONObject device : listDevices(token))
+            if (publicKey.equals(device.optString("pubkey")))
+                return device.optString("id", "");
+        return "";
+    }
+
+    public boolean deviceHasPubkey(String accountNumber, String deviceId, String publicKey)
+            throws Exception {
+        if (TextUtils.isEmpty(deviceId) || TextUtils.isEmpty(publicKey))
+            return false;
+        String token = fetchWebToken(accountNumber);
+        for (JSONObject device : listDevices(token))
+            if (deviceId.equals(device.optString("id")))
+                return publicKey.equals(device.optString("pubkey"));
+        return false;
+    }
+
+    public void rotateDevicePubkey(String accountNumber, String deviceId, String publicKey)
+            throws Exception {
+        if (TextUtils.isEmpty(deviceId))
+            throw new IllegalArgumentException("Mullvad device id is required");
+        if (TextUtils.isEmpty(publicKey))
+            throw new IllegalArgumentException("Mullvad public key is required");
+
+        String token = fetchWebToken(accountNumber);
+        JSONObject body = new JSONObject();
+        body.put("pubkey", publicKey);
+        JSONObject device = requestJson("PUT",
+                API + "/accounts/v1/devices/" + deviceId + "/pubkey", token, body);
+        if (!publicKey.equals(device.optString("pubkey", "")))
+            throw new IOException("Mullvad did not confirm the new public key");
     }
 
     private WgConfig parseReusableConfig(String reusableConfig) {
@@ -164,6 +215,27 @@ public class MullvadProfileGenerator {
         body.put("pubkey", publicKey);
         body.put("hijack_dns", false);
         return postJson(API + "/accounts/v1/devices", token, body);
+    }
+
+    private List<JSONObject> listDevices(String token) throws Exception {
+        Request.Builder builder = new Request.Builder()
+                .url(API + "/accounts/v1/devices");
+        if (!TextUtils.isEmpty(token))
+            builder.header("Authorization", "Bearer " + token);
+
+        try (Response response = client.newCall(builder.build()).execute()) {
+            String text = responseText(response);
+            if (!response.isSuccessful())
+                throw new IOException("Mullvad devices request failed: " + response.code() + " " + text);
+            JSONArray array = new JSONArray(text);
+            List<JSONObject> devices = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject item = array.optJSONObject(i);
+                if (item != null)
+                    devices.add(item);
+            }
+            return devices;
+        }
     }
 
     private List<Relay> fetchRelays() throws Exception {
@@ -270,16 +342,25 @@ public class MullvadProfileGenerator {
     }
 
     private JSONObject postJson(String url, String token, JSONObject body) throws Exception {
+        return requestJson("POST", url, token, body);
+    }
+
+    private JSONObject requestJson(String method, String url, String token, JSONObject body) throws Exception {
         Request.Builder builder = new Request.Builder()
-                .url(url)
-                .post(RequestBody.create(body.toString(), JSON));
+                .url(url);
+        RequestBody requestBody = RequestBody.create(body.toString(), JSON);
+        if ("PUT".equals(method))
+            builder.put(requestBody);
+        else
+            builder.post(requestBody);
         if (!TextUtils.isEmpty(token))
             builder.header("Authorization", "Bearer " + token);
 
         try (Response response = client.newCall(builder.build()).execute()) {
             String text = responseText(response);
             if (!response.isSuccessful())
-                throw new IOException("Mullvad request failed: " + response.code() + " " + text);
+                throw new ApiRejectedException("Mullvad request failed: " + response.code() +
+                        " " + text);
             return new JSONObject(text);
         }
     }

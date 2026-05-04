@@ -105,7 +105,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_shield_check"
-                    android:tint="#C62828"
+                    app:tint="#C62828"
                     android:contentDescription="@null" />
 
                 <TextView
@@ -152,7 +152,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_warning_amber"
-                    android:tint="#2E7D32"
+                    app:tint="#2E7D32"
                     android:contentDescription="@null" />
 
                 <TextView
@@ -208,7 +208,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_domain"
-                    android:tint="#546E7A"
+                    app:tint="#546E7A"
                     android:contentDescription="@null" />
 
                 <TextView
@@ -245,7 +245,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_apps"
-                    android:tint="#546E7A"
+                    app:tint="#546E7A"
                     android:contentDescription="@null" />
 
                 <TextView
@@ -400,7 +400,7 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:src="@drawable/ic_shield_off"
-                android:tint="?android:attr/textColorSecondary"
+                app:tint="?android:attr/textColorSecondary"
                 android:alpha="0.5" />
 
             <TextView

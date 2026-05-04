@@ -21,7 +21,9 @@
 package eu.faircode.netguard;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Notification;
 import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,6 +55,7 @@ import android.widget.TextView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.net.ConnectivityManagerCompat;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -838,6 +841,18 @@ public class Util {
         else
             return (ActivityCompat.checkSelfPermission(context,
                     Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED);
+    }
+
+    @SuppressLint("MissingPermission")
+    public static void notify(Context context, int id, Notification notification) {
+        if (!canNotify(context))
+            return;
+
+        try {
+            NotificationManagerCompat.from(context).notify(id, notification);
+        } catch (SecurityException ex) {
+            Log.w(TAG, ex.toString());
+        }
     }
 
     private static StringBuilder getTrafficLog(Context context) {

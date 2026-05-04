@@ -3,7 +3,7 @@
     <string name="app_description">TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner (\"sporing\").</string>
     <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
-    <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
+    <string name="app_eula" formatted="false">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
     <string name="channel_foreground">Kjørende tjenester</string>
     <string name="channel_notify">Generelle varsler</string>
@@ -258,7 +258,7 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="body_request_data"><![CDATA[Til de det måtte gjelde:\n
 \n
 \n
-Jeg ber deg, som datakontrolleren for Android-appen %s (ID: %s), å bekrefte om den behandler personopplysninger om meg.\n
+Jeg ber deg, som datakontrolleren for Android-appen %1$s (ID: %2$s), å bekrefte om den behandler personopplysninger om meg.\n
 Dersom dette er tilfelle, vennligst oppgi alle påkrevde opplysninger angitt i artikkel 15 i EUs generelle personvernforordning (GDPR), inkludert:\n
 \n
 • En kopi av mine personopplysninger;\n
@@ -281,7 +281,7 @@ Vennlig hilsen\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Til den det måtte gjelde:\n
 \n
 \n
-Jeg påberoper meg retten til å slettes som angitt i artikkel 17 i EUs generelle personvernforordning (GDPR). Jeg ber deg, som datakontrolleren for Android-appen %s (ID: %s), å slette følgende personopplysninger den behandler om meg uten unødvendig forsinkelse:\n
+Jeg påberoper meg retten til å slettes som angitt i artikkel 17 i EUs generelle personvernforordning (GDPR). Jeg ber deg, som datakontrolleren for Android-appen %1$s (ID: %2$s), å slette følgende personopplysninger den behandler om meg uten unødvendig forsinkelse:\n
 • Alle data.\n
 \n
 Bakgrunnen for min fjerning er at jeg trekker tilbake eller har trukket tilbake mitt samtykke til behandling av disse personlige dataene. Denne forespørselen omhandler all behandling av mine personlige opplysninger fra deg, inkludert eventuelle behandlere som behandler personopplysninger på vegne av deg.\n

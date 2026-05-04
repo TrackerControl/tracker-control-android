@@ -86,10 +86,10 @@ public class ActivityForwarding extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = (Cursor) adapter.getItem(position);
-                final int protocol = cursor.getInt(cursor.getColumnIndex("protocol"));
-                final int dport = cursor.getInt(cursor.getColumnIndex("dport"));
-                final String raddr = cursor.getString(cursor.getColumnIndex("raddr"));
-                final int rport = cursor.getInt(cursor.getColumnIndex("rport"));
+                final int protocol = cursor.getInt(cursor.getColumnIndexOrThrow("protocol"));
+                final int dport = cursor.getInt(cursor.getColumnIndexOrThrow("dport"));
+                final String raddr = cursor.getString(cursor.getColumnIndexOrThrow("raddr"));
+                final int rport = cursor.getInt(cursor.getColumnIndexOrThrow("rport"));
 
                 PopupMenu popup = new PopupMenu(ActivityForwarding.this, view);
                 popup.inflate(R.menu.forward);
@@ -150,8 +150,7 @@ public class ActivityForwarding extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_add:
+        if (item.getItemId() == R.id.menu_add) {
                 LayoutInflater inflater = LayoutInflater.from(this);
                 View view = inflater.inflate(R.layout.forwardadd, null, false);
                 final Spinner spProtocol = view.findViewById(R.id.spProtocol);
@@ -249,8 +248,7 @@ public class ActivityForwarding extends AppCompatActivity {
                         .create();
                 dialog.show();
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 }

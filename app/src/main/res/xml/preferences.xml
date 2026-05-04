@@ -248,6 +248,10 @@
                 android:key="ip6"
                 android:summary="@string/summary_ip6"
                 android:title="@string/setting_ip6" />
+            <Preference
+                android:key="vpn_key_rotate_now"
+                android:summary="@string/summary_vpn_key_rotate_now"
+                android:title="@string/setting_vpn_key_rotate_now" />
         </PreferenceCategory>
     </PreferenceScreen>
 

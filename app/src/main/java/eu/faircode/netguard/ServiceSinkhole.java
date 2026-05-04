@@ -905,11 +905,11 @@ public class ServiceSinkhole extends VpnService {
                     boolean sawDifferentTrackerEvidence = false;
 
                     while (lookup.moveToNext()) {
-                        dname = lookup.getString(lookup.getColumnIndex("qname"));
+                        dname = lookup.getString(lookup.getColumnIndexOrThrow("qname"));
                         if (dname != null) {
                             originalDname = dname;
 
-                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
+                            String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
                             Pair<Tracker, String> p = getDecloakedTracker(dname, aname);
 
                             if (foundTracker.first == NO_TRACKER
@@ -978,7 +978,7 @@ public class ServiceSinkhole extends VpnService {
             String aname = null;
             if (lookup != null) {
                 if (lookup.moveToNext())
-                    aname = lookup.getString(lookup.getColumnIndex("aname"));
+                    aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
                 lookup.close();
             }
             return getDecloakedTracker(qname, aname);
@@ -1303,8 +1303,7 @@ public class ServiceSinkhole extends VpnService {
                 state = State.stats;
                 Log.d(TAG, "Start foreground state=" + state.toString());
             } else {
-                if (Util.canNotify(ServiceSinkhole.this))
-                    NotificationManagerCompat.from(ServiceSinkhole.this).notify(NOTIFY_TRAFFIC, builder.build());
+                Util.notify(ServiceSinkhole.this, NOTIFY_TRAFFIC, builder.build());
             }
         }
     }
@@ -1706,6 +1705,7 @@ public class ServiceSinkhole extends VpnService {
             showWireGuardErrorNotification(wgError);
             return false;
         }
+        net.kollnig.missioncontrol.wg.VpnKeyRotationManager.maybeRotateDue(ServiceSinkhole.this);
 
         if (tunnelThread == null) {
             Log.i(TAG, "Starting tunnel thread context=" + jni_context);
@@ -2269,8 +2269,8 @@ public class ServiceSinkhole extends VpnService {
                                 ttl = lookup.getLong(colTTL);
 
                             // Check tracker
-                            String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                            String qname = lookup.getString(lookup.getColumnIndex("qname"));
+                            String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
+                            String qname = lookup.getString(lookup.getColumnIndexOrThrow("qname"));
                             String candidateDname = qname;
                             Tracker candidateTracker = TrackerList.findTracker(qname);
 
@@ -3291,8 +3291,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_revoked));
 
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_DISABLED, notification.build());
+        Util.notify(this, NOTIFY_DISABLED, notification.build());
     }
 
 
@@ -3319,8 +3318,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_autostart));
 
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_AUTOSTART, notification.build());
+        Util.notify(this, NOTIFY_AUTOSTART, notification.build());
     }
 
     private void showErrorNotification(String message) {
@@ -3344,8 +3342,7 @@ public class ServiceSinkhole extends VpnService {
         notification.bigText(getString(R.string.msg_error, message));
         notification.setSummaryText(message);
 
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_ERROR, notification.build());
+        Util.notify(this, NOTIFY_ERROR, notification.build());
     }
 
     private void showDohErrorNotification() {
@@ -3369,8 +3366,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(getString(R.string.msg_doh_unreachable));
 
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_DOH_ERROR, notification.build());
+        Util.notify(this, NOTIFY_DOH_ERROR, notification.build());
     }
 
     private void showWireGuardErrorNotification(String message) {
@@ -3398,8 +3394,7 @@ public class ServiceSinkhole extends VpnService {
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
         notification.bigText(detail);
 
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_WG_ERROR, notification.build());
+        Util.notify(this, NOTIFY_WG_ERROR, notification.build());
     }
 
     private void clearWireGuardErrorNotification() {
@@ -3426,8 +3421,7 @@ public class ServiceSinkhole extends VpnService {
             builder.setCategory(NotificationCompat.CATEGORY_STATUS)
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
-        if (Util.canNotify(this))
-            NotificationManagerCompat.from(this).notify(NOTIFY_UPDATE, builder.build());
+        Util.notify(this, NOTIFY_UPDATE, builder.build());
     }
 
     private void removeWarningNotifications() {

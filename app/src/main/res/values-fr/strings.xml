@@ -316,7 +316,7 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="body_request_data"><![CDATA[À la personne responsable :\n
 \n
 \n
-Je vous demande, en tant que responsable du traitement des données de l\'application Android %s (ID : %s), de confirmer le traitement des données personnelles me concernant.\n
+Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), de confirmer le traitement des données personnelles me concernant.\n
 Si tel est le cas, veuillez me fournir toutes les informations requises stipulées dans l\'article 15 du règlement général de l\'UE sur la protection des données (RPDG), y compris :\n
 \n
 - une copie de mes données personnelles ;\n
@@ -339,7 +339,7 @@ Cordialement,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[À la personne responsable :\n
 \n
 \n
-J\'invoque mon droit à l\'effacement tel que spécifié à l\'article 17 du règlement général de l\'UE sur la protection des données (RPDG). Je vous demande, en tant que responsable du traitement des données de l\'application Android %s (ID : %s), d\'effacer sans délai les données personnelles me concernant :\n
+J\'invoque mon droit à l\'effacement tel que spécifié à l\'article 17 du règlement général de l\'UE sur la protection des données (RPDG). Je vous demande, en tant que responsable du traitement des données de l\'application Android %1$s (ID : %2$s), d\'effacer sans délai les données personnelles me concernant :\n
 - Toutes les données :\n
 \n
 La raison de ma demande de retrait est que je retire ou ai retiré mon consentement au traitement des données à caractère personnel. Cette demande concerne tout traitement de mes données à caractère personnel par vous, y compris par tout responsable du traitement des données à caractère personnel en votre nom.\n

@@ -266,7 +266,7 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="body_request_data"><![CDATA[Do kogo może to dotyczyć:\n
 \n
 \n
-Żądam, jako kontroler danych aplikacji Androida %s (ID: %s), aby potwierdzić, czy przetwarza dane osobowe o mnie.\n
+Żądam, jako kontroler danych aplikacji Androida %1$s (ID: %2$s), aby potwierdzić, czy przetwarza dane osobowe o mnie.\n
 Jeśli tak, proszę podać mi wszystkie wymagane informacje określone w art. 15 ogólnego rozporządzenia UE o ochronie danych (KRLD), zawierający:\n
 \n
 • kopię moich danych osobowych;\n
@@ -289,7 +289,7 @@ Z poważaniem,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Do kogo może to dotyczyć:\n
 \n
 \n
-odwołuję się do mojego prawa do usunięcia danych zgodnie z art. 17 ogólnego rozporządzenia UE o ochronie danych (GKRLD). Proszę, jako kontroler danych aplikacji na Androida %s (ID: %s), aby usunąć następujące dane osobowe, które przetwarza o mnie bez zbędnej zwłoki:\n
+odwołuję się do mojego prawa do usunięcia danych zgodnie z art. 17 ogólnego rozporządzenia UE o ochronie danych (GKRLD). Proszę, jako kontroler danych aplikacji na Androida %1$s (ID: %2$s), aby usunąć następujące dane osobowe, które przetwarza o mnie bez zbędnej zwłoki:\n
 • Wszystkie dane.\n
 \n
 Powodem mojego wniosku o usunięcie danych jest to, że wycofałem lub wycofałem swoją zgodę na przetwarzanie danych osobowych. Wniosek ten dotyczy przetwarzania moich danych osobowych, w tym przetwarzania danych osobowych w imieniu Pana.\n

@@ -151,6 +151,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         String provider = currentProviderMode();
         if (MODE_WIREGUARD.equals(provider))
             return;
+        if (!hasProviderAccount(provider)) {
+            countryErrorVisible = false;
+            clearProgress();
+            adapter.setCountries(savedProviderCountries(provider));
+            return;
+        }
 
         List<VpnCountry> cache = MODE_IVPN.equals(provider) ? ivpnCountryCache : mullvadCountryCache;
         if (!force && !cache.isEmpty()) {
@@ -230,6 +236,14 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         for (Map.Entry<String, String> entry : saved.entrySet())
             countries.add(new VpnCountry(provider, entry.getKey(), entry.getValue()));
         return countries;
+    }
+
+    private boolean hasProviderAccount(String provider) {
+        if (MODE_IVPN.equals(provider))
+            return !TextUtils.isEmpty(manager.getLastIvpnAccount());
+        if (MODE_MULLVAD.equals(provider))
+            return !TextUtils.isEmpty(manager.getLastMullvadAccount());
+        return false;
     }
 
     private List<WgProfileManager.Profile> customProfiles() {
@@ -455,6 +469,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             WgProfileManager.Profile existing =
                     manager.findMullvadProfileForCountry(generated.countryCode);
             manager.saveMullvadAccount(generated.accountNumber);
+            manager.saveMullvadDeviceId(generated.deviceId);
             manager.saveProfile(existing == null ? null : existing.id,
                     generated.name,
                     generated.config,

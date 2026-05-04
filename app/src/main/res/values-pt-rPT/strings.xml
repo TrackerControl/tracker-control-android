@@ -261,7 +261,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="body_request_data"><![CDATA[Para quem isso pode preocupar:\n
 \n
 \n
-estou te solicitando, como controlador de dados do app Android %s (ID: %s), para confirmar se está processando dados pessoais a meu respeito.\n
+estou te solicitando, como controlador de dados do app Android %1$s (ID: %2$s), para confirmar se está processando dados pessoais a meu respeito.\n
 caso positivo, por favor me forneça todas as informações necessárias estipuladas no Artigo 15 do Regulamento Geral de Proteção de Dados da UE (RGPD), incluindo:\n
 \n
 • uma cópia dos meus dados pessoais;\n
@@ -284,7 +284,7 @@ Atenciosamente,\n\n]]></string>
     <string name="body_delete_data"><![CDATA[Para quem pode preocupar:\n
 \n
 \n
-Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %s (ID: %s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
+Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %1$s (ID: %2$s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
 • Todos os dados.\n
 \n
 A razão da minha solicitação de remoção é que eu retiro ou retirei minha autorização para processar os dados pessoais. Esse pedido diz respeito a qualquer processamento dos meus dados pessoais por você, incluindo quaisquer processadores que processam dados pessoais em seu nome.\n

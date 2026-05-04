@@ -151,16 +151,20 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         lvLog.setOnItemClickListener((parent, view, position, id) -> {
             PackageManager pm = getPackageManager();
             Cursor cursor = (Cursor) adapter.getItem(position);
-            long time = cursor.getLong(cursor.getColumnIndex("time"));
-            int version = cursor.getInt(cursor.getColumnIndex("version"));
-            int protocol = cursor.getInt(cursor.getColumnIndex("protocol"));
-            final String saddr = cursor.getString(cursor.getColumnIndex("saddr"));
-            final int sport = (cursor.isNull(cursor.getColumnIndex("sport")) ? -1 : cursor.getInt(cursor.getColumnIndex("sport")));
-            final String daddr = cursor.getString(cursor.getColumnIndex("daddr"));
-            final int dport = (cursor.isNull(cursor.getColumnIndex("dport")) ? -1 : cursor.getInt(cursor.getColumnIndex("dport")));
-            final String dname = cursor.getString(cursor.getColumnIndex("dname"));
-            final int uid = (cursor.isNull(cursor.getColumnIndex("uid")) ? -1 : cursor.getInt(cursor.getColumnIndex("uid")));
-            int allowed1 = (cursor.isNull(cursor.getColumnIndex("allowed")) ? -1 : cursor.getInt(cursor.getColumnIndex("allowed")));
+            long time = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
+            int version = cursor.getInt(cursor.getColumnIndexOrThrow("version"));
+            int protocol = cursor.getInt(cursor.getColumnIndexOrThrow("protocol"));
+            final String saddr = cursor.getString(cursor.getColumnIndexOrThrow("saddr"));
+            int colSport = cursor.getColumnIndexOrThrow("sport");
+            final int sport = (cursor.isNull(colSport) ? -1 : cursor.getInt(colSport));
+            final String daddr = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+            int colDPort = cursor.getColumnIndexOrThrow("dport");
+            final int dport = (cursor.isNull(colDPort) ? -1 : cursor.getInt(colDPort));
+            final String dname = cursor.getString(cursor.getColumnIndexOrThrow("dname"));
+            int colUid = cursor.getColumnIndexOrThrow("uid");
+            final int uid = (cursor.isNull(colUid) ? -1 : cursor.getInt(colUid));
+            int colAllowed = cursor.getColumnIndexOrThrow("allowed");
+            int allowed1 = (cursor.isNull(colAllowed) ? -1 : cursor.getInt(colAllowed));
 
             // Get external address
             InetAddress addr = null;

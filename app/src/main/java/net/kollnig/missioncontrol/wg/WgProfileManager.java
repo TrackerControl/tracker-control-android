@@ -22,6 +22,7 @@ public class WgProfileManager {
     public static final String PREF_WG_PROFILE = "wg_profile";
     public static final String PREF_WG_CONFIG = "wg_config";
     public static final String PREF_MULLVAD_ACCOUNT = "mullvad_account";
+    public static final String PREF_MULLVAD_DEVICE_ID = "mullvad_device_id";
     public static final String PREF_IVPN_ACCOUNT = "ivpn_account";
     public static final String PREF_IVPN_SESSION_TOKEN = "ivpn_session_token";
     public static final String PREF_IVPN_PRIVATE_KEY = "ivpn_private_key";
@@ -290,8 +291,24 @@ public class WgProfileManager {
     }
 
     public void saveMullvadAccount(String accountNumber) {
+        String next = accountNumber == null ? "" : accountNumber.trim();
+        String current = prefs.getString(PREF_MULLVAD_ACCOUNT, "");
+        SharedPreferences.Editor editor = prefs.edit()
+                .putString(PREF_MULLVAD_ACCOUNT, next);
+        if (!next.equals(current))
+            editor.remove(PREF_MULLVAD_DEVICE_ID);
+        editor.apply();
+    }
+
+    public String getMullvadDeviceId() {
+        return prefs.getString(PREF_MULLVAD_DEVICE_ID, "");
+    }
+
+    public void saveMullvadDeviceId(String deviceId) {
+        if (TextUtils.isEmpty(deviceId))
+            return;
         prefs.edit()
-                .putString(PREF_MULLVAD_ACCOUNT, accountNumber == null ? "" : accountNumber.trim())
+                .putString(PREF_MULLVAD_DEVICE_ID, deviceId.trim())
                 .apply();
     }
 
@@ -349,6 +366,68 @@ public class WgProfileManager {
                 .putString(PREF_IVPN_PUBLIC_KEY, session.publicKey)
                 .putString(PREF_IVPN_ADDRESS, session.address)
                 .apply();
+    }
+
+    public String getProviderConfig(String provider, String account) {
+        String normalized = account == null ? "" : account.trim();
+        Profile active = getActiveProfile();
+        if (isProviderProfileForAccount(active, provider, normalized))
+            return active.config;
+
+        for (Profile profile : getProfiles())
+            if (isProviderProfileForAccount(profile, provider, normalized))
+                return profile.config;
+        return "";
+    }
+
+    public boolean hasProviderProfiles(String provider, String account) {
+        return !TextUtils.isEmpty(getProviderConfig(provider, account));
+    }
+
+    public boolean rewriteProviderInterface(String provider, String account,
+                                            String privateKey, String address) throws JSONException {
+        String normalized = account == null ? "" : account.trim();
+        if (TextUtils.isEmpty(provider) || TextUtils.isEmpty(normalized) ||
+                TextUtils.isEmpty(privateKey))
+            return false;
+
+        JSONArray profiles = readProfilesJson();
+        String active = getActiveProfileId();
+        boolean changed = false;
+        boolean activeChanged = false;
+        String activeConfig = null;
+
+        for (int i = 0; i < profiles.length(); i++) {
+            JSONObject profile = profiles.optJSONObject(i);
+            if (profile == null)
+                continue;
+            if (!provider.equals(profile.optString("provider")) ||
+                    !normalized.equals(profile.optString("account")))
+                continue;
+
+            String config = profile.optString("config", "");
+            String next = replaceInterfaceLine(config, "PrivateKey", privateKey);
+            if (!TextUtils.isEmpty(address))
+                next = replaceInterfaceLine(next, "Address", address);
+            if (!next.equals(config)) {
+                profile.put("config", next);
+                changed = true;
+                if (active.equals(profile.optString("id"))) {
+                    activeChanged = true;
+                    activeConfig = next;
+                }
+            }
+        }
+
+        if (!changed)
+            return false;
+
+        SharedPreferences.Editor editor = prefs.edit();
+        writeProfilesJson(editor, profiles);
+        if (activeChanged)
+            editor.putString(PREF_WG_CONFIG, activeConfig == null ? "" : activeConfig);
+        editor.apply();
+        return activeChanged;
     }
 
     public String getReusableMullvadConfig(String accountNumber) {
@@ -455,6 +534,47 @@ public class WgProfileManager {
         json.put("countryCode", profile.countryCode);
         json.put("countryName", profile.countryName);
         return json;
+    }
+
+    private static String replaceInterfaceLine(String config, String key, String value) {
+        if (TextUtils.isEmpty(config))
+            return config == null ? "" : config;
+
+        String[] lines = config.split("\\r?\\n", -1);
+        boolean inInterface = false;
+        boolean replaced = false;
+        int interfaceHeaderEnd = -1;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            String trimmed = line.trim();
+            if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+                inInterface = "[Interface]".equalsIgnoreCase(trimmed);
+                if (inInterface)
+                    interfaceHeaderEnd = sb.length() + line.length() +
+                            (i < lines.length - 1 ? 1 : 0);
+            }
+            if (inInterface && startsWithKey(line, key)) {
+                line = key + " = " + value;
+                replaced = true;
+            }
+            sb.append(line);
+            if (i < lines.length - 1)
+                sb.append('\n');
+        }
+        if (!replaced) {
+            int insertAt = interfaceHeaderEnd >= 0 ? interfaceHeaderEnd : 0;
+            sb.insert(insertAt, key + " = " + value + "\n");
+        }
+        return sb.toString();
+    }
+
+    private static boolean startsWithKey(String line, String key) {
+        String trimmed = line.trim();
+        int eq = trimmed.indexOf('=');
+        if (eq < 0)
+            return false;
+        return key.equalsIgnoreCase(trimmed.substring(0, eq).trim());
     }
 
     private String newId() {

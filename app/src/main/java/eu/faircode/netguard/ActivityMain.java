@@ -59,6 +59,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -123,6 +124,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private View timelineContainer;
     private View vpnContainer;
     private int currentTab = R.id.nav_timeline;
+    private boolean vpnFragmentRequested = false;
     private AlertDialog dialogVpn = null;
     private AlertDialog dialogLegend = null;
     private AlertDialog dialogAbout = null;
@@ -386,13 +388,24 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.timelineContainer, new TimelineFragment())
-                    .replace(R.id.vpnContainer, new VpnFragment())
                     .commit();
         }
 
         bottomNav.setOnItemSelectedListener(item -> {
             selectTab(item.getItemId());
             return true;
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (currentTab != R.id.nav_apps && bottomNav != null) {
+                    bottomNav.setSelectedItemId(R.id.nav_apps);
+                    return;
+                }
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
         });
 
         int initialTab;
@@ -689,7 +702,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                         row[i] = data.getString(i);
                     }
 
-                    String hostname = data.getString(data.getColumnIndex("daddr"));
+                    String hostname = data.getString(data.getColumnIndexOrThrow("daddr"));
                     Tracker tracker = TrackerList.findTracker(hostname);
                     if (tracker != null) {
                         row[data.getColumnNames().length] = tracker.getName();
@@ -700,7 +713,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     }
 
                     try {
-                        String pkg = pm.getNameForUid(data.getInt(data.getColumnIndex("uid")));
+                        String pkg = pm.getNameForUid(data.getInt(data.getColumnIndexOrThrow("uid")));
                         ApplicationInfo info = pm.getApplicationInfo(pkg, 0);
                         String name = pm.getApplicationLabel(info).toString();
 
@@ -1066,6 +1079,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         boolean timeline = itemId == R.id.nav_timeline;
         boolean vpn = itemId == R.id.nav_vpn;
         currentTab = itemId;
+        if (vpn)
+            ensureVpnFragment();
         llAppsContent.setVisibility(!timeline && !vpn ? View.VISIBLE : View.GONE);
         timelineContainer.setVisibility(timeline ? View.VISIBLE : View.GONE);
         vpnContainer.setVisibility(vpn ? View.VISIBLE : View.GONE);
@@ -1083,13 +1098,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         // SearchView mid-expand, which would also drop keyboard focus.
     }
 
-    @Override
-    public void onBackPressed() {
-        if (currentTab != R.id.nav_apps && bottomNav != null) {
-            bottomNav.setSelectedItemId(R.id.nav_apps);
+    private void ensureVpnFragment() {
+        if (getSupportFragmentManager().findFragmentById(R.id.vpnContainer) != null)
             return;
-        }
-        super.onBackPressed();
+        if (vpnFragmentRequested)
+            return;
+        vpnFragmentRequested = true;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.vpnContainer, new VpnFragment())
+                .commit();
     }
 
     private void showHints() {
