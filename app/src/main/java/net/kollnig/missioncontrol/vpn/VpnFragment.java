@@ -1,6 +1,5 @@
 package net.kollnig.missioncontrol.vpn;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,20 +11,22 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import net.kollnig.missioncontrol.ActivityWireGuardProfiles;
@@ -51,21 +52,11 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     private WgProfileManager manager;
     private CountryAdapter adapter;
 
-    private View accountCard;
     private View countryError;
     private TextView statusFlag;
     private TextView statusTitle;
     private TextView statusSummary;
-    private TextView accountSaved;
     private TextView progressText;
-    private EditText accountInput;
-    private View accountInputGroup;
-    private View accountActions;
-    private Button toggleAccount;
-    private Button changeAccount;
-    private Button saveAccount;
-    private Button getAccount;
-    private Button cancelAccount;
     private Button retryCountries;
     private MaterialSwitch enabledSwitch;
     private ProgressBar progress;
@@ -76,8 +67,6 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
     private boolean suppressSwitchChange;
     private boolean loadingCountries;
-    private boolean accountVisible;
-    private boolean changingAccount;
     private String generatingCountryCode = "";
 
     @Nullable
@@ -99,25 +88,13 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         statusTitle = view.findViewById(R.id.vpnStatusTitle);
         statusSummary = view.findViewById(R.id.vpnStatusSummary);
         enabledSwitch = view.findViewById(R.id.vpnEnabledSwitch);
-        accountCard = view.findViewById(R.id.vpnAccountCard);
-        accountSaved = view.findViewById(R.id.vpnAccountSaved);
-        accountInputGroup = view.findViewById(R.id.vpnAccountInputGroup);
-        accountActions = view.findViewById(R.id.vpnAccountActions);
-        toggleAccount = view.findViewById(R.id.vpnToggleAccount);
-        changeAccount = view.findViewById(R.id.vpnChangeAccount);
-        accountInput = view.findViewById(R.id.vpnAccountInput);
-        getAccount = view.findViewById(R.id.vpnGetAccount);
-        cancelAccount = view.findViewById(R.id.vpnCancelAccount);
-        saveAccount = view.findViewById(R.id.vpnSaveAccount);
         progress = view.findViewById(R.id.vpnProgress);
         progressText = view.findViewById(R.id.vpnProgressText);
         countryError = view.findViewById(R.id.vpnCountryError);
         retryCountries = view.findViewById(R.id.vpnRetryCountries);
         RecyclerView countries = view.findViewById(R.id.vpnCountryList);
+        TextView settings = view.findViewById(R.id.vpnSettings);
         TextView customProfiles = view.findViewById(R.id.vpnCustomProfiles);
-
-        accountInput.setSingleLine(true);
-        accountInput.setInputType(InputType.TYPE_CLASS_NUMBER);
 
         countries.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new CountryAdapter();
@@ -139,21 +116,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             refreshUi();
         });
 
-        saveAccount.setOnClickListener(v -> saveAccount());
-        cancelAccount.setOnClickListener(v -> closeAccountEditor());
-        getAccount.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://mullvad.net/en/account/create"))));
-        toggleAccount.setOnClickListener(v -> {
-            accountVisible = !accountVisible;
-            refreshUi();
-        });
-        changeAccount.setOnClickListener(v -> {
-            if (changingAccount)
-                closeAccountEditor();
-            else
-                openAccountEditor();
-        });
         retryCountries.setOnClickListener(v -> loadCountries(true));
+        settings.setOnClickListener(v -> showSettingsDialog());
         customProfiles.setOnClickListener(v -> startActivity(
                 new Intent(requireContext(), ActivityWireGuardProfiles.class)));
 
@@ -188,38 +152,6 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 WgProfileManager.PREF_MULLVAD_ACCOUNT.equals(key)) {
             refreshUi();
         }
-    }
-
-    private void saveAccount() {
-        String account = accountInput.getText().toString().trim();
-        if (TextUtils.isEmpty(account)) {
-            accountInput.setError(getString(R.string.vpn_account_hint));
-            return;
-        }
-
-        manager.saveMullvadAccount(account);
-        changingAccount = false;
-        accountVisible = false;
-        hideKeyboard(accountInput);
-        refreshUi();
-        Toast.makeText(requireContext(), R.string.vpn_account_saved, Toast.LENGTH_LONG).show();
-        if (countryCache.isEmpty())
-            loadCountries(false);
-    }
-
-    private void openAccountEditor() {
-        changingAccount = true;
-        accountInput.setText("");
-        accountInput.setEnabled(true);
-        refreshUi();
-        accountInput.requestFocus();
-    }
-
-    private void closeAccountEditor() {
-        changingAccount = false;
-        accountInput.setText("");
-        hideKeyboard(accountInput);
-        refreshUi();
     }
 
     private void loadCountries(boolean force) {
@@ -281,8 +213,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     private void generateCountry(MullvadProfileGenerator.CountryOption country) {
         String account = manager.getLastMullvadAccount();
         if (TextUtils.isEmpty(account)) {
-            accountInput.requestFocus();
-            accountInput.setError(getString(R.string.vpn_account_hint));
+            showSettingsDialog();
             return;
         }
         if (!TextUtils.isEmpty(generatingCountryCode))
@@ -344,32 +275,6 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     private void refreshUi() {
         if (!isAdded() || manager == null)
             return;
-
-        String account = manager.getLastMullvadAccount();
-        accountCard.setVisibility(View.VISIBLE);
-        if (TextUtils.isEmpty(account)) {
-            accountSaved.setVisibility(View.GONE);
-            accountActions.setVisibility(View.GONE);
-            accountInputGroup.setVisibility(View.VISIBLE);
-            accountInput.setEnabled(true);
-            cancelAccount.setVisibility(View.GONE);
-            if (TextUtils.isEmpty(accountInput.getText()))
-                accountInput.setText("");
-        } else {
-            accountSaved.setText(getString(R.string.vpn_account_number,
-                    accountVisible ? account : maskAccount(account)));
-            accountSaved.setVisibility(View.VISIBLE);
-            accountActions.setVisibility(View.VISIBLE);
-            toggleAccount.setText(accountVisible
-                    ? R.string.vpn_account_hide
-                    : R.string.vpn_account_show);
-            changeAccount.setText(changingAccount
-                    ? R.string.vpn_account_done
-                    : R.string.vpn_account_change);
-            accountInputGroup.setVisibility(changingAccount ? View.VISIBLE : View.GONE);
-            accountInput.setEnabled(changingAccount);
-            cancelAccount.setVisibility(changingAccount ? View.VISIBLE : View.GONE);
-        }
 
         boolean enabled = prefs.getBoolean("wg_enabled", false);
         suppressSwitchChange = true;
@@ -436,11 +341,89 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         return "**** " + account.substring(account.length() - visible);
     }
 
-    private void hideKeyboard(View view) {
-        InputMethodManager imm =
-                (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null)
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private void showSettingsDialog() {
+        LinearLayout form = new LinearLayout(requireContext());
+        form.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        form.setPadding(pad, pad / 2, pad, 0);
+
+        String account = manager.getLastMullvadAccount();
+        TextView intro = new TextView(requireContext());
+        intro.setText(TextUtils.isEmpty(account)
+                ? R.string.vpn_mullvad_intro
+                : R.string.vpn_mullvad_account_note);
+        intro.setTextAppearance(requireContext(), R.style.TextSmall);
+        form.addView(intro, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        TextView current = new TextView(requireContext());
+        current.setText(TextUtils.isEmpty(account)
+                ? getString(R.string.vpn_account_not_set)
+                : getString(R.string.vpn_account_number, maskAccount(account)));
+        current.setTextAppearance(requireContext(), R.style.TextMedium);
+        current.setPadding(0, pad / 2, 0, 0);
+        form.addView(current, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        Button show = new Button(requireContext());
+        show.setText(R.string.vpn_account_show);
+        show.setVisibility(TextUtils.isEmpty(account) ? View.GONE : View.VISIBLE);
+        show.setOnClickListener(v -> {
+            boolean hidden = show.getText().equals(getString(R.string.vpn_account_show));
+            current.setText(getString(R.string.vpn_account_number,
+                    hidden ? account : maskAccount(account)));
+            show.setText(hidden ? R.string.vpn_account_hide : R.string.vpn_account_show);
+        });
+        form.addView(show, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        EditText input = new EditText(requireContext());
+        input.setSingleLine(true);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setHint(R.string.vpn_account_hint);
+        input.setPadding(0, pad / 2, 0, 0);
+        form.addView(input, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        Button getAccount = new Button(requireContext());
+        getAccount.setText(R.string.vpn_get_mullvad_account);
+        getAccount.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://mullvad.net/en/account/create"))));
+        form.addView(getAccount, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.vpn_settings_title)
+                .setView(form)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.vpn_account_save, null)
+                .create();
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    String next = input.getText().toString().trim();
+                    if (TextUtils.isEmpty(next)) {
+                        if (TextUtils.isEmpty(manager.getLastMullvadAccount())) {
+                            input.setError(getString(R.string.vpn_account_hint));
+                            return;
+                        }
+                        dialog.dismiss();
+                        return;
+                    }
+
+                    manager.saveMullvadAccount(next);
+                    Toast.makeText(requireContext(), R.string.vpn_account_saved,
+                            Toast.LENGTH_LONG).show();
+                    if (countryCache.isEmpty())
+                        loadCountries(false);
+                    refreshUi();
+                    dialog.dismiss();
+                }));
+        dialog.show();
     }
 
     private class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHolder> {
