@@ -1459,25 +1459,34 @@ public class ServiceSinkhole extends VpnService {
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
             ParcelFileDescriptor pfd = builder.establish();
-
-            // Set underlying network so Android can correctly assess connectivity,
-            // metering, and network scoring for the VPN.
-            // Mirrors DuckDuckGo ATP approach (Apache 2.0).
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-                Network active = (cm == null ? null : cm.getActiveNetwork());
-                if (active != null) {
-                    Log.i(TAG, "Setting underlying network=" + active);
-                    setUnderlyingNetworks(new Network[]{active});
-                }
-            }
-
+            updateUnderlyingNetworks();
             return pfd;
         } catch (SecurityException ex) {
             throw ex;
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             return null;
+        }
+    }
+
+    private void updateUnderlyingNetworks() {
+        // Set underlying network so Android can correctly assess connectivity,
+        // metering, and network scoring for the VPN.
+        // Mirrors DuckDuckGo ATP approach (Apache 2.0).
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return;
+
+        try {
+            Network active = getActiveNetwork();
+            if (active == null) {
+                Log.i(TAG, "Clearing underlying networks");
+                setUnderlyingNetworks(null);
+            } else {
+                Log.i(TAG, "Setting underlying network=" + active);
+                setUnderlyingNetworks(new Network[]{active});
+            }
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
     }
 
@@ -1724,6 +1733,7 @@ public class ServiceSinkhole extends VpnService {
                 jni_socks5("", 0, "", "");
 
             jni_sni(prefs.getBoolean("sni_enabled", false));
+            updateUnderlyingNetworks();
 
             // WireGuard egress. startOrUpdate is idempotent: same config +
             // same TUN fd is a no-op, so reload-induced "Native restart"
@@ -2467,12 +2477,20 @@ public class ServiceSinkhole extends VpnService {
 
                     try {
                         last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-                        reload("interactive state changed", ServiceSinkhole.this, true);
-                        updateWireGuardInteractiveState(last_interactive);
+                        InteractiveStatePolicy.onScreenStateChanged(
+                                last_interactive,
+                                Util.isInteractive(ServiceSinkhole.this),
+                                new InteractiveStatePolicy.Callbacks() {
+                                    @Override
+                                    public void onWireGuardInteractiveStateChanged(boolean interactive) {
+                                        updateWireGuardInteractiveState(interactive);
+                                    }
 
-                        // Start/stop stats
-                        statsHandler.sendEmptyMessage(
-                                Util.isInteractive(ServiceSinkhole.this) ? MSG_STATS_START : MSG_STATS_STOP);
+                                    @Override
+                                    public void onStatsInteractiveStateChanged(boolean interactive) {
+                                        statsHandler.sendEmptyMessage(interactive ? MSG_STATS_START : MSG_STATS_STOP);
+                                    }
+                                });
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
@@ -2554,7 +2572,7 @@ public class ServiceSinkhole extends VpnService {
             // Reload rules
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
-            reload("connectivity changed", ServiceSinkhole.this, false);
+            reloadAfterNetworkChange(NetworkReloadPolicy.onConnectivityChanged());
         }
     };
 
@@ -2970,7 +2988,6 @@ public class ServiceSinkhole extends VpnService {
             private Network last_network = null;
             private Boolean last_connected = null;
             private Boolean last_metered = null;
-            private String last_generation = null;
             private List<InetAddress> last_dns = null;
 
             @Override
@@ -2980,9 +2997,10 @@ public class ServiceSinkhole extends VpnService {
                     return;
 
                 last_active = network;
+                last_network = network;
                 last_connected = Util.isConnected(ServiceSinkhole.this);
                 last_metered = Util.isMeteredNetwork(ServiceSinkhole.this);
-                reload("network available", ServiceSinkhole.this, false);
+                reloadAfterNetworkChange(NetworkReloadPolicy.onNetworkAvailable());
             }
 
             @Override
@@ -2994,14 +3012,17 @@ public class ServiceSinkhole extends VpnService {
                 // Make sure the right DNS servers are being used
                 List<InetAddress> dns = linkProperties.getDnsServers();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                        ? !same(last_dns, dns)
-                        : prefs.getBoolean("reload_onconnectivity", false)) {
+                String reason = NetworkReloadPolicy.onLinkPropertiesChanged(
+                        last_dns,
+                        dns,
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
+                        prefs.getBoolean("reload_onconnectivity", false));
+                if (reason != null) {
                     Log.i(TAG, "Changed link properties=" + linkProperties +
                             "DNS cur=" + TextUtils.join(",", dns) +
                             "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)));
                     last_dns = dns;
-                    reload("link properties changed", ServiceSinkhole.this, false);
+                    reloadAfterNetworkChange(reason);
                 }
             }
 
@@ -3013,37 +3034,20 @@ public class ServiceSinkhole extends VpnService {
 
                 boolean connected = Util.isConnected(ServiceSinkhole.this);
                 boolean metered = Util.isMeteredNetwork(ServiceSinkhole.this);
-                String generation = Util.getNetworkGeneration(ServiceSinkhole.this);
                 Log.i(TAG, "Connected=" + connected + "/" + last_connected +
-                        " unmetered=" + metered + "/" + last_metered +
-                        " generation=" + generation + "/" + last_generation);
+                        " metered=" + metered + "/" + last_metered);
 
-                String reason = null;
-
-                if (reason == null && !Objects.equals(network, last_network))
-                    reason = "Network changed";
-
-                if (reason == null && last_connected != null && !last_connected.equals(connected))
-                    reason = "Connected state changed";
-
-                if (reason == null && last_metered != null && !last_metered.equals(metered))
-                    reason = "Unmetered state changed";
-
-                if (reason == null && last_generation != null && !last_generation.equals(generation)) {
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                    if (prefs.getBoolean("unmetered_2g", false) ||
-                            prefs.getBoolean("unmetered_3g", false) ||
-                            prefs.getBoolean("unmetered_4g", false))
-                        reason = "Generation changed";
-                }
+                String reason = NetworkReloadPolicy.onCapabilitiesChanged(
+                        network, last_network,
+                        last_connected, connected,
+                        last_metered, metered);
 
                 if (reason != null)
-                    reload(reason, ServiceSinkhole.this, false);
+                    reloadAfterNetworkChange(reason);
 
                 last_network = network;
                 last_connected = connected;
                 last_metered = metered;
-                last_generation = generation;
             }
 
             @Override
@@ -3052,26 +3056,21 @@ public class ServiceSinkhole extends VpnService {
                 if (last_active == null || !last_active.equals(network))
                     return;
 
+                String reason = NetworkReloadPolicy.onNetworkLost(network, last_active);
                 last_active = null;
                 last_connected = Util.isConnected(ServiceSinkhole.this);
-                reload("network lost", ServiceSinkhole.this, false);
-            }
-
-            boolean same(List<InetAddress> last, List<InetAddress> current) {
-                if (last == null || current == null)
-                    return false;
-                if (last == null || last.size() != current.size())
-                    return false;
-
-                for (int i = 0; i < current.size(); i++)
-                    if (!last.get(i).equals(current.get(i)))
-                        return false;
-
-                return true;
+                if (reason != null)
+                    reloadAfterNetworkChange(reason);
             }
         };
         cm.registerNetworkCallback(builder.build(), nc);
         networkCallback = nc;
+    }
+
+    private void reloadAfterNetworkChange(String reason) {
+        if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+            net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
+        reload(reason, ServiceSinkhole.this, false);
     }
 
     private void listenConnectivityChanges() {

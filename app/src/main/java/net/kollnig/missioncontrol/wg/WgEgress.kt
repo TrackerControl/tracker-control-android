@@ -188,6 +188,15 @@ object WgEgress {
     fun latestHandshakeMillisOrNull(): Long? =
         try { tunnel?.latestHandshakeMillis() } catch (_: Throwable) { null }
 
+    fun onUnderlyingNetworkChanged() {
+        verificationGeneration++
+        clearEndpointCache()
+        if (tunnel != null) {
+            Log.i(TAG, "underlying network changed; restarting on next update")
+            forceRestartPending = true
+        }
+    }
+
     fun onInteractiveStateChanged(
         wgEnabled: Boolean,
         configText: String?,
