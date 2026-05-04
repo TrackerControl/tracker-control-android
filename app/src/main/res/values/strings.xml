@@ -237,6 +237,8 @@
     <string name="vpn_account_show">Show</string>
     <string name="vpn_account_hide">Hide</string>
     <string name="vpn_account_change">Change</string>
+    <string name="vpn_account_done">Done</string>
+    <string name="vpn_account_cancel">Cancel</string>
     <string name="vpn_mullvad_intro">Mullvad is the VPN provider used for these country connections. It creates an account number without requiring an email address; add time with Mullvad, then enter the account number here.</string>
     <string name="vpn_get_mullvad_account">Get Mullvad account</string>
     <string name="vpn_account_hint">Mullvad account number</string>

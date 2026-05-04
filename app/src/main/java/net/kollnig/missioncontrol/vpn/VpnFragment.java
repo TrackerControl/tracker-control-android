@@ -65,6 +65,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     private Button changeAccount;
     private Button saveAccount;
     private Button getAccount;
+    private Button cancelAccount;
     private Button retryCountries;
     private MaterialSwitch enabledSwitch;
     private ProgressBar progress;
@@ -106,6 +107,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         changeAccount = view.findViewById(R.id.vpnChangeAccount);
         accountInput = view.findViewById(R.id.vpnAccountInput);
         getAccount = view.findViewById(R.id.vpnGetAccount);
+        cancelAccount = view.findViewById(R.id.vpnCancelAccount);
         saveAccount = view.findViewById(R.id.vpnSaveAccount);
         progress = view.findViewById(R.id.vpnProgress);
         progressText = view.findViewById(R.id.vpnProgressText);
@@ -138,6 +140,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         });
 
         saveAccount.setOnClickListener(v -> saveAccount());
+        cancelAccount.setOnClickListener(v -> closeAccountEditor());
         getAccount.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://mullvad.net/en/account/create"))));
         toggleAccount.setOnClickListener(v -> {
@@ -145,11 +148,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             refreshUi();
         });
         changeAccount.setOnClickListener(v -> {
-            changingAccount = true;
-            accountInput.setText("");
-            accountInput.setEnabled(true);
-            refreshUi();
-            accountInput.requestFocus();
+            if (changingAccount)
+                closeAccountEditor();
+            else
+                openAccountEditor();
         });
         retryCountries.setOnClickListener(v -> loadCountries(true));
         customProfiles.setOnClickListener(v -> startActivity(
@@ -203,6 +205,21 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         Toast.makeText(requireContext(), R.string.vpn_account_saved, Toast.LENGTH_LONG).show();
         if (countryCache.isEmpty())
             loadCountries(false);
+    }
+
+    private void openAccountEditor() {
+        changingAccount = true;
+        accountInput.setText("");
+        accountInput.setEnabled(true);
+        refreshUi();
+        accountInput.requestFocus();
+    }
+
+    private void closeAccountEditor() {
+        changingAccount = false;
+        accountInput.setText("");
+        hideKeyboard(accountInput);
+        refreshUi();
     }
 
     private void loadCountries(boolean force) {
@@ -335,6 +352,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             accountActions.setVisibility(View.GONE);
             accountInputGroup.setVisibility(View.VISIBLE);
             accountInput.setEnabled(true);
+            cancelAccount.setVisibility(View.GONE);
             if (TextUtils.isEmpty(accountInput.getText()))
                 accountInput.setText("");
         } else {
@@ -345,8 +363,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             toggleAccount.setText(accountVisible
                     ? R.string.vpn_account_hide
                     : R.string.vpn_account_show);
+            changeAccount.setText(changingAccount
+                    ? R.string.vpn_account_done
+                    : R.string.vpn_account_change);
             accountInputGroup.setVisibility(changingAccount ? View.VISIBLE : View.GONE);
             accountInput.setEnabled(changingAccount);
+            cancelAccount.setVisibility(changingAccount ? View.VISIBLE : View.GONE);
         }
 
         boolean enabled = prefs.getBoolean("wg_enabled", false);
