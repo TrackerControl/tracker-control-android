@@ -402,11 +402,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         input.setSingleLine(true);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         input.setHint(R.string.vpn_account_hint);
-        input.setPadding(0, pad / 2, 0, 0);
         input.setVisibility(TextUtils.isEmpty(account) ? View.VISIBLE : View.GONE);
-        form.addView(input, new LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        inputParams.topMargin = pad / 2;
+        form.addView(input, inputParams);
         change.setOnClickListener(v -> {
             input.setVisibility(input.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
             change.setText(input.getVisibility() == View.VISIBLE
