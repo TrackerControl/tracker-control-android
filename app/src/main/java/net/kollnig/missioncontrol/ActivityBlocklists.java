@@ -84,7 +84,9 @@ public class ActivityBlocklists extends AppCompatActivity {
             String url = input.getText().toString().trim();
             if (!url.isEmpty()) {
                 try {
-                    new URL(url); // Validate URL
+                    URL parsed = new URL(url); // Validate URL
+                    if (!"https".equalsIgnoreCase(parsed.getProtocol()))
+                        throw new MalformedURLException("Only HTTPS blocklist URLs are supported");
                     if (item == null) {
                         Blocklist newItem = new Blocklist(url, true);
                         manager.addBlocklist(newItem);

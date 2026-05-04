@@ -915,7 +915,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if ("loglevel".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("domain_based_blocked".equals(name)) {
+        else if ("domain_based_blocking".equals(name)) {
             TrackerList.reloadTrackerData(this);
         }
 

@@ -131,6 +131,7 @@
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:label="@string/app_name"
+            android:permission="${applicationId}.permission.ADMIN"
             android:theme="@style/AppDialog">
             <intent-filter>
                 <action android:name="eu.faircode.netguard.START_PORT_FORWARD" />

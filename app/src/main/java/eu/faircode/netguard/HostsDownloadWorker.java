@@ -77,6 +77,8 @@ public class HostsDownloadWorker extends Worker {
 
             try {
                 URL url = new URL(item.url);
+                if (!"https".equalsIgnoreCase(url.getProtocol()))
+                    throw new IOException("Only HTTPS blocklist URLs are supported");
                 connection = url.openConnection();
                 connection.setRequestProperty("Accept-Encoding", "gzip");
                 connection.setConnectTimeout(15000);

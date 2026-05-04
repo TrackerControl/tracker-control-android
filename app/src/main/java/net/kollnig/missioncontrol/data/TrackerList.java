@@ -163,7 +163,8 @@ public class TrackerList {
      */
     public void loadTrackers(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        domainBasedBlocking = prefs.getBoolean("domain_based_blocked", false);
+        domainBasedBlocking = prefs.getBoolean("domain_based_blocking",
+                prefs.getBoolean("domain_based_blocked", false));
         minimalBlockingMode = BlockingMode.isMinimalMode(c);
 
         if (minimalBlockingMode) {

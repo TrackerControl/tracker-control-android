@@ -73,6 +73,8 @@ public class ServiceExternal extends IntentService {
                 URLConnection connection = null;
                 try {
                     URL url = new URL(hosts_url);
+                    if (!"https".equalsIgnoreCase(url.getProtocol()))
+                        throw new IOException("Only HTTPS hosts URLs are supported");
                     connection = url.openConnection();
                     connection.connect();
 
