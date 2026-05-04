@@ -54,7 +54,6 @@
     <string name="setting_reload_onconnectivity">Tải lại mỗi lần đổi kết nối</string>
     <string name="setting_log_app">Tìm kiếm trình theo dõi mới</string>
     <string name="setting_filter">Chặn trình theo dõi</string>
-    <string name="setting_filter_udp">Chặn trình theo dõi trên UDP</string>
     <string name="setting_handover">Chuyển giao VPN liền mạch khi tải lại</string>
     <string name="setting_lockdown">Khoá chặt lưu lượng</string>
     <string name="setting_track_usage">Theo dõi sử dụng mạng</string>
@@ -131,7 +130,6 @@
     <string name="msg_queue">TrackerControl đang bận</string>
     <string name="msg_update">Có bản cập nhật, nhấn để tải xuống</string>
     <string name="msg_usage">Bạn có thể cho phép (xanh lá) hoặc từ chối (đỏ) truy cập internet Wi-Fi hoặc mạng di động bằng cách nhấn vào biểu tượng bên cạnh ứng dụng</string>
-    <string name="msg_whitelist">Truy cập Internet được cho phép theo mặc định (chế độ danh sách đen), điều này có thể được thay đổi trong cài đặt</string>
     <string name="msg_push">Các thông báo đến (đẩy) phần lớn là được thành phần Dịch vụ Play của hệ thống xử lý, nó được cho phép truy cập internet theo mặc định</string>
     <string name="msg_system">Việc quản lý ứng dụng hệ thống có thể được bật trong cài đặt</string>
     <string name="msg_issue">Vui lòng mô tả vấn đề và chỉ ra thời gian mà vấn đề xảy ra:</string>
