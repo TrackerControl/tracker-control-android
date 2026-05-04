@@ -16,6 +16,9 @@ package wgbridge
 
 import (
 	"bytes"
+	"crypto/ecdh"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"os"
@@ -39,6 +42,13 @@ type Protector interface {
 type Logger interface {
 	Verbosef(format string)
 	Errorf(format string)
+}
+
+// DnsRecorder receives DNS answers observed on decrypted inbound packets.
+// It is passive: TrackerControl uses this mapping later when deciding on app
+// connections, but the DNS response is not blocked or rewritten here.
+type DnsRecorder interface {
+	RecordDns(qname string, aname string, resource string, ttl int32)
 }
 
 // Tunnel is the gomobile-bound handle. Stop() must be called from Java when
@@ -89,6 +99,28 @@ func (t *Tunnel) LatestHandshakeMillis() (int64, error) {
 	return latest, nil
 }
 
+// GeneratePrivateKey returns a base64 WireGuard private key.
+func GeneratePrivateKey() (string, error) {
+	key, err := ecdh.X25519().GenerateKey(rand.Reader)
+	if err != nil {
+		return "", err
+	}
+	return base64.StdEncoding.EncodeToString(key.Bytes()), nil
+}
+
+// PublicKey derives the base64 WireGuard public key for a base64 private key.
+func PublicKey(privateKey string) (string, error) {
+	raw, err := base64.StdEncoding.DecodeString(privateKey)
+	if err != nil {
+		return "", fmt.Errorf("decode private key: %w", err)
+	}
+	key, err := ecdh.X25519().NewPrivateKey(raw)
+	if err != nil {
+		return "", fmt.Errorf("private key: %w", err)
+	}
+	return base64.StdEncoding.EncodeToString(key.PublicKey().Bytes()), nil
+}
+
 // StartTunnel boots wireguard-go.
 //
 //	uapiConfig    UAPI text produced by WgConfig.toUapi() on the Java side.
@@ -98,10 +130,11 @@ func (t *Tunnel) LatestHandshakeMillis() (int64, error) {
 //	mtu           payload MTU (typically 1420).
 //	protect       Java callback to VpnService.protect(int).
 //	logger        Java callback for wireguard-go log lines (may be nil).
+//	dnsRecorder   Java callback for passive DNS answer recording (may be nil).
 //
 // The supplied fds are duplicated; Stop() closes only our duplicates.
 func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu int32,
-	protect Protector, logger Logger) (*Tunnel, error) {
+	protect Protector, logger Logger, dnsRecorder DnsRecorder) (*Tunnel, error) {
 
 	if protect == nil {
 		return nil, errors.New("protect must not be nil")
@@ -127,6 +160,7 @@ func StartTunnel(uapiConfig string, outboundRxFd int32, tunWriteFd int32, mtu in
 		txFd:   txDup,
 		mtu:    int(mtu),
 		events: make(chan tun.Event, 4),
+		dns:    dnsRecorder,
 	}
 	t.events <- tun.EventUp
 
@@ -234,6 +268,7 @@ type socketpairTun struct {
 	txFd   int      // inbound:  we write decrypted IP packets to the VpnService TUN
 	mtu    int
 	events chan tun.Event
+	dns    DnsRecorder
 	mu     sync.Mutex
 	closed bool
 }
@@ -275,7 +310,9 @@ func isWouldBlock(err error) bool {
 
 func (t *socketpairTun) Write(bufs [][]byte, offset int) (int, error) {
 	for i, b := range bufs {
-		if _, err := unix.Write(t.txFd, b[offset:]); err != nil {
+		packet := b[offset:]
+		inspectDNSResponse(packet, t.dns)
+		if _, err := unix.Write(t.txFd, packet); err != nil {
 			return i, err
 		}
 	}

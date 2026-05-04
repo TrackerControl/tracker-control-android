@@ -34,11 +34,19 @@ public class WgProfileManager {
         public final String id;
         public final String name;
         public final String config;
+        public final String provider;
+        public final String account;
 
         public Profile(String id, String name, String config) {
+            this(id, name, config, "", "");
+        }
+
+        public Profile(String id, String name, String config, String provider, String account) {
             this.id = id;
             this.name = name;
             this.config = config;
+            this.provider = provider;
+            this.account = account;
         }
     }
 
@@ -113,6 +121,10 @@ public class WgProfileManager {
     }
 
     public void saveProfile(String id, String name, String config) throws JSONException {
+        saveProfile(id, name, config, "", "");
+    }
+
+    public void saveProfile(String id, String name, String config, String provider, String account) throws JSONException {
         JSONArray profiles = readProfilesJson();
         JSONObject profile = TextUtils.isEmpty(id) ? null : findJsonProfile(profiles, id);
         if (profile == null) {
@@ -123,6 +135,8 @@ public class WgProfileManager {
 
         profile.put("name", name);
         profile.put("config", config);
+        profile.put("provider", provider == null ? "" : provider);
+        profile.put("account", account == null ? "" : account);
 
         SharedPreferences.Editor editor = prefs.edit();
         writeProfilesJson(editor, profiles);
@@ -220,7 +234,9 @@ public class WgProfileManager {
         return new Profile(
                 profile.optString("id"),
                 profile.optString("name"),
-                profile.optString("config"));
+                profile.optString("config"),
+                profile.optString("provider"),
+                profile.optString("account"));
     }
 
     private JSONObject toJson(Profile profile) throws JSONException {
@@ -228,6 +244,8 @@ public class WgProfileManager {
         json.put("id", profile.id);
         json.put("name", profile.name);
         json.put("config", profile.config);
+        json.put("provider", profile.provider);
+        json.put("account", profile.account);
         return json;
     }
 

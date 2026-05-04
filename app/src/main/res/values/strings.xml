@@ -140,6 +140,8 @@
     <string name="setting_wg_config">WireGuard config</string>
     <string name="setting_wg_profile">WireGuard profile</string>
     <string name="setting_wg_profile_manage">Manage WireGuard profiles</string>
+    <string name="setting_wg_profile_import">Import WireGuard config</string>
+    <string name="setting_wg_mullvad_setup">Set up Mullvad</string>
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
     <string name="setting_wg_profile_save">Save profile</string>
     <string name="setting_wg_profile_delete">Delete profile</string>
@@ -215,6 +217,12 @@
     <string name="msg_wg_profile_set_active">Set active</string>
     <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
     <string name="msg_wg_profile_delete_confirm">Delete this WireGuard profile?</string>
+    <string name="msg_wg_mullvad_account">Mullvad account number</string>
+    <string name="msg_wg_mullvad_recommended">Recommended location</string>
+    <string name="msg_wg_mullvad_note">TrackerControl creates a Mullvad WireGuard profile. The account number is saved locally for future Mullvad profiles. Tokens are not stored, and deleting the profile here does not remove the device from Mullvad.</string>
+    <string name="msg_wg_mullvad_generating">Creating WireGuard profile…</string>
+    <string name="msg_wg_mullvad_failed">Mullvad setup failed: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">Could not load Mullvad countries: %s</string>
     <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
     <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
     <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>

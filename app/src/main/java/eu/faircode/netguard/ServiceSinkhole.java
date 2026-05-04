@@ -2141,6 +2141,17 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
+    // Called from WireGuard bridge for passive DNS response mapping.
+    public void wireGuardDnsResolved(String qname, String aname, String resource, int ttl) {
+        ResourceRecord rr = new ResourceRecord();
+        rr.Time = new Date().getTime();
+        rr.QName = qname;
+        rr.AName = aname;
+        rr.Resource = resource;
+        rr.TTL = ttl;
+        dnsResolved(rr);
+    }
+
     // Called from native code
     private boolean isDomainBlocked(String name) {
         return false;

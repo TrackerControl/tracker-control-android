@@ -9,6 +9,7 @@ import net.kollnig.missioncontrol.wgbridge.Logger as WgLogger
 import net.kollnig.missioncontrol.wgbridge.Protector as WgProtector
 import net.kollnig.missioncontrol.wgbridge.Tunnel as WgTunnel
 import net.kollnig.missioncontrol.wgbridge.Wgbridge
+import net.kollnig.missioncontrol.wgbridge.DnsRecorder as WgDnsRecorder
 
 /**
  * Owns the wireguard-go tunnel that sits behind NetGuard's IP-layer hijack.
@@ -138,10 +139,16 @@ object WgEgress {
             override fun verbosef(s: String) { Log.v(TAG, s) }
             override fun errorf(s: String)   { Log.e(TAG, s) }
         }
+        val dnsRecorder = object : WgDnsRecorder {
+            override fun recordDns(qname: String, aname: String, resource: String, ttl: Int) {
+                if (vpnService is eu.faircode.netguard.ServiceSinkhole)
+                    vpnService.wireGuardDnsResolved(qname, aname, resource, ttl)
+            }
+        }
 
         try {
             tunnel = Wgbridge.startTunnel(
-                resolved.toUapi(keepaliveEnabled), rxFd, desiredFd, mtu, protector, logger
+                resolved.toUapi(keepaliveEnabled), rxFd, desiredFd, mtu, protector, logger, dnsRecorder
             )
         } catch (e: Throwable) {
             lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"

@@ -2,16 +2,20 @@ package net.kollnig.missioncontrol;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,10 +30,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.kollnig.missioncontrol.wg.WgProfileManager;
 import net.kollnig.missioncontrol.wg.WgConfigParser;
+import net.kollnig.missioncontrol.wg.MullvadProfileGenerator;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
@@ -38,6 +46,8 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
     private WgProfileManager manager;
     private ProfileAdapter adapter;
     private TextView empty;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +68,15 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         list.setAdapter(adapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> showProfileDialog(null));
+        fab.setOnClickListener(v -> showAddProfileChoice());
 
         refresh();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdownNow();
     }
 
     @Override
@@ -81,6 +97,164 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
     private void refresh() {
         adapter.refresh();
         empty.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    private void showAddProfileChoice() {
+        new MaterialAlertDialogBuilder(this)
+                .setItems(new CharSequence[]{
+                        getString(R.string.setting_wg_profile_import),
+                        getString(R.string.setting_wg_mullvad_setup)
+                }, (dialog, which) -> {
+                    if (which == 0)
+                        showProfileDialog(null);
+                    else
+                        showMullvadDialog();
+                })
+                .show();
+    }
+
+    private void showMullvadDialog() {
+        LinearLayout form = new LinearLayout(this);
+        form.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        form.setPadding(pad, pad / 2, pad, 0);
+
+        final EditText account = new EditText(this);
+        account.setSingleLine(true);
+        account.setHint(R.string.msg_wg_mullvad_account);
+        account.setInputType(InputType.TYPE_CLASS_NUMBER);
+        account.setText(getLastMullvadAccount());
+        form.addView(account, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        final Spinner country = new Spinner(this);
+        List<MullvadProfileGenerator.CountryOption> options = new ArrayList<>();
+        options.add(new MullvadProfileGenerator.CountryOption("", getString(R.string.msg_wg_mullvad_recommended)));
+        ArrayAdapter<MullvadProfileGenerator.CountryOption> countryAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, options);
+        countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        country.setAdapter(countryAdapter);
+        form.addView(country, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        TextView note = new TextView(this);
+        note.setText(R.string.msg_wg_mullvad_note);
+        note.setPadding(0, pad / 2, 0, 0);
+        form.addView(note, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.setting_wg_mullvad_setup)
+                .setView(form)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String accountNumber = account.getText().toString().trim();
+                if (TextUtils.isEmpty(accountNumber)) {
+                    account.setError(getString(R.string.msg_wg_mullvad_account));
+                    return;
+                }
+                MullvadProfileGenerator.CountryOption selected =
+                        (MullvadProfileGenerator.CountryOption) country.getSelectedItem();
+                dialog.dismiss();
+                generateMullvadProfile(accountNumber, selected == null ? "" : selected.code);
+            });
+            loadMullvadCountries(countryAdapter);
+        });
+        dialog.show();
+    }
+
+    private void loadMullvadCountries(ArrayAdapter<MullvadProfileGenerator.CountryOption> adapter) {
+        executor.execute(() -> {
+            try {
+                List<MullvadProfileGenerator.CountryOption> countries =
+                        new MullvadProfileGenerator().fetchCountryOptions();
+                mainHandler.post(() -> {
+                    adapter.clear();
+                    adapter.add(new MullvadProfileGenerator.CountryOption(
+                            "", getString(R.string.msg_wg_mullvad_recommended)));
+                    adapter.addAll(countries);
+                    adapter.notifyDataSetChanged();
+                });
+            } catch (Throwable ex) {
+                mainHandler.post(() -> Toast.makeText(this,
+                        getString(R.string.msg_wg_mullvad_countries_failed, ex.getMessage()),
+                        Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
+    private void generateMullvadProfile(String accountNumber, String countryCode) {
+        AlertDialog progress = new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.setting_wg_mullvad_setup)
+                .setMessage(R.string.msg_wg_mullvad_generating)
+                .setCancelable(false)
+                .create();
+        progress.show();
+
+        executor.execute(() -> {
+            try {
+                MullvadProfileGenerator.GeneratedProfile generated =
+                        new MullvadProfileGenerator().generate(accountNumber, countryCode,
+                                getReusableMullvadConfig(accountNumber));
+                WgConfigParser.INSTANCE.parse(generated.config);
+                mainHandler.post(() -> {
+                    progress.dismiss();
+                    try {
+                        manager.saveProfile(null, generated.name, generated.config,
+                                "mullvad", generated.accountNumber);
+                        applyProfiles();
+                        refresh();
+                        Toast.makeText(this, R.string.msg_wg_profile_saved, Toast.LENGTH_LONG).show();
+                    } catch (JSONException ex) {
+                        Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } catch (Throwable ex) {
+                mainHandler.post(() -> {
+                    progress.dismiss();
+                    Toast.makeText(this,
+                            getString(R.string.msg_wg_mullvad_failed, ex.getMessage()),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    private String getLastMullvadAccount() {
+        WgProfileManager.Profile active = manager.getActiveProfile();
+        if (active != null && "mullvad".equals(active.provider) && !TextUtils.isEmpty(active.account))
+            return active.account;
+
+        for (WgProfileManager.Profile profile : manager.getProfiles())
+            if ("mullvad".equals(profile.provider) && !TextUtils.isEmpty(profile.account))
+                return profile.account;
+        return "";
+    }
+
+    private String getReusableMullvadConfig(String accountNumber) {
+        String account = accountNumber == null ? "" : accountNumber.trim();
+        WgProfileManager.Profile active = manager.getActiveProfile();
+        if (isReusableMullvadProfile(active, account))
+            return active.config;
+
+        for (WgProfileManager.Profile profile : manager.getProfiles())
+            if (isReusableMullvadProfile(profile, account))
+                return profile.config;
+        return null;
+    }
+
+    private boolean isReusableMullvadProfile(WgProfileManager.Profile profile, String account) {
+        return profile != null &&
+                "mullvad".equals(profile.provider) &&
+                account.equals(profile.account) &&
+                !TextUtils.isEmpty(profile.config);
     }
 
     private void showProfileDialog(WgProfileManager.Profile item) {
