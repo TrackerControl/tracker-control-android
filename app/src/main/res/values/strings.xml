@@ -250,7 +250,6 @@
     <string name="vpn_account_hint">Mullvad account number</string>
     <string name="vpn_account_save">Save</string>
     <string name="vpn_account_saved">Mullvad account saved</string>
-    <string name="vpn_use_custom_profile">Use a custom WireGuard profile</string>
     <string name="vpn_wireguard_profiles">WireGuard profiles</string>
     <string name="vpn_no_wireguard_profiles">No custom WireGuard profiles yet</string>
     <string name="vpn_import_wireguard_profile">Import WireGuard profile</string>

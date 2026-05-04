@@ -476,7 +476,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 if (position < customCount)
                     return TYPE_CUSTOM_PROFILE;
             } else if (position < countries.size()) {
-                    return TYPE_COUNTRY;
+                return TYPE_COUNTRY;
             }
             return TYPE_FOOTER;
         }
@@ -536,7 +536,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 count += Math.max(1, customProfiles().size());
             else
                 count += countries.size();
-            return count + 1;
+            return isWireGuardMode() ? count + 1 : count;
         }
 
         private int listStartPosition() {
@@ -641,18 +641,11 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         }
 
         private void bindFooter(FooterViewHolder holder) {
-            if (isWireGuardMode())
-                holder.text.setText(customProfiles().isEmpty()
-                        ? R.string.vpn_import_wireguard_profile
-                        : R.string.vpn_manage_wireguard_profiles);
-            else
-                holder.text.setText(R.string.vpn_use_custom_profile);
-            holder.itemView.setOnClickListener(v -> {
-                if (isWireGuardMode())
-                    startActivity(new Intent(requireContext(), ActivityWireGuardProfiles.class));
-                else
-                    setWireGuardMode(true);
-            });
+            holder.text.setText(customProfiles().isEmpty()
+                    ? R.string.vpn_import_wireguard_profile
+                    : R.string.vpn_manage_wireguard_profiles);
+            holder.itemView.setOnClickListener(v -> startActivity(
+                    new Intent(requireContext(), ActivityWireGuardProfiles.class)));
         }
     }
 
