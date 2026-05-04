@@ -36,8 +36,8 @@ import androidx.work.WorkManager;
  */
 public class TrackerAnalysisManager {
     private static final String PREFS_NAME = "library_analysis";
-    // Single work name ensures only one analysis runs at a time (prevents OOM)
-    private static final String WORK_NAME = "tracker_analysis";
+    private static final String WORK_NAME_PREFIX = "tracker_analysis_";
+    private static final String ATTEMPTED_VERSION_PREFIX = "attempted_versioncode_";
 
     private static TrackerAnalysisManager instance;
     private final Context mContext;
@@ -68,34 +68,46 @@ public class TrackerAnalysisManager {
 
     /**
      * Starts an analysis for the given package using WorkManager.
-     * Only one analysis runs at a time to prevent OOM; others are queued.
+     * Duplicate requests for the same package are ignored while one is pending.
      * Observe progress via {@link #getWorkInfoByPackageLiveData(String)}.
      *
      * @param packageName The package to analyze
      */
     public void startAnalysis(String packageName) {
-        Data inputData = new Data.Builder()
+        startAnalysis(packageName, -1, null);
+    }
+
+    /**
+     * Starts an analysis and optionally updates an install notification with the
+     * result when the worker finishes.
+     */
+    public void startAnalysis(String packageName, int notificationUid, @Nullable String appName) {
+        markAnalysisAttempted(packageName);
+
+        Data.Builder dataBuilder = new Data.Builder()
                 .putString(TrackerAnalysisWorker.KEY_PACKAGE_NAME, packageName)
-                .build();
+                .putInt(TrackerAnalysisWorker.KEY_NOTIFICATION_UID, notificationUid);
+        if (appName != null)
+            dataBuilder.putString(TrackerAnalysisWorker.KEY_APP_NAME, appName);
+
+        Data inputData = dataBuilder.build();
 
         OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
                 .setInputData(inputData)
                 .addTag(packageName)
                 .build();
 
-        // Use global work name + APPEND to serialize all analyses (prevents OOM from
-        // concurrent scans)
         workManager.enqueueUniqueWork(
-                WORK_NAME,
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                getWorkName(packageName),
+                ExistingWorkPolicy.KEEP,
                 workRequest);
     }
 
     /**
-     * Observe work status for a given package (by tag).
+     * Observe work status for the package's unique analysis work.
      */
     public LiveData<java.util.List<WorkInfo>> getWorkInfoByPackageLiveData(String packageName) {
-        return workManager.getWorkInfosByTagLiveData(packageName);
+        return workManager.getWorkInfosForUniqueWorkLiveData(getWorkName(packageName));
     }
 
     @Nullable
@@ -105,13 +117,18 @@ public class TrackerAnalysisManager {
 
     public boolean isCacheStale(String packageName) {
         try {
-            PackageInfo pkg = mContext.getPackageManager().getPackageInfo(packageName, 0);
+            PackageInfo pkg = getPackageInfo(packageName);
             SharedPreferences prefs = getPrefs();
             int cachedVersionCode = prefs.getInt("versioncode_" + packageName, Integer.MIN_VALUE);
             return pkg.versionCode > cachedVersionCode;
         } catch (PackageManager.NameNotFoundException e) {
             return true;
         }
+    }
+
+    public boolean shouldStartAnalysis(String packageName) {
+        return shouldStartAnalysis(getCachedResult(packageName), isCacheStale(packageName),
+                hasAttemptedCurrentVersion(packageName));
     }
 
     /**
@@ -124,7 +141,55 @@ public class TrackerAnalysisManager {
                 .apply();
     }
 
+    public static int countTrackers(String result) {
+        if (result == null)
+            return 0;
+
+        int count = 0;
+        int index = result.indexOf("•");
+        while (index >= 0) {
+            count++;
+            index = result.indexOf("•", index + 1);
+        }
+
+        return count;
+    }
+
+    static String getWorkName(String packageName) {
+        return WORK_NAME_PREFIX + packageName;
+    }
+
+    static boolean shouldStartAnalysis(@Nullable String cachedResult, boolean cacheStale,
+            boolean attemptedCurrentVersion) {
+        return !attemptedCurrentVersion && (cachedResult == null || cacheStale);
+    }
+
     private SharedPreferences getPrefs() {
         return mContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
+    private void markAnalysisAttempted(String packageName) {
+        try {
+            PackageInfo pkg = getPackageInfo(packageName);
+            getPrefs().edit()
+                    .putInt(ATTEMPTED_VERSION_PREFIX + packageName, pkg.versionCode)
+                    .apply();
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+    }
+
+    private boolean hasAttemptedCurrentVersion(String packageName) {
+        try {
+            PackageInfo pkg = getPackageInfo(packageName);
+            int attemptedVersionCode = getPrefs().getInt(ATTEMPTED_VERSION_PREFIX + packageName,
+                    Integer.MIN_VALUE);
+            return attemptedVersionCode >= pkg.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    private PackageInfo getPackageInfo(String packageName) throws PackageManager.NameNotFoundException {
+        return mContext.getPackageManager().getPackageInfo(packageName, 0);
     }
 }
