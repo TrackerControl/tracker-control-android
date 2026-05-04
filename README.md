@@ -121,7 +121,7 @@ TrackerControl is mainly designed to help you investigate the tracking practices
 
 Mobile trackers rely on the sending of personal data over the internet. This is why tracking can be detected and analysed from apps' network traffic. This is the core functionality of TrackerControl. The advantage of this approach over tracker library analysis is that actual evidence of data sharing is gathered; by contrast, when analysing solely the presence of tracking libraries in apps, some of these libraries may never be activated by an app at run-time.
 
-TrackerControl analyses network traffic locally on the device using DNS-based detection. TLS Server Name Indication (SNI) extraction is disabled by default because it requires connecting to tracker servers, leaking the user's IP address. SNI can be re-enabled from the advanced settings for research purposes.
+TrackerControl analyses network traffic locally on the device using DNS-based detection. TLS Server Name Indication (SNI) extraction is disabled by default because it requires connecting to tracker servers, leaking the user's IP address. SNI is enabled only when Research mode is turned on for measurement purposes.
 
 You analyse apps network traffic by following the steps within the app to enable the VPN. Consequently, TrackerControl keeps track of any contacted tracking domain. Note that you need to interact with apps of interest in order to make these apps share data with tracking companies over the internet.
 
