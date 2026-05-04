@@ -33,6 +33,7 @@ TrackerControl will always be free and open source, being a research project.
 ## Contents
 - [Download / Installation](#download--installation)
 - [Example Use](#example-use)
+- [VPN Preview](#vpn-preview)
 - [Contributing](#contributing)
 - [Communities](#communities)
 - [Translation](#translation)
@@ -91,6 +92,22 @@ In practice, the modes differ as follows:
 If you're interested in *blocking* tracking, then best download TrackerControl from [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk), from [F-Droid](https://f-droid.org/packages/net.kollnig.missioncontrol.fdroid), or from the [IzzyOnDroid](https://apt.izzysoft.de/fdroid/index/apk/net.kollnig.missioncontrol) F-Droid Repository.
 
 TrackerControl currently defaults to Minimal blocking mode for new installs. All versions allow you to change the blocking mode in Settings.
+
+## VPN Preview
+
+TrackerControl's built-in VPN remains local by default: it analyses and filters traffic on your device without sending traffic to an external VPN provider. The experimental VPN preview adds an optional second step for users who also want remote VPN tunnelling after TrackerControl has applied its local tracker analysis and blocking.
+
+The VPN tab supports three modes:
+
+| Mode | What it does |
+| :--- | :--- |
+| **Mullvad** | Creates WireGuard profiles from a Mullvad account number, lets you choose a relay country, and stores only the account number and generated WireGuard profile data locally. |
+| **IVPN** | Creates WireGuard profiles from an IVPN account ID, including CAPTCHA handling when IVPN requires it, and lets you choose a relay country. |
+| **WireGuard** | Imports and manages custom WireGuard configurations from another VPN provider, your own server, or a workplace endpoint. |
+
+When WireGuard tunnelling is enabled, TrackerControl still uses Android's VPN service for local filtering, then routes allowed traffic through the selected WireGuard endpoint. Secure DNS (DoH) is automatically paused when the active WireGuard profile provides DNS, because DNS queries are then handled through the WireGuard tunnel instead. Provider-generated WireGuard keys can be rotated from advanced settings.
+
+This feature is still a preview. Android only allows one active VPN service at a time, so TrackerControl cannot run alongside a separate VPN app.
 
 ## Example Use
 
