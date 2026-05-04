@@ -380,14 +380,32 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
+        Button change = new Button(requireContext());
+        change.setText(R.string.vpn_account_change);
+        change.setVisibility(TextUtils.isEmpty(account) ? View.GONE : View.VISIBLE);
+        form.addView(change, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+
         EditText input = new EditText(requireContext());
         input.setSingleLine(true);
         input.setInputType(InputType.TYPE_CLASS_NUMBER);
         input.setHint(R.string.vpn_account_hint);
         input.setPadding(0, pad / 2, 0, 0);
+        input.setVisibility(TextUtils.isEmpty(account) ? View.VISIBLE : View.GONE);
         form.addView(input, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
+        change.setOnClickListener(v -> {
+            input.setVisibility(input.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            change.setText(input.getVisibility() == View.VISIBLE
+                    ? R.string.vpn_account_cancel
+                    : R.string.vpn_account_change);
+            if (input.getVisibility() == View.VISIBLE)
+                input.requestFocus();
+            else
+                input.setText("");
+        });
 
         Button getAccount = new Button(requireContext());
         getAccount.setText(R.string.vpn_get_mullvad_account);
@@ -401,13 +419,16 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 .setTitle(R.string.vpn_settings_title)
                 .setView(form)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.vpn_account_save, null)
+                .setPositiveButton(TextUtils.isEmpty(account)
+                        ? R.string.vpn_account_save
+                        : android.R.string.ok, null)
                 .create();
         dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 .setOnClickListener(v -> {
                     String next = input.getText().toString().trim();
                     if (TextUtils.isEmpty(next)) {
-                        if (TextUtils.isEmpty(manager.getLastMullvadAccount())) {
+                        if (TextUtils.isEmpty(manager.getLastMullvadAccount()) ||
+                                input.getVisibility() == View.VISIBLE) {
                             input.setError(getString(R.string.vpn_account_hint));
                             return;
                         }
