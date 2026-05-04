@@ -101,7 +101,6 @@
     <string name="setting_log_app">搜索新的跟踪器</string>
     <string name="setting_log_logcat">研究</string>
     <string name="setting_filter">屏蔽跟踪器</string>
-    <string name="setting_filter_udp">屏蔽UDP上的跟踪器</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
     <string name="setting_lockdown">锁定流量</string>
     <string name="setting_track_usage">追踪网络使用情况</string>
@@ -121,14 +120,12 @@
     <string name="setting_socks5_password">SOCKS5 密码: %s</string>
     <string name="setting_wg_enabled">经 WireGuard 隧道流量</string>
     <string name="setting_wg_config">WireGuard 配置</string>
-    <string name="setting_wireguard">WireGuard (实验性)</string>
     <string name="setting_wg_status">状态</string>
     <string name="setting_pcap_record_size">PCAP 记录大小: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">安全DNS (DoH)</string>
-    <string name="summary_doh_enabled">使用 DNS-overHTTPS 的加密DNS 查询。应用于所有应用。</string>
     <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
@@ -215,7 +212,6 @@
     <string name="msg_queue">TrackerControl 正忙</string>
     <string name="msg_update">可用更新，点击下载</string>
     <string name="msg_usage">你可以通过点击应用程序旁边的图标来允许(绿色) 或拒绝(红色) Wi-Fi或移动互联网接入</string>
-    <string name="msg_whitelist">默认情况下允许互联网连接(黑名单模式)，这可以在设置中更改</string>
     <string name="msg_push">传入(推送) 消息大多由系统组件Play服务处理，默认情况下允许其访问互联网</string>
     <string name="msg_system">可以在设置中启用所有(系统) 应用</string>
     <string name="msg_issue">请描述问题并指出问题发生的时间:</string>
@@ -343,39 +339,6 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR 主题访问请求</string>
-    <string name="body_request_data"><![CDATA[致有关人士：\n
-\n
-\n
-我请求你方作为安卓应用%s (ID:%s) 数据的控制者确认它是否正处理任何有关我的个人资料。\n
-如有，请向我提供《欧盟通用资料保护规例》第15条所规定的所有必须信息，它们包括：\n
-\n
-•我个人数据的一份拷贝；\n
-•处理的目的；\n
-•有关的个人资料类别；\n
-•你方将我的个人资料披露给谁，以及你方提供的保障措施；\n
-•储存个人资料的保留期或用以确定保留期间的标准；\n
-•关于我的个人资料来源的信息；和\n
-•是否存在自动化决策(包括用户建模)，如果有的话：\n
-    -决策过程中涉及的逻辑；\n
-    -对我的意义和设想的后果；\n
-    -你方为防止错误、偏见和歧视所采取的措施；和\n
-    -解释我如何表达我的观点和挑战一个决定；\n
-\n
-此请求涉及你方对我个人资料的任何处理，包括代表你方处理个人资料的任何处理者。\n
-\n
-请通过安全方式通过电子邮件提供您的回复。我期待你方在收到我的请求后一个月内进行答复。\n
-\n
-此致，\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[致有关人士：\n
-\n\n
-我援引欧盟通用数据保护条例(GDPR) 第17条规定的我的数据檫除权，请求你作为安卓应用%s (ID:%s) 数据的控制方及时删除此应用程序处理的关于我的以下个人数据：\n
-• 全部数据\n
-\n
-我提出删除个人资料要求的原因是我撤回或已撤回我对处理个人资料的同意。此要求涉及你方对本人个人资料的任何处理，包括代表你方处理个人资料的任何处理者。\n
-\n
-请通过安全方式通过电子邮件提供您的回复。我期待在你方收到我的请求后一个月进行答复。\n
-\n
-此致，\n\n]]></string>
     <string name="crash_dialog_text">对不起。TrackerControl崩溃了.. 您介意把详细情况发邮件给我们吗?</string>
     <string name="crash_dialog_comment">是否有任何评论？</string>
     <string name="instructions_monitoring_private_dns">切换开关并与一些应用程序进行交互。必须禁用私有DNS。</string>
