@@ -81,7 +81,6 @@
     <string name="setting_log_app">Nieuwe trackers zoeken</string>
     <string name="setting_log_logcat">Onderzoek</string>
     <string name="setting_filter">Trackers blokkeren</string>
-    <string name="setting_filter_udp">Trackers blokkeren op UDP</string>
     <string name="setting_handover">Naadloze VPN-overdracht bij herladen</string>
     <string name="setting_lockdown">Netwerkverkeer vergrendelen</string>
     <string name="setting_track_usage">Netwerkgebruik volgen</string>
@@ -104,7 +103,6 @@
     <string name="setting_watchdog">Bewaken: elke %s minuten</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Beveiligde DNS (DoH)</string>
-    <string name="summary_doh_enabled">Versleutel DNS-zoekopdrachten met behulp van DNS-over-HTTPS. Geldt voor alle apps.</string>
     <string name="warning_beta">Bètafunctie. Werkt mogelijk niet zoals verwacht.</string>
     <string name="setting_doh_endpoint">DoH Eindpunt URL</string>
     <string name="summary_doh_endpoint">HTTPS URL voor DNS-over-HTTPS zoekopdrachten</string>
@@ -180,7 +178,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_queue">TrackerControl is bezig</string>
     <string name="msg_update">Update beschikbaar, tik om te downloaden</string>
     <string name="msg_usage">Toegang tot Wi-Fi of mobiel internet toestaan (\"groen\") of weigeren (\"rood\") door op de miniaturen naast een app te tikken</string>
-    <string name="msg_whitelist">Internettoegang is standaard toegestaan (blacklist-modus), te wijzigen in de instellingen</string>
     <string name="msg_push">De systeemcomponent Play Services, die standaard internettoegang heeft, verwerkt meestal inkomende (push) berichten.</string>
     <string name="msg_system">Het beheren van alle (systeem-) apps kan worden ingeschakeld in de instellingen</string>
     <string name="msg_issue">Beschrijf het probleem en het tijdstip van het probleem:</string>
@@ -305,40 +302,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Verzoek op grond van recht op informatie</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am requesting you, as the data controller of the Android app %s (ID: %s), to confirm whether it is processing any personal data about me.\n
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
-\n
-• a copy of my personal data;\n
-• the purposes of the processing;\n
-• the categories of personal data concerned;\n
-• the recipients you disclose my personal data to and the safeguards you provide;\n
-• the retention period for storing my personal data or the criteria used for determining this period;\n
-• information about the source of my personal data; and\n
-• the existence of automated decision-making (including profiling), and if so:\n
-    - the logic involved in the decision-making process;\n
-    - the significance and the envisaged consequences for me;\n
-    - the steps you have taken to prevent errors, bias and discrimination; and\n
-    - explain how I can express my point of view and challenge a decision.\n
-\n
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %s (ID: %s), to erase the following personal data it processes about me without undue delay:\n
-• All data.\n
-\n
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
     <string name="crash_dialog_text">Sorry. TrackerControl is net vast gelopen.. Stuur je ons een E-mail met details?</string>
     <string name="crash_dialog_comment">Heb je opmerkingen?</string>
     <string name="instructions_monitoring_private_dns">Zet de schakelaar op aan en ga aan de slag met een aantal apps. Privé-DNS moet uit staan.</string>
