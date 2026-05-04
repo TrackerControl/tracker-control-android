@@ -123,7 +123,7 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         account.setSingleLine(true);
         account.setHint(R.string.msg_wg_mullvad_account);
         account.setInputType(InputType.TYPE_CLASS_NUMBER);
-        account.setText(getLastMullvadAccount());
+        account.setText(manager.getLastMullvadAccount());
         form.addView(account, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -202,13 +202,15 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
             try {
                 MullvadProfileGenerator.GeneratedProfile generated =
                         new MullvadProfileGenerator().generate(accountNumber, countryCode,
-                                getReusableMullvadConfig(accountNumber));
+                                manager.getReusableMullvadConfig(accountNumber));
                 WgConfigParser.INSTANCE.parse(generated.config);
                 mainHandler.post(() -> {
                     progress.dismiss();
                     try {
+                        manager.saveMullvadAccount(generated.accountNumber);
                         manager.saveProfile(null, generated.name, generated.config,
-                                "mullvad", generated.accountNumber);
+                                "mullvad", generated.accountNumber,
+                                generated.countryCode, generated.countryName);
                         applyProfiles();
                         refresh();
                         Toast.makeText(this, R.string.msg_wg_profile_saved, Toast.LENGTH_LONG).show();
@@ -225,36 +227,6 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    private String getLastMullvadAccount() {
-        WgProfileManager.Profile active = manager.getActiveProfile();
-        if (active != null && "mullvad".equals(active.provider) && !TextUtils.isEmpty(active.account))
-            return active.account;
-
-        for (WgProfileManager.Profile profile : manager.getProfiles())
-            if ("mullvad".equals(profile.provider) && !TextUtils.isEmpty(profile.account))
-                return profile.account;
-        return "";
-    }
-
-    private String getReusableMullvadConfig(String accountNumber) {
-        String account = accountNumber == null ? "" : accountNumber.trim();
-        WgProfileManager.Profile active = manager.getActiveProfile();
-        if (isReusableMullvadProfile(active, account))
-            return active.config;
-
-        for (WgProfileManager.Profile profile : manager.getProfiles())
-            if (isReusableMullvadProfile(profile, account))
-                return profile.config;
-        return null;
-    }
-
-    private boolean isReusableMullvadProfile(WgProfileManager.Profile profile, String account) {
-        return profile != null &&
-                "mullvad".equals(profile.provider) &&
-                account.equals(profile.account) &&
-                !TextUtils.isEmpty(profile.config);
     }
 
     private void showProfileDialog(WgProfileManager.Profile item) {

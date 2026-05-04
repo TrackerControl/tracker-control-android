@@ -52,11 +52,18 @@ public class MullvadProfileGenerator {
         public final String name;
         public final String config;
         public final String accountNumber;
+        public final String countryCode;
+        public final String countryName;
+        public final String relayHostname;
 
-        public GeneratedProfile(String name, String config, String accountNumber) {
+        public GeneratedProfile(String name, String config, String accountNumber,
+                                String countryCode, String countryName, String relayHostname) {
             this.name = name;
             this.config = config;
             this.accountNumber = accountNumber;
+            this.countryCode = normalizeCountry(countryCode);
+            this.countryName = countryName == null ? "" : countryName;
+            this.relayHostname = relayHostname == null ? "" : relayHostname;
         }
     }
 
@@ -108,7 +115,8 @@ public class MullvadProfileGenerator {
         Relay relay = chooseRelay(fetchRelays(), requestedCountryCode);
 
         String config = buildConfig(privateKey, device, relay);
-        return new GeneratedProfile("Mullvad " + relay.hostname, config, account);
+        return new GeneratedProfile("Mullvad - " + relay.countryName, config, account,
+                relay.countryCode, relay.countryName, relay.hostname);
     }
 
     private WgConfig parseReusableConfig(String reusableConfig) {
@@ -285,7 +293,7 @@ public class MullvadProfileGenerator {
         return normalizeCountry(Locale.getDefault().getCountry());
     }
 
-    private String normalizeCountry(String countryCode) {
+    private static String normalizeCountry(String countryCode) {
         if (countryCode == null)
             return "";
         return countryCode.trim().toLowerCase(Locale.ROOT);

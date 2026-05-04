@@ -154,6 +154,12 @@
             android:layout_height="match_parent"
             android:visibility="gone" />
 
+        <FrameLayout
+            android:id="@+id/vpnContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
         <View
             android:id="@+id/vwPopupAnchor"
             android:layout_width="0dp"
