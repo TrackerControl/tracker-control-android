@@ -90,7 +90,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         list.setAdapter(adapter);
 
         refreshUi();
-        if (!isWireGuardMode())
+        if (!isFirstTimeVpnSetup() && !isWireGuardMode())
             loadCountries(false);
     }
 
@@ -194,7 +194,40 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             return MODE_WIREGUARD.equals(mode);
 
         WgProfileManager.Profile active = manager.getActiveProfile();
-        return active != null && !"mullvad".equals(active.provider);
+        if (active != null)
+            return !"mullvad".equals(active.provider);
+        return !customProfiles().isEmpty() && !hasMullvadSetup();
+    }
+
+    private boolean isFirstTimeVpnSetup() {
+        return customProfiles().isEmpty() && !hasMullvadSetup();
+    }
+
+    private boolean hasMullvadSetup() {
+        if (!TextUtils.isEmpty(prefs.getString(WgProfileManager.PREF_MULLVAD_ACCOUNT, "")))
+            return true;
+        for (WgProfileManager.Profile profile : manager.getProfiles())
+            if ("mullvad".equals(profile.provider) &&
+                    (!TextUtils.isEmpty(profile.account) ||
+                            !TextUtils.isEmpty(profile.countryCode) ||
+                            !TextUtils.isEmpty(profile.config)))
+                return true;
+        return false;
+    }
+
+    private void openMullvadSetup() {
+        prefs.edit().putString(PREF_VPN_MODE, MODE_MULLVAD).apply();
+        showSettingsDialog();
+    }
+
+    private void openMullvadAccountPage() {
+        startActivity(new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://mullvad.net/en/account/create")));
+    }
+
+    private void openWireGuardProfiles() {
+        prefs.edit().putString(PREF_VPN_MODE, MODE_WIREGUARD).apply();
+        startActivity(new Intent(requireContext(), ActivityWireGuardProfiles.class));
     }
 
     private void setWireGuardMode(boolean wireGuard) {
@@ -385,14 +418,6 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 input.setText("");
         });
 
-        Button getAccount = new Button(requireContext());
-        getAccount.setText(R.string.vpn_get_mullvad_account);
-        getAccount.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://mullvad.net/en/account/create"))));
-        form.addView(getAccount, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
-
         AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.vpn_settings_title)
                 .setView(form)
@@ -427,14 +452,15 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
     private class VpnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private static final int TYPE_STATUS = 0;
-        private static final int TYPE_MODE = 1;
-        private static final int TYPE_PROGRESS = 2;
-        private static final int TYPE_SECTION = 3;
-        private static final int TYPE_ERROR = 4;
-        private static final int TYPE_COUNTRY = 5;
-        private static final int TYPE_CUSTOM_PROFILE = 6;
-        private static final int TYPE_EMPTY = 7;
-        private static final int TYPE_FOOTER = 8;
+        private static final int TYPE_INTRO = 1;
+        private static final int TYPE_MODE = 2;
+        private static final int TYPE_PROGRESS = 3;
+        private static final int TYPE_SECTION = 4;
+        private static final int TYPE_ERROR = 5;
+        private static final int TYPE_COUNTRY = 6;
+        private static final int TYPE_CUSTOM_PROFILE = 7;
+        private static final int TYPE_EMPTY = 8;
+        private static final int TYPE_FOOTER = 9;
 
         private final List<MullvadProfileGenerator.CountryOption> countries = new ArrayList<>();
 
@@ -449,6 +475,9 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             if (position == 0)
                 return TYPE_STATUS;
             position--;
+
+            if (isFirstTimeVpnSetup())
+                return TYPE_INTRO;
 
             if (position == 0)
                 return TYPE_MODE;
@@ -488,6 +517,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             if (viewType == TYPE_STATUS)
                 return new StatusViewHolder(inflater.inflate(R.layout.item_vpn_status, parent, false));
+            if (viewType == TYPE_INTRO)
+                return new IntroViewHolder(inflater.inflate(R.layout.item_vpn_intro, parent, false));
             if (viewType == TYPE_MODE)
                 return new ModeViewHolder(inflater.inflate(R.layout.item_vpn_mode, parent, false));
             if (viewType == TYPE_PROGRESS)
@@ -511,6 +542,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             int viewType = getItemViewType(position);
             if (viewType == TYPE_STATUS)
                 bindStatus((StatusViewHolder) holder);
+            else if (viewType == TYPE_INTRO)
+                bindIntro((IntroViewHolder) holder);
             else if (viewType == TYPE_MODE)
                 bindMode((ModeViewHolder) holder);
             else if (viewType == TYPE_PROGRESS)
@@ -532,12 +565,21 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
         @Override
         public int getItemCount() {
+            if (isFirstTimeVpnSetup())
+                return 2;
+
             int count = listStartPosition();
             if (isWireGuardMode())
                 count += Math.max(1, customProfiles().size());
             else
                 count += countries.size();
             return isWireGuardMode() ? count + 1 : count;
+        }
+
+        private void bindIntro(IntroViewHolder holder) {
+            holder.mullvad.setOnClickListener(v -> openMullvadSetup());
+            holder.mullvadAccount.setOnClickListener(v -> openMullvadAccountPage());
+            holder.wireGuard.setOnClickListener(v -> openWireGuardProfiles());
         }
 
         private int listStartPosition() {
@@ -581,15 +623,20 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 refreshUi();
             });
 
-            holder.settings.setContentDescription(getString(isWireGuardMode()
-                    ? R.string.menu_settings
-                    : R.string.vpn_settings));
-            holder.settings.setOnClickListener(v -> {
-                if (isWireGuardMode())
-                    startActivity(new Intent(requireContext(), ActivitySettings.class));
-                else
-                    showSettingsDialog();
-            });
+            holder.settings.setVisibility(isFirstTimeVpnSetup() ? View.GONE : View.VISIBLE);
+            if (!isFirstTimeVpnSetup()) {
+                holder.settings.setContentDescription(getString(isWireGuardMode()
+                        ? R.string.menu_settings
+                        : R.string.vpn_settings));
+                holder.settings.setOnClickListener(v -> {
+                    if (isWireGuardMode())
+                        startActivity(new Intent(requireContext(), ActivitySettings.class));
+                    else
+                        showSettingsDialog();
+                });
+            } else {
+                holder.settings.setOnClickListener(null);
+            }
 
             if (enabled && activeMullvad && !TextUtils.isEmpty(countryName)) {
                 holder.flag.setText(flagEmoji(countryCode));
@@ -653,8 +700,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             holder.text.setText(customProfiles().isEmpty()
                     ? R.string.vpn_import_wireguard_profile
                     : R.string.vpn_manage_wireguard_profiles);
-            holder.itemView.setOnClickListener(v -> startActivity(
-                    new Intent(requireContext(), ActivityWireGuardProfiles.class)));
+            holder.itemView.setOnClickListener(v -> openWireGuardProfiles());
         }
     }
 
@@ -681,6 +727,19 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         ModeViewHolder(View itemView) {
             super(itemView);
             toggle = itemView.findViewById(R.id.vpnModeToggle);
+        }
+    }
+
+    private static class IntroViewHolder extends RecyclerView.ViewHolder {
+        final Button mullvad;
+        final Button mullvadAccount;
+        final Button wireGuard;
+
+        IntroViewHolder(View itemView) {
+            super(itemView);
+            mullvad = itemView.findViewById(R.id.vpnIntroMullvadAction);
+            mullvadAccount = itemView.findViewById(R.id.vpnIntroMullvadAccountAction);
+            wireGuard = itemView.findViewById(R.id.vpnIntroWireGuardAction);
         }
     }
 

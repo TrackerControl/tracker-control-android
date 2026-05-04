@@ -145,7 +145,7 @@
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
     <string name="setting_wg_profile_save">Save profile</string>
     <string name="setting_wg_profile_delete">Delete profile</string>
-    <string name="setting_wireguard">WireGuard (experimental)</string>
+    <string name="setting_wireguard">WireGuard (preview)</string>
     <string name="setting_wg_status">Status</string>
     <string name="setting_pcap_record_size">PCAP record size: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. file size: %s MB</string>
@@ -233,6 +233,13 @@
     <string name="vpn_status_disconnected">Not connected</string>
     <string name="vpn_choose_country">Choose country</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_intro_title">VPN preview</string>
+    <string name="vpn_intro_body">A VPN sends your internet traffic through another server. This can hide your IP address from websites and your network provider, and lets you choose a country for your connection. This tab is new, so treat it as a preview.</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_mullvad_body">A privacy-focused VPN provider. It costs €5 per month and uses account numbers instead of email addresses. Enter an account number, then choose a country in TrackerControl.</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_intro_wireguard_body">Use this if you already have a WireGuard config from another VPN provider, your own server, or your workplace.</string>
+    <string name="vpn_enter_mullvad_account">Enter account number</string>
     <string name="vpn_mode_mullvad">Mullvad</string>
     <string name="vpn_mode_wireguard">WireGuard</string>
     <string name="vpn_settings">Mullvad settings</string>
@@ -244,8 +251,8 @@
     <string name="vpn_account_change">Change</string>
     <string name="vpn_account_done">Done</string>
     <string name="vpn_account_cancel">Cancel</string>
-    <string name="vpn_mullvad_intro">Mullvad is the VPN provider used for these country connections. It creates an account number without requiring an email address; add time with Mullvad, then enter the account number here.</string>
-    <string name="vpn_mullvad_account_note">Enter a new account number to change accounts, or leave it blank to keep the current account.</string>
+    <string name="vpn_mullvad_intro">Enter your Mullvad account number. It is saved on this device.</string>
+    <string name="vpn_mullvad_account_note">This account is used for Mullvad country connections.</string>
     <string name="vpn_get_mullvad_account">Get Mullvad account</string>
     <string name="vpn_account_hint">Mullvad account number</string>
     <string name="vpn_account_save">Save</string>
