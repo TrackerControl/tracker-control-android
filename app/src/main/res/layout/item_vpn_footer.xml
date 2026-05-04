@@ -1,0 +1,9 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vpnCustomProfiles"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="16dp"
+    android:text="@string/vpn_use_custom_profile"
+    android:textAppearance="@style/TextSmall"
+    android:textColor="?attr/colorAccent" />

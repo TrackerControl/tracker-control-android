@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,23 +51,16 @@ import eu.faircode.netguard.ServiceSinkhole;
 public class VpnFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private SharedPreferences prefs;
     private WgProfileManager manager;
-    private CountryAdapter adapter;
-
-    private View countryError;
-    private TextView statusFlag;
-    private TextView statusTitle;
-    private TextView statusSummary;
-    private TextView progressText;
-    private Button retryCountries;
-    private MaterialSwitch enabledSwitch;
-    private ProgressBar progress;
+    private VpnAdapter adapter;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final List<MullvadProfileGenerator.CountryOption> countryCache = new ArrayList<>();
 
-    private boolean suppressSwitchChange;
     private boolean loadingCountries;
+    private boolean progressVisible;
+    private boolean countryErrorVisible;
+    private String progressMessage = "";
     private String generatingCountryCode = "";
 
     @Nullable
@@ -84,42 +78,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         manager = new WgProfileManager(requireContext());
         manager.migrateIfNeeded();
 
-        statusFlag = view.findViewById(R.id.vpnStatusFlag);
-        statusTitle = view.findViewById(R.id.vpnStatusTitle);
-        statusSummary = view.findViewById(R.id.vpnStatusSummary);
-        enabledSwitch = view.findViewById(R.id.vpnEnabledSwitch);
-        progress = view.findViewById(R.id.vpnProgress);
-        progressText = view.findViewById(R.id.vpnProgressText);
-        countryError = view.findViewById(R.id.vpnCountryError);
-        retryCountries = view.findViewById(R.id.vpnRetryCountries);
-        RecyclerView countries = view.findViewById(R.id.vpnCountryList);
-        TextView settings = view.findViewById(R.id.vpnSettings);
-        TextView customProfiles = view.findViewById(R.id.vpnCustomProfiles);
-
-        countries.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new CountryAdapter();
-        countries.setAdapter(adapter);
-
-        enabledSwitch.setOnCheckedChangeListener((buttonView, checked) -> {
-            if (suppressSwitchChange)
-                return;
-            if (checked && manager.getActiveProfile() == null) {
-                suppressSwitchChange = true;
-                enabledSwitch.setChecked(false);
-                suppressSwitchChange = false;
-                Toast.makeText(requireContext(), R.string.vpn_choose_country_first,
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-            prefs.edit().putBoolean("wg_enabled", checked).apply();
-            ServiceSinkhole.reload("changed wg_enabled", requireContext(), false);
-            refreshUi();
-        });
-
-        retryCountries.setOnClickListener(v -> loadCountries(true));
-        settings.setOnClickListener(v -> showSettingsDialog());
-        customProfiles.setOnClickListener(v -> startActivity(
-                new Intent(requireContext(), ActivityWireGuardProfiles.class)));
+        RecyclerView list = view.findViewById(R.id.vpnList);
+        list.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new VpnAdapter();
+        list.setAdapter(adapter);
 
         refreshUi();
         loadCountries(false);
@@ -163,8 +125,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         }
 
         loadingCountries = true;
+        countryErrorVisible = false;
         setProgress(getString(R.string.vpn_loading_countries));
-        countryError.setVisibility(View.GONE);
 
         executor.execute(() -> {
             try {
@@ -174,10 +136,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                     if (!isAdded())
                         return;
                     loadingCountries = false;
+                    countryErrorVisible = false;
                     clearProgress();
                     countryCache.clear();
                     countryCache.addAll(countries);
-                    countryError.setVisibility(View.GONE);
                     adapter.setCountries(countryCache);
                 });
             } catch (Throwable ex) {
@@ -185,9 +147,9 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                     if (!isAdded())
                         return;
                     loadingCountries = false;
+                    countryErrorVisible = true;
                     clearProgress();
                     adapter.setCountries(savedMullvadCountries());
-                    countryError.setVisibility(View.VISIBLE);
                     Toast.makeText(requireContext(),
                             getString(R.string.vpn_country_load_failed, ex.getMessage()),
                             Toast.LENGTH_LONG).show();
@@ -221,7 +183,6 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
         generatingCountryCode = country.code;
         setProgress(getString(R.string.vpn_generating));
-        adapter.notifyDataSetChanged();
 
         executor.execute(() -> {
             try {
@@ -239,7 +200,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                         return;
                     generatingCountryCode = "";
                     clearProgress();
-                    adapter.notifyDataSetChanged();
+                    refreshUi();
                     Toast.makeText(requireContext(),
                             getString(R.string.vpn_generation_failed, ex.getMessage()),
                             Toast.LENGTH_LONG).show();
@@ -273,54 +234,21 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     }
 
     private void refreshUi() {
-        if (!isAdded() || manager == null)
+        if (!isAdded() || adapter == null)
             return;
-
-        boolean enabled = prefs.getBoolean("wg_enabled", false);
-        suppressSwitchChange = true;
-        enabledSwitch.setChecked(enabled);
-        suppressSwitchChange = false;
-
-        WgProfileManager.Profile active = manager.getActiveProfile();
-        boolean activeMullvad = active != null && "mullvad".equals(active.provider);
-        String countryName = activeMullvad ? active.countryName : "";
-        String countryCode = activeMullvad ? active.countryCode : "";
-
-        if (enabled && activeMullvad && !TextUtils.isEmpty(countryName)) {
-            statusFlag.setText(flagEmoji(countryCode));
-            statusTitle.setText(countryName);
-            String summary = manager.getProfileSummary(active);
-            statusSummary.setText(TextUtils.isEmpty(summary)
-                    ? getString(R.string.vpn_status_mullvad)
-                    : getString(R.string.vpn_status_relay, summary));
-            statusSummary.setVisibility(TextUtils.isEmpty(statusSummary.getText()) ? View.GONE : View.VISIBLE);
-        } else if (enabled && active != null) {
-            statusFlag.setText("");
-            statusTitle.setText(R.string.vpn_status_wireguard_connected);
-            String summary = manager.getProfileSummary(active);
-            statusSummary.setText(TextUtils.isEmpty(summary)
-                    ? active.name
-                    : getString(R.string.vpn_status_wireguard_summary, active.name, summary));
-            statusSummary.setVisibility(View.VISIBLE);
-        } else {
-            statusFlag.setText("");
-            statusTitle.setText(R.string.vpn_status_disconnected);
-            statusSummary.setVisibility(View.GONE);
-        }
-
         adapter.notifyDataSetChanged();
     }
 
     private void setProgress(String text) {
-        progress.setVisibility(View.VISIBLE);
-        progressText.setVisibility(View.VISIBLE);
-        progressText.setText(text);
+        progressVisible = true;
+        progressMessage = text;
+        refreshUi();
     }
 
     private void clearProgress() {
-        progress.setVisibility(View.GONE);
-        progressText.setVisibility(View.GONE);
-        progressText.setText("");
+        progressVisible = false;
+        progressMessage = "";
+        refreshUi();
     }
 
     private String flagEmoji(String countryCode) {
@@ -447,7 +375,14 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         dialog.show();
     }
 
-    private class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHolder> {
+    private class VpnAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int TYPE_STATUS = 0;
+        private static final int TYPE_PROGRESS = 1;
+        private static final int TYPE_SECTION = 2;
+        private static final int TYPE_ERROR = 3;
+        private static final int TYPE_COUNTRY = 4;
+        private static final int TYPE_FOOTER = 5;
+
         private final List<MullvadProfileGenerator.CountryOption> countries = new ArrayList<>();
 
         void setCountries(List<MullvadProfileGenerator.CountryOption> next) {
@@ -456,17 +391,131 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             notifyDataSetChanged();
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            if (position == 0)
+                return TYPE_STATUS;
+            position--;
+
+            if (progressVisible) {
+                if (position == 0)
+                    return TYPE_PROGRESS;
+                position--;
+            }
+
+            if (position == 0)
+                return TYPE_SECTION;
+            position--;
+
+            if (countryErrorVisible) {
+                if (position == 0)
+                    return TYPE_ERROR;
+                position--;
+            }
+
+            if (position < countries.size())
+                return TYPE_COUNTRY;
+            return TYPE_FOOTER;
+        }
+
         @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_vpn_country, parent, false);
-            return new ViewHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            if (viewType == TYPE_STATUS)
+                return new StatusViewHolder(inflater.inflate(R.layout.item_vpn_status, parent, false));
+            if (viewType == TYPE_PROGRESS)
+                return new ProgressViewHolder(inflater.inflate(R.layout.item_vpn_progress, parent, false));
+            if (viewType == TYPE_SECTION)
+                return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_vpn_section, parent, false)) {};
+            if (viewType == TYPE_ERROR)
+                return new ErrorViewHolder(inflater.inflate(R.layout.item_vpn_error, parent, false));
+            if (viewType == TYPE_FOOTER)
+                return new FooterViewHolder(inflater.inflate(R.layout.item_vpn_footer, parent, false));
+            return new CountryViewHolder(inflater.inflate(R.layout.item_vpn_country, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            MullvadProfileGenerator.CountryOption country = countries.get(position);
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            int viewType = getItemViewType(position);
+            if (viewType == TYPE_STATUS)
+                bindStatus((StatusViewHolder) holder);
+            else if (viewType == TYPE_PROGRESS)
+                ((ProgressViewHolder) holder).text.setText(progressMessage);
+            else if (viewType == TYPE_ERROR)
+                ((ErrorViewHolder) holder).retry.setOnClickListener(v -> loadCountries(true));
+            else if (viewType == TYPE_FOOTER)
+                holder.itemView.setOnClickListener(v -> startActivity(
+                        new Intent(requireContext(), ActivityWireGuardProfiles.class)));
+            else if (viewType == TYPE_COUNTRY)
+                bindCountry((CountryViewHolder) holder, countries.get(position - countryStartPosition()));
+        }
+
+        @Override
+        public int getItemCount() {
+            return countryStartPosition() + countries.size() + 1;
+        }
+
+        private int countryStartPosition() {
+            int position = 1;
+            if (progressVisible)
+                position++;
+            position++;
+            if (countryErrorVisible)
+                position++;
+            return position;
+        }
+
+        private void bindStatus(StatusViewHolder holder) {
+            boolean enabled = prefs.getBoolean("wg_enabled", false);
+            WgProfileManager.Profile active = manager.getActiveProfile();
+            boolean activeMullvad = active != null && "mullvad".equals(active.provider);
+            String countryName = activeMullvad ? active.countryName : "";
+            String countryCode = activeMullvad ? active.countryCode : "";
+
+            holder.switchView.setOnCheckedChangeListener(null);
+            holder.switchView.setChecked(enabled);
+            holder.switchView.setOnCheckedChangeListener((buttonView, checked) -> {
+                if (checked && manager.getActiveProfile() == null) {
+                    holder.switchView.setChecked(false);
+                    Toast.makeText(requireContext(), R.string.vpn_choose_country_first,
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                prefs.edit().putBoolean("wg_enabled", checked).apply();
+                ServiceSinkhole.reload("changed wg_enabled", requireContext(), false);
+                refreshUi();
+            });
+
+            holder.settings.setOnClickListener(v -> showSettingsDialog());
+
+            if (enabled && activeMullvad && !TextUtils.isEmpty(countryName)) {
+                holder.flag.setText(flagEmoji(countryCode));
+                holder.title.setText(countryName);
+                String summary = manager.getProfileSummary(active);
+                holder.summary.setText(TextUtils.isEmpty(summary)
+                        ? getString(R.string.vpn_status_mullvad)
+                        : getString(R.string.vpn_status_relay, summary));
+                holder.summary.setVisibility(TextUtils.isEmpty(holder.summary.getText()) ?
+                        View.GONE : View.VISIBLE);
+            } else if (enabled && active != null) {
+                holder.flag.setText("");
+                holder.title.setText(R.string.vpn_status_wireguard_connected);
+                String summary = manager.getProfileSummary(active);
+                holder.summary.setText(TextUtils.isEmpty(summary)
+                        ? active.name
+                        : getString(R.string.vpn_status_wireguard_summary, active.name, summary));
+                holder.summary.setVisibility(View.VISIBLE);
+            } else {
+                holder.flag.setText("");
+                holder.title.setText(R.string.vpn_status_disconnected);
+                holder.summary.setText("");
+                holder.summary.setVisibility(View.GONE);
+            }
+        }
+
+        private void bindCountry(CountryViewHolder holder,
+                                 MullvadProfileGenerator.CountryOption country) {
             WgProfileManager.MullvadCountry active = manager.getActiveMullvadCountry();
             boolean isActive = active != null && country.code.equals(active.code);
             boolean isGenerating = country.code.equals(generatingCountryCode);
@@ -476,28 +525,65 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             holder.check.setVisibility(isActive ? View.VISIBLE : View.INVISIBLE);
             holder.rowProgress.setVisibility(isGenerating ? View.VISIBLE : View.GONE);
             holder.itemView.setEnabled(TextUtils.isEmpty(generatingCountryCode));
-            holder.itemView.setAlpha(TextUtils.isEmpty(generatingCountryCode) || isGenerating ? 1f : 0.5f);
+            holder.itemView.setAlpha(TextUtils.isEmpty(generatingCountryCode) || isGenerating ?
+                    1f : 0.5f);
             holder.itemView.setOnClickListener(v -> generateCountry(country));
         }
+    }
 
-        @Override
-        public int getItemCount() {
-            return countries.size();
+    private static class StatusViewHolder extends RecyclerView.ViewHolder {
+        final TextView flag;
+        final TextView title;
+        final TextView summary;
+        final ImageButton settings;
+        final MaterialSwitch switchView;
+
+        StatusViewHolder(View itemView) {
+            super(itemView);
+            flag = itemView.findViewById(R.id.vpnStatusFlag);
+            title = itemView.findViewById(R.id.vpnStatusTitle);
+            summary = itemView.findViewById(R.id.vpnStatusSummary);
+            settings = itemView.findViewById(R.id.vpnSettingsButton);
+            switchView = itemView.findViewById(R.id.vpnEnabledSwitch);
         }
+    }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView flag;
-            TextView name;
-            TextView check;
-            ProgressBar rowProgress;
+    private static class ProgressViewHolder extends RecyclerView.ViewHolder {
+        final TextView text;
 
-            ViewHolder(View itemView) {
-                super(itemView);
-                flag = itemView.findViewById(R.id.vpnCountryFlag);
-                name = itemView.findViewById(R.id.vpnCountryName);
-                check = itemView.findViewById(R.id.vpnCountryCheck);
-                rowProgress = itemView.findViewById(R.id.vpnCountryProgress);
-            }
+        ProgressViewHolder(View itemView) {
+            super(itemView);
+            text = itemView.findViewById(R.id.vpnProgressText);
+        }
+    }
+
+    private static class ErrorViewHolder extends RecyclerView.ViewHolder {
+        final Button retry;
+
+        ErrorViewHolder(View itemView) {
+            super(itemView);
+            retry = itemView.findViewById(R.id.vpnRetryCountries);
+        }
+    }
+
+    private static class CountryViewHolder extends RecyclerView.ViewHolder {
+        final TextView flag;
+        final TextView name;
+        final TextView check;
+        final ProgressBar rowProgress;
+
+        CountryViewHolder(View itemView) {
+            super(itemView);
+            flag = itemView.findViewById(R.id.vpnCountryFlag);
+            name = itemView.findViewById(R.id.vpnCountryName);
+            check = itemView.findViewById(R.id.vpnCountryCheck);
+            rowProgress = itemView.findViewById(R.id.vpnCountryProgress);
+        }
+    }
+
+    private static class FooterViewHolder extends RecyclerView.ViewHolder {
+        FooterViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }
