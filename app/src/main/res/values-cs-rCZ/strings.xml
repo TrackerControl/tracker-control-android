@@ -61,7 +61,6 @@
     <string name="setting_system">Zobrazit systémové aplikace</string>
     <string name="setting_log_app">Hledat nové trackery</string>
     <string name="setting_filter">Blokovat trackery</string>
-    <string name="setting_filter_udp">Blokovat trackery na UDP</string>
     <string name="setting_handover">Plynulé předání VPN při znovunačtení</string>
     <string name="setting_lockdown">Blokovat veškeré přenosy</string>
     <string name="setting_track_usage">Sledovat využití sítě</string>
@@ -155,7 +154,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="msg_queue">TrackerControl je zaneprázdněn</string>
     <string name="msg_update">Aktualizace k dispozici, stiskněte pro stažení</string>
     <string name="msg_usage">Můžete povolit (zelená) nebo zakázat (červená) přístup k internetu pro Wi-Fi či mobilní připojení stisknutím ikon vedle aplikace</string>
-    <string name="msg_whitelist">Přístup k Internetu je ve výchozím stavu povolen (režim seznamu zakázaných), může být změněno v nastavení</string>
     <string name="msg_push">Příchozí (push) zprávy jsou většinou zpracovány systémovou součástí služeb Play, která má ve výchozím stavu internetový přístup povolený</string>
     <string name="msg_system">Správu všech (systémových) aplikací lze povolit v nastavení</string>
     <string name="msg_issue">Prosím, popište problém a uveďte čas kdy k němu došlo:</string>

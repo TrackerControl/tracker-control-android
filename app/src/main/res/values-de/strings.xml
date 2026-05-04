@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Bei jeder Verbindungsänderung neu laden</string>
     <string name="setting_log_app">Neue Tracker suchen</string>
     <string name="setting_filter">Tracker blockieren</string>
-    <string name="setting_filter_udp">Tracker auf UDP blockieren</string>
     <string name="setting_handover">Nahtlose VPN-Übergabe beim Neuladen</string>
     <string name="setting_lockdown">Datenverkehr-Zugriffsbeschränkung</string>
     <string name="setting_track_usage">Netzwerknutzung verfolgen</string>
@@ -134,7 +133,6 @@
     <string name="msg_queue">TrackerControl ist beschäftigt</string>
     <string name="msg_update">Neue Version verfügbar, tippen zum Herunterladen</string>
     <string name="msg_usage">Sie können den Wi-Fi oder mobilen Internet-Zugang zulassen (grünlich) oder verweigern (rötlich), indem Sie auf die Symbole neben einer Anwendung tippen</string>
-    <string name="msg_whitelist">Internet-Zugang ist standardmäßig erlaubt (Blacklist-Modus). Das kann in den Einstellungen geändert werden.</string>
     <string name="msg_push">Eingehende Push-Nachrichten werden normalerweise durch die Systemkomponente Play-Dienste gesteuert, dieser ist standardmäßig der Internetzugang erlaubt</string>
     <string name="msg_system">Verwalten aller (System-) Apps kann in den Einstellungen aktiviert werden</string>
     <string name="msg_issue">Bitte beschreiben Sie das Problem und zu welchem Zeitpunkt es aufgetreten ist:</string>

@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Actualizar al cambiar la conectividad</string>
     <string name="setting_log_app">Buscar nuevos rastreadores</string>
     <string name="setting_filter">Bloquear rastreadores</string>
-    <string name="setting_filter_udp">Bloquear rastreadores en UDP</string>
     <string name="setting_handover">Transferencia fluida a VPN al actualizar</string>
     <string name="setting_lockdown">Bloquear tráfico</string>
     <string name="setting_track_usage">Monitorizar uso de red</string>
@@ -137,7 +136,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Actualización disponible, presiona para descargar</string>
     <string name="msg_usage">Puedes permitir (verde) o denegar (rojo) el acceso a Wi-Fi o Internet móvil tocando los iconos junto a una aplicación</string>
-    <string name="msg_whitelist">El acceso a Internet está permitido por defecto (modo lista negra), esto se puede cambiar en los ajustes</string>
     <string name="msg_push">Los mensajes entrantes (push) son manejados en su mayoría por el componente del sistema Servicios de Google Play, al que se le permite el acceso a Internet por defecto</string>
     <string name="msg_system">La gestión de todas las aplicaciones (del sistema) puede activarse en la configuración</string>
     <string name="msg_issue">Por favor, describa el problema e indique la hora del mismo:</string>

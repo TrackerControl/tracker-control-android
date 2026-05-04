@@ -97,7 +97,6 @@
     <string name="setting_log_app">Poišči nove sledilce</string>
     <string name="setting_log_logcat">Raziskave</string>
     <string name="setting_filter">Blokiraj sledilce</string>
-    <string name="setting_filter_udp">Blokiraj sledilce na UDP-ju</string>
     <string name="setting_handover">Nemoten preklop VPN-a ob ponovnem nalaganju</string>
     <string name="setting_lockdown">Zakleni promet</string>
     <string name="setting_track_usage">Sledi porabi omrežja</string>
@@ -196,7 +195,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_queue">TrackerControl je zaposlen.</string>
     <string name="msg_update">Na voljo je posodobitev, dotaknite za prejem.</string>
     <string name="msg_usage">Dostop do omrežja Wi-Fi ali mobilnega interneta lahko dovolite (zeleno) ali zavrnete (rdeče) z dotikom ikone poleg programa.</string>
-    <string name="msg_whitelist">Dostop do interneta je privzeto dovoljen (način črnega seznama).  To lahko spremenite v nastavitvah.</string>
     <string name="msg_push">Dohodna (potisna) sporočila v glavnem obdela sistemski sestavni del Storitve Play, ki mu je dostop do interneta privzeto dovoljen.</string>
     <string name="msg_system">Upravljanje z vsemi (sistemskimi) programi lahko omogočite v nastavitvah.</string>
     <string name="msg_issue">Prosimo, opišite težavo in čas njenega nastanka:</string>

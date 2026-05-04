@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Birkargatu konektibitate aldaketa bakoitzean</string>
     <string name="setting_log_app">Aztarnari berriak bilatu</string>
     <string name="setting_filter">Aztarnariak blokeatu</string>
-    <string name="setting_filter_udp">UDP bidezko aztarnariak blokeatu</string>
     <string name="setting_handover">Pasatu VPNra etenik gabe birkargatzean</string>
     <string name="setting_lockdown">Blokeatu trafikoa</string>
     <string name="setting_track_usage">Monitorizatu sare-erabilera</string>
@@ -136,7 +135,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="msg_queue">TrackerControl lanean ari da</string>
     <string name="msg_update">Eguneraketa eskuragarri, sakatu deskargatzeko</string>
     <string name="msg_usage">Wi-Fi edo mugikor bidez Internetera sarbidea baimendu (berde) edo ukatu (gorri) aplikazioaren ondoan dauden ikonoak sakatuz</string>
-    <string name="msg_whitelist">Internet sarbidea lehenetsita baimenduta dago (zerrenda beltza modua), hau ezarpenetan aldatu daiteke</string>
     <string name="msg_push">Jasotako (push) mezuak gehienbat Play Services osagaiak kudeatzen ditu, eta Internet sarbidea baimentzen zaio defektuz</string>
     <string name="msg_system">Aplikazio guztiak (sistemakoak) kudeatzea ezarpenetan gaitu daiteke</string>
     <string name="msg_issue">Azaldu arazoa eta esan noiz gertatu den:</string>

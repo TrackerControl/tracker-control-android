@@ -72,7 +72,6 @@
     <string name="setting_reload_onconnectivity">إعادة التحميل عند كل تغيير في الاتصال</string>
     <string name="setting_log_app">البحث عن أدوات التتبع الجديدة</string>
     <string name="setting_filter">حظر أدوات التتبع</string>
-    <string name="setting_filter_udp">حظر أدوات التتبع على UDP</string>
     <string name="setting_handover">تسليم VPN سلس عند إعادة التحميل</string>
     <string name="setting_lockdown">حظر حركة المرور</string>
     <string name="setting_track_usage">تتبع استخدام الشبكة</string>
@@ -150,7 +149,6 @@
     <string name="msg_queue">التحكم في التتبع مشغول</string>
     <string name="msg_update">التحديث متاح، انقر للتنزيل</string>
     <string name="msg_usage">يمكنك السماح (أخضر) أو رفض (أحمر) الوصول إلى الإنترنت عبر Wi-Fi أو الهاتف المحمول بالنقر على الرموز الموجودة بجوار التطبيق</string>
-    <string name="msg_whitelist">يتم السماح بالوصول إلى الإنترنت افتراضيًا (وضع القائمة السوداء)، ويمكن تغيير ذلك في الإعدادات</string>
     <string name="msg_push">تتم معالجة الرسائل الواردة (الرسائل الفورية) في الغالب بواسطة مكون نظام خدمات Play، والذي يُسمح له بالوصول إلى الإنترنت افتراضيًا</string>
     <string name="msg_system">يمكن تمكين إدارة جميع تطبيقات (النظام) في الإعدادات</string>
     <string name="msg_issue">يرجى وصف المشكلة وتحديد وقت حدوث المشكلة:</string>

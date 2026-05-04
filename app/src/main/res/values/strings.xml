@@ -118,7 +118,6 @@
     <string name="setting_log_app">Search new trackers</string>
     <string name="setting_log_logcat">Research</string>
     <string name="setting_filter">Block trackers</string>
-    <string name="setting_filter_udp">Block trackers on UDP</string>
     <string name="setting_handover">Seamless VPN handover on reload</string>
     <string name="setting_lockdown">Lockdown traffic</string>
     <string name="setting_track_usage">Track network usage</string>
@@ -274,7 +273,6 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_queue">TrackerControl is busy</string>
     <string name="msg_update">Update available, tap to download</string>
     <string name="msg_usage">You can allow (greenish) or deny (reddish) Wi-Fi or mobile internet access by tapping on the icons next to an app</string>
-    <string name="msg_whitelist">Internet access is allowed by default (blacklist mode), this can be changed in the settings</string>
     <string name="msg_push">Incoming (push) messages are mostly handled by the system component Play services, which is allowed internet access by default</string>
     <string name="msg_system">Managing all (system) apps can be enabled in the settings</string>
     <string name="msg_issue">Please describe the problem and indicate the time of the problem:</string>

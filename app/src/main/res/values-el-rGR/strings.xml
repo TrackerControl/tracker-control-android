@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Φορτώστε ξανά σε κάθε αλλαγή συνδεσιμότητας</string>
     <string name="setting_log_app">Αναζήτηση νέων ιχνηλατών</string>
     <string name="setting_filter">Αποκλεισμός Ιχνηλατών</string>
-    <string name="setting_filter_udp">Αποκλεισμός ιχνηλατών στο UDP</string>
     <string name="setting_handover">Απρόσκοπτη παράδοση VPN κατά την επαναφόρτωση</string>
     <string name="setting_lockdown">Κλείδωμα της κυκλοφορίας</string>
     <string name="setting_track_usage">Παρακολουθήστε τη χρήση δικτύου</string>
@@ -135,7 +134,6 @@
     <string name="msg_queue">Το TrackerControl είναι απασχολημένο</string>
     <string name="msg_update">Διαθέσιμη αναβάθμιση, πατήστε για να την κατεβάσετε</string>
     <string name="msg_usage">Μπορείτε να επιτρέψετε (πράσινο) ή να αρνηθείτε (κόκκινο) την πρόσβαση στο διαδίκτυο, την σύνδεση Wi-Fi ή τα δεδομένα, πατώντας πάνω στα εικονίδια δίπλα σε μια εφαρμογή</string>
-    <string name="msg_whitelist">Η πρόσβαση στο Διαδίκτυο επιτρέπεται από προεπιλογή ( λειτουργία μαύρης λίστας), αυτό μπορεί να αλλάξει στις ρυθμίσεις</string>
     <string name="msg_push">Τα εισερχόμενα μηνύματα (push) αντιμετωπίζονται ως επί το πλείστον από το σύστημα, ως μέρος των υπηρεσιών του Play, στις οποίες επιτρέπεται πρόσβαση στο διαδίκτυο από προεπιλογή</string>
     <string name="msg_system">Η διαχείριση όλων των εφαρμογών (του συστήματος) μπορεί να ενεργοποιηθεί στις ρυθμίσεις</string>
     <string name="msg_issue">Παρακαλούμε περιγράψτε το πρόβλημα και υποδείξετε το σημείο εμφάνισης του προβλήματος:</string>

@@ -90,7 +90,6 @@
     <string name="setting_log_app">Buscar novos rastreadores</string>
     <string name="setting_log_logcat">Pesquisa</string>
     <string name="setting_filter">Bloquear rastreadores</string>
-    <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_handover">Transição VPN automática ao recarregar</string>
     <string name="setting_lockdown">Bloqueio total de tráfego</string>
     <string name="setting_track_usage">Rastrear uso da rede</string>
@@ -182,7 +181,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Atualização disponível, toque para baixar</string>
     <string name="msg_usage">Você pode permitir (verde) ou negar (vermelho) Wi-Fi ou acesso à internet móvel clicando nos ícones ao lado de um aplicativo</string>
-    <string name="msg_whitelist">O acesso à Internet é permitido por padrão (modo de lista negra), isso pode ser alterado nas configurações</string>
     <string name="msg_push">Mensagens recebidas (push) são normalmente controladas pelo componente do sistema Google Play Services, ao qual é permitido o acesso à Internet por padrão</string>
     <string name="msg_system">Gerenciar todos (sistema) os apps pode ser habilitado nas configurações</string>
     <string name="msg_issue">Por favor, descreva o problema e indique o momento em que ocorreu:</string>

@@ -239,33 +239,18 @@ public class Rule {
     public static List<Rule> getRules(final boolean all, boolean self, Context context) {
         synchronized (context.getApplicationContext()) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences wifi = context.getSharedPreferences("wifi", Context.MODE_PRIVATE);
-            SharedPreferences other = context.getSharedPreferences("other", Context.MODE_PRIVATE);
-            SharedPreferences screen_wifi = context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE);
-            SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
-            SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
             SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
 
             // Get settings
-            boolean default_wifi = prefs.getBoolean("whitelist_wifi", true);
-            boolean default_other = prefs.getBoolean("whitelist_other", true);
-            boolean default_screen_wifi = prefs.getBoolean("screen_wifi", false);
-            boolean default_screen_other = prefs.getBoolean("screen_other", false);
-            boolean default_roaming = prefs.getBoolean("whitelist_roaming", true);
-
             boolean manage_system = prefs.getBoolean("manage_system", false);
-            boolean screen_on = prefs.getBoolean("screen_on", true);
             boolean show_user = prefs.getBoolean("show_user", true);
             boolean show_system = prefs.getBoolean("show_system", false);
             boolean show_nointernet = prefs.getBoolean("show_nointernet", true);
             boolean show_unprotected = prefs.getBoolean("show_unprotected", false);
             boolean show_frozen = prefs.getBoolean("show_frozen", false);
             boolean strict_blocking = BlockingMode.isStrictMode(context);
-
-            default_screen_wifi = default_screen_wifi && screen_on;
-            default_screen_other = default_screen_other && screen_on;
 
             // Get predefined rules
             Map<String, Boolean> pre_wifi_blocked = new HashMap<>();
@@ -286,7 +271,7 @@ public class Rule {
                         } else if ("other".equals(xml.getName())) {
                             String pkg = xml.getAttributeValue(null, "package");
                             boolean pblocked = xml.getAttributeBooleanValue(null, "blocked", false);
-                            boolean proaming = xml.getAttributeBooleanValue(null, "roaming", default_roaming);
+                            boolean proaming = xml.getAttributeBooleanValue(null, "roaming", true);
                             pre_other_blocked.put(pkg, pblocked);
                             pre_roaming.put(pkg, proaming);
 
@@ -395,27 +380,17 @@ public class Rule {
                             ((rule.system ? show_system : show_user) &&
                                     (show_nointernet || rule.internet) &&
                                     (show_frozen || rule.enabled))) {
-                        rule.wifi_default = (pre_wifi_blocked.containsKey(info.packageName)
-                                ? pre_wifi_blocked.get(info.packageName)
-                                : default_wifi);
-                        rule.other_default = (pre_other_blocked.containsKey(info.packageName)
-                                ? pre_other_blocked.get(info.packageName)
-                                : default_other);
-                        rule.screen_wifi_default = default_screen_wifi;
-                        rule.screen_other_default = default_screen_other;
-                        rule.roaming_default = (pre_roaming.containsKey(info.packageName)
-                                ? pre_roaming.get(info.packageName)
-                                : default_roaming);
+                        rule.wifi_default = false;
+                        rule.other_default = false;
+                        rule.screen_wifi_default = false;
+                        rule.screen_other_default = false;
+                        rule.roaming_default = true;
 
-                        rule.wifi_blocked = (!(rule.system && !manage_system)
-                                && wifi.getBoolean(info.packageName, rule.wifi_default));
-                        rule.other_blocked = (!(rule.system && !manage_system)
-                                && other.getBoolean(info.packageName, rule.other_default));
-                        rule.screen_wifi = screen_wifi.getBoolean(info.packageName, rule.screen_wifi_default)
-                                && screen_on;
-                        rule.screen_other = screen_other.getBoolean(info.packageName, rule.screen_other_default)
-                                && screen_on;
-                        rule.roaming = roaming.getBoolean(info.packageName, rule.roaming_default);
+                        rule.wifi_blocked = false;
+                        rule.other_blocked = false;
+                        rule.screen_wifi = false;
+                        rule.screen_other = false;
+                        rule.roaming = true;
 
                         rule.apply = apply.getBoolean(info.packageName, true);
                         rule.tracker_protect = BlockingMode.isTrackerProtectionEnabled(
@@ -435,7 +410,7 @@ public class Rule {
 
                         rule.hosts = dh.getHostCount(rule.uid, true);
 
-                        rule.updateChanged(default_wifi, default_other, default_roaming);
+                        rule.updateChanged();
 
                         // Check unprotected filter: when enabled, only show apps that are not protected
                         boolean isUnprotected = !rule.apply || !rule.tracker_protect;
@@ -551,22 +526,12 @@ public class Rule {
         return packagesList;
     }
 
-    private void updateChanged(boolean default_wifi, boolean default_other, boolean default_roaming) {
-        changed = (wifi_blocked != default_wifi ||
-                (other_blocked != default_other) ||
-                (wifi_blocked && screen_wifi != screen_wifi_default) ||
-                (other_blocked && screen_other != screen_other_default) ||
-                ((!other_blocked || screen_other) && roaming != default_roaming) ||
-                hosts > 0 || !tracker_protect || !apply);
+    private void updateChanged() {
+        changed = (hosts > 0 || !tracker_protect || !apply);
     }
 
     public void updateChanged(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean screen_on = prefs.getBoolean("screen_on", false);
-        boolean default_wifi = prefs.getBoolean("whitelist_wifi", true) && screen_on;
-        boolean default_other = prefs.getBoolean("whitelist_other", true) && screen_on;
-        boolean default_roaming = prefs.getBoolean("whitelist_roaming", true);
-        updateChanged(default_wifi, default_other, default_roaming);
+        updateChanged();
     }
 
     @Override

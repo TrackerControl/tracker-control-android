@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Last inn på nytt ved tilkoblingsendring</string>
     <string name="setting_log_app">Søk etter nye sporere</string>
     <string name="setting_filter">Blokker sporing</string>
-    <string name="setting_filter_udp">Blokker sporing på UDP</string>
     <string name="setting_handover">Sømløs VPN-overlevering ved omlasting</string>
     <string name="setting_lockdown">Blokker trafikk</string>
     <string name="setting_track_usage">Spor nettverksbruk</string>
@@ -135,7 +134,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="msg_queue">TrackerControl er opptatt</string>
     <string name="msg_update">En oppdatering er tilgjengelig, trykk for å laste ned</string>
     <string name="msg_usage">Du kan tillate (grønn) eller avslå (rød) tilgang til Wi-Fi eller mobilnett ved å trykke på ikonene ved siden av en app</string>
-    <string name="msg_whitelist">Som standard er internettilgang tillat (svarteliste-modus). Dette kan endres i instillingene</string>
     <string name="msg_push">Innkommende (push) meldinger er hovedsakelig håndtert av system-komponenten Google Play Services, som er tillatt internettilgang som standard</string>
     <string name="msg_system">Administrasjon av alle (system) apper kan aktiveres i innstillingene</string>
     <string name="msg_issue">Vennligst beskriv problemet og angi tidspunktet for problemet:</string>

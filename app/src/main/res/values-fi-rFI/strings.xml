@@ -59,7 +59,6 @@
     <string name="setting_system">Näytä järjestelmäsovellukset</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
     <string name="setting_filter">Estä seuraimet</string>
-    <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
     <string name="setting_handover">Saumaton VPN-kanavanvaihto ladattaessa</string>
     <string name="setting_lockdown">Liikenteen sulkeminen</string>
     <string name="setting_track_usage">Seuraa verkon käyttöä</string>
@@ -153,7 +152,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_queue">TrackerControl on kiireinen</string>
     <string name="msg_update">Päivitys saatavilla, napauta ladataksesi</string>
     <string name="msg_usage">Voit sallia (vihertävän) tai estää (punertavan) Wi-Fi- tai mobiili-internetyhteyden napauttamalla sovelluksen vieressä olevia kuvakkeita</string>
-    <string name="msg_whitelist">Internet-yhteys on oletusarvoisesti sallittu (mustan listan tila), sitä voidaan muuttaa asetuksissa</string>
     <string name="msg_push">Saapuvia (push) viestejä hoitaa enimmäkseen Play komponenttijärjestelmä, joka on oletusarvoisesti Internet-yhteys</string>
     <string name="msg_system">Kaikkien (järjestelmä) sovellusten hallinta voidaan ottaa käyttöön asetuksissa</string>
     <string name="msg_issue">Kuvaile ongelma ja ilmoita tapahtuma-aika:</string>

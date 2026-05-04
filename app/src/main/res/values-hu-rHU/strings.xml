@@ -58,7 +58,6 @@
     <string name="setting_system">Rendszeralkalmazások megjelenítése</string>
     <string name="setting_log_app">Új nyomkövetők keresése</string>
     <string name="setting_filter">Nyomkövetők blokkolása</string>
-    <string name="setting_filter_udp">Nyomkövetők blokkolása UDP-n</string>
     <string name="setting_handover">Zökkenőmentes VPN átadás újratöltéskor</string>
     <string name="setting_lockdown">Forgalom lezárása</string>
     <string name="setting_track_usage">A hálózat használatának nyomon követése</string>
@@ -138,7 +137,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="msg_queue">A TrackerControl foglalt</string>
     <string name="msg_update">Frissítés érhető el, érintse meg a letöltéshez</string>
     <string name="msg_usage">Engedélyezni (zöldes) vagy tiltani (vöröses) tudja a Wi-Fi vagy mobil internet hozzáférést, ha megérinti az alkalmazás melletti ikont</string>
-    <string name="msg_whitelist">Az internet hozzáférés alapértelmezésként engedélyezve van (blacklist mód), ezt meg lehet változtatni a beállításokban</string>
     <string name="msg_push">A bejövő (push) üzeneteket többnyire a Play Szolgáltatások rendszerösszetevő kezeli, ennek alapértelmezés szerint engedélyezve van az internet-hozzáférése</string>
     <string name="msg_system">Az összes (rendszer) alkalmazás kezelése a beállításokban engedélyezhető</string>
     <string name="msg_issue">Kérjük írja le a problémát és a probléma időpontját:</string>

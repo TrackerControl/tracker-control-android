@@ -150,7 +150,6 @@ public class ServiceSinkhole extends VpnService {
             clearWireGuardErrorNotification();
     };
 
-    private boolean phone_state = false;
     private Object networkCallback = null;
 
     private boolean registeredInteractiveState = false;
@@ -580,23 +579,6 @@ public class ServiceSinkhole extends VpnService {
         private void reload(boolean interactive) {
             List<Rule> listRule = Rule.getRules(true, ServiceSinkhole.this);
 
-            // Check if rules needs to be reloaded
-            if (interactive) {
-                boolean process = false;
-                for (Rule rule : listRule) {
-                    boolean blocked = (last_metered ? rule.other_blocked : rule.wifi_blocked);
-                    boolean screen = (last_metered ? rule.screen_other : rule.screen_wifi);
-                    if (blocked && screen) {
-                        process = true;
-                        break;
-                    }
-                }
-                if (!process) {
-                    Log.i(TAG, "No changed rules on interactive state change");
-                    return;
-                }
-            }
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
 
             // Refresh cached preferences for shouldTrackApp()
@@ -632,7 +614,7 @@ public class ServiceSinkhole extends VpnService {
                 vpn = startVPN(last_builder);
 
             } else {
-                if (vpn != null && prefs.getBoolean("filter", true) && builder.equals(last_builder)) {
+                if (vpn != null && builder.equals(last_builder)) {
                     Log.i(TAG, "Native restart");
                     stopNative(vpn);
 
@@ -1022,10 +1004,9 @@ public class ServiceSinkhole extends VpnService {
         private void usage(Usage usage) {
             if (usage.Uid >= 0 && !(usage.Uid == 0 && usage.Protocol == 17 && usage.DPort == 53)) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                boolean filter = prefs.getBoolean("filter", true);
                 boolean log_app = prefs.getBoolean("log_app", true);
                 boolean track_usage = prefs.getBoolean("track_usage", false);
-                if (filter && log_app && track_usage) {
+                if (log_app && track_usage) {
                     DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                     String dname = dh.getQName(usage.Uid, usage.DAddr);
                     Log.i(TAG, "Usage account " + usage + " dname=" + dname);
@@ -1122,7 +1103,6 @@ public class ServiceSinkhole extends VpnService {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
             long frequency = Long.parseLong(prefs.getString("stats_frequency", "2000"));
             long samples = Long.parseLong(prefs.getString("stats_samples", "90"));
-            boolean filter = prefs.getBoolean("filter", true);
             boolean show_top = prefs.getBoolean("show_top", false);
             int loglevel = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
 
@@ -1143,14 +1123,12 @@ public class ServiceSinkhole extends VpnService {
             float rxsec = 0;
             long ttx = TrafficStats.getTotalTxBytes();
             long trx = TrafficStats.getTotalRxBytes();
-            if (filter) {
-                ttx -= TrafficStats.getUidTxBytes(Process.myUid());
-                trx -= TrafficStats.getUidRxBytes(Process.myUid());
-                if (ttx < 0)
-                    ttx = 0;
-                if (trx < 0)
-                    trx = 0;
-            }
+            ttx -= TrafficStats.getUidTxBytes(Process.myUid());
+            trx -= TrafficStats.getUidRxBytes(Process.myUid());
+            if (ttx < 0)
+                ttx = 0;
+            if (trx < 0)
+                trx = 0;
             if (t > 0 && tx > 0 && rx > 0) {
                 float dt = (ct - t) / 1000f;
                 txsec = (ttx - tx) / dt;
@@ -1289,7 +1267,7 @@ public class ServiceSinkhole extends VpnService {
                 remoteViews.setTextViewText(R.id.tvMax, getString(R.string.msg_mbsec, max / 2 / 1000 / 1000));
 
             // Show session/file count
-            if (filter && loglevel <= Log.WARN) {
+            if (loglevel <= Log.WARN) {
                 int[] count = jni_get_stats(jni_context);
                 remoteViews.setTextViewText(R.id.tvSessions, count[0] + "/" + count[1] + "/" + count[2]);
                 remoteViews.setTextViewText(R.id.tvFiles, count[3] + "/" + count[4]);
@@ -1338,7 +1316,6 @@ public class ServiceSinkhole extends VpnService {
         // Get custom DNS servers
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean ip6 = prefs.getBoolean("ip6", true);
-        boolean filter = prefs.getBoolean("filter", true);
         String vpnDns1 = prefs.getString("dns", null);
         String vpnDns2 = prefs.getString("dns2", null);
         Log.i(TAG, "DNS system=" + TextUtils.join(",", sysDns) + " config=" + vpnDns1 + "," + vpnDns2);
@@ -1493,7 +1470,6 @@ public class ServiceSinkhole extends VpnService {
     private Builder getBuilder(List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean ip6 = prefs.getBoolean("ip6", true);
-        boolean filter = prefs.getBoolean("filter", true);
         boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
 
         // Build VPN service
@@ -1552,14 +1528,12 @@ public class ServiceSinkhole extends VpnService {
         }
 
         // DNS address
-        if (filter) {
-            if (dnsServers == null)
-                dnsServers = getDns(ServiceSinkhole.this);
-            for (InetAddress dns : dnsServers) {
-                if (ip6 || dns instanceof Inet4Address) {
-                    Log.i(TAG, "Using DNS=" + dns + (wgEnabled ? " (protected by WG)" : ""));
-                    builder.addDnsServer(dns);
-                }
+        if (dnsServers == null)
+            dnsServers = getDns(ServiceSinkhole.this);
+        for (InetAddress dns : dnsServers) {
+            if (ip6 || dns instanceof Inet4Address) {
+                Log.i(TAG, "Using DNS=" + dns + (wgEnabled ? " (protected by WG)" : ""));
+                builder.addDnsServer(dns);
             }
         }
 
@@ -1590,15 +1564,14 @@ public class ServiceSinkhole extends VpnService {
         // Add /32 host routes for local DNS servers so their traffic enters the
         // tunnel (where TC can filter it) even though LAN is otherwise excluded.
         // This preserves compatibility with local DNS setups like Pi-hole.
-        if (filter)
-            for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
-                if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
-                    try {
-                        Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
-                        builder.addRoute(dns, 32);
-                    } catch (Throwable ex) {
-                        Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
-                    }
+        for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
+            if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
+                try {
+                    Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
+                    builder.addRoute(dns, 32);
+                } catch (Throwable ex) {
+                    Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
+                }
 
         // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
         // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
@@ -1668,24 +1641,16 @@ public class ServiceSinkhole extends VpnService {
             } catch (PackageManager.NameNotFoundException ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
-            if (last_connected && !filter)
-                for (Rule rule : listAllowed)
+            for (Rule rule : listRule)
+                // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
+                // false
+                if (!rule.apply || (!includeSystem && rule.system))
                     try {
+                        Log.i(TAG, "Not routing " + rule.packageName);
                         builder.addDisallowedApplication(rule.packageName);
                     } catch (PackageManager.NameNotFoundException ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }
-            else if (filter)
-                for (Rule rule : listRule)
-                    // Exclude from VPN if explicitly excluded OR if system app and includeSystem is
-                    // false
-                    if (!rule.apply || (!includeSystem && rule.system))
-                        try {
-                            Log.i(TAG, "Not routing " + rule.packageName);
-                            builder.addDisallowedApplication(rule.packageName);
-                        } catch (PackageManager.NameNotFoundException ex) {
-                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                        }
         }
 
         // Build configure intent
@@ -1700,79 +1665,65 @@ public class ServiceSinkhole extends VpnService {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
-        boolean filter = prefs.getBoolean("filter", true);
-
-        Log.i(TAG, "Start native log=" + log + "/" + log_app + " filter=" + filter);
+        Log.i(TAG, "Start native log=" + log + "/" + log_app + " filter=true");
 
         // Prepare rules
-        if (filter) {
-            prepareUidAllowed(listAllowed, listRule);
-            prepareHostsBlocked(ServiceSinkhole.this);
-            prepareUidIPFilters(null);
-            prepareForwarding();
-        } else {
-            lock.writeLock().lock();
-            mapUidAllowed.clear();
-            mapUidKnown.clear();
-            mapHostsBlocked.clear();
-            mapUidIPFilters.clear();
-            mapForward.clear();
-            lock.writeLock().unlock();
+        prepareUidAllowed(listAllowed, listRule);
+        prepareHostsBlocked(ServiceSinkhole.this);
+        prepareUidIPFilters(null);
+        prepareForwarding();
+
+        int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
+        final int rcode = Integer.parseInt(prefs.getString("rcode", "3"));
+        if (prefs.getBoolean("socks5_enabled", false))
+            jni_socks5(
+                    prefs.getString("socks5_addr", ""),
+                    Integer.parseInt(prefs.getString("socks5_port", "0")),
+                    prefs.getString("socks5_username", ""),
+                    prefs.getString("socks5_password", ""));
+        else
+            jni_socks5("", 0, "", "");
+
+        jni_sni(prefs.getBoolean("sni_enabled", false));
+        updateUnderlyingNetworks();
+
+        // WireGuard egress. startOrUpdate is idempotent: same config +
+        // same TUN fd is a no-op, so reload-induced "Native restart"
+        // calls (where the VPN PFD is reused) won't re-handshake WG.
+        // It also handles the disable case internally — no need to gate.
+        boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
+                prefs.getBoolean("wg_enabled", false),
+                prefs.getString("wg_config", ""),
+                ServiceSinkhole.this,
+                vpn,
+                Util.isInteractive(ServiceSinkhole.this),
+                prefs.getBoolean("wg_keepalive_when_screen_off", false),
+                () -> jni_wireguard_start(),
+                () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+        if (!wgOk) {
+            String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
+            Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
+            showWireGuardErrorNotification(wgError);
+            return false;
         }
 
-        if (log || log_app || filter) {
-            int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
-            final int rcode = Integer.parseInt(prefs.getString("rcode", "3"));
-            if (prefs.getBoolean("socks5_enabled", false))
-                jni_socks5(
-                        prefs.getString("socks5_addr", ""),
-                        Integer.parseInt(prefs.getString("socks5_port", "0")),
-                        prefs.getString("socks5_username", ""),
-                        prefs.getString("socks5_password", ""));
-            else
-                jni_socks5("", 0, "", "");
+        if (tunnelThread == null) {
+            Log.i(TAG, "Starting tunnel thread context=" + jni_context);
+            jni_start(jni_context, prio);
 
-            jni_sni(prefs.getBoolean("sni_enabled", false));
-            updateUnderlyingNetworks();
+            tunnelThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "Running tunnel context=" + jni_context);
+                    jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
+                    Log.i(TAG, "Tunnel exited");
+                    tunnelThread = null;
+                }
+            });
+            // tunnelThread.setPriority(Thread.MAX_PRIORITY);
+            tunnelThread.start();
 
-            // WireGuard egress. startOrUpdate is idempotent: same config +
-            // same TUN fd is a no-op, so reload-induced "Native restart"
-            // calls (where the VPN PFD is reused) won't re-handshake WG.
-            // It also handles the disable case internally — no need to gate.
-            boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
-                    prefs.getBoolean("wg_enabled", false),
-                    prefs.getString("wg_config", ""),
-                    ServiceSinkhole.this,
-                    vpn,
-                    Util.isInteractive(ServiceSinkhole.this),
-                    prefs.getBoolean("wg_keepalive_when_screen_off", false),
-                    () -> jni_wireguard_start(),
-                    () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
-            if (!wgOk) {
-                String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
-                Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
-                showWireGuardErrorNotification(wgError);
-                return false;
-            }
-
-            if (tunnelThread == null) {
-                Log.i(TAG, "Starting tunnel thread context=" + jni_context);
-                jni_start(jni_context, prio);
-
-                tunnelThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Running tunnel context=" + jni_context);
-                        jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
-                        Log.i(TAG, "Tunnel exited");
-                        tunnelThread = null;
-                    }
-                });
-                // tunnelThread.setPriority(Thread.MAX_PRIORITY);
-                tunnelThread.start();
-
-                Log.i(TAG, "Started tunnel thread");
-            }
+            Log.i(TAG, "Started tunnel thread");
         }
 
         return true;
@@ -1993,55 +1944,41 @@ public class ServiceSinkhole extends VpnService {
         mapForward.clear();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getBoolean("filter", true)) {
-            try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getForwarding()) {
-                int colProtocol = cursor.getColumnIndex("protocol");
-                int colDPort = cursor.getColumnIndex("dport");
-                int colRAddr = cursor.getColumnIndex("raddr");
-                int colRPort = cursor.getColumnIndex("rport");
-                int colRUid = cursor.getColumnIndex("ruid");
-                while (cursor.moveToNext()) {
-                    Forward fwd = new Forward();
-                    fwd.protocol = cursor.getInt(colProtocol);
-                    fwd.dport = cursor.getInt(colDPort);
-                    fwd.raddr = cursor.getString(colRAddr);
-                    fwd.rport = cursor.getInt(colRPort);
-                    fwd.ruid = cursor.getInt(colRUid);
-                    mapForward.put(fwd.dport, fwd);
-                    Log.i(TAG, "Forward " + fwd);
-                }
+        try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getForwarding()) {
+            int colProtocol = cursor.getColumnIndex("protocol");
+            int colDPort = cursor.getColumnIndex("dport");
+            int colRAddr = cursor.getColumnIndex("raddr");
+            int colRPort = cursor.getColumnIndex("rport");
+            int colRUid = cursor.getColumnIndex("ruid");
+            while (cursor.moveToNext()) {
+                Forward fwd = new Forward();
+                fwd.protocol = cursor.getInt(colProtocol);
+                fwd.dport = cursor.getInt(colDPort);
+                fwd.raddr = cursor.getString(colRAddr);
+                fwd.rport = cursor.getInt(colRPort);
+                fwd.ruid = cursor.getInt(colRUid);
+                mapForward.put(fwd.dport, fwd);
+                Log.i(TAG, "Forward " + fwd);
             }
+        }
 
-            // Add DoH DNS forwarding when enabled and not superseded by WireGuard DNS.
-            if (prefs.getBoolean("doh_enabled", false) && !hasActiveWireGuardDns(prefs)) {
-                // UDP
-                Forward dnsFwd = new Forward();
-                dnsFwd.protocol = 17; // UDP
-                dnsFwd.dport = 53;
-                dnsFwd.raddr = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_ADDRESS;
-                dnsFwd.rport = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_PORT;
-                dnsFwd.ruid = android.os.Process.myUid();
-                mapForward.put(dnsFwd.dport, dnsFwd);
+        // Add DoH DNS forwarding when enabled and not superseded by WireGuard DNS.
+        if (prefs.getBoolean("doh_enabled", false) && !hasActiveWireGuardDns(prefs)) {
+            Forward dnsFwd = new Forward();
+            dnsFwd.protocol = 17; // UDP
+            dnsFwd.dport = 53;
+            dnsFwd.raddr = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_ADDRESS;
+            dnsFwd.rport = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_PORT;
+            dnsFwd.ruid = android.os.Process.myUid();
+            mapForward.put(dnsFwd.dport, dnsFwd);
 
-                // TCP (use the same port map, as mapForward is keyed by dport)
-                // Note: Current mapForward keyed by dport supports only one rule per port.
-                // Since redirection target is same (5353) and DnsProxyServer listens on both
-                // UDP/TCP 5353,
-                // a single rule effectively handles both if the native code redirects based on
-                // dport match.
-                // However, for correctness in the Forward object:
-                // We leave it as is, or we would need to change mapForward to Map<Integer,
-                // List<Forward>> or similar
-                // if we wanted different destinations.
-                // Since dport 53 -> rport 5353 works for both protocol sockets, this is fine.
-                Log.i(TAG, "DoH Forward " + dnsFwd);
-            }
+            // TCP uses the same port map, as mapForward is keyed by dport.
+            Log.i(TAG, "DoH Forward " + dnsFwd);
         }
         lock.writeLock().unlock();
     }
 
     private List<Rule> getAllowedRules(List<Rule> listRule) {
-        List<Rule> listAllowed = new ArrayList<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Check state
@@ -2049,61 +1986,25 @@ public class ServiceSinkhole extends VpnService {
         boolean metered = Util.isMeteredNetwork(this);
         boolean useMetered = prefs.getBoolean("use_metered", false);
         String ssidNetwork = Util.getWifiSSID(this);
-        String generation = Util.getNetworkGeneration(this);
-        boolean unmetered_2g = prefs.getBoolean("unmetered_2g", false);
-        boolean unmetered_3g = prefs.getBoolean("unmetered_3g", false);
-        boolean unmetered_4g = prefs.getBoolean("unmetered_4g", false);
-        boolean roaming = Util.isRoaming(ServiceSinkhole.this);
-        boolean national = prefs.getBoolean("national_roaming", false);
-        boolean eu = prefs.getBoolean("eu_roaming", false);
-        boolean tethering = prefs.getBoolean("tethering", false);
-        boolean filter = prefs.getBoolean("filter", true);
 
         // Update connected state
         last_connected = Util.isConnected(ServiceSinkhole.this);
 
         boolean org_metered = metered;
-        boolean org_roaming = roaming;
 
         // Update metered state
         if (wifi && !useMetered)
             metered = false;
-        if (unmetered_2g && "2G".equals(generation))
-            metered = false;
-        if (unmetered_3g && "3G".equals(generation))
-            metered = false;
-        if (unmetered_4g && "4G".equals(generation))
-            metered = false;
         last_metered = metered;
-
-        // Update roaming state
-        if (roaming && eu)
-            roaming = !Util.isEU(this);
-        if (roaming && national)
-            roaming = !Util.isNational(this);
 
         Log.i(TAG, "Get allowed" +
                 " connected=" + last_connected +
                 " wifi=" + wifi +
                 " network=" + ssidNetwork +
                 " metered=" + metered + "/" + org_metered +
-                " generation=" + generation +
-                " roaming=" + roaming + "/" + org_roaming +
-                " interactive=" + last_interactive +
-                " tethering=" + tethering +
-                " filter=" + filter);
+                " rules=" + listRule.size());
 
-        if (last_connected)
-            for (Rule rule : listRule) {
-                boolean blocked = (metered ? rule.other_blocked : rule.wifi_blocked);
-                boolean screen = (metered ? rule.screen_other : rule.screen_wifi);
-                if ((!blocked || (screen && last_interactive)) &&
-                        (!metered || !(rule.roaming && roaming)))
-                    listAllowed.add(rule);
-            }
-
-        Log.i(TAG, "Allowed " + listAllowed.size() + " of " + listRule.size());
-        return listAllowed;
+        return new ArrayList<>(listRule);
     }
 
     private void stopVPN(ParcelFileDescriptor pfd) {
@@ -2211,44 +2112,37 @@ public class ServiceSinkhole extends VpnService {
 
         lock.readLock().lock();
 
-        packet.allowed = false;
-        if (prefs.getBoolean("filter", true)) {
-            // https://android.googlesource.com/platform/system/core/+/master/include/private/android_filesystem_config.h
-            if (packet.protocol == 17 /* UDP */ && !prefs.getBoolean("filter_udp", true)) {
-                // Allow unfiltered UDP
-                packet.allowed = true;
-                Log.i(TAG, "Allowing UDP " + packet);
-            } else if ((packet.uid < 2000) &&
-                    !mapUidKnown.containsKey(packet.uid) && isSupported(packet.protocol)) {
-                // Allow unknown (system) traffic
-                packet.allowed = true;
-                Log.w(TAG, "Allowing unknown system " + packet);
-            } else if (packet.uid == Process.myUid()) {
-                // Allow self
-                packet.allowed = true;
-                Log.w(TAG, "Allowing self " + packet);
-            } else {
-                boolean filtered = false;
+        // https://android.googlesource.com/platform/system/core/+/master/include/private/android_filesystem_config.h
+        if ((packet.uid < 2000) &&
+                !mapUidKnown.containsKey(packet.uid) && isSupported(packet.protocol)) {
+            // Allow unknown (system) traffic
+            packet.allowed = true;
+            Log.w(TAG, "Allowing unknown system " + packet);
+        } else if (packet.uid == Process.myUid()) {
+            // Allow self
+            packet.allowed = true;
+            Log.w(TAG, "Allowing self " + packet);
+        } else {
+            boolean filtered = false;
 
-                if (packet.data != null && !packet.data.isEmpty())
-                    Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
+            if (packet.data != null && !packet.data.isEmpty())
+                Log.d(TAG, "Found SNI in isAddressAllowed: " + packet.data);
 
-                // Check if tracker is known
-                // In minimal mode (including TC Slim), always enable blocking
-                if (blockKnownTracker(packet.daddr, packet.uid)) {
-                    filtered = true;
-                    packet.allowed = false;
-                }
-
-                InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
-                if (internetBlocklist.blockedInternet(packet.uid)) {
-                    filtered = true;
-                    packet.allowed = false;
-                }
-
-                if (!filtered)
-                    packet.allowed = true;
+            // Check if tracker is known
+            // In minimal mode (including TC Slim), always enable blocking
+            if (blockKnownTracker(packet.daddr, packet.uid)) {
+                filtered = true;
+                packet.allowed = false;
             }
+
+            InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(ServiceSinkhole.this);
+            if (internetBlocklist.blockedInternet(packet.uid)) {
+                filtered = true;
+                packet.allowed = false;
+            }
+
+            if (!filtered)
+                packet.allowed = true;
         }
 
         // Block DNS-over-TLS (DoT) on port 853 to prevent bypassing DNS filtering
@@ -2672,29 +2566,6 @@ public class ServiceSinkhole extends VpnService {
         }
     };
 
-    private PhoneStateListener phoneStateListener = new PhoneStateListener() {
-        private String last_generation = null;
-
-        @Override
-        public void onDataConnectionStateChanged(int state, int networkType) {
-            if (state == TelephonyManager.DATA_CONNECTED) {
-                String current_generation = Util.getNetworkGeneration(ServiceSinkhole.this);
-                Log.i(TAG, "Data connected generation=" + current_generation);
-
-                if (last_generation == null || !last_generation.equals(current_generation)) {
-                    Log.i(TAG, "New network generation=" + current_generation);
-                    last_generation = current_generation;
-
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                    if (prefs.getBoolean("unmetered_2g", false) ||
-                            prefs.getBoolean("unmetered_3g", false) ||
-                            prefs.getBoolean("unmetered_4g", false))
-                        reload("data connection state changed", ServiceSinkhole.this, false);
-                }
-            }
-        }
-    };
-
     private BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -2731,14 +2602,6 @@ public class ServiceSinkhole extends VpnService {
                         // Remove settings
                         String packageName = intent.getData().getSchemeSpecificPart();
                         Log.i(TAG, "Deleting settings package=" + packageName);
-                        context.getSharedPreferences("wifi", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("other", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE).edit().remove(packageName)
-                                .apply();
-                        context.getSharedPreferences("screen_other", Context.MODE_PRIVATE).edit().remove(packageName)
-                                .apply();
-                        context.getSharedPreferences("roaming", Context.MODE_PRIVATE).edit().remove(packageName)
-                                .apply();
                         context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                         BlockingMode.clearAutoExcludedApp(context, packageName);
                         context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).edit().remove(packageName).apply();
@@ -3082,13 +2945,6 @@ public class ServiceSinkhole extends VpnService {
                 ContextCompat.RECEIVER_NOT_EXPORTED);
         registeredConnectivityChanged = true;
 
-        // Listen for phone state changes
-        Log.i(TAG, "Starting listening to service state changes");
-        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (tm != null) {
-            tm.listen(phoneStateListener, PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
-            phone_state = true;
-        }
     }
 
     private Network getActiveNetwork() {
@@ -3199,17 +3055,7 @@ public class ServiceSinkhole extends VpnService {
         boolean blocked = intent.getBooleanExtra(EXTRA_BLOCKED, false);
         Log.i(TAG, "Set " + pkg + " " + network + "=" + blocked);
 
-        // Get defaults
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-        boolean default_wifi = settings.getBoolean("whitelist_wifi", true);
-        boolean default_other = settings.getBoolean("whitelist_other", true);
-
-        // Update setting
-        SharedPreferences prefs = getSharedPreferences(network, Context.MODE_PRIVATE);
-        if (blocked == ("wifi".equals(network) ? default_wifi : default_other))
-            prefs.edit().remove(pkg).apply();
-        else
-            prefs.edit().putBoolean(pkg, blocked).apply();
+        Log.i(TAG, "Ignoring legacy network access rule");
 
         // Apply rules
         ServiceSinkhole.reload("notification", ServiceSinkhole.this, false);
@@ -3297,12 +3143,6 @@ public class ServiceSinkhole extends VpnService {
 
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
             cm.unregisterNetworkCallback(networkMonitorCallback);
-
-            if (phone_state) {
-                TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                tm.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
-                phone_state = false;
-            }
 
             try {
                 if (vpn != null) {

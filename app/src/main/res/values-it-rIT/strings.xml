@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Ricarica ad ogni cambio di connessione</string>
     <string name="setting_log_app">Ricerca nuovi tracker</string>
     <string name="setting_filter">Blocca tracker</string>
-    <string name="setting_filter_udp">Blocca tracker su UDP</string>
     <string name="setting_handover">Passaggio alla VPN senza interruzioni al momento del ricaricamento</string>
     <string name="setting_lockdown">Blocca traffico</string>
     <string name="setting_track_usage">Sorveglia l\'utilizzo della rete</string>
@@ -136,7 +135,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="msg_queue">TrackerControl è occupato</string>
     <string name="msg_update">Aggiornamento disponibile, clicca per scaricare</string>
     <string name="msg_usage">Puoi consentire (verde) o bloccare (rosso) l\'accesso internet tramite Wi-Fi o rete mobile toccando le icone accanto ad un\'applicazione</string>
-    <string name="msg_whitelist">L\'accesso a internet è consentito in modo predefinito (modalità blacklist), questo può essere cambiato nelle impostazioni</string>
     <string name="msg_push">I messaggi in entrata (push) sono per la maggior parte gestiti dal componente di sistema Play Services, al quale è consentito l\'accesso a internet in modo predefinito</string>
     <string name="msg_system">La gestione di tutte le applicazioni (sistema) può essere attivata nelle impostazioni</string>
     <string name="msg_issue">Si prega di descrivere il problema e di indicare l\'orario in cui si è verificato:</string>

@@ -80,13 +80,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                 Runnable next = () -> viewPager.setCurrentItem(position + 1);
 
                 if (currentSlide.warningResId != 0) {
-                    Util.areYouSure(this, currentSlide.warningResId, () -> {
-                        if (getString(R.string.onboarding_privatedns_title).equals(currentSlide.title.toString())) {
-                            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("filter", false)
-                                    .apply();
-                        }
-                        next.run();
-                    });
+                    Util.areYouSure(this, currentSlide.warningResId, () -> next.run());
                 } else {
                     next.run();
                 }
@@ -592,8 +586,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                 // Set current selection
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
                         holder.itemView.getContext());
-                boolean researchPreset = prefs.getBoolean("log_logcat", false)
-                        || !prefs.getBoolean("filter", true);
+                boolean researchPreset = prefs.getBoolean("log_logcat", false);
                 String currentMode = BlockingMode.getMode(holder.itemView.getContext());
                 holder.rgBlockingMode.setOnCheckedChangeListener(null);
                 if (researchPreset)
@@ -607,7 +600,6 @@ public class ActivityOnboarding extends AppCompatActivity {
 
                 holder.rgBlockingMode.setOnCheckedChangeListener((group, checkedId) -> {
                     String mode = BlockingMode.MODE_STANDARD;
-                    boolean enableFilter = true;
                     boolean enableSni = false;
                     boolean enableAdbLogging = false;
                     boolean enableDotBlocking = true;
@@ -626,7 +618,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                     PreferenceManager.getDefaultSharedPreferences(holder.itemView.getContext())
                             .edit()
                             .putString(BlockingMode.PREF_BLOCKING_MODE, mode)
-                            .putBoolean("filter", enableFilter)
+                            .putBoolean("filter", true)
                             .putBoolean("sni_enabled", enableSni)
                             .putBoolean("log_logcat", enableAdbLogging)
                             .putBoolean("block_dot", enableDotBlocking)

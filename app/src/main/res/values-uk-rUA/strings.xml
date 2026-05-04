@@ -96,7 +96,6 @@
     <string name="setting_log_app">Пошук нових трекерів</string>
     <string name="setting_log_logcat">Дослідження</string>
     <string name="setting_filter">Блокувати трекери</string>
-    <string name="setting_filter_udp">Блокувати трекери на UDP</string>
     <string name="setting_handover">Безперебійна передача VPN при перезавантаженні</string>
     <string name="setting_lockdown">Трафік в карантині</string>
     <string name="setting_track_usage">Відстежувати використання мережі</string>
@@ -192,7 +191,6 @@
     <string name="msg_queue">TrackerControl зайнятий</string>
     <string name="msg_update">Доступне оновлення, натисніть для завантаження</string>
     <string name="msg_usage">Ви можете дозволити (зелений колір) або заборонити (червоний колір) доступ до Wi-Fi або мобільного Інтернету, натиснувши на піктограми поруч із додатком</string>
-    <string name="msg_whitelist">Доступ до Інтернету дозволений за замовчуванням (режим чорного списку), це можна змінити в налаштуваннях</string>
     <string name="msg_push">Вхідні (push) повідомлення в основному обробляються системним компонентом Play services, якому за замовчуванням дозволено доступ до Інтернету</string>
     <string name="msg_system">Керування всіма (системними) програмами можна ввімкнути в налаштуваннях</string>
     <string name="msg_issue">Будь ласка, опишіть проблему та вкажіть час її виникнення:</string>

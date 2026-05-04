@@ -338,44 +338,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     }
 
     private void updateRule(Context context, Rule rule, boolean root, List<Rule> listAll) {
-        SharedPreferences wifi = context.getSharedPreferences("wifi", Context.MODE_PRIVATE);
-        SharedPreferences other = context.getSharedPreferences("other", Context.MODE_PRIVATE);
         SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
-        SharedPreferences screen_wifi = context.getSharedPreferences("screen_wifi", Context.MODE_PRIVATE);
-        SharedPreferences screen_other = context.getSharedPreferences("screen_other", Context.MODE_PRIVATE);
-        SharedPreferences roaming = context.getSharedPreferences("roaming", Context.MODE_PRIVATE);
         SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
-
-        if (rule.wifi_blocked == rule.wifi_default)
-            wifi.edit().remove(rule.packageName).apply();
-        else
-            wifi.edit().putBoolean(rule.packageName, rule.wifi_blocked).apply();
-
-        if (rule.other_blocked == rule.other_default)
-            other.edit().remove(rule.packageName).apply();
-        else
-            other.edit().putBoolean(rule.packageName, rule.other_blocked).apply();
 
         apply.edit().putBoolean(rule.packageName, rule.apply).apply();
         BlockingMode.clearAutoExcludedApp(context, rule.packageName);
         tracker_protect.edit().putBoolean(rule.packageName, rule.tracker_protect).apply();
-
-        if (rule.screen_wifi == rule.screen_wifi_default)
-            screen_wifi.edit().remove(rule.packageName).apply();
-        else
-            screen_wifi.edit().putBoolean(rule.packageName, rule.screen_wifi).apply();
-
-        if (rule.screen_other == rule.screen_other_default)
-            screen_other.edit().remove(rule.packageName).apply();
-        else
-            screen_other.edit().putBoolean(rule.packageName, rule.screen_other).apply();
-
-        if (rule.roaming == rule.roaming_default)
-            roaming.edit().remove(rule.packageName).apply();
-        else
-            roaming.edit().putBoolean(rule.packageName, rule.roaming).apply();
-
 
         if (rule.notify)
             notify.edit().remove(rule.packageName).apply();
@@ -389,13 +358,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         for (String pkg : rule.related) {
             for (Rule related : listAll)
                 if (related.packageName.equals(pkg)) {
-                    related.wifi_blocked = rule.wifi_blocked;
-                    related.other_blocked = rule.other_blocked;
                     related.apply = rule.apply;
                     related.tracker_protect = rule.tracker_protect;
-                    related.screen_wifi = rule.screen_wifi;
-                    related.screen_other = rule.screen_other;
-                    related.roaming = rule.roaming;
                     related.notify = rule.notify;
                     listModified.add(related);
                 }

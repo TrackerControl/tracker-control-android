@@ -26,7 +26,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -47,7 +46,6 @@ import androidx.preference.TwoStatePreference;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Xml;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -128,8 +126,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private static final int REQUEST_EXPORT = 1;
     private static final int REQUEST_IMPORT = 2;
     private static final int REQUEST_CALL = 5;
-
-    private AlertDialog dialogFilter = null;
 
     private static final Intent INTENT_VPN_SETTINGS = new Intent("android.net.vpn.SETTINGS");
 
@@ -446,10 +442,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             if (p != null) cat_advanced.removePreference(p);
             p = cat_advanced.findPreference("log_app");
             if (p != null) cat_advanced.removePreference(p);
-            p = cat_advanced.findPreference("filter_udp");
-            if (p != null) cat_advanced.removePreference(p);
-            p = cat_advanced.findPreference("filter");
-            if (p != null) p.setEnabled(false);
         }
 
         // In minimal mode, hide domain_based_blocking (not used)
@@ -607,10 +599,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     protected void onDestroy() {
         running = false;
         wgStatusHandler.removeCallbacksAndMessages(null);
-        if (dialogFilter != null) {
-            dialogFilter.dismiss();
-            dialogFilter = null;
-        }
         super.onDestroy();
     }
 
@@ -641,21 +629,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             prefs.edit().remove(name).apply();
 
         // Dependencies
-        if ("screen_on".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("whitelist_wifi".equals(name) ||
-                "screen_wifi".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("whitelist_other".equals(name) ||
-                "screen_other".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("whitelist_roaming".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("pause".equals(name))
+        if ("pause".equals(name))
             getPreferenceScreen().findPreference(name)
                     .setTitle(getString(R.string.setting_pause, prefs.getString(name, "10")));
 
@@ -679,17 +653,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             }
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        } else if ("unmetered_2g".equals(name) ||
-                "unmetered_3g".equals(name) ||
-                "unmetered_4g".equals(name) ||
-                "wifi_only".equals(name) ||
+        } else if ("wifi_only".equals(name) ||
                 "screen_delay".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("national_roaming".equals(name))
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        else if ("eu_roaming".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("disable_on_call".equals(name)) {
@@ -736,38 +701,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         } else if ("notify_access".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
-        else if ("filter".equals(name)) {
-            // Show dialog
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && prefs.getBoolean(name, true)) {
-                LayoutInflater inflater = LayoutInflater.from(ActivitySettings.this);
-                View view = inflater.inflate(R.layout.filter, null, false);
-                dialogFilter = new MaterialAlertDialogBuilder(ActivitySettings.this)
-                        .setView(view)
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Do nothing
-                            }
-                        })
-                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialogInterface) {
-                                dialogFilter = null;
-                            }
-                        })
-                        .create();
-                dialogFilter.show();
-            } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && !prefs.getBoolean(name, false)) {
-                prefs.edit().putBoolean(name, true).apply();
-                Toast.makeText(ActivitySettings.this, R.string.msg_filter4, Toast.LENGTH_SHORT).show();
-            }
-
-            ((TwoStatePreference) getPreferenceScreen().findPreference(name)).setChecked(prefs.getBoolean(name, false));
-
-            ServiceSinkhole.reload("changed " + name, this, false);
-
-        } else if ("use_hosts".equals(name))
+        else if ("use_hosts".equals(name))
             ServiceSinkhole.reload("changed " + name, this, false);
 
         else if ("vpn4".equals(name)) {
@@ -1226,27 +1160,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         serializer.endTag(null, "application");
         out.flush();
 
-        serializer.startTag(null, "wifi");
-        xmlExport(getSharedPreferences("wifi", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "wifi");
-        out.flush();
-
-        serializer.startTag(null, "mobile");
-        xmlExport(getSharedPreferences("other", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "mobile");
-
-        serializer.startTag(null, "screen_wifi");
-        xmlExport(getSharedPreferences("screen_wifi", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "screen_wifi");
-
-        serializer.startTag(null, "screen_other");
-        xmlExport(getSharedPreferences("screen_other", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "screen_other");
-
-        serializer.startTag(null, "roaming");
-        xmlExport(getSharedPreferences("roaming", Context.MODE_PRIVATE), serializer);
-        serializer.endTag(null, "roaming");
-
         serializer.startTag(null, "apply");
         xmlExport(getSharedPreferences("apply", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "apply");
@@ -1431,11 +1344,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         reader.parse(new InputSource(in));
 
         xmlImport(handler.application, prefs);
-        xmlImport(handler.wifi, getSharedPreferences("wifi", Context.MODE_PRIVATE));
-        xmlImport(handler.mobile, getSharedPreferences("other", Context.MODE_PRIVATE));
-        xmlImport(handler.screen_wifi, getSharedPreferences("screen_wifi", Context.MODE_PRIVATE));
-        xmlImport(handler.screen_other, getSharedPreferences("screen_other", Context.MODE_PRIVATE));
-        xmlImport(handler.roaming, getSharedPreferences("roaming", Context.MODE_PRIVATE));
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));

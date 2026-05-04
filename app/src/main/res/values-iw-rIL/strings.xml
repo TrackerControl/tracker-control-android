@@ -58,7 +58,6 @@
     <string name="setting_reload_onconnectivity">טען מחדש בכל שינוי קישוריות</string>
     <string name="setting_log_app">חפש עוקבים חדשים</string>
     <string name="setting_filter">חסימת עוקבים</string>
-    <string name="setting_filter_udp">חסום עוקבים ב-UDP</string>
     <string name="setting_handover">העברה חלקה של ה-VPN בטעינה מחדש</string>
     <string name="setting_lockdown">נעילת תעבורה</string>
     <string name="setting_track_usage">עקוב אחר השימוש ברשת</string>
@@ -138,7 +137,6 @@
     <string name="msg_queue">TrackerControl תפוס</string>
     <string name="msg_update">היי יש עדכון זמין, הקש כדי להוריד</string>
     <string name="msg_usage">אתה יכול לאפשר (ירקרק) או לדחות (אדמדם) גישה לאינטרנט אלחוטי או סלולרי על ידי הקשה על הסמלים שליד אפליקציה</string>
-    <string name="msg_whitelist">גישה לאינטרנט מותרת כברירת מחדל (מצב רשימה שחורה), ניתן לשנות זאת בהגדרות</string>
     <string name="msg_push">הודעות נכנסות (דחיפה) מטופלות לרוב על ידי רכיב המערכת Play Services, המותרת גישה לאינטרנט כברירת מחדל</string>
     <string name="msg_system">ניתן להפעיל את כל האפליקציות (מערכת) בהגדרות</string>
     <string name="msg_issue">נא לתאר את הבעיה ולציין את זמן הבעיה:</string>

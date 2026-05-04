@@ -56,7 +56,6 @@
     <string name="setting_reload_onconnectivity">Her bağlantı değişikliğinde tekrar yüklensin</string>
     <string name="setting_log_app">Yeni izleyiciler ara</string>
     <string name="setting_filter">İzleyicileri engelle</string>
-    <string name="setting_filter_udp">UDP\'de izleyicileri engelle</string>
     <string name="setting_handover">Yeniden yüklemede kesintisiz VPN devredilmesi</string>
     <string name="setting_lockdown">Trafiği durdur</string>
     <string name="setting_track_usage">Veri kullanımını ölç</string>
@@ -137,7 +136,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="msg_queue">TrackerControl meşgul</string>
     <string name="msg_update">Güncelleme mevcut, indirmek için dokunun</string>
     <string name="msg_usage">Uygulamanın yanındaki simgelere dokunarak kablosuz veya mobil veri erişimine izin verip (yeşil) engelleyebilirsiniz (kırmızı)</string>
-    <string name="msg_whitelist">İnternet erişimine varsayılan olarak izin verilir (karaliste), bu ayarlardan değiştirilebilir</string>
     <string name="msg_push">Gelen (anlık) iletiler genellikle internet erişimi varsayılan olarak verilen Play hizmetleri tarafından yönetilir</string>
     <string name="msg_system">Tüm uygulamaların (sistem) yönetimi ayarlardan etkinleştirilebilir</string>
     <string name="msg_issue">Lütfen sorunu açıklayın ve sorunun zamanını belirtin:</string>

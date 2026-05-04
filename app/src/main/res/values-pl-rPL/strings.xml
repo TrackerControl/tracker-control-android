@@ -58,7 +58,6 @@
     <string name="setting_reload_onconnectivity">Przeładowanie przy każdej zmianie łączności</string>
     <string name="setting_log_app">Szukaj nowych skryptów śledzących</string>
     <string name="setting_filter">Blokuj skrypty śledzące</string>
-    <string name="setting_filter_udp">Blokuj skrypty śledzące z UDP</string>
     <string name="setting_handover">Bezszwowe przekazanie VPN przy przeładowaniu</string>
     <string name="setting_lockdown">Blokada ruchu</string>
     <string name="setting_track_usage">Wykorzystanie sieci trakcyjnej</string>
@@ -139,7 +138,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="msg_queue">TrackerControl jest zajęty</string>
     <string name="msg_update">Aktualizacja dostępna, dotknij, aby pobrać</string>
     <string name="msg_usage">Możesz zezwolić (zielonkawy) lub odmówić (czerwonkawy) dostępu do Wi-Fi lub Internetu mobilnego, stukając w ikony znajdujące się obok aplikacji</string>
-    <string name="msg_whitelist">Dostęp do Internetu jest domyślnie dozwolony (tryb czarnej listy), można to zmienić w ustawieniach</string>
     <string name="msg_push">Komunikaty przychodzące (pchające) są w większości obsługiwane przez komponent systemowy Usługi Play, który domyślnie ma dostęp do Internetu</string>
     <string name="msg_system">Zarządzanie wszystkimi aplikacjami (systemowymi) może być włączone w ustawieniach</string>
     <string name="msg_issue">Proszę opisać problem i wskazać czas jego wystąpienia:</string>

@@ -53,7 +53,6 @@
     <string name="setting_reload_onconnectivity">연결 변경 시마다 새로 고침</string>
     <string name="setting_log_app">새 트래커 찾기</string>
     <string name="setting_filter">트래커 차단</string>
-    <string name="setting_filter_udp">UDP에서 트래커 차단</string>
     <string name="setting_handover">재시작 시 끊김 없이 VPN 전환</string>
     <string name="setting_lockdown">트래픽 차단</string>
     <string name="setting_track_usage">네트워크 사용량 추적</string>

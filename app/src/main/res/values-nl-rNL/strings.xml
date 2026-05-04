@@ -81,7 +81,6 @@
     <string name="setting_log_app">Nieuwe trackers zoeken</string>
     <string name="setting_log_logcat">Onderzoek</string>
     <string name="setting_filter">Trackers blokkeren</string>
-    <string name="setting_filter_udp">Trackers blokkeren op UDP</string>
     <string name="setting_handover">Naadloze VPN-overdracht bij herladen</string>
     <string name="setting_lockdown">Netwerkverkeer vergrendelen</string>
     <string name="setting_track_usage">Netwerkgebruik volgen</string>
@@ -180,7 +179,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="msg_queue">TrackerControl is bezig</string>
     <string name="msg_update">Update beschikbaar, tik om te downloaden</string>
     <string name="msg_usage">Toegang tot Wi-Fi of mobiel internet toestaan (\"groen\") of weigeren (\"rood\") door op de miniaturen naast een app te tikken</string>
-    <string name="msg_whitelist">Internettoegang is standaard toegestaan (blacklist-modus), te wijzigen in de instellingen</string>
     <string name="msg_push">De systeemcomponent Play Services, die standaard internettoegang heeft, verwerkt meestal inkomende (push) berichten.</string>
     <string name="msg_system">Het beheren van alle (systeem-) apps kan worden ingeschakeld in de instellingen</string>
     <string name="msg_issue">Beschrijf het probleem en het tijdstip van het probleem:</string>

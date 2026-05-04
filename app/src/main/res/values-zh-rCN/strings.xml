@@ -94,7 +94,6 @@
     <string name="setting_log_app">搜索新的跟踪器</string>
     <string name="setting_log_logcat">研究</string>
     <string name="setting_filter">屏蔽跟踪器</string>
-    <string name="setting_filter_udp">屏蔽UDP上的跟踪器</string>
     <string name="setting_handover">重新加载时无缝切换 VPN</string>
     <string name="setting_lockdown">锁定流量</string>
     <string name="setting_track_usage">追踪网络使用情况</string>
@@ -193,7 +192,6 @@
     <string name="msg_queue">TrackerControl 正忙</string>
     <string name="msg_update">可用更新，点击下载</string>
     <string name="msg_usage">你可以通过点击应用程序旁边的图标来允许(绿色) 或拒绝(红色) Wi-Fi或移动互联网接入</string>
-    <string name="msg_whitelist">默认情况下允许互联网连接(黑名单模式)，这可以在设置中更改</string>
     <string name="msg_push">传入(推送) 消息大多由系统组件Play服务处理，默认情况下允许其访问互联网</string>
     <string name="msg_system">可以在设置中启用所有(系统) 应用</string>
     <string name="msg_issue">请描述问题并指出问题发生的时间:</string>

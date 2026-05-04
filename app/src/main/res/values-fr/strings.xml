@@ -94,7 +94,6 @@
     <string name="setting_log_app">Rechercher de nouveaux traqueurs</string>
     <string name="setting_log_logcat">Recherche</string>
     <string name="setting_filter">Bloquer les traqueurs</string>
-    <string name="setting_filter_udp">Bloquer les traqueurs sur UDP</string>
     <string name="setting_handover">Passage au VPN sans interruption lors du rechargement</string>
     <string name="setting_lockdown">Verrouiller le trafic</string>
     <string name="setting_track_usage">Surveiller l\'utilisation du réseau</string>
@@ -191,7 +190,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="msg_queue">TrackerControl est occupé</string>
     <string name="msg_update">Mise à jour disponible, appuyez pour télécharger</string>
     <string name="msg_usage">Vous pouvez autoriser (vert) ou refuser (rouge) l\'accès à internet via le Wi-Fi ou le réseau mobile en cliquant sur les icônes à coté d’une application</string>
-    <string name="msg_whitelist">L’accès Internet est autorisé par défaut (mode liste noire), ceci peut être modifié dans les paramètres</string>
     <string name="msg_push">Les messages entrants (push) sont principalement gérés par le composant système Google Play Services, qui est autorisé à accéder à Internet par défaut</string>
     <string name="msg_system">La gestion de toutes les applications (système) peut être activée dans les paramètres</string>
     <string name="msg_issue">Veuillez décrire le problème et indiquer l\'heure à laquelle il est survenu :</string>

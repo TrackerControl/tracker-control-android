@@ -97,7 +97,6 @@
     <string name="setting_log_app">Искать новые трекеры</string>
     <string name="setting_log_logcat">Исследовать</string>
     <string name="setting_filter">Блокировать трекеры</string>
-    <string name="setting_filter_udp">Блокировать трекеры на UDP</string>
     <string name="setting_handover">Бесшовная передача VPN при перезагрузке</string>
     <string name="setting_lockdown">Блокировка трафика</string>
     <string name="setting_track_usage">Отслеживать использование сети</string>
@@ -194,7 +193,6 @@
     <string name="msg_queue">TrackerControl занят</string>
     <string name="msg_update">Доступно обновление, нажмите для скачивания</string>
     <string name="msg_usage">Вы можете разрешить (зеленый) или запретить (красный) доступ по Wi-Fi или мобильному интернету, нажав на значок рядом с приложением</string>
-    <string name="msg_whitelist">Доступ в интернет разрешен по умолчанию (режим чёрного списка), это может быть изменено в настройках</string>
     <string name="msg_push">Входящие (push) сообщения в основном обрабатываются системными компонентами Google Play, которым по умолчанию разрешён доступ в интернет</string>
     <string name="msg_system">Управление всеми (системными) приложениями может быть включено в расширенных настройках</string>
     <string name="msg_issue">Пожалуйста, опишите проблему и укажите время её возникновения:</string>

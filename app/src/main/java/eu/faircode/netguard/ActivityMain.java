@@ -289,16 +289,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             Log.i(TAG, "Always-on=" + alwaysOn);
                             if (!TextUtils.isEmpty(alwaysOn))
                                 if (getPackageName().equals(alwaysOn)) {
-                                    if (prefs.getBoolean("filter", true)) {
-                                        int lockdown = Settings.Secure.getInt(getContentResolver(),
-                                                "always_on_vpn_lockdown", 0);
-                                        Log.i(TAG, "Lockdown=" + lockdown);
-                                        if (lockdown != 0) {
-                                            swEnabled.setChecked(false);
-                                            Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown,
-                                                    Toast.LENGTH_LONG).show();
-                                            return;
-                                        }
+                                    int lockdown = Settings.Secure.getInt(getContentResolver(),
+                                            "always_on_vpn_lockdown", 0);
+                                    Log.i(TAG, "Lockdown=" + lockdown);
+                                    if (lockdown != 0) {
+                                        swEnabled.setChecked(false);
+                                        Toast.makeText(ActivityMain.this, R.string.msg_always_on_lockdown,
+                                                Toast.LENGTH_LONG).show();
+                                        return;
                                     }
                                 } else {
                                     swEnabled.setChecked(false);
@@ -753,13 +751,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (swEnabled.isChecked() != enabled)
                 swEnabled.setChecked(enabled);
 
-        } else if ("whitelist_wifi".equals(name) ||
-                "screen_on".equals(name) ||
-                "screen_wifi".equals(name) ||
-                "whitelist_other".equals(name) ||
-                "screen_other".equals(name) ||
-                "whitelist_roaming".equals(name) ||
-                "show_user".equals(name) ||
+        } else if ("show_user".equals(name) ||
                 "show_system".equals(name) ||
                 "show_nointernet".equals(name) ||
                 "show_unprotected".equals(name) ||
@@ -769,14 +761,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if ("sort".equals(name))
                 adapter.updateSortPreference(prefs.getString("sort", "trackers_week"));
             updateApplicationList(null);
-
-            final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);
-            boolean screen_on = prefs.getBoolean("screen_on", true);
-            boolean whitelist_wifi = prefs.getBoolean("whitelist_wifi", false);
-            boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
-            boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
-            llWhitelist.setVisibility(
-                    !(whitelist_wifi || whitelist_other) && screen_on && hintWhitelist ? View.VISIBLE : View.GONE);
 
         } else if ("manage_system".equals(name)) {
             invalidateOptionsMenu();
@@ -1103,22 +1087,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private void showHints() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Hint white listing
-        final LinearLayout llWhitelist = findViewById(R.id.llWhitelist);
-        Button btnWhitelist = findViewById(R.id.btnWhitelist);
-        boolean whitelist_wifi = prefs.getBoolean("whitelist_wifi", false);
-        boolean whitelist_other = prefs.getBoolean("whitelist_other", false);
-        boolean hintWhitelist = prefs.getBoolean("hint_whitelist", true);
-        llWhitelist.setVisibility(
-                !(whitelist_wifi || whitelist_other) && hintWhitelist ? View.VISIBLE : View.GONE);
-        btnWhitelist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefs.edit().putBoolean("hint_whitelist", false).apply();
-                llWhitelist.setVisibility(View.GONE);
-            }
-        });
 
         // Hint push messages
         final LinearLayout llPush = findViewById(R.id.llPush);
