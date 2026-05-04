@@ -59,7 +59,6 @@
     <string name="setting_system">Näytä järjestelmäsovellukset</string>
     <string name="setting_log_app">Etsi uusia seuraimia</string>
     <string name="setting_filter">Estä seuraimet</string>
-    <string name="setting_filter_udp">Estä seuraimet UPD liikenteessä</string>
     <string name="setting_handover">Saumaton VPN-kanavanvaihto ladattaessa</string>
     <string name="setting_lockdown">Liikenteen sulkeminen</string>
     <string name="setting_track_usage">Seuraa verkon käyttöä</string>
@@ -82,7 +81,6 @@
     <string name="setting_watchdog">Tarkistus: %s minuutin välein</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Suojattu DNS (DoH)</string>
-    <string name="summary_doh_enabled">Salaa DNS-kyselyt DNS-over-HTTPS: llä. Koskee kaikkia sovelluksia.</string>
     <string name="warning_beta">Beta-ominaisuus. Ei välttämättä toimi odotetusti.</string>
     <string name="setting_doh_endpoint">DoH-palvelimen URL</string>
     <string name="summary_doh_endpoint">HTTPS URL DNS-over-HTTPS kyselyille</string>
@@ -153,7 +151,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="msg_queue">TrackerControl on kiireinen</string>
     <string name="msg_update">Päivitys saatavilla, napauta ladataksesi</string>
     <string name="msg_usage">Voit sallia (vihertävän) tai estää (punertavan) Wi-Fi- tai mobiili-internetyhteyden napauttamalla sovelluksen vieressä olevia kuvakkeita</string>
-    <string name="msg_whitelist">Internet-yhteys on oletusarvoisesti sallittu (mustan listan tila), sitä voidaan muuttaa asetuksissa</string>
     <string name="msg_push">Saapuvia (push) viestejä hoitaa enimmäkseen Play komponenttijärjestelmä, joka on oletusarvoisesti Internet-yhteys</string>
     <string name="msg_system">Kaikkien (järjestelmä) sovellusten hallinta voidaan ottaa käyttöön asetuksissa</string>
     <string name="msg_issue">Kuvaile ongelma ja ilmoita tapahtuma-aika:</string>
@@ -278,40 +275,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR-aihepyyntö</string>
-    <string name="body_request_data"><![CDATA[Arvoisa vastaanottaja:\n
-\n
-\n
-Pyydän teitä, Android-sovelluksen %s (ID: %s), tietojen valvojana, vahvistamaan, käsitteleekö sovellus minua koskevia henkilötietoja.\n
-Jos näin on, toimittakaa minulle kaikki EU:n yleisen tietosuoja-asetuksen (GDPR) 15 artiklassa vaaditut tiedot, mukaan lukien:\n
-\n
-• kopio henkilötiedoistani;\n
-• käsittelyn tarkoitukset;\n
-• kyseessä olevien henkilötietojen luokat;\n
-• vastaanottajat, joille luovutatte henkilötietojani, ja tarjoamanne suojatoimet;\n
-• henkilötietojeni säilytysaika tai tämän ajan määrittämisessä käytetyt kriteerit;\n
-•tiedot henkilötietojeni lähteestä; ja\n
-•automaattisen päätöksenteon (mukaan lukien profilointi) olemassaolo ja, jos on:\n
-    - päätöksentekoprosessissa käytetty logiikka;\n
-    - merkitys ja minulle aiheutuvat ennakoidut seuraukset;\n
-    -toimenpiteet, joihin olette ryhtyneet virheiden, puolueellisuuden ja syrjinnän estämiseksi; ja\n
-    - selitys siitä, miten voin ilmaista näkemykseni ja riitauttaa päätöksen.\n
-\n
-Tämä pyyntö koskee kaikkia henkilötietojeni käsittelyä, mukaan lukien kaikki henkilötietojen käsittelyn suorittajat, jotka käsittelevät henkilötietoja puolestanne.\n
-\n
-Vastatkaa pyyntööni turvallisella tavalla sähköpostitse. Odotan vastausta kuukauden kuluessa pyyntöni vastaanottamisesta.\n
-\n
-Ystävällisin terveisin,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Arvoisa vastaanottaja:\n
-\n
-\n
-Käytän EU:n yleisen tietosuoja-asetuksen (GDPR) 17 artiklassa määriteltyä oikeuttani tietojen poistamiseen. Pyydän teitä, Android-sovelluksen %s (tunnus: %s) rekisterinpitäjänä, poistamaan seuraavat minua koskevat henkilötiedot viipymättä:\n
-• Kaikki tiedot.\n
-\n
-Pyydän tietojen poistamista, koska peruutan tai olen peruuttanut suostumukseni henkilötietojeni käsittelyyn. Tämä pyyntö koskee kaikkia henkilötietojeni käsittelyjä, mukaan lukien kaikki teidän puolestanne henkilötietoja käsittelevät alihankkijat.\n
-\n
-Pyydän teitä vastaamaan turvallisella tavalla sähköpostitse. Odotan vastausta kuukauden kuluessa pyyntöni vastaanottamisesta.\n
-\n
-Ystävällisin terveisin,\n\n]]></string>
     <string name="crash_dialog_text">Anteeksi. TrackerControl kaatui juuri. Haluaisitko lähettää meille sähköpostia yksityiskohdilla?</string>
     <string name="crash_dialog_comment">Kommentteja?</string>
     <string name="instructions_monitoring_private_dns">Vaihda kytkintä ja ole vuorovaikutuksessa joidenkin sovellusten kanssa. Yksityinen DNS on poistettava käytöstä.</string>
