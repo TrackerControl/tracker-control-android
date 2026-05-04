@@ -170,6 +170,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             manager.startAnalysis(mAppId);
             // Fragment's observer will pick up the work state changes
         });
+
+        if (manager.shouldStartAnalysis(mAppId))
+            manager.startAnalysis(mAppId);
     }
 
     /**

@@ -91,7 +91,6 @@ import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2681,7 +2680,7 @@ public class ServiceSinkhole extends VpnService {
 
                 // Check tracker libraries in app
                 if (br != null)
-                    checkTrackers(packageName, uid, br, builder);
+                    checkTrackers(packageName, uid, name, br, builder);
             }
 
         } catch (PackageManager.NameNotFoundException ex) {
@@ -2692,7 +2691,8 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private void checkTrackers(String packageName, int uid, BroadcastReceiver br, NotificationCompat.Builder builder) {
+    private void checkTrackers(String packageName, int uid, String appName, BroadcastReceiver br,
+            NotificationCompat.Builder builder) {
         BroadcastReceiver.PendingResult result = br.goAsync();
         new Thread() {
             public void run() {
@@ -2704,13 +2704,12 @@ public class ServiceSinkhole extends VpnService {
                     String cachedResult = manager.getCachedResult(packageName);
                     if (cachedResult != null && !manager.isCacheStale(packageName)) {
                         // Use cached result
-                        int trackerCount = StringUtils.countMatches(cachedResult, "•");
+                        int trackerCount = TrackerAnalysisManager.countTrackers(cachedResult);
                         builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
                         NotificationManagerCompat.from(c).notify(uid, builder.build());
                     } else {
-                        // Schedule analysis for later - notification will show generic message
-                        manager.startAnalysis(packageName);
-                        // Don't update notification here, user can check app details for results
+                        // Schedule analysis for later; the worker updates this notification when done.
+                        manager.startAnalysis(packageName, uid, appName);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
