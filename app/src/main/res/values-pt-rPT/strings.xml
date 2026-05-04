@@ -60,7 +60,6 @@
     <string name="setting_system">Mostrar aplicações do sistema</string>
     <string name="setting_log_app">Pesquisar novos rastreadores</string>
     <string name="setting_filter">Bloquear rastreadores</string>
-    <string name="setting_filter_udp">Bloquear rastreadores no UDP</string>
     <string name="setting_handover">Entrega de VPN sem emendas na recarga</string>
     <string name="setting_lockdown">Bloqueio do tráfego</string>
     <string name="setting_track_usage">Rastrear a utilização da rede</string>
@@ -83,7 +82,6 @@
     <string name="setting_watchdog">Watchdog: a cada %s de minutos</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS seguro (DoH)</string>
-    <string name="summary_doh_enabled">Encriptar consultas DNS utilizando DNS por HTTPS. Aplica-se a todas as aplicações.</string>
     <string name="warning_beta">Funcionalidade beta. Pode não funcionar como esperado.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">URL HTTPS para consultas DNS por HTTPS</string>
@@ -149,7 +147,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="msg_queue">TrackerControl está ocupado</string>
     <string name="msg_update">Atualização disponível, toque para baixar</string>
     <string name="msg_usage">Você pode permitir (esverdeado) ou negar (avermelhado) o acesso Wi-Fi ou internet móvel tocando nos ícones ao lado de um aplicativo</string>
-    <string name="msg_whitelist">O acesso à Internet é permitido por padrão (modo de lista negra), isto pode ser alterado nas configurações</string>
     <string name="msg_push">As mensagens recebidas (push) são, em sua maioria, tratadas pelo componente do sistema Serviços Play, que é permitido o acesso à Internet por padrão</string>
     <string name="msg_system">O gerenciamento de todos os aplicativos (sistema) pode ser habilitado nas configurações</string>
     <string name="msg_issue">Por favor, descreva o problema e indique a hora do problema:</string>
@@ -260,40 +257,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Pedido de Acesso ao Assunto GDPR</string>
-    <string name="body_request_data"><![CDATA[Para quem isso pode preocupar:\n
-\n
-\n
-estou te solicitando, como controlador de dados do app Android %s (ID: %s), para confirmar se está processando dados pessoais a meu respeito.\n
-caso positivo, por favor me forneça todas as informações necessárias estipuladas no Artigo 15 do Regulamento Geral de Proteção de Dados da UE (RGPD), incluindo:\n
-\n
-• uma cópia dos meus dados pessoais;\n
-• as finalidades do processamento;\n
-• Categorias de dados pessoais em causa;\n
-• os destinatários que você divulga meus dados pessoais e as salvaguardas que você fornece;\n
-• o período de retenção para armazenar os meus dados pessoais ou os critérios utilizados para determinar este período;\n
-• Informações sobre a origem dos meus dados pessoais; e\n
-• a existência de tomadas de decisão automatizadas (incluindo a característica), e se fora:\n
-    - a lógica envolvida no processo de tomada de decisão;\n
-    - A importância e as consequências previstas para mim;\n
-    - as medidas que você tomou para prevenir erros, viés e discriminação; e\n
-    - explique como posso expressar meu ponto de vista e desafiar uma decisão.\n
-\n
-Esta solicitação se refere a qualquer processamento de meus dados pessoais por você, incluindo qualquer processador processador processando dados pessoais em seu nome.\n
-\n
-Por favor, forneça sua resposta por meio de e-mail seguro. Aguardo com expectativa uma resposta no prazo de um mês a contar do recebimento do meu pedido.\n
-\n
-Atenciosamente,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Para quem pode preocupar:\n
-\n
-\n
-Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %s (ID: %s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
-• Todos os dados.\n
-\n
-A razão da minha solicitação de remoção é que eu retiro ou retirei minha autorização para processar os dados pessoais. Esse pedido diz respeito a qualquer processamento dos meus dados pessoais por você, incluindo quaisquer processadores que processam dados pessoais em seu nome.\n
-\n
-Por favor, forneça sua resposta por meio de e-mail com segurança. Aguardo com expectativa uma resposta dentro de um mês a contar da recepção do meu pedido.\n
-\n
-disso,\n\n]]></string>
     <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de cair... Você se importaria de nos enviar um e-mail com detalhes?</string>
     <string name="crash_dialog_comment">Algum comentário?</string>
     <string name="instructions_monitoring_private_dns">Alternar o interruptor e interagir com algumas aplicações. O DNS privado deve ser desativado.</string>
