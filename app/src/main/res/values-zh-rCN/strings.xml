@@ -126,6 +126,7 @@
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">安全DNS (DoH)</string>
+    <string name="summary_doh_enabled">使用 DNS-overall HTTPS 加密 DNS 查询。当WireGuard 提供 DNS 时自动暂停，因为这些查询使用WireGuard 隧道。</string>
     <string name="warning_beta">测试版功能。可能无法按预期工作。</string>
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
@@ -163,12 +164,19 @@
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_wg_enabled">隐藏设备 IP。让 TCP 和 UDP 出口流量流经隧道。应用程序会在网络中断时看到网络错误 - fail-closed 状态，不会退回到直连。 当隧道闲置时服务器发起的到手机的连接可能无法正常工作(禁用 keepalive 以节省电量)。</string>
     <string name="summary_wg_config">粘贴来自 VPN 服务提供商的 [Interface] / [Peer] 配置</string>
+    <string name="summary_wg_keepalive_when_screen_off">即使屏幕关闭，也以您的WireGuard配置设置中设置的时间间隔内发送 keepalive 数据包。 在空闲连接丢失的网络上提高可靠性，但会增加电池使用量。</string>
     <string name="summary_wg_status_off">关</string>
     <string name="summary_wg_status_missing_config">关闭 - 没有设定配置</string>
     <string name="summary_wg_status_connected">已连接</string>
     <string name="summary_wg_status_blocked">已阻止- %s</string>
     <string name="summary_wg_status_starting">正在启动</string>
+    <string name="summary_vpn_key_rotate_now">强制 Mullvad 和 IVPN WireGuard key 轮换用于调试</string>
     <string name="msg_wg_config_invalid">无效的 WireGuard 配置： %s</string>
+    <string name="msg_wg_profile_no_config">保存配置文件前粘贴一个WireGuard 配置</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_mullvad_note">TrackerControl 创建一个 Mullvad WireGuard 配置文件。账户号码将在本地保存以供未来Mullvad 配置文件使用。 没有存储令牌，删除此处的配置文件不会从 Mullvad 移除设备。</string>
+    <string name="vpn_intro_body">VPN 通过另一个服务器发送您的网络流量。 这可以对网站和网络提供商中隐藏您的 IP 地址，并允许您选择一个国家用于连接。 此选项卡是新的，将其视为预览功能。</string>
+    <string name="vpn_intro_mullvad_body">聚焦隐私的 VPN 提供商。每月花费 5 欧元并使用账户号而不是电子邮件地址。请输入账户号，然后在 TrackerControl 中选择一个国家。</string>
     <string name="msg_wg_blocked_title">WireGuard 隧道不可用</string>
     <string name="msg_wg_blocked">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。</string>
     <string name="msg_wg_blocked_detail">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。%s</string>
