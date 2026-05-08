@@ -40,6 +40,7 @@
     <string name="timeline_open_app">打开应用</string>
     <string name="tab_timeline">时间轴</string>
     <string name="tab_apps">应用程序</string>
+    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">上个小时</string>
     <string name="timeline_section_today">今天</string>
     <string name="timeline_section_yesterday">昨天</string>
@@ -120,7 +121,16 @@
     <string name="setting_socks5_password">SOCKS5 密码: %s</string>
     <string name="setting_wg_enabled">经 WireGuard 隧道流量</string>
     <string name="setting_wg_config">WireGuard 配置</string>
+    <string name="setting_wg_profile">WireGuard 配置</string>
+    <string name="setting_wg_profile_manage">自定义 WireGuard 配置文件</string>
+    <string name="setting_wg_profile_import">导入WireGuard配置</string>
+    <string name="setting_wg_mullvad_setup">设置 Mullvad</string>
+    <string name="setting_wg_keepalive_when_screen_off">屏幕关闭时保持WireGuard活跃</string>
+    <string name="setting_wg_profile_save">保存配置</string>
+    <string name="setting_wg_profile_delete">删除配置文件</string>
+    <string name="setting_wireguard">WireGuard (预览)</string>
     <string name="setting_wg_status">状态</string>
+    <string name="setting_vpn_key_rotate_now">立即轮换 VPN 提供商密钥</string>
     <string name="setting_pcap_record_size">PCAP 记录大小: %s B</string>
     <string name="setting_pcap_file_size">PCAP 最大文件大小: %s MB</string>
     <string name="setting_watchdog">监控: 每 %s 分钟</string>
@@ -164,6 +174,9 @@
     <string name="summary_socks5_enabled">只有TCP流量会被发送到代理服务器</string>
     <string name="summary_wg_enabled">隐藏设备 IP。让 TCP 和 UDP 出口流量流经隧道。应用程序会在网络中断时看到网络错误 - fail-closed 状态，不会退回到直连。 当隧道闲置时服务器发起的到手机的连接可能无法正常工作(禁用 keepalive 以节省电量)。</string>
     <string name="summary_wg_config">粘贴来自 VPN 服务提供商的 [Interface] / [Peer] 配置</string>
+    <string name="summary_wg_profile">选择已保存的WireGuard配置</string>
+    <string name="summary_wg_profile_none">没有保存的配置文件</string>
+    <string name="summary_wg_profile_manage">添加、编辑或删除自定义WireGuard 配置</string>
     <string name="summary_wg_keepalive_when_screen_off">即使屏幕关闭，也以您的WireGuard配置设置中设置的时间间隔内发送 keepalive 数据包。 在空闲连接丢失的网络上提高可靠性，但会增加电池使用量。</string>
     <string name="summary_wg_status_off">关</string>
     <string name="summary_wg_status_missing_config">关闭 - 没有设定配置</string>
@@ -171,15 +184,88 @@
     <string name="summary_wg_status_blocked">已阻止- %s</string>
     <string name="summary_wg_status_starting">正在启动</string>
     <string name="summary_vpn_key_rotate_now">强制 Mullvad 和 IVPN WireGuard key 轮换用于调试</string>
+    <string name="msg_vpn_key_rotation_started">VPN key轮换已开始</string>
     <string name="msg_wg_config_invalid">无效的 WireGuard 配置： %s</string>
+    <string name="msg_wg_profile_name">配置文件名</string>
+    <string name="msg_wg_profile_default_name">默认</string>
+    <string name="msg_wg_profile_saved">WireGuard 配置已保存</string>
+    <string name="msg_wg_profile_deleted">WireGuard 配置已删除</string>
     <string name="msg_wg_profile_no_config">保存配置文件前粘贴一个WireGuard 配置</string>
+    <string name="msg_wg_profile_empty">暂无配置</string>
+    <string name="msg_wg_profile_active">活跃</string>
+    <string name="msg_wg_profile_set_active">设置为活跃</string>
     <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_delete_confirm">删除这个WireGuard配置文件吗？</string>
+    <string name="msg_wg_mullvad_account">Mullvad账号</string>
+    <string name="msg_wg_mullvad_recommended">推荐位置</string>
     <string name="msg_wg_mullvad_note">TrackerControl 创建一个 Mullvad WireGuard 配置文件。账户号码将在本地保存以供未来Mullvad 配置文件使用。 没有存储令牌，删除此处的配置文件不会从 Mullvad 移除设备。</string>
+    <string name="msg_wg_mullvad_generating">正在创建WireGuard配置文件…</string>
+    <string name="msg_wg_mullvad_failed">Mullvad 设置失败: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">无法加载 Mullvad 地区： %s</string>
+    <string name="vpn_status_connected">%s</string>
+    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">中继: %s</string>
+    <string name="vpn_status_mullvad_summary">中继: %s</string>
+    <string name="vpn_status_wireguard_connected">WireGuard 已连接</string>
+    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
+    <string name="vpn_status_disconnected">未连接</string>
+    <string name="vpn_choose_country">选择国家/地区</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_title">VPN 预览</string>
     <string name="vpn_intro_body">VPN 通过另一个服务器发送您的网络流量。 这可以对网站和网络提供商中隐藏您的 IP 地址，并允许您选择一个国家用于连接。 此选项卡是新的，将其视为预览功能。</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
     <string name="vpn_intro_mullvad_body">聚焦隐私的 VPN 提供商。每月花费 5 欧元并使用账户号而不是电子邮件地址。请输入账户号，然后在 TrackerControl 中选择一个国家。</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_ivpn_body">支持 WireGuard 的聚焦隐私的 VPN 提供商。输入 IVPN 账户 ID，然后在 TrackerControl 中选择一个地区。</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_intro_wireguard_body">如果您已经有来自另一个 VPN 提供商、你自己的服务器或工作场所的 WireGuard 配置，请使用这个。</string>
+    <string name="vpn_enter_mullvad_account">输入账号</string>
+    <string name="vpn_enter_ivpn_account">输入账户ID</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_settings">Mullvad 设置</string>
+    <string name="vpn_settings_title">Mullvad 设置</string>
+    <string name="vpn_ivpn_settings">IVPN 设置</string>
+    <string name="vpn_ivpn_settings_title">IVPN 设置</string>
+    <string name="vpn_account_number">账户：%s</string>
+    <string name="vpn_account_not_set">账户：未设置</string>
+    <string name="vpn_account_show">显示</string>
+    <string name="vpn_account_hide">隐藏</string>
+    <string name="vpn_account_change">更改</string>
+    <string name="vpn_account_done">已完成</string>
+    <string name="vpn_account_cancel">取消</string>
+    <string name="vpn_mullvad_intro">输入您的 Mullvad 账户号码。它已保存在这台设备上。</string>
+    <string name="vpn_mullvad_account_note">此账户用于Mullvad地区连接。</string>
+    <string name="vpn_get_mullvad_account">获取Mullvad账户</string>
+    <string name="vpn_get_ivpn_account">获取 IVPN 账户</string>
+    <string name="vpn_account_hint">Mullvad账号</string>
+    <string name="vpn_ivpn_intro">输入您的 IVPN 账户号码。它保存在这台设备上。</string>
+    <string name="vpn_ivpn_captcha_intro">创建 WireGuard 会话前 IVPN 需要 CAPTCHA 验证。</string>
+    <string name="vpn_ivpn_account_hint">IVPN账户ID</string>
+    <string name="vpn_ivpn_captcha_hint">CAPTCHA 文本</string>
+    <string name="vpn_account_save">保存</string>
+    <string name="vpn_account_saved">账户已保存</string>
+    <string name="vpn_wireguard_profiles">WireGuard 配置</string>
+    <string name="vpn_no_wireguard_profiles">尚无自定义的WireGuard配置</string>
+    <string name="vpn_import_wireguard_profile">导入WireGuard配置</string>
+    <string name="vpn_manage_wireguard_profiles">管理WireGuard配置</string>
+    <string name="vpn_country_load_failed">无法加载 %1$s 个国家： %2$s</string>
+    <string name="vpn_country_load_failed_short">无法加载地区</string>
+    <string name="vpn_choose_country_first">先选择一个地区</string>
+    <string name="vpn_choose_profile_first">请先选择一个WireGuard配置</string>
+    <string name="vpn_setup_required">设置Mullvad或先导入WireGuard 配置文件</string>
+    <string name="vpn_loading_countries">正在加载地区...</string>
+    <string name="vpn_generating">正在创建WireGuard配置文件……</string>
+    <string name="vpn_generation_failed">VPN 设置失败: %s</string>
+    <string name="vpn_retry">重试</string>
+    <string name="vpn_country_selected">好</string>
     <string name="msg_wg_blocked_title">WireGuard 隧道不可用</string>
     <string name="msg_wg_blocked">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。</string>
     <string name="msg_wg_blocked_detail">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。%s</string>
+    <string name="msg_wg_recovery_failed">WireGuard 在苏醒后停止响应。TrackerControl 正在尝试重新连接，网络连接可能保持阻止状态，直到WireGuard恢复为止。</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
     <string name="summary_log_logcat">研究模式：已识别的追踪器会记录到 ADB 并启用 SNI 提取以更好地检测主机名。用 TC-Log 标签通过 adb logcat 获取日志。</string>
     <string name="msg_sure">你确定吗？</string>
@@ -347,6 +433,39 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR 主题访问请求</string>
+    <string name="body_request_data"><![CDATA[致有关人士：\n
+\n
+\n
+我请求你方作为安卓应用 %1$s(ID：%2$s) 数据的控制者确认它是否正处理任何有关我的个人资料。\n
+如有，请向我提供《欧盟通用资料保护规例》第15条所规定的所有必须信息，它们包括：\n
+\n
+•我个人数据的一份拷贝；\n
+•处理的目的；\n
+•有关的个人资料类别；\n
+•你方将我的个人资料披露给谁，以及你方提供的保障措施；\n
+•储存个人资料的保留期或用以确定保留期间的标准；\n
+•关于我的个人资料来源的信息；和\n
+•是否存在自动化决策(包括用户建模)，如果有的话：\n
+    -决策过程中涉及的逻辑；\n
+    -对我的意义和设想的后果；\n
+    -你方为防止错误、偏见和歧视所采取的措施；和\n
+    -解释我如何表达我的观点和挑战一个决定；\n
+\n
+此请求涉及你方对我个人资料的任何处理，包括代表你方处理个人资料的任何处理者。\n
+\n
+请通过安全方式通过电子邮件提供您的回复。我期待你方在收到我的请求后一个月内进行答复。\n
+\n
+此致，\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[致有关人士：\n
+\n\n
+我援引欧盟通用数据保护条例(GDPR) 第17条规定的我的数据檫除权，请求你作为安卓应用 %1$s (ID：%2$s) 数据的控制方及时删除此应用程序处理的关于我的以下个人数据：\n
+• 全部数据\n
+\n
+我提出删除个人资料要求的原因是我撤回或已撤回我对处理个人资料的同意。此要求涉及你方对本人个人资料的任何处理，包括代表你方处理个人资料的任何处理者。\n
+\n
+请通过安全方式通过电子邮件提供您的回复。我期待在你方收到我的请求后一个月进行答复。\n
+\n
+此致，\n\n]]></string>
     <string name="crash_dialog_text">对不起。TrackerControl崩溃了.. 您介意把详细情况发邮件给我们吗?</string>
     <string name="crash_dialog_comment">是否有任何评论？</string>
     <string name="instructions_monitoring_private_dns">切换开关并与一些应用程序进行交互。必须禁用私有DNS。</string>
