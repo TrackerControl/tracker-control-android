@@ -40,6 +40,7 @@
     <string name="timeline_open_app">Odprite program</string>
     <string name="tab_timeline">Časovnica</string>
     <string name="tab_apps">Programi</string>
+    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Zadnja ura</string>
     <string name="timeline_section_today">Danes</string>
     <string name="timeline_section_yesterday">Včeraj</string>
@@ -123,6 +124,10 @@
     <string name="setting_socks5_password">Geslo SOCKS5: %s</string>
     <string name="setting_wg_enabled">Preusmeri promet preko WireGuarda</string>
     <string name="setting_wg_config">Nastavitve WireGuard</string>
+    <string name="setting_wg_profile">Profil WireGuard</string>
+    <string name="setting_wg_profile_manage">Profili WireGuard po meri</string>
+    <string name="setting_wg_profile_import">Uvozi nastavitve WireGuard</string>
+    <string name="setting_wg_mullvad_setup">Nastavi Mullvad</string>
     <string name="setting_wg_status">Stanje</string>
     <string name="setting_pcap_record_size">Velikost zapisa PCAP: %s B</string>
     <string name="setting_pcap_file_size">Najv. velikost datoteke PCAP: %s MB</string>
