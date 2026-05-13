@@ -140,10 +140,30 @@
     <string name="summary_socks5_enabled">Alleen TCP-verkeer wordt naar de proxyserver gestuurd</string>
     <string name="summary_wg_status_starting">Starten</string>
     <string name="msg_wg_profile_name">Profielnaam</string>
+    <string name="msg_wg_profile_deleted">WireGuard profiel verwijderd</string>
     <string name="msg_wg_profile_empty">Nog geen profielen</string>
     <string name="msg_wg_profile_active">Actief</string>
     <string name="msg_wg_profile_set_active">Activeren</string>
-    <string name="msg_wg_mullvad_account">Mullvad account nummer</string>
+    <string name="msg_wg_mullvad_account">Mullvad profiel nummer</string>
+    <string name="msg_wg_mullvad_recommended">Aanbevolen locatie</string>
+    <string name="vpn_status_disconnected">Niet verbonden</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_enter_mullvad_account">Vul profielnummer in</string>
+    <string name="vpn_enter_ivpn_account">Vul profiel ID in</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_settings">Mullvad instellingen</string>
+    <string name="vpn_settings_title">Mullvad instellingen</string>
+    <string name="vpn_ivpn_settings">IVPN instellingen</string>
+    <string name="vpn_ivpn_settings_title">IVPN instellingen</string>
+    <string name="vpn_account_not_set">Account: niet ingesteld</string>
+    <string name="vpn_account_show">Tonen</string>
+    <string name="vpn_account_hide">Verbergen</string>
+    <string name="vpn_account_change">Verander</string>
+    <string name="vpn_account_done">Klaar</string>
+    <string name="vpn_account_cancel">Annuleer</string>
     <string name="summary_watchdog">Controleer regelmatig of TrackerControl nog actief is (voer nul in om deze optie uit te schakelen). Dit kan leiden tot extra batterijverbruik.</string>
     <string name="summary_log_logcat">Onderzoeksmodus: geïdentificeerde trackers worden gelogd naar ADB en SNI-extractie is ingeschakeld voor betere hostnamendetectie. Bekijk de logs met behulp van adb logcat en de tag \'TC-Log\'.</string>
     <string name="msg_sure">Weet je het zeker?</string>
@@ -325,6 +345,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tracker_fingerprinting">Vingerafdrukken</string>
     <string name="tracker_social">Sociaal</string>
     <string name="tracker_email">E-mail</string>
+    <string name="tracker_consent">Toestemmingsbeheer</string>
     <string name="tracker_uncategorised">Ongecategoriseerd</string>
     <string name="setting_strict_blocking">Strikt Blokkeren</string>
     <string name="summary_strict_blocking">Voor nieuw geïnstalleerde apps: probeer zoveel als mogelijk het delen van data met bedrijven te blokkeren. Meer apps zullen falen.</string>
@@ -334,6 +355,14 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="setting_sni_enabled">SNI-extractie (onderzoek)</string>
     <string name="summary_sni_enabled">Extraheer hostnamen uit TLS-verbindingen voor nauwkeurigere tracker detectie. Waarschuwing: dit lekt uw IP-adres naar tracker servers. Schakel alleen in voor onderzoek.</string>
     <string name="setting_blocking_mode">Blokkeermodus</string>
+    <string name="blocking_mode_minimal">Minimaal</string>
+    <string name="blocking_mode_standard">Standaard</string>
+    <string name="blocking_mode_strict">Strikt</string>
+    <string name="onboarding_blockingmode_title">Kies methode van blokkeren</string>
+    <string name="onboarding_blockingmode_standard_label">Standaard</string>
+    <string name="onboarding_blockingmode_strict_label">Strikt</string>
+    <string name="onboarding_blockingmode_research_label">Onderzoek</string>
+    <string name="vpn_exclude">Uitsluiten van vpn</string>
     <string name="uninstall">Deïnstalleren</string>
     <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Zet de schakelaar in het hoofdscherm op aan en start de app om trackers op te sporen</string>
@@ -358,21 +387,31 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tracking_detection_failed_ram">Detectie tracker bibliotheek niet gelukt. Onvoldoende RAM.</string>
     <string name="tracking_detection_failed_report">Detectie tracker bibliotheek niet gelukt. Meld dit probleem bij de ontwikkelaar.</string>
     <string name="detected_trackers">Gevonden tracker bibliotheken: %s</string>
+    <string name="analyzing_classes">Analyseer klassen…</string>
+    <string name="analyzing_classes_progress">Analyseer klassen… %d%%</string>
+    <string name="analysis_already_running">Analyse reeds begonnen</string>
     <string name="none">Geen</string>
     <string name="trackers_static">Tracker bibliotheken</string>
     <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.
 \n\nTrackerControl kan deze tracking blokkeren.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
+    <string name="analysis_queued">Analyse in wachtrij geplaatst…</string>
     <string name="blocked">GEBLOKKEERD</string>
     <string name="allowed">TOEGESTAAN</string>
     <string name="setting_domain_based_blocked">Blokkeren op basis van domein</string>
     <string name="summary_domain_based_blocking">Staat meer fijnmazig blokkeren toe. Nog steeds in ontwikkeling.</string>
     <string name="untap_unblock">Tip: Klik op individuele items om die te deblokkeren.</string>
     <string name="uncertain_entry">Vermeldingen met een \"*\" kunnen onnauwkeurig zijn door beperkingen van Android. Dit betekent meestal dat hetzelfde bedrijf hetzelfde IP-adres gebruikt onder verschillende domeinnamen, maar kan ook betekenen dat verschillende bedrijven achter hetzelfde IP-adres zitten (bv. als ze een Content Delivery Network gebruiken).</string>
+    <string name="browsers_not_supported">Zoekmachine niet gedetecteerd ⚠️</string>
     <string name="static_analysis">Trackers detecteren in app code</string>
     <string name="failed_loading_cached_analysis">Het laden van tracker resultaten in de cache is mislukt. Graag dit melden aan de ontwikkelaar op hello@trackercontrol.org</string>
     <string name="msg_notifications">Tic hier om meldingen toe te staan (voor foutmeldingen, enz.)</string>
     <!-- Onboarding -->
+    <string name="title_next">Volgende</string>
+    <string name="title_skip">Overslaan</string>
+    <string name="title_previous">Vorige</string>
+    <string name="title_finish">Start</string>
+    <string name="onboarding_welcome_title">Neem controle over je privacy</string>
     <string name="onboarding_notify_title">Blijf op de hoogte</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
