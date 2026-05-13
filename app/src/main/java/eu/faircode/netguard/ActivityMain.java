@@ -132,6 +132,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private Runnable searchRunnable;
     private static final long SEARCH_DEBOUNCE_MS = 300;
 
+    public void createInsets(View view) {
+        if (view == null) return;
+
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, windowInsets) -> {
+            int types = WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.ime();
+            Insets insets = windowInsets.getInsets(types);
+            v.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+
+            return WindowInsetsCompat.CONSUMED;
+        });
+    }
+
     private static final int REQUEST_VPN = 1;
     private static final int REQUEST_INVITE = 2;
     public static final int REQUEST_ROAMING = 3;
@@ -204,6 +216,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     v.getPaddingRight(), v.getPaddingBottom());
             return insets;
         });
+
+        createInsets(findViewById(android.R.id.content).getRootView());
 
         // Check for filtering
         if (!Util.canFilter(this)) {
