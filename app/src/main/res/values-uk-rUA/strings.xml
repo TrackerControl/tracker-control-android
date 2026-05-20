@@ -34,6 +34,13 @@
     <string name="title_tracker_activity">Активність трекера</string>
     <string name="timeline_empty">Немає нещодавньої активності трекера.\n\nУвімкніть TrackerControl, щоб побачити, які програми відстежують вас.</string>
     <string name="timeline_empty_disabled_title">TrackerControl вимкнено</string>
+    <string name="timeline_empty_disabled_subtitle">Увімкніть TrackerControl за допомогою перемикача у правому верхньому куті. Після цього тут з’являться дані про активність трекерів у ваших додатках.</string>
+    <string name="timeline_empty_enabled_title">Слідкуємо за трекерами…</string>
+    <string name="timeline_empty_enabled_subtitle">Більшість додатків зв’язуються з трекерами лише під час їхнього використання. Відкрийте додаток, а потім поверніться до цього екрана — тут з’явиться інформація про активність його трекера.</string>
+    <string name="timeline_open_app">Відкрити додаток</string>
+    <string name="tab_timeline">Хронологія</string>
+    <string name="tab_apps">Додатки</string>
+    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Остання година</string>
     <string name="timeline_section_today">Сьогодні</string>
     <string name="timeline_section_yesterday">Вчора</string>
@@ -115,6 +122,11 @@
     <string name="setting_socks5_port">Порт SOCKS5: %s</string>
     <string name="setting_socks5_username">Ім’я користувача SOCKS5: %s</string>
     <string name="setting_socks5_password">Пароль SOCKS5: %s</string>
+    <string name="setting_wg_enabled">Трафік через тунель WireGuard</string>
+    <string name="setting_wg_config">Конфігурація WireGuard</string>
+    <string name="setting_wg_profile">Профіль WireGuard</string>
+    <string name="setting_wg_profile_manage">Користувацькі профілі WireGuard</string>
+    <string name="setting_wg_profile_import">Імпортувати конфігурацію WireGuard</string>
     <string name="setting_pcap_record_size">Розмір запису PCAP: %s B</string>
     <string name="setting_pcap_file_size">Макс. розмір файлу PCAP: %s МБ</string>
     <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
@@ -155,6 +167,7 @@
     <string name="summary_rcode">Значенням за замовчуванням є 3 (NXDOMAIN), що означає «домен не існує».</string>
     <string name="summary_validate">Доменне ім’я, що використовується для перевірки інтернет-з’єднання через порт 443 (https).</string>
     <string name="summary_socks5_enabled">На проксі-сервер направлятиметься лише TCP-трафік</string>
+    <string name="summary_wg_enabled">Приховує IP-адресу пристрою. Тунелює вихідні TCP та UDP-адреси. Програми бачитимуть помилки мережі під час збоїв — закриття збою, без перенаправлення. Ініційовані сервером з’єднання з телефоном можуть не працювати, поки тунель неактивний (функція keepalive вимкнена для економії заряду батареї).</string>
     <string name="summary_watchdog">Періодично перевіряйте, чи TrackerControl все ще працює (введіть нуль, щоб вимкнути цю опцію). Це може призвести до додаткового споживання заряду акумулятора.</string>
     <string name="summary_log_logcat">Режим дослідження: виявлені трекери записуються в ADB, а для кращого виявлення імен хостів увімкнено вилучення SNI. Отримайте журнали за допомогою adb logcat, використовуючи тег «TC-Log».</string>
     <string name="msg_sure">Ви впевнені?</string>
