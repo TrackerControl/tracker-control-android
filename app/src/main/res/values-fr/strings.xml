@@ -186,6 +186,9 @@
     <string name="msg_wg_profile_empty">Aucun profil</string>
     <string name="msg_wg_profile_active">Actif</string>
     <string name="msg_wg_profile_set_active">Définir comme actif</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nClé Privée = ...\nAdresse = ...\n\n[Pair]\nClé publique = ...\nIP autorisées = 0.0.0.0/0, ::/0\nPoint de terminaison = ...</string>
+    <string name="msg_wg_mullvad_account">Numéro de compte Mullvad</string>
+    <string name="msg_wg_mullvad_recommended">Emplacement recommandé</string>
     <string name="msg_wg_mullvad_failed">Échec de la configuration de Mullvad : %s</string>
     <string name="msg_wg_mullvad_countries_failed">Impossible de charger les pays de Mullvad : %s</string>
     <string name="vpn_status_connected">%s</string>
@@ -495,8 +498,10 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="onboarding_welcome_title">Prenez le contrôle de votre vie privée</string>
     <string name="onboarding_welcome_desc">TrackerControl est un projet de recherche porté par la communauté, qui vous permet de :\n\n• <b>Surveiller</b> la collecte cachée de données par les applications mobiles en temps réel.\n• <b>Bloquer</b> les traqueurs et les publicités, en utilisant notre base de données de <b>2 000 000 applications analysées</b>.\n• <b>Identifier</b> les entreprises et les pays de destination recevant vos données.\n\nToutes les analyses s\'effectuent <b>localement sur votre appareil</b> – votre trafic reste toujours sous votre contrôle.</string>
     <string name="onboarding_vpn_title">Activer la protection</string>
+    <string name="onboarding_vpn_blocked_title">Un autre VPN est actif</string>
     <string name="onboarding_vpn_blocked_action">Ouvrir les paramètres VPN</string>
     <string name="onboarding_battery_action">Désactiver l\'optimisation</string>
+    <string name="onboarding_battery_sure">Sans désactiver l\'optimisation de la batterie, TrackerControl peut être couper par Android à tout moment. Êtes-vous sûr de vouloir continuer ?</string>
     <string name="onboarding_notify_title">Restez informé</string>
     <string name="onboarding_privatedns_action">Ouvrir les paramètres DNS</string>
     <string name="onboarding_lockdown_title">Paramètres de verrouillage VPN</string>
