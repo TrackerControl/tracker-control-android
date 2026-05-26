@@ -176,6 +176,7 @@
     <string name="summary_validate">Ime domene, ki se uporablja za preverjanje veljavnosti internetne povezave na vratih 443 (https).</string>
     <string name="summary_socks5_enabled">Posredniškemu strežniku bo poslan samo promet TCP.</string>
     <string name="summary_wg_enabled">Skrije IP naprave.  Preusmeri izhoda TCP in UDP.  Programi bodo med izpadi omrežja videli napake — ob napakah se lahko WireGuard zaustavi.  Povezave, ki jih s telefonom začne strežnik, morda ne bodo delovale, ko je povezava nedejavna (WireGuard zaradi prihranka energije morda ne bo več dejaven, ko je zaslon izklopljen).</string>
+    <string name="summary_wg_config">Prilepi nastavitve [Interface]/[Peer] od ponudnika</string>
     <string name="summary_wg_profile">Izberi shranjene nastavitve WireGuard</string>
     <string name="summary_wg_profile_none">Ni shranjenih profilov</string>
     <string name="summary_wg_profile_manage">Dodaj, uredi ali izbriši nastavitve Wireguarda po meri</string>
@@ -196,6 +197,23 @@
     <string name="msg_wg_profile_empty">Noben profil še ni bil ustvarjen.</string>
     <string name="msg_wg_profile_active">Dejaven</string>
     <string name="msg_wg_profile_set_active">Nastavi kot dejaven</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nZasebni ključ = …\nNaslov = …\n\n[Peer]\nJavni ključ = …\nDovoljeni IP-ji = 0.0.0.0/0, ::/0\nKončna točka = …</string>
+    <string name="msg_wg_profile_delete_confirm">Izbriši za profil WireGuard?</string>
+    <string name="msg_wg_mullvad_account">Številka računa Mullvad</string>
+    <string name="msg_wg_mullvad_recommended">Priporočljivo mesto</string>
+    <string name="msg_wg_mullvad_note">TrackerControl ustvari WireGuardov profil Mulvad.  Številka računa se shrani krajevno za bodoče profile Mulvad.  Žetoni se ne shranjujejo in in izbrisa tukajšnjega profila ne odstrani naprave iz Mullvada.</string>
+    <string name="msg_wg_mullvad_countries_failed"></string>
+    <string name="vpn_status_connected">%s</string>
+    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">Prehod: %s</string>
+    <string name="vpn_status_mullvad_summary">Prehod: %s</string>
+    <string name="vpn_status_wireguard_connected">WireGuard je povezan.</string>
+    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
+    <string name="vpn_status_disconnected">Ni povezano.</string>
+    <string name="vpn_choose_country">Izberite državo.</string>
+    <string name="vpn_provider_mullvad">VPN Mullvad</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
     <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene.</string>
     <string name="msg_wg_blocked_detail">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene. %s</string>
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
