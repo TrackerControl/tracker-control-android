@@ -192,6 +192,8 @@
     <string name="vpn_intro_mullvad_body">VPN-провайдер, орієнтований на конфіденційність. Він коштує 5 євро на місяць і використовує номери облікових записів замість адрес електронної пошти. Введіть номер облікового запису, а потім виберіть країну в TrackerControl.</string>
     <string name="vpn_intro_ivpn_body">VPN-провайдер, орієнтований на конфіденційність, з підтримкою WireGuard. Введіть ідентифікатор облікового запису IVPN, а потім виберіть країну в TrackerControl.</string>
     <string name="vpn_intro_wireguard_body">Використовуйте цю опцію, якщо у вас вже є конфігураційний файл WireGuard від іншого постачальника VPN, власного сервера або вашого робочого місця.</string>
+    <string name="vpn_mullvad_intro">Введіть номер вашого облікового запису Mullvad. Він збережений на цьому пристрої.</string>
+    <string name="vpn_ivpn_captcha_intro">IVPN потребує перевірки CAPTCHA перед створенням сеансу WireGuard.</string>
     <string name="vpn_country_selected">Гаразд</string>
     <string name="msg_wg_blocked_title">Тунель WireGuard недоступний</string>
     <string name="msg_wg_blocked">Доступ до Інтернету блокується, доки не запуститься WireGuard або налаштування WireGuard не буде вимкнено.</string>
