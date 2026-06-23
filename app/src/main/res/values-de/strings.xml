@@ -33,6 +33,16 @@
     <string name="menu_timeline">Tracker-Aktivitäten</string>
     <string name="title_tracker_activity">Tracker-Aktivitäten</string>
     <string name="timeline_empty_disabled_subtitle">TrackerControl mit dem Schalter oben rechts aktivieren. Die Tracker-Aktivitäten Ihrer Apps werden dann hier angezeigt.</string>
+    <string name="timeline_open_app">Eine App öffnen</string>
+    <string name="tab_apps">Apps</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="timeline_section_today">Heute</string>
+    <string name="timeline_section_yesterday">Gestern</string>
+    <string name="timeline_section_this_week">Diese Woche</string>
+    <string name="timeline_tracker_blocked">Blockiert</string>
+    <string name="timeline_tracker_allowed">Zugelassen</string>
+    <string name="troubleshooting_title">Fehlerbehebung</string>
+    <string name="troubleshooting_alwayson_action">Öffne VPN-Einstellungen</string>
     <string name="menu_apps">Andere Apps</string>
     <string name="menu_protocol_other">Anderes</string>
     <string name="menu_traffic_allowed">Zugelassen</string>
@@ -62,6 +72,8 @@
     <string name="setting_ip6">IPv6-Datenverkehr aktivieren</string>
     <string name="setting_call">Bei Anruf deaktivieren</string>
     <string name="setting_reload_onconnectivity">Bei jeder Verbindungsänderung neu laden</string>
+    <string name="setting_advanced_options">Erweiterte Optionen (für Experten)</string>
+    <string name="setting_system">System-Apps anzeigen</string>
     <string name="setting_log_app">Neue Tracker suchen</string>
     <string name="setting_filter">Tracker blockieren</string>
     <string name="setting_handover">Nahtlose VPN-Übergabe beim Neuladen</string>
@@ -81,6 +93,9 @@
     <string name="setting_socks5_port">SOCKS5-Port: %s</string>
     <string name="setting_socks5_username">SOCKS5-Benutzername: %s</string>
     <string name="setting_socks5_password">SOCKS5-Passwort: %s</string>
+    <string name="setting_wg_config">WireGuard-Konfiguration</string>
+    <string name="setting_wg_profile">WireGuard-Profil</string>
+    <string name="setting_wg_status">Status</string>
     <string name="setting_pcap_record_size">PCAP Aufnahmegröße: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. Dateigröße: %s MB</string>
     <string name="setting_watchdog">Watchdog: alle %s Minuten</string>
