@@ -44,6 +44,23 @@ class WgConnectivityCheckerTest {
         assertEquals(0, prods)
     }
 
+    /** Historical tx at seed time is baseline, not fresh demand. */
+    @Test
+    fun seededTxDoesNotCountAsUnansweredSend() {
+        val c = newChecker()
+        c.seed(0, stats(0, 100))
+
+        for (t in 1000L..30_000L step 1000L) {
+            assertEquals(WgVerdict.HEALTHY, c.tick(t, stats(0, 100)))
+        }
+        assertEquals(0, prods)
+
+        // A new send after the seed starts the unanswered-send timer.
+        assertEquals(WgVerdict.HEALTHY, c.tick(31_000, stats(0, 120)))
+        assertEquals(WgVerdict.WAITING, c.tick(36_000, stats(0, 120)))
+        assertEquals(1, prods)
+    }
+
     // --- the failure path -----------------------------------------------
 
     /**
@@ -68,6 +85,24 @@ class WgConnectivityCheckerTest {
 
         // Still nothing back after PING_TIMEOUT_MS past the first prod → BROKEN.
         assertEquals(WgVerdict.BROKEN, c.tick(7000 + WgConnectivityChecker.PING_TIMEOUT_MS + 1, stats(50, 40)))
+    }
+
+    /** Prods are rate-limited while waiting for rx. */
+    @Test
+    fun unansweredSendsProdAtCadence() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(50, 10)))
+
+        assertEquals(WgVerdict.WAITING, c.tick(7000, stats(50, 20)))
+        assertEquals(1, prods)
+
+        assertEquals(WgVerdict.WAITING, c.tick(8000, stats(50, 20)))
+        assertEquals(WgVerdict.WAITING, c.tick(9000, stats(50, 20)))
+        assertEquals(1, prods)
+
+        assertEquals(WgVerdict.WAITING, c.tick(10_000, stats(50, 20)))
+        assertEquals(2, prods)
     }
 
     /**

@@ -53,6 +53,7 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
 
         data class Connecting(
             val start: Long,
+            val awaitingRx: Boolean,
             override val rx: Long,
             override val tx: Long
         ) : ConnState()
@@ -65,13 +66,13 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
         ) : ConnState()
     }
 
-    private var state: ConnState = ConnState.Connecting(0, 0, 0)
+    private var state: ConnState = ConnState.Connecting(0, false, 0, 0)
     private var initialProdTs: Long? = null
     private var numProds: Int = 0
 
     /** Seed the baseline counters at loop start (or after a tunnel restart). */
     fun seed(now: Long, stats: WgStats) {
-        state = ConnState.Connecting(now, stats.rxBytes, stats.txBytes)
+        state = ConnState.Connecting(now, false, stats.rxBytes, stats.txBytes)
         resetProd()
     }
 
@@ -115,7 +116,13 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
                     state = ConnState.Connected(now, now, newRx, newTx)
                     true
                 } else {
-                    state = ConnState.Connecting(s.start, newRx, newTx)
+                    val txInc = newTx > s.tx
+                    state = ConnState.Connecting(
+                        start = if (!s.awaitingRx && txInc) now else s.start,
+                        awaitingRx = s.awaitingRx || txInc,
+                        rx = newRx,
+                        tx = newTx
+                    )
                     false
                 }
             }
@@ -141,13 +148,13 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
      * we'd prod and restart a perfectly healthy idle tunnel every ~20s.
      */
     private fun rxTimedOut(now: Long): Boolean = when (val s = state) {
-        is ConnState.Connecting -> now - s.start >= BYTES_RX_TIMEOUT_MS && s.tx > 0
+        is ConnState.Connecting -> s.awaitingRx && now - s.start >= BYTES_RX_TIMEOUT_MS
         is ConnState.Connected ->
             s.txTimestamp > s.rxTimestamp && now - s.rxTimestamp >= BYTES_RX_TIMEOUT_MS
     }
 
     private fun maybeProd(now: Long) {
-        val cadenceOk = initialProdTs?.let { (now - it) / numProds < SECONDS_PER_PING_MS } ?: true
+        val cadenceOk = initialProdTs?.let { (now - it) / numProds >= SECONDS_PER_PING_MS } ?: true
         if (!cadenceOk) return
         try {
             prod()
