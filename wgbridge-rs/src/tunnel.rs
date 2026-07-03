@@ -32,6 +32,11 @@ struct Inner {
     /// Peer configuration as last applied; consulted when restoring the
     /// keepalive interval after a prod.
     peers: std::sync::Mutex<Vec<PeerConfig>>,
+    /// Bumped on every prod. A prod's delayed restore only runs if no newer
+    /// prod has started meanwhile; the monitor prods on the same cadence as
+    /// PROD_RESTORE_AFTER, so a stale restore would otherwise revert the
+    /// prod interval before it ever emitted a keepalive.
+    prod_generation: std::sync::atomic::AtomicU64,
     logger: Arc<dyn BridgeLogger>,
 }
 
@@ -109,6 +114,7 @@ pub fn start_tunnel(
         inner: Arc::new(Inner {
             device: tokio::sync::Mutex::new(Some(device)),
             peers: std::sync::Mutex::new(config.peers),
+            prod_generation: std::sync::atomic::AtomicU64::new(0),
             logger,
         }),
     })
@@ -187,6 +193,8 @@ impl Tunnel {
     pub fn send_keepalive(&self) {
         let inner = Arc::clone(&self.inner);
         self.runtime.spawn(async move {
+            use std::sync::atomic::Ordering;
+            let generation = inner.prod_generation.fetch_add(1, Ordering::SeqCst) + 1;
             let keys: Vec<PublicKey> = {
                 let peers = inner.peers.lock().unwrap();
                 peers.iter().map(|p| p.public_key).collect()
@@ -210,6 +218,11 @@ impl Tunnel {
             }
 
             tokio::time::sleep(PROD_RESTORE_AFTER).await;
+
+            // A newer prod owns the interval now; let its restore run instead.
+            if inner.prod_generation.load(Ordering::SeqCst) != generation {
+                return;
+            }
 
             let configured: Vec<(PublicKey, Option<u16>)> = {
                 let peers = inner.peers.lock().unwrap();

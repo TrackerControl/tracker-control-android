@@ -260,6 +260,11 @@ public class ServiceSinkhole extends VpnService {
     /** Disable WG egress and close the socketpair write end. Idempotent. */
     private native void jni_wireguard_stop();
 
+    /** Tell the C layer whether WG egress is wanted. While required but not
+     *  running (restart window, failed start) hijack-eligible traffic is
+     *  dropped instead of forwarded directly, so restarts never leak. */
+    private native void jni_wireguard_required(boolean required);
+
     private native void jni_done(long context);
 
     public static void setPcap(boolean enabled, Context context) {
@@ -681,6 +686,7 @@ public class ServiceSinkhole extends VpnService {
                 // VPN off, OS is killing us, etc.) so WG should not survive.
                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
                         () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+                jni_wireguard_required(false);
                 clearWireGuardErrorNotification();
                 unprepare();
 
@@ -1692,6 +1698,8 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.setRecoveryCallbacks(
                 () -> ServiceSinkhole.reload("wireguard connectivity repair", ServiceSinkhole.this, false),
                 () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
+        jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
+                && !TextUtils.isEmpty(prefs.getString("wg_config", "")));
         boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
                 prefs.getBoolean("wg_enabled", false),
                 prefs.getString("wg_config", ""),

@@ -31,6 +31,11 @@ char socks5_username[127 + 1];
 char socks5_password[127 + 1];
 _Atomic int wg_enabled = 0;
 _Atomic int wg_outbound_fd = -1;
+// Set while the user wants WireGuard egress, independently of whether the
+// tunnel is currently up. When required but not enabled (restart window,
+// failed start), ip.c drops hijack-eligible traffic instead of forwarding
+// it directly, so a WG restart never leaks traffic onto the raw network.
+_Atomic int wg_required = 0;
 int loglevel = ANDROID_LOG_WARN;
 
 extern int max_tun_msg;
@@ -143,6 +148,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
     *socks5_password = 0;
     atomic_store_explicit(&wg_enabled, 0, memory_order_release);
     atomic_store_explicit(&wg_outbound_fd, -1, memory_order_release);
+    atomic_store_explicit(&wg_required, 0, memory_order_release);
     pcap_file = NULL;
 
     if (pthread_mutex_init(&ctx->lock, NULL))
@@ -386,6 +392,12 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, job
     atomic_store_explicit(&wg_enabled, 1, memory_order_release);
     log_android(ANDROID_LOG_WARN, "WireGuard egress enabled tx=%d rx=%d", sv[0], sv[1]);
     return sv[1];
+}
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1required(JNIEnv *env, jobject instance,
+                                                                   jboolean required) {
+    atomic_store_explicit(&wg_required, required ? 1 : 0, memory_order_release);
 }
 
 JNIEXPORT void JNICALL

@@ -71,6 +71,11 @@ impl IpRecv for SocketpairRecv {
                         guard.clear_ready();
                         break;
                     }
+                    // Retryable; must not bubble up — gotatun treats an IpRecv
+                    // error as fatal and permanently stops the outbound pump.
+                    if e.kind() == io::ErrorKind::Interrupted {
+                        continue;
+                    }
                     if packets.is_empty() {
                         return Err(e);
                     }

@@ -31,6 +31,7 @@ object WgEgress {
     private const val HANDSHAKE_DEAD_AFTER_MS = 180_000L
     private const val RECOVERY_NOTIFY_AFTER_MS = 30_000L
     private const val ENDPOINT_CACHE_TTL_MS = 5 * 60 * 1000L
+    private const val RESOLVE_TIMEOUT_MS = 4_000L
     // If the monitor declares the tunnel broken again this soon after a
     // rebind + re-resolve, the cheap path clearly didn't help — escalate to
     // a full restart.
@@ -41,6 +42,13 @@ object WgEgress {
     @Volatile private var verificationGeneration: Long = 0
     @Volatile private var currentConfig: String? = null
     private var currentTunFd: Int = -1
+    // The exact ParcelFileDescriptor the running tunnel was started with. A
+    // re-established VPN can be handed a new pfd that reuses the previous
+    // integer fd number, so comparing fd ints alone would wrongly no-op and
+    // leave the Rust side writing into a dup of the dead TUN. Identity of the
+    // pfd object distinguishes "same TUN reused across a Native restart"
+    // (same object) from "new TUN that happens to alias the fd number".
+    private var currentTunPfd: ParcelFileDescriptor? = null
     private var currentInteractive: Boolean = true
     private var currentKeepaliveAlwaysOn: Boolean = false
     @Volatile private var forceRestartPending: Boolean = false
@@ -49,11 +57,20 @@ object WgEgress {
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
+    // Guarded by monitorLock: started/stopped from the vpn handler thread,
+    // the wg-rebind thread, and the dying monitor thread itself. Unsynchronized
+    // access could leak a second polling thread (double prods, double restarts).
     private var monitor: WgConnectivityMonitor? = null
+    private val monitorLock = Any()
 
     private val verifyHandler by lazy { Handler(Looper.getMainLooper()) }
     private val listeners = java.util.concurrent.CopyOnWriteArrayList<Runnable>()
     private val endpointCache = mutableMapOf<String, EndpointCacheEntry>()
+    // Last successful resolution per host:port, without TTL. Recovery paths
+    // fall back to this when DNS fails or times out — during a broken-tunnel
+    // window the resolver itself runs over the (dead or dropped) VPN network,
+    // so fresh resolution is often impossible exactly when we need it most.
+    private val lastKnownEndpoints = mutableMapOf<String, String>()
     private val endpointCacheLock = Any()
 
     /**
@@ -99,7 +116,7 @@ object WgEgress {
 
         if (!wantRunning) {
             clearRecoveryState()
-            clearEndpointCache()
+            clearAllEndpointState()
             if (tunnel != null) {
                 Log.i(TAG, "WG disabled — tearing down tunnel")
                 stopInternal(stopSocketpair)
@@ -108,13 +125,13 @@ object WgEgress {
             return true
         }
 
-        if (tunnel != null && currentConfig == configText && currentTunFd == desiredFd && !forceRestartPending) {
+        if (tunnel != null && currentConfig == configText && currentTunPfd === vpnFd && !forceRestartPending) {
             val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
             val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
             if (oldKeepaliveEnabled != newKeepaliveEnabled &&
                 !reapplyConfigOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
                 return false
-            Log.v(TAG, "startOrUpdate: same config + same TUN fd, no-op")
+            Log.v(TAG, "startOrUpdate: same config + same TUN pfd, no-op")
             return true
         }
 
@@ -183,6 +200,7 @@ object WgEgress {
 
         currentConfig = configText
         currentTunFd = desiredFd
+        currentTunPfd = vpnFd
         currentInteractive = interactive
         currentKeepaliveAlwaysOn = keepaliveAlwaysOn
         Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
@@ -193,21 +211,27 @@ object WgEgress {
     }
 
     private fun startMonitor() {
-        monitor?.stop()
-        monitor = WgConnectivityMonitor(
-            statsProvider = { statsOrNull() },
-            prod = { try { tunnel?.sendKeepalive() } catch (e: Throwable) { Log.w(TAG, "prod keepalive threw", e) } },
-            onBroken = { onMonitorBroken() }
-        ).also { it.start() }
+        synchronized(monitorLock) {
+            monitor?.stop()
+            monitor = WgConnectivityMonitor(
+                statsProvider = { statsOrNull() },
+                prod = { try { tunnel?.sendKeepalive() } catch (e: Throwable) { Log.w(TAG, "prod keepalive threw", e) } },
+                onBroken = { onMonitorBroken() }
+            ).also { it.start() }
+        }
     }
 
     private fun stopMonitor() {
-        monitor?.stop()
-        monitor = null
+        synchronized(monitorLock) {
+            monitor?.stop()
+            monitor = null
+        }
     }
 
     private fun onMonitorBroken() {
         if (tunnel == null) return
+        // A full restart is already queued; it will rebind everything anyway.
+        if (forceRestartPending) return
 
         // First recourse: rebind the UDP sockets and re-resolve the endpoint.
         // That covers the common roaming failures (network switch, endpoint
@@ -289,6 +313,16 @@ object WgEgress {
 
     private fun statsOrNull(): WgStats? = try {
         tunnel?.stats()?.let {
+            // hasFreshHandshake deliberately uses WireGuard's REJECT_AFTER_TIME
+            // (180s): while a handshake is younger than the session lifetime,
+            // "tx without rx" is not proof of breakage — an idle tunnel whose
+            // keepalives are (by protocol) unanswered looks exactly like that.
+            // Once the session expires, a prod forces a re-handshake, which
+            // either advances rx (alive) or fails (genuinely broken). The cost
+            // is a detection floor of up to ~3 min for paths that break right
+            // after a successful handshake; the benefit is zero restart churn
+            // on healthy idle tunnels. Shorten this only together with a real
+            // in-tunnel probe (Mullvad uses ICMP pings for this).
             WgStats(
                 it.rxBytes,
                 it.txBytes,
@@ -303,7 +337,7 @@ object WgEgress {
     /** Tear down the tunnel completely. Called on actual service stop. */
     fun stop(stopSocketpair: () -> Unit) {
         clearRecoveryState()
-        clearEndpointCache()
+        clearAllEndpointState()
         if (tunnel != null) {
             stopInternal(stopSocketpair)
             notifyStateChanged()
@@ -321,6 +355,9 @@ object WgEgress {
         verificationGeneration++
         clearEndpointCache()
         if (tunnel == null) return
+        // A full restart is already queued (and the accompanying reload() is
+        // in flight); rebinding concurrently would just race it.
+        if (forceRestartPending) return
 
         // Rebind the protected UDP sockets onto the new default network and
         // re-resolve the endpoint instead of tearing the tunnel down: the
@@ -332,7 +369,7 @@ object WgEgress {
         Thread({
             if (tryCheapRecovery()) {
                 lastCheapRecoveryMs = now()
-            } else if (tunnel != null) {
+            } else if (tunnel != null && !forceRestartPending) {
                 requestFullRestart("WG rebind failed after network change", notify = false)
             }
         }, "wg-rebind").start()
@@ -367,6 +404,7 @@ object WgEgress {
         tunnel = null
         currentConfig = null
         currentTunFd = -1
+        currentTunPfd = null
         currentKeepaliveAlwaysOn = false
         lastCheapRecoveryMs = 0
         verificationGeneration++
@@ -467,13 +505,44 @@ object WgEgress {
         if (cached != null)
             return cached
 
-        val addr = java.net.InetAddress.getByName(host)
-        val ip = addr.hostAddress ?: throw IllegalStateException("getHostAddress null for $host")
-        val resolved = if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
+        val resolved = try {
+            val addr = resolveHostBounded(host)
+            val ip = addr.hostAddress ?: throw IllegalStateException("getHostAddress null for $host")
+            if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
+        } catch (e: Exception) {
+            // DNS often fails exactly when we resolve: the resolver runs over
+            // the VPN network, which is dead (broken tunnel) or dropped
+            // (fail-closed restart window). Reuse the last IP that worked —
+            // WG endpoints rarely move, and a wrong guess just leads the
+            // monitor to escalate again.
+            val fallback = synchronized(endpointCacheLock) { lastKnownEndpoints[cacheKey] }
+            if (fallback == null) throw e
+            Log.w(TAG, "endpoint resolution for $host failed (${e.message}); using last known $fallback")
+            return fallback
+        }
         synchronized(endpointCacheLock) {
             endpointCache[cacheKey] = EndpointCacheEntry(resolved, now())
+            lastKnownEndpoints[cacheKey] = resolved
         }
         return resolved
+    }
+
+    /**
+     * [java.net.InetAddress.getByName] with a deadline: netd can block for
+     * ~30s when DNS is unreachable, which would stall the recovery threads
+     * for far longer than the fallback path needs.
+     */
+    private fun resolveHostBounded(host: String): java.net.InetAddress {
+        val task = java.util.concurrent.FutureTask { java.net.InetAddress.getByName(host) }
+        Thread(task, "wg-resolve").apply { isDaemon = true }.start()
+        return try {
+            task.get(RESOLVE_TIMEOUT_MS, java.util.concurrent.TimeUnit.MILLISECONDS)
+        } catch (e: java.util.concurrent.TimeoutException) {
+            task.cancel(true)
+            throw java.net.UnknownHostException("DNS timeout for $host")
+        } catch (e: java.util.concurrent.ExecutionException) {
+            throw (e.cause as? Exception) ?: e
+        }
     }
 
     private fun cachedEndpoint(cacheKey: String): String? {
@@ -487,9 +556,19 @@ object WgEgress {
         }
     }
 
+    /** Drops the TTL cache so the next resolution is fresh; keeps the
+     *  last-known fallback, which recovery relies on when DNS is down. */
     private fun clearEndpointCache() {
         synchronized(endpointCacheLock) {
             endpointCache.clear()
+        }
+    }
+
+    /** Full reset, including the last-known fallback. For stop/disable only. */
+    private fun clearAllEndpointState() {
+        synchronized(endpointCacheLock) {
+            endpointCache.clear()
+            lastKnownEndpoints.clear()
         }
     }
 
