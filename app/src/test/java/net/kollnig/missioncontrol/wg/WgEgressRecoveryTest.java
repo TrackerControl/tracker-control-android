@@ -1,40 +1,24 @@
 package net.kollnig.missioncontrol.wg;
 
-import static org.junit.Assert.assertFalse;
-
-import org.junit.Test;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
+/**
+ * Screen-state keepalive toggling for the WireGuard egress.
+ *
+ * <p>The wake-time "reload if the tunnel looks dead" recovery that this class
+ * used to exercise has been replaced by the continuous {@link
+ * WgConnectivityMonitor} watchdog (see {@link WgConnectivityCheckerTest}).
+ * {@link WgEgress#onInteractiveStateChanged} now only re-applies the keepalive
+ * interval and must be a safe no-op when there is no running tunnel.
+ */
 public class WgEgressRecoveryTest {
-    @Test
-    public void wakeRecoveryIsNoopWhenWireGuardIsDisabled() {
-        AtomicBoolean reloadRequested = new AtomicBoolean(false);
-
-        WgEgress.INSTANCE.onInteractiveStateChanged(
-                false,
-                validConfig(),
-                true,
-                false,
-                () -> reloadRequested.set(true),
-                () -> reloadRequested.set(true));
-
-        assertFalse(reloadRequested.get());
+    @org.junit.Test
+    public void interactiveStateChangeIsNoopWhenWireGuardIsDisabled() {
+        // No tunnel is running in a unit test; this must not throw.
+        WgEgress.INSTANCE.onInteractiveStateChanged(false, validConfig(), true, false);
     }
 
-    @Test
-    public void wakeRecoveryIsNoopWhenConfigIsMissing() {
-        AtomicBoolean reloadRequested = new AtomicBoolean(false);
-
-        WgEgress.INSTANCE.onInteractiveStateChanged(
-                true,
-                "",
-                true,
-                false,
-                () -> reloadRequested.set(true),
-                () -> reloadRequested.set(true));
-
-        assertFalse(reloadRequested.get());
+    @org.junit.Test
+    public void interactiveStateChangeIsNoopWhenConfigIsMissing() {
+        WgEgress.INSTANCE.onInteractiveStateChanged(true, "", true, false);
     }
 
     private static String validConfig() {

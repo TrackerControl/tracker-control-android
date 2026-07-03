@@ -1,110 +1,124 @@
 apply plugin: 'com.android.application'
 
-// --- WireGuard bridge (built from source via gomobile) ---
-// Produces app/build/wgbridge/wgbridge.aar from wgbridge/*.go on demand.
-// Only re-runs when the Go source, go.mod or go.sum change. Keeps the
-// build fully reproducible (no checked-in binary AAR) while remaining a
-// single `./gradlew assemble` for contributors.
-def wgbridgeSrcDir = file("$rootDir/wgbridge")
-def wgbridgeAar    = file("$buildDir/wgbridge/wgbridge.aar")
-def gomobileVersion = 'v0.0.0-20260410095206-2cfb76559b7b'
+// --- WireGuard bridge (Rust, built from source via cargo-ndk) ---
+// Produces libwgbridge.so per ABI from wgbridge-rs/ (which embeds gotatun,
+// Mullvad's WireGuard implementation). Only re-runs when the Rust source or
+// Cargo manifests change. Keeps the build fully reproducible (no checked-in
+// binaries) while remaining a single `./gradlew assemble` for contributors.
+def wgbridgeSrcDir  = file("$rootDir/wgbridge-rs")
+def wgbridgeOutDir  = file("$buildDir/rustJniLibs")
+def wgbridgeAbis    = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
+def wgbridgeNdkVersion = '27.2.12479018' // keep in sync with defaultConfig.ndkVersion
 
-// Locate the `go` binary. Android Studio launches Gradle with a sanitized
-// PATH that omits /usr/local/go/bin and Homebrew dirs, so falling back to
-// "just exec 'go'" produces "Cannot run program 'go'" on most macOS setups.
-// Order: explicit goBin Gradle property -> $GOROOT/bin -> common installs.
-def findGoBinary = { ->
+// Resolve the NDK directory the way AGP does (local.properties, then env),
+// since modern AGP extensions no longer expose android.ndkDirectory.
+def findNdkDirectory = { ->
+    def sdkDir = null
+    def localProps = file("$rootDir/local.properties")
+    if (localProps.exists()) {
+        def props = new Properties()
+        localProps.withInputStream { props.load(it) }
+        sdkDir = props.getProperty('sdk.dir')
+    }
+    sdkDir = sdkDir ?: System.getenv('ANDROID_HOME') ?: System.getenv('ANDROID_SDK_ROOT')
+    if (sdkDir == null)
+        throw new GradleException('Cannot locate the Android SDK (set sdk.dir in local.properties or ANDROID_HOME).')
+    def ndkDir = file("$sdkDir/ndk/$wgbridgeNdkVersion")
+    if (!ndkDir.directory)
+        throw new GradleException("Android NDK $wgbridgeNdkVersion not found at $ndkDir — install it via the SDK manager.")
+    return ndkDir
+}
+
+// Locate the `cargo` binary. Android Studio launches Gradle with a sanitized
+// PATH that omits ~/.cargo/bin and Homebrew dirs, so falling back to
+// "just exec 'cargo'" fails on most macOS setups.
+// Order: explicit cargoBin Gradle property -> rustup default -> common installs.
+def findCargoBinary = { ->
+    def home = System.getProperty('user.home')
     def candidates = []
-    if (project.hasProperty('goBin')) candidates << project.property('goBin')
-    if (System.getenv('GOROOT')) candidates << "${System.getenv('GOROOT')}/bin/go"
+    if (project.hasProperty('cargoBin')) candidates << project.property('cargoBin')
     candidates += [
-        '/usr/local/go/bin/go',          // official installer (Linux + macOS Intel)
-        '/opt/homebrew/bin/go',          // Homebrew on Apple Silicon
-        '/opt/homebrew/opt/go/bin/go',   // Homebrew keg-only
-        '/usr/local/bin/go',             // Homebrew on Intel
-        '/usr/bin/go',                   // distro packages
-        "${System.getProperty('user.home')}/sdk/go/bin/go",
+        "${home}/.cargo/bin/cargo",           // rustup default location
+        '/opt/homebrew/opt/rustup/bin/cargo', // Homebrew rustup shim (Apple Silicon)
+        '/usr/local/opt/rustup/bin/cargo',    // Homebrew rustup shim (Intel)
+        '/usr/local/bin/cargo',
+        '/usr/bin/cargo',                     // distro packages
     ]
     for (c in candidates) {
         if (c != null && file(c).canExecute()) return c
     }
     // Last resort: hope it's on PATH (works on Linux usually).
-    return 'go'
+    return 'cargo'
 }
 
-tasks.register('wgbridgeBind') {
-    description = 'Builds wgbridge.aar via `gomobile bind`. Requires Go 1.25+, gomobile and the Android NDK.'
+tasks.register('wgbridgeBuild') {
+    description = 'Builds libwgbridge.so via `cargo ndk`. Requires rustup with the four Android targets, cargo-ndk and the Android NDK.'
     group       = 'build'
 
     inputs.files(fileTree(wgbridgeSrcDir) {
-        include '**/*.go'
-        include 'go.mod'
-        include 'go.sum'
+        include 'src/**'
+        include 'Cargo.toml'
+        include 'Cargo.lock'
     }).withPropertyName('wgbridgeSource').withPathSensitivity(PathSensitivity.RELATIVE)
-    outputs.file(wgbridgeAar).withPropertyName('wgbridgeAar')
+    outputs.dir(wgbridgeOutDir).withPropertyName('wgbridgeJniLibs')
     outputs.cacheIf { true }
 
     doLast {
-        wgbridgeAar.parentFile.mkdirs()
-
-        def goBin = findGoBinary()
-        if (goBin == 'go' && !System.getenv('PATH')?.split(File.pathSeparator)?.any { file("$it/go").canExecute() }) {
+        def cargoBin = findCargoBinary()
+        if (cargoBin == 'cargo' && !System.getenv('PATH')?.split(File.pathSeparator)?.any { file("$it/cargo").canExecute() }) {
             throw new GradleException("""
-                Could not find a `go` executable. Install Go 1.25+ from https://go.dev/dl/
-                or via Homebrew (`brew install go`), then either:
-                  - add Go's bin dir to PATH in your shell rc and restart Android Studio, or
-                  - pass -PgoBin=/path/to/go to Gradle, or
-                  - set GOROOT in your environment.
+                Could not find a `cargo` executable. Install Rust via rustup
+                (https://rustup.rs), then:
+                  rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
+                  cargo install cargo-ndk
+                and either add ~/.cargo/bin to PATH (restart Android Studio),
+                or pass -PcargoBin=/path/to/cargo to Gradle.
             """.stripIndent())
         }
-
-        // Ask Go for GOPATH so `gomobile` resolves; also add Go's own dir to
-        // PATH for downstream tools the binding might invoke (cgo, etc).
-        def gopath = providers.exec {
-            commandLine goBin, 'env', 'GOPATH'
-        }.standardOutput.asText.get().trim()
-        def goDir  = file(goBin).parent
+        def cargoDir = file(cargoBin).parent
 
         def env = new HashMap<String, String>(System.getenv())
-        env['PATH'] = "${goDir}${File.pathSeparator}${gopath}/bin${File.pathSeparator}${env['PATH'] ?: ''}"
+        env['PATH'] = "${cargoDir}${File.pathSeparator}${System.getProperty('user.home')}/.cargo/bin${File.pathSeparator}${env['PATH'] ?: ''}"
+        env['ANDROID_NDK_HOME'] = findNdkDirectory().absolutePath
+        // Android 15+ requires 16KB-aligned ELF LOAD segments.
+        env['RUSTFLAGS'] = ((env['RUSTFLAGS'] ?: '') +
+                ' -C link-arg=-Wl,-z,max-page-size=16384' +
+                ' -C link-arg=-Wl,-z,common-page-size=16384').trim()
 
-        def gomobileBin = "${gopath}/bin/gomobile"
-        def gobindBin   = "${gopath}/bin/gobind"
-        if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
-            logger.lifecycle("Installing gomobile + gobind into ${gopath}/bin ...")
-            // Both binaries are needed: gomobile drives the build, gobind
-            // does the actual Java <-> Go interface generation. `gomobile
-            // init` used to install gobind for you but on recent versions
-            // we install it explicitly so the failure mode is clearer.
+        // cargo-ndk drives the per-ABI cross-compilation and linker setup.
+        def cargoNdk = "${System.getProperty('user.home')}/.cargo/bin/cargo-ndk"
+        if (!file(cargoNdk).canExecute() &&
+                !env['PATH'].split(File.pathSeparator).any { file("$it/cargo-ndk").canExecute() }) {
+            logger.lifecycle('Installing cargo-ndk ...')
             providers.exec {
                 environment env
-                commandLine goBin, 'install',
-                        "golang.org/x/mobile/cmd/gomobile@${gomobileVersion}",
-                        "golang.org/x/mobile/cmd/gobind@${gomobileVersion}"
+                commandLine cargoBin, 'install', 'cargo-ndk'
             }.result.get().assertNormalExitValue()
-            if (!file(gomobileBin).canExecute() || !file(gobindBin).canExecute()) {
-                throw new GradleException("Installed gomobile/gobind but ${gopath}/bin still missing one of them.")
-            }
         }
+
+        def args = [cargoBin, 'ndk']
+        wgbridgeAbis.each { args += ['-t', it] }
+        args += ['--platform', '23', '-o', wgbridgeOutDir.absolutePath, 'build', '--release']
 
         providers.exec {
             workingDir wgbridgeSrcDir
             environment env
-            commandLine gomobileBin, 'bind',
-                    '-target=android',
-                    '-androidapi', '23',
-                    '-javapkg=net.kollnig.missioncontrol',
-                    '-ldflags', '-extldflags "-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"',
-                    '-o', wgbridgeAar.absolutePath,
-                    '.'
+            commandLine args
         }.result.get().assertNormalExitValue()
+
+        // gotatun also declares crate-type cdylib, so cargo-ndk copies a
+        // stray libgotatun-<hash>.so next to libwgbridge.so. wgbridge links
+        // gotatun statically; drop the stray artifacts.
+        wgbridgeAbis.each { abi ->
+            fileTree(dir: "$wgbridgeOutDir/$abi", include: 'libgotatun*.so').each { it.delete() }
+        }
     }
 }
 
-// Force the AAR to be present before any Java/Kotlin compilation that
-// references its classes. preBuild runs before all variant compile tasks.
+// Force the native library to be present before packaging; preBuild runs
+// before all variant tasks.
 afterEvaluate {
-    tasks.named('preBuild').configure { dependsOn 'wgbridgeBind' }
+    tasks.named('preBuild').configure { dependsOn 'wgbridgeBuild' }
 }
 
 android {
@@ -133,7 +147,7 @@ android {
             }
         }
 
-        ndkVersion = "27.2.12479018"
+        ndkVersion = wgbridgeNdkVersion
         
         ndk {
             // https://developer.android.com/ndk/guides/abis.html#sa
@@ -144,6 +158,13 @@ android {
     packagingOptions {
         jniLibs {
             useLegacyPackaging = true
+        }
+    }
+
+    sourceSets {
+        main {
+            // libwgbridge.so built from wgbridge-rs/ by the wgbridgeBuild task
+            jniLibs.srcDirs += "$buildDir/rustJniLibs"
         }
     }
 
@@ -244,7 +265,6 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation files(wgbridgeAar)
 
     // https://developer.android.com/jetpack/androidx/releases/
     implementation 'androidx.activity:activity:1.13.0'

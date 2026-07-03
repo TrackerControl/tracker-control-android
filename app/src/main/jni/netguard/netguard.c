@@ -363,8 +363,9 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1sni(JNIEnv *env, jobject instance
 
 // Allocate a SOCK_DGRAM socketpair: the C side keeps the write end (sv[0])
 // in wg_outbound_fd and atomically sets wg_enabled=1. The read end (sv[1]) is
-// returned to Java, which passes it to wgbridge.StartTunnel so wireguard-go
-// can pull outbound IP packets. SOCK_DGRAM preserves IP-packet boundaries.
+// returned to Java, which passes it to Wgbridge.startTunnel so the WireGuard
+// engine (gotatun) can pull outbound IP packets. SOCK_DGRAM preserves
+// IP-packet boundaries.
 JNIEXPORT jint JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, jobject instance) {
     if (atomic_load_explicit(&wg_enabled, memory_order_acquire)) {

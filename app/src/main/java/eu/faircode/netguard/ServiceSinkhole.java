@@ -1689,6 +1689,9 @@ public class ServiceSinkhole extends VpnService {
         // same TUN fd is a no-op, so reload-induced "Native restart"
         // calls (where the VPN PFD is reused) won't re-handshake WG.
         // It also handles the disable case internally — no need to gate.
+        net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.setRecoveryCallbacks(
+                () -> ServiceSinkhole.reload("wireguard connectivity repair", ServiceSinkhole.this, false),
+                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
         boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
                 prefs.getBoolean("wg_enabled", false),
                 prefs.getString("wg_config", ""),
@@ -1773,9 +1776,7 @@ public class ServiceSinkhole extends VpnService {
                 true,
                 wgConfig,
                 interactive,
-                keepaliveAlwaysOn,
-                () -> ServiceSinkhole.reload("wireguard wake repair", ServiceSinkhole.this, false),
-                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
+                keepaliveAlwaysOn);
     }
 
     private void unprepare() {

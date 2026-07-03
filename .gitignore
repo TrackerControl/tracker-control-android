@@ -109,3 +109,6 @@ lint/tmp/
 .DS_Store
 
 /crowdin.properties
+
+# Rust build artifacts (wgbridge-rs)
+wgbridge-rs/target/

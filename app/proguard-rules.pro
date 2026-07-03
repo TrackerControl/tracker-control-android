@@ -45,6 +45,13 @@
     void accountUsage(eu.faircode.netguard.Usage);
 }
 
+# wgbridge (Rust/gotatun) JNI: classes and callback interfaces invoked by name
+# from native tunnel threads
+-keep class net.kollnig.missioncontrol.wgbridge.** { *; }
+-keep class * implements net.kollnig.missioncontrol.wgbridge.Protector { *; }
+-keep class * implements net.kollnig.missioncontrol.wgbridge.Logger { *; }
+-keep class * implements net.kollnig.missioncontrol.wgbridge.DnsRecorder { *; }
+
 #AndroidX
 -keep class androidx.appcompat.widget.** { *; }
 -keep class androidx.appcompat.app.AppCompatViewInflater { <init>(...); }

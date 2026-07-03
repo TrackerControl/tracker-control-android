@@ -5,12 +5,12 @@ import net.kollnig.missioncontrol.wg.WgConfigParser.base64ToHex
 /**
  * Minimal parser for the WireGuard `.conf` format (a subset of the
  * `wg-quick` syntax). We deliberately do not pull in
- * `com.wireguard.android:tunnel` to avoid duplicating its bundled
- * libwg-go.so with the one in `wgbridge.aar`.
+ * `com.wireguard.android:tunnel` to avoid bundling its libwg-go.so
+ * alongside our own WireGuard engine.
  *
- * Returned [WgConfig] also exposes a [toUapi] string in the format
- * wireguard-go's IpcSet API expects — that's what `WgEgress` hands
- * to the Go bridge at startup.
+ * Returned [WgConfig] also exposes a [toUapi] string in WireGuard's UAPI
+ * configuration format — that's what `WgEgress` hands to the Rust bridge
+ * (`wgbridge-rs/`, which embeds gotatun) at startup.
  */
 data class WgConfig(
     val privateKey: String,

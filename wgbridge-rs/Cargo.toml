@@ -1,0 +1,29 @@
+[package]
+name = "wgbridge"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-only"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+gotatun = { version = "=0.7.2", default-features = false, features = ["ring", "device"] }
+tokio = { version = "1.43", features = ["rt-multi-thread", "net", "sync", "time", "macros"] }
+base64 = "0.22"
+hex = "0.4"
+ipnetwork = "0.21"
+getrandom = "0.2"
+libc = "0.2"
+log = "0.4"
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.21"
+android_logger = "0.14"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
