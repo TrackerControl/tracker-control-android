@@ -237,7 +237,7 @@ internal class WgConnectivityMonitor(
             when (checker.tick(now, statsProvider())) {
                 WgVerdict.HEALTHY, WgVerdict.WAITING -> {}
                 WgVerdict.BROKEN -> {
-                    Log.w(TAG, "tunnel unresponsive after prod; requesting restart")
+                    Log.w(TAG, "tunnel unresponsive after prod; reporting broken state")
                     running = false
                     onBroken()
                     return

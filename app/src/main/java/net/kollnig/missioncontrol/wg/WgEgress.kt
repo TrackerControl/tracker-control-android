@@ -38,11 +38,11 @@ object WgEgress {
     @Volatile private var tunnel: WgTunnel? = null
     @Volatile private var lastError: String? = null
     @Volatile private var verificationGeneration: Long = 0
-    private var currentConfig: String? = null
+    @Volatile private var currentConfig: String? = null
     private var currentTunFd: Int = -1
     private var currentInteractive: Boolean = true
     private var currentKeepaliveAlwaysOn: Boolean = false
-    private var forceRestartPending: Boolean = false
+    @Volatile private var forceRestartPending: Boolean = false
     @Volatile private var lastCheapRecoveryMs: Long = 0
 
     @Volatile private var requestReloadCb: Runnable? = null
@@ -219,12 +219,16 @@ object WgEgress {
             return
         }
 
-        Log.w(TAG, "connectivity monitor: tunnel broken; forcing restart")
+        requestFullRestart("connectivity monitor: tunnel still broken after cheap recovery", notify = true)
+    }
+
+    private fun requestFullRestart(reason: String, notify: Boolean) {
+        Log.w(TAG, "$reason; forcing restart")
         lastError = "WireGuard tunnel unresponsive"
         clearEndpointCache()
         forceRestartPending = true
         notifyStateChanged()
-        notifyBrokenCb?.run()
+        if (notify) notifyBrokenCb?.run()
         requestReloadCb?.run()
     }
 
@@ -305,9 +309,7 @@ object WgEgress {
             if (tryCheapRecovery()) {
                 lastCheapRecoveryMs = now()
             } else if (tunnel != null) {
-                Log.w(TAG, "WG rebind failed; forcing restart")
-                forceRestartPending = true
-                requestReloadCb?.run()
+                requestFullRestart("WG rebind failed after network change", notify = false)
             }
         }, "wg-rebind").start()
     }
