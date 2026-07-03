@@ -7,7 +7,8 @@ import android.util.Log
 data class WgStats(
     val rxBytes: Long,
     val txBytes: Long,
-    val latestHandshakeMillis: Long
+    val latestHandshakeMillis: Long,
+    val hasFreshHandshake: Boolean = false
 )
 
 /** Outcome of a single connectivity poll. */
@@ -79,6 +80,12 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     /** One poll. [stats] == null means the tunnel was torn down underneath us. */
     fun tick(now: Long, stats: WgStats?): WgVerdict {
         if (stats == null) return WgVerdict.GONE
+
+        if (stats.hasFreshHandshake) {
+            update(now, stats.rxBytes, stats.txBytes)
+            resetProd()
+            return WgVerdict.HEALTHY
+        }
 
         if (update(now, stats.rxBytes, stats.txBytes)) {
             resetProd()

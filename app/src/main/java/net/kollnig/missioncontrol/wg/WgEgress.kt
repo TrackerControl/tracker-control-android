@@ -288,7 +288,14 @@ object WgEgress {
     }
 
     private fun statsOrNull(): WgStats? = try {
-        tunnel?.stats()?.let { WgStats(it.rxBytes, it.txBytes, it.latestHandshakeMillis) }
+        tunnel?.stats()?.let {
+            WgStats(
+                it.rxBytes,
+                it.txBytes,
+                it.latestHandshakeMillis,
+                it.latestHandshakeMillis > 0 && now() - it.latestHandshakeMillis < HANDSHAKE_DEAD_AFTER_MS
+            )
+        }
     } catch (e: Throwable) {
         null
     }

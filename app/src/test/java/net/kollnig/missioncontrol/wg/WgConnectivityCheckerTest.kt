@@ -19,7 +19,8 @@ class WgConnectivityCheckerTest {
     private var prods = 0
     private fun newChecker() = WgConnectivityChecker { prods++ }
 
-    private fun stats(rx: Long, tx: Long) = WgStats(rx, tx, 0L)
+    private fun stats(rx: Long, tx: Long, freshHandshake: Boolean = false) =
+        WgStats(rx, tx, 0L, freshHandshake)
 
     // --- baseline / connecting ------------------------------------------
 
@@ -136,6 +137,19 @@ class WgConnectivityCheckerTest {
         // Subsequent idle does not re-prod.
         assertEquals(WgVerdict.HEALTHY, c.tick(9000, stats(60, 20)))
         assertEquals(1, prods)
+    }
+
+    /** Fresh WireGuard handshakes count as tunnel liveness even without payload rx. */
+    @Test
+    fun freshHandshakeSuppressesPayloadRxTimeout() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(50, 10)))
+
+        for (t in 2000L..60_000L step 1000L) {
+            assertEquals(WgVerdict.HEALTHY, c.tick(t, stats(50, t, freshHandshake = true)))
+        }
+        assertEquals(0, prods)
     }
 
     /** Continuous two-way traffic never trips the watchdog. */
