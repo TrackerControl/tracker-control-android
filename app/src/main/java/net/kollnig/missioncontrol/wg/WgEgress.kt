@@ -29,6 +29,7 @@ object WgEgress {
     private const val DEFAULT_MTU = 1420
     private const val POST_WAKE_VERIFY_DELAY_MS = 3_000L
     private const val HANDSHAKE_DEAD_AFTER_MS = 180_000L
+    private const val RECOVERY_NOTIFY_AFTER_MS = 30_000L
     private const val ENDPOINT_CACHE_TTL_MS = 5 * 60 * 1000L
     // If the monitor declares the tunnel broken again this soon after a
     // rebind + re-resolve, the cheap path clearly didn't help — escalate to
@@ -44,6 +45,7 @@ object WgEgress {
     private var currentKeepaliveAlwaysOn: Boolean = false
     @Volatile private var forceRestartPending: Boolean = false
     @Volatile private var lastCheapRecoveryMs: Long = 0
+    @Volatile private var recoveryNotificationGeneration: Long = 0
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -224,12 +226,27 @@ object WgEgress {
 
     private fun requestFullRestart(reason: String, notify: Boolean) {
         Log.w(TAG, "$reason; forcing restart")
-        lastError = "WireGuard tunnel unresponsive"
         clearEndpointCache()
         forceRestartPending = true
-        notifyStateChanged()
-        if (notify) notifyBrokenCb?.run()
+        if (notify) scheduleRecoveryNotificationCheck()
         requestReloadCb?.run()
+    }
+
+    private fun scheduleRecoveryNotificationCheck() {
+        val gen = ++recoveryNotificationGeneration
+        verifyHandler.postDelayed({
+            if (gen != recoveryNotificationGeneration) return@postDelayed
+            if (tunnel == null) return@postDelayed
+            val latest = latestHandshakeMillisOrNull() ?: 0L
+            if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
+                lastError = null
+                notifyStateChanged()
+                return@postDelayed
+            }
+            lastError = "WireGuard tunnel unresponsive"
+            notifyStateChanged()
+            notifyBrokenCb?.run()
+        }, RECOVERY_NOTIFY_AFTER_MS)
     }
 
     /**
@@ -394,6 +411,7 @@ object WgEgress {
 
     private fun clearRecoveryState() {
         verificationGeneration++
+        recoveryNotificationGeneration++
         forceRestartPending = false
     }
 
@@ -404,6 +422,7 @@ object WgEgress {
             val latest = latestHandshakeMillisOrNull() ?: 0L
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
+                recoveryNotificationGeneration++
                 notifyStateChanged()
             }
         }, POST_WAKE_VERIFY_DELAY_MS)
