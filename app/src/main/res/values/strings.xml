@@ -769,4 +769,15 @@ Sincerely,\n\n]]></string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_apply_blocklists_failed">Failed to apply host files</string>
     <string name="msg_last_update">Last update: %s</string>
+
+    <!-- APK patcher for HTTPS content inspection -->
+    <string name="menu_patch_inspection">Patch for traffic inspection</string>
+    <string name="patch_title">Patch %1$s for inspection</string>
+    <string name="patch_progress">Patching…</string>
+    <string name="patch_success">Patched %1$d method(s). Opening installer.</string>
+    <string name="patch_failed">Patching failed: %1$s</string>
+    <string name="patch_failed_source_missing">source APK not found</string>
+    <string name="patch_unavailable">APK patching is not available in this build.</string>
+    <string name="patch_warning">This repackages the app to disable certificate pinning so its HTTPS traffic can be inspected. The patched APK is re-signed, so Android may require uninstalling the original app before installation. Only patch apps you trust to inspect. Continue?</string>
+    <string name="patch_install_prompt">Install the patched APK?</string>
 </resources>

@@ -31,6 +31,111 @@ extern _Atomic int wg_required;
 static atomic_long wg_drop_count = 0;
 static atomic_long wg_gap_drop_count = 0;
 
+// ---------------------------------------------------------------------------
+// WireGuard flow verdict cache.
+//
+// With the WireGuard hijack active, packets never reach the userspace TCP/UDP
+// state machines, so the session tables that normally amortise the allow
+// decision are never populated. Without this cache every UDP datagram (and,
+// with SNI inspection enabled, every outbound TCP/443 packet) would repeat
+// the uid lookup (a binder call on Android 10+), the JNI packet-object
+// creation and the Java allow decision — per packet, at line rate. It also
+// keeps blocked UDP flows blocked: the old block_udp() session would satisfy
+// has_udp_session() and let follow-up datagrams into the tunnel.
+//
+// A verdict sticks for the flow's lifetime, bounded by WG_FLOW_TTL so rule
+// and DNS-mapping changes are picked up within a minute (direct mode keeps
+// lingering sessions around for longer than that). jni_start and the WG
+// start/stop paths clear the cache so reloads apply new rules immediately.
+// ---------------------------------------------------------------------------
+
+#define WG_FLOW_CACHE_SIZE 512
+#define WG_FLOW_TTL 60 // seconds
+
+struct wg_flow {
+    time_t time;
+    uint8_t used;
+    uint8_t version;
+    uint8_t protocol;
+    uint8_t allowed;
+    uint16_t sport;
+    uint16_t dport;
+    uint8_t saddr[16];
+    uint8_t daddr[16];
+};
+
+static struct wg_flow wg_flow_cache[WG_FLOW_CACHE_SIZE];
+// handle_ip runs on the tunnel thread, but the cache is cleared from JNI
+// calls on other threads.
+static pthread_mutex_t wg_flow_lock = PTHREAD_MUTEX_INITIALIZER;
+
+void wg_flow_clear(void) {
+    pthread_mutex_lock(&wg_flow_lock);
+    memset(wg_flow_cache, 0, sizeof(wg_flow_cache));
+    pthread_mutex_unlock(&wg_flow_lock);
+}
+
+static struct wg_flow *wg_flow_slot(int version, int protocol,
+                                    const void *saddr, uint16_t sport,
+                                    const void *daddr, uint16_t dport) {
+    size_t alen = (version == 4 ? 4 : 16);
+    const uint8_t *s = saddr;
+    const uint8_t *d = daddr;
+    uint32_t h = (uint32_t) (version * 31 + protocol);
+    for (size_t i = 0; i < alen; i++)
+        h = h * 31 + s[i];
+    for (size_t i = 0; i < alen; i++)
+        h = h * 31 + d[i];
+    h = h * 31 + sport;
+    h = h * 31 + dport;
+    return &wg_flow_cache[h % WG_FLOW_CACHE_SIZE];
+}
+
+static int wg_flow_match(const struct wg_flow *f, int version, int protocol,
+                         const void *saddr, uint16_t sport,
+                         const void *daddr, uint16_t dport) {
+    size_t alen = (version == 4 ? 4 : 16);
+    return f->used && f->version == version && f->protocol == protocol &&
+           f->sport == sport && f->dport == dport &&
+           memcmp(f->saddr, saddr, alen) == 0 &&
+           memcmp(f->daddr, daddr, alen) == 0;
+}
+
+// Returns the cached verdict (0/1) or -1 on miss. Entries are not refreshed
+// on hit, so a busy flow re-validates against the Java rules every
+// WG_FLOW_TTL seconds.
+static int wg_flow_lookup(int version, int protocol,
+                          const void *saddr, uint16_t sport,
+                          const void *daddr, uint16_t dport) {
+    int verdict = -1;
+    pthread_mutex_lock(&wg_flow_lock);
+    struct wg_flow *f = wg_flow_slot(version, protocol, saddr, sport, daddr, dport);
+    if (wg_flow_match(f, version, protocol, saddr, sport, daddr, dport) &&
+        time(NULL) - f->time < WG_FLOW_TTL)
+        verdict = f->allowed;
+    pthread_mutex_unlock(&wg_flow_lock);
+    return verdict;
+}
+
+static void wg_flow_insert(int version, int protocol,
+                           const void *saddr, uint16_t sport,
+                           const void *daddr, uint16_t dport, int allowed) {
+    size_t alen = (version == 4 ? 4 : 16);
+    pthread_mutex_lock(&wg_flow_lock);
+    struct wg_flow *f = wg_flow_slot(version, protocol, saddr, sport, daddr, dport);
+    memset(f, 0, sizeof(*f)); // direct-mapped: a collision simply evicts
+    f->used = 1;
+    f->time = time(NULL);
+    f->version = (uint8_t) version;
+    f->protocol = (uint8_t) protocol;
+    f->allowed = (uint8_t) (allowed != 0);
+    f->sport = sport;
+    f->dport = dport;
+    memcpy(f->saddr, saddr, alen);
+    memcpy(f->daddr, daddr, alen);
+    pthread_mutex_unlock(&wg_flow_lock);
+}
+
 // Skip tunneling for addresses WireGuard cannot meaningfully forward
 // (multicast, link-local, loopback). Apps targeting these wouldn't gain
 // privacy from WG and the peer would likely drop them anyway.
@@ -306,6 +411,25 @@ void handle_ip(const struct arguments *args,
 
     flags[flen] = 0;
 
+    // WireGuard state, shared by the flow cache, the allow decision and the
+    // egress below. DNS is force-tunnelled even to local destinations (see
+    // the hijack comment further down).
+    int is_dns = (dport == 53 &&
+                  (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
+    int wg_is_enabled = atomic_load_explicit(&wg_enabled, memory_order_acquire);
+    int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
+    int wg_fd = atomic_load_explicit(&wg_outbound_fd, memory_order_acquire);
+    int wg_dest = !is_local_dest(version, daddr) || is_dns;
+    int wg_hijack = wg_is_enabled && wg_fd >= 0 && wg_dest;
+
+    // On the WG path the allow verdict is cached per flow (DNS is always
+    // tunnelled and skips the cache). A hit skips the uid lookup and the
+    // Java allow decision below.
+    int wg_cached = -1;
+    if (wg_hijack && !is_dns &&
+        (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP))
+        wg_cached = wg_flow_lookup(version, protocol, saddr, sport, daddr, dport);
+
     // Limit number of sessions
     if (sessions >= maxsessions) {
         if ((protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6) ||
@@ -318,11 +442,12 @@ void handle_ip(const struct arguments *args,
         }
     }
 
-    // Get uid
+    // Get uid (skipped on a WG flow-cache hit: the verdict is already known)
     jint uid = -1;
-    if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
+    if (wg_cached < 0 &&
+        (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play))) {
+        (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play)))) {
             if (args->ctx->sdk <= 28) // Android 9 Pie
                 uid = get_uid(version, protocol, saddr, sport, daddr, dport);
             else
@@ -336,8 +461,14 @@ void handle_ip(const struct arguments *args,
     // Check if allowed
     int allowed = 0;
     struct allowed *redirect = NULL;
-    if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
+    if (wg_cached >= 0)
+        allowed = wg_cached;
+    // In WG mode UDP sessions are stale leftovers (handle_udp never runs);
+    // trusting them would let block_udp() entries pass into the tunnel.
+    else if (protocol == IPPROTO_UDP && !wg_hijack && has_udp_session(args, pkt, payload))
         allowed = 1; // could be a lingering/blocked session
+    else if (protocol == IPPROTO_UDP && wg_hijack && is_dns)
+        allowed = 1; // DNS always goes into the tunnel
     else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !is_play)) // assume existing session
                                          || (uid == 0 && dport == 53)         // assume existing session
                                          || (dport == 443 && syn && is_play))) // let SYN pass by until SNI can be extracted
@@ -359,7 +490,7 @@ void handle_ip(const struct arguments *args,
             const uint16_t datalen = (const uint16_t) (length - (data - pkt));
 
             // Search existing TCP session
-            struct ng_session *cur = args->ctx->ng_session;
+            cur = args->ctx->ng_session;
             while (cur != NULL &&
                    !(cur->protocol == IPPROTO_TCP &&
                      cur->tcp.version == version &&
@@ -401,6 +532,11 @@ void handle_ip(const struct arguments *args,
             if (cur != NULL)
                 cur->tcp.checkedHostname = 1;
         }
+
+        // Cache the verdict for the WG fast path.
+        if (wg_hijack && !is_dns &&
+            (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP))
+            wg_flow_insert(version, protocol, saddr, sport, daddr, dport, allowed);
     }
 
     // Handle allowed traffic
@@ -412,12 +548,6 @@ void handle_ip(const struct arguments *args,
         // intentionally protected by WG too: in WG mode the VPN builder uses
         // WG DNS or public fallback DNS, and unprotected DNS would leak the
         // user's physical network.
-        int is_dns = (dport == 53 &&
-                      (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
-        int wg_is_enabled = atomic_load_explicit(&wg_enabled, memory_order_acquire);
-        int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
-        int wg_fd = atomic_load_explicit(&wg_outbound_fd, memory_order_acquire);
-        int wg_dest = !is_local_dest(version, daddr) || is_dns;
 
         // Fail closed while WG is required but not (yet) running — e.g. the
         // brief window during a tunnel restart, or after a failed start.
@@ -437,7 +567,7 @@ void handle_ip(const struct arguments *args,
             return;
         }
 
-        if (wg_is_enabled && wg_fd >= 0 && wg_dest) {
+        if (wg_hijack) {
             ssize_t w = write(wg_fd, pkt, length);
             if (w != (ssize_t) length) {
                 if (w < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
@@ -461,11 +591,15 @@ void handle_ip(const struct arguments *args,
         else if (protocol == IPPROTO_TCP)
             handle_tcp(args, pkt, length, payload, uid, allowed, redirect, epoll_fd);
     } else {
-        if (protocol == IPPROTO_UDP)
+        // On the WG path the blocked verdict lives in the flow cache; a
+        // block_udp() session there would be dead weight, and re-logging
+        // every datagram of a blocked flow would spam the log.
+        if (protocol == IPPROTO_UDP && !wg_hijack)
             block_udp(args, pkt, length, payload, uid);
 
-        log_android(ANDROID_LOG_WARN, "Address v%d p%d %s/%u syn %d not allowed",
-                    version, protocol, dest, dport, syn);
+        if (wg_cached < 0)
+            log_android(ANDROID_LOG_WARN, "Address v%d p%d %s/%u syn %d not allowed",
+                        version, protocol, dest, dport, syn);
     }
 }
 

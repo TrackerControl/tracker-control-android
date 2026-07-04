@@ -406,6 +406,10 @@ void handle_ip(const struct arguments *args,
                const int epoll_fd,
                int sessions, int maxsessions);
 
+// Drops all cached WireGuard flow verdicts (ip.c); call whenever rules may
+// have changed or the WG tunnel starts/stops.
+void wg_flow_clear(void);
+
 jboolean handle_icmp(const struct arguments *args,
                      const uint8_t *pkt, size_t length,
                      const uint8_t *payload,

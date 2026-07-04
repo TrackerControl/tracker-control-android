@@ -25,6 +25,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -55,7 +56,11 @@ import net.kollnig.missioncontrol.data.PlayStore;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.patch.ApkPatcher;
+import net.kollnig.missioncontrol.patch.PatchResult;
+import net.kollnig.missioncontrol.patch.PatcherFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -212,8 +217,114 @@ public class DetailsActivity extends AppCompatActivity {
             intent.setData(Uri.parse("package:" + appPackageName));
             startActivity(intent);
             return true;
+        } else if (itemId == R.id.action_patch_inspection) {
+            startPatchForInspection();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Repackage the selected app so its certificate pinning is disabled,
+     * allowing a local TLS-terminating proxy to inspect its HTTPS traffic.
+     */
+    private void startPatchForInspection() {
+        ApkPatcher patcher = PatcherFactory.get();
+        if (!patcher.isAvailable()) {
+            Toast.makeText(this, R.string.patch_unavailable, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        final String sourceDir = resolveSourceApk();
+        if (sourceDir == null) {
+            Toast.makeText(this,
+                    getString(R.string.patch_failed,
+                            getString(R.string.patch_failed_source_missing)),
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.patch_title, appName()))
+                .setMessage(R.string.patch_warning)
+                .setPositiveButton(android.R.string.ok,
+                        (d, w) -> new PatchTask().execute(sourceDir))
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private String resolveSourceApk() {
+        try {
+            ApplicationInfo ai = getPackageManager()
+                    .getApplicationInfo(appPackageName, 0);
+            return ai.sourceDir;
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            return null;
+        }
+    }
+
+    private String appName() {
+        return getIntent().getStringExtra(INTENT_EXTRA_APP_NAME);
+    }
+
+    /**
+     * Runs the patcher off the main thread and, on success, offers the
+     * patched APK for installation via the FileProvider.
+     */
+    class PatchTask extends AsyncTask<String, String, PatchResult> {
+        private final ProgressDialog dialog = new ProgressDialog(DetailsActivity.this);
+        private File output;
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage(getString(R.string.patch_progress));
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+
+        @Override
+        protected PatchResult doInBackground(String... args) {
+            File in = new File(args[0]);
+            File dir = new File(getCacheDir(), "apk-patcher");
+            dir.mkdirs();
+            output = new File(dir, appPackageName + "-patched.apk");
+            ApkPatcher p = PatcherFactory.get();
+            return p.patch(DetailsActivity.this, appPackageName, in, output,
+                    msg -> publishProgress(msg));
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            if (values.length > 0 && values[0] != null)
+                dialog.setMessage(values[0]);
+        }
+
+        @Override
+        protected void onPostExecute(PatchResult result) {
+            if (running && dialog.isShowing()) dialog.dismiss();
+            if (!running) return;
+            if (result.status == PatchResult.Status.SUCCESS) {
+                offerInstall();
+                View v = findViewById(R.id.view_pager);
+                Snackbar.make(v, getString(R.string.patch_success, result.patchedMethods),
+                        Snackbar.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(DetailsActivity.this,
+                        getString(R.string.patch_failed, result.message),
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+        private void offerInstall() {
+            if (output == null || !output.exists()) return;
+            Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                    DetailsActivity.this, getPackageName() + ".provider", output);
+            Intent install = new Intent(Intent.ACTION_VIEW)
+                    .setDataAndType(uri, "application/vnd.android.package-archive")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(install);
+        }
     }
 
     /**

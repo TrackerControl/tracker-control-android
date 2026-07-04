@@ -184,8 +184,9 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
 private const val TAG = "WgConnMonitor"
 
 /**
- * Continuous WireGuard liveness watchdog. Owns the 1s polling thread and the
- * Android clock, delegating the actual decision to [WgConnectivityChecker].
+ * Continuous WireGuard liveness watchdog. Owns the polling thread (1s while
+ * traffic moves, backing off to 5s once idle) and the Android clock,
+ * delegating the actual decision to [WgConnectivityChecker].
  *
  * Doze handling mirrors Mullvad's `SUSPEND_TIMEOUT` reset: if the loop notices
  * it was suspended longer than expected (the device dozed), the checker
@@ -199,11 +200,17 @@ internal class WgConnectivityMonitor(
     private val onBroken: () -> Unit
 ) {
     private companion object {
-        /** How often the loop samples the tunnel counters. */
+        /** How often the loop samples the tunnel counters while traffic moves. */
         const val LOOP_SLEEP_MS = 1_000L
 
-        /** A wall-clock gap larger than this means the device dozed. */
-        const val SUSPEND_TIMEOUT_MS = 6_000L
+        /** Sampling cadence once the tunnel has been idle for [IDLE_AFTER_MS]. */
+        const val IDLE_SLEEP_MS = 5_000L
+
+        /** Counters unchanged for this long — drop to the idle cadence. */
+        const val IDLE_AFTER_MS = 30_000L
+
+        /** Sleeping this much longer than requested means the device dozed. */
+        const val SUSPEND_SLACK_MS = 5_000L
     }
 
     private val checker = WgConnectivityChecker(prod)
@@ -230,10 +237,14 @@ internal class WgConnectivityMonitor(
         val seed = statsProvider() ?: return
         var lastCheck = SystemClock.elapsedRealtime()
         checker.seed(lastCheck, seed)
+        var lastRx = seed.rxBytes
+        var lastTx = seed.txBytes
+        var lastActivity = lastCheck
+        var sleepMs = LOOP_SLEEP_MS
 
         while (running && !Thread.currentThread().isInterrupted) {
             try {
-                Thread.sleep(LOOP_SLEEP_MS)
+                Thread.sleep(sleepMs)
             } catch (e: InterruptedException) {
                 break
             }
@@ -243,12 +254,23 @@ internal class WgConnectivityMonitor(
             lastCheck = now
 
             // The device dozed; the elapsed gap is not evidence of a stall.
-            if (slept >= SUSPEND_TIMEOUT_MS) {
+            if (slept >= sleepMs + SUSPEND_SLACK_MS) {
                 checker.onSuspended(now)
+                sleepMs = LOOP_SLEEP_MS
                 continue
             }
 
-            when (checker.tick(now, statsProvider())) {
+            // Battery: an idle tunnel doesn't need 1 Hz sampling. Any counter
+            // movement snaps back to the fast cadence on the next tick.
+            val stats = statsProvider()
+            if (stats != null && (stats.rxBytes != lastRx || stats.txBytes != lastTx)) {
+                lastRx = stats.rxBytes
+                lastTx = stats.txBytes
+                lastActivity = now
+            }
+            sleepMs = if (now - lastActivity >= IDLE_AFTER_MS) IDLE_SLEEP_MS else LOOP_SLEEP_MS
+
+            when (checker.tick(now, stats)) {
                 WgVerdict.HEALTHY, WgVerdict.WAITING -> {}
                 WgVerdict.BROKEN -> {
                     Log.w(TAG, "tunnel unresponsive after prod; reporting broken state")

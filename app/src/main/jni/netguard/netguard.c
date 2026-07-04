@@ -177,6 +177,9 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1start(
     max_tun_msg = 0;
     ctx->stopping = 0;
 
+    // Rules may have changed across a reload; cached WG verdicts are stale.
+    wg_flow_clear();
+
     log_android(ANDROID_LOG_WARN, "Starting level %d", loglevel);
 
 }
@@ -388,6 +391,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, job
     int flags = fcntl(sv[0], F_GETFL, 0);
     if (flags >= 0)
         fcntl(sv[0], F_SETFL, flags | O_NONBLOCK);
+    wg_flow_clear();
     atomic_store_explicit(&wg_outbound_fd, sv[0], memory_order_release);
     atomic_store_explicit(&wg_enabled, 1, memory_order_release);
     log_android(ANDROID_LOG_WARN, "WireGuard egress enabled tx=%d rx=%d", sv[0], sv[1]);
@@ -408,6 +412,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1stop(JNIEnv *env, jobj
         close(fd);
         log_android(ANDROID_LOG_WARN, "WireGuard egress disabled, closed tx=%d", fd);
     }
+    wg_flow_clear();
 }
 
 JNIEXPORT void JNICALL

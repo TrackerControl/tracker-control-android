@@ -16,4 +16,8 @@
         android:id="@+id/action_clear"
         android:title="@string/menu_clear"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_patch_inspection"
+        android:title="@string/menu_patch_inspection"
+        app:showAsAction="never" />
 </menu>

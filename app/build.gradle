@@ -166,6 +166,11 @@ android {
             // libwgbridge.so built from wgbridge-rs/ by the wgbridgeBuild task
             jniLibs.srcDirs += "$buildDir/rustJniLibs"
         }
+        // The APK-patcher engine (apksig + ARSCLib) is only compiled into the
+        // fdroid and github flavors. The play flavor excludes it and falls
+        // back to NoOpPatcher at runtime via PatcherFactory.
+        fdroid.java.srcDirs += 'src/patcher/java'
+        github.java.srcDirs += 'src/patcher/java'
     }
 
     externalNativeBuild {
@@ -307,6 +312,17 @@ dependencies {
 
     // OkHttp for DNS-over-HTTPS
     implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+
+    // On-device APK patcher (certificate-pinning circumvention) for HTTPS
+    // content inspection. apksig (Apache-2.0) re-signs patched APKs; dexlib2
+    // (BSD-3) is already a dependency above; ARSCLib (Apache-2.0) edits binary
+    // Android resources (AndroidManifest + res/xml/network_security_config).
+    // Only bundled for the fdroid and github flavors — the play flavor gets a
+    // no-op patcher instead.
+    fdroidImplementation 'com.android.tools.build:apksig:9.0.1'
+    githubImplementation 'com.android.tools.build:apksig:9.0.1'
+    fdroidImplementation 'io.github.reandroid:ARSCLib:1.4.0'
+    githubImplementation 'io.github.reandroid:ARSCLib:1.4.0'
 }
 
 // Fix lint error on release builds

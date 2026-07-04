@@ -5,4 +5,7 @@
     <cache-path
         name="share_images"
         path="share/" />
+    <cache-path
+        name="patched_apks"
+        path="apk-patcher/" />
 </paths>
