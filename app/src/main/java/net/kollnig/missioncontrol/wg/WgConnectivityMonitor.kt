@@ -197,7 +197,8 @@ internal class WgConnectivityMonitor(
     private val statsProvider: () -> WgStats?,
     prod: () -> Unit,
     private val onBroken: () -> Unit,
-    // Fired once, the first time this monitor observes a completed handshake,
+    // Fired each time this monitor observes a completed handshake after a
+    // period without one (tunnel start, or re-handshake after session expiry),
     // so listeners (e.g. the settings status line) can move from
     // "Handshaking" to "Connected" without polling.
     private val onConnected: () -> Unit = {}
@@ -265,13 +266,21 @@ internal class WgConnectivityMonitor(
                 WgVerdict.GONE -> return
             }
 
-            if (!announcedConnected && stats != null && stats.latestHandshakeMillis > 0L) {
+            // Announce on every no-session -> session transition, not just the
+            // first: an expired session (idle screen-off tunnel past
+            // REJECT_AFTER_TIME) drops latestHandshakeMillis back to 0, and the
+            // lazy re-handshake on the next packet must re-notify listeners or
+            // the settings status line stays frozen on "Handshaking".
+            val hasHandshake = stats != null && stats.latestHandshakeMillis > 0L
+            if (!announcedConnected && hasHandshake) {
                 announcedConnected = true
                 try {
                     onConnected()
                 } catch (e: Throwable) {
                     Log.w(TAG, "onConnected threw", e)
                 }
+            } else if (announcedConnected && !hasHandshake) {
+                announcedConnected = false
             }
         }
     }
