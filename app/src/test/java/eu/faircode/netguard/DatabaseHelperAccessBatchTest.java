@@ -65,6 +65,31 @@ public class DatabaseHelperAccessBatchTest {
     }
 
     @Test
+    public void usageFlushBeforeAccessFlushStillAccumulates() {
+        // Regression: flushUsageBatch used to run independently of
+        // accessBatch, so a usage delta whose access row was still pending
+        // (not yet flushed) matched zero rows and was silently dropped.
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearAccess();
+
+        int uid = 24680;
+        Packet seed = packet(uid, "tracker.example.com", 443, 1_000L, true);
+        dh.updateAccess(seed, null, -1, DatabaseHelper.ACCESS_UNCERTAIN_NONE);
+        // Note: no flushAccessBatch() here — the access row is still pending.
+
+        Usage u = usage(uid, "tracker.example.com", 443, 100, 200);
+        dh.updateUsage(u, null);
+        dh.flushUsageBatch();
+
+        try (Cursor c = dh.getAccess(uid)) {
+            assertTrue(c.moveToFirst());
+            assertEquals(100L, c.getLong(c.getColumnIndexOrThrow("sent")));
+            assertEquals(200L, c.getLong(c.getColumnIndexOrThrow("received")));
+            assertEquals(1, c.getInt(c.getColumnIndexOrThrow("connections")));
+        }
+    }
+
+    @Test
     public void differentKeysInSameBatchProduceSeparateRows() {
         DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
         dh.clearAccess();

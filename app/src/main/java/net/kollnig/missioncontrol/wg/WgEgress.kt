@@ -61,6 +61,15 @@ object WgEgress {
     @Volatile private var lastCheapRecoveryMs: Long = 0
     @Volatile private var recoveryNotificationGeneration: Long = 0
     @Volatile private var restartAttempts: Int = 0
+    // Tracks whether a delayed (backed-off) restart is currently posted, so
+    // clearRecoveryState() can cancel it without forcing verifyHandler's lazy
+    // init on paths that never scheduled anything (e.g. plain-JUnit-tested
+    // no-tunnel callers that never touch the main-thread Looper).
+    @Volatile private var restartScheduled: Boolean = false
+    private val pendingRestartRunnable = Runnable {
+        restartScheduled = false
+        requestReloadCb?.run()
+    }
 
     // Single-thread executor for network-change rebinds: bounds the thread
     // count on a flapping network (instead of one raw Thread per event) and
@@ -272,10 +281,13 @@ object WgEgress {
         clearEndpointCache()
         forceRestartPending = true
         if (notify) scheduleRecoveryNotificationCheck()
+        verifyHandler.removeCallbacks(pendingRestartRunnable)
         if (delay <= 0L) {
+            restartScheduled = false
             requestReloadCb?.run()
         } else {
-            verifyHandler.postDelayed({ requestReloadCb?.run() }, delay)
+            restartScheduled = true
+            verifyHandler.postDelayed(pendingRestartRunnable, delay)
         }
     }
 
@@ -495,6 +507,13 @@ object WgEgress {
         recoveryNotificationGeneration++
         forceRestartPending = false
         restartAttempts = 0
+        // restartScheduled guards the lazy init: this runs on every no-tunnel
+        // /disable path, most of which never scheduled a delayed restart and
+        // so never touched verifyHandler in the first place.
+        if (restartScheduled) {
+            restartScheduled = false
+            verifyHandler.removeCallbacks(pendingRestartRunnable)
+        }
     }
 
     private fun scheduleFreshHandshakeNotificationCheck() {

@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDoneException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -729,6 +730,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void flushUsageBatch() {
+        // A usage delta's access row may still be sitting unflushed in
+        // accessBatch (independent batch/flush timers); flush it first so the
+        // UPDATE below always has a row to land on instead of silently
+        // matching zero rows and losing the delta.
+        flushAccessBatch();
+
         Map<AccessKey, long[]> batch;
         synchronized (usageBatch) {
             if (usageBatch.isEmpty())
@@ -743,22 +750,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getWritableDatabase();
             db.beginTransactionNonExclusive();
             try {
-                for (Map.Entry<AccessKey, long[]> entry : batch.entrySet()) {
-                    AccessKey key = entry.getKey();
-                    long[] delta = entry.getValue();
+                // Collapses the previous SELECT-then-UPDATE round trip into a
+                // single UPDATE; COALESCE guards against NULL (never-accounted) columns.
+                SQLiteStatement stmt = db.compileStatement(
+                        "UPDATE access SET " +
+                                "sent = COALESCE(sent, 0) + ?, " +
+                                "received = COALESCE(received, 0) + ?, " +
+                                "connections = COALESCE(connections, 0) + ? " +
+                                "WHERE uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?");
+                try {
+                    for (Map.Entry<AccessKey, long[]> entry : batch.entrySet()) {
+                        AccessKey key = entry.getKey();
+                        long[] delta = entry.getValue();
 
-                    // Collapses the previous SELECT-then-UPDATE round trip into a
-                    // single UPDATE; COALESCE guards against NULL (never-accounted) columns.
-                    db.execSQL(
-                            "UPDATE access SET " +
-                                    "sent = COALESCE(sent, 0) + ?, " +
-                                    "received = COALESCE(received, 0) + ?, " +
-                                    "connections = COALESCE(connections, 0) + ? " +
-                                    "WHERE uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?",
-                            new Object[] {
-                                    delta[0], delta[1], delta[2],
-                                    key.uid, key.version, key.protocol, key.daddr, key.dport
-                            });
+                        stmt.clearBindings();
+                        stmt.bindLong(1, delta[0]);
+                        stmt.bindLong(2, delta[1]);
+                        stmt.bindLong(3, delta[2]);
+                        stmt.bindLong(4, key.uid);
+                        stmt.bindLong(5, key.version);
+                        stmt.bindLong(6, key.protocol);
+                        stmt.bindString(7, key.daddr);
+                        stmt.bindLong(8, key.dport);
+
+                        int rows = stmt.executeUpdateDelete();
+                        if (rows != 1)
+                            Log.e(TAG, "Update usage failed rows=" + rows);
+                    }
+                } finally {
+                    stmt.close();
                 }
 
                 db.setTransactionSuccessful();
