@@ -2,5 +2,13 @@
     android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <!-- Install the re-signed, patched APK set via PackageInstaller. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+
+    <application android:largeHeap="true">
+        <receiver
+            android:name="net.kollnig.missioncontrol.patch.ApkInstallReceiver"
+            android:exported="false" />
+    </application>
 
 </manifest>

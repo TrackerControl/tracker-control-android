@@ -17,21 +17,23 @@ package net.kollnig.missioncontrol.patch;
 
 import androidx.annotation.NonNull;
 
+import org.jf.dexlib2.Opcodes;
 import org.jf.dexlib2.iface.ClassDef;
 import org.jf.dexlib2.iface.DexFile;
 import org.jf.dexlib2.iface.Method;
 import org.jf.dexlib2.iface.MethodImplementation;
 import org.jf.dexlib2.iface.MethodParameter;
 import org.jf.dexlib2.immutable.ImmutableClassDef;
-import org.jf.dexlib2.immutable.ImmutableDexFile;
 import org.jf.dexlib2.immutable.ImmutableMethod;
 import org.jf.dexlib2.immutable.ImmutableMethodImplementation;
 import org.jf.dexlib2.immutable.instruction.ImmutableInstruction;
 
+import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Applies the {@link SmaliPatches} declarative method-body replacements to a
@@ -44,25 +46,36 @@ final class DexPatcher {
 
     /** Result of patching one dex file. */
     static final class Result {
-        final ImmutableDexFile dex;
+        final DexFile dex;             // rewritten dex, null when nothing matched
         final byte[] bytes;            // serialized patched dex, null if not yet written
         final int patchedMethods;
 
-        Result(ImmutableDexFile dex, byte[] bytes, int patchedMethods) {
+        Result(DexFile dex, byte[] bytes, int patchedMethods) {
             this.dex = dex;
             this.bytes = bytes;
             this.patchedMethods = patchedMethods;
         }
 
-        Result(ImmutableDexFile dex, int patchedMethods) {
+        Result(DexFile dex, int patchedMethods) {
             this(dex, null, patchedMethods);
         }
     }
 
-    /** Patch every class in {@code dex} and return the rewritten dex + count. */
+    /**
+     * Patch every class in {@code dex} and return the rewritten dex + count.
+     *
+     * <p>Only the classes that actually match a {@link SmaliPatches} selector are
+     * materialized into new {@link ImmutableClassDef}s; every other class is
+     * passed through by reference to its original lazy {@code DexBackedClassDef},
+     * which reads from the backing dex buffer on demand. This keeps peak memory
+     * proportional to the (tiny) set of patched classes rather than to the whole
+     * dex — deep-copying every class was what exhausted the heap on large apps.
+     * When nothing matches, {@link Result#dex} is null so the caller can leave
+     * the original dex untouched.</p>
+     */
     @NonNull
     static Result patchDex(@NonNull DexFile dex) {
-        List<ImmutableClassDef> outClasses = new ArrayList<>();
+        final List<ClassDef> outClasses = new ArrayList<>();
         int patched = 0;
         for (ClassDef classDef : dex.getClasses()) {
             int[] count = {0};
@@ -71,10 +84,37 @@ final class DexPatcher {
                 patched += count[0];
                 outClasses.add(rewritten);
             } else {
-                outClasses.add(ImmutableClassDef.of(classDef));
+                outClasses.add(classDef); // pass-through, lazy — no deep copy
             }
         }
-        return new Result(new ImmutableDexFile(dex.getOpcodes(), outClasses), patched);
+        if (patched == 0) return new Result(null, 0);
+
+        final Opcodes opcodes = dex.getOpcodes();
+        DexFile out = new DexFile() {
+            @NonNull
+            @Override
+            public Set<? extends ClassDef> getClasses() {
+                return new AbstractSet<ClassDef>() {
+                    @NonNull
+                    @Override
+                    public Iterator<ClassDef> iterator() {
+                        return outClasses.iterator();
+                    }
+
+                    @Override
+                    public int size() {
+                        return outClasses.size();
+                    }
+                };
+            }
+
+            @NonNull
+            @Override
+            public Opcodes getOpcodes() {
+                return opcodes;
+            }
+        };
+        return new Result(out, patched);
     }
 
     /**

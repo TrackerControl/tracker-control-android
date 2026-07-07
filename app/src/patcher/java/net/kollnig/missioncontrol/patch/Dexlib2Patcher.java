@@ -24,7 +24,6 @@ import androidx.annotation.Nullable;
 
 import com.android.apksig.ApkSigner;
 import com.reandroid.apk.ApkModule;
-import com.reandroid.apk.ApkSplitInfoCleaner;
 import com.reandroid.apk.DexFileInputSource;
 import com.reandroid.archive.InputSource;
 import com.reandroid.archive.ByteInputSource;
@@ -37,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,6 +57,14 @@ import java.util.List;
  *   <li>Strip the original signature and re-sign with an AndroidKeyStore RSA
  *       key via apksig (v1 + v2 + v3).</li>
  * </ol>
+ *
+ * <p>Only the <em>base</em> APK is loaded and patched — all pinning-relevant
+ * content (dex, {@code resources.arsc}, manifest) lives there. Any config
+ * splits (ABI native libs, densities, languages) are left byte-for-byte
+ * unchanged and merely re-signed with the same key, then installed together
+ * with the base as a split-install session. This keeps only the base APK in
+ * memory, avoiding the {@code OutOfMemoryError} that whole-APK split merging
+ * caused on large apps.</p>
  *
  * <p>ARSCLib (Apache-2.0) handles binary resource read/write; dexlib2 (BSD-3)
  * handles dex; apksig (Apache-2.0) handles signing. No GPL dependency.</p>
@@ -85,59 +93,67 @@ public final class Dexlib2Patcher implements ApkPatcher {
     public PatchResult patch(@NonNull Context ctx,
                              @NonNull String packageName,
                              @NonNull File inputApk,
-                             @NonNull File outputApk,
+                             @NonNull File outputDir,
                              @NonNull ProgressListener listener) {
-        File workDir = new File(ctx.getCacheDir(), "apk-patcher");
-        workDir.mkdirs();
-        File unsigned = new File(workDir, "unsigned.apk");
+        outputDir.mkdirs();
+        File unsigned = new File(outputDir, "base-unsigned.apk");
         if (unsigned.exists()) unsigned.delete();
 
-        try (ApkModule apk = ApkModule.loadApkFile(inputApk)) {
-            // Merge any split APKs (App Bundle config splits) into the base
-            // module so the result is a single standalone installable APK.
-            mergeSplits(ctx, packageName, apk, listener);
-
-            // Strip the split manifest metadata (<split> / <isSplitRequired>)
-            // so Android treats the merged APK as a regular base APK.
-            ApkSplitInfoCleaner.cleanSplitInfo(apk);
-
-            int dexPatched = patchDexes(apk, listener);
-            ResourcePatcher.patchResources(apk, listener::onProgress);
-
-            listener.onProgress("Writing APK…");
-            apk.writeApk(unsigned);
-
-            listener.onProgress("Signing APK…");
+        try {
             SigningKeyManager.Signer signer = new SigningKeyManager().signer();
-            sign(unsigned, outputApk, signer);
+            List<File> outputs = new ArrayList<>();
+            int dexPatched;
 
+            // 1. Patch and sign the base APK. Only the base is loaded into
+            //    memory; splits never are.
+            File signedBase = new File(outputDir, "base.apk");
+            listener.onProgress("Reading base APK…");
+            try (ApkModule apk = ApkModule.loadApkFile(inputApk)) {
+                dexPatched = patchDexes(apk, listener);
+                ResourcePatcher.patchResources(apk, listener::onProgress);
+
+                listener.onProgress("Writing base APK…");
+                apk.writeApk(unsigned);
+            }
+            listener.onProgress("Signing base APK…");
+            sign(unsigned, signedBase, signer);
             if (!unsigned.delete()) unsigned.deleteOnExit();
+            outputs.add(signedBase);
+
+            // 2. Re-sign every config split unchanged with the same key so the
+            //    whole set installs together. apksig streams file-to-file, so
+            //    this stays cheap regardless of split size.
+            resignSplits(ctx, packageName, outputDir, signer, outputs, listener);
+
             listener.onProgress("Done. Patched " + dexPatched + " method(s).");
-            return PatchResult.success(outputApk, dexPatched);
+            return PatchResult.success(outputs, dexPatched);
         } catch (Throwable t) {
             return PatchResult.failure(firstLine(t));
         }
     }
 
     /**
-     * Discover the app's split APKs (e.g. {@code split_config.arm64_v8a.apk},
-     * {@code split_config.xxhdpi.apk}) via {@link PackageManager} and merge
-     * each into {@code base}. After this, {@code base} contains the union of
-     * all dex files, native libraries, resources and assets from every split.
+     * Re-sign each of the app's config splits (e.g.
+     * {@code split_config.arm64_v8a.apk}, {@code split_config.xxhdpi.apk}) with
+     * {@code signer} and add the results to {@code outputs}. The splits' bytes
+     * are otherwise untouched — only their signature is replaced so they match
+     * the re-signed base.
      */
-    private void mergeSplits(@NonNull Context ctx, @NonNull String packageName,
-                             @NonNull ApkModule base,
-                             @NonNull ProgressListener listener) throws IOException {
+    private void resignSplits(@NonNull Context ctx, @NonNull String packageName,
+                              @NonNull File outputDir,
+                              @NonNull SigningKeyManager.Signer signer,
+                              @NonNull List<File> outputs,
+                              @NonNull ProgressListener listener) throws Exception {
         String[] splitPaths = resolveSplitPaths(ctx, packageName);
         if (splitPaths == null || splitPaths.length == 0) return;
         for (String path : splitPaths) {
             File splitFile = new File(path);
             if (!splitFile.exists()) continue;
             String name = splitFile.getName();
-            listener.onProgress("Merging " + name + "…");
-            try (ApkModule split = ApkModule.loadApkFile(splitFile)) {
-                base.merge(split);
-            }
+            listener.onProgress("Signing " + name + "…");
+            File out = new File(outputDir, name);
+            sign(splitFile, out, signer);
+            outputs.add(out);
         }
     }
 
@@ -158,8 +174,12 @@ public final class Dexlib2Patcher implements ApkPatcher {
             throws Exception {
         int total = 0;
         List<DexFileInputSource> dexFiles = apk.listDexFiles();
+        int count = dexFiles.size();
+        int index = 0;
         for (DexFileInputSource src : dexFiles) {
+            index++;
             String name = src.getAlias();
+            listener.onProgress("Scanning " + name + " (" + index + "/" + count + ")…");
             byte[] original = readAll(src);
             DexPatcher.Result result = patchDex(original, name, listener);
             if (result != null) {

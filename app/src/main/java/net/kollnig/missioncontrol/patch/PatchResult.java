@@ -19,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 /** Outcome of a patching run. */
 public final class PatchResult {
@@ -26,24 +28,35 @@ public final class PatchResult {
     public enum Status { SUCCESS, FAILED }
 
     public final Status status;
-    @Nullable public final File outputFile;
+    /**
+     * The signed APKs to install, base first followed by any re-signed config
+     * splits. On failure this is empty. Install the whole list together as a
+     * single split-install session.
+     */
+    @NonNull public final List<File> outputFiles;
     public final int patchedMethods;
     @Nullable public final String message;
 
-    private PatchResult(Status status, File outputFile, int patchedMethods, String message) {
+    private PatchResult(Status status, List<File> outputFiles, int patchedMethods, String message) {
         this.status = status;
-        this.outputFile = outputFile;
+        this.outputFiles = outputFiles;
         this.patchedMethods = patchedMethods;
         this.message = message;
     }
 
+    /** The patched base APK, or null on failure. */
+    @Nullable
+    public File baseApk() {
+        return outputFiles.isEmpty() ? null : outputFiles.get(0);
+    }
+
     @NonNull
-    static PatchResult success(@NonNull File output, int patchedMethods) {
-        return new PatchResult(Status.SUCCESS, output, patchedMethods, null);
+    static PatchResult success(@NonNull List<File> outputFiles, int patchedMethods) {
+        return new PatchResult(Status.SUCCESS, outputFiles, patchedMethods, null);
     }
 
     @NonNull
     static PatchResult failure(@NonNull String message) {
-        return new PatchResult(Status.FAILED, null, 0, message);
+        return new PatchResult(Status.FAILED, Collections.emptyList(), 0, message);
     }
 }

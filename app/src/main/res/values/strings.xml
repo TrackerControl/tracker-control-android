@@ -774,6 +774,10 @@ Sincerely,\n\n]]></string>
     <string name="menu_patch_inspection">Patch for traffic inspection</string>
     <string name="patch_title">Patch %1$s for inspection</string>
     <string name="patch_progress">Patching…</string>
+    <string name="patch_started_background">Patching in the background. You\'ll be notified with progress.</string>
+    <string name="patch_installing">Installing…</string>
+    <string name="patch_install_success">App installed.</string>
+    <string name="patch_install_failed">Install failed: %1$s</string>
     <string name="patch_success">Patched %1$d method(s). Opening installer.</string>
     <string name="patch_failed">Patching failed: %1$s</string>
     <string name="patch_failed_source_missing">source APK not found</string>

@@ -40,7 +40,7 @@ public final class NoOpPatcher implements ApkPatcher {
     public PatchResult patch(@NonNull Context ctx,
                              @NonNull String packageName,
                              @NonNull File inputApk,
-                             @NonNull File outputApk,
+                             @NonNull File outputDir,
                              @NonNull ProgressListener listener) {
         return PatchResult.failure("No patcher engine is available in this build.");
     }

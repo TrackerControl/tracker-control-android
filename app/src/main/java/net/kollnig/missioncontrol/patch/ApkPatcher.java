@@ -43,18 +43,24 @@ public interface ApkPatcher {
     }
 
     /**
-     * Patch the given input APK and write a signed, installable result to
-     * {@code outputApk}. This is a long-running, blocking operation and must
-     * be invoked off the main thread.
+     * Patch the given app's base APK and write the signed, installable result(s)
+     * into {@code outputDir}. Only the base APK is patched (dex + resources +
+     * manifest); any config splits (ABI, density, language) are re-signed
+     * unchanged with the same key so the whole set installs together as a
+     * split-install session. This is a long-running, blocking operation and
+     * must be invoked off the main thread.
      *
-     * @return a {@link PatchResult}; on success {@link PatchResult#outputFile}
-     *         equals {@code outputApk}.
+     * @param inputApk  the app's base APK (its config splits are discovered via
+     *                  {@link android.content.pm.PackageManager})
+     * @param outputDir a writable directory to receive the signed APKs
+     * @return a {@link PatchResult}; on success {@link PatchResult#outputFiles}
+     *         lists the base APK first, then any re-signed splits.
      */
     @NonNull
     PatchResult patch(@NonNull Context ctx,
                      @NonNull String packageName,
                      @NonNull File inputApk,
-                     @NonNull File outputApk,
+                     @NonNull File outputDir,
                      @NonNull ProgressListener listener);
 
     /** Whether a real patching engine is available in this build. */
