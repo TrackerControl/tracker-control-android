@@ -116,6 +116,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final long ACCESS_BATCH_FLUSH_MS = 2000;
     private final Map<AccessKey, PendingAccess> accessBatch = new LinkedHashMap<>();
     private long lastAccessFlush = System.currentTimeMillis();
+    // Bounds how long the tail of a burst can sit unflushed: a size/next-write
+    // flush may never come if traffic goes quiet, so the first entry of an
+    // otherwise-idle batch schedules a time-based flush on the DB handler
+    // thread. Without this, a lone late access update stays invisible to
+    // listeners (no notifyAccessChanged) until the next reader or shutdown.
+    private final Runnable accessFlushRunnable = this::flushAccessBatch;
+    private final Runnable usageFlushRunnable = this::flushUsageBatch;
 
     private static final int USAGE_BATCH_SIZE = 50;
     private static final long USAGE_BATCH_FLUSH_MS = 2000;
@@ -640,11 +647,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         p.block = block;
 
         synchronized (accessBatch) {
+            boolean wasEmpty = accessBatch.isEmpty();
+            // Coalescing is last-write-wins, but block is only carried on the
+            // updates that specify it (block >= 0). If the newer update leaves
+            // block unspecified, preserve the pending specified value instead
+            // of dropping it — an unbatched sequence would have left the row's
+            // block untouched by the later (block < 0) write.
+            PendingAccess prev = accessBatch.get(key);
+            if (prev != null && prev.blockSpecified && !p.blockSpecified) {
+                p.blockSpecified = true;
+                p.block = prev.block;
+            }
             accessBatch.put(key, p);
             long now = System.currentTimeMillis();
             if (accessBatch.size() >= ACCESS_BATCH_SIZE || now - lastAccessFlush >= ACCESS_BATCH_FLUSH_MS)
                 flushAccessBatch();
+            else if (wasEmpty)
+                scheduleAccessFlush();
         }
+    }
+
+    private void scheduleAccessFlush() {
+        handler.removeCallbacks(accessFlushRunnable);
+        handler.postDelayed(accessFlushRunnable, ACCESS_BATCH_FLUSH_MS);
     }
 
     public void flushAccessBatch() {
@@ -652,6 +677,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         synchronized (accessBatch) {
             if (accessBatch.isEmpty())
                 return;
+            handler.removeCallbacks(accessFlushRunnable);
             batch = new LinkedHashMap<>(accessBatch);
             accessBatch.clear();
             lastAccessFlush = System.currentTimeMillis();
@@ -714,6 +740,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         AccessKey key = new AccessKey(usage.Uid, usage.Version, usage.Protocol, daddr, usage.DPort);
 
         synchronized (usageBatch) {
+            boolean wasEmpty = usageBatch.isEmpty();
             long[] acc = usageBatch.get(key);
             if (acc == null) {
                 acc = new long[3];
@@ -726,7 +753,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             long now = System.currentTimeMillis();
             if (usageBatch.size() >= USAGE_BATCH_SIZE || now - lastUsageFlush >= USAGE_BATCH_FLUSH_MS)
                 flushUsageBatch();
+            else if (wasEmpty)
+                scheduleUsageFlush();
         }
+    }
+
+    private void scheduleUsageFlush() {
+        handler.removeCallbacks(usageFlushRunnable);
+        handler.postDelayed(usageFlushRunnable, USAGE_BATCH_FLUSH_MS);
     }
 
     public void flushUsageBatch() {
@@ -740,6 +774,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         synchronized (usageBatch) {
             if (usageBatch.isEmpty())
                 return;
+            handler.removeCallbacks(usageFlushRunnable);
             batch = new LinkedHashMap<>(usageBatch);
             usageBatch.clear();
             lastUsageFlush = System.currentTimeMillis();

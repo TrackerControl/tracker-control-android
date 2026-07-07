@@ -90,6 +90,29 @@ public class DatabaseHelperAccessBatchTest {
     }
 
     @Test
+    public void specifiedBlockSurvivesLaterUnspecifiedUpdateInSameBatch() {
+        // A block-setting update (block >= 0) followed by an ordinary
+        // (block < 0) update for the same key within one batch window must not
+        // drop the block: an unbatched sequence would leave the row's block
+        // untouched by the second write, so last-write-wins has to carry it.
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearAccess();
+
+        int uid = 13579;
+        dh.updateAccess(packet(uid, "tracker.example.com", 443, 1_000L, true), null,
+                1, DatabaseHelper.ACCESS_UNCERTAIN_NONE);
+        dh.updateAccess(packet(uid, "tracker.example.com", 443, 2_000L, false), null,
+                -1, DatabaseHelper.ACCESS_UNCERTAIN_NONE);
+        dh.flushAccessBatch();
+
+        try (Cursor c = dh.getAccess(uid)) {
+            assertTrue(c.moveToFirst());
+            assertEquals("specified block must not be lost when a later update omits it",
+                    1, c.getInt(c.getColumnIndexOrThrow("block")));
+        }
+    }
+
+    @Test
     public void differentKeysInSameBatchProduceSeparateRows() {
         DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
         dh.clearAccess();
