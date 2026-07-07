@@ -54,6 +54,15 @@ object WgEgress {
     @Volatile private var forceRestartPending: Boolean = false
     @Volatile private var lastCheapRecoveryMs: Long = 0
     @Volatile private var recoveryNotificationGeneration: Long = 0
+    // A single roam (Wi-Fi <-> cellular) makes the framework deliver several
+    // capability/connectivity callbacks within a few hundred ms. Each would
+    // otherwise spawn its own rebind + DNS re-resolution. Coalesce them: only
+    // one rebind runs at a time, and trailing callbacks within the debounce
+    // window are dropped (the in-flight rebind already reads the latest
+    // network state when it executes).
+    private val rebindInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
+    @Volatile private var lastRebindKickoffMs: Long = 0
+    private val rebindDebounceMs = 1_000L
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -216,7 +225,8 @@ object WgEgress {
             monitor = WgConnectivityMonitor(
                 statsProvider = { statsOrNull() },
                 prod = { try { tunnel?.sendKeepalive() } catch (e: Throwable) { Log.w(TAG, "prod keepalive threw", e) } },
-                onBroken = { onMonitorBroken() }
+                onBroken = { onMonitorBroken() },
+                onConnected = { notifyStateChanged() }
             ).also { it.start() }
         }
     }
@@ -365,12 +375,24 @@ object WgEgress {
         // roaming (Wi-Fi <-> cellular, crossing borders) without a
         // re-handshake. Runs off-thread because endpoint re-resolution does
         // blocking DNS. Falls back to a full restart if the rebind fails.
+        // Coalesce the burst of callbacks a single roam produces.
+        val kickoff = now()
+        if (kickoff - lastRebindKickoffMs < rebindDebounceMs || !rebindInFlight.compareAndSet(false, true)) {
+            Log.d(TAG, "network change coalesced into in-flight/recent rebind")
+            return
+        }
+        lastRebindKickoffMs = kickoff
+
         Log.i(TAG, "underlying network changed; rebinding WG sockets")
         Thread({
-            if (tryCheapRecovery()) {
-                lastCheapRecoveryMs = now()
-            } else if (tunnel != null && !forceRestartPending) {
-                requestFullRestart("WG rebind failed after network change", notify = false)
+            try {
+                if (tryCheapRecovery()) {
+                    lastCheapRecoveryMs = now()
+                } else if (tunnel != null && !forceRestartPending) {
+                    requestFullRestart("WG rebind failed after network change", notify = false)
+                }
+            } finally {
+                rebindInFlight.set(false)
             }
         }, "wg-rebind").start()
     }

@@ -196,7 +196,11 @@ private const val TAG = "WgConnMonitor"
 internal class WgConnectivityMonitor(
     private val statsProvider: () -> WgStats?,
     prod: () -> Unit,
-    private val onBroken: () -> Unit
+    private val onBroken: () -> Unit,
+    // Fired once, the first time this monitor observes a completed handshake,
+    // so listeners (e.g. the settings status line) can move from
+    // "Handshaking" to "Connected" without polling.
+    private val onConnected: () -> Unit = {}
 ) {
     private companion object {
         /** How often the loop samples the tunnel counters. */
@@ -230,6 +234,7 @@ internal class WgConnectivityMonitor(
         val seed = statsProvider() ?: return
         var lastCheck = SystemClock.elapsedRealtime()
         checker.seed(lastCheck, seed)
+        var announcedConnected = false
 
         while (running && !Thread.currentThread().isInterrupted) {
             try {
@@ -248,7 +253,8 @@ internal class WgConnectivityMonitor(
                 continue
             }
 
-            when (checker.tick(now, statsProvider())) {
+            val stats = statsProvider()
+            when (checker.tick(now, stats)) {
                 WgVerdict.HEALTHY, WgVerdict.WAITING -> {}
                 WgVerdict.BROKEN -> {
                     Log.w(TAG, "tunnel unresponsive after prod; reporting broken state")
@@ -257,6 +263,15 @@ internal class WgConnectivityMonitor(
                     return
                 }
                 WgVerdict.GONE -> return
+            }
+
+            if (!announcedConnected && stats != null && stats.latestHandshakeMillis > 0L) {
+                announcedConnected = true
+                try {
+                    onConnected()
+                } catch (e: Throwable) {
+                    Log.w(TAG, "onConnected threw", e)
+                }
             }
         }
     }

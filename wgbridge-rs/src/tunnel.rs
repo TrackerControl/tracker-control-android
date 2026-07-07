@@ -76,6 +76,11 @@ pub fn start_tunnel(
     protector: Arc<dyn SocketProtector>,
     logger: Arc<dyn BridgeLogger>,
     dns: Option<Arc<dyn DnsSink>>,
+    // Invoked once on each tokio worker thread as it starts. The JNI layer uses
+    // this to attach the worker to the JVM, so the Java GlobalRefs held by the
+    // callbacks can be dropped on those threads without the jni crate warning
+    // "Dropping a GlobalRef in a detached thread" during teardown.
+    on_worker_start: Arc<dyn Fn() + Send + Sync>,
 ) -> Result<Tunnel, String> {
     let config = parse_uapi_config(uapi_config).map_err(|e| e.to_string())?;
 
@@ -85,6 +90,7 @@ pub fn start_tunnel(
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(2)
         .thread_name("wgbridge")
+        .on_thread_start(move || on_worker_start())
         .enable_all()
         .build()
         .map_err(|e| format!("tokio runtime: {e}"))?;

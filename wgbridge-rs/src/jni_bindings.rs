@@ -205,6 +205,17 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeS
     let dns: Option<Arc<dyn DnsSink>> =
         JavaCallback::new(&env, dns_recorder).map(|cb| Arc::new(JavaDnsSink(cb)) as _);
 
+    // Attach each tokio worker to the JVM as it spins up, so the Java
+    // GlobalRefs the callbacks hold are dropped on attached threads at
+    // teardown (avoids the jni "detached thread" GlobalRef warning).
+    let Ok(vm) = env.get_java_vm() else {
+        throw(&mut env, "could not obtain JavaVM");
+        return 0;
+    };
+    let on_worker_start: Arc<dyn Fn() + Send + Sync> = Arc::new(move || {
+        let _ = vm.attach_current_thread_permanently();
+    });
+
     match start_tunnel(
         &uapi,
         outbound_rx_fd,
@@ -213,6 +224,7 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeS
         Arc::new(JavaProtector(protector)),
         logger,
         dns,
+        on_worker_start,
     ) {
         Ok(tunnel) => Box::into_raw(Box::new(tunnel)) as jlong,
         Err(e) => {

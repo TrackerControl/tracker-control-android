@@ -205,6 +205,7 @@
     <string name="summary_wg_status_off">Off</string>
     <string name="summary_wg_status_missing_config">Off — no config set</string>
     <string name="summary_wg_status_connected">Connected</string>
+    <string name="summary_wg_status_handshaking">Handshaking…</string>
     <string name="summary_wg_status_blocked">Blocked — %s</string>
     <string name="summary_wg_status_starting">Starting</string>
     <string name="summary_vpn_key_rotate_now">Force Mullvad and IVPN WireGuard key rotation for debugging</string>

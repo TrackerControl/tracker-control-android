@@ -942,12 +942,21 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         if (TextUtils.isEmpty(prefs.getString("wg_config", "")))
             return getString(R.string.summary_wg_status_missing_config);
 
-        if (net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.isRunning())
-            return getString(R.string.summary_wg_status_connected);
-
         String error = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
         if (!TextUtils.isEmpty(error))
             return getString(R.string.summary_wg_status_blocked, error);
+
+        if (net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.isRunning()) {
+            // The engine being up is not the same as a working tunnel:
+            // WireGuard handshakes lazily on the first packet, so "running"
+            // can mean "no peer has ever answered". Only claim "Connected"
+            // once an actual handshake has completed; otherwise the user sees
+            // "Connected" even with a wrong endpoint until traffic fails.
+            Long handshake = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.latestHandshakeMillisOrNull();
+            if (handshake != null && handshake > 0)
+                return getString(R.string.summary_wg_status_connected);
+            return getString(R.string.summary_wg_status_handshaking);
+        }
 
         return getString(R.string.summary_wg_status_starting);
     }
