@@ -36,6 +36,12 @@ object WgEgress {
     // rebind + re-resolve, the cheap path clearly didn't help — escalate to
     // a full restart.
     private const val CHEAP_RECOVERY_ESCALATION_MS = 90_000L
+    // Exponential backoff for repeated full-restart cycles (captive portal,
+    // blocked UDP path): first restart is immediate, subsequent ones back off
+    // instead of looping every ~20s (BYTES_RX_TIMEOUT_MS + PING_TIMEOUT_MS)
+    // indefinitely, each doing DNS + handshake + monitor polling under a wakelock.
+    private const val RESTART_BACKOFF_BASE_MS = 20_000L
+    private const val RESTART_BACKOFF_MAX_MS = 5 * 60_000L
 
     @Volatile private var tunnel: WgTunnel? = null
     @Volatile private var lastError: String? = null
@@ -54,6 +60,16 @@ object WgEgress {
     @Volatile private var forceRestartPending: Boolean = false
     @Volatile private var lastCheapRecoveryMs: Long = 0
     @Volatile private var recoveryNotificationGeneration: Long = 0
+    @Volatile private var restartAttempts: Int = 0
+
+    // Single-thread executor for network-change rebinds: bounds the thread
+    // count on a flapping network (instead of one raw Thread per event) and
+    // rebindQueued dedups bursts so only one rebind is in flight/queued at a time.
+    private val rebindExecutor = java.util.concurrent.Executors.newSingleThreadExecutor {
+        Thread(it, "wg-rebind").apply { isDaemon = true }
+    }
+    private val rebindLock = Any()
+    @Volatile private var rebindQueued: Boolean = false
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -249,11 +265,18 @@ object WgEgress {
     }
 
     private fun requestFullRestart(reason: String, notify: Boolean) {
-        Log.w(TAG, "$reason; forcing restart")
+        val attempt = restartAttempts++
+        val delay = if (attempt == 0) 0L
+        else minOf(RESTART_BACKOFF_MAX_MS, RESTART_BACKOFF_BASE_MS shl (attempt - 1).coerceAtMost(10))
+        Log.w(TAG, "$reason; forcing restart (attempt=${attempt + 1}, delay=${delay}ms)")
         clearEndpointCache()
         forceRestartPending = true
         if (notify) scheduleRecoveryNotificationCheck()
-        requestReloadCb?.run()
+        if (delay <= 0L) {
+            requestReloadCb?.run()
+        } else {
+            verifyHandler.postDelayed({ requestReloadCb?.run() }, delay)
+        }
     }
 
     private fun scheduleRecoveryNotificationCheck() {
@@ -264,6 +287,7 @@ object WgEgress {
             val latest = latestHandshakeMillisOrNull() ?: 0L
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
+                restartAttempts = 0
                 notifyStateChanged()
                 return@postDelayed
             }
@@ -365,14 +389,26 @@ object WgEgress {
         // roaming (Wi-Fi <-> cellular, crossing borders) without a
         // re-handshake. Runs off-thread because endpoint re-resolution does
         // blocking DNS. Falls back to a full restart if the rebind fails.
-        Log.i(TAG, "underlying network changed; rebinding WG sockets")
-        Thread({
-            if (tryCheapRecovery()) {
-                lastCheapRecoveryMs = now()
-            } else if (tunnel != null && !forceRestartPending) {
-                requestFullRestart("WG rebind failed after network change", notify = false)
+        synchronized(rebindLock) {
+            if (rebindQueued) {
+                Log.i(TAG, "underlying network changed; rebind already queued, skipping duplicate")
+                return
             }
-        }, "wg-rebind").start()
+            rebindQueued = true
+        }
+
+        Log.i(TAG, "underlying network changed; rebinding WG sockets")
+        rebindExecutor.execute {
+            try {
+                if (tryCheapRecovery()) {
+                    lastCheapRecoveryMs = now()
+                } else if (tunnel != null && !forceRestartPending) {
+                    requestFullRestart("WG rebind failed after network change", notify = false)
+                }
+            } finally {
+                synchronized(rebindLock) { rebindQueued = false }
+            }
+        }
     }
 
     /**
@@ -458,6 +494,7 @@ object WgEgress {
         verificationGeneration++
         recoveryNotificationGeneration++
         forceRestartPending = false
+        restartAttempts = 0
     }
 
     private fun scheduleFreshHandshakeNotificationCheck() {
@@ -468,6 +505,7 @@ object WgEgress {
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
                 recoveryNotificationGeneration++
+                restartAttempts = 0
                 notifyStateChanged()
             }
         }, POST_WAKE_VERIFY_DELAY_MS)

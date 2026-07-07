@@ -39,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -50,6 +51,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int ACCESS_UNCERTAIN_MULTIPLE_TRACKERS = 3;
 
     public Cursor getHosts(int uid) {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -63,6 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getHosts() {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -102,6 +107,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final long LOG_BATCH_FLUSH_MS = 5000;
     private final List<ContentValues> logBatch = new ArrayList<>();
     private long lastLogFlush = System.currentTimeMillis();
+
+    // Access/usage batching: coalesces repeated updates to the same
+    // (uid, version, protocol, daddr, dport) row into a single write instead
+    // of one transaction per tracker flow.
+    private static final int ACCESS_BATCH_SIZE = 50;
+    private static final long ACCESS_BATCH_FLUSH_MS = 2000;
+    private final Map<AccessKey, PendingAccess> accessBatch = new LinkedHashMap<>();
+    private long lastAccessFlush = System.currentTimeMillis();
+
+    private static final int USAGE_BATCH_SIZE = 50;
+    private static final long USAGE_BATCH_FLUSH_MS = 2000;
+    private final Map<AccessKey, long[]> usageBatch = new LinkedHashMap<>();
+    private long lastUsageFlush = System.currentTimeMillis();
+
+    private static final class AccessKey {
+        final int uid, version, protocol, dport;
+        final String daddr;
+
+        AccessKey(int uid, int version, int protocol, String daddr, int dport) {
+            this.uid = uid;
+            this.version = version;
+            this.protocol = protocol;
+            this.daddr = daddr;
+            this.dport = dport;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof AccessKey))
+                return false;
+            AccessKey k = (AccessKey) o;
+            return uid == k.uid && version == k.version && protocol == k.protocol &&
+                    dport == k.dport && daddr.equals(k.daddr);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(uid, version, protocol, daddr, dport);
+        }
+    }
+
+    // Last-write-wins per key: only the latest state of a rapidly repeated
+    // access update needs to reach the row.
+    private static final class PendingAccess {
+        long time;
+        boolean allowed;
+        int uncertain;
+        boolean blockSpecified;
+        int block;
+    }
 
     static {
         hthread = new HandlerThread("DatabaseHelper");
@@ -572,43 +627,75 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Access
 
-    public boolean updateAccess(Packet packet, String dname, int block, int uncertain) {
-        int rows;
+    public void updateAccess(Packet packet, String dname, int block, int uncertain) {
+        String daddr = (dname == null ? packet.daddr : dname);
+        AccessKey key = new AccessKey(packet.uid, packet.version, packet.protocol, daddr, packet.dport);
+
+        PendingAccess p = new PendingAccess();
+        p.time = packet.time;
+        p.allowed = packet.allowed;
+        p.uncertain = uncertain;
+        p.blockSpecified = (block >= 0);
+        p.block = block;
+
+        synchronized (accessBatch) {
+            accessBatch.put(key, p);
+            long now = System.currentTimeMillis();
+            if (accessBatch.size() >= ACCESS_BATCH_SIZE || now - lastAccessFlush >= ACCESS_BATCH_FLUSH_MS)
+                flushAccessBatch();
+        }
+    }
+
+    public void flushAccessBatch() {
+        Map<AccessKey, PendingAccess> batch;
+        synchronized (accessBatch) {
+            if (accessBatch.isEmpty())
+                return;
+            batch = new LinkedHashMap<>(accessBatch);
+            accessBatch.clear();
+            lastAccessFlush = System.currentTimeMillis();
+        }
 
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             db.beginTransactionNonExclusive();
             try {
-                ContentValues cv = new ContentValues();
-                cv.put("time", packet.time);
-                cv.put("allowed", packet.allowed ? 1 : 0);
-                cv.put("uncertain", uncertain);
-                if (block >= 0)
-                    cv.put("block", block);
+                for (Map.Entry<AccessKey, PendingAccess> entry : batch.entrySet()) {
+                    AccessKey key = entry.getKey();
+                    PendingAccess p = entry.getValue();
 
-                // There is a segmented index on uid, version, protocol, daddr and dport
-                rows = db.update("access", cv, "uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?",
-                        new String[] {
-                                Integer.toString(packet.uid),
-                                Integer.toString(packet.version),
-                                Integer.toString(packet.protocol),
-                                dname == null ? packet.daddr : dname,
-                                Integer.toString(packet.dport) });
+                    ContentValues cv = new ContentValues();
+                    cv.put("time", p.time);
+                    cv.put("allowed", p.allowed ? 1 : 0);
+                    cv.put("uncertain", p.uncertain);
+                    if (p.blockSpecified)
+                        cv.put("block", p.block);
 
-                if (rows == 0) {
-                    cv.put("uid", packet.uid);
-                    cv.put("version", packet.version);
-                    cv.put("protocol", packet.protocol);
-                    cv.put("daddr", dname == null ? packet.daddr : dname);
-                    cv.put("dport", packet.dport);
-                    if (block < 0)
-                        cv.put("block", block);
+                    // There is a segmented index on uid, version, protocol, daddr and dport
+                    int rows = db.update("access", cv,
+                            "uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?",
+                            new String[] {
+                                    Integer.toString(key.uid),
+                                    Integer.toString(key.version),
+                                    Integer.toString(key.protocol),
+                                    key.daddr,
+                                    Integer.toString(key.dport) });
 
-                    if (db.insert("access", null, cv) == -1)
-                        Log.e(TAG, "Insert access failed");
-                } else if (rows != 1)
-                    Log.e(TAG, "Update access failed rows=" + rows);
+                    if (rows == 0) {
+                        cv.put("uid", key.uid);
+                        cv.put("version", key.version);
+                        cv.put("protocol", key.protocol);
+                        cv.put("daddr", key.daddr);
+                        cv.put("dport", key.dport);
+                        if (!p.blockSpecified)
+                            cv.put("block", -1);
+
+                        if (db.insert("access", null, cv) == -1)
+                            Log.e(TAG, "Insert access failed");
+                    } else if (rows != 1)
+                        Log.e(TAG, "Update access failed rows=" + rows);
+                }
 
                 db.setTransactionSuccessful();
             } finally {
@@ -619,47 +706,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         notifyAccessChanged();
-        return (rows == 0);
     }
 
     public void updateUsage(Usage usage, String dname) {
+        String daddr = (dname == null ? usage.DAddr : dname);
+        AccessKey key = new AccessKey(usage.Uid, usage.Version, usage.Protocol, daddr, usage.DPort);
+
+        synchronized (usageBatch) {
+            long[] acc = usageBatch.get(key);
+            if (acc == null) {
+                acc = new long[3];
+                usageBatch.put(key, acc);
+            }
+            acc[0] += usage.Sent;
+            acc[1] += usage.Received;
+            acc[2] += 1;
+
+            long now = System.currentTimeMillis();
+            if (usageBatch.size() >= USAGE_BATCH_SIZE || now - lastUsageFlush >= USAGE_BATCH_FLUSH_MS)
+                flushUsageBatch();
+        }
+    }
+
+    public void flushUsageBatch() {
+        Map<AccessKey, long[]> batch;
+        synchronized (usageBatch) {
+            if (usageBatch.isEmpty())
+                return;
+            batch = new LinkedHashMap<>(usageBatch);
+            usageBatch.clear();
+            lastUsageFlush = System.currentTimeMillis();
+        }
+
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             db.beginTransactionNonExclusive();
             try {
-                // There is a segmented index on uid, version, protocol, daddr and dport
-                String selection = "uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?";
-                String[] selectionArgs = new String[] {
-                        Integer.toString(usage.Uid),
-                        Integer.toString(usage.Version),
-                        Integer.toString(usage.Protocol),
-                        dname == null ? usage.DAddr : dname,
-                        Integer.toString(usage.DPort)
-                };
+                for (Map.Entry<AccessKey, long[]> entry : batch.entrySet()) {
+                    AccessKey key = entry.getKey();
+                    long[] delta = entry.getValue();
 
-                try (Cursor cursor = db.query("access", new String[] { "sent", "received", "connections" }, selection,
-                        selectionArgs, null, null, null)) {
-                    long sent = 0;
-                    long received = 0;
-                    int connections = 0;
-                    int colSent = cursor.getColumnIndex("sent");
-                    int colReceived = cursor.getColumnIndex("received");
-                    int colConnections = cursor.getColumnIndex("connections");
-                    if (cursor.moveToNext()) {
-                        sent = cursor.isNull(colSent) ? 0 : cursor.getLong(colSent);
-                        received = cursor.isNull(colReceived) ? 0 : cursor.getLong(colReceived);
-                        connections = cursor.isNull(colConnections) ? 0 : cursor.getInt(colConnections);
-                    }
-
-                    ContentValues cv = new ContentValues();
-                    cv.put("sent", sent + usage.Sent);
-                    cv.put("received", received + usage.Received);
-                    cv.put("connections", connections + 1);
-
-                    int rows = db.update("access", cv, selection, selectionArgs);
-                    if (rows != 1)
-                        Log.e(TAG, "Update usage failed rows=" + rows);
+                    // Collapses the previous SELECT-then-UPDATE round trip into a
+                    // single UPDATE; COALESCE guards against NULL (never-accounted) columns.
+                    db.execSQL(
+                            "UPDATE access SET " +
+                                    "sent = COALESCE(sent, 0) + ?, " +
+                                    "received = COALESCE(received, 0) + ?, " +
+                                    "connections = COALESCE(connections, 0) + ? " +
+                                    "WHERE uid = ? AND version = ? AND protocol = ? AND daddr = ? AND dport = ?",
+                            new Object[] {
+                                    delta[0], delta[1], delta[2],
+                                    key.uid, key.version, key.protocol, key.daddr, key.dport
+                            });
                 }
 
                 db.setTransactionSuccessful();
@@ -674,6 +773,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void setAccess(long id, int block) {
+        flushAccessBatch();
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -698,6 +798,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void clearAccess() {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -717,6 +819,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void clearAccess(int uid, boolean keeprules) {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -741,6 +845,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void resetUsage(int uid) {
+        flushUsageBatch();
         lock.writeLock().lock();
         try {
             // There is a segmented index on uid
@@ -767,6 +872,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAccess(int uid) {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -785,6 +892,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAccess() {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -797,6 +906,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAccessUnset(int uid, int limit, long since) {
+        flushAccessBatch();
+        flushUsageBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -847,6 +958,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return Cursor with columns: uid, daddr, allowed, time, uncertain
      */
     public Cursor getInsightsData7Days() {
+        flushAccessBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
@@ -864,6 +976,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getRecentTrackerActivity() {
+        flushAccessBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
