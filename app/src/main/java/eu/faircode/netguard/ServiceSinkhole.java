@@ -530,9 +530,6 @@ public class ServiceSinkhole extends VpnService {
                         !prefs.getBoolean("enabled", false) &&
                         !prefs.getBoolean("show_stats", false))
                     stopForeground(true);
-
-                // Request garbage collection
-                System.gc();
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
