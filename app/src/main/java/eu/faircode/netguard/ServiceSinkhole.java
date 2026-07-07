@@ -126,6 +126,14 @@ import javax.net.ssl.HttpsURLConnection;
 public class ServiceSinkhole extends VpnService {
     private static final String TAG = "TrackerControl.VPN";
 
+    // Safety net for the per-command wakelock: a command that hangs or throws
+    // before reaching the release in CommandHandler's finally block (or a
+    // future code path that forgets to release) auto-releases instead of
+    // holding the CPU awake indefinitely. Generously covers the slowest
+    // legitimate case (WG config parse + bounded DNS resolve + handshake +
+    // the 3s handover-retry sleep) with margin.
+    private static final long WAKELOCK_TIMEOUT_MS = 30_000L;
+
     private boolean registeredUser = false;
     private boolean registeredIdleState = false;
     private boolean registeredApState = false;
@@ -522,9 +530,6 @@ public class ServiceSinkhole extends VpnService {
                         !prefs.getBoolean("enabled", false) &&
                         !prefs.getBoolean("show_stats", false))
                     stopForeground(true);
-
-                // Request garbage collection
-                System.gc();
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
@@ -2938,10 +2943,27 @@ public class ServiceSinkhole extends VpnService {
         networkCallback = nc;
     }
 
-    private void reloadAfterNetworkChange(String reason) {
-        if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
-            net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
-        reload(reason, ServiceSinkhole.this, false);
+    // Network flapping (Wi-Fi<->cellular handoffs, DHCP renewals) fires several
+    // ConnectivityManager callbacks within milliseconds of each other. Each
+    // reload is a foreground-service update + wakelock + native VPN restart +
+    // WireGuard rebind, so bursts are coalesced into a single reload using the
+    // last reason once the burst settles. Every reason string currently in use
+    // maps to the same shouldRestartWireGuard()==true branch, so collapsing to
+    // the latest reason changes no behaviour beyond the log line.
+    private static final long NETWORK_RELOAD_DEBOUNCE_MS = 1500L;
+    private static final Object NETWORK_RELOAD_TOKEN = new Object();
+    private final Handler networkReloadDebounceHandler = new Handler(Looper.getMainLooper());
+
+    private void reloadAfterNetworkChange(final String reason) {
+        networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+        networkReloadDebounceHandler.postAtTime(new Runnable() {
+            @Override
+            public void run() {
+                if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+                    net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
+                reload(reason, ServiceSinkhole.this, false);
+            }
+        }, NETWORK_RELOAD_TOKEN, SystemClock.uptimeMillis() + NETWORK_RELOAD_DEBOUNCE_MS);
     }
 
     private void listenConnectivityChanges() {
@@ -3021,8 +3043,8 @@ public class ServiceSinkhole extends VpnService {
             return START_STICKY;
         }
 
-        // Keep awake
-        getLock(this).acquire();
+        // Keep awake (bounded: see WAKELOCK_TIMEOUT_MS)
+        getLock(this).acquire(WAKELOCK_TIMEOUT_MS);
 
         // Get state
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -3096,10 +3118,16 @@ public class ServiceSinkhole extends VpnService {
         synchronized (this) {
             Log.i(TAG, "Destroy");
 
-            // Flush any pending log entries before shutdown
+            // Flush any pending batched writes before shutdown
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-            if (dh != null)
+            if (dh != null) {
                 dh.flushLogBatch();
+                dh.flushAccessBatch();
+                dh.flushUsageBatch();
+            }
+
+            // Cancel any debounced network-change reload so it doesn't fire post-teardown
+            networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
 
             commandLooper.quit();
             logLooper.quit();

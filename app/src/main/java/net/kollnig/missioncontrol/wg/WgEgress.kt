@@ -36,6 +36,12 @@ object WgEgress {
     // rebind + re-resolve, the cheap path clearly didn't help — escalate to
     // a full restart.
     private const val CHEAP_RECOVERY_ESCALATION_MS = 90_000L
+    // Exponential backoff for repeated full-restart cycles (captive portal,
+    // blocked UDP path): first restart is immediate, subsequent ones back off
+    // instead of looping every ~20s (BYTES_RX_TIMEOUT_MS + PING_TIMEOUT_MS)
+    // indefinitely, each doing DNS + handshake + monitor polling under a wakelock.
+    private const val RESTART_BACKOFF_BASE_MS = 20_000L
+    private const val RESTART_BACKOFF_MAX_MS = 5 * 60_000L
 
     @Volatile private var tunnel: WgTunnel? = null
     @Volatile private var lastError: String? = null
@@ -54,15 +60,33 @@ object WgEgress {
     @Volatile private var forceRestartPending: Boolean = false
     @Volatile private var lastCheapRecoveryMs: Long = 0
     @Volatile private var recoveryNotificationGeneration: Long = 0
-    // A single roam (Wi-Fi <-> cellular) makes the framework deliver several
-    // capability/connectivity callbacks within a few hundred ms. Each would
-    // otherwise spawn its own rebind + DNS re-resolution. Coalesce them: only
-    // one rebind runs at a time, and trailing callbacks within the debounce
-    // window are dropped (the in-flight rebind already reads the latest
-    // network state when it executes).
-    private val rebindInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
-    @Volatile private var lastRebindKickoffMs: Long = 0
-    private val rebindDebounceMs = 1_000L
+    @Volatile private var restartAttempts: Int = 0
+    // Tracks whether a delayed (backed-off) restart is currently posted, so
+    // clearRecoveryState() can cancel it without forcing verifyHandler's lazy
+    // init on paths that never scheduled anything (e.g. plain-JUnit-tested
+    // no-tunnel callers that never touch the main-thread Looper).
+    @Volatile private var restartScheduled: Boolean = false
+    private val pendingRestartRunnable = Runnable {
+        restartScheduled = false
+        // If forceRestartPending was cleared while this was queued, the tunnel
+        // was already (re)started by another path (e.g. a network-change
+        // reload consumed the pending restart in startOrUpdate) — firing now
+        // would kick a redundant restart of an already-healthy tunnel.
+        if (forceRestartPending) requestReloadCb?.run()
+    }
+
+    // Single-thread executor for network-change rebinds: bounds the thread
+    // count on a flapping network (instead of one raw Thread per event).
+    // rebindInFlight means a rebind task is running; a network change arriving
+    // during that window sets rebindDirty so the task re-runs once with the
+    // latest network instead of being dropped — otherwise the sockets could
+    // stay bound to a network that has already gone away.
+    private val rebindExecutor = java.util.concurrent.Executors.newSingleThreadExecutor {
+        Thread(it, "wg-rebind").apply { isDaemon = true }
+    }
+    private val rebindLock = Any()
+    private var rebindInFlight: Boolean = false
+    private var rebindDirty: Boolean = false
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -259,11 +283,21 @@ object WgEgress {
     }
 
     private fun requestFullRestart(reason: String, notify: Boolean) {
-        Log.w(TAG, "$reason; forcing restart")
+        val attempt = restartAttempts++
+        val delay = if (attempt == 0) 0L
+        else minOf(RESTART_BACKOFF_MAX_MS, RESTART_BACKOFF_BASE_MS shl (attempt - 1).coerceAtMost(10))
+        Log.w(TAG, "$reason; forcing restart (attempt=${attempt + 1}, delay=${delay}ms)")
         clearEndpointCache()
         forceRestartPending = true
         if (notify) scheduleRecoveryNotificationCheck()
-        requestReloadCb?.run()
+        verifyHandler.removeCallbacks(pendingRestartRunnable)
+        if (delay <= 0L) {
+            restartScheduled = false
+            requestReloadCb?.run()
+        } else {
+            restartScheduled = true
+            verifyHandler.postDelayed(pendingRestartRunnable, delay)
+        }
     }
 
     private fun scheduleRecoveryNotificationCheck() {
@@ -274,6 +308,7 @@ object WgEgress {
             val latest = latestHandshakeMillisOrNull() ?: 0L
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
+                restartAttempts = 0
                 notifyStateChanged()
                 return@postDelayed
             }
@@ -375,26 +410,45 @@ object WgEgress {
         // roaming (Wi-Fi <-> cellular, crossing borders) without a
         // re-handshake. Runs off-thread because endpoint re-resolution does
         // blocking DNS. Falls back to a full restart if the rebind fails.
-        // Coalesce the burst of callbacks a single roam produces.
-        val kickoff = now()
-        if (kickoff - lastRebindKickoffMs < rebindDebounceMs || !rebindInFlight.compareAndSet(false, true)) {
-            Log.d(TAG, "network change coalesced into in-flight/recent rebind")
-            return
+        synchronized(rebindLock) {
+            if (rebindInFlight) {
+                // A rebind is already running; the network changed again, so
+                // mark it for a re-run rather than dropping this event.
+                rebindDirty = true
+                Log.i(TAG, "underlying network changed; rebind in flight, scheduling re-run")
+                return
+            }
+            rebindInFlight = true
+            rebindDirty = false
         }
-        lastRebindKickoffMs = kickoff
 
         Log.i(TAG, "underlying network changed; rebinding WG sockets")
-        Thread({
+        rebindExecutor.execute {
             try {
-                if (tryCheapRecovery()) {
-                    lastCheapRecoveryMs = now()
-                } else if (tunnel != null && !forceRestartPending) {
-                    requestFullRestart("WG rebind failed after network change", notify = false)
+                while (true) {
+                    if (tryCheapRecovery()) {
+                        lastCheapRecoveryMs = now()
+                    } else if (tunnel != null && !forceRestartPending) {
+                        requestFullRestart("WG rebind failed after network change", notify = false)
+                    }
+                    synchronized(rebindLock) {
+                        if (!rebindDirty) {
+                            rebindInFlight = false
+                            return@execute
+                        }
+                        // Another network change landed mid-rebind; loop once
+                        // more with the now-current default network.
+                        rebindDirty = false
+                    }
                 }
-            } finally {
-                rebindInFlight.set(false)
+            } catch (e: Throwable) {
+                Log.w(TAG, "WG rebind task failed", e)
+                synchronized(rebindLock) {
+                    rebindInFlight = false
+                    rebindDirty = false
+                }
             }
-        }, "wg-rebind").start()
+        }
     }
 
     /**
@@ -480,14 +534,29 @@ object WgEgress {
         verificationGeneration++
         recoveryNotificationGeneration++
         forceRestartPending = false
+        restartAttempts = 0
+        // restartScheduled guards the lazy init: this runs on every no-tunnel
+        // /disable path, most of which never scheduled a delayed restart and
+        // so never touched verifyHandler in the first place.
+        if (restartScheduled) {
+            restartScheduled = false
+            verifyHandler.removeCallbacks(pendingRestartRunnable)
+        }
     }
 
     private fun scheduleFreshHandshakeNotificationCheck() {
         val gen = verificationGeneration
         verifyHandler.postDelayed({
-            if (gen != verificationGeneration) return@postDelayed
             val latest = latestHandshakeMillisOrNull() ?: 0L
-            if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
+            val fresh = latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS
+            // A confirmed-fresh handshake means the path is healthy right now,
+            // so clear the restart backoff even if a concurrent network-change
+            // event bumped verificationGeneration and invalidated the check
+            // below — otherwise a later transient breakage would needlessly
+            // wait out a stale (up to 5 min) backoff before recovering.
+            if (fresh) restartAttempts = 0
+            if (gen != verificationGeneration) return@postDelayed
+            if (fresh) {
                 lastError = null
                 recoveryNotificationGeneration++
                 notifyStateChanged()
