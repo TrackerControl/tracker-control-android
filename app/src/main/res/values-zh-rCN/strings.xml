@@ -265,7 +265,6 @@
     <string name="msg_wg_blocked_title">WireGuard 隧道不可用</string>
     <string name="msg_wg_blocked">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。</string>
     <string name="msg_wg_blocked_detail">在 WireGuard 启动或禁用 WireGuard 设置前互联网访问将被拦截。%s</string>
-    <string name="msg_wg_recovery_failed">WireGuard 在苏醒后停止响应。TrackerControl 正在尝试重新连接，网络连接可能保持阻止状态，直到WireGuard恢复为止。</string>
     <string name="summary_watchdog">定期检查TrackerControl是否仍在运行(输入零禁用此选项)。这可能会导致额外的电池使用。</string>
     <string name="summary_log_logcat">研究模式：已识别的追踪器会记录到 ADB 并启用 SNI 提取以更好地检测主机名。用 TC-Log 标签通过 adb logcat 获取日志。</string>
     <string name="msg_sure">你确定吗？</string>
