@@ -268,7 +268,6 @@
     <string name="msg_wg_blocked_title">Prehod WireGuard ni na voljo.</string>
     <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene.</string>
     <string name="msg_wg_blocked_detail">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene. %s</string>
-    <string name="msg_wg_recovery_failed">Po bujenju se je WireGuard prenehal odzivati.  TrackerControl se poizkuša ponovno povezati.  Dokler si WireGuard ne opomore bo dostop do interneta morda blokiran.</string>
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_log_logcat">Raziskovani način: prepoznani sledilce se beležijo v ADB in izločitev SNI je omogočena zaradi boljšega zaznavanja gostiteljskih imen.  Dnevnike lahko pridobite z \'adb logcat\' z uporabo oznake \'TC-Log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
