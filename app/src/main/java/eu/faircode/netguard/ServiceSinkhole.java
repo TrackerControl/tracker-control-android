@@ -112,6 +112,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -1819,6 +1820,7 @@ public class ServiceSinkhole extends VpnService {
     public static void prepareHostsBlocked(Context c) {
         BufferedReader br = null;
         InputStreamReader is = null;
+        boolean locked = false;
         File hosts = new File(c.getFilesDir(), "hosts.txt");
 
         try {
@@ -1839,6 +1841,7 @@ public class ServiceSinkhole extends VpnService {
             }
 
             lock.writeLock().lock();
+            locked = true;
             mapHostsBlocked.clear();
 
             int count = 0;
@@ -1853,7 +1856,9 @@ public class ServiceSinkhole extends VpnService {
                     String[] words = line.split("\\s+");
                     if (words.length == 2) {
                         count++;
-                        mapHostsBlocked.put(words[1], true);
+                        // Keyed lowercase to match TrackerList.findTracker(),
+                        // which normalises qnames before the hosts lookup.
+                        mapHostsBlocked.put(words[1].toLowerCase(Locale.ROOT), true);
                     } else
                         Log.i(TAG, "Invalid hosts file line: " + line);
                 }
@@ -1875,9 +1880,13 @@ public class ServiceSinkhole extends VpnService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            // Only unlock if we actually acquired the lock. Opening the hosts
+            // source above can throw before lock() runs, and an unconditional
+            // unlock would then raise IllegalMonitorStateException and crash the
+            // VPN service.
+            if (locked)
+                lock.writeLock().unlock();
         }
-
-        lock.writeLock().unlock();
 
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
@@ -2113,6 +2122,10 @@ public class ServiceSinkhole extends VpnService {
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
+    // Negative results (no tracker / no dname for an IP) are cached only
+    // briefly so a later-captured DNS mapping is picked up quickly, instead of
+    // staying invisible for the full DNS TTL (up to 7 days).
+    private static final long NEGATIVE_TRACKER_CACHE_TTL_MS = 60 * 1000L;
 
     public static void clearTrackerCaches() {
         ipToHost.clear();
@@ -2261,25 +2274,32 @@ public class ServiceSinkhole extends VpnService {
             if (dname == null) { // TODO: Note that this does not implement any SNI code
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                long time;
-                long ttl;
+                long now = new Date().getTime();
+                // Expiry of the DNS record the chosen dname/tracker came from;
+                // -1 until we lock onto a tracker row, so a host-only result can
+                // fall back to the first candidate row's expiry instead.
+                long chosenTime = -1;
+                long chosenTtl = -1;
+                long firstTime = now;
+                long firstTtl = 7 * 24 * 3600 * 1000L;
+                boolean sawFirstRow = false;
                 boolean sawTrackerEvidence = false;
                 boolean sawNonTrackerEvidence = false;
                 try (Cursor lookup = dh.getQAName(uid, daddr, true)) {
-                    time = new Date().getTime();
-                    ttl = 7 * 24 * 3600 * 1000L;
-
                     // Loop through all fresh DNS candidates for this IP and only fail closed
                     // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
                     if (lookup != null) {
                         while (lookup.moveToNext()) {
-                            // Get DNS expiry details
+                            // Get DNS expiry details for this candidate row
                             int colTime = lookup.getColumnIndex("time");
                             int colTTL = lookup.getColumnIndex("ttl");
-                            if (!lookup.isNull(colTime))
-                                time = lookup.getLong(colTime);
-                            if (!lookup.isNull(colTTL))
-                                ttl = lookup.getLong(colTTL);
+                            long rowTime = lookup.isNull(colTime) ? now : lookup.getLong(colTime);
+                            long rowTtl = lookup.isNull(colTTL) ? firstTtl : lookup.getLong(colTTL);
+                            if (!sawFirstRow) {
+                                firstTime = rowTime;
+                                firstTtl = rowTtl;
+                                sawFirstRow = true;
+                            }
 
                             // Check tracker
                             String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
@@ -2306,6 +2326,11 @@ public class ServiceSinkhole extends VpnService {
                                 if (tracker == null) {
                                     tracker = candidateTracker;
                                     dname = candidateDname;
+                                    // Expire the cache entry with the DNS record
+                                    // this tracker was derived from, not whatever
+                                    // row happened to be read last.
+                                    chosenTime = rowTime;
+                                    chosenTtl = rowTtl;
                                 }
                             } else if (qname != null || aname != null)
                                 sawNonTrackerEvidence = true;
@@ -2324,9 +2349,29 @@ public class ServiceSinkhole extends VpnService {
                 if (tracker == null)
                     tracker = NO_TRACKER;
 
+                // Choose the cache expiry:
+                long expiry;
+                if (dname == NO_DNAME) {
+                    // No DNS mapping was captured for this IP at all — the query
+                    // may have gone over DoT, arrived before the service
+                    // started, or been lost to a split TCP response. This is an
+                    // unconfident miss: re-check soon rather than caching it for
+                    // the full DNS TTL (up to 7 days), which would keep any
+                    // tracker traffic to this IP invisible and unblocked until
+                    // then.
+                    expiry = now + NEGATIVE_TRACKER_CACHE_TTL_MS;
+                } else {
+                    // DNS evidence exists (tracker or confident non-tracker);
+                    // expire with the record the decision was derived from, not
+                    // whatever row happened to be read last.
+                    expiry = (chosenTime >= 0)
+                            ? chosenTime + chosenTtl
+                            : firstTime + firstTtl;
+                }
+
                 // Save dname and tracker
-                ipToHost.put(daddr, new Expiring<>(dname, time + ttl));
-                ipToTracker.put(daddr, new Expiring<>(tracker, time + ttl));
+                ipToHost.put(daddr, new Expiring<>(dname, expiry));
+                ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
             }
 
             // Do not block based on IP-only tracker evidence.

@@ -12,6 +12,7 @@ const DNS_TYPE_AAAA: u16 = 28;
 const DNS_CLASS_IN: u16 = 1;
 
 const IP_PROTO_HOP_BY_HOP: u8 = 0;
+const IP_PROTO_TCP: u8 = 6;
 const IP_PROTO_UDP: u8 = 17;
 const IP_PROTO_ROUTING: u8 = 43;
 const IP_PROTO_FRAGMENT: u8 = 44;
@@ -21,7 +22,7 @@ pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
     if packet.is_empty() {
         return;
     }
-    let Some(payload) = udp_payload_from_dns_response(packet) else {
+    let Some(payload) = dns_message_from_response(packet) else {
         return;
     };
     for rr in parse_dns_answers(payload) {
@@ -33,21 +34,50 @@ pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
     }
 }
 
-fn udp_payload_from_dns_response(packet: &[u8]) -> Option<&[u8]> {
+/// Extracts the DNS message from a UDP:53 or TCP:53 response packet.
+///
+/// UDP responses carry the whole message in one datagram. TCP responses are a
+/// byte stream framed with a 2-byte length prefix; here we only see individual
+/// decrypted IP packets, not a reassembled stream, so we parse a TCP response
+/// only when a single segment carries the length prefix and the entire message
+/// that follows it. Responses split across segments (large answer sets, DNSSEC)
+/// are skipped rather than misparsed — best effort, but strictly more coverage
+/// than the UDP-only handling it replaces. Resolvers commonly fall back to TCP
+/// when a UDP answer is truncated, and without this those mappings were lost.
+fn dns_message_from_response(packet: &[u8]) -> Option<&[u8]> {
+    let (proto, segment) = transport_segment(packet)?;
+    match proto {
+        IP_PROTO_UDP => udp_dns_payload(segment),
+        IP_PROTO_TCP => tcp_dns_payload(segment),
+        _ => None,
+    }
+}
+
+/// Returns the (transport protocol, transport segment) for an IPv4/IPv6 packet,
+/// walking IPv6 extension headers. Only UDP and TCP are reported; per-protocol
+/// header validation is left to the payload extractors.
+fn transport_segment(packet: &[u8]) -> Option<(u8, &[u8])> {
     match packet[0] >> 4 {
         4 => {
             if packet.len() < 20 {
                 return None;
             }
             let ihl = ((packet[0] & 0x0f) as usize) * 4;
-            if ihl < 20 || packet.len() < ihl + 8 || packet[9] != IP_PROTO_UDP {
+            if ihl < 20 || packet.len() < ihl {
+                return None;
+            }
+            let proto = packet[9];
+            if proto != IP_PROTO_UDP && proto != IP_PROTO_TCP {
                 return None;
             }
             let mut total = u16::from_be_bytes([packet[2], packet[3]]) as usize;
             if total == 0 || total > packet.len() {
                 total = packet.len();
             }
-            udp_dns_payload(&packet[ihl..total])
+            if total < ihl {
+                return None;
+            }
+            Some((proto, &packet[ihl..total]))
         }
         6 => {
             if packet.len() < 40 {
@@ -61,11 +91,11 @@ fn udp_payload_from_dns_response(packet: &[u8]) -> Option<&[u8]> {
             let mut next = packet[6];
             let mut off = 40usize;
             loop {
-                if next == IP_PROTO_UDP {
-                    if total < off + 8 {
+                if next == IP_PROTO_UDP || next == IP_PROTO_TCP {
+                    if total < off {
                         return None;
                     }
-                    return udp_dns_payload(&packet[off..total]);
+                    return Some((next, &packet[off..total]));
                 }
                 if next == IP_PROTO_FRAGMENT {
                     return None;
@@ -94,6 +124,27 @@ fn udp_dns_payload(udp: &[u8]) -> Option<&[u8]> {
         return None;
     }
     Some(&udp[8..udp_len])
+}
+
+fn tcp_dns_payload(tcp: &[u8]) -> Option<&[u8]> {
+    if tcp.len() < 20 {
+        return None;
+    }
+    // Source port 53: this is a response from the resolver.
+    if u16::from_be_bytes([tcp[0], tcp[1]]) != 53 {
+        return None;
+    }
+    let data_off = ((tcp[12] >> 4) as usize) * 4;
+    if data_off < 20 || tcp.len() < data_off + 2 {
+        return None;
+    }
+    let msg = &tcp[data_off..];
+    let msg_len = u16::from_be_bytes([msg[0], msg[1]]) as usize;
+    // Only parse when the whole framed message is present in this segment.
+    if msg_len == 0 || msg.len() < 2 + msg_len {
+        return None;
+    }
+    Some(&msg[2..2 + msg_len])
 }
 
 fn is_ipv6_ext_header(next: u8) -> bool {
@@ -313,6 +364,32 @@ mod tests {
         packet
     }
 
+    fn ipv4_tcp(payload: &[u8]) -> Vec<u8> {
+        // payload is the TCP data (already framed with the 2-byte DNS length).
+        let tcp_hdr = 20;
+        let seg_len = tcp_hdr + payload.len();
+        let total = 20 + seg_len;
+        let mut packet = vec![0u8; total];
+        packet[0] = 0x45;
+        packet[2..4].copy_from_slice(&(total as u16).to_be_bytes());
+        packet[8] = 64;
+        packet[9] = IP_PROTO_TCP;
+        packet[12..16].copy_from_slice(&[10, 64, 0, 1]);
+        packet[16..20].copy_from_slice(&[10, 0, 0, 2]);
+        packet[20..22].copy_from_slice(&53u16.to_be_bytes()); // src port
+        packet[22..24].copy_from_slice(&12345u16.to_be_bytes()); // dst port
+        packet[32] = 5 << 4; // data offset = 5 words (20-byte header)
+        packet[40..].copy_from_slice(payload);
+        packet
+    }
+
+    fn tcp_dns_framed(msg: &[u8]) -> Vec<u8> {
+        let mut out = Vec::with_capacity(2 + msg.len());
+        out.extend_from_slice(&(msg.len() as u16).to_be_bytes());
+        out.extend_from_slice(msg);
+        out
+    }
+
     fn ipv6_udp_with_destination_options(payload: &[u8]) -> Vec<u8> {
         let udp_len = 8 + payload.len();
         let total_payload = 8 + udp_len;
@@ -388,7 +465,7 @@ mod tests {
         let mut packet = ipv4_udp(&msg);
         packet.extend_from_slice(&[0xaa, 0xbb, 0xcc]);
 
-        let payload = udp_payload_from_dns_response(&packet).expect("packet not recognized");
+        let payload = dns_message_from_response(&packet).expect("packet not recognized");
         assert_eq!(payload.len(), msg.len());
     }
 
@@ -400,7 +477,7 @@ mod tests {
         ]);
         let packet = ipv6_udp_with_destination_options(&msg);
 
-        let payload = udp_payload_from_dns_response(&packet).expect("packet not recognized");
+        let payload = dns_message_from_response(&packet).expect("packet not recognized");
         assert_eq!(payload.len(), msg.len());
     }
 
@@ -409,7 +486,40 @@ mod tests {
         let msg = dns_message(&[dns_question("tracker.example", DNS_TYPE_A)]);
         let mut packet = ipv6_udp_with_destination_options(&msg);
         packet[6] = IP_PROTO_FRAGMENT;
-        assert!(udp_payload_from_dns_response(&packet).is_none());
+        assert!(dns_message_from_response(&packet).is_none());
+    }
+
+    #[test]
+    fn parse_tcp_dns_response() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let packet = ipv4_tcp(&tcp_dns_framed(&msg));
+
+        let payload = dns_message_from_response(&packet).expect("tcp packet not recognized");
+        assert_eq!(payload, msg.as_slice());
+
+        let answers = parse_dns_answers(payload);
+        assert_eq!(answers.len(), 1);
+        assert_eq!(answers[0].qname, "tracker.example");
+        assert_eq!(answers[0].resource, "203.0.113.7");
+    }
+
+    #[test]
+    fn tcp_dns_partial_segment_is_skipped() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let mut framed = tcp_dns_framed(&msg);
+        // Claim a message longer than the segment actually carries: a response
+        // split across TCP segments must be skipped, not misparsed.
+        let claimed = (msg.len() as u16) + 10;
+        framed[0..2].copy_from_slice(&claimed.to_be_bytes());
+        let packet = ipv4_tcp(&framed);
+
+        assert!(dns_message_from_response(&packet).is_none());
     }
 
     #[test]
