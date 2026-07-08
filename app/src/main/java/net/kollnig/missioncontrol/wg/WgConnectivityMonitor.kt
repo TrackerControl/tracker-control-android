@@ -71,23 +71,36 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     private var initialProdTs: Long? = null
     private var numProds: Int = 0
 
+    /**
+     * True when the most recent [tick] observed the rx counter advancing —
+     * decrypted return traffic, the only signal that proves the data path
+     * works end to end. A completed handshake is NOT such proof (a path can
+     * pass handshakes yet drop transport packets), so recovery backoff resets
+     * key off this instead of handshake freshness.
+     */
+    var lastTickSawRx: Boolean = false
+        private set
+
     /** Seed the baseline counters at loop start (or after a tunnel restart). */
     fun seed(now: Long, stats: WgStats) {
         state = ConnState.Connecting(now, false, stats.rxBytes, stats.txBytes)
+        lastTickSawRx = false
         resetProd()
     }
 
     /** One poll. [stats] == null means the tunnel was torn down underneath us. */
     fun tick(now: Long, stats: WgStats?): WgVerdict {
+        lastTickSawRx = false
         if (stats == null) return WgVerdict.GONE
 
         if (stats.hasFreshHandshake) {
-            update(now, stats.rxBytes, stats.txBytes)
+            lastTickSawRx = update(now, stats.rxBytes, stats.txBytes)
             resetProd()
             return WgVerdict.HEALTHY
         }
 
         if (update(now, stats.rxBytes, stats.txBytes)) {
+            lastTickSawRx = true
             resetProd()
             return WgVerdict.HEALTHY
         }
@@ -201,7 +214,12 @@ internal class WgConnectivityMonitor(
     // period without one (tunnel start, or re-handshake after session expiry),
     // so listeners (e.g. the settings status line) can move from
     // "Handshaking" to "Connected" without polling.
-    private val onConnected: () -> Unit = {}
+    private val onConnected: () -> Unit = {},
+    // Fired on every poll that observed the rx counter advancing. This is the
+    // only end-to-end proof the data path works (handshake success is not:
+    // some paths pass handshakes but drop transport packets), so it is what
+    // recovery backoff resets must key off.
+    private val onRxAdvanced: () -> Unit = {}
 ) {
     private companion object {
         /** How often the loop samples the tunnel counters. */
@@ -264,6 +282,14 @@ internal class WgConnectivityMonitor(
                     return
                 }
                 WgVerdict.GONE -> return
+            }
+
+            if (checker.lastTickSawRx) {
+                try {
+                    onRxAdvanced()
+                } catch (e: Throwable) {
+                    Log.w(TAG, "onRxAdvanced threw", e)
+                }
             }
 
             // Announce on every no-session -> session transition, not just the

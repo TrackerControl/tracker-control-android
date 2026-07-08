@@ -250,7 +250,12 @@ object WgEgress {
                 statsProvider = { statsOrNull() },
                 prod = { try { tunnel?.sendKeepalive() } catch (e: Throwable) { Log.w(TAG, "prod keepalive threw", e) } },
                 onBroken = { onMonitorBroken() },
-                onConnected = { notifyStateChanged() }
+                onConnected = { notifyStateChanged() },
+                // Reset the restart backoff only on observed return traffic:
+                // a fresh handshake shortly after a restart is exactly the
+                // signal a handshake-passes-but-data-drops failure loop also
+                // produces, so resetting on it would defeat the backoff.
+                onRxAdvanced = { restartAttempts = 0 }
             ).also { it.start() }
         }
     }
@@ -308,7 +313,6 @@ object WgEgress {
             val latest = latestHandshakeMillisOrNull() ?: 0L
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
-                restartAttempts = 0
                 notifyStateChanged()
                 return@postDelayed
             }
@@ -549,12 +553,12 @@ object WgEgress {
         verifyHandler.postDelayed({
             val latest = latestHandshakeMillisOrNull() ?: 0L
             val fresh = latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS
-            // A confirmed-fresh handshake means the path is healthy right now,
-            // so clear the restart backoff even if a concurrent network-change
-            // event bumped verificationGeneration and invalidated the check
-            // below — otherwise a later transient breakage would needlessly
-            // wait out a stale (up to 5 min) backoff before recovering.
-            if (fresh) restartAttempts = 0
+            // Note: a fresh handshake deliberately does NOT reset the restart
+            // backoff. Handshake success is not proof the data path works
+            // (some paths pass handshakes but drop transport packets), and a
+            // failing restart loop produces this exact signal 3s after every
+            // restart, which used to defeat the backoff entirely. The monitor
+            // resets the backoff when it observes rx advancing instead.
             if (gen != verificationGeneration) return@postDelayed
             if (fresh) {
                 lastError = null

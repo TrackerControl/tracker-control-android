@@ -167,6 +167,57 @@ class WgConnectivityCheckerTest {
         assertEquals(0, prods)
     }
 
+    // --- rx-advance signal (drives recovery backoff reset) ----------------
+
+    /**
+     * lastTickSawRx must be true exactly when decrypted return traffic was
+     * observed — not on idle ticks, not on unanswered sends, and not on a
+     * fresh handshake alone. The restart backoff in WgEgress resets on this
+     * signal; if handshake freshness or plain HEALTHY verdicts set it, a
+     * handshake-passes-but-data-drops loop would restart at full tilt forever.
+     */
+    @Test
+    fun rxAdvanceIsOnlySignaledForReturnTraffic() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+        assertEquals(false, c.lastTickSawRx)
+
+        // Idle tick: healthy, but no rx observed.
+        c.tick(1000, stats(0, 0))
+        assertEquals(false, c.lastTickSawRx)
+
+        // Unanswered send: tx advances, still no rx.
+        c.tick(2000, stats(0, 10))
+        assertEquals(false, c.lastTickSawRx)
+
+        // Fresh handshake without payload rx: liveness, but not path proof.
+        c.tick(3000, stats(0, 20, freshHandshake = true))
+        assertEquals(false, c.lastTickSawRx)
+
+        // Return traffic arrives.
+        c.tick(4000, stats(50, 20))
+        assertEquals(true, c.lastTickSawRx)
+
+        // Back to idle: the flag reflects the latest tick only.
+        c.tick(5000, stats(50, 20))
+        assertEquals(false, c.lastTickSawRx)
+
+        // rx advancing during a fresh-handshake tick still counts.
+        c.tick(6000, stats(80, 30, freshHandshake = true))
+        assertEquals(true, c.lastTickSawRx)
+    }
+
+    /** A torn-down tunnel (null stats) never reports rx. */
+    @Test
+    fun rxAdvanceIsClearedOnGone() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+        c.tick(1000, stats(50, 10))
+        assertEquals(true, c.lastTickSawRx)
+        c.tick(2000, null)
+        assertEquals(false, c.lastTickSawRx)
+    }
+
     // --- teardown / doze -------------------------------------------------
 
     /** A torn-down tunnel (null stats) reports GONE. */
