@@ -268,7 +268,6 @@
     <string name="msg_wg_blocked_title">Тунель WireGuard недоступний</string>
     <string name="msg_wg_blocked">Доступ до Інтернету блокується, доки не запуститься WireGuard або налаштування WireGuard не буде вимкнено.</string>
     <string name="msg_wg_blocked_detail">Доступ до Інтернету заблоковано, доки не запуститься WireGuard або налаштування WireGuard не буде вимкнено. %s</string>
-    <string name="msg_wg_recovery_failed">WireGuard перестав відповідати після пробудження. TrackerControl намагається відновити підключення, і доступ до Інтернету може залишатися заблокованим, доки WireGuard не відновиться.</string>
     <string name="summary_watchdog">Періодично перевіряйте, чи TrackerControl все ще працює (введіть нуль, щоб вимкнути цю опцію). Це може призвести до додаткового споживання заряду акумулятора.</string>
     <string name="summary_log_logcat">Режим дослідження: виявлені трекери записуються в ADB, а для кращого виявлення імен хостів увімкнено вилучення SNI. Отримайте журнали за допомогою adb logcat, використовуючи тег «TC-Log».</string>
     <string name="msg_sure">Ви впевнені?</string>
