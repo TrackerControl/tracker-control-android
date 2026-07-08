@@ -112,6 +112,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -125,6 +126,14 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class ServiceSinkhole extends VpnService {
     private static final String TAG = "TrackerControl.VPN";
+
+    // Safety net for the per-command wakelock: a command that hangs or throws
+    // before reaching the release in CommandHandler's finally block (or a
+    // future code path that forgets to release) auto-releases instead of
+    // holding the CPU awake indefinitely. Generously covers the slowest
+    // legitimate case (WG config parse + bounded DNS resolve + handshake +
+    // the 3s handover-retry sleep) with margin.
+    private static final long WAKELOCK_TIMEOUT_MS = 30_000L;
 
     private boolean registeredUser = false;
     private boolean registeredIdleState = false;
@@ -259,6 +268,11 @@ public class ServiceSinkhole extends VpnService {
 
     /** Disable WG egress and close the socketpair write end. Idempotent. */
     private native void jni_wireguard_stop();
+
+    /** Tell the C layer whether WG egress is wanted. While required but not
+     *  running (restart window, failed start) hijack-eligible traffic is
+     *  dropped instead of forwarded directly, so restarts never leak. */
+    private native void jni_wireguard_required(boolean required);
 
     private native void jni_done(long context);
 
@@ -517,9 +531,6 @@ public class ServiceSinkhole extends VpnService {
                         !prefs.getBoolean("enabled", false) &&
                         !prefs.getBoolean("show_stats", false))
                     stopForeground(true);
-
-                // Request garbage collection
-                System.gc();
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
@@ -681,6 +692,7 @@ public class ServiceSinkhole extends VpnService {
                 // VPN off, OS is killing us, etc.) so WG should not survive.
                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
                         () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+                jni_wireguard_required(false);
                 clearWireGuardErrorNotification();
                 unprepare();
 
@@ -1689,6 +1701,11 @@ public class ServiceSinkhole extends VpnService {
         // same TUN fd is a no-op, so reload-induced "Native restart"
         // calls (where the VPN PFD is reused) won't re-handshake WG.
         // It also handles the disable case internally — no need to gate.
+        net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.setRecoveryCallbacks(
+                () -> ServiceSinkhole.reload("wireguard connectivity repair", ServiceSinkhole.this, false),
+                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
+        jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
+                && !TextUtils.isEmpty(prefs.getString("wg_config", "")));
         boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
                 prefs.getBoolean("wg_enabled", false),
                 prefs.getString("wg_config", ""),
@@ -1773,9 +1790,7 @@ public class ServiceSinkhole extends VpnService {
                 true,
                 wgConfig,
                 interactive,
-                keepaliveAlwaysOn,
-                () -> ServiceSinkhole.reload("wireguard wake repair", ServiceSinkhole.this, false),
-                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
+                keepaliveAlwaysOn);
     }
 
     private void unprepare() {
@@ -1805,6 +1820,7 @@ public class ServiceSinkhole extends VpnService {
     public static void prepareHostsBlocked(Context c) {
         BufferedReader br = null;
         InputStreamReader is = null;
+        boolean locked = false;
         File hosts = new File(c.getFilesDir(), "hosts.txt");
 
         try {
@@ -1825,6 +1841,7 @@ public class ServiceSinkhole extends VpnService {
             }
 
             lock.writeLock().lock();
+            locked = true;
             mapHostsBlocked.clear();
 
             int count = 0;
@@ -1839,7 +1856,9 @@ public class ServiceSinkhole extends VpnService {
                     String[] words = line.split("\\s+");
                     if (words.length == 2) {
                         count++;
-                        mapHostsBlocked.put(words[1], true);
+                        // Keyed lowercase to match TrackerList.findTracker(),
+                        // which normalises qnames before the hosts lookup.
+                        mapHostsBlocked.put(words[1].toLowerCase(Locale.ROOT), true);
                     } else
                         Log.i(TAG, "Invalid hosts file line: " + line);
                 }
@@ -1861,9 +1880,13 @@ public class ServiceSinkhole extends VpnService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            // Only unlock if we actually acquired the lock. Opening the hosts
+            // source above can throw before lock() runs, and an unconditional
+            // unlock would then raise IllegalMonitorStateException and crash the
+            // VPN service.
+            if (locked)
+                lock.writeLock().unlock();
         }
-
-        lock.writeLock().unlock();
 
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
@@ -2099,6 +2122,10 @@ public class ServiceSinkhole extends VpnService {
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
+    // Negative results (no tracker / no dname for an IP) are cached only
+    // briefly so a later-captured DNS mapping is picked up quickly, instead of
+    // staying invisible for the full DNS TTL (up to 7 days).
+    private static final long NEGATIVE_TRACKER_CACHE_TTL_MS = 60 * 1000L;
 
     public static void clearTrackerCaches() {
         ipToHost.clear();
@@ -2247,25 +2274,32 @@ public class ServiceSinkhole extends VpnService {
             if (dname == null) { // TODO: Note that this does not implement any SNI code
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                long time;
-                long ttl;
+                long now = new Date().getTime();
+                // Expiry of the DNS record the chosen dname/tracker came from;
+                // -1 until we lock onto a tracker row, so a host-only result can
+                // fall back to the first candidate row's expiry instead.
+                long chosenTime = -1;
+                long chosenTtl = -1;
+                long firstTime = now;
+                long firstTtl = 7 * 24 * 3600 * 1000L;
+                boolean sawFirstRow = false;
                 boolean sawTrackerEvidence = false;
                 boolean sawNonTrackerEvidence = false;
                 try (Cursor lookup = dh.getQAName(uid, daddr, true)) {
-                    time = new Date().getTime();
-                    ttl = 7 * 24 * 3600 * 1000L;
-
                     // Loop through all fresh DNS candidates for this IP and only fail closed
                     // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
                     if (lookup != null) {
                         while (lookup.moveToNext()) {
-                            // Get DNS expiry details
+                            // Get DNS expiry details for this candidate row
                             int colTime = lookup.getColumnIndex("time");
                             int colTTL = lookup.getColumnIndex("ttl");
-                            if (!lookup.isNull(colTime))
-                                time = lookup.getLong(colTime);
-                            if (!lookup.isNull(colTTL))
-                                ttl = lookup.getLong(colTTL);
+                            long rowTime = lookup.isNull(colTime) ? now : lookup.getLong(colTime);
+                            long rowTtl = lookup.isNull(colTTL) ? firstTtl : lookup.getLong(colTTL);
+                            if (!sawFirstRow) {
+                                firstTime = rowTime;
+                                firstTtl = rowTtl;
+                                sawFirstRow = true;
+                            }
 
                             // Check tracker
                             String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
@@ -2292,6 +2326,11 @@ public class ServiceSinkhole extends VpnService {
                                 if (tracker == null) {
                                     tracker = candidateTracker;
                                     dname = candidateDname;
+                                    // Expire the cache entry with the DNS record
+                                    // this tracker was derived from, not whatever
+                                    // row happened to be read last.
+                                    chosenTime = rowTime;
+                                    chosenTtl = rowTtl;
                                 }
                             } else if (qname != null || aname != null)
                                 sawNonTrackerEvidence = true;
@@ -2310,9 +2349,29 @@ public class ServiceSinkhole extends VpnService {
                 if (tracker == null)
                     tracker = NO_TRACKER;
 
+                // Choose the cache expiry:
+                long expiry;
+                if (dname == NO_DNAME) {
+                    // No DNS mapping was captured for this IP at all — the query
+                    // may have gone over DoT, arrived before the service
+                    // started, or been lost to a split TCP response. This is an
+                    // unconfident miss: re-check soon rather than caching it for
+                    // the full DNS TTL (up to 7 days), which would keep any
+                    // tracker traffic to this IP invisible and unblocked until
+                    // then.
+                    expiry = now + NEGATIVE_TRACKER_CACHE_TTL_MS;
+                } else {
+                    // DNS evidence exists (tracker or confident non-tracker);
+                    // expire with the record the decision was derived from, not
+                    // whatever row happened to be read last.
+                    expiry = (chosenTime >= 0)
+                            ? chosenTime + chosenTtl
+                            : firstTime + firstTtl;
+                }
+
                 // Save dname and tracker
-                ipToHost.put(daddr, new Expiring<>(dname, time + ttl));
-                ipToTracker.put(daddr, new Expiring<>(tracker, time + ttl));
+                ipToHost.put(daddr, new Expiring<>(dname, expiry));
+                ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
             }
 
             // Do not block based on IP-only tracker evidence.
@@ -2929,10 +2988,27 @@ public class ServiceSinkhole extends VpnService {
         networkCallback = nc;
     }
 
-    private void reloadAfterNetworkChange(String reason) {
-        if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
-            net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
-        reload(reason, ServiceSinkhole.this, false);
+    // Network flapping (Wi-Fi<->cellular handoffs, DHCP renewals) fires several
+    // ConnectivityManager callbacks within milliseconds of each other. Each
+    // reload is a foreground-service update + wakelock + native VPN restart +
+    // WireGuard rebind, so bursts are coalesced into a single reload using the
+    // last reason once the burst settles. Every reason string currently in use
+    // maps to the same shouldRestartWireGuard()==true branch, so collapsing to
+    // the latest reason changes no behaviour beyond the log line.
+    private static final long NETWORK_RELOAD_DEBOUNCE_MS = 1500L;
+    private static final Object NETWORK_RELOAD_TOKEN = new Object();
+    private final Handler networkReloadDebounceHandler = new Handler(Looper.getMainLooper());
+
+    private void reloadAfterNetworkChange(final String reason) {
+        networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+        networkReloadDebounceHandler.postAtTime(new Runnable() {
+            @Override
+            public void run() {
+                if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+                    net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
+                reload(reason, ServiceSinkhole.this, false);
+            }
+        }, NETWORK_RELOAD_TOKEN, SystemClock.uptimeMillis() + NETWORK_RELOAD_DEBOUNCE_MS);
     }
 
     private void listenConnectivityChanges() {
@@ -3012,8 +3088,8 @@ public class ServiceSinkhole extends VpnService {
             return START_STICKY;
         }
 
-        // Keep awake
-        getLock(this).acquire();
+        // Keep awake (bounded: see WAKELOCK_TIMEOUT_MS)
+        getLock(this).acquire(WAKELOCK_TIMEOUT_MS);
 
         // Get state
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -3087,10 +3163,16 @@ public class ServiceSinkhole extends VpnService {
         synchronized (this) {
             Log.i(TAG, "Destroy");
 
-            // Flush any pending log entries before shutdown
+            // Flush any pending batched writes before shutdown
             DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-            if (dh != null)
+            if (dh != null) {
                 dh.flushLogBatch();
+                dh.flushAccessBatch();
+                dh.flushUsageBatch();
+            }
+
+            // Cancel any debounced network-change reload so it doesn't fire post-teardown
+            networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
 
             commandLooper.quit();
             logLooper.quit();

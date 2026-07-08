@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,6 +106,13 @@ public class TrackerList {
      * @return A {@link Tracker} object, if host is null, null otherwise
      */
     public static Tracker findTracker(@NonNull String hostname) {
+        // DNS is case-insensitive, but the tracker/hosts lists are keyed in
+        // lowercase and qnames are stored as they appear on the wire. Without
+        // normalising here, a query for Graph.Facebook.Com — whether a
+        // deliberate evasion or a resolver using 0x20 case randomisation —
+        // would slip past detection and blocking.
+        hostname = hostname.toLowerCase(Locale.ROOT);
+
         Tracker t = null;
 
         if (hostnameToTracker.containsKey(hostname)) {

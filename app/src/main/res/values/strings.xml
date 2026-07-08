@@ -205,6 +205,7 @@
     <string name="summary_wg_status_off">Off</string>
     <string name="summary_wg_status_missing_config">Off — no config set</string>
     <string name="summary_wg_status_connected">Connected</string>
+    <string name="summary_wg_status_handshaking">Handshaking…</string>
     <string name="summary_wg_status_blocked">Blocked — %s</string>
     <string name="summary_wg_status_starting">Starting</string>
     <string name="summary_vpn_key_rotate_now">Force Mullvad and IVPN WireGuard key rotation for debugging</string>
@@ -289,7 +290,7 @@
     <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
     <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
     <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>
-    <string name="msg_wg_recovery_failed">WireGuard stopped responding after wake. TrackerControl is trying to reconnect, and internet access may remain blocked until WireGuard recovers.</string>
+    <string name="msg_wg_recovery_failed">WireGuard stopped responding. TrackerControl is trying to reconnect, and internet access may remain blocked until WireGuard recovers.</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>
 

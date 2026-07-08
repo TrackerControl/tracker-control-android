@@ -21,13 +21,26 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Set up Rust
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
+          cargo install cargo-ndk
+
+      - name: Cache cargo registry and build
+        uses: actions/cache@v4
         with:
-          go-version: '1.25'
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            wgbridge-rs/target
+          key: cargo-${{ runner.os }}-${{ hashFiles('wgbridge-rs/Cargo.lock') }}
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Rust unit tests
+        run: cargo test --manifest-path wgbridge-rs/Cargo.toml
 
       - name: Run unit tests
         run: ./gradlew testGithubDebugUnitTest

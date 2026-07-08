@@ -134,6 +134,11 @@ In combination with F-Droid, this repository uses automated builds and follows a
 You need:
 - Android Studio (with the Android SDK and build tools)
 - Android NDK (any recent version)
+- Rust via [rustup](https://rustup.rs) with the Android targets, for the WireGuard engine ([gotatun](https://github.com/mullvad/gotatun), built from source in `wgbridge-rs/`):
+  ```bash
+  rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
+  cargo install cargo-ndk
+  ```
 
 Build from within Android Studio, or use the provided gradle wrapper — see the [Android developer documentation](https://developer.android.com/studio/build/building-cmdline). If you find any problems with these instructions, please file an issue.
 
@@ -196,6 +201,8 @@ The app builds on a range of publicly available resources:
 - *DuckDuckGo Tracker Radar:* some data from [tracker-radar](https://github.com/duckduckgo/tracker-radar), at the heart of DuckDuckGo's tracking analysis.
 - *DuckDuckGo App Exclusions:* the Minimal blocking mode's excluded-apps list (browsers, system services, known incompatible apps) is derived from DuckDuckGo's [privacy-configuration](https://github.com/duckduckgo/privacy-configuration) (Apache 2.0).
 - *DuckDuckGo App Tracking Protection:* Blocking and battery optimisations are informed by DuckDuckGo's [App Tracking Protection](https://github.com/duckduckgo/Android) (Apache 2.0).
+- *WireGuard Connectivity Monitor:* the tunnel liveness state machine is adapted from the `talpid-wireguard` connectivity monitor in [Mullvad's VPN app](https://github.com/mullvad/mullvadvpn-app) (MPL-2.0).
+- *WireGuard Engine:* the feature VPN tunnel is powered by [GotaTun](https://github.com/mullvad/gotatun), Mullvad's Rust implementation of the WireGuard® protocol (MPL-2.0).
 
 ## License
 
