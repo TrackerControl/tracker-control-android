@@ -3,7 +3,7 @@
     <string name="app_description">TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner (\"sporing\").</string>
     <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
-    <string name="app_eula" formatted="false">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
+    <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
     <string name="channel_foreground">Kjørende tjenester</string>
     <string name="channel_notify">Generelle varsler</string>
@@ -255,40 +255,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Forespørsel om GDPR-datatilgang</string>
-    <string name="body_request_data"><![CDATA[Til de det måtte gjelde:\n
-\n
-\n
-Jeg ber deg, som datakontrolleren for Android-appen %1$s (ID: %2$s), å bekrefte om den behandler personopplysninger om meg.\n
-Dersom dette er tilfelle, vennligst oppgi alle påkrevde opplysninger angitt i artikkel 15 i EUs generelle personvernforordning (GDPR), inkludert:\n
-\n
-• En kopi av mine personopplysninger;\n
-• Formålene med behandlingen;\n
-• Kategoriene av personlige opplysninger.\n
-• Hvilke mottakerne du deler mine personopplysninger med og sikkerhetsanordningene du bruker.\n
-• Oppbevaringsperioden du lagrer mine personlige data eller kriteriene som brukes for å bestemme denne perioden.\n
-• informasjon om kilden til min personlige data; og\n
-• Om det finnes automatiserte beslutninger (inkludert profilering), og hvis det:\n
-    - logikken som er involvert i beslutningsprosessen;\n
-    - betydningen og den planlagte konsekvensen for meg;\n
-    - trinnene du har iverksatt for å forhindre feil, fornemmelse og diskriminering. og\n
-    - forklare hvordan jeg kan uttrykke mitt syn på og utfordre en avgjørelse.\n
-\n
-Denne forespørselen er knyttet til enhver behandling av mine personlige data fra deg, inkludert alle behandlere som behandler personopplysninger på vegne av deg.\n
-\n
-Oppgi ditt svar på en sikkert måte via e-post. Jeg ser frem til å motta svar innen en måned etter at du har mottatt min forespørsel.\n
-\n
-Vennlig hilsen\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Til den det måtte gjelde:\n
-\n
-\n
-Jeg påberoper meg retten til å slettes som angitt i artikkel 17 i EUs generelle personvernforordning (GDPR). Jeg ber deg, som datakontrolleren for Android-appen %1$s (ID: %2$s), å slette følgende personopplysninger den behandler om meg uten unødvendig forsinkelse:\n
-• Alle data.\n
-\n
-Bakgrunnen for min fjerning er at jeg trekker tilbake eller har trukket tilbake mitt samtykke til behandling av disse personlige dataene. Denne forespørselen omhandler all behandling av mine personlige opplysninger fra deg, inkludert eventuelle behandlere som behandler personopplysninger på vegne av deg.\n
-\n
-Vennligst oppgi ditt svar på en sikker måte via e-post. Jeg ser frem til å motta svar innen en måned etter at du har mottatt min forespørsel.\n
-\n
-Vennlig hilsen,\n\n]]></string>
     <string name="crash_dialog_text">Beklager. TrackerControl krasjet nettopp.. Kan du tenke deg å sende oss en e-post med detaljer?</string>
     <string name="crash_dialog_comment">Eventuelle kommentarer?</string>
     <string name="instructions_monitoring_private_dns">Slå av/på bryteren og bruk noen apper. Privat DNS må deaktiveres.</string>
