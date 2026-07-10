@@ -4,7 +4,7 @@
     <string name="app_copyright">Copyright \u00A9 2019–2025 Konrad Kollnig\n\nTrackerControl perustuu Marcel Bokhorstin (M66B) kehittämään NetGuardiin.</string>
     <string name="app_android">TrackerControl vaatii Android 5,1 tai uudemman</string>
     <string name="app_xposed">Xposed aiheuttaa liikaa kaatumisia, mikä voi johtaa TrackerControlin poistamiseen Google Play kaupasta, joten TrackerControlia ei tueta, kun Xposed on asennettu</string>
-    <string name="app_eula" formatted="false">Tämän sovelluksen käyttö on omalla vastuullasi. Mikään sovellus ei voi tarjota 100% suojaa seurantaa vastaan.</string>
+    <string name="app_eula">Tämän sovelluksen käyttö on omalla vastuullasi. Mikään sovellus ei voi tarjota 100% suojaa seurantaa vastaan.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Yksityisyydensuoja</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Evästekäytäntö</a></string>
     <string name="channel_foreground">Käynnissä olevat palvelut</string>
     <string name="channel_notify">Yleiset ilmoitukset</string>
@@ -275,40 +275,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR-aihepyyntö</string>
-    <string name="body_request_data"><![CDATA[Arvoisa vastaanottaja:\n
-\n
-\n
-Pyydän teitä, Android-sovelluksen %1$s (ID: %2$s), tietojen valvojana, vahvistamaan, käsitteleekö sovellus minua koskevia henkilötietoja.\n
-Jos näin on, toimittakaa minulle kaikki EU:n yleisen tietosuoja-asetuksen (GDPR) 15 artiklassa vaaditut tiedot, mukaan lukien:\n
-\n
-• kopio henkilötiedoistani;\n
-• käsittelyn tarkoitukset;\n
-• kyseessä olevien henkilötietojen luokat;\n
-• vastaanottajat, joille luovutatte henkilötietojani, ja tarjoamanne suojatoimet;\n
-• henkilötietojeni säilytysaika tai tämän ajan määrittämisessä käytetyt kriteerit;\n
-•tiedot henkilötietojeni lähteestä; ja\n
-•automaattisen päätöksenteon (mukaan lukien profilointi) olemassaolo ja, jos on:\n
-    - päätöksentekoprosessissa käytetty logiikka;\n
-    - merkitys ja minulle aiheutuvat ennakoidut seuraukset;\n
-    -toimenpiteet, joihin olette ryhtyneet virheiden, puolueellisuuden ja syrjinnän estämiseksi; ja\n
-    - selitys siitä, miten voin ilmaista näkemykseni ja riitauttaa päätöksen.\n
-\n
-Tämä pyyntö koskee kaikkia henkilötietojeni käsittelyä, mukaan lukien kaikki henkilötietojen käsittelyn suorittajat, jotka käsittelevät henkilötietoja puolestanne.\n
-\n
-Vastatkaa pyyntööni turvallisella tavalla sähköpostitse. Odotan vastausta kuukauden kuluessa pyyntöni vastaanottamisesta.\n
-\n
-Ystävällisin terveisin,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[Arvoisa vastaanottaja:\n
-\n
-\n
-Käytän EU:n yleisen tietosuoja-asetuksen (GDPR) 17 artiklassa määriteltyä oikeuttani tietojen poistamiseen. Pyydän teitä, Android-sovelluksen %1$s (tunnus: %2$s) rekisterinpitäjänä, poistamaan seuraavat minua koskevat henkilötiedot viipymättä:\n
-• Kaikki tiedot.\n
-\n
-Pyydän tietojen poistamista, koska peruutan tai olen peruuttanut suostumukseni henkilötietojeni käsittelyyn. Tämä pyyntö koskee kaikkia henkilötietojeni käsittelyjä, mukaan lukien kaikki teidän puolestanne henkilötietoja käsittelevät alihankkijat.\n
-\n
-Pyydän teitä vastaamaan turvallisella tavalla sähköpostitse. Odotan vastausta kuukauden kuluessa pyyntöni vastaanottamisesta.\n
-\n
-Ystävällisin terveisin,\n\n]]></string>
     <string name="crash_dialog_text">Anteeksi. TrackerControl kaatui juuri. Haluaisitko lähettää meille sähköpostia yksityiskohdilla?</string>
     <string name="crash_dialog_comment">Kommentteja?</string>
     <string name="instructions_monitoring_private_dns">Vaihda kytkintä ja ole vuorovaikutuksessa joidenkin sovellusten kanssa. Yksityinen DNS on poistettava käytöstä.</string>
