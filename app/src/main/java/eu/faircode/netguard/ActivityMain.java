@@ -384,6 +384,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         vpnContainer = findViewById(R.id.vpnContainer);
         bottomNav = findViewById(R.id.bottomNav);
 
+        // Pad the bottom navigation by the system bar insets so it isn't
+        // obscured by the gesture/navigation bar on API 35+ edge-to-edge
+        final int bottomNavInitialLeft = bottomNav.getPaddingLeft();
+        final int bottomNavInitialTop = bottomNav.getPaddingTop();
+        final int bottomNavInitialRight = bottomNav.getPaddingRight();
+        final int bottomNavInitialBottom = bottomNav.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bottomNavInitialLeft + sysBars.left, bottomNavInitialTop,
+                    bottomNavInitialRight + sysBars.right, bottomNavInitialBottom + sysBars.bottom);
+            return insets;
+        });
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
