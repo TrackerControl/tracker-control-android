@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_description">TrackerControl ermöglicht es Benutzern, die weit verbreitete, laufende, versteckte Datenerfassung in mobilen Apps über das Benutzerverhalten („Tracking“) zu überwachen und zu steuern.</string>
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl basiert auf NetGuard, entwickelt von Marcel Bokhorst (M66B).</string>
     <string name="app_android">TrackerControl erfordert Android 5.1 oder höher</string>
     <string name="app_xposed">Xposed verursacht sehr viele Abstürze, was dazu führen kann, dass TrackerControl aus dem Google Play Store entfernt werden könnte, deshalb wird TrackerControl nicht unterstützt, solange Xposed installiert ist</string>
     <string name="app_eula">Die Nutzung dieser App erfolgt auf eigenes Risiko. Keine App kann vollständigen Schutz vor Tracking garantieren.</string>
@@ -13,18 +14,35 @@
     <string name="menu_app_user">Benutzer-Apps anzeigen</string>
     <string name="menu_app_system">System-Apps anzeigen</string>
     <string name="menu_app_nointernet">Anwendungen ohne Internet anzeigen</string>
+    <string name="menu_app_unprotected">Nur ungeschützte Apps anzeigen</string>
+    <string name="menu_app_frozen">Eingefrorene Apps anzeigen</string>
     <string name="menu_sort">Apps sortieren</string>
     <string name="menu_sort_name">Nach Name sortieren</string>
     <string name="menu_sort_uid">Nach UID sortieren</string>
     <string name="menu_sort_companies_week">Nach Unternehmen sortieren (Woche)</string>
     <string name="menu_sort_companies">Nach Unternehmen sortieren</string>
+    <string name="menu_sort_by_latest_detected_tracker">Nach zuletzt erkannten Tracker sortieren</string>
     <string name="menu_log">Traffic-Log</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_invite">Einladen</string>
     <string name="menu_legend">Legende</string>
     <string name="menu_support">Diese App unterstützen</string>
     <string name="menu_log_support">Erläuterungen</string>
+    <string name="menu_troubleshooting">Fehlerbehebung</string>
     <string name="menu_about">Über</string>
+    <string name="menu_timeline">Tracker-Aktivitäten</string>
+    <string name="title_tracker_activity">Tracker-Aktivitäten</string>
+    <string name="timeline_empty_disabled_subtitle">TrackerControl mit dem Schalter oben rechts aktivieren. Die Tracker-Aktivitäten Ihrer Apps werden dann hier angezeigt.</string>
+    <string name="timeline_open_app">Eine App öffnen</string>
+    <string name="tab_apps">Apps</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="timeline_section_today">Heute</string>
+    <string name="timeline_section_yesterday">Gestern</string>
+    <string name="timeline_section_this_week">Diese Woche</string>
+    <string name="timeline_tracker_blocked">Blockiert</string>
+    <string name="timeline_tracker_allowed">Zugelassen</string>
+    <string name="troubleshooting_title">Fehlerbehebung</string>
+    <string name="troubleshooting_alwayson_action">Öffne VPN-Einstellungen</string>
     <string name="menu_apps">Andere Apps</string>
     <string name="menu_protocol_other">Anderes</string>
     <string name="menu_traffic_allowed">Zugelassen</string>
@@ -54,6 +72,8 @@
     <string name="setting_ip6">IPv6-Datenverkehr aktivieren</string>
     <string name="setting_call">Bei Anruf deaktivieren</string>
     <string name="setting_reload_onconnectivity">Bei jeder Verbindungsänderung neu laden</string>
+    <string name="setting_advanced_options">Erweiterte Optionen (für Experten)</string>
+    <string name="setting_system">System-Apps anzeigen</string>
     <string name="setting_log_app">Neue Tracker suchen</string>
     <string name="setting_filter">Tracker blockieren</string>
     <string name="setting_handover">Nahtlose VPN-Übergabe beim Neuladen</string>
@@ -73,6 +93,9 @@
     <string name="setting_socks5_port">SOCKS5-Port: %s</string>
     <string name="setting_socks5_username">SOCKS5-Benutzername: %s</string>
     <string name="setting_socks5_password">SOCKS5-Passwort: %s</string>
+    <string name="setting_wg_config">WireGuard-Konfiguration</string>
+    <string name="setting_wg_profile">WireGuard-Profil</string>
+    <string name="setting_wg_status">Status</string>
     <string name="setting_pcap_record_size">PCAP Aufnahmegröße: %s B</string>
     <string name="setting_pcap_file_size">PCAP max. Dateigröße: %s MB</string>
     <string name="setting_watchdog">Watchdog: alle %s Minuten</string>
@@ -343,8 +366,6 @@ Sincerely,\n\n]]></string>
     <string name="summary_domain_based_blocking">Ermöglicht eine präzisere Blockierung. Derzeit in der Entwicklung.</string>
     <string name="untap_unblock">Tipp: Sie können einzelne Einträge durch Tippen aufheben.</string>
     <string name="uncertain_entry">Mit einem \'*\' markierte Einträge könnten aufgrund von Android-Einschränkungen ungenau sein. Dies bedeutet in der Regel, dass ein Unternehmen dieselbe IP-Adresse unter verschiedenen Domains verwendet, aber kann auch bedeuten, dass verschiedene Unternehmen die gleiche IP-Adresse verwenden (z. B. wenn sie ein Content Delivery Network verwenden).</string>
-    <string name="browsers_not_supported">Browser werden nicht unterstützt: ⚠️</string>
-    <string name="browsers_not_supported_explanation">Dies scheint eine Browser-App zu sein.\n\nDas Blockieren von Trackern in Browsern wird von TrackerControl nicht unterstützt. Verwenden Sie stattdessen einen Browser mit integrierter Anti-Tracking Funktion, um eine bessere Blockierung zu erhalten.\n\nZum Beispiel: Mozilla Fennec</string>
     <string name="static_analysis">Tracker im App-Code erkennen</string>
     <string name="failed_loading_cached_analysis">Laden der zwischengespeicherten Tracker-Ergebnisse fehlgeschlagen. Bitte melden Sie dies dem Entwickler unter hello@trackercontrol.org</string>
     <string name="msg_notifications">Tippen, um Benachrichtigungen zu erlauben (für Fehlermeldungen, etc.)</string>

@@ -82,7 +82,6 @@
     <string name="setting_watchdog">Watchdog: a cada %s de minutos</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">DNS seguro (DoH)</string>
-    <string name="summary_doh_enabled">Encriptar consultas DNS utilizando DNS por HTTPS. Aplica-se a todas as aplicações.</string>
     <string name="warning_beta">Funcionalidade beta. Pode não funcionar como esperado.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">URL HTTPS para consultas DNS por HTTPS</string>
