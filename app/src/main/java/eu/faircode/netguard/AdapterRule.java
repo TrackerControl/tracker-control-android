@@ -62,7 +62,9 @@ import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> implements Filterable {
     private static final String TAG = "TrackerControl.Adapter";
@@ -78,8 +80,13 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private boolean wifiActive = true;
     private boolean otherActive = true;
     private boolean live = true;
+    private final Context appContext;
     private List<Rule> listAll = new ArrayList<>();
     private List<Rule> listFiltered = new ArrayList<>();
+    // Full installed-app set used only for search, so apps hidden from the visible
+    // list by the display filters remain reachable (#420, #483). Built lazily and
+    // invalidated whenever the visible list is replaced.
+    private List<Rule> searchPool = null;
     private int iconSize;
     private final RequestOptions glideOptions;
     private String cachedSort;
@@ -106,6 +113,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
     public AdapterRule(Context context, View anchor) {
         this.anchor = anchor;
+        this.appContext = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         this.glideOptions = new RequestOptions().format(DecodeFormat.PREFER_RGB_565);
 
@@ -147,6 +155,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
     public void set(List<Rule> listRule) {
         listAll = listRule;
+        searchPool = null; // rebuilt lazily on next search
         List<Rule> oldList = listFiltered;
         listFiltered = new ArrayList<>(listRule);
         DiffUtil.DiffResult result = DiffUtil.calculateDiff(new RuleDiffCallback(oldList, listFiltered));
@@ -379,23 +388,52 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         }
     }
 
+    /**
+     * The set searched by the search box. It is the visible list plus every other installed
+     * app, so apps hidden by the display filters (system / frozen / no-internet) but still
+     * routed and filtered by TC can be found and configured (#420, #483). Visible apps keep
+     * their fully-populated rules (with tracker counts); hidden apps are added as lightweight
+     * stubs. Built once per visible-list update and cached.
+     */
+    private synchronized List<Rule> getSearchPool() {
+        if (searchPool != null)
+            return searchPool;
+
+        List<Rule> pool = new ArrayList<>(listAll);
+        Set<String> present = new HashSet<>();
+        for (Rule rule : listAll)
+            present.add(rule.packageName);
+        try {
+            for (Rule stub : Rule.getSearchStubs(appContext))
+                if (!present.contains(stub.packageName))
+                    pool.add(stub);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+
+        searchPool = pool;
+        return pool;
+    }
+
     @Override
     public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence query) {
                 List<Rule> listResult = new ArrayList<>();
-                if (query == null)
+                String queryStr = query == null ? "" : query.toString().toLowerCase().trim();
+                if (queryStr.isEmpty())
                     listResult.addAll(listAll);
                 else {
-                    String queryStr = query.toString().toLowerCase().trim();
                     int uid;
                     try {
                         uid = Integer.parseInt(queryStr);
                     } catch (NumberFormatException ignore) {
                         uid = -1;
                     }
-                    for (Rule rule : listAll)
+                    // Search the full installed-app set, not just the visible list, so hidden
+                    // but filtered apps stay reachable (#420, #483).
+                    for (Rule rule : getSearchPool())
                         if (rule.uid == uid ||
                                 rule.packageName.toLowerCase().contains(queryStr) ||
                                 (rule.name != null && rule.name.toLowerCase().contains(queryStr)))

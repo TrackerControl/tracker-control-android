@@ -513,6 +513,52 @@ public class Rule {
         }
     }
 
+    /**
+     * Build a lightweight list of rules for ALL installed applications, for search only.
+     *
+     * The visible list built by {@link #getRules} applies the show_system / show_frozen /
+     * show_nointernet display filters. An app hidden by those filters (e.g. an OEM-preinstalled
+     * app that TC routes because "include system apps" is on, a frozen package, or a shared-UID
+     * sibling) can still be routed through the tun and filtered/blocked by UID, yet be absent
+     * from the list and therefore unreachable — the user cannot open it to add an exception or
+     * exclude it. That is the "blocked but not listed" breakage reported in issues #420
+     * (Instagram) and #483 (Feeder), whose only workaround is disabling TC entirely.
+     *
+     * Search therefore must reach every installed app, not just the currently-visible subset.
+     * This intentionally skips the expensive / side-effecting work in getRules (tracker counts,
+     * default seeding, sorting, snackbars): stubs only need enough to be matched by the search
+     * filter and to open the per-app details screen (name, package, uid, internet).
+     */
+    public static List<Rule> getSearchStubs(Context context) {
+        synchronized (context.getApplicationContext()) {
+            List<Rule> listStub = new ArrayList<>();
+
+            SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
+            SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+            SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
+
+            DatabaseHelper dh = DatabaseHelper.getInstance(context);
+            for (PackageInfo info : getPackages(context))
+                try {
+                    // Skip self
+                    if (info.applicationInfo.uid == Process.myUid())
+                        continue;
+
+                    Rule rule = new Rule(dh, info, context);
+                    rule.apply = apply.getBoolean(info.packageName, true);
+                    rule.tracker_protect = BlockingMode.isTrackerProtectionEnabled(
+                            context, tracker_protect, info.packageName);
+                    rule.notify = notify.getBoolean(info.packageName, true);
+                    rule.updateChanged();
+                    listStub.add(rule);
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
+
+            return listStub;
+        }
+    }
+
     private static List<String> getHandlingPackages(PackageManager pm, Intent intent) {
         List<String> packagesList = new ArrayList<>();
 
