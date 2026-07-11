@@ -207,6 +207,8 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <!-- App Overview -->
     <string name="tracked_app_icon">Disabilita l\'accesso a Internet per questa applicazione</string>
     <string name="tracked_app_name">Nome applicazione</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">ha contattato %d azienda la settimana scorsa</item>
         <item quantity="other">ha contattato %d aziende la settimana scorsa</item>
@@ -350,4 +352,5 @@ Cordiali saluti,\n\n]]></string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>
