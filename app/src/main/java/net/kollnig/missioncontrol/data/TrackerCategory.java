@@ -23,6 +23,7 @@ import net.kollnig.missioncontrol.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,23 @@ public class TrackerCategory {
         m.put("ConsentManagers", R.string.tracker_consent);
         m.put(UNCATEGORISED, R.string.tracker_uncategorised);
         LABELS = Collections.unmodifiableMap(m);
+    }
+
+    // Disconnect.me ships finer-grained category names than the UI buckets in
+    // LABELS. This maps each raw Disconnect category to one of those buckets.
+    // Disconnect occasionally renames or adds categories; keep this in sync with
+    // the categories in disconnect-blacklist.reversed.json. Anything neither
+    // aliased here nor already a LABELS key silently folds into UNCATEGORISED —
+    // DisconnectCategoryCoverageTest turns that silent drift into a build failure.
+    private static final Map<String, String> DISCONNECT_ALIASES;
+    static {
+        Map<String, String> m = new HashMap<>();
+        m.put("FingerprintingGeneral", "Fingerprinting");
+        m.put("FingerprintingInvasive", "Fingerprinting");
+        m.put("EmailStrict", "Email");
+        m.put("EmailAggressive", "Email");
+        m.put("Anti-fraud", "Content");
+        DISCONNECT_ALIASES = Collections.unmodifiableMap(m);
     }
 
     public String category;
@@ -104,6 +122,32 @@ public class TrackerCategory {
     public static String canonicalise(String category) {
         if (category != null && LABELS.containsKey(category)) return category;
         return UNCATEGORISED;
+    }
+
+    /**
+     * Map a raw Disconnect.me category name to its canonical TrackerControl
+     * category, applying Disconnect-specific aliases first. Unknown categories
+     * still collapse to {@link #UNCATEGORISED} via {@link #canonicalise}.
+     */
+    public static String mapDisconnectCategory(String category) {
+        String aliased = DISCONNECT_ALIASES.containsKey(category)
+                ? DISCONNECT_ALIASES.get(category)
+                : category;
+        return canonicalise(aliased);
+    }
+
+    /**
+     * Whether a raw Disconnect.me category maps to a real UI bucket rather than
+     * silently folding into {@link #UNCATEGORISED}. Used by
+     * DisconnectCategoryCoverageTest to flag when Disconnect adds or renames a
+     * category the app doesn't yet handle.
+     */
+    public static boolean isRecognisedDisconnectCategory(String category) {
+        if (category == null) return false;
+        String aliased = DISCONNECT_ALIASES.containsKey(category)
+                ? DISCONNECT_ALIASES.get(category)
+                : category;
+        return LABELS.containsKey(aliased) && !UNCATEGORISED.equals(aliased);
     }
 
     /**

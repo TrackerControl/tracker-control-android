@@ -606,19 +606,10 @@ public class TrackerList {
                     while (reader.hasNext()) {
                         String categoryName = reader.nextName();
 
-                        switch (categoryName) {
-                            case "FingerprintingGeneral":
-                            case "FingerprintingInvasive":
-                                categoryName = "Fingerprinting";
-                                break;
-                            case "EmailStrict":
-                            case "EmailAggressive":
-                                categoryName = "Email";
-                                break;
-                            case "Anti-fraud":
-                                categoryName = "Content";
-                                break;
-                        }
+                        // Map Disconnect's category names onto our UI buckets. The
+                        // mapping lives in TrackerCategory so it is a single source
+                        // of truth that DisconnectCategoryCoverageTest can verify.
+                        String canonicalCategory = TrackerCategory.mapDisconnectCategory(categoryName);
 
                         reader.beginArray();
                         while (reader.hasNext()) {
@@ -637,7 +628,7 @@ public class TrackerList {
                                 }
                                 trackerConsumed = true;
 
-                                Tracker tracker = new Tracker(trackerName, categoryName);
+                                Tracker tracker = new Tracker(trackerName, canonicalCategory);
 
                                 // Parse tracker domains
                                 reader.beginObject();
