@@ -333,6 +333,8 @@ dependencies {
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
     implementation 'com.opencsv:opencsv:5.12.0'
+    // Pinned to 4.x: geoip2 5.x uses Java constructs incompatible with
+    // Android. Dependabot ignores the 5.0 major (see .github/dependabot.yml).
     implementation 'com.maxmind.geoip2:geoip2:4.4.0'
 
     // Crash reporting
