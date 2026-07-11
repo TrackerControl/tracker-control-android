@@ -21,6 +21,8 @@
 package eu.faircode.netguard;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -634,6 +636,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             prefs.edit().putBoolean("enabled", resultCode == RESULT_OK).apply();
             if (resultCode == RESULT_OK) {
+                // Cancel any pending pause auto-resume alarm, so a stale one
+                // does not re-fire after TC was resumed manually (#327)
+                AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent alarmIntent = new Intent(WidgetAdmin.INTENT_ON);
+                alarmIntent.setPackage(getPackageName());
+                PendingIntent pi = PendingIntentCompat.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                am.cancel(pi);
+
                 ServiceSinkhole.start("prepared", this);
             } else if (resultCode == RESULT_CANCELED)
                 Toast.makeText(this, R.string.msg_vpn_cancelled, Toast.LENGTH_LONG).show();
