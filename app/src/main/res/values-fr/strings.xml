@@ -356,6 +356,8 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Désactiver l\'accès à internet pour cette application</string>
     <string name="tracked_app_name">Nom de l\'application</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">a contacté %d société la semaine dernière</item>
         <item quantity="other">a contacté %d sociétés la semaine dernière</item>
@@ -578,4 +580,5 @@ Cordialement,\n\n]]></string>
     <string name="msg_invalid_url">URL invalide</string>
     <string name="msg_apply_blocklists_failed">Échec de l\'application des fichiers hôtes</string>
     <string name="msg_last_update">Dernière mise à jour : %s</string>
+    <!-- Accessibility labels -->
 </resources>
