@@ -106,7 +106,6 @@
     <string name="msg_started">Takipçiler aranıyor...</string>
     <string name="msg_waiting">Eylem bekleniyor</string>
     <string name="msg_disabled">TrackerControl\'ü etkinleştirmek için yukarıdaki anahtarı kullanın.</string>
-    <string name="msg_revoked">TrackerControl, muhtemelen başka bir VPN tabanlı uygulama kullanılarak devre dışı bırakıldı</string>
     <string name="msg_installed">%1$s ile ilgili sorun mu yaşıyorsunuz?</string>
     <string name="msg_installed_description">Uygulamanın şirketlerle iletişim kurmasına izin verin</string>
     <string name="msg_installed_tracker_libraries_found">%d izleyici kitaplığı içeriyor</string>
