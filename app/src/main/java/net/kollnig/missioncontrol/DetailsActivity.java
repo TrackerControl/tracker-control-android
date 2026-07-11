@@ -206,6 +206,8 @@ public class DetailsActivity extends AppCompatActivity {
             Intent launch = Common.getLaunchIntent(this, appPackageName);
             if (launch != null)
                 startActivity(launch);
+            else
+                Toast.makeText(this, R.string.launch_app_failed, Toast.LENGTH_SHORT).show();
             return true;
         } else if (itemId == R.id.action_uninstall) {
             Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
