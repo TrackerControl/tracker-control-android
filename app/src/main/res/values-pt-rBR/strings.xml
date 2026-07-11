@@ -255,6 +255,8 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <!-- App Overview -->
     <string name="tracked_app_icon">Desativar o acesso à internet para este aplicativo</string>
     <string name="tracked_app_name">Nome do aplicativo</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">contactou %d empresa na semana passada</item>
         <item quantity="other">contactou %d empresas na semana passada</item>
@@ -458,4 +460,5 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_invalid_url">URL inválida</string>
     <string name="msg_apply_blocklists_failed">Falha ao aplicar arquivos host</string>
     <string name="msg_last_update">Última atualização: %s</string>
+    <!-- Accessibility labels -->
 </resources>
