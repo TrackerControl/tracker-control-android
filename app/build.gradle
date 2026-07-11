@@ -81,9 +81,28 @@ tasks.register('wgbridgeBuild') {
         env['PATH'] = "${cargoDir}${File.pathSeparator}${System.getProperty('user.home')}/.cargo/bin${File.pathSeparator}${env['PATH'] ?: ''}"
         env['ANDROID_NDK_HOME'] = findNdkDirectory().absolutePath
         // Android 15+ requires 16KB-aligned ELF LOAD segments.
-        env['RUSTFLAGS'] = ((env['RUSTFLAGS'] ?: '') +
-                ' -C link-arg=-Wl,-z,max-page-size=16384' +
-                ' -C link-arg=-Wl,-z,common-page-size=16384').trim()
+        // --remap-path-prefix strips the checkout- and machine-specific
+        // absolute paths (cargo registry cache, wgbridge-rs checkout dir)
+        // that rustc otherwise bakes into panic/track_caller strings, so
+        // libwgbridge.so is reproducible across build machines.
+        def rustFlags = []
+        if (env['CARGO_ENCODED_RUSTFLAGS']) {
+            rustFlags.addAll(env['CARGO_ENCODED_RUSTFLAGS'].split('\u001f').findAll { !it.isEmpty() })
+        } else if (env['RUSTFLAGS']) {
+            // Cargo interprets RUSTFLAGS as whitespace-separated arguments.
+            rustFlags.addAll(env['RUSTFLAGS'].trim().split(/\s+/))
+        }
+        def cargoHome = env['CARGO_HOME'] ?: "${System.getProperty('user.home')}/.cargo"
+        rustFlags.addAll([
+                '-Clink-arg=-Wl,-z,max-page-size=16384',
+                '-Clink-arg=-Wl,-z,common-page-size=16384',
+                '-Clink-arg=-Wl,--build-id=none',
+                "--remap-path-prefix=${file(cargoHome).absolutePath}=/cargo",
+                "--remap-path-prefix=${wgbridgeSrcDir.absolutePath}=/wgbridge-rs",
+        ])
+        // Unlike RUSTFLAGS, the encoded form preserves spaces inside paths.
+        env['CARGO_ENCODED_RUSTFLAGS'] = rustFlags.join('\u001f')
+        env.remove('RUSTFLAGS')
 
         // cargo-ndk drives the per-ABI cross-compilation and linker setup.
         def cargoNdk = "${System.getProperty('user.home')}/.cargo/bin/cargo-ndk"
@@ -111,6 +130,28 @@ tasks.register('wgbridgeBuild') {
         // gotatun statically; drop the stray artifacts.
         wgbridgeAbis.each { abi ->
             fileTree(dir: "$wgbridgeOutDir/$abi", include: 'libgotatun*.so').each { it.delete() }
+        }
+
+        // The NDK's clang linker still embeds a .comment section (compiler
+        // version string, incl. "+bolt"/"-bolt" markers that vary by NDK
+        // build) even with --build-id=none. Strip it for reproducibility,
+        // matching the equivalent objcopy step for the CMake-built netguard
+        // library. See https://izzyondroid.org/docs/reproducibleBuilds/DebugFailedRBs/#clang
+        def hostTag = { ->
+            def os = System.getProperty('os.name').toLowerCase()
+            if (os.contains('mac')) return 'darwin-x86_64'
+            if (os.contains('win')) return 'windows-x86_64'
+            return 'linux-x86_64'
+        }()
+        def objcopy = "${findNdkDirectory().absolutePath}/toolchains/llvm/prebuilt/${hostTag}/bin/llvm-objcopy"
+        wgbridgeAbis.each { abi ->
+            def lib = file("$wgbridgeOutDir/$abi/libwgbridge.so")
+            if (lib.exists()) {
+                providers.exec {
+                    commandLine objcopy, '--remove-section', '.comment',
+                            '--remove-section', '.note.gnu.build-id', lib.absolutePath
+                }.result.get().assertNormalExitValue()
+            }
         }
     }
 }
