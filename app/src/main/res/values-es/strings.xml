@@ -246,6 +246,8 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Desactivar acceso a internet para esta app</string>
     <string name="tracked_app_name">Nombre de la aplicación</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">contactó %d empresa la última semana</item>
         <item quantity="other">contactó %d empresas la última semana</item>
@@ -390,4 +392,5 @@ Atentamente,\n\n]]></string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>
