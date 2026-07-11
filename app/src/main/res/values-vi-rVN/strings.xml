@@ -168,6 +168,7 @@
     <string name="msg_sure">Bạn có chắc không?</string>
     <string name="msg_waiting">Đang đợi sự kiện</string>
     <string name="msg_disabled">Sử dụng công tắc ở trên để bật TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl đã bị tắt, có khả năng là do sử dụng một ứng dụng dựa trên VPN khác</string>
     <string name="msg_installed">Có vấn đề với %1$s?</string>
     <string name="msg_installed_description">Cho phép ứng dụng liên hệ các công ty</string>
     <string name="msg_installed_tracker_libraries_found">Chứa %d thư viện trình theo dõi</string>

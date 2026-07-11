@@ -117,6 +117,7 @@
     <string name="msg_sure">Você tem certeza?</string>
     <string name="msg_waiting">À espera do evento</string>
     <string name="msg_disabled">Use o interruptor acima para ativar o TrackerControl.</string>
+    <string name="msg_revoked">O TrackerControl foi desativado, provavelmente utilizando outro aplicativo baseado em VPN</string>
     <string name="msg_installed">Problemas com %1$s?</string>
     <string name="msg_installed_description">Permitir que o app contacte empresas</string>
     <string name="msg_installed_tracker_libraries_found">Contém %d bibliotecas de rastreadores</string>
@@ -256,6 +257,40 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Pedido de Acesso ao Assunto GDPR</string>
+    <string name="body_request_data"><![CDATA[Para quem isso pode preocupar:\n
+\n
+\n
+estou te solicitando, como controlador de dados do app Android %1$s (ID: %2$s), para confirmar se está processando dados pessoais a meu respeito.\n
+caso positivo, por favor me forneça todas as informações necessárias estipuladas no Artigo 15 do Regulamento Geral de Proteção de Dados da UE (RGPD), incluindo:\n
+\n
+• uma cópia dos meus dados pessoais;\n
+• as finalidades do processamento;\n
+• Categorias de dados pessoais em causa;\n
+• os destinatários que você divulga meus dados pessoais e as salvaguardas que você fornece;\n
+• o período de retenção para armazenar os meus dados pessoais ou os critérios utilizados para determinar este período;\n
+• Informações sobre a origem dos meus dados pessoais; e\n
+• a existência de tomadas de decisão automatizadas (incluindo a característica), e se fora:\n
+    - a lógica envolvida no processo de tomada de decisão;\n
+    - A importância e as consequências previstas para mim;\n
+    - as medidas que você tomou para prevenir erros, viés e discriminação; e\n
+    - explique como posso expressar meu ponto de vista e desafiar uma decisão.\n
+\n
+Esta solicitação se refere a qualquer processamento de meus dados pessoais por você, incluindo qualquer processador processador processando dados pessoais em seu nome.\n
+\n
+Por favor, forneça sua resposta por meio de e-mail seguro. Aguardo com expectativa uma resposta no prazo de um mês a contar do recebimento do meu pedido.\n
+\n
+Atenciosamente,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Para quem pode preocupar:\n
+\n
+\n
+Estou invocando meu direito de eliminar conforme especificado no artigo 17 do Regulamento Geral de Proteção de Dados da UE (RGPD). Estou solicitando você, como controlador de dados do app Android %1$s (ID: %2$s), para apagar os seguintes dados pessoais processados sobre mim sem atraso indevido:\n
+• Todos os dados.\n
+\n
+A razão da minha solicitação de remoção é que eu retiro ou retirei minha autorização para processar os dados pessoais. Esse pedido diz respeito a qualquer processamento dos meus dados pessoais por você, incluindo quaisquer processadores que processam dados pessoais em seu nome.\n
+\n
+Por favor, forneça sua resposta por meio de e-mail com segurança. Aguardo com expectativa uma resposta dentro de um mês a contar da recepção do meu pedido.\n
+\n
+disso,\n\n]]></string>
     <string name="crash_dialog_text">Desculpe. O TrackerControl acabou de cair... Você se importaria de nos enviar um e-mail com detalhes?</string>
     <string name="crash_dialog_comment">Algum comentário?</string>
     <string name="instructions_monitoring_private_dns">Alternar o interruptor e interagir com algumas aplicações. O DNS privado deve ser desativado.</string>

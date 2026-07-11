@@ -104,6 +104,7 @@
     <string name="msg_sure">よろしいですか？</string>
     <string name="msg_waiting">イベントの待機中</string>
     <string name="msg_disabled">上のスイッチを使用して、TrackerControl を有効にします。</string>
+    <string name="msg_revoked">TrackerControl が無効にされました。他の VPN ベースのアプリケーションが使用中の可能性があります</string>
     <string name="msg_installed">%1$s で問題がありますか？</string>
     <string name="msg_installed_description">アプリが会社に連絡することを許可する</string>
     <string name="msg_installed_tracker_libraries_found">%d のトラッカーライブラリが含まれています</string>

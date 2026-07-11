@@ -106,6 +106,7 @@
     <string name="msg_started">Takipçiler aranıyor...</string>
     <string name="msg_waiting">Eylem bekleniyor</string>
     <string name="msg_disabled">TrackerControl\'ü etkinleştirmek için yukarıdaki anahtarı kullanın.</string>
+    <string name="msg_revoked">TrackerControl, muhtemelen başka bir VPN tabanlı uygulama kullanılarak devre dışı bırakıldı</string>
     <string name="msg_installed">%1$s ile ilgili sorun mu yaşıyorsunuz?</string>
     <string name="msg_installed_description">Uygulamanın şirketlerle iletişim kurmasına izin verin</string>
     <string name="msg_installed_tracker_libraries_found">%d izleyici kitaplığı içeriyor</string>
@@ -256,6 +257,40 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Konu Erişim Talebi</string>
+    <string name="body_request_data"><![CDATA[İlgili makama:\n
+\n
+\n
+Android uygulamasının %1$s (ID: %2$s) veri denetleyicisi olarak, benim hakkımda herhangi bir kişisel veri işleyip işlemediğinizi onaylamanızı rica ediyorum.\n
+Öyleyse, lütfen aşağıdakiler dahil olmak üzere AB Genel Veri Koruma Yönetmeliği\'nin (GDPR) 15. Maddesinde belirtilen gerekli tüm bilgileri bana sağlayın:\n
+\n
+• kişisel verilerimin bir kopyası;\n
+• işlemenin amaçları;\n
+• ilgili kişisel veri kategorileri; \n
+• kişisel verilerimi ifşa ettiğiniz alıcılar ve sağladığınız güvenlik önlemleri;\n
+• kişisel verilerimin saklanma süresi veya bu sürenin belirlenmesinde kullanılan kriterler;\n
+• kişisel verilerimin kaynağı hakkında bilgi; ve\n
+• otomatik karar vermenin varlığı (profil oluşturma dahil) ve öyleyse: \n
+    - karar verme sürecine dahil olan mantık;\n
+    - benim için önemi ve öngörülen sonuçları;\n
+    - hataları, önyargıları ve ayrımcılığı önlemek için attığınız adımlar; ve\n
+    - bakış açımı nasıl ifade edebileceğimi ve bir karara nasıl itiraz edebileceğimi açıklayın.\n
+\n
+Bu talep, sizin adınıza kişisel verileri işleyen tüm işlemciler de dahil olmak üzere, kişisel verilerimin sizin tarafınızdan işlenmesiyle ilgilidir.\n
+\n
+Lütfen yanıtınızı e-posta ile güvenli yollarla sağlayın. Talebimi aldıktan sonraki bir ay içinde yanıt almayı sabırsızlıkla bekliyorum.\n
+\n
+İçtenlikle,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[İlgili Makama:\n
+\n
+\n
+AB Genel Veri Koruma Yönetmeliği\'nin (GDPR) 17. Maddesinde belirtildiği şekilde silme hakkımı kullanıyorum. Android uygulaması olan %1$s (ID: %2$s) veri sorumlusu olarak sizden ricam, hakkımda işlediği aşağıdaki kişisel verileri gereksiz bir gecikme olmadan silmenizi rica ediyorum:\n
+• Tüm veriler.\n
+\n
+Kaldırma talebimin nedeni, kişisel verilerimin işlenmesine ilişkin onayımı geri çekmem veya geri almış olmamdır. Bu talep, sizin adınıza kişisel verileri işleyen işleyiciler de dahil olmak üzere, kişisel verilerimin sizin tarafınızdan işlenmesiyle ilgilidir.\n
+\n
+Lütfen yanıtınızı güvenli şekilde e-posta ile gönderin. Talebimin alınmasından itibaren bir ay içinde yanıt almayı dört gözle bekliyorum.\n
+\n
+Saygılarımla,\n\n]]></string>
     <string name="crash_dialog_text">Afedersiniz. TrackerControl az önce çöktü. Bize ayrıntıları içeren bir e-posta gönderir misiniz?</string>
     <string name="crash_dialog_comment">Herhangi bir yorum?</string>
     <string name="instructions_monitoring_private_dns">Anahtarı değiştirin ve bazı uygulamalarla etkileşim kurun. Özel DNS devre dışı bırakılmalıdır.</string>

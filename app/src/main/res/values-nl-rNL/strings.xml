@@ -214,6 +214,7 @@
     <string name="msg_started">Op zoek naar trackers...</string>
     <string name="msg_waiting">Wacht op gebeurtenis</string>
     <string name="msg_disabled">Gebruik bovenstaande schakelaar om TrackerControl te activeren.</string>
+    <string name="msg_revoked">TrackerControl is uitgeschakeld, waarschijnlijk door het gebruik van een andere VPN gebaseerde app</string>
     <string name="msg_installed">Problemen met %1$s?</string>
     <string name="msg_installed_description">Toestaan dat app contact opneemt met bedrijven</string>
     <string name="msg_installed_tracker_libraries_found">Bevat %d trackerbibliotheken</string>

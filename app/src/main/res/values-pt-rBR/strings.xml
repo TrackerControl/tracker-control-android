@@ -150,6 +150,7 @@
     <string name="msg_started">Procurando por rastreadores...</string>
     <string name="msg_waiting">Aguardando evento</string>
     <string name="msg_disabled">Use o interruptor acima para habilitar o TrackerControl.</string>
+    <string name="msg_revoked">O TrackerControl foi desativado, provavelmente outro aplicativo baseado em VPN está sendo utilizado</string>
     <string name="msg_installed">Problemas com %1$s?</string>
     <string name="msg_installed_description">Permitir que o app contate as empresas</string>
     <string name="msg_installed_tracker_libraries_found">Contém %d bibliotecas de rastreadores</string>

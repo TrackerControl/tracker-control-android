@@ -108,6 +108,7 @@
     <string name="msg_started">Wyszukiwanie trackerów...</string>
     <string name="msg_waiting">Oczekiwanie na zdarzenie</string>
     <string name="msg_disabled">Użyj powyższego przełącznika, aby włączyć TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl został wyłączony, prawdopodobnie przy użyciu innej aplikacji opartej na sieci VPN</string>
     <string name="msg_installed">Problemy z %1$s?</string>
     <string name="msg_installed_description">Zezwól aplikacji na kontakt z firmami</string>
     <string name="msg_installed_tracker_libraries_found">Zawiera %d bibliotek trackerów</string>
@@ -262,6 +263,40 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">PKBR Przedmiot wniosku o dostęp</string>
+    <string name="body_request_data"><![CDATA[Do kogo może to dotyczyć:\n
+\n
+\n
+Żądam, jako kontroler danych aplikacji Androida %1$s (ID: %2$s), aby potwierdzić, czy przetwarza dane osobowe o mnie.\n
+Jeśli tak, proszę podać mi wszystkie wymagane informacje określone w art. 15 ogólnego rozporządzenia UE o ochronie danych (KRLD), zawierający:\n
+\n
+• kopię moich danych osobowych;\n
+• cele przetwarzania;\n
+• kategorie danych osobowych, których to dotyczy;\n
+• odbiorcy, którym ujawniasz moje dane osobowe oraz gwarancje, które zapewniłeś;\n
+• okres przechowywania moich danych osobowych lub kryteria użyte do określenia tego okresu;\n
+• informacje o źródle moich danych osobowych; i\n
+• istnienie automatycznego procesu decyzyjnego (w tym profilowanie), i jeśli tak:\n
+    - logika związana z procesem decyzyjnym;\n
+    - znaczenie i przewidywane konsekwencje dla mnie;\n
+    - kroki podjęte w celu zapobiegania błędom, stronniczości i dyskryminacji; i\n
+    - wyjaśnienie, w jaki sposób mogę wyrazić mój punkt widzenia i zakwestionować decyzję.\n
+\n
+Ta prośba dotyczy przetwarzania moich danych osobowych przez Ciebie, w tym wszelkie podmioty przetwarzające dane osobowe w imieniu Pana.\n
+\n
+Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
+\n
+Z poważaniem,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Do kogo może to dotyczyć:\n
+\n
+\n
+odwołuję się do mojego prawa do usunięcia danych zgodnie z art. 17 ogólnego rozporządzenia UE o ochronie danych (GKRLD). Proszę, jako kontroler danych aplikacji na Androida %1$s (ID: %2$s), aby usunąć następujące dane osobowe, które przetwarza o mnie bez zbędnej zwłoki:\n
+• Wszystkie dane.\n
+\n
+Powodem mojego wniosku o usunięcie danych jest to, że wycofałem lub wycofałem swoją zgodę na przetwarzanie danych osobowych. Wniosek ten dotyczy przetwarzania moich danych osobowych, w tym przetwarzania danych osobowych w imieniu Pana.\n
+\n
+Prosimy o dostarczenie odpowiedzi za pomocą bezpiecznych środków pocztą elektroniczną. Z niecierpliwością oczekuję odpowiedzi w ciągu miesiąca od otrzymania mojego wniosku.\n
+\n
+Z poważaniem,\n\n]]></string>
     <string name="crash_dialog_text">Przepraszam. TrackerControl się rozbił... Mógłbyś wysłać nam e-mail ze szczegółami?</string>
     <string name="crash_dialog_comment">Jakieś uwagi?</string>
     <string name="instructions_monitoring_private_dns">Przełączaj przełącznik i współdziałaj z niektórymi aplikacjami. Prywatny DNS musi być wyłączony.</string>

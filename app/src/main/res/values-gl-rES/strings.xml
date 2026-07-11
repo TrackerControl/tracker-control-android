@@ -60,6 +60,7 @@
     <string name="msg_sure">¿Está seguro?</string>
     <string name="msg_waiting">Agardando por evento</string>
     <string name="msg_disabled">Use o botón de enriba para activar TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl foi deactivado, é moi posible que por usar outra aplicación con VPN</string>
     <string name="msg_installed">¿Problemas con %1$s?</string>
     <string name="msg_installed_description">Permitir á aplicación contactar con empresas</string>
     <string name="msg_installed_n">Foi instalado</string>

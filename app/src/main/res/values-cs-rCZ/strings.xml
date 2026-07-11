@@ -119,6 +119,7 @@
     <string name="msg_started">Vyhledávání trackerů...</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
     <string name="msg_installed">Problémy s %1$s?</string>
     <string name="msg_installed_description">Umožnit aplikaci kontaktovat společnosti</string>
     <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven trackerů: %d</string>
@@ -280,6 +281,40 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
+    <string name="body_request_data"><![CDATA[Komu:\n
+\n
+\n
+Žádám vás, abyste jako správce údajů aplikace Android %1$s (ID: %2$s), potvrdil, zda o mně zpracovává nějaké osobní údaje.\n
+Pokud ano, poskytněte mi prosím všechny požadované informace stanovené v článku 15 obecného nařízení EU o ochraně osobních údajů (GDPR), včetně:\n
+\n
+• kopie mých osobních údajů;\n
+• účelů zpracování;\n
+• kategorie dotčených osobních údajů;\n
+• příjemce, kterým sdělujete mé osobní údaje, a záruky, které poskytujete;\n
+• dobu uchovávání mých osobních údajů nebo kritéria použitá pro stanovení této doby;\n
+• informace o zdroji mých osobních údajů; a\n
+• existenci automatizovaného rozhodování (včetně profilování), a pokud možno:\n
+    - logiku rozhodovacího procesu;\n
+    - význam a předpokládané důsledky pro mě;\n
+    - opatření, která jste přijali, abyste předešli chybám, předpojatosti a diskriminaci; a\n
+    - vysvětlení, jak mohu vyjádřit svůj názor a napadnout rozhodnutí.\n
+\n
+Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
+\n
+Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se na odpověď do jednoho měsíce od obdržení mé žádosti.\n
+\n
+S pozdravem,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Komu:\n
+\n
+\n
+Uplatňuji své právo na výmaz podle článku 17 obecného nařízení EU o ochraně osobních údajů (GDPR). Žádám vás jako správce údajů aplikace pro Android %1$s (ID: %2$s), abyste bez zbytečného odkladu vymazali následující osobní údaje, které o mně zpracovává:\n
+• Všechny údaje.\n
+\n
+Důvodem mé žádosti o odstranění je odvolání nebo odvolání mého souhlasu se zpracováním osobních údajů. Tato žádost se týká jakéhokoli zpracování mých osobních údajů vámi, včetně zpracovatelů, kteří zpracovávají osobní údaje vaším jménem.\n
+\n
+Svou odpověď prosím zašlete zabezpečeným způsobem e-mailem. Těším se na odpověď do jednoho měsíce od obdržení mé žádosti.\n
+\n
+S pozdravem,\n\n]]></string>
     <string name="crash_dialog_text">Omlouváme se. TrackerControl přestal právě fungoval. Chcete nám poslat e-mail s podrobnostmi?</string>
     <string name="crash_dialog_comment">Nějaké komentáře?</string>
     <string name="instructions_monitoring_private_dns">Přepni switch a interaguj s aplikacemi.

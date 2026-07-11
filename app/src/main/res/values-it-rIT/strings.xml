@@ -105,6 +105,7 @@
     <string name="msg_sure">Sei sicuro⋅a?</string>
     <string name="msg_waiting">In attesa di eventi</string>
     <string name="msg_disabled">Utilizzare l\'interruttore qui sopra per attivare TrackerControl.</string>
+    <string name="msg_revoked">TrackerControl è stata disabilitata, probabilmente a causa di un\'altra applicazione che usa una VPN</string>
     <string name="msg_installed">Problemi con %1$s?</string>
     <string name="msg_installed_description">Consenti all\'app di contattare le aziende</string>
     <string name="msg_installed_tracker_libraries_found">Contiene %d librerie tracker</string>
@@ -255,6 +256,40 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">Richiesta Accesso Dati GDPR</string>
+    <string name="body_request_data"><![CDATA[Alla persona responsabile:\n
+\n
+\n
+In qualità di titolare del trattamento dei dati dell\'applicazione Android %1$s (ID: %2$s), le chiedo di confermare se sta trattando dati personali che mi riguardano.\n
+In caso affermativo, vi prego di fornirmi tutte le informazioni richieste dall\'articolo 15 del regolamento generale dell\'UE sulla protezione dei dati (GDPR), tra cui:\n
+\n
+- una copia dei miei dati personali;\n
+- le finalità del trattamento;\n
+- le categorie di dati personali interessate;\n
+- i destinatari a cui divulgate i miei dati personali e le garanzie da voi fornite;\n
+- il periodo di conservazione dei miei dati personali o i criteri utilizzati per determinare tale periodo;\n
+- informazioni sulla fonte dei miei dati personali;\n
+- l\'esistenza di un processo decisionale automatizzato (inclusa la profilazione) e, in caso affermativo:\n
+    - la logica coinvolta nel processo decisionale;\n
+    - il significato e le conseguenze previste per me;\n
+    - le misure adottate per prevenire errori, pregiudizi e discriminazioni;\n
+    - spiegare come posso esprimere il mio punto di vista e contestare una decisione.\n
+\n
+ Questa richiesta si riferisce a qualsiasi trattamento dei miei dati personali da parte vostra, compresi eventuali incaricati del trattamento dei dati personali per vostro conto.\n
+\n
+Si prega di fornire la vostra risposta attraverso mezzi sicuri via e-mail. Attendo una risposta entro un mese dal ricevimento della mia richiesta.\n
+\n
+Cordiali saluti,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Alla persona responsabile:\n
+\n
+\n
+Invoco il mio diritto alla cancellazione come specificato nell\'articolo 17 del regolamento generale dell\'UE sulla protezione dei dati (GDPR). In qualità di titolare del trattamento dei dati dell\'applicazione Android %1$s (ID: %2$s), le chiedo di cancellare senza indugio i seguenti dati personali da lei trattati che mi riguardano:\n
+- Tutti i dati:\n
+\n
+Il motivo della mia richiesta di rimozione è che ritiro o ho ritirato il mio consenso al trattamento dei dati personali. Questa richiesta si riferisce a qualsiasi trattamento dei miei dati personali da parte vostra, compresi eventuali incaricati del trattamento dei dati personali per vostro conto.\n
+\n
+Si prega di fornire la vostra risposta attraverso mezzi sicuri via e-mail. Attendo una risposta entro un mese dal ricevimento della mia richiesta.\n
+\n
+Cordiali saluti,\n\n]]></string>
     <string name="crash_dialog_text">Mi dispiace. TrackerControl è andato in blocco. Ti dispiacerebbe inviarci un\'email con i dettagli?</string>
     <string name="crash_dialog_comment">Hai commenti?</string>
     <string name="instructions_monitoring_private_dns">Attiva/disattiva l\'interruttore e interagisci le applicazioni. Il DNS privato deve essere disabilitato.</string>
