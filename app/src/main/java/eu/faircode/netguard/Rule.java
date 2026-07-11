@@ -97,11 +97,19 @@ public class Rule {
     private static List<PackageInfo> cachePackageInfo = null;
     private static Map<PackageInfo, String> cacheLabel = new HashMap<>();
     private static Map<String, Boolean> cacheSystem = new HashMap<>();
-    private static final Map<String, Boolean> cachePredefinedSystem = new HashMap<>();
-    private static boolean predefinedSystemLoaded = false;
+    private static final Object predefinedLock = new Object();
+    private static PredefinedRules cachePredefinedRules;
     private static Map<String, Boolean> cacheInternet = new HashMap<>();
     private static Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
     private static Map<Integer, Long> trackerRecent = new HashMap<>();
+
+    private static final class PredefinedRules {
+        final Map<String, Boolean> wifiBlocked = new HashMap<>();
+        final Map<String, Boolean> otherBlocked = new HashMap<>();
+        final Map<String, Boolean> roaming = new HashMap<>();
+        final Map<String, String[]> related = new HashMap<>();
+        final Map<String, Boolean> system = new HashMap<>();
+    }
 
     public long getLastTrackerTime() {
         Long time = trackerRecent.get(uid);
@@ -126,7 +134,7 @@ public class Rule {
     public static boolean isSystem(String packageName, Context context) {
         if (!cacheSystem.containsKey(packageName)) {
             boolean system = Util.isSystem(packageName, context);
-            Boolean predefined = getPredefinedSystem(context).get(packageName);
+            Boolean predefined = getPredefinedRules(context).system.get(packageName);
             cacheSystem.put(packageName, resolveSystemClassification(system, predefined));
         }
         return cacheSystem.get(packageName);
@@ -136,26 +144,43 @@ public class Rule {
         return predefined == null ? system : predefined;
     }
 
-    private static Map<String, Boolean> getPredefinedSystem(Context context) {
-        synchronized (cachePredefinedSystem) {
-            if (predefinedSystemLoaded)
-                return cachePredefinedSystem;
+    private static PredefinedRules getPredefinedRules(Context context) {
+        synchronized (predefinedLock) {
+            if (cachePredefinedRules != null)
+                return cachePredefinedRules;
+
+            PredefinedRules rules = new PredefinedRules();
 
             try (XmlResourceParser xml = context.getResources().getXml(R.xml.predefined)) {
                 int eventType = xml.getEventType();
                 while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if (eventType == XmlPullParser.START_TAG && "type".equals(xml.getName())) {
-                        String pkg = xml.getAttributeValue(null, "package");
-                        boolean system = xml.getAttributeBooleanValue(null, "system", true);
-                        cachePredefinedSystem.put(pkg, system);
-                    }
+                    if (eventType == XmlPullParser.START_TAG)
+                        if ("wifi".equals(xml.getName())) {
+                            String pkg = xml.getAttributeValue(null, "package");
+                            rules.wifiBlocked.put(pkg,
+                                    xml.getAttributeBooleanValue(null, "blocked", false));
+                        } else if ("other".equals(xml.getName())) {
+                            String pkg = xml.getAttributeValue(null, "package");
+                            rules.otherBlocked.put(pkg,
+                                    xml.getAttributeBooleanValue(null, "blocked", false));
+                            rules.roaming.put(pkg,
+                                    xml.getAttributeBooleanValue(null, "roaming", true));
+                        } else if ("relation".equals(xml.getName())) {
+                            String pkg = xml.getAttributeValue(null, "package");
+                            rules.related.put(pkg,
+                                    xml.getAttributeValue(null, "related").split(","));
+                        } else if ("type".equals(xml.getName())) {
+                            String pkg = xml.getAttributeValue(null, "package");
+                            rules.system.put(pkg,
+                                    xml.getAttributeBooleanValue(null, "system", true));
+                        }
                     eventType = xml.next();
                 }
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
-            predefinedSystemLoaded = true;
-            return cachePredefinedSystem;
+            cachePredefinedRules = rules;
+            return rules;
         }
     }
 
@@ -177,9 +202,8 @@ public class Rule {
             cachePackageInfo = null;
             cacheLabel.clear();
             cacheSystem.clear();
-            synchronized (cachePredefinedSystem) {
-                cachePredefinedSystem.clear();
-                predefinedSystemLoaded = false;
+            synchronized (predefinedLock) {
+                cachePredefinedRules = null;
             }
             cacheInternet.clear();
             cacheEnabled.clear();
@@ -288,44 +312,7 @@ public class Rule {
             boolean show_frozen = prefs.getBoolean("show_frozen", false);
             boolean strict_blocking = BlockingMode.isStrictMode(context);
 
-            // Get predefined rules
-            Map<String, Boolean> pre_wifi_blocked = new HashMap<>();
-            Map<String, Boolean> pre_other_blocked = new HashMap<>();
-            Map<String, Boolean> pre_roaming = new HashMap<>();
-            Map<String, String[]> pre_related = new HashMap<>();
-            Map<String, Boolean> pre_system = new HashMap<>();
-            try (XmlResourceParser xml = context.getResources().getXml(R.xml.predefined)) {
-                int eventType = xml.getEventType();
-                while (eventType != XmlPullParser.END_DOCUMENT) {
-                    if (eventType == XmlPullParser.START_TAG)
-                        if ("wifi".equals(xml.getName())) {
-                            String pkg = xml.getAttributeValue(null, "package");
-                            boolean pblocked = xml.getAttributeBooleanValue(null, "blocked", false);
-                            pre_wifi_blocked.put(pkg, pblocked);
-
-                        } else if ("other".equals(xml.getName())) {
-                            String pkg = xml.getAttributeValue(null, "package");
-                            boolean pblocked = xml.getAttributeBooleanValue(null, "blocked", false);
-                            boolean proaming = xml.getAttributeBooleanValue(null, "roaming", true);
-                            pre_other_blocked.put(pkg, pblocked);
-                            pre_roaming.put(pkg, proaming);
-
-                        } else if ("relation".equals(xml.getName())) {
-                            String pkg = xml.getAttributeValue(null, "package");
-                            String[] rel = xml.getAttributeValue(null, "related").split(",");
-                            pre_related.put(pkg, rel);
-
-                        } else if ("type".equals(xml.getName())) {
-                            String pkg = xml.getAttributeValue(null, "package");
-                            boolean system = xml.getAttributeBooleanValue(null, "system", true);
-                            pre_system.put(pkg, system);
-                        }
-
-                    eventType = xml.next();
-                }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
+            PredefinedRules predefined = getPredefinedRules(context);
 
             // Build rule list
             List<Rule> listRules = new ArrayList<>();
@@ -406,8 +393,8 @@ public class Rule {
 
                     trackerDefaultsChanged |= trackerBlocklist.ensureDefaults(rule.uid, strict_blocking);
 
-                    if (pre_system.containsKey(info.packageName))
-                        rule.system = pre_system.get(info.packageName);
+                    if (predefined.system.containsKey(info.packageName))
+                        rule.system = predefined.system.get(info.packageName);
                     // if (info.applicationInfo.uid == Process.myUid())
                     // rule.system = true;
 
@@ -434,8 +421,8 @@ public class Rule {
 
                         // Related packages
                         List<String> listPkg = new ArrayList<>();
-                        if (pre_related.containsKey(info.packageName))
-                            listPkg.addAll(Arrays.asList(pre_related.get(info.packageName)));
+                        if (predefined.related.containsKey(info.packageName))
+                            listPkg.addAll(Arrays.asList(predefined.related.get(info.packageName)));
                         for (PackageInfo pi : listPI)
                             if (pi.applicationInfo.uid == rule.uid && !pi.packageName.equals(rule.packageName)) {
                                 rule.relateduids = true;
