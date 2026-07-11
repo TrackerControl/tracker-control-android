@@ -719,13 +719,12 @@ jboolean handle_tcp(const struct arguments *args,
                 }
             }
 
-            // Clamp the MSS we use for downstream segmentation into the tun.
+            // In tethering compatibility mode, clamp the MSS we use for
+            // downstream segmentation into the tun.
             // This bounds the size of the segments we emit toward the peer so
-            // they fit constrained upstream paths even though PMTUD ICMP is
-            // dropped (#478). Applied to both the default (oversized-tun) MSS
-            // and any smaller value advertised by the peer, so smaller paths
-            // still work.
-            if (mss > TCP_MSS_CLAMP)
+            // they fit constrained paths even though PMTUD ICMP is dropped
+            // (#478). Smaller values advertised by the peer remain unchanged.
+            if (args->ctx->tcp_mss_clamp && mss > TCP_MSS_CLAMP)
                 mss = TCP_MSS_CLAMP;
 
             log_android(ANDROID_LOG_WARN, "%s new session mss %u ws %u window %u",
@@ -1274,14 +1273,15 @@ ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
 
     // TCP options
     if (syn) {
-        // Advertise a clamped MSS to the peer so it sizes its segments to fit
-        // constrained upstream paths without relying on PMTUD ICMP (#478).
+        // In tethering compatibility mode, advertise a clamped MSS to the peer
+        // so it sizes its segments to fit constrained upstream paths without
+        // relying on PMTUD ICMP (#478).
         // The MSS option value goes on the wire in network byte order (the
         // parser reads it with ntohs, see handle SYN above); htons is required
         // here for the clamp to take effect - the value must not be written in
         // host order.
         uint16_t mss = get_default_mss(cur->version);
-        if (mss > TCP_MSS_CLAMP)
+        if (args->ctx->tcp_mss_clamp && mss > TCP_MSS_CLAMP)
             mss = TCP_MSS_CLAMP;
 
         *(options) = 2; // MSS

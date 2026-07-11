@@ -170,14 +170,16 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1start(
-        JNIEnv *env, jobject instance, jlong context, jint loglevel_) {
+        JNIEnv *env, jobject instance, jlong context, jint loglevel_, jboolean tcp_mss_clamp) {
     struct context *ctx = (struct context *) context;
 
     loglevel = loglevel_;
     max_tun_msg = 0;
     ctx->stopping = 0;
+    ctx->tcp_mss_clamp = tcp_mss_clamp;
 
-    log_android(ANDROID_LOG_WARN, "Starting level %d", loglevel);
+    log_android(ANDROID_LOG_WARN, "Starting level %d tcp mss clamp %d",
+                loglevel, tcp_mss_clamp);
 
 }
 

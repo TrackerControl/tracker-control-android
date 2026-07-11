@@ -49,15 +49,16 @@
 #define UDP4_MAXMSG (IP_MAXPACKET - 20 - 8) // bytes (socket)
 #define UDP6_MAXMSG (IPV6_MAXPACKET - 40 - 8) // bytes (socket)
 
-// TCP MSS clamp for the SYN/SYN-ACK we inject into the tun. The tun advertises
+// Optional TCP MSS clamp for the SYN/SYN-ACK we inject into the tun. The tun advertises
 // an oversized MTU (get_mtu() == 10000), so the derived MSS (~9960) would let a
 // peer emit segments far larger than any real upstream path (cellular/WireGuard
 // are typically <= 1500). Because handle_icmp() drops the ICMPv4 "fragmentation
 // needed" / ICMPv6 "packet too big" messages that Path-MTU-Discovery relies on,
 // such oversized segments can black-hole - notably for tethered clients (#478).
 // Clamping to a conservative value keeps every segment small enough to traverse
-// typical constrained paths without depending on PMTUD. Heuristic; verify on
-// device before relying on the exact value.
+// typical constrained paths without depending on PMTUD. This is enabled only
+// by the tethering compatibility setting. Heuristic; verify on device before
+// relying on the exact value.
 #define TCP_MSS_CLAMP 1360 // bytes
 
 #define ICMP_TIMEOUT 5 // seconds
@@ -91,6 +92,7 @@ struct context {
     int pipefds[2];
     int stopping;
     int sdk;
+    jboolean tcp_mss_clamp;
     struct ng_session *ng_session;
 };
 

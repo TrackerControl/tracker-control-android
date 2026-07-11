@@ -244,7 +244,7 @@ public class ServiceSinkhole extends VpnService {
 
     private native long jni_init(int sdk);
 
-    private native void jni_start(long context, int loglevel);
+    private native void jni_start(long context, int loglevel, boolean tcpMssClamp);
 
     private native void jni_run(long context, int tun, boolean fwd53, int rcode);
 
@@ -1675,7 +1675,9 @@ public class ServiceSinkhole extends VpnService {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
-        Log.i(TAG, "Start native log=" + log + "/" + log_app + " filter=true");
+        boolean tcpMssClamp = prefs.getBoolean("tcp_mss_clamp", false);
+        Log.i(TAG, "Start native log=" + log + "/" + log_app +
+                " filter=true tcp_mss_clamp=" + tcpMssClamp);
 
         // Prepare rules
         prepareUidAllowed(listAllowed, listRule);
@@ -1725,7 +1727,7 @@ public class ServiceSinkhole extends VpnService {
 
         if (tunnelThread == null) {
             Log.i(TAG, "Starting tunnel thread context=" + jni_context);
-            jni_start(jni_context, prio);
+            jni_start(jni_context, prio, tcpMssClamp);
 
             tunnelThread = new Thread(new Runnable() {
                 @Override
