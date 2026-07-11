@@ -163,8 +163,13 @@ public class CountriesFragment extends Fragment {
             String countries = TextUtils.join(",#", hostCountriesCount.keySet());
             renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
 
+            // Render on this background thread; the resulting Picture is
+            // immutable and safe to hand to the UI thread. This also means a
+            // malformed-CSS exception is caught by the outer try below rather
+            // than crashing the UI thread.
+            final Picture picture = svg.renderToPicture(renderOptions);
+
             mv.post(() -> {
-                Picture picture = svg.renderToPicture(renderOptions);
                 mv.setImageDrawable(new PictureDrawable(picture));
                 pbLoading.setVisibility(View.GONE);
             });
