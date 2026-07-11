@@ -16,4 +16,8 @@
         android:id="@+id/action_clear"
         android:title="@string/menu_clear"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_clear_tracker_settings"
+        android:title="@string/action_clear_tracker_settings"
+        app:showAsAction="never" />
 </menu>

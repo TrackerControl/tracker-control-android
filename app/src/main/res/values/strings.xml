@@ -92,6 +92,11 @@
     <string name="menu_export">Export</string>
     <string name="menu_reset">Reset</string>
 
+    <string name="action_clear_tracker_settings">Clear this app\'s TC settings</string>
+    <string name="clear_tracker_settings_confirm_title">Clear tracker settings for this app?</string>
+    <string name="clear_tracker_settings_confirm_message">This resets the tracker allow/block choices you\'ve made for this app back to the default. It doesn\'t affect other apps, or this app\'s traffic log, VPN-exclude, or internet-access settings.</string>
+    <string name="clear_tracker_settings_done">Tracker settings for this app were reset.</string>
+
     <string name="menu_cleanup">Cleanup</string>
 
     <string name="setting_options">General</string>

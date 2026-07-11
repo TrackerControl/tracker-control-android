@@ -58,8 +58,10 @@ import net.kollnig.missioncontrol.data.TrackerCategory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
@@ -79,6 +81,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final SharedPreferences apply;
     private final SharedPreferences tracker_protect;
     private List<TrackerCategory> mValues = new ArrayList<>();
+
+    // Tracks which tracker categories the user has collapsed on this screen.
+    // Categories are expanded by default; collapse state is kept only for the
+    // lifetime of this adapter (i.e. this screen/session), not persisted, and
+    // is intentionally not a global setting (#390).
+    private final Set<String> collapsedCategories = new HashSet<>();
 
     // Analysis UI elements (populated when header is created)
     private TextView mBtnAnalyze;
@@ -255,15 +263,29 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             boolean trackerProtectionEnabled = BlockingMode.isTrackerProtectionEnabled(
                     mContext, tracker_protect, mAppId);
             boolean allowGranularControl = !BlockingMode.isMinimalMode(mContext);
-            holder.mBlockingTip.setVisibility(allowGranularControl ? View.VISIBLE : View.GONE);
 
             // Load data
             final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
             final TrackerCategory trackerCategory = getItem(position);
             final String trackerCategoryName = trackerCategory.getCategoryName();
 
+            // Collapsible category (#390): tapping the category name toggles
+            // whether its tracker list is shown. Expanded by default; state is
+            // remembered only for this screen, not persisted as a setting.
+            boolean collapsed = collapsedCategories.contains(trackerCategoryName);
+            holder.mCompaniesList.setVisibility(collapsed ? View.GONE : View.VISIBLE);
+            holder.mBlockingTip.setVisibility(!collapsed && allowGranularControl ? View.VISIBLE : View.GONE);
             // Display uncertainty
-            holder.mUncertain.setVisibility(trackerCategory.isUncertain() ? View.VISIBLE : View.GONE);
+            holder.mUncertain.setVisibility(!collapsed && trackerCategory.isUncertain() ? View.VISIBLE : View.GONE);
+            holder.mTrackerCategoryName.setCompoundDrawablesWithIntrinsicBounds(
+                    0, 0, collapsed ? R.drawable.ic_expand_more : R.drawable.ic_expand_less, 0);
+            holder.mTrackerCategoryName.setOnClickListener(v -> {
+                if (collapsedCategories.contains(trackerCategoryName))
+                    collapsedCategories.remove(trackerCategoryName);
+                else
+                    collapsedCategories.add(trackerCategoryName);
+                notifyDataSetChanged();
+            });
 
             // Add data to view
             holder.mTrackerCategoryName.setText(trackerCategory.getDisplayName(mContext));

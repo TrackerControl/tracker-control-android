@@ -45,11 +45,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.opencsv.CSVWriter;
 
+import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.PlayStore;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -69,6 +71,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import eu.faircode.netguard.DatabaseHelper;
+import eu.faircode.netguard.Rule;
+import eu.faircode.netguard.ServiceSinkhole;
 
 public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
@@ -202,6 +206,9 @@ public class DetailsActivity extends AppCompatActivity {
             dh.clearAccess(appUid, false);
             detailsStateAdapter.updateTrackerLists();
             return true;
+        } else if (itemId == R.id.action_clear_tracker_settings) {
+            confirmClearTrackerSettings();
+            return true;
         } else if (itemId == R.id.action_launch) {
             Intent launch = Common.getLaunchIntent(this, appPackageName);
             if (launch != null)
@@ -214,6 +221,42 @@ public class DetailsActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Ask for confirmation before resetting this app's tracker allow/block
+     * choices (#390) — this is a destructive, irreversible action for
+     * whatever custom per-tracker/per-category toggles the user has set.
+     */
+    private void confirmClearTrackerSettings() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.clear_tracker_settings_confirm_title)
+                .setMessage(R.string.clear_tracker_settings_confirm_message)
+                .setPositiveButton(R.string.yes, (dialog, which) -> clearTrackerSettings())
+                .setNegativeButton(R.string.no, null)
+                .show();
+    }
+
+    /**
+     * Resets this app's tracker allow/block configuration back to the current
+     * blocking mode's default (reusing the same {@link TrackerBlocklist#clear}
+     * used when an app is uninstalled, followed by re-applying defaults since
+     * the app remains installed here). Does not touch the traffic log, or the
+     * app's VPN-exclude/internet-access toggles.
+     */
+    private void clearTrackerSettings() {
+        TrackerBlocklist b = TrackerBlocklist.getInstance(this);
+        b.clear(appUid);
+        b.ensureDefaults(appUid, BlockingMode.isStrictMode(this));
+        b.saveSettings(this);
+
+        AsyncTask.execute(() -> {
+            Rule.clearCache(this);
+            ServiceSinkhole.reload("tracker settings cleared", this, false);
+        });
+
+        detailsStateAdapter.updateTrackerLists();
+        Toast.makeText(this, R.string.clear_tracker_settings_done, Toast.LENGTH_SHORT).show();
     }
 
     /**
