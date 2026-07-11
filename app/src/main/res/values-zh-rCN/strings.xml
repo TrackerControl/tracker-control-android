@@ -386,6 +386,8 @@
     <!-- App Overview -->
     <string name="tracked_app_icon">禁止此应用访问互联网</string>
     <string name="tracked_app_name">应用程序名称</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="other">上周联系了 %d 个公司</item>
     </plurals>
@@ -648,4 +650,5 @@
     <string name="msg_invalid_url">URL 无效</string>
     <string name="msg_apply_blocklists_failed">应用主机文件失败</string>
     <string name="msg_last_update">上次更新：%s</string>
+    <!-- Accessibility labels -->
 </resources>
