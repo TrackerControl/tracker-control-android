@@ -3007,10 +3007,8 @@ public class ServiceSinkhole extends VpnService {
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
                 NetworkCapabilities caps = cm.getNetworkCapabilities(network);
-                if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) {
-                    callbackDefaultNetwork = network;
+                if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
                     scheduleUnderlyingNetworkSnapshot(false);
-                }
                 if (!isActiveNetwork(network))
                     return;
 
@@ -3048,10 +3046,8 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                 Log.i(TAG, "Changed capabilities=" + network + " caps=" + networkCapabilities);
-                if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) {
-                    callbackDefaultNetwork = network;
+                if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
                     scheduleUnderlyingNetworkSnapshot(false);
-                }
                 if (!isActiveNetwork(network))
                     return;
 
@@ -3076,10 +3072,7 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onLost(Network network) {
                 Log.i(TAG, "Lost network=" + network + " active=" + isActiveNetwork(network));
-                if (network.equals(callbackDefaultNetwork)) {
-                    callbackDefaultNetwork = null;
-                    scheduleUnderlyingNetworkSnapshot(false);
-                }
+                scheduleUnderlyingNetworkSnapshot(false);
                 if (last_active == null || !last_active.equals(network))
                     return;
 
@@ -3183,7 +3176,6 @@ public class ServiceSinkhole extends VpnService {
 
     private void scheduleUnderlyingNetworkSnapshot(boolean eager) {
         if (destroying) return;
-        underlyingNetworkReducer.offer(sampleUnderlyingNetworks());
         underlyingNetworkHandler.removeCallbacksAndMessages(UNDERLYING_NETWORK_TOKEN);
         Runnable emit = () -> {
             // Re-sample after the burst settles; onLost and capability changes
