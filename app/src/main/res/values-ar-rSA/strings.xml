@@ -122,7 +122,6 @@
     <string name="msg_started">البحث عن أدوات التتبع...</string>
     <string name="msg_waiting">انتظار الحدث</string>
     <string name="msg_disabled">استخدم المفتاح أعلاه لتمكين التحكم في التتبع.</string>
-    <string name="msg_revoked">تم تعطيل التحكم في التتبع، على الأرجح باستخدام تطبيق آخر يعتمد على VPN</string>
     <string name="msg_installed">هل هناك مشاكل مع %1$s؟</string>
     <string name="msg_installed_description">السماح للتطبيق بالاتصال بالشركات</string>
     <string name="msg_installed_tracker_libraries_found">يحتوي على %d مكتبة تتبع</string>
