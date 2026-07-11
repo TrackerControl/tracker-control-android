@@ -1401,7 +1401,10 @@ public class ServiceSinkhole extends VpnService {
     // and of a family the tun will actually carry: IPv4 always, IPv6 only when
     // allowed (i.e. IPv6 routing is enabled and no IPv4 resolver was available).
     private static boolean isUsableDns(InetAddress dns, boolean allowIp6) {
-        if (dns.isLoopbackAddress() || dns.isAnyLocalAddress())
+        // A link-local resolver is scoped to the underlying physical interface.
+        // That scope cannot be preserved when the address is advertised on the
+        // VPN, so it would be unreachable from the tun interface.
+        if (dns.isLoopbackAddress() || dns.isAnyLocalAddress() || dns.isLinkLocalAddress())
             return false;
         return (dns instanceof Inet4Address) || (allowIp6 && dns instanceof Inet6Address);
     }
@@ -1605,14 +1608,17 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, "addRoute " + route + ": " + ex);
             }
 
-        // Add /32 host routes for local DNS servers so their traffic enters the
-        // tunnel (where TC can filter it) even though LAN is otherwise excluded.
-        // This preserves compatibility with local DNS setups like Pi-hole.
+        // Add host routes for DNS servers not necessarily covered by the general
+        // VPN routes. IPv4 LAN resolvers are excluded from VpnRoutes, while IPv6
+        // ULA resolvers are outside the 2000::/3 global-unicast route below.
+        // Keeping both inside the tunnel ensures DNS remains reachable and passes
+        // through TC's filtering path.
         for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
-            if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
+            if ((dns instanceof Inet4Address && dns.isSiteLocalAddress()) ||
+                    dns instanceof Inet6Address)
                 try {
-                    Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
-                    builder.addRoute(dns, 32);
+                    Log.i(TAG, "Adding DNS host route=" + dns.getHostAddress());
+                    builder.addRoute(dns, dns instanceof Inet4Address ? 32 : 128);
                 } catch (Throwable ex) {
                     Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                 }
