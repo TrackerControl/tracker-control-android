@@ -163,12 +163,12 @@ afterEvaluate {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId "net.kollnig.missioncontrol"
         minSdk 23
-        targetSdk 36
+        targetSdk 37
         //noinspection HighAppVersionCode
         versionCode 2026042701
         versionName "2026.04.27"
@@ -300,7 +300,7 @@ androidComponents {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.18.0'
+    implementation 'androidx.core:core-ktx:1.19.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.16.1'
 
@@ -315,18 +315,18 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.work:work-runtime:2.11.2'
     implementation 'com.google.guava:guava:33.6.0-android'
     annotationProcessor 'androidx.annotation:annotation:1.10.0'
 
     // fix errors with libraries
-    def lifecycle_version = '2.10.0'
+    def lifecycle_version = '2.11.0'
     //implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     // https://bumptech.github.io/glide/
-    def glide_version = "5.0.7"
+    def glide_version = "5.0.9"
     implementation("com.github.bumptech.glide:glide:$glide_version") {
         exclude group: "com.android.support"
     }
@@ -349,7 +349,7 @@ dependencies {
     implementation 'com.caverock:androidsvg-aar:1.4'
 
     // OkHttp for DNS-over-HTTPS
-    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
 }
 
 // Fix lint error on release builds

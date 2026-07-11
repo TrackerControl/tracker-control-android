@@ -8,7 +8,7 @@ use gotatun::x25519::{PublicKey, StaticSecret};
 /// Returns a fresh base64 WireGuard private key.
 pub fn generate_private_key() -> Result<String, String> {
     let mut bytes = [0u8; 32];
-    getrandom::getrandom(&mut bytes).map_err(|e| format!("getrandom: {e}"))?;
+    getrandom::fill(&mut bytes).map_err(|e| format!("getrandom: {e}"))?;
     // StaticSecret::from clamps the scalar per X25519.
     let secret = StaticSecret::from(bytes);
     Ok(BASE64.encode(secret.to_bytes()))
