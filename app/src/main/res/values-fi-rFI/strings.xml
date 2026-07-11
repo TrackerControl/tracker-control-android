@@ -117,7 +117,6 @@
     <string name="msg_started">Etsitään seuraimia...</string>
     <string name="msg_waiting">Odottaa tapahtumaa</string>
     <string name="msg_disabled">Ota yllä olevalla kytkimellä TrackerControl käyttöön.</string>
-    <string name="msg_revoked">TrackerControl on poistettu käytöstä, todennäköisesti käyttämällä toista VPN-pohjaista sovellusta</string>
     <string name="msg_installed">Ongelmia %1$s kanssa?</string>
     <string name="msg_installed_description">Salli sovelluksen ottaa yhteyttä yrityksiin</string>
     <string name="msg_installed_tracker_libraries_found">Sisältää %d seurainkirjastoa</string>
