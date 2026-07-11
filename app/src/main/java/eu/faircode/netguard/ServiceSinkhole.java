@@ -3208,38 +3208,34 @@ public class ServiceSinkhole extends VpnService {
     public void onRevoke() {
         Log.i(TAG, "Revoke");
 
-        // Preserve the enabled state only while Android still designates us as
-        // the always-on VPN. In that case a transient system teardown should be
-        // recoverable. A deliberate revoke in system settings, or another VPN
-        // taking the slot, clears the always-on designation and must disable TC;
-        // otherwise the repeating watchdog would keep trying to reclaim the VPN.
+        // Android does not tell us *why* onRevoke() fired. The system calls it
+        // identically for (a) a deliberate user disable from the system VPN
+        // settings, (b) another VPN app taking the single VPN slot (#331), and
+        // (c) an OS-initiated teardown/re-auth of the always-on slot — Doze,
+        // memory pressure, an OS update — which is the "always-on VPN turns
+        // itself off after 3-5 days" report (#526).
         //
-        // Correctness in both directions (staying on for #526 recovery, and
-        // honoring a deliberate system-settings disable) depends on the OS
-        // reporting the always-on designation correctly right here at revoke
-        // time. On pre-Q devices the "always_on_vpn_app" Settings.Secure key is
-        // @hide and some OEM/OS builds return null even when TC *is* the
-        // configured always-on VPN, or the lookup can throw. That null/unknown
-        // case is deliberately biased toward keeping the VPN enabled: only a
-        // positively-known alwaysOn=false is allowed to persist enabled=false.
-        Boolean alwaysOn = null;
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-                alwaysOn = isAlwaysOn();
-            else {
-                String alwaysOnPackage = Settings.Secure.getString(
-                        getContentResolver(), "always_on_vpn_app");
-                alwaysOn = (alwaysOnPackage == null) ? null : getPackageName().equals(alwaysOnPackage);
-            }
-        } catch (Throwable ex) {
-            Log.w(TAG, "Could not determine always-on VPN state", ex);
-            alwaysOn = null;
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean enabled = resolveEnabledAfterRevoke(prefs.getBoolean("enabled", false), alwaysOn);
-        prefs.edit().putBoolean("enabled", enabled).apply();
-        Log.i(TAG, "Revoke always-on=" + alwaysOn + " enabled=" + enabled);
+        // We deliberately do NOT persist enabled=false here. Every genuine
+        // in-app disable path (the main toggle in ActivityMain, the quick-
+        // settings tile in ServiceTileMain, and the widget in WidgetAdmin)
+        // already sets enabled=false *itself* before stopping the service, and
+        // tearing down our own tunnel does not trigger onRevoke(). So a revoke
+        // reaching this method is always externally initiated. Clearing
+        // "enabled" here used to turn every such external teardown into a
+        // permanent self-disable with no recovery: the service is START_STICKY
+        // and onStartCommand() keys off "enabled", so once it is false every
+        // subsequent (re)start immediately stops again.
+        //
+        // Leaving "enabled" untouched lets the existing recovery mechanisms
+        // re-establish the tunnel once TC reacquires the VPN slot: the OS
+        // restarting the always-on service, ReceiverAutostart on boot, the
+        // watchdog alarm, and reopening ActivityMain (which calls start() when
+        // enabled). We do not add any retry loop here, so a second VPN that
+        // legitimately holds the slot is not thrashed — recovery is driven only
+        // by those OS-paced triggers. The remaining tradeoff is that a user who
+        // disables TC via the *system* VPN settings (rather than the in-app
+        // toggle) will see it come back on the next such trigger; the in-app
+        // toggle remains the supported way to turn TC off.
 
         // Feedback: the tunnel really did drop, so inform the user (mirrors
         // Android's own "VPN disconnected" notice). This does not disable TC.
@@ -3247,15 +3243,6 @@ public class ServiceSinkhole extends VpnService {
         WidgetMain.updateWidgets(this);
 
         super.onRevoke();
-    }
-
-    static boolean resolveEnabledAfterRevoke(boolean enabled, Boolean alwaysOn) {
-        // alwaysOn == null means the always-on state could not be positively
-        // determined (see onRevoke comment above). Do not force a disable in
-        // that case: keep whatever enabled state was already persisted.
-        if (alwaysOn == null)
-            return enabled;
-        return enabled && alwaysOn;
     }
 
     @Override
