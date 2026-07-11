@@ -250,6 +250,8 @@ public class ActivityDns extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         running = false;
+        if (adapter != null)
+            adapter.close();
         adapter = null;
         super.onDestroy();
     }

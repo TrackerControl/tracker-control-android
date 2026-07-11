@@ -103,9 +103,7 @@ public class ActivityForwarding extends AppCompatActivity {
                         if (menuItem.getItemId() == R.id.menu_delete) {
                             DatabaseHelper.getInstance(ActivityForwarding.this).deleteForward(protocol, dport);
                             ServiceSinkhole.reload("forwarding", ActivityForwarding.this, false);
-                            adapter = new AdapterForwarding(ActivityForwarding.this,
-                                    DatabaseHelper.getInstance(ActivityForwarding.this).getForwarding());
-                            lvForwarding.setAdapter(adapter);
+                            adapter.changeCursor(DatabaseHelper.getInstance(ActivityForwarding.this).getForwarding());
                         }
                         return false;
                     }
@@ -133,6 +131,8 @@ public class ActivityForwarding extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         running = false;
+        if (adapter != null)
+            adapter.close();
         adapter = null;
         if (dialog != null) {
             dialog.dismiss();
@@ -220,9 +220,7 @@ public class ActivityForwarding extends AppCompatActivity {
                                             if (running)
                                                 if (ex == null) {
                                                     ServiceSinkhole.reload("forwarding", ActivityForwarding.this, false);
-                                                    adapter = new AdapterForwarding(ActivityForwarding.this,
-                                                            DatabaseHelper.getInstance(ActivityForwarding.this).getForwarding());
-                                                    lvForwarding.setAdapter(adapter);
+                                                    adapter.changeCursor(DatabaseHelper.getInstance(ActivityForwarding.this).getForwarding());
                                                 } else
                                                     Toast.makeText(ActivityForwarding.this, ex.toString(), Toast.LENGTH_LONG).show();
                                         }
