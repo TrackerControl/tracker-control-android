@@ -779,4 +779,16 @@ Sincerely,\n\n]]></string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_apply_blocklists_failed">Failed to apply host files</string>
     <string name="msg_last_update">Last update: %s</string>
+
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Tracker blocking</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">Delete blocklist</string>
+    <string name="blocklist_enable_description">Enable blocklist %s</string>
+    <string name="log_connection_allowed">Allowed</string>
+    <string name="log_connection_blocked">Blocked</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="log_connection_other">Other network</string>
+    <string name="log_screen_on">Screen on</string>
+    <string name="log_app_icon">App icon</string>
 </resources>
