@@ -227,6 +227,8 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <!-- App Overview -->
     <string name="tracked_app_icon">Zakázat přístup k internetu pro tuto aplikaci</string>
     <string name="tracked_app_name">Název aplikace</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">poslední týden kontaktována %d společnost</item>
         <item quantity="few">poslední týden kontaktovány %d společnosti</item>
@@ -395,4 +397,5 @@ Privátní DNS musí být vypnutá.</string>
     <string name="onboarding_blocking_title">Blokovat trackery</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>
