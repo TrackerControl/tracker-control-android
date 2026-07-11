@@ -47,6 +47,22 @@ public class NativeFailureRecoveryPolicyTest {
     }
 
     @Test
+    public void largeRetryBudgetDoesNotOverflowBackoff() {
+        // A generous config whose naive `initialDelayMs << failures` would
+        // overflow a signed long; every delay must stay positive and non-decreasing.
+        NativeFailureRecoveryPolicy policy = new NativeFailureRecoveryPolicy(80, 1_000L, Long.MAX_VALUE);
+
+        long previous = 0L;
+        for (int i = 0; i < 80; i++) {
+            long delay = policy.onFailure(i);
+            assertTrue("delay must stay positive (no overflow)", delay > 0L);
+            assertTrue("backoff must be non-decreasing", delay >= previous);
+            previous = delay;
+        }
+        assertEquals(NativeFailureRecoveryPolicy.NO_RETRY, policy.onFailure(81L));
+    }
+
+    @Test
     public void identifiesFileDescriptorExhaustion() {
         assertTrue(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(24));
         assertFalse(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(23));

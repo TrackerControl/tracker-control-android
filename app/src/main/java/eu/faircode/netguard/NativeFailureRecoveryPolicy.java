@@ -38,7 +38,11 @@ final class NativeFailureRecoveryPolicy {
         if (failures >= maxRetries)
             return NO_RETRY;
 
-        long delay = initialDelayMs << failures;
+        // Exponential backoff, clamped to avoid signed-long overflow when
+        // maxRetries (and thus the shift amount) is large.
+        long delay = (failures < Long.SIZE - 1 && initialDelayMs <= (Long.MAX_VALUE >> failures))
+                ? initialDelayMs << failures
+                : Long.MAX_VALUE;
         failures++;
         return delay;
     }
