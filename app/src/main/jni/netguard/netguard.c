@@ -476,10 +476,10 @@ Java_eu_faircode_netguard_Util_is_1numeric_1address(JNIEnv *env, jclass type, js
     return numeric;
 }
 
-void report_exit(const struct arguments *args, const char *fmt, ...) {
+void report_exit(const struct arguments *args, int error, const char *fmt, ...) {
     jclass cls = (*args->env)->GetObjectClass(args->env, args->instance);
     ng_add_alloc(cls, "cls");
-    jmethodID mid = jniGetMethodID(args->env, cls, "nativeExit", "(Ljava/lang/String;)V");
+    jmethodID mid = jniGetMethodID(args->env, cls, "nativeExit", "(ILjava/lang/String;)V");
 
     jstring jreason = NULL;
     if (fmt != NULL) {
@@ -492,7 +492,7 @@ void report_exit(const struct arguments *args, const char *fmt, ...) {
         va_end(argptr);
     }
 
-    (*args->env)->CallVoidMethod(args->env, args->instance, mid, jreason);
+    (*args->env)->CallVoidMethod(args->env, args->instance, mid, error, jreason);
     jniCheckException(args->env);
 
     if (jreason != NULL) {

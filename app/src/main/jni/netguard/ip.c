@@ -74,12 +74,13 @@ int check_tun(const struct arguments *args,
     if (ev->events & EPOLLERR) {
         log_android(ANDROID_LOG_ERROR, "tun %d exception", args->tun);
         if (fcntl(args->tun, F_GETFL) < 0) {
+            int error = errno;
             log_android(ANDROID_LOG_ERROR, "fcntl tun %d F_GETFL error %d: %s",
-                        args->tun, errno, strerror(errno));
-            report_exit(args, "fcntl tun %d F_GETFL error %d: %s",
-                        args->tun, errno, strerror(errno));
+                        args->tun, error, strerror(error));
+            report_exit(args, error, "fcntl tun %d F_GETFL error %d: %s",
+                        args->tun, error, strerror(error));
         } else
-            report_exit(args, "tun %d exception", args->tun);
+            report_exit(args, 0, "tun %d exception", args->tun);
         return -1;
     }
 
@@ -88,16 +89,17 @@ int check_tun(const struct arguments *args,
         uint8_t *buffer = ng_malloc(get_mtu(), "tun read");
         ssize_t length = read(args->tun, buffer, get_mtu());
         if (length < 0) {
+            int error = errno;
             ng_free(buffer, __FILE__, __LINE__);
 
             log_android(ANDROID_LOG_ERROR, "tun %d read error %d: %s",
-                        args->tun, errno, strerror(errno));
-            if (errno == EINTR || errno == EAGAIN)
+                        args->tun, error, strerror(error));
+            if (error == EINTR || error == EAGAIN)
                 // Retry later
                 return 0;
             else {
-                report_exit(args, "tun %d read error %d: %s",
-                            args->tun, errno, strerror(errno));
+                report_exit(args, error, "tun %d read error %d: %s",
+                            args->tun, error, strerror(error));
                 return -1;
             }
         } else if (length > 0) {
@@ -119,7 +121,7 @@ int check_tun(const struct arguments *args,
             ng_free(buffer, __FILE__, __LINE__);
 
             log_android(ANDROID_LOG_ERROR, "tun %d empty read", args->tun);
-            report_exit(args, "tun %d empty read", args->tun);
+            report_exit(args, 0, "tun %d empty read", args->tun);
             return -1;
         }
     }

@@ -354,7 +354,7 @@ void handle_signal(int sig, siginfo_t *info, void *context);
 
 void *handle_events(void *a);
 
-void report_exit(const struct arguments *args, const char *fmt, ...);
+void report_exit(const struct arguments *args, int error, const char *fmt, ...);
 
 void report_error(const struct arguments *args, jint error, const char *fmt, ...);
 
