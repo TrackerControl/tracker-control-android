@@ -731,6 +731,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 
+        else if ("tcp_mss_clamp".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
+
         else if ("manage_system".equals(name)) {
             boolean manage = prefs.getBoolean(name, false);
             if (!manage)
