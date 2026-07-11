@@ -251,7 +251,6 @@
     <string name="msg_started">Recherche de traqueurs...</string>
     <string name="msg_waiting">En attente d\'évènement</string>
     <string name="msg_disabled">Utilisez l\'interrupteur ci-dessus pour activer TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl a été désactivé, probablement en utilisant une autre application VPN</string>
     <string name="msg_installed">Problèmes avec %1$s?</string>
     <string name="msg_installed_description">Permettre à l\'application de contacter des entreprises</string>
     <string name="msg_installed_tracker_libraries_found">Contient %d bibliothèques de traqueurs</string>
