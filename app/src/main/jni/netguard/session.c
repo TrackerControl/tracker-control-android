@@ -57,9 +57,11 @@ void *handle_events(void *a) {
     // Open epoll file
     int epoll_fd = epoll_create(1);
     if (epoll_fd < 0) {
-        log_android(ANDROID_LOG_ERROR, "epoll create error %d: %s", errno, strerror(errno));
-        report_exit(args, "epoll create error %d: %s", errno, strerror(errno));
+        int error = errno;
+        log_android(ANDROID_LOG_ERROR, "epoll create error %d: %s", error, strerror(error));
+        report_exit(args, error, "epoll create error %d: %s", error, strerror(error));
         args->ctx->stopping = 1;
+        goto cleanup;
     }
 
     // Monitor stop events
@@ -68,9 +70,11 @@ void *handle_events(void *a) {
     ev_pipe.events = EPOLLIN | EPOLLERR;
     ev_pipe.data.ptr = &ev_pipe;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, args->ctx->pipefds[0], &ev_pipe)) {
-        log_android(ANDROID_LOG_ERROR, "epoll add pipe error %d: %s", errno, strerror(errno));
-        report_exit(args, "epoll add pipe error %d: %s", errno, strerror(errno));
+        int error = errno;
+        log_android(ANDROID_LOG_ERROR, "epoll add pipe error %d: %s", error, strerror(error));
+        report_exit(args, error, "epoll add pipe error %d: %s", error, strerror(error));
         args->ctx->stopping = 1;
+        goto cleanup;
     }
 
     // Monitor tun events
@@ -79,8 +83,9 @@ void *handle_events(void *a) {
     ev_tun.events = EPOLLIN | EPOLLERR;
     ev_tun.data.ptr = NULL;
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, args->tun, &ev_tun)) {
-        log_android(ANDROID_LOG_ERROR, "epoll add tun error %d: %s", errno, strerror(errno));
-        report_exit(args, "epoll add tun error %d: %s", errno, strerror(errno));
+        int error = errno;
+        log_android(ANDROID_LOG_ERROR, "epoll add tun error %d: %s", error, strerror(error));
+        report_exit(args, error, "epoll add tun error %d: %s", error, strerror(error));
         args->ctx->stopping = 1;
     }
 
@@ -181,15 +186,16 @@ void *handle_events(void *a) {
                                recheck ? EPOLL_MIN_CHECK : timeout * 1000);
 
         if (ready < 0) {
-            if (errno == EINTR) {
+            int error = errno;
+            if (error == EINTR) {
                 log_android(ANDROID_LOG_DEBUG, "epoll interrupted tun %d", args->tun);
                 continue;
             } else {
                 log_android(ANDROID_LOG_ERROR,
                             "epoll tun %d error %d: %s",
-                            args->tun, errno, strerror(errno));
-                report_exit(args, "epoll tun %d error %d: %s",
-                            args->tun, errno, strerror(errno));
+                            args->tun, error, strerror(error));
+                report_exit(args, error, "epoll tun %d error %d: %s",
+                            args->tun, error, strerror(error));
                 break;
             }
         }
@@ -270,6 +276,7 @@ void *handle_events(void *a) {
         }
     }
 
+cleanup:
     // Close epoll file
     if (epoll_fd >= 0 && close(epoll_fd))
         log_android(ANDROID_LOG_ERROR,
@@ -368,4 +375,3 @@ void check_allowed(const struct arguments *args) {
         s = s->next;
     }
 }
-

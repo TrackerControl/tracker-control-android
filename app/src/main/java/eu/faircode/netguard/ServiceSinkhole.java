@@ -175,7 +175,7 @@ public class ServiceSinkhole extends VpnService {
 
     private static Object jni_lock = new Object();
     private static long jni_context = 0;
-    private Thread tunnelThread = null;
+    private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
     private ParcelFileDescriptor vpn = null;
     private boolean temporarilyStopped = false;
@@ -195,6 +195,25 @@ public class ServiceSinkhole extends VpnService {
     private volatile CommandHandler commandHandler;
     private volatile LogHandler logHandler;
     private volatile StatsHandler statsHandler;
+
+    private static final int NATIVE_RECOVERY_MAX_RETRIES = 5;
+    private static final long NATIVE_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    private static final long NATIVE_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
+    private final NativeFailureRecoveryPolicy nativeRecoveryPolicy = new NativeFailureRecoveryPolicy(
+            NATIVE_RECOVERY_MAX_RETRIES,
+            NATIVE_RECOVERY_INITIAL_DELAY_MS,
+            NATIVE_RECOVERY_STABLE_WINDOW_MS);
+    private final Handler nativeRecoveryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable nativeRecoveryRunnable = () -> {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+        if (!prefs.getBoolean("enabled", false) || temporarilyStopped || vpn == null) {
+            Log.i(TAG, "Skipping native recovery because protection is no longer active");
+            return;
+        }
+
+        Log.i(TAG, "Retrying native tunnel after failure");
+        ServiceSinkhole.reload("native tunnel recovery", ServiceSinkhole.this, false);
+    };
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
@@ -478,6 +497,8 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case start:
+                        if (vpn == null)
+                            cancelNativeRecovery(true);
                         start();
                         break;
 
@@ -486,6 +507,7 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case stop:
+                        cancelNativeRecovery(true);
                         stop(temporarilyStopped);
                         break;
 
@@ -1784,6 +1806,7 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Started tunnel thread");
         }
 
+        cancelNativeRecovery(false);
         return true;
     }
 
@@ -2088,21 +2111,46 @@ public class ServiceSinkhole extends VpnService {
     }
 
     // Called from native code
-    private void nativeExit(String reason) {
-        Log.w(TAG, "Native exit reason=" + reason);
+    private void nativeExit(int error, String reason) {
+        Log.w(TAG, "Native exit error=" + error + " reason=" + reason);
         if (reason != null) {
-            showErrorNotification(reason);
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.edit().putBoolean("enabled", false).apply();
-            WidgetMain.updateWidgets(this);
+            String displayReason = (NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                    ? getString(R.string.msg_native_fd_exhausted)
+                    : reason);
+            showErrorNotification(displayReason);
+
+            if (!prefs.getBoolean("enabled", false) || temporarilyStopped)
+                return;
+
+            long delayMs = nativeRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
+            if (delayMs == NativeFailureRecoveryPolicy.NO_RETRY) {
+                Log.e(TAG, "Native recovery retry budget exhausted");
+                cancelNativeRecovery(false);
+                prefs.edit().putBoolean("enabled", false).apply();
+                WidgetMain.updateWidgets(this);
+                ServiceSinkhole.stop("native recovery exhausted", this, false);
+                return;
+            }
+
+            nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
+            nativeRecoveryHandler.postDelayed(nativeRecoveryRunnable, delayMs);
+            Log.w(TAG, "Scheduled native recovery in " + delayMs + " ms");
         }
     }
 
     // Called from native code
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
-        showErrorNotification(message);
+        showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                ? getString(R.string.msg_native_fd_exhausted)
+                : message);
+    }
+
+    private void cancelNativeRecovery(boolean resetBudget) {
+        nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
+        if (resetBudget)
+            nativeRecoveryPolicy.reset();
     }
 
     // Called from native code
@@ -3260,6 +3308,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+            cancelNativeRecovery(true);
 
             commandLooper.quit();
             logLooper.quit();
