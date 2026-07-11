@@ -177,7 +177,7 @@ public class ServiceSinkhole extends VpnService {
     private static long jni_context = 0;
     private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
-    private ParcelFileDescriptor vpn = null;
+    private volatile ParcelFileDescriptor vpn = null;
     private boolean temporarilyStopped = false;
 
     private static long last_hosts_modified = 0;

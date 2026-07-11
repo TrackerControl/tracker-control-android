@@ -87,6 +87,7 @@ void *handle_events(void *a) {
         log_android(ANDROID_LOG_ERROR, "epoll add tun error %d: %s", error, strerror(error));
         report_exit(args, error, "epoll add tun error %d: %s", error, strerror(error));
         args->ctx->stopping = 1;
+        goto cleanup;
     }
 
     // Loop
