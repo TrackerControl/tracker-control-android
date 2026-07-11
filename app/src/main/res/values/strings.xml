@@ -308,6 +308,7 @@
     <string name="msg_installed_tracker_libraries_found">Contains %d tracker libraries</string>
     <string name="msg_installed_n">Has been installed</string>
     <string name="msg_completed">Action completed</string>
+    <string name="msg_no_file_manager">No file manager found to pick a file.</string>
     <string name="msg_vpn">TrackerControl uses a local VPN to filter internet traffic.
 For this reason, please allow a VPN connection in the next dialog.
 Your internet traffic is not being sent to a remote VPN server.</string>

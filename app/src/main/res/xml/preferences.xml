@@ -133,16 +133,6 @@
                 android:defaultValue="false"
                 android:key="handover"
                 android:title="@string/setting_handover" />
-            <eu.faircode.netguard.SwitchPreference
-                android:defaultValue="false"
-                android:enabled="false"
-                android:key="track_usage"
-                android:summary="@string/summary_track_usage"
-                android:title="@string/setting_track_usage" />
-            <Preference
-                android:enabled="false"
-                android:key="reset_usage"
-                android:title="@string/setting_reset_usage" />
             <Preference
                 android:key="forwarding"
                 android:title="@string/setting_forwarding" />
