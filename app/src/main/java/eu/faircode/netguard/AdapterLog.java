@@ -169,24 +169,32 @@ public class AdapterLog extends CursorAdapter {
         tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(time));
 
         // Show connection type
-        if (connection <= 0)
+        String connectionDescription;
+        if (connection <= 0) {
             ivConnection.setImageResource(allowed > 0 ? R.drawable.host_allowed : R.drawable.host_blocked);
-        else {
+            connectionDescription = context.getString(allowed > 0 ? R.string.log_connection_allowed : R.string.log_connection_blocked);
+        } else {
+            String networkType = context.getString(connection == 1 ? R.string.log_connection_wifi : R.string.log_connection_other);
+            String allowedState = context.getString(allowed > 0 ? R.string.log_connection_allowed : R.string.log_connection_blocked);
+            connectionDescription = networkType + ", " + allowedState;
             if (allowed > 0)
                 ivConnection.setImageResource(connection == 1 ? R.drawable.wifi_on : R.drawable.other_on);
             else
                 ivConnection.setImageResource(connection == 1 ? R.drawable.wifi_off : R.drawable.other_off);
         }
+        ivConnection.setContentDescription(connectionDescription);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             Drawable wrap = DrawableCompat.wrap(ivConnection.getDrawable());
             DrawableCompat.setTint(wrap, allowed > 0 ? colorOn : colorOff);
         }
 
         // Show if screen on
-        if (interactive <= 0)
+        if (interactive <= 0) {
             ivInteractive.setImageDrawable(null);
-        else {
+            ivInteractive.setContentDescription(null);
+        } else {
             ivInteractive.setImageResource(R.drawable.screen_on);
+            ivInteractive.setContentDescription(context.getString(R.string.log_screen_on));
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 Drawable wrap = DrawableCompat.wrap(ivInteractive.getDrawable());
                 DrawableCompat.setTint(wrap, colorOn);
@@ -233,9 +241,11 @@ public class AdapterLog extends CursorAdapter {
             } catch (PackageManager.NameNotFoundException ignored) {
             }
 
-        if (info == null)
+        if (info == null) {
             ivIcon.setImageDrawable(null);
-        else {
+            ivIcon.setContentDescription(context.getString(R.string.log_app_icon));
+        } else {
+            ivIcon.setContentDescription(info.loadLabel(pm));
             if (info.icon <= 0)
                 ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
             else {

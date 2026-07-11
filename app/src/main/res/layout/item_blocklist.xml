@@ -51,6 +51,9 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="8dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/blocklist_delete_description"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
         android:src="@android:drawable/ic_menu_delete" />
 
 </LinearLayout>

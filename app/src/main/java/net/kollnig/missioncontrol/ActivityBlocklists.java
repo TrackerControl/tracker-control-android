@@ -155,6 +155,8 @@ public class ActivityBlocklists extends AppCompatActivity {
                 holder.textError.setVisibility(View.VISIBLE);
             }
 
+            holder.switchEnabled.setContentDescription(
+                    context.getString(R.string.blocklist_enable_description, item.url));
             holder.switchEnabled.setChecked(item.enabled);
             holder.switchEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 item.enabled = isChecked;
