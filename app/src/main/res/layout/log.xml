@@ -20,6 +20,7 @@
 
         <ImageView
             android:id="@+id/ivIcon"
+            android:importantForAccessibility="no"
             android:layout_width="24dip"
             android:layout_height="24dip"
             android:layout_gravity="center_vertical" />

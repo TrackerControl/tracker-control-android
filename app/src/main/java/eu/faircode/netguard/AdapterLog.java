@@ -243,9 +243,7 @@ public class AdapterLog extends CursorAdapter {
 
         if (info == null) {
             ivIcon.setImageDrawable(null);
-            ivIcon.setContentDescription(context.getString(R.string.log_app_icon));
         } else {
-            ivIcon.setContentDescription(info.loadLabel(pm));
             if (info.icon <= 0)
                 ivIcon.setImageResource(android.R.drawable.sym_def_app_icon);
             else {
