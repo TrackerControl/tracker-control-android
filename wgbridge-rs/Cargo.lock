@@ -394,9 +394,9 @@ dependencies = [
 
 [[package]]
 name = "gotatun"
-version = "0.7.2"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09e8590454839d406160792e2c5617e463a0d223f7370687528d0dd6560140b9"
+checksum = "af09aa1725e33bf1b186267f939fe629316da3df8e00ddeba7e446a264832bb4"
 dependencies = [
  "aead",
  "base64",
@@ -415,7 +415,6 @@ dependencies = [
  "ip_network_table",
  "ipnetwork",
  "libc",
- "log",
  "nix",
  "parking_lot",
  "rand",
@@ -426,6 +425,7 @@ dependencies = [
  "thiserror",
  "tokio",
  "tokio-util",
+ "tracing",
  "typed-builder",
  "windows-sys 0.61.2",
  "x25519-dalek",
@@ -931,6 +931,37 @@ dependencies = [
  "futures-sink",
  "pin-project-lite",
  "tokio",
+]
+
+[[package]]
+name = "tracing"
+version = "0.1.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100"
+dependencies = [
+ "pin-project-lite",
+ "tracing-attributes",
+ "tracing-core",
+]
+
+[[package]]
+name = "tracing-attributes"
+version = "0.1.31"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7490cfa5ec963746568740651ac6781f701c9c5ea257c58e057f3ba8cf69e8da"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "tracing-core"
+version = "0.1.36"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
+dependencies = [
+ "once_cell",
 ]
 
 [[package]]
