@@ -107,7 +107,6 @@
     <string name="msg_sure">אתה בטוח?</string>
     <string name="msg_waiting">ממתין לאירוע</string>
     <string name="msg_disabled">השתמש במתג למעלה כדי להפעיל את TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl מנוטרל, ככל הנראה בגלל שימוש ביישום מבוסס VPN אחר</string>
     <string name="msg_installed">יש בעיות עם %1$s?</string>
     <string name="msg_installed_description">אפשר לאפליקציה ליצור קשר עם חברות</string>
     <string name="msg_installed_tracker_libraries_found">מכיל %d ספריות מעקב</string>
