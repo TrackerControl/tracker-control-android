@@ -160,7 +160,6 @@
     <string name="msg_started">Поиск трекеров...</string>
     <string name="msg_waiting">Ожидание события</string>
     <string name="msg_disabled">Для включения TrackerControl используйте переключатель выше.</string>
-    <string name="msg_revoked">TrackerControl был отключен, скорее всего, из-за применения другого VPN-подключения</string>
     <string name="msg_installed">Проблемы с %1$s?</string>
     <string name="msg_installed_description">Разрешить приложению связываться с компаниями</string>
     <string name="msg_installed_tracker_libraries_found">Содержит %d библиотек трекеров</string>
