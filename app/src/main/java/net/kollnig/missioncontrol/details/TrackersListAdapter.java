@@ -279,6 +279,31 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     return tv;
                 }
 
+                @Override
+                public boolean areAllItemsEnabled() {
+                    return false;
+                }
+
+                @Override
+                public boolean isEnabled(int pos) {
+                    Tracker t = getItem(pos);
+                    return t == null || !isAmbiguousDeadToggle(t);
+                }
+
+                /**
+                 * Ambiguous shared-IP trackers are always allowed at runtime outside
+                 * Strict mode (see BlockingModeLogic#blocksAmbiguousTrackerIp), no
+                 * matter their configured blocked state. Tapping such a row would
+                 * silently toggle hidden state with no runtime effect, so it must be
+                 * treated as non-interactive rather than shown as a dead toggle.
+                 */
+                private boolean isAmbiguousDeadToggle(Tracker t) {
+                    return trackerProtectionEnabled
+                            && !BlockingMode.isMinimalMode(getContext())
+                            && !BlockingMode.isStrictMode(getContext())
+                            && t.isAllowedInStandardMode();
+                }
+
                 private void updateText(TextView tv, Tracker t) {
                     String name = t.getName();
                     if (name.equals(TRACKER_HOSTLIST))
@@ -291,6 +316,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     List<String> sortedHosts = new ArrayList<>(t.getHosts());
                     Collections.sort(sortedHosts);
                     String hosts = TextUtils.join("\n• ", sortedHosts);
+
+                    boolean uncertainAllowed = isAmbiguousDeadToggle(t);
 
                     Spannable spannable;
                     boolean showStatus;
@@ -321,7 +348,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         String text = String.format("%s\n• %s", title, hosts);
                         spannable = new SpannableString(text);
                     } else {
-                        String status = getContext().getString(companyBlocked ? R.string.blocked : R.string.allowed);
+                        String status = getContext().getString(uncertainAllowed
+                                ? R.string.allowed_shared_ip
+                                : (companyBlocked ? R.string.blocked : R.string.allowed));
                         int color = ContextCompat.getColor(getContext(),
                                 companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
 
@@ -341,6 +370,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                     tv.setText(spannable, TextView.BufferType.SPANNABLE);
+                    // Grey out ambiguous shared-IP rows: they are non-interactive
+                    // (see isEnabled above), so the toggle isn't a dead click.
+                    tv.setEnabled(!uncertainAllowed);
                 }
             };
             holder.mCompaniesList.setAdapter(trackersAdapter);
@@ -381,6 +413,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         Tracker t = trackersAdapter.getItem(i);
                         if (t == null)
                             return;
+
+                        // Ambiguous shared-IP trackers are always allowed at runtime
+                        // outside Strict mode. The row is marked non-interactive via
+                        // the adapter's isEnabled(), but guard here too in case a
+                        // click still reaches us, instead of silently doing nothing.
+                        if (!BlockingMode.isStrictMode(mContext) && t.isAllowedInStandardMode()) {
+                            Toast.makeText(mContext, R.string.allowed_shared_ip, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
                         if (!blockedTrackerCategory) {
