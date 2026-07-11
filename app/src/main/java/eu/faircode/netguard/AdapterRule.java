@@ -263,7 +263,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
         boolean blockedInternet = internetBlocklist.blockedInternet(rule.uid);
         setGreyscale(iv, rule.internet && active && blockedInternet);
-        updateToggleContentDescription(iv, context, rule, blockedInternet);
+        updateToggleContentDescription(iv, context, rule, active, blockedInternet);
         holder.ivIcon.setOnClickListener(view -> {
             if (!rule.internet)
                 return;
@@ -284,7 +284,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 Toast.makeText(context, R.string.internet_blocked, Toast.LENGTH_SHORT).show();
             }
             setGreyscale(iv, !wasBlocked);
-            updateToggleContentDescription(iv, context, rule, !wasBlocked);
+            updateToggleContentDescription(iv, context, rule, true, !wasBlocked);
         });
 
         boolean pastWeekOnly = !("trackers_all".equals(cachedSort));
@@ -330,10 +330,14 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
      * Internet toggle button, reflecting the app's name and current
      * block/allow state (accessibility fix for #231).
      */
-    private void updateToggleContentDescription(ImageView iv, Context context, Rule rule, boolean blocked) {
+    private void updateToggleContentDescription(ImageView iv, Context context, Rule rule,
+            boolean active, boolean blocked) {
         final String description;
         if (!rule.internet)
             description = context.getString(R.string.toggle_no_internet_description, rule.name);
+        else if (!active)
+            description = context.getString(R.string.toggle_internet_unavailable_description,
+                    rule.name);
         else if (blocked)
             description = context.getString(R.string.toggle_allow_internet_description, rule.name);
         else
