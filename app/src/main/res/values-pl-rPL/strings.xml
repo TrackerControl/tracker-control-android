@@ -108,7 +108,6 @@
     <string name="msg_started">Wyszukiwanie trackerów...</string>
     <string name="msg_waiting">Oczekiwanie na zdarzenie</string>
     <string name="msg_disabled">Użyj powyższego przełącznika, aby włączyć TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl został wyłączony, prawdopodobnie przy użyciu innej aplikacji opartej na sieci VPN</string>
     <string name="msg_installed">Problemy z %1$s?</string>
     <string name="msg_installed_description">Zezwól aplikacji na kontakt z firmami</string>
     <string name="msg_installed_tracker_libraries_found">Zawiera %d bibliotek trackerów</string>
