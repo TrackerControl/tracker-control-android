@@ -3213,15 +3213,27 @@ public class ServiceSinkhole extends VpnService {
         // recoverable. A deliberate revoke in system settings, or another VPN
         // taking the slot, clears the always-on designation and must disable TC;
         // otherwise the repeating watchdog would keep trying to reclaim the VPN.
-        boolean alwaysOn = false;
+        //
+        // Correctness in both directions (staying on for #526 recovery, and
+        // honoring a deliberate system-settings disable) depends on the OS
+        // reporting the always-on designation correctly right here at revoke
+        // time. On pre-Q devices the "always_on_vpn_app" Settings.Secure key is
+        // @hide and some OEM/OS builds return null even when TC *is* the
+        // configured always-on VPN, or the lookup can throw. That null/unknown
+        // case is deliberately biased toward keeping the VPN enabled: only a
+        // positively-known alwaysOn=false is allowed to persist enabled=false.
+        Boolean alwaysOn = null;
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                 alwaysOn = isAlwaysOn();
-            else
-                alwaysOn = getPackageName().equals(Settings.Secure.getString(
-                        getContentResolver(), "always_on_vpn_app"));
+            else {
+                String alwaysOnPackage = Settings.Secure.getString(
+                        getContentResolver(), "always_on_vpn_app");
+                alwaysOn = (alwaysOnPackage == null) ? null : getPackageName().equals(alwaysOnPackage);
+            }
         } catch (Throwable ex) {
             Log.w(TAG, "Could not determine always-on VPN state", ex);
+            alwaysOn = null;
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -3237,7 +3249,12 @@ public class ServiceSinkhole extends VpnService {
         super.onRevoke();
     }
 
-    static boolean resolveEnabledAfterRevoke(boolean enabled, boolean alwaysOn) {
+    static boolean resolveEnabledAfterRevoke(boolean enabled, Boolean alwaysOn) {
+        // alwaysOn == null means the always-on state could not be positively
+        // determined (see onRevoke comment above). Do not force a disable in
+        // that case: keep whatever enabled state was already persisted.
+        if (alwaysOn == null)
+            return enabled;
         return enabled && alwaysOn;
     }
 
