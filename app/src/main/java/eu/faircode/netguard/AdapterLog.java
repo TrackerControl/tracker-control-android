@@ -127,6 +127,13 @@ public class AdapterLog extends CursorAdapter {
         this.organization = organization;
     }
 
+    void close() {
+        // CursorAdapter closes the current cursor when it is replaced. The
+        // activity owns this adapter, so release its last cursor explicitly
+        // instead of leaving it for the finalizer/StrictMode to detect.
+        changeCursor(null);
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return LayoutInflater.from(context).inflate(R.layout.log, parent, false);
