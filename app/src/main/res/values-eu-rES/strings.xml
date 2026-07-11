@@ -105,7 +105,6 @@
     <string name="msg_sure">Ziur zaude?</string>
     <string name="msg_waiting">Gertaeraren zain</string>
     <string name="msg_disabled">Erabili goiko kontrola TrackerControl aktibatzeko.</string>
-    <string name="msg_revoked">TrackerControl desaktibatu egin da, ziur aski VPNan oinarritutako beste aplikazioren bat erabiltzeagatik</string>
     <string name="msg_installed">Arazoak %1$s(r)ekin?</string>
     <string name="msg_installed_description">Baimendu aplikazioa konpainiekin kontaktatzea</string>
     <string name="msg_installed_tracker_libraries_found">%d aztarnari liburutegi ditu</string>
