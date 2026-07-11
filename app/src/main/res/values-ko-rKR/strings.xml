@@ -79,9 +79,12 @@
     <string name="summary_track_usage">각 앱 및 주소에서 송수신한 바이트 수를 추적합니다. 배터리 사용량이 증가할 수 있습니다.</string>
     <string name="msg_sure">확실한가요?</string>
     <!-- App Overview -->
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <!-- App Details -->
     <!-- Actions -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>
