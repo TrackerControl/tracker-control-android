@@ -91,6 +91,13 @@
 
     <style name="RocketSwitch.NoIcon">
         <item name="thumbIcon">@null</item>
+        <!-- Restore the standard Material3 track outline (suppressed via
+             transparent trackDecorationTint in RocketSwitch) so the inactive
+             track reads as a switch rather than a bare thumb. Scoped to
+             .NoIcon only (used by the traffic log toggle), leaving the
+             rocket-icon RocketSwitch (main enable switch) untouched.
+             See issue #559. -->
+        <item name="trackDecorationTint">?attr/colorOutline</item>
     </style>
 
     <!-- ActionBar with colorPrimary background and white icons/text -->

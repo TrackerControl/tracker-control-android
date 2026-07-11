@@ -17,6 +17,11 @@
     <color name="switchTrackActive">@color/colorAccent</color>
     <color name="switchTrackNormal">#888</color>
 
+    <!-- Link/action color for footer-style text links (e.g. "Manage WireGuard
+         profiles"). Same as colorAccent in light mode; overridden with a
+         brighter tone in values-night for contrast against a dark surface. -->
+    <color name="colorFooterLink">@color/colorAccent</color>
+
     <color name="colorSend">#FF0000</color>
     <color name="colorReceive">#0000FF</color>
 
