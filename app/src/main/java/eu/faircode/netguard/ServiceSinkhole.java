@@ -3147,11 +3147,37 @@ public class ServiceSinkhole extends VpnService {
     public void onRevoke() {
         Log.i(TAG, "Revoke");
 
-        // Disable firewall (will result in stop command)
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean("enabled", false).apply();
+        // Android does not tell us *why* onRevoke() fired. The system calls it
+        // identically for (a) a deliberate user disable from the system VPN
+        // settings, (b) another VPN app taking the single VPN slot (#331), and
+        // (c) an OS-initiated teardown/re-auth of the always-on slot — Doze,
+        // memory pressure, an OS update — which is the "always-on VPN turns
+        // itself off after 3-5 days" report (#526).
+        //
+        // We deliberately do NOT persist enabled=false here. Every genuine
+        // in-app disable path (the main toggle in ActivityMain, the quick-
+        // settings tile in ServiceTileMain, and the widget in WidgetAdmin)
+        // already sets enabled=false *itself* before stopping the service, and
+        // tearing down our own tunnel does not trigger onRevoke(). So a revoke
+        // reaching this method is always externally initiated. Clearing
+        // "enabled" here used to turn every such external teardown into a
+        // permanent self-disable with no recovery: the service is START_STICKY
+        // and onStartCommand() keys off "enabled", so once it is false every
+        // subsequent (re)start immediately stops again.
+        //
+        // Leaving "enabled" untouched lets the existing recovery mechanisms
+        // re-establish the tunnel once TC reacquires the VPN slot: the OS
+        // restarting the always-on service, ReceiverAutostart on boot, the
+        // watchdog alarm, and reopening ActivityMain (which calls start() when
+        // enabled). We do not add any retry loop here, so a second VPN that
+        // legitimately holds the slot is not thrashed — recovery is driven only
+        // by those OS-paced triggers. The remaining tradeoff is that a user who
+        // disables TC via the *system* VPN settings (rather than the in-app
+        // toggle) will see it come back on the next such trigger; the in-app
+        // toggle remains the supported way to turn TC off.
 
-        // Feedback
+        // Feedback: the tunnel really did drop, so inform the user (mirrors
+        // Android's own "VPN disconnected" notice). This does not disable TC.
         showDisabledNotification();
         WidgetMain.updateWidgets(this);
 
