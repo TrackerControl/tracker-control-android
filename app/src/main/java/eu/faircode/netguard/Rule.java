@@ -97,6 +97,8 @@ public class Rule {
     private static List<PackageInfo> cachePackageInfo = null;
     private static Map<PackageInfo, String> cacheLabel = new HashMap<>();
     private static Map<String, Boolean> cacheSystem = new HashMap<>();
+    private static final Map<String, Boolean> cachePredefinedSystem = new HashMap<>();
+    private static boolean predefinedSystemLoaded = false;
     private static Map<String, Boolean> cacheInternet = new HashMap<>();
     private static Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
     private static Map<Integer, Long> trackerRecent = new HashMap<>();
@@ -122,9 +124,39 @@ public class Rule {
     }
 
     public static boolean isSystem(String packageName, Context context) {
-        if (!cacheSystem.containsKey(packageName))
-            cacheSystem.put(packageName, Util.isSystem(packageName, context));
+        if (!cacheSystem.containsKey(packageName)) {
+            boolean system = Util.isSystem(packageName, context);
+            Boolean predefined = getPredefinedSystem(context).get(packageName);
+            cacheSystem.put(packageName, resolveSystemClassification(system, predefined));
+        }
         return cacheSystem.get(packageName);
+    }
+
+    static boolean resolveSystemClassification(boolean system, Boolean predefined) {
+        return predefined == null ? system : predefined;
+    }
+
+    private static Map<String, Boolean> getPredefinedSystem(Context context) {
+        synchronized (cachePredefinedSystem) {
+            if (predefinedSystemLoaded)
+                return cachePredefinedSystem;
+
+            try (XmlResourceParser xml = context.getResources().getXml(R.xml.predefined)) {
+                int eventType = xml.getEventType();
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    if (eventType == XmlPullParser.START_TAG && "type".equals(xml.getName())) {
+                        String pkg = xml.getAttributeValue(null, "package");
+                        boolean system = xml.getAttributeBooleanValue(null, "system", true);
+                        cachePredefinedSystem.put(pkg, system);
+                    }
+                    eventType = xml.next();
+                }
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
+            predefinedSystemLoaded = true;
+            return cachePredefinedSystem;
+        }
     }
 
     private static boolean hasInternet(String packageName, Context context) {
@@ -145,6 +177,10 @@ public class Rule {
             cachePackageInfo = null;
             cacheLabel.clear();
             cacheSystem.clear();
+            synchronized (cachePredefinedSystem) {
+                cachePredefinedSystem.clear();
+                predefinedSystemLoaded = false;
+            }
             cacheInternet.clear();
             cacheEnabled.clear();
         }
@@ -258,8 +294,7 @@ public class Rule {
             Map<String, Boolean> pre_roaming = new HashMap<>();
             Map<String, String[]> pre_related = new HashMap<>();
             Map<String, Boolean> pre_system = new HashMap<>();
-            try {
-                XmlResourceParser xml = context.getResources().getXml(R.xml.predefined);
+            try (XmlResourceParser xml = context.getResources().getXml(R.xml.predefined)) {
                 int eventType = xml.getEventType();
                 while (eventType != XmlPullParser.END_DOCUMENT) {
                     if (eventType == XmlPullParser.START_TAG)
