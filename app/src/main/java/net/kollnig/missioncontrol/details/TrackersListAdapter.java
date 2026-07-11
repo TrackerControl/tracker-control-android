@@ -266,7 +266,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mUncertain.setVisibility(trackerCategory.isUncertain() ? View.VISIBLE : View.GONE);
 
             // Add data to view
-            holder.mTrackerCategoryName.setText(trackerCategory.getDisplayName(mContext));
+            String categoryDisplayName = trackerCategory.getDisplayName(mContext);
+            holder.mTrackerCategoryName.setText(categoryDisplayName);
+            holder.mSwitchTracker.setContentDescription(
+                    String.format(mContext.getString(R.string.toggle_block_category_description),
+                            categoryDisplayName));
             final ArrayAdapter<Tracker> trackersAdapter = new ArrayAdapter<Tracker>(mContext,
                     R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
                 @Override

@@ -261,7 +261,9 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         // Show if Internet access blocked
         final ImageView iv = holder.ivIcon;
         InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
-        setGreyscale(iv, rule.internet && active && internetBlocklist.blockedInternet(rule.uid));
+        boolean blockedInternet = internetBlocklist.blockedInternet(rule.uid);
+        setGreyscale(iv, rule.internet && active && blockedInternet);
+        updateToggleContentDescription(iv, context, rule, blockedInternet);
         holder.ivIcon.setOnClickListener(view -> {
             if (!rule.internet)
                 return;
@@ -282,6 +284,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 Toast.makeText(context, R.string.internet_blocked, Toast.LENGTH_SHORT).show();
             }
             setGreyscale(iv, !wasBlocked);
+            updateToggleContentDescription(iv, context, rule, !wasBlocked);
         });
 
         boolean pastWeekOnly = !("trackers_all".equals(cachedSort));
@@ -320,6 +323,22 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         // All binding work for those views has been removed to improve scroll performance.
         // The legacy expanded-state code (database queries, AdapterAccess creation,
         // click listeners on hidden views) was the primary cause of scroll jank.
+    }
+
+    /**
+     * Sets a screen-reader-friendly content description on the app icon /
+     * Internet toggle button, reflecting the app's name and current
+     * block/allow state (accessibility fix for #231).
+     */
+    private void updateToggleContentDescription(ImageView iv, Context context, Rule rule, boolean blocked) {
+        final String description;
+        if (!rule.internet)
+            description = context.getString(R.string.toggle_no_internet_description, rule.name);
+        else if (blocked)
+            description = context.getString(R.string.toggle_allow_internet_description, rule.name);
+        else
+            description = context.getString(R.string.toggle_block_internet_description, rule.name);
+        iv.setContentDescription(description);
     }
 
     private void setGreyscale(ImageView iv, boolean on) {

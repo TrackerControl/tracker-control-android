@@ -468,6 +468,12 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Disable internet access for this application</string>
     <string name="tracked_app_name">Application Name</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <string name="toggle_block_internet_description">Block internet access for %1$s</string>
+    <string name="toggle_allow_internet_description">Allow internet access for %1$s</string>
+    <string name="toggle_no_internet_description">%1$s has no internet access</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <string name="toggle_block_category_description">Block trackers in category %1$s</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contacted %d company last week</item>
         <item quantity="other">contacted %d companies last week</item>
