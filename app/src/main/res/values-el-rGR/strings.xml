@@ -105,7 +105,6 @@
     <string name="msg_sure">Είστε σίγουρος;</string>
     <string name="msg_waiting">Αναμονή για συμβάν</string>
     <string name="msg_disabled">Χρησιμοποιήστε τον παραπάνω διακόπτη για να ενεργοποιήσετε το TrackerControl.</string>
-    <string name="msg_revoked">Το TrackerControl έχει απενεργοποιηθεί, πιθανότατα χρησιμοποιώντας μια άλλη εφαρμογή που βασίζεται σε VPN</string>
     <string name="msg_installed">Προβλήματα με %1$s;</string>
     <string name="msg_installed_description">Επιτρέψτε στην εφαρμογή να επικοινωνεί με εταιρείες</string>
     <string name="msg_installed_tracker_libraries_found">Περιέχει %d βιβλιοθήκες ιχνηλατών</string>
