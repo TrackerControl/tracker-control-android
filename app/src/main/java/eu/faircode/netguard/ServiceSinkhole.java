@@ -2508,6 +2508,9 @@ public class ServiceSinkhole extends VpnService {
                                         statsHandler.sendEmptyMessage(interactive ? MSG_STATS_START : MSG_STATS_STOP);
                                     }
                                 });
+
+                        if (last_interactive)
+                            reArmVpnHealthCheckIfDeferred();
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
@@ -3080,6 +3083,14 @@ public class ServiceSinkhole extends VpnService {
     private final VpnHealthRecoveryPolicy vpnHealthPolicy = new VpnHealthRecoveryPolicy();
     private int vpnHealthGeneration;
     private boolean vpnHealthProbeInFlight;
+    // Set when a probe is skipped purely because the screen was off. A brief
+    // screen-off during the scheduled delay would otherwise silently drop the
+    // whole recovery sequence until the next epoch (e.g. next real network
+    // change), leaving a genuinely wedged VPN path unrepaired for a long
+    // time. Re-armed defensively on the next screen-on, without touching the
+    // epoch/trigger model: this only ever schedules the same probe that was
+    // skipped, at the same generation-check guarded entry point.
+    private boolean vpnHealthProbeDeferredForScreenOff;
 
     private void reloadAfterNetworkChange(final String reason) {
         networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
@@ -3128,8 +3139,16 @@ public class ServiceSinkhole extends VpnService {
                 }, VPN_HEALTH_TOKEN, SystemClock.uptimeMillis() + 1_000L);
                 return;
             }
-            if (!Util.isInteractive(this) || !Util.isConnected(this)) {
-                Log.i(TAG, "VPN health check skipped: device inactive or offline");
+            if (!Util.isInteractive(this)) {
+                // Don't drop the sequence: re-check as soon as the screen
+                // turns back on, still gated on the same generation/state
+                // checks above (and on isConnected below).
+                Log.i(TAG, "VPN health check deferred: screen off");
+                vpnHealthProbeDeferredForScreenOff = true;
+                return;
+            }
+            if (!Util.isConnected(this)) {
+                Log.i(TAG, "VPN health check skipped: device offline");
                 return;
             }
             vpnHealthProbeInFlight = true;
@@ -3192,7 +3211,26 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void run() {
                 vpnHealthGeneration++;
+                vpnHealthProbeDeferredForScreenOff = false;
                 vpnHealthHandler.removeCallbacksAndMessages(VPN_HEALTH_TOKEN);
+            }
+        });
+    }
+
+    // Re-arms a VPN health probe that was previously skipped only because the
+    // screen was off. Safe to call unconditionally (e.g. on every screen-on):
+    // it is a no-op unless a probe was actually deferred, and it reuses the
+    // existing generation-guarded startVpnHealthProbe() entry point, so it
+    // cannot bypass the epoch/recovery budget or run against a stale/stopped
+    // VPN state.
+    private void reArmVpnHealthCheckIfDeferred() {
+        vpnHealthHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (!vpnHealthProbeDeferredForScreenOff)
+                    return;
+                vpnHealthProbeDeferredForScreenOff = false;
+                startVpnHealthProbe(vpnHealthGeneration);
             }
         });
     }
