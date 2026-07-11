@@ -2115,17 +2115,18 @@ public class ServiceSinkhole extends VpnService {
         Log.w(TAG, "Native exit error=" + error + " reason=" + reason);
         if (reason != null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String displayReason = (NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
-                    ? getString(R.string.msg_native_fd_exhausted)
-                    : reason);
-            showErrorNotification(displayReason);
 
+            // A native exit while TC is disabled or intentionally paused is expected: stay silent.
             if (!prefs.getBoolean("enabled", false) || temporarilyStopped)
                 return;
 
             long delayMs = nativeRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
             if (delayMs == NativeFailureRecoveryPolicy.NO_RETRY) {
+                // Recovery budget exhausted: TC is going down, so surface the failure to the user.
                 Log.e(TAG, "Native recovery retry budget exhausted");
+                showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                        ? getString(R.string.msg_native_fd_exhausted)
+                        : reason);
                 cancelNativeRecovery(false);
                 prefs.edit().putBoolean("enabled", false).apply();
                 WidgetMain.updateWidgets(this);
@@ -2133,6 +2134,7 @@ public class ServiceSinkhole extends VpnService {
                 return;
             }
 
+            // Transient failure: recover transparently, without alarming the user.
             nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
             nativeRecoveryHandler.postDelayed(nativeRecoveryRunnable, delayMs);
             Log.w(TAG, "Scheduled native recovery in " + delayMs + " ms");
