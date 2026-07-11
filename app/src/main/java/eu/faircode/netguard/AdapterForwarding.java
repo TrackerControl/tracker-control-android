@@ -47,6 +47,10 @@ public class AdapterForwarding extends CursorAdapter {
         colRUid = cursor.getColumnIndex("ruid");
     }
 
+    void close() {
+        changeCursor(null);
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         return LayoutInflater.from(context).inflate(R.layout.forward, parent, false);

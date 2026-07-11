@@ -81,6 +81,11 @@ public class AdapterLog extends CursorAdapter {
     private InetAddress vpn6 = null;
 
     public AdapterLog(Context context, Cursor cursor, boolean resolve, boolean organization) {
+        this(context, cursor, resolve, organization, true);
+    }
+
+    AdapterLog(Context context, Cursor cursor, boolean resolve, boolean organization,
+               boolean initializeNetworkConfiguration) {
         super(context, cursor, 0);
         this.resolve = resolve;
         this.organization = organization;
@@ -107,15 +112,17 @@ public class AdapterLog extends CursorAdapter {
 
         iconSize = Util.dips2pixels(24, context);
 
-        try {
-            List<InetAddress> lstDns = ServiceSinkhole.getDns(context);
-            dns1 = (lstDns.size() > 0 ? lstDns.get(0) : null);
-            dns2 = (lstDns.size() > 1 ? lstDns.get(1) : null);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            vpn4 = InetAddress.getByName(prefs.getString("vpn4", "10.1.10.1"));
-            vpn6 = InetAddress.getByName(prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1"));
-        } catch (UnknownHostException ex) {
-            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        if (initializeNetworkConfiguration) {
+            try {
+                List<InetAddress> lstDns = ServiceSinkhole.getDns(context);
+                dns1 = (lstDns.size() > 0 ? lstDns.get(0) : null);
+                dns2 = (lstDns.size() > 1 ? lstDns.get(1) : null);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                vpn4 = InetAddress.getByName(prefs.getString("vpn4", "10.1.10.1"));
+                vpn6 = InetAddress.getByName(prefs.getString("vpn6", "fd00:1:fd00:1:fd00:1:fd00:1"));
+            } catch (UnknownHostException ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
         }
     }
 
@@ -125,6 +132,13 @@ public class AdapterLog extends CursorAdapter {
 
     public void setOrganization(boolean organization) {
         this.organization = organization;
+    }
+
+    void close() {
+        // CursorAdapter closes the current cursor when it is replaced. The
+        // activity owns this adapter, so release its last cursor explicitly
+        // instead of leaving it for the finalizer/StrictMode to detect.
+        changeCursor(null);
     }
 
     @Override

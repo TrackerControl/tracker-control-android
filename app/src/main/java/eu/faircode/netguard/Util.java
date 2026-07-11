@@ -132,8 +132,12 @@ public class Util {
     static {
         try {
             System.loadLibrary("netguard");
-        } catch (UnsatisfiedLinkError ignored) {
-            System.exit(1);
+        } catch (UnsatisfiedLinkError error) {
+            // Robolectric runs on the host JVM and cannot load Android ABI
+            // libraries. Let unit tests exercise Java-only code paths, while
+            // keeping a missing native library fatal and diagnosable on-device.
+            if (!"robolectric".equals(Build.FINGERPRINT))
+                throw error;
         }
     }
 
