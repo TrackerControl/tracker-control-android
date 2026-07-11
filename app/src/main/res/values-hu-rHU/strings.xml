@@ -108,7 +108,6 @@
     <string name="msg_started">Nyomkövetők keresése...</string>
     <string name="msg_waiting">Várakozás eseményre</string>
     <string name="msg_disabled">Használja a fenti kapcsolót a TrackerControl engedélyezéséhez.</string>
-    <string name="msg_revoked">A TrackerControl le van tiltva, valószínűleg egy másik VPN alapú alkalmazással</string>
     <string name="msg_installed">%1$s gondot okozó alkalmazás?</string>
     <string name="msg_installed_description">Engedélyezi az alkalmazás kapcsolatát a társaságokkal</string>
     <string name="msg_installed_tracker_libraries_found">%d nyomkövető könyvtárat tartalmaz</string>
