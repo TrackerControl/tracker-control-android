@@ -119,7 +119,6 @@
     <string name="msg_started">Vyhledávání trackerů...</string>
     <string name="msg_waiting">Čekání na událost</string>
     <string name="msg_disabled">Pomocí výše uvedeného přepínače povolte TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl byl deaktivován, pravděpodobně jinou aplikací používající VPN rozhraní</string>
     <string name="msg_installed">Problémy s %1$s?</string>
     <string name="msg_installed_description">Umožnit aplikaci kontaktovat společnosti</string>
     <string name="msg_installed_tracker_libraries_found">Počet obsažených knihoven trackerů: %d</string>
