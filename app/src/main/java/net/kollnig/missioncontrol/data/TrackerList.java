@@ -22,6 +22,8 @@ import static net.kollnig.missioncontrol.data.TrackerCategory.UNCATEGORISED;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.util.JsonReader;
+import android.util.JsonToken;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,12 +32,10 @@ import androidx.preference.PreferenceManager;
 
 import eu.faircode.netguard.DatabaseHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -395,51 +394,80 @@ public class TrackerList {
         // Keep track of parent companies
         Map<String, Tracker> rootParents = new HashMap<>();
 
-        try (InputStream is = c.getAssets().open("xray-blacklist.json")) {
-            // Read JSON
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            if (is.read(buffer) <= 0)
-                throw new IOException("No bytes read.");
+        // Stream-parse to avoid materialising the whole file as a String plus a
+        // JSONArray DOM (three transient copies). Produces the exact same map as
+        // the previous DOM-based parse. See loadTrackers() footprint notes (#405).
+        try (InputStream is = c.getAssets().open("xray-blacklist.json");
+             JsonReader reader = new JsonReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            // Each JSON array entry contains a tracker company with its domains
+            reader.beginArray();
+            while (reader.hasNext()) {
+                // Field order is not guaranteed and the resolved company name
+                // (possibly root_parent) must be known before domains are
+                // attached, so collect the fields we need first.
+                String ownerName = null;
+                String rootParent = null;
+                String country = null;
+                boolean necessary = false;
+                List<String> doms = new ArrayList<>();
 
-            String json = new String(buffer, StandardCharsets.UTF_8);
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    switch (reader.nextName()) {
+                        case "owner_name":
+                            ownerName = reader.nextString();
+                            break;
+                        case "root_parent":
+                            // Mirror JSONObject.isNull(): an explicit null (or an
+                            // absent key) leaves rootParent null and is ignored.
+                            if (reader.peek() == JsonToken.NULL)
+                                reader.nextNull();
+                            else
+                                rootParent = reader.nextString();
+                            break;
+                        case "necessary":
+                            necessary = reader.nextBoolean();
+                            break;
+                        case "country":
+                            country = reader.nextString();
+                            break;
+                        case "doms":
+                            reader.beginArray();
+                            while (reader.hasNext())
+                                doms.add(reader.nextString());
+                            reader.endArray();
+                            break;
+                        default:
+                            reader.skipValue();
+                            break;
+                    }
+                }
+                reader.endObject();
 
-            // Each JSON array entry contains tracker company with domains
-            JSONArray jsonCompanies = new JSONArray(json);
-            for (int i = 0; i < jsonCompanies.length(); i++) {
-                JSONObject jsonCompany = jsonCompanies.getJSONObject(i);
-
-                Tracker tracker;
-                String name = jsonCompany.getString("owner_name");
-                boolean necessary = jsonCompany.has("necessary")
-                        && jsonCompany.getBoolean("necessary");
-
+                String name = ownerName;
                 // Necessary tracker are identified at lowest company level
-                if (!jsonCompany.isNull("root_parent")
-                        && !necessary)
-                    name = jsonCompany.getString("root_parent");
+                if (rootParent != null && !necessary)
+                    name = rootParent;
 
                 // Check if we've seen a tracker from the same root company
-                tracker = rootParents.get(name);
+                Tracker tracker = rootParents.get(name);
                 if (tracker == null) {
                     String category = necessary ? "Content" : UNCATEGORISED;
                     tracker = new Tracker(name, category);
-                    tracker.country = jsonCompany.getString("country");
+                    tracker.country = country;
                     rootParents.put(name, tracker);
                 }
 
                 // Add domains to tracker map
-                JSONArray domains = jsonCompany.getJSONArray("doms");
-                for (int j = 0; j < domains.length(); j++) {
-                    String dom = domains.getString(j);
-
+                for (String dom : doms) {
                     if (isIgnoredDomain(dom))
                         continue;
 
                     addTrackerDomain(tracker, dom);
                 }
             }
-        } catch (IOException | JSONException e) {
+            reader.endArray();
+        } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "Loading X-Ray list failed.. ", e);
         }
     }
@@ -450,59 +478,84 @@ public class TrackerList {
      * @param c Context
      */
     private void loadDuckDuckGoTrackers(Context c) {
-        try (InputStream is = c.getAssets().open("duckduckgo-android-tds.json")) {
-            // Read JSON
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            if (is.read(buffer) <= 0)
-                throw new IOException("No bytes read.");
-
-            String json = new String(buffer, StandardCharsets.UTF_8);
-
-            // Parse DuckDuckGo list
-            JSONObject duckduckgo = new JSONObject(json);
-            JSONObject trackers = duckduckgo.getJSONObject("trackers");
-
-            // Iterate through all tracker domains
-            for (Iterator<String> it = trackers.keys(); it.hasNext();) {
-                String domain = it.next();
-                JSONObject trackerInfo = trackers.getJSONObject(domain);
-
-                // Skip CDN domains that would cause false positives
-                if (isIgnoredDomain(domain))
-                    continue;
-
-                // Check if tracker already exists (e.g., from Disconnect list)
-                Tracker existingTracker = hostnameToTracker.get(domain);
-                
-                // Only add/overwrite if:
-                // 1. Tracker doesn't exist yet, OR
-                // 2. Existing tracker has "Content" category (which can be overwritten)
-                if (existingTracker != null && !"Content".equals(existingTracker.category)) {
-                    // Don't overwrite non-Content categories from Disconnect
+        // Stream-parse to avoid materialising the whole file as a String plus a
+        // JSONObject DOM. Produces the exact same map as the previous DOM-based
+        // parse (this list is loaded in every mode, so it also helps minimal mode).
+        try (InputStream is = c.getAssets().open("duckduckgo-android-tds.json");
+             JsonReader reader = new JsonReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            reader.beginObject();
+            while (reader.hasNext()) {
+                if (!"trackers".equals(reader.nextName())) {
+                    reader.skipValue();
                     continue;
                 }
 
-                // Get owner information
-                JSONObject owner = trackerInfo.getJSONObject("owner");
-                String displayName = owner.getString("displayName");
+                // Iterate through all tracker domains
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    String domain = reader.nextName();
 
-                // Determine category based on default action
-                String defaultAction = trackerInfo.getString("default");
-                String category;
-                if ("ignore".equals(defaultAction)) {
-                    category = "Content"; // Similar to necessary trackers
-                } else {
-                    category = UNCATEGORISED; // Default to uncategorised instead of Advertisement
+                    // We only need the owner's display name and the default action
+                    // from each entry; everything else is skipped.
+                    String displayName = null;
+                    String defaultAction = null;
+
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        switch (reader.nextName()) {
+                            case "owner":
+                                reader.beginObject();
+                                while (reader.hasNext()) {
+                                    if ("displayName".equals(reader.nextName()))
+                                        displayName = reader.nextString();
+                                    else
+                                        reader.skipValue();
+                                }
+                                reader.endObject();
+                                break;
+                            case "default":
+                                defaultAction = reader.nextString();
+                                break;
+                            default:
+                                reader.skipValue();
+                                break;
+                        }
+                    }
+                    reader.endObject();
+
+                    // Skip CDN domains that would cause false positives
+                    if (isIgnoredDomain(domain))
+                        continue;
+
+                    // Check if tracker already exists (e.g., from Disconnect list)
+                    Tracker existingTracker = hostnameToTracker.get(domain);
+
+                    // Only add/overwrite if:
+                    // 1. Tracker doesn't exist yet, OR
+                    // 2. Existing tracker has "Content" category (which can be overwritten)
+                    if (existingTracker != null && !"Content".equals(existingTracker.category)) {
+                        // Don't overwrite non-Content categories from Disconnect
+                        continue;
+                    }
+
+                    // Determine category based on default action
+                    String category;
+                    if ("ignore".equals(defaultAction)) {
+                        category = "Content"; // Similar to necessary trackers
+                    } else {
+                        category = UNCATEGORISED; // Default to uncategorised instead of Advertisement
+                    }
+
+                    // Create tracker with owner's display name
+                    Tracker tracker = new Tracker(displayName, category);
+
+                    // Add domain to tracker map
+                    addTrackerDomain(tracker, domain);
                 }
-
-                // Create tracker with owner's display name
-                Tracker tracker = new Tracker(displayName, category);
-
-                // Add domain to tracker map
-                addTrackerDomain(tracker, domain);
+                reader.endObject();
             }
-        } catch (IOException | JSONException e) {
+            reader.endObject();
+        } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "Loading DuckDuckGo list failed.. ", e);
         }
     }
@@ -530,55 +583,88 @@ public class TrackerList {
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();
 
-            // Parse Disconnect.me list
-            JSONObject disconnect = new JSONObject(json);
-            JSONObject categories = (JSONObject) disconnect.get("categories");
-            for (Iterator<String> it = categories.keys(); it.hasNext();) {
-                String categoryName = it.next();
-                JSONArray category = (JSONArray) categories.get(categoryName);
-                for (int i = 0; i < category.length(); i++) {
-                    // Found tracker, now add to list
-                    JSONObject jsonTracker = category.getJSONObject(i);
-                    String trackerName = jsonTracker.keys().next();
-
-                    switch (categoryName) {
-                        case "FingerprintingGeneral":
-                        case "FingerprintingInvasive":
-                            categoryName = "Fingerprinting";
-                            break;
-                        case "EmailStrict":
-                        case "EmailAggressive":
-                            categoryName = "Email";
-                            break;
-                        case "Anti-fraud":
-                            categoryName = "Content";
-                            break;
+            // Stream-parse the (un-reversed) JSON instead of building a full
+            // JSONObject DOM on top of the two String copies already required by
+            // the reversal. Traversal mirrors the previous DOM walk exactly.
+            try (JsonReader reader = new JsonReader(new StringReader(json))) {
+                reader.beginObject();
+                while (reader.hasNext()) {
+                    if (!"categories".equals(reader.nextName())) {
+                        reader.skipValue();
+                        continue;
                     }
 
-                    Tracker tracker = new Tracker(trackerName, categoryName);
+                    reader.beginObject();
+                    while (reader.hasNext()) {
+                        String categoryName = reader.nextName();
 
-                    // Parse tracker domains
-                    JSONObject trackerHomeUrls = (JSONObject) jsonTracker.get(trackerName);
-                    for (Iterator<String> iter = trackerHomeUrls.keys(); iter.hasNext();) {
-                        String trackerHomeUrl = iter.next();
-
-                        // Skip non-domains fields
-                        if (!(trackerHomeUrls.get(trackerHomeUrl) instanceof JSONArray))
-                            continue;
-
-                        JSONArray urls = (JSONArray) trackerHomeUrls.get(trackerHomeUrl);
-                        for (int j = 0; j < urls.length(); j++) {
-                            String dom = urls.getString(j);
-
-                            if (isIgnoredDomain(dom))
-                                continue;
-
-                            addTrackerDomain(tracker, dom);
+                        switch (categoryName) {
+                            case "FingerprintingGeneral":
+                            case "FingerprintingInvasive":
+                                categoryName = "Fingerprinting";
+                                break;
+                            case "EmailStrict":
+                            case "EmailAggressive":
+                                categoryName = "Email";
+                                break;
+                            case "Anti-fraud":
+                                categoryName = "Content";
+                                break;
                         }
+
+                        reader.beginArray();
+                        while (reader.hasNext()) {
+                            // Each element is a single-key object:
+                            // { trackerName: { homeUrl: [dom, ...], ... } }
+                            reader.beginObject();
+                            // Only the first key (the tracker name) is used, matching
+                            // the previous jsonTracker.keys().next() behaviour; any
+                            // further keys are skipped.
+                            boolean trackerConsumed = false;
+                            while (reader.hasNext()) {
+                                String trackerName = reader.nextName();
+                                if (trackerConsumed) {
+                                    reader.skipValue();
+                                    continue;
+                                }
+                                trackerConsumed = true;
+
+                                Tracker tracker = new Tracker(trackerName, categoryName);
+
+                                // Parse tracker domains
+                                reader.beginObject();
+                                while (reader.hasNext()) {
+                                    reader.nextName(); // tracker home URL (unused)
+
+                                    // Skip non-domain fields (mirrors the previous
+                                    // instanceof JSONArray check).
+                                    if (reader.peek() != JsonToken.BEGIN_ARRAY) {
+                                        reader.skipValue();
+                                        continue;
+                                    }
+
+                                    reader.beginArray();
+                                    while (reader.hasNext()) {
+                                        String dom = reader.nextString();
+
+                                        if (isIgnoredDomain(dom))
+                                            continue;
+
+                                        addTrackerDomain(tracker, dom);
+                                    }
+                                    reader.endArray();
+                                }
+                                reader.endObject();
+                            }
+                            reader.endObject();
+                        }
+                        reader.endArray();
                     }
+                    reader.endObject();
                 }
+                reader.endObject();
             }
-        } catch (IOException | JSONException e) {
+        } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "Loading Disconnect.me list failed.. ", e);
         }
     }
