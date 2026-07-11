@@ -21,6 +21,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -51,6 +54,22 @@ public class ActivityOnboarding extends AppCompatActivity {
     private OnboardingAdapter adapter;
     private boolean slidesInitialized = false;
 
+    /**
+     * Adds the bottom system-bar (navigation bar) inset to a view's existing
+     * bottom margin, so it isn't clipped on edge-to-edge displays.
+     */
+    private void addBottomInsetMargin(View v) {
+        ViewGroup.MarginLayoutParams initialParams = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        final int initialBottomMargin = initialParams.bottomMargin;
+        ViewCompat.setOnApplyWindowInsetsListener(v, (view, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            params.bottomMargin = initialBottomMargin + sysBars.bottom;
+            view.setLayoutParams(params);
+            return insets;
+        });
+    }
+
     private boolean isLockdownEnabled() {
         try {
             int lockdown = Settings.Secure.getInt(getContentResolver(), "always_on_vpn_lockdown", 0);
@@ -68,6 +87,12 @@ public class ActivityOnboarding extends AppCompatActivity {
         viewPager = findViewById(R.id.viewPager);
         btnNext = findViewById(R.id.btnNext);
         btnPrevious = findViewById(R.id.btnPrevious);
+
+        // Consume the bottom system-bar inset as extra margin so the Next/
+        // Previous buttons aren't clipped by the gesture/navigation bar on
+        // edge-to-edge displays.
+        addBottomInsetMargin(btnNext);
+        addBottomInsetMargin(btnPrevious);
 
         BlockingMode.enforcePlayStoreMode(this);
         setupSlides();

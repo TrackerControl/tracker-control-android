@@ -26,6 +26,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -108,6 +111,16 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         list.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new VpnAdapter();
         list.setAdapter(adapter);
+
+        // Pad the list by the bottom system bar inset so the last row isn't
+        // obscured by the gesture/navigation bar on edge-to-edge displays.
+        final int listInitialBottom = list.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(list, (v, insets) -> {
+            Insets sysBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(),
+                    listInitialBottom + sysBars.bottom);
+            return insets;
+        });
 
         refreshUi();
         if (!isFirstTimeVpnSetup() && !isWireGuardMode())

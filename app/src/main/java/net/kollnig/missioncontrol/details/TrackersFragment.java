@@ -211,6 +211,14 @@ public class TrackersFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Avoid leaking the SwipeRefreshLayout (and its Activity context) beyond
+        // the view's lifecycle when the Fragment instance is retained.
+        swipeRefresh = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         running = false;
