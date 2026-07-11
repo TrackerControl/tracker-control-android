@@ -305,8 +305,10 @@ public class ActivityOnboarding extends AppCompatActivity {
                 slide.actionButtonText = vpnPrepared ? getString(R.string.onboarding_action_granted)
                         : getString(R.string.onboarding_vpn_action);
                 slide.warningResId = vpnPrepared ? 0 : R.string.onboarding_vpn_sure;
-                slide.actionListener = v -> {
-                    if (!vpnPrepared) {
+                if (vpnPrepared) {
+                    slide.actionListener = null;
+                } else {
+                    slide.actionListener = v -> {
                         // Proactively detect another Always-on VPN on Android < S,
                         // where the setting is still readable.
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -331,8 +333,8 @@ public class ActivityOnboarding extends AppCompatActivity {
                             Log.e("Onboarding", ex.toString());
                             showAlwaysOnVpnBlockedDialog();
                         }
-                    }
-                };
+                    };
+                }
             }
 
             // 4. Notifications
@@ -341,12 +343,14 @@ public class ActivityOnboarding extends AppCompatActivity {
                 slide.actionButtonText = canNotify ? getString(R.string.onboarding_action_granted)
                         : getString(R.string.onboarding_notify_action);
                 slide.warningResId = canNotify ? 0 : R.string.onboarding_notify_sure;
-                slide.actionListener = v -> {
-                    if (!canNotify) {
+                if (canNotify) {
+                    slide.actionListener = null;
+                } else {
+                    slide.actionListener = v -> {
                         ActivityCompat.requestPermissions(ActivityOnboarding.this,
                                 new String[] { Manifest.permission.POST_NOTIFICATIONS }, 1);
-                    }
-                };
+                    };
+                }
             }
 
             // 5. Battery Optimization - Disabled for now
@@ -396,15 +400,17 @@ public class ActivityOnboarding extends AppCompatActivity {
                 slide.actionButtonText = privateDnsEnabled ? getString(R.string.onboarding_privatedns_action)
                         : getString(R.string.onboarding_action_disabled);
                 slide.warningResId = privateDnsEnabled ? R.string.onboarding_privatedns_skip_msg : 0;
-                slide.actionListener = v -> {
-                    if (privateDnsEnabled) {
+                if (privateDnsEnabled) {
+                    slide.actionListener = v -> {
                         Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
                         if (intent.resolveActivity(getPackageManager()) == null) {
                             intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
                         }
                         startActivity(intent);
-                    }
-                };
+                    };
+                } else {
+                    slide.actionListener = null;
+                }
             }
 
             // Lockdown
@@ -414,16 +420,18 @@ public class ActivityOnboarding extends AppCompatActivity {
                     slide.actionButtonText = lockdownEnabled ? getString(R.string.onboarding_lockdown_action)
                             : getString(R.string.onboarding_action_disabled);
                     slide.warningResId = lockdownEnabled ? R.string.onboarding_lockdown_sure : 0;
-                    slide.actionListener = v -> {
-                        if (lockdownEnabled) {
+                    if (lockdownEnabled) {
+                        slide.actionListener = v -> {
                             try {
                                 Intent intent = new Intent(Settings.ACTION_VPN_SETTINGS);
                                 startActivity(intent);
                             } catch (Throwable ex) {
                                 Log.e("Onboarding", ex.toString());
                             }
-                        }
-                    };
+                        };
+                    } else {
+                        slide.actionListener = null;
+                    }
                 } else {
                     // Android 9 (Pie): Cannot check status, so always show button and no warning
                     slide.actionButtonText = getString(R.string.onboarding_lockdown_action);
@@ -660,6 +668,7 @@ public class ActivityOnboarding extends AppCompatActivity {
                 if (slide.actionButtonText != null) {
                     holder.btnAction.setVisibility(View.VISIBLE);
                     holder.btnAction.setText(slide.actionButtonText);
+                    holder.btnAction.setEnabled(slide.actionListener != null);
                     holder.btnAction.setOnClickListener(slide.actionListener);
                 } else {
                     holder.btnAction.setVisibility(View.GONE);
