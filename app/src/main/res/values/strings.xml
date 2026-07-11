@@ -570,6 +570,7 @@ Sincerely,\n\n]]></string>
     <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>
 
     <string name="launch_app">Launch &amp; Find trackers</string>
+    <string name="launch_app_failed">This app can\'t be launched</string>
     <string name="countries">Destination Countries</string>
     <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
     <string name="countries_loading_failed">Oops.. The country map failed to load. Please tell tc@kollnig.net how this happened.</string>
