@@ -274,7 +274,6 @@
     <string name="msg_started">Iskanje sledilcev …</string>
     <string name="msg_waiting">Čakanje na dogodek</string>
     <string name="msg_disabled">Uporabite stikalo zgoraj, da omogočite TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl je bil onemogočen verjetno z uporabo drugega programa, osnovanega na VPN-u.</string>
     <string name="msg_installed">Težave s/z %1$s?</string>
     <string name="msg_installed_description">Dovoli programom, da navežejo stik s podjetji</string>
     <string name="msg_installed_tracker_libraries_found">Vsebuje %d sledilnih knjižnic.</string>
