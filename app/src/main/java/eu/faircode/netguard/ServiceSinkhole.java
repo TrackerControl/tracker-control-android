@@ -2125,7 +2125,7 @@ public class ServiceSinkhole extends VpnService {
                 // Recovery budget exhausted: TC is going down, so surface the failure to the user.
                 Log.e(TAG, "Native recovery retry budget exhausted");
                 showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
-                        ? getString(R.string.msg_native_fd_exhausted)
+                        ? getString(R.string.msg_native_fd_recovery_exhausted)
                         : reason);
                 cancelNativeRecovery(false);
                 prefs.edit().putBoolean("enabled", false).apply();
@@ -2145,7 +2145,7 @@ public class ServiceSinkhole extends VpnService {
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
         showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
-                ? getString(R.string.msg_native_fd_exhausted)
+                ? getString(R.string.msg_native_fd_error)
                 : message);
     }
 
