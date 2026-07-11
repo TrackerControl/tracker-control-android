@@ -631,41 +631,29 @@ public class ServiceSinkhole extends VpnService {
                 } else {
                     last_builder = builder;
 
-                    boolean handover = prefs.getBoolean("handover", false);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                        handover = false;
-                    Log.i(TAG, "VPN restart handover=" + handover);
-
-                    if (handover) {
-                        // Attempt seamless handover
-                        ParcelFileDescriptor prev = vpn;
+                    if (vpn == null)
                         vpn = startVPN(builder);
-
-                        if (prev != null && vpn == null) {
-                            Log.w(TAG, "Handover failed");
-                            stopNative(prev);
-                            stopVPN(prev);
-                            prev = null;
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException ignored) {
-                            }
-                            vpn = startVPN(last_builder);
-                            if (vpn == null)
-                                throw new IllegalStateException("Handover failed");
+                    else {
+                        ParcelFileDescriptor previous = vpn;
+                        try {
+                            vpn = VpnReplacementSequencer.replace(
+                                    previous,
+                                    () -> startVPN(getBlockingBuilder(listRule)),
+                                    () -> startVPN(builder),
+                                    active -> vpn = active,
+                                    ServiceSinkhole.this::stopNative,
+                                    ServiceSinkhole.this::stopVPN);
+                        } catch (RuntimeException ex) {
+                            // A blocking descriptor remains active after a
+                            // replacement failure. Force the next reload down
+                            // the full replacement path instead of starting
+                            // the packet engine on that placeholder interface.
+                            last_builder = null;
+                            Log.w(TAG, ex.getMessage());
+                            if (ex instanceof VpnReplacementSequencer.EstablishFailedException)
+                                throw new StartFailedException(getString(R.string.msg_start_failed));
+                            throw ex;
                         }
-
-                        if (prev != null) {
-                            stopNative(prev);
-                            stopVPN(prev);
-                        }
-                    } else {
-                        if (vpn != null) {
-                            stopNative(vpn);
-                            stopVPN(vpn);
-                        }
-
-                        vpn = startVPN(builder);
                     }
                 }
             }
@@ -1483,6 +1471,12 @@ public class ServiceSinkhole extends VpnService {
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
             ParcelFileDescriptor pfd = builder.establish();
+            if (pfd == null || !pfd.getFileDescriptor().valid()) {
+                Log.w(TAG, "VPN interface was not ready after establish");
+                if (pfd != null)
+                    stopVPN(pfd);
+                return null;
+            }
             updateUnderlyingNetworks();
             return pfd;
         } catch (SecurityException ex) {
@@ -1708,6 +1702,45 @@ public class ServiceSinkhole extends VpnService {
         PendingIntent pi = PendingIntentCompat.getActivity(this, 0, configure, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setConfigureIntent(pi);
 
+        return builder;
+    }
+
+    private Builder getBlockingBuilder(List<Rule> listRule) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean ip6 = prefs.getBoolean("ip6", true);
+        boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
+
+        Builder builder = new Builder();
+        builder.setSession(getString(R.string.app_name));
+        builder.setBlocking(true);
+        builder.setMtu(1280);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            builder.setMetered(Util.isMeteredNetwork(this));
+
+        builder.addAddress("192.0.2.1", 32);
+        builder.addRoute("0.0.0.0", 0);
+        if (ip6) {
+            builder.addAddress("2001:db8::1", 128);
+            builder.addRoute("::", 0);
+        }
+
+        try {
+            builder.addDisallowedApplication(getPackageName());
+        } catch (PackageManager.NameNotFoundException ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+
+        for (Rule rule : listRule)
+            if (!rule.apply || (!includeSystem && rule.system))
+                try {
+                    builder.addDisallowedApplication(rule.packageName);
+                } catch (PackageManager.NameNotFoundException ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
+
+        Intent configure = new Intent(this, ActivityMain.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, 0, configure, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setConfigureIntent(pi);
         return builder;
     }
 
