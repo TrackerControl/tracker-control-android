@@ -159,6 +159,7 @@ public class AdapterLog extends CursorAdapter {
         final TextView tvDaddr = view.findViewById(R.id.tvDAddr);
         TextView tvDPort = view.findViewById(R.id.tvDPort);
         final TextView tvOrganization = view.findViewById(R.id.tvOrganization);
+        TextView tvStatus = view.findViewById(R.id.tvStatus);
         final ImageView ivIcon = view.findViewById(R.id.ivIcon);
         TextView tvUid = view.findViewById(R.id.tvUid);
         TextView tvData = view.findViewById(R.id.tvData);
@@ -167,6 +168,17 @@ public class AdapterLog extends CursorAdapter {
 
         // Show time
         tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(time));
+
+        // Show blocked/allowed status as a clear text label (not just the tinted icon)
+        if (allowed < 0)
+            tvStatus.setVisibility(View.GONE);
+        else {
+            tvStatus.setVisibility(View.VISIBLE);
+            tvStatus.setText(allowed > 0 ? R.string.allowed : R.string.blocked);
+            tvStatus.setTextColor(context.getColor(allowed > 0
+                    ? R.color.timeline_allowed
+                    : R.color.timeline_blocked));
+        }
 
         // Show connection type
         if (connection <= 0)

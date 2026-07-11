@@ -58,9 +58,17 @@ import eu.faircode.netguard.ServiceSinkhole;
  */
 public class TrackerList {
     private static final String TAG = TrackerList.class.getSimpleName();
+    // Shared CDN registrable domains that host legitimate content for many
+    // sites and therefore cause false positives when a tracker shares the same
+    // infrastructure. Matched exactly against the domains listed in the
+    // blocklists. Note: Cloudflare's own analytics beacon
+    // (cloudflareinsights.com) is deliberately NOT ignored here so it stays
+    // blockable — only the general Cloudflare CDN domain (which fronts e.g.
+    // cdnjs.cloudflare.com) is whitelisted.
     private static final Set<String> ignoreDomains = new HashSet<>(Arrays.asList(
             "cloudfront.net",
-            "fastly.net"));
+            "fastly.net",
+            "cloudflare.com"));
     private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
