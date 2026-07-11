@@ -196,6 +196,7 @@ The app builds on a range of publicly available resources:
 - *GDPR Requests:* templates adopted from [My Data Done Right](https://www.mydatadoneright.eu/) by the NGO Bits of Freedom.
 - *Country Visualisation:* code kindly offered by [Takuma Seno](https://github.com/takuseno/GeoMap). IP-to-country mapping uses the GeoLite2 database by [MaxMind](https://www.maxmind.com).
 - *ClassyShark3xodus:* tracker-library signatures from [ClassyShark3xodus](https://bitbucket.org/oF2pks/fdroid-classyshark3xodus/src/master/ClassySharkAndroid/app/src/main/res/values/arrays.xml).
+- *Exodus Privacy Signatures:* tracker code- and network-detection signatures from the [Exodus Privacy](https://exodus-privacy.eu.org/) database. The app fetches the latest signatures from their official [JSON API](https://reports.exodus-privacy.eu.org/api/trackers) at runtime; the bundled offline fallback at `app/src/main/assets/trackers.json` can be refreshed with `scripts/update_exodus_trackers.py`.
 - *sniproxy:* SNI parsing derived from an early version of [sniproxy](https://github.com/dlundquist/sniproxy), per [RFC 3546](https://datatracker.ietf.org/doc/html/rfc3546).
 - *Peter Lowe's Blocklist:* the IP blocklist by [Peter Lowe](https://pgl.yoyo.org/adservers/iplist.php) (note the [license](https://pgl.yoyo.org/license/) prohibits commercial use).
 - *DuckDuckGo Tracker Radar:* some data from [tracker-radar](https://github.com/duckduckgo/tracker-radar), at the heart of DuckDuckGo's tracking analysis.
