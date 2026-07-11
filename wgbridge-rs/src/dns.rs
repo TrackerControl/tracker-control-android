@@ -111,14 +111,18 @@ impl DnsInspector {
             let already_seen = flow.next_seq.wrapping_sub(data_seq);
             let payload = if data_seq == flow.next_seq {
                 segment.payload
-            } else if already_seen < 0x8000_0000 && already_seen as usize <= segment.payload.len() {
-                &segment.payload[already_seen as usize..]
-            } else {
+            } else if already_seen >= 0x8000_0000 {
                 // A forward gap means bytes needed to find message boundaries
                 // are missing. Drop the flow instead of parsing a mid-message
                 // payload as a new length prefix.
                 self.tcp_flows.remove(&segment.key);
                 return;
+            } else {
+                // A wholly-old or partially-overlapping retransmission: skip
+                // the bytes we've already consumed and keep the flow alive.
+                // If the retransmission lies entirely behind the frontier,
+                // this yields an empty tail, which is a harmless no-op.
+                &segment.payload[(already_seen as usize).min(segment.payload.len())..]
             };
 
             if flow.buffer.len() + payload.len() > MAX_TCP_DNS_BUFFER {
@@ -738,6 +742,34 @@ mod tests {
         inspector.inspect(&packet, &sink);
 
         assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn stateful_inspector_ignores_wholly_old_retransmission() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        // Retransmission of a prefix that lies entirely behind the frontier
+        // already advanced past by `first` (i.e. already_seen > payload.len()).
+        let old_retransmit = ipv4_tcp_segment(&framed[..split / 4], 1000, 0x18);
+        let second = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&first, &sink);
+        assert!(sink.0.lock().unwrap().is_empty());
+        inspector.inspect(&old_retransmit, &sink);
+        assert!(sink.0.lock().unwrap().is_empty());
+        inspector.inspect(&second, &sink);
+
+        let records = sink.0.lock().unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].0, "tracker.example");
+        assert_eq!(records[0].2, "203.0.113.7");
     }
 
     #[test]
