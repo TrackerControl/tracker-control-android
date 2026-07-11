@@ -105,7 +105,6 @@
     <string name="msg_sure">Sei sicuro⋅a?</string>
     <string name="msg_waiting">In attesa di eventi</string>
     <string name="msg_disabled">Utilizzare l\'interruttore qui sopra per attivare TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl è stata disabilitata, probabilmente a causa di un\'altra applicazione che usa una VPN</string>
     <string name="msg_installed">Problemi con %1$s?</string>
     <string name="msg_installed_description">Consenti all\'app di contattare le aziende</string>
     <string name="msg_installed_tracker_libraries_found">Contiene %d librerie tracker</string>
