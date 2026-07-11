@@ -747,6 +747,8 @@ Sincerely,\n\n]]></string>
     <string name="insights_tracking_attempts">Tracker Hosts Contacted</string>
     <string name="insights_blocked">Blocked</string>
     <string name="insights_allowed">Allowed Through</string>
+    <string name="insights_view_blocked_log">View blocked connections in the detailed log</string>
+    <string name="insights_view_allowed_log">View allowed connections in the detailed log</string>
     <string name="insights_tracker_companies">Tracking Companies</string>
     <string name="insights_apps_with_trackers">Apps with Trackers</string>
     <string name="insights_top_tracking_apps">Worst Offending Apps</string>

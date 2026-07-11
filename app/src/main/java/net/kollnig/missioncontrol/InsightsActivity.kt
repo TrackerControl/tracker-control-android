@@ -46,6 +46,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import eu.faircode.netguard.ActivityLog
 import eu.faircode.netguard.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -77,6 +78,8 @@ class InsightsActivity : AppCompatActivity() {
     private lateinit var llTopDomains: LinearLayout
     private lateinit var llNoData: LinearLayout
     private lateinit var llBlockedAllowed: LinearLayout
+    private lateinit var llBlockedCard: LinearLayout
+    private lateinit var llAllowedCard: LinearLayout
     private lateinit var progressBar: ProgressBar
     private lateinit var fabShare: FloatingActionButton
 
@@ -108,12 +111,27 @@ class InsightsActivity : AppCompatActivity() {
         llTopDomains = findViewById(R.id.llTopDomains)
         llNoData = findViewById(R.id.llNoData)
         llBlockedAllowed = findViewById(R.id.llBlockedAllowed)
+        llBlockedCard = findViewById(R.id.llBlockedCard)
+        llAllowedCard = findViewById(R.id.llAllowedCard)
         progressBar = findViewById(R.id.progressBar)
         fabShare = findViewById(R.id.fabShare)
 
         fabShare.setOnClickListener {
             shareInsights()
         }
+
+        // Tapping the blocked/allowed stat cards opens the detailed traffic
+        // log, so users can see exactly which connections were blocked or
+        // allowed (see issue #563).
+        val openLog = View.OnClickListener {
+            if (Util.canFilter(this)) {
+                startActivity(Intent(this, ActivityLog::class.java))
+            } else {
+                Toast.makeText(this, R.string.msg_unavailable, Toast.LENGTH_SHORT).show()
+            }
+        }
+        llBlockedCard.setOnClickListener(openLog)
+        llAllowedCard.setOnClickListener(openLog)
 
         // Pad the scroll content so the last card isn't hidden behind the navigation bar.
         val scroll = findViewById<ScrollView>(R.id.insightsScroll)
