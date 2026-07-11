@@ -51,10 +51,13 @@ impl JavaCallback {
         Some(Self { vm, obj })
     }
 
-    /// Runs `f` with a JNIEnv attached to the current thread. Worker threads
-    /// stay attached for their lifetime (they are long-lived tokio threads).
-    fn with_env<R>(&self, f: impl FnOnce(&mut JNIEnv, &GlobalRef) -> jni::errors::Result<R>) -> Option<R> {
-        let mut env = self.vm.attach_current_thread_permanently().ok()?;
+    /// Runs `f` with a JNIEnv attached as a daemon. Worker threads stay
+    /// attached for their lifetime without keeping the JVM alive at shutdown.
+    fn with_env<R>(
+        &self,
+        f: impl FnOnce(&mut JNIEnv, &GlobalRef) -> jni::errors::Result<R>,
+    ) -> Option<R> {
+        let mut env = self.vm.attach_current_thread_as_daemon().ok()?;
         match f(&mut env, &self.obj) {
             Ok(r) => Some(r),
             Err(_) => {
@@ -205,7 +208,7 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeS
     let dns: Option<Arc<dyn DnsSink>> =
         JavaCallback::new(&env, dns_recorder).map(|cb| Arc::new(JavaDnsSink(cb)) as _);
 
-    // Attach each tokio worker to the JVM as it spins up, so the Java
+    // Attach each tokio worker to the JVM as a daemon as it spins up, so the Java
     // GlobalRefs the callbacks hold are dropped on attached threads at
     // teardown (avoids the jni "detached thread" GlobalRef warning).
     let Ok(vm) = env.get_java_vm() else {
@@ -213,7 +216,7 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeS
         return 0;
     };
     let on_worker_start: Arc<dyn Fn() + Send + Sync> = Arc::new(move || {
-        let _ = vm.attach_current_thread_permanently();
+        let _ = vm.attach_current_thread_as_daemon();
     });
 
     match start_tunnel(

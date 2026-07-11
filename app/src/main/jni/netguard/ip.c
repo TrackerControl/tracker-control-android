@@ -24,8 +24,6 @@
 int max_tun_msg = 0;
 extern int loglevel;
 extern FILE *pcap_file;
-extern _Atomic int wg_enabled;
-extern _Atomic int wg_outbound_fd;
 extern _Atomic int wg_required;
 
 static atomic_long wg_drop_count = 0;
@@ -414,10 +412,28 @@ void handle_ip(const struct arguments *args,
         // user's physical network.
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
-        int wg_is_enabled = atomic_load_explicit(&wg_enabled, memory_order_acquire);
         int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
-        int wg_fd = atomic_load_explicit(&wg_outbound_fd, memory_order_acquire);
         int wg_dest = !is_local_dest(version, daddr) || is_dns;
+
+        if (wg_dest) {
+            ssize_t w;
+            int write_errno;
+            if (write_wireguard_packet(pkt, length, &w, &write_errno)) {
+                if (w != (ssize_t) length) {
+                    if (w < 0 && (write_errno == EAGAIN || write_errno == EWOULDBLOCK)) {
+                        long drops = atomic_fetch_add_explicit(
+                                &wg_drop_count, 1, memory_order_relaxed) + 1;
+                        if ((drops & 1023L) == 1)
+                            log_android(ANDROID_LOG_WARN,
+                                        "wg socket buffer full, dropped %ld packets", drops);
+                    } else
+                        log_android(ANDROID_LOG_WARN, "wg write %zd/%zu errno %d: %s",
+                                    w, length, write_errno, strerror(write_errno));
+                }
+                // Fail-closed: if the write fails, drop. Do not fall through to direct.
+                return;
+            }
+        }
 
         // Fail closed while WG is required but not (yet) running — e.g. the
         // brief window during a tunnel restart, or after a failed start.
@@ -427,30 +443,12 @@ void handle_ip(const struct arguments *args,
         // (the resolver runs on the VPN network). This briefly exposes DNS
         // queries to the configured (WG/public fallback) DNS server over the
         // physical network, which is far less than leaking all traffic.
-        if (wg_is_required && !(wg_is_enabled && wg_fd >= 0)
-                && wg_dest && !is_dns) {
+        if (wg_is_required && wg_dest && !is_dns) {
             long drops = atomic_fetch_add_explicit(
                     &wg_gap_drop_count, 1, memory_order_relaxed) + 1;
             if ((drops & 255L) == 1)
                 log_android(ANDROID_LOG_WARN,
                             "wg not running, dropped %ld packets (fail closed)", drops);
-            return;
-        }
-
-        if (wg_is_enabled && wg_fd >= 0 && wg_dest) {
-            ssize_t w = write(wg_fd, pkt, length);
-            if (w != (ssize_t) length) {
-                if (w < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
-                    long drops = atomic_fetch_add_explicit(
-                            &wg_drop_count, 1, memory_order_relaxed) + 1;
-                    if ((drops & 1023L) == 1)
-                        log_android(ANDROID_LOG_WARN,
-                                    "wg socket buffer full, dropped %ld packets", drops);
-                } else
-                    log_android(ANDROID_LOG_WARN, "wg write %zd/%zu errno %d: %s",
-                                w, length, errno, strerror(errno));
-            }
-            // Fail-closed: if the write fails, drop. Do not fall through to direct.
             return;
         }
 

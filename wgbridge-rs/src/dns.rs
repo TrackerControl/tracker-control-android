@@ -2,8 +2,10 @@
 //! wgbridge/dns.go). Extracts A/AAAA answers from UDP:53 responses and hands
 //! them to the [`DnsSink`]; packets are never modified or blocked here.
 
-use std::net::{Ipv4Addr, Ipv6Addr};
+use std::collections::HashMap;
+use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use std::panic::{catch_unwind, AssertUnwindSafe};
+use std::time::{Duration, Instant};
 
 use crate::callbacks::DnsSink;
 
@@ -18,14 +20,164 @@ const IP_PROTO_ROUTING: u8 = 43;
 const IP_PROTO_FRAGMENT: u8 = 44;
 const IP_PROTO_DST_OPTS: u8 = 60;
 
-pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
-    if packet.is_empty() {
-        return;
+const MAX_TCP_DNS_FLOWS: usize = 64;
+const MAX_TCP_DNS_BUFFER: usize = u16::MAX as usize + 2;
+const TCP_DNS_IDLE_TIMEOUT: Duration = Duration::from_secs(60);
+
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
+struct TcpFlowKey {
+    src: IpAddr,
+    dst: IpAddr,
+    src_port: u16,
+    dst_port: u16,
+}
+
+struct TcpDnsFlow {
+    next_seq: u32,
+    buffer: Vec<u8>,
+    last_seen: Instant,
+}
+
+/// Stateful passive DNS inspector. UDP messages are handled directly; TCP
+/// messages are reassembled per flow using sequence numbers and the DNS-over-
+/// TCP two-byte length prefix.
+#[derive(Default)]
+pub struct DnsInspector {
+    tcp_flows: HashMap<TcpFlowKey, TcpDnsFlow>,
+}
+
+impl DnsInspector {
+    pub fn inspect(&mut self, packet: &[u8], recorder: &dyn DnsSink) {
+        if packet.is_empty() {
+            return;
+        }
+        let Some((proto, segment)) = transport_segment(packet) else {
+            return;
+        };
+        match proto {
+            IP_PROTO_UDP => {
+                if let Some(msg) = udp_dns_payload(segment) {
+                    record_answers(msg, recorder);
+                }
+            }
+            IP_PROTO_TCP => self.inspect_tcp(packet, segment, recorder),
+            _ => {}
+        }
     }
-    let Some(payload) = dns_message_from_response(packet) else {
-        return;
-    };
-    for rr in parse_dns_answers(payload) {
+
+    fn inspect_tcp(&mut self, packet: &[u8], tcp: &[u8], recorder: &dyn DnsSink) {
+        let Some(segment) = tcp_segment(packet, tcp) else {
+            return;
+        };
+        let now = Instant::now();
+        self.tcp_flows
+            .retain(|_, flow| now.duration_since(flow.last_seen) <= TCP_DNS_IDLE_TIMEOUT);
+
+        if segment.rst {
+            self.tcp_flows.remove(&segment.key);
+            return;
+        }
+        if segment.syn {
+            if !self.tcp_flows.contains_key(&segment.key) {
+                self.ensure_capacity();
+            }
+            self.tcp_flows.insert(
+                segment.key.clone(),
+                TcpDnsFlow {
+                    next_seq: segment.seq.wrapping_add(1),
+                    buffer: Vec::new(),
+                    last_seen: now,
+                },
+            );
+        }
+
+        if !segment.payload.is_empty() {
+            if !self.tcp_flows.contains_key(&segment.key) {
+                self.ensure_capacity();
+            }
+            let data_seq = segment.seq.wrapping_add(u32::from(segment.syn));
+            let flow = self
+                .tcp_flows
+                .entry(segment.key.clone())
+                .or_insert_with(|| TcpDnsFlow {
+                    // Best-effort bootstrap for a connection that pre-dates the
+                    // inspector. A later gap invalidates the stream until a SYN.
+                    next_seq: data_seq,
+                    buffer: Vec::new(),
+                    last_seen: now,
+                });
+            flow.last_seen = now;
+
+            let already_seen = flow.next_seq.wrapping_sub(data_seq);
+            let payload = if data_seq == flow.next_seq {
+                segment.payload
+            } else if already_seen < 0x8000_0000 && already_seen as usize <= segment.payload.len() {
+                &segment.payload[already_seen as usize..]
+            } else {
+                // A forward gap means bytes needed to find message boundaries
+                // are missing. Drop the flow instead of parsing a mid-message
+                // payload as a new length prefix.
+                self.tcp_flows.remove(&segment.key);
+                return;
+            };
+
+            if flow.buffer.len() + payload.len() > MAX_TCP_DNS_BUFFER {
+                self.tcp_flows.remove(&segment.key);
+                return;
+            }
+            flow.buffer.extend_from_slice(payload);
+            flow.next_seq = flow.next_seq.wrapping_add(payload.len() as u32);
+
+            while flow.buffer.len() >= 2 {
+                let msg_len = u16::from_be_bytes([flow.buffer[0], flow.buffer[1]]) as usize;
+                if msg_len == 0 {
+                    flow.buffer.drain(..2);
+                    continue;
+                }
+                if flow.buffer.len() < msg_len + 2 {
+                    break;
+                }
+                let msg = flow.buffer[2..2 + msg_len].to_vec();
+                flow.buffer.drain(..2 + msg_len);
+                record_answers(&msg, recorder);
+            }
+        }
+
+        if segment.fin {
+            self.tcp_flows.remove(&segment.key);
+        }
+    }
+
+    fn ensure_capacity(&mut self) {
+        if self.tcp_flows.len() < MAX_TCP_DNS_FLOWS {
+            return;
+        }
+        if let Some(oldest) = self
+            .tcp_flows
+            .iter()
+            .min_by_key(|(_, flow)| flow.last_seen)
+            .map(|(key, _)| key.clone())
+        {
+            self.tcp_flows.remove(&oldest);
+        }
+    }
+}
+
+struct TcpSegment<'a> {
+    key: TcpFlowKey,
+    seq: u32,
+    syn: bool,
+    fin: bool,
+    rst: bool,
+    payload: &'a [u8],
+}
+
+pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
+    DnsInspector::default().inspect(packet, recorder);
+}
+
+fn record_answers(msg: &[u8], recorder: &dyn DnsSink) {
+    for rr in parse_dns_answers(msg) {
         // The recorder crosses into Java; never let a failure there take
         // down the packet path.
         let _ = catch_unwind(AssertUnwindSafe(|| {
@@ -34,23 +186,55 @@ pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
     }
 }
 
-/// Extracts the DNS message from a UDP:53 or TCP:53 response packet.
-///
-/// UDP responses carry the whole message in one datagram. TCP responses are a
-/// byte stream framed with a 2-byte length prefix; here we only see individual
-/// decrypted IP packets, not a reassembled stream, so we parse a TCP response
-/// only when a single segment carries the length prefix and the entire message
-/// that follows it. Responses split across segments (large answer sets, DNSSEC)
-/// are skipped rather than misparsed — best effort, but strictly more coverage
-/// than the UDP-only handling it replaces. Resolvers commonly fall back to TCP
-/// when a UDP answer is truncated, and without this those mappings were lost.
-fn dns_message_from_response(packet: &[u8]) -> Option<&[u8]> {
-    let (proto, segment) = transport_segment(packet)?;
-    match proto {
-        IP_PROTO_UDP => udp_dns_payload(segment),
-        IP_PROTO_TCP => tcp_dns_payload(segment),
-        _ => None,
+fn tcp_segment<'a>(packet: &[u8], tcp: &'a [u8]) -> Option<TcpSegment<'a>> {
+    if tcp.len() < 20 || u16::from_be_bytes([tcp[0], tcp[1]]) != 53 {
+        return None;
     }
+    let (src, dst) = match packet[0] >> 4 {
+        4 => {
+            // Reject IPv4 fragments: TCP sequence framing alone cannot fill
+            // gaps created below the transport layer.
+            let fragment = u16::from_be_bytes([packet[6], packet[7]]);
+            if fragment & 0x3fff != 0 {
+                return None;
+            }
+            (
+                IpAddr::V4(Ipv4Addr::new(
+                    packet[12], packet[13], packet[14], packet[15],
+                )),
+                IpAddr::V4(Ipv4Addr::new(
+                    packet[16], packet[17], packet[18], packet[19],
+                )),
+            )
+        }
+        6 => {
+            let src: [u8; 16] = packet[8..24].try_into().ok()?;
+            let dst: [u8; 16] = packet[24..40].try_into().ok()?;
+            (
+                IpAddr::V6(Ipv6Addr::from(src)),
+                IpAddr::V6(Ipv6Addr::from(dst)),
+            )
+        }
+        _ => return None,
+    };
+    let data_off = ((tcp[12] >> 4) as usize) * 4;
+    if data_off < 20 || tcp.len() < data_off {
+        return None;
+    }
+    let flags = tcp[13];
+    Some(TcpSegment {
+        key: TcpFlowKey {
+            src,
+            dst,
+            src_port: 53,
+            dst_port: u16::from_be_bytes([tcp[2], tcp[3]]),
+        },
+        seq: u32::from_be_bytes(tcp[4..8].try_into().ok()?),
+        syn: flags & 0x02 != 0,
+        fin: flags & 0x01 != 0,
+        rst: flags & 0x04 != 0,
+        payload: &tcp[data_off..],
+    })
 }
 
 /// Returns the (transport protocol, transport segment) for an IPv4/IPv6 packet,
@@ -126,6 +310,7 @@ fn udp_dns_payload(udp: &[u8]) -> Option<&[u8]> {
     Some(&udp[8..udp_len])
 }
 
+#[cfg(test)]
 fn tcp_dns_payload(tcp: &[u8]) -> Option<&[u8]> {
     if tcp.len() < 20 {
         return None;
@@ -365,6 +550,10 @@ mod tests {
     }
 
     fn ipv4_tcp(payload: &[u8]) -> Vec<u8> {
+        ipv4_tcp_segment(payload, 1000, 0x18)
+    }
+
+    fn ipv4_tcp_segment(payload: &[u8], seq: u32, flags: u8) -> Vec<u8> {
         // payload is the TCP data (already framed with the 2-byte DNS length).
         let tcp_hdr = 20;
         let seg_len = tcp_hdr + payload.len();
@@ -378,7 +567,9 @@ mod tests {
         packet[16..20].copy_from_slice(&[10, 0, 0, 2]);
         packet[20..22].copy_from_slice(&53u16.to_be_bytes()); // src port
         packet[22..24].copy_from_slice(&12345u16.to_be_bytes()); // dst port
+        packet[24..28].copy_from_slice(&seq.to_be_bytes());
         packet[32] = 5 << 4; // data offset = 5 words (20-byte header)
+        packet[33] = flags;
         packet[40..].copy_from_slice(payload);
         packet
     }
@@ -465,7 +656,8 @@ mod tests {
         let mut packet = ipv4_udp(&msg);
         packet.extend_from_slice(&[0xaa, 0xbb, 0xcc]);
 
-        let payload = dns_message_from_response(&packet).expect("packet not recognized");
+        let (_, segment) = transport_segment(&packet).expect("packet not recognized");
+        let payload = udp_dns_payload(segment).expect("UDP payload not recognized");
         assert_eq!(payload.len(), msg.len());
     }
 
@@ -477,7 +669,8 @@ mod tests {
         ]);
         let packet = ipv6_udp_with_destination_options(&msg);
 
-        let payload = dns_message_from_response(&packet).expect("packet not recognized");
+        let (_, segment) = transport_segment(&packet).expect("packet not recognized");
+        let payload = udp_dns_payload(segment).expect("UDP payload not recognized");
         assert_eq!(payload.len(), msg.len());
     }
 
@@ -486,7 +679,7 @@ mod tests {
         let msg = dns_message(&[dns_question("tracker.example", DNS_TYPE_A)]);
         let mut packet = ipv6_udp_with_destination_options(&msg);
         packet[6] = IP_PROTO_FRAGMENT;
-        assert!(dns_message_from_response(&packet).is_none());
+        assert!(transport_segment(&packet).is_none());
     }
 
     #[test]
@@ -497,7 +690,8 @@ mod tests {
         ]);
         let packet = ipv4_tcp(&tcp_dns_framed(&msg));
 
-        let payload = dns_message_from_response(&packet).expect("tcp packet not recognized");
+        let (_, segment) = transport_segment(&packet).expect("tcp packet not recognized");
+        let payload = tcp_dns_payload(segment).expect("TCP payload not recognized");
         assert_eq!(payload, msg.as_slice());
 
         let answers = parse_dns_answers(payload);
@@ -507,19 +701,62 @@ mod tests {
     }
 
     #[test]
-    fn tcp_dns_partial_segment_is_skipped() {
+    fn stateful_inspector_reassembles_split_tcp_dns_response() {
         let msg = dns_message(&[
             dns_question("tracker.example", DNS_TYPE_A),
             dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
         ]);
-        let mut framed = tcp_dns_framed(&msg);
-        // Claim a message longer than the segment actually carries: a response
-        // split across TCP segments must be skipped, not misparsed.
-        let claimed = (msg.len() as u16) + 10;
-        framed[0..2].copy_from_slice(&claimed.to_be_bytes());
-        let packet = ipv4_tcp(&framed);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let second = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
 
-        assert!(dns_message_from_response(&packet).is_none());
+        inspector.inspect(&first, &sink);
+        assert!(sink.0.lock().unwrap().is_empty());
+        inspector.inspect(&second, &sink);
+
+        let records = sink.0.lock().unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].0, "tracker.example");
+        assert_eq!(records[0].2, "203.0.113.7");
+    }
+
+    #[test]
+    fn stateful_inspector_ignores_retransmitted_tcp_bytes() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let packet = ipv4_tcp_segment(&framed, 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&packet, &sink);
+        inspector.inspect(&packet, &sink);
+
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn stateful_inspector_discards_stream_after_sequence_gap() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let after_gap = ipv4_tcp_segment(&framed[split..], 1001 + split as u32, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&first, &sink);
+        inspector.inspect(&after_gap, &sink);
+
+        assert!(sink.0.lock().unwrap().is_empty());
     }
 
     #[test]

@@ -110,6 +110,12 @@ struct allowed {
     uint16_t rport; // host notation
 };
 
+// Writes one packet to the active WireGuard socketpair while protecting the
+// descriptor from concurrent stop/close. Returns 1 when WireGuard claimed the
+// packet (including a failed write, which must be dropped) and 0 when inactive.
+int write_wireguard_packet(const void *packet, size_t length,
+                           ssize_t *written, int *write_errno);
+
 struct segment {
     uint32_t seq;
     uint16_t len;

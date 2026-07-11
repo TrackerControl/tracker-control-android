@@ -10,11 +10,12 @@ use gotatun::packet::{Ip, Packet};
 use gotatun::tun::IpSend;
 
 use crate::callbacks::DnsSink;
-use crate::dns::inspect_dns_response;
+use crate::dns::DnsInspector;
 
 pub struct TunFdSend {
     fd: Arc<OwnedFd>,
     dns: Option<Arc<dyn DnsSink>>,
+    dns_inspector: DnsInspector,
     write_errors: Arc<AtomicU64>,
 }
 
@@ -24,6 +25,7 @@ impl TunFdSend {
         Self {
             fd: Arc::new(fd),
             dns,
+            dns_inspector: DnsInspector::default(),
             write_errors: Arc::new(AtomicU64::new(0)),
         }
     }
@@ -40,7 +42,7 @@ impl IpSend for TunFdSend {
         let data = packet.as_ref();
 
         if let Some(dns) = &self.dns {
-            inspect_dns_response(data, dns.as_ref());
+            self.dns_inspector.inspect(data, dns.as_ref());
         }
 
         let n = write_fd(self.fd.as_raw_fd(), data);
