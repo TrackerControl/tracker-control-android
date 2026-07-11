@@ -87,6 +87,14 @@ public class BlockingModeAndroidTest {
         assertFalse(result.autoExcludedApps.contains("com.whatsapp"));
     }
 
+    @Test
+    public void explicitTrackerProtectionOverridesMinimalModeDefaults() {
+        assertTrue(BlockingMode.resolveTrackerProtection(false, null));
+        assertFalse(BlockingMode.resolveTrackerProtection(true, null));
+        assertFalse(BlockingMode.resolveTrackerProtection(false, false));
+        assertTrue(BlockingMode.resolveTrackerProtection(true, true));
+    }
+
     private static String readExcludedAppsAsset() throws IOException {
         return new String(Files.readAllBytes(assetPath("ddg-excluded-apps.json")), StandardCharsets.UTF_8);
     }

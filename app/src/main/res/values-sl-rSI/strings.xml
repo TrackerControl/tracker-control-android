@@ -204,7 +204,7 @@
     <string name="msg_wg_mullvad_note">TrackerControl ustvari WireGuardov profil Mulvad.  Številka računa se shrani krajevno za bodoče profile Mulvad.  Žetoni se ne shranjujejo in in izbrisa tukajšnjega profila ne odstrani naprave iz Mullvada.</string>
     <string name="msg_wg_mullvad_generating">Ustvarjanje profila WireGuard …</string>
     <string name="msg_wg_mullvad_failed">Nastavitev Mullvada je spodletela: %s</string>
-    <string name="msg_wg_mullvad_countries_failed"></string>
+    <string name="msg_wg_mullvad_countries_failed">Držav Mullvad ni bilo mogoče naložiti: %s</string>
     <string name="vpn_status_connected">%s</string>
     <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
