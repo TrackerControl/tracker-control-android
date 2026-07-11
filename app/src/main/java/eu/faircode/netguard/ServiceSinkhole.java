@@ -1330,38 +1330,26 @@ public class ServiceSinkhole extends VpnService {
         String vpnDns2 = prefs.getString("dns2", null);
         Log.i(TAG, "DNS system=" + TextUtils.join(",", sysDns) + " config=" + vpnDns1 + "," + vpnDns2);
 
-        if (vpnDns1 != null)
-            try {
-                InetAddress dns = InetAddress.getByName(vpnDns1);
-                if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (dns instanceof Inet4Address))
-                    listDns.add(dns);
-            } catch (Throwable ignored) {
-            }
+        // First pass: IPv4 resolvers only. This reproduces the historical
+        // behaviour and is preserved exactly for IPv4 and dual-stack networks —
+        // wherever a working IPv4 resolver exists, the tun keeps advertising only
+        // IPv4 DNS, so nothing changes for the working majority.
+        collectDns(listDns, vpnDns1, vpnDns2, sysDns, false);
 
-        if (vpnDns2 != null)
-            try {
-                InetAddress dns = InetAddress.getByName(vpnDns2);
-                if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (dns instanceof Inet4Address))
-                    listDns.add(dns);
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
-
-        if (listDns.size() == 2)
-            return listDns;
-
-        for (String def_dns : sysDns)
-            try {
-                InetAddress ddns = InetAddress.getByName(def_dns);
-                if (!listDns.contains(ddns) &&
-                        !(ddns.isLoopbackAddress() || ddns.isAnyLocalAddress()) &&
-                        (ddns instanceof Inet4Address))
-                    listDns.add(ddns);
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
+        // Second pass: on IPv6-only networks (increasingly common on modern
+        // cellular / Android 13+ IPv6-only mobile data) the carrier hands out only
+        // IPv6 resolvers, so the IPv4-only pass above finds nothing. Previously we
+        // then fell through to hardcoded IPv4 public DNS (getDefaultDns), which is
+        // unreachable without a working CLAT/NAT64 path — so all resolution failed
+        // on mobile data. Accept the carrier's IPv6 resolvers instead. Gated on the
+        // "ip6" preference because the builder only routes/advertises IPv6 when it
+        // is enabled (see getConfig: the "ip6 || Inet4Address" DNS filter and the
+        // 2000::/3 route). The native tunnel already intercepts and blocks DNS over
+        // IPv6 (udp.c/dns.c are IP-version-agnostic). Issue #339 (part of #449).
+        if (listDns.isEmpty() && ip6) {
+            Log.i(TAG, "No IPv4 resolver available; accepting IPv6 resolvers (IPv6-only network)");
+            collectDns(listDns, vpnDns1, vpnDns2, sysDns, true);
+        }
 
         // Fallback DNS servers if none found
         if (listDns.isEmpty())
@@ -1370,6 +1358,52 @@ public class ServiceSinkhole extends VpnService {
         Log.i(TAG, "Get DNS=" + TextUtils.join(",", listDns));
 
         return listDns;
+    }
+
+    // Collect usable resolvers — custom (dns/dns2) first, then the system
+    // resolvers — into listDns, mirroring the historical selection order and the
+    // "stop once two custom entries are set" short-circuit. allowIp6=false keeps
+    // the original IPv4-only filtering; allowIp6=true additionally accepts IPv6
+    // resolvers (used as an IPv6-only-network fallback, see getDns).
+    private static void collectDns(List<InetAddress> listDns, String vpnDns1,
+                                   String vpnDns2, List<String> sysDns, boolean allowIp6) {
+        if (vpnDns1 != null)
+            try {
+                InetAddress dns = InetAddress.getByName(vpnDns1);
+                if (isUsableDns(dns, allowIp6) && !listDns.contains(dns))
+                    listDns.add(dns);
+            } catch (Throwable ignored) {
+            }
+
+        if (vpnDns2 != null)
+            try {
+                InetAddress dns = InetAddress.getByName(vpnDns2);
+                if (isUsableDns(dns, allowIp6) && !listDns.contains(dns))
+                    listDns.add(dns);
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
+
+        if (listDns.size() == 2)
+            return;
+
+        for (String def_dns : sysDns)
+            try {
+                InetAddress ddns = InetAddress.getByName(def_dns);
+                if (isUsableDns(ddns, allowIp6) && !listDns.contains(ddns))
+                    listDns.add(ddns);
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
+    }
+
+    // A resolver is usable if it is a real remote address (not loopback / any-local)
+    // and of a family the tun will actually carry: IPv4 always, IPv6 only when
+    // allowed (i.e. IPv6 routing is enabled and no IPv4 resolver was available).
+    private static boolean isUsableDns(InetAddress dns, boolean allowIp6) {
+        if (dns.isLoopbackAddress() || dns.isAnyLocalAddress())
+            return false;
+        return (dns instanceof Inet4Address) || (allowIp6 && dns instanceof Inet6Address);
     }
 
     private static List<InetAddress> getWireGuardDns(net.kollnig.missioncontrol.wg.WgConfig config) {
