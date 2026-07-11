@@ -581,6 +581,8 @@ public class ServiceSinkhole extends VpnService {
                 // Start DoH proxy if enabled and not superseded by WireGuard DNS.
                 updateDnsProxyState();
 
+                scheduleVpnHealthCheck(true, VPN_HEALTH_STARTUP_DELAY_MS);
+
                 removeWarningNotifications();
                 updateEnforcingNotification(listAllowed.size(), listRule.size());
             }
@@ -684,6 +686,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void stop(boolean temporary) {
+            cancelVpnHealthChecks();
             if (vpn != null) {
                 stopNative(vpn);
                 stopVPN(vpn);
@@ -2090,6 +2093,7 @@ public class ServiceSinkhole extends VpnService {
     // Called from native code
     private void nativeExit(String reason) {
         Log.w(TAG, "Native exit reason=" + reason);
+        cancelVpnHealthChecks();
         if (reason != null) {
             showErrorNotification(reason);
 
@@ -3060,6 +3064,23 @@ public class ServiceSinkhole extends VpnService {
     private static final Object NETWORK_RELOAD_TOKEN = new Object();
     private final Handler networkReloadDebounceHandler = new Handler(Looper.getMainLooper());
 
+    // Connectivity checks are event driven: once after startup and once after
+    // physical network transitions. Retries are short, bounded sequences rather
+    // than a permanent polling loop.
+    private static final long VPN_HEALTH_STARTUP_DELAY_MS = 5_000L;
+    private static final long VPN_HEALTH_NETWORK_DELAY_MS = 4_000L;
+    private static final long VPN_HEALTH_RETRY_DELAY_MS = 5_000L;
+    private static final int VPN_HEALTH_CONNECT_TIMEOUT_MS = 2_500;
+    private static final Object VPN_HEALTH_TOKEN = new Object();
+    private static final byte[][] VPN_HEALTH_ENDPOINTS = new byte[][]{
+            {(byte) 9, (byte) 9, (byte) 9, (byte) 9},
+            {(byte) 1, (byte) 1, (byte) 1, (byte) 1}
+    };
+    private final Handler vpnHealthHandler = new Handler(Looper.getMainLooper());
+    private final VpnHealthRecoveryPolicy vpnHealthPolicy = new VpnHealthRecoveryPolicy();
+    private int vpnHealthGeneration;
+    private boolean vpnHealthProbeInFlight;
+
     private void reloadAfterNetworkChange(final String reason) {
         networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
         networkReloadDebounceHandler.postAtTime(new Runnable() {
@@ -3068,8 +3089,112 @@ public class ServiceSinkhole extends VpnService {
                 if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
                     net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
                 reload(reason, ServiceSinkhole.this, false);
+                scheduleVpnHealthCheck(true, VPN_HEALTH_NETWORK_DELAY_MS);
             }
         }, NETWORK_RELOAD_TOKEN, SystemClock.uptimeMillis() + NETWORK_RELOAD_DEBOUNCE_MS);
+    }
+
+    private void scheduleVpnHealthCheck(final boolean beginEpoch, final long delayMs) {
+        vpnHealthHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (beginEpoch)
+                    vpnHealthPolicy.beginEpoch();
+
+                vpnHealthGeneration++;
+                final int generation = vpnHealthGeneration;
+                vpnHealthHandler.removeCallbacksAndMessages(VPN_HEALTH_TOKEN);
+                vpnHealthHandler.postAtTime(new Runnable() {
+                    @Override
+                    public void run() {
+                        startVpnHealthProbe(generation);
+                    }
+                }, VPN_HEALTH_TOKEN, SystemClock.uptimeMillis() + delayMs);
+            }
+        });
+    }
+
+    private void startVpnHealthProbe(final int generation) {
+        synchronized (this) {
+            if (generation != vpnHealthGeneration ||
+                    state != State.enforcing || vpn == null || temporarilyStopped)
+                return;
+            if (vpnHealthProbeInFlight) {
+                vpnHealthHandler.postAtTime(new Runnable() {
+                    @Override
+                    public void run() {
+                        startVpnHealthProbe(generation);
+                    }
+                }, VPN_HEALTH_TOKEN, SystemClock.uptimeMillis() + 1_000L);
+                return;
+            }
+            if (!Util.isInteractive(this) || !Util.isConnected(this)) {
+                Log.i(TAG, "VPN health check skipped: device inactive or offline");
+                return;
+            }
+            vpnHealthProbeInFlight = true;
+        }
+
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                final boolean vpnReachable = canReachHealthEndpoint(false);
+                final boolean bypassReachable = !vpnReachable && canReachHealthEndpoint(true);
+                vpnHealthHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        finishVpnHealthProbe(generation, vpnReachable, bypassReachable);
+                    }
+                });
+            }
+        });
+    }
+
+    private void finishVpnHealthProbe(int generation, boolean vpnReachable, boolean bypassReachable) {
+        synchronized (this) {
+            vpnHealthProbeInFlight = false;
+            if (generation != vpnHealthGeneration || state != State.enforcing || vpn == null)
+                return;
+        }
+
+        VpnHealthRecoveryPolicy.Action action = vpnHealthPolicy.record(vpnReachable, bypassReachable);
+        Log.i(TAG, "VPN health result vpn=" + vpnReachable + " bypass=" + bypassReachable +
+                " action=" + action);
+        if (action == VpnHealthRecoveryPolicy.Action.RETRY) {
+            scheduleVpnHealthCheck(false, VPN_HEALTH_RETRY_DELAY_MS);
+        } else if (action == VpnHealthRecoveryPolicy.Action.RECOVER) {
+            reload("VPN connectivity recovery", this, false);
+            scheduleVpnHealthCheck(false, VPN_HEALTH_STARTUP_DELAY_MS);
+        } else if (action == VpnHealthRecoveryPolicy.Action.EXHAUSTED) {
+            Log.w(TAG, "VPN connectivity recovery budget exhausted");
+        }
+    }
+
+    private boolean canReachHealthEndpoint(boolean bypassVpn) {
+        for (byte[] address : VPN_HEALTH_ENDPOINTS) {
+            try (Socket socket = new Socket()) {
+                if (bypassVpn && !protect(socket)) {
+                    Log.w(TAG, "Unable to protect VPN health socket");
+                    return false;
+                }
+                socket.connect(new InetSocketAddress(InetAddress.getByAddress(address), 443),
+                        VPN_HEALTH_CONNECT_TIMEOUT_MS);
+                return true;
+            } catch (IOException ex) {
+                Log.d(TAG, "VPN health endpoint unavailable: " + ex);
+            }
+        }
+        return false;
+    }
+
+    private void cancelVpnHealthChecks() {
+        vpnHealthHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                vpnHealthGeneration++;
+                vpnHealthHandler.removeCallbacksAndMessages(VPN_HEALTH_TOKEN);
+            }
+        });
     }
 
     private void listenConnectivityChanges() {
@@ -3260,6 +3385,8 @@ public class ServiceSinkhole extends VpnService {
 
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+            vpnHealthGeneration++;
+            vpnHealthHandler.removeCallbacksAndMessages(VPN_HEALTH_TOKEN);
 
             commandLooper.quit();
             logLooper.quit();
