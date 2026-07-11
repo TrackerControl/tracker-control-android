@@ -75,6 +75,21 @@
     <string name="troubleshooting_alwayson_title">Always-on VPN</string>
     <string name="troubleshooting_alwayson_desc">If \"Block connections without VPN\" (lockdown) is enabled in Android VPN settings, TrackerControl cannot work correctly. Disable this option. A notification will appear if this is detected.</string>
     <string name="troubleshooting_alwayson_action">Open VPN settings</string>
+
+    <string name="troubleshooting_selfcheck_title">Self-check</string>
+    <string name="troubleshooting_selfcheck_desc">Not sure why apps won\'t connect, or worried about battery? Run an on-device self-check. It explains what it finds in plain language and produces a report you can copy into a bug report — nothing is sent anywhere unless you share it.</string>
+    <string name="troubleshooting_selfcheck_action">Run self-check</string>
+
+    <string name="diagnostics_title">Self-check</string>
+    <string name="diagnostics_intro">This is an on-device snapshot to help explain common issues. Nothing leaves your device unless you copy or share the report below.</string>
+    <string name="diagnostics_connectivity">Connectivity</string>
+    <string name="diagnostics_battery">Battery</string>
+    <string name="diagnostics_full_report">Full report</string>
+    <string name="diagnostics_generating">Generating self-check…</string>
+    <string name="diagnostics_copy">Copy report</string>
+    <string name="diagnostics_share">Share report</string>
+    <string name="diagnostics_copied">Report copied to clipboard</string>
+
     <string name="menu_apps">Other apps</string>
 
     <string name="menu_protocol_udp" translatable="false">UDP</string>

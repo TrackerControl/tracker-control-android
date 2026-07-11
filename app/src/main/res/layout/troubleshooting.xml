@@ -36,6 +36,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Self-check / diagnostics -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/troubleshooting_selfcheck_title"
+                android:textAppearance="@style/TextMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/troubleshooting_selfcheck_desc"
+                android:textAppearance="@style/TextSmall" />
+
+            <Button
+                android:id="@+id/btnSelfCheck"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/troubleshooting_selfcheck_action" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="4dp"
+                android:background="?android:attr/listDivider" />
+
             <!-- Battery Optimisation -->
             <TextView
                 android:layout_width="wrap_content"

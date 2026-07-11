@@ -182,6 +182,16 @@
                 android:value="eu.faircode.netguard.ActivitySettings" />
         </activity>
 
+        <activity
+            android:name="net.kollnig.missioncontrol.ActivityDiagnostics"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/diagnostics_title"
+            android:parentActivityName="eu.faircode.netguard.ActivityMain">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="eu.faircode.netguard.ActivityMain" />
+        </activity>
+
 
         <activity
             android:name="net.kollnig.missioncontrol.DetailsActivity"

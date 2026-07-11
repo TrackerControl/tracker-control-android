@@ -1250,6 +1250,21 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             view.findViewById(R.id.tvDataSaverStatus).setVisibility(View.VISIBLE);
         }
 
+        // Self-check / diagnostics button
+        view.findViewById(R.id.btnSelfCheck).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(ActivityMain.this,
+                            net.kollnig.missioncontrol.ActivityDiagnostics.class));
+                    if (dialogTroubleshooting != null)
+                        dialogTroubleshooting.dismiss();
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString());
+                }
+            }
+        });
+
         // VPN settings button
         view.findViewById(R.id.btnVpnSettings).setOnClickListener(new View.OnClickListener() {
             @Override
