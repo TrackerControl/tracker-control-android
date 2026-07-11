@@ -111,10 +111,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -159,6 +161,16 @@ public class ServiceSinkhole extends VpnService {
     };
 
     private Object networkCallback = null;
+    private ConnectivityManager.NetworkCallback underlyingDefaultNetworkCallback = null;
+    private volatile Network callbackDefaultNetwork = null;
+    private final java.util.concurrent.atomic.AtomicLong underlyingTunEpoch =
+            new java.util.concurrent.atomic.AtomicLong(0);
+    private static final long UNDERLYING_NETWORK_DEBOUNCE_MS = 300L;
+    private static final Object UNDERLYING_NETWORK_TOKEN = new Object();
+    private final Handler underlyingNetworkHandler = new Handler(Looper.getMainLooper());
+    private final net.kollnig.missioncontrol.wg.UnderlyingNetworkReducer underlyingNetworkReducer =
+            new net.kollnig.missioncontrol.wg.UnderlyingNetworkReducer();
+    private volatile boolean destroying = false;
 
     private boolean registeredInteractiveState = false;
     private PhoneStateListener callStateListener = null;
@@ -1483,6 +1495,7 @@ public class ServiceSinkhole extends VpnService {
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
             ParcelFileDescriptor pfd = builder.establish();
+            if (pfd != null) onTunTransition();
             updateUnderlyingNetworks();
             return pfd;
         } catch (SecurityException ex) {
@@ -2082,6 +2095,7 @@ public class ServiceSinkhole extends VpnService {
         Log.i(TAG, "Stopping");
         try {
             pfd.close();
+            onTunTransition();
         } catch (IOException ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
@@ -2602,6 +2616,7 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Available network " + network + " " + ni);
             Log.i(TAG, "Capabilities=" + capabilities);
             checkConnectivity(network, ni, capabilities);
+            scheduleUnderlyingNetworkSnapshot(false);
         }
 
         @Override
@@ -2611,6 +2626,13 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "New capabilities network " + network + " " + ni);
             Log.i(TAG, "Capabilities=" + capabilities);
             checkConnectivity(network, ni, capabilities);
+            scheduleUnderlyingNetworkSnapshot(false);
+        }
+
+        @Override
+        public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
+            Log.i(TAG, "New link properties network " + network + " " + linkProperties);
+            scheduleUnderlyingNetworkSnapshot(false);
         }
 
         @Override
@@ -2629,11 +2651,13 @@ public class ServiceSinkhole extends VpnService {
             synchronized (mapValidated) {
                 mapValidated.remove(network);
             }
+            scheduleUnderlyingNetworkSnapshot(false);
         }
 
         @Override
         public void onUnavailable() {
             Log.i(TAG, "No networks available");
+            scheduleUnderlyingNetworkSnapshot(false);
         }
 
         private void checkConnectivity(Network network, NetworkInfo ni, NetworkCapabilities capabilities) {
@@ -2937,10 +2961,17 @@ public class ServiceSinkhole extends VpnService {
 
         // Monitor networks
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        registerUnderlyingDefaultNetworkCallback(cm);
         cm.registerNetworkCallback(
                 new NetworkRequest.Builder()
-                        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
+                        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                        .addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN).build(),
                 networkMonitorCallback);
+
+        // Do not wait for an asynchronous callback: callbacks can be delayed or
+        // missed while the VPN is being established. Mullvad uses the same
+        // eager-snapshot principle before consuming its callback stream.
+        scheduleUnderlyingNetworkSnapshot(true);
 
         // Setup house holding
         Intent alarmIntent = new Intent(this, ServiceSinkhole.class);
@@ -2975,6 +3006,11 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onAvailable(Network network) {
                 Log.i(TAG, "Available network=" + network);
+                NetworkCapabilities caps = cm.getNetworkCapabilities(network);
+                if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) {
+                    callbackDefaultNetwork = network;
+                    scheduleUnderlyingNetworkSnapshot(false);
+                }
                 if (!isActiveNetwork(network))
                     return;
 
@@ -2988,6 +3024,7 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onLinkPropertiesChanged(Network network, LinkProperties linkProperties) {
                 Log.i(TAG, "Changed properties=" + network + " props=" + linkProperties);
+                scheduleUnderlyingNetworkSnapshot(false);
                 if (!isActiveNetwork(network))
                     return;
 
@@ -3011,6 +3048,10 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onCapabilitiesChanged(Network network, NetworkCapabilities networkCapabilities) {
                 Log.i(TAG, "Changed capabilities=" + network + " caps=" + networkCapabilities);
+                if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN)) {
+                    callbackDefaultNetwork = network;
+                    scheduleUnderlyingNetworkSnapshot(false);
+                }
                 if (!isActiveNetwork(network))
                     return;
 
@@ -3035,6 +3076,10 @@ public class ServiceSinkhole extends VpnService {
             @Override
             public void onLost(Network network) {
                 Log.i(TAG, "Lost network=" + network + " active=" + isActiveNetwork(network));
+                if (network.equals(callbackDefaultNetwork)) {
+                    callbackDefaultNetwork = null;
+                    scheduleUnderlyingNetworkSnapshot(false);
+                }
                 if (last_active == null || !last_active.equals(network))
                     return;
 
@@ -3047,6 +3092,117 @@ public class ServiceSinkhole extends VpnService {
         };
         cm.registerNetworkCallback(builder.build(), nc);
         networkCallback = nc;
+    }
+
+    private void registerUnderlyingDefaultNetworkCallback(ConnectivityManager cm) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || cm == null) return;
+        ConnectivityManager.NetworkCallback callback = new ConnectivityManager.NetworkCallback() {
+            @Override public void onAvailable(Network network) {
+                callbackDefaultNetwork = network;
+                scheduleUnderlyingNetworkSnapshot(false);
+            }
+            @Override public void onCapabilitiesChanged(
+                    Network network, NetworkCapabilities capabilities) {
+                callbackDefaultNetwork = network;
+                scheduleUnderlyingNetworkSnapshot(false);
+            }
+            @Override public void onLinkPropertiesChanged(
+                    Network network, LinkProperties properties) {
+                scheduleUnderlyingNetworkSnapshot(false);
+            }
+            @Override public void onLost(Network network) {
+                if (network.equals(callbackDefaultNetwork)) callbackDefaultNetwork = null;
+                scheduleUnderlyingNetworkSnapshot(false);
+            }
+            @Override public void onUnavailable() {
+                callbackDefaultNetwork = null;
+                scheduleUnderlyingNetworkSnapshot(false);
+            }
+        };
+        try {
+            cm.registerDefaultNetworkCallback(callback);
+            underlyingDefaultNetworkCallback = callback;
+        } catch (RuntimeException ex) {
+            // Android 11 can reject registration transiently. The eager
+            // snapshot plus the NOT_VPN stream remain a safe fallback.
+            Log.w(TAG, "Could not register default-network callback", ex);
+        }
+    }
+
+    /** Sample both callback views; the reducer removes callback ordering noise. */
+    private net.kollnig.missioncontrol.wg.UnderlyingNetworkReducer.Snapshot
+    sampleUnderlyingNetworks() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Set<String> nonVpn = new HashSet<>();
+        if (cm != null) {
+            for (Network network : cm.getAllNetworks()) {
+                NetworkCapabilities caps = cm.getNetworkCapabilities(network);
+                if (caps != null &&
+                        caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                        caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
+                    nonVpn.add(underlyingNetworkSignature(cm, network, caps));
+            }
+        }
+        Network defaultNetwork = callbackDefaultNetwork;
+        if (defaultNetwork == null) defaultNetwork = getActiveNetwork();
+        String defaultSignature = null;
+        if (defaultNetwork != null && cm != null) {
+            NetworkCapabilities caps = cm.getNetworkCapabilities(defaultNetwork);
+            if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
+                defaultSignature = underlyingNetworkSignature(cm, defaultNetwork, caps);
+        }
+        if (defaultSignature == null && cm != null) {
+            defaultNetwork = getActiveNetwork();
+            NetworkCapabilities caps = defaultNetwork == null ? null : cm.getNetworkCapabilities(defaultNetwork);
+            if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_VPN))
+                defaultSignature = underlyingNetworkSignature(cm, defaultNetwork, caps);
+        }
+        return new net.kollnig.missioncontrol.wg.UnderlyingNetworkReducer.Snapshot(
+                defaultSignature, nonVpn, underlyingTunEpoch.get());
+    }
+
+    private String underlyingNetworkSignature(
+            ConnectivityManager cm, Network network, NetworkCapabilities caps) {
+        StringBuilder value = new StringBuilder(network.toString());
+        value.append("|validated=").append(
+                caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED));
+        value.append("|metered=").append(
+                !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED));
+        value.append("|transports=");
+        for (int transport = 0; transport <= 8; transport++)
+            if (caps.hasTransport(transport)) value.append(transport).append(',');
+        LinkProperties lp = cm.getLinkProperties(network);
+        if (lp != null) {
+            value.append("|iface=").append(lp.getInterfaceName());
+            value.append("|dns=").append(lp.getDnsServers());
+            value.append("|routes=").append(lp.getRoutes());
+            value.append("|addresses=").append(lp.getLinkAddresses());
+        }
+        return value.toString();
+    }
+
+    private void scheduleUnderlyingNetworkSnapshot(boolean eager) {
+        if (destroying) return;
+        underlyingNetworkReducer.offer(sampleUnderlyingNetworks());
+        underlyingNetworkHandler.removeCallbacksAndMessages(UNDERLYING_NETWORK_TOKEN);
+        Runnable emit = () -> {
+            // Re-sample after the burst settles; onLost and capability changes
+            // can arrive in either order across the two callbacks.
+            underlyingNetworkReducer.offer(sampleUnderlyingNetworks());
+            net.kollnig.missioncontrol.wg.UnderlyingNetworkReducer.Event event =
+                    underlyingNetworkReducer.flush();
+            if (event != null)
+                net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged(
+                        event.generation, event.snapshot.isConnected(), event.rebindRequired);
+        };
+        if (eager) emit.run();
+        else underlyingNetworkHandler.postAtTime(emit, UNDERLYING_NETWORK_TOKEN,
+                SystemClock.uptimeMillis() + UNDERLYING_NETWORK_DEBOUNCE_MS);
+    }
+
+    private void onTunTransition() {
+        underlyingTunEpoch.incrementAndGet();
+        if (!destroying) scheduleUnderlyingNetworkSnapshot(false);
     }
 
     // Network flapping (Wi-Fi<->cellular handoffs, DHCP renewals) fires several
@@ -3065,8 +3221,6 @@ public class ServiceSinkhole extends VpnService {
         networkReloadDebounceHandler.postAtTime(new Runnable() {
             @Override
             public void run() {
-                if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
-                    net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
                 reload(reason, ServiceSinkhole.this, false);
             }
         }, NETWORK_RELOAD_TOKEN, SystemClock.uptimeMillis() + NETWORK_RELOAD_DEBOUNCE_MS);
@@ -3259,7 +3413,9 @@ public class ServiceSinkhole extends VpnService {
             }
 
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
+            destroying = true;
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+            underlyingNetworkHandler.removeCallbacksAndMessages(UNDERLYING_NETWORK_TOKEN);
 
             commandLooper.quit();
             logLooper.quit();
@@ -3310,6 +3466,14 @@ public class ServiceSinkhole extends VpnService {
             net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.removeStateListener(wgStateListener);
 
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (underlyingDefaultNetworkCallback != null) {
+                try {
+                    cm.unregisterNetworkCallback(underlyingDefaultNetworkCallback);
+                } catch (RuntimeException ex) {
+                    Log.w(TAG, "Could not unregister default-network callback", ex);
+                }
+                underlyingDefaultNetworkCallback = null;
+            }
             cm.unregisterNetworkCallback(networkMonitorCallback);
 
             try {

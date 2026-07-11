@@ -109,6 +109,8 @@ object WgEgress {
     private val rebindLock = Any()
     private var rebindInFlight: Boolean = false
     private var rebindDirty: Boolean = false
+    @Volatile private var underlyingNetworkGeneration: Long = 0
+    @Volatile private var underlyingNetworkConnected: Boolean = false
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
@@ -141,6 +143,7 @@ object WgEgress {
 
     fun addStateListener(l: Runnable) { listeners.add(l) }
     fun removeStateListener(l: Runnable) { listeners.remove(l) }
+
     private fun notifyStateChanged() {
         for (l in listeners) try { l.run() } catch (e: Throwable) { Log.w(TAG, "listener threw", e) }
     }
@@ -309,6 +312,13 @@ object WgEgress {
 
     private fun onMonitorBroken(expected: TunnelSnapshot) {
         if (!isCurrent(expected)) return
+        // No physical path exists. Keep the fail-closed tunnel in place and
+        // let the next distinct connectivity generation trigger the rebind;
+        // restarting now would only churn sockets against the same absence.
+        if (!underlyingNetworkConnected) {
+            Log.i(TAG, "connectivity monitor: no underlying network; waiting")
+            return
+        }
         // A full restart is already queued; it will rebind everything anyway.
         if (forceRestartPending) return
 
@@ -470,9 +480,18 @@ object WgEgress {
     fun latestHandshakeMillisOrNull(): Long? =
         try { tunnel?.latestHandshakeMillis() } catch (_: Throwable) { null }
 
-    fun onUnderlyingNetworkChanged() {
+    fun onUnderlyingNetworkChanged(generation: Long, connected: Boolean, rebindRequired: Boolean) {
+        synchronized(rebindLock) {
+            if (generation <= underlyingNetworkGeneration) return
+            underlyingNetworkGeneration = generation
+            underlyingNetworkConnected = connected
+        }
         verificationGeneration++
         clearEndpointCache()
+        // TUN replacement invalidates the service's snapshot but does not
+        // indicate an outer-path change. Publishing its generation is useful
+        // for stale-work checks; rebinding the intentionally replaced tunnel is not.
+        if (!rebindRequired || !connected) return
         if (tunnel == null) return
         // A full restart is already queued (and the accompanying reload() is
         // in flight); rebinding concurrently would just race it.
@@ -500,6 +519,15 @@ object WgEgress {
         rebindExecutor.execute {
             try {
                 while (true) {
+                    val expectedUnderlyingGeneration: Long
+                    synchronized(rebindLock) {
+                        if (!underlyingNetworkConnected) {
+                            rebindInFlight = false
+                            rebindDirty = false
+                            return@execute
+                        }
+                        expectedUnderlyingGeneration = underlyingNetworkGeneration
+                    }
                     val expected = captureTunnel()
                     if (expected == null) {
                         synchronized(rebindLock) {
@@ -508,22 +536,38 @@ object WgEgress {
                         }
                         return@execute
                     }
-                    when (tryCheapRecovery(expected)) {
-                        RecoveryResult.SUCCEEDED -> {
-                            if (isCurrent(expected)) lastCheapRecoveryMs = now()
-                        }
-                        RecoveryResult.FAILED -> {
-                            if (!forceRestartPending) {
-                                requestFullRestart(
-                                    "WG rebind failed after network change",
-                                    notify = false,
-                                    expected = expected
-                                )
-                            }
-                        }
-                        RecoveryResult.STALE -> Unit
-                    }
+                    val result = tryCheapRecovery(expected)
                     synchronized(rebindLock) {
+                        // Recovery can block in DNS. Discard its result if a
+                        // newer path (including offline) landed meanwhile.
+                        if (expectedUnderlyingGeneration != underlyingNetworkGeneration ||
+                            !underlyingNetworkConnected) {
+                            if (!underlyingNetworkConnected) {
+                                rebindInFlight = false
+                                rebindDirty = false
+                                return@execute
+                            }
+                            rebindDirty = true
+                        } else when (result) {
+                            RecoveryResult.SUCCEEDED -> {
+                                if (isCurrent(expected)) {
+                                    lastCheapRecoveryMs = now()
+                                    // The liveness loop stops before invoking
+                                    // onBroken. Reconnect must resume it.
+                                    startMonitor(expected)
+                                }
+                            }
+                            RecoveryResult.FAILED -> {
+                                if (!forceRestartPending) {
+                                    requestFullRestart(
+                                        "WG rebind failed after network change",
+                                        notify = false,
+                                        expected = expected
+                                    )
+                                }
+                            }
+                            RecoveryResult.STALE -> Unit
+                        }
                         if (!rebindDirty) {
                             rebindInFlight = false
                             return@execute
