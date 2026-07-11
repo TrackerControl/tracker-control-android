@@ -225,6 +225,8 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Poista internetyhteys käytöstä tälle sovellukselle</string>
     <string name="tracked_app_name">Sovelluksen nimi</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">otti yhteyttä %d yritykseen viime viikolla</item>
         <item quantity="other">otti yhteyttä %d yritykseen viime viikolla</item>
@@ -455,4 +457,5 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="msg_delete_blocklist_confirm">Oletko varma, että haluat poistaa tämän hosts-tiedoston?</string>
     <string name="msg_invalid_url">Virheellinen URL-osoite</string>
     <string name="msg_last_update">Päivitetty viimeksi: %s</string>
+    <!-- Accessibility labels -->
 </resources>
