@@ -129,7 +129,6 @@
     <string name="msg_started">Suche nach Trackern...</string>
     <string name="msg_waiting">Auf Ereignis warten</string>
     <string name="msg_disabled">Verwenden Sie den obigen Schalter um TrackerControl zu aktivieren.</string>
-    <string name="msg_revoked">TrackerControl wurde deaktiviert, wahrscheinlich durch die Verwendung einer anderen VPN-Anwendung</string>
     <string name="msg_installed">Probleme mit %1$s?</string>
     <string name="msg_installed_description">App erlauben, Unternehmen zu kontaktieren</string>
     <string name="msg_installed_tracker_libraries_found">Enthält %d Tracker-Bibliothek(en)</string>
