@@ -1894,6 +1894,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void prepareUidIPFilters(String dname) {
         lock.writeLock().lock();
+        try {
 
         if (dname == null) // reset mechanism, called from startNative()
             mapUidIPFilters.clear();
@@ -1958,11 +1959,14 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
-        lock.writeLock().unlock();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private void prepareForwarding() {
         lock.writeLock().lock();
+        try {
         mapForward.clear();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -1997,7 +2001,10 @@ public class ServiceSinkhole extends VpnService {
             // TCP uses the same port map, as mapForward is keyed by dport.
             Log.i(TAG, "DoH Forward " + dnsFwd);
         }
-        lock.writeLock().unlock();
+
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private List<Rule> getAllowedRules(List<Rule> listRule) {
@@ -2137,6 +2144,8 @@ public class ServiceSinkhole extends VpnService {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         lock.readLock().lock();
+        Allowed allowed = null;
+        try {
 
         // https://android.googlesource.com/platform/system/core/+/master/include/private/android_filesystem_config.h
         if ((packet.uid < 2000) &&
@@ -2177,7 +2186,6 @@ public class ServiceSinkhole extends VpnService {
             packet.allowed = false;
         }
 
-        Allowed allowed = null;
         if (packet.allowed)
             if (mapForward.containsKey(packet.dport)) {
                 Forward fwd = mapForward.get(packet.dport);
@@ -2190,7 +2198,11 @@ public class ServiceSinkhole extends VpnService {
             } else
                 allowed = new Allowed();
 
-        lock.readLock().unlock();
+        } finally {
+            // Read lock must always be released: a leaked read lock would
+            // permanently block every future writeLock() (all reloads).
+            lock.readLock().unlock();
+        }
 
         if (prefs.getBoolean("log", false) || prefs.getBoolean("log_app", true))
             if (packet.protocol != 6 /* TCP */ || !"".equals(packet.flags))
@@ -2386,8 +2398,15 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
-            assert tracker != null;
-            Log.i("TC-Log", app + " " + daddr + " " + ipToHost.get(daddr).getOrExpired() + " " + tracker.getName());
+            // tracker can be null here when the host cache had an entry but the
+            // tracker cache was empty/expired, and ipToHost.get(daddr) can be
+            // null on an ipToTracker cache hit (the ipToHost.put(...) block is
+            // skipped). Guard both so log_logcat never NPEs the packet path.
+            if (tracker != null) {
+                Expiring<String> expiringHost = ipToHost.get(daddr);
+                String host = (expiringHost == null ? null : expiringHost.getOrExpired());
+                Log.i("TC-Log", app + " " + daddr + " " + host + " " + tracker.getName());
+            }
         } else {
             if (tracker != NO_TRACKER) {
                 boolean blockedByGranularRule = false;
