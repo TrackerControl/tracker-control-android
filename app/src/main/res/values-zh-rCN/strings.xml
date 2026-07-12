@@ -378,11 +378,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">端口 %1$d</string>
     <string name="title_log_copy">复制</string>
-    <string-array name="blockingModeNames">
-        <item>最小</item>
-        <item>标准</item>
-        <item>严格</item>
-    </string-array>
     <!-- App Overview -->
     <string name="tracked_app_icon">禁止此应用访问互联网</string>
     <string name="tracked_app_name">应用程序名称</string>

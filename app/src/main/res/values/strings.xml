@@ -439,7 +439,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_log_port">Port %1$d</string>
     <string name="title_log_copy">Copy</string>
 
-    <string-array name="blockingModeNames">
+    <string-array name="blockingModeNames" translatable="false">
         <item>@string/blocking_mode_minimal</item>
         <item>@string/blocking_mode_standard</item>
         <item>@string/blocking_mode_strict</item>
