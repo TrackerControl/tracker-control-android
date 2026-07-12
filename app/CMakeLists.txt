@@ -32,4 +32,15 @@ target_link_libraries( netguard
 target_link_options(netguard PRIVATE
     "-Wl,-z,max-page-size=16384"
     "-Wl,-z,common-page-size=16384"
-    "-Wl,--build-id=sha1")
+    "-Wl,--build-id=none")
+
+# The clang version string embedded in .comment (which varies with the NDK's
+# use of BOLT-optimized toolchains, "+bolt"/"-bolt") and any residual
+# .note.gnu.build-id both harm reproducibility. Strip them post-link.
+# See https://izzyondroid.org/docs/reproducibleBuilds/DebugFailedRBs/#clang
+add_custom_command(TARGET netguard
+    POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} --remove-section .comment
+            --remove-section .note.gnu.build-id
+            $<TARGET_FILE:netguard>
+    VERBATIM)

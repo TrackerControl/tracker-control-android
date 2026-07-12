@@ -3,4 +3,9 @@
     <color name="colorPrimary">#fb8c00</color>
     <color name="colorPrimaryDark">#c25e00</color>
     <color name="colorAccent">#4db6ac</color>
+
+    <!-- Brighter than colorAccent for low-contrast text links on the dark
+         (near-black) surface, e.g. the "Manage WireGuard profiles" footer
+         link. See issue #560. -->
+    <color name="colorFooterLink">#80cbc4</color>
 </resources>

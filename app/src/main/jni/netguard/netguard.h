@@ -49,6 +49,18 @@
 #define UDP4_MAXMSG (IP_MAXPACKET - 20 - 8) // bytes (socket)
 #define UDP6_MAXMSG (IPV6_MAXPACKET - 40 - 8) // bytes (socket)
 
+// Optional TCP MSS clamp for the SYN/SYN-ACK we inject into the tun. The tun advertises
+// an oversized MTU (get_mtu() == 10000), so the derived MSS (~9960) would let a
+// peer emit segments far larger than any real upstream path (cellular/WireGuard
+// are typically <= 1500). Because handle_icmp() drops the ICMPv4 "fragmentation
+// needed" / ICMPv6 "packet too big" messages that Path-MTU-Discovery relies on,
+// such oversized segments can black-hole - notably for tethered clients (#478).
+// Clamping to a conservative value keeps every segment small enough to traverse
+// typical constrained paths without depending on PMTUD. This is enabled only
+// by the tethering compatibility setting. Heuristic; verify on device before
+// relying on the exact value.
+#define TCP_MSS_CLAMP 1360 // bytes
+
 #define ICMP_TIMEOUT 5 // seconds
 
 #define UDP_TIMEOUT_53 15 // seconds
@@ -80,6 +92,7 @@ struct context {
     int pipefds[2];
     int stopping;
     int sdk;
+    jboolean tcp_mss_clamp;
     struct ng_session *ng_session;
 };
 
@@ -96,6 +109,12 @@ struct allowed {
     char raddr[INET6_ADDRSTRLEN + 1];
     uint16_t rport; // host notation
 };
+
+// Writes one packet to the active WireGuard socketpair while protecting the
+// descriptor from concurrent stop/close. Returns 1 when WireGuard claimed the
+// packet (including a failed write, which must be dropped) and 0 when inactive.
+int write_wireguard_packet(const void *packet, size_t length,
+                           ssize_t *written, int *write_errno);
 
 struct segment {
     uint32_t seq;
@@ -341,7 +360,7 @@ void handle_signal(int sig, siginfo_t *info, void *context);
 
 void *handle_events(void *a);
 
-void report_exit(const struct arguments *args, const char *fmt, ...);
+void report_exit(const struct arguments *args, int error, const char *fmt, ...);
 
 void report_error(const struct arguments *args, jint error, const char *fmt, ...);
 

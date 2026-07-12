@@ -3,7 +3,7 @@
     <string name="app_description">TrackerControl-ek aplikazioek egiten duten erabilpenaren jarraipenaren datuak era ezkutuan jasotzeko egiten duten lana monitorizatu eta kontrolatzeko aukera eskaintzen die erabiltzaileei (\'tracking\' bezala ezaguna).</string>
     <string name="app_android">TrackerControlek Android 5.1 edo berriagoa behar du</string>
     <string name="app_xposed">Xposedek arazo asko sortzen ditu eta horregatik agian TrackerControl Google Play Storetik ezabatu dezakete, beraz TrackerControl ezin da instalatu Xposed instalatuta dagoen artean</string>
-    <string name="app_eula" formatted="false">Aplikazio honen erabilera zure ardurapean dago. Aplikazio batek ezin du 100% babesa eskaini jarraipenaren aurka.</string>
+    <string name="app_eula">Aplikazio honen erabilera zure ardurapean dago. Aplikazio batek ezin du 100% babesa eskaini jarraipenaren aurka.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Pribatutasun politika</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie Politika</a></string>
     <string name="channel_foreground">Martxan dauden zerbitzuak</string>
     <string name="channel_notify">Jakinarazpen orokorrak</string>
@@ -207,6 +207,8 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Desaktibatu interneterako sarrera aplikazio honi</string>
     <string name="tracked_app_name">Aplikazioaren izena</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">konpainia %d kontaktatu du azken astean</item>
         <item quantity="other">%d konpainia kontaktatu ditu azken astean</item>
@@ -354,4 +356,5 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

@@ -114,6 +114,8 @@
     <string name="title_notify">通知網際網路存取嘗試</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">關閉這個 app 的網際網路連線</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="menu_csv">匯出為 CSV</string>
     <string name="export_failed">匯出失敗</string>
     <string name="exported">已匯出到儲存空間！</string>
@@ -146,40 +148,6 @@
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR 當事人存取請求</string>
-    <string name="body_request_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to confirm whether it is processing any personal data about me.\n
-If so, please provide me with all the required information stipulated in Article 15 of the EU General Data Protection Regulation (GDPR), including:\n
-\n
-• a copy of my personal data;\n
-• the purposes of the processing;\n
-• the categories of personal data concerned;\n
-• the recipients you disclose my personal data to and the safeguards you provide;\n
-• the retention period for storing my personal data or the criteria used for determining this period;\n
-• information about the source of my personal data; and\n
-• the existence of automated decision-making (including profiling), and if so:\n
-    - the logic involved in the decision-making process;\n
-    - the significance and the envisaged consequences for me;\n
-    - the steps you have taken to prevent errors, bias and discrimination; and\n
-    - explain how I can express my point of view and challenge a decision.\n
-\n
-This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
-    <string name="body_delete_data"><![CDATA[To Whom It May Concern:\n
-\n
-\n
-I am invoking my right to erasure as specified in Article 17 of the EU General Data Protection Regulation (GDPR). I am requesting you, as the data controller of the Android app %1$s (ID: %2$s), to erase the following personal data it processes about me without undue delay:\n
-• All data.\n
-\n
-The reason for my removal request is that I withdraw or have withdrawn my consent for processing the personal data. This request relates to any processing of my personal data by you, including any processors processing personal data on behalf of you.\n
-\n
-Please provide your response through secure means by email. I look forward to receiving a response within one month of the receipt of my request.\n
-\n
-Sincerely,\n\n]]></string>
     <string name="instructions_monitoring_private_dns">撥動開關與一些 app 互動。私人 DNS 必須關閉。</string>
     <string name="device_not_supported_title">不支援裝置</string>
     <string name="device_not_supported_msg">您的裝置作業系統不允許監控及過濾網路通訊。此功能為 TrackerControl 所需。</string>
@@ -195,4 +163,5 @@ Sincerely,\n\n]]></string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

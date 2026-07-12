@@ -1,0 +1,96 @@
+name: Update bundled lists
+
+# Refreshes the slow-moving bundled tracker/host lists and opens a PR with the
+# result. Runs monthly; can also be triggered manually. The PR's normal CI (Test
+# workflow, incl. the blocking baseline and DisconnectCategoryCoverageTest) is
+# the gate that catches a bad upstream or a new Disconnect category before ship.
+#
+# Each list has its own reproducible, stdlib-only updater under scripts/
+# (update_*.py). update_exodus_trackers.py comes from PR #622; it is run here if
+# present so the two efforts share one Exodus updater instead of duplicating it.
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'   # 06:00 UTC on the 1st of each month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Refresh lists
+        env:
+          # Optional: set the repo/org secret to also refresh GeoLite2.
+          MAXMIND_LICENSE_KEY: ${{ secrets.MAXMIND_LICENSE_KEY }}
+        run: |
+          set -uo pipefail
+          updaters=(update_disconnect_list.py update_ddg_tds.py update_exodus_trackers.py)
+          if [ -n "${MAXMIND_LICENSE_KEY:-}" ]; then
+            updaters+=(update_geolite2.py)
+          else
+            echo "::notice::MAXMIND_LICENSE_KEY not set — skipping GeoLite2"
+          fi
+
+          failed=()
+          for u in "${updaters[@]}"; do
+            if [ ! -f "scripts/$u" ]; then
+              echo "::notice::scripts/$u not present — skipping"
+              continue
+            fi
+            echo "=== $u ==="
+            python3 "scripts/$u" || failed+=("$u")
+          done
+
+          if [ "${#failed[@]}" -ne 0 ]; then
+            echo "::warning::updater(s) failed: ${failed[*]} (continuing to PR whatever changed)"
+          fi
+
+      - name: Open PR if anything changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- app/src/main/assets; then
+            echo "No list changes."
+            exit 0
+          fi
+
+          BRANCH="automation/update-lists"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add app/src/main/assets
+          git commit -m "Update bundled tracker/host lists"
+          git push --force-with-lease origin "$BRANCH"
+
+          if gh pr view "$BRANCH" >/dev/null 2>&1; then
+            echo "PR already open for $BRANCH — updated in place."
+          else
+            gh pr create \
+              --base "${GITHUB_REF_NAME}" \
+              --head "$BRANCH" \
+              --title "Update bundled tracker/host lists" \
+              --body "$(cat <<'EOF'
+          Automated refresh of the slow-moving bundled lists via the
+          `scripts/update_*.py` updaters.
+
+          **Review checklist**
+          - [ ] CI (Test workflow) is green — incl. blocking baseline and
+                DisconnectCategoryCoverageTest.
+          - [ ] Diff sizes look sane — no list collapsed to near-empty.
+
+          The `disconnect-blacklist.reversed.json` diff is unreadable by design
+          (stored byte-reversed); rely on the tests instead.
+          EOF
+          )"
+          fi

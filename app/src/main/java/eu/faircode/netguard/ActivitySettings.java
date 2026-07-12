@@ -24,6 +24,7 @@ import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -363,13 +364,20 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         // Handle export
+        // Do not gate on resolveActivity(): on some ROMs (e.g. without the
+        // system DocumentsUI) it wrongly returns null and silently greys out
+        // Backup, even though the picker would launch. Keep it enabled and fail
+        // gracefully with a message instead (issue #308).
         Preference pref_export = screen.findPreference("export");
         if (pref_export != null) {
-            pref_export.setEnabled(getIntentCreateExport().resolveActivity(getPackageManager()) != null);
             pref_export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startActivityForResult(getIntentCreateExport(), ActivitySettings.REQUEST_EXPORT);
+                    try {
+                        startActivityForResult(getIntentCreateExport(), ActivitySettings.REQUEST_EXPORT);
+                    } catch (ActivityNotFoundException ex) {
+                        Toast.makeText(ActivitySettings.this, R.string.msg_no_file_manager, Toast.LENGTH_LONG).show();
+                    }
                     return true;
                 }
             });
@@ -378,11 +386,14 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Handle import
         Preference pref_import = screen.findPreference("import");
         if (pref_import != null) {
-            pref_import.setEnabled(getIntentOpenExport().resolveActivity(getPackageManager()) != null);
             pref_import.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
+                    try {
+                        startActivityForResult(getIntentOpenExport(), ActivitySettings.REQUEST_IMPORT);
+                    } catch (ActivityNotFoundException ex) {
+                        Toast.makeText(ActivitySettings.this, R.string.msg_no_file_manager, Toast.LENGTH_LONG).show();
+                    }
                     return true;
                 }
             });
@@ -717,6 +728,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
 
         else if ("sni_enabled".equals(name)) {
+            ServiceSinkhole.reload("changed " + name, this, false);
+        }
+
+        else if ("tcp_mss_clamp".equals(name)) {
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 

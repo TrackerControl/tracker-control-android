@@ -61,6 +61,7 @@
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/vpnEnabledSwitch"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/vpn_enabled_switch_description" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

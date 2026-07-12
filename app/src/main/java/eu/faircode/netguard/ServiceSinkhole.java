@@ -175,9 +175,9 @@ public class ServiceSinkhole extends VpnService {
 
     private static Object jni_lock = new Object();
     private static long jni_context = 0;
-    private Thread tunnelThread = null;
+    private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
-    private ParcelFileDescriptor vpn = null;
+    private volatile ParcelFileDescriptor vpn = null;
     private boolean temporarilyStopped = false;
 
     private static long last_hosts_modified = 0;
@@ -195,6 +195,25 @@ public class ServiceSinkhole extends VpnService {
     private volatile CommandHandler commandHandler;
     private volatile LogHandler logHandler;
     private volatile StatsHandler statsHandler;
+
+    private static final int NATIVE_RECOVERY_MAX_RETRIES = 5;
+    private static final long NATIVE_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    private static final long NATIVE_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
+    private final NativeFailureRecoveryPolicy nativeRecoveryPolicy = new NativeFailureRecoveryPolicy(
+            NATIVE_RECOVERY_MAX_RETRIES,
+            NATIVE_RECOVERY_INITIAL_DELAY_MS,
+            NATIVE_RECOVERY_STABLE_WINDOW_MS);
+    private final Handler nativeRecoveryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable nativeRecoveryRunnable = () -> {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+        if (!prefs.getBoolean("enabled", false) || temporarilyStopped || vpn == null) {
+            Log.i(TAG, "Skipping native recovery because protection is no longer active");
+            return;
+        }
+
+        Log.i(TAG, "Retrying native tunnel after failure");
+        ServiceSinkhole.reload("native tunnel recovery", ServiceSinkhole.this, false);
+    };
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
@@ -244,7 +263,7 @@ public class ServiceSinkhole extends VpnService {
 
     private native long jni_init(int sdk);
 
-    private native void jni_start(long context, int loglevel);
+    private native void jni_start(long context, int loglevel, boolean tcpMssClamp);
 
     private native void jni_run(long context, int tun, boolean fwd53, int rcode);
 
@@ -478,6 +497,8 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case start:
+                        if (vpn == null)
+                            cancelNativeRecovery(true);
                         start();
                         break;
 
@@ -486,6 +507,7 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case stop:
+                        cancelNativeRecovery(true);
                         stop(temporarilyStopped);
                         break;
 
@@ -631,41 +653,29 @@ public class ServiceSinkhole extends VpnService {
                 } else {
                     last_builder = builder;
 
-                    boolean handover = prefs.getBoolean("handover", false);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                        handover = false;
-                    Log.i(TAG, "VPN restart handover=" + handover);
-
-                    if (handover) {
-                        // Attempt seamless handover
-                        ParcelFileDescriptor prev = vpn;
+                    if (vpn == null)
                         vpn = startVPN(builder);
-
-                        if (prev != null && vpn == null) {
-                            Log.w(TAG, "Handover failed");
-                            stopNative(prev);
-                            stopVPN(prev);
-                            prev = null;
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException ignored) {
-                            }
-                            vpn = startVPN(last_builder);
-                            if (vpn == null)
-                                throw new IllegalStateException("Handover failed");
+                    else {
+                        ParcelFileDescriptor previous = vpn;
+                        try {
+                            vpn = VpnReplacementSequencer.replace(
+                                    previous,
+                                    () -> startVPN(getBlockingBuilder(listRule)),
+                                    () -> startVPN(builder),
+                                    active -> vpn = active,
+                                    ServiceSinkhole.this::stopNative,
+                                    ServiceSinkhole.this::stopVPN);
+                        } catch (RuntimeException ex) {
+                            // A blocking descriptor remains active after a
+                            // replacement failure. Force the next reload down
+                            // the full replacement path instead of starting
+                            // the packet engine on that placeholder interface.
+                            last_builder = null;
+                            Log.w(TAG, ex.getMessage());
+                            if (ex instanceof VpnReplacementSequencer.EstablishFailedException)
+                                throw new StartFailedException(getString(R.string.msg_start_failed));
+                            throw ex;
                         }
-
-                        if (prev != null) {
-                            stopNative(prev);
-                            stopVPN(prev);
-                        }
-                    } else {
-                        if (vpn != null) {
-                            stopNative(vpn);
-                            stopVPN(vpn);
-                        }
-
-                        vpn = startVPN(builder);
                     }
                 }
             }
@@ -1330,38 +1340,26 @@ public class ServiceSinkhole extends VpnService {
         String vpnDns2 = prefs.getString("dns2", null);
         Log.i(TAG, "DNS system=" + TextUtils.join(",", sysDns) + " config=" + vpnDns1 + "," + vpnDns2);
 
-        if (vpnDns1 != null)
-            try {
-                InetAddress dns = InetAddress.getByName(vpnDns1);
-                if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (dns instanceof Inet4Address))
-                    listDns.add(dns);
-            } catch (Throwable ignored) {
-            }
+        // First pass: IPv4 resolvers only. This reproduces the historical
+        // behaviour and is preserved exactly for IPv4 and dual-stack networks —
+        // wherever a working IPv4 resolver exists, the tun keeps advertising only
+        // IPv4 DNS, so nothing changes for the working majority.
+        collectDns(listDns, vpnDns1, vpnDns2, sysDns, false);
 
-        if (vpnDns2 != null)
-            try {
-                InetAddress dns = InetAddress.getByName(vpnDns2);
-                if (!(dns.isLoopbackAddress() || dns.isAnyLocalAddress()) &&
-                        (dns instanceof Inet4Address))
-                    listDns.add(dns);
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
-
-        if (listDns.size() == 2)
-            return listDns;
-
-        for (String def_dns : sysDns)
-            try {
-                InetAddress ddns = InetAddress.getByName(def_dns);
-                if (!listDns.contains(ddns) &&
-                        !(ddns.isLoopbackAddress() || ddns.isAnyLocalAddress()) &&
-                        (ddns instanceof Inet4Address))
-                    listDns.add(ddns);
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
+        // Second pass: on IPv6-only networks (increasingly common on modern
+        // cellular / Android 13+ IPv6-only mobile data) the carrier hands out only
+        // IPv6 resolvers, so the IPv4-only pass above finds nothing. Previously we
+        // then fell through to hardcoded IPv4 public DNS (getDefaultDns), which is
+        // unreachable without a working CLAT/NAT64 path — so all resolution failed
+        // on mobile data. Accept the carrier's IPv6 resolvers instead. Gated on the
+        // "ip6" preference because the builder only routes/advertises IPv6 when it
+        // is enabled (see getConfig: the "ip6 || Inet4Address" DNS filter and the
+        // 2000::/3 route). The native tunnel already intercepts and blocks DNS over
+        // IPv6 (udp.c/dns.c are IP-version-agnostic). Issue #339 (part of #449).
+        if (listDns.isEmpty() && ip6) {
+            Log.i(TAG, "No IPv4 resolver available; accepting IPv6 resolvers (IPv6-only network)");
+            collectDns(listDns, vpnDns1, vpnDns2, sysDns, true);
+        }
 
         // Fallback DNS servers if none found
         if (listDns.isEmpty())
@@ -1370,6 +1368,55 @@ public class ServiceSinkhole extends VpnService {
         Log.i(TAG, "Get DNS=" + TextUtils.join(",", listDns));
 
         return listDns;
+    }
+
+    // Collect usable resolvers — custom (dns/dns2) first, then the system
+    // resolvers — into listDns, mirroring the historical selection order and the
+    // "stop once two custom entries are set" short-circuit. allowIp6=false keeps
+    // the original IPv4-only filtering; allowIp6=true additionally accepts IPv6
+    // resolvers (used as an IPv6-only-network fallback, see getDns).
+    private static void collectDns(List<InetAddress> listDns, String vpnDns1,
+                                   String vpnDns2, List<String> sysDns, boolean allowIp6) {
+        if (vpnDns1 != null)
+            try {
+                InetAddress dns = InetAddress.getByName(vpnDns1);
+                if (isUsableDns(dns, allowIp6) && !listDns.contains(dns))
+                    listDns.add(dns);
+            } catch (Throwable ignored) {
+            }
+
+        if (vpnDns2 != null)
+            try {
+                InetAddress dns = InetAddress.getByName(vpnDns2);
+                if (isUsableDns(dns, allowIp6) && !listDns.contains(dns))
+                    listDns.add(dns);
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
+
+        if (listDns.size() == 2)
+            return;
+
+        for (String def_dns : sysDns)
+            try {
+                InetAddress ddns = InetAddress.getByName(def_dns);
+                if (isUsableDns(ddns, allowIp6) && !listDns.contains(ddns))
+                    listDns.add(ddns);
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
+    }
+
+    // A resolver is usable if it is a real remote address (not loopback / any-local)
+    // and of a family the tun will actually carry: IPv4 always, IPv6 only when
+    // allowed (i.e. IPv6 routing is enabled and no IPv4 resolver was available).
+    private static boolean isUsableDns(InetAddress dns, boolean allowIp6) {
+        // A link-local resolver is scoped to the underlying physical interface.
+        // That scope cannot be preserved when the address is advertised on the
+        // VPN, so it would be unreachable from the tun interface.
+        if (dns.isLoopbackAddress() || dns.isAnyLocalAddress() || dns.isLinkLocalAddress())
+            return false;
+        return (dns instanceof Inet4Address) || (allowIp6 && dns instanceof Inet6Address);
     }
 
     private static List<InetAddress> getWireGuardDns(net.kollnig.missioncontrol.wg.WgConfig config) {
@@ -1446,6 +1493,12 @@ public class ServiceSinkhole extends VpnService {
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
             ParcelFileDescriptor pfd = builder.establish();
+            if (pfd == null || !pfd.getFileDescriptor().valid()) {
+                Log.w(TAG, "VPN interface was not ready after establish");
+                if (pfd != null)
+                    stopVPN(pfd);
+                return null;
+            }
             updateUnderlyingNetworks();
             return pfd;
         } catch (SecurityException ex) {
@@ -1571,14 +1624,17 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, "addRoute " + route + ": " + ex);
             }
 
-        // Add /32 host routes for local DNS servers so their traffic enters the
-        // tunnel (where TC can filter it) even though LAN is otherwise excluded.
-        // This preserves compatibility with local DNS setups like Pi-hole.
+        // Add host routes for DNS servers not necessarily covered by the general
+        // VPN routes. IPv4 LAN resolvers are excluded from VpnRoutes, while IPv6
+        // ULA resolvers are outside the 2000::/3 global-unicast route below.
+        // Keeping both inside the tunnel ensures DNS remains reachable and passes
+        // through TC's filtering path.
         for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
-            if (dns instanceof Inet4Address && dns.isSiteLocalAddress())
+            if ((dns instanceof Inet4Address && dns.isSiteLocalAddress()) ||
+                    dns instanceof Inet6Address)
                 try {
-                    Log.i(TAG, "Adding host route for local DNS=" + dns.getHostAddress());
-                    builder.addRoute(dns, 32);
+                    Log.i(TAG, "Adding DNS host route=" + dns.getHostAddress());
+                    builder.addRoute(dns, dns instanceof Inet4Address ? 32 : 128);
                 } catch (Throwable ex) {
                     Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                 }
@@ -1671,11 +1727,52 @@ public class ServiceSinkhole extends VpnService {
         return builder;
     }
 
+    private Builder getBlockingBuilder(List<Rule> listRule) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean ip6 = prefs.getBoolean("ip6", true);
+        boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
+
+        Builder builder = new Builder();
+        builder.setSession(getString(R.string.app_name));
+        builder.setBlocking(true);
+        builder.setMtu(1280);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            builder.setMetered(Util.isMeteredNetwork(this));
+
+        builder.addAddress("192.0.2.1", 32);
+        builder.addRoute("0.0.0.0", 0);
+        if (ip6) {
+            builder.addAddress("2001:db8::1", 128);
+            builder.addRoute("::", 0);
+        }
+
+        try {
+            builder.addDisallowedApplication(getPackageName());
+        } catch (PackageManager.NameNotFoundException ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+
+        for (Rule rule : listRule)
+            if (!rule.apply || (!includeSystem && rule.system))
+                try {
+                    builder.addDisallowedApplication(rule.packageName);
+                } catch (PackageManager.NameNotFoundException ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
+
+        Intent configure = new Intent(this, ActivityMain.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, 0, configure, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setConfigureIntent(pi);
+        return builder;
+    }
+
     private boolean startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
         boolean log_app = prefs.getBoolean("log_app", true);
-        Log.i(TAG, "Start native log=" + log + "/" + log_app + " filter=true");
+        boolean tcpMssClamp = prefs.getBoolean("tcp_mss_clamp", false);
+        Log.i(TAG, "Start native log=" + log + "/" + log_app +
+                " filter=true tcp_mss_clamp=" + tcpMssClamp);
 
         // Prepare rules
         prepareUidAllowed(listAllowed, listRule);
@@ -1725,7 +1822,7 @@ public class ServiceSinkhole extends VpnService {
 
         if (tunnelThread == null) {
             Log.i(TAG, "Starting tunnel thread context=" + jni_context);
-            jni_start(jni_context, prio);
+            jni_start(jni_context, prio, tcpMssClamp);
 
             tunnelThread = new Thread(new Runnable() {
                 @Override
@@ -1742,6 +1839,7 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Started tunnel thread");
         }
 
+        cancelNativeRecovery(false);
         return true;
     }
 
@@ -2046,21 +2144,48 @@ public class ServiceSinkhole extends VpnService {
     }
 
     // Called from native code
-    private void nativeExit(String reason) {
-        Log.w(TAG, "Native exit reason=" + reason);
+    private void nativeExit(int error, String reason) {
+        Log.w(TAG, "Native exit error=" + error + " reason=" + reason);
         if (reason != null) {
-            showErrorNotification(reason);
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.edit().putBoolean("enabled", false).apply();
-            WidgetMain.updateWidgets(this);
+
+            // A native exit while TC is disabled or intentionally paused is expected: stay silent.
+            if (!prefs.getBoolean("enabled", false) || temporarilyStopped)
+                return;
+
+            long delayMs = nativeRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
+            if (delayMs == NativeFailureRecoveryPolicy.NO_RETRY) {
+                // Recovery budget exhausted: TC is going down, so surface the failure to the user.
+                Log.e(TAG, "Native recovery retry budget exhausted");
+                showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                        ? getString(R.string.msg_native_fd_recovery_exhausted)
+                        : reason);
+                cancelNativeRecovery(false);
+                prefs.edit().putBoolean("enabled", false).apply();
+                WidgetMain.updateWidgets(this);
+                ServiceSinkhole.stop("native recovery exhausted", this, false);
+                return;
+            }
+
+            // Transient failure: recover transparently, without alarming the user.
+            nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
+            nativeRecoveryHandler.postDelayed(nativeRecoveryRunnable, delayMs);
+            Log.w(TAG, "Scheduled native recovery in " + delayMs + " ms");
         }
     }
 
     // Called from native code
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
-        showErrorNotification(message);
+        showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                ? getString(R.string.msg_native_fd_error)
+                : message);
+    }
+
+    private void cancelNativeRecovery(boolean resetBudget) {
+        nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
+        if (resetBudget)
+            nativeRecoveryPolicy.reset();
     }
 
     // Called from native code
@@ -3166,11 +3291,37 @@ public class ServiceSinkhole extends VpnService {
     public void onRevoke() {
         Log.i(TAG, "Revoke");
 
-        // Disable firewall (will result in stop command)
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean("enabled", false).apply();
+        // Android does not tell us *why* onRevoke() fired. The system calls it
+        // identically for (a) a deliberate user disable from the system VPN
+        // settings, (b) another VPN app taking the single VPN slot (#331), and
+        // (c) an OS-initiated teardown/re-auth of the always-on slot — Doze,
+        // memory pressure, an OS update — which is the "always-on VPN turns
+        // itself off after 3-5 days" report (#526).
+        //
+        // We deliberately do NOT persist enabled=false here. Every genuine
+        // in-app disable path (the main toggle in ActivityMain, the quick-
+        // settings tile in ServiceTileMain, and the widget in WidgetAdmin)
+        // already sets enabled=false *itself* before stopping the service, and
+        // tearing down our own tunnel does not trigger onRevoke(). So a revoke
+        // reaching this method is always externally initiated. Clearing
+        // "enabled" here used to turn every such external teardown into a
+        // permanent self-disable with no recovery: the service is START_STICKY
+        // and onStartCommand() keys off "enabled", so once it is false every
+        // subsequent (re)start immediately stops again.
+        //
+        // Leaving "enabled" untouched lets the existing recovery mechanisms
+        // re-establish the tunnel once TC reacquires the VPN slot: the OS
+        // restarting the always-on service, ReceiverAutostart on boot, the
+        // watchdog alarm, and reopening ActivityMain (which calls start() when
+        // enabled). We do not add any retry loop here, so a second VPN that
+        // legitimately holds the slot is not thrashed — recovery is driven only
+        // by those OS-paced triggers. The remaining tradeoff is that a user who
+        // disables TC via the *system* VPN settings (rather than the in-app
+        // toggle) will see it come back on the next such trigger; the in-app
+        // toggle remains the supported way to turn TC off.
 
-        // Feedback
+        // Feedback: the tunnel really did drop, so inform the user (mirrors
+        // Android's own "VPN disconnected" notice). This does not disable TC.
         showDisabledNotification();
         WidgetMain.updateWidgets(this);
 
@@ -3192,6 +3343,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+            cancelNativeRecovery(true);
 
             commandLooper.quit();
             logLooper.quit();

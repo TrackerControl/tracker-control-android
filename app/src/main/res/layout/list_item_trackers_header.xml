@@ -233,6 +233,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="0dp"
                     android:textColor="?android:textColorPrimary"
+                    android:contentDescription="@string/vpn_exclude"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/vpn_exclude_name" />
 
@@ -281,6 +282,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="0dp"
                     android:textColor="?android:textColorPrimary"
+                    android:contentDescription="@string/exclude_vpn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/root_name" />
 
@@ -327,6 +329,7 @@
                     android:layout_height="wrap_content"
                     android:minHeight="0dp"
                     android:textColor="?android:textColorPrimary"
+                    android:contentDescription="@string/internet_access"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/root_name2" />
 

@@ -6,4 +6,5 @@
     android:padding="16dp"
     android:text="@string/vpn_manage_wireguard_profiles"
     android:textAppearance="@style/TextSmall"
-    android:textColor="?attr/colorAccent" />
+    android:textColor="@color/colorFooterLink"
+    android:textStyle="bold" />

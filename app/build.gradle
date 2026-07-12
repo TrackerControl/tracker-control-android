@@ -81,9 +81,28 @@ tasks.register('wgbridgeBuild') {
         env['PATH'] = "${cargoDir}${File.pathSeparator}${System.getProperty('user.home')}/.cargo/bin${File.pathSeparator}${env['PATH'] ?: ''}"
         env['ANDROID_NDK_HOME'] = findNdkDirectory().absolutePath
         // Android 15+ requires 16KB-aligned ELF LOAD segments.
-        env['RUSTFLAGS'] = ((env['RUSTFLAGS'] ?: '') +
-                ' -C link-arg=-Wl,-z,max-page-size=16384' +
-                ' -C link-arg=-Wl,-z,common-page-size=16384').trim()
+        // --remap-path-prefix strips the checkout- and machine-specific
+        // absolute paths (cargo registry cache, wgbridge-rs checkout dir)
+        // that rustc otherwise bakes into panic/track_caller strings, so
+        // libwgbridge.so is reproducible across build machines.
+        def rustFlags = []
+        if (env['CARGO_ENCODED_RUSTFLAGS']) {
+            rustFlags.addAll(env['CARGO_ENCODED_RUSTFLAGS'].split('\u001f').findAll { !it.isEmpty() })
+        } else if (env['RUSTFLAGS']) {
+            // Cargo interprets RUSTFLAGS as whitespace-separated arguments.
+            rustFlags.addAll(env['RUSTFLAGS'].trim().split(/\s+/))
+        }
+        def cargoHome = env['CARGO_HOME'] ?: "${System.getProperty('user.home')}/.cargo"
+        rustFlags.addAll([
+                '-Clink-arg=-Wl,-z,max-page-size=16384',
+                '-Clink-arg=-Wl,-z,common-page-size=16384',
+                '-Clink-arg=-Wl,--build-id=none',
+                "--remap-path-prefix=${file(cargoHome).absolutePath}=/cargo",
+                "--remap-path-prefix=${wgbridgeSrcDir.absolutePath}=/wgbridge-rs",
+        ])
+        // Unlike RUSTFLAGS, the encoded form preserves spaces inside paths.
+        env['CARGO_ENCODED_RUSTFLAGS'] = rustFlags.join('\u001f')
+        env.remove('RUSTFLAGS')
 
         // cargo-ndk drives the per-ABI cross-compilation and linker setup.
         def cargoNdk = "${System.getProperty('user.home')}/.cargo/bin/cargo-ndk"
@@ -112,6 +131,28 @@ tasks.register('wgbridgeBuild') {
         wgbridgeAbis.each { abi ->
             fileTree(dir: "$wgbridgeOutDir/$abi", include: 'libgotatun*.so').each { it.delete() }
         }
+
+        // The NDK's clang linker still embeds a .comment section (compiler
+        // version string, incl. "+bolt"/"-bolt" markers that vary by NDK
+        // build) even with --build-id=none. Strip it for reproducibility,
+        // matching the equivalent objcopy step for the CMake-built netguard
+        // library. See https://izzyondroid.org/docs/reproducibleBuilds/DebugFailedRBs/#clang
+        def hostTag = { ->
+            def os = System.getProperty('os.name').toLowerCase()
+            if (os.contains('mac')) return 'darwin-x86_64'
+            if (os.contains('win')) return 'windows-x86_64'
+            return 'linux-x86_64'
+        }()
+        def objcopy = "${findNdkDirectory().absolutePath}/toolchains/llvm/prebuilt/${hostTag}/bin/llvm-objcopy"
+        wgbridgeAbis.each { abi ->
+            def lib = file("$wgbridgeOutDir/$abi/libwgbridge.so")
+            if (lib.exists()) {
+                providers.exec {
+                    commandLine objcopy, '--remove-section', '.comment',
+                            '--remove-section', '.note.gnu.build-id', lib.absolutePath
+                }.result.get().assertNormalExitValue()
+            }
+        }
     }
 }
 
@@ -122,12 +163,12 @@ afterEvaluate {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId "net.kollnig.missioncontrol"
         minSdk 23
-        targetSdk 36
+        targetSdk 37
         //noinspection HighAppVersionCode
         versionCode 2026042701
         versionName "2026.04.27"
@@ -259,7 +300,7 @@ androidComponents {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.18.0'
+    implementation 'androidx.core:core-ktx:1.19.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.16.1'
 
@@ -274,24 +315,26 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.work:work-runtime:2.11.2'
     implementation 'com.google.guava:guava:33.6.0-android'
     annotationProcessor 'androidx.annotation:annotation:1.10.0'
 
     // fix errors with libraries
-    def lifecycle_version = '2.10.0'
+    def lifecycle_version = '2.11.0'
     //implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
     // https://bumptech.github.io/glide/
-    def glide_version = "5.0.7"
+    def glide_version = "5.0.9"
     implementation("com.github.bumptech.glide:glide:$glide_version") {
         exclude group: "com.android.support"
     }
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
     implementation 'com.opencsv:opencsv:5.12.0'
+    // Pinned to 4.x: geoip2 5.x uses Java constructs incompatible with
+    // Android. Dependabot ignores the 5.0 major (see .github/dependabot.yml).
     implementation 'com.maxmind.geoip2:geoip2:4.4.0'
 
     // Crash reporting
@@ -306,7 +349,7 @@ dependencies {
     implementation 'com.caverock:androidsvg-aar:1.4'
 
     // OkHttp for DNS-over-HTTPS
-    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
+    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
 }
 
 // Fix lint error on release builds

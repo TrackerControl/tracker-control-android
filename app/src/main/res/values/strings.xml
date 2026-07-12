@@ -113,6 +113,8 @@
     <string name="setting_ip6">Enable IPv6 traffic</string>
     <string name="setting_call">Disable on call</string>
     <string name="setting_reload_onconnectivity">Reload on every connectivity change</string>
+    <string name="setting_tcp_mss_clamp">Tethering compatibility mode</string>
+    <string name="summary_tcp_mss_clamp">Limit TCP segment size to avoid stalled connections on some tethered networks. May reduce performance.</string>
 
     <string name="setting_advanced_options">Advanced options (for experts)</string>
     <string name="setting_system">Show system apps</string>
@@ -302,17 +304,20 @@
     <string name="msg_started">Looking for trackers...</string>
     <string name="msg_waiting">Waiting for event</string>
     <string name="msg_disabled">Use the switch above to enable TrackerControl.</string>
-    <string name="msg_revoked">TrackerControl has been disabled, likely by using another VPN based app</string>
+    <string name="msg_revoked">TrackerControl was disconnected, likely by another VPN app or the system. It will reconnect automatically when possible.</string>
     <string name="msg_installed">Problems with %1$s?</string>
     <string name="msg_installed_description">Allow app to contact companies</string>
     <string name="msg_installed_tracker_libraries_found">Contains %d tracker libraries</string>
     <string name="msg_installed_n">Has been installed</string>
     <string name="msg_completed">Action completed</string>
+    <string name="msg_no_file_manager">No file manager found to pick a file.</string>
     <string name="msg_vpn">TrackerControl uses a local VPN to filter internet traffic.
 For this reason, please allow a VPN connection in the next dialog.
 Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_autostart">TrackerControl could not start automatically. This is likely because of a bug in your Android version.</string>
     <string name="msg_error">An unexpected error has occurred: \'%s\'</string>
+    <string name="msg_native_fd_recovery_exhausted">The VPN repeatedly ran out of file descriptors. Protection has stopped after all automatic restart attempts failed.</string>
+    <string name="msg_native_fd_error">The VPN ran out of file descriptors. Close unused apps or restart your device, then restart protection.</string>
     <string name="msg_doh_unreachable">Secure DNS (DoH) cannot be reached even though you have an active internet connection. If this happens repeatedly, consider disabling it in the Network settings.</string>
     <string name="msg_start_failed">Android refused to start the VPN service at this moment. This is likely because of a bug in your Android version.</string>
     <string name="msg_try">Try TrackerControl</string>
@@ -465,6 +470,13 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Disable internet access for this application</string>
     <string name="tracked_app_name">Application Name</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <string name="toggle_block_internet_description">Block internet access for %1$s</string>
+    <string name="toggle_allow_internet_description">Allow internet access for %1$s</string>
+    <string name="toggle_no_internet_description">%1$s has no internet access</string>
+    <string name="toggle_internet_unavailable_description">Internet access control unavailable for %1$s</string>
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <string name="toggle_block_category_description">Tracker blocking for category %1$s</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contacted %d company last week</item>
         <item quantity="other">contacted %d companies last week</item>
@@ -567,6 +579,7 @@ Sincerely,\n\n]]></string>
     <string name="device_not_supported_msg">The operating system of your device does not allow for monitoring and filtering of network communications. This is required for TrackerControl.</string>
 
     <string name="launch_app">Launch &amp; Find trackers</string>
+    <string name="launch_app_failed">This app can\'t be launched</string>
     <string name="countries">Destination Countries</string>
     <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
     <string name="countries_loading_failed">Oops.. The country map failed to load. Please tell tc@kollnig.net how this happened.</string>
@@ -658,6 +671,7 @@ Sincerely,\n\n]]></string>
     <string name="analysis_queued">Analysis queued…</string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>
+    <string name="allowed_shared_ip">Allowed — shared IP; enable Strict mode to block</string>
 
     <string name="setting_domain_based_blocked">Domain-based Blocking</string>
     <string name="summary_domain_based_blocking">Allows more granular blocking. Still in development.</string>
@@ -774,4 +788,16 @@ Sincerely,\n\n]]></string>
     <string name="msg_invalid_url">Invalid URL</string>
     <string name="msg_apply_blocklists_failed">Failed to apply host files</string>
     <string name="msg_last_update">Last update: %s</string>
+
+    <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Tracker blocking</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">Delete blocklist</string>
+    <string name="blocklist_enable_description">Enable blocklist %s</string>
+    <string name="log_connection_allowed">Allowed</string>
+    <string name="log_connection_blocked">Blocked</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="log_connection_other">Other network</string>
+    <string name="log_screen_on">Screen on</string>
+    <string name="log_app_icon">App icon</string>
 </resources>

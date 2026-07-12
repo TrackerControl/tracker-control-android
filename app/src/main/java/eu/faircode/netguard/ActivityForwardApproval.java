@@ -22,6 +22,7 @@ package eu.faircode.netguard;
 
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -41,8 +42,9 @@ public class ActivityForwardApproval extends Activity {
     static {
         try {
             System.loadLibrary("netguard");
-        } catch (UnsatisfiedLinkError ignored) {
-            System.exit(1);
+        } catch (UnsatisfiedLinkError error) {
+            if (!"robolectric".equals(Build.FINGERPRINT))
+                throw error;
         }
     }
 
