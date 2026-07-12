@@ -20,41 +20,51 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.ConnectionPool;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okio.ByteString;
 
 /**
  * DNS-over-HTTPS (DoH) client for secure DNS resolution.
- * Sends DNS wire format queries to a DoH endpoint via HTTPS POST.
+ * Sends DNS wire format queries to a DoH endpoint via HTTPS GET. The upstream
+ * transaction ID is normalized to zero so semantically identical requests share
+ * an HTTP cache entry, as recommended by RFC 8484. OkHttp then applies the DoH
+ * server's Cache-Control policy without TrackerControl parsing DNS messages.
  */
 public class DnsOverHttpsClient {
     private static final String TAG = "TrackerControl.DoH";
     private static final MediaType DNS_MESSAGE = MediaType.parse("application/dns-message");
-
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 5000;
     private static final int WRITE_TIMEOUT_MS = 5000;
+    private static final long HTTP_CACHE_MAX_BYTES = 2L * 1024L * 1024L;
+    private static final int MAX_GET_URL_LENGTH = 2048;
     private static final ExecutorService SHUTDOWN_EXECUTOR = Executors.newSingleThreadExecutor(r -> {
         Thread thread = new Thread(r, "DoH-shutdown");
         thread.setDaemon(true);
         return thread;
     });
     private static DnsOverHttpsClient instance;
+    private static Cache responseCache;
     private final OkHttpClient client;
     private final String endpoint;
 
-    private DnsOverHttpsClient(String endpoint) {
+    private DnsOverHttpsClient(Context context, String endpoint) {
         this.endpoint = endpoint;
 
         this.client = new OkHttpClient.Builder()
@@ -62,6 +72,7 @@ public class DnsOverHttpsClient {
                 .readTimeout(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
+                .cache(getResponseCache(context))
                 .retryOnConnectionFailure(true)
                 .build();
 
@@ -71,20 +82,28 @@ public class DnsOverHttpsClient {
     public static synchronized DnsOverHttpsClient getInstance(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-        return getInstance(endpoint);
+        return getInstance(context, endpoint);
     }
 
     /**
      * Get instance with specific endpoint (used by DnsProxyServer).
      */
-    public static synchronized DnsOverHttpsClient getInstance(String endpoint) {
+    public static synchronized DnsOverHttpsClient getInstance(Context context, String endpoint) {
         if (instance == null || !Objects.equals(instance.endpoint, endpoint)) {
             if (instance != null) {
                 instance.shutdown();
             }
-            instance = new DnsOverHttpsClient(endpoint);
+            instance = new DnsOverHttpsClient(context.getApplicationContext(), endpoint);
         }
         return instance;
+    }
+
+    private static synchronized Cache getResponseCache(Context context) {
+        if (responseCache == null) {
+            File directory = new File(context.getCacheDir(), "doh-http-cache");
+            responseCache = new Cache(directory, HTTP_CACHE_MAX_BYTES);
+        }
+        return responseCache;
     }
 
     public static synchronized void resetInstance() {
@@ -121,6 +140,16 @@ public class DnsOverHttpsClient {
         SHUTDOWN_EXECUTOR.execute(() -> {
             client.dispatcher().cancelAll();
             client.connectionPool().evictAll();
+            Cache cache = client.cache();
+            if (cache != null) {
+                try {
+                    // The proxy is stopped on network changes, so do not carry
+                    // answers into a different network environment.
+                    cache.evictAll();
+                } catch (IOException e) {
+                    Log.w(TAG, "Failed to clear DoH HTTP cache: " + e.getMessage());
+                }
+            }
         });
     }
 
@@ -135,10 +164,12 @@ public class DnsOverHttpsClient {
 
     @Nullable
     public byte[] resolve(@NonNull byte[] dnsQuery) {
-        if (dnsQuery.length == 0) {
-            Log.w(TAG, "Empty DNS query");
+        if (dnsQuery.length < 12) {
+            Log.w(TAG, "DNS query too short: " + dnsQuery.length + " bytes");
             return null;
         }
+
+        Request request = buildRequest(endpoint, dnsQuery);
 
         for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
             if (attempt > 0) {
@@ -152,13 +183,6 @@ public class DnsOverHttpsClient {
             }
 
             try {
-                RequestBody body = RequestBody.create(dnsQuery, DNS_MESSAGE);
-                Request request = new Request.Builder()
-                        .url(endpoint)
-                        .post(body)
-                        .header("Accept", "application/dns-message")
-                        .build();
-
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
@@ -177,7 +201,9 @@ public class DnsOverHttpsClient {
                         Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
                         continue;
                     }
-                    Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes");
+                    restoreTransactionId(dnsQuery, dnsResponse);
+                    Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes"
+                            + (response.cacheResponse() == null ? "" : " (HTTP cache hit)"));
                     return dnsResponse;
                 }
             } catch (IOException e) {
@@ -186,6 +212,46 @@ public class DnsOverHttpsClient {
         }
 
         return null;
+    }
+
+    static byte[] normalizeTransactionId(byte[] dnsQuery) {
+        byte[] normalized = Arrays.copyOf(dnsQuery, dnsQuery.length);
+        normalized[0] = 0;
+        normalized[1] = 0;
+        return normalized;
+    }
+
+    static HttpUrl buildRequestUrl(String endpoint, byte[] dnsQuery) {
+        String encodedQuery = ByteString.of(normalizeTransactionId(dnsQuery)).base64Url();
+        int padding = encodedQuery.indexOf('=');
+        if (padding >= 0)
+            encodedQuery = encodedQuery.substring(0, padding);
+        return new Request.Builder()
+                .url(endpoint)
+                .build()
+                .url()
+                .newBuilder()
+                .removeAllQueryParameters("dns")
+                .addQueryParameter("dns", encodedQuery)
+                .build();
+    }
+
+    static Request buildRequest(String endpoint, byte[] dnsQuery) {
+        byte[] normalized = normalizeTransactionId(dnsQuery);
+        HttpUrl requestUrl = buildRequestUrl(endpoint, normalized);
+        Request.Builder request = new Request.Builder()
+                .url(requestUrl)
+                .header("Accept", "application/dns-message");
+        if (requestUrl.toString().length() <= MAX_GET_URL_LENGTH)
+            request.get();
+        else
+            request.url(endpoint).post(RequestBody.create(normalized, DNS_MESSAGE));
+        return request.build();
+    }
+
+    static void restoreTransactionId(byte[] dnsQuery, byte[] dnsResponse) {
+        dnsResponse[0] = dnsQuery[0];
+        dnsResponse[1] = dnsQuery[1];
     }
 
     /**

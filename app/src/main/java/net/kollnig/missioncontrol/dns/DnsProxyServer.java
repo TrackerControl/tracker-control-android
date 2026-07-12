@@ -59,11 +59,6 @@ public class DnsProxyServer {
     private static final long CIRCUIT_BREAKER_COOLDOWN_MS = 60_000;
     private volatile long circuitOpenUntil = 0;
 
-    // TTL-respecting response cache: serves repeat queries locally so identical
-    // background lookups (very common while the screen is off) don't each trigger
-    // a DoH round-trip and radio wakeup. See issue #652.
-    private final DnsResponseCache cache = new DnsResponseCache();
-
     private DnsProxyServer(Context context) {
         this.context = context.getApplicationContext();
     }
@@ -167,9 +162,6 @@ public class DnsProxyServer {
         // Also reset the DoH client to close idle HTTPS connections
         DnsOverHttpsClient.resetInstance();
 
-        // Drop cached answers so they can't leak across a network change.
-        cache.clear();
-
         Log.i(TAG, "DNS proxy server stopped");
     }
 
@@ -248,31 +240,17 @@ public class DnsProxyServer {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             byte[] responseData = null;
 
-            // Serve from cache first: avoids a DoH round-trip (and radio wakeup) for
-            // repeat lookups of the same name while its TTL is still valid.
-            byte[] cached = cache.get(queryData);
-            if (cached != null) {
-                DatagramSocket socket = serverSocket;
-                if (socket == null || socket.isClosed()) return;
-                DatagramPacket response = new DatagramPacket(
-                        cached, cached.length, clientAddress, clientPort);
-                socket.send(response);
-                Log.d(TAG, "DoH cache hit, response sent to " + clientAddress + ":" + clientPort);
-                return;
-            }
-
             // Circuit breaker: skip DoH if we recently had too many failures
             boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
             if (!circuitOpen) {
                 String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
                 responseData = dohClient.resolve(queryData);
             }
 
             if (responseData != null) {
                 dohFailures.set(0);
                 circuitOpenUntil = 0;
-                cache.put(queryData, responseData);
                 DatagramSocket socket = serverSocket;
                 if (socket == null || socket.isClosed()) return;
                 DatagramPacket response = new DatagramPacket(
@@ -381,26 +359,16 @@ public class DnsProxyServer {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             byte[] responseData = null;
 
-            byte[] cached = cache.get(queryData);
-            if (cached != null) {
-                out.writeShort(cached.length);
-                out.write(cached);
-                out.flush();
-                Log.d(TAG, "DoH cache hit (TCP)");
-                return;
-            }
-
             boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
             if (!circuitOpen) {
                 String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
                 responseData = dohClient.resolve(queryData);
             }
 
             if (responseData != null) {
                 dohFailures.set(0);
                 circuitOpenUntil = 0;
-                cache.put(queryData, responseData);
                 out.writeShort(responseData.length);
                 out.write(responseData);
                 out.flush();
