@@ -263,11 +263,6 @@
     <string name="title_log_whois">Whois %1$s</string>
     <string name="title_log_port">Порт %1$d</string>
     <string name="title_log_copy">Скопировать</string>
-    <string-array name="blockingModeNames">
-        <item>@string/blocking_mode_minimal</item>
-        <item>Строка/blocking_mode_standard</item>
-        <item>Строка/blocking_mode_strict</item>
-    </string-array>
     <!-- App Overview -->
     <string name="tracked_app_icon">Отключить доступ в интернет для этого приложения</string>
     <string name="tracked_app_name">Название приложения</string>
