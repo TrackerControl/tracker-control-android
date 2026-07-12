@@ -116,6 +116,7 @@
     <string name="tracked_app_icon">關閉這個 app 的網際網路連線</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="menu_csv">匯出為 CSV</string>
     <string name="export_failed">匯出失敗</string>
     <string name="exported">已匯出到儲存空間！</string>

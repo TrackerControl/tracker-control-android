@@ -221,6 +221,7 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="tracked_app_name">Nome da Aplicação</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="confirm_ipinfo_title">Recuperar informações da organização?</string>
     <string name="external_servers">Receber e-mail do desenvolvedor automaticamente?</string>
     <string name="confirm_google_info">Este aplicativo pode receber automaticamente o e-mail do desenvolvedor do aplicativo na Loja do Google Play para você.</string>

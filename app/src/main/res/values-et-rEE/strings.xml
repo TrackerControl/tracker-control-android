@@ -122,6 +122,7 @@
     <!-- App Overview -->
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <string name="yes">Jah</string>
     <string name="no">Ei</string>
     <string name="menu_csv">Ekspordi CSV-failina</string>

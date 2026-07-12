@@ -209,6 +209,7 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="tracked_app_name">Nome applicazione</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">ha contattato %d azienda la settimana scorsa</item>
         <item quantity="other">ha contattato %d aziende la settimana scorsa</item>

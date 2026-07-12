@@ -212,6 +212,7 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="tracked_app_name">Nazwa wniosku</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">aplikacja kontaktowała się z %d firmą w ubiegłym tygodniu</item>
         <item quantity="few">aplikacja kontaktowała się z %d firmami w ubiegłym tygodniu</item>
