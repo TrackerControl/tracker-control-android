@@ -44,7 +44,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Prefetch Gradle dependencies
-        run: ./gradlew :app:dependencies
+        run: |
+          ./gradlew :app:dependencies
+          ./gradlew :app:dependencies --configuration androidLintTool
 
       - name: Run Rust unit tests
         run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
