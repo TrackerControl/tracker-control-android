@@ -227,6 +227,7 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tracked_app_name">Sovelluksen nimi</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">otti yhteyttä %d yritykseen viime viikolla</item>
         <item quantity="other">otti yhteyttä %d yritykseen viime viikolla</item>
