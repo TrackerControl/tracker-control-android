@@ -1561,10 +1561,13 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgConfig wgParsed = null;
         String wgVpn4 = null;
         String wgVpn6 = null;
+        List<String> wgAllowedIps = new ArrayList<>();
         List<InetAddress> dnsServers = null;
         if (wgEnabled && !TextUtils.isEmpty(wgConfigText)) {
             try {
                 wgParsed = net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+                for (net.kollnig.missioncontrol.wg.WgPeer peer : wgParsed.getPeers())
+                    wgAllowedIps.addAll(peer.getAllowedIPs());
                 for (String addr : wgParsed.getAddress()) {
                     String ip = addr.split("/")[0].trim();
                     if (ip.contains(":")) {
@@ -1616,10 +1619,12 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
 
-        // Static routes covering all public IPv4 space, excluding private,
-        // reserved, and carrier Wi-Fi calling ranges.
-        // Mirrors DuckDuckGo ATP approach (Apache 2.0).
-        for (IPUtil.CIDR route : VpnRoutes.getRoutes())
+        // WireGuard AllowedIPs can opt RFC 1918 ranges into the VPN routes;
+        // without WireGuard, private and reserved ranges remain excluded.
+        List<IPUtil.CIDR> routes = (wgEnabled && !wgAllowedIps.isEmpty())
+                ? VpnRoutes.getRoutes(wgAllowedIps)
+                : VpnRoutes.getRoutes();
+        for (IPUtil.CIDR route : routes)
             try {
                 builder.addRoute(route.address, route.prefix);
             } catch (Throwable ex) {

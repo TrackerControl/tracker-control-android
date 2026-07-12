@@ -22,6 +22,7 @@ package eu.faircode.netguard;
 
 import android.util.Log;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -29,26 +30,22 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Static pre-computed VPN routes covering all public IPv4 address space,
- * excluding private, reserved, and carrier Wi-Fi calling ranges.
- *
- * Routes are computed once on first access from a fixed exclusion list,
- * avoiding per-rebuild dynamic computation overhead.
+ * IPv4 VPN routes. RFC 1918 ranges are excluded by default, but WireGuard
+ * AllowedIPs can route them through the tunnel. Reserved and carrier ranges
+ * remain excluded.
  */
 public class VpnRoutes {
     private static final String TAG = "TrackerControl.VpnRoutes";
     private static volatile List<IPUtil.CIDR> cachedRoutes;
 
-    // Ranges excluded from VPN routing (must not overlap)
-    private static final String[][] EXCLUDED_RANGES = {
-            // Reserved and private ranges
+    // Ranges ALWAYS excluded from VPN routing, regardless of WireGuard
+    // AllowedIPs (must not overlap each other or RFC1918_RANGES).
+    private static final String[][] ALWAYS_EXCLUDED = {
+            // Reserved ranges
             {"0.0.0.0", "8"},       // Current network (RFC 1122)
-            {"10.0.0.0", "8"},      // Private (RFC 1918)
             {"100.64.0.0", "10"},   // CGNAT (RFC 6598)
             {"127.0.0.0", "8"},     // Loopback (RFC 1122)
             {"169.254.0.0", "16"},  // Link-local (RFC 3927)
-            {"172.16.0.0", "12"},   // Private (RFC 1918)
-            {"192.168.0.0", "16"},  // Private (RFC 1918)
             {"224.0.0.0", "3"},     // Multicast (224/4) + reserved (240/4)
 
             // T-Mobile Wi-Fi calling
@@ -69,59 +66,155 @@ public class VpnRoutes {
             {"174.192.0.0", "9"},
     };
 
+    // RFC 1918 private ranges. Excluded by default so LAN traffic bypasses the
+    // tunnel, but included (routed into the tunnel) for the portion covered by
+    // the active WireGuard profile's AllowedIPs.
+    private static final String[][] RFC1918_RANGES = {
+            {"10.0.0.0", "8"},      // Private (RFC 1918)
+            {"172.16.0.0", "12"},   // Private (RFC 1918)
+            {"192.168.0.0", "16"},  // Private (RFC 1918)
+    };
+
     /**
-     * Returns the list of CIDR routes to add to the VPN builder.
+     * Returns the default route list (WireGuard remote egress off): all public
+     * IPv4 space excluding private, reserved, and carrier Wi-Fi calling ranges.
      * Computed once and cached for all subsequent calls.
      */
     public static List<IPUtil.CIDR> getRoutes() {
         if (cachedRoutes == null) {
             synchronized (VpnRoutes.class) {
                 if (cachedRoutes == null) {
-                    cachedRoutes = computeRoutes();
+                    cachedRoutes = computeRoutes(Collections.emptyList());
                 }
             }
         }
         return cachedRoutes;
     }
 
-    private static List<IPUtil.CIDR> computeRoutes() {
-        // Build sorted exclusion list
-        List<IPUtil.CIDR> excludes = new ArrayList<>();
-        for (String[] range : EXCLUDED_RANGES) {
-            excludes.add(new IPUtil.CIDR(range[0], Integer.parseInt(range[1])));
-        }
-        Collections.sort(excludes);
+    /**
+     * Returns the route list for an active WireGuard remote-egress tunnel,
+     * making the profile's AllowedIPs authoritative over the RFC 1918
+     * exclusions. Any part of an RFC 1918 range covered by {@code wgAllowedIps}
+     * is routed into the tunnel; everything else behaves exactly as
+     * {@link #getRoutes()}.
+     *
+     * @param wgAllowedIps the union of every peer's {@code AllowedIPs} entries
+     *                     (CIDR strings; IPv6 entries are ignored for now).
+     */
+    public static List<IPUtil.CIDR> getRoutes(List<String> wgAllowedIps) {
+        List<IPUtil.CIDR> allowedV4 = parseV4AllowedIps(wgAllowedIps);
+        if (allowedV4.isEmpty())
+            return getRoutes(); // No IPv4 AllowedIPs — identical to WG-off default
+        return computeRoutes(allowedV4);
+    }
 
-        // Compute complement: all IP ranges NOT in the exclusion list
+    private static List<IPUtil.CIDR> computeRoutes(List<IPUtil.CIDR> allowedV4) {
+        // Build the excluded intervals: always-excluded ranges verbatim, plus
+        // each RFC 1918 range with any AllowedIPs-covered portion carved out.
+        List<long[]> excluded = new ArrayList<>();
+        for (String[] range : ALWAYS_EXCLUDED)
+            excluded.add(toInterval(range[0], Integer.parseInt(range[1])));
+
+        List<long[]> allowed = new ArrayList<>();
+        for (IPUtil.CIDR cidr : allowedV4)
+            allowed.add(new long[]{inetToLong(cidr.getStart()), inetToLong(cidr.getEnd())});
+
+        for (String[] range : RFC1918_RANGES) {
+            long[] interval = toInterval(range[0], Integer.parseInt(range[1]));
+            excluded.addAll(subtract(interval[0], interval[1], allowed));
+        }
+
+        excluded.sort((a, b) -> Long.compare(a[0], b[0]));
+
+        // Compute the complement: all IPv4 space NOT in the exclusion list.
         List<IPUtil.CIDR> routes = new ArrayList<>();
         try {
             long startLong = 0; // 0.0.0.0
-            for (IPUtil.CIDR exclude : excludes) {
-                long excludeStartLong = inetToLong(exclude.getStart());
-                if (excludeStartLong > startLong) {
-                    InetAddress gapStart = longToInet(startLong);
-                    InetAddress gapEnd = IPUtil.minus1(exclude.getStart());
-                    routes.addAll(IPUtil.toCIDR(gapStart, gapEnd));
-                }
-                long excludeEndLong = inetToLong(exclude.getEnd());
-                if (excludeEndLong < 0xFFFFFFFFL) {
-                    startLong = excludeEndLong + 1;
-                } else {
+            for (long[] exclude : excluded) {
+                if (exclude[0] > startLong)
+                    routes.addAll(IPUtil.toCIDR(longToInet(startLong), longToInet(exclude[0] - 1)));
+                if (exclude[1] >= 0xFFFFFFFFL) {
                     startLong = 0xFFFFFFFFL + 1; // Past end of IPv4 space
                     break;
                 }
+                if (exclude[1] + 1 > startLong)
+                    startLong = exclude[1] + 1;
             }
-            // Any remaining space after last exclusion (none if 224.0.0.0/3 is last)
-            if (startLong <= 0xFFFFFFFFL) {
+            // Any remaining space after the last exclusion.
+            if (startLong <= 0xFFFFFFFFL)
                 routes.addAll(IPUtil.toCIDR(longToInet(startLong), longToInet(0xFFFFFFFFL)));
-            }
         } catch (UnknownHostException ex) {
             Log.e(TAG, "Failed to compute routes: " + ex);
         }
 
         Log.i(TAG, "Computed " + routes.size() + " VPN routes from "
-                + EXCLUDED_RANGES.length + " exclusions");
+                + excluded.size() + " exclusions (" + allowedV4.size() + " WG AllowedIPs)");
         return Collections.unmodifiableList(routes);
+    }
+
+    /**
+     * Returns the sub-intervals of [start, end] not covered by any interval in
+     * {@code allowed}. {@code allowed} intervals may overlap and be unsorted.
+     */
+    private static List<long[]> subtract(long start, long end, List<long[]> allowed) {
+        // Clip the allowed intervals to [start, end] and sort by start.
+        List<long[]> overlaps = new ArrayList<>();
+        for (long[] a : allowed) {
+            long s = Math.max(a[0], start);
+            long e = Math.min(a[1], end);
+            if (s <= e)
+                overlaps.add(new long[]{s, e});
+        }
+        overlaps.sort((a, b) -> Long.compare(a[0], b[0]));
+
+        List<long[]> result = new ArrayList<>();
+        long cursor = start;
+        for (long[] a : overlaps) {
+            if (a[0] > cursor)
+                result.add(new long[]{cursor, a[0] - 1});
+            if (a[1] + 1 > cursor)
+                cursor = a[1] + 1;
+            if (cursor > end)
+                break;
+        }
+        if (cursor <= end)
+            result.add(new long[]{cursor, end});
+        return result;
+    }
+
+    /** Parse WireGuard AllowedIPs CIDR strings, keeping only valid IPv4 entries. */
+    private static List<IPUtil.CIDR> parseV4AllowedIps(List<String> wgAllowedIps) {
+        List<IPUtil.CIDR> allowedV4 = new ArrayList<>();
+        if (wgAllowedIps == null)
+            return allowedV4;
+        for (String raw : wgAllowedIps) {
+            if (raw == null)
+                continue;
+            String entry = raw.trim();
+            if (entry.isEmpty())
+                continue;
+            try {
+                String[] parts = entry.split("/");
+                String ip = parts[0].trim();
+                if (ip.contains(":"))
+                    continue; // IPv6 — see class docs; tracked as follow-up
+                int prefix = parts.length > 1 ? Integer.parseInt(parts[1].trim()) : 32;
+                if (prefix < 0 || prefix > 32)
+                    continue;
+                InetAddress addr = InetAddress.getByName(ip);
+                if (!(addr instanceof Inet4Address))
+                    continue;
+                allowedV4.add(new IPUtil.CIDR(ip, prefix));
+            } catch (Throwable ex) {
+                Log.w(TAG, "Ignoring malformed AllowedIPs entry '" + entry + "': " + ex);
+            }
+        }
+        return allowedV4;
+    }
+
+    private static long[] toInterval(String ip, int prefix) {
+        IPUtil.CIDR cidr = new IPUtil.CIDR(ip, prefix);
+        return new long[]{inetToLong(cidr.getStart()), inetToLong(cidr.getEnd())};
     }
 
     private static long inetToLong(InetAddress addr) {
