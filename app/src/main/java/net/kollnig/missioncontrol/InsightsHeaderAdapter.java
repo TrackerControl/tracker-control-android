@@ -121,11 +121,14 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         // Group each stat number + label so TalkBack announces them as a
         // single unit instead of two separate reads.
         holder.llBlockedStat.setContentDescription(
-                blockedText + ", " + context.getString(R.string.insights_tracking_attempts));
+                context.getString(R.string.accessibility_stat_description, blockedText,
+                        context.getString(R.string.insights_tracking_attempts)));
         holder.llCompaniesStat.setContentDescription(
-                companiesText + ", " + context.getString(R.string.insights_tracker_companies));
+                context.getString(R.string.accessibility_stat_description, companiesText,
+                        context.getString(R.string.insights_tracker_companies)));
         holder.llBlockedPctStat.setContentDescription(
-                pctText + ", " + context.getString(R.string.insights_blocked));
+                context.getString(R.string.accessibility_stat_description, pctText,
+                        context.getString(R.string.insights_blocked)));
         LinearLayout.LayoutParams blockedLp =
                 (LinearLayout.LayoutParams) holder.vBlockedProgress.getLayoutParams();
         blockedLp.weight = pct;
