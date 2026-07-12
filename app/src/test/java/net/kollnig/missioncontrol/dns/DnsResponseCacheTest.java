@@ -173,15 +173,15 @@ public class DnsResponseCacheTest {
     }
 
     @Test
-    public void shortTtlIsClampedToFloor() {
+    public void shortTtlExpiresAtAuthoritativeTtl() {
         FakeClock clock = new FakeClock();
         DnsResponseCache cache = new DnsResponseCache(clock);
 
-        // TTL of 5 s should be honoured as MIN_TTL_SECONDS (still cacheable).
+        // A cache must not extend the authoritative 5 s TTL.
         cache.put(buildQuery(1, "example.com", 1),
                 buildResponse(1, "example.com", 1, 5, 0, 1));
-        clock.now += 6_000L; // past the record TTL but within the floor
-        assertNotNull(cache.get(buildQuery(2, "example.com", 1)));
+        clock.now += 6_000L;
+        assertNull(cache.get(buildQuery(2, "example.com", 1)));
     }
 
     @Test

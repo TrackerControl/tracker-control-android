@@ -29,8 +29,7 @@ import java.util.Map;
  * <ul>
  *   <li>Only NOERROR responses with at least one answer record are stored.</li>
  *   <li>The entry lifetime is the <em>minimum</em> TTL across all answer records,
- *       clamped to [{@link #MIN_TTL_SECONDS}, {@link #MAX_TTL_SECONDS}]. A record
- *       with TTL 0 is never cached.</li>
+ *       capped at {@link #MAX_TTL_SECONDS}. A record with TTL 0 is never cached.</li>
  *   <li>Only single-question queries are cached (the overwhelmingly common case).</li>
  *   <li>On a hit the stored bytes are copied, the transaction ID is rewritten to
  *       match the caller, and every answer TTL is rewritten to the remaining
@@ -42,8 +41,6 @@ import java.util.Map;
  */
 final class DnsResponseCache {
 
-    /** Never cache for less than this — avoids thrashing on very short TTLs. */
-    static final long MIN_TTL_SECONDS = 30;
     /** Never cache for longer than this regardless of the record TTL. */
     static final long MAX_TTL_SECONDS = 6 * 60 * 60;
     /** Upper bound on distinct cached questions. */
@@ -135,7 +132,9 @@ final class DnsResponseCache {
         if (parsed == null || parsed.minTtl <= 0)
             return;
 
-        long ttl = Math.max(MIN_TTL_SECONDS, Math.min(parsed.minTtl, MAX_TTL_SECONDS));
+        // A cache may shorten a DNS TTL but must never extend it: doing so can
+        // retain a stale destination after the authoritative record expires.
+        long ttl = Math.min(parsed.minTtl, MAX_TTL_SECONDS);
         long expiry = clock.nowMs() + ttl * 1000L;
         map.put(key, new CacheEntry(Arrays.copyOf(response, response.length), expiry, parsed.ttlOffsets));
     }
