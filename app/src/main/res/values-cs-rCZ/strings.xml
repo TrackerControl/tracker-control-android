@@ -387,8 +387,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="static_analysis">Detekovat trackery v kódu aplikace</string>
     <string name="failed_loading_cached_analysis">Načítání výsledků sledování z mezipaměti se nezdařilo. Nahlaste to prosím vývojáři na hello@trackercontrol.org</string>
     <string name="msg_notifications">Klepnutím udělíte oprávnění k oznámením (pro chybové zprávy atd.)</string>
-    <string name="setting_include_system_vpn">Zahrnout systémové aplikace</string>
-    <string name="summary_include_system_vpn">Zahrňte všechny systémové aplikace do VPN a DoH.\n\nPoznámka: V nastavení VPN pro Android musí být možnost \"Blokovat připojení bez VPN\" VYPNUTÁ.</string>
     <!-- Onboarding -->
     <string name="title_next">Další</string>
     <string name="title_skip">Přeskočit</string>
