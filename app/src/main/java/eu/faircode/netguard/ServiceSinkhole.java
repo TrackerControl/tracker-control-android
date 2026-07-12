@@ -2207,8 +2207,7 @@ public class ServiceSinkhole extends VpnService {
             prepareUidIPFilters(rr.QName);
 
             if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
-                ipToHost.remove(rr.Resource);
-                ipToTracker.remove(rr.Resource);
+                invalidateTrackerCachesForIp(rr.Resource);
             }
         }
     }
@@ -2257,8 +2256,34 @@ public class ServiceSinkhole extends VpnService {
 
     static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Integer, String> uidToPackage = new ConcurrentHashMap<>();
+    // The tracker-verdict caches are keyed by (uid, destination IP) rather than
+    // destination IP alone (see #655, Option 1). These caches sit directly on
+    // the per-app blocking path (blockKnownTracker(daddr, uid)); keying them by
+    // IP only lets one app's cached verdict be reused for a different app that
+    // happens to reach the same shared IP. Per-app keying makes cache reuse
+    // conservative and prevents cross-app bleed the moment any uid-specific
+    // state (per-app access rules, or a future uid-aware DNS lookup) feeds the
+    // cached value. Note: this multiplies cache cardinality by the number of
+    // active apps per IP (IPs x apps); entries still expire on the DNS TTL (or
+    // NEGATIVE_TRACKER_CACHE_TTL_MS for misses), so the working set stays
+    // bounded by live traffic.
     static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
+
+    // Build the composite (uid, destination IP) key for the tracker-verdict
+    // caches. The '#' separator never occurs in an IPv4/IPv6 literal, so the IP
+    // prefix stays unambiguous for invalidateTrackerCachesForIp().
+    static String trackerCacheKey(int uid, String daddr) {
+        return daddr + '#' + uid;
+    }
+
+    // A freshly resolved DNS answer for an IP invalidates every app's cached
+    // verdict for that IP, so remove all (uid, IP) entries sharing this IP.
+    private static void invalidateTrackerCachesForIp(String daddr) {
+        String prefix = daddr + '#';
+        ipToHost.keySet().removeIf(k -> k.startsWith(prefix));
+        ipToTracker.keySet().removeIf(k -> k.startsWith(prefix));
+    }
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
     // Negative results (no tracker / no dname for an IP) are cached only
@@ -2409,23 +2434,24 @@ public class ServiceSinkhole extends VpnService {
         String blockingMode = BlockingMode.getMode(this);
         boolean blockAmbiguousTrackers = BlockingModeLogic.blocksAmbiguousTrackerIp(blockingMode);
         Tracker tracker = null;
-        Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
+        String cacheKey = trackerCacheKey(uid, daddr);
+        Expiring<Tracker> expiringTracker = ipToTracker.get(cacheKey);
         if (expiringTracker != null) {
             tracker = expiringTracker.getOrExpired();
 
             if (tracker == null) // expired
-                ipToTracker.remove(daddr);
+                ipToTracker.remove(cacheKey);
         }
 
         if (tracker == null) {
             // Check if IP known
             String dname = null;
-            Expiring<String> expiringHost = ipToHost.get(daddr);
+            Expiring<String> expiringHost = ipToHost.get(cacheKey);
             if (expiringHost != null) {
                 dname = expiringHost.getOrExpired();
 
                 if (dname == null) // expired
-                    ipToHost.remove(daddr);
+                    ipToHost.remove(cacheKey);
             }
 
             if (dname == null) { // TODO: Note that this does not implement any SNI code
@@ -2527,8 +2553,8 @@ public class ServiceSinkhole extends VpnService {
                 }
 
                 // Save dname and tracker
-                ipToHost.put(daddr, new Expiring<>(dname, expiry));
-                ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
+                ipToHost.put(cacheKey, new Expiring<>(dname, expiry));
+                ipToTracker.put(cacheKey, new Expiring<>(tracker, expiry));
             }
 
             // Do not block based on IP-only tracker evidence.
@@ -2548,7 +2574,7 @@ public class ServiceSinkhole extends VpnService {
             // null on an ipToTracker cache hit (the ipToHost.put(...) block is
             // skipped). Guard both so log_logcat never NPEs the packet path.
             if (tracker != null) {
-                Expiring<String> expiringHost = ipToHost.get(daddr);
+                Expiring<String> expiringHost = ipToHost.get(cacheKey);
                 String host = (expiringHost == null ? null : expiringHost.getOrExpired());
                 Log.i("TC-Log", app + " " + daddr + " " + host + " " + tracker.getName());
             }
@@ -2607,6 +2633,12 @@ public class ServiceSinkhole extends VpnService {
                                         statsHandler.sendEmptyMessage(interactive ? MSG_STATS_START : MSG_STATS_STOP);
                                     }
                                 });
+
+                        // On screen-off, drop idle DoH keep-alive sockets so a
+                        // server-side reset during doze can't wake the radio.
+                        if (!last_interactive)
+                            net.kollnig.missioncontrol.dns.DnsProxyServer
+                                    .getInstance(ServiceSinkhole.this).onScreenOff();
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 

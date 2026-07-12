@@ -95,6 +95,22 @@ public class DnsOverHttpsClient {
     }
 
     /**
+     * Evict idle keep-alive connections from the current client, if any. Called on
+     * screen-off so an idle pooled TLS socket cannot be reset by the server during
+     * doze and wake the radio. In-flight requests are unaffected. No-op if no
+     * client has been created yet.
+     */
+    public static synchronized void evictIdleConnections() {
+        if (instance != null) {
+            instance.evictIdle();
+        }
+    }
+
+    private void evictIdle() {
+        SHUTDOWN_EXECUTOR.execute(() -> client.connectionPool().evictAll());
+    }
+
+    /**
      * Shutdown the OkHttpClient and release resources.
      * Call this when DoH is disabled to prevent idle connections from draining
      * battery. Runs on a background thread to avoid NetworkOnMainThreadException
