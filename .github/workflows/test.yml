@@ -49,6 +49,11 @@ jobs:
         run: |
           ./gradlew :app:dependencies
           ./gradlew :app:prefetchAndroidLintDependencies
+          # :app:dependencies only resolves dependency metadata, not the
+          # actual test-variant classpath artifacts (e.g. mockwebserver3).
+          # Compile the unit tests online once so their classpath is cached
+          # before the offline run below.
+          ./gradlew :app:assembleFdroidDebugUnitTest
 
       - name: Run Rust unit tests
         run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
@@ -105,6 +110,9 @@ jobs:
       - name: Prefetch Gradle dependencies
         run: |
           ./gradlew :app:dependencies
+          # Warm the cache for the androidTest classpath (androidx.test.*)
+          # so the offline emulator run below doesn't need network access.
+          ./gradlew :app:assembleFdroidDebugAndroidTest
 
       - name: Enable KVM
         run: |
