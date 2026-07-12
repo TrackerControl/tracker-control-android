@@ -49,17 +49,20 @@ as its output, so it's skipped when the Rust source hasn't changed.
 
 ### Prerequisites
 
-- **Rust ≥ 1.95** via [rustup](https://rustup.rs), with the Android targets:
+- **Rust 1.95.0** via [rustup](https://rustup.rs). The version and Android
+  targets are pinned in the repository's `rust-toolchain.toml`.
+- **cargo-ndk 4.1.2**.
+- **Android NDK 27.2.12479018 (r27c)** (the Gradle task points cargo-ndk at
+  the NDK configured for the app module).
 
-  ```bash
-  rustup target add armv7-linux-androideabi aarch64-linux-android \
-      i686-linux-android x86_64-linux-android
-  ```
+Install the pinned Rust prerequisites and pre-fetch the locked crates with:
 
-- **cargo-ndk**: `cargo install cargo-ndk` (the Gradle task installs it
-  automatically if missing).
-- **Android NDK ≥ 27** (the Gradle task points cargo-ndk at the NDK
-  configured for the app module).
+```bash
+./scripts/setup_rust_android.sh
+```
+
+The Gradle build is intentionally offline: it never installs tools or fetches
+crates. This keeps local, CI, and F-Droid builds on the same inputs.
 
 ### Manual build (debugging)
 
@@ -84,19 +87,22 @@ cargo test
 
 ## F-Droid build metadata
 
-The F-Droid build server doesn't ship Rust by default. Add the following
-to the `Builds:` entry in `metadata/net.kollnig.missioncontrol.yml`:
+The F-Droid build server doesn't ship the required Rust setup by default. Add
+the following to the new `Builds:` entry in
+`metadata/net.kollnig.missioncontrol.fdroid.yml`:
 
 ```yaml
 sudo:
   - apt-get update
-  - apt-get install -y curl build-essential
+  - apt-get install -y rustup gcc libc-dev
 prebuild:
-  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
-  - source $HOME/.cargo/env
-  - rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
-  - cargo install cargo-ndk
+  - ../scripts/setup_rust_android.sh
+ndk: r27c
 ```
+
+The existing `gradle: [fdroid]` setting remains unchanged. The prebuild step
+runs while dependency downloads are allowed; Gradle subsequently compiles the
+locked crate graph with Cargo offline.
 
 ## Java/Kotlin API surface
 

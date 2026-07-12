@@ -9,6 +9,7 @@ def wgbridgeSrcDir  = file("$rootDir/wgbridge-rs")
 def wgbridgeOutDir  = file("$buildDir/rustJniLibs")
 def wgbridgeAbis    = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 def wgbridgeNdkVersion = '27.2.12479018' // keep in sync with defaultConfig.ndkVersion
+def wgbridgeCargoNdkVersion = '4.1.2' // keep in sync with scripts/setup_rust_android.sh
 
 // Resolve the NDK directory the way AGP does (local.properties, then env),
 // since modern AGP extensions no longer expose android.ndkDirectory.
@@ -70,7 +71,7 @@ tasks.register('wgbridgeBuild') {
                 Could not find a `cargo` executable. Install Rust via rustup
                 (https://rustup.rs), then:
                   rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
-                  cargo install cargo-ndk
+                  cargo install cargo-ndk@${wgbridgeCargoNdkVersion} --locked
                 and either add ~/.cargo/bin to PATH (restart Android Studio),
                 or pass -PcargoBin=/path/to/cargo to Gradle.
             """.stripIndent())
@@ -104,20 +105,23 @@ tasks.register('wgbridgeBuild') {
         env['CARGO_ENCODED_RUSTFLAGS'] = rustFlags.join('\u001f')
         env.remove('RUSTFLAGS')
 
-        // cargo-ndk drives the per-ABI cross-compilation and linker setup.
-        def cargoNdk = "${System.getProperty('user.home')}/.cargo/bin/cargo-ndk"
-        if (!file(cargoNdk).canExecute() &&
-                !env['PATH'].split(File.pathSeparator).any { file("$it/cargo-ndk").canExecute() }) {
-            logger.lifecycle('Installing cargo-ndk ...')
-            providers.exec {
-                environment env
-                commandLine cargoBin, 'install', 'cargo-ndk'
-            }.result.get().assertNormalExitValue()
+        // Tool installation must happen before Gradle runs. In particular,
+        // F-Droid disables network access for the actual build phase.
+        def cargoNdkAvailable = file("${System.getProperty('user.home')}/.cargo/bin/cargo-ndk").canExecute() ||
+                env['PATH'].split(File.pathSeparator).any { file("$it/cargo-ndk").canExecute() }
+        if (!cargoNdkAvailable) {
+            throw new GradleException("""
+                Could not find cargo-ndk ${wgbridgeCargoNdkVersion}. Run:
+                  ./scripts/setup_rust_android.sh
+                Gradle deliberately does not install build tools because release
+                and F-Droid builds must be able to run without network access.
+            """.stripIndent())
         }
 
         def args = [cargoBin, 'ndk']
         wgbridgeAbis.each { args += ['-t', it] }
-        args += ['--platform', '23', '-o', wgbridgeOutDir.absolutePath, 'build', '--release']
+        args += ['--platform', '23', '-o', wgbridgeOutDir.absolutePath,
+                 'build', '--release', '--locked', '--offline']
 
         providers.exec {
             workingDir wgbridgeSrcDir
