@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class WgProfileManager {
     private static final String TAG = "TrackerControl.WgProfiles";
@@ -201,6 +202,7 @@ public class WgProfileManager {
 
     public void deleteProfile(String id) {
         JSONArray profiles = readProfilesJson();
+        String active = getActiveProfileId();
         JSONArray kept = new JSONArray();
         for (int i = 0; i < profiles.length(); i++) {
             JSONObject profile = profiles.optJSONObject(i);
@@ -213,7 +215,7 @@ public class WgProfileManager {
         if (kept.length() == 0) {
             editor.remove(PREF_WG_PROFILE);
             editor.remove(PREF_WG_CONFIG);
-        } else {
+        } else if (id.equals(active) || findJsonProfile(kept, active) == null) {
             JSONObject next = kept.optJSONObject(0);
             if (next != null) {
                 editor.putString(PREF_WG_PROFILE, next.optString("id"));
@@ -578,7 +580,7 @@ public class WgProfileManager {
     }
 
     private String newId() {
-        return "wg-" + System.currentTimeMillis();
+        return "wg-" + UUID.randomUUID();
     }
 
     private static String normalizeCountry(String countryCode) {

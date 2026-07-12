@@ -16,10 +16,12 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          # Robolectric SDK 36 (see app/src/test/resources/robolectric.properties)
+          # ships jars compiled with Java 21 and refuses to run on Java 17.
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Install Android native build tools
@@ -47,6 +49,11 @@ jobs:
         run: |
           ./gradlew :app:dependencies
           ./gradlew :app:prefetchAndroidLintDependencies
+          # :app:dependencies only resolves dependency metadata, not the
+          # actual test-variant classpath artifacts (e.g. mockwebserver3).
+          # Compile the unit tests online once so their classpath is cached
+          # before the offline run below.
+          ./gradlew :app:assembleFdroidDebugUnitTest
 
       - name: Run Rust unit tests
         run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
@@ -64,3 +71,64 @@ jobs:
           for ABI in armeabi-v7a arm64-v8a x86 x86_64; do
             test "$(unzip -Z1 "$APK" "lib/$ABI/libwgbridge.so")" = "lib/$ABI/libwgbridge.so"
           done
+
+  instrumentation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Android native build tools
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "cmake;3.22.1" \
+            "ndk;27.2.12479018"
+
+      - name: Cache cargo registry and build
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            wgbridge-rs/target
+          key: cargo-android-${{ runner.os }}-${{ hashFiles('wgbridge-rs/Cargo.lock') }}
+
+      - name: Set up Rust
+        run: ./scripts/setup_rust_android.sh
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Prefetch Gradle dependencies
+        run: |
+          ./gradlew :app:dependencies
+          # Warm the cache for the androidTest classpath (androidx.test.*).
+          # Running the tests themselves still needs network access: the
+          # Unified Test Platform runner classpath (UTP, dagger, protobuf,
+          # etc.) is only resolved once a device is actually connected.
+          ./gradlew :app:assembleFdroidDebugAndroidTest
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run instrumentation tests
+        uses: reactivecircus/android-emulator-runner@v2.38.0
+        with:
+          # API 37 has no published emulator system image yet; 36 is the
+          # newest one available while compileSdk/targetSdk track the preview.
+          api-level: 36
+          arch: x86_64
+          ndk: 27.2.12479018
+          profile: pixel_7
+          script: ./gradlew connectedFdroidDebugAndroidTest
