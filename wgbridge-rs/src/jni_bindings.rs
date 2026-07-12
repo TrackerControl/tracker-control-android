@@ -5,15 +5,28 @@
 use std::sync::Arc;
 use std::sync::Once;
 
-use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
+use jni::objects::{Global, JClass, JObject, JString, JValue};
+use jni::strings::JNIString;
 use jni::sys::{jboolean, jint, jlong, jlongArray, jstring};
-use jni::{JNIEnv, JavaVM};
+use jni::{jni_sig, jni_str, Env, EnvUnowned, JavaVM};
 
 use crate::callbacks::{BridgeLogger, DnsSink, NullLogger, SocketProtector};
 use crate::keys;
 use crate::tunnel::{start_tunnel, Tunnel};
 
 static LOGGER_INIT: Once = Once::new();
+
+macro_rules! with_native_env {
+    ($unowned_env:ident, $env:ident, $body:block) => {{
+        $unowned_env
+            .with_env(|$env| -> jni::errors::Result<_> {
+                #[allow(clippy::redundant_closure_call)]
+                let result = (|| $body)();
+                Ok(result)
+            })
+            .resolve::<jni::errors::ThrowRuntimeExAndDefault>()
+    }};
+}
 
 fn init_android_logger() {
     LOGGER_INIT.call_once(|| {
@@ -25,24 +38,24 @@ fn init_android_logger() {
     });
 }
 
-fn throw(env: &mut JNIEnv, msg: &str) {
+fn throw(env: &mut Env, msg: &str) {
     // Don't clobber an exception already in flight.
-    if !env.exception_check().unwrap_or(false) {
-        let _ = env.throw_new("java/lang/RuntimeException", msg);
+    if !env.exception_check() {
+        let _ = env.throw_new(jni_str!("java/lang/RuntimeException"), JNIString::new(msg));
     }
 }
 
-fn get_string(env: &mut JNIEnv, s: &JString) -> Option<String> {
-    env.get_string(s).ok().map(|s| s.into())
+fn get_string(env: &Env, s: &JString) -> Option<String> {
+    s.try_to_string(env).ok()
 }
 
 struct JavaCallback {
     vm: JavaVM,
-    obj: GlobalRef,
+    obj: Global<JObject<'static>>,
 }
 
 impl JavaCallback {
-    fn new(env: &JNIEnv, obj: JObject) -> Option<Self> {
+    fn new(env: &Env, obj: JObject) -> Option<Self> {
         if obj.is_null() {
             return None;
         }
@@ -51,17 +64,22 @@ impl JavaCallback {
         Some(Self { vm, obj })
     }
 
-    /// Runs `f` with a JNIEnv attached as a daemon. Worker threads stay
-    /// attached for their lifetime without keeping the JVM alive at shutdown.
+    /// Runs `f` with an Env attached to the current thread. Worker threads
+    /// stay attached for their lifetime (they are long-lived tokio threads).
     fn with_env<R>(
         &self,
-        f: impl FnOnce(&mut JNIEnv, &GlobalRef) -> jni::errors::Result<R>,
+        f: impl FnOnce(&mut Env, &JObject) -> jni::errors::Result<R>,
     ) -> Option<R> {
-        let mut env = self.vm.attach_current_thread_as_daemon().ok()?;
-        match f(&mut env, &self.obj) {
+        match self
+            .vm
+            .attach_current_thread(|env| f(env, self.obj.as_ref()))
+        {
             Ok(r) => Some(r),
             Err(_) => {
-                let _ = env.exception_clear();
+                let _ = self.vm.attach_current_thread(|env| {
+                    env.exception_clear();
+                    Ok::<_, jni::errors::Error>(())
+                });
                 None
             }
         }
@@ -74,8 +92,13 @@ impl SocketProtector for JavaProtector {
     fn protect(&self, fd: i32) -> bool {
         self.0
             .with_env(|env, obj| {
-                env.call_method(obj, "protect", "(I)Z", &[JValue::Int(fd)])?
-                    .z()
+                env.call_method(
+                    obj,
+                    jni_str!("protect"),
+                    jni_sig!((fd: jint) -> jboolean),
+                    &[JValue::Int(fd)],
+                )?
+                .z()
             })
             .unwrap_or(false)
     }
@@ -89,8 +112,8 @@ impl BridgeLogger for JavaLogger {
             let s = env.new_string(msg)?;
             env.call_method(
                 obj,
-                "verbosef",
-                "(Ljava/lang/String;)V",
+                jni_str!("verbosef"),
+                jni_sig!((message: JString) -> void),
                 &[JValue::Object(&s)],
             )
             .map(|_| ())
@@ -100,8 +123,13 @@ impl BridgeLogger for JavaLogger {
     fn error(&self, msg: &str) {
         self.0.with_env(|env, obj| {
             let s = env.new_string(msg)?;
-            env.call_method(obj, "errorf", "(Ljava/lang/String;)V", &[JValue::Object(&s)])
-                .map(|_| ())
+            env.call_method(
+                obj,
+                jni_str!("errorf"),
+                jni_sig!((message: JString) -> void),
+                &[JValue::Object(&s)],
+            )
+            .map(|_| ())
         });
     }
 }
@@ -116,8 +144,8 @@ impl DnsSink for JavaDnsSink {
             let r = env.new_string(resource)?;
             env.call_method(
                 obj,
-                "recordDns",
-                "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V",
+                jni_str!("recordDns"),
+                jni_sig!((qname: JString, aname: JString, resource: JString, ttl: jint) -> void),
                 &[
                     JValue::Object(&q),
                     JValue::Object(&a),
@@ -142,46 +170,50 @@ fn tunnel_from_handle<'a>(handle: jlong) -> Option<&'a Tunnel> {
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_generatePrivateKey(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
 ) -> jstring {
-    match keys::generate_private_key() {
-        Ok(key) => env
-            .new_string(key)
-            .map(|s| s.into_raw())
-            .unwrap_or(std::ptr::null_mut()),
-        Err(e) => {
-            throw(&mut env, &e);
-            std::ptr::null_mut()
+    with_native_env!(unowned_env, env, {
+        match keys::generate_private_key() {
+            Ok(key) => env
+                .new_string(key)
+                .map(|s| s.into_raw())
+                .unwrap_or(std::ptr::null_mut()),
+            Err(e) => {
+                throw(env, &e);
+                std::ptr::null_mut()
+            }
         }
-    }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_publicKey(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     private_key: JString,
 ) -> jstring {
-    let Some(private_key) = get_string(&mut env, &private_key) else {
-        throw(&mut env, "privateKey must not be null");
-        return std::ptr::null_mut();
-    };
-    match keys::public_key(&private_key) {
-        Ok(key) => env
-            .new_string(key)
-            .map(|s| s.into_raw())
-            .unwrap_or(std::ptr::null_mut()),
-        Err(e) => {
-            throw(&mut env, &e);
-            std::ptr::null_mut()
+    with_native_env!(unowned_env, env, {
+        let Some(private_key) = get_string(env, &private_key) else {
+            throw(env, "privateKey must not be null");
+            return std::ptr::null_mut();
+        };
+        match keys::public_key(&private_key) {
+            Ok(key) => env
+                .new_string(key)
+                .map(|s| s.into_raw())
+                .unwrap_or(std::ptr::null_mut()),
+            Err(e) => {
+                throw(env, &e);
+                std::ptr::null_mut()
+            }
         }
-    }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeStartTunnel(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     uapi_config: JString,
     outbound_rx_fd: jint,
@@ -191,180 +223,197 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeS
     logger: JObject,
     dns_recorder: JObject,
 ) -> jlong {
-    init_android_logger();
+    with_native_env!(unowned_env, env, {
+        init_android_logger();
 
-    let Some(uapi) = get_string(&mut env, &uapi_config) else {
-        throw(&mut env, "uapiConfig must not be null");
-        return 0;
-    };
-    let Some(protector) = JavaCallback::new(&env, protector) else {
-        throw(&mut env, "protector must not be null");
-        return 0;
-    };
-    let logger: Arc<dyn BridgeLogger> = match JavaCallback::new(&env, logger) {
-        Some(cb) => Arc::new(JavaLogger(cb)),
-        None => Arc::new(NullLogger),
-    };
-    let dns: Option<Arc<dyn DnsSink>> =
-        JavaCallback::new(&env, dns_recorder).map(|cb| Arc::new(JavaDnsSink(cb)) as _);
+        let Some(uapi) = get_string(env, &uapi_config) else {
+            throw(env, "uapiConfig must not be null");
+            return 0;
+        };
+        let Some(protector) = JavaCallback::new(env, protector) else {
+            throw(env, "protector must not be null");
+            return 0;
+        };
+        let logger: Arc<dyn BridgeLogger> = match JavaCallback::new(env, logger) {
+            Some(cb) => Arc::new(JavaLogger(cb)),
+            None => Arc::new(NullLogger),
+        };
+        let dns: Option<Arc<dyn DnsSink>> =
+            JavaCallback::new(env, dns_recorder).map(|cb| Arc::new(JavaDnsSink(cb)) as _);
 
-    // Attach each tokio worker to the JVM as a daemon as it spins up, so the Java
-    // GlobalRefs the callbacks hold are dropped on attached threads at
-    // teardown (avoids the jni "detached thread" GlobalRef warning).
-    let Ok(vm) = env.get_java_vm() else {
-        throw(&mut env, "could not obtain JavaVM");
-        return 0;
-    };
-    let on_worker_start: Arc<dyn Fn() + Send + Sync> = Arc::new(move || {
-        let _ = vm.attach_current_thread_as_daemon();
-    });
+        // Attach each tokio worker to the JVM as it spins up, so the Java
+        // GlobalRefs the callbacks hold are dropped on attached threads at
+        // teardown (avoids the jni "detached thread" GlobalRef warning).
+        let Ok(vm) = env.get_java_vm() else {
+            throw(env, "could not obtain JavaVM");
+            return 0;
+        };
+        let on_worker_start: Arc<dyn Fn() + Send + Sync> = Arc::new(move || {
+            let _ = vm.attach_current_thread(|_| Ok::<_, jni::errors::Error>(()));
+        });
 
-    match start_tunnel(
-        &uapi,
-        outbound_rx_fd,
-        tun_write_fd,
-        mtu.clamp(576, 65535) as u16,
-        Arc::new(JavaProtector(protector)),
-        logger,
-        dns,
-        on_worker_start,
-    ) {
-        Ok(tunnel) => Box::into_raw(Box::new(tunnel)) as jlong,
-        Err(e) => {
-            throw(&mut env, &e);
-            0
+        match start_tunnel(
+            &uapi,
+            outbound_rx_fd,
+            tun_write_fd,
+            mtu.clamp(576, 65535) as u16,
+            Arc::new(JavaProtector(protector)),
+            logger,
+            dns,
+            on_worker_start,
+        ) {
+            Ok(tunnel) => Box::into_raw(Box::new(tunnel)) as jlong,
+            Err(e) => {
+                throw(env, &e);
+                0
+            }
         }
-    }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSetConfig(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     handle: jlong,
     uapi_config: JString,
 ) {
-    let Some(tunnel) = tunnel_from_handle(handle) else {
-        throw(&mut env, "tunnel stopped");
-        return;
-    };
-    let Some(uapi) = get_string(&mut env, &uapi_config) else {
-        throw(&mut env, "uapiConfig must not be null");
-        return;
-    };
-    if let Err(e) = tunnel.set_config(&uapi) {
-        throw(&mut env, &e);
-    }
+    with_native_env!(unowned_env, env, {
+        let Some(tunnel) = tunnel_from_handle(handle) else {
+            throw(env, "tunnel stopped");
+            return;
+        };
+        let Some(uapi) = get_string(env, &uapi_config) else {
+            throw(env, "uapiConfig must not be null");
+            return;
+        };
+        if let Err(e) = tunnel.set_config(&uapi) {
+            throw(env, &e);
+        }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeStats(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     handle: jlong,
 ) -> jlongArray {
-    let Some(tunnel) = tunnel_from_handle(handle) else {
-        throw(&mut env, "tunnel stopped");
-        return std::ptr::null_mut();
-    };
-    match tunnel.stats() {
-        Ok(stats) => {
-            let values = [stats.rx_bytes, stats.tx_bytes, stats.latest_handshake_millis];
-            match env.new_long_array(3) {
-                Ok(array) => {
-                    let _ = env.set_long_array_region(&array, 0, &values);
-                    array.into_raw()
-                }
-                Err(e) => {
-                    throw(&mut env, &e.to_string());
-                    std::ptr::null_mut()
+    with_native_env!(unowned_env, env, {
+        let Some(tunnel) = tunnel_from_handle(handle) else {
+            throw(env, "tunnel stopped");
+            return std::ptr::null_mut();
+        };
+        match tunnel.stats() {
+            Ok(stats) => {
+                let values = [
+                    stats.rx_bytes,
+                    stats.tx_bytes,
+                    stats.latest_handshake_millis,
+                ];
+                match env.new_long_array(3) {
+                    Ok(array) => {
+                        let _ = array.set_region(env, 0, &values);
+                        array.into_raw()
+                    }
+                    Err(e) => {
+                        throw(env, &e.to_string());
+                        std::ptr::null_mut()
+                    }
                 }
             }
+            Err(e) => {
+                throw(env, &e);
+                std::ptr::null_mut()
+            }
         }
-        Err(e) => {
-            throw(&mut env, &e);
-            std::ptr::null_mut()
-        }
-    }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSendKeepalive(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     handle: jlong,
 ) {
-    let Some(tunnel) = tunnel_from_handle(handle) else {
-        throw(&mut env, "tunnel stopped");
-        return;
-    };
-    tunnel.send_keepalive();
+    with_native_env!(unowned_env, env, {
+        let Some(tunnel) = tunnel_from_handle(handle) else {
+            throw(env, "tunnel stopped");
+            return;
+        };
+        tunnel.send_keepalive();
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeRebind(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     handle: jlong,
 ) {
-    let Some(tunnel) = tunnel_from_handle(handle) else {
-        throw(&mut env, "tunnel stopped");
-        return;
-    };
-    if let Err(e) = tunnel.rebind() {
-        throw(&mut env, &e);
-    }
+    with_native_env!(unowned_env, env, {
+        let Some(tunnel) = tunnel_from_handle(handle) else {
+            throw(env, "tunnel stopped");
+            return;
+        };
+        if let Err(e) = tunnel.rebind() {
+            throw(env, &e);
+        }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeUpdateEndpoint(
-    mut env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     handle: jlong,
     public_key: JString,
     endpoint: JString,
 ) {
-    let Some(tunnel) = tunnel_from_handle(handle) else {
-        throw(&mut env, "tunnel stopped");
-        return;
-    };
-    let (Some(public_key), Some(endpoint)) = (
-        get_string(&mut env, &public_key),
-        get_string(&mut env, &endpoint),
-    ) else {
-        throw(&mut env, "publicKey and endpoint must not be null");
-        return;
-    };
-    let key = match keys::parse_public_key_b64(&public_key) {
-        Ok(key) => key,
-        Err(e) => {
-            throw(&mut env, &e);
+    with_native_env!(unowned_env, env, {
+        let Some(tunnel) = tunnel_from_handle(handle) else {
+            throw(env, "tunnel stopped");
             return;
+        };
+        let (Some(public_key), Some(endpoint)) =
+            (get_string(env, &public_key), get_string(env, &endpoint))
+        else {
+            throw(env, "publicKey and endpoint must not be null");
+            return;
+        };
+        let key = match keys::parse_public_key_b64(&public_key) {
+            Ok(key) => key,
+            Err(e) => {
+                throw(env, &e);
+                return;
+            }
+        };
+        if let Err(e) = tunnel.update_endpoint(&key, &endpoint) {
+            throw(env, &e);
         }
-    };
-    if let Err(e) = tunnel.update_endpoint(&key, &endpoint) {
-        throw(&mut env, &e);
-    }
+    })
 }
 
 #[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeStop(
-    _env: JNIEnv,
+    mut unowned_env: EnvUnowned,
     _class: JClass,
     handle: jlong,
 ) {
-    if handle == 0 {
-        return;
-    }
-    // SAFETY: reclaims the Box created by nativeStartTunnel. The Java side
-    // zeroes its handle before calling, so this runs at most once.
-    let tunnel = unsafe { Box::from_raw(handle as *mut Tunnel) };
-    tunnel.stop();
-    drop(tunnel);
+    with_native_env!(unowned_env, _env, {
+        if handle == 0 {
+            return;
+        }
+        // SAFETY: reclaims the Box created by nativeStartTunnel. The Java side
+        // zeroes its handle before calling, so this runs at most once.
+        let tunnel = unsafe { Box::from_raw(handle as *mut Tunnel) };
+        tunnel.stop();
+        drop(tunnel);
+    })
 }
 
 /// Returns whether a `jboolean` from Java is true; kept for future natives.
 #[allow(dead_code)]
 fn jbool(b: jboolean) -> bool {
-    b != 0
+    b
 }
