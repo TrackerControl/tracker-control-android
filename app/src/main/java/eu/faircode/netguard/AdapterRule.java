@@ -412,16 +412,21 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     listResult.addAll(listAll);
                 else {
                     String queryStr = query.toString().toLowerCase().trim();
+                    // Apps sharing a UID are controlled together by the VPN (#229), so let
+                    // users explicitly search for them all with a "uid:<number>" query.
+                    boolean uidOnly = queryStr.startsWith("uid:");
+                    String uidStr = uidOnly ? queryStr.substring(4).trim() : queryStr;
                     int uid;
                     try {
-                        uid = Integer.parseInt(queryStr);
+                        uid = Integer.parseInt(uidStr);
                     } catch (NumberFormatException ignore) {
                         uid = -1;
                     }
                     for (Rule rule : listAll)
-                        if (rule.uid == uid ||
-                                rule.packageName.toLowerCase().contains(queryStr) ||
-                                (rule.name != null && rule.name.toLowerCase().contains(queryStr)))
+                        if (uidOnly ? rule.uid == uid
+                                : rule.uid == uid ||
+                                        rule.packageName.toLowerCase().contains(queryStr) ||
+                                        (rule.name != null && rule.name.toLowerCase().contains(queryStr)))
                             listResult.add(rule);
                 }
 

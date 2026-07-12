@@ -34,6 +34,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -153,6 +154,10 @@ public class DetailsActivity extends AppCompatActivity {
         toolbar.setTitle(getString(R.string.app_info));
         toolbar.setSubtitle(appName);
 
+        // Show the app's UID, and any other installed packages that share it (#229),
+        // since blocking rules are applied per-UID and can therefore affect siblings.
+        showUidInfo(appUid);
+
         // Apply window insets so content avoids status/navigation bars.
         // Use padding (not margin) so the AppBarLayout's colored background
         // extends behind the transparent status bar on API 35+.
@@ -180,6 +185,37 @@ public class DetailsActivity extends AppCompatActivity {
                     pagerInitialBottom + sysBars.bottom + extraPadding);
             return insets;
         });
+    }
+
+    /**
+     * Shows the app's UID and, if any other installed packages share it,
+     * their names. Blocking rules in TrackerControl are applied per-UID, so
+     * apps sharing a UID are controlled together (#229) — surfacing this
+     * avoids surprising users when a setting change affects siblings too.
+     *
+     * @param uid The UID of the app being shown
+     */
+    private void showUidInfo(int uid) {
+        TextView tvUid = findViewById(R.id.tvUid);
+        if (uid < 0)
+            return;
+
+        String[] packages = getPackageManager().getPackagesForUid(uid);
+        StringBuilder others = new StringBuilder();
+        if (packages != null)
+            for (String pkg : packages)
+                if (!pkg.equals(appPackageName)) {
+                    if (others.length() > 0)
+                        others.append(", ");
+                    others.append(pkg);
+                }
+
+        String text = getString(R.string.app_uid, uid);
+        if (others.length() > 0)
+            text += "\n" + getString(R.string.app_uid_shared_with, others.toString());
+
+        tvUid.setText(text);
+        tvUid.setVisibility(View.VISIBLE);
     }
 
     @Override

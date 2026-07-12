@@ -25,6 +25,19 @@
             app:titleTextColor="@android:color/white"
             app:subtitleTextColor="@android:color/white" />
 
+        <TextView
+            android:id="@+id/tvUid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:alpha="0.75"
+            android:visibility="gone"
+            tools:text="App ID (UID): 10123" />
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
