@@ -64,6 +64,7 @@ import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -421,7 +422,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                 if (query == null)
                     listResult.addAll(listAll);
                 else {
-                    String queryStr = query.toString().toLowerCase().trim();
+                    String queryStr = query.toString().toLowerCase(Locale.ROOT).trim();
                     if (queryStr.startsWith(TRACKER_SEARCH_PREFIX)) {
                         String company = queryStr.substring(TRACKER_SEARCH_PREFIX.length()).trim();
                         // Built once per filter invocation (single DB scan), not per
@@ -433,7 +434,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                             if (companies == null)
                                 continue;
                             for (String name : companies)
-                                if (name != null && name.toLowerCase().contains(company)) {
+                                if (name != null && name.toLowerCase(Locale.ROOT).contains(company)) {
                                     listResult.add(rule);
                                     break;
                                 }
