@@ -217,6 +217,7 @@ public class ServiceSinkhole extends VpnService {
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
+    private volatile SharedPreferences cachedApplyPrefs;
     private volatile boolean cachedManageSystem;
 
     private static final int NOTIFY_ENFORCING = 1;
@@ -615,6 +616,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Refresh cached preferences for shouldTrackApp()
             cachedTrackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+            cachedApplyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
             cachedManageSystem = prefs.getBoolean("manage_system", false);
 
             if (state != State.enforcing) {
@@ -2340,7 +2342,8 @@ public class ServiceSinkhole extends VpnService {
     /**
      * Check if tracking should be applied to this app (blocking/logging).
      * Returns false if:
-     * - Tracker Protection (apply) is disabled for this app
+     * - Monitoring (apply) is disabled for this app
+     * - Tracker Protection (tracker_protect) is disabled for this app
      * - It's a system app and manage_system is disabled
      */
     private boolean shouldTrackApp(int uid) {
@@ -2361,6 +2364,18 @@ public class ServiceSinkhole extends VpnService {
             }
             packageName = packages[0];
             uidToPackage.put(uid, packageName);
+        }
+
+        // Check if monitoring is enabled for this app. When monitoring is off the
+        // app is excluded from the VPN (addDisallowedApplication), but traffic from
+        // system daemons sharing this UID can still reach the tunnel, so no tracker
+        // access must be recorded for it either.
+        SharedPreferences applyPrefs = cachedApplyPrefs;
+        if (applyPrefs == null) {
+            applyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+        }
+        if (!applyPrefs.getBoolean(packageName, true)) {
+            return false;
         }
 
         // Check if tracker protection is enabled for this app
