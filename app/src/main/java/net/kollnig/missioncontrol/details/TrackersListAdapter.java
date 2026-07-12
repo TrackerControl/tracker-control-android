@@ -46,6 +46,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.work.Data;
 import androidx.work.WorkInfo;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
@@ -63,6 +65,7 @@ import java.util.Objects;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
+import eu.faircode.netguard.TempUnblockReceiver;
 import eu.faircode.netguard.Util;
 
 /**
@@ -323,6 +326,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                     boolean uncertainAllowed = isAmbiguousDeadToggle(t);
 
+                    // Temporary allowance (#216): the tracker is unblocked for a
+                    // fixed window, then automatically re-blocked.
+                    boolean tempAllowed = trackerProtectionEnabled
+                            && !BlockingMode.isMinimalMode(getContext())
+                            && TempUnblockReceiver.isTemporarilyAllowed(getContext(), mAppUid, t);
+
                     Spannable spannable;
                     boolean showStatus;
                     boolean companyBlocked;
@@ -354,7 +363,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         String status = getContext().getString(uncertainAllowed
                                 ? R.string.allowed_shared_ip
-                                : (companyBlocked ? R.string.blocked : R.string.allowed));
+                                : (tempAllowed
+                                        ? R.string.temporarily_allowed
+                                        : (companyBlocked ? R.string.blocked : R.string.allowed)));
                         int color = ContextCompat.getColor(getContext(),
                                 companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
 
@@ -436,13 +447,56 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         boolean blockedTracker = b.blockedTracker(mAppUid, t);
                         if (blockedTracker)
                             b.unblock(mAppUid, t);
-                        else
+                        else {
+                            // Re-blocking a company also ends any active temporary
+                            // allowance (#216) and cancels its pending alarm.
+                            TempUnblockReceiver.cancel(mContext, mAppUid, t);
                             b.block(mAppUid, t);
+                        }
 
                         trackersAdapter.notifyDataSetChanged();
                     });
                 else
                     holder.mCompaniesList.setOnItemClickListener(null);
+
+                if (enabled)
+                    holder.mCompaniesList.setOnItemLongClickListener((adapterView, v, i, l) -> {
+                        if (w.blockedInternet(mAppUid))
+                            return false;
+
+                        Tracker t = trackersAdapter.getItem(i);
+                        if (t == null)
+                            return false;
+
+                        // Ambiguous shared-IP trackers are already allowed at runtime.
+                        if (!BlockingMode.isStrictMode(mContext) && t.isAllowedInStandardMode())
+                            return false;
+
+                        // Only offer a temporary allowance for a company that is
+                        // currently blocked (category blocked AND company blocked)
+                        // and not already temporarily allowed.
+                        if (!b.blockedTracker(mAppUid, t))
+                            return false;
+
+                        String name = t.getName();
+                        if (name.equals(TRACKER_HOSTLIST))
+                            name = mContext.getString(R.string.tracker_hostlist);
+
+                        final Tracker tracker = t;
+                        new MaterialAlertDialogBuilder(mContext)
+                                .setTitle(name)
+                                .setMessage(mContext.getString(R.string.temp_allow_message, name))
+                                .setPositiveButton(R.string.temp_allow_action, (dialog, which) -> {
+                                    TempUnblockReceiver.allowTemporarily(mContext, mAppUid, tracker);
+                                    Toast.makeText(mContext, R.string.temp_allow_toast, Toast.LENGTH_SHORT).show();
+                                    trackersAdapter.notifyDataSetChanged();
+                                })
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .show();
+                        return true;
+                    });
+                else
+                    holder.mCompaniesList.setOnItemLongClickListener(null);
             }
 
             // cast holder to VHItem and set data

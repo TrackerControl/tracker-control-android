@@ -672,6 +672,10 @@ Sincerely,\n\n]]></string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>
     <string name="allowed_shared_ip">Allowed — shared IP; enable Strict mode to block</string>
+    <string name="temporarily_allowed">ALLOWED FOR 10 MIN</string>
+    <string name="temp_allow_action">Allow for 10 minutes</string>
+    <string name="temp_allow_message">Temporarily allow %1$s for this app? It will be blocked again automatically in 10 minutes.</string>
+    <string name="temp_allow_toast">Allowed for 10 minutes</string>
 
     <string name="setting_domain_based_blocked">Domain-based Blocking</string>
     <string name="summary_domain_based_blocking">Allows more granular blocking. Still in development.</string>

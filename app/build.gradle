@@ -170,8 +170,8 @@ android {
         minSdk 23
         targetSdk 37
         //noinspection HighAppVersionCode
-        versionCode 2026042701
-        versionName "2026.04.27"
+        versionCode 2026070801
+        versionName "2026.07.08"
 
         // Secure DNS (DoH) configuration
         buildConfigField "String", "DEFAULT_DOH_ENDPOINT", "\"https://dns.quad9.net/dns-query\""

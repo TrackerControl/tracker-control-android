@@ -275,6 +275,10 @@
         </receiver>
 
         <receiver
+            android:name="eu.faircode.netguard.TempUnblockReceiver"
+            android:exported="false" />
+
+        <receiver
             android:name="eu.faircode.netguard.WidgetAdmin"
             android:exported="true"
             android:label="@string/app_name"

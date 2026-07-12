@@ -1,0 +1,4 @@
+- New WireGuard engine: Migrated to Mullvad's gotatun for better performance and reliability.
+- Improved tracker detection: DNS-over-TCP, DNS negative caching, hostname case handling, and a locking issue.
+- Improved WireGuard reliability: More accurate connection status, fewer unnecessary reconnects on network roaming, and faster recovery after network changes.
+- Battery improvements: Batched database writes, debounced network reloads, and smarter WireGuard restart backoff.

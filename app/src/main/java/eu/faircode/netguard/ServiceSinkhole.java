@@ -217,6 +217,7 @@ public class ServiceSinkhole extends VpnService {
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
+    private volatile SharedPreferences cachedApplyPrefs;
     private volatile boolean cachedManageSystem;
 
     private static final int NOTIFY_ENFORCING = 1;
@@ -615,6 +616,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Refresh cached preferences for shouldTrackApp()
             cachedTrackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+            cachedApplyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
             cachedManageSystem = prefs.getBoolean("manage_system", false);
 
             if (state != State.enforcing) {
@@ -1559,10 +1561,13 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgConfig wgParsed = null;
         String wgVpn4 = null;
         String wgVpn6 = null;
+        List<String> wgAllowedIps = new ArrayList<>();
         List<InetAddress> dnsServers = null;
         if (wgEnabled && !TextUtils.isEmpty(wgConfigText)) {
             try {
                 wgParsed = net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+                for (net.kollnig.missioncontrol.wg.WgPeer peer : wgParsed.getPeers())
+                    wgAllowedIps.addAll(peer.getAllowedIPs());
                 for (String addr : wgParsed.getAddress()) {
                     String ip = addr.split("/")[0].trim();
                     if (ip.contains(":")) {
@@ -1617,7 +1622,16 @@ public class ServiceSinkhole extends VpnService {
         // Static routes covering all public IPv4 space, excluding private,
         // reserved, and carrier Wi-Fi calling ranges.
         // Mirrors DuckDuckGo ATP approach (Apache 2.0).
-        for (IPUtil.CIDR route : VpnRoutes.getRoutes())
+        //
+        // When WireGuard remote egress is active, its AllowedIPs are
+        // authoritative over the RFC 1918 exclusions: private ranges the
+        // profile covers (e.g. 0.0.0.0/0 or an explicit LAN subnet) are routed
+        // into the tunnel so self-hosted services behind the endpoint stay
+        // reachable (issue #593). WG off keeps today's exclusions exactly.
+        List<IPUtil.CIDR> routes = (wgEnabled && !wgAllowedIps.isEmpty())
+                ? VpnRoutes.getRoutes(wgAllowedIps)
+                : VpnRoutes.getRoutes();
+        for (IPUtil.CIDR route : routes)
             try {
                 builder.addRoute(route.address, route.prefix);
             } catch (Throwable ex) {
@@ -2340,7 +2354,8 @@ public class ServiceSinkhole extends VpnService {
     /**
      * Check if tracking should be applied to this app (blocking/logging).
      * Returns false if:
-     * - Tracker Protection (apply) is disabled for this app
+     * - Monitoring (apply) is disabled for this app
+     * - Tracker Protection (tracker_protect) is disabled for this app
      * - It's a system app and manage_system is disabled
      */
     private boolean shouldTrackApp(int uid) {
@@ -2361,6 +2376,18 @@ public class ServiceSinkhole extends VpnService {
             }
             packageName = packages[0];
             uidToPackage.put(uid, packageName);
+        }
+
+        // Check if monitoring is enabled for this app. When monitoring is off the
+        // app is excluded from the VPN (addDisallowedApplication), but traffic from
+        // system daemons sharing this UID can still reach the tunnel, so no tracker
+        // access must be recorded for it either.
+        SharedPreferences applyPrefs = cachedApplyPrefs;
+        if (applyPrefs == null) {
+            applyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+        }
+        if (!applyPrefs.getBoolean(packageName, true)) {
+            return false;
         }
 
         // Check if tracker protection is enabled for this app
@@ -2954,6 +2981,15 @@ public class ServiceSinkhole extends VpnService {
         Log.i(TAG, "Created context=" + jni_context);
         boolean pcap = prefs.getBoolean("pcap", false);
         setPcap(pcap, this);
+
+        // Re-block any temporary tracker allowances (#216) that expired while the
+        // service was down, and reschedule alarms for any still active, so a
+        // process death cannot leave a tracker permanently unblocked.
+        try {
+            TempUnblockReceiver.sweep(this);
+        } catch (Throwable ex) {
+            Log.e(TAG, "Temp-unblock sweep failed: " + ex);
+        }
 
         Util.setTheme(this);
         super.onCreate();
