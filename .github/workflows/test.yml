@@ -50,7 +50,7 @@ jobs:
         run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
 
       - name: Run unit tests
-        run: ./gradlew testGithubDebugUnitTest --offline
+        run: ./gradlew testFdroidDebugUnitTest --offline
 
       - name: Build F-Droid release APK offline
         run: ./gradlew :app:assembleFdroidRelease --offline
