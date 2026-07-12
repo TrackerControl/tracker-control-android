@@ -119,6 +119,20 @@ public class ReceiverAutostart extends BroadcastReceiver {
                     }
                 }
 
+                if (oldVersion < 2026071202) {
+                    // Collapse the three system-app prefs into one "Monitor system
+                    // apps" toggle backed by include_system_vpn. Preserve the
+                    // existing VPN-routing choice exactly and derive the other two
+                    // internal prefs (tracker detection + list visibility) from it,
+                    // so a user who routed system apps now also monitors them.
+                    boolean monitorSystem = prefs.getBoolean("include_system_vpn", false);
+                    Log.i(TAG, "Migrating system-app prefs to single toggle=" + monitorSystem);
+                    editor.putBoolean("manage_system", monitorSystem);
+                    editor.putBoolean("show_system", monitorSystem);
+                    if (!monitorSystem)
+                        editor.putBoolean("show_user", true);
+                }
+
             } else {
                 Log.i(TAG, "Initializing sdk=" + Build.VERSION.SDK_INT);
             }

@@ -687,8 +687,8 @@ Sincerely,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
 
-    <string name="setting_include_system_vpn">Include system apps</string>
-    <string name="summary_include_system_vpn">Include all system apps in the VPN and DoH.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED.</string>
+    <string name="setting_monitor_system">Monitor system apps</string>
+    <string name="summary_monitor_system">Route system apps (Play Services, carrier services, etc.) through the VPN so their trackers are detected and blocked, and show them in the app list.\n\nOff by default: excluding system apps is friendlier to battery, because their background traffic no longer wakes the VPN. Turning this on conflicts with \"Block connections without VPN\" in the Android VPN settings, which must be DISABLED.</string>
 
     <!-- Onboarding -->
     <string name="title_next">Next</string>
