@@ -108,12 +108,27 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         }
 
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
-        holder.tvBlocked.setText(nf.format(data.getTotalTrackingAttempts()));
-        holder.tvCompanies.setText(String.valueOf(data.getUniqueTrackerCompanies()));
+        String blockedText = nf.format(data.getTotalTrackingAttempts());
+        String companiesText = String.valueOf(data.getUniqueTrackerCompanies());
+        holder.tvBlocked.setText(blockedText);
+        holder.tvCompanies.setText(companiesText);
 
         // Protection percentage + bar (weights divide the bar into blocked/allowed)
         int pct = data.getBlockedPercentage();
-        holder.tvBlockedPct.setText(pct + "%");
+        String pctText = pct + "%";
+        holder.tvBlockedPct.setText(pctText);
+
+        // Group each stat number + label so TalkBack announces them as a
+        // single unit instead of two separate reads.
+        holder.llBlockedStat.setContentDescription(
+                context.getString(R.string.accessibility_stat_description, blockedText,
+                        context.getString(R.string.insights_tracking_attempts)));
+        holder.llCompaniesStat.setContentDescription(
+                context.getString(R.string.accessibility_stat_description, companiesText,
+                        context.getString(R.string.insights_tracker_companies)));
+        holder.llBlockedPctStat.setContentDescription(
+                context.getString(R.string.accessibility_stat_description, pctText,
+                        context.getString(R.string.insights_blocked)));
         LinearLayout.LayoutParams blockedLp =
                 (LinearLayout.LayoutParams) holder.vBlockedProgress.getLayoutParams();
         blockedLp.weight = pct;
@@ -280,6 +295,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         TextView tvBlockedPct;
         View vBlockedProgress;
         View vAllowedProgress;
+        View llBlockedStat;
+        View llCompaniesStat;
+        View llBlockedPctStat;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -292,6 +310,9 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             tvBlockedPct = itemView.findViewById(R.id.tvHeroBlockedPct);
             vBlockedProgress = itemView.findViewById(R.id.vBlockedProgress);
             vAllowedProgress = itemView.findViewById(R.id.vAllowedProgress);
+            llBlockedStat = itemView.findViewById(R.id.llHeroBlockedStat);
+            llCompaniesStat = itemView.findViewById(R.id.llHeroCompaniesStat);
+            llBlockedPctStat = itemView.findViewById(R.id.llHeroBlockedPctStat);
         }
     }
 }

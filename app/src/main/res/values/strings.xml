@@ -477,6 +477,10 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="toggle_internet_unavailable_description">Internet access control unavailable for %1$s</string>
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="toggle_block_category_description">Tracker blocking for category %1$s</string>
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
+    <string name="widget_toggle_enable_description">Enable tracker blocking</string>
+    <string name="widget_toggle_disable_description">Disable tracker blocking</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contacted %d company last week</item>
         <item quantity="other">contacted %d companies last week</item>

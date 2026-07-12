@@ -18,7 +18,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_rocket_colour"/>
+            android:src="@drawable/ic_rocket_colour"
+            android:importantForAccessibility="no"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -53,7 +54,8 @@
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
                     android:background="?attr/colorPrimary"
-                    android:src="@drawable/ic_rocket_white_60"/>
+                    android:src="@drawable/ic_rocket_white_60"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -75,7 +77,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="?attr/iconQueue"/>
+                    android:src="?attr/iconQueue"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,7 +100,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="?attr/iconMetered"/>
+                    android:src="?attr/iconMetered"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -120,7 +124,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/wifi_on"/>
+                    android:src="@drawable/wifi_on"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -143,7 +148,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/wifi_off"/>
+                    android:src="@drawable/wifi_off"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -165,7 +171,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/wifi_off_disabled"/>
+                    android:src="@drawable/wifi_off_disabled"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -188,7 +195,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/other_on"/>
+                    android:src="@drawable/other_on"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -211,7 +219,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/other_off"/>
+                    android:src="@drawable/other_off"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -233,7 +242,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/other_off_disabled"/>
+                    android:src="@drawable/other_off_disabled"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -256,7 +266,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/screen_on"/>
+                    android:src="@drawable/screen_on"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -303,7 +314,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/host_allowed"/>
+                    android:src="@drawable/host_allowed"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -326,7 +338,8 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="4dp"
-                    android:src="@drawable/host_blocked"/>
+                    android:src="@drawable/host_blocked"
+                    android:importantForAccessibility="no"/>
 
                 <TextView
                     android:layout_width="wrap_content"
