@@ -391,8 +391,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="static_analysis">Detectar rastreadores no código do aplicativo</string>
     <string name="failed_loading_cached_analysis">Falha ao carregar resultados do rastreador em cache. Por favor reporte isto para o desenvolvedor em hello@trackercontrol.org</string>
     <string name="msg_notifications">Toque para conceder permissões de notificação (para mensagens de erro, etc.)</string>
-    <string name="setting_include_system_vpn">Incluir apps do sistema</string>
-    <string name="summary_include_system_vpn">Inclua todos os aplicativos do sistema na VPN e no DoH.\n\nNota: \"Bloquear conexões sem VPN\" nas configurações da VPN do Android deve ser DESATIVADO.</string>
     <!-- Onboarding -->
     <string name="title_next">Avançar</string>
     <string name="title_skip">Pular</string>
