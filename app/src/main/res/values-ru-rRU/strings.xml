@@ -271,6 +271,8 @@
     <!-- App Overview -->
     <string name="tracked_app_icon">Отключить доступ в интернет для этого приложения</string>
     <string name="tracked_app_name">Название приложения</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">%d компания за неделю</item>
         <item quantity="few">%d компании за неделю</item>
@@ -500,4 +502,5 @@
     <string name="msg_invalid_url">Недопустимый URL</string>
     <string name="msg_apply_blocklists_failed">Не удалось применить hosts файлы</string>
     <string name="msg_last_update">Последнее обновление: %s</string>
+    <!-- Accessibility labels -->
 </resources>

@@ -209,6 +209,8 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <!-- App Overview -->
     <string name="tracked_app_icon">Az alkalmazás internet hozzáférésének letiltása</string>
     <string name="tracked_app_name">Alkalmazásnév</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">a legutóbbi héten %d kapcsolat a céggel</item>
         <item quantity="other">a legutóbbi héten %d kapcsolat a cégekkel</item>
@@ -353,4 +355,5 @@ Tisztelettel,\n\n]]></string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

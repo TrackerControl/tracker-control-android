@@ -228,6 +228,8 @@
     <!-- App Overview -->
     <string name="tracked_app_icon">Internetzugriff für diese Anwendung deaktivieren</string>
     <string name="tracked_app_name">Name der App</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">%d Unternehmen kontaktiert vergangene Woche</item>
         <item quantity="other">%d Unternehmen kontaktiert vergangene Woche</item>
@@ -338,4 +340,5 @@
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

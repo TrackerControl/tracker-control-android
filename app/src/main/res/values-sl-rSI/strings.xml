@@ -382,6 +382,8 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Onemogoči dostop do interneta za ta program</string>
     <string name="tracked_app_name">Ime programa</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">je prejšnji teden navezal stik z %d-im podjetjem</item>
         <item quantity="two">je prejšnji teden navezal stik z %d-mi podjetji</item>
@@ -617,4 +619,5 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_invalid_url">Neveljaven URL</string>
     <string name="msg_apply_blocklists_failed">Uporaba datotek z gostitelji je spodletela.</string>
     <string name="msg_last_update">Zadnja posodobitev: %s</string>
+    <!-- Accessibility labels -->
 </resources>

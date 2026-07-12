@@ -114,6 +114,8 @@
     <string name="title_notify">通知網際網路存取嘗試</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">關閉這個 app 的網際網路連線</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <string name="menu_csv">匯出為 CSV</string>
     <string name="export_failed">匯出失敗</string>
     <string name="exported">已匯出到儲存空間！</string>
@@ -161,4 +163,5 @@
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

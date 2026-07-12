@@ -3,9 +3,12 @@
     <!-- Secure DNS (DoH) -->
     <!-- Block DNS-over-TLS (DoT) -->
     <!-- App Overview -->
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <!-- App Details -->
     <!-- Actions -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>
