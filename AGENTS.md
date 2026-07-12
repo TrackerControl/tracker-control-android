@@ -106,6 +106,16 @@ Three product flavours — **github**, **fdroid**, **play** — differ only in t
 update-check API; **github** is the normal local dev flavour. Debug builds install
 side-by-side (`applicationIdSuffix ".test"`).
 
+**Connected-device testing:** Always build and install the **github debug**
+variant. Update the existing installation in place with `adb install -r` so its
+app data, preferences, VPN consent, and test state are preserved. Do not uninstall
+the app or run `pm clear` unless the user explicitly requests a clean install.
+
+```bash
+./gradlew assembleGithubDebug
+adb install -r app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
+```
+
 ```bash
 # From the repo root. Use ./gradlew (the wrapper).
 
