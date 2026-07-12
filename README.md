@@ -133,11 +133,10 @@ In combination with F-Droid, this repository uses automated builds and follows a
 
 You need:
 - Android Studio (with the Android SDK and build tools)
-- Android NDK (any recent version)
-- Rust via [rustup](https://rustup.rs) with the Android targets, for the WireGuard engine ([gotatun](https://github.com/mullvad/gotatun), built from source in `wgbridge-rs/`):
+- Android NDK 27.2.12479018 (r27c)
+- Rust via [rustup](https://rustup.rs), for the WireGuard engine ([gotatun](https://github.com/mullvad/gotatun), built from source in `wgbridge-rs/`). The compiler, Android targets, and `cargo-ndk` version are pinned; install them and pre-fetch locked crates with:
   ```bash
-  rustup target add armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
-  cargo install cargo-ndk
+  ./scripts/setup_rust_android.sh
   ```
 
 Build from within Android Studio, or use the provided gradle wrapper — see the [Android developer documentation](https://developer.android.com/studio/build/building-cmdline). If you find any problems with these instructions, please file an issue.
