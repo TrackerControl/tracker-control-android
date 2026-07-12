@@ -1559,10 +1559,13 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgConfig wgParsed = null;
         String wgVpn4 = null;
         String wgVpn6 = null;
+        List<String> wgAllowedIps = new ArrayList<>();
         List<InetAddress> dnsServers = null;
         if (wgEnabled && !TextUtils.isEmpty(wgConfigText)) {
             try {
                 wgParsed = net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+                for (net.kollnig.missioncontrol.wg.WgPeer peer : wgParsed.getPeers())
+                    wgAllowedIps.addAll(peer.getAllowedIPs());
                 for (String addr : wgParsed.getAddress()) {
                     String ip = addr.split("/")[0].trim();
                     if (ip.contains(":")) {
@@ -1617,7 +1620,16 @@ public class ServiceSinkhole extends VpnService {
         // Static routes covering all public IPv4 space, excluding private,
         // reserved, and carrier Wi-Fi calling ranges.
         // Mirrors DuckDuckGo ATP approach (Apache 2.0).
-        for (IPUtil.CIDR route : VpnRoutes.getRoutes())
+        //
+        // When WireGuard remote egress is active, its AllowedIPs are
+        // authoritative over the RFC 1918 exclusions: private ranges the
+        // profile covers (e.g. 0.0.0.0/0 or an explicit LAN subnet) are routed
+        // into the tunnel so self-hosted services behind the endpoint stay
+        // reachable (issue #593). WG off keeps today's exclusions exactly.
+        List<IPUtil.CIDR> routes = (wgEnabled && !wgAllowedIps.isEmpty())
+                ? VpnRoutes.getRoutes(wgAllowedIps)
+                : VpnRoutes.getRoutes();
+        for (IPUtil.CIDR route : routes)
             try {
                 builder.addRoute(route.address, route.prefix);
             } catch (Throwable ex) {
