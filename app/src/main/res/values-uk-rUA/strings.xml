@@ -377,15 +377,16 @@
     <string name="title_log_port">Порт %1$d</string>
     <string name="title_log_copy">Копіювати</string>
     <string-array name="blockingModeNames">
-        <item>@string/blocking_mode_minimal</item>
-        <item>@string/blocking_mode_standard</item>
-        <item>@string/blocking_mode_strict</item>
+        <item>@string/режим_блокування_мінімальний</item>
+        <item>@string/режим_блокування_стандартний</item>
+        <item>@string/режим_блокування_суворий</item>
     </string-array>
     <!-- App Overview -->
     <string name="tracked_app_icon">Вимкнути доступ до Інтернету для цієї програми</string>
     <string name="tracked_app_name">Назва програми</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">звернувся до компанії %d минулого тижня</item>
         <item quantity="few">звернувся до %d компаній минулого тижня</item>
