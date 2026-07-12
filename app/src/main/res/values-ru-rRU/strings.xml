@@ -412,8 +412,6 @@
     <string name="static_analysis">Обнаружить трекеры в коде приложения</string>
     <string name="failed_loading_cached_analysis">Не удалось загрузить результаты кэшированного трекера. Пожалуйста, сообщите об этом разработчику по адресу hello@trackercontrol.org</string>
     <string name="msg_notifications">Нажмите, чтобы предоставить доступ к уведомлениям (для сообщений об ошибках и т.д.)</string>
-    <string name="setting_include_system_vpn">Включить системные приложения</string>
-    <string name="summary_include_system_vpn">Включите все системные приложения в VPN и DoH.\n\nПримечание: «Блокировать соединения без VPN» в настройках Android VPN должно быть ОТКЛЮЧЕННО.</string>
     <!-- Onboarding -->
     <string name="title_next">Далее</string>
     <string name="title_skip">Пропустить</string>
