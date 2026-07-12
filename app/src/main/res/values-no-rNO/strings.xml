@@ -3,7 +3,7 @@
     <string name="app_description">TrackerControl lar brukere overvåke og kontrollere den utbredte, pågående og skjulte innsamlingen av bruksdata i mobilapplikasjoner (\"sporing\").</string>
     <string name="app_android">TrackerControl krever Android 5.1 eller nyere</string>
     <string name="app_xposed">Xposed forårsaker for mange krasjer, noe som kan føre til at TrackerControl blir fjernet fra Google Play. TrackerControl støttes derfor ikke mens Xposed er installert</string>
-    <string name="app_eula" formatted="false">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
+    <string name="app_eula">Bruken av denne appen er på eget ansvar. Ingen app kan tilby 100% beskyttelse mot sporing.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Personvernerklæring</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Om informasjonskapsler</a></string>
     <string name="channel_foreground">Kjørende tjenester</string>
     <string name="channel_notify">Generelle varsler</string>
@@ -206,6 +206,8 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <!-- App Overview -->
     <string name="tracked_app_icon">Deaktiver Internett-tilgang for denne applikasjonen</string>
     <string name="tracked_app_name">Applikasjonsnavn</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">tok kontakt med %d firma i forrige uke</item>
         <item quantity="other">tok kontakt med %d firma forrige uke</item>
@@ -350,4 +352,5 @@ Vennlig hilsen,\n\n]]></string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

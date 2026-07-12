@@ -80,17 +80,22 @@ public class BlockingMode {
     }
 
     /**
-     * Minimal mode normally forces tracker protection on for apps that are in
-     * the VPN route. Browsers are the exception: they stay routed for VPN /
-     * WireGuard privacy, but app-level tracker blocking defaults off because
-     * browser-native blocking is usually more precise.
+     * Tracker protection defaults on for ordinary apps and off for browsers,
+     * where browser-native blocking is usually more precise. An explicit
+     * per-package value always wins, including in Minimal mode, so bulk
+     * include/exclude actions have the behavior promised by the settings UI.
      */
     public static boolean isTrackerProtectionEnabled(Context c,
             SharedPreferences trackerProtectPrefs,
             String packageName) {
-        if (isBrowserApp(c, packageName))
-            return trackerProtectPrefs.getBoolean(packageName, false);
-        return isMinimalMode(c) || trackerProtectPrefs.getBoolean(packageName, true);
+        Boolean configured = trackerProtectPrefs.contains(packageName)
+                ? trackerProtectPrefs.getBoolean(packageName, true)
+                : null;
+        return resolveTrackerProtection(isBrowserApp(c, packageName), configured);
+    }
+
+    static boolean resolveTrackerProtection(boolean browser, Boolean configured) {
+        return configured == null ? !browser : configured;
     }
 
     /**

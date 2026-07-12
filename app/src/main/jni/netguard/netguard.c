@@ -29,8 +29,11 @@ char socks5_addr[INET6_ADDRSTRLEN + 1];
 int socks5_port = 0;
 char socks5_username[127 + 1];
 char socks5_password[127 + 1];
-_Atomic int wg_enabled = 0;
-_Atomic int wg_outbound_fd = -1;
+static int wg_outbound_fd = -1;
+// Guards the complete outbound descriptor lifetime: publish, check+write,
+// detach, and close. The descriptor is non-blocking, so writers hold this only
+// for one bounded socket operation.
+static pthread_mutex_t wg_outbound_lock = PTHREAD_MUTEX_INITIALIZER;
 // Set while the user wants WireGuard egress, independently of whether the
 // tunnel is currently up. When required but not enabled (restart window,
 // failed start), ip.c drops hijack-eligible traffic instead of forwarding
@@ -146,8 +149,16 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
     socks5_port = 0;
     *socks5_username = 0;
     *socks5_password = 0;
-    atomic_store_explicit(&wg_enabled, 0, memory_order_release);
-    atomic_store_explicit(&wg_outbound_fd, -1, memory_order_release);
+    if (pthread_mutex_lock(&wg_outbound_lock))
+        log_android(ANDROID_LOG_ERROR, "wg outbound lock failed during init");
+    else {
+        int fd = wg_outbound_fd;
+        wg_outbound_fd = -1;
+        if (fd >= 0)
+            close(fd);
+        if (pthread_mutex_unlock(&wg_outbound_lock))
+            log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed during init");
+    }
     atomic_store_explicit(&wg_required, 0, memory_order_release);
     pcap_file = NULL;
 
@@ -370,16 +381,12 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1sni(JNIEnv *env, jobject instance
 }
 
 // Allocate a SOCK_DGRAM socketpair: the C side keeps the write end (sv[0])
-// in wg_outbound_fd and atomically sets wg_enabled=1. The read end (sv[1]) is
+// in wg_outbound_fd. The read end (sv[1]) is
 // returned to Java, which passes it to Wgbridge.startTunnel so the WireGuard
 // engine (gotatun) can pull outbound IP packets. SOCK_DGRAM preserves
 // IP-packet boundaries.
 JNIEXPORT jint JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, jobject instance) {
-    if (atomic_load_explicit(&wg_enabled, memory_order_acquire)) {
-        log_android(ANDROID_LOG_WARN, "WireGuard already started");
-        return -1;
-    }
     int sv[2];
     if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sv) < 0) {
         log_android(ANDROID_LOG_ERROR, "wg socketpair errno %d: %s", errno, strerror(errno));
@@ -388,12 +395,56 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, job
     set_wg_socket_buffer(sv[0], SO_SNDBUF, "tx snd");
     set_wg_socket_buffer(sv[1], SO_RCVBUF, "rx rcv");
     int flags = fcntl(sv[0], F_GETFL, 0);
-    if (flags >= 0)
-        fcntl(sv[0], F_SETFL, flags | O_NONBLOCK);
-    atomic_store_explicit(&wg_outbound_fd, sv[0], memory_order_release);
-    atomic_store_explicit(&wg_enabled, 1, memory_order_release);
+    if (flags < 0 || fcntl(sv[0], F_SETFL, flags | O_NONBLOCK) < 0) {
+        log_android(ANDROID_LOG_ERROR, "wg tx O_NONBLOCK failed errno %d: %s",
+                    errno, strerror(errno));
+        close(sv[0]);
+        close(sv[1]);
+        return -1;
+    }
+
+    if (pthread_mutex_lock(&wg_outbound_lock)) {
+        log_android(ANDROID_LOG_ERROR, "wg outbound lock failed during start");
+        close(sv[0]);
+        close(sv[1]);
+        return -1;
+    }
+    if (wg_outbound_fd >= 0) {
+        pthread_mutex_unlock(&wg_outbound_lock);
+        close(sv[0]);
+        close(sv[1]);
+        log_android(ANDROID_LOG_WARN, "WireGuard already started");
+        return -1;
+    }
+    wg_outbound_fd = sv[0];
+    if (pthread_mutex_unlock(&wg_outbound_lock))
+        log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed during start");
     log_android(ANDROID_LOG_WARN, "WireGuard egress enabled tx=%d rx=%d", sv[0], sv[1]);
     return sv[1];
+}
+
+int write_wireguard_packet(const void *packet, size_t length,
+                           ssize_t *written, int *write_errno) {
+    *written = -1;
+    *write_errno = 0;
+
+    if (pthread_mutex_lock(&wg_outbound_lock)) {
+        // Claim and drop the packet: falling through could leak it directly.
+        *write_errno = EIO;
+        return 1;
+    }
+
+    if (wg_outbound_fd < 0) {
+        pthread_mutex_unlock(&wg_outbound_lock);
+        return 0;
+    }
+
+    *written = write(wg_outbound_fd, packet, length);
+    if (*written < 0)
+        *write_errno = errno;
+    if (pthread_mutex_unlock(&wg_outbound_lock))
+        log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed after write");
+    return 1;
 }
 
 JNIEXPORT void JNICALL
@@ -404,12 +455,19 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1required(JNIEnv *env, 
 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1stop(JNIEnv *env, jobject instance) {
-    atomic_store_explicit(&wg_enabled, 0, memory_order_release);
-    int fd = atomic_exchange_explicit(&wg_outbound_fd, -1, memory_order_acq_rel);
+    if (pthread_mutex_lock(&wg_outbound_lock)) {
+        // Do not close without the lock: an in-flight writer may own the fd.
+        log_android(ANDROID_LOG_ERROR, "wg outbound lock failed during stop");
+        return;
+    }
+    int fd = wg_outbound_fd;
+    wg_outbound_fd = -1;
     if (fd >= 0) {
         close(fd);
         log_android(ANDROID_LOG_WARN, "WireGuard egress disabled, closed tx=%d", fd);
     }
+    if (pthread_mutex_unlock(&wg_outbound_lock))
+        log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed during stop");
 }
 
 JNIEXPORT void JNICALL
@@ -476,10 +534,10 @@ Java_eu_faircode_netguard_Util_is_1numeric_1address(JNIEnv *env, jclass type, js
     return numeric;
 }
 
-void report_exit(const struct arguments *args, const char *fmt, ...) {
+void report_exit(const struct arguments *args, int error, const char *fmt, ...) {
     jclass cls = (*args->env)->GetObjectClass(args->env, args->instance);
     ng_add_alloc(cls, "cls");
-    jmethodID mid = jniGetMethodID(args->env, cls, "nativeExit", "(Ljava/lang/String;)V");
+    jmethodID mid = jniGetMethodID(args->env, cls, "nativeExit", "(ILjava/lang/String;)V");
 
     jstring jreason = NULL;
     if (fmt != NULL) {
@@ -492,7 +550,7 @@ void report_exit(const struct arguments *args, const char *fmt, ...) {
         va_end(argptr);
     }
 
-    (*args->env)->CallVoidMethod(args->env, args->instance, mid, jreason);
+    (*args->env)->CallVoidMethod(args->env, args->instance, mid, error, jreason);
     jniCheckException(args->env);
 
     if (jreason != NULL) {

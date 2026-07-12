@@ -44,6 +44,13 @@ object WgEgress {
     private const val RESTART_BACKOFF_MAX_MS = 5 * 60_000L
 
     @Volatile private var tunnel: WgTunnel? = null
+    // Monotonically identifies the tunnel instance published in [tunnel].
+    // Recovery runs off-thread and may finish after startOrUpdate has replaced
+    // that instance, so object identity alone is not enough to associate its
+    // result with the lifecycle that launched it. AtomicLong also makes the
+    // read/modify/write safe across the VPN, monitor, and rebind threads.
+    private val tunnelGeneration = java.util.concurrent.atomic.AtomicLong(0)
+    private val tunnelLifecycleLock = Any()
     @Volatile private var lastError: String? = null
     @Volatile private var verificationGeneration: Long = 0
     @Volatile private var currentConfig: String? = null
@@ -66,13 +73,28 @@ object WgEgress {
     // init on paths that never scheduled anything (e.g. plain-JUnit-tested
     // no-tunnel callers that never touch the main-thread Looper).
     @Volatile private var restartScheduled: Boolean = false
+    @Volatile private var pendingRestartTunnel: WgTunnel? = null
+    @Volatile private var pendingRestartTunnelGeneration: Long = -1
     private val pendingRestartRunnable = Runnable {
         restartScheduled = false
         // If forceRestartPending was cleared while this was queued, the tunnel
         // was already (re)started by another path (e.g. a network-change
         // reload consumed the pending restart in startOrUpdate) — firing now
         // would kick a redundant restart of an already-healthy tunnel.
-        if (forceRestartPending) requestReloadCb?.run()
+        synchronized(tunnelLifecycleLock) {
+            val expected = TunnelSnapshot(
+                pendingRestartTunnel ?: return@synchronized,
+                pendingRestartTunnelGeneration
+            )
+            // Keep validation and callback dispatch atomic with publication.
+            // The callback only posts the service reload; if that ever changes
+            // to synchronously start the tunnel, JVM monitors are re-entrant.
+            if (forceRestartPending && isCurrentLocked(expected)) {
+                pendingRestartTunnel = null
+                pendingRestartTunnelGeneration = -1
+                requestReloadCb?.run()
+            }
+        }
     }
 
     // Single-thread executor for network-change rebinds: bounds the thread
@@ -216,19 +238,18 @@ object WgEgress {
             }
         }
 
-        try {
-            tunnel = Wgbridge.startTunnel(
+        val startedTunnel = try {
+            Wgbridge.startTunnel(
                 resolved.toUapi(keepaliveEnabled), rxFd, desiredFd, mtu, protector, logger, dnsRecorder
             )
         } catch (e: Throwable) {
             lastError = "WireGuard tunnel failed to start: ${e.message ?: e.javaClass.simpleName}"
             Log.e(TAG, "Wgbridge.startTunnel failed", e)
-            closeRawFd(rxFd)
             stopSocketpair()
             notifyStateChanged()
             return false
         } finally {
-            if (tunnel != null) closeRawFd(rxFd)
+            closeRawFd(rxFd)
         }
 
         currentConfig = configText
@@ -236,6 +257,12 @@ object WgEgress {
         currentTunPfd = vpnFd
         currentInteractive = interactive
         currentKeepaliveAlwaysOn = keepaliveAlwaysOn
+        synchronized(tunnelLifecycleLock) {
+            tunnelGeneration.incrementAndGet()
+            // Volatile publication happens only after all companion state has
+            // been installed above.
+            tunnel = startedTunnel
+        }
         Log.i(TAG, "WG up: tunFd=$desiredFd mtu=$mtu peers=${resolved.peers.size}")
         notifyStateChanged()
         scheduleFreshHandshakeNotificationCheck()
@@ -244,18 +271,31 @@ object WgEgress {
     }
 
     private fun startMonitor() {
+        val expected = captureTunnel() ?: return
+        startMonitor(expected)
+    }
+
+    private fun startMonitor(expected: TunnelSnapshot) {
+        if (!isCurrent(expected)) return
         synchronized(monitorLock) {
+            if (!isCurrent(expected)) return
             monitor?.stop()
             monitor = WgConnectivityMonitor(
-                statsProvider = { statsOrNull() },
-                prod = { try { tunnel?.sendKeepalive() } catch (e: Throwable) { Log.w(TAG, "prod keepalive threw", e) } },
-                onBroken = { onMonitorBroken() },
-                onConnected = { notifyStateChanged() },
+                statsProvider = { statsOrNull(expected) },
+                prod = {
+                    if (isCurrent(expected)) try {
+                        expected.tunnel.sendKeepalive()
+                    } catch (e: Throwable) {
+                        Log.w(TAG, "prod keepalive threw", e)
+                    }
+                },
+                onBroken = { if (isCurrent(expected)) onMonitorBroken(expected) },
+                onConnected = { if (isCurrent(expected)) notifyStateChanged() },
                 // Reset the restart backoff only on observed return traffic:
                 // a fresh handshake shortly after a restart is exactly the
                 // signal a handshake-passes-but-data-drops failure loop also
                 // produces, so resetting on it would defeat the backoff.
-                onRxAdvanced = { restartAttempts = 0 }
+                onRxAdvanced = { if (isCurrent(expected)) restartAttempts = 0 }
             ).also { it.start() }
         }
     }
@@ -267,8 +307,8 @@ object WgEgress {
         }
     }
 
-    private fun onMonitorBroken() {
-        if (tunnel == null) return
+    private fun onMonitorBroken(expected: TunnelSnapshot) {
+        if (!isCurrent(expected)) return
         // A full restart is already queued; it will rebind everything anyway.
         if (forceRestartPending) return
 
@@ -277,28 +317,49 @@ object WgEgress {
         // IP change) without redoing the handshake or dropping packets.
         // Escalate to a full restart if a recent cheap recovery didn't stick.
         val now = now()
-        if (now - lastCheapRecoveryMs > CHEAP_RECOVERY_ESCALATION_MS && tryCheapRecovery()) {
-            lastCheapRecoveryMs = now
-            Log.w(TAG, "connectivity monitor: tunnel broken; rebound sockets, watching")
-            startMonitor()
-            return
+        if (now - lastCheapRecoveryMs > CHEAP_RECOVERY_ESCALATION_MS) {
+            when (tryCheapRecovery(expected)) {
+                RecoveryResult.STALE -> return
+                RecoveryResult.SUCCEEDED -> {
+                    if (!isCurrent(expected)) return
+                    lastCheapRecoveryMs = now
+                    Log.w(TAG, "connectivity monitor: tunnel broken; rebound sockets, watching")
+                    startMonitor(expected)
+                    return
+                }
+                RecoveryResult.FAILED -> Unit
+            }
         }
 
-        requestFullRestart("connectivity monitor: tunnel still broken after cheap recovery", notify = true)
+        requestFullRestart(
+            "connectivity monitor: tunnel still broken after cheap recovery",
+            notify = true,
+            expected = expected
+        )
     }
 
-    private fun requestFullRestart(reason: String, notify: Boolean) {
-        val attempt = restartAttempts++
-        val delay = if (attempt == 0) 0L
-        else minOf(RESTART_BACKOFF_MAX_MS, RESTART_BACKOFF_BASE_MS shl (attempt - 1).coerceAtMost(10))
+    private fun requestFullRestart(reason: String, notify: Boolean, expected: TunnelSnapshot) {
+        val attempt: Int
+        val delay: Long
+        synchronized(tunnelLifecycleLock) {
+            // This check and installation of pending state must be atomic with
+            // tunnel replacement. Otherwise a replacement can land between
+            // them and inherit forceRestartPending from an obsolete failure.
+            if (!isCurrentLocked(expected)) return
+            clearEndpointCache()
+            attempt = restartAttempts++
+            delay = if (attempt == 0) 0L
+            else minOf(RESTART_BACKOFF_MAX_MS, RESTART_BACKOFF_BASE_MS shl (attempt - 1).coerceAtMost(10))
+            forceRestartPending = true
+            pendingRestartTunnel = expected.tunnel
+            pendingRestartTunnelGeneration = expected.generation
+        }
         Log.w(TAG, "$reason; forcing restart (attempt=${attempt + 1}, delay=${delay}ms)")
-        clearEndpointCache()
-        forceRestartPending = true
         if (notify) scheduleRecoveryNotificationCheck()
         verifyHandler.removeCallbacks(pendingRestartRunnable)
         if (delay <= 0L) {
             restartScheduled = false
-            requestReloadCb?.run()
+            pendingRestartRunnable.run()
         } else {
             restartScheduled = true
             verifyHandler.postDelayed(pendingRestartRunnable, delay)
@@ -327,18 +388,23 @@ object WgEgress {
      * re-resolves peer hostnames (bypassing the endpoint cache), and prods
      * the tunnel. Runs synchronously; callers must be off the main thread.
      */
-    private fun tryCheapRecovery(): Boolean {
-        val t = tunnel ?: return false
-        val configText = currentConfig ?: return false
-        return try {
+    private fun tryCheapRecovery(expected: TunnelSnapshot): RecoveryResult {
+        synchronized(tunnelLifecycleLock) {
+            if (!isCurrentLocked(expected)) return RecoveryResult.STALE
             clearEndpointCache()
-            t.rebind()
-            refreshPeerEndpoints(t, configText)
-            t.sendKeepalive()
-            true
+        }
+        val configText = currentConfig ?: return RecoveryResult.STALE
+        return try {
+            if (!isCurrent(expected)) return RecoveryResult.STALE
+            expected.tunnel.rebind()
+            if (!isCurrent(expected)) return RecoveryResult.STALE
+            if (!refreshPeerEndpoints(expected, configText)) return RecoveryResult.STALE
+            if (!isCurrent(expected)) return RecoveryResult.STALE
+            expected.tunnel.sendKeepalive()
+            if (isCurrent(expected)) RecoveryResult.SUCCEEDED else RecoveryResult.STALE
         } catch (e: Throwable) {
             Log.w(TAG, "WG rebind/re-resolve failed", e)
-            false
+            if (isCurrent(expected)) RecoveryResult.FAILED else RecoveryResult.STALE
         }
     }
 
@@ -348,20 +414,24 @@ object WgEgress {
      * roaming across resolver views (e.g. after crossing a border) picks up
      * the new server IP.
      */
-    private fun refreshPeerEndpoints(t: WgTunnel, configText: String) {
+    private fun refreshPeerEndpoints(expected: TunnelSnapshot, configText: String): Boolean {
         val parsed = WgConfigParser.parse(configText)
         for (peer in parsed.peers) {
             val endpoint = peer.endpoint ?: continue
             try {
-                t.updateEndpoint(peer.publicKey, resolveEndpoint(endpoint))
+                val resolved = resolveEndpoint(endpoint)
+                if (!isCurrent(expected)) return false
+                expected.tunnel.updateEndpoint(peer.publicKey, resolved)
             } catch (e: Throwable) {
                 Log.w(TAG, "endpoint refresh for $endpoint failed", e)
             }
         }
+        return isCurrent(expected)
     }
 
-    private fun statsOrNull(): WgStats? = try {
-        tunnel?.stats()?.let {
+    private fun statsOrNull(expected: TunnelSnapshot? = captureTunnel()): WgStats? = try {
+        if (expected == null || !isCurrent(expected)) null
+        else expected.tunnel.stats().let {
             // hasFreshHandshake deliberately uses WireGuard's REJECT_AFTER_TIME
             // (180s): while a handshake is younger than the session lifetime,
             // "tx without rx" is not proof of breakage — an idle tunnel whose
@@ -430,10 +500,28 @@ object WgEgress {
         rebindExecutor.execute {
             try {
                 while (true) {
-                    if (tryCheapRecovery()) {
-                        lastCheapRecoveryMs = now()
-                    } else if (tunnel != null && !forceRestartPending) {
-                        requestFullRestart("WG rebind failed after network change", notify = false)
+                    val expected = captureTunnel()
+                    if (expected == null) {
+                        synchronized(rebindLock) {
+                            rebindInFlight = false
+                            rebindDirty = false
+                        }
+                        return@execute
+                    }
+                    when (tryCheapRecovery(expected)) {
+                        RecoveryResult.SUCCEEDED -> {
+                            if (isCurrent(expected)) lastCheapRecoveryMs = now()
+                        }
+                        RecoveryResult.FAILED -> {
+                            if (!forceRestartPending) {
+                                requestFullRestart(
+                                    "WG rebind failed after network change",
+                                    notify = false,
+                                    expected = expected
+                                )
+                            }
+                        }
+                        RecoveryResult.STALE -> Unit
                     }
                     synchronized(rebindLock) {
                         if (!rebindDirty) {
@@ -480,8 +568,20 @@ object WgEgress {
 
     private fun stopInternal(stopSocketpair: () -> Unit) {
         stopMonitor()
-        val t = tunnel
-        tunnel = null
+        val t = synchronized(tunnelLifecycleLock) {
+            val old = tunnel
+            // Invalidate in-flight recovery before stopping the old object.
+            // Any later success/failure result is now harmlessly stale.
+            tunnel = null
+            tunnelGeneration.incrementAndGet()
+            // stop() calls clearRecoveryState first, but a recovery failure may
+            // land between that call and this invalidation. Clear again while
+            // holding the same lock used to install pending restart state.
+            forceRestartPending = false
+            pendingRestartTunnel = null
+            pendingRestartTunnelGeneration = -1
+            old
+        }
         currentConfig = null
         currentTunFd = -1
         currentTunPfd = null
@@ -538,6 +638,8 @@ object WgEgress {
         verificationGeneration++
         recoveryNotificationGeneration++
         forceRestartPending = false
+        pendingRestartTunnel = null
+        pendingRestartTunnelGeneration = -1
         restartAttempts = 0
         // restartScheduled guards the lazy init: this runs on every no-tunnel
         // /disable path, most of which never scheduled a delayed restart and
@@ -679,4 +781,25 @@ object WgEgress {
         val endpoint: String,
         val resolvedAtMillis: Long
     )
+
+    private data class TunnelSnapshot(
+        val tunnel: WgTunnel,
+        val generation: Long
+    )
+
+    private enum class RecoveryResult { SUCCEEDED, FAILED, STALE }
+
+    private fun captureTunnel(): TunnelSnapshot? {
+        synchronized(tunnelLifecycleLock) {
+            val generation = tunnelGeneration.get()
+            val current = tunnel ?: return null
+            return TunnelSnapshot(current, generation)
+        }
+    }
+
+    private fun isCurrent(expected: TunnelSnapshot): Boolean =
+        synchronized(tunnelLifecycleLock) { isCurrentLocked(expected) }
+
+    private fun isCurrentLocked(expected: TunnelSnapshot): Boolean =
+        expected.generation == tunnelGeneration.get() && tunnel === expected.tunnel
 }

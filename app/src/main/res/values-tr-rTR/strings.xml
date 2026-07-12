@@ -208,6 +208,8 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <!-- App Overview -->
     <string name="tracked_app_icon">Bu uygulama için internet erişimini devre dışı bırak</string>
     <string name="tracked_app_name">Uygulama Adı</string>
+    <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <plurals name="n_companies_found_week">
         <item quantity="one">geçen hafta %d şirketle bağlantı kuruldu</item>
         <item quantity="other">geçen hafta %d şirketle bağlantı kuruldu</item>
@@ -352,4 +354,5 @@ Saygılarımla,\n\n]]></string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

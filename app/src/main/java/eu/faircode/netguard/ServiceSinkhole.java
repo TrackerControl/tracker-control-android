@@ -175,9 +175,9 @@ public class ServiceSinkhole extends VpnService {
 
     private static Object jni_lock = new Object();
     private static long jni_context = 0;
-    private Thread tunnelThread = null;
+    private volatile Thread tunnelThread = null;
     private ServiceSinkhole.Builder last_builder = null;
-    private ParcelFileDescriptor vpn = null;
+    private volatile ParcelFileDescriptor vpn = null;
     private boolean temporarilyStopped = false;
 
     private static long last_hosts_modified = 0;
@@ -195,6 +195,25 @@ public class ServiceSinkhole extends VpnService {
     private volatile CommandHandler commandHandler;
     private volatile LogHandler logHandler;
     private volatile StatsHandler statsHandler;
+
+    private static final int NATIVE_RECOVERY_MAX_RETRIES = 5;
+    private static final long NATIVE_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    private static final long NATIVE_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
+    private final NativeFailureRecoveryPolicy nativeRecoveryPolicy = new NativeFailureRecoveryPolicy(
+            NATIVE_RECOVERY_MAX_RETRIES,
+            NATIVE_RECOVERY_INITIAL_DELAY_MS,
+            NATIVE_RECOVERY_STABLE_WINDOW_MS);
+    private final Handler nativeRecoveryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable nativeRecoveryRunnable = () -> {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+        if (!prefs.getBoolean("enabled", false) || temporarilyStopped || vpn == null) {
+            Log.i(TAG, "Skipping native recovery because protection is no longer active");
+            return;
+        }
+
+        Log.i(TAG, "Retrying native tunnel after failure");
+        ServiceSinkhole.reload("native tunnel recovery", ServiceSinkhole.this, false);
+    };
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
@@ -478,6 +497,8 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case start:
+                        if (vpn == null)
+                            cancelNativeRecovery(true);
                         start();
                         break;
 
@@ -486,6 +507,7 @@ public class ServiceSinkhole extends VpnService {
                         break;
 
                     case stop:
+                        cancelNativeRecovery(true);
                         stop(temporarilyStopped);
                         break;
 
@@ -631,41 +653,29 @@ public class ServiceSinkhole extends VpnService {
                 } else {
                     last_builder = builder;
 
-                    boolean handover = prefs.getBoolean("handover", false);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
-                        handover = false;
-                    Log.i(TAG, "VPN restart handover=" + handover);
-
-                    if (handover) {
-                        // Attempt seamless handover
-                        ParcelFileDescriptor prev = vpn;
+                    if (vpn == null)
                         vpn = startVPN(builder);
-
-                        if (prev != null && vpn == null) {
-                            Log.w(TAG, "Handover failed");
-                            stopNative(prev);
-                            stopVPN(prev);
-                            prev = null;
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException ignored) {
-                            }
-                            vpn = startVPN(last_builder);
-                            if (vpn == null)
-                                throw new IllegalStateException("Handover failed");
+                    else {
+                        ParcelFileDescriptor previous = vpn;
+                        try {
+                            vpn = VpnReplacementSequencer.replace(
+                                    previous,
+                                    () -> startVPN(getBlockingBuilder(listRule)),
+                                    () -> startVPN(builder),
+                                    active -> vpn = active,
+                                    ServiceSinkhole.this::stopNative,
+                                    ServiceSinkhole.this::stopVPN);
+                        } catch (RuntimeException ex) {
+                            // A blocking descriptor remains active after a
+                            // replacement failure. Force the next reload down
+                            // the full replacement path instead of starting
+                            // the packet engine on that placeholder interface.
+                            last_builder = null;
+                            Log.w(TAG, ex.getMessage());
+                            if (ex instanceof VpnReplacementSequencer.EstablishFailedException)
+                                throw new StartFailedException(getString(R.string.msg_start_failed));
+                            throw ex;
                         }
-
-                        if (prev != null) {
-                            stopNative(prev);
-                            stopVPN(prev);
-                        }
-                    } else {
-                        if (vpn != null) {
-                            stopNative(vpn);
-                            stopVPN(vpn);
-                        }
-
-                        vpn = startVPN(builder);
                     }
                 }
             }
@@ -1483,6 +1493,12 @@ public class ServiceSinkhole extends VpnService {
     private ParcelFileDescriptor startVPN(Builder builder) throws SecurityException {
         try {
             ParcelFileDescriptor pfd = builder.establish();
+            if (pfd == null || !pfd.getFileDescriptor().valid()) {
+                Log.w(TAG, "VPN interface was not ready after establish");
+                if (pfd != null)
+                    stopVPN(pfd);
+                return null;
+            }
             updateUnderlyingNetworks();
             return pfd;
         } catch (SecurityException ex) {
@@ -1711,6 +1727,45 @@ public class ServiceSinkhole extends VpnService {
         return builder;
     }
 
+    private Builder getBlockingBuilder(List<Rule> listRule) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean ip6 = prefs.getBoolean("ip6", true);
+        boolean includeSystem = prefs.getBoolean("include_system_vpn", false);
+
+        Builder builder = new Builder();
+        builder.setSession(getString(R.string.app_name));
+        builder.setBlocking(true);
+        builder.setMtu(1280);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            builder.setMetered(Util.isMeteredNetwork(this));
+
+        builder.addAddress("192.0.2.1", 32);
+        builder.addRoute("0.0.0.0", 0);
+        if (ip6) {
+            builder.addAddress("2001:db8::1", 128);
+            builder.addRoute("::", 0);
+        }
+
+        try {
+            builder.addDisallowedApplication(getPackageName());
+        } catch (PackageManager.NameNotFoundException ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+
+        for (Rule rule : listRule)
+            if (!rule.apply || (!includeSystem && rule.system))
+                try {
+                    builder.addDisallowedApplication(rule.packageName);
+                } catch (PackageManager.NameNotFoundException ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                }
+
+        Intent configure = new Intent(this, ActivityMain.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, 0, configure, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setConfigureIntent(pi);
+        return builder;
+    }
+
     private boolean startNative(final ParcelFileDescriptor vpn, List<Rule> listAllowed, List<Rule> listRule) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean log = prefs.getBoolean("log", false);
@@ -1784,6 +1839,7 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Started tunnel thread");
         }
 
+        cancelNativeRecovery(false);
         return true;
     }
 
@@ -2088,21 +2144,48 @@ public class ServiceSinkhole extends VpnService {
     }
 
     // Called from native code
-    private void nativeExit(String reason) {
-        Log.w(TAG, "Native exit reason=" + reason);
+    private void nativeExit(int error, String reason) {
+        Log.w(TAG, "Native exit error=" + error + " reason=" + reason);
         if (reason != null) {
-            showErrorNotification(reason);
-
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            prefs.edit().putBoolean("enabled", false).apply();
-            WidgetMain.updateWidgets(this);
+
+            // A native exit while TC is disabled or intentionally paused is expected: stay silent.
+            if (!prefs.getBoolean("enabled", false) || temporarilyStopped)
+                return;
+
+            long delayMs = nativeRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
+            if (delayMs == NativeFailureRecoveryPolicy.NO_RETRY) {
+                // Recovery budget exhausted: TC is going down, so surface the failure to the user.
+                Log.e(TAG, "Native recovery retry budget exhausted");
+                showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                        ? getString(R.string.msg_native_fd_recovery_exhausted)
+                        : reason);
+                cancelNativeRecovery(false);
+                prefs.edit().putBoolean("enabled", false).apply();
+                WidgetMain.updateWidgets(this);
+                ServiceSinkhole.stop("native recovery exhausted", this, false);
+                return;
+            }
+
+            // Transient failure: recover transparently, without alarming the user.
+            nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
+            nativeRecoveryHandler.postDelayed(nativeRecoveryRunnable, delayMs);
+            Log.w(TAG, "Scheduled native recovery in " + delayMs + " ms");
         }
     }
 
     // Called from native code
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
-        showErrorNotification(message);
+        showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                ? getString(R.string.msg_native_fd_error)
+                : message);
+    }
+
+    private void cancelNativeRecovery(boolean resetBudget) {
+        nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
+        if (resetBudget)
+            nativeRecoveryPolicy.reset();
     }
 
     // Called from native code
@@ -3208,34 +3291,33 @@ public class ServiceSinkhole extends VpnService {
     public void onRevoke() {
         Log.i(TAG, "Revoke");
 
-        // Android does not tell us *why* onRevoke() fired. The system calls it
-        // identically for (a) a deliberate user disable from the system VPN
-        // settings, (b) another VPN app taking the single VPN slot (#331), and
-        // (c) an OS-initiated teardown/re-auth of the always-on slot — Doze,
-        // memory pressure, an OS update — which is the "always-on VPN turns
-        // itself off after 3-5 days" report (#526).
+        // Preserve the enabled state only while Android still designates us as
+        // the always-on VPN. In that case a transient system teardown should be
+        // recoverable. A deliberate revoke in system settings, or another VPN
+        // taking the slot, clears the always-on designation and must disable TC;
+        // otherwise the repeating watchdog would keep trying to reclaim the VPN.
         //
-        // We deliberately do NOT persist enabled=false here. Every genuine
-        // in-app disable path (the main toggle in ActivityMain, the quick-
-        // settings tile in ServiceTileMain, and the widget in WidgetAdmin)
-        // already sets enabled=false *itself* before stopping the service, and
-        // tearing down our own tunnel does not trigger onRevoke(). So a revoke
-        // reaching this method is always externally initiated. Clearing
-        // "enabled" here used to turn every such external teardown into a
-        // permanent self-disable with no recovery: the service is START_STICKY
-        // and onStartCommand() keys off "enabled", so once it is false every
-        // subsequent (re)start immediately stops again.
-        //
-        // Leaving "enabled" untouched lets the existing recovery mechanisms
-        // re-establish the tunnel once TC reacquires the VPN slot: the OS
-        // restarting the always-on service, ReceiverAutostart on boot, the
-        // watchdog alarm, and reopening ActivityMain (which calls start() when
-        // enabled). We do not add any retry loop here, so a second VPN that
-        // legitimately holds the slot is not thrashed — recovery is driven only
-        // by those OS-paced triggers. The remaining tradeoff is that a user who
-        // disables TC via the *system* VPN settings (rather than the in-app
-        // toggle) will see it come back on the next such trigger; the in-app
-        // toggle remains the supported way to turn TC off.
+        // Correctness in both directions depends on the OS reporting the
+        // always-on designation correctly at revoke time. On pre-Q devices the
+        // hidden setting may be unavailable, so unknown is biased toward keeping
+        // the existing state; only a positively-known false disables TC.
+        Boolean alwaysOn = null;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+                alwaysOn = isAlwaysOn();
+            else {
+                String alwaysOnPackage = Settings.Secure.getString(
+                        getContentResolver(), "always_on_vpn_app");
+                alwaysOn = (alwaysOnPackage == null) ? null : getPackageName().equals(alwaysOnPackage);
+            }
+        } catch (Throwable ex) {
+            Log.w(TAG, "Could not determine always-on VPN state", ex);
+        }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean enabled = resolveEnabledAfterRevoke(prefs.getBoolean("enabled", false), alwaysOn);
+        prefs.edit().putBoolean("enabled", enabled).apply();
+        Log.i(TAG, "Revoke always-on=" + alwaysOn + " enabled=" + enabled);
 
         // Feedback: the tunnel really did drop, so inform the user (mirrors
         // Android's own "VPN disconnected" notice). This does not disable TC.
@@ -3243,6 +3325,12 @@ public class ServiceSinkhole extends VpnService {
         WidgetMain.updateWidgets(this);
 
         super.onRevoke();
+    }
+
+    static boolean resolveEnabledAfterRevoke(boolean enabled, Boolean alwaysOn) {
+        if (alwaysOn == null)
+            return enabled;
+        return enabled && alwaysOn;
     }
 
     @Override
@@ -3260,6 +3348,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+            cancelNativeRecovery(true);
 
             commandLooper.quit();
             logLooper.quit();

@@ -59,15 +59,16 @@ fn dup_fd(fd: i32) -> io::Result<OwnedFd> {
 ///
 /// * `uapi_config`   – UAPI text produced by WgConfig.toUapi() on the Java side.
 /// * `outbound_rx_fd`– read end of a socketpair held by C; C writes raw IP
-///                     packets, gotatun reads them as its "TUN".
+///   packets, gotatun reads them as its "TUN".
 /// * `tun_write_fd`  – VpnService TUN fd; decrypted inbound IP packets are
-///                     written here.
+///   written here.
 /// * `mtu`           – payload MTU (typically 1420).
 /// * `protector`     – Java callback to VpnService.protect(int).
 /// * `logger`        – Java callback for bridge log lines.
 /// * `dns`           – Java callback for passive DNS answer recording (may be None).
 ///
 /// The supplied fds are duplicated; stop() closes only our duplicates.
+#[allow(clippy::too_many_arguments)] // Mirrors the fixed JNI startTunnel API.
 pub fn start_tunnel(
     uapi_config: &str,
     outbound_rx_fd: i32,

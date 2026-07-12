@@ -35,7 +35,7 @@
 -keep class eu.faircode.netguard.ResourceRecord { *; }
 -keep class eu.faircode.netguard.Usage { *; }
 -keep class eu.faircode.netguard.ServiceSinkhole {
-    void nativeExit(java.lang.String);
+    void nativeExit(int, java.lang.String);
     void nativeError(int, java.lang.String);
     void logPacket(eu.faircode.netguard.Packet);
     void dnsResolved(eu.faircode.netguard.ResourceRecord);
