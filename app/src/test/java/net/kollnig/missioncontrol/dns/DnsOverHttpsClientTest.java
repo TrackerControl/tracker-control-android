@@ -5,8 +5,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 
+import org.xbill.DNS.ARecord;
+import org.xbill.DNS.DClass;
+import org.xbill.DNS.Message;
+import org.xbill.DNS.Name;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.Section;
+
 import org.junit.Test;
 
+import java.net.InetAddress;
 import java.util.Arrays;
 
 public class DnsOverHttpsClientTest {
@@ -53,13 +61,30 @@ public class DnsOverHttpsClientTest {
     }
 
     @Test
-    public void restoresCallersTransactionId() {
+    public void cachedResponseRestoresIdAndSubtractsHttpAge() throws Exception {
+        Message response = new Message(0);
+        response.addRecord(new ARecord(Name.fromString("example.com."),
+                DClass.IN, 300, InetAddress.getByName("192.0.2.1")), Section.ANSWER);
         byte[] query = new byte[]{0x12, 0x34};
-        byte[] response = new byte[]{0x00, 0x00, (byte) 0x81, (byte) 0x80};
 
-        DnsOverHttpsClient.restoreTransactionId(query, response);
+        Message aged = new Message(DnsOverHttpsClient
+                .ageDnsResponse(response.toWire(), 100, query));
 
-        assertArrayEquals(new byte[]{0x12, 0x34, (byte) 0x81, (byte) 0x80}, response);
+        assertEquals(0x1234, aged.getHeader().getID());
+        Record answer = aged.getSection(Section.ANSWER).get(0);
+        assertEquals(200, answer.getTTL());
+    }
+
+    @Test
+    public void cachedResponseNeverUnderflowsTtl() throws Exception {
+        Message response = new Message(0);
+        response.addRecord(new ARecord(Name.fromString("example.com."),
+                DClass.IN, 5, InetAddress.getByName("192.0.2.1")), Section.ANSWER);
+
+        Message aged = new Message(DnsOverHttpsClient
+                .ageDnsResponse(response.toWire(), 100, new byte[]{0x00, 0x01}));
+
+        assertEquals(0, aged.getSection(Section.ANSWER).get(0).getTTL());
     }
 
     @Test

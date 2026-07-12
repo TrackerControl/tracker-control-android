@@ -364,6 +364,7 @@ dependencies {
 
     // OkHttp for DNS-over-HTTPS
     implementation 'com.squareup.okhttp3:okhttp:5.4.0'
+    implementation 'dnsjava:dnsjava:3.6.4'
 }
 
 // Fix lint error on release builds

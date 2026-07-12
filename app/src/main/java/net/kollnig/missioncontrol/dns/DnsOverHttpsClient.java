@@ -20,6 +20,11 @@ import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 
+import org.xbill.DNS.Message;
+import org.xbill.DNS.Record;
+import org.xbill.DNS.Section;
+import org.xbill.DNS.Type;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -201,7 +206,8 @@ public class DnsOverHttpsClient {
                         Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
                         continue;
                     }
-                    restoreTransactionId(dnsQuery, dnsResponse);
+                    dnsResponse = ageDnsResponse(
+                            dnsResponse, responseAgeSeconds(response), dnsQuery);
                     Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes"
                             + (response.cacheResponse() == null ? "" : " (HTTP cache hit)"));
                     return dnsResponse;
@@ -249,9 +255,49 @@ public class DnsOverHttpsClient {
         return request.build();
     }
 
-    static void restoreTransactionId(byte[] dnsQuery, byte[] dnsResponse) {
-        dnsResponse[0] = dnsQuery[0];
-        dnsResponse[1] = dnsQuery[1];
+    static long responseAgeSeconds(Response response) {
+        long residentMillis = Math.max(0,
+                System.currentTimeMillis() - response.receivedResponseAtMillis());
+        long upstreamAge = 0;
+        String age = response.header("Age");
+        if (age != null) {
+            try {
+                upstreamAge = Math.max(0, Long.parseLong(age));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        long residentAge = residentMillis / 1000L;
+        return upstreamAge > Long.MAX_VALUE - residentAge
+                ? Long.MAX_VALUE
+                : upstreamAge + residentAge;
+    }
+
+    static byte[] ageDnsResponse(byte[] dnsResponse, long ageSeconds, byte[] dnsQuery)
+            throws IOException {
+        Message message = new Message(dnsResponse);
+        message.getHeader().setID(((dnsQuery[0] & 0xFF) << 8) | (dnsQuery[1] & 0xFF));
+
+        if (ageSeconds > 0) {
+            for (int section : new int[]{Section.ANSWER, Section.AUTHORITY, Section.ADDITIONAL}) {
+                java.util.List<Record> records = message.getSection(section);
+                message.removeAllRecords(section);
+                for (Record record : records) {
+                    Record aged = record;
+                    // OPT's TTL-shaped field contains EDNS metadata, not a cache TTL.
+                    if (record.getType() != Type.OPT && record.getTTL() > 0) {
+                        long ttl = ageSeconds >= record.getTTL()
+                                ? 0
+                                : record.getTTL() - ageSeconds;
+                        aged = Record.newRecord(record.getName(), record.getType(),
+                                record.getDClass(), ttl, record.rdataToWireCanonical());
+                        if (aged == null)
+                            throw new IOException("Failed to rebuild aged DNS record");
+                    }
+                    message.addRecord(aged, section);
+                }
+            }
+        }
+        return message.toWire();
     }
 
     /**
