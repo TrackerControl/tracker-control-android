@@ -3,6 +3,7 @@ name: Test
 on:
   push:
     branches: [ master, main ]
+    tags: [ '[0-9]*' ]
   pull_request:
     branches: [ master, main ]
 
@@ -21,9 +22,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Rust
-        run: ./scripts/setup_rust_android.sh
-
       - name: Cache cargo registry and build
         uses: actions/cache@v6
         with:
@@ -33,14 +31,28 @@ jobs:
             wgbridge-rs/target
           key: cargo-${{ runner.os }}-${{ hashFiles('wgbridge-rs/Cargo.lock') }}
 
+      - name: Set up Rust
+        run: ./scripts/setup_rust_android.sh
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
+
+      - name: Prefetch Gradle dependencies
+        run: ./gradlew :app:dependencies
 
       - name: Run Rust unit tests
         run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
 
       - name: Run unit tests
-        run: ./gradlew testGithubDebugUnitTest
+        run: ./gradlew testGithubDebugUnitTest --offline
 
-      - name: Build debug APK
-        run: ./gradlew assembleGithubDebug
+      - name: Build F-Droid release APK offline
+        run: ./gradlew :app:assembleFdroidRelease --offline
+
+      - name: Verify WireGuard libraries in F-Droid APK
+        run: |
+          APK=$(find app/build/outputs/apk/fdroid -type f -name '*.apk' -print -quit)
+          test -n "$APK"
+          for ABI in armeabi-v7a arm64-v8a x86 x86_64; do
+            test "$(unzip -Z1 "$APK" "lib/$ABI/libwgbridge.so")" = "lib/$ABI/libwgbridge.so"
+          done
