@@ -119,6 +119,26 @@ public class ReceiverAutostart extends BroadcastReceiver {
                     }
                 }
 
+                if (oldVersion < 2026071202) {
+                    // Collapse the three system-app prefs into one "Monitor system
+                    // apps" toggle. Do not silently enable tracker blocking for a
+                    // user who previously routed system apps but opted out of
+                    // managing them. Very old installs need the preceding
+                    // manage_system -> include_system_vpn migration reflected here
+                    // before the editor is applied.
+                    boolean managedSystem = prefs.getBoolean("manage_system", false);
+                    boolean includedSystem = prefs.getBoolean("include_system_vpn", false);
+                    if (oldVersion < 2026010401 && managedSystem)
+                        includedSystem = true;
+                    boolean monitorSystem = includedSystem && managedSystem;
+                    Log.i(TAG, "Migrating system-app prefs to single toggle=" + monitorSystem);
+                    editor.putBoolean("include_system_vpn", monitorSystem);
+                    editor.putBoolean("manage_system", monitorSystem);
+                    editor.putBoolean("show_system", monitorSystem);
+                    if (!monitorSystem)
+                        editor.putBoolean("show_user", true);
+                }
+
             } else {
                 Log.i(TAG, "Initializing sdk=" + Build.VERSION.SDK_INT);
             }
