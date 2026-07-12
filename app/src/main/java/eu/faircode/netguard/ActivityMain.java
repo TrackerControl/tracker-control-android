@@ -981,11 +981,13 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (!showingApps)
             return super.onPrepareOptionsMenu(menu);
 
+        Menu submenu = menu.findItem(R.id.menu_filter).getSubMenu();
         if (prefs.getBoolean("manage_system", false)) {
             menu.findItem(R.id.menu_app_user).setChecked(prefs.getBoolean("show_user", true));
-            menu.findItem(R.id.menu_app_system).setChecked(prefs.getBoolean("show_system", false));
+            // Visibility follows the single "Monitor system apps" setting.
+            // Do not leave a second control here that can desynchronise it.
+            submenu.removeItem(R.id.menu_app_system);
         } else {
-            Menu submenu = menu.findItem(R.id.menu_filter).getSubMenu();
             submenu.removeItem(R.id.menu_app_user);
             submenu.removeItem(R.id.menu_app_system);
         }
@@ -1019,10 +1021,6 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (itemId == R.id.menu_app_user) {
             item.setChecked(!item.isChecked());
             prefs.edit().putBoolean("show_user", item.isChecked()).apply();
-            return true;
-        } else if (itemId == R.id.menu_app_system) {
-            item.setChecked(!item.isChecked());
-            prefs.edit().putBoolean("show_system", item.isChecked()).apply();
             return true;
         } else if (itemId == R.id.menu_app_nointernet) {
             item.setChecked(!item.isChecked());
