@@ -246,6 +246,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         ivQueue = actionView.findViewById(R.id.ivQueue);
         swEnabled = actionView.findViewById(R.id.swEnabled);
         ivMetered = actionView.findViewById(R.id.ivMetered);
+        ivQueue.setContentDescription(getString(R.string.msg_queue));
+        ivMetered.setContentDescription(getString(R.string.msg_metered));
 
         // Get daily changing title
         if (!Util.isPlayStoreInstall())

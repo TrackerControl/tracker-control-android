@@ -52,7 +52,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:alpha="0.9"
+                    android:alpha="0.95"
                     android:text="@string/insights_subtitle_7days"
                     android:textColor="@android:color/white"
                     android:textSize="13sp"
@@ -92,15 +92,18 @@
 
                 <!-- Hosts contacted -->
                 <LinearLayout
+                    android:id="@+id/llHeroBlockedStat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvHeroBlocked"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
                         android:textColor="@android:color/white"
                         android:textSize="36sp"
                         android:textStyle="bold" />
@@ -108,7 +111,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:alpha="0.85"
+                        android:alpha="0.95"
+                        android:importantForAccessibility="no"
                         android:text="@string/insights_tracking_attempts"
                         android:textColor="@android:color/white"
                         android:textSize="11sp" />
@@ -117,15 +121,18 @@
 
                 <!-- Companies count -->
                 <LinearLayout
+                    android:id="@+id/llHeroCompaniesStat"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:focusable="true"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tvHeroCompanies"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
                         android:textColor="@android:color/white"
                         android:textSize="36sp"
                         android:textStyle="bold" />
@@ -133,7 +140,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:alpha="0.85"
+                        android:alpha="0.95"
+                        android:importantForAccessibility="no"
                         android:text="@string/insights_tracker_companies"
                         android:textColor="@android:color/white"
                         android:textSize="11sp" />
@@ -142,8 +150,10 @@
 
                 <!-- Protection % -->
                 <LinearLayout
+                    android:id="@+id/llHeroBlockedPctStat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
                     android:gravity="end"
                     android:orientation="vertical">
 
@@ -152,7 +162,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:textColor="#A5D6A7"
+                        android:importantForAccessibility="no"
+                        android:textColor="#F1F8E9"
                         android:textSize="36sp"
                         android:textStyle="bold" />
 
@@ -160,7 +171,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
-                        android:alpha="0.85"
+                        android:alpha="0.95"
+                        android:importantForAccessibility="no"
                         android:text="@string/insights_blocked"
                         android:textColor="@android:color/white"
                         android:textSize="11sp" />

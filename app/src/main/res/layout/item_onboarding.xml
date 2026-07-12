@@ -18,6 +18,7 @@
             android:layout_height="120dp"
             android:layout_marginBottom="24dp"
             android:layout_gravity="start"
+            android:importantForAccessibility="no"
             android:src="@drawable/ic_rocket2"
             app:tint="?attr/colorAccent" />
 

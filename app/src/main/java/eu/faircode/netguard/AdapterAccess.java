@@ -121,10 +121,12 @@ public class AdapterAccess extends CursorAdapter {
 
         // Set values
         tvTime.setText(new SimpleDateFormat("dd HH:mm").format(time));
-        if (block < 0)
+        if (block < 0) {
             ivBlock.setImageDrawable(null);
-        else {
+            ivBlock.setContentDescription(null);
+        } else {
             ivBlock.setImageResource(block > 0 ? R.drawable.host_blocked : R.drawable.host_allowed);
+            ivBlock.setContentDescription(context.getString(block > 0 ? R.string.blocked : R.string.allowed));
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 Drawable wrap = DrawableCompat.wrap(ivBlock.getDrawable());
                 DrawableCompat.setTint(wrap, block > 0 ? colorOff : colorOn);
