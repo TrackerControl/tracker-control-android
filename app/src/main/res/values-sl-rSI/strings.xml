@@ -204,7 +204,7 @@
     <string name="msg_wg_mullvad_note">TrackerControl ustvari WireGuardov profil Mulvad.  Številka računa se shrani krajevno za bodoče profile Mulvad.  Žetoni se ne shranjujejo in in izbrisa tukajšnjega profila ne odstrani naprave iz Mullvada.</string>
     <string name="msg_wg_mullvad_generating">Ustvarjanje profila WireGuard …</string>
     <string name="msg_wg_mullvad_failed">Nastavitev Mullvada je spodletela: %s</string>
-    <string name="msg_wg_mullvad_countries_failed">Držav Mullvad ni bilo mogoče naložiti: %s</string>
+    <string name="msg_wg_mullvad_countries_failed"></string>
     <string name="vpn_status_connected">%s</string>
     <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>
@@ -384,6 +384,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tracked_app_name">Ime programa</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">je prejšnji teden navezal stik z %d-im podjetjem</item>
         <item quantity="two">je prejšnji teden navezal stik z %d-mi podjetji</item>
