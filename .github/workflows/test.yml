@@ -110,8 +110,10 @@ jobs:
       - name: Prefetch Gradle dependencies
         run: |
           ./gradlew :app:dependencies
-          # Warm the cache for the androidTest classpath (androidx.test.*)
-          # so the offline emulator run below doesn't need network access.
+          # Warm the cache for the androidTest classpath (androidx.test.*).
+          # Running the tests themselves still needs network access: the
+          # Unified Test Platform runner classpath (UTP, dagger, protobuf,
+          # etc.) is only resolved once a device is actually connected.
           ./gradlew :app:assembleFdroidDebugAndroidTest
 
       - name: Enable KVM
@@ -129,4 +131,4 @@ jobs:
           arch: x86_64
           ndk: 27.2.12479018
           profile: pixel_7
-          script: ./gradlew connectedFdroidDebugAndroidTest --offline
+          script: ./gradlew connectedFdroidDebugAndroidTest
