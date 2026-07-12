@@ -60,9 +60,12 @@ import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.TrackerList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> implements Filterable {
     private static final String TAG = "TrackerControl.Adapter";
@@ -78,6 +81,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
     private boolean wifiActive = true;
     private boolean otherActive = true;
     private boolean live = true;
+    private final Context appContext;
     private List<Rule> listAll = new ArrayList<>();
     private List<Rule> listFiltered = new ArrayList<>();
     private int iconSize;
@@ -106,6 +110,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
     public AdapterRule(Context context, View anchor) {
         this.anchor = anchor;
+        this.appContext = context.getApplicationContext();
         this.inflater = LayoutInflater.from(context);
         this.glideOptions = new RequestOptions().format(DecodeFormat.PREFER_RGB_565);
 
@@ -402,6 +407,11 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         }
     }
 
+    // Prefix that switches the search box from matching app name/package/uid to
+    // matching the tracker companies an app has been observed contacting, e.g.
+    // "tracker:gravy analytics" (#447).
+    private static final String TRACKER_SEARCH_PREFIX = "tracker:";
+
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -412,17 +422,35 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     listResult.addAll(listAll);
                 else {
                     String queryStr = query.toString().toLowerCase().trim();
-                    int uid;
-                    try {
-                        uid = Integer.parseInt(queryStr);
-                    } catch (NumberFormatException ignore) {
-                        uid = -1;
+                    if (queryStr.startsWith(TRACKER_SEARCH_PREFIX)) {
+                        String company = queryStr.substring(TRACKER_SEARCH_PREFIX.length()).trim();
+                        // Built once per filter invocation (single DB scan), not per
+                        // row, and runs on this Filter's background thread.
+                        Map<Integer, Set<String>> trackersByUid =
+                                TrackerList.getInstance(appContext).getTrackerNamesByUid();
+                        for (Rule rule : listAll) {
+                            Set<String> companies = trackersByUid.get(rule.uid);
+                            if (companies == null)
+                                continue;
+                            for (String name : companies)
+                                if (name != null && name.toLowerCase().contains(company)) {
+                                    listResult.add(rule);
+                                    break;
+                                }
+                        }
+                    } else {
+                        int uid;
+                        try {
+                            uid = Integer.parseInt(queryStr);
+                        } catch (NumberFormatException ignore) {
+                            uid = -1;
+                        }
+                        for (Rule rule : listAll)
+                            if (rule.uid == uid ||
+                                    rule.packageName.toLowerCase().contains(queryStr) ||
+                                    (rule.name != null && rule.name.toLowerCase().contains(queryStr)))
+                                listResult.add(rule);
                     }
-                    for (Rule rule : listAll)
-                        if (rule.uid == uid ||
-                                rule.packageName.toLowerCase().contains(queryStr) ||
-                                (rule.name != null && rule.name.toLowerCase().contains(queryStr)))
-                            listResult.add(rule);
                 }
 
                 FilterResults result = new FilterResults();

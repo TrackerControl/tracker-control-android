@@ -11,6 +11,7 @@
     <string name="channel_access">Access notifications</string>
 
     <string name="menu_search">Search for app</string>
+    <string name="menu_search_hint">Search app, or tracker:company</string>
     <string name="menu_filter">Filter apps</string>
     <string name="menu_app_user">Show user apps</string>
     <string name="menu_app_system">Show system apps</string>

@@ -239,6 +239,32 @@ public class TrackerList {
     }
 
     /**
+     * Retrieves the set of contacted tracker company names, per app UID (#447), so
+     * the app-list search can filter apps by "tracker:<company>". A single DB scan
+     * builds a lookup for every app at once, instead of querying per row; the
+     * caller (AdapterRule's search Filter) already runs on a background thread, so
+     * no caching is needed here.
+     *
+     * @return Map of app UID to the set of tracker company names observed for it
+     */
+    public synchronized Map<Integer, Set<String>> getTrackerNamesByUid() {
+        Map<Integer, Set<String>> trackers = new ArrayMap<>();
+
+        try (Cursor cursor = databaseHelper.getHosts()) {
+            if (cursor.moveToFirst()) {
+                do {
+                    int appUid = cursor.getInt(cursor.getColumnIndexOrThrow("uid"));
+                    String hostname = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+                    Tracker tracker = findTracker(hostname);
+                    checkTracker(trackers, appUid, tracker);
+                } while (cursor.moveToNext());
+            }
+        }
+
+        return trackers;
+    }
+
+    /**
      * Helper method to check tracker
      *
      * @param trackers Set of seen trackers

@@ -911,6 +911,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         });
 
         final SearchView searchView = (SearchView) menuSearch.getActionView();
+        // Hint at the "tracker:<company>" search prefix (#447), which filters apps
+        // by the tracker companies they have been observed contacting.
+        searchView.setQueryHint(getString(R.string.menu_search_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
