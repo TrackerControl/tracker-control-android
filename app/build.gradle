@@ -11,6 +11,16 @@ def wgbridgeAbis    = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 def wgbridgeNdkVersion = '27.2.12479018' // keep in sync with defaultConfig.ndkVersion
 def wgbridgeCargoNdkVersion = '4.1.2' // keep in sync with scripts/setup_rust_android.sh
 
+// Resolves the lint tool artifacts while networking is available so release
+// builds can subsequently run with Gradle's --offline flag (as on F-Droid).
+tasks.register('prefetchAndroidLintDependencies') {
+    description = 'Downloads the Android lint tool artifacts for a later offline build.'
+    group = 'build setup'
+    doLast {
+        configurations.named('androidLintTool').get().resolve()
+    }
+}
+
 // Resolve the NDK directory the way AGP does (local.properties, then env),
 // since modern AGP extensions no longer expose android.ndkDirectory.
 def findNdkDirectory = { ->
