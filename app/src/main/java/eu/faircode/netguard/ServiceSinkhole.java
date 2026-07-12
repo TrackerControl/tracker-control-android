@@ -2607,6 +2607,12 @@ public class ServiceSinkhole extends VpnService {
                                         statsHandler.sendEmptyMessage(interactive ? MSG_STATS_START : MSG_STATS_STOP);
                                     }
                                 });
+
+                        // On screen-off, drop idle DoH keep-alive sockets so a
+                        // server-side reset during doze can't wake the radio.
+                        if (!last_interactive)
+                            net.kollnig.missioncontrol.dns.DnsProxyServer
+                                    .getInstance(ServiceSinkhole.this).onScreenOff();
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 

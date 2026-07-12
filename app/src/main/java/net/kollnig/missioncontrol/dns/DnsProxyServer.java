@@ -166,6 +166,19 @@ public class DnsProxyServer {
     }
 
     /**
+     * Called when the screen turns off. Evicts idle keep-alive HTTPS connections
+     * so an idle pooled TLS socket can't be reset by the server mid-doze and wake
+     * the radio. In-flight requests keep their connections. The response cache is
+     * intentionally preserved — it is most valuable precisely while the screen is
+     * off. No-op when the proxy is not running.
+     */
+    public void onScreenOff() {
+        if (!running.get())
+            return;
+        DnsOverHttpsClient.evictIdleConnections();
+    }
+
+    /**
      * Check DoH enabled state and start/stop the proxy accordingly.
      * Call this from ServiceSinkhole.reload() to handle settings changes.
      */
@@ -231,7 +244,7 @@ public class DnsProxyServer {
             boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
             if (!circuitOpen) {
                 String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
                 responseData = dohClient.resolve(queryData);
             }
 
@@ -349,7 +362,7 @@ public class DnsProxyServer {
             boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
             if (!circuitOpen) {
                 String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
-                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(endpoint);
+                DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
                 responseData = dohClient.resolve(queryData);
             }
 

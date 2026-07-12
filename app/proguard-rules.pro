@@ -7,6 +7,12 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+# dnsjava also supports desktop JVM service providers and optional SLF4J
+# bindings that are absent on Android. None is used by the DoH wire parser.
+-dontwarn lombok.Generated
+-dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn sun.net.spi.nameservice.NameServiceDescriptor
+
 # Add any project specific keep options here:
 
 # If your project uses WebView with JS, uncomment the following
@@ -82,6 +88,11 @@
 #ACRA
 -keep class org.acra.** { *; }
 
+# dnsjava's InetAddressResolver SPI targets the desktop JVM and is shrunk out
+# on Android; its META-INF/services entry then dangles harmlessly.
+-dontwarn org.xbill.DNS.spi.**
+-dontwarn java.net.spi.InetAddressResolverProvider
+
 # Suppress warnings for missing annotation processor classes
 -dontwarn javax.annotation.**
 -dontwarn com.google.auto.service.**
@@ -90,4 +101,3 @@
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
 -dontwarn javax.annotation.CheckReturnValue
 -dontwarn javax.annotation.concurrent.GuardedBy
-
