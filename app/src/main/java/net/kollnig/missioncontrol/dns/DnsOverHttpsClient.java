@@ -28,6 +28,7 @@ import org.xbill.DNS.Type;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -206,8 +207,7 @@ public class DnsOverHttpsClient {
                         Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
                         continue;
                     }
-                    dnsResponse = ageDnsResponse(
-                            dnsResponse, responseAgeSeconds(response), dnsQuery);
+                    dnsResponse = finalizeResponse(dnsResponse, response, dnsQuery);
                     Log.d(TAG, "DoH response received: " + dnsResponse.length + " bytes"
                             + (response.cacheResponse() == null ? "" : " (HTTP cache hit)"));
                     return dnsResponse;
@@ -232,27 +232,53 @@ public class DnsOverHttpsClient {
         int padding = encodedQuery.indexOf('=');
         if (padding >= 0)
             encodedQuery = encodedQuery.substring(0, padding);
-        return new Request.Builder()
-                .url(endpoint)
-                .build()
-                .url()
-                .newBuilder()
+        HttpUrl base = HttpUrl.parse(endpoint);
+        if (base == null)
+            throw new IllegalArgumentException("Invalid DoH endpoint: " + endpoint);
+        return base.newBuilder()
                 .removeAllQueryParameters("dns")
                 .addQueryParameter("dns", encodedQuery)
                 .build();
     }
 
     static Request buildRequest(String endpoint, byte[] dnsQuery) {
-        byte[] normalized = normalizeTransactionId(dnsQuery);
-        HttpUrl requestUrl = buildRequestUrl(endpoint, normalized);
+        // buildRequestUrl normalizes the transaction ID internally, so pass the
+        // raw query here and only re-normalize for the POST fallback body.
+        HttpUrl requestUrl = buildRequestUrl(endpoint, dnsQuery);
         Request.Builder request = new Request.Builder()
                 .url(requestUrl)
                 .header("Accept", "application/dns-message");
         if (requestUrl.toString().length() <= MAX_GET_URL_LENGTH)
             request.get();
         else
-            request.url(endpoint).post(RequestBody.create(normalized, DNS_MESSAGE));
+            request.url(endpoint)
+                    .post(RequestBody.create(normalizeTransactionId(dnsQuery), DNS_MESSAGE));
         return request.build();
+    }
+
+    /**
+     * Restore the caller's transaction ID and, only when the HTTP response is not
+     * fresh, subtract its age from record TTLs. Fresh responses (the common path)
+     * are finished by patching the two ID bytes directly, keeping dnsjava off the
+     * hot path. If TTL aging fails to round-trip the message, the answer is still
+     * returned with its ID restored rather than dropping resolution entirely.
+     */
+    static byte[] finalizeResponse(byte[] dnsResponse, Response response, byte[] dnsQuery) {
+        long ageSeconds = responseAgeSeconds(response);
+        if (ageSeconds > 0) {
+            try {
+                return ageDnsResponse(dnsResponse, ageSeconds, dnsQuery);
+            } catch (IOException e) {
+                Log.w(TAG, "Failed to age DoH response, returning as-is: " + e.getMessage());
+            }
+        }
+        restoreTransactionId(dnsResponse, dnsQuery);
+        return dnsResponse;
+    }
+
+    static void restoreTransactionId(byte[] dnsResponse, byte[] dnsQuery) {
+        dnsResponse[0] = dnsQuery[0];
+        dnsResponse[1] = dnsQuery[1];
     }
 
     static long responseAgeSeconds(Response response) {
@@ -279,7 +305,7 @@ public class DnsOverHttpsClient {
 
         if (ageSeconds > 0) {
             for (int section : new int[]{Section.ANSWER, Section.AUTHORITY, Section.ADDITIONAL}) {
-                java.util.List<Record> records = message.getSection(section);
+                List<Record> records = message.getSection(section);
                 message.removeAllRecords(section);
                 for (Record record : records) {
                     Record aged = record;

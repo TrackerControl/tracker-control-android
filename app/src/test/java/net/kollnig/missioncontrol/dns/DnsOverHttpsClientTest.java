@@ -88,6 +88,33 @@ public class DnsOverHttpsClientTest {
     }
 
     @Test
+    public void restoreTransactionIdPatchesIdWithoutTouchingRest() {
+        byte[] response = new byte[]{0x00, 0x00, 0x01, 0x02, 0x03};
+        byte[] query = new byte[]{0x12, 0x34, (byte) 0xFF};
+
+        DnsOverHttpsClient.restoreTransactionId(response, query);
+
+        assertArrayEquals(new byte[]{0x12, 0x34, 0x01, 0x02, 0x03}, response);
+    }
+
+    @Test
+    public void freshResponseRestoresIdAndKeepsTtlUntouched() throws Exception {
+        Message response = new Message(0);
+        response.addRecord(new ARecord(Name.fromString("example.com."),
+                DClass.IN, 300, InetAddress.getByName("192.0.2.1")), Section.ANSWER);
+        byte[] wire = response.toWire();
+        byte[] query = new byte[]{0x12, 0x34};
+
+        // A fresh response (age 0) is finished by a direct byte patch, so the
+        // wire message must be identical apart from the two transaction-ID bytes.
+        DnsOverHttpsClient.restoreTransactionId(wire, query);
+
+        Message restored = new Message(wire);
+        assertEquals(0x1234, restored.getHeader().getID());
+        assertEquals(300, restored.getSection(Section.ANSWER).get(0).getTTL());
+    }
+
+    @Test
     public void smallQueryUsesCacheFriendlyGet() {
         byte[] query = new byte[12];
 

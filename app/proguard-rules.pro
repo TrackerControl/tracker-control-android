@@ -88,6 +88,11 @@
 #ACRA
 -keep class org.acra.** { *; }
 
+# dnsjava's InetAddressResolver SPI targets the desktop JVM and is shrunk out
+# on Android; its META-INF/services entry then dangles harmlessly.
+-dontwarn org.xbill.DNS.spi.**
+-dontwarn java.net.spi.InetAddressResolverProvider
+
 # Suppress warnings for missing annotation processor classes
 -dontwarn javax.annotation.**
 -dontwarn com.google.auto.service.**
