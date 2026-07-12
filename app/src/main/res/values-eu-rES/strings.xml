@@ -209,6 +209,7 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="tracked_app_name">Aplikazioaren izena</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="one">konpainia %d kontaktatu du azken astean</item>
         <item quantity="other">%d konpainia kontaktatu ditu azken astean</item>

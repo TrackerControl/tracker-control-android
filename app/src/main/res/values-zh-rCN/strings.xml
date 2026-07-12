@@ -388,6 +388,7 @@
     <string name="tracked_app_name">应用程序名称</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <plurals name="n_companies_found_week">
         <item quantity="other">上周联系了 %d 个公司</item>
     </plurals>
