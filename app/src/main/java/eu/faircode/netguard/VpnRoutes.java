@@ -30,32 +30,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * VPN routes covering all public IPv4 address space, excluding private,
- * reserved, and carrier Wi-Fi calling ranges.
- *
- * <p>The default route set (WireGuard remote egress off) is computed once and
- * cached. RFC 1918 private ranges (10/8, 172.16/12, 192.168/16) are normally
- * excluded so LAN traffic bypasses the tunnel and reaches the local network
- * directly.
- *
- * <p>When WireGuard remote egress is active, the profile's {@code AllowedIPs}
- * become authoritative: any part of an RFC 1918 range that a peer's
- * {@code AllowedIPs} covers (e.g. {@code 0.0.0.0/0} or an explicit
- * {@code 192.168.1.0/24}) is routed into the tunnel instead of being excluded,
- * so split-DNS setups that resolve self-hosted services to private addresses
- * behind the WireGuard endpoint become reachable (issue #593). Loopback,
- * link-local, multicast, CGNAT, current-network, and carrier Wi-Fi-calling
- * ranges are ALWAYS excluded regardless of AllowedIPs.
+ * IPv4 VPN routes. RFC 1918 ranges are excluded by default, but WireGuard
+ * AllowedIPs can route them through the tunnel. Reserved and carrier ranges
+ * remain excluded.
  */
 public class VpnRoutes {
     private static final String TAG = "TrackerControl.VpnRoutes";
     private static volatile List<IPUtil.CIDR> cachedRoutes;
-
-    // Single-entry cache for the WireGuard-active case: the config rarely
-    // changes but getBuilder() runs on every VPN rebuild, so caching by the
-    // normalized AllowedIPs signature avoids recomputing the complement.
-    private static volatile String cachedAllowedKey;
-    private static volatile List<IPUtil.CIDR> cachedAllowedRoutes;
 
     // Ranges ALWAYS excluded from VPN routing, regardless of WireGuard
     // AllowedIPs (must not overlap each other or RFC1918_RANGES).
@@ -124,20 +105,7 @@ public class VpnRoutes {
         List<IPUtil.CIDR> allowedV4 = parseV4AllowedIps(wgAllowedIps);
         if (allowedV4.isEmpty())
             return getRoutes(); // No IPv4 AllowedIPs — identical to WG-off default
-
-        String key = allowedKey(allowedV4);
-        List<IPUtil.CIDR> cached = cachedAllowedRoutes;
-        if (cached != null && key.equals(cachedAllowedKey))
-            return cached;
-
-        synchronized (VpnRoutes.class) {
-            if (cachedAllowedRoutes != null && key.equals(cachedAllowedKey))
-                return cachedAllowedRoutes;
-            List<IPUtil.CIDR> routes = computeRoutes(allowedV4);
-            cachedAllowedRoutes = routes;
-            cachedAllowedKey = key;
-            return routes;
-        }
+        return computeRoutes(allowedV4);
     }
 
     private static List<IPUtil.CIDR> computeRoutes(List<IPUtil.CIDR> allowedV4) {
@@ -242,15 +210,6 @@ public class VpnRoutes {
             }
         }
         return allowedV4;
-    }
-
-    /** Stable signature of an AllowedIPs set for single-entry cache keying. */
-    private static String allowedKey(List<IPUtil.CIDR> allowedV4) {
-        List<String> keys = new ArrayList<>(allowedV4.size());
-        for (IPUtil.CIDR cidr : allowedV4)
-            keys.add(inetToLong(cidr.getStart()) + "/" + cidr.prefix);
-        Collections.sort(keys);
-        return String.join(",", keys);
     }
 
     private static long[] toInterval(String ip, int prefix) {

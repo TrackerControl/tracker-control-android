@@ -1617,15 +1617,8 @@ public class ServiceSinkhole extends VpnService {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
 
-        // Static routes covering all public IPv4 space, excluding private,
-        // reserved, and carrier Wi-Fi calling ranges.
-        // Mirrors DuckDuckGo ATP approach (Apache 2.0).
-        //
-        // When WireGuard remote egress is active, its AllowedIPs are
-        // authoritative over the RFC 1918 exclusions: private ranges the
-        // profile covers (e.g. 0.0.0.0/0 or an explicit LAN subnet) are routed
-        // into the tunnel so self-hosted services behind the endpoint stay
-        // reachable (issue #593). WG off keeps today's exclusions exactly.
+        // WireGuard AllowedIPs can opt RFC 1918 ranges into the VPN routes;
+        // without WireGuard, private and reserved ranges remain excluded.
         List<IPUtil.CIDR> routes = (wgEnabled && !wgAllowedIps.isEmpty())
                 ? VpnRoutes.getRoutes(wgAllowedIps)
                 : VpnRoutes.getRoutes();
