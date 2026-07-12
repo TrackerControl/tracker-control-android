@@ -23,7 +23,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Install Android native build tools
-        run: "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "cmake;3.22.1" "ndk;27.2.12479018"
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "cmake;3.22.1" \
+            "ndk;27.2.12479018"
 
       - name: Cache cargo registry and build
         uses: actions/cache@v6
