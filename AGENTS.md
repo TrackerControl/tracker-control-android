@@ -51,18 +51,18 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
     `onRevoke`), MTU/routes, native start/stop. **This is the load-bearing file;
     most connectivity/battery/lifecycle issues trace here.**
   - `DatabaseHelper.java` — the `dns`, `access`, and `log` tables. Note the DNS
-    history is **UID-global** (`getQAName` ignores `uid`) — see TODO.md and §5 C-3.
+    history is **UID-global** (`getQAName` ignores `uid`) — see §4 and §5.
   - `ActivityMain.java`, `ActivitySettings.java`, `ActivityLog.java`,
     `ActivityDns.java` — main UI, settings, raw traffic log, DNS log.
   - `WidgetAdmin.java` — pause/resume alarms (`INTENT_ON`). `ServiceTileMain.java`
     — Quick-Settings tile. `ReceiverAutostart.java` — boot/always-on restart.
-  - `VpnRoutes.java` — the tun route set (RFC1918/CGNAT excludes; see TODO.md).
+  - `VpnRoutes.java` — the tun route set (RFC1918/CGNAT excludes).
   - Policy helpers: `InteractiveStatePolicy`, `NativeFailureRecoveryPolicy`,
     `NetworkReloadPolicy`, `VpnReplacementSequencer`.
 - **Tracker detection + TC UI** — `net.kollnig.missioncontrol`:
   - `data/TrackerList.java` — loads the blocklists into the static
     `hostnameToTracker` map; the heart of detection. Blocking-mode list selection
-    lives here (`loadTrackers`). Watch memory (§5 WI-9).
+    lives here (`loadTrackers`). Watch memory.
   - `data/InsightsData*.java`, `InsightsActivity.kt` — the insights/summary UI.
   - `analysis/` — static tracker-library detection in app code (dexlib2 signatures).
   - `details/`, `DetailsActivity.java`, `TrackersListAdapter` — per-app tracker
@@ -70,7 +70,7 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
   - `dns/DnsOverHttpsClient.java`, `dns/DnsProxyServer.java` — Secure DNS (DoH).
   - `wg/` (Kotlin) — WireGuard config/egress: `WgConfig.kt` (wg-quick → UAPI),
     `WgEgress.kt` (lifecycle, hostname re-resolution), `WgConnectivityMonitor.kt`
-    (the 1 s stats poll — battery-relevant, §5 WI-10).
+    (the 1 s stats poll — battery-relevant).
   - `wgbridge/` — hand-written JNI bindings to the Rust crate: `Wgbridge`,
     `Tunnel`, `Protector`, `Logger`, `DnsRecorder`. Mirror of `wgbridge-rs`.
 - **Native C packet engine** — `app/src/main/jni/netguard/`: `netguard.c`,
@@ -90,7 +90,7 @@ IP→hostname mapping, which drives future block decisions recorded in `Database
 (low battery, default for many after onboarding); *Standard* loads Disconnect +
 X-Ray + DDG and **allows** ambiguous shared-IP hosts; *Strict* **blocks** those
 ambiguous shared-IP hosts. Shared-IP ambiguity + UID-global DNS evidence is the
-root of a whole cluster of reports (§5 C-3).
+root of a whole cluster of reports (see §4).
 
 ---
 
@@ -105,6 +105,16 @@ exact `rustup target add …` list and F-Droid build metadata.
 Three product flavours — **github**, **fdroid**, **play** — differ only in the
 update-check API; **github** is the normal local dev flavour. Debug builds install
 side-by-side (`applicationIdSuffix ".test"`).
+
+**Connected-device testing:** Always build and install the **github debug**
+variant. Update the existing installation in place with `adb install -r` so its
+app data, preferences, VPN consent, and test state are preserved. Do not uninstall
+the app or run `pm clear` unless the user explicitly requests a clean install.
+
+```bash
+./gradlew assembleGithubDebug
+adb install -r app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
+```
 
 ```bash
 # From the repo root. Use ./gradlew (the wrapper).
@@ -159,8 +169,55 @@ The non-negotiables that decide most changes:
    because acting on it would leak the user's IP to the tracker first.
 3. **Battery is a first-class constraint.** Anything periodic must be gated off
    idle/screen-off. Do not make DoH a stronger default until its screen-off cost is
-   profiled and fixed (TODO.md). Battery is also frequently mis-attributed to the
+   profiled and fixed. Battery is also frequently mis-attributed to the
    VPN UID — surface stats, don't re-investigate.
 4. **Attribution is global, not per-app** (the DNS table has no UID). Treat this as
-   a known, deliberately-deferred limitation, not a bug to patch ad-hoc (TODO.md,
-   §5 C-3).
+   a known, deliberately-deferred limitation, not a bug to patch ad-hoc.
+
+The still-live reasoning behind these constraints (screen-off DoH battery, the
+ParcelFileDescriptor close race, LAN/tethering routing, DNS attribution) lives in the
+GitHub issue tracker — search there rather than re-deriving.
+
+---
+
+## 5. Reviewing & triaging issues
+
+The §4 constraints decide most triage. Trace any bug into the actual code before
+assigning a verdict — line numbers drift, and reports that look identical often have
+distinct root causes. Verdicts:
+
+- **Fixable-aligned** — a real defect whose fix helps the default (minimal-mode) user or
+  recovers breakage, and fits the philosophy. Safe to implement.
+- **Fixable-with-tension** — implementable, but needs a product/design decision first.
+- **Unfixable-by-construction** — the request collides with a §4 constraint (always-on
+  VPN's idle cost; plaintext-DNS-only detection, which strict Private DNS/DoT defeats;
+  UID-global attribution; no SSL interception). Respond to the reporter; do **not** add a
+  knob to paper over it.
+- **External-platform/OEM** — root cause is Android/OEM/work-profile; not fixable in-app.
+- **Decline-philosophy** — a general-firewall or expert-knob request (§4 constraint 1),
+  which is NetGuard's role. The per-app "Exclude from VPN" toggle + Minimal-mode
+  auto-excludes already cover breakage-recovery.
+
+Two close messages get reused enough to keep on hand:
+
+**A — configurability proliferation / firewall feature (use NetGuard):**
+> Thanks for the suggestion. TrackerControl is deliberately a focused tracker blocker, not
+> a general-purpose firewall — its design prioritises simplicity and sensible defaults over
+> fine-grained per-app/per-network configuration, and we explicitly avoid "Rethink-style"
+> expert knobs unless they directly help users recover from breakage. The firewall-style
+> control you're describing is exactly what NetGuard — the project TrackerControl is forked
+> from — already provides, and keeping that role there is what lets TrackerControl stay lean
+> and battery-friendly. If your goal is to stop a specific app breaking, the per-app "Exclude
+> from VPN" toggle (in that app's tracker details) bypasses TrackerControl entirely for it.
+> Closing as out of scope, but thank you for the thoughtful request.
+
+**B — requires SSL interception (privacy-by-construction):**
+> Thanks for the request. By design, TrackerControl never performs SSL/TLS interception — it
+> only ever logs connection metadata, and this "privacy-preserving by construction" property
+> is non-negotiable (it's also what lets the app run without root and stay trustworthy). What
+> you're describing would require decrypting HTTPS via a local man-in-the-middle, which we
+> will not add. Tracker detection therefore relies on DNS interception rather than payload
+> inspection; even TLS/SNI parsing is confined to an opt-in research mode, because acting on
+> it would leak your IP to the tracker before we could block. Closing as won't-fix-by-
+> construction — this isn't a limitation we can lift without breaking the app's core privacy
+> guarantee.
