@@ -64,6 +64,7 @@ import net.kollnig.missioncontrol.data.InternetBlocklist;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> implements Filterable {
@@ -421,7 +422,7 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
             @Override
             protected FilterResults performFiltering(CharSequence query) {
                 List<Rule> listResult = new ArrayList<>();
-                String queryStr = query == null ? "" : query.toString().toLowerCase().trim();
+                String queryStr = query == null ? "" : query.toString().toLowerCase(Locale.ROOT).trim();
                 if (queryStr.isEmpty())
                     listResult.addAll(listAll);
                 else {
@@ -435,8 +436,8 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
                     // but filtered apps stay reachable (#420, #483).
                     for (Rule rule : getSearchPool())
                         if (rule.uid == uid ||
-                                rule.packageName.toLowerCase().contains(queryStr) ||
-                                (rule.name != null && rule.name.toLowerCase().contains(queryStr)))
+                                rule.packageName.toLowerCase(Locale.ROOT).contains(queryStr) ||
+                                (rule.name != null && rule.name.toLowerCase(Locale.ROOT).contains(queryStr)))
                             listResult.add(rule);
                 }
 
