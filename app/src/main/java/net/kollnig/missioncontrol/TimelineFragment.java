@@ -38,6 +38,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import eu.faircode.netguard.DatabaseHelper;
+import eu.faircode.netguard.Util;
 
 public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntryClickListener {
 
@@ -232,7 +233,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
                 if (!uidAppInfo.containsKey(uid)) {
                     String appName = Integer.toString(uid);
                     String packageName = null;
-                    String[] packages = pm.getPackagesForUid(uid);
+                    String[] packages = Util.getPackagesForUid(pm, uid);
                     if (packages != null && packages.length > 0) {
                         packageName = packages[0];
                         try {
