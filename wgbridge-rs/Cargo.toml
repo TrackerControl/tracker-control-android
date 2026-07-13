@@ -14,7 +14,7 @@ tokio = { version = "1.43", features = ["rt-multi-thread", "net", "sync", "time"
 base64 = "0.22"
 hex = "0.4"
 ipnetwork = "0.21"
-getrandom = "0.3"
+getrandom = "0.4"
 libc = "0.2"
 log = "0.4"
 
