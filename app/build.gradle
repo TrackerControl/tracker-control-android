@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+def ccacheLauncher = file("$projectDir/gradle/ccache-launcher.sh").absolutePath
+
 // WireGuard bridge (Rust/cargo-ndk) build logic. Defines the wgbridgeBuild
 // task and exposes ext.wgbridgeNdkVersion (reused for defaultConfig.ndkVersion).
 apply from: "$projectDir/gradle/wgbridge.gradle"
@@ -36,7 +38,9 @@ android {
         externalNativeBuild {
             cmake {
                 cppFlags ""
-                arguments "-DANDROID_PLATFORM=android-22"
+                arguments "-DANDROID_PLATFORM=android-22",
+                        "-DCMAKE_C_COMPILER_LAUNCHER=${ccacheLauncher}",
+                        "-DCMAKE_CXX_COMPILER_LAUNCHER=${ccacheLauncher}"
                 // https://developer.android.com/ndk/guides/cmake.html
             }
         }
