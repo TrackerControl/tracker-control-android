@@ -8,7 +8,7 @@
 // as an ext property because build.gradle's android{} block reuses it for
 // defaultConfig.ndkVersion; everything else stays local to this script.
 def wgbridgeSrcDir = file("$rootDir/wgbridge-rs")
-def wgbridgeOutDir = file("$buildDir/rustJniLibs")
+def wgbridgeOutDir = layout.buildDirectory.dir("rustJniLibs").get().asFile
 def wgbridgeAbis = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 ext.wgbridgeNdkVersion = '27.2.12479018' // keep in sync with defaultConfig.ndkVersion
 def wgbridgeNdkVersion = ext.wgbridgeNdkVersion

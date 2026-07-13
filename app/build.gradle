@@ -22,8 +22,8 @@ android {
         minSdk 23
         targetSdk 37
         //noinspection HighAppVersionCode
-        versionCode 2026042701
-        versionName "2026.04.27"
+        versionCode 2026071301
+        versionName "2026.07.13"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Secure DNS (DoH) configuration
@@ -194,6 +194,7 @@ dependencies {
     implementation 'com.opencsv:opencsv:5.12.0'
     // Pinned to 4.x: geoip2 5.x uses Java constructs incompatible with
     // Android. Dependabot ignores the 5.0 major (see .github/dependabot.yml).
+    //noinspection GradleDependency,NewerVersionAvailable
     implementation 'com.maxmind.geoip2:geoip2:4.4.0'
 
     // Crash reporting
