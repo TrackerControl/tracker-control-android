@@ -4,7 +4,7 @@
 //! doubles as "rebind the UDP sockets on the new default network".
 
 use std::io;
-use std::os::fd::{AsFd, AsRawFd};
+use std::os::fd::AsRawFd;
 use std::sync::Arc;
 
 use gotatun::udp::socket::{UdpSocket, UdpSocketFactory};
@@ -26,7 +26,9 @@ impl ProtectedUdpFactory {
     }
 
     fn protect(&self, socket: &UdpSocket) -> io::Result<()> {
-        let fd = socket.as_fd().as_raw_fd();
+        // gotatun 0.8.x hides the inner socket behind an enum; socket() exposes
+        // the underlying tokio UdpSocket (0.8.1+) so we can protect its fd.
+        let fd = socket.socket()?.as_raw_fd();
         if !self.protector.protect(fd) {
             // Fail closed: an unprotected socket would loop through the TUN.
             return Err(io::Error::other(format!(
