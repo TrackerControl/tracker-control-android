@@ -34,6 +34,8 @@
 #include <string.h> /* strncpy() */
 #include <sys/socket.h>
 
+#include "tls.h"
+
 #define TLS_HEADER_LEN 5
 #define TLS_HANDSHAKE_CONTENT_TYPE 0x16
 #define TLS_HANDSHAKE_TYPE_CLIENT_HELLO 0x01
@@ -44,44 +46,49 @@
 
 
 /* Parse a TLS packet for the Server Name Indication extension in the client
- * hello handshake, returning the first servername found (pointer to static
- * array)
+ * hello handshake, writing the first server name found into *hostname (a
+ * caller-provided buffer of at least FQDN_MAX + 1 bytes).
  *
  * Returns:
- *  >=0  - length of the hostname and updates *hostname
- *         caller is responsible for freeing *hostname
- *  -1   - Incomplete request
- *  -2   - No Host header included in this request
- *  -3   - Invalid hostname pointer
- *  -4   - malloc failure
- *  < -4 - Invalid TLS client hello
+ *  >= 0                     - length of the hostname written to *hostname
+ *  TLS_PARSE_INCOMPLETE(-1) - the TLS record is not fully present yet; the
+ *                             caller may buffer more TCP payload and retry
+ *  TLS_PARSE_NO_SNI  (-2)   - a complete ClientHello with no server name
+ *  TLS_PARSE_INVALID (-5)   - not a TLS ClientHello handshake
  */
-#define FQDN_MAX	255
 
-static void parse_server_name_extension(const char *data, size_t data_len,
-                                        char *hostname)
+static int parse_server_name_extension(const char *data, size_t data_len,
+                                       char *hostname)
 {
     size_t pos = 2; /* skip server name list length */
 
-    while (pos + 3 < data_len) {
+    /*
+     * Each entry is a 3-byte header (1 byte name type + 2 byte length)
+     * followed by <length> bytes of name. Reading the header needs pos,
+     * pos + 1 and pos + 2 in range, i.e. pos + 3 <= data_len. The original
+     * "pos + 3 < data_len" dropped a name entry ending exactly at the buffer
+     * boundary.
+     */
+    while (pos + 3 <= data_len) {
         size_t len = ((unsigned char)data[pos + 1] << 8) +
                      (unsigned char)data[pos + 2];
 
         if (pos + 3 + len > data_len)
-            return;
+            return TLS_PARSE_NO_SNI;
 
         switch (data[pos]) { /* name type */
             case 0x00: /* host_name */
                 len = MIN(len, FQDN_MAX);
                 strncpy(hostname, data + pos + 3, len);
                 hostname[len] = '\0';
-                return;
+                return (int) len;
         }
         pos += 3 + len;
     }
+    return TLS_PARSE_NO_SNI;
 }
 
-static void parse_extensions(const char *data, size_t data_len, char *hostname)
+static int parse_extensions(const char *data, size_t data_len, char *hostname)
 {
     size_t pos = 0;
 
@@ -99,21 +106,21 @@ static void parse_extensions(const char *data, size_t data_len, char *hostname)
              * of the extension here
              */
             if (pos + 4 + len > data_len)
-                return;
-            parse_server_name_extension(data + pos + 4, len,
-                                        hostname);
-            return;
+                return TLS_PARSE_NO_SNI;
+            return parse_server_name_extension(data + pos + 4, len,
+                                               hostname);
         }
         pos += 4 + len; /* Advance to the next extension header */
     }
+    return TLS_PARSE_NO_SNI;
 }
 
 /*
  * Parse a TLS packet for the Server Name Indication extension in the client
- * hello handshake, returning the first servername found (pointer to static
- * array)
+ * hello handshake, writing the first server name found into *hostname.
+ * See the block comment above for return values.
  */
-void parse_tls_header(const char *data, size_t data_len, char *hostname)
+int parse_tls_header(const char *data, size_t data_len, char *hostname)
 {
     char tls_content_type;
     char tls_version_major;
@@ -126,7 +133,7 @@ void parse_tls_header(const char *data, size_t data_len, char *hostname)
      * TLS header
      */
     if (data_len < TLS_HEADER_LEN)
-        return;
+        return TLS_PARSE_INCOMPLETE;
 
     /*
      * SSL 2.0 compatible Client Hello
@@ -135,36 +142,37 @@ void parse_tls_header(const char *data, size_t data_len, char *hostname)
      *
      * See RFC5246 Appendix E.2
      */
-    if (data[0] & 0x80 && data[2] == 1) {
-        return;
-    }
+    if (data[0] & 0x80 && data[2] == 1)
+        return TLS_PARSE_INVALID;
 
     tls_content_type = data[0];
-    if (tls_content_type != TLS_HANDSHAKE_CONTENT_TYPE) {
-        return;
-    }
+    if (tls_content_type != TLS_HANDSHAKE_CONTENT_TYPE)
+        return TLS_PARSE_INVALID;
 
     tls_version_major = data[1];
     tls_version_minor = data[2];
-    if (tls_version_major < 3) {
-        return;
-    }
+    if (tls_version_major < 3)
+        return TLS_PARSE_INVALID;
 
-    /* TLS record length */
+    /* Full TLS record length (5-byte header + payload) */
     len = ((unsigned char)data[3] << 8) +
           (unsigned char)data[4] + TLS_HEADER_LEN;
-    data_len = MIN(data_len, len);
 
-    /* Check we received entire TLS record length */
+    /*
+     * A ClientHello can be split across several TCP segments (large extension
+     * sets, post-quantum key shares). If the whole record is not present yet,
+     * ask the caller to buffer more rather than silently giving up — which
+     * previously lost the SNI for good.
+     */
     if (data_len < len)
-        return;
+        return TLS_PARSE_INCOMPLETE;
+    data_len = len;
 
     /* Handshake */
     if (pos + 1 > data_len)
-        return;
-    if (data[pos] != TLS_HANDSHAKE_TYPE_CLIENT_HELLO) {
-        return;
-    }
+        return TLS_PARSE_NO_SNI;
+    if (data[pos] != TLS_HANDSHAKE_TYPE_CLIENT_HELLO)
+        return TLS_PARSE_INVALID;
 
     /*
      * Skip past fixed length records:
@@ -178,35 +186,34 @@ void parse_tls_header(const char *data, size_t data_len, char *hostname)
 
     /* Session ID */
     if (pos + 1 > data_len)
-        return;
+        return TLS_PARSE_NO_SNI;
     len = (unsigned char)data[pos];
     pos += 1 + len;
 
     /* Cipher Suites */
     if (pos + 2 > data_len)
-        return;
+        return TLS_PARSE_NO_SNI;
     len = ((unsigned char)data[pos] << 8) + (unsigned char)data[pos + 1];
     pos += 2 + len;
 
     /* Compression Methods */
     if (pos + 1 > data_len)
-        return;
+        return TLS_PARSE_NO_SNI;
     len = (unsigned char)data[pos];
     pos += 1 + len;
 
     if (pos == data_len && tls_version_major == 3 &&
-        tls_version_minor == 0) {
-        return;
-    }
+        tls_version_minor == 0)
+        return TLS_PARSE_NO_SNI;
 
     /* Extensions */
     if (pos + 2 > data_len)
-        return;
+        return TLS_PARSE_NO_SNI;
     len = ((unsigned char)data[pos] << 8) + (unsigned char)data[pos + 1];
     pos += 2;
 
     if (pos + len > data_len)
-        return;
+        return TLS_PARSE_NO_SNI;
 
-    parse_extensions(data + pos, len, hostname);
+    return parse_extensions(data + pos, len, hostname);
 }

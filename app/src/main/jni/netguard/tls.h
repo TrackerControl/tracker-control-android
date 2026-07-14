@@ -27,7 +27,19 @@
 #define TLS_H
 
 #include <stdint.h>
+#include <stddef.h>
 
-void parse_tls_header(const char *data, size_t data_len, char *hostname);
+/* Maximum length of a fully-qualified domain name (server name). */
+#define FQDN_MAX 255
+
+/* parse_tls_header() return codes (see tls.c for details) */
+#define TLS_PARSE_INCOMPLETE  (-1)  /* TLS record not fully received; buffer more and retry */
+#define TLS_PARSE_NO_SNI      (-2)  /* complete ClientHello, but no server name present */
+#define TLS_PARSE_INVALID     (-5)  /* not a TLS ClientHello handshake */
+
+/* Returns the hostname length (>= 0) on success and writes it into *hostname
+ * (caller buffer of at least FQDN_MAX + 1 == 256 bytes), or one of the
+ * TLS_PARSE_* codes above. */
+int parse_tls_header(const char *data, size_t data_len, char *hostname);
 
 #endif //TLS_H

@@ -153,6 +153,14 @@ int is_upper_layer(int protocol) {
 // Can be enabled at runtime via jni_sni() for research purposes.
 int is_play = 0;
 
+// Upper bound on bytes buffered while reassembling a ClientHello that spans
+// multiple TCP segments (research-mode SNI extraction). A single TLS record is
+// at most 2^14 + 5 bytes; real ClientHellos are well under this even with
+// post-quantum key shares. The buffer is per-session, allocated only for a
+// split ClientHello, and freed as soon as the record is complete or the cap is
+// reached, so the battery/memory cost stays bounded and confined to is_play.
+#define TLS_SNI_MAX_BUFFER 16384
+
 void handle_ip(const struct arguments *args,
                const uint8_t *pkt, const size_t length,
                const int epoll_fd,
@@ -345,6 +353,10 @@ void handle_ip(const struct arguments *args,
     else {
         struct ng_session *cur = NULL;
         char* packetdata = data;
+        // While a ClientHello is still being reassembled across TCP segments we
+        // let the segment through but postpone the block decision until the SNI
+        // is available (or we give up), so it is not made on partial evidence.
+        int defer_sni = 0;
 
         // Check if we have a CLIENT HELLO, and if so extract SNI
         if (protocol == IPPROTO_TCP && dport == 443 && !syn && is_play) {
@@ -358,8 +370,12 @@ void handle_ip(const struct arguments *args,
             const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
             const uint16_t datalen = (const uint16_t) (length - (data - pkt));
 
-            // Search existing TCP session
-            struct ng_session *cur = args->ctx->ng_session;
+            // Search existing TCP session (created on the SYN). Assign the
+            // outer cur so the block-decision below sees the same session
+            // instead of a shadowed local that stayed NULL (which meant
+            // checkedHostname was never set and the decision re-ran every
+            // packet).
+            cur = args->ctx->ng_session;
             while (cur != NULL &&
                    !(cur->protocol == IPPROTO_TCP &&
                      cur->tcp.version == version &&
@@ -370,13 +386,51 @@ void handle_ip(const struct arguments *args,
                                      memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
                 cur = cur->next;
 
-            // Try to parse Server Name Extension
-            if (cur != NULL && cur->tcp.checkedHostname == 0) {                
-                char hostname[512] = "";
-                parse_tls_header((const char *) data, datalen, hostname);
-                if (strnlen(hostname, 512) > 0) {
-                    log_android(ANDROID_LOG_DEBUG, "Seen SNI: %s", hostname);
-                    packetdata = hostname;
+            // Try to parse the Server Name Indication once per session. A
+            // ClientHello can span several TCP segments; buffer up to
+            // TLS_SNI_MAX_BUFFER bytes and retry instead of losing the hostname
+            // when it does not fit in the first segment.
+            if (cur != NULL && cur->tcp.checkedHostname == 0) {
+                char hostname[FQDN_MAX + 1] = "";
+                int rc;
+
+                if (cur->tcp.tls_data == NULL) {
+                    // First segment: try to parse it on its own.
+                    rc = parse_tls_header((const char *) data, datalen, hostname);
+                    if (rc == TLS_PARSE_INCOMPLETE && datalen < TLS_SNI_MAX_BUFFER) {
+                        // ClientHello continues in later segments: start
+                        // bounded reassembly.
+                        cur->tcp.tls_data = ng_malloc(TLS_SNI_MAX_BUFFER, "tls sni");
+                        if (cur->tcp.tls_data != NULL) {
+                            memcpy(cur->tcp.tls_data, data, datalen);
+                            cur->tcp.tls_len = datalen;
+                            defer_sni = 1;
+                        }
+                    }
+                } else {
+                    // Continuation: append this segment and re-parse the
+                    // accumulated record.
+                    uint16_t space = (uint16_t) (TLS_SNI_MAX_BUFFER - cur->tcp.tls_len);
+                    uint16_t copy = datalen < space ? datalen : space;
+                    memcpy(cur->tcp.tls_data + cur->tcp.tls_len, data, copy);
+                    cur->tcp.tls_len += copy;
+                    rc = parse_tls_header((const char *) cur->tcp.tls_data,
+                                          cur->tcp.tls_len, hostname);
+                    if (rc == TLS_PARSE_INCOMPLETE && cur->tcp.tls_len < TLS_SNI_MAX_BUFFER)
+                        defer_sni = 1; // still need more segments
+                }
+
+                if (!defer_sni) {
+                    // Determined: SNI found, no SNI, invalid, or cap reached.
+                    if (strnlen(hostname, sizeof(hostname)) > 0) {
+                        log_android(ANDROID_LOG_DEBUG, "Seen SNI: %s", hostname);
+                        packetdata = hostname;
+                    }
+                    if (cur->tcp.tls_data != NULL) {
+                        ng_free(cur->tcp.tls_data, __FILE__, __LINE__);
+                        cur->tcp.tls_data = NULL;
+                        cur->tcp.tls_len = 0;
+                    }
                 }
             }
 
@@ -389,8 +443,10 @@ void handle_ip(const struct arguments *args,
             allowed = 1;
         }
 
-        // No existing TCP session, or unhandled TLS session?
-        if (cur == NULL || cur->tcp.checkedHostname == 0) {
+        // No existing TCP session, or unhandled TLS session? Skip while a
+        // ClientHello is still being reassembled (the segment is already
+        // allowed to pass; the decision waits for the SNI).
+        if (!defer_sni && (cur == NULL || cur->tcp.checkedHostname == 0)) {
             jobject objPacket = create_packet(
                     args, version, protocol, flags, source, sport, dest, dport, packetdata, uid, 0);
             redirect = is_address_allowed(args, objPacket);

@@ -34,6 +34,11 @@ void clear_tcp_data(struct tcp_session *cur) {
         ng_free(p->data, __FILE__, __LINE__);
         ng_free(p, __FILE__, __LINE__);
     }
+    if (cur->tls_data != NULL) {
+        ng_free(cur->tls_data, __FILE__, __LINE__);
+        cur->tls_data = NULL;
+        cur->tls_len = 0;
+    }
 }
 
 int get_tcp_timeout(const struct tcp_session *t, int sessions, int maxsessions) {
@@ -764,6 +769,9 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.state = TCP_LISTEN;
             s->tcp.socks5 = SOCKS5_NONE;
             s->tcp.forward = NULL;
+            s->tcp.checkedHostname = 0;
+            s->tcp.tls_data = NULL;
+            s->tcp.tls_len = 0;
             s->next = NULL;
 
             if (datalen) {
