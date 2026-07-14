@@ -2869,7 +2869,7 @@ public class ServiceSinkhole extends VpnService {
 
             // Get application info
             PackageManager pm = getPackageManager();
-            String[] packages = pm.getPackagesForUid(uid);
+            String[] packages = Util.getPackagesForUid(pm, uid);
             if (packages == null || packages.length < 1)
                 throw new PackageManager.NameNotFoundException(Integer.toString(uid));
             boolean internet = Util.hasInternet(uid, this);

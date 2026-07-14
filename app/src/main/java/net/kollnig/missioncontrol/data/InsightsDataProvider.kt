@@ -23,6 +23,7 @@ import android.content.pm.PackageManager
 import android.util.Pair
 import androidx.preference.PreferenceManager
 import eu.faircode.netguard.DatabaseHelper
+import eu.faircode.netguard.Util
 import net.kollnig.missioncontrol.Common
 import java.util.Locale
 
@@ -216,7 +217,7 @@ class InsightsDataProvider(context: Context) {
      */
     private fun getPackageNameForUid(uid: Int): String? {
         if (uid == 0) return "android"
-        val packages = packageManager.getPackagesForUid(uid)
+        val packages = Util.getPackagesForUid(packageManager, uid)
         return packages?.firstOrNull()
     }
 
@@ -225,7 +226,7 @@ class InsightsDataProvider(context: Context) {
      */
     private fun isSystemApp(uid: Int): Boolean {
         if (uid == 0) return true
-        val packages = packageManager.getPackagesForUid(uid) ?: return false
+        val packages = Util.getPackagesForUid(packageManager, uid) ?: return false
         return packages.any { pkg ->
             try {
                 val appInfo = packageManager.getApplicationInfo(pkg, 0)

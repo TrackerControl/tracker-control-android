@@ -26,6 +26,7 @@ import android.net.Uri
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
+import eu.faircode.netguard.Util
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -172,7 +173,7 @@ object Common {
         if (uid == 0) return "System"
 
         // Get packages for this UID and return the app label (not package name)
-        val packages = pm.getPackagesForUid(uid)
+        val packages = Util.getPackagesForUid(pm, uid)
         if (packages != null && packages.isNotEmpty()) {
             try {
                 val appInfo = pm.getApplicationInfo(packages[0], 0)

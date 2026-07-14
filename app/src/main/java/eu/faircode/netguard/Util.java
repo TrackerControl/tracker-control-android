@@ -381,9 +381,21 @@ public class Util {
         return (pm.checkPermission("android.permission.INTERNET", packageName) == PackageManager.PERMISSION_GRANTED);
     }
 
+    // On Android 16+, getPackagesForUid throws SecurityException for UIDs of
+    // other users/profiles (work profile, private space, cloned apps) instead
+    // of returning null (requires INTERACT_ACROSS_USERS). Treat those as unknown.
+    public static String[] getPackagesForUid(PackageManager pm, int uid) {
+        try {
+            return pm.getPackagesForUid(uid);
+        } catch (SecurityException ex) {
+            Log.w(TAG, "getPackagesForUid uid=" + uid + ": " + ex.getMessage());
+            return null;
+        }
+    }
+
     public static boolean hasInternet(int uid, Context context) {
         PackageManager pm = context.getPackageManager();
-        String[] pkgs = pm.getPackagesForUid(uid);
+        String[] pkgs = getPackagesForUid(pm, uid);
         if (pkgs != null)
             for (String pkg : pkgs)
                 if (hasInternet(pkg, context))
@@ -416,7 +428,7 @@ public class Util {
             listResult.add(context.getString(R.string.title_nobody));
         else {
             PackageManager pm = context.getPackageManager();
-            String[] pkgs = pm.getPackagesForUid(uid);
+            String[] pkgs = getPackagesForUid(pm, uid);
             if (pkgs == null)
                 listResult.add(Integer.toString(uid));
             else

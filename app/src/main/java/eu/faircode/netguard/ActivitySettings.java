@@ -1293,7 +1293,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     for (String uidStr : set) {
                         try {
                             int uid = Integer.parseInt(uidStr);
-                            String[] packages = pm.getPackagesForUid(uid);
+                            String[] packages = Util.getPackagesForUid(pm, uid);
                             if (packages != null) {
                                 Collections.addAll(packageNames, packages);
                             }
@@ -1315,7 +1315,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     for (String uidStr : set) {
                         try {
                             int uid = Integer.parseInt(uidStr);
-                            String[] packages = pm.getPackagesForUid(uid);
+                            String[] packages = Util.getPackagesForUid(pm, uid);
                             if (packages != null) {
                                 for (String pkg : packages) {
                                     packageNames.add(pkg);
@@ -1391,7 +1391,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         else if (uid == 9999)
             return new String[] { "nobody" };
         else {
-            String pkgs[] = getPackageManager().getPackagesForUid(uid);
+            String pkgs[] = Util.getPackagesForUid(getPackageManager(), uid);
             if (pkgs == null)
                 return new String[0];
             else
