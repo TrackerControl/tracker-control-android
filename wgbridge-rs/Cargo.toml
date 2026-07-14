@@ -9,7 +9,7 @@ publish = false
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-gotatun = { version = "=0.7.2", default-features = false, features = ["ring", "device"] }
+gotatun = { version = "=0.8.1", default-features = false, features = ["ring", "device"] }
 tokio = { version = "1.43", features = ["rt-multi-thread", "net", "sync", "time", "macros"] }
 base64 = "0.22"
 hex = "0.4"
