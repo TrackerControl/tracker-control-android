@@ -772,6 +772,7 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.checkedHostname = 0;
             s->tcp.tls_data = NULL;
             s->tcp.tls_len = 0;
+            s->tcp.tls_seq = 0;
             s->next = NULL;
 
             if (datalen) {
