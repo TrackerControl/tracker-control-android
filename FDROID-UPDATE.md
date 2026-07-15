@@ -2,19 +2,21 @@
 
 TrackerControl's WireGuard engine is compiled from Rust source. New F-Droid
 build entries must prepare the pinned Rust toolchain and Cargo dependencies
-before F-Droid starts its offline Gradle build.
+before Gradle invokes Cargo in locked, offline mode.
 
-The examples below use release `2026071201` / `2026.07.12`. Substitute the
+The examples below use release `2026071301` / `2026.07.13`. Substitute the
 actual version code and version name for later releases.
 
 ## 1. Tag the release
 
 Only tag a commit that includes the current `rust-toolchain.toml`,
 `wgbridge-rs/Cargo.lock`, and `scripts/setup_rust_android.sh` files.
+`rust-toolchain.toml` is authoritative for the Rust version, profile, and
+Android targets; the setup script installs that specification.
 
 ```bash
-git tag 2026071201
-git push origin 2026071201
+git tag 2026071301
+git push origin 2026071301
 ```
 
 TrackerControl's F-Droid metadata uses numeric tags as release identifiers.
@@ -28,7 +30,8 @@ fork and create a branch:
 git clone https://gitlab.com/YOUR_USERNAME/fdroiddata.git
 cd fdroiddata
 git remote add upstream https://gitlab.com/fdroid/fdroiddata.git
-git switch -c trackercontrol-2026071201
+git fetch upstream master
+git switch -c trackercontrol-2026071301 upstream/master
 ```
 
 Edit:
@@ -40,9 +43,9 @@ metadata/net.kollnig.missioncontrol.fdroid.yml
 Append this entry under `Builds:`:
 
 ```yaml
-  - versionName: 2026.07.12-fdroid
-    versionCode: 2026071201
-    commit: '2026071201'
+  - versionName: 2026.07.13-fdroid
+    versionCode: 2026071301
+    commit: '2026071301'
     subdir: app
     sudo:
       - apt-get update
@@ -57,8 +60,8 @@ Append this entry under `Builds:`:
 Update the current-version fields at the bottom of the file:
 
 ```yaml
-CurrentVersion: 2026.07.12-fdroid
-CurrentVersionCode: 2026071201
+CurrentVersion: 2026.07.13-fdroid
+CurrentVersionCode: 2026071301
 ```
 
 Keep the automatic-update configuration unchanged:
@@ -78,12 +81,16 @@ fdroid readmeta
 fdroid lint net.kollnig.missioncontrol.fdroid
 ```
 
-For an end-to-end local application check, first provision the pinned Rust
-dependencies while networking is available, then build the release offline:
+For an end-to-end local application check, provision the pinned Rust and
+Gradle dependencies while networking is available, then build the release
+offline:
 
 ```bash
 ./scripts/setup_rust_android.sh
-./gradlew :app:assembleFdroidRelease --offline
+./gradlew :app:dependencies :app:prefetchAndroidLintDependencies \
+  --no-daemon --no-configuration-cache
+./gradlew :app:assembleFdroidRelease --offline \
+  --no-build-cache --no-configuration-cache --no-daemon
 ```
 
 The APK should contain `libwgbridge.so` for `armeabi-v7a`, `arm64-v8a`, `x86`,
@@ -95,8 +102,8 @@ From the `fdroiddata` checkout:
 
 ```bash
 git add metadata/net.kollnig.missioncontrol.fdroid.yml
-git commit -m "Update TrackerControl to 2026071201"
-git push origin trackercontrol-2026071201
+git commit -m "Update TrackerControl to 2026071301"
+git push origin trackercontrol-2026071301
 ```
 
 Open a merge request from that branch into `fdroid/fdroiddata:master`.
@@ -111,7 +118,8 @@ targets, and cargo-ndk, and fetches Cargo.lock dependencies. The Gradle build
 itself runs Cargo with --locked --offline.
 
 Locally verified with:
-./gradlew :app:assembleFdroidRelease --offline
+./gradlew :app:assembleFdroidRelease --offline --no-build-cache \
+  --no-configuration-cache --no-daemon
 ```
 
 ## If the update bot opens a merge request first
