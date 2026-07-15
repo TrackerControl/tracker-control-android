@@ -394,7 +394,12 @@ void handle_ip(const struct arguments *args,
                 char hostname[FQDN_MAX + 1] = "";
                 int rc;
 
-                if (cur->tcp.tls_data == NULL) {
+                if (datalen == 0) {
+                    // Bare ACK (e.g. completing the TCP handshake) or FIN:
+                    // no ClientHello bytes to parse yet. Keep waiting for
+                    // data without spending the reassembly buffer.
+                    defer_sni = 1;
+                } else if (cur->tcp.tls_data == NULL) {
                     // First segment: try to parse it on its own.
                     rc = parse_tls_header((const char *) data, datalen, hostname);
                     if (rc == TLS_PARSE_INCOMPLETE && datalen < TLS_SNI_MAX_BUFFER) {
@@ -454,8 +459,16 @@ void handle_ip(const struct arguments *args,
             if (redirect != NULL && (*redirect->raddr == 0 || redirect->rport == 0))
                 redirect = NULL;
 
-            if (cur != NULL)
+            if (cur != NULL) {
                 cur->tcp.checkedHostname = 1;
+                // A blocked verdict on an established session must reset the
+                // connection: dropping only this segment is undone by TCP
+                // retransmission, because later segments skip the
+                // once-per-session decision above and pass with allowed = 1.
+                // Mirrors handle_tcp's write_rst for blocked new sessions.
+                if (!allowed)
+                    write_rst(args, &cur->tcp);
+            }
         }
     }
 
