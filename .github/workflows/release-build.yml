@@ -41,7 +41,7 @@ jobs:
       - name: Install pinned Android build tools
         run: |
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
-            "platforms;android-37" \
+            "platforms;android-37.0" \
             "build-tools;36.1.0" \
             "cmake;3.22.1" \
             "ndk;27.2.12479018"
@@ -100,6 +100,7 @@ jobs:
             printf 'commit=%s\n' "$commit"
             printf 'tag_or_ref=%s\n' "$RELEASE_REF"
             printf 'runner_image=%s\n' "$ImageOS-$ImageVersion"
+            printf 'android_platform=37.0\n'
             printf 'android_build_tools=36.1.0\n'
             printf 'android_ndk=27.2.12479018\n'
             printf 'cargo_ndk='; cargo ndk --version
