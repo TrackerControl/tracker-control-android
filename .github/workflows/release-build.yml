@@ -1,0 +1,119 @@
+name: Build unsigned GitHub release APK
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Tag or commit to build
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-build-${{ inputs.ref || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-unsigned:
+    name: Build unsigned APK on Linux
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out release source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@0f481fcb613427c0f801b606911222b5b6f3083a # v5
+        with:
+          java-version: '21'
+          distribution: temurin
+
+      - name: Install pinned Android build tools
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" \
+            "platforms;android-37" \
+            "build-tools;36.1.0" \
+            "cmake;3.22.1" \
+            "ndk;27.2.12479018"
+
+      - name: Set up pinned Rust toolchain
+        run: ./scripts/setup_rust_android.sh
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
+        with:
+          cache-read-only: true
+
+      - name: Prefetch Gradle dependencies
+        run: |
+          ./gradlew :app:dependencies :app:prefetchAndroidLintDependencies \
+            --no-daemon --no-configuration-cache
+
+      - name: Build unsigned GitHub release APK offline
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/tc-wgbridge-target
+        run: |
+          ./gradlew :app:assembleGithubRelease --offline \
+            --no-build-cache --no-configuration-cache --no-daemon
+
+      - name: Verify and collect unsigned APK
+        id: artifact
+        env:
+          RELEASE_REF: ${{ inputs.ref || github.ref_name }}
+        run: |
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/36.1.0"
+          mapfile -t apks < <(find app/build/outputs/apk/github/release \
+            -type f -name '*.apk' -print)
+          if (( ${#apks[@]} != 1 )); then
+            printf 'Expected exactly one release APK, found %d\n' "${#apks[@]}" >&2
+            printf '%s\n' "${apks[@]}" >&2
+            exit 1
+          fi
+
+          apk=${apks[0]}
+          if "$BUILD_TOOLS/apksigner" verify "$apk" >/dev/null 2>&1; then
+            echo 'Release build was unexpectedly signed.' >&2
+            exit 1
+          fi
+          "$BUILD_TOOLS/zipalign" -c -P 16 -v 4 "$apk"
+
+          commit=$(git rev-parse HEAD)
+          mkdir -p release-artifact
+          cp "$apk" release-artifact/TrackerControl-githubRelease-unsigned.apk
+          (
+            cd release-artifact
+            sha256sum TrackerControl-githubRelease-unsigned.apk \
+              > SHA256SUMS-unsigned.txt
+          )
+
+          {
+            printf 'commit=%s\n' "$commit"
+            printf 'tag_or_ref=%s\n' "$RELEASE_REF"
+            printf 'runner_image=%s\n' "$ImageOS-$ImageVersion"
+            printf 'android_build_tools=36.1.0\n'
+            printf 'android_ndk=27.2.12479018\n'
+            printf 'cargo_ndk='; cargo ndk --version
+            rustc -vV
+            java -version 2>&1
+          } > release-artifact/BUILD-INFO.txt
+
+          printf 'commit=%s\n' "$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Upload unsigned release artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: trackercontrol-github-release-${{ steps.artifact.outputs.commit }}
+          path: release-artifact/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30

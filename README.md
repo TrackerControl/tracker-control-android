@@ -141,6 +141,8 @@ You need:
 
 Build from within Android Studio, or use the provided gradle wrapper — see the [Android developer documentation](https://developer.android.com/studio/build/building-cmdline). If you find any problems with these instructions, please file an issue.
 
+Maintainers publishing the GitHub APK should follow the [release build and local signing procedure](docs/RELEASING.md).
+
 ## Contributing
 
 TrackerControl is community-driven and welcomes contributions of all kinds — programming skills are not required.
