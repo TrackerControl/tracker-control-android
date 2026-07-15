@@ -409,41 +409,20 @@ void handle_ip(const struct arguments *args,
                         if (cur->tcp.tls_data != NULL) {
                             memcpy(cur->tcp.tls_data, data, datalen);
                             cur->tcp.tls_len = datalen;
-                            cur->tcp.tls_seq = ntohl(tcphdr->seq) + datalen;
                             defer_sni = 1;
                         }
                     }
                 } else {
-                    // Continuation: append only in-order bytes and re-parse the
-                    // accumulated record. The tun delivers the kernel's
-                    // segments in order, so the only surprise is a
-                    // retransmission, whose duplicate bytes would corrupt the
-                    // buffer if appended again. A forward gap means we lost
-                    // track: give up rather than parse a buffer with a hole.
-                    uint32_t seq = ntohl(tcphdr->seq);
-                    if ((int32_t) (seq - cur->tcp.tls_seq) > 0) {
-                        // Gap: abandon reassembly; the decision below runs
-                        // without SNI (defer_sni stays 0, buffer is freed).
-                    } else {
-                        uint32_t behind = cur->tcp.tls_seq - seq;
-                        if (behind >= datalen) {
-                            // Pure retransmission of already-buffered bytes.
-                            defer_sni = 1;
-                        } else {
-                            // Skip the overlap, append only the new tail.
-                            uint16_t skip = (uint16_t) behind;
-                            uint16_t fresh = (uint16_t) (datalen - skip);
-                            uint16_t space = (uint16_t) (TLS_SNI_MAX_BUFFER - cur->tcp.tls_len);
-                            uint16_t copy = fresh < space ? fresh : space;
-                            memcpy(cur->tcp.tls_data + cur->tcp.tls_len, data + skip, copy);
-                            cur->tcp.tls_len += copy;
-                            cur->tcp.tls_seq += copy;
-                            rc = parse_tls_header((const char *) cur->tcp.tls_data,
-                                                  cur->tcp.tls_len, hostname);
-                            if (rc == TLS_PARSE_INCOMPLETE && cur->tcp.tls_len < TLS_SNI_MAX_BUFFER)
-                                defer_sni = 1; // still need more segments
-                        }
-                    }
+                    // Continuation: append this segment and re-parse the
+                    // accumulated record.
+                    uint16_t space = (uint16_t) (TLS_SNI_MAX_BUFFER - cur->tcp.tls_len);
+                    uint16_t copy = datalen < space ? datalen : space;
+                    memcpy(cur->tcp.tls_data + cur->tcp.tls_len, data, copy);
+                    cur->tcp.tls_len += copy;
+                    rc = parse_tls_header((const char *) cur->tcp.tls_data,
+                                          cur->tcp.tls_len, hostname);
+                    if (rc == TLS_PARSE_INCOMPLETE && cur->tcp.tls_len < TLS_SNI_MAX_BUFFER)
+                        defer_sni = 1; // still need more segments
                 }
 
                 if (!defer_sni) {
