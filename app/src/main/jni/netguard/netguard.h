@@ -213,6 +213,8 @@ struct tcp_session {
     struct segment *forward;
 
     int checkedHostname;
+    uint8_t *tls_data; // buffered ClientHello for cross-segment SNI reassembly (research mode)
+    uint16_t tls_len;  // bytes currently buffered in tls_data
 };
 
 struct ng_session {
