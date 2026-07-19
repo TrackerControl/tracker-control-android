@@ -381,8 +381,6 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="static_analysis">Tunnista sovelluskoodissa olevat seuraimet</string>
     <string name="failed_loading_cached_analysis">Välimuistissa olevien seurainten tulosten lataaminen epäonnistui. Ilmoita tästä kehittäjälle osoitteessa hello@trackercontrol.org</string>
     <string name="msg_notifications">Napauta myöntääksesi ilmoitusten käyttöoikeudet (virheilmoitukset jne.)</string>
-    <string name="setting_include_system_vpn">Sisällytä järjestelmäsovellukset</string>
-    <string name="summary_include_system_vpn">Sisällytä kaikki järjestelmäsovellukset VPN: ään ja DoH: iin.\n\nHuom: \"Estä yhteydet ilman VPN: ää\" Android VPN -asetuksissa on oltava POIS PÄÄLTÄ.</string>
     <!-- Onboarding -->
     <string name="title_next">Seuraava</string>
     <string name="title_skip">Ohita</string>

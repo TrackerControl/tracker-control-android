@@ -563,8 +563,6 @@
     <string name="static_analysis">Виявлення трекерів у коді програми</string>
     <string name="failed_loading_cached_analysis">Не вдалося завантажити кешовані результати трекера. Повідомте про це розробника за адресою hello@trackercontrol.org</string>
     <string name="msg_notifications">Натисніть, щоб надати дозволи на сповіщення (для повідомлень про помилки тощо)</string>
-    <string name="setting_include_system_vpn">Включити системні програми</string>
-    <string name="summary_include_system_vpn">Включіть усі системні програми в VPN і DoH.\n\nПримітка: у налаштуваннях VPN для Android необхідно ВИМКНУТИ опцію «Блокувати з\'єднання без VPN».</string>
     <!-- Onboarding -->
     <string name="title_next">Далі</string>
     <string name="title_skip">Пропустити</string>

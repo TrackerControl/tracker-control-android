@@ -525,8 +525,6 @@ Cordialement,\n\n]]></string>
     <string name="static_analysis">Détecter les traqueurs dans le code de l\'application</string>
     <string name="failed_loading_cached_analysis">Le chargement des résultats du tracker mis en cache a échoué. Veuillez le signaler au développeur à hello@trackercontrol.org</string>
     <string name="msg_notifications">Appuyer pour accorder les autorisations de notification (pour les messages d\'erreur, etc.)</string>
-    <string name="setting_include_system_vpn">Inclure les applications système</string>
-    <string name="summary_include_system_vpn">Inclure toutes les applications système dans le VPN et DoH.\n\nNote: \"Bloquer les connexions sans VPN\" dans les paramètres VPN Android doit être désactivé.</string>
     <!-- Onboarding -->
     <string name="title_next">Suivant</string>
     <string name="title_skip">Passer</string>

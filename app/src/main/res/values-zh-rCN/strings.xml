@@ -558,8 +558,6 @@
     <string name="static_analysis">检测应用代码中的跟踪器</string>
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
-    <string name="setting_include_system_vpn">包含系统应用</string>
-    <string name="summary_include_system_vpn">将所有系统应用包含在 VPN 和 DoH 中。\n\n注意：必须禁用 Android VPN 设置中的“拦截所有不使用 VPN 的连接”。</string>
     <!-- Onboarding -->
     <string name="title_next">下一步</string>
     <string name="title_skip">跳过</string>

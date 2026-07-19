@@ -22,6 +22,9 @@
     <string name="menu_support">Toeta seda rakendust</string>
     <string name="menu_log_support">Selgitus</string>
     <string name="menu_about">Rakenduse teave</string>
+    <string name="tab_timeline">Ajajoon</string>
+    <string name="tab_apps">Rakendused</string>
+    <string name="tab_vpn">VPN</string>
     <string name="timeline_section_last_hour">Viimase tunni jooksul</string>
     <string name="timeline_section_today">Täna</string>
     <string name="timeline_section_yesterday">Eile</string>
@@ -43,13 +46,18 @@
     <string name="menu_organization">Näita organisatsiooni</string>
     <string name="menu_pcap_enabled">PCAP on kasutusel</string>
     <string name="menu_export">Ekspordi</string>
+    <string name="setting_further_options">Täiendavad võimalused</string>
     <string name="setting_dark">Tume kujundus</string>
     <string name="setting_install">Teavitu uue paigalduse puhul</string>
     <string name="setting_pause">Lülita automaatselt sisse %1$s minuti pärast</string>
     <string name="setting_update">Kontrolli uuendusi</string>
     <string name="setting_network_options">Võrgueelistused</string>
     <string name="setting_lan">Luba ligipääs kohtvõrku</string>
+    <string name="setting_ip6">Luba kasutada IPv6 liiklust</string>
+    <string name="setting_call">Lülita helistamise ajaks välja</string>
     <string name="setting_reload_onconnectivity">Laadi uuesti igal välisühenduse muutumisel</string>
+    <string name="setting_advanced_options">Täiendavad valikud (ekspertidele)</string>
+    <string name="setting_system">Näita süsteemirakendusi</string>
     <string name="setting_log_app">Otsi uusi jälitajaid</string>
     <string name="setting_filter">Blokeeri jälitajaid</string>
     <string name="setting_track_usage">Jälgi võrgukasutust</string>
@@ -74,6 +82,21 @@
     <string name="setting_hosts_download">Laadi alla hosts fail</string>
     <string name="setting_hosts_update">Uuenda hosts faili</string>
     <string name="summary_install">Näita olekuribal teavitusi hiljuti paigaldatud rakenduste kohta</string>
+    <string name="vpn_account_show">Näita</string>
+    <string name="vpn_account_hide">Peida</string>
+    <string name="vpn_account_change">Muuda</string>
+    <string name="vpn_account_done">Valmis</string>
+    <string name="vpn_account_cancel">Katkesta</string>
+    <string name="vpn_mullvad_intro">Sisesta oma Mullvadi kasutajakonto number. Ta on salvestatud selles seadmes.</string>
+    <string name="vpn_mullvad_account_note">See konto on kasutusel Mullvadi maakohaste ühenduste jaoks.</string>
+    <string name="vpn_get_mullvad_account">Tee endale Mullvadi kasutajakonto</string>
+    <string name="vpn_get_ivpn_account">Tee endale IVPN-i kasutajakonto</string>
+    <string name="vpn_account_hint">Mullvadi kasutajakonto number</string>
+    <string name="vpn_ivpn_intro">Sisesta oma IVPN kasutajakonto tunnus. Ta on salvestatud selles seadmes.</string>
+    <string name="vpn_retry">Proovi uuesti</string>
+    <string name="vpn_country_selected">Sobib</string>
+    <string name="msg_wg_blocked_title">WireGuardi tunnel pole saadaval</string>
+    <string name="msg_sure">Kas oled selles kindel?</string>
     <string name="msg_started">Otsin jälitajaid...</string>
     <string name="msg_disabled">TrackerControli sisselülitamiseks kasuta ülal asuvat liugurlülitit.</string>
     <string name="msg_revoked">TrackerControl on lülitatud välja, ilmselt mõne teise VPN-põhise rakenduse tõttu</string>
@@ -100,6 +123,7 @@
     <string name="title_dport">Lähteport</string>
     <string name="title_raddr">Sihtaadress</string>
     <string name="title_rport">Sihtport</string>
+    <string name="title_ruid">Sihtrakendus</string>
     <string name="title_unmetered_allowed">Mittemahupõhine liiklus on lubatud</string>
     <string name="title_unmetered_blocked">Mittemahupõhine liiklus on blokeeritud</string>
     <string name="title_unmetered_disabled">Mittemahupõhise liikluse reeglid ei kehti</string>
@@ -123,6 +147,7 @@
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
+    <string name="ok">Sobib</string>
     <string name="yes">Jah</string>
     <string name="no">Ei</string>
     <string name="menu_csv">Ekspordi CSV-failina</string>
@@ -137,13 +162,14 @@
     <string name="tab_actions">Minu andmed</string>
     <string name="tracker_name">Jälitaja nimi</string>
     <string name="internet_access">Internetiühendus</string>
+    <string name="internet_access_explanation">Võida ka klõpsata rakenduse ikooni põhivaates.</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
     <string name="block_tracking_description">Väga paljud rakendused saadavad andmeid kolmandatele osapooltele ehk jälitajatele. TrackerControl võimaldab sul neid võrguühendusi valikuliselt blokeerida. Kasuta sellist võimalust siiski mõistlikult, sest rakenduste arendajad sõltuvad sellistest teenustest nagu reklaamimine või vigade otsing.</string>
     <string name="data_managment">Halda andmeid</string>
     <string name="contacts">Kontakt </string>
-    <string name="contacts_description">Kui sa arvad, et rakendus riku andmekaitsereegleid, siis sa võid vastavate organisatsioonidega otse ühendust võtta.</string>
+    <string name="contacts_description">Kui sa arvad, et rakendus rikub andmekaitsereegleid, siis sa võid vastavate organisatsioonidega otse ühendust võtta.</string>
     <string name="play_services_required">See on Google Play teenuste seadistus ning need puuduvad sinu nutiseadmest.</string>
     <string name="no_mail_service">Palun paigalda e-posti klient.</string>
     <string name="blocking_settings">Vali jälitajad</string>
@@ -155,6 +181,18 @@
     <string name="crash_dialog_text">Vabandust, TrackerControl jooksis just kokku. Kas sa oleksid nõus meile saatma e-kirja üksikasjaliku kirjeldusega?</string>
     <string name="crash_dialog_comment">Kas sul on kommentare?</string>
     <string name="launch_app">Käivita ja otsi jälitajaid</string>
+    <string name="launch_app_failed">Selle rakenduse käivitamine ei õnnestunud</string>
+    <string name="countries">Sihtmaad</string>
+    <string name="countries_explanation">Tuvasta maad, kuhu sinu telefon saadab jälitamisega seotud andmeid.\n\nTeave põhineb nimelahenduse päringutel ja IP-aadresside andmekogul ning ei pruugi olla täpne.</string>
+    <string name="countries_loading_failed">Vaat kus lops... Maakaardi laadimine ei õnnestunud. Palun kirjuta sellest tc@kollnig.net aadressile ja kirjelda, kuidas see juhtus.</string>
+    <string name="tracker_advertising">Reklaam</string>
+    <string name="tracker_analytics">Analüütika</string>
+    <string name="tracker_content">Põhitarvikud</string>
+    <string name="tracker_cryptomining">Krüptokaevandamine</string>
+    <string name="tracker_fingerprinting">Sõrmejäljestamine</string>
+    <string name="tracker_social">Sotsiaalmeedia</string>
+    <string name="tracker_email">E-post</string>
+    <string name="tracker_consent">Nõusoleku haldus</string>
     <string name="tracker_uncategorised">Kategoriseerimata</string>
     <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
     <string name="no_trackers_found_message">Jälitajate tuvastamiseks käivita rakendus</string>
@@ -172,6 +210,7 @@
     <string name="tracking_detection_failed_ram">Jälitajate teekide tuvastamine ei õnnestunud. Pole piisavalt muutmälu.</string>
     <string name="tracking_detection_failed_report">Jälitajate teekide tuvastamine ei õnnestunud. Palun teata sellest veast arendajatele.</string>
     <string name="detected_trackers">Tuvastatud jälitajate teegid: %s</string>
+    <string name="none">Puudub</string>
     <string name="trackers_static">Jälitajate teegid</string>
     <string name="blocked">BLOKEERITUD</string>
     <string name="allowed">LUBATUD</string>
@@ -179,7 +218,24 @@
     <string name="static_analysis">Tuvasta jälitajaid rakenduse koodist</string>
     <string name="msg_notifications">Teavituste õiguste lubamiseks klõpsi (näiteks veasõnumite jaoks)</string>
     <!-- Onboarding -->
+    <string name="title_next">Järgmine</string>
+    <string name="title_skip">Jäta vahele</string>
+    <string name="title_previous">Eelmine</string>
     <!-- Insights Screen -->
+    <string name="insights_share">Jaga sõpradega</string>
+    <string name="insights_see_more">Vaata lisaks →</string>
+    <string name="insights_view_timeline">Vaata hiljutist jälitajate tegevust</string>
     <!-- What's New onboarding slide (not translated) -->
+    <string name="msg_invalid_url">Vigane võrguaadress</string>
+    <string name="msg_last_update">Viimane uuendus: %s</string>
     <!-- Accessibility labels -->
+    <string name="switch_tracker_control_description">Jälitajate blokeerimine</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">Kustuta keeluloend</string>
+    <string name="blocklist_enable_description">Lülita keeluloend sisse: %s</string>
+    <string name="log_connection_allowed">Lubatud</string>
+    <string name="log_connection_blocked">Blokeeritud</string>
+    <string name="log_connection_wifi">WiFi</string>
+    <string name="log_connection_other">Muu võrk</string>
+    <string name="log_app_icon">Rakenduse ikoon</string>
 </resources>
