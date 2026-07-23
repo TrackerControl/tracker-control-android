@@ -2796,67 +2796,83 @@ public class ServiceSinkhole extends VpnService {
 
     private BroadcastReceiver packageChangedReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(final Context context, final Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
 
-            try {
-                if (Intent.ACTION_PACKAGE_ADDED.equals(intent.getAction())) {
-                    // Application added
-                    Rule.clearCache(context);
-
-                    if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                        int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
-                        if (uid > -1) {
-                            // Set tracker defaults based on blocking mode
-                            TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                            if (b.ensureDefaults(uid, BlockingMode.isStrictMode(context)))
-                                b.saveSettings(context);
-
-                            // Show install notification
-                            if (prefs.getBoolean("installed", true))
-                                notifyNewApplication(uid, this);
-                        }
+            // Handle off the main thread: Rule.clearCache() synchronizes on the
+            // application context, a lock the command thread can hold for several
+            // seconds while building rules via slow PackageManager IPC. Doing this
+            // work on the main thread blocks input dispatching and causes an ANR.
+            final BroadcastReceiver.PendingResult result = goAsync();
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        handlePackageChanged(context, intent);
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    } finally {
+                        result.finish();
                     }
-
-                    reload("package added", context, false);
-
-                } else if (Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())) {
-                    // Application removed
-                    Rule.clearCache(context);
-
-                    if (intent.getBooleanExtra(Intent.EXTRA_DATA_REMOVED, false)) {
-                        // Remove settings
-                        String packageName = intent.getData().getSchemeSpecificPart();
-                        Log.i(TAG, "Deleting settings package=" + packageName);
-                        context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        BlockingMode.clearAutoExcludedApp(context, packageName);
-                        context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-                        context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
-
-                        int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
-                        if (uid > 0) {
-                            DatabaseHelper dh = DatabaseHelper.getInstance(context);
-                            dh.clearLog(uid);
-                            dh.clearAccess(uid, false);
-                            uidToApp.remove(uid);
-                            uidToPackage.remove(uid);
-
-                            NotificationManagerCompat.from(context).cancel(uid); // installed notification
-                            NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
-                        }
-                    }
-
-                    reload("package deleted", context, false);
                 }
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
+            });
         }
     };
 
-    public void notifyNewApplication(int uid, BroadcastReceiver br) {
+    private void handlePackageChanged(Context context, Intent intent) {
+        if (Intent.ACTION_PACKAGE_ADDED.equals(intent.getAction())) {
+            // Application added
+            Rule.clearCache(context);
+
+            if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
+                if (uid > -1) {
+                    // Set tracker defaults based on blocking mode
+                    TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+                    if (b.ensureDefaults(uid, BlockingMode.isStrictMode(context)))
+                        b.saveSettings(context);
+
+                    // Show install notification
+                    if (prefs.getBoolean("installed", true))
+                        notifyNewApplication(uid, true);
+                }
+            }
+
+            reload("package added", context, false);
+
+        } else if (Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())) {
+            // Application removed
+            Rule.clearCache(context);
+
+            if (intent.getBooleanExtra(Intent.EXTRA_DATA_REMOVED, false)) {
+                // Remove settings
+                String packageName = intent.getData().getSchemeSpecificPart();
+                Log.i(TAG, "Deleting settings package=" + packageName);
+                context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+                BlockingMode.clearAutoExcludedApp(context, packageName);
+                context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+                context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+
+                int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
+                if (uid > 0) {
+                    DatabaseHelper dh = DatabaseHelper.getInstance(context);
+                    dh.clearLog(uid);
+                    dh.clearAccess(uid, false);
+                    uidToApp.remove(uid);
+                    uidToPackage.remove(uid);
+
+                    NotificationManagerCompat.from(context).cancel(uid); // installed notification
+                    NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
+                }
+            }
+
+            reload("package deleted", context, false);
+        }
+    }
+
+    public void notifyNewApplication(int uid, boolean checkTrackerLibraries) {
         if (uid < 0 || !Util.hasInternet(uid, this))
             return;
         if (uid == Process.myUid())
@@ -2908,8 +2924,8 @@ public class ServiceSinkhole extends VpnService {
                     NotificationManagerCompat.from(this).notify(uid, builder.build());
 
                 // Check tracker libraries in app
-                if (br != null)
-                    checkTrackers(packageName, uid, name, br, builder);
+                if (checkTrackerLibraries)
+                    checkTrackers(packageName, uid, name, builder);
             }
 
         } catch (PackageManager.NameNotFoundException ex) {
@@ -2920,33 +2936,28 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
-    private void checkTrackers(String packageName, int uid, String appName, BroadcastReceiver br,
+    // Callers must invoke this off the main thread (e.g. the package receiver's
+    // executor or the command handler thread), as it performs blocking work.
+    private void checkTrackers(String packageName, int uid, String appName,
             NotificationCompat.Builder builder) {
-        BroadcastReceiver.PendingResult result = br.goAsync();
-        new Thread() {
-            public void run() {
-                try {
-                    Context c = getApplicationContext();
-                    TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(c);
+        try {
+            Context c = getApplicationContext();
+            TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(c);
 
-                    // Check cache first
-                    String cachedResult = manager.getCachedResult(packageName);
-                    if (cachedResult != null && !manager.isCacheStale(packageName)) {
-                        // Use cached result
-                        int trackerCount = TrackerAnalysisManager.countTrackers(cachedResult);
-                        builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
-                        NotificationManagerCompat.from(c).notify(uid, builder.build());
-                    } else {
-                        // Schedule analysis for later; the worker updates this notification when done.
-                        manager.startAnalysis(packageName, uid, appName);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                result.setResultCode(RESULT_OK);
-                result.finish();
+            // Check cache first
+            String cachedResult = manager.getCachedResult(packageName);
+            if (cachedResult != null && !manager.isCacheStale(packageName)) {
+                // Use cached result
+                int trackerCount = TrackerAnalysisManager.countTrackers(cachedResult);
+                builder.setContentText(getString(R.string.msg_installed_tracker_libraries_found, trackerCount));
+                NotificationManagerCompat.from(c).notify(uid, builder.build());
+            } else {
+                // Schedule analysis for later; the worker updates this notification when done.
+                manager.startAnalysis(packageName, uid, appName);
             }
-        }.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -3306,7 +3317,7 @@ public class ServiceSinkhole extends VpnService {
         ServiceSinkhole.reload("notification", ServiceSinkhole.this, false);
 
         // Update notification
-        notifyNewApplication(uid, null);
+        notifyNewApplication(uid, false);
 
         // Update UI
         Intent ruleset = new Intent(ActivityMain.ACTION_RULES_CHANGED);
