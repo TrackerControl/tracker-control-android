@@ -1,3 +1,5 @@
+import org.gradle.process.ExecOperations
+
 // --- WireGuard bridge (Rust, built from source via cargo-ndk) ---
 // Produces libwgbridge.so per ABI from wgbridge-rs/ (which embeds gotatun,
 // Mullvad's WireGuard implementation). Only re-runs when the Rust source or
@@ -13,6 +15,7 @@ def wgbridgeAbis = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
 ext.wgbridgeNdkVersion = '27.2.12479018' // keep in sync with defaultConfig.ndkVersion
 def wgbridgeNdkVersion = ext.wgbridgeNdkVersion
 def wgbridgeCargoNdkVersion = '4.1.2' // keep in sync with scripts/setup_rust_android.sh
+def wgbridgeExecOperations = project.services.get(ExecOperations)
 
 // Resolve the NDK directory the way AGP does (local.properties, then env),
 // since modern AGP extensions no longer expose android.ndkDirectory.
@@ -149,11 +152,16 @@ tasks.register('wgbridgeBuild') {
         args += ['--platform', '23', '-o', wgbridgeOutDir.absolutePath,
                  'build', '--release', '--locked', '--offline']
 
-        providers.exec {
+        wgbridgeExecOperations.exec {
             workingDir wgbridgeSrcDir
             environment env
             commandLine args
-        }.result.get().assertNormalExitValue()
+            // Keep Gradle's build offline, but surface Cargo's actionable
+            // prerequisite diagnostics (for example, a missing locked crate)
+            // instead of reducing them to an exit code 101.
+            standardOutput = System.out
+            errorOutput = System.err
+        }.assertNormalExitValue()
 
         // gotatun also declares crate-type cdylib, so cargo-ndk copies a
         // stray libgotatun-<hash>.so next to libwgbridge.so. wgbridge links
