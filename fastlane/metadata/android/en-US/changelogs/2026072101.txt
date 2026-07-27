@@ -1,0 +1,8 @@
+- New VPN preview: use Mullvad, IVPN, or your own WireGuard profile
+- New Timeline view and refreshed Insights
+- Completed Material 3 redesign with better accessibility
+- More reliable VPN, WireGuard, DNS, pause/resume, and tracker detection
+- Fixed a crash on devices with work profiles
+- Lower memory use, better performance, and less Secure DNS battery drain
+- Updated tracker lists, translations, and dependencies
+- Many bug fixes
