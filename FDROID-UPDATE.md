@@ -4,7 +4,7 @@ TrackerControl's WireGuard engine is compiled from Rust source. New F-Droid
 build entries must prepare the pinned Rust toolchain and Cargo dependencies
 before Gradle invokes Cargo in locked, offline mode.
 
-The examples below use release `2026071301` / `2026.07.13`. Substitute the
+The examples below use release `2026072701` / `2026.07.27`. Substitute the
 actual version code and version name for later releases.
 
 ## 1. Tag the release
@@ -15,8 +15,8 @@ Only tag a commit that includes the current `rust-toolchain.toml`,
 Android targets; the setup script installs that specification.
 
 ```bash
-git tag 2026071301
-git push origin 2026071301
+git tag 2026072701
+git push origin 2026072701
 ```
 
 TrackerControl's F-Droid metadata uses numeric tags as release identifiers.
@@ -31,7 +31,7 @@ git clone https://gitlab.com/YOUR_USERNAME/fdroiddata.git
 cd fdroiddata
 git remote add upstream https://gitlab.com/fdroid/fdroiddata.git
 git fetch upstream master
-git switch -c trackercontrol-2026071301 upstream/master
+git switch -c trackercontrol-2026072701 upstream/master
 ```
 
 Edit:
@@ -43,9 +43,9 @@ metadata/net.kollnig.missioncontrol.fdroid.yml
 Append this entry under `Builds:`:
 
 ```yaml
-  - versionName: 2026.07.13-fdroid
-    versionCode: 2026071301
-    commit: '2026071301'
+  - versionName: 2026.07.27-fdroid
+    versionCode: 2026072701
+    commit: '2026072701'
     subdir: app
     sudo:
       - apt-get update
@@ -60,8 +60,8 @@ Append this entry under `Builds:`:
 Update the current-version fields at the bottom of the file:
 
 ```yaml
-CurrentVersion: 2026.07.13-fdroid
-CurrentVersionCode: 2026071301
+CurrentVersion: 2026.07.27-fdroid
+CurrentVersionCode: 2026072701
 ```
 
 Keep the automatic-update configuration unchanged:
@@ -89,6 +89,10 @@ offline:
 ./scripts/setup_rust_android.sh
 ./gradlew :app:dependencies :app:prefetchAndroidLintDependencies \
   --no-daemon --no-configuration-cache
+# AGP resolves AAPT2 lazily when generating the locale config, so cache it
+# before verifying the release build in offline mode.
+./gradlew :app:generateFdroidReleaseLocaleConfig \
+  --no-daemon --no-configuration-cache
 ./gradlew :app:assembleFdroidRelease --offline \
   --no-build-cache --no-configuration-cache --no-daemon
 ```
@@ -102,8 +106,8 @@ From the `fdroiddata` checkout:
 
 ```bash
 git add metadata/net.kollnig.missioncontrol.fdroid.yml
-git commit -m "Update TrackerControl to 2026071301"
-git push origin trackercontrol-2026071301
+git commit -m "Update TrackerControl to 2026072701"
+git push origin trackercontrol-2026072701
 ```
 
 Open a merge request from that branch into `fdroid/fdroiddata:master`.

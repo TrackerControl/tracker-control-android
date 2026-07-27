@@ -2,7 +2,8 @@
 /output/
 
 .claude/
-fdroidserver/
+/fdroidserver/
+/fdroiddata/
 
 output-metadata.json
 

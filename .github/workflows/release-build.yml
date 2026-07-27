@@ -58,6 +58,10 @@ jobs:
         run: |
           ./gradlew :app:dependencies :app:prefetchAndroidLintDependencies \
             --no-daemon --no-configuration-cache
+          # AGP resolves its platform-specific AAPT2 binary lazily while
+          # generating the locale config; cache it before the offline build.
+          ./gradlew :app:generateGithubReleaseLocaleConfig \
+            --no-daemon --no-configuration-cache
 
       - name: Build unsigned GitHub release APK offline
         env:
