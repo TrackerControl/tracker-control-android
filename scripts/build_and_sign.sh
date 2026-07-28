@@ -39,6 +39,7 @@ require_command() {
 readonly TAG=$1
 readonly REQUESTED_RUN_ID=${2:-}
 [[ $TAG =~ ^[0-9]+$ ]] || fail "release tag must be numeric: $TAG"
+readonly FASTLANE_CHANGELOG="$ROOT/fastlane/metadata/android/en-US/changelogs/$TAG.txt"
 
 require_command gh
 require_command git
@@ -167,6 +168,14 @@ printf 'signing_certificate_sha256=%s\n' "$ACTUAL_CERT_SHA256" \
 printf 'workflow_run=%s\n' "$RUN_URL" >> "$OUTPUT_BUILD_INFO"
 
 printf 'Creating draft GitHub release %s...\n' "$TAG"
+RELEASE_NOTES='Download the latest version [here](https://github.com/TrackerControl/tracker-control-android/releases/latest/download/TrackerControl-githubRelease-latest.apk).'
+if [[ -s $FASTLANE_CHANGELOG ]]; then
+    printf 'Including Fastlane changelog: %s\n' "$FASTLANE_CHANGELOG"
+    RELEASE_NOTES+=$'\n\n'
+    RELEASE_NOTES+=$(<"$FASTLANE_CHANGELOG")
+else
+    printf 'No Fastlane changelog found for %s; using generated release notes only.\n' "$TAG"
+fi
 gh release create "$TAG" \
     "$SIGNED_APK" \
     "$SIGNED_SUMS" \
@@ -175,7 +184,8 @@ gh release create "$TAG" \
     --verify-tag \
     --draft \
     --generate-notes \
-    --title "$TAG"
+    --notes "$RELEASE_NOTES" \
+    --title "Version $TAG"
 
 printf '\nSigned APK: %s\n' "$SIGNED_APK"
 printf 'A draft release was created. Test the APK, then publish it in GitHub.\n'
