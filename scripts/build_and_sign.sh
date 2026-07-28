@@ -129,9 +129,14 @@ readonly OUTPUT_DIR=${RELEASE_OUTPUT_DIR:-"$ROOT/output/release-$TAG"}
 mkdir -p "$OUTPUT_DIR"
 readonly ALIGNED_APK="$TEMP_DIR/TrackerControl-githubRelease-aligned.apk"
 readonly TEMP_SIGNED_APK="$TEMP_DIR/TrackerControl-githubRelease-signed.apk"
+# Asset names must sort alphabetically after the APK: the GitHub API
+# returns release assets ordered by name, and the app's update checker
+# (ServiceSinkhole#checkUpdate) always takes assets[0] as the download.
+# Using the APK filename as a literal prefix guarantees it sorts first
+# under any lexicographic comparison, regardless of case-folding rules.
 readonly SIGNED_APK="$OUTPUT_DIR/TrackerControl-githubRelease-latest.apk"
-readonly SIGNED_SUMS="$OUTPUT_DIR/SHA256SUMS.txt"
-readonly OUTPUT_BUILD_INFO="$OUTPUT_DIR/BUILD-INFO.txt"
+readonly SIGNED_SUMS="$OUTPUT_DIR/TrackerControl-githubRelease-latest.apk.sha256sums"
+readonly OUTPUT_BUILD_INFO="$OUTPUT_DIR/TrackerControl-githubRelease-latest.apk.build-info.txt"
 [[ ! -e $SIGNED_APK ]] || fail "signed output already exists: $SIGNED_APK"
 
 printf 'Aligning and signing the APK...\n'
