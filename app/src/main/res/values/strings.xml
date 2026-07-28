@@ -605,7 +605,7 @@ Sincerely,\n\n]]></string>
     <string name="summary_block_ambiguous_trackers">When an IP has both tracker and non-tracker hostname evidence, still block it. Disable this to reduce app breakage.</string>
 
     <string name="setting_sni_enabled">SNI extraction (research)</string>
-    <string name="summary_sni_enabled">Extract hostnames from TLS connections for more accurate tracker detection. Warning: this leaks your IP address to tracker servers. Only enable for research.</string>
+    <string name="summary_sni_enabled">Extract hostnames from TLS connections for more accurate tracker detection. Warning: this leaks your IP address to tracker servers (or, if remote routing is enabled, the VPN provider\'s IP). Only enable for research.</string>
 
     <string name="setting_blocking_mode">Blocking Mode</string>
     <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers stay routed through the VPN, but tracker protection is off by default. Known incompatible apps are excluded. Limited app breakage.</string>
