@@ -51,6 +51,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
+name = "base64"
+version = "0.23.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b25655df2c3cdd83c5e5b293b88acd880332b2ddadd7c30ac43144fdc0033da9"
+
+[[package]]
 name = "bitfield-struct"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -404,7 +410,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "87942cf21be131088380c8b3cb3dc9a8528a7f840a8230bed0e79b2e202d0629"
 dependencies = [
  "aead",
- "base64",
+ "base64 0.22.1",
  "bitfield-struct",
  "blake2",
  "bytes",
@@ -1100,7 +1106,7 @@ name = "wgbridge"
 version = "0.1.0"
 dependencies = [
  "android_logger",
- "base64",
+ "base64 0.23.0",
  "getrandom 0.4.3",
  "gotatun",
  "hex",
