@@ -110,6 +110,16 @@ public class MullvadProfileGenerator {
     }
 
     public GeneratedProfile generate(String accountNumber, String requestedCountryCode, String reusableConfig) throws Exception {
+        return generate(accountNumber, requestedCountryCode, reusableConfig, null);
+    }
+
+    /**
+     * @param excludeHostname a relay hostname to avoid re-picking when another
+     *                        candidate is available in the chosen pool, e.g. a
+     *                        relay a caller just failed over away from.
+     */
+    public GeneratedProfile generate(String accountNumber, String requestedCountryCode, String reusableConfig,
+                                     String excludeHostname) throws Exception {
         String account = accountNumber == null ? "" : accountNumber.trim();
         if (account.isEmpty())
             throw new IllegalArgumentException("Mullvad account number is required");
@@ -126,7 +136,7 @@ public class MullvadProfileGenerator {
             privateKey = reusable.getPrivateKey();
             device = deviceFromConfig(reusable);
         }
-        Relay relay = chooseRelay(fetchRelays(), requestedCountryCode);
+        Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
 
         String config = buildConfig(privateKey, device, relay);
         return new GeneratedProfile("Mullvad - " + relay.countryName, config, account,
@@ -278,6 +288,10 @@ public class MullvadProfileGenerator {
     }
 
     private Relay chooseRelay(List<Relay> relays, String requestedCountryCode) {
+        return chooseRelay(relays, requestedCountryCode, null);
+    }
+
+    private Relay chooseRelay(List<Relay> relays, String requestedCountryCode, String excludeHostname) {
         if (relays.isEmpty())
             throw new IllegalStateException("No active Mullvad WireGuard relays found");
 
@@ -286,6 +300,17 @@ public class MullvadProfileGenerator {
             candidates = filterCountry(relays, defaultCountry());
         if (candidates.isEmpty())
             candidates = new ArrayList<>(relays);
+
+        if (!TextUtils.isEmpty(excludeHostname)) {
+            List<Relay> withoutExcluded = new ArrayList<>();
+            for (Relay relay : candidates)
+                if (!excludeHostname.equals(relay.hostname))
+                    withoutExcluded.add(relay);
+            // Only apply the exclusion if it leaves a choice — a single-relay
+            // country should still return that relay rather than throw.
+            if (!withoutExcluded.isEmpty())
+                candidates = withoutExcluded;
+        }
 
         List<Relay> stboot = new ArrayList<>();
         for (Relay relay : candidates)

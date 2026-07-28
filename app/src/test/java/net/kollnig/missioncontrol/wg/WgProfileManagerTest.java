@@ -91,6 +91,24 @@ public class WgProfileManagerTest {
     }
 
     @Test
+    public void updateProfileConfigIfActiveOnlyWritesWhenStillActive() throws Exception {
+        manager.saveProfile("", "One", "config-1");
+        String first = manager.getActiveProfileId();
+        manager.saveProfile("", "Two", "config-2");
+        String second = manager.getActiveProfileId();
+
+        assertTrue(manager.updateProfileConfigIfActive(second, "config-2b"));
+        assertEquals("config-2b", manager.getProfile(second).config);
+        assertEquals("config-2b", prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+
+        // "first" is no longer active: the write must not clobber the live
+        // PREF_WG_CONFIG pointer, which now belongs to "second".
+        assertFalse(manager.updateProfileConfigIfActive(first, "stale-write"));
+        assertEquals("config-1", manager.getProfile(first).config);
+        assertEquals("config-2b", prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
     public void deletingInactiveProfilePreservesActiveSelection() throws Exception {
         manager.saveProfile("", "One", "config-1");
         String first = manager.getActiveProfileId();
