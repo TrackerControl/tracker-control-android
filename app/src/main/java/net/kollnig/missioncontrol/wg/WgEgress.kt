@@ -42,6 +42,13 @@ object WgEgress {
     // indefinitely, each doing DNS + handshake + monitor polling under a wakelock.
     private const val RESTART_BACKOFF_BASE_MS = 20_000L
     private const val RESTART_BACKOFF_MAX_MS = 5 * 60_000L
+    // A dead relay server looks identical to any other broken-tunnel cause
+    // from in here (no rx, handshake stalls). After this many full-restart
+    // cycles against the SAME endpoint have all failed to recover, ask the
+    // provider-aware callback to move the active profile to a different
+    // relay before continuing the restart loop, instead of retrying the
+    // one dead server forever.
+    private const val RELAY_FAILOVER_AFTER_ATTEMPTS = 3
 
     @Volatile private var tunnel: WgTunnel? = null
     // Monotonically identifies the tunnel instance published in [tunnel].
@@ -112,6 +119,16 @@ object WgEgress {
 
     @Volatile private var requestReloadCb: Runnable? = null
     @Volatile private var notifyBrokenCb: Runnable? = null
+    // Provider-aware hook: tries to move the active profile to a different
+    // relay server (same provider/account/country, reused key material) and
+    // returns whether it actually switched. Null, or a profile with no
+    // provider (self-hosted / manually imported single-server configs), means
+    // there is nothing to fail over to.
+    @Volatile private var regenerateEndpointCb: (() -> Boolean)? = null
+    @Volatile private var failoverInFlight: Boolean = false
+    private val failoverExecutor = java.util.concurrent.Executors.newSingleThreadExecutor {
+        Thread(it, "wg-failover").apply { isDaemon = true }
+    }
     // Guarded by monitorLock: started/stopped from the vpn handler thread,
     // the wg-rebind thread, and the dying monitor thread itself. Unsynchronized
     // access could leak a second polling thread (double prods, double restarts).
@@ -134,9 +151,14 @@ object WgEgress {
      * [notifyBroken] surfaces a user-facing notification. Registered once
      * when the service starts the egress.
      */
-    fun setRecoveryCallbacks(requestReload: Runnable, notifyBroken: Runnable) {
+    fun setRecoveryCallbacks(
+        requestReload: Runnable,
+        notifyBroken: Runnable,
+        regenerateEndpoint: (() -> Boolean)? = null
+    ) {
         requestReloadCb = requestReload
         notifyBrokenCb = notifyBroken
+        regenerateEndpointCb = regenerateEndpoint
     }
 
     fun addStateListener(l: Runnable) { listeners.add(l) }
@@ -340,7 +362,6 @@ object WgEgress {
 
     private fun requestFullRestart(reason: String, notify: Boolean, expected: TunnelSnapshot) {
         val attempt: Int
-        val delay: Long
         synchronized(tunnelLifecycleLock) {
             // This check and installation of pending state must be atomic with
             // tunnel replacement. Otherwise a replacement can land between
@@ -348,14 +369,24 @@ object WgEgress {
             if (!isCurrentLocked(expected)) return
             clearEndpointCache()
             attempt = restartAttempts++
-            delay = if (attempt == 0) 0L
-            else minOf(RESTART_BACKOFF_MAX_MS, RESTART_BACKOFF_BASE_MS shl (attempt - 1).coerceAtMost(10))
             forceRestartPending = true
             pendingRestartTunnel = expected.tunnel
             pendingRestartTunnelGeneration = expected.generation
         }
-        Log.w(TAG, "$reason; forcing restart (attempt=${attempt + 1}, delay=${delay}ms)")
+        Log.w(TAG, "$reason; forcing restart (attempt=${attempt + 1})")
         if (notify) scheduleRecoveryNotificationCheck()
+
+        val regenerate = regenerateEndpointCb
+        if (attempt > 0 && attempt % RELAY_FAILOVER_AFTER_ATTEMPTS == 0 && regenerate != null) {
+            tryRelayFailover(regenerate, expected, attempt)
+            return
+        }
+        scheduleRestart(attempt)
+    }
+
+    private fun scheduleRestart(attempt: Int) {
+        val delay = if (attempt == 0) 0L
+        else minOf(RESTART_BACKOFF_MAX_MS, RESTART_BACKOFF_BASE_MS shl (attempt - 1).coerceAtMost(10))
         verifyHandler.removeCallbacks(pendingRestartRunnable)
         if (delay <= 0L) {
             restartScheduled = false
@@ -363,6 +394,45 @@ object WgEgress {
         } else {
             restartScheduled = true
             verifyHandler.postDelayed(pendingRestartRunnable, delay)
+        }
+    }
+
+    /**
+     * The same relay has now failed to recover across several full-restart
+     * cycles — likely the server itself is down, not a local network blip.
+     * Runs the (network-bound) [regenerate] callback off-thread; on success
+     * it has already rewritten the active profile's config, so the queued
+     * restart picks up the new peer. On failure or timeout, falls back to
+     * the normal same-config backoff so we never restart less often than
+     * before this existed.
+     */
+    private fun tryRelayFailover(regenerate: () -> Boolean, expected: TunnelSnapshot, attempt: Int) {
+        if (failoverInFlight) {
+            scheduleRestart(attempt)
+            return
+        }
+        failoverInFlight = true
+        try {
+            failoverExecutor.execute {
+                val switched = try {
+                    regenerate()
+                } catch (e: Throwable) {
+                    Log.w(TAG, "relay failover callback threw", e)
+                    false
+                } finally {
+                    failoverInFlight = false
+                }
+                if (!isCurrent(expected)) return@execute
+                if (switched) {
+                    Log.w(TAG, "relay failover: switched the active profile to a different server")
+                    scheduleRestart(0)
+                } else {
+                    scheduleRestart(attempt)
+                }
+            }
+        } catch (e: java.util.concurrent.RejectedExecutionException) {
+            failoverInFlight = false
+            scheduleRestart(attempt)
         }
     }
 

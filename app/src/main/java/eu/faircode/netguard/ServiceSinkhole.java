@@ -1807,7 +1807,8 @@ public class ServiceSinkhole extends VpnService {
         // It also handles the disable case internally — no need to gate.
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.setRecoveryCallbacks(
                 () -> ServiceSinkhole.reload("wireguard connectivity repair", ServiceSinkhole.this, false),
-                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)));
+                () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)),
+                () -> net.kollnig.missioncontrol.wg.WgRelayFailover.attemptFailover(ServiceSinkhole.this));
         jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
                 && !TextUtils.isEmpty(prefs.getString("wg_config", "")));
         boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
