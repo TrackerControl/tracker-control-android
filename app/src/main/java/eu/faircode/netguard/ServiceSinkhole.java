@@ -803,22 +803,24 @@ public class ServiceSinkhole extends VpnService {
                 JSONObject jroot = jarray.getJSONObject(0);
                 // JSONObject jroot = new JSONObject(json.toString());
                 if (jroot.has("tag_name") && jroot.has("html_url") && jroot.has("assets")) {
+                    // Always link to the release page rather than a specific
+                    // asset: the user picks the right download there, and
+                    // the notification doesn't depend on asset ordering.
                     String url = jroot.getString("html_url");
                     JSONArray jassets = jroot.getJSONArray("assets");
                     if (jassets.length() > 0) {
-                        JSONObject jasset = jassets.getJSONObject(0);
-                        if (jasset.has("name")) {
-                            long available = jroot.getLong("tag_name");
-                            String name = jasset.getString("name");
-                            Log.i(TAG, "Tag " + available + " name " + name + " url " + url);
+                        long available = jroot.getLong("tag_name");
+                        String name = (jroot.has("name") && !jroot.isNull("name") && jroot.getString("name").length() > 0)
+                                ? jroot.getString("name")
+                                : getString(R.string.title_version, available);
+                        Log.i(TAG, "Tag " + available + " name " + name + " url " + url);
 
-                            long current = Util.getSelfVersionCode(ServiceSinkhole.this);
-                            if (current < available) {
-                                Log.i(TAG, "Update available from " + current + " to " + available);
-                                showUpdateNotification(name, url);
-                            } else
-                                Log.i(TAG, "Up-to-date current version " + current);
-                        }
+                        long current = Util.getSelfVersionCode(ServiceSinkhole.this);
+                        if (current < available) {
+                            Log.i(TAG, "Update available from " + current + " to " + available);
+                            showUpdateNotification(name, url);
+                        } else
+                            Log.i(TAG, "Up-to-date current version " + current);
                     }
                 }
             } catch (JSONException ex) {

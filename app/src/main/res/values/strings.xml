@@ -346,6 +346,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_inactive">No active internet connection</string>
     <string name="msg_queue">TrackerControl is busy</string>
     <string name="msg_update">Update available, tap to download</string>
+    <string name="title_version">Version %1$d</string>
     <string name="msg_usage">You can allow (greenish) or deny (reddish) Wi-Fi or mobile internet access by tapping on the icons next to an app</string>
     <string name="msg_push">Incoming (push) messages are mostly handled by the system component Play services, which is allowed internet access by default</string>
     <string name="msg_system">Managing all (system) apps can be enabled in the settings</string>

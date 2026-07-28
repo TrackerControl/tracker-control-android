@@ -65,8 +65,14 @@ The script writes the signed APK and verification metadata to
 `output/release-2026071301/` and creates a draft GitHub release containing:
 
 - `TrackerControl-githubRelease-latest.apk`
-- `SHA256SUMS.txt`
-- `BUILD-INFO.txt`
+- `TrackerControl-githubRelease-latest.apk.sha256sums`
+- `TrackerControl-githubRelease-latest.apk.build-info.txt`
+
+The two metadata files are named with the APK filename as a prefix so they
+always sort alphabetically after it. The GitHub API returns release assets
+ordered by name, and the app's in-app update checker always downloads
+`assets[0]`; without this ordering it can fetch `BUILD-INFO.txt` instead of
+the APK (#681).
 
 Install and test the APK from the draft, then publish the release in GitHub.
 
