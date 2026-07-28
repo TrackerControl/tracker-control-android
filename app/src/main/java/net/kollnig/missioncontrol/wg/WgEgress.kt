@@ -44,11 +44,18 @@ object WgEgress {
     private const val RESTART_BACKOFF_MAX_MS = 5 * 60_000L
     // A dead relay server looks identical to any other broken-tunnel cause
     // from in here (no rx, handshake stalls). After this many full-restart
-    // cycles against the SAME endpoint have all failed to recover, ask the
-    // provider-aware callback to move the active profile to a different
-    // relay before continuing the restart loop, instead of retrying the
-    // one dead server forever.
+    // cycles against the SAME endpoint have all failed to recover, and on
+    // every further multiple of it, ask the provider-aware callback to move
+    // the active profile to a different relay before continuing the restart
+    // loop, instead of retrying the one dead server forever.
     private const val RELAY_FAILOVER_AFTER_ATTEMPTS = 3
+    // Bounds the relay-list fetch + config rewrite so a stalled network call
+    // can never withhold a restart for longer than the caller would have
+    // waited anyway. forceRestartPending is already set by the time this
+    // runs, which makes onMonitorBroken/onUnderlyingNetworkChanged no-op
+    // until a restart is scheduled — without a bound, a hung call would
+    // silently stall recovery instead of merely skipping the relay switch.
+    private const val FAILOVER_TIMEOUT_MS = 15_000L
 
     @Volatile private var tunnel: WgTunnel? = null
     // Monotonically identifies the tunnel instance published in [tunnel].
@@ -125,7 +132,7 @@ object WgEgress {
     // provider (self-hosted / manually imported single-server configs), means
     // there is nothing to fail over to.
     @Volatile private var regenerateEndpointCb: (() -> Boolean)? = null
-    @Volatile private var failoverInFlight: Boolean = false
+    private val failoverInFlight = java.util.concurrent.atomic.AtomicBoolean(false)
     private val failoverExecutor = java.util.concurrent.Executors.newSingleThreadExecutor {
         Thread(it, "wg-failover").apply { isDaemon = true }
     }
@@ -356,11 +363,19 @@ object WgEgress {
         requestFullRestart(
             "connectivity monitor: tunnel still broken after cheap recovery",
             notify = true,
-            expected = expected
+            expected = expected,
+            // Only a monitor-observed break (no rx/handshake) is evidence the
+            // relay itself is unreachable; a rebind failure below is not.
+            eligibleForFailover = true
         )
     }
 
-    private fun requestFullRestart(reason: String, notify: Boolean, expected: TunnelSnapshot) {
+    private fun requestFullRestart(
+        reason: String,
+        notify: Boolean,
+        expected: TunnelSnapshot,
+        eligibleForFailover: Boolean
+    ) {
         val attempt: Int
         synchronized(tunnelLifecycleLock) {
             // This check and installation of pending state must be atomic with
@@ -377,7 +392,7 @@ object WgEgress {
         if (notify) scheduleRecoveryNotificationCheck()
 
         val regenerate = regenerateEndpointCb
-        if (attempt > 0 && attempt % RELAY_FAILOVER_AFTER_ATTEMPTS == 0 && regenerate != null) {
+        if (eligibleForFailover && attempt > 0 && attempt % RELAY_FAILOVER_AFTER_ATTEMPTS == 0 && regenerate != null) {
             tryRelayFailover(regenerate, expected, attempt)
             return
         }
@@ -402,16 +417,32 @@ object WgEgress {
      * cycles — likely the server itself is down, not a local network blip.
      * Runs the (network-bound) [regenerate] callback off-thread; on success
      * it has already rewritten the active profile's config, so the queued
-     * restart picks up the new peer. On failure or timeout, falls back to
-     * the normal same-config backoff so we never restart less often than
-     * before this existed.
+     * restart picks up the new peer and the backoff resets, since the new
+     * relay hasn't earned any of the old one's penalty. On failure or
+     * [FAILOVER_TIMEOUT_MS] timeout, falls back to the normal same-config
+     * backoff so we never restart less often than before this existed.
+     *
+     * [resolved] guards against the timeout and the completed callback both
+     * trying to schedule a restart for the same attempt: whichever of the
+     * two runs first (main thread for the timeout, [failoverExecutor] for
+     * the callback) wins the race, the other is a no-op.
      */
     private fun tryRelayFailover(regenerate: () -> Boolean, expected: TunnelSnapshot, attempt: Int) {
-        if (failoverInFlight) {
+        if (!failoverInFlight.compareAndSet(false, true)) {
             scheduleRestart(attempt)
             return
         }
-        failoverInFlight = true
+        val resolved = java.util.concurrent.atomic.AtomicBoolean(false)
+        val timeoutRunnable = Runnable {
+            if (resolved.compareAndSet(false, true)) {
+                failoverInFlight.set(false)
+                if (isCurrent(expected)) {
+                    Log.w(TAG, "relay failover timed out after ${FAILOVER_TIMEOUT_MS}ms; falling back to backoff")
+                    scheduleRestart(attempt)
+                }
+            }
+        }
+        verifyHandler.postDelayed(timeoutRunnable, FAILOVER_TIMEOUT_MS)
         try {
             failoverExecutor.execute {
                 val switched = try {
@@ -420,19 +451,23 @@ object WgEgress {
                     Log.w(TAG, "relay failover callback threw", e)
                     false
                 } finally {
-                    failoverInFlight = false
+                    failoverInFlight.set(false)
                 }
+                verifyHandler.removeCallbacks(timeoutRunnable)
+                if (!resolved.compareAndSet(false, true)) return@execute
                 if (!isCurrent(expected)) return@execute
                 if (switched) {
                     Log.w(TAG, "relay failover: switched the active profile to a different server")
+                    restartAttempts = 0
                     scheduleRestart(0)
                 } else {
                     scheduleRestart(attempt)
                 }
             }
         } catch (e: java.util.concurrent.RejectedExecutionException) {
-            failoverInFlight = false
-            scheduleRestart(attempt)
+            verifyHandler.removeCallbacks(timeoutRunnable)
+            failoverInFlight.set(false)
+            if (resolved.compareAndSet(false, true)) scheduleRestart(attempt)
         }
     }
 
@@ -587,7 +622,12 @@ object WgEgress {
                                 requestFullRestart(
                                     "WG rebind failed after network change",
                                     notify = false,
-                                    expected = expected
+                                    expected = expected,
+                                    // A rebind failure means the local network
+                                    // changed under us, not that the relay is
+                                    // dead — don't let it count toward
+                                    // switching relays.
+                                    eligibleForFailover = false
                                 )
                             }
                         }

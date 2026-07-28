@@ -229,9 +229,27 @@ public class WgProfileManager {
         String active = getActiveProfileId();
         if (TextUtils.isEmpty(active))
             return;
+        updateProfileConfig(active, config);
+    }
 
+    /**
+     * Like {@link #updateActiveProfileConfig}, but only writes if {@code profileId}
+     * is still the active profile. For callers (e.g. background relay failover)
+     * that resolved which profile to update before doing slow work: without this
+     * check, a profile switch that lands during that work would silently write
+     * the stale profile's regenerated config over whatever the user switched to.
+     * Returns whether the write happened.
+     */
+    public boolean updateProfileConfigIfActive(String profileId, String config) {
+        if (TextUtils.isEmpty(profileId) || !profileId.equals(getActiveProfileId()))
+            return false;
+        updateProfileConfig(profileId, config);
+        return true;
+    }
+
+    private void updateProfileConfig(String profileId, String config) {
         JSONArray profiles = readProfilesJson();
-        JSONObject profile = findJsonProfile(profiles, active);
+        JSONObject profile = findJsonProfile(profiles, profileId);
         if (profile == null)
             return;
 
@@ -239,7 +257,8 @@ public class WgProfileManager {
             profile.put("config", config == null ? "" : config);
             SharedPreferences.Editor editor = prefs.edit();
             writeProfilesJson(editor, profiles);
-            editor.putString(PREF_WG_CONFIG, config == null ? "" : config);
+            if (profileId.equals(getActiveProfileId()))
+                editor.putString(PREF_WG_CONFIG, config == null ? "" : config);
             editor.apply();
         } catch (JSONException ex) {
             Log.w(TAG, "Update WireGuard profile failed: " + ex.getMessage());
