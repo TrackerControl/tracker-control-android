@@ -1164,14 +1164,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (readableDb == null)
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
-            // There is a segmented index on resource
-            String query = "SELECT d.qname, d.aname, d.time, d.ttl";
-            query += " FROM dns AS d";
-            query += " WHERE d.resource = '" + ip.replace("'", "''") + "'";
-            if (alive)
-                query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
-            query += " GROUP BY d.qname"; // remove duplicates
-            query += " ORDER BY d.qname";
+            String escapedIp = ip.replace("'", "''");
+            String aliveFilter = alive
+                    ? " AND (%1$s.time IS NULL OR %1$s.time + %1$s.ttl >= " + now + ")"
+                    : "";
+            // There is a segmented index on resource. A shared IP can carry
+            // DNS evidence for several qnames; keep only the most recently
+            // observed row per qname (dedup) and order qnames by recency, so
+            // the freshest resolution — most likely tied to the connection
+            // that's actually being made now — is attributed first instead
+            // of an alphabetically-first but possibly stale one.
+            String query = "SELECT d.qname, d.aname, d.time, d.ttl" +
+                    " FROM dns AS d" +
+                    " WHERE d.resource = '" + escapedIp + "'" +
+                    String.format(aliveFilter, "d") +
+                    " AND d.ID = (" +
+                    "   SELECT d2.ID FROM dns AS d2" +
+                    "   WHERE d2.resource = d.resource AND d2.qname = d.qname" +
+                    String.format(aliveFilter, "d2") +
+                    "   ORDER BY d2.time DESC, d2.ID DESC" +
+                    "   LIMIT 1" +
+                    " )" +
+                    " ORDER BY d.time DESC, d.ID DESC";
             return db.rawQuery(query, new String[] {});
         } finally {
             lock.readLock().unlock();
