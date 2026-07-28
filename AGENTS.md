@@ -166,7 +166,12 @@ The non-negotiables that decide most changes:
    made when a control directly helps a user *recover from breakage*.
 2. **Privacy-preserving by construction.** No SSL/TLS interception, ever. Detection
    works off DNS metadata; SNI/TLS parsing is confined to an opt-in research mode
-   because acting on it would leak the user's IP to the tracker first.
+   because acting on it would leak the user's IP to the tracker first. This SNI
+   parsing happens in the native `handle_ip()` block/allow decision (`ip.c`)
+   before traffic is dispatched to any egress path, so it runs the same way
+   whether remote routing (WireGuard) is on or off — when it is on, the
+   subsequent connection to the tracker goes out through the tunnel, so only
+   the VPN provider's IP leaks, not the device's real IP.
 3. **Battery is a first-class constraint.** Anything periodic must be gated off
    idle/screen-off. Do not make DoH a stronger default until its screen-off cost is
    profiled and fixed. Battery is also frequently mis-attributed to the
