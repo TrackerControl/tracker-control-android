@@ -31,8 +31,8 @@ public class TrackerListModeTest {
     public void minimalModeRepresentativeDomainsComeFromDuckDuckGoAsset() throws Exception {
         String duckDuckGo = readAsset("duckduckgo-android-tds.json");
 
-        assertTrue(matchesDomainDefault(duckDuckGo, "accounts.google.com", "ignore"));
-        assertTrue(matchesDomainDefault(duckDuckGo, "15.taboola.com", "block"));
+        assertTrue(matchesDomainDefault(duckDuckGo, "ajax.googleapis.com", "ignore"));
+        assertTrue(matchesDomainDefault(duckDuckGo, "creativecdn.com", "block"));
     }
 
     @Test
@@ -44,10 +44,10 @@ public class TrackerListModeTest {
                 .toString();
 
         for (String domain : new String[] {
-                "doubleclick.net",
-                "google-analytics.com",
                 "crashlytics.com",
-                "branch.io"
+                "adjust.com",
+                "mixpanel.com",
+                "appsflyer.com"
         }) {
             assertFalse(duckDuckGo.contains("\"" + domain + "\""));
             assertTrue(xray.contains(domain));
@@ -59,10 +59,10 @@ public class TrackerListModeTest {
     public void minimalModeDoesNotSeeRepresentativeXrayOrDisconnectDomains() throws IOException {
         String duckDuckGo = readAsset("duckduckgo-android-tds.json");
 
-        assertFalse(duckDuckGo.contains("\"doubleclick.net\""));
-        assertFalse(duckDuckGo.contains("\"google-analytics.com\""));
         assertFalse(duckDuckGo.contains("\"crashlytics.com\""));
-        assertFalse(duckDuckGo.contains("\"branch.io\""));
+        assertFalse(duckDuckGo.contains("\"adjust.com\""));
+        assertFalse(duckDuckGo.contains("\"mixpanel.com\""));
+        assertFalse(duckDuckGo.contains("\"appsflyer.com\""));
     }
 
     @Test
