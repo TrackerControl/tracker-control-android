@@ -1623,9 +1623,21 @@ public class ServiceSinkhole extends VpnService {
 
         // WireGuard AllowedIPs can opt RFC 1918 ranges into the VPN routes;
         // without WireGuard, private and reserved ranges remain excluded.
-        List<IPUtil.CIDR> routes = (wgEnabled && !wgAllowedIps.isEmpty())
-                ? VpnRoutes.getRoutes(wgAllowedIps)
-                : VpnRoutes.getRoutes();
+        // Tethering compatibility mode instead installs a plain default route,
+        // which some devices need before they forward tethered traffic into the
+        // tun at all (#699). WireGuard keeps precedence: a full tunnel would
+        // hand LAN and reserved traffic to the peer, which drops it.
+        boolean tetheringCompat = prefs.getBoolean("tcp_mss_clamp", false);
+        List<IPUtil.CIDR> routes;
+        if (wgEnabled && !wgAllowedIps.isEmpty()) {
+            if (tetheringCompat)
+                Log.i(TAG, "Tethering compatibility routes skipped: WireGuard AllowedIPs apply");
+            routes = VpnRoutes.getRoutes(wgAllowedIps);
+        } else if (tetheringCompat) {
+            Log.i(TAG, "Using tethering compatibility routes (full tunnel)");
+            routes = VpnRoutes.getTetheringRoutes();
+        } else
+            routes = VpnRoutes.getRoutes();
         for (IPUtil.CIDR route : routes)
             try {
                 builder.addRoute(route.address, route.prefix);

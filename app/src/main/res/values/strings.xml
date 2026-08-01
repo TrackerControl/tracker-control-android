@@ -120,7 +120,7 @@
     <string name="setting_call">Disable on call</string>
     <string name="setting_reload_onconnectivity">Reload on every connectivity change</string>
     <string name="setting_tcp_mss_clamp">Tethering compatibility mode</string>
-    <string name="summary_tcp_mss_clamp">Limit TCP segment size to avoid stalled connections on some tethered networks. May reduce performance.</string>
+    <string name="summary_tcp_mss_clamp">Route all traffic through TrackerControl and limit TCP segment size, to fix tethered connections that stall or get no internet access. Local network access bypasses TrackerControl no longer, and performance may be reduced.</string>
 
     <string name="setting_advanced_options">Advanced options (for experts)</string>
     <string name="setting_system">Show system apps</string>

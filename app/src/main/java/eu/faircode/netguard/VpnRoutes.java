@@ -92,6 +92,27 @@ public class VpnRoutes {
     }
 
     /**
+     * Returns the full-tunnel route list (a single 0.0.0.0/0 default route)
+     * used by tethering compatibility mode.
+     *
+     * <p>Some devices only forward tethered traffic into the tun while the VPN
+     * carries a real default route; with the split-tunnel route set above they
+     * fall back to the device's own tethering path, which on such devices is
+     * broken (#699). This also puts the tethering downstream subnets
+     * (192.168.42/43/44/49) and the 255.255.255.255 DHCP broadcast back inside
+     * the tunnel, matching the behaviour TrackerControl had before the static
+     * route set was introduced.
+     *
+     * <p>The cost is that LAN traffic and reserved ranges no longer bypass the
+     * tunnel, which is why this is opt-in. Carrier ePDG addresses are still
+     * excluded on Android 13+, where {@code excludeRoute()} applies on top of
+     * this route.
+     */
+    public static List<IPUtil.CIDR> getTetheringRoutes() {
+        return Collections.singletonList(new IPUtil.CIDR("0.0.0.0", 0));
+    }
+
+    /**
      * Returns the route list for an active WireGuard remote-egress tunnel,
      * making the profile's AllowedIPs authoritative over the RFC 1918
      * exclusions. Any part of an RFC 1918 range covered by {@code wgAllowedIps}

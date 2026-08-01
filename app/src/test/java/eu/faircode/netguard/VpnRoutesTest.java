@@ -17,6 +17,7 @@
 
 package eu.faircode.netguard;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -85,6 +86,37 @@ public class VpnRoutesTest {
 
         assertFalse(isRouted(viaEmpty, "192.168.1.10"));
         assertFalse(isRouted(viaV6, "192.168.1.10"));
+    }
+
+    // --- tethering compatibility mode ---------------------------------------
+
+    @Test
+    public void tetheringRoutesAreASingleDefaultRoute() throws Exception {
+        List<IPUtil.CIDR> routes = VpnRoutes.getTetheringRoutes();
+
+        assertEquals(1, routes.size());
+        assertEquals(0, routes.get(0).prefix);
+
+        // Everything is inside the tunnel, including the ranges the default
+        // route set excludes: the tethering downstream subnets and the DHCP
+        // broadcast the tethered client uses to get a lease (#699).
+        assertTrue(isRouted(routes, "8.8.8.8"));
+        assertTrue(isRouted(routes, "192.168.42.129")); // USB tethering
+        assertTrue(isRouted(routes, "192.168.43.1"));   // Wi-Fi tethering
+        assertTrue(isRouted(routes, "192.168.44.1"));   // Bluetooth tethering
+        assertTrue(isRouted(routes, "10.0.0.1"));
+        assertTrue(isRouted(routes, "100.64.0.1"));
+        assertTrue(isRouted(routes, "0.0.0.0"));
+        assertTrue(isRouted(routes, "255.255.255.255")); // DHCP broadcast
+    }
+
+    @Test
+    public void tetheringRoutesDoNotAffectTheDefaultRouteSet() throws Exception {
+        VpnRoutes.getTetheringRoutes();
+        List<IPUtil.CIDR> routes = VpnRoutes.getRoutes();
+
+        assertFalse(isRouted(routes, "192.168.42.129"));
+        assertTrue(isRouted(routes, "8.8.8.8"));
     }
 
     // --- WireGuard active: AllowedIPs authoritative --------------------------
