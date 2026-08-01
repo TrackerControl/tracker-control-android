@@ -39,6 +39,12 @@ public class TimelineEmptyStateTest {
     }
 
     @Test
+    public void unavailableRecordingIsReportedWithoutASettingsCallToAction() {
+        assertEquals(EmptyState.RECORDING_UNAVAILABLE,
+                TimelineEmptyAdapter.stateFor(true, false, false));
+    }
+
+    @Test
     public void watchingWhenEnabledAndRecording() {
         assertEquals(EmptyState.WATCHING, TimelineEmptyAdapter.stateFor(true, true));
     }

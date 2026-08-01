@@ -159,6 +159,8 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
                 emptyAdapter.setTrackerControlEnabled(prefs.getBoolean("enabled", false));
                 emptyAdapter.setTrackerRecordingEnabled(prefs.getBoolean("log_app", true));
+                emptyAdapter.setTrackerRecordingAvailable(
+                        !Util.isPlayStoreInstall(requireContext()));
                 emptyAdapter.setVisible(entries.isEmpty());
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

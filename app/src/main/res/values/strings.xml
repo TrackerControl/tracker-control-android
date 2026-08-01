@@ -41,6 +41,8 @@
     <string name="timeline_empty_enabled_subtitle">Most apps only contact trackers while you use them. Open an app, then come back — its tracker activity will appear here.</string>
     <string name="timeline_empty_recording_off_title">Tracker recording is off</string>
     <string name="timeline_empty_recording_off_subtitle">“Search new trackers” is turned off in Advanced settings. Trackers are still blocked, but they are no longer recorded, so this Timeline stays empty. Turn it back on to see tracker activity again.</string>
+    <string name="timeline_empty_recording_unavailable_title">Tracker recording unavailable</string>
+    <string name="timeline_empty_recording_unavailable_subtitle">This version of TrackerControl does not expose tracker activity recording. Blocking still works, but this Timeline will stay empty.</string>
     <string name="timeline_open_app">Open an app</string>
     <string name="timeline_open_settings">Open settings</string>
     <string name="unidentified_app_uid">Unidentified app (UID %1$d)</string>

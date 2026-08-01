@@ -18,6 +18,7 @@ public class TimelineEmptyAdapter extends RecyclerView.Adapter<TimelineEmptyAdap
     private boolean visible = false;
     private boolean trackerControlEnabled = false;
     private boolean trackerRecordingEnabled = true;
+    private boolean trackerRecordingAvailable = true;
 
     public void setVisible(boolean visible) {
         if (this.visible == visible)
@@ -51,6 +52,18 @@ public class TimelineEmptyAdapter extends RecyclerView.Adapter<TimelineEmptyAdap
             notifyItemChanged(0);
     }
 
+    /**
+     * Whether this build exposes the setting that controls tracker recording.
+     * The Play build deliberately removes "Search new trackers" from Settings.
+     */
+    public void setTrackerRecordingAvailable(boolean available) {
+        if (this.trackerRecordingAvailable == available)
+            return;
+        this.trackerRecordingAvailable = available;
+        if (visible)
+            notifyItemChanged(0);
+    }
+
     @Override
     public int getItemCount() {
         return visible ? 1 : 0;
@@ -71,12 +84,20 @@ public class TimelineEmptyAdapter extends RecyclerView.Adapter<TimelineEmptyAdap
     enum EmptyState {
         TRACKER_CONTROL_OFF,
         RECORDING_OFF,
+        RECORDING_UNAVAILABLE,
         WATCHING
     }
 
     static EmptyState stateFor(boolean trackerControlEnabled, boolean trackerRecordingEnabled) {
+        return stateFor(trackerControlEnabled, trackerRecordingEnabled, true);
+    }
+
+    static EmptyState stateFor(boolean trackerControlEnabled, boolean trackerRecordingEnabled,
+                               boolean trackerRecordingAvailable) {
         if (!trackerControlEnabled)
             return EmptyState.TRACKER_CONTROL_OFF;
+        if (!trackerRecordingAvailable)
+            return EmptyState.RECORDING_UNAVAILABLE;
         if (!trackerRecordingEnabled)
             return EmptyState.RECORDING_OFF;
         return EmptyState.WATCHING;
@@ -84,7 +105,8 @@ public class TimelineEmptyAdapter extends RecyclerView.Adapter<TimelineEmptyAdap
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        switch (stateFor(trackerControlEnabled, trackerRecordingEnabled)) {
+        switch (stateFor(trackerControlEnabled, trackerRecordingEnabled,
+                trackerRecordingAvailable)) {
             case TRACKER_CONTROL_OFF:
                 holder.tvTitle.setText(R.string.timeline_empty_disabled_title);
                 holder.tvSubtitle.setText(R.string.timeline_empty_disabled_subtitle);
@@ -99,6 +121,13 @@ public class TimelineEmptyAdapter extends RecyclerView.Adapter<TimelineEmptyAdap
                 holder.btnOpenApp.setText(R.string.timeline_open_settings);
                 holder.btnOpenApp.setOnClickListener(v -> v.getContext().startActivity(
                         new Intent(v.getContext(), ActivitySettings.class)));
+                break;
+
+            case RECORDING_UNAVAILABLE:
+                holder.tvTitle.setText(R.string.timeline_empty_recording_unavailable_title);
+                holder.tvSubtitle.setText(R.string.timeline_empty_recording_unavailable_subtitle);
+                holder.btnOpenApp.setVisibility(View.GONE);
+                holder.btnOpenApp.setOnClickListener(null);
                 break;
 
             default:
