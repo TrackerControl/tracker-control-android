@@ -25,6 +25,7 @@ import androidx.preference.PreferenceManager
 import eu.faircode.netguard.DatabaseHelper
 import eu.faircode.netguard.Util
 import net.kollnig.missioncontrol.Common
+import net.kollnig.missioncontrol.R
 import java.util.Locale
 
 /**
@@ -89,25 +90,31 @@ class InsightsDataProvider(context: Context) {
 
                     if (!seenContacts.add(contactKey)) continue
 
-                    // Get package name (cached)
-                    val packageName = uidPackageCache.getOrPut(uid) {
-                        getPackageNameForUid(uid)
+                    // Get package name (cached; null is a valid cached result,
+                    // so probe with containsKey to avoid re-resolving every row)
+                    val packageName = if (uidPackageCache.containsKey(uid))
+                        uidPackageCache[uid]
+                    else
+                        getPackageNameForUid(uid).also { uidPackageCache[uid] = it }
+
+                    // A UID with no resolvable package (other profile, cloned or
+                    // uninstalled app) is still recorded by ServiceSinkhole,
+                    // which defaults unknown UIDs to tracked. Count it here too
+                    // instead of dropping it; the per-package preference checks
+                    // below simply have nothing to look up.
+                    if (packageName != null) {
+                        // Check if system app - skip if show_system is false
+                        val isSystem = uidSystemCache.getOrPut(uid) {
+                            isSystemApp(uid)
+                        }
+                        if (isSystem && !showSystem) continue
+
+                        // Check if excluded from VPN
+                        if (!applyPrefs.getBoolean(packageName, true)) continue
+
+                        // Check if tracker protection is disabled for this app
+                        if (!BlockingMode.isTrackerProtectionEnabled(context, trackerProtectPrefs, packageName)) continue
                     }
-
-                    // Skip if we can't identify the package
-                    if (packageName == null) continue
-
-                    // Check if system app - skip if show_system is false
-                    val isSystem = uidSystemCache.getOrPut(uid) {
-                        isSystemApp(uid)
-                    }
-                    if (isSystem && !showSystem) continue
-
-                    // Check if excluded from VPN
-                    if (!applyPrefs.getBoolean(packageName, true)) continue
-
-                    // Check if tracker protection is disabled for this app
-                    if (!BlockingMode.isTrackerProtectionEnabled(context, trackerProtectPrefs, packageName)) continue
 
                     // Find tracker company for this hostname
                     val tracker = TrackerList.findTracker(daddr) ?: continue
@@ -166,8 +173,16 @@ class InsightsDataProvider(context: Context) {
             .sortedByDescending { it.value }
             .take(5)
 
-        data.topTrackingApps = sortedApps.mapNotNull { entry ->
-            Common.getAppName(packageManager, entry.key)?.let { Pair(it, entry.value) }
+        data.topTrackingApps = sortedApps.map { entry ->
+            val uid = entry.key
+            // Unresolvable UIDs are now counted, so name them by UID rather
+            // than letting them all collapse into a bare "Unknown" row.
+            val name = if (uid != 0 && uidPackageCache[uid] == null)
+                context.getString(R.string.unidentified_app_uid, uid)
+            else
+                Common.getAppName(packageManager, uid)
+                    ?: context.getString(R.string.unidentified_app_uid, uid)
+            Pair(name, entry.value)
         }.toMutableList()
 
         // Build top tracker companies list (by total hosts contacted)

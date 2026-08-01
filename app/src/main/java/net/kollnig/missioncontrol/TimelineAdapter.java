@@ -121,14 +121,21 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void bindEntry(EntryHolder holder, TimelineEntry entry) {
-        // App icon
-        try {
-            ApplicationInfo ai = pm.getApplicationInfo(entry.packageName, 0);
-            Drawable icon = pm.getApplicationIcon(ai);
-            holder.ivAppIcon.setImageDrawable(icon);
-        } catch (PackageManager.NameNotFoundException e) {
-            holder.ivAppIcon.setImageResource(android.R.drawable.sym_def_app_icon);
+        // App icon. The package is unknown for UIDs that cannot be resolved
+        // (other profiles, cloned or uninstalled apps), whose activity is still
+        // recorded and listed.
+        Drawable icon = null;
+        if (entry.packageName != null) {
+            try {
+                ApplicationInfo ai = pm.getApplicationInfo(entry.packageName, 0);
+                icon = pm.getApplicationIcon(ai);
+            } catch (PackageManager.NameNotFoundException ignored) {
+            }
         }
+        if (icon != null)
+            holder.ivAppIcon.setImageDrawable(icon);
+        else
+            holder.ivAppIcon.setImageResource(android.R.drawable.sym_def_app_icon);
 
         // App name
         holder.tvAppName.setText(entry.appName);
@@ -191,10 +198,17 @@ public class TimelineAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             shown++;
         }
 
-        // Click listener
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onEntryClick(entry);
-        });
+        // Click listener. Details are per-package, so entries without a
+        // resolvable package are shown but not clickable.
+        if (entry.packageName == null) {
+            holder.itemView.setOnClickListener(null);
+            holder.itemView.setClickable(false);
+        } else {
+            holder.itemView.setClickable(true);
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onEntryClick(entry);
+            });
+        }
     }
 
     static class SectionHolder extends RecyclerView.ViewHolder {

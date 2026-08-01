@@ -1,5 +1,6 @@
 package net.kollnig.missioncontrol;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -124,6 +125,11 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
     @Override
     public void onEntryClick(TimelineEntry entry) {
+        // Details are looked up per package; entries for UIDs without a
+        // resolvable package are listed but have nothing to open.
+        if (entry.packageName == null)
+            return;
+
         Intent intent = new Intent(requireContext(), DetailsActivity.class);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, entry.appName);
         intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, entry.packageName);
@@ -152,6 +158,9 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
                 emptyAdapter.setTrackerControlEnabled(prefs.getBoolean("enabled", false));
+                emptyAdapter.setTrackerRecordingEnabled(prefs.getBoolean("log_app", true));
+                emptyAdapter.setTrackerRecordingAvailable(
+                        !Util.isPlayStoreInstall(requireContext()));
                 emptyAdapter.setVisible(entries.isEmpty());
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -174,14 +183,15 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
     }
 
     private List<TimelineEntry> buildTimeline() {
-        DatabaseHelper dh = DatabaseHelper.getInstance(requireContext());
-        PackageManager pm = requireContext().getPackageManager();
+        Context context = requireContext();
+        DatabaseHelper dh = DatabaseHelper.getInstance(context);
+        PackageManager pm = context.getPackageManager();
         // findTracker() reads from a static map populated lazily by
         // TrackerList.getInstance(). Without this call, opening the
         // app on the Timeline tab races with insights initialization
         // and every entry is silently dropped — appearing as an empty
         // "Watching for trackers…" screen even when there is data.
-        TrackerList.getInstance(requireContext());
+        TrackerList.getInstance(context);
 
         Map<Integer, Map<String, TrackerContact>> uidTrackers = new LinkedHashMap<>();
         Map<Integer, Long> uidLatestTime = new LinkedHashMap<>();
@@ -231,11 +241,19 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
                 }
 
                 if (!uidAppInfo.containsKey(uid)) {
-                    String appName = Integer.toString(uid);
+                    // A UID that cannot be resolved to a package (another
+                    // profile — work profile, Secure Folder, private space,
+                    // cloned app — or an app uninstalled since the contact)
+                    // still gets its tracker access recorded: shouldTrackApp()
+                    // deliberately defaults unknown UIDs to tracked. Show that
+                    // activity under a UID label instead of dropping it, which
+                    // would leave the recorded data permanently invisible.
+                    String appName = context.getString(R.string.unidentified_app_uid, uid);
                     String packageName = null;
                     String[] packages = Util.getPackagesForUid(pm, uid);
                     if (packages != null && packages.length > 0) {
                         packageName = packages[0];
+                        appName = packageName;
                         try {
                             ApplicationInfo ai = pm.getApplicationInfo(packageName, 0);
                             appName = pm.getApplicationLabel(ai).toString();
@@ -251,7 +269,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
         for (Map.Entry<Integer, Map<String, TrackerContact>> e : uidTrackers.entrySet()) {
             int uid = e.getKey();
             String[] appInfo = uidAppInfo.get(uid);
-            if (appInfo == null || appInfo[1] == null)
+            if (appInfo == null)
                 continue;
 
             List<TrackerContact> trackers = new ArrayList<>(e.getValue().values());
