@@ -76,7 +76,11 @@ def validate(raw: str) -> dict:
     if not isinstance(categories, dict) or not categories:
         raise RuntimeError("'categories' is empty or not an object")
 
-    return {"categories": sorted(categories.keys())}
+    # Store a compact representation instead of mirroring upstream whitespace.
+    # This keeps the bundled asset small and makes its output deterministic even
+    # when Disconnect changes only the formatting of services.json.
+    compact = json.dumps(root, ensure_ascii=False, separators=(",", ":"))
+    return {"categories": sorted(categories.keys()), "compact": compact}
 
 
 def reverse(text: str) -> str:
@@ -130,7 +134,7 @@ def main() -> int:
         print("Validation OK (--check: asset not written).")
         return 0
 
-    reversed_text = reverse(raw)
+    reversed_text = reverse(stats["compact"])
     existing = ASSET_PATH.read_text(encoding="utf-8") if ASSET_PATH.exists() else None
     if existing == reversed_text:
         print(f"Asset already up to date: {ASSET_PATH.relative_to(REPO_ROOT)}")
