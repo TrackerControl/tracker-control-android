@@ -16,6 +16,24 @@ tasks.register('prefetchAndroidLintDependencies') {
     }
 }
 
+// Runtime-scoped transitive dependencies (androidx.constraintlayout:constraintlayout-core
+// via constraintlayout, androidx.test.espresso:espresso-idling-resource via androidx.test,
+// ...) never appear on a compile classpath, so compiling or assembling does not put them
+// into the Gradle cache. Resolve the runtime classpaths explicitly while networking is
+// available, otherwise the subsequent --offline test run and release build fail with
+// "No cached version available for offline mode".
+tasks.register('prefetchOfflineBuildClasspaths') {
+    description = 'Downloads the runtime classpath artifacts for a later offline test run and build.'
+    group = 'build setup'
+    doLast {
+        ['fdroidDebugUnitTestRuntimeClasspath',
+         'fdroidReleaseCompileClasspath',
+         'fdroidReleaseRuntimeClasspath'].each { name ->
+            configurations.named(name).get().resolve()
+        }
+    }
+}
+
 android {
     compileSdk = 37
 
