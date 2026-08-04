@@ -54,6 +54,11 @@ jobs:
           # Compile the unit tests online once so their classpath is cached
           # before the offline run below.
           ./gradlew :app:assembleFdroidDebugUnitTest
+          # assembleFdroidDebugUnitTest doesn't resolve the unit test
+          # *runtime* classpath (e.g. espresso-idling-resource, pulled in
+          # via Robolectric/androidx.test), which mergeFdroidDebugUnitTestManifest
+          # needs. Warm that too, or the offline test run below fails.
+          ./gradlew :app:mergeFdroidDebugUnitTestManifest
 
       - name: Run Rust unit tests
         run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
