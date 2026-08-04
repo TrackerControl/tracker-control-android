@@ -13,6 +13,14 @@
     <!-- http://developer.android.com/guide/topics/security/permissions.html#normal-dangerous -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!--
+        Android 17 local network protections: reaching a DNS server, Secure DNS
+        resolver or WireGuard peer on the user's own network needs this runtime
+        permission once the app targets API 37. Only requested when a setting
+        actually points TrackerControl at the local network (see
+        net.kollnig.missioncontrol.LocalNetworkAccess).
+    -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
 
     <!-- https://developer.android.com/preview/privacy/package-visibility -->
     <uses-permission

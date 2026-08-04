@@ -87,6 +87,7 @@ import com.opencsv.CSVWriter;
 
 import net.kollnig.missioncontrol.ActivityOnboarding;
 import net.kollnig.missioncontrol.Common;
+import net.kollnig.missioncontrol.LocalNetworkAccess;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.TimelineFragment;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -140,6 +141,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public static final int REQUEST_DETAILS_UPDATED = 4;
 
     private static final int REQUEST_NOTIFICATIONS = 5;
+    private static final int REQUEST_LOCAL_NETWORK = 6;
 
     private static final int REQUEST_EXPORT = 10;
 
@@ -453,6 +455,18 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 }
             });
 
+        // Local network permission (Android 17+), shown when the configuration
+        // needs it: without it, a LAN DNS server or WireGuard peer is
+        // unreachable and the user is left without working name resolution.
+        TextView tvLocalNetwork = findViewById(R.id.tvLocalNetwork);
+        tvLocalNetwork.setVisibility(View.GONE);
+        tvLocalNetwork.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPermissions(new String[] { LocalNetworkAccess.PERMISSION }, REQUEST_LOCAL_NETWORK);
+            }
+        });
+
         // Application list
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
         rvApplication.setHasFixedSize(false);
@@ -547,6 +561,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         TextView tvNotifications = findViewById(R.id.tvNotifications);
         if (tvNotifications != null)
             tvNotifications.setVisibility(canNotify ? View.GONE : View.VISIBLE);
+
+        TextView tvLocalNetwork = findViewById(R.id.tvLocalNetwork);
+        if (tvLocalNetwork != null)
+            tvLocalNetwork.setVisibility(
+                    LocalNetworkAccess.isMissing(this) ? View.VISIBLE : View.GONE);
 
         super.onResume();
     }
@@ -766,6 +785,28 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED &&
                     !ActivityCompat.shouldShowRequestPermissionRationale(this,
                             Manifest.permission.POST_NOTIFICATIONS))
+                try {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex + "\n" + ex.getStackTrace());
+                }
+        } else if (requestCode == REQUEST_LOCAL_NETWORK) {
+            boolean granted = (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED);
+            TextView tvLocalNetwork = findViewById(R.id.tvLocalNetwork);
+            if (tvLocalNetwork != null)
+                tvLocalNetwork.setVisibility(granted ? View.GONE : View.VISIBLE);
+            if (granted)
+                // The tunnel keeps its sockets across a reload, but the native
+                // engine reopens them, so LAN destinations become reachable.
+                ServiceSinkhole.reload("permission granted", this, false);
+            else if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    LocalNetworkAccess.PERMISSION))
+                // Permanently denied: the prompt no longer appears, so send the
+                // user to the permission screen instead.
                 try {
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getPackageName(), null);
