@@ -97,9 +97,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
@@ -185,6 +187,10 @@ public class ServiceSinkhole extends VpnService {
     private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
+    // uid -> Rule.system, kept only so the packet-loop report (issue #653) can
+    // split its per-UID counters into system and user apps without asking the
+    // package manager again.
+    private final Map<Integer, Boolean> mapUidSystem = new HashMap<>();
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
     private Map<Integer, Forward> mapForward = new HashMap<>();
     public static ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -275,6 +281,8 @@ public class ServiceSinkhole extends VpnService {
     private native int jni_get_mtu();
 
     private native int[] jni_get_stats(long context);
+
+    private native long[] jni_get_loop_stats(long context);
 
     private static native void jni_pcap(String name, int record_size, int file_size);
 
@@ -1871,6 +1879,12 @@ public class ServiceSinkhole extends VpnService {
         if (tunnelThread != null) {
             Log.i(TAG, "Stopping tunnel thread");
 
+            // Read the packet-loop counters (issue #653) before jni_clear wipes
+            // the context, so every native run leaves its wakeup totals behind.
+            PacketLoopStats loopStats = getPacketLoopStats();
+            if (loopStats != null)
+                Log.w(TAG, loopStats.summary(isRoutingSystemApps()));
+
             jni_stop(jni_context);
 
             Thread thread = tunnelThread;
@@ -1898,6 +1912,65 @@ public class ServiceSinkhole extends VpnService {
         // path below.
     }
 
+    private boolean isRoutingSystemApps() {
+        return PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("include_system_vpn", false);
+    }
+
+    private PacketLoopStats getPacketLoopStats() {
+        if (jni_context == 0)
+            return null;
+        try {
+            return PacketLoopStats.parse(jni_get_loop_stats(jni_context));
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            return null;
+        }
+    }
+
+    private PacketLoopStats.UidInfo getLoopStatsUidInfo() {
+        return new PacketLoopStats.UidInfo() {
+            @Override
+            public String label(int uid) {
+                List<String> names = Util.getApplicationNames(uid, ServiceSinkhole.this);
+                return names.isEmpty() ? null : names.get(0);
+            }
+
+            @Override
+            public boolean isSystem(int uid) {
+                lock.readLock().lock();
+                try {
+                    // Unknown UIDs (e.g. root, mediaserver) are not in the rule
+                    // list; treating them as system matches how the VPN builder
+                    // excludes them when system apps are not routed.
+                    Boolean system = mapUidSystem.get(uid);
+                    return system == null || system;
+                } finally {
+                    lock.readLock().unlock();
+                }
+            }
+        };
+    }
+
+    /**
+     * Exposes the packet-loop counters (issue #653) without adding a user-facing
+     * setting or a periodic sampler that would itself cost battery:
+     * {@code adb shell dumpsys activity service
+     * net.kollnig.missioncontrol/eu.faircode.netguard.ServiceSinkhole}.
+     */
+    @Override
+    protected void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
+        try {
+            PacketLoopStats stats = getPacketLoopStats();
+            if (stats == null)
+                writer.println("Packet loop (issue #653): no native context");
+            else
+                writer.print(stats.format(getLoopStatsUidInfo(), isRoutingSystemApps()));
+        } catch (Throwable ex) {
+            writer.println(ex.toString());
+        }
+    }
+
     private void updateWireGuardInteractiveState(boolean interactive) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
         boolean wgEnabled = prefs.getBoolean("wg_enabled", false);
@@ -1917,6 +1990,7 @@ public class ServiceSinkhole extends VpnService {
         lock.writeLock().lock();
         mapUidAllowed.clear();
         mapUidKnown.clear();
+        mapUidSystem.clear();
         mapHostsBlocked.clear();
         mapUidIPFilters.clear();
         mapForward.clear();
@@ -1933,6 +2007,10 @@ public class ServiceSinkhole extends VpnService {
         mapUidKnown.clear();
         for (Rule rule : listRule)
             mapUidKnown.put(rule.uid, rule.uid);
+
+        mapUidSystem.clear();
+        for (Rule rule : listRule)
+            mapUidSystem.put(rule.uid, rule.system);
 
         lock.writeLock().unlock();
     }

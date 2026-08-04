@@ -101,6 +101,9 @@ int check_tun(const struct arguments *args,
                 return -1;
             }
         } else if (length > 0) {
+            loop_stats_add(&args->ctx->stats.tun_packets, 1);
+            loop_stats_add(&args->ctx->stats.tun_bytes, (uint64_t) length);
+
             // Write pcap record
             if (pcap_file != NULL)
                 write_pcap_rec(buffer, (size_t) length);
@@ -335,6 +338,12 @@ void handle_ip(const struct arguments *args,
                 uid = get_uid(version, protocol, saddr, sport, daddr, dport);
             else
                 uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+
+            // Attribute the new session to its UID (issue #653). This is the
+            // only point where the native side learns the UID of traffic coming
+            // out of the tun, so it is also the only per-app attribution we can
+            // record for the upstream direction.
+            loop_stats_uid_session(&args->ctx->stats, uid);
     }
 
     log_android(ANDROID_LOG_DEBUG,
@@ -460,6 +469,11 @@ void handle_ip(const struct arguments *args,
                 redirect = NULL;
 
             if (cur != NULL) {
+                // SNI research mode defers the decision for port 443 past the
+                // SYN, so the UID for these sessions is resolved here instead of
+                // in the new-session branch above. checkedHostname flips 0 -> 1
+                // exactly once per session, which keeps the count comparable.
+                loop_stats_uid_session(&args->ctx->stats, uid);
                 cur->tcp.checkedHostname = 1;
                 // A blocked verdict on an established session must reset the
                 // connection: dropping only this segment is undone by TCP

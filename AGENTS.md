@@ -4,11 +4,15 @@ This is the shared, tool-agnostic guide for anyone — human or AI agent — wor
 in this repository. It is the single source of truth for how to navigate, build,
 and reason about TrackerControl, plus the rationale used when triaging issues.
 
-One document sits next to this one and stays authoritative for their own scope:
+Two documents sit next to this one and stay authoritative for their own scope:
 
 - **[wgbridge-rs/README.md](wgbridge-rs/README.md)** — the Rust WireGuard bridge:
   architecture, the JNI API surface, and how to build/test the crate. Read it
   before touching anything under `wgbridge-rs/` or `net.kollnig.missioncontrol.wg*`.
+- **[docs/battery-packet-loop-measurement.md](docs/battery-packet-loop-measurement.md)**
+  — the packet loop's wakeup/CPU counters: what they measure, how to read them
+  with `dumpsys`, and how to run a system-apps-routed vs. excluded comparison.
+  Read it before making a battery claim about the tun.
 
 ---
 
@@ -57,6 +61,8 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
   - `WidgetAdmin.java` — pause/resume alarms (`INTENT_ON`). `ServiceTileMain.java`
     — Quick-Settings tile. `ReceiverAutostart.java` — boot/always-on restart.
   - `VpnRoutes.java` — the tun route set (RFC1918/CGNAT excludes).
+  - `PacketLoopStats.java` — parses/formats the native packet-loop wakeup and CPU
+    counters; surfaced via `ServiceSinkhole.dump()` (`adb shell dumpsys`).
   - Policy helpers: `InteractiveStatePolicy`, `NativeFailureRecoveryPolicy`,
     `NetworkReloadPolicy`, `VpnReplacementSequencer`.
 - **Tracker detection + TC UI** — `net.kollnig.missioncontrol`:
@@ -75,7 +81,8 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
     `Tunnel`, `Protector`, `Logger`, `DnsRecorder`. Mirror of `wgbridge-rs`.
 - **Native C packet engine** — `app/src/main/jni/netguard/`: `netguard.c`,
   `session.c`, `ip.c`, `tcp.c`, `udp.c`, `icmp.c`, `dns.c` (plaintext DNS parse),
-  `tls.c` (SNI, research-only), `dhcp.c`, `pcap.c`. Built by `CMakeLists.txt`.
+  `tls.c` (SNI, research-only), `dhcp.c`, `pcap.c`, `loopstats.c` (packet-loop
+  wakeup/CPU counters). Built by `CMakeLists.txt`.
 - **Rust WireGuard bridge** — `wgbridge-rs/` (see its README): `jni_bindings.rs`,
   `tunnel.rs`, `config.rs` (UAPI), `dns.rs` (passive DNS inspection), `transport/`
   (socketpair + tun-fd transports), `keys.rs`, `callbacks.rs`.
@@ -175,7 +182,10 @@ The non-negotiables that decide most changes:
 3. **Battery is a first-class constraint.** Anything periodic must be gated off
    idle/screen-off. Do not make DoH a stronger default until its screen-off cost is
    profiled and fixed. Battery is also frequently mis-attributed to the
-   VPN UID — surface stats, don't re-investigate.
+   VPN UID — surface stats, don't re-investigate. The packet loop carries always-on
+   wakeup/CPU counters; read them with `dumpsys` rather than guessing from
+   throughput — see
+   [docs/battery-packet-loop-measurement.md](docs/battery-packet-loop-measurement.md).
 4. **Attribution is global, not per-app** (the DNS table has no UID). Treat this as
    a known, deliberately-deferred limitation, not a bug to patch ad-hoc.
 

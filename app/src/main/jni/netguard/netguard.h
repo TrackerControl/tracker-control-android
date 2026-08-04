@@ -32,6 +32,7 @@
 
 #include <android/log.h>
 #include <sys/system_properties.h>
+#include <stdatomic.h>
 
 #define TAG "TrackerControl.JNI"
 
@@ -87,6 +88,53 @@
 #define SOCKS5_CONNECT 4
 #define SOCKS5_CONNECTED 5
 
+// Packet-loop instrumentation (issue #653). The battery cost of routing system
+// apps through the tun is expected to come from wakeup frequency, not from
+// throughput, so the counters below measure how often handle_events() is woken
+// and how much CPU it burns once awake - deliberately not MB/s.
+//
+// Counters are cheap (a relaxed atomic add, plus five vDSO clock reads per loop
+// iteration) and always on: without them there is no way to compare
+// "system apps routed" against "system apps excluded" on a real device.
+//
+// Per-UID attribution is only possible where the native side already knows the
+// UID, i.e. when a session is created (handle_ip resolves the UID for new
+// sessions only) and when a session socket becomes readable. Packets read from
+// the tun for an *existing* session carry no UID, so tun_packets is a global
+// total. See docs/battery-packet-loop-measurement.md.
+#define LOOP_UID_SLOTS 128
+
+struct loop_uid_stat {
+    jint uid; // LOOP_UID_FREE when unused
+    uint64_t sessions; // new-session decisions attributed to this UID
+    uint64_t events; // session-socket epoll events dispatched for this UID
+};
+
+#define LOOP_UID_FREE (-2) // -1 is a valid "unknown UID" from get_uid()
+
+// Number of leading scalars in the long[] returned by jni_get_loop_stats().
+// Keep in sync with PacketLoopStats.SCALARS.
+#define LOOP_STATS_SCALARS 16
+
+struct loop_stats {
+    atomic_uint_least64_t started_ms; // get_ms() when the loop started
+    atomic_uint_least64_t iterations; // loop body entries
+    atomic_uint_least64_t polls; // epoll_wait() calls
+    atomic_uint_least64_t wakeups; // epoll_wait() returned > 0
+    atomic_uint_least64_t timeouts; // epoll_wait() returned 0
+    atomic_uint_least64_t recheck_polls; // polls capped to EPOLL_MIN_CHECK
+    atomic_uint_least64_t events_tun; // epoll events on the tun fd
+    atomic_uint_least64_t events_sock; // epoll events on session sockets
+    atomic_uint_least64_t events_pipe; // epoll events on the stop pipe
+    atomic_uint_least64_t tun_packets; // packets read from the tun
+    atomic_uint_least64_t tun_bytes; // bytes read from the tun
+    atomic_uint_least64_t cpu_us; // CLOCK_THREAD_CPUTIME_ID of the loop thread
+    atomic_uint_least64_t scan_us; // wall time spent walking/checking sessions
+    atomic_uint_least64_t dispatch_us; // wall time spent handling epoll events
+    atomic_uint_least64_t uid_overflow; // updates dropped because the table is full
+    struct loop_uid_stat uids[LOOP_UID_SLOTS];
+};
+
 struct context {
     pthread_mutex_t lock;
     int pipefds[2];
@@ -94,6 +142,7 @@ struct context {
     int sdk;
     jboolean tcp_mss_clamp;
     struct ng_session *ng_session;
+    struct loop_stats stats;
 };
 
 struct arguments {
@@ -369,6 +418,27 @@ void report_error(const struct arguments *args, jint error, const char *fmt, ...
 void check_allowed(const struct arguments *args);
 
 void clear(struct context *ctx);
+
+// Packet-loop instrumentation, see struct loop_stats.
+
+void loop_stats_reset(struct loop_stats *stats);
+
+void loop_stats_add(atomic_uint_least64_t *counter, uint64_t delta);
+
+uint64_t loop_stats_get(const atomic_uint_least64_t *counter);
+
+long long get_us();
+
+uint64_t get_thread_cpu_us();
+
+// Both UID updates are called with ctx->lock held (handle_ip and the
+// session-socket dispatch both run inside the locked region of handle_events).
+void loop_stats_uid_session(struct loop_stats *stats, jint uid);
+
+void loop_stats_uid_event(struct loop_stats *stats, jint uid);
+
+// Call from the packet-loop thread only, see loopstats.c.
+void log_loop_stats(struct context *ctx);
 
 int check_icmp_session(const struct arguments *args,
                        struct ng_session *s,

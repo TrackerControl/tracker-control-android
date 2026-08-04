@@ -188,6 +188,9 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1start(
     max_tun_msg = 0;
     ctx->stopping = 0;
     ctx->tcp_mss_clamp = tcp_mss_clamp;
+    // Counters cover one native run, so a "system apps routed" run and a
+    // "system apps excluded" run are never mixed in the same totals.
+    loop_stats_reset(&ctx->stats);
 
     log_android(ANDROID_LOG_WARN, "Starting level %d tcp mss clamp %d",
                 loglevel, tcp_mss_clamp);
@@ -286,6 +289,61 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1get_1stats(
     jcount[4] = (jint) rlim.rlim_cur;
 
     (*env)->ReleaseIntArrayElements(env, jarray, jcount, 0);
+    return jarray;
+}
+
+// Packet-loop instrumentation (issue #653). Returns a flat long[]: LOOP_STATS_*
+// scalars first, then one (uid, sessions, events) triple per attributed UID.
+// PacketLoopStats on the Java side owns the index constants and the formatting.
+JNIEXPORT jlongArray JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1get_1loop_1stats(
+        JNIEnv *env, jobject instance, jlong context) {
+    struct context *ctx = (struct context *) context;
+    struct loop_stats *stats = &ctx->stats;
+
+    // The UID table is only written with ctx->lock held, so take it to read a
+    // consistent snapshot. The scalars are relaxed atomics and need no lock.
+    if (pthread_mutex_lock(&ctx->lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_lock failed");
+
+    jint uid_count = 0;
+    for (int i = 0; i < LOOP_UID_SLOTS; i++)
+        if (stats->uids[i].uid != LOOP_UID_FREE)
+            uid_count++;
+
+    jlong values[LOOP_STATS_SCALARS + 3 * LOOP_UID_SLOTS];
+    uint64_t started_ms = loop_stats_get(&stats->started_ms);
+    values[0] = started_ms == 0 ? 0 : (jlong) ((uint64_t) get_ms() - started_ms);
+    values[1] = (jlong) loop_stats_get(&stats->iterations);
+    values[2] = (jlong) loop_stats_get(&stats->polls);
+    values[3] = (jlong) loop_stats_get(&stats->wakeups);
+    values[4] = (jlong) loop_stats_get(&stats->timeouts);
+    values[5] = (jlong) loop_stats_get(&stats->recheck_polls);
+    values[6] = (jlong) loop_stats_get(&stats->events_tun);
+    values[7] = (jlong) loop_stats_get(&stats->events_sock);
+    values[8] = (jlong) loop_stats_get(&stats->events_pipe);
+    values[9] = (jlong) loop_stats_get(&stats->tun_packets);
+    values[10] = (jlong) loop_stats_get(&stats->tun_bytes);
+    values[11] = (jlong) loop_stats_get(&stats->cpu_us);
+    values[12] = (jlong) loop_stats_get(&stats->scan_us);
+    values[13] = (jlong) loop_stats_get(&stats->dispatch_us);
+    values[14] = (jlong) loop_stats_get(&stats->uid_overflow);
+    values[15] = uid_count;
+
+    jsize length = LOOP_STATS_SCALARS;
+    for (int i = 0; i < LOOP_UID_SLOTS; i++)
+        if (stats->uids[i].uid != LOOP_UID_FREE) {
+            values[length++] = stats->uids[i].uid;
+            values[length++] = (jlong) stats->uids[i].sessions;
+            values[length++] = (jlong) stats->uids[i].events;
+        }
+
+    if (pthread_mutex_unlock(&ctx->lock))
+        log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
+
+    jlongArray jarray = (*env)->NewLongArray(env, length);
+    if (jarray != NULL)
+        (*env)->SetLongArrayRegion(env, jarray, 0, length, values);
     return jarray;
 }
 

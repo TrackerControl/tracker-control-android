@@ -92,8 +92,13 @@ void *handle_events(void *a) {
 
     // Loop
     long long last_check = 0;
+    long long last_cpu_sample_us = 0;
+    struct loop_stats *stats = &args->ctx->stats;
     while (!args->ctx->stopping) {
         log_android(ANDROID_LOG_DEBUG, "Loop");
+
+        long long iteration_start_us = get_us();
+        loop_stats_add(&stats->iterations, 1);
 
         int recheck = 0;
         int timeout = EPOLL_TIMEOUT;
@@ -183,8 +188,20 @@ void *handle_events(void *a) {
 
         // Poll
         struct epoll_event ev[EPOLL_EVENTS];
+        long long pre_wait_us = get_us();
+        loop_stats_add(&stats->scan_us, (uint64_t) (pre_wait_us - iteration_start_us));
+        loop_stats_add(&stats->polls, 1);
+        if (recheck)
+            loop_stats_add(&stats->recheck_polls, 1);
+
         int ready = epoll_wait(epoll_fd, ev, EPOLL_EVENTS,
                                recheck ? EPOLL_MIN_CHECK : timeout * 1000);
+
+        long long post_wait_us = get_us();
+        if (ready > 0)
+            loop_stats_add(&stats->wakeups, 1);
+        else if (ready == 0)
+            loop_stats_add(&stats->timeouts, 1);
 
         if (ready < 0) {
             int error = errno;
@@ -212,6 +229,8 @@ void *handle_events(void *a) {
 
             for (int i = 0; i < ready; i++) {
                 if (ev[i].data.ptr == &ev_pipe) {
+                    loop_stats_add(&stats->events_pipe, 1);
+
                     // Check pipe
                     uint8_t buffer[1];
                     if (read(args->ctx->pipefds[0], buffer, 1) < 0)
@@ -221,6 +240,8 @@ void *handle_events(void *a) {
                         log_android(ANDROID_LOG_WARN, "Read pipe");
 
                 } else if (ev[i].data.ptr == NULL) {
+                    loop_stats_add(&stats->events_tun, 1);
+
                     // Check upstream
                     log_android(ANDROID_LOG_DEBUG, "epoll ready %d/%d in %d out %d err %d hup %d",
                                 i, ready,
@@ -250,6 +271,13 @@ void *handle_events(void *a) {
                                 ((struct ng_session *) ev[i].data.ptr)->socket);
 
                     struct ng_session *session = (struct ng_session *) ev[i].data.ptr;
+                    loop_stats_add(&stats->events_sock, 1);
+                    loop_stats_uid_event(stats,
+                                         session->protocol == IPPROTO_UDP
+                                         ? session->udp.uid
+                                         : (session->protocol == IPPROTO_TCP
+                                            ? session->tcp.uid
+                                            : session->icmp.uid));
                     if (session->protocol == IPPROTO_ICMP ||
                         session->protocol == IPPROTO_ICMPV6)
                         check_icmp_socket(args, &ev[i]);
@@ -275,9 +303,28 @@ void *handle_events(void *a) {
             if (error)
                 break;
         }
+
+        // Wall time spent handling this wakeup, plus the loop thread's total CPU
+        // time. CLOCK_THREAD_CPUTIME_ID only advances while the thread runs, so
+        // it excludes the time blocked in epoll_wait() and is therefore the
+        // figure to compare across configurations. It has to be read on this
+        // thread: a reader thread cannot observe another thread's CPU clock.
+        long long body_end_us = get_us();
+        loop_stats_add(&stats->dispatch_us, (uint64_t) (body_end_us - post_wait_us));
+
+        // Unlike CLOCK_MONOTONIC, CLOCK_THREAD_CPUTIME_ID is not served from the
+        // vDSO, so sampling it every iteration would add a syscall to the busiest
+        // path in the app. Once a second is ample for the per-hour rates this
+        // measurement is about; the final sample is taken in log_loop_stats(),
+        // which also runs on this thread.
+        if (body_end_us - last_cpu_sample_us > 1000000LL) {
+            last_cpu_sample_us = body_end_us;
+            atomic_store_explicit(&stats->cpu_us, get_thread_cpu_us(), memory_order_relaxed);
+        }
     }
 
 cleanup:
+    log_loop_stats(args->ctx);
     // Close epoll file
     if (epoll_fd >= 0 && close(epoll_fd))
         log_android(ANDROID_LOG_ERROR,
