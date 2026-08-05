@@ -1693,7 +1693,7 @@ public class ServiceSinkhole extends VpnService {
         // In "hostname" mode it does not fall back — the user picked that
         // resolver explicitly, so DNS simply fails and nothing resolves. That
         // looks like TC broke the connection, with no hint of why, so say it.
-        if (prefs.getBoolean("block_dot", true) && Util.isPrivateDnsHostnameMode(this)) {
+        if (Util.isPrivateDnsBlocked(this)) {
             Log.w(TAG, "Private DNS set to a hostname: DoT is blocked and Android will not" +
                     " fall back to plaintext DNS, so name resolution fails");
             showPrivateDnsNotification(Util.getPrivateDnsSpecifier(this));
@@ -3146,6 +3146,7 @@ public class ServiceSinkhole extends VpnService {
             private Boolean last_connected = null;
             private Boolean last_metered = null;
             private List<InetAddress> last_dns = null;
+            private String last_private_dns = null;
 
             @Override
             public void onAvailable(Network network) {
@@ -3168,17 +3169,26 @@ public class ServiceSinkhole extends VpnService {
 
                 // Make sure the right DNS servers are being used
                 List<InetAddress> dns = linkProperties.getDnsServers();
+                // Non-null only when Private DNS is pinned to a hostname, which
+                // leaves the resolver list untouched — so this is the only part
+                // of the properties that reveals the change.
+                String private_dns = (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
+                        ? null : linkProperties.getPrivateDnsServerName());
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
                 String reason = NetworkReloadPolicy.onLinkPropertiesChanged(
                         last_dns,
                         dns,
                         Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
-                        prefs.getBoolean("reload_onconnectivity", false));
+                        prefs.getBoolean("reload_onconnectivity", false),
+                        last_private_dns,
+                        private_dns);
                 if (reason != null) {
                     Log.i(TAG, "Changed link properties=" + linkProperties +
                             "DNS cur=" + TextUtils.join(",", dns) +
-                            "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)));
+                            "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)) +
+                            " private DNS cur=" + private_dns + " prv=" + last_private_dns);
                     last_dns = dns;
+                    last_private_dns = private_dns;
                     reloadAfterNetworkChange(reason);
                 }
             }

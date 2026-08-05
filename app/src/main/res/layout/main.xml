@@ -64,6 +64,26 @@
         android:textColor="?attr/colorOff"
         android:visibility="gone" />
 
+    <!--
+        Same reasoning as the row above, and the one place this reaches a user
+        who declined notification permissions: with Private DNS pinned nothing
+        resolves at all, so the notification alone may never be seen.
+    -->
+    <TextView
+        android:id="@+id/tvPrivateDns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_warning_amber"
+        android:drawablePadding="8dp"
+        android:drawableTint="?attr/colorError"
+        android:padding="8dp"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:text="@string/msg_private_dns"
+        android:textAppearance="@style/TextSmall"
+        android:textColor="?attr/colorOff"
+        android:visibility="gone" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
