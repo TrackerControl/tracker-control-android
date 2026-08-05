@@ -74,6 +74,7 @@ import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.LocalNetworkAccess;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
@@ -127,6 +128,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private static final int REQUEST_EXPORT = 1;
     private static final int REQUEST_IMPORT = 2;
     private static final int REQUEST_CALL = 5;
+    private static final int REQUEST_LOCAL_NETWORK = 6;
+
+    private boolean requestedLocalNetwork = false;
 
     private static final Intent INTENT_VPN_SETTINGS = new Intent("android.net.vpn.SETTINGS");
 
@@ -966,6 +970,19 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             TrackerList.reloadTrackerData(this);
         }
 
+        // Android 17 blocks traffic to local network addresses unless the user
+        // grants ACCESS_LOCAL_NETWORK. Ask as soon as a setting starts pointing
+        // TrackerControl at the LAN — a custom DNS server, a local Secure DNS
+        // resolver, a WireGuard peer at home, or the full-tunnel tethering
+        // mode — rather than letting name resolution fail silently (#701).
+        // Asked at most once per visit: writing back a trimmed value re-enters
+        // this listener, and a second request while the dialog is up is dropped
+        // by the framework.
+        if (!requestedLocalNetwork && LocalNetworkAccess.isRelevantSetting(name)
+                && LocalNetworkAccess.isMissing(this)) {
+            requestedLocalNetwork = true;
+            requestPermissions(new String[] { LocalNetworkAccess.PERMISSION }, REQUEST_LOCAL_NETWORK);
+        }
     }
 
     private CharSequence getWireGuardStatusSummary(SharedPreferences prefs) {

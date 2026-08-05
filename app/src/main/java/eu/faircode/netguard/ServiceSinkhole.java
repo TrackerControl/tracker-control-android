@@ -1660,6 +1660,13 @@ public class ServiceSinkhole extends VpnService {
                     Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                 }
 
+        // Android 17 refuses local network traffic without ACCESS_LOCAL_NETWORK:
+        // TCP times out, UDP fails with EPERM. A LAN resolver routed into the tun
+        // above is re-sent from our own socket, so it goes silent (#701).
+        if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(ServiceSinkhole.this))
+            Log.w(TAG, "Local network access not granted: configured LAN destinations" +
+                    " (custom DNS, Secure DNS resolver, WireGuard peer) are unreachable");
+
         // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
         // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
         // TC excludes itself from the VPN (addDisallowedApplication), so this DNS resolution
