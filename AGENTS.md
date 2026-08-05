@@ -4,11 +4,14 @@ This is the shared, tool-agnostic guide for anyone — human or AI agent — wor
 in this repository. It is the single source of truth for how to navigate, build,
 and reason about TrackerControl, plus the rationale used when triaging issues.
 
-One document sits next to this one and stays authoritative for their own scope:
+Two documents sit next to this one and stay authoritative for their own scope:
 
 - **[wgbridge-rs/README.md](wgbridge-rs/README.md)** — the Rust WireGuard bridge:
   architecture, the JNI API surface, and how to build/test the crate. Read it
   before touching anything under `wgbridge-rs/` or `net.kollnig.missioncontrol.wg*`.
+- **[docs/RELEASING.md](docs/RELEASING.md)** — cutting a release: version bump,
+  Fastlane changelog, the tag-triggered unsigned build, local signing, and the
+  smoke-test checklist the signed APK must pass before the draft is published.
 
 ---
 
@@ -189,6 +192,12 @@ Preferences, once seeded:
 To check a notification, read it with
 `adb shell dumpsys notification --noredact | grep -A6 '<your title>'` rather than
 screenshotting the shade, which captures the user's private notifications.
+
+None of the above applies unchanged to a **signed release APK**: it installs as
+`net.kollnig.missioncontrol` and is not debuggable, so `run-as` is refused and
+onboarding cannot be seeded away — only `appops` and `pm grant` still work. The
+release smoke-test procedure lives in
+[docs/RELEASING.md](docs/RELEASING.md#smoke-test-the-signed-apk).
 
 ```bash
 # From the repo root. Use ./gradlew (the wrapper).
