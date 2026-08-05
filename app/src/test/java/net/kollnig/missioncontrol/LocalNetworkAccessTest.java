@@ -181,11 +181,78 @@ public class LocalNetworkAccessTest {
     }
 
     @Test
+    public void localSocks5ProxyNeedsLocalNetworkAccessOnlyWhenEnabled() {
+        prefs.edit().putString("socks5_addr", "192.168.1.2").commit();
+        assertFalse(LocalNetworkAccess.isConfigured(prefs));
+
+        prefs.edit().putBoolean("socks5_enabled", true).commit();
+        assertTrue(LocalNetworkAccess.isConfigured(prefs));
+    }
+
+    @Test
+    public void remoteSocks5ProxyDoesNotNeedLocalNetworkAccess() {
+        prefs.edit()
+                .putBoolean("socks5_enabled", true)
+                .putString("socks5_addr", "203.0.113.5")
+                .commit();
+        assertFalse(LocalNetworkAccess.isConfigured(prefs));
+    }
+
+    @Test
+    public void privateRangesAreRecognised() {
+        assertTrue(LocalNetworkAccess.isLocalAddress("10.0.0.1"));
+        assertTrue(LocalNetworkAccess.isLocalAddress("172.16.0.1"));
+        assertTrue(LocalNetworkAccess.isLocalAddress("172.31.255.254"));
+        assertTrue(LocalNetworkAccess.isLocalAddress("192.168.0.1"));
+        assertTrue(LocalNetworkAccess.isLocalAddress("169.254.1.1")); // link-local
+        assertTrue(LocalNetworkAccess.isLocalAddress("fe80::1"));
+        assertTrue(LocalNetworkAccess.isLocalAddress("fe80::1%wlan0")); // zone index
+        assertTrue(LocalNetworkAccess.isLocalAddress("fdff:ffff::1"));
+    }
+
+    @Test
+    public void publicRangesAreNotRecognisedAsLocal() {
+        assertFalse(LocalNetworkAccess.isLocalAddress("172.15.0.1")); // just below 172.16/12
+        assertFalse(LocalNetworkAccess.isLocalAddress("172.32.0.1")); // just above
+        assertFalse(LocalNetworkAccess.isLocalAddress("192.169.0.1"));
+        assertFalse(LocalNetworkAccess.isLocalAddress("2606:4700:4700::1111"));
+        assertFalse(LocalNetworkAccess.isLocalAddress("::1")); // the device itself
+    }
+
+    @Test
+    public void carrierGradeNatRangeIsRecognised() {
+        // 100.64.0.0/10 (RFC 6598): some routers use it on their LAN side.
+        assertTrue(LocalNetworkAccess.isLocalAddress("100.64.0.1"));
+        assertTrue(LocalNetworkAccess.isLocalAddress("100.127.255.254"));
+        assertFalse(LocalNetworkAccess.isLocalAddress("100.63.255.255"));
+        assertFalse(LocalNetworkAccess.isLocalAddress("100.128.0.1"));
+    }
+
+    @Test
+    public void hostnamesAreNeverResolved() {
+        // A blocking lookup here would run on the caller's thread.
+        assertFalse(LocalNetworkAccess.isLocalAddress("pi.hole"));
+        assertFalse(LocalNetworkAccess.isLocalAddress("localhost"));
+        assertFalse(LocalNetworkAccess.isLocalAddress("not:a:literal"));
+        assertFalse(LocalNetworkAccess.isLocalUrlHost("https://pi.hole/dns-query"));
+    }
+
+    @Test
+    public void wireGuardEndpointWithoutPortIsRecognised() {
+        prefs.edit()
+                .putBoolean("wg_enabled", true)
+                .putString("wg_config", String.format(WG_CONFIG_TEMPLATE, "192.168.1.5"))
+                .commit();
+        assertTrue(LocalNetworkAccess.isConfigured(prefs));
+    }
+
+    @Test
     public void relevantSettingsAreRecognised() {
         assertTrue(LocalNetworkAccess.isRelevantSetting("dns"));
         assertTrue(LocalNetworkAccess.isRelevantSetting("doh_endpoint"));
         assertTrue(LocalNetworkAccess.isRelevantSetting("tcp_mss_clamp"));
         assertTrue(LocalNetworkAccess.isRelevantSetting("wg_config"));
+        assertTrue(LocalNetworkAccess.isRelevantSetting("socks5_addr"));
         assertFalse(LocalNetworkAccess.isRelevantSetting("blocking_mode"));
         assertFalse(LocalNetworkAccess.isRelevantSetting(null));
     }

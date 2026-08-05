@@ -56,7 +56,9 @@ import java.net.URI;
  *       connection, with no DNS exemption to fall back on;</li>
  *   <li>tethering compatibility mode, which installs a full-tunnel default
  *       route, so LAN traffic no longer bypasses the VPN;</li>
- *   <li>a WireGuard peer hosted on the LAN, whose endpoint socket is local.</li>
+ *   <li>a WireGuard peer hosted on the LAN, whose endpoint socket is local;</li>
+ *   <li>a SOCKS5 proxy on the LAN, which the native engine dials from our own
+ *       socket in the same way.</li>
  * </ul>
  *
  * <p>The system's own resolvers are deliberately not treated as needing the
@@ -85,6 +87,7 @@ public class LocalNetworkAccess {
             "doh_enabled", "doh_endpoint",      // Secure DNS
             "tcp_mss_clamp",                    // tethering compatibility mode
             "wg_enabled", "wg_config",          // WireGuard remote egress
+            "socks5_enabled", "socks5_addr",    // SOCKS5 egress
     };
 
     /** Whether the running Android version enforces local network protections. */
@@ -135,6 +138,12 @@ public class LocalNetworkAccess {
         if (prefs.getBoolean("tcp_mss_clamp", false))
             return true;
 
+        // The native engine dials the SOCKS5 proxy from our own socket, exactly
+        // like the WireGuard endpoint below (see ServiceSinkhole.jni_socks5).
+        if (prefs.getBoolean("socks5_enabled", false) &&
+                isLocalAddress(prefs.getString("socks5_addr", null)))
+            return true;
+
         return prefs.getBoolean("wg_enabled", false) &&
                 hasLocalWireGuardEndpoint(prefs.getString("wg_config", null));
     }
@@ -178,7 +187,12 @@ public class LocalNetworkAccess {
                 // IPv6 literal; drop any zone index (fe80::1%wlan0).
                 int zone = value.indexOf('%');
                 String literal = (zone < 0 ? value : value.substring(0, zone));
-                // Colons cannot appear in host names, so this never resolves.
+                // getByName() falls back to a name lookup for anything it cannot
+                // parse numerically — a blocking resolve on the caller's thread.
+                // Only hand it strings that can be IPv6 literals in the first
+                // place; everything else is not an address we care about.
+                if (!isIpv6Literal(literal))
+                    return null;
                 return InetAddress.getByName(literal);
             }
 
@@ -202,6 +216,25 @@ public class LocalNetworkAccess {
             Log.w(TAG, "Cannot parse address: " + ex);
             return null;
         }
+    }
+
+    /**
+     * Whether {@code value} consists only of characters an IPv6 literal can be
+     * made of. A cheap gate in front of {@link InetAddress#getByName(String)},
+     * which would otherwise resolve whatever it cannot parse.
+     */
+    private static boolean isIpv6Literal(String value) {
+        if (value.isEmpty())
+            return false;
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            boolean allowed = (c >= '0' && c <= '9') ||
+                    (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') ||
+                    c == ':' || c == '.'; // '.' for IPv4-mapped (::ffff:10.0.0.1)
+            if (!allowed)
+                return false;
+        }
+        return true;
     }
 
     /** 100.64.0.0/10 (RFC 6598), used by some routers for their LAN side. */
