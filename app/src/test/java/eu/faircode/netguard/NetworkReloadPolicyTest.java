@@ -1,6 +1,7 @@
 package eu.faircode.netguard;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -76,7 +77,8 @@ public class NetworkReloadPolicyTest {
                         Collections.singletonList("9.9.9.9"),
                         Collections.singletonList("1.1.1.1"),
                         true,
-                        false));
+                        false,
+                        null, null));
     }
 
     @Test
@@ -85,7 +87,8 @@ public class NetworkReloadPolicyTest {
                 Arrays.asList("9.9.9.9", "149.112.112.112"),
                 Arrays.asList("9.9.9.9", "149.112.112.112"),
                 true,
-                false));
+                false,
+                null, null));
     }
 
     @Test
@@ -95,13 +98,80 @@ public class NetworkReloadPolicyTest {
                         Collections.singletonList("9.9.9.9"),
                         Collections.singletonList("9.9.9.9"),
                         false,
-                        true));
+                        true,
+                        null, null));
 
         assertNull(NetworkReloadPolicy.onLinkPropertiesChanged(
                 Collections.singletonList("9.9.9.9"),
                 Collections.singletonList("1.1.1.1"),
                 false,
-                false));
+                false,
+                null, null));
+    }
+
+    /**
+     * Pinning Private DNS to a hostname leaves the resolver list untouched, so
+     * comparing DNS servers alone never notices it and the warning that DoT is
+     * blocked would not appear until some unrelated network change.
+     */
+    @Test
+    public void privateDnsPinnedReloads() {
+        assertEquals("private DNS changed",
+                NetworkReloadPolicy.onLinkPropertiesChanged(
+                        Collections.singletonList("9.9.9.9"),
+                        Collections.singletonList("9.9.9.9"),
+                        true,
+                        false,
+                        null, "dns.google"));
+    }
+
+    @Test
+    public void privateDnsClearedReloads() {
+        assertEquals("private DNS changed",
+                NetworkReloadPolicy.onLinkPropertiesChanged(
+                        Collections.singletonList("9.9.9.9"),
+                        Collections.singletonList("9.9.9.9"),
+                        true,
+                        false,
+                        "dns.google", null));
+    }
+
+    @Test
+    public void samePrivateDnsDoesNotReload() {
+        assertNull(NetworkReloadPolicy.onLinkPropertiesChanged(
+                Collections.singletonList("9.9.9.9"),
+                Collections.singletonList("9.9.9.9"),
+                true,
+                false,
+                "dns.google", "dns.google"));
+    }
+
+    /**
+     * The tunnel is unaffected by a resolver being pinned, so this reload must
+     * not cost a WireGuard rebind and re-handshake.
+     */
+    @Test
+    public void privateDnsChangeDoesNotRestartWireGuard() {
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard("private DNS changed"));
+    }
+
+    /**
+     * A burst of callbacks is collapsed to its last reason, but the rebind it
+     * needs is not a property of that reason alone: a private DNS change
+     * landing right after a genuine network change must not cancel the rebind
+     * that change required, or the tunnel keeps a socket bound to a gone
+     * network until some later event.
+     */
+    @Test
+    public void privateDnsChangeDoesNotCancelAPendingRestart() {
+        boolean pending = NetworkReloadPolicy.shouldRestartWireGuard(false, "Network changed");
+        assertTrue(pending);
+        assertTrue(NetworkReloadPolicy.shouldRestartWireGuard(pending, "private DNS changed"));
+    }
+
+    @Test
+    public void privateDnsChangeAloneStillDoesNotRestartWireGuard() {
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(false, "private DNS changed"));
     }
 
     @Test

@@ -467,6 +467,21 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         });
 
+        // Private DNS pinned to a hostname while we block DoT: name resolution
+        // fails outright, so the user may never see the notification that says
+        // so — nothing they tap can load anything either.
+        TextView tvPrivateDns = findViewById(R.id.tvPrivateDns);
+        tvPrivateDns.setVisibility(View.GONE);
+        tvPrivateDns.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                if (settings.resolveActivity(getPackageManager()) == null)
+                    settings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                startActivity(settings);
+            }
+        });
+
         // Application list
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
         rvApplication.setHasFixedSize(false);
@@ -566,6 +581,16 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (tvLocalNetwork != null)
             tvLocalNetwork.setVisibility(
                     LocalNetworkAccess.isMissing(this) ? View.VISIBLE : View.GONE);
+
+        // Only while we are actually filtering: with the VPN off, port 853 is
+        // not blocked and a pinned resolver works fine.
+        TextView tvPrivateDns = findViewById(R.id.tvPrivateDns);
+        if (tvPrivateDns != null) {
+            boolean vpnEnabled = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean("enabled", false);
+            tvPrivateDns.setVisibility(
+                    vpnEnabled && Util.isPrivateDnsBlocked(this) ? View.VISIBLE : View.GONE);
+        }
 
         super.onResume();
     }

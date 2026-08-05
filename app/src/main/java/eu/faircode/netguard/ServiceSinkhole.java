@@ -119,6 +119,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
@@ -1693,7 +1694,7 @@ public class ServiceSinkhole extends VpnService {
         // In "hostname" mode it does not fall back — the user picked that
         // resolver explicitly, so DNS simply fails and nothing resolves. That
         // looks like TC broke the connection, with no hint of why, so say it.
-        if (prefs.getBoolean("block_dot", true) && Util.isPrivateDnsHostnameMode(this)) {
+        if (Util.isPrivateDnsBlocked(this)) {
             Log.w(TAG, "Private DNS set to a hostname: DoT is blocked and Android will not" +
                     " fall back to plaintext DNS, so name resolution fails");
             showPrivateDnsNotification(Util.getPrivateDnsSpecifier(this));
@@ -3146,6 +3147,7 @@ public class ServiceSinkhole extends VpnService {
             private Boolean last_connected = null;
             private Boolean last_metered = null;
             private List<InetAddress> last_dns = null;
+            private String last_private_dns = null;
 
             @Override
             public void onAvailable(Network network) {
@@ -3168,17 +3170,26 @@ public class ServiceSinkhole extends VpnService {
 
                 // Make sure the right DNS servers are being used
                 List<InetAddress> dns = linkProperties.getDnsServers();
+                // Non-null only when Private DNS is pinned to a hostname, which
+                // leaves the resolver list untouched — so this is the only part
+                // of the properties that reveals the change.
+                String private_dns = (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
+                        ? null : linkProperties.getPrivateDnsServerName());
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
                 String reason = NetworkReloadPolicy.onLinkPropertiesChanged(
                         last_dns,
                         dns,
                         Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
-                        prefs.getBoolean("reload_onconnectivity", false));
+                        prefs.getBoolean("reload_onconnectivity", false),
+                        last_private_dns,
+                        private_dns);
                 if (reason != null) {
                     Log.i(TAG, "Changed link properties=" + linkProperties +
                             "DNS cur=" + TextUtils.join(",", dns) +
-                            "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)));
+                            "DNS prv=" + (last_dns == null ? null : TextUtils.join(",", last_dns)) +
+                            " private DNS cur=" + private_dns + " prv=" + last_private_dns);
                     last_dns = dns;
+                    last_private_dns = private_dns;
                     reloadAfterNetworkChange(reason);
                 }
             }
@@ -3228,19 +3239,24 @@ public class ServiceSinkhole extends VpnService {
     // ConnectivityManager callbacks within milliseconds of each other. Each
     // reload is a foreground-service update + wakelock + native VPN restart +
     // WireGuard rebind, so bursts are coalesced into a single reload using the
-    // last reason once the burst settles. Every reason string currently in use
-    // maps to the same shouldRestartWireGuard()==true branch, so collapsing to
-    // the latest reason changes no behaviour beyond the log line.
+    // last reason once the burst settles. Not every reason needs the rebind, so
+    // the need for one is accumulated across the burst rather than read off the
+    // surviving reason: a reason that does not need it must not cancel one that
+    // did, or the tunnel keeps a socket bound to a network that is gone.
     private static final long NETWORK_RELOAD_DEBOUNCE_MS = 1500L;
     private static final Object NETWORK_RELOAD_TOKEN = new Object();
     private final Handler networkReloadDebounceHandler = new Handler(Looper.getMainLooper());
+    private final AtomicBoolean pendingWireGuardRestart = new AtomicBoolean(false);
 
     private void reloadAfterNetworkChange(final String reason) {
+        // Callbacks arrive off the main thread; the reload runs on it.
+        if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+            pendingWireGuardRestart.set(true);
         networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
         networkReloadDebounceHandler.postAtTime(new Runnable() {
             @Override
             public void run() {
-                if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+                if (pendingWireGuardRestart.getAndSet(false))
                     net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
                 reload(reason, ServiceSinkhole.this, false);
             }
