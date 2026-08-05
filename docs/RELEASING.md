@@ -126,33 +126,67 @@ for p in net.kollnig.missioncontrol{,.fdroid,.test}; do
 done
 ```
 
-Tap through onboarding. On a fresh install it is four slides — welcome,
-blocking mode, VPN, timeline — so the whole run is a fixed tap sequence. These
-coordinates are for a **1080×2400** screen (Pixel 8); run
-`adb shell wm size` first and re-derive them if the device differs.
+Tap through onboarding. `ActivityOnboarding.setupSlides()` builds the list once
+from device state, so pre-grant first (`install -g` plus the `appops` line
+above) and the two permission slides drop out, leaving a fixed five-slide run:
+**welcome → blocking mode → VPN lockdown → Disable Private DNS → timeline**.
+Without pre-granting you also get the **Enable Protection** slide (third) and
+the **Stay Informed** notification slide, and the VPN slide raises the system
+consent dialog.
+
+Three of these slides raise an "Are you sure?" confirmation on **Next**, and the
+dialog's OK button moves vertically with the length of the message — so resolve
+it rather than hardcoding it. Coordinates below are for **1080×2400**; check
+with `adb shell wm size`.
 
 ```bash
-adb shell input tap 922 2256   # Next            — welcome
-adb shell input tap 922 2256   # Next            — blocking mode (leave Minimal)
-adb shell input tap 336 1598   # Enable On-Device VPN
-adb shell input tap 922 2256   # Next            — button now reads "Granted"
-adb shell input tap 878 2256   # Get Started     — timeline, last slide
+# Tap the OK button of the current AlertDialog, wherever it happens to sit.
+ok() {
+    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+    adb shell cat /sdcard/ui.xml \
+        | grep -oE '<node[^>]*text="OK"[^>]*bounds="\[[0-9]+,[0-9]+\]\[[0-9]+,[0-9]+\]"' \
+        | grep -oE 'bounds="[^"]*"' | head -1 \
+        | sed -E 's/bounds="\[([0-9]+),([0-9]+)\]\[([0-9]+),([0-9]+)\]"/\1 \2 \3 \4/' \
+        | awk '{ printf "%d %d\n", ($1+$3)/2, ($2+$4)/2 }' \
+        | xargs adb shell input tap
+}
+# Print the current slide's title and buttons.
+where() {
+    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+    adb shell cat /sdcard/ui.xml | grep -oE 'text="[^"]{3,60}"' \
+        | sed 's/text="//;s/"$//' | head -4
+}
+
+adb shell input tap 922 2256   # Next        — welcome
+adb shell input tap 922 2256   # Next        — blocking mode (leave Minimal)
+adb shell input tap 922 2256   # Next        — VPN lockdown  → confirmation
+ok
+adb shell input tap 922 2256   # Next        — Disable Private DNS → confirmation
+ok
+adb shell input tap 878 2256   # Get Started — timeline, last slide
+
 adb shell input tap 178 2256   # Timeline tab
 adb shell input tap 540 2256   # Apps tab
 ```
 
-Screenshot with `adb exec-out screencap -p > shot.png` after the sequence, and
-between taps if anything looks off — the last slide's bottom-right button reads
-**Get Started** rather than **Next**, which is the cheap check that the run
-ended where it should.
+Call `where` between steps if anything desyncs; a slide whose bottom-right
+button reads **Get Started** instead of **Next** is the last one, which is the
+cheap check that the run ended where it should. Screenshot the result with
+`adb exec-out screencap -p > shot.png`.
 
-Two conditional slides can extend the sequence, both of which the fixed taps
-above would walk into: the **notification** slide, when
-`POST_NOTIFICATIONS` is not already granted (installing with `-g`, as above,
-avoids it), and the **VPN lockdown** slide on Android P+. Onboarding is built
-once in `ActivityOnboarding.setupSlides()`; `refreshSlides()` only updates
-slides in place and never rebuilds, so granting VPN consent mid-run relabels
-that slide to "Granted" rather than dropping it.
+Two slides here are worth reading rather than clicking past, because both fire
+on a device where the underlying setting is *not* actually a problem — measured
+on a Pixel 8 (Android 17) with `always_on_vpn_lockdown=0` and
+`private_dns_mode=opportunistic`:
+
+- **VPN Lockdown Setting** offers "Open VPN Settings" and warns on Next even
+  though lockdown is off. Per `refreshSlides()` it should read "Disabled" with
+  no warning on Q+.
+- **Disable Private DNS** appears for any mode other than `off`
+  (`Util.isPrivateDns`), so `opportunistic` — Android's default — triggers a
+  slide telling the user their setup is broken when DoT is not actually in use.
+  #711 removes this slide; once that lands, the sequence above loses its second
+  `ok` step.
 
 Checks that must all pass before publishing:
 
