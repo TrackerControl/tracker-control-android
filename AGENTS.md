@@ -116,6 +116,73 @@ the app or run `pm clear` unless the user explicitly requests a clean install.
 adb install -r app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
 ```
 
+### Driving the app without permission popups
+
+Onboarding, the VPN consent dialog and the runtime permission prompts can all be
+pre-satisfied from adb, so an agent never has to tap through them.
+
+Note the package first: github debug is `net.kollnig.missioncontrol.test`, which
+is also what a maintainer's own day-to-day dev build installs as. Seeding
+preferences into it overwrites their real configuration. If the device is
+someone's daily driver, either confirm before touching that package or use a
+different flavour's debug build (`net.kollnig.missioncontrol.fdroid.test`), which
+installs alongside it.
+
+```bash
+PKG=net.kollnig.missioncontrol.test
+
+# 1. Runtime permissions. -g grants everything the manifest declares, so revoke
+#    whichever one you are actually testing (checkSelfPermission would lie).
+adb install -r -g app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
+adb shell pm revoke $PKG android.permission.ACCESS_LOCAL_NETWORK
+
+# 2. VPN consent. Makes VpnService.prepare() return null, which skips BOTH the
+#    system ConfirmDialog and TrackerControl's own explainer before it.
+adb shell appops set $PKG ACTIVATE_VPN allow
+
+# 3. Onboarding. ActivityMain checks onboarding_version against
+#    ActivityOnboarding.ONBOARDING_VERSION; seeding it lands you on the main
+#    screen. This works before the first launch — run-as can create the file.
+cat > /tmp/seed.xml <<'XML'
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="onboarding_version" value="2" />
+</map>
+XML
+adb push /tmp/seed.xml /data/local/tmp/seed.xml
+adb shell "run-as $PKG sh -c 'mkdir -p shared_prefs && cat /data/local/tmp/seed.xml > shared_prefs/${PKG}_preferences.xml'"
+
+adb shell monkey -p $PKG -c android.intent.category.LAUNCHER 1
+```
+
+(Push through `/data/local/tmp` rather than piping a heredoc into `adb shell` —
+quoting survives the round trip intact.)
+
+The VPN switch is at roughly `input tap 108 216` on a 1080×2400 screen; from
+there the tunnel comes up with no dialogs at all. Verify with
+`adb shell dumpsys connectivity | grep -o "VPN:net.kollnig[a-z.]*"`.
+
+Preferences, once seeded:
+
+- **Force-stop before editing.** A running process holds prefs in memory and
+  will overwrite your file on exit: `adb shell am force-stop $PKG` first.
+- **Merge, never replace.** Rewriting the whole file drops `onboarding_version`
+  and drops you back into onboarding. Append inside `</map>` with `sed`, or read
+  the file, edit, and write it back whole.
+- **`adb uninstall` and `pm clear` wipe all of the above** — the seeded prefs,
+  the appop, and the granted permissions. Prefer leaving the app installed and
+  resetting only the state your test cares about.
+
+Two things to keep in mind on someone's personal device:
+
+- `VpnService.prepare()` **revokes whatever VPN app currently holds consent**,
+  including the user's own build or their real VPN. Say so before you enable a
+  tunnel, and remind them afterwards that it needs re-enabling.
+- To check a notification, read it with
+  `adb shell dumpsys notification --noredact | grep -A6 '<your title>'` rather
+  than screenshotting the shade, which captures the user's private
+  notifications.
+
 ```bash
 # From the repo root. Use ./gradlew (the wrapper).
 
