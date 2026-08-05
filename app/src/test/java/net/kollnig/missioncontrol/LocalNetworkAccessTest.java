@@ -55,6 +55,46 @@ public class LocalNetworkAccessTest {
     public void setUp() {
         prefs = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         prefs.edit().clear().commit();
+        LocalNetworkAccess.forgetObservations();
+    }
+
+    @Test
+    public void runtimeDestinationOnTheLanIsRemembered() {
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+
+        // What a host name in a DoH URL or WireGuard endpoint resolved to.
+        LocalNetworkAccess.reportDestination("192.168.1.10");
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+    }
+
+    @Test
+    public void runtimeDestinationOffTheLanIsIgnored() {
+        LocalNetworkAccess.reportDestination("9.9.9.9");
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+
+        // Never resolved here — callers pass an address they already have.
+        LocalNetworkAccess.reportDestination("pi.hole");
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+
+        LocalNetworkAccess.reportDestination(null);
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+    }
+
+    @Test
+    public void observationsAreForgottenOnReset() {
+        LocalNetworkAccess.reportDestination("fd00::1");
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+
+        LocalNetworkAccess.forgetObservations();
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+    }
+
+    @Test
+    public void observationDoesNotAffectConfigurationDetection() {
+        // isConfigured() answers "does the stored configuration name the LAN",
+        // which a runtime observation must not fake up.
+        LocalNetworkAccess.reportDestination("192.168.1.10");
+        assertFalse(LocalNetworkAccess.isConfigured(prefs));
     }
 
     @Test

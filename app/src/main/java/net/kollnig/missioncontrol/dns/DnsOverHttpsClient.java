@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
+import net.kollnig.missioncontrol.LocalNetworkAccess;
 
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Record;
@@ -27,6 +28,7 @@ import org.xbill.DNS.Type;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -36,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.ConnectionPool;
+import okhttp3.Dns;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -80,6 +83,17 @@ public class DnsOverHttpsClient {
                 .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
                 .cache(getResponseCache(context))
                 .retryOnConnectionFailure(true)
+                // An endpoint given as a host name can still be a resolver on
+                // the user's own network, which Android 17 blocks us from
+                // reaching without ACCESS_LOCAL_NETWORK. OkHttp resolves it
+                // anyway, so note the address it got rather than looking it up
+                // a second time (#701).
+                .dns(hostname -> {
+                    List<InetAddress> addresses = Dns.SYSTEM.lookup(hostname);
+                    for (InetAddress address : addresses)
+                        LocalNetworkAccess.reportDestination(address.getHostAddress());
+                    return addresses;
+                })
                 .build();
 
         Log.i(TAG, "DoH client initialized with endpoint: " + endpoint);

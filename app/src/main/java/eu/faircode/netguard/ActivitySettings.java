@@ -978,6 +978,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Asked at most once per visit: writing back a trimmed value re-enters
         // this listener, and a second request while the dialog is up is dropped
         // by the framework.
+        if (LocalNetworkAccess.isRelevantSetting(name))
+            // The new value may point somewhere else entirely; what we saw the
+            // old one reach says nothing about it.
+            LocalNetworkAccess.forgetObservations();
+
         if (!requestedLocalNetwork && LocalNetworkAccess.isRelevantSetting(name)
                 && LocalNetworkAccess.isMissing(this)) {
             requestedLocalNetwork = true;
