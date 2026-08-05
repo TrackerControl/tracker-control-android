@@ -1693,10 +1693,10 @@ public class ServiceSinkhole extends VpnService {
         // In "hostname" mode it does not fall back — the user picked that
         // resolver explicitly, so DNS simply fails and nothing resolves. That
         // looks like TC broke the connection, with no hint of why, so say it.
-        if (prefs.getBoolean("block_dot", true) && Util.getPrivateDnsSpecifier(this) != null) {
+        if (prefs.getBoolean("block_dot", true) && Util.isPrivateDnsHostnameMode(this)) {
             Log.w(TAG, "Private DNS set to a hostname: DoT is blocked and Android will not" +
                     " fall back to plaintext DNS, so name resolution fails");
-            showPrivateDnsNotification();
+            showPrivateDnsNotification(Util.getPrivateDnsSpecifier(this));
         } else
             clearPrivateDnsNotification();
 
@@ -3807,7 +3807,7 @@ public class ServiceSinkhole extends VpnService {
      * device with no working resolver. Opens the network settings, where the
      * setting lives; naming the resolver makes clear which one is meant.
      */
-    private void showPrivateDnsNotification() {
+    private void showPrivateDnsNotification(String specifier) {
         Intent settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
         if (settings.resolveActivity(getPackageManager()) == null)
             settings = new Intent(Settings.ACTION_WIFI_SETTINGS);
@@ -3815,7 +3815,7 @@ public class ServiceSinkhole extends VpnService {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         String detail = getString(R.string.msg_private_dns_notify,
-                Util.getPrivateDnsSpecifier(this));
+                specifier != null ? specifier : getString(R.string.msg_private_dns_unknown_resolver));
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)

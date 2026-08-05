@@ -580,12 +580,6 @@
     <string name="onboarding_notify_desc">允许通知以直接从状态栏查看实时更新并控制保护。</string>
     <string name="onboarding_notify_action">允许通知</string>
     <string name="onboarding_notify_sure">没有通知权限，您将无法从状态栏查看实时更新或控制保护。您确定吗？</string>
-    <string name="onboarding_privatedns_title">禁用私人DNS</string>
-    <string name="onboarding_privatedns_desc">Android 的 Private DNS 功能会妨碍 TrackerControl 拦截跟踪器的能力。要继续此设置 <b>必须</b>设为“关闭”。</string>
-    <string name="onboarding_privatedns_instruction">设置 -&gt; 网络 &amp; 互联网 -&gt; Private DNS -&gt; 关闭。</string>
-    <string name="onboarding_privatedns_action">打开 DNS 设置</string>
-    <string name="onboarding_privatedns_skip_title">跳过私人DNS禁用？</string>
-    <string name="onboarding_privatedns_skip_msg">在开启 Private DNS 情况下继续会极大限制 TrackControl 的运行。多数跟踪不会被拦截，只剩下跟踪库分析。另外， VPN 过滤器会被禁用来确保基础功能。</string>
     <string name="onboarding_timeline_title">观看时间轴填充</string>
     <string name="onboarding_timeline_desc">通过 TrackerControl 时间轴观察跟踪器活动 。时间轴一开始可能是空的：应用程序通常只在您使用时才与跟踪服务器联系。\n\n完成设置后，打开几个应用程序，然后返回到TrackerControl查看检测到和被阻止的跟踪活动。</string>
     <string name="onboarding_network_title">不受限制的网络</string>
