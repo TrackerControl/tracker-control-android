@@ -699,6 +699,11 @@ object WgEgress {
         currentKeepaliveAlwaysOn = false
         lastCheapRecoveryMs = 0
         verificationGeneration++
+        // An error describes a tunnel that no longer exists. Listeners check
+        // lastError before isRunning — deliberately, so a start that fails
+        // without ever producing a tunnel still reports — so leaving it set
+        // here kept a stopped tunnel reporting its final error forever.
+        lastError = null
         if (t != null) {
             try {
                 t.stop()

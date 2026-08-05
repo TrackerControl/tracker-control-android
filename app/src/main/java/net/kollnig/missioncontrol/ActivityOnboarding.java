@@ -242,20 +242,8 @@ public class ActivityOnboarding extends AppCompatActivity {
         // }
         // }
 
-        // 7. Private DNS (Mandatory)
-        boolean privateDnsEnabled = Util.isPrivateDns(this);
-        if (privateDnsEnabled) {
-            slides.add(new Slide(
-                    R.string.onboarding_privatedns_title,
-                    getText(R.string.onboarding_privatedns_title),
-                    android.text.TextUtils.concat(getText(R.string.onboarding_privatedns_desc), "\n\n",
-                            android.text.Html
-                                    .fromHtml("<b>" + getString(R.string.onboarding_privatedns_instruction) + "</b>")),
-                    R.drawable.screen,
-                    getString(R.string.onboarding_privatedns_action),
-                    R.string.onboarding_privatedns_skip_msg,
-                    null));
-        }
+        // 7. Private DNS - no longer asked about: DoT (port 853) is blocked by
+        // default, so Android falls back to plaintext DNS on its own.
 
         // 8. Timeline
         slides.add(new Slide(
@@ -393,25 +381,6 @@ public class ActivityOnboarding extends AppCompatActivity {
             // }
             // };
             // }
-
-            // 7. Private DNS
-            if (slide.titleResId == R.string.onboarding_privatedns_title) {
-                boolean privateDnsEnabled = Util.isPrivateDns(this);
-                slide.actionButtonText = privateDnsEnabled ? getString(R.string.onboarding_privatedns_action)
-                        : getString(R.string.onboarding_action_disabled);
-                slide.warningResId = privateDnsEnabled ? R.string.onboarding_privatedns_skip_msg : 0;
-                if (privateDnsEnabled) {
-                    slide.actionListener = v -> {
-                        Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
-                        if (intent.resolveActivity(getPackageManager()) == null) {
-                            intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                        }
-                        startActivity(intent);
-                    };
-                } else {
-                    slide.actionListener = null;
-                }
-            }
 
             // Lockdown
             if (slide.titleResId == R.string.onboarding_lockdown_title) {

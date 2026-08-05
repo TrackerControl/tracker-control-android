@@ -260,14 +260,6 @@ public class Util {
         return (country != null && listEU.contains(country.toUpperCase()));
     }
 
-    public static boolean isPrivateDns(Context context) {
-        String dns_mode = Settings.Global.getString(context.getContentResolver(), "private_dns_mode");
-        Log.i(TAG, "Private DNS mode=" + dns_mode);
-        if (dns_mode == null)
-            dns_mode = "off";
-        return (!"off".equals(dns_mode));
-    }
-
     public static String getNetworkGeneration(int networkType) {
         switch (networkType) {
             case TelephonyManager.NETWORK_TYPE_1xRTT:

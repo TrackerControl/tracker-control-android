@@ -231,6 +231,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_DOH_ERROR = 11;
     private static final int NOTIFY_WG_ERROR = 12;
     private static final int NOTIFY_LOCAL_NETWORK = 13;
+    private static final int NOTIFY_PRIVATE_DNS = 14;
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -706,7 +707,20 @@ public class ServiceSinkhole extends VpnService {
                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
                         () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
                 jni_wireguard_required(false);
+                // WgEgress clears its error as it tears the tunnel down, so the
+                // state listener already retracts this one; the call remains for
+                // the case it cannot see, a start that failed without ever
+                // producing a tunnel, where stop() finds nothing to notify about.
                 clearWireGuardErrorNotification();
+                // The other two are config warnings nothing else retracts, and
+                // both describe a tunnel that is no longer running — but leave
+                // them on a temporary stop (a call, say): the VPN is coming
+                // straight back, and re-posting a cancelled notification alerts
+                // again, so the user would be buzzed on every call.
+                if (!temporary) {
+                    clearLocalNetworkNotification();
+                    clearPrivateDnsNotification();
+                }
                 unprepare();
 
                 // Stop DoH proxy
@@ -1673,6 +1687,18 @@ public class ServiceSinkhole extends VpnService {
             showLocalNetworkNotification();
         } else
             clearLocalNetworkNotification();
+
+        // Blocking port 853 is what lets us keep seeing DNS: with Private DNS on
+        // "automatic", Android falls back to plaintext and detection carries on.
+        // In "hostname" mode it does not fall back — the user picked that
+        // resolver explicitly, so DNS simply fails and nothing resolves. That
+        // looks like TC broke the connection, with no hint of why, so say it.
+        if (prefs.getBoolean("block_dot", true) && Util.getPrivateDnsSpecifier(this) != null) {
+            Log.w(TAG, "Private DNS set to a hostname: DoT is blocked and Android will not" +
+                    " fall back to plaintext DNS, so name resolution fails");
+            showPrivateDnsNotification();
+        } else
+            clearPrivateDnsNotification();
 
         // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
         // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
@@ -3774,6 +3800,46 @@ public class ServiceSinkhole extends VpnService {
 
     private void clearLocalNetworkNotification() {
         NotificationManagerCompat.from(this).cancel(NOTIFY_LOCAL_NETWORK);
+    }
+
+    /**
+     * Private DNS is pinned to a hostname while we block DoT, which leaves the
+     * device with no working resolver. Opens the network settings, where the
+     * setting lives; naming the resolver makes clear which one is meant.
+     */
+    private void showPrivateDnsNotification() {
+        Intent settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+        if (settings.resolveActivity(getPackageManager()) == null)
+            settings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_PRIVATE_DNS, settings,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String detail = getString(R.string.msg_private_dns_notify,
+                Util.getPrivateDnsSpecifier(this));
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.msg_private_dns_title))
+                .setContentText(detail)
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setOngoing(false)
+                .setAutoCancel(true)
+                // Rebuilt on every network change; alert once, then sit quietly.
+                .setOnlyAlertOnce(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(detail);
+
+        Util.notify(this, NOTIFY_PRIVATE_DNS, notification.build());
+    }
+
+    private void clearPrivateDnsNotification() {
+        NotificationManagerCompat.from(this).cancel(NOTIFY_PRIVATE_DNS);
     }
 
     private void showUpdateNotification(String name, String url) {
