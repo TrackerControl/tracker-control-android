@@ -230,6 +230,7 @@ public class ServiceSinkhole extends VpnService {
     public static final int NOTIFY_EXTERNAL = 9;
     private static final int NOTIFY_DOH_ERROR = 11;
     private static final int NOTIFY_WG_ERROR = 12;
+    private static final int NOTIFY_LOCAL_NETWORK = 13;
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -1663,9 +1664,15 @@ public class ServiceSinkhole extends VpnService {
         // Android 17 refuses local network traffic without ACCESS_LOCAL_NETWORK:
         // TCP times out, UDP fails with EPERM. A LAN resolver routed into the tun
         // above is re-sent from our own socket, so it goes silent (#701).
-        if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(ServiceSinkhole.this))
+        // The symptom is "nothing resolves", which no one attributes to a
+        // permission — and the banner only reaches someone who opens the app.
+        // Notify, so the reason meets the user where the failure appears.
+        if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(ServiceSinkhole.this)) {
             Log.w(TAG, "Local network access not granted: configured LAN destinations" +
-                    " (custom DNS, Secure DNS resolver, WireGuard peer) are unreachable");
+                    " (custom DNS, Secure DNS resolver, WireGuard peer, proxy) are unreachable");
+            showLocalNetworkNotification();
+        } else
+            clearLocalNetworkNotification();
 
         // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
         // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
@@ -3662,6 +3669,14 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void showDohErrorNotification() {
+        // A local resolver we are not allowed to reach is not a DoH problem,
+        // and "consider disabling Secure DNS" is the wrong advice for it: the
+        // fix is one permission away. Say so instead (#701).
+        if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(this)) {
+            showLocalNetworkNotification();
+            return;
+        }
+
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntentCompat.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -3686,6 +3701,14 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void showWireGuardErrorNotification(String message) {
+        // Same as the DoH case: a peer on the LAN that we may not talk to is a
+        // permission problem, not a tunnel problem, and sending the user to the
+        // WireGuard settings only wastes their time (#701).
+        if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(this)) {
+            showLocalNetworkNotification();
+            return;
+        }
+
         Intent main = new Intent(this, ActivitySettings.class);
         PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_WG_ERROR, main,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -3715,6 +3738,42 @@ public class ServiceSinkhole extends VpnService {
 
     private void clearWireGuardErrorNotification() {
         NotificationManagerCompat.from(this).cancel(NOTIFY_WG_ERROR);
+    }
+
+    /**
+     * Local network access is missing and something the user configured needs
+     * it. Opens the main screen, where the warning row requests the permission.
+     */
+    private void showLocalNetworkNotification() {
+        Intent main = new Intent(this, ActivityMain.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_LOCAL_NETWORK, main,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String detail = getString(R.string.msg_local_network_notify);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.msg_local_network_title))
+                .setContentText(detail)
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setOngoing(false)
+                .setAutoCancel(true)
+                // Rebuilt on every network change; alert once, then sit quietly.
+                .setOnlyAlertOnce(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(detail);
+
+        Util.notify(this, NOTIFY_LOCAL_NETWORK, notification.build());
+    }
+
+    private void clearLocalNetworkNotification() {
+        NotificationManagerCompat.from(this).cancel(NOTIFY_LOCAL_NETWORK);
     }
 
     private void showUpdateNotification(String name, String url) {
