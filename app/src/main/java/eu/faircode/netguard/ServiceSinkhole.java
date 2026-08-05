@@ -119,6 +119,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
@@ -3238,19 +3239,24 @@ public class ServiceSinkhole extends VpnService {
     // ConnectivityManager callbacks within milliseconds of each other. Each
     // reload is a foreground-service update + wakelock + native VPN restart +
     // WireGuard rebind, so bursts are coalesced into a single reload using the
-    // last reason once the burst settles. Every reason string currently in use
-    // maps to the same shouldRestartWireGuard()==true branch, so collapsing to
-    // the latest reason changes no behaviour beyond the log line.
+    // last reason once the burst settles. Not every reason needs the rebind, so
+    // the need for one is accumulated across the burst rather than read off the
+    // surviving reason: a reason that does not need it must not cancel one that
+    // did, or the tunnel keeps a socket bound to a network that is gone.
     private static final long NETWORK_RELOAD_DEBOUNCE_MS = 1500L;
     private static final Object NETWORK_RELOAD_TOKEN = new Object();
     private final Handler networkReloadDebounceHandler = new Handler(Looper.getMainLooper());
+    private final AtomicBoolean pendingWireGuardRestart = new AtomicBoolean(false);
 
     private void reloadAfterNetworkChange(final String reason) {
+        // Callbacks arrive off the main thread; the reload runs on it.
+        if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+            pendingWireGuardRestart.set(true);
         networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
         networkReloadDebounceHandler.postAtTime(new Runnable() {
             @Override
             public void run() {
-                if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
+                if (pendingWireGuardRestart.getAndSet(false))
                     net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.onUnderlyingNetworkChanged();
                 reload(reason, ServiceSinkhole.this, false);
             }

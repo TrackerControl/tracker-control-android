@@ -155,6 +155,25 @@ public class NetworkReloadPolicyTest {
         assertFalse(NetworkReloadPolicy.shouldRestartWireGuard("private DNS changed"));
     }
 
+    /**
+     * A burst of callbacks is collapsed to its last reason, but the rebind it
+     * needs is not a property of that reason alone: a private DNS change
+     * landing right after a genuine network change must not cancel the rebind
+     * that change required, or the tunnel keeps a socket bound to a gone
+     * network until some later event.
+     */
+    @Test
+    public void privateDnsChangeDoesNotCancelAPendingRestart() {
+        boolean pending = NetworkReloadPolicy.shouldRestartWireGuard(false, "Network changed");
+        assertTrue(pending);
+        assertTrue(NetworkReloadPolicy.shouldRestartWireGuard(pending, "private DNS changed"));
+    }
+
+    @Test
+    public void privateDnsChangeAloneStillDoesNotRestartWireGuard() {
+        assertFalse(NetworkReloadPolicy.shouldRestartWireGuard(false, "private DNS changed"));
+    }
+
     @Test
     public void physicalConnectivityReloadsRestartWireGuard() {
         assertTrue(NetworkReloadPolicy.shouldRestartWireGuard("network available"));

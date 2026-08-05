@@ -70,6 +70,15 @@ final class NetworkReloadPolicy {
                 REASON_CONNECTIVITY_CHANGED.equals(reason);
     }
 
+    /**
+     * The same decision across a coalesced burst of callbacks, which keeps only
+     * the last reason. The need for a rebind is sticky: once any reason in the
+     * burst required one, a later reason that does not must not cancel it.
+     */
+    static boolean shouldRestartWireGuard(boolean pendingRestart, String reason) {
+        return pendingRestart || shouldRestartWireGuard(reason);
+    }
+
     static boolean same(List<?> last, List<?> current) {
         if (last == null || current == null || last.size() != current.size())
             return false;
