@@ -798,7 +798,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     grantResults[0] == PackageManager.PERMISSION_GRANTED);
             TextView tvLocalNetwork = findViewById(R.id.tvLocalNetwork);
             if (tvLocalNetwork != null)
-                tvLocalNetwork.setVisibility(granted ? View.GONE : View.VISIBLE);
+                // Derived, not inferred from the grant result: the row is about
+                // the configuration needing access, which onResume decides too.
+                tvLocalNetwork.setVisibility(
+                        LocalNetworkAccess.isMissing(this) ? View.VISIBLE : View.GONE);
             if (granted)
                 // The tunnel keeps its sockets across a reload, but the native
                 // engine reopens them, so LAN destinations become reachable.

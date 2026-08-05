@@ -69,6 +69,9 @@ import java.net.URI;
  * never need it.
  */
 public class LocalNetworkAccess {
+    private LocalNetworkAccess() {
+    }
+
     private static final String TAG = "TrackerControl.LocalNet";
 
     /**
@@ -122,11 +125,11 @@ public class LocalNetworkAccess {
     }
 
     /** Whether the current configuration makes TrackerControl talk to the LAN. */
-    public static boolean isConfigured(Context context) {
+    private static boolean isConfigured(Context context) {
         return isConfigured(PreferenceManager.getDefaultSharedPreferences(context));
     }
 
-    public static boolean isConfigured(SharedPreferences prefs) {
+    static boolean isConfigured(SharedPreferences prefs) {
         if (isLocalAddress(prefs.getString("dns", null)) ||
                 isLocalAddress(prefs.getString("dns2", null)))
             return true;

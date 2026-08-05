@@ -693,7 +693,7 @@ Sincerely,\n\n]]></string>
     <string name="static_analysis">Detect trackers in app code</string>
     <string name="failed_loading_cached_analysis">Loading cached tracker results failed. Please report this to the developer at hello@trackercontrol.org</string>
     <string name="msg_notifications">Tap to grant notification permissions (for error messages, etc.)</string>
-    <string name="msg_local_network">Tap to allow local network access, which Android asks about as \"nearby devices\". Android 17 blocks it by default, so your own DNS server, Secure DNS resolver or WireGuard peer cannot be reached.</string>
+    <string name="msg_local_network">Tap to allow local network access, which Android asks about as \"nearby devices\". Android 17 blocks it by default, so your own DNS server, Secure DNS resolver, WireGuard peer or proxy cannot be reached.</string>
 
     <string name="setting_monitor_system">Monitor system apps</string>
     <string name="summary_monitor_system">Route system apps (Play Services, carrier services, etc.) through the VPN so their trackers are detected and blocked, and show them in the app list.\n\nOff by default: excluding system apps is friendlier to battery, because their background traffic no longer wakes the VPN. Turning this on conflicts with \"Block connections without VPN\" in the Android VPN settings, which must be DISABLED.</string>
