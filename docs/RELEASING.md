@@ -126,40 +126,33 @@ for p in net.kollnig.missioncontrol{,.fdroid,.test}; do
 done
 ```
 
-Tap through onboarding. **Do not assume a fixed number of screens.**
-`ActivityOnboarding.setupSlides()` builds the list once, from device state:
-the VPN slide only appears when consent is not already granted, the lockdown
-slide on Android P+, the notification slide only when that permission is
-missing, and the "Disable Private DNS" slide whenever `private_dns_mode` is
-anything other than `off` (`Util.isPrivateDns`) — including `opportunistic`,
-not just strict mode. `refreshSlides()` then only updates the existing slides
-in place; it never rebuilds the list, so granting consent mid-run relabels the
-VPN slide to "Granted" rather than dropping it.
-
-Drive by what is on screen, not by a script. On a 1080×2400 screen the buttons
-sit at roughly:
+Tap through onboarding. On a fresh install it is four slides — welcome,
+blocking mode, VPN, timeline — so the whole run is a fixed tap sequence. These
+coordinates are for a **1080×2400** screen (Pixel 8); run
+`adb shell wm size` first and re-derive them if the device differs.
 
 ```bash
-adb shell input tap 922 2256   # Next (bottom right)
+adb shell input tap 922 2256   # Next            — welcome
+adb shell input tap 922 2256   # Next            — blocking mode (leave Minimal)
 adb shell input tap 336 1598   # Enable On-Device VPN
-adb shell input tap 878 2256   # Get Started
+adb shell input tap 922 2256   # Next            — button now reads "Granted"
+adb shell input tap 878 2256   # Get Started     — timeline, last slide
 adb shell input tap 178 2256   # Timeline tab
 adb shell input tap 540 2256   # Apps tab
 ```
 
-Screenshot between taps with `adb exec-out screencap -p > shot.png` rather than
-tapping blind; a shifted layout otherwise silently taps the wrong control. The
-last slide's bottom-right button reads **Get Started** instead of **Next**,
-which is how you know the run is over.
+Screenshot with `adb exec-out screencap -p > shot.png` after the sequence, and
+between taps if anything looks off — the last slide's bottom-right button reads
+**Get Started** rather than **Next**, which is the cheap check that the run
+ended where it should.
 
-While tapping through, note which slides actually appear and sanity-check them
-against the device's state — this is part of the test, not just navigation. In
-the 2026080501 run on a Pixel 8 (Android 17, `private_dns_mode=opportunistic`,
-`always_on_vpn_lockdown=0`) only four slides appeared — welcome, blocking mode,
-VPN, timeline — with **no lockdown slide and no Private DNS slide**, although
-`setupSlides()` adds the lockdown slide unconditionally on P+ and the Private
-DNS slide for any non-`off` mode. That was not chased down at the time and is
-unexplained; if you see the same, it is worth an issue rather than a shrug.
+Two conditional slides can extend the sequence, both of which the fixed taps
+above would walk into: the **notification** slide, when
+`POST_NOTIFICATIONS` is not already granted (installing with `-g`, as above,
+avoids it), and the **VPN lockdown** slide on Android P+. Onboarding is built
+once in `ActivityOnboarding.setupSlides()`; `refreshSlides()` only updates
+slides in place and never rebuilds, so granting VPN consent mid-run relabels
+that slide to "Granted" rather than dropping it.
 
 Checks that must all pass before publishing:
 
