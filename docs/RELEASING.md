@@ -126,9 +126,18 @@ for p in net.kollnig.missioncontrol{,.fdroid,.test}; do
 done
 ```
 
-Tap through onboarding — four screens: intro **Next**, blocking mode (leave
-**Minimal**) **Next**, **Enable On-Device VPN** then **Next**, and finally
-**Get Started**. On a 1080×2400 screen the buttons sit at roughly:
+Tap through onboarding. **Do not assume a fixed number of screens.**
+`ActivityOnboarding.setupSlides()` builds the list once, from device state:
+the VPN slide only appears when consent is not already granted, the lockdown
+slide on Android P+, the notification slide only when that permission is
+missing, and the "Disable Private DNS" slide whenever `private_dns_mode` is
+anything other than `off` (`Util.isPrivateDns`) — including `opportunistic`,
+not just strict mode. `refreshSlides()` then only updates the existing slides
+in place; it never rebuilds the list, so granting consent mid-run relabels the
+VPN slide to "Granted" rather than dropping it.
+
+Drive by what is on screen, not by a script. On a 1080×2400 screen the buttons
+sit at roughly:
 
 ```bash
 adb shell input tap 922 2256   # Next (bottom right)
@@ -139,7 +148,18 @@ adb shell input tap 540 2256   # Apps tab
 ```
 
 Screenshot between taps with `adb exec-out screencap -p > shot.png` rather than
-tapping blind; a shifted layout otherwise silently taps the wrong control.
+tapping blind; a shifted layout otherwise silently taps the wrong control. The
+last slide's bottom-right button reads **Get Started** instead of **Next**,
+which is how you know the run is over.
+
+While tapping through, note which slides actually appear and sanity-check them
+against the device's state — this is part of the test, not just navigation. In
+the 2026080501 run on a Pixel 8 (Android 17, `private_dns_mode=opportunistic`,
+`always_on_vpn_lockdown=0`) only four slides appeared — welcome, blocking mode,
+VPN, timeline — with **no lockdown slide and no Private DNS slide**, although
+`setupSlides()` adds the lockdown slide unconditionally on P+ and the Private
+DNS slide for any non-`off` mode. That was not chased down at the time and is
+unexplained; if you see the same, it is worth an issue rather than a shrug.
 
 Checks that must all pass before publishing:
 
