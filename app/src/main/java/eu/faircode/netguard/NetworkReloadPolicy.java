@@ -9,6 +9,7 @@ final class NetworkReloadPolicy {
     static final String REASON_NETWORK_CHANGED = "Network changed";
     static final String REASON_CONNECTED_CHANGED = "Connected state changed";
     static final String REASON_LINK_PROPERTIES_CHANGED = "link properties changed";
+    static final String REASON_PRIVATE_DNS_CHANGED = "private DNS changed";
     static final String REASON_METERED_CHANGED = "Metered state changed";
     static final String REASON_CONNECTIVITY_CHANGED = "connectivity changed";
 
@@ -30,9 +31,16 @@ final class NetworkReloadPolicy {
     }
 
     static String onLinkPropertiesChanged(List<?> lastDns, List<?> currentDns,
-                                          boolean compareDns, boolean reloadOnConnectivity) {
+                                          boolean compareDns, boolean reloadOnConnectivity,
+                                          String lastPrivateDns, String currentPrivateDns) {
         if (compareDns ? !same(lastDns, currentDns) : reloadOnConnectivity)
             return REASON_LINK_PROPERTIES_CHANGED;
+
+        // Pinning Private DNS to a hostname leaves the resolver list alone, so
+        // the comparison above never sees it — yet it decides whether blocking
+        // DoT stops name resolution outright, which the user has to be told.
+        if (!Objects.equals(lastPrivateDns, currentPrivateDns))
+            return REASON_PRIVATE_DNS_CHANGED;
 
         return null;
     }

@@ -57,6 +57,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.net.ConnectivityManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
@@ -570,6 +571,18 @@ public class Util {
         if (!isPrivateDnsHostnameMode(context))
             return null;
         return Settings.Global.getString(context.getContentResolver(), "private_dns_specifier");
+    }
+
+    /**
+     * Whether the device is left with no working resolver: Private DNS pinned
+     * to a hostname while we block DoT. Deliberately keyed on the mode rather
+     * than on the resolver name, which is only decoration for the warning —
+     * a name that reads back empty must not turn the warning off.
+     */
+    public static boolean isPrivateDnsBlocked(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("block_dot", true)
+                && isPrivateDnsHostnameMode(context);
     }
 
     public interface DoubtListener {
