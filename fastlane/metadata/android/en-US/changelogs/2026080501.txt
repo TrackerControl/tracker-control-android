@@ -1,0 +1,8 @@
+- Support for Android 17 local network protections
+- Clearer warnings when local network access is missing or blocked
+- Full tunnel routing in tethering compatibility mode
+- Automatic failover to another Mullvad/IVPN relay when one stays dead
+- More accurate tracker attribution for shared IP addresses
+- Restored system app filter and improved tracker activity display
+- Updated tracker lists, translations, and dependencies
+- Many bug fixes

@@ -42,8 +42,8 @@ android {
         minSdk 23
         targetSdk 37
         //noinspection HighAppVersionCode
-        versionCode 2026072702
-        versionName "2026.07.27"
+        versionCode 2026080501
+        versionName "2026.08.05"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // Secure DNS (DoH) configuration
