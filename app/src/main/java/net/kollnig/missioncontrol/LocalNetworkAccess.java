@@ -121,7 +121,56 @@ public class LocalNetworkAccess {
     public static boolean isMissing(Context context) {
         // Cheapest checks first: nothing to do below Android 17, and parsing the
         // WireGuard config is pointless once the permission is granted.
-        return isEnforced() && !isGranted(context) && isConfigured(context);
+        return isEnforced() && !isGranted(context)
+                && (observedLocalDestination || isConfigured(context));
+    }
+
+    /**
+     * A destination we resolved to a local network address, seen while running.
+     * Covers what {@link #isConfigured(SharedPreferences)} structurally cannot:
+     * a configuration that names a <em>host</em> rather than an address —
+     * {@code https://pi.hole/dns-query}, a WireGuard endpoint on a dynamic DNS
+     * name — where classifying it up front would mean resolving a name on
+     * whichever thread asked, including the main one.
+     *
+     * <p>Not persisted. A stale observation survives no longer than the
+     * process, and anything still pointing at the LAN re-reports itself as soon
+     * as it is used again.
+     */
+    private static volatile boolean observedLocalDestination;
+
+    /**
+     * Report an address TrackerControl is about to talk to. Callers pass what
+     * they already resolved, so this never performs a lookup itself and is safe
+     * to call from any thread.
+     *
+     * <p>Only the destination matters, not whether the connection succeeded: if
+     * it is local and the permission is missing, that traffic is blocked.
+     */
+    public static void reportDestination(String address) {
+        // Deliberately not gated on isEnforced(): isMissing() applies that gate
+        // anyway, and keeping this branch out makes the latch testable under
+        // Robolectric, which runs below the enforcement level.
+        if (observedLocalDestination)
+            return;
+        if (isLocalAddress(address)) {
+            Log.i(TAG, "Local network destination observed at runtime");
+            observedLocalDestination = true;
+        }
+    }
+
+    /** Whether a local destination has been seen since the last reset. */
+    static boolean hasObservedLocalDestination() {
+        return observedLocalDestination;
+    }
+
+    /**
+     * Drop what we observed, so a configuration that no longer points at the
+     * LAN stops warning. Called when a relevant setting changes; anything still
+     * local reports itself again on next use.
+     */
+    public static void forgetObservations() {
+        observedLocalDestination = false;
     }
 
     /** Whether the current configuration makes TrackerControl talk to the LAN. */

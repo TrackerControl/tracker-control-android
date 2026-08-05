@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.util.Log
+import net.kollnig.missioncontrol.LocalNetworkAccess
 import net.kollnig.missioncontrol.wgbridge.Logger as WgLogger
 import net.kollnig.missioncontrol.wgbridge.Protector as WgProtector
 import net.kollnig.missioncontrol.wgbridge.Tunnel as WgTunnel
@@ -815,6 +816,10 @@ object WgEgress {
         val resolved = try {
             val addr = resolveHostBounded(host)
             val ip = addr.hostAddress ?: throw IllegalStateException("getHostAddress null for $host")
+            // A peer named by host name can still sit on the user's own network,
+            // which Android 17 blocks without ACCESS_LOCAL_NETWORK (#701). The
+            // address is in hand here, so no extra lookup is needed to notice.
+            LocalNetworkAccess.reportDestination(ip)
             if (addr is java.net.Inet6Address) "[$ip]:$port" else "$ip:$port"
         } catch (e: Exception) {
             // DNS often fails exactly when we resolve: the resolver runs over
