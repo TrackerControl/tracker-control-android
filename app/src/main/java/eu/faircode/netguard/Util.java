@@ -260,14 +260,6 @@ public class Util {
         return (country != null && listEU.contains(country.toUpperCase()));
     }
 
-    public static boolean isPrivateDns(Context context) {
-        String dns_mode = Settings.Global.getString(context.getContentResolver(), "private_dns_mode");
-        Log.i(TAG, "Private DNS mode=" + dns_mode);
-        if (dns_mode == null)
-            dns_mode = "off";
-        return (!"off".equals(dns_mode));
-    }
-
     public static String getNetworkGeneration(int networkType) {
         switch (networkType) {
             case TelephonyManager.NETWORK_TYPE_1xRTT:
@@ -564,12 +556,20 @@ public class Util {
         return ((brief ? b : p) + (version > 0 ? version : ""));
     }
 
-    public static String getPrivateDnsSpecifier(Context context) {
+    /**
+     * Whether Android's Private DNS is pinned to a specific resolver hostname
+     * ("hostname" mode) rather than left on "automatic" or turned off. In this
+     * mode Android does not fall back to plaintext DNS when DoT is blocked.
+     */
+    public static boolean isPrivateDnsHostnameMode(Context context) {
         String dns_mode = Settings.Global.getString(context.getContentResolver(), "private_dns_mode");
-        if ("hostname".equals(dns_mode))
-            return Settings.Global.getString(context.getContentResolver(), "private_dns_specifier");
-        else
+        return "hostname".equals(dns_mode);
+    }
+
+    public static String getPrivateDnsSpecifier(Context context) {
+        if (!isPrivateDnsHostnameMode(context))
             return null;
+        return Settings.Global.getString(context.getContentResolver(), "private_dns_specifier");
     }
 
     public interface DoubtListener {

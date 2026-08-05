@@ -696,6 +696,9 @@ Sincerely,\n\n]]></string>
     <string name="msg_local_network">Tap to allow local network access, which Android asks about as \"nearby devices\". Android 17 blocks it by default, so your own DNS server, Secure DNS resolver, WireGuard peer or proxy cannot be reached.</string>
     <string name="msg_local_network_title">Local network access needed</string>
     <string name="msg_local_network_notify">TrackerControl cannot reach your own DNS server, Secure DNS resolver, WireGuard peer or proxy, so name resolution may fail. Android 17 requires permission for this, which Android asks about as \"nearby devices\". Tap to open TrackerControl and allow it.</string>
+    <string name="msg_private_dns_title">Private DNS blocks name resolution</string>
+    <string name="msg_private_dns_notify">Android\'s \"Private DNS\" is set to %1$s, and TrackerControl blocks encrypted DNS so it can detect trackers. Android does not fall back to normal DNS in this mode, so nothing will load. Tap to set Private DNS to \"Automatic\" or \"Off\" — TrackerControl offers its own Secure DNS in Settings.</string>
+    <string name="msg_private_dns_unknown_resolver">a custom resolver</string>
 
     <string name="setting_monitor_system">Monitor system apps</string>
     <string name="summary_monitor_system">Route system apps (Play Services, carrier services, etc.) through the VPN so their trackers are detected and blocked, and show them in the app list.\n\nOff by default: excluding system apps is friendlier to battery, because their background traffic no longer wakes the VPN. Turning this on conflicts with \"Block connections without VPN\" in the Android VPN settings, which must be DISABLED.</string>
@@ -727,12 +730,6 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_notify_action">Allow Notifications</string>
     <string name="onboarding_notify_sure">Without notification permissions, you will not be able to see real-time updates or control protection from the status bar. Are you sure?</string>
     
-    <string name="onboarding_privatedns_title">Disable Private DNS</string>
-    <string name="onboarding_privatedns_desc">Android\'s \"Private DNS\" feature interferes with TrackerControl\'s ability to block trackers. This setting <b>must</b> be set to \"Off\" to proceed.</string>
-    <string name="onboarding_privatedns_instruction">Settings -> Network &amp; internet -> Private DNS -> Off.</string>
-    <string name="onboarding_privatedns_action">Open DNS Settings</string>
-    <string name="onboarding_privatedns_skip_title">Skip Private DNS Disabling?</string>
-    <string name="onboarding_privatedns_skip_msg">Proceeding with Private DNS enabled will heavily restrict TrackerControl. Most tracking will not be blocked, leaving only the tracker library analysis. Additionally, the VPN filter will be disabled to ensure basic functionality.</string>
 
     <string name="onboarding_timeline_title">Watch the Timeline Fill Up</string>
     <string name="onboarding_timeline_desc">TrackerControl starts on the Timeline. At first it can be empty: apps usually contact trackers only while you use them.\n\nAfter finishing setup, open a few apps, then return to TrackerControl to see detected and blocked tracking activity.</string>

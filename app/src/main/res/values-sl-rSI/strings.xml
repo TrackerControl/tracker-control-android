@@ -554,12 +554,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="onboarding_notify_desc">Dovoli obvestila, da si ogledate posodobitve v resničnem času in nadzirate zaščito neposredno iz vrstice stanja.</string>
     <string name="onboarding_notify_action">Dovoli obvestila</string>
     <string name="onboarding_notify_sure">Brez dovoljenj za obvestila si ne boste mogli ogledati posodobitev v resničnem času ali nadzirati zaščite iz vrstice stanja.  Ali ste prepričani?</string>
-    <string name="onboarding_privatedns_title">Onemogoči zasebni DNS</string>
-    <string name="onboarding_privatedns_desc">Androidova značilnost \"Zasebni DNS\" moti zmožnost blokiranja sledilcev programa TrackerControl.  Če želite nadaljevati,  <b>morate</b> to nastavitev izklopiti.</string>
-    <string name="onboarding_privatedns_instruction">Nastavitve –&gt; Omrežje in internet –&gt; Zasebni DNS –&gt; Izklopi.</string>
-    <string name="onboarding_privatedns_action">Odpri nastavitve DNS</string>
-    <string name="onboarding_privatedns_skip_title">Preskoči onemogočanje zasebnega DNS-a?</string>
-    <string name="onboarding_privatedns_skip_msg">Če nadaljujete z omogočenim zasebnim DNS-om, bo to znatno omejilo TrackerControl.  Večina sledenja ne bo blokirana – program bo zmožen samo preučevanja sledilnih knjižnic.  Poleg tega bo filter VPN onemogočen, da se zagotovi osnovno delovanje.</string>
     <string name="onboarding_timeline_title">Oglejte si, kako se časovnica napolni</string>
     <string name="onboarding_timeline_desc">TrackerControl se zažene po časovnici.  Na začetku je lahko prazna — programi običajno stopijo v stik s sledilci šele med njihovo uporabo.\n\nKo končate z nastavitvijo odprite nekaj programov in se vrnite v TrackerControl, da si ogledate zaznano in blokirano sledilno dejavnost.</string>
     <string name="onboarding_network_title">Neomejeno omrežje</string>

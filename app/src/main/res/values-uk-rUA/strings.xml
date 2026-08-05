@@ -585,12 +585,6 @@
     <string name="onboarding_notify_desc">Дозвольте сповіщення, щоб бачити оновлення в режимі реального часу та керувати захистом безпосередньо зі смуги стану.</string>
     <string name="onboarding_notify_action">Дозволити сповіщення</string>
     <string name="onboarding_notify_sure">Без дозволу на отримання сповіщень ви не зможете бачити оновлення в режимі реального часу та керувати захистом із панелі стану. Ви впевнені?</string>
-    <string name="onboarding_privatedns_title">Вимкнути приватний DNS</string>
-    <string name="onboarding_privatedns_desc">Функція «Приватний DNS» в Android заважає TrackerControl блокувати трекери. Щоб продовжити, це налаштування <b>необхідно</b> встановити в положення «Вимкнено».</string>
-    <string name="onboarding_privatedns_instruction">Налаштування -&gt; Мережа &amp; інтернет -&gt; Приватний DNS -&gt; Вимкнено.</string>
-    <string name="onboarding_privatedns_action">Відкрити налаштування DNS</string>
-    <string name="onboarding_privatedns_skip_title">Пропустити вимкнення приватного DNS?</string>
-    <string name="onboarding_privatedns_skip_msg">Продовження роботи з увімкненим приватним DNS значно обмежить роботу TrackerControl. Більшість відстежень не буде заблоковано, залишиться лише аналіз бібліотеки трекерів. Крім того, фільтр VPN буде вимкнено, щоб забезпечити базову функціональність.</string>
     <string name="onboarding_timeline_title">Спостерігайте за заповненням часової шкали</string>
     <string name="onboarding_timeline_desc">TrackerControl запускається на часовій шкалі. Спочатку вона може бути порожньою: зазвичай програми зв’язуються з трекерами лише під час їхнього використання.\n\nПісля завершення налаштування відкрийте кілька програм, а потім поверніться до TrackerControl, щоб переглянути виявлену та заблоковану активність трекерів.</string>
     <string name="onboarding_network_title">Необмежена мережа</string>

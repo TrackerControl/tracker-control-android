@@ -409,12 +409,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="onboarding_notify_desc">Permite notificações para ver atualizações em tempo real e controlar a proteção diretamente na barra de status.</string>
     <string name="onboarding_notify_action">Permitir notificações</string>
     <string name="onboarding_notify_sure">Sem permissões de notificação, você não poderá ver atualizações ou proteção de controle em tempo real na barra de status. Tem certeza?</string>
-    <string name="onboarding_privatedns_title">Desabilitar DNS privado</string>
-    <string name="onboarding_privatedns_desc">O recurso \"DNS privado\" do Android interfere com a capacidade do TrackerControl de bloquear rastreadores. Esta configuração <b>deve ser definida como</b> desativada para continuar.</string>
-    <string name="onboarding_privatedns_instruction">Configurações -&gt; Rede &amp; Internet -&gt; DNS privado -&gt; Desligado.</string>
-    <string name="onboarding_privatedns_action">Abrir configurações de DNS</string>
-    <string name="onboarding_privatedns_skip_title">Ignorar o DNS privado desativado?</string>
-    <string name="onboarding_privatedns_skip_msg">Prosseguir com DNS privado habilitado irá restringir fortemente o TrackerControl. A maioria do rastreamento não será bloqueada, deixando apenas a análise da biblioteca de rastreamento. Além disso, o filtro da VPN será desativado para garantir as funcionalidades básicas.</string>
     <string name="onboarding_network_title">Rede irrestrita</string>
     <string name="onboarding_network_desc">A Economia de dados pode impedir que o TrackerControl funcione corretamente em segundo plano. Conceda acesso irrestrito para uma proteção mais confiável.</string>
     <string name="onboarding_network_action">Conceder acesso irrestrito</string>

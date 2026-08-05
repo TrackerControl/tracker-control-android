@@ -541,8 +541,6 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_battery_sure">Sans désactiver l\'optimisation de la batterie, TrackerControl peut être couper par Android à tout moment. Êtes-vous sûr de vouloir continuer ?</string>
     <string name="onboarding_notify_title">Restez informé</string>
     <string name="onboarding_notify_action">Autoriser les notifications</string>
-    <string name="onboarding_privatedns_title">Désactiver le DNS privé</string>
-    <string name="onboarding_privatedns_action">Ouvrir les paramètres DNS</string>
     <string name="onboarding_lockdown_title">Paramètres de verrouillage VPN</string>
     <string name="onboarding_lockdown_action">Ouvrir les paramètres VPN</string>
     <string name="onboarding_dns_title">DNS sécurisé (fonctionnalité béta ; peut ne pas fonctionner comme prévu)</string>

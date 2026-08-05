@@ -434,12 +434,6 @@
     <string name="onboarding_notify_desc">Разрешить уведомления, чтобы видеть обновления в режиме реального времени и управлять защитой непосредственно из строки состояния.</string>
     <string name="onboarding_notify_action">Разрешить уведомления</string>
     <string name="onboarding_notify_sure">Без разрешения на показ уведомлений вы не сможете видеть обновления или управлять защитой из строки состояния. Вы уверены?</string>
-    <string name="onboarding_privatedns_title">Отключить приватный DNS</string>
-    <string name="onboarding_privatedns_desc">Android-функция \"Private DNS\" препятствует возможности TrackerControl блокировать трекеры. Эта настройка <b>должна быть</b>  \"Выключено\" для продолжения.</string>
-    <string name="onboarding_privatedns_instruction">Настройки -&gt; Сеть &amp; Интернет -&gt; Частный DNS -&gt; Выключить.</string>
-    <string name="onboarding_privatedns_action">Открыть настройки DNS</string>
-    <string name="onboarding_privatedns_skip_title">Пропустить отключение приватного DNS?</string>
-    <string name="onboarding_privatedns_skip_msg">Включение приватного DNS сильно ограничит TrackerControl. Большинство треков не будет блокироваться, оставляя только анализ библиотеки трекеров. Кроме того, фильтр VPN будет отключен для обеспечения базовой функциональности.</string>
     <string name="onboarding_network_title">Не ограничивать сеть</string>
     <string name="onboarding_network_desc">Data Saving может предотвратить корректную работу TrackerControl в фоновом режиме. Предоставьте неограниченный доступ для наиболее надежной защиты.</string>
     <string name="onboarding_network_action">Предоставить неограниченный доступ</string>
