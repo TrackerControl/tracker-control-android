@@ -79,7 +79,7 @@
         android:padding="8dp"
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:text="@string/msg_private_dns"
+        android:text="@string/msg_private_dns_row"
         android:textAppearance="@style/TextSmall"
         android:textColor="?attr/colorOff"
         android:visibility="gone" />
