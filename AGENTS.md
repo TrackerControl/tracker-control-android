@@ -106,34 +106,47 @@ Three product flavours — **github**, **fdroid**, **play** — differ only in t
 update-check API; **github** is the normal local dev flavour. Debug builds install
 side-by-side (`applicationIdSuffix ".test"`).
 
-**Connected-device testing:** Always build and install the **github debug**
-variant. Update the existing installation in place with `adb install -r` so its
-app data, preferences, VPN consent, and test state are preserved. Do not uninstall
-the app or run `pm clear` unless the user explicitly requests a clean install.
+**Connected-device testing:** build and install the **fdroid debug** variant,
+which installs as `net.kollnig.missioncontrol.fdroid.test`.
 
 ```bash
-./gradlew assembleGithubDebug
-adb install -r app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
+./gradlew assembleFdroidDebug
+adb install -r app/build/outputs/apk/fdroid/debug/TrackerControl-fdroidDebug-latest.apk
 ```
+
+Not github debug: that installs as `net.kollnig.missioncontrol.test`, which is
+also what a maintainer's own day-to-day dev build installs as. Testing against it
+overwrites their real preferences, and enabling its VPN takes the consent slot
+from whatever they were running. The flavours differ only in the update-check
+API, so nothing is lost by using fdroid for device work. (Working on the
+update-check itself is the exception — that needs github, and needs asking
+first.)
+
+**Never destroy state without asking.** `adb uninstall`, `pm clear`, overwriting
+a preferences file, revoking a permission — every one of these is irreversible
+and the device usually belongs to someone who has real configuration on it. Ask
+first, naming the package and what will be lost, and wait for a yes. This applies
+even when the target looks like a throwaway you installed yourself: it is one
+mistaken package name away from wiping the real install. Update in place with
+`adb install -r`, which preserves app data, preferences, VPN consent, and test
+state, and for cleanup reset only the specific state your test touched.
+
+One more side effect worth announcing before you trigger it: enabling the VPN
+calls `VpnService.prepare()`, which **revokes whatever VPN app currently holds
+consent** — the maintainer's own build, or their real VPN. It will need
+re-enabling afterwards.
 
 ### Driving the app without permission popups
 
 Onboarding, the VPN consent dialog and the runtime permission prompts can all be
 pre-satisfied from adb, so an agent never has to tap through them.
 
-Note the package first: github debug is `net.kollnig.missioncontrol.test`, which
-is also what a maintainer's own day-to-day dev build installs as. Seeding
-preferences into it overwrites their real configuration. If the device is
-someone's daily driver, either confirm before touching that package or use a
-different flavour's debug build (`net.kollnig.missioncontrol.fdroid.test`), which
-installs alongside it.
-
 ```bash
-PKG=net.kollnig.missioncontrol.test
+PKG=net.kollnig.missioncontrol.fdroid.test
 
 # 1. Runtime permissions. -g grants everything the manifest declares, so revoke
 #    whichever one you are actually testing (checkSelfPermission would lie).
-adb install -r -g app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
+adb install -r -g app/build/outputs/apk/fdroid/debug/TrackerControl-fdroidDebug-latest.apk
 adb shell pm revoke $PKG android.permission.ACCESS_LOCAL_NETWORK
 
 # 2. VPN consent. Makes VpnService.prepare() return null, which skips BOTH the
@@ -170,18 +183,12 @@ Preferences, once seeded:
   and drops you back into onboarding. Append inside `</map>` with `sed`, or read
   the file, edit, and write it back whole.
 - **`adb uninstall` and `pm clear` wipe all of the above** — the seeded prefs,
-  the appop, and the granted permissions. Prefer leaving the app installed and
-  resetting only the state your test cares about.
+  the appop, and the granted permissions — which is a second reason not to reach
+  for them, on top of needing to ask first.
 
-Two things to keep in mind on someone's personal device:
-
-- `VpnService.prepare()` **revokes whatever VPN app currently holds consent**,
-  including the user's own build or their real VPN. Say so before you enable a
-  tunnel, and remind them afterwards that it needs re-enabling.
-- To check a notification, read it with
-  `adb shell dumpsys notification --noredact | grep -A6 '<your title>'` rather
-  than screenshotting the shade, which captures the user's private
-  notifications.
+To check a notification, read it with
+`adb shell dumpsys notification --noredact | grep -A6 '<your title>'` rather than
+screenshotting the shade, which captures the user's private notifications.
 
 ```bash
 # From the repo root. Use ./gradlew (the wrapper).
