@@ -214,6 +214,12 @@ dependencies {
 
     // OkHttp for DNS-over-HTTPS
     implementation 'com.squareup.okhttp3:okhttp:5.4.0'
+    // Proton's maintained SRP implementation for the optional Proton VPN
+    // account-login path. We deliberately do not pull in Proton Core's full
+    // account/Hilt graph; ProtonAuthClient owns only the protocol boundary.
+    implementation 'me.proton.core:crypto-android:36.6.1'
+    implementation 'me.proton.core:util-kotlin:36.6.1'
+    implementation 'me.proton.crypto:android-golib:2.9.0-2'
     implementation 'dnsjava:dnsjava:3.6.5'
 }
 
