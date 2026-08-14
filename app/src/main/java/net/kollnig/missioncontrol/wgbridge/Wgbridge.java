@@ -25,6 +25,31 @@ public final class Wgbridge {
     public static native String publicKey(String privateKey);
 
     /**
+     * Generates an Ed25519 PKIX public identity and its converted X25519
+     * WireGuard private key, as required by Proton's certificate API.
+     */
+    public static Ed25519WireGuardKeyPair generateProtonKeyPair() {
+        String encoded = generateEd25519WireGuardKeyPair();
+        int separator = encoded.indexOf('\n');
+        if (separator <= 0)
+            throw new IllegalStateException("Invalid Ed25519 keypair from native bridge");
+        return new Ed25519WireGuardKeyPair(
+                encoded.substring(0, separator), encoded.substring(separator + 1));
+    }
+
+    private static native String generateEd25519WireGuardKeyPair();
+
+    public static final class Ed25519WireGuardKeyPair {
+        public final String privateKey;
+        public final String publicKeyPem;
+
+        private Ed25519WireGuardKeyPair(String privateKey, String publicKeyPem) {
+            this.privateKey = privateKey;
+            this.publicKeyPem = publicKeyPem;
+        }
+    }
+
+    /**
      * Boots gotatun.
      *
      * @param uapiConfig   UAPI text produced by WgConfig.toUapi()

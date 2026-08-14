@@ -3,7 +3,15 @@
 
 use base64::engine::general_purpose::STANDARD as BASE64;
 use base64::Engine;
+use curve25519_dalek::constants::ED25519_BASEPOINT_TABLE;
+use curve25519_dalek::scalar::Scalar;
 use gotatun::x25519::{PublicKey, StaticSecret};
+use ring::digest::{digest, SHA512};
+
+pub struct Ed25519WireGuardKeyPair {
+    pub private_key: String,
+    pub public_key_pem: String,
+}
 
 /// Returns a fresh base64 WireGuard private key.
 pub fn generate_private_key() -> Result<String, String> {
@@ -23,6 +31,39 @@ pub fn public_key(private_key_b64: &str) -> Result<String, String> {
         .map_err(|_| "private key must be 32 bytes".to_owned())?;
     let secret = StaticSecret::from(bytes);
     Ok(BASE64.encode(PublicKey::from(&secret).as_bytes()))
+}
+
+/// Generates the Ed25519 identity Proton registers and the matching converted
+/// X25519 private key WireGuard uses. The conversion follows RFC 8032 key
+/// expansion and the same scheme as Proton's go-vpn-lib `toX25519Base64`.
+pub fn generate_ed25519_wireguard_key_pair() -> Result<Ed25519WireGuardKeyPair, String> {
+    let mut seed = [0u8; 32];
+    getrandom::fill(&mut seed).map_err(|e| format!("getrandom: {e}"))?;
+    Ok(ed25519_wireguard_key_pair_from_seed(seed))
+}
+
+fn ed25519_wireguard_key_pair_from_seed(seed: [u8; 32]) -> Ed25519WireGuardKeyPair {
+    let hash = digest(&SHA512, &seed);
+    let mut expanded = [0u8; 32];
+    expanded.copy_from_slice(&hash.as_ref()[..32]);
+    expanded[0] &= 248;
+    expanded[31] &= 127;
+    expanded[31] |= 64;
+
+    let scalar = Scalar::from_bytes_mod_order(expanded);
+    let ed_public = (ED25519_BASEPOINT_TABLE * &scalar).compress().to_bytes();
+    // SubjectPublicKeyInfo for Ed25519: SEQUENCE(AlgorithmIdentifier(1.3.101.112), BIT STRING).
+    let mut spki = Vec::with_capacity(44);
+    spki.extend_from_slice(&[0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00]);
+    spki.extend_from_slice(&ed_public);
+
+    Ed25519WireGuardKeyPair {
+        private_key: BASE64.encode(expanded),
+        public_key_pem: format!(
+            "-----BEGIN PUBLIC KEY-----\n{}\n-----END PUBLIC KEY-----",
+            BASE64.encode(spki)
+        ),
+    }
 }
 
 /// Decodes a base64 public key (used by Tunnel.updateEndpoint).
@@ -61,5 +102,15 @@ mod tests {
     fn rejects_garbage() {
         assert!(public_key("not base64!!!").is_err());
         assert!(public_key("c2hvcnQ=").is_err()); // "short"
+    }
+
+    #[test]
+    fn proton_key_pair_uses_ed25519_spki_and_x25519_private_key() {
+        let pair = ed25519_wireguard_key_pair_from_seed([0u8; 32]);
+        assert_eq!(BASE64.decode(&pair.private_key).unwrap().len(), 32);
+        let pem = pair.public_key_pem.lines().nth(1).unwrap();
+        let spki = BASE64.decode(pem).unwrap();
+        assert_eq!(&spki[..12], &[0x30, 0x2a, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x03, 0x21, 0x00]);
+        assert_eq!(spki.len(), 44);
     }
 }

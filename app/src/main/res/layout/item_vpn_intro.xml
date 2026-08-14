@@ -102,6 +102,30 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/vpnIntroProtonTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="@string/vpn_intro_proton_title"
+            android:textAppearance="@style/TextMedium" />
+
+        <TextView
+            android:id="@+id/vpnIntroProtonBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_intro_proton_body"
+            android:textAppearance="@style/TextSmall" />
+
+        <Button
+            android:id="@+id/vpnIntroProtonAction"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/vpn_sign_in_proton" />
+
+        <TextView
             android:id="@+id/vpnIntroWireGuardTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

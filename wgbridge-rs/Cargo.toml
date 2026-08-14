@@ -15,6 +15,8 @@ base64 = "0.22"
 hex = "0.4"
 ipnetwork = "0.21"
 getrandom = "0.4"
+curve25519-dalek = "4.1"
+ring = "0.17"
 libc = "0.2"
 log = "0.4"
 

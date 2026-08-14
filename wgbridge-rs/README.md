@@ -124,6 +124,7 @@ class Wgbridge {
         DnsRecorder dnsRecorder);
     static String generatePrivateKey();
     static String publicKey(String privateKey);
+    static Ed25519WireGuardKeyPair generateProtonKeyPair();
 }
 
 interface Protector   { boolean protect(int fd); }

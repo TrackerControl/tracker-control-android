@@ -212,6 +212,25 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_publicK
 }
 
 #[no_mangle]
+pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_generateEd25519WireGuardKeyPair(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+) -> jstring {
+    with_native_env!(unowned_env, env, {
+        match keys::generate_ed25519_wireguard_key_pair() {
+            Ok(pair) => env
+                .new_string(format!("{}\n{}", pair.private_key, pair.public_key_pem))
+                .map(|s| s.into_raw())
+                .unwrap_or(std::ptr::null_mut()),
+            Err(e) => {
+                throw(env, &e);
+                std::ptr::null_mut()
+            }
+        }
+    })
+}
+
+#[no_mangle]
 pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Wgbridge_nativeStartTunnel(
     mut unowned_env: EnvUnowned,
     _class: JClass,

@@ -1101,6 +1101,7 @@ version = "0.1.0"
 dependencies = [
  "android_logger",
  "base64",
+ "curve25519-dalek",
  "getrandom 0.4.3",
  "gotatun",
  "hex",
@@ -1108,6 +1109,7 @@ dependencies = [
  "jni",
  "libc",
  "log",
+ "ring",
  "tokio",
 ]
 

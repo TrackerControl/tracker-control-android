@@ -44,6 +44,10 @@ import net.kollnig.missioncontrol.wg.IvpnProfileGenerator;
 import net.kollnig.missioncontrol.wg.MullvadProfileGenerator;
 import net.kollnig.missioncontrol.wg.WgConfigParser;
 import net.kollnig.missioncontrol.wg.WgProfileManager;
+import net.kollnig.missioncontrol.wg.proton.ProtonAccountManager;
+import net.kollnig.missioncontrol.wg.proton.ProtonGeneratedProfile;
+import net.kollnig.missioncontrol.wg.proton.ProtonLoginResult;
+import net.kollnig.missioncontrol.wg.proton.ProtonSession;
 
 import org.json.JSONException;
 
@@ -62,16 +66,19 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     private static final String PREF_VPN_MODE = "vpn_mode";
     private static final String MODE_MULLVAD = "mullvad";
     private static final String MODE_IVPN = "ivpn";
+    private static final String MODE_PROTON = "proton";
     private static final String MODE_WIREGUARD = "wireguard";
 
     private SharedPreferences prefs;
     private WgProfileManager manager;
+    private ProtonAccountManager protonManager;
     private VpnAdapter adapter;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final List<VpnCountry> mullvadCountryCache = new ArrayList<>();
     private final List<VpnCountry> ivpnCountryCache = new ArrayList<>();
+    private final List<VpnCountry> protonCountryCache = new ArrayList<>();
 
     private boolean loadingCountries;
     private boolean progressVisible;
@@ -84,11 +91,17 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         final String provider;
         final String code;
         final String name;
+        final String serverId;
 
         VpnCountry(String provider, String code, String name) {
+            this(provider, code, name, "");
+        }
+
+        VpnCountry(String provider, String code, String name, String serverId) {
             this.provider = provider;
             this.code = code == null ? "" : code.trim().toLowerCase(Locale.ROOT);
             this.name = name == null ? "" : name;
+            this.serverId = serverId == null ? "" : serverId;
         }
     }
 
@@ -105,6 +118,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         manager = new WgProfileManager(requireContext());
+        protonManager = new ProtonAccountManager(requireContext());
         manager.migrateIfNeeded();
 
         RecyclerView list = view.findViewById(R.id.vpnList);
@@ -153,8 +167,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 WgProfileManager.PREF_WG_PROFILES.equals(key) ||
                 PREF_VPN_MODE.equals(key) ||
                 WgProfileManager.PREF_MULLVAD_ACCOUNT.equals(key) ||
-                WgProfileManager.PREF_IVPN_ACCOUNT.equals(key)) {
-            refreshUi();
+                WgProfileManager.PREF_IVPN_ACCOUNT.equals(key) ||
+                ProtonAccountManager.PREF_USERNAME.equals(key) ||
+                ProtonAccountManager.PREF_SESSION.equals(key)) {
+            mainHandler.post(this::refreshUi);
         }
     }
 
@@ -171,7 +187,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             return;
         }
 
-        List<VpnCountry> cache = MODE_IVPN.equals(provider) ? ivpnCountryCache : mullvadCountryCache;
+        List<VpnCountry> cache = countryCache(provider);
         if (!force && !cache.isEmpty()) {
             adapter.setCountries(cache);
             return;
@@ -225,7 +241,11 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
     private List<VpnCountry> fetchCountryOptions(String provider) throws Exception {
         List<VpnCountry> countries = new ArrayList<>();
-        if (MODE_IVPN.equals(provider)) {
+        if (MODE_PROTON.equals(provider)) {
+            for (ProtonAccountManager.Country country : protonManager.fetchCountries())
+                countries.add(new VpnCountry(MODE_PROTON, country.getCode(), country.getName(),
+                        country.getServerId()));
+        } else if (MODE_IVPN.equals(provider)) {
             for (IvpnProfileGenerator.CountryOption country :
                     new IvpnProfileGenerator().fetchCountryOptions())
                 countries.add(new VpnCountry(MODE_IVPN, country.code, country.name));
@@ -235,6 +255,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 countries.add(new VpnCountry(MODE_MULLVAD, country.code, country.name));
         }
         return countries;
+    }
+
+    private List<VpnCountry> countryCache(String provider) {
+        if (MODE_PROTON.equals(provider))
+            return protonCountryCache;
+        return MODE_IVPN.equals(provider) ? ivpnCountryCache : mullvadCountryCache;
     }
 
     private List<VpnCountry> savedProviderCountries(String provider) {
@@ -256,20 +282,24 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             return !TextUtils.isEmpty(manager.getLastIvpnAccount());
         if (MODE_MULLVAD.equals(provider))
             return !TextUtils.isEmpty(manager.getLastMullvadAccount());
+        if (MODE_PROTON.equals(provider))
+            return protonManager.hasSession();
         return false;
     }
 
     private List<WgProfileManager.Profile> customProfiles() {
         List<WgProfileManager.Profile> profiles = new ArrayList<>();
         for (WgProfileManager.Profile profile : manager.getProfiles())
-            if (!"mullvad".equals(profile.provider) && !"ivpn".equals(profile.provider))
+            if (!"mullvad".equals(profile.provider) && !"ivpn".equals(profile.provider) &&
+                    !"proton".equals(profile.provider))
                 profiles.add(profile);
         return profiles;
     }
 
     private String currentProviderMode() {
         String mode = prefs.getString(PREF_VPN_MODE, "");
-        if (MODE_MULLVAD.equals(mode) || MODE_IVPN.equals(mode) || MODE_WIREGUARD.equals(mode))
+        if (MODE_MULLVAD.equals(mode) || MODE_IVPN.equals(mode) || MODE_PROTON.equals(mode) ||
+                MODE_WIREGUARD.equals(mode))
             return mode;
 
         WgProfileManager.Profile active = manager.getActiveProfile();
@@ -278,12 +308,16 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 return MODE_MULLVAD;
             if ("ivpn".equals(active.provider))
                 return MODE_IVPN;
+            if ("proton".equals(active.provider))
+                return MODE_PROTON;
             return MODE_WIREGUARD;
         }
         if (hasMullvadSetup())
             return MODE_MULLVAD;
         if (hasIvpnSetup())
             return MODE_IVPN;
+        if (hasProtonSetup())
+            return MODE_PROTON;
         if (!customProfiles().isEmpty())
             return MODE_WIREGUARD;
         return MODE_MULLVAD;
@@ -301,8 +335,13 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         return MODE_MULLVAD.equals(currentProviderMode());
     }
 
+    private boolean isProtonMode() {
+        return MODE_PROTON.equals(currentProviderMode());
+    }
+
     private boolean isFirstTimeVpnSetup() {
-        return customProfiles().isEmpty() && !hasMullvadSetup() && !hasIvpnSetup();
+        return customProfiles().isEmpty() && !hasMullvadSetup() && !hasIvpnSetup() &&
+                !hasProtonSetup();
     }
 
     private boolean hasMullvadSetup() {
@@ -329,9 +368,19 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         return false;
     }
 
+    private boolean hasProtonSetup() {
+        if (protonManager.hasSession())
+            return true;
+        for (WgProfileManager.Profile profile : manager.getProfiles())
+            if ("proton".equals(profile.provider) && !TextUtils.isEmpty(profile.config))
+                return true;
+        return false;
+    }
+
     private String providerDisplayName(String provider) {
-        return MODE_IVPN.equals(provider)
-                ? getString(R.string.vpn_provider_ivpn)
+        if (MODE_PROTON.equals(provider))
+            return getString(R.string.vpn_provider_proton);
+        return MODE_IVPN.equals(provider) ? getString(R.string.vpn_provider_ivpn)
                 : getString(R.string.vpn_provider_mullvad);
     }
 
@@ -353,6 +402,11 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     private void openIvpnAccountPage() {
         startActivity(new Intent(Intent.ACTION_VIEW,
                 Uri.parse("https://www.ivpn.net/pricing/")));
+    }
+
+    private void openProtonSetup() {
+        prefs.edit().putString(PREF_VPN_MODE, MODE_PROTON).apply();
+        showProtonSettingsDialog();
     }
 
     private void openWireGuardProfiles() {
@@ -383,11 +437,50 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     }
 
     private void generateCountry(VpnCountry country) {
+        if (MODE_PROTON.equals(country.provider)) {
+            generateProtonCountry(country);
+            return;
+        }
         if (MODE_IVPN.equals(country.provider)) {
             generateIvpnCountry(country, "", "");
             return;
         }
         generateMullvadCountry(country);
+    }
+
+    private void generateProtonCountry(VpnCountry country) {
+        if (!protonManager.hasSession()) {
+            showProtonSettingsDialog();
+            return;
+        }
+        if (!TextUtils.isEmpty(generatingCountryCode))
+            return;
+
+        generatingCountryCode = country.code;
+        generatingProvider = MODE_PROTON;
+        setProgress(getString(R.string.vpn_generating));
+        executor.execute(() -> {
+            try {
+                ProtonGeneratedProfile generated = protonManager.generateProfile(country.serverId);
+                WgConfigParser.INSTANCE.parse(generated.getConfig());
+                mainHandler.post(() -> {
+                    if (isAdded())
+                        saveGeneratedProtonProfile(generated, country);
+                });
+            } catch (Throwable ex) {
+                mainHandler.post(() -> {
+                    if (!isAdded())
+                        return;
+                    generatingCountryCode = "";
+                    generatingProvider = "";
+                    clearProgress();
+                    refreshUi();
+                    Toast.makeText(requireContext(),
+                            getString(R.string.vpn_generation_failed, ex.getMessage()),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
     private void generateMullvadCountry(VpnCountry country) {
@@ -523,6 +616,35 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             prefs.edit()
                     .putBoolean("wg_enabled", true)
                     .putString(PREF_VPN_MODE, MODE_IVPN)
+                    .apply();
+            ServiceSinkhole.reload("wireguard profile changed", requireContext(), false);
+            generatingCountryCode = "";
+            generatingProvider = "";
+            clearProgress();
+            refreshUi();
+        } catch (JSONException ex) {
+            generatingCountryCode = "";
+            generatingProvider = "";
+            clearProgress();
+            Toast.makeText(requireContext(), ex.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void saveGeneratedProtonProfile(ProtonGeneratedProfile generated, VpnCountry country) {
+        try {
+            WgProfileManager.Profile existing = null;
+            for (WgProfileManager.Profile profile : manager.getProfiles())
+                if (MODE_PROTON.equals(profile.provider) && country.code.equals(profile.countryCode)) {
+                    existing = profile;
+                    break;
+                }
+            manager.saveProfile(existing == null ? null : existing.id,
+                    getString(R.string.vpn_proton_profile_name, country.name),
+                    generated.getConfig(), MODE_PROTON, protonManager.username(),
+                    country.code, country.name);
+            prefs.edit()
+                    .putBoolean("wg_enabled", true)
+                    .putString(PREF_VPN_MODE, MODE_PROTON)
                     .apply();
             ServiceSinkhole.reload("wireguard profile changed", requireContext(), false);
             generatingCountryCode = "";
@@ -787,6 +909,149 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         dialog.show();
     }
 
+    private void showProtonSettingsDialog() {
+        boolean signedIn = protonManager.hasSession();
+        LinearLayout form = new LinearLayout(requireContext());
+        form.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        form.setPadding(pad, pad / 2, pad, 0);
+
+        TextView current = new TextView(requireContext());
+        current.setText(signedIn
+                ? getString(R.string.vpn_proton_signed_in, protonManager.username())
+                : getString(R.string.vpn_intro_proton_body));
+        current.setTextAppearance(requireContext(), R.style.TextSmall);
+        form.addView(current);
+
+        EditText username = new EditText(requireContext());
+        username.setSingleLine(true);
+        username.setInputType(InputType.TYPE_CLASS_TEXT |
+                InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        username.setHint(R.string.vpn_proton_username_hint);
+        username.setVisibility(signedIn ? View.GONE : View.VISIBLE);
+        form.addView(username);
+
+        EditText password = new EditText(requireContext());
+        password.setSingleLine(true);
+        password.setInputType(InputType.TYPE_CLASS_TEXT |
+                InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        password.setHint(R.string.vpn_proton_password_hint);
+        password.setVisibility(signedIn ? View.GONE : View.VISIBLE);
+        form.addView(password);
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.vpn_proton_settings_title)
+                .setView(form)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(signedIn ? android.R.string.ok : R.string.vpn_sign_in_proton,
+                        null);
+        if (signedIn)
+            builder.setNeutralButton(R.string.vpn_proton_sign_out, null);
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(d -> {
+            if (signedIn) {
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> dialog.dismiss());
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
+                    protonManager.clear();
+                    protonCountryCache.clear();
+                    refreshUi();
+                    dialog.dismiss();
+                });
+                return;
+            }
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String name = username.getText().toString().trim();
+                String secret = password.getText().toString();
+                if (TextUtils.isEmpty(name)) {
+                    username.setError(getString(R.string.vpn_proton_username_hint));
+                    return;
+                }
+                if (TextUtils.isEmpty(secret)) {
+                    password.setError(getString(R.string.vpn_proton_password_hint));
+                    return;
+                }
+                password.setText("");
+                dialog.dismiss();
+                authenticateProton(name, secret.toCharArray());
+            });
+        });
+        dialog.show();
+    }
+
+    private void authenticateProton(String username, char[] password) {
+        setProgress(getString(R.string.vpn_proton_signing_in));
+        executor.execute(() -> {
+            try {
+                ProtonLoginResult result = protonManager.login(username, password);
+                mainHandler.post(() -> {
+                    if (!isAdded())
+                        return;
+                    clearProgress();
+                    if (result instanceof ProtonLoginResult.TwoFactorRequired) {
+                        ProtonLoginResult.TwoFactorRequired pending =
+                                (ProtonLoginResult.TwoFactorRequired) result;
+                        showProtonTwoFactorDialog(username, pending.getPendingSession());
+                    } else {
+                        protonCountryCache.clear();
+                        loadCountries(true);
+                        refreshUi();
+                    }
+                });
+            } catch (Throwable ex) {
+                mainHandler.post(() -> showProtonFailure(ex));
+            }
+        });
+    }
+
+    private void showProtonTwoFactorDialog(String username, ProtonSession pending) {
+        EditText code = new EditText(requireContext());
+        code.setSingleLine(true);
+        code.setInputType(InputType.TYPE_CLASS_NUMBER);
+        code.setHint(R.string.vpn_proton_two_factor_hint);
+        AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.vpn_proton_settings_title)
+                .setView(code)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, null)
+                .create();
+        dialog.setOnShowListener(d -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(v -> {
+                    String value = code.getText().toString().trim();
+                    if (TextUtils.isEmpty(value)) {
+                        code.setError(getString(R.string.vpn_proton_two_factor_hint));
+                        return;
+                    }
+                    dialog.dismiss();
+                    setProgress(getString(R.string.vpn_proton_signing_in));
+                    executor.execute(() -> {
+                        try {
+                            protonManager.completeTwoFactor(username, pending, value);
+                            mainHandler.post(() -> {
+                                if (!isAdded())
+                                    return;
+                                clearProgress();
+                                protonCountryCache.clear();
+                                loadCountries(true);
+                                refreshUi();
+                            });
+                        } catch (Throwable ex) {
+                            mainHandler.post(() -> showProtonFailure(ex));
+                        }
+                    });
+                }));
+        dialog.show();
+    }
+
+    private void showProtonFailure(Throwable error) {
+        if (!isAdded())
+            return;
+        clearProgress();
+        Toast.makeText(requireContext(),
+                getString(R.string.vpn_proton_sign_in_failed, error.getMessage()),
+                Toast.LENGTH_LONG).show();
+        refreshUi();
+    }
+
     @Nullable
     private Bitmap decodeCaptcha(String captchaImage) {
         if (TextUtils.isEmpty(captchaImage))
@@ -934,6 +1199,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             holder.mullvadAccount.setOnClickListener(v -> openMullvadAccountPage());
             holder.ivpn.setOnClickListener(v -> openIvpnSetup());
             holder.ivpnAccount.setOnClickListener(v -> openIvpnAccountPage());
+            holder.proton.setOnClickListener(v -> openProtonSetup());
             holder.wireGuard.setOnClickListener(v -> openWireGuardProfiles());
         }
 
@@ -952,6 +1218,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             int checkedId = R.id.vpnModeMullvad;
             if (isIvpnMode())
                 checkedId = R.id.vpnModeIvpn;
+            else if (isProtonMode())
+                checkedId = R.id.vpnModeProton;
             else if (isWireGuardMode())
                 checkedId = R.id.vpnModeWireGuard;
             holder.toggle.check(checkedId);
@@ -962,6 +1230,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                     setProviderMode(MODE_WIREGUARD);
                 else if (buttonId == R.id.vpnModeIvpn)
                     setProviderMode(MODE_IVPN);
+                else if (buttonId == R.id.vpnModeProton)
+                    setProviderMode(MODE_PROTON);
                 else
                     setProviderMode(MODE_MULLVAD);
             });
@@ -972,9 +1242,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             WgProfileManager.Profile active = manager.getActiveProfile();
             boolean activeMullvad = active != null && "mullvad".equals(active.provider);
             boolean activeIvpn = active != null && "ivpn".equals(active.provider);
+            boolean activeProton = active != null && "proton".equals(active.provider);
             String countryName = activeMullvad ? active.countryName : "";
             String countryCode = activeMullvad ? active.countryCode : "";
-            if (activeIvpn) {
+            if (activeIvpn || activeProton) {
                 countryName = active.countryName;
                 countryCode = active.countryCode;
             }
@@ -992,6 +1263,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                                 Toast.LENGTH_LONG).show();
                     } else if (isIvpnMode() && TextUtils.isEmpty(manager.getLastIvpnAccount())) {
                         showIvpnSettingsDialog(null, "", "", null);
+                    } else if (isProtonMode() && !protonManager.hasSession()) {
+                        showProtonSettingsDialog();
                     } else if (isMullvadMode() && TextUtils.isEmpty(manager.getLastMullvadAccount())) {
                         showMullvadSettingsDialog();
                     } else {
@@ -1009,12 +1282,16 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             if (!isFirstTimeVpnSetup()) {
                 holder.settings.setContentDescription(getString(isWireGuardMode()
                         ? R.string.menu_settings
-                        : isIvpnMode() ? R.string.vpn_ivpn_settings : R.string.vpn_settings));
+                        : isIvpnMode() ? R.string.vpn_ivpn_settings
+                        : isProtonMode() ? R.string.vpn_proton_settings_title
+                        : R.string.vpn_settings));
                 holder.settings.setOnClickListener(v -> {
                     if (isWireGuardMode())
                         startActivity(new Intent(requireContext(), ActivitySettings.class));
                     else if (isIvpnMode())
                         showIvpnSettingsDialog(null, "", "", null);
+                    else if (isProtonMode())
+                        showProtonSettingsDialog();
                     else
                         showMullvadSettingsDialog();
                 });
@@ -1022,14 +1299,16 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 holder.settings.setOnClickListener(null);
             }
 
-            if (enabled && (activeMullvad || activeIvpn) && !TextUtils.isEmpty(countryName)) {
+            if (enabled && (activeMullvad || activeIvpn || activeProton) &&
+                    !TextUtils.isEmpty(countryName)) {
                 holder.flag.setText(flagEmoji(countryCode));
                 holder.flag.setVisibility(View.VISIBLE);
                 holder.title.setText(countryName);
                 String summary = manager.getProfileSummary(active);
                 holder.summary.setText(TextUtils.isEmpty(summary)
-                        ? (activeIvpn ? getString(R.string.vpn_provider_ivpn) :
-                        getString(R.string.vpn_status_mullvad))
+                        ? (activeIvpn ? getString(R.string.vpn_provider_ivpn)
+                        : activeProton ? getString(R.string.vpn_provider_proton)
+                        : getString(R.string.vpn_status_mullvad))
                         : getString(R.string.vpn_status_relay, summary));
                 holder.summary.setVisibility(TextUtils.isEmpty(holder.summary.getText()) ?
                         View.GONE : View.VISIBLE);
@@ -1135,6 +1414,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         final Button mullvadAccount;
         final Button ivpn;
         final Button ivpnAccount;
+        final Button proton;
         final Button wireGuard;
 
         IntroViewHolder(View itemView) {
@@ -1143,6 +1423,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             mullvadAccount = itemView.findViewById(R.id.vpnIntroMullvadAccountAction);
             ivpn = itemView.findViewById(R.id.vpnIntroIvpnAction);
             ivpnAccount = itemView.findViewById(R.id.vpnIntroIvpnAccountAction);
+            proton = itemView.findViewById(R.id.vpnIntroProtonAction);
             wireGuard = itemView.findViewById(R.id.vpnIntroWireGuardAction);
         }
     }
