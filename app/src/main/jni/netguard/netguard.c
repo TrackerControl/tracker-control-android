@@ -140,6 +140,10 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
 JNIEXPORT jlong JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
         JNIEnv *env, jobject instance, jint sdk) {
+    // Resolve the routing policy now: the packet path must never pay a dlopen,
+    // and a failure should be logged while there is still something to read it.
+    policy_ensure();
+
     struct context *ctx = ng_calloc(1, sizeof(struct context), "init");
     ctx->sdk = sdk;
 

@@ -12,162 +12,152 @@
  * Copyright © 2026
  */
 
+// Routing policy for both egress paths. The decision itself lives in
+// wgbridge-rs/src/policy.rs, where `cargo test` covers it in CI; this file
+// reaches it, caches the handful of facts the packet path needs so the common
+// case never crosses the boundary at all, and remembers a flow's verdict.
+//
+// Nothing here decides anything, with one exception marked below.
+
 #include "netguard.h"
 
+#include <dlfcn.h>
 #include <stdlib.h>
 #include <stdatomic.h>
 
-// Sorted array of the UIDs whose routing *differs* from the global default,
-// plus that default. Written from the Java thread during a reload and read by
-// the tunnel thread on the packet path, so both sides take route_lock. The
-// packet path is otherwise single-threaded (one tunnelThread runs jni_run),
-// which is why nothing else here needs a lock.
-//
-// Only the exceptions are pushed, never the whole tunnelled set. In the default
-// mode every applied app is tunnelled, so a "tunnelled UIDs" array held every
-// installed app and was indistinguishable from a heavily-overridden one — which
-// made route_uid_relevant() below always true and cost every user, WireGuard or
-// not, a per-packet lock and session-table walk.
-static pthread_mutex_t route_lock = PTHREAD_MUTEX_INITIALIZER;
-static jint *route_uids = NULL;
-static int route_uid_count = 0;
-static int route_default_tunnel = 1;
+#define POLICY_ABI_VERSION 1
 
-// Fast-path mirrors of the facts the packet path needs before it knows whether
-// resolving a UID is worth anything. All are read per packet, so they are
-// atomics rather than lock-protected: with no per-app override configured —
-// the shipped default — every UID gets the same answer, and the packet path
-// must not pay a mutex or a session-table walk to rediscover that.
-static _Atomic int route_has_overrides = 0;
-static _Atomic int route_default_tunnel_fast = 1;
+static pthread_once_t policy_once = PTHREAD_ONCE_INIT;
+static int policy_ok = 0;
 
-// Whether direct apps' DNS is redirected to the system resolver. Its own flag
-// rather than a reuse of args->fwd53: that one is also set by an unrelated
-// port-53 forward (Secure DNS runs one whenever WireGuard carries no DNS line
-// of its own), and borrowing it silently switched off the rule that every
-// resolver query takes the tunnel.
-static _Atomic int route_dns_direct_fast = 0;
+static int (*p_abi_version)(void) = NULL;
+static void (*p_set_route_uids)(const jint *uids, int count, int default_tunnel) = NULL;
+static void (*p_clear_route_uids)(void) = NULL;
+static int (*p_is_tunnel_uid)(jint uid) = NULL;
+static int (*p_wants_tunnel)(int local_dest, int is_dns, int tunnel_uid, int dns_direct) = NULL;
 
-static int compare_uid(const void *a, const void *b) {
-    jint ua = *(const jint *) a;
-    jint ub = *(const jint *) b;
-    return (ua > ub) - (ua < ub);
-}
+// Facts the packet path reads per packet. Mirrored here rather than queried
+// across the boundary: with no per-app override configured — the shipped
+// default — every UID gets the same answer, and rediscovering that per packet
+// is what made the fork expensive enough to show up as degraded DNS.
+static _Atomic int policy_has_overrides = 0;
+static _Atomic int policy_default_tunnel = 1;
+static _Atomic int policy_dns_direct = 0;
 
-void set_route_uids(const jint *uids, int count, int default_tunnel, int dns_direct) {
-    jint *copy = NULL;
-    if (count > 0) {
-        copy = ng_malloc(sizeof(jint) * (size_t) count, "route uids");
-        if (copy == NULL) {
-            log_android(ANDROID_LOG_ERROR, "route uids alloc failed, keeping previous routing");
-            return;
-        }
-        memcpy(copy, uids, sizeof(jint) * (size_t) count);
-        qsort(copy, (size_t) count, sizeof(jint), compare_uid);
-    }
-
-    if (pthread_mutex_lock(&route_lock)) {
-        log_android(ANDROID_LOG_ERROR, "route lock failed, keeping previous routing");
-        if (copy != NULL)
-            ng_free(copy, __FILE__, __LINE__);
+static void policy_load() {
+    // Java loads libnetguard only, so the bridge is resolved here rather than
+    // linked: a DT_NEEDED would stop libnetguard loading at all whenever the
+    // Rust library is missing, and would couple the CMake output to a cargo
+    // one that is deliberately built late (see app/gradle/wgbridge.gradle).
+    // Java's own System.loadLibrary("wgbridge") returns this same soinfo when
+    // the tunnel starts, so there is exactly one policy table. Never dlclose.
+    void *handle = dlopen("libwgbridge.so", RTLD_NOW | RTLD_LOCAL);
+    if (handle == NULL) {
+        log_android(ANDROID_LOG_ERROR, "policy: cannot load libwgbridge: %s", dlerror());
         return;
     }
 
-    jint *previous = route_uids;
-    route_uids = copy;
-    route_uid_count = count;
-    route_default_tunnel = default_tunnel;
+    p_abi_version = dlsym(handle, "tc_policy_abi_version");
+    p_set_route_uids = dlsym(handle, "tc_policy_set_route_uids");
+    p_clear_route_uids = dlsym(handle, "tc_policy_clear_route_uids");
+    p_is_tunnel_uid = dlsym(handle, "tc_policy_is_tunnel_uid");
+    p_wants_tunnel = dlsym(handle, "tc_policy_wants_tunnel");
 
-    atomic_store_explicit(&route_has_overrides, count > 0 ? 1 : 0, memory_order_release);
-    atomic_store_explicit(&route_default_tunnel_fast, default_tunnel, memory_order_release);
-    atomic_store_explicit(&route_dns_direct_fast, dns_direct, memory_order_release);
+    if (p_abi_version == NULL || p_set_route_uids == NULL || p_clear_route_uids == NULL ||
+        p_is_tunnel_uid == NULL || p_wants_tunnel == NULL) {
+        log_android(ANDROID_LOG_ERROR, "policy: missing symbol: %s", dlerror());
+        return;
+    }
 
-    if (pthread_mutex_unlock(&route_lock))
-        log_android(ANDROID_LOG_ERROR, "route unlock failed");
+    int abi = p_abi_version();
+    if (abi != POLICY_ABI_VERSION) {
+        log_android(ANDROID_LOG_ERROR, "policy: ABI %d, expected %d", abi, POLICY_ABI_VERSION);
+        return;
+    }
+
+    policy_ok = 1;
+    log_android(ANDROID_LOG_WARN, "policy: libwgbridge %p ABI %d", handle, abi);
+}
+
+void policy_ensure() {
+    pthread_once(&policy_once, policy_load);
+}
+
+void set_route_uids(const jint *uids, int count, int default_tunnel, int dns_direct) {
+    policy_ensure();
+
+    if (count < 0 || uids == NULL)
+        count = 0;
+
+    if (policy_ok)
+        p_set_route_uids(uids, count, default_tunnel);
+
+    atomic_store_explicit(&policy_default_tunnel, default_tunnel, memory_order_release);
+    atomic_store_explicit(&policy_dns_direct, dns_direct, memory_order_release);
+    // Without the bridge there is no table to consult, so pin every UID to the
+    // global default. A per-app choice is then ignored, which is exactly the
+    // behaviour that shipped before per-app routing existed — never a leak out
+    // of the tunnel, never a new drop.
+    atomic_store_explicit(&policy_has_overrides,
+                          (policy_ok && count > 0) ? 1 : 0, memory_order_release);
 
     // Verdicts cached against the previous rules must not survive them.
     route_flow_invalidate();
-
-    if (previous != NULL)
-        ng_free(previous, __FILE__, __LINE__);
 }
 
 void clear_route_uids() {
-    set_route_uids(NULL, 0, 1, 0);
+    policy_ensure();
+
+    if (policy_ok)
+        p_clear_route_uids();
+
+    atomic_store_explicit(&policy_has_overrides, 0, memory_order_release);
+    atomic_store_explicit(&policy_default_tunnel, 1, memory_order_release);
+    atomic_store_explicit(&policy_dns_direct, 0, memory_order_release);
+
+    route_flow_invalidate();
 }
 
 int is_tunnel_uid(jint uid) {
-    if (pthread_mutex_lock(&route_lock)) {
-        // Fall back to the safest answer: keep the app in the tunnel.
-        log_android(ANDROID_LOG_ERROR, "route lock failed, tunnelling uid %d", uid);
-        return 1;
-    }
+    if (policy_ok)
+        return p_is_tunnel_uid(uid);
 
-    int tunnel;
-    // Only UIDs the user gave an explicit, differing answer for are listed.
-    // Everything else — an unresolved UID, system traffic, an app installed
-    // since the last reload — follows the global default, which is what makes
-    // the default mode identical to the behaviour before per-app routing
-    // existed.
-    if (uid < 0 || route_uids == NULL)
-        tunnel = route_default_tunnel;
-    else if (bsearch(&uid, route_uids, (size_t) route_uid_count, sizeof(jint), compare_uid)
-             != NULL)
-        tunnel = !route_default_tunnel;
-    else
-        tunnel = route_default_tunnel;
-
-    if (pthread_mutex_unlock(&route_lock))
-        log_android(ANDROID_LOG_ERROR, "route unlock failed");
-
-    return tunnel;
+    return route_default_is_tunnel();
 }
 
 /**
  * Whether resolving this packet's UID can change the routing answer.
  *
  * With no per-app override configured, every UID resolves to the same global
- * default, so the packet path can skip both the UID lookup and the lock. This
- * is the shipped default, and keeping it free is what holds the per-packet cost
- * at what it was before per-app routing existed.
+ * default, so the packet path can skip the UID lookup and the boundary
+ * crossing. This is the shipped default, and keeping it free is what holds the
+ * per-packet cost at what it was before per-app routing existed.
  */
 int route_uid_relevant() {
-    return atomic_load_explicit(&route_has_overrides, memory_order_acquire);
+    return atomic_load_explicit(&policy_has_overrides, memory_order_acquire);
 }
 
 /** The answer every UID gets when no override is configured. */
 int route_default_is_tunnel() {
-    return atomic_load_explicit(&route_default_tunnel_fast, memory_order_acquire);
+    return atomic_load_explicit(&policy_default_tunnel, memory_order_acquire);
 }
 
 /** Whether direct apps' DNS is redirected, in which case DNS follows the UID. */
 int route_dns_direct() {
-    return atomic_load_explicit(&route_dns_direct_fast, memory_order_acquire);
+    return atomic_load_explicit(&policy_dns_direct, memory_order_acquire);
 }
 
-/**
- * Whether this packet belongs in the tunnel. Pure, so the rule can be read
- * straight through — the caller still decides what to do when the tunnel is
- * down, because only the write attempt can say whether it is.
- *
- * @param local_dest loopback / link-local / multicast destination
- * @param is_dns     port 53, over UDP or TCP
- * @param tunnel_uid whether this packet's UID is routed through the tunnel
- * @param dns_direct whether direct apps' DNS is redirected to the system
- *                   resolver; while false, DNS always takes the tunnel
- */
 int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct) {
-    // Destinations WireGuard cannot meaningfully forward never take the tunnel,
-    // whichever app sent them.
+    if (policy_ok)
+        return p_wants_tunnel(local_dest, is_dns, tunnel_uid, dns_direct);
+
+    // The one decision duplicated outside policy.rs, and only because a packet
+    // still has to be routed when the bridge could not be resolved. Keep it a
+    // literal transcription of policy::wants_tunnel.
     if (local_dest && !is_dns)
         return 0;
-
-    // Unless a direct app's DNS is being redirected, every resolver query takes
-    // the tunnel: sending it out directly would expose the user's physical
-    // network to the resolver.
     if (is_dns && !dns_direct)
         return 1;
-
     return tunnel_uid;
 }
 
@@ -183,15 +173,16 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
 // a non-SYN segment, answered it with an RST.
 //
 // So remember the verdict per flow, keyed on the 5-tuple, and consult it before
-// giving up. Written and read only by the tunnel thread, which is why nothing
-// here takes a lock; a reload bumps route_flow_gen instead of clearing the
-// table, so entries decided under superseded rules simply stop matching.
+// giving up. This is a cache rather than policy, which is why it stays on this
+// side of the boundary. Written and read only by the tunnel thread, which is
+// why nothing here takes a lock; a reload bumps route_flow_gen instead of
+// clearing the table, so entries decided under superseded rules stop matching.
 
-#define ROUTE_FLOW_SIZE 1024        // power of two; ~40 KB resident
+#define ROUTE_FLOW_SIZE 1024        // power of two; ~56 KB resident
 #define ROUTE_FLOW_MAX_AGE 300      // seconds idle before an entry is reusable
 
 struct route_flow_entry {
-    uint32_t gen;                   // 0 = free
+    uint32_t gen;                   // 0 = never written
     uint8_t version;
     uint8_t protocol;
     uint8_t tunnel;
@@ -206,7 +197,7 @@ static struct route_flow_entry route_flows[ROUTE_FLOW_SIZE];
 static _Atomic uint32_t route_flow_gen = 1;
 
 void route_flow_invalidate() {
-    // Wrapping past 0 would resurrect free slots, so skip it.
+    // Wrapping to 0 would make every never-written slot look current, so skip it.
     uint32_t next = atomic_fetch_add_explicit(&route_flow_gen, 1, memory_order_release) + 1;
     if (next == 0)
         atomic_store_explicit(&route_flow_gen, 1, memory_order_release);

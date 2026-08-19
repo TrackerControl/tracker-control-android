@@ -537,8 +537,11 @@ void dns_resolved(const struct arguments *args,
 
 jboolean is_domain_blocked(const struct arguments *args, const char *name);
 
-// Per-app remote routing (route.c). Java pushes down only the UIDs whose
-// routing differs from the global default; the packet path only reads them.
+// Per-app remote routing (policy.c, deciding in wgbridge-rs/src/policy.rs).
+// Java pushes down only the UIDs whose routing differs from the global default;
+// the packet path only reads them.
+void policy_ensure();
+
 void set_route_uids(const jint *uids, int count, int default_tunnel, int dns_direct);
 
 void clear_route_uids();

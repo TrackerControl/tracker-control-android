@@ -105,6 +105,26 @@ The existing `gradle: [fdroid]` setting remains unchanged. The prebuild step
 runs while dependency downloads are allowed; Gradle subsequently compiles the
 locked crate graph with Cargo offline.
 
+## C API surface
+
+`src/policy.rs` decides per-app tunnel routing for *both* egress paths, so the
+same table answers the C hijack path and, eventually, a gotatun that reads the
+tun itself. `jni/netguard/policy.c` resolves these by `dlopen`/`dlsym` rather
+than linking, because `wgbridgeBuild` runs late (see `app/gradle/wgbridge.gradle`)
+and a `DT_NEEDED` would stop `libnetguard` loading at all when the bridge is
+missing.
+
+| Symbol | Purpose |
+|---|---|
+| `tc_policy_abi_version()` | Guards the shim against a mismatched library; currently `1`. |
+| `tc_policy_set_route_uids(uids, count, default_tunnel)` | Replaces the override set. A null pointer or `count <= 0` means "no overrides". |
+| `tc_policy_clear_route_uids()` | Back to tunnel-everything. |
+| `tc_policy_is_tunnel_uid(uid)` | Whether one UID takes the tunnel. Absence from the set means "follow the default". |
+| `tc_policy_wants_tunnel(local_dest, is_dns, tunnel_uid, dns_direct)` | The packet-level decision. |
+
+These are exported from the `cdylib` and survive `strip = true`; CI asserts they
+are present in every ABI of the F-Droid APK.
+
 ## Java/Kotlin API surface
 
 The Java classes in `app/src/main/java/net/kollnig/missioncontrol/wgbridge/`
