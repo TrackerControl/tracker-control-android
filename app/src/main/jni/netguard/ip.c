@@ -526,30 +526,32 @@ void handle_ip(const struct arguments *args,
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
         int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
 
-        // Which app this packet belongs to. The lookup above is deliberately
-        // skipped for established flows (existing UDP sessions, non-SYN TCP),
-        // so those arrive here with uid == -1. Fall back to the session table
-        // rather than to the global default: defaulting would divert an
-        // already-NATted flow mid-stream. Never re-run the real lookup here —
-        // get_uid_q is a binder call, and this is the per-packet path.
-        //
-        // One case still lands on the default: the first TCP:443 SYN while SNI
-        // research mode is on, which has neither a uid nor a session yet.
-        jint route_uid = (uid >= 0
-                          ? uid
-                          : get_session_uid(args, version, protocol, pkt, payload));
+        // Which app this packet belongs to — but only when that can change the
+        // answer. With no per-app override configured every UID routes the same
+        // way, and this is the per-packet path: resolving a UID there would
+        // cost a lock and, for the established flows that arrive with uid == -1
+        // (existing UDP sessions, non-SYN TCP, i.e. most packets), a walk of the
+        // whole session table, which grows with load. That is pure waste for
+        // everyone who has not opted in.
+        int tunnel_uid;
+        if (route_uid_relevant()) {
+            // Fall back to the session table rather than to the global default:
+            // defaulting would divert an already-NATted flow mid-stream. Never
+            // re-run the real lookup here — get_uid_q is a binder call.
+            //
+            // One case still lands on the default: the first TCP:443 SYN while
+            // SNI research mode is on, which has neither a uid nor a session.
+            jint route_uid = (uid >= 0
+                              ? uid
+                              : get_session_uid(args, version, protocol, pkt, payload));
+            tunnel_uid = is_tunnel_uid(route_uid);
+        } else
+            tunnel_uid = route_default_is_tunnel();
 
-        int tunnel_uid = is_tunnel_uid(route_uid);
-        enum route_decision decision = route_decide(
-                wireguard_active(), wg_is_required, is_local_dest(version, daddr),
-                is_dns, tunnel_uid, args->fwd53);
+        int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
+                                         tunnel_uid, args->fwd53);
 
-        if (!tunnel_uid)
-            log_android(ANDROID_LOG_DEBUG,
-                        "Routing v%d p%d %s/%u uid %d direct (decision %d)",
-                        version, protocol, dest, dport, route_uid, decision);
-
-        if (decision == ROUTE_TUNNEL) {
+        if (wg_dest) {
             ssize_t w;
             int write_errno;
             if (write_wireguard_packet(pkt, length, &w, &write_errno)) {
@@ -567,10 +569,6 @@ void handle_ip(const struct arguments *args,
                 // Fail-closed: if the write fails, drop. Do not fall through to direct.
                 return;
             }
-            // The bridge stopped between the decision and the write; re-decide
-            // below with the tunnel known to be down.
-            decision = route_decide(0, wg_is_required, is_local_dest(version, daddr),
-                                    is_dns, tunnel_uid, args->fwd53);
         }
 
         // Fail closed while WG is required but not (yet) running — e.g. the
@@ -581,7 +579,7 @@ void handle_ip(const struct arguments *args,
         // (the resolver runs on the VPN network). This briefly exposes DNS
         // queries to the configured (WG/public fallback) DNS server over the
         // physical network, which is far less than leaking all traffic.
-        if (decision == ROUTE_DROP) {
+        if (wg_is_required && wg_dest && !is_dns) {
             long drops = atomic_fetch_add_explicit(
                     &wg_gap_drop_count, 1, memory_order_relaxed) + 1;
             if ((drops & 255L) == 1)

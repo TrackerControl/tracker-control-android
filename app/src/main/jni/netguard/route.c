@@ -15,6 +15,7 @@
 #include "netguard.h"
 
 #include <stdlib.h>
+#include <stdatomic.h>
 
 // Sorted array of UIDs Java wants routed through the remote tunnel, plus the
 // default applied to every UID not in it. Written from the Java thread during
@@ -25,6 +26,14 @@ static pthread_mutex_t route_lock = PTHREAD_MUTEX_INITIALIZER;
 static jint *route_uids = NULL;
 static int route_uid_count = 0;
 static int route_default_tunnel = 1;
+
+// Fast-path mirrors of the two facts the packet path needs before it knows
+// whether resolving a UID is worth anything. Both are read per packet, so they
+// are atomics rather than lock-protected: with no per-app override configured
+// — the shipped default — every UID gets the same answer, and the packet path
+// must not pay a mutex or a session-table walk to rediscover that.
+static _Atomic int route_has_overrides = 0;
+static _Atomic int route_default_tunnel_fast = 1;
 
 static int compare_uid(const void *a, const void *b) {
     jint ua = *(const jint *) a;
@@ -51,6 +60,9 @@ void set_route_uids(const jint *uids, int count, int default_tunnel) {
     route_uids = copy;
     route_uid_count = count;
     route_default_tunnel = default_tunnel;
+
+    atomic_store_explicit(&route_has_overrides, count > 0 ? 1 : 0, memory_order_release);
+    atomic_store_explicit(&route_default_tunnel_fast, default_tunnel, memory_order_release);
 
     if (pthread_mutex_unlock(&route_lock))
         log_android(ANDROID_LOG_ERROR, "route unlock failed");
@@ -88,41 +100,44 @@ int is_tunnel_uid(jint uid) {
 }
 
 /**
- * The whole per-packet routing decision, kept free of I/O so it can be reasoned
- * about (and, unlike the rest of this directory, read straight through).
+ * Whether resolving this packet's UID can change the routing answer.
  *
- * @param wg_active      whether the WireGuard bridge currently accepts packets
- * @param wg_is_required whether egress must not fall back to the raw network
- * @param local_dest     loopback / link-local / multicast destination
- * @param is_dns         port 53, over UDP or TCP
- * @param tunnel_uid     whether this packet's UID is routed through the tunnel
- * @param dns_direct     whether direct apps' DNS is redirected to the system
- *                       resolver; while false, DNS always takes the tunnel
+ * With no per-app override configured, every UID resolves to the same global
+ * default, so the packet path can skip both the UID lookup and the lock. This
+ * is the shipped default, and keeping it free is what holds the per-packet cost
+ * at what it was before per-app routing existed.
  */
-enum route_decision route_decide(int wg_active, int wg_is_required, int local_dest,
-                                 int is_dns, int tunnel_uid, int dns_direct) {
+int route_uid_relevant() {
+    return atomic_load_explicit(&route_has_overrides, memory_order_acquire);
+}
+
+/** The answer every UID gets when no override is configured. */
+int route_default_is_tunnel() {
+    return atomic_load_explicit(&route_default_tunnel_fast, memory_order_acquire);
+}
+
+/**
+ * Whether this packet belongs in the tunnel. Pure, so the rule can be read
+ * straight through — the caller still decides what to do when the tunnel is
+ * down, because only the write attempt can say whether it is.
+ *
+ * @param local_dest loopback / link-local / multicast destination
+ * @param is_dns     port 53, over UDP or TCP
+ * @param tunnel_uid whether this packet's UID is routed through the tunnel
+ * @param dns_direct whether direct apps' DNS is redirected to the system
+ *                   resolver; while false, DNS always takes the tunnel
+ */
+int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct) {
     // Destinations WireGuard cannot meaningfully forward never take the tunnel,
     // whichever app sent them.
     if (local_dest && !is_dns)
-        return ROUTE_DIRECT;
+        return 0;
 
-    // Until the DNS split ships, every resolver query takes the tunnel: sending
-    // it out directly would expose the user's physical network to the resolver.
-    int wants_tunnel = (is_dns && !dns_direct) ? 1 : tunnel_uid;
+    // Unless a direct app's DNS is being redirected, every resolver query takes
+    // the tunnel: sending it out directly would expose the user's physical
+    // network to the resolver.
+    if (is_dns && !dns_direct)
+        return 1;
 
-    if (!wants_tunnel)
-        return ROUTE_DIRECT;
-
-    if (wg_active)
-        return ROUTE_TUNNEL;
-
-    // WireGuard is required but not running — the window during a tunnel
-    // restart, or after a failed start. Falling through to direct here would
-    // leak this app's traffic onto the raw network. DNS stays exempt because
-    // recovery has to re-resolve the peer endpoint, and blocking DNS would
-    // deadlock that recovery.
-    if (wg_is_required && !is_dns)
-        return ROUTE_DROP;
-
-    return ROUTE_DIRECT;
+    return tunnel_uid;
 }

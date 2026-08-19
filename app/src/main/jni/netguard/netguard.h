@@ -116,9 +116,6 @@ struct allowed {
 int write_wireguard_packet(const void *packet, size_t length,
                            ssize_t *written, int *write_errno);
 
-// Whether the WireGuard bridge is currently up. A hint only — see the comment
-// on the definition.
-int wireguard_active();
 
 struct segment {
     uint32_t seq;
@@ -542,20 +539,19 @@ jboolean is_domain_blocked(const struct arguments *args, const char *name);
 
 // Per-app remote routing (route.c). The UID set is pushed down from Java on
 // every reload; the packet path only reads it.
-enum route_decision {
-    ROUTE_TUNNEL,
-    ROUTE_DIRECT,
-    ROUTE_DROP
-};
-
 void set_route_uids(const jint *uids, int count, int default_tunnel);
 
 void clear_route_uids();
 
 int is_tunnel_uid(jint uid);
 
-enum route_decision route_decide(int wg_active, int wg_is_required, int local_dest,
-                                 int is_dns, int tunnel_uid, int dns_direct);
+// Lock-free fast path: whether a UID lookup can change the answer at all, and
+// the answer everything gets when it cannot.
+int route_uid_relevant();
+
+int route_default_is_tunnel();
+
+int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct);
 
 jint get_uid_q(const struct arguments *args,
                jint version,

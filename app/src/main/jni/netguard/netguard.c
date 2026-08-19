@@ -423,22 +423,6 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, job
     return sv[1];
 }
 
-// Whether the WireGuard bridge currently accepts packets. Only a hint: the
-// bridge can stop between this call and the write, which the caller re-decides
-// on. Kept separate from write_wireguard_packet so the routing decision can be
-// made before committing to a write.
-int wireguard_active() {
-    if (pthread_mutex_lock(&wg_outbound_lock))
-        return 0;
-
-    int active = (wg_outbound_fd >= 0);
-
-    if (pthread_mutex_unlock(&wg_outbound_lock))
-        log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed after probe");
-
-    return active;
-}
-
 int write_wireguard_packet(const void *packet, size_t length,
                            ssize_t *written, int *write_errno) {
     *written = -1;
