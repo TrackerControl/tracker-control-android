@@ -108,12 +108,33 @@ public final class RemoteRoutingLogic {
      * <p>
      * Turning this on makes every DNS query cost a UID lookup, an
      * isAddressAllowed upcall and a real UDP session — today port 53 skips all
-     * three. It is therefore only enabled when some app actually needs its DNS
-     * kept out of the tunnel, so users of the default mode keep the existing
-     * zero-cost DNS path.
+     * three. It is therefore only enabled once some app actually is routed
+     * around the tunnel, so everyone else keeps the existing zero-cost DNS
+     * path. Note this is a property of the resolved rules, not of the mode: a
+     * per-app override sends an app direct in either mode.
      */
-    public static boolean redirectDirectDns(String mode) {
-        return MODE_SELECTED.equals(normalizeMode(mode));
+    public static boolean redirectDirectDns(boolean anyAppRoutedDirect) {
+        return anyAppRoutedDirect;
+    }
+
+    /**
+     * Whether one UID's traffic leaves outside the tunnel, mirroring the native
+     * is_tunnel_uid.
+     * <p>
+     * A UID with no rule of its own — unknown or system traffic — follows the
+     * global default. Treating it as "not tunnelled" merely because it is
+     * absent from the tunnelled set would quietly route system traffic direct.
+     *
+     * @param inTunnelSet   whether the UID is in the tunnelled set
+     * @param known         whether any installed app maps to this UID
+     * @param defaultTunnel the global default for unlisted UIDs
+     */
+    public static boolean routesDirect(boolean inTunnelSet, boolean known, boolean defaultTunnel) {
+        if (inTunnelSet)
+            return false;
+        if (known)
+            return true;
+        return !defaultTunnel;
     }
 
     /**

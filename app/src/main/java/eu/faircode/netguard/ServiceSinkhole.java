@@ -196,6 +196,9 @@ public class ServiceSinkhole extends VpnService {
     // Resolver used by apps routed around the remote tunnel. Null when the
     // system offers none, in which case their DNS stays in the tunnel.
     private String directDnsTarget = null;
+    // Whether any app is routed around the tunnel, which is what makes the
+    // extra per-query DNS cost worth paying.
+    private boolean anyDirectRouting = false;
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
     private Map<Integer, Forward> mapForward = new HashMap<>();
     public static ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -1871,12 +1874,14 @@ public class ServiceSinkhole extends VpnService {
         final int rcode = Integer.parseInt(prefs.getString("rcode", "3"));
         // Port 53 is the only UDP traffic that skips the UID lookup entirely
         // today, so turning fwd53 on costs a lookup, a JNI upcall and a real
-        // UDP session per query. Only pay that where some app actually needs
-        // its DNS kept out of the tunnel.
+        // UDP session per query. Only pay that when some app actually is routed
+        // around the tunnel — which is a property of the resolved rules, not of
+        // the mode: a per-app override sends an app direct in either mode, and
+        // gating on the mode alone left such an app tunnelling its DNS while
+        // its traffic went direct, exactly the split the redirect exists to
+        // avoid.
         final boolean fwd53 = mapForward.containsKey(53)
-                || RemoteRoutingLogic.redirectDirectDns(
-                        prefs.getString(Rule.PREF_WG_ROUTE_MODE,
-                                RemoteRoutingLogic.getDefaultMode()));
+                || RemoteRoutingLogic.redirectDirectDns(anyDirectRouting);
         if (prefs.getBoolean("socks5_enabled", false))
             jni_socks5(
                     prefs.getString("socks5_addr", ""),
@@ -2010,6 +2015,7 @@ public class ServiceSinkhole extends VpnService {
             mapUidKnown.put(rule.uid, rule.uid);
 
         mapUidTunnel = mapUidTunnel(listRule);
+        anyDirectRouting = anyDirectRouting(listRule);
         // Util.getDefaultDNS does binder calls, so resolve it once per reload
         // rather than on the DNS path.
         directDnsTarget = resolveDirectDnsTarget();
@@ -2054,6 +2060,24 @@ public class ServiceSinkhole extends VpnService {
 
         Log.w(TAG, "No system DNS for direct apps; keeping their DNS in the tunnel");
         return null;
+    }
+
+    private static boolean anyDirectRouting(List<Rule> listRule) {
+        for (Rule rule : listRule)
+            if (rule.apply && !rule.wg_route)
+                return true;
+        return false;
+    }
+
+    /**
+     * Whether this UID is routed around the remote tunnel. Mirrors the native
+     * is_tunnel_uid: a UID with no rule of its own — unknown or system traffic
+     * — follows the global default rather than counting as "not tunnelled",
+     * which a bare mapUidTunnel lookup would wrongly report.
+     */
+    private boolean routesDirect(int uid) {
+        return RemoteRoutingLogic.routesDirect(
+                mapUidTunnel.contains(uid), mapUidKnown.containsKey(uid), defaultTunnel);
     }
 
     /** Hands the current routing decision to the packet path. */
@@ -2478,7 +2502,7 @@ public class ServiceSinkhole extends VpnService {
                     packet.data = "> " + fwd.raddr + "/" + fwd.rport;
                 }
             } else if (packet.dport == 53 && directDnsTarget != null
-                    && !mapUidTunnel.contains(packet.uid)) {
+                    && routesDirect(packet.uid)) {
                 // An app routed around the remote tunnel resolves against the
                 // underlying network instead of the tunnel's resolver. The
                 // redirect is transparent: replies are rebuilt from the

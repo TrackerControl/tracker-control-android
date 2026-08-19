@@ -92,11 +92,35 @@ public class RemoteRoutingLogicTest {
 
     /**
      * The DNS redirect costs a UID lookup, a JNI upcall and a UDP session per
-     * query, so users of the default mode must not pay for it.
+     * query, so nobody pays for it until an app is actually routed direct.
+     * Keying this off the mode instead was wrong: a per-app override sends an
+     * app direct in "All apps" too, and that app then tunnelled its DNS while
+     * its traffic went direct — the very split the redirect exists to avoid.
      */
     @Test
-    public void dnsRedirectOnlyInSelectedMode() {
-        assertFalse(RemoteRoutingLogic.redirectDirectDns(RemoteRoutingLogic.MODE_ALL));
-        assertTrue(RemoteRoutingLogic.redirectDirectDns(RemoteRoutingLogic.MODE_SELECTED));
+    public void dnsRedirectFollowsActualDirectApps() {
+        assertFalse(RemoteRoutingLogic.redirectDirectDns(false));
+        assertTrue(RemoteRoutingLogic.redirectDirectDns(true));
+
+        boolean overriddenDirectInAllMode = !RemoteRoutingLogic.routesThroughTunnel(
+                RemoteRoutingLogic.MODE_ALL, Boolean.FALSE, true);
+        assertTrue(RemoteRoutingLogic.redirectDirectDns(overriddenDirectInAllMode));
+    }
+
+    /**
+     * Unknown and system UIDs have no rule, so they must follow the global
+     * default rather than being read as "not tunnelled".
+     */
+    @Test
+    public void unknownUidFollowsTheDefaultRatherThanGoingDirect() {
+        assertFalse(RemoteRoutingLogic.routesDirect(false, false, true));
+        assertTrue(RemoteRoutingLogic.routesDirect(false, false, false));
+    }
+
+    @Test
+    public void knownUidOutsideTheTunnelSetGoesDirect() {
+        assertTrue(RemoteRoutingLogic.routesDirect(false, true, true));
+        assertFalse(RemoteRoutingLogic.routesDirect(true, true, false));
+        assertFalse(RemoteRoutingLogic.routesDirect(true, true, true));
     }
 }
