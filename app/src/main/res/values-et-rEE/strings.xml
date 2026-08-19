@@ -248,4 +248,18 @@
     <string name="app_state_no_internet_shared_uid">Kehtib ka rakendusele %1$s, mis jagab selle rakendusega Androidi kasutaja-ID-d.</string>
     <string name="app_state_bypassed">TrackerControlist mööda</string>
     <string name="app_state_bypassed_explanation">Rakendus ühendub otse, TrackerControlist mööda. Tema jaoks ei jälgita ega blokeerita midagi. Kasuta seda viimase abinõuna, kui rakendus ikka ei tööta.\n\nMärkus: Androidi VPN-i sätetes peab \"Blokeeri ühendused ilma VPN-ita\" olema VÄLJA LÜLITATUD, et see toimiks.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Suuna läbi kaug-VPN-i</string>
+    <string name="summary_wg_route_mode">Millised rakendused suunatakse läbi kaug-VPN-i. Ülejäänud jäävad täielikult jälgituks ja filtreerituks — nad lihtsalt ühenduvad selle seadme enda võrgust.</string>
+    <string name="wg_route_mode_all">Kõik rakendused</string>
+    <string name="wg_route_mode_selected">Ainult valitud rakendused</string>
+    <string name="app_route_heading">Kaug-VPN</string>
+    <string name="app_route_through">Läbi kaug-VPN-i</string>
+    <string name="app_route_through_explanation">See rakendus ühendub sinu kaug-VPN-i kaudu, mis näeb selle liiklust sinu võrgu asemel.</string>
+    <string name="app_route_direct">Otse sellest seadmest</string>
+    <string name="app_route_direct_explanation">See rakendus ühendub sinu enda võrgust. Jälitajate seire ja blokeerimine kehtivad edasi. Selle DNS-päringud lähevad sinu võrgu nimeserverisse, mitte VPN-i omasse, ja rakendus näeb seadme tegelikku aadressi — mõni rakendus vajab seda, näiteks kohalike seadmete jaoks või captive portali kontrolliks.</string>
+    <string name="app_route_unavailable_no_vpn">Kaug-VPN-i pole seadistatud, seega kogu liiklus lahkub juba otse sellest seadmest.</string>
+    <string name="app_route_unavailable_bypassed">See rakendus möödub TrackerControlist täielikult, seega pole liiklust, mida suunata.</string>
+    <string name="app_route_unavailable_partial_routes">Sinu kaug-VPN ei kanna kogu liiklust (selle AllowedIPs pole täistunnel). Rakendusepõhine suunamine vajab täistunnelit, sest marsruudid on kõigil rakendustel ühised.</string>
 </resources>

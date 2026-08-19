@@ -388,4 +388,18 @@
     <string name="app_state_no_internet_shared_uid">ينطبق أيضًا على %1$s، الذي يشارك هذا التطبيق مُعرِّف مستخدم أندرويد.</string>
     <string name="app_state_bypassed">تجاوز TrackerControl</string>
     <string name="app_state_bypassed_explanation">يتصل التطبيق مباشرةً، خارج TrackerControl. لا تتم مراقبة أو حظر أي شيء له. استخدم هذا كملاذ أخير إذا كان التطبيق لا يزال لا يعمل.\n\nملاحظة: يجب تعطيل \"حظر الاتصالات بدون VPN\" في إعدادات VPN بنظام أندرويد حتى يعمل هذا.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">التوجيه عبر VPN البعيد</string>
+    <string name="summary_wg_route_mode">أي التطبيقات تُمرَّر عبر VPN البعيد. التطبيقات التي لا تُمرَّر تبقى مراقَبة ومُرشَّحة بالكامل — لكنها تتصل من شبكة هذا الجهاز.</string>
+    <string name="wg_route_mode_all">كل التطبيقات</string>
+    <string name="wg_route_mode_selected">التطبيقات المحددة فقط</string>
+    <string name="app_route_heading">VPN البعيد</string>
+    <string name="app_route_through">عبر VPN البعيد</string>
+    <string name="app_route_through_explanation">يتصل هذا التطبيق عبر VPN البعيد الخاص بك، الذي يرى حركته بدلاً من شبكتك.</string>
+    <string name="app_route_direct">مباشرةً من هذا الجهاز</string>
+    <string name="app_route_direct_explanation">يتصل هذا التطبيق من شبكتك. تظل مراقبة أدوات التتبع وحظرها سارية. تذهب استعلامات DNS الخاصة به إلى محلل شبكتك بدلاً من محلل VPN، ويرى العنوان الحقيقي لهذا الجهاز — بعض التطبيقات تحتاج ذلك، مثلاً للوصول إلى الأجهزة المحلية أو فحص بوابة الاتصال.</string>
+    <string name="app_route_unavailable_no_vpn">لا يوجد VPN بعيد مُعد، لذا فإن كل الحركة تغادر هذا الجهاز مباشرةً بالفعل.</string>
+    <string name="app_route_unavailable_bypassed">يتجاوز هذا التطبيق TrackerControl تمامًا، لذا لا توجد حركة لتوجيهها.</string>
+    <string name="app_route_unavailable_partial_routes">لا ينقل VPN البعيد كل الحركة (قيمة AllowedIPs لديه ليست نفقًا كاملاً). يتطلب التوجيه لكل تطبيق نفقًا كاملاً، لأن المسارات مشتركة بين كل التطبيقات.</string>
 </resources>

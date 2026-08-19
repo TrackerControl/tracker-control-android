@@ -24,4 +24,18 @@
     <string name="app_state_no_internet_shared_uid">ఈ యాప్‌తో Android వినియోగదారు ID‌ను పంచుకునే %1$sకు కూడా ఇది వర్తిస్తుంది.</string>
     <string name="app_state_bypassed">TrackerControlను దాటవేయి</string>
     <string name="app_state_bypassed_explanation">యాప్ TrackerControl వెలుపల నేరుగా కనెక్ట్ అవుతుంది. దాని కోసం ఏదీ పర్యవేక్షించబడదు లేదా నిరోధించబడదు. యాప్ ఇప్పటికీ పని చేయకపోతే చివరి ప్రయత్నంగా దీన్ని ఉపయోగించండి.\n\nగమనిక: ఇది పని చేయాలంటే Android VPN సెట్టింగ్‌లలో \"VPN లేకుండా కనెక్షన్‌లను నిరోధించు\" నిలిపివేయబడాలి.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">రిమోట్ VPN ద్వారా పంపు</string>
+    <string name="summary_wg_route_mode">ఏ యాప్‌లు రిమోట్ VPN ద్వారా వెళ్తాయో నిర్ణయిస్తుంది. వెళ్లని యాప్‌లు కూడా పూర్తిగా పర్యవేక్షించబడతాయి, నిరోధించబడతాయి — అవి ఈ పరికరం సొంత నెట్‌వర్క్ నుండి కనెక్ట్ అవుతాయి.</string>
+    <string name="wg_route_mode_all">అన్ని యాప్‌లు</string>
+    <string name="wg_route_mode_selected">ఎంచుకున్న యాప్‌లు మాత్రమే</string>
+    <string name="app_route_heading">రిమోట్ VPN</string>
+    <string name="app_route_through">రిమోట్ VPN ద్వారా</string>
+    <string name="app_route_through_explanation">ఈ యాప్ మీ రిమోట్ VPN ద్వారా కనెక్ట్ అవుతుంది; మీ నెట్‌వర్క్ బదులు VPN దాని ట్రాఫిక్‌ను చూస్తుంది.</string>
+    <string name="app_route_direct">ఈ పరికరం నుండి నేరుగా</string>
+    <string name="app_route_direct_explanation">ఈ యాప్ మీ సొంత నెట్‌వర్క్ నుండి కనెక్ట్ అవుతుంది. ట్రాకర్ పర్యవేక్షణ, నిరోధం ఇంకా వర్తిస్తాయి. దాని DNS ప్రశ్నలు VPN బదులు మీ నెట్‌వర్క్ రిజాల్వర్‌కు వెళ్తాయి, అలాగే అది ఈ పరికరం అసలు చిరునామాను చూస్తుంది — కొన్ని యాప్‌లకు ఇది అవసరం, ఉదాహరణకు స్థానిక పరికరాలను చేరుకోవడానికి లేదా captive portal తనిఖీకి.</string>
+    <string name="app_route_unavailable_no_vpn">రిమోట్ VPN ఏదీ సెటప్ చేయలేదు, కాబట్టి మొత్తం ట్రాఫిక్ ఇప్పటికే నేరుగా ఈ పరికరం నుండి వెళ్తోంది.</string>
+    <string name="app_route_unavailable_bypassed">ఈ యాప్ TrackerControlను పూర్తిగా దాటవేస్తుంది, కాబట్టి పంపడానికి ట్రాఫిక్ లేదు.</string>
+    <string name="app_route_unavailable_partial_routes">మీ రిమోట్ VPN మొత్తం ట్రాఫిక్‌ను మోయదు (దాని AllowedIPs పూర్తి టన్నెల్ కాదు). మార్గాలను అన్ని యాప్‌లు పంచుకుంటాయి కాబట్టి యాప్‌వారీ రూటింగ్‌కు పూర్తి టన్నెల్ అవసరం.</string>
 </resources>

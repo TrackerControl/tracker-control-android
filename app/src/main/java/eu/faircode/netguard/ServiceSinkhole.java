@@ -87,6 +87,7 @@ import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.BlockingModeLogic;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -111,10 +112,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -186,6 +189,13 @@ public class ServiceSinkhole extends VpnService {
     private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
+    // UIDs forwarded through the remote WireGuard tunnel. Pushed down to the
+    // packet path as a sorted array; unlisted UIDs follow the global default.
+    private Set<Integer> mapUidTunnel = new HashSet<>();
+    private boolean defaultTunnel = true;
+    // Resolver used by apps routed around the remote tunnel. Null when the
+    // system offers none, in which case their DNS stays in the tunnel.
+    private String directDnsTarget = null;
     private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
     private Map<Integer, Forward> mapForward = new HashMap<>();
     public static ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -296,6 +306,14 @@ public class ServiceSinkhole extends VpnService {
      *  running (restart window, failed start) hijack-eligible traffic is
      *  dropped instead of forwarded directly, so restarts never leak. */
     private native void jni_wireguard_required(boolean required);
+
+    /**
+     * Pushes the set of UIDs routed through the remote tunnel down to the
+     * packet path, plus the default applied to every UID not in the set
+     * (unknown UIDs and system traffic). Java writes this while the tunnel
+     * thread reads it, so the native side guards it with its own lock.
+     */
+    private native void jni_wireguard_route(int[] tunnelUids, boolean defaultTunnel);
 
     private native void jni_done(long context);
 
@@ -1851,6 +1869,14 @@ public class ServiceSinkhole extends VpnService {
 
         int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
         final int rcode = Integer.parseInt(prefs.getString("rcode", "3"));
+        // Port 53 is the only UDP traffic that skips the UID lookup entirely
+        // today, so turning fwd53 on costs a lookup, a JNI upcall and a real
+        // UDP session per query. Only pay that where some app actually needs
+        // its DNS kept out of the tunnel.
+        final boolean fwd53 = mapForward.containsKey(53)
+                || RemoteRoutingLogic.redirectDirectDns(
+                        prefs.getString(Rule.PREF_WG_ROUTE_MODE,
+                                RemoteRoutingLogic.getDefaultMode()));
         if (prefs.getBoolean("socks5_enabled", false))
             jni_socks5(
                     prefs.getString("socks5_addr", ""),
@@ -1861,6 +1887,7 @@ public class ServiceSinkhole extends VpnService {
             jni_socks5("", 0, "", "");
 
         jni_sni(prefs.getBoolean("sni_enabled", false));
+        pushRoutingToNative();
         updateUnderlyingNetworks();
 
         // WireGuard egress. startOrUpdate is idempotent: same config +
@@ -1898,7 +1925,7 @@ public class ServiceSinkhole extends VpnService {
                 @Override
                 public void run() {
                     Log.i(TAG, "Running tunnel context=" + jni_context);
-                    jni_run(jni_context, vpn.getFd(), mapForward.containsKey(53), rcode);
+                    jni_run(jni_context, vpn.getFd(), fwd53, rcode);
                     Log.i(TAG, "Tunnel exited");
                     tunnelThread = null;
                 }
@@ -1982,7 +2009,64 @@ public class ServiceSinkhole extends VpnService {
         for (Rule rule : listRule)
             mapUidKnown.put(rule.uid, rule.uid);
 
+        mapUidTunnel = mapUidTunnel(listRule);
+        // Util.getDefaultDNS does binder calls, so resolve it once per reload
+        // rather than on the DNS path.
+        directDnsTarget = resolveDirectDnsTarget();
+        defaultTunnel = RemoteRoutingLogic.defaultTunnel(
+                RemoteRoutingLogic.normalizeMode(
+                        PreferenceManager.getDefaultSharedPreferences(this)
+                                .getString(Rule.PREF_WG_ROUTE_MODE,
+                                        RemoteRoutingLogic.getDefaultMode())));
+
         lock.writeLock().unlock();
+    }
+
+    /**
+     * The UIDs whose traffic goes through the remote tunnel.
+     * <p>
+     * A shared UID is tunnelled if any of its packages is: the packet path only
+     * ever sees the UID, so the finer per-package answer cannot be honoured and
+     * the more private of the two is the right way to round.
+     */
+    private static Set<Integer> mapUidTunnel(List<Rule> listRule) {
+        Set<Integer> tunnel = new HashSet<>();
+        for (Rule rule : listRule)
+            if (rule.wg_route)
+                tunnel.add(rule.uid);
+        return tunnel;
+    }
+
+    /**
+     * The system resolver for apps routed around the remote tunnel.
+     * <p>
+     * With the tunnel up, the tun advertises the tunnel's own resolvers, which
+     * a direct app may not be able to reach at all. Redirecting its queries to
+     * the underlying network's resolver is what makes direct routing work when
+     * the tunnel drops — at the cost, stated in the UI, of that app's DNS being
+     * visible to its local network rather than to the VPN provider.
+     */
+    private String resolveDirectDnsTarget() {
+        List<String> sysDns = Util.getDefaultDNS(ServiceSinkhole.this);
+        for (String dns : sysDns)
+            if (!TextUtils.isEmpty(dns))
+                return dns;
+
+        Log.w(TAG, "No system DNS for direct apps; keeping their DNS in the tunnel");
+        return null;
+    }
+
+    /** Hands the current routing decision to the packet path. */
+    private void pushRoutingToNative() {
+        lock.readLock().lock();
+        int[] uids = new int[mapUidTunnel.size()];
+        int i = 0;
+        for (Integer uid : mapUidTunnel)
+            uids[i++] = uid;
+        boolean defaults = defaultTunnel;
+        lock.readLock().unlock();
+
+        jni_wireguard_route(uids, defaults);
     }
 
     public static void prepareHostsBlocked(Context c) {
@@ -2393,6 +2477,13 @@ public class ServiceSinkhole extends VpnService {
                     allowed = new Allowed(fwd.raddr, fwd.rport);
                     packet.data = "> " + fwd.raddr + "/" + fwd.rport;
                 }
+            } else if (packet.dport == 53 && directDnsTarget != null
+                    && !mapUidTunnel.contains(packet.uid)) {
+                // An app routed around the remote tunnel resolves against the
+                // underlying network instead of the tunnel's resolver. The
+                // redirect is transparent: replies are rebuilt from the
+                // session's original addresses, so the app never sees it.
+                allowed = new Allowed(directDnsTarget, 53);
             } else
                 allowed = new Allowed();
 
@@ -2919,6 +3010,7 @@ public class ServiceSinkhole extends VpnService {
                 context.getSharedPreferences("apply", Context.MODE_PRIVATE).edit().remove(packageName).apply();
                 BlockingMode.clearAutoExcludedApp(context, packageName);
                 context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE).edit().remove(packageName).apply();
+                context.getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE).edit().remove(packageName).apply();
                 context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
 
                 int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);

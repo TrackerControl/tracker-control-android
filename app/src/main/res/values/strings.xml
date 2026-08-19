@@ -458,6 +458,16 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item>strict</item>
     </string-array>
 
+    <string-array name="wgRouteModeNames" translatable="false">
+        <item>@string/wg_route_mode_all</item>
+        <item>@string/wg_route_mode_selected</item>
+    </string-array>
+
+    <string-array name="wgRouteModeValues" translatable="false">
+        <item>all</item>
+        <item>selected</item>
+    </string-array>
+
     <string-array name="logLevelNames" translatable="false">
         <item>Verbose</item>
         <item>Debug</item>
@@ -630,6 +640,21 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_blockingmode_strict_desc">Blocks everything including essential services and ambiguous domains. Significant app breakage — many apps will need to be manually excluded.</string>
     <string name="onboarding_blockingmode_research_label">Research</string>
     <string name="onboarding_blockingmode_research_desc">No tracker blocking. Logs transmissions to ADB and enables SNI extraction for better hostname detection. Research only: this leaks your IP address to tracker servers.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Route through remote VPN</string>
+    <string name="summary_wg_route_mode">Which apps are forwarded through the remote VPN. Apps that are not still get full tracker monitoring and blocking — they simply connect from this device\'s own network.</string>
+    <string name="wg_route_mode_all">All apps</string>
+    <string name="wg_route_mode_selected">Only selected apps</string>
+
+    <string name="app_route_heading">Remote VPN</string>
+    <string name="app_route_through">Through the remote VPN</string>
+    <string name="app_route_through_explanation">This app connects through your remote VPN, which sees its traffic instead of your network.</string>
+    <string name="app_route_direct">Directly from this device</string>
+    <string name="app_route_direct_explanation">This app connects from your own network. Tracker monitoring and blocking still apply. Its DNS queries go to your network\'s resolver rather than the VPN\'s, and it sees this device\'s real address — some apps need that, for example to reach local devices or check a captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">No remote VPN is set up, so all traffic already leaves from this device.</string>
+    <string name="app_route_unavailable_bypassed">This app bypasses TrackerControl entirely, so there is no traffic to route.</string>
+    <string name="app_route_unavailable_partial_routes">Your remote VPN does not carry all traffic (its AllowedIPs is not a full tunnel). Per-app routing needs a full tunnel, because routes are shared by every app.</string>
 
     <!-- Per-app protection state -->
     <string name="app_state_heading">Protection</string>

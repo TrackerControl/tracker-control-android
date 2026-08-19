@@ -349,4 +349,18 @@
     <string name="app_state_no_internet_shared_uid">חל גם על %1$s, שחולקת מזהה משתמש של Android עם אפליקציה זו.</string>
     <string name="app_state_bypassed">עקיפת TrackerControl</string>
     <string name="app_state_bypassed_explanation">האפליקציה מתחברת ישירות, מחוץ ל-TrackerControl. דבר אינו מנוטר או נחסם עבורה. השתמשו בכך כמוצא אחרון אם האפליקציה עדיין לא עובדת.\n\nהערה: האפשרות \"חסום חיבורים ללא VPN\" בהגדרות ה-VPN של Android חייבת להיות מושבתת כדי שזה יעבוד.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">ניתוב דרך VPN מרוחק</string>
+    <string name="summary_wg_route_mode">אילו אפליקציות מועברות דרך ה-VPN המרוחק. אלה שלא, ממשיכות להיות מנוטרות ומסוננות במלואן — הן פשוט מתחברות מהרשת של המכשיר הזה.</string>
+    <string name="wg_route_mode_all">כל האפליקציות</string>
+    <string name="wg_route_mode_selected">רק אפליקציות נבחרות</string>
+    <string name="app_route_heading">VPN מרוחק</string>
+    <string name="app_route_through">דרך ה-VPN המרוחק</string>
+    <string name="app_route_through_explanation">אפליקציה זו מתחברת דרך ה-VPN המרוחק שלך, שרואה את התעבורה שלה במקום הרשת שלך.</string>
+    <string name="app_route_direct">ישירות מהמכשיר הזה</string>
+    <string name="app_route_direct_explanation">אפליקציה זו מתחברת מהרשת שלך. ניטור וחסימה של רכיבי מעקב ממשיכים לחול. שאילתות ה-DNS שלה הולכות לפותר של הרשת שלך במקום של ה-VPN, והיא רואה את הכתובת האמיתית של המכשיר — חלק מהאפליקציות זקוקות לכך, למשל כדי להגיע למכשירים מקומיים או לבדוק captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">לא מוגדר VPN מרוחק, ולכן כל התעבורה כבר יוצאת ישירות מהמכשיר הזה.</string>
+    <string name="app_route_unavailable_bypassed">אפליקציה זו עוקפת את TrackerControl לחלוטין, ולכן אין תעבורה לנתב.</string>
+    <string name="app_route_unavailable_partial_routes">ה-VPN המרוחק שלך אינו נושא את כל התעבורה (ה-AllowedIPs שלו אינו מנהרה מלאה). ניתוב לכל אפליקציה דורש מנהרה מלאה, מכיוון שהנתיבים משותפים לכל האפליקציות.</string>
 </resources>

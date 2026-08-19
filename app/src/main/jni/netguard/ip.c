@@ -53,6 +53,47 @@ static int is_local_dest(int version, const void *daddr) {
     }
 }
 
+// The UID of an established flow, for packets that arrive without one.
+//
+// Packet 2+ of a direct flow reaches the routing fork with uid == -1: the
+// expensive lookup above is deliberately skipped for existing UDP sessions and
+// non-SYN TCP. The uid cache usually answers, but it expires and is evicted,
+// and defaulting on a miss would send the rest of an established, already-NATted
+// flow into the tunnel mid-stream. The session table is the authoritative and
+// free source, so consult it before giving up.
+static jint get_session_uid(const struct arguments *args, int version, int protocol,
+                            const uint8_t *pkt, const uint8_t *payload) {
+    const struct iphdr *ip4 = (struct iphdr *) pkt;
+    const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+
+    for (struct ng_session *cur = args->ctx->ng_session; cur != NULL; cur = cur->next) {
+        if (cur->protocol != protocol)
+            continue;
+
+        if (protocol == IPPROTO_UDP) {
+            const struct udphdr *udphdr = (struct udphdr *) payload;
+            if (cur->udp.version == version &&
+                cur->udp.source == udphdr->source && cur->udp.dest == udphdr->dest &&
+                (version == 4
+                 ? cur->udp.saddr.ip4 == ip4->saddr && cur->udp.daddr.ip4 == ip4->daddr
+                 : memcmp(&cur->udp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0))
+                return cur->udp.uid;
+        } else if (protocol == IPPROTO_TCP) {
+            const struct tcphdr *tcphdr = (struct tcphdr *) payload;
+            if (cur->tcp.version == version &&
+                cur->tcp.source == tcphdr->source && cur->tcp.dest == tcphdr->dest &&
+                (version == 4
+                 ? cur->tcp.saddr.ip4 == ip4->saddr && cur->tcp.daddr.ip4 == ip4->daddr
+                 : memcmp(&cur->tcp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0))
+                return cur->tcp.uid;
+        }
+    }
+
+    return -1;
+}
+
 uint16_t get_mtu() {
     return 10000;
 }
@@ -484,9 +525,31 @@ void handle_ip(const struct arguments *args,
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
         int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
-        int wg_dest = !is_local_dest(version, daddr) || is_dns;
 
-        if (wg_dest) {
+        // Which app this packet belongs to. The lookup above is deliberately
+        // skipped for established flows (existing UDP sessions, non-SYN TCP),
+        // so those arrive here with uid == -1. Fall back to the session table
+        // rather than to the global default: defaulting would divert an
+        // already-NATted flow mid-stream. Never re-run the real lookup here —
+        // get_uid_q is a binder call, and this is the per-packet path.
+        //
+        // One case still lands on the default: the first TCP:443 SYN while SNI
+        // research mode is on, which has neither a uid nor a session yet.
+        jint route_uid = (uid >= 0
+                          ? uid
+                          : get_session_uid(args, version, protocol, pkt, payload));
+
+        int tunnel_uid = is_tunnel_uid(route_uid);
+        enum route_decision decision = route_decide(
+                wireguard_active(), wg_is_required, is_local_dest(version, daddr),
+                is_dns, tunnel_uid, args->fwd53);
+
+        if (!tunnel_uid)
+            log_android(ANDROID_LOG_DEBUG,
+                        "Routing v%d p%d %s/%u uid %d direct (decision %d)",
+                        version, protocol, dest, dport, route_uid, decision);
+
+        if (decision == ROUTE_TUNNEL) {
             ssize_t w;
             int write_errno;
             if (write_wireguard_packet(pkt, length, &w, &write_errno)) {
@@ -504,6 +567,10 @@ void handle_ip(const struct arguments *args,
                 // Fail-closed: if the write fails, drop. Do not fall through to direct.
                 return;
             }
+            // The bridge stopped between the decision and the write; re-decide
+            // below with the tunnel known to be down.
+            decision = route_decide(0, wg_is_required, is_local_dest(version, daddr),
+                                    is_dns, tunnel_uid, args->fwd53);
         }
 
         // Fail closed while WG is required but not (yet) running — e.g. the
@@ -514,7 +581,7 @@ void handle_ip(const struct arguments *args,
         // (the resolver runs on the VPN network). This briefly exposes DNS
         // queries to the configured (WG/public fallback) DNS server over the
         // physical network, which is far less than leaking all traffic.
-        if (wg_is_required && wg_dest && !is_dns) {
+        if (decision == ROUTE_DROP) {
             long drops = atomic_fetch_add_explicit(
                     &wg_gap_drop_count, 1, memory_order_relaxed) + 1;
             if ((drops & 255L) == 1)

@@ -620,4 +620,18 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="app_state_no_internet_shared_uid">Velja tudi za %1$s, ki si s to aplikacijo deli Androidov ID uporabnika.</string>
     <string name="app_state_bypassed">Obidi TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikacija se poveže neposredno, mimo TrackerControla. Zanjo se nič ne spremlja in nič ne blokira. Uporabite to kot zadnjo možnost, če aplikacija še vedno ne deluje.\n\nOpomba: možnost \"Blokiraj povezave brez VPN\" v Androidovih nastavitvah VPN mora biti IZKLOPLJENA, da to deluje.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Usmeri prek oddaljenega VPN</string>
+    <string name="summary_wg_route_mode">Katere aplikacije gredo prek oddaljenega VPN. Preostale so še naprej v celoti nadzorovane in filtrirane — le povežejo se prek omrežja te naprave.</string>
+    <string name="wg_route_mode_all">Vse aplikacije</string>
+    <string name="wg_route_mode_selected">Samo izbrane aplikacije</string>
+    <string name="app_route_heading">Oddaljeni VPN</string>
+    <string name="app_route_through">Prek oddaljenega VPN</string>
+    <string name="app_route_through_explanation">Ta aplikacija se poveže prek vašega oddaljenega VPN, ki namesto vašega omrežja vidi njen promet.</string>
+    <string name="app_route_direct">Neposredno s te naprave</string>
+    <string name="app_route_direct_explanation">Ta aplikacija se poveže iz vašega omrežja. Nadzor in blokiranje sledilnikov še naprej veljata. Njene poizvedbe DNS gredo na razreševalnik vašega omrežja namesto na VPN, aplikacija pa vidi pravi naslov te naprave — nekatere aplikacije to potrebujejo, na primer za dostop do lokalnih naprav ali preverjanje captive portala.</string>
+    <string name="app_route_unavailable_no_vpn">Oddaljeni VPN ni nastavljen, zato ves promet že zdaj odhaja neposredno s te naprave.</string>
+    <string name="app_route_unavailable_bypassed">Ta aplikacija povsem obide TrackerControl, zato ni prometa za usmerjanje.</string>
+    <string name="app_route_unavailable_partial_routes">Vaš oddaljeni VPN ne prenaša vsega prometa (njegov AllowedIPs ni poln predor). Usmerjanje po aplikacijah zahteva poln predor, ker si poti delijo vse aplikacije.</string>
 </resources>

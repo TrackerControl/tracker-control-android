@@ -472,4 +472,18 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="app_state_no_internet_shared_uid">Geldt ook voor %1$s, die een Android-gebruikers-ID deelt met deze app.</string>
     <string name="app_state_bypassed">TrackerControl omzeilen</string>
     <string name="app_state_bypassed_explanation">De app maakt rechtstreeks verbinding, buiten TrackerControl om. Er wordt niets voor gecontroleerd of geblokkeerd. Gebruik dit als laatste redmiddel als de app nog steeds niet werkt.\n\nLet op: \"Verbindingen zonder VPN blokkeren\" in de Android-VPN-instellingen moet UITGESCHAKELD zijn om dit te laten werken.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Via externe VPN leiden</string>
+    <string name="summary_wg_route_mode">Welke apps via de externe VPN worden geleid. Apps die dat niet doen blijven volledig gecontroleerd en gefilterd — ze verbinden gewoon via het eigen netwerk van dit apparaat.</string>
+    <string name="wg_route_mode_all">Alle apps</string>
+    <string name="wg_route_mode_selected">Alleen geselecteerde apps</string>
+    <string name="app_route_heading">Externe VPN</string>
+    <string name="app_route_through">Via de externe VPN</string>
+    <string name="app_route_through_explanation">Deze app verbindt via je externe VPN, die het verkeer ziet in plaats van je netwerk.</string>
+    <string name="app_route_direct">Rechtstreeks vanaf dit apparaat</string>
+    <string name="app_route_direct_explanation">Deze app verbindt via je eigen netwerk. Trackercontrole en -blokkering blijven gelden. De DNS-aanvragen gaan naar de resolver van je netwerk in plaats van die van de VPN, en de app ziet het echte adres van dit apparaat — sommige apps hebben dat nodig, bijvoorbeeld om lokale apparaten te bereiken of een captive portal te controleren.</string>
+    <string name="app_route_unavailable_no_vpn">Er is geen externe VPN ingesteld, dus al het verkeer verlaat dit apparaat al rechtstreeks.</string>
+    <string name="app_route_unavailable_bypassed">Deze app omzeilt TrackerControl volledig, dus er is geen verkeer om te leiden.</string>
+    <string name="app_route_unavailable_partial_routes">Je externe VPN draagt niet al het verkeer (de AllowedIPs vormen geen volledige tunnel). Routering per app vereist een volledige tunnel, omdat routes door alle apps worden gedeeld.</string>
 </resources>

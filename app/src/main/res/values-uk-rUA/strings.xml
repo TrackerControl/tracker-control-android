@@ -651,4 +651,18 @@
     <string name="app_state_no_internet_shared_uid">Стосується також %1$s, який має спільний із цим застосунком ідентифікатор користувача Android.</string>
     <string name="app_state_bypassed">Обійти TrackerControl</string>
     <string name="app_state_bypassed_explanation">Застосунок з\'єднується напряму, поза TrackerControl. Для нього нічого не відстежується й не блокується. Використовуйте це як останній засіб, якщо застосунок і далі не працює.\n\nПримітка: параметр \"Блокувати з\'єднання без VPN\" у налаштуваннях VPN Android має бути ВИМКНЕНИЙ, щоб це працювало.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Спрямовувати через віддалений VPN</string>
+    <string name="summary_wg_route_mode">Які застосунки спрямовуються через віддалений VPN. Решта й далі повністю відстежується та фільтрується — вони просто з\'єднуються через мережу цього пристрою.</string>
+    <string name="wg_route_mode_all">Усі застосунки</string>
+    <string name="wg_route_mode_selected">Лише вибрані застосунки</string>
+    <string name="app_route_heading">Віддалений VPN</string>
+    <string name="app_route_through">Через віддалений VPN</string>
+    <string name="app_route_through_explanation">Цей застосунок з\'єднується через ваш віддалений VPN, який бачить його трафік замість вашої мережі.</string>
+    <string name="app_route_direct">Напряму з цього пристрою</string>
+    <string name="app_route_direct_explanation">Цей застосунок з\'єднується через вашу власну мережу. Відстеження й блокування трекерів і далі діють. Його DNS-запити йдуть до резолвера вашої мережі, а не VPN, і він бачить справжню адресу пристрою — деяким застосункам це потрібно, наприклад для доступу до локальних пристроїв або перевірки captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Віддалений VPN не налаштовано, тож увесь трафік і так виходить напряму з цього пристрою.</string>
+    <string name="app_route_unavailable_bypassed">Цей застосунок повністю обходить TrackerControl, тож спрямовувати нічого.</string>
+    <string name="app_route_unavailable_partial_routes">Ваш віддалений VPN передає не весь трафік (його AllowedIPs не утворює повний тунель). Маршрутизація за застосунками потребує повного тунелю, бо маршрути спільні для всіх застосунків.</string>
 </resources>

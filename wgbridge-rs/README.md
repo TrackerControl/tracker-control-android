@@ -158,3 +158,13 @@ hostnames, and re-resolves them on network changes via `updateEndpoint`).
   and end in one sequence-aligned segment. Rewriting a frame split across
   packets needs buffering plus TCP sequence translation; continuation segments
   are deliberately forwarded unchanged until that exists.
+- **DNS upstream privacy**: app DNS packets to port 53 go through WireGuard
+  whenever the tunnel is up — `ip.c` forces them into it regardless of
+  destination, because an unprotected query would expose the user's physical
+  network to the resolver. The one exception is an app the user has routed
+  around the tunnel: its queries are redirected to the system resolver
+  (see `RemoteRoutingLogic`), which is the cost of letting that app keep
+  working when the tunnel drops. The remaining gap is that TrackerControl's
+  own DoH proxy is not yet advertised as the sole resolver, which would let
+  interception and upstream privacy hold at the same time without the
+  redirect.

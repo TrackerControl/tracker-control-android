@@ -373,4 +373,18 @@ Z poważaniem,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Dotyczy też %1$s, która współdzieli z tą aplikacją identyfikator użytkownika Androida.</string>
     <string name="app_state_bypassed">Pomiń TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikacja łączy się bezpośrednio, poza TrackerControl. Nic nie jest dla niej monitorowane ani blokowane. Użyj tego w ostateczności, jeśli aplikacja nadal nie działa.\n\nUwaga: opcja \"Blokuj połączenia bez VPN\" w ustawieniach VPN Androida musi być WYŁĄCZONA, aby to zadziałało.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Kieruj przez zdalny VPN</string>
+    <string name="summary_wg_route_mode">Które aplikacje są przekazywane przez zdalny VPN. Pozostałe nadal są w pełni monitorowane i filtrowane — po prostu łączą się przez sieć tego urządzenia.</string>
+    <string name="wg_route_mode_all">Wszystkie aplikacje</string>
+    <string name="wg_route_mode_selected">Tylko wybrane aplikacje</string>
+    <string name="app_route_heading">Zdalny VPN</string>
+    <string name="app_route_through">Przez zdalny VPN</string>
+    <string name="app_route_through_explanation">Ta aplikacja łączy się przez Twój zdalny VPN, który widzi jej ruch zamiast Twojej sieci.</string>
+    <string name="app_route_direct">Bezpośrednio z tego urządzenia</string>
+    <string name="app_route_direct_explanation">Ta aplikacja łączy się przez Twoją własną sieć. Monitorowanie i blokowanie trackerów nadal działa. Jej zapytania DNS trafiają do resolwera Twojej sieci zamiast do VPN, a aplikacja widzi prawdziwy adres tego urządzenia — niektóre aplikacje tego potrzebują, na przykład by dotrzeć do urządzeń lokalnych lub sprawdzić captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Nie skonfigurowano zdalnego VPN, więc cały ruch już wychodzi bezpośrednio z tego urządzenia.</string>
+    <string name="app_route_unavailable_bypassed">Ta aplikacja całkowicie pomija TrackerControl, więc nie ma ruchu do kierowania.</string>
+    <string name="app_route_unavailable_partial_routes">Twój zdalny VPN nie przenosi całego ruchu (jego AllowedIPs nie tworzy pełnego tunelu). Kierowanie na poziomie aplikacji wymaga pełnego tunelu, ponieważ trasy są wspólne dla wszystkich aplikacji.</string>
 </resources>

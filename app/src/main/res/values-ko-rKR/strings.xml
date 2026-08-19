@@ -100,4 +100,18 @@
     <string name="app_state_no_internet_shared_uid">이 앱과 Android 사용자 ID를 공유하는 %1$s에도 적용됩니다.</string>
     <string name="app_state_bypassed">TrackerControl 우회</string>
     <string name="app_state_bypassed_explanation">앱이 TrackerControl을 거치지 않고 직접 연결합니다. 이 앱에 대해서는 아무것도 감시하거나 차단하지 않습니다. 앱이 여전히 동작하지 않을 때 최후의 수단으로 사용하세요.\n\n참고: 이 기능이 동작하려면 Android VPN 설정에서 \"VPN 없이 연결 차단\"이 사용 중지되어 있어야 합니다.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">원격 VPN으로 보내기</string>
+    <string name="summary_wg_route_mode">어떤 앱을 원격 VPN으로 보낼지 정합니다. 보내지 않는 앱도 트래커 감시와 차단은 그대로 적용되며, 이 기기의 네트워크로 직접 연결할 뿐입니다.</string>
+    <string name="wg_route_mode_all">모든 앱</string>
+    <string name="wg_route_mode_selected">선택한 앱만</string>
+    <string name="app_route_heading">원격 VPN</string>
+    <string name="app_route_through">원격 VPN을 통해</string>
+    <string name="app_route_through_explanation">이 앱은 원격 VPN을 통해 연결하며, 내 네트워크 대신 VPN이 트래픽을 봅니다.</string>
+    <string name="app_route_direct">이 기기에서 직접</string>
+    <string name="app_route_direct_explanation">이 앱은 내 네트워크로 연결합니다. 트래커 감시와 차단은 계속 적용됩니다. DNS 질의는 VPN이 아니라 내 네트워크의 리졸버로 가고, 앱은 이 기기의 실제 주소를 봅니다. 로컬 기기 접근이나 캡티브 포털 확인처럼 이것이 필요한 앱도 있습니다.</string>
+    <string name="app_route_unavailable_no_vpn">설정된 원격 VPN이 없어 모든 트래픽이 이미 이 기기에서 직접 나갑니다.</string>
+    <string name="app_route_unavailable_bypassed">이 앱은 TrackerControl을 완전히 우회하므로 보낼 트래픽이 없습니다.</string>
+    <string name="app_route_unavailable_partial_routes">원격 VPN이 모든 트래픽을 나르지 않습니다(AllowedIPs가 전체 터널이 아닙니다). 경로는 모든 앱이 공유하므로 앱별 라우팅에는 전체 터널이 필요합니다.</string>
 </resources>

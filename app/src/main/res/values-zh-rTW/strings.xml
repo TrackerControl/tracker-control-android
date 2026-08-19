@@ -176,4 +176,18 @@
     <string name="app_state_no_internet_shared_uid">同樣適用於 %1$s，它與此應用程式共用同一個 Android 使用者 ID。</string>
     <string name="app_state_bypassed">略過 TrackerControl</string>
     <string name="app_state_bypassed_explanation">應用程式會略過 TrackerControl 直接連線，不會對其進行任何監控或封鎖。僅在應用程式仍無法使用時作為最後手段使用。\n\n注意：必須在 Android 的 VPN 設定中停用\"封鎖不使用 VPN 的連線\"，此項才會生效。</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">透過遠端 VPN 轉送</string>
+    <string name="summary_wg_route_mode">哪些應用程式經遠端 VPN 轉送。未轉送的應用程式仍受到完整的追蹤器監控與封鎖，只是改從本機自己的網路連線。</string>
+    <string name="wg_route_mode_all">所有應用程式</string>
+    <string name="wg_route_mode_selected">僅所選應用程式</string>
+    <string name="app_route_heading">遠端 VPN</string>
+    <string name="app_route_through">經遠端 VPN</string>
+    <string name="app_route_through_explanation">此應用程式經你的遠端 VPN 連線，由 VPN 而非你的網路看到它的流量。</string>
+    <string name="app_route_direct">直接從本機連線</string>
+    <string name="app_route_direct_explanation">此應用程式從你自己的網路連線。追蹤器監控與封鎖仍然生效。它的 DNS 查詢會送往你網路的解析器而非 VPN 的，而且它看到的是本機的真實位址——某些應用程式需要這樣，例如存取區域網路裝置或偵測強制網路入口。</string>
+    <string name="app_route_unavailable_no_vpn">尚未設定遠端 VPN，因此所有流量已經直接從本機送出。</string>
+    <string name="app_route_unavailable_bypassed">此應用程式完全略過 TrackerControl，因此沒有可轉送的流量。</string>
+    <string name="app_route_unavailable_partial_routes">你的遠端 VPN 並未承載全部流量（其 AllowedIPs 不是全隧道）。路由由所有應用程式共用，因此依應用程式分流需要全隧道。</string>
 </resources>

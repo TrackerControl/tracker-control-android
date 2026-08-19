@@ -42,6 +42,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Pair;
 import net.kollnig.missioncontrol.data.BlockingMode;
+import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 
@@ -59,6 +60,10 @@ import java.util.Map;
 
 public class Rule {
     private static final String TAG = "TrackerControl.Rule";
+    /** Per-package remote-routing overrides, mirroring "apply"/"tracker_protect". */
+    public static final String PREF_WG_ROUTE = "wg_route";
+    /** Global remote-routing mode, in the default shared preferences. */
+    public static final String PREF_WG_ROUTE_MODE = "wg_route_mode";
 
     public int uid;
     public String packageName;
@@ -84,6 +89,11 @@ public class Rule {
 
     public boolean apply = true; // If false, completely exclude from VPN (no DNS, no routing)
     public boolean tracker_protect = true; // If false, don't block trackers (but still route through VPN)
+    // Whether this app's traffic is forwarded through the remote VPN. Filtering
+    // and remote routing are independent choices (#723): an app can be fully
+    // monitored and blocked while still connecting from the device's own
+    // network. Resolved from the global mode plus an optional per-app override.
+    public boolean wg_route = true;
     public boolean notify = true;
 
     public boolean relateduids = false;
@@ -301,7 +311,10 @@ public class Rule {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
             SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+            SharedPreferences wg_route = context.getSharedPreferences(PREF_WG_ROUTE, Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
+            String wgRouteMode = RemoteRoutingLogic.normalizeMode(
+                    prefs.getString(PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
 
             // Get settings
             boolean manage_system = prefs.getBoolean("manage_system", false);
@@ -417,6 +430,12 @@ public class Rule {
                         rule.apply = apply.getBoolean(info.packageName, true);
                         rule.tracker_protect = BlockingMode.isTrackerProtectionEnabled(
                                 context, tracker_protect, info.packageName);
+                        rule.wg_route = RemoteRoutingLogic.routesThroughTunnel(
+                                wgRouteMode,
+                                wg_route.contains(info.packageName)
+                                        ? wg_route.getBoolean(info.packageName, true)
+                                        : null,
+                                rule.apply);
                         rule.notify = notify.getBoolean(info.packageName, true);
 
                         // Related packages
@@ -557,7 +576,11 @@ public class Rule {
 
             SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
             SharedPreferences tracker_protect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+            SharedPreferences wg_route = context.getSharedPreferences(PREF_WG_ROUTE, Context.MODE_PRIVATE);
             SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
+            String wgRouteMode = RemoteRoutingLogic.normalizeMode(
+                    PreferenceManager.getDefaultSharedPreferences(context)
+                            .getString(PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
 
             DatabaseHelper dh = DatabaseHelper.getInstance(context);
             for (PackageInfo info : getPackages(context))
@@ -570,6 +593,12 @@ public class Rule {
                     rule.apply = apply.getBoolean(info.packageName, true);
                     rule.tracker_protect = BlockingMode.isTrackerProtectionEnabled(
                             context, tracker_protect, info.packageName);
+                    rule.wg_route = RemoteRoutingLogic.routesThroughTunnel(
+                            wgRouteMode,
+                            wg_route.contains(info.packageName)
+                                    ? wg_route.getBoolean(info.packageName, true)
+                                    : null,
+                            rule.apply);
                     rule.notify = notify.getBoolean(info.packageName, true);
                     rule.updateChanged();
                     listStub.add(rule);

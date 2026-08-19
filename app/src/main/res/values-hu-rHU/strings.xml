@@ -368,4 +368,18 @@ Tisztelettel,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Erre is vonatkozik: %1$s, amely Android-felhasználóazonosítón osztozik ezzel az alkalmazással.</string>
     <string name="app_state_bypassed">TrackerControl megkerülése</string>
     <string name="app_state_bypassed_explanation">Az alkalmazás közvetlenül, a TrackerControlon kívül csatlakozik. Semmit sem figyel és blokkol nála. Végső megoldásként használja, ha az alkalmazás továbbra sem működik.\n\nMegjegyzés: az Android VPN-beállításaiban a \"Kapcsolatok blokkolása VPN nélkül\" beállításnak KIKAPCSOLVA kell lennie, hogy ez működjön.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Átirányítás a távoli VPN-en</string>
+    <string name="summary_wg_route_mode">Mely alkalmazások haladnak át a távoli VPN-en. A többi továbbra is teljesen felügyelt és szűrt — csak az eszköz saját hálózatáról csatlakoznak.</string>
+    <string name="wg_route_mode_all">Minden alkalmazás</string>
+    <string name="wg_route_mode_selected">Csak a kiválasztott alkalmazások</string>
+    <string name="app_route_heading">Távoli VPN</string>
+    <string name="app_route_through">A távoli VPN-en át</string>
+    <string name="app_route_through_explanation">Ez az alkalmazás a távoli VPN-en át csatlakozik, amely a hálózata helyett látja a forgalmát.</string>
+    <string name="app_route_direct">Közvetlenül erről az eszközről</string>
+    <string name="app_route_direct_explanation">Ez az alkalmazás a saját hálózatáról csatlakozik. A követők felügyelete és blokkolása továbbra is érvényes. DNS-kérései a VPN helyett a hálózat feloldójához mennek, és az alkalmazás látja az eszköz valódi címét — egyes alkalmazásoknak erre szükségük van, például helyi eszközök eléréséhez vagy captive portal ellenőrzéséhez.</string>
+    <string name="app_route_unavailable_no_vpn">Nincs beállítva távoli VPN, így minden forgalom már közvetlenül hagyja el az eszközt.</string>
+    <string name="app_route_unavailable_bypassed">Ez az alkalmazás teljesen megkerüli a TrackerControlt, így nincs mit átirányítani.</string>
+    <string name="app_route_unavailable_partial_routes">A távoli VPN nem viszi az összes forgalmat (az AllowedIPs nem teljes alagút). Az alkalmazásonkénti átirányításhoz teljes alagút kell, mert az útvonalakat minden alkalmazás megosztja.</string>
 </resources>

@@ -405,4 +405,18 @@ Atentamente,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">También se aplica a %1$s, que comparte un ID de usuario de Android con esta aplicación.</string>
     <string name="app_state_bypassed">Omitir TrackerControl</string>
     <string name="app_state_bypassed_explanation">La aplicación se conecta directamente, fuera de TrackerControl. No se supervisa ni se bloquea nada para ella. Usa esto como último recurso si la aplicación sigue sin funcionar.\n\nNota: \"Bloquear conexiones sin VPN\" en los ajustes de VPN de Android debe estar DESACTIVADO para que esto funcione.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Enrutar por el VPN remoto</string>
+    <string name="summary_wg_route_mode">Qué aplicaciones se envían a través del VPN remoto. Las que no lo hacen siguen totalmente supervisadas y filtradas — simplemente se conectan desde la red de este dispositivo.</string>
+    <string name="wg_route_mode_all">Todas las aplicaciones</string>
+    <string name="wg_route_mode_selected">Solo aplicaciones seleccionadas</string>
+    <string name="app_route_heading">VPN remoto</string>
+    <string name="app_route_through">A través del VPN remoto</string>
+    <string name="app_route_through_explanation">Esta aplicación se conecta a través de tu VPN remoto, que ve su tráfico en lugar de tu red.</string>
+    <string name="app_route_direct">Directamente desde este dispositivo</string>
+    <string name="app_route_direct_explanation">Esta aplicación se conecta desde tu propia red. La supervisión y el bloqueo de rastreadores siguen aplicándose. Sus consultas DNS van al resolutor de tu red en lugar del VPN, y ve la dirección real de este dispositivo — algunas aplicaciones lo necesitan, por ejemplo para llegar a dispositivos locales o comprobar un portal cautivo.</string>
+    <string name="app_route_unavailable_no_vpn">No hay ningún VPN remoto configurado, así que todo el tráfico ya sale directamente de este dispositivo.</string>
+    <string name="app_route_unavailable_bypassed">Esta aplicación omite TrackerControl por completo, así que no hay tráfico que enrutar.</string>
+    <string name="app_route_unavailable_partial_routes">Tu VPN remoto no transporta todo el tráfico (sus AllowedIPs no forman un túnel completo). El enrutamiento por aplicación necesita un túnel completo, porque las rutas las comparten todas las aplicaciones.</string>
 </resources>

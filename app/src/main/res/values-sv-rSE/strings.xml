@@ -15,4 +15,18 @@
     <string name="app_state_no_internet_shared_uid">Gäller även %1$s, som delar ett Android-användar-ID med den här appen.</string>
     <string name="app_state_bypassed">Förbigå TrackerControl</string>
     <string name="app_state_bypassed_explanation">Appen ansluter direkt, utanför TrackerControl. Ingenting övervakas eller blockeras för den. Använd detta som sista utväg om appen fortfarande inte fungerar.\n\nObs: \"Blockera anslutningar utan VPN\" i Androids VPN-inställningar måste vara INAKTIVERAT för att detta ska fungera.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Dirigera via fjärr-VPN</string>
+    <string name="summary_wg_route_mode">Vilka appar som skickas genom fjärr-VPN:et. De som inte gör det övervakas och filtreras fortfarande fullt ut — de ansluter bara från enhetens eget nätverk.</string>
+    <string name="wg_route_mode_all">Alla appar</string>
+    <string name="wg_route_mode_selected">Endast valda appar</string>
+    <string name="app_route_heading">Fjärr-VPN</string>
+    <string name="app_route_through">Via fjärr-VPN:et</string>
+    <string name="app_route_through_explanation">Den här appen ansluter via ditt fjärr-VPN, som ser dess trafik i stället för ditt nätverk.</string>
+    <string name="app_route_direct">Direkt från den här enheten</string>
+    <string name="app_route_direct_explanation">Den här appen ansluter från ditt eget nätverk. Spårarövervakning och blockering gäller fortfarande. Dess DNS-frågor går till nätverkets resolver i stället för VPN:ets, och appen ser enhetens riktiga adress — vissa appar behöver det, till exempel för att nå lokala enheter eller kontrollera en captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Inget fjärr-VPN är konfigurerat, så all trafik lämnar redan enheten direkt.</string>
+    <string name="app_route_unavailable_bypassed">Den här appen förbigår TrackerControl helt, så det finns ingen trafik att dirigera.</string>
+    <string name="app_route_unavailable_partial_routes">Ditt fjärr-VPN bär inte all trafik (dess AllowedIPs är inte en full tunnel). Dirigering per app kräver en full tunnel, eftersom rutter delas av alla appar.</string>
 </resources>

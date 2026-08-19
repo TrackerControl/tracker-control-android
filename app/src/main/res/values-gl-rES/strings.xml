@@ -91,4 +91,18 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="app_state_no_internet_shared_uid">Tamén se aplica a %1$s, que comparte un ID de usuario de Android con esta aplicación.</string>
     <string name="app_state_bypassed">Omitir TrackerControl</string>
     <string name="app_state_bypassed_explanation">A aplicación conéctase directamente, fóra de TrackerControl. Non se supervisa nin se bloquea nada para ela. Usa isto como último recurso se a aplicación segue sen funcionar.\n\nNota: \"Bloquear conexións sen VPN\" nos axustes de VPN de Android debe estar DESACTIVADO para que isto funcione.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Encamiñar polo VPN remoto</string>
+    <string name="summary_wg_route_mode">Que aplicacións se envían a través do VPN remoto. As que non seguen totalmente supervisadas e filtradas — simplemente conéctanse desde a rede deste dispositivo.</string>
+    <string name="wg_route_mode_all">Todas as aplicacións</string>
+    <string name="wg_route_mode_selected">Só aplicacións seleccionadas</string>
+    <string name="app_route_heading">VPN remoto</string>
+    <string name="app_route_through">A través do VPN remoto</string>
+    <string name="app_route_through_explanation">Esta aplicación conéctase a través do teu VPN remoto, que ve o seu tráfico no canto da túa rede.</string>
+    <string name="app_route_direct">Directamente desde este dispositivo</string>
+    <string name="app_route_direct_explanation">Esta aplicación conéctase desde a túa propia rede. A supervisión e o bloqueo de rastrexadores seguen a aplicarse. As súas consultas DNS van ao resolvedor da túa rede no canto do VPN, e ve o enderezo real deste dispositivo — algunhas aplicacións precísano, por exemplo para chegar a dispositivos locais ou comprobar un portal cativo.</string>
+    <string name="app_route_unavailable_no_vpn">Non hai ningún VPN remoto configurado, así que todo o tráfico xa sae directamente deste dispositivo.</string>
+    <string name="app_route_unavailable_bypassed">Esta aplicación omite TrackerControl por completo, así que non hai tráfico que encamiñar.</string>
+    <string name="app_route_unavailable_partial_routes">O teu VPN remoto non transporta todo o tráfico (os seus AllowedIPs non forman un túnel completo). O encamiñamento por aplicación precisa un túnel completo, porque as rutas compártenas todas as aplicacións.</string>
 </resources>

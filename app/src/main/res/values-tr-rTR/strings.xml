@@ -367,4 +367,18 @@ Saygılarımla,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Bu uygulamayla Android kullanıcı kimliğini paylaşan %1$s için de geçerlidir.</string>
     <string name="app_state_bypassed">TrackerControl\'ü atla</string>
     <string name="app_state_bypassed_explanation">Uygulama, TrackerControl dışında doğrudan bağlanır. Onun için hiçbir şey izlenmez veya engellenmez. Uygulama hâlâ çalışmıyorsa son çare olarak bunu kullanın.\n\nNot: Bunun çalışması için Android VPN ayarlarındaki \"VPN olmadan bağlantıları engelle\" seçeneği KAPALI olmalıdır.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Uzak VPN üzerinden yönlendir</string>
+    <string name="summary_wg_route_mode">Hangi uygulamaların uzak VPN üzerinden iletileceği. İletilmeyenler yine tümüyle izlenir ve filtrelenir — yalnızca bu cihazın kendi ağından bağlanırlar.</string>
+    <string name="wg_route_mode_all">Tüm uygulamalar</string>
+    <string name="wg_route_mode_selected">Yalnızca seçili uygulamalar</string>
+    <string name="app_route_heading">Uzak VPN</string>
+    <string name="app_route_through">Uzak VPN üzerinden</string>
+    <string name="app_route_through_explanation">Bu uygulama, trafiğini ağınız yerine gören uzak VPN\'iniz üzerinden bağlanır.</string>
+    <string name="app_route_direct">Doğrudan bu cihazdan</string>
+    <string name="app_route_direct_explanation">Bu uygulama kendi ağınızdan bağlanır. İzleyici izleme ve engelleme geçerliliğini korur. DNS sorguları VPN yerine ağınızın çözücüsüne gider ve uygulama bu cihazın gerçek adresini görür — bazı uygulamalar buna ihtiyaç duyar, örneğin yerel cihazlara erişmek veya bir captive portal denetlemek için.</string>
+    <string name="app_route_unavailable_no_vpn">Kurulu bir uzak VPN yok, bu yüzden tüm trafik zaten doğrudan bu cihazdan çıkıyor.</string>
+    <string name="app_route_unavailable_bypassed">Bu uygulama TrackerControl\'ü tamamen atlıyor, dolayısıyla yönlendirilecek trafik yok.</string>
+    <string name="app_route_unavailable_partial_routes">Uzak VPN\'iniz tüm trafiği taşımıyor (AllowedIPs değeri tam tünel değil). Uygulama başına yönlendirme tam tünel gerektirir, çünkü rotalar tüm uygulamalarca paylaşılır.</string>
 </resources>

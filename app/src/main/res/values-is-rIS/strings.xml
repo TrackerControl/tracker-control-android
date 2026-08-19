@@ -15,4 +15,18 @@
     <string name="app_state_no_internet_shared_uid">Á einnig við um %1$s, sem deilir Android-notandaauðkenni með þessu forriti.</string>
     <string name="app_state_bypassed">Sniðganga TrackerControl</string>
     <string name="app_state_bypassed_explanation">Forritið tengist beint, utan TrackerControl. Ekkert er vaktað eða útilokað fyrir það. Notaðu þetta sem síðasta úrræði ef forritið virkar enn ekki.\n\nAthugið: \"Loka á tengingar án VPN\" í VPN-stillingum Android verður að vera SLÖKKT til að þetta virki.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Beina um fjartengt VPN</string>
+    <string name="summary_wg_route_mode">Hvaða forrit fara um fjartengda VPN-ið. Þau sem gera það ekki eru áfram að fullu vöktuð og síuð — þau tengjast einfaldlega um net þessa tækis.</string>
+    <string name="wg_route_mode_all">Öll forrit</string>
+    <string name="wg_route_mode_selected">Aðeins valin forrit</string>
+    <string name="app_route_heading">Fjartengt VPN</string>
+    <string name="app_route_through">Um fjartengda VPN-ið</string>
+    <string name="app_route_through_explanation">Þetta forrit tengist um fjartengda VPN-ið þitt, sem sér umferð þess í stað netsins þíns.</string>
+    <string name="app_route_direct">Beint frá þessu tæki</string>
+    <string name="app_route_direct_explanation">Þetta forrit tengist um þitt eigið net. Vöktun og útilokun rekjara gilda áfram. DNS-fyrirspurnir þess fara á nafnaþjón netsins þíns í stað VPN-sins og forritið sér raunverulegt vistfang tækisins — sum forrit þurfa það, til dæmis til að ná í staðbundin tæki eða athuga captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Ekkert fjartengt VPN er uppsett, svo öll umferð fer nú þegar beint frá þessu tæki.</string>
+    <string name="app_route_unavailable_bypassed">Þetta forrit sniðgengur TrackerControl algjörlega, svo það er engin umferð til að beina.</string>
+    <string name="app_route_unavailable_partial_routes">Fjartengda VPN-ið þitt ber ekki alla umferð (AllowedIPs þess er ekki full göng). Beining eftir forriti krefst fullra ganga því allar leiðir eru sameiginlegar öllum forritum.</string>
 </resources>

@@ -498,4 +498,18 @@
     <string name="app_state_no_internet_shared_uid">Относится и к %1$s: это приложение использует общий с ним идентификатор пользователя Android.</string>
     <string name="app_state_bypassed">В обход TrackerControl</string>
     <string name="app_state_bypassed_explanation">Приложение подключается напрямую, минуя TrackerControl. Для него ничего не отслеживается и не блокируется. Используйте это как крайнюю меру, если приложение по-прежнему не работает.\n\nПримечание: параметр \"Блокировать соединения без VPN\" в настройках VPN Android должен быть ОТКЛЮЧЁН, чтобы это работало.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Направлять через удалённый VPN</string>
+    <string name="summary_wg_route_mode">Какие приложения направляются через удалённый VPN. Остальные по-прежнему полностью отслеживаются и фильтруются — они просто подключаются через сеть этого устройства.</string>
+    <string name="wg_route_mode_all">Все приложения</string>
+    <string name="wg_route_mode_selected">Только выбранные приложения</string>
+    <string name="app_route_heading">Удалённый VPN</string>
+    <string name="app_route_through">Через удалённый VPN</string>
+    <string name="app_route_through_explanation">Это приложение подключается через ваш удалённый VPN, который видит его трафик вместо вашей сети.</string>
+    <string name="app_route_direct">Напрямую с этого устройства</string>
+    <string name="app_route_direct_explanation">Это приложение подключается через вашу собственную сеть. Отслеживание и блокировка трекеров по-прежнему действуют. Его DNS-запросы идут к резолверу вашей сети, а не VPN, и оно видит настоящий адрес устройства — некоторым приложениям это нужно, например для доступа к локальным устройствам или проверки captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Удалённый VPN не настроен, поэтому весь трафик и так уходит напрямую с этого устройства.</string>
+    <string name="app_route_unavailable_bypassed">Это приложение полностью обходит TrackerControl, поэтому направлять нечего.</string>
+    <string name="app_route_unavailable_partial_routes">Ваш удалённый VPN передаёт не весь трафик (его AllowedIPs не образует полный туннель). Маршрутизация по приложениям требует полного туннеля, так как маршруты общие для всех приложений.</string>
 </resources>

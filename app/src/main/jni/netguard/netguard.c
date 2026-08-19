@@ -423,6 +423,22 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1start(JNIEnv *env, job
     return sv[1];
 }
 
+// Whether the WireGuard bridge currently accepts packets. Only a hint: the
+// bridge can stop between this call and the write, which the caller re-decides
+// on. Kept separate from write_wireguard_packet so the routing decision can be
+// made before committing to a write.
+int wireguard_active() {
+    if (pthread_mutex_lock(&wg_outbound_lock))
+        return 0;
+
+    int active = (wg_outbound_fd >= 0);
+
+    if (pthread_mutex_unlock(&wg_outbound_lock))
+        log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed after probe");
+
+    return active;
+}
+
 int write_wireguard_packet(const void *packet, size_t length,
                            ssize_t *written, int *write_errno) {
     *written = -1;
@@ -451,6 +467,32 @@ JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1required(JNIEnv *env, jobject instance,
                                                                    jboolean required) {
     atomic_store_explicit(&wg_required, required ? 1 : 0, memory_order_release);
+}
+
+JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1route(JNIEnv *env, jobject instance,
+                                                                jintArray uids_,
+                                                                jboolean default_tunnel) {
+    jint count = 0;
+    jint *uids = NULL;
+    if (uids_ != NULL) {
+        count = (*env)->GetArrayLength(env, uids_);
+        if (count > 0) {
+            uids = (*env)->GetIntArrayElements(env, uids_, NULL);
+            if (uids == NULL) {
+                log_android(ANDROID_LOG_ERROR, "wg route uids unavailable, keeping previous");
+                return;
+            }
+        }
+    }
+
+    set_route_uids(uids, count, default_tunnel ? 1 : 0);
+
+    if (uids != NULL)
+        (*env)->ReleaseIntArrayElements(env, uids_, uids, JNI_ABORT);
+
+    log_android(ANDROID_LOG_WARN, "WireGuard routing: %d tunnelled uids, default %s",
+                count, default_tunnel ? "tunnel" : "direct");
 }
 
 JNIEXPORT void JNICALL
@@ -489,6 +531,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1done(
         ng_free(uid_cache, __FILE__, __LINE__);
     uid_cache_size = 0;
     uid_cache = NULL;
+
+    clear_route_uids();
 
     ng_free(ctx, __FILE__, __LINE__);
 }

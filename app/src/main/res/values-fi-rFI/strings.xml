@@ -458,4 +458,18 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Koskee myös sovellusta %1$s, jolla on sama Android-käyttäjätunnus kuin tällä sovelluksella.</string>
     <string name="app_state_bypassed">Ohita TrackerControl</string>
     <string name="app_state_bypassed_explanation">Sovellus muodostaa yhteyden suoraan, TrackerControlin ohi. Sille ei valvota eikä estetä mitään. Käytä tätä viimeisenä keinona, jos sovellus ei vieläkään toimi.\n\nHuomaa: Androidin VPN-asetusten kohdan \"Estä yhteydet ilman VPN:ää\" on oltava POIS KÄYTÖSTÄ, jotta tämä toimii.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Reititä etä-VPN:n kautta</string>
+    <string name="summary_wg_route_mode">Mitkä sovellukset kulkevat etä-VPN:n kautta. Muita valvotaan ja suodatetaan edelleen täysin — ne vain yhdistävät tämän laitteen omasta verkosta.</string>
+    <string name="wg_route_mode_all">Kaikki sovellukset</string>
+    <string name="wg_route_mode_selected">Vain valitut sovellukset</string>
+    <string name="app_route_heading">Etä-VPN</string>
+    <string name="app_route_through">Etä-VPN:n kautta</string>
+    <string name="app_route_through_explanation">Tämä sovellus yhdistää etä-VPN:si kautta, joka näkee sen liikenteen verkkosi sijaan.</string>
+    <string name="app_route_direct">Suoraan tästä laitteesta</string>
+    <string name="app_route_direct_explanation">Tämä sovellus yhdistää omasta verkostasi. Seuraimien valvonta ja esto ovat edelleen voimassa. Sen DNS-kyselyt menevät verkkosi nimipalvelimelle VPN:n sijaan, ja sovellus näkee laitteen todellisen osoitteen — jotkin sovellukset tarvitsevat sitä, esimerkiksi paikallisten laitteiden tavoittamiseen tai captive portalin tarkistamiseen.</string>
+    <string name="app_route_unavailable_no_vpn">Etä-VPN:ää ei ole määritetty, joten kaikki liikenne lähtee jo suoraan tästä laitteesta.</string>
+    <string name="app_route_unavailable_bypassed">Tämä sovellus ohittaa TrackerControlin kokonaan, joten reititettävää liikennettä ei ole.</string>
+    <string name="app_route_unavailable_partial_routes">Etä-VPN:si ei kuljeta kaikkea liikennettä (sen AllowedIPs ei ole täysi tunneli). Sovelluskohtainen reititys vaatii täyden tunnelin, koska reitit ovat kaikille sovelluksille yhteiset.</string>
 </resources>

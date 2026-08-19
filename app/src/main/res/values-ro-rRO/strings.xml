@@ -85,4 +85,18 @@
     <string name="app_state_no_internet_shared_uid">Se aplică și pentru %1$s, care împarte un ID de utilizator Android cu această aplicație.</string>
     <string name="app_state_bypassed">Ocolește TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Rutează prin VPN-ul la distanță</string>
+    <string name="summary_wg_route_mode">Care aplicații sunt trimise prin VPN-ul la distanță. Celelalte rămân complet monitorizate și filtrate — doar se conectează din rețeaua acestui dispozitiv.</string>
+    <string name="wg_route_mode_all">Toate aplicațiile</string>
+    <string name="wg_route_mode_selected">Doar aplicațiile selectate</string>
+    <string name="app_route_heading">VPN la distanță</string>
+    <string name="app_route_through">Prin VPN-ul la distanță</string>
+    <string name="app_route_through_explanation">Această aplicație se conectează prin VPN-ul dvs. la distanță, care îi vede traficul în locul rețelei dvs.</string>
+    <string name="app_route_direct">Direct de pe acest dispozitiv</string>
+    <string name="app_route_direct_explanation">Această aplicație se conectează din propria rețea. Monitorizarea și blocarea urmăritorilor rămân valabile. Interogările ei DNS merg la rezolvatorul rețelei dvs., nu la cel al VPN-ului, iar aplicația vede adresa reală a dispozitivului — unele aplicații au nevoie de asta, de exemplu pentru a ajunge la dispozitive locale sau a verifica un captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Nu este configurat niciun VPN la distanță, așa că tot traficul iese deja direct de pe acest dispozitiv.</string>
+    <string name="app_route_unavailable_bypassed">Această aplicație ocolește complet TrackerControl, deci nu există trafic de rutat.</string>
+    <string name="app_route_unavailable_partial_routes">VPN-ul dvs. la distanță nu transportă tot traficul (AllowedIPs nu formează un tunel complet). Rutarea per aplicație necesită un tunel complet, deoarece rutele sunt partajate de toate aplicațiile.</string>
 </resources>

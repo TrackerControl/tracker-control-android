@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -43,6 +44,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.work.Data;
@@ -54,6 +56,7 @@ import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisWorker;
 import net.kollnig.missioncontrol.data.AppProtectionState;
 import net.kollnig.missioncontrol.data.BlockingMode;
+import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -475,6 +478,88 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 applyState(selected, w);
                 notifyDataSetChanged();
             });
+
+            bindRemoteRouting(holder);
+        }
+    }
+
+    /**
+     * The remote-routing control, which is deliberately independent of the
+     * protection state above: whether an app is filtered and whether it is
+     * forwarded through the remote VPN are separate choices (#723).
+     */
+    private void bindRemoteRouting(VHHeader holder) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean wgEnabled = prefs.getBoolean("wg_enabled", false)
+                && !TextUtils.isEmpty(prefs.getString("wg_config", ""));
+        boolean applyApp = apply.getBoolean(mAppId, true);
+        boolean defaultRoutes = wgEnabled && hasDefaultRoutes(prefs);
+
+        RemoteRoutingLogic.Unavailable unavailable =
+                RemoteRoutingLogic.getUnavailableReason(wgEnabled, defaultRoutes, applyApp);
+        if (unavailable != null) {
+            holder.mAppRoute.setVisibility(View.GONE);
+            holder.mAppRouteUnavailable.setVisibility(View.VISIBLE);
+            holder.mAppRouteUnavailable.setText(explainUnavailable(unavailable));
+            return;
+        }
+
+        holder.mAppRouteUnavailable.setVisibility(View.GONE);
+        holder.mAppRoute.setVisibility(View.VISIBLE);
+
+        String mode = RemoteRoutingLogic.normalizeMode(
+                prefs.getString(Rule.PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
+        boolean tunnelled = RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true);
+
+        holder.mAppRoute.setOnCheckedChangeListener(null);
+        holder.mAppRoute.check(tunnelled ? R.id.rbRouteTunnel : R.id.rbRouteDirect);
+        holder.mAppRoute.setOnCheckedChangeListener((group, checkedId) -> {
+            boolean wantsTunnel = (checkedId == R.id.rbRouteTunnel);
+            if (wantsTunnel == RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true))
+                return;
+
+            mContext.getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE)
+                    .edit().putBoolean(mAppId, wantsTunnel).apply();
+
+            AsyncTask.execute(() -> {
+                Rule.clearCache(mContext);
+                ServiceSinkhole.reload("app routing changed", mContext, false);
+            });
+        });
+    }
+
+    @Nullable
+    private Boolean getRouteOverride() {
+        SharedPreferences wgRoute = mContext.getSharedPreferences(Rule.PREF_WG_ROUTE,
+                Context.MODE_PRIVATE);
+        return wgRoute.contains(mAppId) ? wgRoute.getBoolean(mAppId, true) : null;
+    }
+
+    private boolean hasDefaultRoutes(SharedPreferences prefs) {
+        try {
+            net.kollnig.missioncontrol.wg.WgConfig config =
+                    net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE
+                            .parse(prefs.getString("wg_config", ""));
+            List<String> allowedIps = new ArrayList<>();
+            for (net.kollnig.missioncontrol.wg.WgPeer peer : config.getPeers())
+                allowedIps.addAll(peer.getAllowedIPs());
+            return RemoteRoutingLogic.hasDefaultRoutes(allowedIps,
+                    prefs.getBoolean("ip6", true));
+        } catch (Throwable ex) {
+            Log.w(TAG, "Cannot read AllowedIPs, hiding per-app routing: " + ex);
+            return false;
+        }
+    }
+
+    private String explainUnavailable(RemoteRoutingLogic.Unavailable unavailable) {
+        switch (unavailable) {
+            case BYPASSED:
+                return mContext.getString(R.string.app_route_unavailable_bypassed);
+            case PARTIAL_ROUTES:
+                return mContext.getString(R.string.app_route_unavailable_partial_routes);
+            case NO_REMOTE_VPN:
+            default:
+                return mContext.getString(R.string.app_route_unavailable_no_vpn);
         }
     }
 
@@ -615,6 +700,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mLibraryDisclaimer;
         final RadioGroup mAppState;
         final TextView mNoInternetExplanation;
+        final View mAppRouteCard;
+        final RadioGroup mAppRoute;
+        final TextView mAppRouteUnavailable;
 
         VHHeader(View view) {
             super(view);
@@ -622,6 +710,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mLibraryDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
             mAppState = view.findViewById(R.id.rgAppState);
             mNoInternetExplanation = view.findViewById(R.id.tvStateNoInternetDesc);
+            mAppRouteCard = view.findViewById(R.id.cardAppRoute);
+            mAppRoute = view.findViewById(R.id.rgAppRoute);
+            mAppRouteUnavailable = view.findViewById(R.id.tvAppRouteUnavailable);
         }
     }
 }
