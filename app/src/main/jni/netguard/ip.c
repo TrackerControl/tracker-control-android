@@ -61,6 +61,10 @@ static int is_local_dest(int version, const void *daddr) {
 // and defaulting on a miss would send the rest of an established, already-NATted
 // flow into the tunnel mid-stream. The session table is the authoritative and
 // free source, so consult it before giving up.
+//
+// This runs only behind a route_flow_lookup miss, so it is the second fallback
+// rather than the per-packet cost it once was. The UDP arm repeats the 5-tuple
+// match in udp.c's has_udp_session; keep the two in step.
 static jint get_session_uid(const struct arguments *args, int version, int protocol,
                             const uint8_t *pkt, const uint8_t *payload) {
     const struct iphdr *ip4 = (struct iphdr *) pkt;
@@ -69,6 +73,17 @@ static jint get_session_uid(const struct arguments *args, int version, int proto
     for (struct ng_session *cur = args->ctx->ng_session; cur != NULL; cur = cur->next) {
         if (cur->protocol != protocol)
             continue;
+
+        if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6) {
+            const struct icmp *icmp = (struct icmp *) payload;
+            if (cur->icmp.version == version && cur->icmp.id == icmp->icmp_id &&
+                (version == 4
+                 ? cur->icmp.saddr.ip4 == ip4->saddr && cur->icmp.daddr.ip4 == ip4->daddr
+                 : memcmp(&cur->icmp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->icmp.daddr.ip6, &ip6->ip6_dst, 16) == 0))
+                return cur->icmp.uid;
+            continue;
+        }
 
         if (protocol == IPPROTO_UDP) {
             const struct udphdr *udphdr = (struct udphdr *) payload;
@@ -371,7 +386,13 @@ void handle_ip(const struct arguments *args,
     jint uid = -1;
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play))) {
+        // SNI research mode lets a 443 SYN through without a UID so the
+        // ClientHello can be reassembled first. That is fine for the block
+        // decision, but the routing fork needs the UID now: with no UID and no
+        // session, the SYN falls to the global default and every later packet
+        // of that flow inherits the answer from it.
+        (protocol == IPPROTO_TCP && syn &&
+         (dport != 443 || !is_play || route_uid_relevant()))) {
             if (args->ctx->sdk <= 28) // Android 9 Pie
                 uid = get_uid(version, protocol, saddr, sport, daddr, dport);
             else
@@ -535,21 +556,33 @@ void handle_ip(const struct arguments *args,
         // everyone who has not opted in.
         int tunnel_uid;
         if (route_uid_relevant()) {
-            // Fall back to the session table rather than to the global default:
-            // defaulting would divert an already-NATted flow mid-stream. Never
-            // re-run the real lookup here — get_uid_q is a binder call.
-            //
-            // One case still lands on the default: the first TCP:443 SYN while
-            // SNI research mode is on, which has neither a uid nor a session.
-            jint route_uid = (uid >= 0
-                              ? uid
-                              : get_session_uid(args, version, protocol, pkt, payload));
-            tunnel_uid = is_tunnel_uid(route_uid);
+            // A flow keeps the verdict its first packet was given. Tunnelled
+            // flows never create an ng_session — the WireGuard write below
+            // returns first — so without this their later packets have nothing
+            // to resolve a UID from and would be re-decided on the global
+            // default, mid-stream.
+            if (!route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
+                                   &tunnel_uid)) {
+                // Fall back to the session table rather than to the global
+                // default: defaulting would divert an already-NATted flow
+                // mid-stream. Never re-run the real lookup here — get_uid_q is
+                // a binder call.
+                jint route_uid = (uid >= 0
+                                  ? uid
+                                  : get_session_uid(args, version, protocol, pkt, payload));
+                tunnel_uid = is_tunnel_uid(route_uid);
+
+                // Only remember a verdict that was actually decided on a UID;
+                // caching a guessed default would pin it for the whole flow.
+                if (route_uid >= 0)
+                    route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                     tunnel_uid);
+            }
         } else
             tunnel_uid = route_default_is_tunnel();
 
         int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
-                                         tunnel_uid, args->fwd53);
+                                         tunnel_uid, route_dns_direct());
 
         if (wg_dest) {
             ssize_t w;

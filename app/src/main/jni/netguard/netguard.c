@@ -456,7 +456,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1required(JNIEnv *env, 
 JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1route(JNIEnv *env, jobject instance,
                                                                 jintArray uids_,
-                                                                jboolean default_tunnel) {
+                                                                jboolean default_tunnel,
+                                                                jboolean dns_direct) {
     jint count = 0;
     jint *uids = NULL;
     if (uids_ != NULL) {
@@ -470,13 +471,14 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1route(JNIEnv *env, job
         }
     }
 
-    set_route_uids(uids, count, default_tunnel ? 1 : 0);
+    set_route_uids(uids, count, default_tunnel ? 1 : 0, dns_direct ? 1 : 0);
 
     if (uids != NULL)
         (*env)->ReleaseIntArrayElements(env, uids_, uids, JNI_ABORT);
 
-    log_android(ANDROID_LOG_WARN, "WireGuard routing: %d tunnelled uids, default %s",
-                count, default_tunnel ? "tunnel" : "direct");
+    log_android(ANDROID_LOG_WARN,
+                "WireGuard routing: default %s, %d uid overrides, direct DNS %s",
+                default_tunnel ? "tunnel" : "direct", count, dns_direct ? "on" : "off");
 }
 
 JNIEXPORT void JNICALL

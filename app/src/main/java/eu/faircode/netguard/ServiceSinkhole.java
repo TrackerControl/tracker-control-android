@@ -189,9 +189,9 @@ public class ServiceSinkhole extends VpnService {
     private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
-    // UIDs forwarded through the remote WireGuard tunnel. Pushed down to the
+    // UIDs whose routing differs from the global default. Pushed down to the
     // packet path as a sorted array; unlisted UIDs follow the global default.
-    private Set<Integer> mapUidTunnel = new HashSet<>();
+    private Set<Integer> mapUidRouteOverride = new HashSet<>();
     private boolean defaultTunnel = true;
     // Resolver used by apps routed around the remote tunnel. Null when the
     // system offers none, in which case their DNS stays in the tunnel.
@@ -311,12 +311,14 @@ public class ServiceSinkhole extends VpnService {
     private native void jni_wireguard_required(boolean required);
 
     /**
-     * Pushes the set of UIDs routed through the remote tunnel down to the
-     * packet path, plus the default applied to every UID not in the set
-     * (unknown UIDs and system traffic). Java writes this while the tunnel
-     * thread reads it, so the native side guards it with its own lock.
+     * Pushes the set of UIDs whose routing differs from the global default down
+     * to the packet path, plus that default (applied to every UID not in the
+     * set — unknown UIDs and system traffic included) and whether direct apps'
+     * DNS is redirected to the system resolver rather than always taking the
+     * tunnel. Java writes this while the tunnel thread reads it, so the native
+     * side guards it with its own lock.
      */
-    private native void jni_wireguard_route(int[] tunnelUids, boolean defaultTunnel);
+    private native void jni_wireguard_route(int[] overrideUids, boolean defaultTunnel, boolean dnsDirect);
 
     private native void jni_done(long context);
 
@@ -2014,33 +2016,46 @@ public class ServiceSinkhole extends VpnService {
         for (Rule rule : listRule)
             mapUidKnown.put(rule.uid, rule.uid);
 
-        mapUidTunnel = mapUidTunnel(listRule);
-        anyDirectRouting = anyDirectRouting(listRule);
-        // Util.getDefaultDNS does binder calls, so resolve it once per reload
-        // rather than on the DNS path.
-        directDnsTarget = resolveDirectDnsTarget();
         defaultTunnel = RemoteRoutingLogic.defaultTunnel(
                 RemoteRoutingLogic.normalizeMode(
                         PreferenceManager.getDefaultSharedPreferences(this)
                                 .getString(Rule.PREF_WG_ROUTE_MODE,
                                         RemoteRoutingLogic.getDefaultMode())));
+        mapUidRouteOverride = mapUidRouteOverride(listRule, defaultTunnel);
+        anyDirectRouting = anyDirectRouting(listRule);
+        // Util.getDefaultDNS does binder calls, so resolve it once per reload
+        // rather than on the DNS path.
+        directDnsTarget = resolveDirectDnsTarget();
 
         lock.writeLock().unlock();
     }
 
     /**
-     * The UIDs whose traffic goes through the remote tunnel.
+     * The UIDs whose routing differs from the global default.
      * <p>
      * A shared UID is tunnelled if any of its packages is: the packet path only
      * ever sees the UID, so the finer per-package answer cannot be honoured and
      * the more private of the two is the right way to round.
+     * <p>
+     * Bypassed apps are skipped rather than counted as direct. They are handed
+     * to {@code addDisallowedApplication}, so no packet of theirs ever reaches
+     * the tun — listing them would put an entry in the override set for every
+     * bypassed app and defeat the empty-set fast path for no benefit.
      */
-    private static Set<Integer> mapUidTunnel(List<Rule> listRule) {
-        Set<Integer> tunnel = new HashSet<>();
-        for (Rule rule : listRule)
-            if (rule.wg_route)
-                tunnel.add(rule.uid);
-        return tunnel;
+    private static Set<Integer> mapUidRouteOverride(List<Rule> listRule, boolean defaultTunnel) {
+        Map<Integer, Boolean> tunnelByUid = new HashMap<>();
+        for (Rule rule : listRule) {
+            if (!rule.apply)
+                continue;
+            Boolean current = tunnelByUid.get(rule.uid);
+            tunnelByUid.put(rule.uid, (current != null && current) || rule.wg_route);
+        }
+
+        Set<Integer> overrides = new HashSet<>();
+        for (Map.Entry<Integer, Boolean> entry : tunnelByUid.entrySet())
+            if (RemoteRoutingLogic.isRouteOverride(entry.getValue(), defaultTunnel))
+                overrides.add(entry.getKey());
+        return overrides;
     }
 
     /**
@@ -2071,26 +2086,27 @@ public class ServiceSinkhole extends VpnService {
 
     /**
      * Whether this UID is routed around the remote tunnel. Mirrors the native
-     * is_tunnel_uid: a UID with no rule of its own — unknown or system traffic
-     * — follows the global default rather than counting as "not tunnelled",
-     * which a bare mapUidTunnel lookup would wrongly report.
+     * is_tunnel_uid: a UID absent from the override set follows the global
+     * default rather than counting as "not tunnelled", which a bare
+     * mapUidRouteOverride lookup would wrongly report.
      */
     private boolean routesDirect(int uid) {
         return RemoteRoutingLogic.routesDirect(
-                mapUidTunnel.contains(uid), mapUidKnown.containsKey(uid), defaultTunnel);
+                mapUidRouteOverride.contains(uid), defaultTunnel);
     }
 
     /** Hands the current routing decision to the packet path. */
     private void pushRoutingToNative() {
         lock.readLock().lock();
-        int[] uids = new int[mapUidTunnel.size()];
+        int[] uids = new int[mapUidRouteOverride.size()];
         int i = 0;
-        for (Integer uid : mapUidTunnel)
+        for (Integer uid : mapUidRouteOverride)
             uids[i++] = uid;
         boolean defaults = defaultTunnel;
+        boolean dnsDirect = RemoteRoutingLogic.redirectDirectDns(anyDirectRouting);
         lock.readLock().unlock();
 
-        jni_wireguard_route(uids, defaults);
+        jni_wireguard_route(uids, defaults, dnsDirect);
     }
 
     public static void prepareHostsBlocked(Context c) {

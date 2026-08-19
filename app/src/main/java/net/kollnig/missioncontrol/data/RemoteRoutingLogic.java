@@ -23,8 +23,8 @@ package net.kollnig.missioncontrol.data;
  * exclude it from the VPN altogether, which also dropped local monitoring and
  * blocking (#723).
  * <p>
- * Pure helpers, no Android dependencies, so the decision table is JVM-testable
- * — the native packet path has no test harness at all.
+ * Pure helpers mirroring the native routing decision, no Android dependencies,
+ * kept JVM-testable so the decision table is covered by unit tests.
  */
 public final class RemoteRoutingLogic {
     /** Every app goes through the remote tunnel. The shipped default. */
@@ -118,23 +118,33 @@ public final class RemoteRoutingLogic {
     }
 
     /**
+     * Whether a UID whose routing differs from the global default should be
+     * pushed to the packet path.
+     * <p>
+     * Only the exceptions are pushed, never the whole tunnelled set: with no
+     * per-app override the set is then empty, which is what lets the packet
+     * path skip the UID lookup entirely. Pushing every tunnelled UID instead
+     * made the default mode — where every applied app is tunnelled — look
+     * indistinguishable from a heavily-overridden one.
+     */
+    public static boolean isRouteOverride(boolean tunnelled, boolean defaultTunnel) {
+        return tunnelled != defaultTunnel;
+    }
+
+    /**
      * Whether one UID's traffic leaves outside the tunnel, mirroring the native
      * is_tunnel_uid.
      * <p>
-     * A UID with no rule of its own — unknown or system traffic — follows the
-     * global default. Treating it as "not tunnelled" merely because it is
-     * absent from the tunnelled set would quietly route system traffic direct.
+     * A UID absent from the override set follows the global default, whatever
+     * it is. That includes system traffic and UIDs belonging to no installed
+     * app, which is what makes the default mode identical to the behaviour
+     * before per-app routing existed.
      *
-     * @param inTunnelSet   whether the UID is in the tunnelled set
-     * @param known         whether any installed app maps to this UID
-     * @param defaultTunnel the global default for unlisted UIDs
+     * @param inOverrideSet whether the UID's routing differs from the default
+     * @param defaultTunnel the global default
      */
-    public static boolean routesDirect(boolean inTunnelSet, boolean known, boolean defaultTunnel) {
-        if (inTunnelSet)
-            return false;
-        if (known)
-            return true;
-        return !defaultTunnel;
+    public static boolean routesDirect(boolean inOverrideSet, boolean defaultTunnel) {
+        return !(defaultTunnel != inOverrideSet);
     }
 
     /**

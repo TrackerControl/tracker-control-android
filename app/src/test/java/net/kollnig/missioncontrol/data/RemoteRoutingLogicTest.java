@@ -108,19 +108,42 @@ public class RemoteRoutingLogicTest {
     }
 
     /**
-     * Unknown and system UIDs have no rule, so they must follow the global
-     * default rather than being read as "not tunnelled".
+     * An app is only ever pushed into the override set when its routing
+     * actually differs from the global default; matching the default in
+     * either direction is not an override.
      */
     @Test
-    public void unknownUidFollowsTheDefaultRatherThanGoingDirect() {
-        assertFalse(RemoteRoutingLogic.routesDirect(false, false, true));
-        assertTrue(RemoteRoutingLogic.routesDirect(false, false, false));
+    public void isRouteOverrideOnlyWhenTunnelledDiffersFromDefault() {
+        assertFalse(RemoteRoutingLogic.isRouteOverride(true, true));
+        assertFalse(RemoteRoutingLogic.isRouteOverride(false, false));
+        assertTrue(RemoteRoutingLogic.isRouteOverride(true, false));
+        assertTrue(RemoteRoutingLogic.isRouteOverride(false, true));
     }
 
+    /**
+     * In the shipped default mode ("all", so defaultTunnel is true) with no
+     * per-app override configured, nothing is an override. That is the
+     * property that keeps the pushed set empty and lets the native fast path
+     * engage for everyone who never touches per-app routing.
+     */
     @Test
-    public void knownUidOutsideTheTunnelSetGoesDirect() {
-        assertTrue(RemoteRoutingLogic.routesDirect(false, true, true));
-        assertFalse(RemoteRoutingLogic.routesDirect(true, true, false));
-        assertFalse(RemoteRoutingLogic.routesDirect(true, true, true));
+    public void defaultModeWithNoOverrideProducesNoOverride() {
+        assertFalse(RemoteRoutingLogic.isRouteOverride(true, true));
+    }
+
+    /**
+     * routesDirect mirrors the native is_tunnel_uid: a UID absent from the
+     * override set follows the global default in both directions, and a UID
+     * present in the set always gets the opposite of the default.
+     */
+    @Test
+    public void routesDirectCoversAllFourCombinations() {
+        // Not in the override set: follows the default, whatever it is.
+        assertFalse(RemoteRoutingLogic.routesDirect(false, true));
+        assertTrue(RemoteRoutingLogic.routesDirect(false, false));
+
+        // In the override set: inverts the default.
+        assertTrue(RemoteRoutingLogic.routesDirect(true, true));
+        assertFalse(RemoteRoutingLogic.routesDirect(true, false));
     }
 }
