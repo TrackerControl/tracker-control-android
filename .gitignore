@@ -1,7 +1,9 @@
 .env
 /output/
 
-.claude/
+.claude/*
+!.claude/settings.json
+.claude/settings.local.json
 /fdroidserver/
 /fdroiddata/
 
