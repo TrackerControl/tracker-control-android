@@ -180,11 +180,12 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- App Protection Card - one state, four mutually exclusive options -->
+    <!-- App controls: tap a row to change protection state or remote VPN routing -->
     <androidx.cardview.widget.CardView
-        android:layout_marginBottom="8dp"
+        android:id="@+id/cardAppControls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:clipToPadding="false"
         app:cardCornerRadius="4dp"
         app:cardElevation="1dp"
@@ -193,178 +194,115 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvAppStateHeading"
+            <LinearLayout
+                android:id="@+id/rowAppState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="@string/app_state_heading"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:minHeight="56dp"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
-            <RadioGroup
-                android:id="@+id/rgAppState"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvAppStateTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_state_heading"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvAppStateValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivAppStateChevron"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="?android:attr/textColorSecondary" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:background="?android:attr/listDivider" />
+
+            <LinearLayout
+                android:id="@+id/rowAppRoute"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:minHeight="56dp"
+                android:gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
-                <RadioButton
-                    android:id="@+id/rbStateProtected"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:contentDescription="@string/app_state_protected"
-                    android:text="@string/app_state_protected"
-                    android:textStyle="bold" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvStateProtectedDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/app_state_protected_explanation"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                    <TextView
+                        android:id="@+id/tvAppRouteTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_route_heading"
+                        android:textColor="?android:textColorPrimary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                <RadioButton
-                    android:id="@+id/rbStateTrackersAllowed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:contentDescription="@string/app_state_trackers_allowed"
-                    android:text="@string/app_state_trackers_allowed"
-                    android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvAppRouteValue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="?android:textColorSecondary"
+                        android:textSize="13sp" />
 
-                <TextView
-                    android:id="@+id/tvStateTrackersAllowedDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/app_state_trackers_allowed_explanation"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                </LinearLayout>
 
-                <RadioButton
-                    android:id="@+id/rbStateNoInternet"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:contentDescription="@string/app_state_no_internet"
-                    android:text="@string/app_state_no_internet"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/ivAppRouteChevron"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="?android:attr/textColorSecondary" />
 
-                <TextView
-                    android:id="@+id/tvStateNoInternetDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/app_state_no_internet_explanation"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
-
-                <RadioButton
-                    android:id="@+id/rbStateBypassed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:contentDescription="@string/app_state_bypassed"
-                    android:text="@string/app_state_bypassed"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvStateBypassedDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:text="@string/app_state_bypassed_explanation"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
-
-            </RadioGroup>
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- Remote VPN routing: independent of the protection state above -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardAppRoute"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="@dimen/z_card">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/tvAppRouteHeading"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:text="@string/app_route_heading"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvAppRouteUnavailable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                android:visibility="gone" />
-
-            <RadioGroup
-                android:id="@+id/rgAppRoute"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <RadioButton
-                    android:id="@+id/rbRouteTunnel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:contentDescription="@string/app_route_through"
-                    android:text="@string/app_route_through"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvRouteTunnelDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:text="@string/app_route_through_explanation"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
-
-                <RadioButton
-                    android:id="@+id/rbRouteDirect"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:contentDescription="@string/app_route_direct"
-                    android:text="@string/app_route_direct"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvRouteDirectDesc"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:text="@string/app_route_direct_explanation"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
-
-            </RadioGroup>
+            </LinearLayout>
 
         </LinearLayout>
 

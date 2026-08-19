@@ -37,6 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,6 +94,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private View mLayoutProgress;
     private TextView mTvAnalysisProgress;
     private ProgressBar mPbTrackerDetection;
+
+    // At most one of the app-controls bottom sheets is open at a time.
+    private BottomSheetDialog mOpenSheet;
 
     public TrackersListAdapter(Context c,
             RecyclerView v,
@@ -455,29 +459,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
 
-            // The internet block is keyed by UID, so it necessarily covers every
-            // package sharing that UID. Say so rather than letting it surprise.
-            String relatedApps = getRelatedApps();
-            if (relatedApps == null) {
-                holder.mNoInternetExplanation.setText(R.string.app_state_no_internet_explanation);
-            } else {
-                String explanation = mContext.getString(R.string.app_state_no_internet_explanation_shared,
-                        mContext.getString(R.string.app_state_no_internet_explanation),
-                        mContext.getString(R.string.app_state_no_internet_shared_uid, relatedApps));
-                holder.mNoInternetExplanation.setText(explanation);
-            }
-
-            AppProtectionState state = currentState(w);
-            holder.mAppState.setOnCheckedChangeListener(null);
-            holder.mAppState.check(radioIdFor(state));
-            holder.mAppState.setOnCheckedChangeListener((group, checkedId) -> {
-                AppProtectionState selected = stateForRadioId(checkedId);
-                if (selected == null || selected == currentState(w))
-                    return;
-
-                applyState(selected, w);
-                notifyDataSetChanged();
-            });
+            holder.mAppStateValue.setText(stateLabelRes(currentState(w)));
+            holder.mRowAppState.setOnClickListener(v -> showProtectionSheet(w));
 
             bindRemoteRouting(holder);
         }
@@ -498,34 +481,129 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         RemoteRoutingLogic.Unavailable unavailable =
                 RemoteRoutingLogic.getUnavailableReason(wgEnabled, defaultRoutes, applyApp);
         if (unavailable != null) {
-            holder.mAppRoute.setVisibility(View.GONE);
-            holder.mAppRouteUnavailable.setVisibility(View.VISIBLE);
-            holder.mAppRouteUnavailable.setText(explainUnavailable(unavailable));
+            holder.mRowAppRoute.setOnClickListener(null);
+            holder.mRowAppRoute.setClickable(false);
+            holder.mRowAppRoute.setEnabled(false);
+            holder.mAppRouteChevron.setVisibility(View.GONE);
+            holder.mAppRouteValue.setText(explainUnavailable(unavailable));
             return;
         }
-
-        holder.mAppRouteUnavailable.setVisibility(View.GONE);
-        holder.mAppRoute.setVisibility(View.VISIBLE);
 
         String mode = RemoteRoutingLogic.normalizeMode(
                 prefs.getString(Rule.PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
         boolean tunnelled = RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true);
 
-        holder.mAppRoute.setOnCheckedChangeListener(null);
-        holder.mAppRoute.check(tunnelled ? R.id.rbRouteTunnel : R.id.rbRouteDirect);
-        holder.mAppRoute.setOnCheckedChangeListener((group, checkedId) -> {
-            boolean wantsTunnel = (checkedId == R.id.rbRouteTunnel);
-            if (wantsTunnel == RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true))
-                return;
+        holder.mRowAppRoute.setEnabled(true);
+        holder.mRowAppRoute.setClickable(true);
+        holder.mAppRouteChevron.setVisibility(View.VISIBLE);
+        holder.mAppRouteValue.setText(tunnelled ? R.string.app_route_through : R.string.app_route_direct);
+        holder.mRowAppRoute.setOnClickListener(v -> showRouteSheet());
+    }
 
-            mContext.getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE)
-                    .edit().putBoolean(mAppId, wantsTunnel).apply();
+    /**
+     * Shows the protection-state bottom sheet, wiring the shared-UID
+     * No-Internet explanation into the sheet's own description view.
+     */
+    private void showProtectionSheet(InternetBlocklist w) {
+        BottomSheetDialog sheet = new BottomSheetDialog(mContext);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.bottom_sheet_app_state, null);
+        sheet.setContentView(view);
 
-            AsyncTask.execute(() -> {
-                Rule.clearCache(mContext);
-                ServiceSinkhole.reload("app routing changed", mContext, false);
-            });
+        // The internet block is keyed by UID, so it necessarily covers every
+        // package sharing that UID. Say so rather than letting it surprise.
+        TextView noInternetDesc = view.findViewById(R.id.tvStateNoInternetDesc);
+        String relatedApps = getRelatedApps();
+        if (relatedApps == null) {
+            noInternetDesc.setText(R.string.app_state_no_internet_explanation);
+        } else {
+            String explanation = mContext.getString(R.string.app_state_no_internet_explanation_shared,
+                    mContext.getString(R.string.app_state_no_internet_explanation),
+                    mContext.getString(R.string.app_state_no_internet_shared_uid, relatedApps));
+            noInternetDesc.setText(explanation);
+        }
+
+        RadioGroup rgAppState = view.findViewById(R.id.rgAppState);
+        rgAppState.check(radioIdFor(currentState(w)));
+        rgAppState.setOnCheckedChangeListener((group, checkedId) -> {
+            AppProtectionState selected = stateForRadioId(checkedId);
+
+            // Dismiss first: applyState() may trigger a reload, and the sheet
+            // shouldn't linger on screen while that happens.
+            sheet.dismiss();
+
+            if (selected != null && selected != currentState(w)) {
+                applyState(selected, w);
+                notifyDataSetChanged();
+            }
         });
+
+        showSheet(sheet);
+    }
+
+    /**
+     * Shows the remote-routing bottom sheet, recomputing the current mode the
+     * same way {@link #bindRemoteRouting(VHHeader)} does.
+     */
+    private void showRouteSheet() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String mode = RemoteRoutingLogic.normalizeMode(
+                prefs.getString(Rule.PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
+        boolean tunnelled = RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true);
+
+        BottomSheetDialog sheet = new BottomSheetDialog(mContext);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.bottom_sheet_app_route, null);
+        sheet.setContentView(view);
+
+        RadioGroup rgAppRoute = view.findViewById(R.id.rgAppRoute);
+        rgAppRoute.check(tunnelled ? R.id.rbRouteTunnel : R.id.rbRouteDirect);
+        rgAppRoute.setOnCheckedChangeListener((group, checkedId) -> {
+            boolean wantsTunnel = (checkedId == R.id.rbRouteTunnel);
+
+            // Dismiss first: the reload triggered below shouldn't hold the
+            // sheet open while it runs.
+            sheet.dismiss();
+
+            if (wantsTunnel != RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true)) {
+                mContext.getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE)
+                        .edit().putBoolean(mAppId, wantsTunnel).apply();
+
+                AsyncTask.execute(() -> {
+                    Rule.clearCache(mContext);
+                    ServiceSinkhole.reload("app routing changed", mContext, false);
+                });
+
+                // The row subtitle now depends on this value.
+                notifyDataSetChanged();
+            }
+        });
+
+        showSheet(sheet);
+    }
+
+    /**
+     * Only one sheet should be open at a time, and it must not outlive the
+     * RecyclerView that hosts the row that opened it.
+     */
+    private void showSheet(BottomSheetDialog sheet) {
+        if (mOpenSheet != null)
+            mOpenSheet.dismiss();
+
+        mOpenSheet = sheet;
+        sheet.setOnDismissListener(d -> {
+            if (mOpenSheet == d)
+                mOpenSheet = null;
+        });
+        sheet.show();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+
+        if (mOpenSheet != null) {
+            mOpenSheet.dismiss();
+            mOpenSheet = null;
+        }
     }
 
     @Nullable
@@ -657,6 +735,20 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return null;
     }
 
+    private static int stateLabelRes(AppProtectionState state) {
+        switch (state) {
+            case TRACKERS_ALLOWED:
+                return R.string.app_state_trackers_allowed;
+            case NO_INTERNET:
+                return R.string.app_state_no_internet;
+            case BYPASSED:
+                return R.string.app_state_bypassed;
+            case PROTECTED:
+            default:
+                return R.string.app_state_protected;
+        }
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size() + 1;
@@ -698,21 +790,21 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHHeader extends RecyclerView.ViewHolder {
         final TextView mLibraryExplanation;
         final TextView mLibraryDisclaimer;
-        final RadioGroup mAppState;
-        final TextView mNoInternetExplanation;
-        final View mAppRouteCard;
-        final RadioGroup mAppRoute;
-        final TextView mAppRouteUnavailable;
+        final View mRowAppState;
+        final TextView mAppStateValue;
+        final View mRowAppRoute;
+        final TextView mAppRouteValue;
+        final View mAppRouteChevron;
 
         VHHeader(View view) {
             super(view);
             mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
             mLibraryDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
-            mAppState = view.findViewById(R.id.rgAppState);
-            mNoInternetExplanation = view.findViewById(R.id.tvStateNoInternetDesc);
-            mAppRouteCard = view.findViewById(R.id.cardAppRoute);
-            mAppRoute = view.findViewById(R.id.rgAppRoute);
-            mAppRouteUnavailable = view.findViewById(R.id.tvAppRouteUnavailable);
+            mRowAppState = view.findViewById(R.id.rowAppState);
+            mAppStateValue = view.findViewById(R.id.tvAppStateValue);
+            mRowAppRoute = view.findViewById(R.id.rowAppRoute);
+            mAppRouteValue = view.findViewById(R.id.tvAppRouteValue);
+            mAppRouteChevron = view.findViewById(R.id.ivAppRouteChevron);
         }
     }
 }
