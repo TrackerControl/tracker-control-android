@@ -22,6 +22,7 @@ import static net.kollnig.missioncontrol.data.TrackerList.TRACKER_HOSTLIST;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Spannable;
@@ -34,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +52,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisWorker;
+import net.kollnig.missioncontrol.data.AppProtectionState;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -390,9 +393,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 holder.mSwitchTracker.setOnCheckedChangeListener(null);
                 holder.mCompaniesList.setOnItemClickListener(null);
             } else {
-                boolean enabled = apply.getBoolean(mAppId, true)
-                        && !w.blockedInternet(mAppUid)
-                        && trackerProtectionEnabled;
+                boolean enabled = currentState(w) == AppProtectionState.PROTECTED;
                 holder.mSwitchTracker.setEnabled(enabled);
                 holder.mSwitchTracker.setChecked(
                         b.blocked(mAppUid, trackerCategoryName));
@@ -451,70 +452,124 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
 
-            boolean isBrowser = BlockingMode.isBrowserApp(mContext, mAppId);
-            boolean showTrackerProtection = !BlockingMode.isMinimalMode(mContext) || isBrowser;
-            holder.mTrackerProtectionRow.setVisibility(showTrackerProtection ? View.VISIBLE : View.GONE);
-            holder.mTrackerProtectionDivider.setVisibility(showTrackerProtection ? View.VISIBLE : View.GONE);
-            holder.mSwitchVPN.setOnCheckedChangeListener(null);
-
-            // Tracker protection toggle. In minimal mode this is only shown for
-            // browsers, where tracker blocking defaults off but can be opted in.
-            if (showTrackerProtection) {
-                holder.mSwitchVPN.setVisibility(View.VISIBLE);
-                holder.mSwitchVPN.setEnabled(apply.getBoolean(mAppId, true)
-                        && !w.blockedInternet(mAppUid));
-                holder.mSwitchVPN.setChecked(BlockingMode.isTrackerProtectionEnabled(
-                        mContext, tracker_protect, mAppId));
-                holder.mSwitchVPN.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if (!buttonView.isPressed())
-                        return; // to fix errors
-                    tracker_protect.edit().putBoolean(mAppId, isChecked).apply();
-
-                    // Move expensive operations off the main thread to prevent UI freezing
-                    // Rule.clearCache() can block waiting for a lock held by Rule.getRules()
-                    AsyncTask.execute(() -> {
-                        Rule.clearCache(mContext);
-                        ServiceSinkhole.reload("app blocking changed", mContext, false);
-                    });
-
-                    notifyDataSetChanged();
-                });
+            // The internet block is keyed by UID, so it necessarily covers every
+            // package sharing that UID. Say so rather than letting it surprise.
+            String relatedApps = getRelatedApps();
+            if (relatedApps == null) {
+                holder.mNoInternetExplanation.setText(R.string.app_state_no_internet_explanation);
             } else {
-                holder.mSwitchVPN.setVisibility(View.GONE);
+                String explanation = mContext.getString(R.string.app_state_no_internet_explanation_shared,
+                        mContext.getString(R.string.app_state_no_internet_explanation),
+                        relatedApps);
+                holder.mNoInternetExplanation.setText(explanation);
             }
 
-            // Blocking of Internet
-            holder.mSwitchInternet.setEnabled(apply.getBoolean(mAppId, true));
-            holder.mSwitchInternet.setChecked(
-                    !w.blockedInternet(mAppUid));
-            holder.mSwitchInternet.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
-                if (!buttonView.isPressed())
-                    return; // to fix errors
-
-                if (hasBecomeChecked)
-                    w.unblock(mAppUid);
-                else
-                    w.block(mAppUid);
-
-                notifyDataSetChanged();
-            });
-
-            // Exclude from VPN toggle (completely bypasses TrackerControl)
-            holder.mSwitchVpnExclude.setChecked(!apply.getBoolean(mAppId, true));
-            holder.mSwitchVpnExclude.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (!buttonView.isPressed())
+            AppProtectionState state = currentState(w);
+            holder.mAppState.setOnCheckedChangeListener(null);
+            holder.mAppState.check(radioIdFor(state));
+            holder.mAppState.setOnCheckedChangeListener((group, checkedId) -> {
+                AppProtectionState selected = stateForRadioId(checkedId);
+                if (selected == null || selected == currentState(w))
                     return;
-                apply.edit().putBoolean(mAppId, !isChecked).apply();
-                BlockingMode.clearAutoExcludedApp(mContext, mAppId);
 
-                AsyncTask.execute(() -> {
-                    Rule.clearCache(mContext);
-                    ServiceSinkhole.reload("vpn exclude changed", mContext, false);
-                });
-
+                applyState(selected, w);
                 notifyDataSetChanged();
             });
         }
+    }
+
+    /**
+     * Comma-separated labels of the other packages sharing this app's UID, or
+     * {@code null} when the UID belongs to this package alone.
+     */
+    @Nullable
+    private String getRelatedApps() {
+        PackageManager pm = mContext.getPackageManager();
+        String[] packages = Util.getPackagesForUid(pm, mAppUid);
+        if (packages == null || packages.length < 2)
+            return null;
+
+        List<String> names = new ArrayList<>();
+        for (String packageName : packages) {
+            if (packageName.equals(mAppId))
+                continue;
+
+            try {
+                names.add(pm.getApplicationLabel(pm.getApplicationInfo(packageName, 0)).toString());
+            } catch (PackageManager.NameNotFoundException ignored) {
+                names.add(packageName);
+            }
+        }
+
+        return names.isEmpty() ? null : TextUtils.join(", ", names);
+    }
+
+    private AppProtectionState currentState(InternetBlocklist w) {
+        return AppProtectionState.resolve(
+                apply.getBoolean(mAppId, true),
+                BlockingMode.isTrackerProtectionEnabled(mContext, tracker_protect, mAppId),
+                w.blockedInternet(mAppUid));
+    }
+
+    private void applyState(AppProtectionState target, InternetBlocklist w) {
+        AppProtectionState.Change change = AppProtectionState.of(target);
+
+        boolean applyBefore = apply.getBoolean(mAppId, true);
+        boolean protectBefore = BlockingMode.isTrackerProtectionEnabled(mContext, tracker_protect, mAppId);
+
+        apply.edit().putBoolean(mAppId, change.apply).apply();
+        // Only a re-included app leaves the mode-managed exclusion set. Clearing
+        // it unconditionally would turn a Minimal-mode auto-exclusion into a
+        // permanent one as soon as the user toggled the app off and on again.
+        if (change.apply)
+            BlockingMode.clearAutoExcludedApp(mContext, mAppId);
+
+        if (change.trackerProtect != null)
+            tracker_protect.edit().putBoolean(mAppId, change.trackerProtect).apply();
+
+        w.apply(mContext, mAppUid, change.internetBlocked);
+
+        // The internet blocklist is read live by the packet path, so a change
+        // that only blocks or unblocks Internet needs no reload. Which apps are
+        // in the tun, and which of them are filtered, are baked into the rules.
+        boolean needsReload = change.apply != applyBefore
+                || (change.trackerProtect != null && change.trackerProtect != protectBefore);
+        if (!needsReload)
+            return;
+
+        // Move expensive operations off the main thread to prevent UI freezing
+        // Rule.clearCache() can block waiting for a lock held by Rule.getRules()
+        AsyncTask.execute(() -> {
+            Rule.clearCache(mContext);
+            ServiceSinkhole.reload("app protection changed", mContext, false);
+        });
+    }
+
+    private static int radioIdFor(AppProtectionState state) {
+        switch (state) {
+            case TRACKERS_ALLOWED:
+                return R.id.rbStateTrackersAllowed;
+            case NO_INTERNET:
+                return R.id.rbStateNoInternet;
+            case BYPASSED:
+                return R.id.rbStateBypassed;
+            case PROTECTED:
+            default:
+                return R.id.rbStateProtected;
+        }
+    }
+
+    @Nullable
+    private static AppProtectionState stateForRadioId(int checkedId) {
+        if (checkedId == R.id.rbStateProtected)
+            return AppProtectionState.PROTECTED;
+        if (checkedId == R.id.rbStateTrackersAllowed)
+            return AppProtectionState.TRACKERS_ALLOWED;
+        if (checkedId == R.id.rbStateNoInternet)
+            return AppProtectionState.NO_INTERNET;
+        if (checkedId == R.id.rbStateBypassed)
+            return AppProtectionState.BYPASSED;
+        return null;
     }
 
     @Override
@@ -558,21 +613,15 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class VHHeader extends RecyclerView.ViewHolder {
         final TextView mLibraryExplanation;
         final TextView mLibraryDisclaimer;
-        final MaterialSwitch mSwitchInternet;
-        final MaterialSwitch mSwitchVPN;
-        final MaterialSwitch mSwitchVpnExclude;
-        final View mTrackerProtectionRow;
-        final View mTrackerProtectionDivider;
+        final RadioGroup mAppState;
+        final TextView mNoInternetExplanation;
 
         VHHeader(View view) {
             super(view);
             mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
             mLibraryDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
-            mSwitchInternet = view.findViewById(R.id.switch_internet);
-            mSwitchVPN = view.findViewById(R.id.switch_vpn);
-            mSwitchVpnExclude = view.findViewById(R.id.switch_vpn_exclude);
-            mTrackerProtectionRow = view.findViewById(R.id.rowTrackerProtection);
-            mTrackerProtectionDivider = view.findViewById(R.id.dividerTrackerProtection);
+            mAppState = view.findViewById(R.id.rgAppState);
+            mNoInternetExplanation = view.findViewById(R.id.tvStateNoInternetDesc);
         }
     }
 }

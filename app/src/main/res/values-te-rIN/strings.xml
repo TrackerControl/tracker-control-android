@@ -12,4 +12,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">రక్షణ</string>
+    <string name="app_state_protected">రక్షించబడింది</string>
+    <string name="app_state_protected_explanation">ఈ యాప్ కోసం ట్రాకర్‌లు నిరోధించబడతాయి మరియు రికార్డ్ చేయబడతాయి.</string>
+    <string name="app_state_trackers_allowed">ట్రాకర్‌లు అనుమతించబడ్డాయి</string>
+    <string name="app_state_trackers_allowed_explanation">యాప్ TrackerControl ద్వారానే కొనసాగుతుంది, కానీ దాని ట్రాకర్‌లు నిరోధించబడవు, రికార్డ్ చేయబడవు. నిరోధించడం వల్ల యాప్ పని చేయకపోతే దీన్ని ఉపయోగించండి.</string>
+    <string name="app_state_no_internet">ఇంటర్నెట్ లేదు</string>
+    <string name="app_state_no_internet_explanation">ఈ యాప్ యొక్క అన్ని కనెక్షన్‌లు నిరోధించబడ్డాయి. ప్రధాన స్క్రీన్‌లో యాప్ చిహ్నాన్ని కూడా నొక్కవచ్చు.</string>
+    <string name="app_state_no_internet_shared_uid">ఈ యాప్‌తో Android వినియోగదారు ID‌ను పంచుకునే %1$sకు కూడా ఇది వర్తిస్తుంది.</string>
+    <string name="app_state_bypassed">TrackerControlను దాటవేయి</string>
+    <string name="app_state_bypassed_explanation">యాప్ TrackerControl వెలుపల నేరుగా కనెక్ట్ అవుతుంది. దాని కోసం ఏదీ పర్యవేక్షించబడదు లేదా నిరోధించబడదు. యాప్ ఇప్పటికీ పని చేయకపోతే చివరి ప్రయత్నంగా దీన్ని ఉపయోగించండి.\n\nగమనిక: ఇది పని చేయాలంటే Android VPN సెట్టింగ్‌లలో \"VPN లేకుండా కనెక్షన్‌లను నిరోధించు\" నిలిపివేయబడాలి.</string>
 </resources>

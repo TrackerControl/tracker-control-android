@@ -294,7 +294,6 @@
     <string name="tab_countries">Quốc gia</string>
     <string name="tab_actions">Dữ liệu của tôi</string>
     <string name="tracker_name">Tên trình theo dõi</string>
-    <string name="internet_access">Truy cập Internet</string>
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
     <string name="block_tracking">Chặn trình theo dõi</string>
@@ -375,4 +374,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Bảo vệ</string>
+    <string name="app_state_protected">Được bảo vệ</string>
+    <string name="app_state_protected_explanation">Trình theo dõi bị chặn và được ghi lại cho ứng dụng này.</string>
+    <string name="app_state_trackers_allowed">Cho phép trình theo dõi</string>
+    <string name="app_state_trackers_allowed_explanation">Ứng dụng vẫn đi qua TrackerControl, nhưng các trình theo dõi của nó không bị chặn và cũng không được ghi lại. Hãy dùng tuỳ chọn này nếu việc chặn làm hỏng ứng dụng.</string>
+    <string name="app_state_no_internet">Không có Internet</string>
+    <string name="app_state_no_internet_explanation">Mọi kết nối của ứng dụng này đều bị chặn. Bạn cũng có thể chạm vào biểu tượng ứng dụng ở màn hình chính.</string>
+    <string name="app_state_no_internet_shared_uid">Cũng áp dụng cho %1$s, ứng dụng dùng chung ID người dùng Android với ứng dụng này.</string>
+    <string name="app_state_bypassed">Bỏ qua TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Ứng dụng kết nối trực tiếp, bên ngoài TrackerControl. Không có gì được giám sát hay chặn cho nó. Hãy dùng tuỳ chọn này như biện pháp cuối cùng nếu ứng dụng vẫn không hoạt động.\n\nLưu ý: \"Chặn kết nối khi không có VPN\" trong cài đặt VPN của Android phải được TẮT thì tuỳ chọn này mới hoạt động.</string>
 </resources>

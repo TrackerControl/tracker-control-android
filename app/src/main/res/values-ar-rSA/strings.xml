@@ -258,7 +258,6 @@
     <string name="tab_countries">البلدان</string>
     <string name="tab_actions">بياناتي</string>
     <string name="tracker_name">اسم أداة التتبع</string>
-    <string name="internet_access">الوصول إلى الإنترنت</string>
     <string name="app_info">إدارة التطبيق</string>
     <!-- Actions -->
     <string name="block_tracking">حظر أدوات التتبع</string>
@@ -377,4 +376,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">الحماية</string>
+    <string name="app_state_protected">محمي</string>
+    <string name="app_state_protected_explanation">يتم حظر أدوات التتبع وتسجيلها لهذا التطبيق.</string>
+    <string name="app_state_trackers_allowed">السماح بأدوات التتبع</string>
+    <string name="app_state_trackers_allowed_explanation">يواصل التطبيق العمل عبر TrackerControl، لكن أدوات التتبع الخاصة به لا تُحظر ولا تُسجَّل. استخدم هذا الخيار إذا كان الحظر يُعطِّل التطبيق.</string>
+    <string name="app_state_no_internet">بلا إنترنت</string>
+    <string name="app_state_no_internet_explanation">جميع اتصالات هذا التطبيق محظورة. يمكنك أيضًا الضغط على أيقونة التطبيق في الشاشة الرئيسية.</string>
+    <string name="app_state_no_internet_shared_uid">ينطبق أيضًا على %1$s، الذي يشارك هذا التطبيق مُعرِّف مستخدم أندرويد.</string>
+    <string name="app_state_bypassed">تجاوز TrackerControl</string>
+    <string name="app_state_bypassed_explanation">يتصل التطبيق مباشرةً، خارج TrackerControl. لا تتم مراقبة أو حظر أي شيء له. استخدم هذا كملاذ أخير إذا كان التطبيق لا يزال لا يعمل.\n\nملاحظة: يجب تعطيل \"حظر الاتصالات بدون VPN\" في إعدادات VPN بنظام أندرويد حتى يعمل هذا.</string>
 </resources>

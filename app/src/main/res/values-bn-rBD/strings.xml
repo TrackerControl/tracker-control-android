@@ -59,4 +59,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">সুরক্ষা</string>
+    <string name="app_state_protected">সুরক্ষিত</string>
+    <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
+    <string name="app_state_trackers_allowed">ট্র্যাকার অনুমোদিত</string>
+    <string name="app_state_trackers_allowed_explanation">অ্যাপটি TrackerControl-এর মধ্য দিয়েই চলতে থাকে, তবে এর ট্র্যাকারগুলি ব্লকও করা হয় না, রেকর্ডও করা হয় না। ব্লক করার ফলে অ্যাপ কাজ না করলে এটি ব্যবহার করুন।</string>
+    <string name="app_state_no_internet">ইন্টারনেট নেই</string>
+    <string name="app_state_no_internet_explanation">এই অ্যাপের সব সংযোগ ব্লক করা হয়েছে। আপনি প্রধান স্ক্রিনে অ্যাপের আইকনেও ট্যাপ করতে পারেন।</string>
+    <string name="app_state_no_internet_shared_uid">%1$s-এর ক্ষেত্রেও প্রযোজ্য, যেটি এই অ্যাপের সঙ্গে একই Android ব্যবহারকারী আইডি ভাগ করে।</string>
+    <string name="app_state_bypassed">TrackerControl এড়িয়ে যান</string>
+    <string name="app_state_bypassed_explanation">অ্যাপটি TrackerControl-এর বাইরে সরাসরি সংযোগ করে। এর জন্য কিছুই পর্যবেক্ষণ বা ব্লক করা হয় না। অ্যাপ তবুও কাজ না করলে শেষ উপায় হিসেবে এটি ব্যবহার করুন।\n\nদ্রষ্টব্য: এটি কাজ করতে হলে Android-এর VPN সেটিংসে \"VPN ছাড়া সংযোগ ব্লক করুন\" বন্ধ থাকতে হবে।</string>
 </resources>

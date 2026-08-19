@@ -260,8 +260,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="tab_countries">Země</string>
     <string name="tab_actions">Moje data</string>
     <string name="tracker_name">Název trackeru</string>
-    <string name="internet_access">Přístup k internetu</string>
-    <string name="internet_access_explanation">Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
     <string name="app_info">Spravovat aplikace</string>
     <!-- Actions -->
     <string name="block_tracking">Blokovat trackery</string>
@@ -340,9 +338,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="setting_strict_blocking">Přísné blokování</string>
     <string name="summary_strict_blocking">Blokovat skoro všechno sdílení dat nově nainstalovaných aplikací. Aplikace nemusí fungovat.</string>
     <string name="strict_blocking_explanation">Je doporučeno vypnout tuto možnost pro snížení počtu nefungujících aplikací. Je ale třeba k zakázání veškerého sdílení.</string>
-    <string name="exclude_vpn_explanation">Detekuje a blokuje trackery pro tuto aplikaci.</string>
-    <string name="vpn_exclude">Vyloučit z VPN</string>
-    <string name="vpn_exclude_explanation">Povolte tuto funkci, pokud narazíte na problémy. Aplikace zcela obejde TrackerControl.\n\nPoznámka: Aby tato funkce fungovala, musí být v nastavení VPN pro Android VYPNUTA možnost \"Blokovat připojení bez VPN\".</string>
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
@@ -397,4 +392,16 @@ Privátní DNS musí být vypnutá.</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Ochrana</string>
+    <string name="app_state_protected">Chráněno</string>
+    <string name="app_state_protected_explanation">Trackery jsou pro tuto aplikaci blokovány a zaznamenávány.</string>
+    <string name="app_state_trackers_allowed">Trackery povoleny</string>
+    <string name="app_state_trackers_allowed_explanation">Aplikace dál běží přes TrackerControl, ale její trackery se neblokují ani nezaznamenávají. Použijte, pokud blokování aplikaci rozbíjí.</string>
+    <string name="app_state_no_internet">Bez internetu</string>
+    <string name="app_state_no_internet_explanation">Všechna připojení této aplikace jsou blokována. Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
+    <string name="app_state_no_internet_shared_uid">Platí i pro %1$s, která s touto aplikací sdílí uživatelské ID systému Android.</string>
+    <string name="app_state_bypassed">Obejít TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplikace se připojuje přímo, mimo TrackerControl. Nic se pro ni nesleduje ani neblokuje. Použijte jako poslední možnost, pokud aplikace stále nefunguje.\n\nPoznámka: Aby to fungovalo, musí být volba \"Blokovat připojení bez VPN\" v nastavení VPN systému Android VYPNUTA.</string>
 </resources>

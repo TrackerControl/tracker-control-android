@@ -236,7 +236,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="tab_countries">Herrialdeak</string>
     <string name="tab_actions">Nire datuak</string>
     <string name="tracker_name">Aztarnariaren izena</string>
-    <string name="internet_access">Internet sarbidea</string>
     <string name="app_info">Aplikazioa kudeatu</string>
     <!-- Actions -->
     <string name="block_tracking">Aztarnariak blokeatu</string>
@@ -358,4 +357,16 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Babesa</string>
+    <string name="app_state_protected">Babestuta</string>
+    <string name="app_state_protected_explanation">Aplikazio honetarako jarraitzaileak blokeatu eta erregistratzen dira.</string>
+    <string name="app_state_trackers_allowed">Jarraitzaileak onartuta</string>
+    <string name="app_state_trackers_allowed_explanation">Aplikazioak TrackerControl bidez jarraitzen du, baina bere jarraitzaileak ez dira ez blokeatzen ez erregistratzen. Erabili hau blokeatzeak aplikazioa hondatzen badu.</string>
+    <string name="app_state_no_internet">Internetik ez</string>
+    <string name="app_state_no_internet_explanation">Aplikazio honen konexio guztiak blokeatuta daude. Pantaila nagusiko aplikazioaren ikonoa ere uki dezakezu.</string>
+    <string name="app_state_no_internet_shared_uid">%1$s aplikazioari ere aplikatzen zaio, Android erabiltzaile-ID bera partekatzen baitu honekin.</string>
+    <string name="app_state_bypassed">Saihestu TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplikazioa zuzenean konektatzen da, TrackerControletik kanpo. Ez zaio ezer monitorizatzen ez blokeatzen. Erabili hau azken aukera gisa aplikazioak oraindik funtzionatzen ez badu.\n\nOharra: Androiden VPN ezarpenetako \"Blokeatu VPNrik gabeko konexioak\" DESAKTIBATUTA egon behar da hau funtziona dezan.</string>
 </resources>

@@ -180,7 +180,7 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- App Controls Card - Groups all toggles together -->
+    <!-- App Protection Card - one state, four mutually exclusive options -->
     <androidx.cardview.widget.CardView
         android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
@@ -196,144 +196,94 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Exclude from VPN Toggle (troubleshooting - first for visibility) -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cardVpnExclude"
+            <TextView
+                android:id="@+id/tvAppStateHeading"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="@string/app_state_heading"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/vpn_exclude_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/vpn_exclude"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <TextView
-                    android:id="@+id/tvVpnExcludeExplanation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="48dp"
-                    android:text="@string/vpn_exclude_explanation"
-                    android:textColor="?android:textColorSecondary"
-                    android:textSize="13sp"
-                    android:textStyle="italic"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/vpn_exclude_name" />
-
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_vpn_exclude"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="0dp"
-                    android:textColor="?android:textColorPrimary"
-                    android:contentDescription="@string/vpn_exclude"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/vpn_exclude_name" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <View
-                android:id="@+id/dividerTrackerProtection"
+            <RadioGroup
+                android:id="@+id/rgAppState"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
-                android:background="?android:attr/listDivider" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <!-- Tracker Protection Toggle -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/rowTrackerProtection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                <RadioButton
+                    android:id="@+id/rbStateProtected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:contentDescription="@string/app_state_protected"
+                    android:text="@string/app_state_protected"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/root_name"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvStateProtectedDesc"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/exclude_vpn"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    android:layout_marginStart="32dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/app_state_protected_explanation"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+
+                <RadioButton
+                    android:id="@+id/rbStateTrackersAllowed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:contentDescription="@string/app_state_trackers_allowed"
+                    android:text="@string/app_state_trackers_allowed"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvTrackerProtectionExplanation"
-                    android:layout_width="0dp"
+                    android:id="@+id/tvStateTrackersAllowedDesc"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="48dp"
-                    android:text="@string/exclude_vpn_explanation"
-                    android:textColor="?android:textColorSecondary"
-                    android:textSize="13sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/root_name" />
+                    android:layout_marginStart="32dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/app_state_trackers_allowed_explanation"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_vpn"
-                    android:layout_width="wrap_content"
+                <RadioButton
+                    android:id="@+id/rbStateNoInternet"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="0dp"
-                    android:textColor="?android:textColorPrimary"
-                    android:contentDescription="@string/exclude_vpn"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/root_name" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="12dp"
-                android:background="?android:attr/listDivider" />
-
-            <!-- Internet Access Toggle -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    android:layout_marginBottom="4dp"
+                    android:contentDescription="@string/app_state_no_internet"
+                    android:text="@string/app_state_no_internet"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/root_name2"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvStateNoInternetDesc"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/internet_access"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    android:layout_marginStart="32dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="@string/app_state_no_internet_explanation"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+
+                <RadioButton
+                    android:id="@+id/rbStateBypassed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:contentDescription="@string/app_state_bypassed"
+                    android:text="@string/app_state_bypassed"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvInternetAccessExplanation"
-                    android:layout_width="0dp"
+                    android:id="@+id/tvStateBypassedDesc"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="48dp"
-                    android:text="@string/internet_access_explanation"
-                    android:textColor="?android:textColorSecondary"
-                    android:textSize="13sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/root_name2" />
+                    android:layout_marginStart="32dp"
+                    android:text="@string/app_state_bypassed_explanation"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
-                <com.google.android.material.materialswitch.MaterialSwitch
-                    android:id="@+id/switch_internet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="0dp"
-                    android:textColor="?android:textColorPrimary"
-                    android:contentDescription="@string/internet_access"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/root_name2" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </RadioGroup>
 
         </LinearLayout>
 

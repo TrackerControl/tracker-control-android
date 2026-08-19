@@ -238,7 +238,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tab_countries">Országok</string>
     <string name="tab_actions">Adataim</string>
     <string name="tracker_name">Nyomkövető neve</string>
-    <string name="internet_access">Internet-hozzáférés</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
     <string name="block_tracking">Nyomkövetők blokkolása</string>
@@ -357,4 +356,16 @@ Tisztelettel,\n\n]]></string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Védelem</string>
+    <string name="app_state_protected">Védett</string>
+    <string name="app_state_protected_explanation">A követők blokkolva és rögzítve vannak ennél az alkalmazásnál.</string>
+    <string name="app_state_trackers_allowed">Követők engedélyezve</string>
+    <string name="app_state_trackers_allowed_explanation">Az alkalmazás továbbra is a TrackerControlon keresztül fut, de a követőit sem nem blokkolja, sem nem rögzíti. Használja ezt, ha a blokkolás elrontja az alkalmazást.</string>
+    <string name="app_state_no_internet">Nincs internet</string>
+    <string name="app_state_no_internet_explanation">Az alkalmazás összes kapcsolata blokkolva van. A főképernyőn az alkalmazás ikonjára is koppinthat.</string>
+    <string name="app_state_no_internet_shared_uid">Erre is vonatkozik: %1$s, amely Android-felhasználóazonosítón osztozik ezzel az alkalmazással.</string>
+    <string name="app_state_bypassed">TrackerControl megkerülése</string>
+    <string name="app_state_bypassed_explanation">Az alkalmazás közvetlenül, a TrackerControlon kívül csatlakozik. Semmit sem figyel és blokkol nála. Végső megoldásként használja, ha az alkalmazás továbbra sem működik.\n\nMegjegyzés: az Android VPN-beállításaiban a \"Kapcsolatok blokkolása VPN nélkül\" beállításnak KIKAPCSOLVA kell lennie, hogy ez működjön.</string>
 </resources>

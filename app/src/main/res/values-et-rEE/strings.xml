@@ -161,8 +161,6 @@
     <string name="tab_countries">Maad</string>
     <string name="tab_actions">Minu andmed</string>
     <string name="tracker_name">Jälitaja nimi</string>
-    <string name="internet_access">Internetiühendus</string>
-    <string name="internet_access_explanation">Võida ka klõpsata rakenduse ikooni põhivaates.</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
@@ -238,4 +236,16 @@
     <string name="log_connection_wifi">WiFi</string>
     <string name="log_connection_other">Muu võrk</string>
     <string name="log_app_icon">Rakenduse ikoon</string>
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Kaitse</string>
+    <string name="app_state_protected">Kaitstud</string>
+    <string name="app_state_protected_explanation">Jälitajad blokeeritakse ja salvestatakse selle rakenduse puhul.</string>
+    <string name="app_state_trackers_allowed">Jälitajad lubatud</string>
+    <string name="app_state_trackers_allowed_explanation">Rakendus töötab endiselt TrackerControli kaudu, kuid selle jälitajaid ei blokeerita ega salvestata. Kasuta seda, kui blokeerimine rikub rakenduse.</string>
+    <string name="app_state_no_internet">Internetita</string>
+    <string name="app_state_no_internet_explanation">Kõik selle rakenduse ühendused on blokeeritud. Võid ka põhiekraanil rakenduse ikoonile vajutada.</string>
+    <string name="app_state_no_internet_shared_uid">Kehtib ka rakendusele %1$s, mis jagab selle rakendusega Androidi kasutaja-ID-d.</string>
+    <string name="app_state_bypassed">TrackerControlist mööda</string>
+    <string name="app_state_bypassed_explanation">Rakendus ühendub otse, TrackerControlist mööda. Tema jaoks ei jälgita ega blokeerita midagi. Kasuta seda viimase abinõuna, kui rakendus ikka ei tööta.\n\nMärkus: Androidi VPN-i sätetes peab \"Blokeeri ühendused ilma VPN-ita\" olema VÄLJA LÜLITATUD, et see toimiks.</string>
 </resources>

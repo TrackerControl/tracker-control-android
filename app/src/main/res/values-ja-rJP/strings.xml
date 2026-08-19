@@ -230,7 +230,6 @@
     <string name="tab_countries">国</string>
     <string name="tab_actions">自分のデータ</string>
     <string name="tracker_name">トラッカー名</string>
-    <string name="internet_access">インターネットアクセス</string>
     <string name="app_info">アプリの管理</string>
     <!-- Actions -->
     <string name="block_tracking">トラッカーをブロック</string>
@@ -314,4 +313,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">保護</string>
+    <string name="app_state_protected">保護中</string>
+    <string name="app_state_protected_explanation">このアプリのトラッカーをブロックし、記録します。</string>
+    <string name="app_state_trackers_allowed">トラッカーを許可</string>
+    <string name="app_state_trackers_allowed_explanation">アプリは引き続き TrackerControl を経由しますが、トラッカーはブロックも記録もされません。ブロックによってアプリが正常に動作しない場合に使用してください。</string>
+    <string name="app_state_no_internet">インターネットなし</string>
+    <string name="app_state_no_internet_explanation">このアプリのすべての接続をブロックします。メイン画面のアプリアイコンをタップしても切り替えられます。</string>
+    <string name="app_state_no_internet_shared_uid">このアプリと Android のユーザー ID を共有する %1$s にも適用されます。</string>
+    <string name="app_state_bypassed">TrackerControl を迂回</string>
+    <string name="app_state_bypassed_explanation">アプリは TrackerControl を経由せず直接接続します。監視もブロックも行われません。アプリがそれでも動作しない場合の最終手段として使用してください。\n\n注意: これを機能させるには、Android の VPN 設定で \"VPN なしの接続をブロック\" を無効にする必要があります。</string>
 </resources>

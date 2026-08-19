@@ -242,7 +242,6 @@
     <string name="tab_countries">מדינות</string>
     <string name="tab_actions">הנתונים שלי</string>
     <string name="tracker_name">שם עוקב</string>
-    <string name="internet_access">גישה לאינטרנט</string>
     <string name="app_info">ניהול אפליקציה</string>
     <!-- Actions -->
     <string name="block_tracking">חסימת עוקבים</string>
@@ -338,4 +337,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">הגנה</string>
+    <string name="app_state_protected">מוגן</string>
+    <string name="app_state_protected_explanation">רכיבי מעקב נחסמים ונרשמים עבור אפליקציה זו.</string>
+    <string name="app_state_trackers_allowed">רכיבי מעקב מותרים</string>
+    <string name="app_state_trackers_allowed_explanation">האפליקציה ממשיכה לעבור דרך TrackerControl, אך רכיבי המעקב שלה אינם נחסמים ואינם נרשמים. השתמשו בכך אם החסימה שוברת את האפליקציה.</string>
+    <string name="app_state_no_internet">אין אינטרנט</string>
+    <string name="app_state_no_internet_explanation">כל החיבורים של אפליקציה זו חסומים. אפשר גם להקיש על סמל האפליקציה במסך הראשי.</string>
+    <string name="app_state_no_internet_shared_uid">חל גם על %1$s, שחולקת מזהה משתמש של Android עם אפליקציה זו.</string>
+    <string name="app_state_bypassed">עקיפת TrackerControl</string>
+    <string name="app_state_bypassed_explanation">האפליקציה מתחברת ישירות, מחוץ ל-TrackerControl. דבר אינו מנוטר או נחסם עבורה. השתמשו בכך כמוצא אחרון אם האפליקציה עדיין לא עובדת.\n\nהערה: האפשרות \"חסום חיבורים ללא VPN\" בהגדרות ה-VPN של Android חייבת להיות מושבתת כדי שזה יעבוד.</string>
 </resources>

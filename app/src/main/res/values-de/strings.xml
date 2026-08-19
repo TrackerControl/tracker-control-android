@@ -257,7 +257,6 @@
     <string name="tab_countries">Länder</string>
     <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
-    <string name="internet_access">Internetzugang</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
     <string name="block_tracking">Tracker blockieren</string>
@@ -342,4 +341,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Schutz</string>
+    <string name="app_state_protected">Geschützt</string>
+    <string name="app_state_protected_explanation">Tracker werden für diese App blockiert und aufgezeichnet.</string>
+    <string name="app_state_trackers_allowed">Tracker erlaubt</string>
+    <string name="app_state_trackers_allowed_explanation">Die App läuft weiterhin über TrackerControl, ihre Tracker werden aber weder blockiert noch aufgezeichnet. Nutze dies, wenn das Blockieren die App beeinträchtigt.</string>
+    <string name="app_state_no_internet">Kein Internet</string>
+    <string name="app_state_no_internet_explanation">Alle Verbindungen dieser App werden blockiert. Du kannst auch auf das App-Symbol im Hauptbildschirm tippen.</string>
+    <string name="app_state_no_internet_shared_uid">Gilt auch für %1$s, da diese App sich eine Android-Benutzer-ID mit dieser App teilt.</string>
+    <string name="app_state_bypassed">TrackerControl umgehen</string>
+    <string name="app_state_bypassed_explanation">Die App verbindet sich direkt, außerhalb von TrackerControl. Nichts wird für sie überwacht oder blockiert. Nutze dies als letzten Ausweg, wenn die App weiterhin nicht funktioniert.\n\nHinweis: \"Verbindungen ohne VPN blockieren\" in den Android-VPN-Einstellungen muss DEAKTIVIERT sein, damit dies funktioniert.</string>
 </resources>

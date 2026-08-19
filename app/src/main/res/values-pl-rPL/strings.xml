@@ -243,7 +243,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="tab_countries">Kraje</string>
     <string name="tab_actions">Moje dane</string>
     <string name="tracker_name">Nazwa znacznika</string>
-    <string name="internet_access">Dostęp do internetu</string>
     <string name="app_info">Zarządzaj aplikacją</string>
     <!-- Actions -->
     <string name="block_tracking">Trackery blokowe</string>
@@ -362,4 +361,16 @@ Z poważaniem,\n\n]]></string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Ochrona</string>
+    <string name="app_state_protected">Chroniona</string>
+    <string name="app_state_protected_explanation">Trackery są blokowane i rejestrowane dla tej aplikacji.</string>
+    <string name="app_state_trackers_allowed">Trackery dozwolone</string>
+    <string name="app_state_trackers_allowed_explanation">Aplikacja nadal działa przez TrackerControl, ale jej trackery nie są ani blokowane, ani rejestrowane. Użyj tego, jeśli blokowanie psuje aplikację.</string>
+    <string name="app_state_no_internet">Brak Internetu</string>
+    <string name="app_state_no_internet_explanation">Wszystkie połączenia tej aplikacji są zablokowane. Możesz też dotknąć ikony aplikacji na ekranie głównym.</string>
+    <string name="app_state_no_internet_shared_uid">Dotyczy też %1$s, która współdzieli z tą aplikacją identyfikator użytkownika Androida.</string>
+    <string name="app_state_bypassed">Pomiń TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplikacja łączy się bezpośrednio, poza TrackerControl. Nic nie jest dla niej monitorowane ani blokowane. Użyj tego w ostateczności, jeśli aplikacja nadal nie działa.\n\nUwaga: opcja \"Blokuj połączenia bez VPN\" w ustawieniach VPN Androida musi być WYŁĄCZONA, aby to zadziałało.</string>
 </resources>

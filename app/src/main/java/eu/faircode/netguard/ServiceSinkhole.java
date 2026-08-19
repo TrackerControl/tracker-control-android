@@ -2923,6 +2923,23 @@ public class ServiceSinkhole extends VpnService {
 
                 int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
                 if (uid > 0) {
+                    // The internet block is keyed by UID, not by package, so it
+                    // may still be in use by another package of a shared UID.
+                    // Drop it only once the UID has no package left, otherwise a
+                    // reinstall silently comes back with its Internet blocked.
+                    // A SecurityException (other user/profile on Android 16+)
+                    // means "unknown", which must not be read as "none left".
+                    try {
+                        String[] remaining = context.getPackageManager().getPackagesForUid(uid);
+                        if (remaining == null || remaining.length == 0) {
+                            InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+                            if (internetBlocklist.blockedInternet(uid))
+                                internetBlocklist.unblock(context, uid);
+                        }
+                    } catch (SecurityException ex) {
+                        Log.w(TAG, "Keeping internet block uid=" + uid + ": " + ex.getMessage());
+                    }
+
                     DatabaseHelper dh = DatabaseHelper.getInstance(context);
                     dh.clearLog(uid);
                     dh.clearAccess(uid, false);

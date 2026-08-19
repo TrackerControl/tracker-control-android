@@ -235,7 +235,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="tab_countries">Land</string>
     <string name="tab_actions">Mine data</string>
     <string name="tracker_name">Sporernavn</string>
-    <string name="internet_access">Internett-tilgang</string>
     <string name="app_info">Behandle app</string>
     <!-- Actions -->
     <string name="block_tracking">Block sporere</string>
@@ -354,4 +353,16 @@ Vennlig hilsen,\n\n]]></string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Beskyttelse</string>
+    <string name="app_state_protected">Beskyttet</string>
+    <string name="app_state_protected_explanation">Sporere blokkeres og registreres for denne appen.</string>
+    <string name="app_state_trackers_allowed">Sporere tillatt</string>
+    <string name="app_state_trackers_allowed_explanation">Appen går fortsatt gjennom TrackerControl, men sporerne blir verken blokkert eller registrert. Bruk dette hvis blokkering ødelegger appen.</string>
+    <string name="app_state_no_internet">Ingen internett</string>
+    <string name="app_state_no_internet_explanation">Alle tilkoblinger fra denne appen blokkeres. Du kan også trykke på appikonet på hovedskjermen.</string>
+    <string name="app_state_no_internet_shared_uid">Gjelder også %1$s, som deler en Android-bruker-ID med denne appen.</string>
+    <string name="app_state_bypassed">Omgå TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Appen kobler til direkte, utenfor TrackerControl. Ingenting overvåkes eller blokkeres for den. Bruk dette som siste utvei hvis appen fortsatt ikke virker.\n\nMerk: \"Blokker tilkoblinger uten VPN\" i Androids VPN-innstillinger må være DEAKTIVERT for at dette skal virke.</string>
 </resources>

@@ -16,4 +16,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">محافظت</string>
+    <string name="app_state_protected">محافظت‌شده</string>
+    <string name="app_state_protected_explanation">ردیاب‌ها برای این برنامه مسدود و ثبت می‌شوند.</string>
+    <string name="app_state_trackers_allowed">ردیاب‌ها مجاز</string>
+    <string name="app_state_trackers_allowed_explanation">برنامه همچنان از طریق TrackerControl کار می‌کند، اما ردیاب‌های آن نه مسدود می‌شوند و نه ثبت. اگر مسدودسازی برنامه را خراب می‌کند از این گزینه استفاده کنید.</string>
+    <string name="app_state_no_internet">بدون اینترنت</string>
+    <string name="app_state_no_internet_explanation">همهٔ اتصال‌های این برنامه مسدود شده‌اند. می‌توانید روی نماد برنامه در صفحهٔ اصلی نیز ضربه بزنید.</string>
+    <string name="app_state_no_internet_shared_uid">برای %1$s نیز اعمال می‌شود، که شناسهٔ کاربری اندروید را با این برنامه به اشتراک می‌گذارد.</string>
+    <string name="app_state_bypassed">دور زدن TrackerControl</string>
+    <string name="app_state_bypassed_explanation">برنامه مستقیماً و خارج از TrackerControl متصل می‌شود. هیچ چیزی برای آن پایش یا مسدود نمی‌شود. اگر برنامه هنوز کار نمی‌کند، این را به‌عنوان آخرین راه‌حل استفاده کنید.\n\nتوجه: گزینهٔ \"مسدودسازی اتصال‌های بدون VPN\" در تنظیمات VPN اندروید باید غیرفعال باشد تا این کار کند.</string>
 </resources>

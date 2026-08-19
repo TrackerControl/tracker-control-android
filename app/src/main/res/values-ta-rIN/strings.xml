@@ -12,4 +12,16 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">பாதுகாப்பு</string>
+    <string name="app_state_protected">பாதுகாக்கப்பட்டது</string>
+    <string name="app_state_protected_explanation">இந்த ஆப்ஸுக்கான டிராக்கர்கள் தடுக்கப்பட்டு பதிவு செய்யப்படுகின்றன.</string>
+    <string name="app_state_trackers_allowed">டிராக்கர்கள் அனுமதிக்கப்பட்டன</string>
+    <string name="app_state_trackers_allowed_explanation">ஆப்ஸ் தொடர்ந்து TrackerControl வழியாகச் செல்கிறது, ஆனால் அதன் டிராக்கர்கள் தடுக்கப்படுவதுமில்லை, பதிவு செய்யப்படுவதுமில்லை. தடுப்பதால் ஆப்ஸ் வேலை செய்யாவிட்டால் இதைப் பயன்படுத்தவும்.</string>
+    <string name="app_state_no_internet">இணையம் இல்லை</string>
+    <string name="app_state_no_internet_explanation">இந்த ஆப்ஸின் அனைத்து இணைப்புகளும் தடுக்கப்படுகின்றன. முதன்மைத் திரையில் ஆப்ஸ் ஐகானைத் தட்டியும் மாற்றலாம்.</string>
+    <string name="app_state_no_internet_shared_uid">இந்த ஆப்ஸுடன் Android பயனர் ஐடியைப் பகிர்ந்துகொள்ளும் %1$s-க்கும் இது பொருந்தும்.</string>
+    <string name="app_state_bypassed">TrackerControl-ஐத் தவிர்</string>
+    <string name="app_state_bypassed_explanation">ஆப்ஸ் TrackerControl-ஐத் தவிர்த்து நேரடியாக இணைகிறது. அதற்காக எதுவும் கண்காணிக்கப்படுவதோ தடுக்கப்படுவதோ இல்லை. ஆப்ஸ் இன்னும் வேலை செய்யாவிட்டால் கடைசி வழியாக இதைப் பயன்படுத்தவும்.\n\nகுறிப்பு: இது வேலை செய்ய Android VPN அமைப்புகளில் \"VPN இல்லாத இணைப்புகளைத் தடு\" முடக்கப்பட்டிருக்க வேண்டும்.</string>
 </resources>

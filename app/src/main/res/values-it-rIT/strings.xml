@@ -236,7 +236,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="tab_countries">Paesi</string>
     <string name="tab_actions">I miei dati</string>
     <string name="tracker_name">Nome del tracker</string>
-    <string name="internet_access">Accesso ad internet</string>
     <string name="app_info">Gestisci l\'applicazione</string>
     <!-- Actions -->
     <string name="block_tracking">Blocca i tracker</string>
@@ -354,4 +353,16 @@ Cordiali saluti,\n\n]]></string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Protezione</string>
+    <string name="app_state_protected">Protetta</string>
+    <string name="app_state_protected_explanation">I tracker vengono bloccati e registrati per questa app.</string>
+    <string name="app_state_trackers_allowed">Tracker consentiti</string>
+    <string name="app_state_trackers_allowed_explanation">L\'app continua a passare per TrackerControl, ma i suoi tracker non vengono né bloccati né registrati. Usa questa opzione se il blocco impedisce all\'app di funzionare.</string>
+    <string name="app_state_no_internet">Nessuna connessione</string>
+    <string name="app_state_no_internet_explanation">Tutte le connessioni di questa app sono bloccate. Puoi anche toccare l\'icona dell\'app nella schermata principale.</string>
+    <string name="app_state_no_internet_shared_uid">Vale anche per %1$s, che condivide un ID utente Android con questa app.</string>
+    <string name="app_state_bypassed">Ignora TrackerControl</string>
+    <string name="app_state_bypassed_explanation">L\'app si connette direttamente, al di fuori di TrackerControl. Per essa non viene monitorato né bloccato nulla. Usa questa opzione come ultima risorsa se l\'app continua a non funzionare.\n\nNota: \"Blocca connessioni senza VPN\" nelle impostazioni VPN di Android deve essere DISATTIVATO perché funzioni.</string>
 </resources>

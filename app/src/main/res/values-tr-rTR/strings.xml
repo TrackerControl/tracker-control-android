@@ -237,7 +237,6 @@ Bu nedenle, lütfen bir sonraki iletişim kutusunda bir VPN bağlantısına izin
     <string name="tab_countries">Ülkeler</string>
     <string name="tab_actions">Bilgilerim</string>
     <string name="tracker_name">İzleyici Adı</string>
-    <string name="internet_access">İnternet Erişimi</string>
     <string name="app_info">Uygulama Yönet</string>
     <!-- Actions -->
     <string name="block_tracking">İzleyicileri engelle</string>
@@ -356,4 +355,16 @@ Saygılarımla,\n\n]]></string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Koruma</string>
+    <string name="app_state_protected">Korunuyor</string>
+    <string name="app_state_protected_explanation">Bu uygulama için izleyiciler engelleniyor ve kaydediliyor.</string>
+    <string name="app_state_trackers_allowed">İzleyicilere izin ver</string>
+    <string name="app_state_trackers_allowed_explanation">Uygulama TrackerControl üzerinden çalışmaya devam eder, ancak izleyicileri ne engellenir ne de kaydedilir. Engelleme uygulamayı bozuyorsa bunu kullanın.</string>
+    <string name="app_state_no_internet">İnternet yok</string>
+    <string name="app_state_no_internet_explanation">Bu uygulamanın tüm bağlantıları engellendi. Ana ekrandaki uygulama simgesine de dokunabilirsiniz.</string>
+    <string name="app_state_no_internet_shared_uid">Bu uygulamayla Android kullanıcı kimliğini paylaşan %1$s için de geçerlidir.</string>
+    <string name="app_state_bypassed">TrackerControl\'ü atla</string>
+    <string name="app_state_bypassed_explanation">Uygulama, TrackerControl dışında doğrudan bağlanır. Onun için hiçbir şey izlenmez veya engellenmez. Uygulama hâlâ çalışmıyorsa son çare olarak bunu kullanın.\n\nNot: Bunun çalışması için Android VPN ayarlarındaki \"VPN olmadan bağlantıları engelle\" seçeneği KAPALI olmalıdır.</string>
 </resources>

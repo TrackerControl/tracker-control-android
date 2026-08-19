@@ -3,4 +3,16 @@
     <!-- App Overview -->
     <!-- App Details -->
     <!-- Actions -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Vörn</string>
+    <string name="app_state_protected">Varið</string>
+    <string name="app_state_protected_explanation">Rekjarar eru útilokaðir og skráðir fyrir þetta forrit.</string>
+    <string name="app_state_trackers_allowed">Rekjarar leyfðir</string>
+    <string name="app_state_trackers_allowed_explanation">Forritið fer áfram um TrackerControl en rekjarar þess eru hvorki útilokaðir né skráðir. Notaðu þetta ef útilokun skemmir forritið.</string>
+    <string name="app_state_no_internet">Ekkert internet</string>
+    <string name="app_state_no_internet_explanation">Allar tengingar þessa forrits eru útilokaðar. Þú getur einnig ýtt á táknmynd forritsins á aðalskjánum.</string>
+    <string name="app_state_no_internet_shared_uid">Á einnig við um %1$s, sem deilir Android-notandaauðkenni með þessu forriti.</string>
+    <string name="app_state_bypassed">Sniðganga TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Forritið tengist beint, utan TrackerControl. Ekkert er vaktað eða útilokað fyrir það. Notaðu þetta sem síðasta úrræði ef forritið virkar enn ekki.\n\nAthugið: \"Loka á tengingar án VPN\" í VPN-stillingum Android verður að vera SLÖKKT til að þetta virki.</string>
 </resources>

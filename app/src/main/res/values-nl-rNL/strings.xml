@@ -351,8 +351,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tab_countries">Landen</string>
     <string name="tab_actions">Mijn gegevens</string>
     <string name="tracker_name">Tracker naam</string>
-    <string name="internet_access">Internettoegang</string>
-    <string name="internet_access_explanation">Je kunt ook op het app-icoon tikken in het hoofdscherm.</string>
     <string name="app_info">App beheren</string>
     <!-- Actions -->
     <string name="block_tracking">Trackers blokkeren</string>
@@ -409,7 +407,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="onboarding_blockingmode_standard_label">Standaard</string>
     <string name="onboarding_blockingmode_strict_label">Strikt</string>
     <string name="onboarding_blockingmode_research_label">Onderzoek</string>
-    <string name="vpn_exclude">Uitsluiten van vpn</string>
     <string name="uninstall">Deïnstalleren</string>
     <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Zet de schakelaar in het hoofdscherm op aan en start de app om trackers op te sporen</string>
@@ -463,4 +460,16 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Bescherming</string>
+    <string name="app_state_protected">Beschermd</string>
+    <string name="app_state_protected_explanation">Trackers worden voor deze app geblokkeerd en geregistreerd.</string>
+    <string name="app_state_trackers_allowed">Trackers toegestaan</string>
+    <string name="app_state_trackers_allowed_explanation">De app blijft via TrackerControl lopen, maar de trackers worden niet geblokkeerd en niet geregistreerd. Gebruik dit als blokkeren de app stukmaakt.</string>
+    <string name="app_state_no_internet">Geen internet</string>
+    <string name="app_state_no_internet_explanation">Alle verbindingen van deze app worden geblokkeerd. Je kunt ook op het app-pictogram in het hoofdscherm tikken.</string>
+    <string name="app_state_no_internet_shared_uid">Geldt ook voor %1$s, die een Android-gebruikers-ID deelt met deze app.</string>
+    <string name="app_state_bypassed">TrackerControl omzeilen</string>
+    <string name="app_state_bypassed_explanation">De app maakt rechtstreeks verbinding, buiten TrackerControl om. Er wordt niets voor gecontroleerd of geblokkeerd. Gebruik dit als laatste redmiddel als de app nog steeds niet werkt.\n\nLet op: \"Verbindingen zonder VPN blokkeren\" in de Android-VPN-instellingen moet UITGESCHAKELD zijn om dit te laten werken.</string>
 </resources>
