@@ -473,6 +473,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             updateBlockingModeSummary(pref_blocking_mode, currentMode);
         }
 
+        Preference pref_log_logcat = screen.findPreference("log_logcat");
+        if (pref_log_logcat != null)
+            updateResearchModeSummary(pref_log_logcat);
+
         if (Util.isPlayStoreInstall(this) && cat_advanced != null) {
             Log.i(TAG, "Play store install");
             if (pref_forwarding != null)
@@ -726,10 +730,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             boolean research = prefs.getBoolean(name, false);
             if (prefs.getBoolean("sni_enabled", false) != research)
                 prefs.edit().putBoolean("sni_enabled", research).apply();
+            refreshResearchModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 
         else if ("sni_enabled".equals(name)) {
+            refreshResearchModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 
@@ -891,6 +897,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         } else if ("wg_enabled".equals(name)) {
             updateWireGuardStatus();
+            refreshResearchModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("wg_keepalive_when_screen_off".equals(name)) {
@@ -925,6 +932,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 new WgProfileManager(this).updateActiveProfileConfig(wg_config);
             configureWireGuardProfiles(getPreferenceScreen(), prefs);
             updateWireGuardStatus();
+            refreshResearchModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("pcap_record_size".equals(name) || "pcap_file_size".equals(name)) {
@@ -1043,6 +1051,31 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             pref.setSummary(R.string.summary_blocking_mode_strict);
         else
             pref.setSummary(R.string.summary_blocking_mode_standard);
+    }
+
+    // SNI research mode reassembles the ClientHello on a per-flow session that
+    // only exists for directly-routed traffic (see handle_ip in ip.c): a flow
+    // the remote VPN tunnels never gets one, so research mode silently
+    // collects nothing for it. Say so on the Research preference itself,
+    // where sni_enabled is actually toggled, rather than on blocking_mode.
+    private void updateResearchModeSummary(Preference pref) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String base = getString(R.string.summary_log_logcat);
+        if (prefs.getBoolean("sni_enabled", false) &&
+                prefs.getBoolean("wg_enabled", false) &&
+                !TextUtils.isEmpty(prefs.getString("wg_config", null)))
+            pref.setSummary(base + " " + getString(R.string.summary_sni_wg_note));
+        else
+            pref.setSummary(base);
+    }
+
+    // Re-derives the Research preference summary after a preference other than
+    // log_logcat itself changed the SNI-under-WireGuard note's condition
+    // (sni_enabled, wg_enabled, wg_config).
+    private void refreshResearchModeSummary() {
+        Preference pref = getPreferenceScreen().findPreference("log_logcat");
+        if (pref != null)
+            updateResearchModeSummary(pref);
     }
 
     private void setTrackerProtectionForAll(boolean enabled) {

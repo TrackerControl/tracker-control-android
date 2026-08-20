@@ -123,6 +123,76 @@ static jint get_route_uid(const struct arguments *args, int version, int protoco
     return get_uid_q(args, version, protocol, source, sport, dest, dport);
 }
 
+// Whether a flow's owning app should be routed through the tunnel. Shared by
+// handle_ip's routing fork and, for SNI research mode, by the earlier check
+// that decides whether a 443 flow will ever get an ng_session to reassemble
+// a ClientHello into (a tunnelled flow never does: the WireGuard write below
+// returns before handle_tcp creates one). uid is the already-known UID for
+// this packet, or -1 when the caller has not resolved one yet. out_uid, when
+// not NULL, is filled with any UID this call resolves from the session table
+// or the authoritative lookup, so a caller that still needs a UID afterwards
+// (SNI research mode attributing a flow that just lost its exemption) can
+// reuse it instead of paying for the same lookup again.
+static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport,
+                              const char *source, const char *dest,
+                              const uint8_t *pkt, const uint8_t *payload,
+                              jint uid, jint *out_uid) {
+    int tunnel_uid;
+    if (route_uid_relevant()) {
+        // A flow keeps the verdict its first packet was given. A fresh UID
+        // is authoritative even when a previous flow happened to reuse the
+        // same 5-tuple, so do not consult the flow cache in that case.
+        jint route_uid = uid;
+        if (route_uid >= 0) {
+            tunnel_uid = is_tunnel_uid(route_uid);
+            route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                             tunnel_uid);
+        } else if (route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
+                                     &tunnel_uid)) {
+            // Established tunnelled flows never create an ng_session — the
+            // WireGuard write below returns first — so the cache preserves
+            // their first-packet answer without a per-packet UID lookup.
+        } else {
+            // A cache expiry or collision is rare, but falling back to the
+            // selected-mode default would divert an already-established
+            // tunnelled flow direct and can make TCP reset. Recover the UID
+            // from the native session table first, then from the
+            // authoritative Android/procfs lookup.
+            route_uid = get_session_uid(args, version, protocol, pkt, payload);
+            if (route_uid < 0)
+                route_uid = get_route_uid(args, version, protocol,
+                                          saddr, sport, daddr, dport,
+                                          source, dest);
+
+            if (route_uid >= 0) {
+                tunnel_uid = is_tunnel_uid(route_uid);
+                route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                 tunnel_uid);
+                if (out_uid != NULL)
+                    *out_uid = route_uid;
+            } else {
+                // Unknown ownership is privacy-sensitive: keep the packet
+                // in the remote tunnel rather than fail-open to direct
+                // routing in selected mode. Cache that explicit fail-closed
+                // verdict so the rest of this flow does not repeat a Binder
+                // or procfs lookup on every packet. A later flow with the
+                // same tuple still wins because a freshly resolved UID is
+                // handled before the cache above.
+                tunnel_uid = 1;
+                route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                 tunnel_uid);
+                log_android(ANDROID_LOG_WARN,
+                            "Route UID unavailable for v%d p%d %s/%u > %s/%u; tunnelling",
+                            version, protocol, source, sport, dest, dport);
+            }
+        }
+    } else
+        tunnel_uid = route_default_is_tunnel();
+    return tunnel_uid;
+}
+
 uint16_t get_mtu() {
     return 10000;
 }
@@ -396,21 +466,72 @@ void handle_ip(const struct arguments *args,
         }
     }
 
-    // Get uid
+    // Get uid. SNI research mode deliberately lets a 443 SYN through without
+    // one so the ClientHello can be reassembled first. That is fine for the
+    // block decision, but the routing fork needs the UID now: with no UID and
+    // no session, the SYN falls to the global default and every later packet
+    // of that flow inherits the answer from it.
     jint uid = -1;
+    int sni_candidate = (is_play && protocol == IPPROTO_TCP && dport == 443);
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        // SNI research mode lets a 443 SYN through without a UID so the
-        // ClientHello can be reassembled first. That is fine for the block
-        // decision, but the routing fork needs the UID now: with no UID and no
-        // session, the SYN falls to the global default and every later packet
-        // of that flow inherits the answer from it.
         (protocol == IPPROTO_TCP && syn &&
-         (dport != 443 || !is_play || route_uid_relevant()))) {
+         (!sni_candidate || route_uid_relevant()))) {
             if (args->ctx->sdk <= 28) // Android 9 Pie
                 uid = get_uid(version, protocol, saddr, sport, daddr, dport);
             else
                 uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+    }
+
+    // SNI research mode reassembles a ClientHello on the ng_session that
+    // handle_tcp creates for a 443 flow — but the WireGuard hijack below hands
+    // a tunnelled flow's packets to the WG bridge and returns before
+    // handle_tcp ever runs, so such a flow never gets a session to reassemble
+    // on. Left alone that means the reassembly guard always sees cur == NULL,
+    // so no SNI is ever collected, and every later segment re-runs the full
+    // is_address_allowed() upcall and a UID lookup forever, because the
+    // once-per-session shortcut lives inside a cur != NULL branch a tunnelled
+    // flow never reaches. Rather than build per-flow reassembly state for a
+    // tunnelled flow, resolve the routing verdict up front and, when it
+    // tunnels, drop sni_active so the packet takes the ordinary path below:
+    // decide once on the SYN by IP, then allowed = 1, exactly as WireGuard
+    // behaves without research mode.
+    int sni_active = sni_candidate;
+    int sni_tunnel_uid = 0;
+    int sni_tunnel_uid_known = 0;
+    jint sni_resolved_uid = -1;
+    int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
+    if (wg_is_required && sni_candidate) {
+        // is_dns is 0 here by construction: this is only reached for dport
+        // 443. uid is unresolved for every packet but the SYN of a per-app
+        // routed flow, which is what the flow cache and the session-table
+        // fallback inside resolve_tunnel_uid are for. sni_resolved_uid, when
+        // filled in, lets the UID-attribution fallback below reuse whatever
+        // this call already paid a session-table/procfs lookup for, instead
+        // of resolving it a second time.
+        sni_tunnel_uid = resolve_tunnel_uid(args, version, protocol,
+                                            saddr, sport, daddr, dport,
+                                            source, dest, pkt, payload, uid,
+                                            &sni_resolved_uid);
+        sni_tunnel_uid_known = 1;
+        if (route_wants_tunnel(is_local_dest(version, daddr), 0,
+                               sni_tunnel_uid, route_dns_direct()))
+            sni_active = 0;
+    }
+
+    // The ordinary path decides on the SYN, so a flow that just lost research
+    // mode still needs the UID the exemption above skipped — without it the
+    // decision would run unattributed, which WireGuard without research mode
+    // never does. Prefer whatever resolve_tunnel_uid already resolved above;
+    // only fall back to a fresh lookup when it did not (route_uid_relevant()
+    // was false, so no UID needed resolving for the routing verdict).
+    if (sni_candidate && !sni_active && syn && uid < 0) {
+        if (sni_resolved_uid >= 0)
+            uid = sni_resolved_uid;
+        else if (args->ctx->sdk <= 28) // Android 9 Pie
+            uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+        else
+            uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
     }
 
     log_android(ANDROID_LOG_DEBUG,
@@ -422,9 +543,9 @@ void handle_ip(const struct arguments *args,
     struct allowed *redirect = NULL;
     if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
         allowed = 1; // could be a lingering/blocked session
-    else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !is_play)) // assume existing session
+    else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !sni_active)) // assume existing session
                                          || (uid == 0 && dport == 53)         // assume existing session
-                                         || (dport == 443 && syn && is_play))) // let SYN pass by until SNI can be extracted
+                                         || (dport == 443 && syn && sni_active))) // let SYN pass by until SNI can be extracted
         allowed = 1;
     else {
         struct ng_session *cur = NULL;
@@ -435,7 +556,7 @@ void handle_ip(const struct arguments *args,
         int defer_sni = 0;
 
         // Check if we have a CLIENT HELLO, and if so extract SNI
-        if (protocol == IPPROTO_TCP && dport == 443 && !syn && is_play) {
+        if (protocol == IPPROTO_TCP && dport == 443 && !syn && sni_active) {
             // Get TCP headers
             const uint8_t version = (*pkt) >> 4;
             const struct iphdr *ip4 = (struct iphdr *) pkt;
@@ -559,7 +680,6 @@ void handle_ip(const struct arguments *args,
         // user's physical network.
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
-        int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
 
         // Which app this packet belongs to — but only when that can change the
         // answer. With no per-app override configured every UID routes the same
@@ -567,56 +687,15 @@ void handle_ip(const struct arguments *args,
         // cost a lock and, for the established flows that arrive with uid == -1
         // (existing UDP sessions, non-SYN TCP, i.e. most packets), a walk of the
         // whole session table, which grows with load. That is pure waste for
-        // everyone who has not opted in.
-        int tunnel_uid;
-        if (route_uid_relevant()) {
-            // A flow keeps the verdict its first packet was given. A fresh UID
-            // is authoritative even when a previous flow happened to reuse the
-            // same 5-tuple, so do not consult the flow cache in that case.
-            jint route_uid = uid;
-            if (route_uid >= 0) {
-                tunnel_uid = is_tunnel_uid(route_uid);
-                route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                 tunnel_uid);
-            } else if (route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
-                                         &tunnel_uid)) {
-                // Established tunnelled flows never create an ng_session — the
-                // WireGuard write below returns first — so the cache preserves
-                // their first-packet answer without a per-packet UID lookup.
-            } else {
-                // A cache expiry or collision is rare, but falling back to the
-                // selected-mode default would divert an already-established
-                // tunnelled flow direct and can make TCP reset. Recover the UID
-                // from the native session table first, then from the
-                // authoritative Android/procfs lookup.
-                route_uid = get_session_uid(args, version, protocol, pkt, payload);
-                if (route_uid < 0)
-                    route_uid = get_route_uid(args, version, protocol,
-                                              saddr, sport, daddr, dport,
-                                              source, dest);
-
-                if (route_uid >= 0) {
-                    tunnel_uid = is_tunnel_uid(route_uid);
-                    route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                     tunnel_uid);
-                } else {
-                    // Unknown ownership is privacy-sensitive: keep the packet
-                    // in the remote tunnel rather than fail-open to direct
-                    // routing in selected mode. Cache that explicit fail-closed
-                    // verdict so the rest of this flow does not repeat a Binder
-                    // or procfs lookup on every packet. A later flow with the
-                    // same tuple still wins because a freshly resolved UID is
-                    // handled before the cache above.
-                    tunnel_uid = 1;
-                    route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                     tunnel_uid);
-                    log_android(ANDROID_LOG_WARN,
-                                "Route UID unavailable for v%d p%d %s/%u > %s/%u; tunnelling",
-                                version, protocol, source, sport, dest, dport);
-                }
-            }
-        } else
-            tunnel_uid = route_default_is_tunnel();
+        // everyone who has not opted in. The SNI research-mode check above
+        // already resolved this (and stored it in the flow cache) for a
+        // candidate 443 flow while WireGuard is required; reuse that answer
+        // instead of resolving and re-storing it a second time.
+        int tunnel_uid = sni_tunnel_uid_known
+                ? sni_tunnel_uid
+                : resolve_tunnel_uid(args, version, protocol,
+                                     saddr, sport, daddr, dport,
+                                     source, dest, pkt, payload, uid, NULL);
 
         int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
                                          tunnel_uid, route_dns_direct());
