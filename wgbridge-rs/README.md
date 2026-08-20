@@ -26,8 +26,9 @@ encrypted side), so we plug in:
 - `SocketpairRecv` — reads outbound raw IP packets from the socketpair fd
   written by `jni/netguard/ip.c` (batched, via tokio's `AsyncFd`);
 - `TunFdSend` — writes decrypted inbound packets to the VpnService TUN fd,
-  running passive DNS inspection (A/AAAA answers feed TrackerControl's
-  tracker mapping) on the way through;
+  recording A/AAAA answers for TrackerControl's mapping and applying its DNS
+  response policy (SVCB/HTTPS blanking and the explicit domain-policy hook) on
+  the way through;
 - `ProtectedUdpFactory` — binds the outer UDP sockets and protects them via
   the Java `Protector` callback. Because gotatun re-invokes the factory on
   every reconfigure, `Tunnel.rebind()` doubles as "move the encrypted
@@ -128,7 +129,11 @@ class Wgbridge {
 
 interface Protector   { boolean protect(int fd); }
 interface Logger      { void verbosef(String s); void errorf(String s); }
-interface DnsRecorder { void recordDns(String qname, String aname, String resource, int ttl); }
+interface DnsRecorder {
+    void recordDns(String qname, String aname, String resource, int ttl);
+    default boolean isDomainBlocked(String qname) { return false; }
+    default int blockedRcode() { return 3; }
+}
 
 class Tunnel {
     void setConfig(String uapiConfig);
@@ -148,11 +153,8 @@ hostnames, and re-resolves them on network changes via `updateEndpoint`).
 
 ## Potential improvements
 
-- **DNS upstream privacy**: app DNS packets to port 53 currently stay on the
-  local NetGuard path so DNS forwarding, tracker lookup, and local resolvers
-  keep working. That is fine for interception, but the upstream resolver path
-  should be revisited when WireGuard is enabled. Ideally, TrackerControl would
-  still intercept app DNS locally while sending DoH/plain-DNS fallback upstream
-  through WireGuard, except for deliberately local-network DNS such as a router
-  or Pi-hole. This is not urgent, but it matters for a complete IP-privacy
-  story because TrackerControl itself is excluded from the VPN route.
+- **Split DNS-over-TCP rewriting**: inbound TCP DNS is recorded with bounded
+  reassembly, but response rewriting is limited to complete frames that begin
+  and end in one sequence-aligned segment. Rewriting a frame split across
+  packets needs buffering plus TCP sequence translation; continuation segments
+  are deliberately forwarded unchanged until that exists.

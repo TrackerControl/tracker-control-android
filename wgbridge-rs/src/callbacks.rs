@@ -7,11 +7,26 @@ pub trait SocketProtector: Send + Sync + 'static {
     fn protect(&self, fd: i32) -> bool;
 }
 
-/// Receives DNS answers observed on decrypted inbound packets. Passive:
-/// TrackerControl uses this mapping later when deciding on app connections,
-/// but the DNS response is not blocked or rewritten here.
+/// Receives DNS answers observed on decrypted inbound packets and exposes the
+/// DNS policy used when the response is sent back to the app.
 pub trait DnsSink: Send + Sync + 'static {
     fn record_dns(&self, qname: &str, aname: &str, resource: &str, ttl: i32);
+
+    /// Whether a response for `qname` should be returned without answers.
+    ///
+    /// The current Android callback deliberately returns `false`, matching
+    /// ServiceSinkhole.isDomainBlocked on the master branch. Keeping this as
+    /// an explicit policy hook lets the packet rewriter preserve the native
+    /// path's semantics without inventing a second blocklist in Rust.
+    fn is_domain_blocked(&self, _qname: &str) -> bool {
+        false
+    }
+
+    /// RCODE used for a response blanked by the DNS policy. DNS RCODE is four
+    /// bits; invalid callback values are clamped by the packet rewriter.
+    fn blocked_rcode(&self) -> u8 {
+        3 // NXDOMAIN, matching the native default preference.
+    }
 }
 
 /// Bridge-level log lines destined for the Java side.

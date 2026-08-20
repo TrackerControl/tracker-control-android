@@ -156,6 +156,30 @@ impl DnsSink for JavaDnsSink {
             .map(|_| ())
         });
     }
+
+    fn is_domain_blocked(&self, qname: &str) -> bool {
+        self.0
+            .with_env(|env, obj| {
+                let q = env.new_string(qname)?;
+                env.call_method(
+                    obj,
+                    jni_str!("isDomainBlocked"),
+                    jni_sig!((qname: JString) -> jboolean),
+                    &[JValue::Object(&q)],
+                )?
+                .z()
+            })
+            .unwrap_or(false)
+    }
+
+    fn blocked_rcode(&self) -> u8 {
+        self.0
+            .with_env(|env, obj| {
+                env.call_method(obj, jni_str!("blockedRcode"), jni_sig!(() -> jint), &[])
+                    .map(|value| value.i().unwrap_or(3).clamp(0, 15) as u8)
+            })
+            .unwrap_or(3)
+    }
 }
 
 fn tunnel_from_handle<'a>(handle: jlong) -> Option<&'a Tunnel> {

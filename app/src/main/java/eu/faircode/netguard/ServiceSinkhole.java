@@ -1464,7 +1464,15 @@ public class ServiceSinkhole extends VpnService {
         return listDns;
     }
 
-    private static boolean hasActiveWireGuardDns(SharedPreferences prefs) {
+    /**
+     * Whether the configured WireGuard egress will own DNS routing.
+     *
+     * The tunnel supplies a protected public fallback when the config has no
+     * usable DNS entry, so Secure DNS must be paused for that case too. The
+     * parser check keeps a malformed or incomplete preference from suppressing
+     * DoH when no tunnel can actually be started.
+     */
+    static boolean hasActiveWireGuard(SharedPreferences prefs) {
         if (!prefs.getBoolean("wg_enabled", false))
             return false;
 
@@ -1473,9 +1481,8 @@ public class ServiceSinkhole extends VpnService {
             return false;
 
         try {
-            net.kollnig.missioncontrol.wg.WgConfig config =
-                    net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
-            return !getWireGuardDns(config).isEmpty();
+            net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE.parse(wgConfigText);
+            return true;
         } catch (Throwable ignored) {
             return false;
         }
@@ -1486,8 +1493,8 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.dns.DnsProxyServer proxy =
                 net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(this);
 
-        if (prefs.getBoolean("doh_enabled", false) && hasActiveWireGuardDns(prefs)) {
-            Log.i(TAG, "Secure DNS proxy disabled while WireGuard DNS is active");
+        if (prefs.getBoolean("doh_enabled", false) && hasActiveWireGuard(prefs)) {
+            Log.i(TAG, "Secure DNS proxy disabled while WireGuard egress is active");
             proxy.stop();
         } else {
             proxy.checkAndUpdateState();
@@ -2149,8 +2156,11 @@ public class ServiceSinkhole extends VpnService {
             }
         }
 
-        // Add DoH DNS forwarding when enabled and not superseded by WireGuard DNS.
-        if (prefs.getBoolean("doh_enabled", false) && !hasActiveWireGuardDns(prefs)) {
+        // Add DoH DNS forwarding only when WireGuard is not owning DNS. This
+        // includes configs without a DNS line: getBuilder() installs a
+        // protected public fallback for those configs, and the DoH client is
+        // excluded from this VPN so it cannot be safely chained through WG.
+        if (prefs.getBoolean("doh_enabled", false) && !hasActiveWireGuard(prefs)) {
             Forward dnsFwd = new Forward();
             dnsFwd.protocol = 17; // UDP
             dnsFwd.dport = 53;

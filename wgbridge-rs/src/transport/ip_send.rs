@@ -1,5 +1,5 @@
-//! IpSend to the VpnService TUN fd, with passive DNS inspection of the
-//! decrypted inbound packets on the way through.
+//! IpSend to the VpnService TUN fd, with DNS inspection and response policy
+//! applied to decrypted inbound packets on the way through.
 
 use std::io;
 use std::os::fd::{AsRawFd, OwnedFd};
@@ -38,12 +38,20 @@ fn write_fd(fd: i32, buf: &[u8]) -> isize {
 
 impl IpSend for TunFdSend {
     async fn send(&mut self, packet: Packet<Ip>) -> io::Result<()> {
-        let packet: Packet<[u8]> = packet.into();
-        let data = packet.as_ref();
+        let mut packet: Packet<[u8]> = packet.into();
 
         if let Some(dns) = &self.dns {
-            self.dns_inspector.inspect(data, dns.as_ref());
+            // The inspector records A/AAAA mappings before it blanks
+            // SVCB/HTTPS or a domain-blocked response. Its TCP sequence state
+            // also prevents continuation segments from being parsed as new
+            // DNS-over-TCP frames.
+            let data = packet.buf_mut().as_mut();
+            if let Some(new_len) = self.dns_inspector.inspect_and_rewrite(data, dns.as_ref()) {
+                packet.truncate(new_len);
+            }
         }
+
+        let data = packet.as_ref();
 
         let n = write_fd(self.fd.as_raw_fd(), data);
         if n != data.len() as isize {

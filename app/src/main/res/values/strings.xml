@@ -166,7 +166,7 @@
 
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Secure DNS (DoH)</string>
-    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Automatically paused when WireGuard provides DNS, because those queries use the WireGuard tunnel instead.</string>
+    <string name="summary_doh_enabled">Encrypt DNS queries using DNS-over-HTTPS. Automatically paused when WireGuard is active, because those queries use the WireGuard tunnel instead.</string>
     <string name="warning_beta">Beta feature. May not work as expected.</string>
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL for DNS-over-HTTPS queries</string>
