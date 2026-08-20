@@ -2017,16 +2017,28 @@ public class ServiceSinkhole extends VpnService {
         for (Rule rule : listRule)
             mapUidKnown.put(rule.uid, rule.uid);
 
-        defaultTunnel = RemoteRoutingLogic.defaultTunnel(
-                RemoteRoutingLogic.normalizeMode(
-                        PreferenceManager.getDefaultSharedPreferences(this)
-                                .getString(Rule.PREF_WG_ROUTE_MODE,
-                                        RemoteRoutingLogic.getDefaultMode())));
-        mapUidRouteOverride = mapUidRouteOverride(listRule, defaultTunnel);
-        anyDirectRouting = anyDirectRouting(listRule);
-        // Util.getDefaultDNS does binder calls, so resolve it once per reload
-        // rather than on the DNS path.
-        directDnsTarget = resolveDirectDnsTarget();
+        // Per-app routing only means anything when a remote tunnel exists to
+        // route around. With WireGuard off, wg_route_mode/wg_route prefs must
+        // not linger into costing every DNS query the fwd53 UID-lookup/upcall
+        // path below: collapse to the no-tunnel defaults instead of resolving
+        // them from stale preferences.
+        if (hasActiveWireGuard(PreferenceManager.getDefaultSharedPreferences(this))) {
+            defaultTunnel = RemoteRoutingLogic.defaultTunnel(
+                    RemoteRoutingLogic.normalizeMode(
+                            PreferenceManager.getDefaultSharedPreferences(this)
+                                    .getString(Rule.PREF_WG_ROUTE_MODE,
+                                            RemoteRoutingLogic.getDefaultMode())));
+            mapUidRouteOverride = mapUidRouteOverride(listRule, defaultTunnel);
+            anyDirectRouting = anyDirectRouting(listRule);
+            // Util.getDefaultDNS does binder calls, so resolve it once per reload
+            // rather than on the DNS path.
+            directDnsTarget = resolveDirectDnsTarget();
+        } else {
+            defaultTunnel = true;
+            mapUidRouteOverride = new HashSet<>();
+            anyDirectRouting = false;
+            directDnsTarget = null;
+        }
 
         lock.writeLock().unlock();
     }

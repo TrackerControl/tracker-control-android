@@ -185,7 +185,14 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
 // why nothing here takes a lock; a reload bumps route_flow_gen instead of
 // clearing the table, so entries decided under superseded rules stop matching.
 
-#define ROUTE_FLOW_SIZE 1024        // power of two; ~56 KB resident
+// 4-way set-associative: same 1024-entry / ~56 KB budget as the original
+// direct-mapped table, but two concurrently active flows that hash to the
+// same set no longer evict each other every packet. A direct-mapped table
+// made that eviction ping-pong guaranteed for any colliding pair of busy
+// flows, and every miss it caused fell through to a per-packet Binder/procfs
+// UID lookup — the exact cost this cache exists to avoid.
+#define ROUTE_FLOW_WAYS 4
+#define ROUTE_FLOW_SETS 256         // power of two; SETS * WAYS = 1024 entries
 #define ROUTE_FLOW_MAX_AGE 300      // seconds idle before an entry is reusable
 
 struct route_flow_entry {
@@ -200,7 +207,7 @@ struct route_flow_entry {
     time_t time;
 };
 
-static struct route_flow_entry route_flows[ROUTE_FLOW_SIZE];
+static struct route_flow_entry route_flows[ROUTE_FLOW_SETS][ROUTE_FLOW_WAYS];
 static _Atomic uint32_t route_flow_gen = 1;
 
 void route_flow_invalidate() {
@@ -210,9 +217,9 @@ void route_flow_invalidate() {
         atomic_store_explicit(&route_flow_gen, 1, memory_order_release);
 }
 
-static size_t route_flow_slot(int version, int protocol,
-                              const void *saddr, uint16_t sport,
-                              const void *daddr, uint16_t dport) {
+static size_t route_flow_set(int version, int protocol,
+                             const void *saddr, uint16_t sport,
+                             const void *daddr, uint16_t dport) {
     size_t alen = (version == 4 ? 4u : 16u);
     // FNV-1a
     uint32_t h = 2166136261u;
@@ -228,7 +235,7 @@ static size_t route_flow_slot(int version, int protocol,
     h = (h ^ (uint8_t) (sport >> 8)) * 16777619u;
     h = (h ^ (uint8_t) (dport & 0xff)) * 16777619u;
     h = (h ^ (uint8_t) (dport >> 8)) * 16777619u;
-    return (size_t) (h & (ROUTE_FLOW_SIZE - 1));
+    return (size_t) (h & (ROUTE_FLOW_SETS - 1));
 }
 
 static int route_flow_matches(const struct route_flow_entry *e, uint32_t gen,
@@ -253,33 +260,61 @@ int route_flow_lookup(int version, int protocol,
                       const void *daddr, uint16_t dport,
                       int *tunnel) {
     uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
-    struct route_flow_entry *e = &route_flows[route_flow_slot(
+    struct route_flow_entry *set = route_flows[route_flow_set(
             version, protocol, saddr, sport, daddr, dport)];
 
     time_t now = time(NULL);
-    if (!route_flow_matches(e, gen, version, protocol, saddr, sport, daddr, dport, now))
-        return 0;
-
-    e->time = now;
-    *tunnel = e->tunnel;
-    return 1;
+    for (int way = 0; way < ROUTE_FLOW_WAYS; way++) {
+        struct route_flow_entry *e = &set[way];
+        if (!route_flow_matches(e, gen, version, protocol, saddr, sport, daddr, dport, now))
+            continue;
+        e->time = now;
+        *tunnel = e->tunnel;
+        return 1;
+    }
+    return 0;
 }
 
 /**
- * Remember this flow's verdict. One slot per hash, overwritten on collision —
- * it is a cache, and a miss only costs the fallback path that ran before it
- * existed. Never called for a packet whose UID was unknown: pinning a guessed
- * default for the life of a flow is the failure this exists to prevent.
+ * Remember this flow's verdict, in the first empty/stale/current-gen-oldest
+ * way of its set. It is a cache, and a miss only costs the fallback path that
+ * ran before it existed. Never called for a packet whose UID was unknown:
+ * pinning a guessed default for the life of a flow is the failure this exists
+ * to prevent.
  */
 void route_flow_store(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
                       int tunnel) {
     size_t alen = (version == 4 ? 4u : 16u);
-    struct route_flow_entry *e = &route_flows[route_flow_slot(
+    uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+    struct route_flow_entry *set = route_flows[route_flow_set(
             version, protocol, saddr, sport, daddr, dport)];
 
-    e->gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+    // Pick a way to write, cheapest-safe choice first: reuse this flow's own
+    // entry if it is already cached, else an empty/superseded/expired way,
+    // else evict the oldest entry in the set (a working set wider than 4
+    // concurrently-hot flows per set degrades to more fallback lookups, not
+    // to a wrong answer).
+    time_t now = time(NULL);
+    struct route_flow_entry *victim = NULL;
+    struct route_flow_entry *oldest = &set[0];
+    for (int way = 0; way < ROUTE_FLOW_WAYS; way++) {
+        struct route_flow_entry *e = &set[way];
+        if (route_flow_matches(e, gen, version, protocol, saddr, sport, daddr, dport, now)) {
+            victim = e;
+            break;
+        }
+        if (victim == NULL && (e->gen != gen || now - e->time > ROUTE_FLOW_MAX_AGE))
+            victim = e;
+        if (e->time < oldest->time)
+            oldest = e;
+    }
+    if (victim == NULL)
+        victim = oldest;
+
+    struct route_flow_entry *e = victim;
+    e->gen = gen;
     e->version = (uint8_t) version;
     e->protocol = (uint8_t) protocol;
     e->tunnel = (uint8_t) (tunnel ? 1 : 0);
@@ -289,5 +324,5 @@ void route_flow_store(int version, int protocol,
     memset(e->daddr, 0, sizeof(e->daddr));
     memcpy(e->saddr, saddr, alen);
     memcpy(e->daddr, daddr, alen);
-    e->time = time(NULL);
+    e->time = now;
 }
