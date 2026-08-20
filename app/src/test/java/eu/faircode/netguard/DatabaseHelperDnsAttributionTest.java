@@ -59,6 +59,33 @@ public class DatabaseHelperDnsAttributionTest {
         }
     }
 
+    @Test
+    public void aliveFilterAppliesBeforeDedup() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearDns();
+
+        String ip = "203.0.113.30";
+        // The freshest observation has already expired; an older one is still
+        // alive. With alive=true the expired row must not shadow the alive one.
+        // Rows are inserted directly because insertDns() clamps the TTL to the
+        // "ttl" preference floor, which would keep the fresh row alive.
+        long now = System.currentTimeMillis();
+        dh.getWritableDatabase().execSQL(
+                "INSERT INTO dns (time, qname, aname, resource, ttl) VALUES ("
+                        + (now - 10_000) + ", 't2.example.com', 'alive-cname.example.com', '"
+                        + ip + "', 3600000)");
+        dh.getWritableDatabase().execSQL(
+                "INSERT INTO dns (time, qname, aname, resource, ttl) VALUES ("
+                        + (now - 5_000) + ", 't2.example.com', 'expired-cname.example.com', '"
+                        + ip + "', 1000)");
+
+        try (Cursor c = dh.getQAName(-1, ip, true)) {
+            assertEquals(1, c.getCount());
+            assertTrue(c.moveToFirst());
+            assertEquals("alive-cname.example.com", c.getString(c.getColumnIndexOrThrow("aname")));
+        }
+    }
+
     private static ResourceRecord rr(long time, String qname, String aname, String resource, int ttl) {
         ResourceRecord rr = new ResourceRecord();
         rr.Time = time;

@@ -1166,7 +1166,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = readableDb;
             String escapedIp = ip.replace("'", "''");
             String aliveFilter = alive
-                    ? " AND (%1$s.time IS NULL OR %1$s.time + %1$s.ttl >= " + now + ")"
+                    ? " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")"
                     : "";
             // There is a segmented index on resource. A shared IP can carry
             // DNS evidence for several qnames; keep only the most recently
@@ -1174,17 +1174,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // the freshest resolution — most likely tied to the connection
             // that's actually being made now — is attributed first instead
             // of an alphabetically-first but possibly stale one.
-            String query = "SELECT d.qname, d.aname, d.time, d.ttl" +
+            //
+            // The dedup deliberately uses a single MAX(time) aggregate: with
+            // exactly one min/max aggregate, SQLite takes the bare columns
+            // from the row that supplied the maximum, so this is one index
+            // range scan over the IP's rows. A correlated per-row subquery
+            // here re-scans the IP's rows once per candidate row — O(n²) —
+            // and this query runs for every new connection (log() and
+            // blockKnownTracker()), where it grows with DNS history until
+            // it shows up as battery drain and heat.
+            String query = "SELECT d.qname, d.aname, d.time, d.ttl, MAX(d.time)" +
                     " FROM dns AS d" +
                     " WHERE d.resource = '" + escapedIp + "'" +
-                    String.format(aliveFilter, "d") +
-                    " AND d.ID = (" +
-                    "   SELECT d2.ID FROM dns AS d2" +
-                    "   WHERE d2.resource = d.resource AND d2.qname = d.qname" +
-                    String.format(aliveFilter, "d2") +
-                    "   ORDER BY d2.time DESC, d2.ID DESC" +
-                    "   LIMIT 1" +
-                    " )" +
+                    aliveFilter +
+                    " GROUP BY d.qname" +
                     " ORDER BY d.time DESC, d.ID DESC";
             return db.rawQuery(query, new String[] {});
         } finally {
