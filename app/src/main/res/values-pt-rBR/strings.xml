@@ -284,8 +284,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="tab_countries">Países</string>
     <string name="tab_actions">Meus dados</string>
     <string name="tracker_name">Nome do rastreador</string>
-    <string name="internet_access">Acesso à Internet</string>
-    <string name="internet_access_explanation">Você também pode tocar no ícone do app na tela principal.</string>
     <string name="app_info">Gerenciar app</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
@@ -346,9 +344,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="onboarding_blockingmode_strict_desc">Bloqueia tudo, incluindo serviços essenciais e domínios ambíguos. Falhas significativas em aplicativos — muitos aplicativos precisarão ser excluídos manualmente.</string>
     <string name="onboarding_blockingmode_research_label">Pesquisa</string>
     <string name="onboarding_blockingmode_research_desc">Sem bloqueio do rastreador. Transmissões de logs para ADB e permite a extração SNI para melhor detecção de nome de host. Apenas pesquisa: isso vaza seu endereço IP para servidores de rastreadores.</string>
-    <string name="exclude_vpn_explanation">Detecta e bloqueia rastreadores para este app.</string>
-    <string name="vpn_exclude">Excluir da VPN</string>
-    <string name="vpn_exclude_explanation">Habilite se você se deparar com problemas. O aplicativo irá ignorar completamente o TrackerControl\n\nNota: \"Bloquear conexões sem VPN\" nas configurações de VPN do Android deve ser DESATIVADA para funcionar.</string>
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Configurações do app &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilite o interruptor na tela principal e inicie o app para encontrar rastreadores</string>
@@ -454,4 +449,30 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="msg_apply_blocklists_failed">Falha ao aplicar arquivos host</string>
     <string name="msg_last_update">Última atualização: %s</string>
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Proteção</string>
+    <string name="app_state_protected">Protegido</string>
+    <string name="app_state_protected_explanation">Os rastreadores são bloqueados e registrados para este aplicativo.</string>
+    <string name="app_state_trackers_allowed">Rastreadores permitidos</string>
+    <string name="app_state_trackers_allowed_explanation">O aplicativo continua passando pelo TrackerControl, mas seus rastreadores não são bloqueados nem registrados. Use isto se o bloqueio quebrar o aplicativo.</string>
+    <string name="app_state_no_internet">Sem Internet</string>
+    <string name="app_state_no_internet_explanation">Todas as conexões deste aplicativo estão bloqueadas. Você também pode tocar no ícone do aplicativo na tela principal.</string>
+    <string name="app_state_no_internet_shared_uid">Também se aplica a %1$s, que compartilha um ID de usuário do Android com este aplicativo.</string>
+    <string name="app_state_bypassed">Ignorar o TrackerControl</string>
+    <string name="app_state_bypassed_explanation">O aplicativo se conecta diretamente, fora do TrackerControl. Nada é monitorado nem bloqueado para ele. Use isto como último recurso se o aplicativo ainda não funcionar.\n\nObservação: \"Bloquear conexões sem VPN\" nas configurações de VPN do Android precisa estar DESATIVADO para que isto funcione.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Rotear pela VPN remota</string>
+    <string name="summary_wg_route_mode">Quais aplicativos são encaminhados pela VPN remota. Os que não são continuam totalmente monitorados e filtrados — apenas se conectam pela rede deste dispositivo.</string>
+    <string name="wg_route_mode_all">Todos os aplicativos</string>
+    <string name="wg_route_mode_selected">Somente aplicativos selecionados</string>
+    <string name="app_route_heading">VPN remota</string>
+    <string name="app_route_through">Pela VPN remota</string>
+    <string name="app_route_through_explanation">Este aplicativo se conecta pela sua VPN remota, que vê o tráfego dele no lugar da sua rede.</string>
+    <string name="app_route_direct">Diretamente deste dispositivo</string>
+    <string name="app_route_direct_explanation">Este aplicativo se conecta pela sua própria rede. O monitoramento e o bloqueio de rastreadores continuam valendo. As consultas DNS vão para o resolvedor da sua rede em vez do da VPN, e ele vê o endereço real deste dispositivo — alguns aplicativos precisam disso, por exemplo para alcançar dispositivos locais ou verificar um portal cativo.</string>
+    <string name="app_route_unavailable_no_vpn">Nenhuma VPN remota está configurada, então todo o tráfego já sai diretamente deste dispositivo.</string>
+    <string name="app_route_unavailable_bypassed">Este aplicativo ignora o TrackerControl por completo, então não há tráfego a rotear.</string>
+    <string name="app_route_unavailable_partial_routes">Sua VPN remota não transporta todo o tráfego (os AllowedIPs dela não formam um túnel completo). O roteamento por aplicativo exige um túnel completo, porque as rotas são compartilhadas por todos os aplicativos.</string>
 </resources>

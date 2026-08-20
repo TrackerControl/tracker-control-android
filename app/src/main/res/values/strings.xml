@@ -458,6 +458,16 @@ Your internet traffic is not being sent to a remote VPN server.</string>
         <item>strict</item>
     </string-array>
 
+    <string-array name="wgRouteModeNames" translatable="false">
+        <item>@string/wg_route_mode_all</item>
+        <item>@string/wg_route_mode_selected</item>
+    </string-array>
+
+    <string-array name="wgRouteModeValues" translatable="false">
+        <item>all</item>
+        <item>selected</item>
+    </string-array>
+
     <string-array name="logLevelNames" translatable="false">
         <item>Verbose</item>
         <item>Debug</item>
@@ -519,8 +529,6 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="tab_countries">Countries</string>
     <string name="tab_actions">My Data</string>
     <string name="tracker_name">Tracker Name</string>
-    <string name="internet_access">Internet Access</string>
-    <string name="internet_access_explanation">You can also tap the app icon in the main screen.</string>
     <string name="app_info">Manage App</string>
 
     <!-- Actions -->
@@ -633,10 +641,33 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_blockingmode_research_label">Research</string>
     <string name="onboarding_blockingmode_research_desc">No tracker blocking. Logs transmissions to ADB and enables SNI extraction for better hostname detection. Research only: this leaks your IP address to tracker servers.</string>
 
-    <string name="exclude_vpn" translatable="false">Tracker Protection</string>
-    <string name="exclude_vpn_explanation">Detects and blocks trackers for this app.</string>
-    <string name="vpn_exclude">Exclude from VPN</string>
-    <string name="vpn_exclude_explanation">Enable if you run into issues. App will bypass TrackerControl completely.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED for this to work.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Route through remote VPN</string>
+    <string name="summary_wg_route_mode">Which apps are forwarded through the remote VPN. Apps that are not still get full tracker monitoring and blocking — they simply connect from this device\'s own network.</string>
+    <string name="wg_route_mode_all">All apps</string>
+    <string name="wg_route_mode_selected">Only selected apps</string>
+
+    <string name="app_route_heading">Remote VPN</string>
+    <string name="app_route_through">Through the remote VPN</string>
+    <string name="app_route_through_explanation">This app connects through your remote VPN, which sees its traffic instead of your network.</string>
+    <string name="app_route_direct">Directly from this device</string>
+    <string name="app_route_direct_explanation">This app connects from your own network. Tracker monitoring and blocking still apply. Its DNS queries go to your network\'s resolver rather than the VPN\'s, and it sees this device\'s real address — some apps need that, for example to reach local devices or check a captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">No remote VPN is set up, so all traffic already leaves from this device.</string>
+    <string name="app_route_unavailable_bypassed">This app bypasses TrackerControl entirely, so there is no traffic to route.</string>
+    <string name="app_route_unavailable_partial_routes">Your remote VPN does not carry all traffic (its AllowedIPs is not a full tunnel). Per-app routing needs a full tunnel, because routes are shared by every app.</string>
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Protection</string>
+    <string name="app_state_protected">Protected</string>
+    <string name="app_state_protected_explanation">Trackers are blocked and recorded for this app.</string>
+    <string name="app_state_trackers_allowed">Trackers allowed</string>
+    <string name="app_state_trackers_allowed_explanation">The app keeps running through TrackerControl, but its trackers are neither blocked nor recorded. Use this if blocking breaks the app.</string>
+    <string name="app_state_no_internet">No Internet</string>
+    <string name="app_state_no_internet_explanation">All connections from this app are blocked. You can also tap the app icon in the main screen.</string>
+    <string name="app_state_no_internet_explanation_shared" translatable="false">%1$s %2$s</string>
+    <string name="app_state_no_internet_shared_uid">Also applies to %1$s, which shares an Android user ID with this app.</string>
+    <string name="app_state_bypassed">Bypass TrackerControl</string>
+    <string name="app_state_bypassed_explanation">The app connects directly, outside TrackerControl. Nothing is monitored or blocked for it. Use this as a last resort if the app still does not work.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED for this to work.</string>
     <string name="uninstall">Uninstall</string>
     <string name="settings_uninstall">App Settings &amp; Uninstall</string>
 

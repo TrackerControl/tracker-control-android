@@ -294,7 +294,6 @@
     <string name="tab_countries">Quốc gia</string>
     <string name="tab_actions">Dữ liệu của tôi</string>
     <string name="tracker_name">Tên trình theo dõi</string>
-    <string name="internet_access">Truy cập Internet</string>
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
     <string name="block_tracking">Chặn trình theo dõi</string>
@@ -375,4 +374,30 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Bảo vệ</string>
+    <string name="app_state_protected">Được bảo vệ</string>
+    <string name="app_state_protected_explanation">Trình theo dõi bị chặn và được ghi lại cho ứng dụng này.</string>
+    <string name="app_state_trackers_allowed">Cho phép trình theo dõi</string>
+    <string name="app_state_trackers_allowed_explanation">Ứng dụng vẫn đi qua TrackerControl, nhưng các trình theo dõi của nó không bị chặn và cũng không được ghi lại. Hãy dùng tuỳ chọn này nếu việc chặn làm hỏng ứng dụng.</string>
+    <string name="app_state_no_internet">Không có Internet</string>
+    <string name="app_state_no_internet_explanation">Mọi kết nối của ứng dụng này đều bị chặn. Bạn cũng có thể chạm vào biểu tượng ứng dụng ở màn hình chính.</string>
+    <string name="app_state_no_internet_shared_uid">Cũng áp dụng cho %1$s, ứng dụng dùng chung ID người dùng Android với ứng dụng này.</string>
+    <string name="app_state_bypassed">Bỏ qua TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Ứng dụng kết nối trực tiếp, bên ngoài TrackerControl. Không có gì được giám sát hay chặn cho nó. Hãy dùng tuỳ chọn này như biện pháp cuối cùng nếu ứng dụng vẫn không hoạt động.\n\nLưu ý: \"Chặn kết nối khi không có VPN\" trong cài đặt VPN của Android phải được TẮT thì tuỳ chọn này mới hoạt động.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Định tuyến qua VPN từ xa</string>
+    <string name="summary_wg_route_mode">Những ứng dụng nào được chuyển tiếp qua VPN từ xa. Các ứng dụng còn lại vẫn được giám sát và chặn đầy đủ — chúng chỉ kết nối từ mạng của chính thiết bị này.</string>
+    <string name="wg_route_mode_all">Mọi ứng dụng</string>
+    <string name="wg_route_mode_selected">Chỉ ứng dụng đã chọn</string>
+    <string name="app_route_heading">VPN từ xa</string>
+    <string name="app_route_through">Qua VPN từ xa</string>
+    <string name="app_route_through_explanation">Ứng dụng này kết nối qua VPN từ xa của bạn, và VPN thấy lưu lượng của nó thay vì mạng của bạn.</string>
+    <string name="app_route_direct">Trực tiếp từ thiết bị này</string>
+    <string name="app_route_direct_explanation">Ứng dụng này kết nối từ mạng của bạn. Việc giám sát và chặn trình theo dõi vẫn được áp dụng. Truy vấn DNS của nó đi tới bộ phân giải của mạng bạn thay vì của VPN, và nó thấy địa chỉ thật của thiết bị — một số ứng dụng cần điều đó, ví dụ để truy cập thiết bị nội bộ hoặc kiểm tra captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Chưa thiết lập VPN từ xa nào, nên toàn bộ lưu lượng vốn đã rời thiết bị này trực tiếp.</string>
+    <string name="app_route_unavailable_bypassed">Ứng dụng này bỏ qua hoàn toàn TrackerControl, nên không có lưu lượng để định tuyến.</string>
+    <string name="app_route_unavailable_partial_routes">VPN từ xa của bạn không mang toàn bộ lưu lượng (AllowedIPs của nó không phải đường hầm đầy đủ). Định tuyến theo ứng dụng cần đường hầm đầy đủ, vì các tuyến được mọi ứng dụng dùng chung.</string>
 </resources>

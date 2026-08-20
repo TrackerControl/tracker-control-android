@@ -408,8 +408,6 @@
     <string name="tab_countries">国家</string>
     <string name="tab_actions">我的数据</string>
     <string name="tracker_name">追踪器名称</string>
-    <string name="internet_access">互联网访问</string>
-    <string name="internet_access_explanation">您也可以点击主屏幕上的应用图标。</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
     <string name="block_tracking">屏蔽追踪器</string>
@@ -508,9 +506,6 @@
     <string name="onboarding_blockingmode_strict_desc">屏蔽一切，包括基本服务和模糊域。严重的应用程序异常 — 需手动排除众多应用。</string>
     <string name="onboarding_blockingmode_research_label">研究</string>
     <string name="onboarding_blockingmode_research_desc">无跟踪器屏蔽。传输日志到 ADB 并允许提取SNI以更好地检测主机名。仅研究：这将泄漏您的 IP 地址到跟踪服务器。</string>
-    <string name="exclude_vpn_explanation">检测并阻止此应用的跟踪器。</string>
-    <string name="vpn_exclude">从 VPN 中排除</string>
-    <string name="vpn_exclude_explanation">如果您遇到问题，请启用。应用将完全绕过 TrackerControl。\n\n注意：在Android VPN 设置中\"屏蔽不使用VPN的所有连接\"必须禁用才能让这个选项正常工作。</string>
     <string name="uninstall">卸载</string>
     <string name="settings_uninstall">应用设置 &amp; 卸载</string>
     <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
@@ -639,4 +634,30 @@
     <string name="msg_apply_blocklists_failed">应用主机文件失败</string>
     <string name="msg_last_update">上次更新：%s</string>
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">保护</string>
+    <string name="app_state_protected">已保护</string>
+    <string name="app_state_protected_explanation">为此应用拦截并记录跟踪器。</string>
+    <string name="app_state_trackers_allowed">允许跟踪器</string>
+    <string name="app_state_trackers_allowed_explanation">应用仍然通过 TrackerControl 联网，但其跟踪器既不被拦截也不被记录。如果拦截导致应用无法正常使用，可选择此项。</string>
+    <string name="app_state_no_internet">无网络</string>
+    <string name="app_state_no_internet_explanation">此应用的所有连接都会被拦截。你也可以在主界面点按应用图标。</string>
+    <string name="app_state_no_internet_shared_uid">同样适用于 %1$s，它与此应用共用同一个 Android 用户 ID。</string>
+    <string name="app_state_bypassed">绕过 TrackerControl</string>
+    <string name="app_state_bypassed_explanation">应用将绕过 TrackerControl 直接联网，不会对其进行任何监测或拦截。仅在应用仍然无法使用时作为最后手段使用。\n\n注意：必须在 Android 的 VPN 设置中停用\"屏蔽不使用 VPN 的连接\"，此项才能生效。</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">通过远程 VPN 转发</string>
+    <string name="summary_wg_route_mode">哪些应用经远程 VPN 转发。未转发的应用仍然受到完整的跟踪器监测与拦截，只是改从本机自己的网络连接。</string>
+    <string name="wg_route_mode_all">所有应用</string>
+    <string name="wg_route_mode_selected">仅所选应用</string>
+    <string name="app_route_heading">远程 VPN</string>
+    <string name="app_route_through">经远程 VPN</string>
+    <string name="app_route_through_explanation">此应用经你的远程 VPN 连接，由 VPN 而非你的网络看到它的流量。</string>
+    <string name="app_route_direct">直接从本机连接</string>
+    <string name="app_route_direct_explanation">此应用从你自己的网络连接。跟踪器监测与拦截依然生效。它的 DNS 查询会发往你网络的解析器而非 VPN 的，并且它看到的是本机的真实地址——某些应用需要这样，例如访问局域网设备或检测强制门户。</string>
+    <string name="app_route_unavailable_no_vpn">尚未设置远程 VPN，因此所有流量已经直接从本机发出。</string>
+    <string name="app_route_unavailable_bypassed">此应用完全绕过 TrackerControl，因此没有可转发的流量。</string>
+    <string name="app_route_unavailable_partial_routes">你的远程 VPN 并未承载全部流量（其 AllowedIPs 不是全隧道）。路由由所有应用共享，因此按应用分流需要全隧道。</string>
 </resources>

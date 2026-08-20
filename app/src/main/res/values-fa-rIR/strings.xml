@@ -16,4 +16,30 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">محافظت</string>
+    <string name="app_state_protected">محافظت‌شده</string>
+    <string name="app_state_protected_explanation">ردیاب‌ها برای این برنامه مسدود و ثبت می‌شوند.</string>
+    <string name="app_state_trackers_allowed">ردیاب‌ها مجاز</string>
+    <string name="app_state_trackers_allowed_explanation">برنامه همچنان از طریق TrackerControl کار می‌کند، اما ردیاب‌های آن نه مسدود می‌شوند و نه ثبت. اگر مسدودسازی برنامه را خراب می‌کند از این گزینه استفاده کنید.</string>
+    <string name="app_state_no_internet">بدون اینترنت</string>
+    <string name="app_state_no_internet_explanation">همهٔ اتصال‌های این برنامه مسدود شده‌اند. می‌توانید روی نماد برنامه در صفحهٔ اصلی نیز ضربه بزنید.</string>
+    <string name="app_state_no_internet_shared_uid">برای %1$s نیز اعمال می‌شود، که شناسهٔ کاربری اندروید را با این برنامه به اشتراک می‌گذارد.</string>
+    <string name="app_state_bypassed">دور زدن TrackerControl</string>
+    <string name="app_state_bypassed_explanation">برنامه مستقیماً و خارج از TrackerControl متصل می‌شود. هیچ چیزی برای آن پایش یا مسدود نمی‌شود. اگر برنامه هنوز کار نمی‌کند، این را به‌عنوان آخرین راه‌حل استفاده کنید.\n\nتوجه: گزینهٔ \"مسدودسازی اتصال‌های بدون VPN\" در تنظیمات VPN اندروید باید غیرفعال باشد تا این کار کند.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">مسیریابی از طریق VPN راه دور</string>
+    <string name="summary_wg_route_mode">کدام برنامه‌ها از طریق VPN راه دور فرستاده شوند. برنامه‌هایی که فرستاده نمی‌شوند همچنان به‌طور کامل پایش و فیلتر می‌شوند — فقط از شبکهٔ خودِ این دستگاه متصل می‌شوند.</string>
+    <string name="wg_route_mode_all">همهٔ برنامه‌ها</string>
+    <string name="wg_route_mode_selected">فقط برنامه‌های انتخاب‌شده</string>
+    <string name="app_route_heading">VPN راه دور</string>
+    <string name="app_route_through">از طریق VPN راه دور</string>
+    <string name="app_route_through_explanation">این برنامه از طریق VPN راه دور شما متصل می‌شود، که به‌جای شبکهٔ شما ترافیک آن را می‌بیند.</string>
+    <string name="app_route_direct">مستقیم از این دستگاه</string>
+    <string name="app_route_direct_explanation">این برنامه از شبکهٔ خودتان متصل می‌شود. پایش و مسدودسازی ردیاب‌ها همچنان اعمال می‌شود. پرس‌وجوهای DNS آن به‌جای VPN به حل‌کنندهٔ شبکهٔ شما می‌رود و برنامه نشانی واقعی این دستگاه را می‌بیند — برخی برنامه‌ها به این نیاز دارند، مثلاً برای دسترسی به دستگاه‌های محلی یا بررسی captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">هیچ VPN راه دوری تنظیم نشده است، بنابراین همهٔ ترافیک از پیش مستقیماً این دستگاه را ترک می‌کند.</string>
+    <string name="app_route_unavailable_bypassed">این برنامه به‌طور کامل TrackerControl را دور می‌زند، بنابراین ترافیکی برای مسیریابی وجود ندارد.</string>
+    <string name="app_route_unavailable_partial_routes">VPN راه دور شما همهٔ ترافیک را حمل نمی‌کند (AllowedIPs آن تونل کامل نیست). مسیریابی جداگانه برای هر برنامه به تونل کامل نیاز دارد، چون مسیرها میان همهٔ برنامه‌ها مشترک است.</string>
 </resources>

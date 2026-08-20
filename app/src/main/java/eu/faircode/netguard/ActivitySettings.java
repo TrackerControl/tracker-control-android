@@ -896,6 +896,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         } else if ("wg_keepalive_when_screen_off".equals(name)) {
             ServiceSinkhole.reload("changed " + name, this, false);
 
+        } else if (Rule.PREF_WG_ROUTE_MODE.equals(name)) {
+            // The reload restarts the tunnel thread, which is what picks up the
+            // matching fwd53 change — that flag is only read at jni_run.
+            Rule.clearCache(this);
+            ServiceSinkhole.reload("changed " + name, this, false);
+
         } else if ("wg_config".equals(name)) {
             String wg_config = prefs.getString(name, null);
             boolean valid = true;
@@ -1257,6 +1263,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlExport(getSharedPreferences("tracker_protect", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "tracker_protect");
 
+        serializer.startTag(null, Rule.PREF_WG_ROUTE);
+        xmlExport(getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE), serializer);
+        serializer.endTag(null, Rule.PREF_WG_ROUTE);
+
         serializer.startTag(null, "notify");
         xmlExport(getSharedPreferences("notify", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "notify");
@@ -1435,6 +1445,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.application, prefs);
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
+        xmlImport(handler.wg_route, getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
         xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
 
@@ -1489,6 +1500,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> roaming = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
         public Map<String, Object> tracker_protect = new HashMap<>();
+        public Map<String, Object> wg_route = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
         public Map<String, Object> blocklist = new HashMap<>();
         private Map<String, Object> current = null;
@@ -1528,6 +1540,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             else if (qName.equals("tracker_protect"))
                 current = tracker_protect;
+            else if (qName.equals(Rule.PREF_WG_ROUTE))
+                current = wg_route;
 
             else if (qName.equals("notify"))
                 current = notify;

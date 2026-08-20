@@ -53,6 +53,76 @@ static int is_local_dest(int version, const void *daddr) {
     }
 }
 
+// The UID of an established flow, for packets that arrive without one.
+//
+// Packet 2+ of a direct flow reaches the routing fork with uid == -1: the
+// expensive lookup above is deliberately skipped for existing UDP sessions and
+// non-SYN TCP. The uid cache usually answers, but it expires and is evicted,
+// and defaulting on a miss would send the rest of an established, already-NATted
+// flow into the tunnel mid-stream. The session table is the authoritative and
+// free source, so consult it before giving up.
+//
+// This runs only behind a route_flow_lookup miss, so it is the second fallback
+// rather than the per-packet cost it once was. The UDP arm repeats the 5-tuple
+// match in udp.c's has_udp_session; keep the two in step.
+static jint get_session_uid(const struct arguments *args, int version, int protocol,
+                            const uint8_t *pkt, const uint8_t *payload) {
+    const struct iphdr *ip4 = (struct iphdr *) pkt;
+    const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+
+    for (struct ng_session *cur = args->ctx->ng_session; cur != NULL; cur = cur->next) {
+        if (cur->protocol != protocol)
+            continue;
+
+        if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6) {
+            const struct icmp *icmp = (struct icmp *) payload;
+            if (cur->icmp.version == version && cur->icmp.id == icmp->icmp_id &&
+                (version == 4
+                 ? cur->icmp.saddr.ip4 == ip4->saddr && cur->icmp.daddr.ip4 == ip4->daddr
+                 : memcmp(&cur->icmp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->icmp.daddr.ip6, &ip6->ip6_dst, 16) == 0))
+                return cur->icmp.uid;
+            continue;
+        }
+
+        if (protocol == IPPROTO_UDP) {
+            const struct udphdr *udphdr = (struct udphdr *) payload;
+            if (cur->udp.version == version &&
+                cur->udp.source == udphdr->source && cur->udp.dest == udphdr->dest &&
+                (version == 4
+                 ? cur->udp.saddr.ip4 == ip4->saddr && cur->udp.daddr.ip4 == ip4->daddr
+                 : memcmp(&cur->udp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0))
+                return cur->udp.uid;
+        } else if (protocol == IPPROTO_TCP) {
+            const struct tcphdr *tcphdr = (struct tcphdr *) payload;
+            if (cur->tcp.version == version &&
+                cur->tcp.source == tcphdr->source && cur->tcp.dest == tcphdr->dest &&
+                (version == 4
+                 ? cur->tcp.saddr.ip4 == ip4->saddr && cur->tcp.daddr.ip4 == ip4->daddr
+                 : memcmp(&cur->tcp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0))
+                return cur->tcp.uid;
+        }
+    }
+
+    return -1;
+}
+
+// Re-run the authoritative UID lookup only after both the flow cache and the
+// native session table miss. This is deliberately off the hot path: established
+// UDP/TCP packets normally hit the flow cache, while a miss can be caused by a
+// cache expiry or hash collision. Keep the Android <=28 procfs path identical
+// to the initial lookup and use ConnectivityManager on newer releases.
+static jint get_route_uid(const struct arguments *args, int version, int protocol,
+                          const void *saddr, uint16_t sport,
+                          const void *daddr, uint16_t dport,
+                          const char *source, const char *dest) {
+    if (args->ctx->sdk <= 28)
+        return get_uid(version, protocol, saddr, sport, daddr, dport);
+    return get_uid_q(args, version, protocol, source, sport, dest, dport);
+}
+
 uint16_t get_mtu() {
     return 10000;
 }
@@ -330,7 +400,13 @@ void handle_ip(const struct arguments *args,
     jint uid = -1;
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
-        (protocol == IPPROTO_TCP && syn && (dport != 443 || !is_play))) {
+        // SNI research mode lets a 443 SYN through without a UID so the
+        // ClientHello can be reassembled first. That is fine for the block
+        // decision, but the routing fork needs the UID now: with no UID and no
+        // session, the SYN falls to the global default and every later packet
+        // of that flow inherits the answer from it.
+        (protocol == IPPROTO_TCP && syn &&
+         (dport != 443 || !is_play || route_uid_relevant()))) {
             if (args->ctx->sdk <= 28) // Android 9 Pie
                 uid = get_uid(version, protocol, saddr, sport, daddr, dport);
             else
@@ -484,7 +560,66 @@ void handle_ip(const struct arguments *args,
         int is_dns = (dport == 53 &&
                       (protocol == IPPROTO_UDP || protocol == IPPROTO_TCP));
         int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
-        int wg_dest = !is_local_dest(version, daddr) || is_dns;
+
+        // Which app this packet belongs to — but only when that can change the
+        // answer. With no per-app override configured every UID routes the same
+        // way, and this is the per-packet path: resolving a UID there would
+        // cost a lock and, for the established flows that arrive with uid == -1
+        // (existing UDP sessions, non-SYN TCP, i.e. most packets), a walk of the
+        // whole session table, which grows with load. That is pure waste for
+        // everyone who has not opted in.
+        int tunnel_uid;
+        if (route_uid_relevant()) {
+            // A flow keeps the verdict its first packet was given. A fresh UID
+            // is authoritative even when a previous flow happened to reuse the
+            // same 5-tuple, so do not consult the flow cache in that case.
+            jint route_uid = uid;
+            if (route_uid >= 0) {
+                tunnel_uid = is_tunnel_uid(route_uid);
+                route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                 tunnel_uid);
+            } else if (route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
+                                         &tunnel_uid)) {
+                // Established tunnelled flows never create an ng_session — the
+                // WireGuard write below returns first — so the cache preserves
+                // their first-packet answer without a per-packet UID lookup.
+            } else {
+                // A cache expiry or collision is rare, but falling back to the
+                // selected-mode default would divert an already-established
+                // tunnelled flow direct and can make TCP reset. Recover the UID
+                // from the native session table first, then from the
+                // authoritative Android/procfs lookup.
+                route_uid = get_session_uid(args, version, protocol, pkt, payload);
+                if (route_uid < 0)
+                    route_uid = get_route_uid(args, version, protocol,
+                                              saddr, sport, daddr, dport,
+                                              source, dest);
+
+                if (route_uid >= 0) {
+                    tunnel_uid = is_tunnel_uid(route_uid);
+                    route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                     tunnel_uid);
+                } else {
+                    // Unknown ownership is privacy-sensitive: keep the packet
+                    // in the remote tunnel rather than fail-open to direct
+                    // routing in selected mode. Cache that explicit fail-closed
+                    // verdict so the rest of this flow does not repeat a Binder
+                    // or procfs lookup on every packet. A later flow with the
+                    // same tuple still wins because a freshly resolved UID is
+                    // handled before the cache above.
+                    tunnel_uid = 1;
+                    route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                     tunnel_uid);
+                    log_android(ANDROID_LOG_WARN,
+                                "Route UID unavailable for v%d p%d %s/%u > %s/%u; tunnelling",
+                                version, protocol, source, sport, dest, dport);
+                }
+            }
+        } else
+            tunnel_uid = route_default_is_tunnel();
+
+        int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
+                                         tunnel_uid, route_dns_direct());
 
         if (wg_dest) {
             ssize_t w;

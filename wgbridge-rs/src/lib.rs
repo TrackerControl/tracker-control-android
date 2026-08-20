@@ -20,6 +20,7 @@ pub mod callbacks;
 pub mod config;
 pub mod dns;
 pub mod keys;
+pub mod policy;
 pub mod transport;
 pub mod tunnel;
 

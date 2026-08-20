@@ -131,6 +131,55 @@ public class BlockingModeLogicTest {
                 BlockingModeLogic.clearAutoExcludedApp(Set.of("browser", "other"), "other"));
     }
 
+    /**
+     * The UI must keep an auto-excluded app in the managed set while it stays
+     * excluded, otherwise toggling it off and on again before the next mode
+     * switch silently converts a Minimal-mode auto-exclusion into a permanent
+     * one. This is the pre-sync window: syncVpnExclusions self-heals on the
+     * next mode switch, but only if membership survived until then.
+     */
+    @Test
+    public void reExcludedAutoExcludedAppStillRestoresOnModeSwitch() {
+        Map<String, Boolean> applyPrefs = new HashMap<>();
+        applyPrefs.put("incompatible", false);
+
+        // Membership is retained because the resulting apply is false.
+        Set<String> autoExcludedApps = Set.of("incompatible");
+
+        BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
+                BlockingModeLogic.MODE_STANDARD,
+                Set.of("incompatible"),
+                applyPrefs,
+                autoExcludedApps);
+
+        assertEquals(Set.of("incompatible"), result.applyRemovals);
+        assertTrue(result.autoExcludedApps.isEmpty());
+    }
+
+    /**
+     * Re-including an auto-excluded app does clear its membership, and the next
+     * sync must then leave the app alone rather than excluding it again.
+     */
+    @Test
+    public void reIncludedAutoExcludedAppIsNotExcludedAgain() {
+        Set<String> autoExcludedApps =
+                BlockingModeLogic.clearAutoExcludedApp(Set.of("incompatible"), "incompatible");
+        assertTrue(autoExcludedApps.isEmpty());
+
+        Map<String, Boolean> applyPrefs = new HashMap<>();
+        applyPrefs.put("incompatible", true);
+
+        BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
+                BlockingModeLogic.MODE_MINIMAL,
+                Set.of("incompatible"),
+                applyPrefs,
+                autoExcludedApps);
+
+        assertTrue(result.applyFalsePackages.isEmpty());
+        assertTrue(result.applyRemovals.isEmpty());
+        assertTrue(result.autoExcludedApps.isEmpty());
+    }
+
     @Test
     public void browserCategoryIsNotParsedAsVpnExclusion() {
         Set<String> excludedApps = BlockingModeLogic.parseExcludedAppsJson(

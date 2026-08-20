@@ -40,6 +40,7 @@ public class TrackersFragment extends Fragment {
     private int mAppUid;
 
     private SwipeRefreshLayout swipeRefresh;
+    private RecyclerView recyclerView;
     private TrackersListAdapter adapter;
 
     private boolean running = false;
@@ -79,7 +80,7 @@ public class TrackersFragment extends Fragment {
 
         Context c = v.getContext();
         trackerList = TrackerList.getInstance(c);
-        RecyclerView recyclerView = v.findViewById(R.id.transmissions_list);
+        recyclerView = v.findViewById(R.id.transmissions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(c));
         adapter = new TrackersListAdapter(getActivity(), recyclerView, mAppUid, mAppId);
         recyclerView.setAdapter(adapter);
@@ -212,10 +213,19 @@ public class TrackersFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
+        // Explicitly detach the adapter while the RecyclerView still exists.
+        // This invokes onDetachedFromRecyclerView(), which dismisses any open
+        // BottomSheetDialog before the view's Activity context can be retained.
+        if (recyclerView != null) {
+            recyclerView.setAdapter(null);
+            recyclerView = null;
+        }
+        adapter = null;
+
         // Avoid leaking the SwipeRefreshLayout (and its Activity context) beyond
         // the view's lifecycle when the Fragment instance is retained.
         swipeRefresh = null;
+        super.onDestroyView();
     }
 
     @Override

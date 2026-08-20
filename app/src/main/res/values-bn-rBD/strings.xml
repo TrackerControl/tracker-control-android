@@ -59,4 +59,30 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">সুরক্ষা</string>
+    <string name="app_state_protected">সুরক্ষিত</string>
+    <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
+    <string name="app_state_trackers_allowed">ট্র্যাকার অনুমোদিত</string>
+    <string name="app_state_trackers_allowed_explanation">অ্যাপটি TrackerControl-এর মধ্য দিয়েই চলতে থাকে, তবে এর ট্র্যাকারগুলি ব্লকও করা হয় না, রেকর্ডও করা হয় না। ব্লক করার ফলে অ্যাপ কাজ না করলে এটি ব্যবহার করুন।</string>
+    <string name="app_state_no_internet">ইন্টারনেট নেই</string>
+    <string name="app_state_no_internet_explanation">এই অ্যাপের সব সংযোগ ব্লক করা হয়েছে। আপনি প্রধান স্ক্রিনে অ্যাপের আইকনেও ট্যাপ করতে পারেন।</string>
+    <string name="app_state_no_internet_shared_uid">%1$s-এর ক্ষেত্রেও প্রযোজ্য, যেটি এই অ্যাপের সঙ্গে একই Android ব্যবহারকারী আইডি ভাগ করে।</string>
+    <string name="app_state_bypassed">TrackerControl এড়িয়ে যান</string>
+    <string name="app_state_bypassed_explanation">অ্যাপটি TrackerControl-এর বাইরে সরাসরি সংযোগ করে। এর জন্য কিছুই পর্যবেক্ষণ বা ব্লক করা হয় না। অ্যাপ তবুও কাজ না করলে শেষ উপায় হিসেবে এটি ব্যবহার করুন।\n\nদ্রষ্টব্য: এটি কাজ করতে হলে Android-এর VPN সেটিংসে \"VPN ছাড়া সংযোগ ব্লক করুন\" বন্ধ থাকতে হবে।</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">দূরবর্তী VPN দিয়ে পাঠান</string>
+    <string name="summary_wg_route_mode">কোন অ্যাপগুলি দূরবর্তী VPN দিয়ে যাবে। যেগুলি যায় না সেগুলিতেও ট্র্যাকার পর্যবেক্ষণ ও ব্লকিং পুরোপুরি চলে — সেগুলি কেবল এই ডিভাইসের নিজের নেটওয়ার্ক থেকে সংযোগ করে।</string>
+    <string name="wg_route_mode_all">সব অ্যাপ</string>
+    <string name="wg_route_mode_selected">শুধু নির্বাচিত অ্যাপ</string>
+    <string name="app_route_heading">দূরবর্তী VPN</string>
+    <string name="app_route_through">দূরবর্তী VPN দিয়ে</string>
+    <string name="app_route_through_explanation">এই অ্যাপটি আপনার দূরবর্তী VPN দিয়ে সংযোগ করে, যা আপনার নেটওয়ার্কের বদলে এর ট্রাফিক দেখে।</string>
+    <string name="app_route_direct">সরাসরি এই ডিভাইস থেকে</string>
+    <string name="app_route_direct_explanation">এই অ্যাপটি আপনার নিজের নেটওয়ার্ক থেকে সংযোগ করে। ট্র্যাকার পর্যবেক্ষণ ও ব্লকিং তবুও প্রযোজ্য। এর DNS অনুরোধ VPN-এর বদলে আপনার নেটওয়ার্কের রিজলভারে যায় এবং এটি এই ডিভাইসের প্রকৃত ঠিকানা দেখে — কিছু অ্যাপের এটি দরকার, যেমন স্থানীয় ডিভাইসে পৌঁছাতে বা ক্যাপটিভ পোর্টাল যাচাই করতে।</string>
+    <string name="app_route_unavailable_no_vpn">কোনও দূরবর্তী VPN সেট করা নেই, তাই সব ট্রাফিক ইতিমধ্যেই সরাসরি এই ডিভাইস থেকে যাচ্ছে।</string>
+    <string name="app_route_unavailable_bypassed">এই অ্যাপটি TrackerControl সম্পূর্ণ এড়িয়ে যায়, তাই পাঠানোর মতো কোনও ট্রাফিক নেই।</string>
+    <string name="app_route_unavailable_partial_routes">আপনার দূরবর্তী VPN সব ট্রাফিক বহন করে না (এর AllowedIPs পূর্ণ টানেল নয়)। অ্যাপভিত্তিক রাউটিংয়ের জন্য পূর্ণ টানেল দরকার, কারণ রুটগুলি সব অ্যাপ ভাগ করে নেয়।</string>
 </resources>

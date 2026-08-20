@@ -12,4 +12,30 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">பாதுகாப்பு</string>
+    <string name="app_state_protected">பாதுகாக்கப்பட்டது</string>
+    <string name="app_state_protected_explanation">இந்த ஆப்ஸுக்கான டிராக்கர்கள் தடுக்கப்பட்டு பதிவு செய்யப்படுகின்றன.</string>
+    <string name="app_state_trackers_allowed">டிராக்கர்கள் அனுமதிக்கப்பட்டன</string>
+    <string name="app_state_trackers_allowed_explanation">ஆப்ஸ் தொடர்ந்து TrackerControl வழியாகச் செல்கிறது, ஆனால் அதன் டிராக்கர்கள் தடுக்கப்படுவதுமில்லை, பதிவு செய்யப்படுவதுமில்லை. தடுப்பதால் ஆப்ஸ் வேலை செய்யாவிட்டால் இதைப் பயன்படுத்தவும்.</string>
+    <string name="app_state_no_internet">இணையம் இல்லை</string>
+    <string name="app_state_no_internet_explanation">இந்த ஆப்ஸின் அனைத்து இணைப்புகளும் தடுக்கப்படுகின்றன. முதன்மைத் திரையில் ஆப்ஸ் ஐகானைத் தட்டியும் மாற்றலாம்.</string>
+    <string name="app_state_no_internet_shared_uid">இந்த ஆப்ஸுடன் Android பயனர் ஐடியைப் பகிர்ந்துகொள்ளும் %1$s-க்கும் இது பொருந்தும்.</string>
+    <string name="app_state_bypassed">TrackerControl-ஐத் தவிர்</string>
+    <string name="app_state_bypassed_explanation">ஆப்ஸ் TrackerControl-ஐத் தவிர்த்து நேரடியாக இணைகிறது. அதற்காக எதுவும் கண்காணிக்கப்படுவதோ தடுக்கப்படுவதோ இல்லை. ஆப்ஸ் இன்னும் வேலை செய்யாவிட்டால் கடைசி வழியாக இதைப் பயன்படுத்தவும்.\n\nகுறிப்பு: இது வேலை செய்ய Android VPN அமைப்புகளில் \"VPN இல்லாத இணைப்புகளைத் தடு\" முடக்கப்பட்டிருக்க வேண்டும்.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">தொலைநிலை VPN வழியாக அனுப்பு</string>
+    <string name="summary_wg_route_mode">எந்த ஆப்ஸ் தொலைநிலை VPN வழியாகச் செல்லும். செல்லாதவையும் முழுமையாகக் கண்காணிக்கப்பட்டு தடுக்கப்படுகின்றன — அவை இந்தச் சாதனத்தின் சொந்த நெட்வொர்க்கிலிருந்து இணைகின்றன.</string>
+    <string name="wg_route_mode_all">எல்லா ஆப்ஸும்</string>
+    <string name="wg_route_mode_selected">தேர்ந்தெடுத்த ஆப்ஸ் மட்டும்</string>
+    <string name="app_route_heading">தொலைநிலை VPN</string>
+    <string name="app_route_through">தொலைநிலை VPN வழியாக</string>
+    <string name="app_route_through_explanation">இந்த ஆப்ஸ் உங்கள் தொலைநிலை VPN வழியாக இணைகிறது; உங்கள் நெட்வொர்க்குக்குப் பதிலாக VPN அதன் போக்குவரத்தைப் பார்க்கிறது.</string>
+    <string name="app_route_direct">இந்தச் சாதனத்திலிருந்து நேரடியாக</string>
+    <string name="app_route_direct_explanation">இந்த ஆப்ஸ் உங்கள் சொந்த நெட்வொர்க்கிலிருந்து இணைகிறது. டிராக்கர் கண்காணிப்பும் தடுப்பும் தொடர்ந்து பொருந்தும். அதன் DNS வினவல்கள் VPN-க்குப் பதிலாக உங்கள் நெட்வொர்க்கின் தீர்ப்பானுக்குச் செல்கின்றன, மேலும் அது இந்தச் சாதனத்தின் உண்மையான முகவரியைப் பார்க்கிறது — சில ஆப்ஸுக்கு இது தேவை, எடுத்துக்காட்டாக உள்ளூர் சாதனங்களை அணுகவோ captive portal-ஐச் சரிபார்க்கவோ.</string>
+    <string name="app_route_unavailable_no_vpn">தொலைநிலை VPN எதுவும் அமைக்கப்படவில்லை, எனவே எல்லாப் போக்குவரத்தும் ஏற்கெனவே நேரடியாக இந்தச் சாதனத்திலிருந்து செல்கிறது.</string>
+    <string name="app_route_unavailable_bypassed">இந்த ஆப்ஸ் TrackerControl-ஐ முழுமையாகத் தவிர்க்கிறது, எனவே அனுப்ப எந்தப் போக்குவரத்தும் இல்லை.</string>
+    <string name="app_route_unavailable_partial_routes">உங்கள் தொலைநிலை VPN எல்லாப் போக்குவரத்தையும் எடுத்துச் செல்வதில்லை (அதன் AllowedIPs முழு சுரங்கம் அல்ல). வழிகள் எல்லா ஆப்ஸாலும் பகிரப்படுவதால், ஆப்ஸ்வாரி வழியமைப்புக்கு முழு சுரங்கம் தேவை.</string>
 </resources>

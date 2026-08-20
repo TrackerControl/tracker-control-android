@@ -114,4 +114,30 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Beskyttelse</string>
+    <string name="app_state_protected">Beskyttet</string>
+    <string name="app_state_protected_explanation">Sporere blokeres og registreres for denne app.</string>
+    <string name="app_state_trackers_allowed">Sporere tilladt</string>
+    <string name="app_state_trackers_allowed_explanation">Appen kører fortsat gennem TrackerControl, men dens sporere hverken blokeres eller registreres. Brug dette, hvis blokering ødelægger appen.</string>
+    <string name="app_state_no_internet">Intet internet</string>
+    <string name="app_state_no_internet_explanation">Alle forbindelser fra denne app blokeres. Du kan også trykke på appikonet på hovedskærmen.</string>
+    <string name="app_state_no_internet_shared_uid">Gælder også %1$s, som deler et Android-bruger-id med denne app.</string>
+    <string name="app_state_bypassed">Omgå TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Appen forbinder direkte, uden om TrackerControl. Intet overvåges eller blokeres for den. Brug dette som sidste udvej, hvis appen stadig ikke virker.\n\nBemærk: \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger skal være DEAKTIVERET, for at dette virker.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Send gennem fjern-VPN</string>
+    <string name="summary_wg_route_mode">Hvilke apps der sendes gennem fjern-VPN\'et. De øvrige overvåges og filtreres fortsat fuldt ud — de forbinder blot fra enhedens eget netværk.</string>
+    <string name="wg_route_mode_all">Alle apps</string>
+    <string name="wg_route_mode_selected">Kun valgte apps</string>
+    <string name="app_route_heading">Fjern-VPN</string>
+    <string name="app_route_through">Gennem fjern-VPN\'et</string>
+    <string name="app_route_through_explanation">Denne app forbinder gennem dit fjern-VPN, som ser dens trafik i stedet for dit netværk.</string>
+    <string name="app_route_direct">Direkte fra denne enhed</string>
+    <string name="app_route_direct_explanation">Denne app forbinder fra dit eget netværk. Sporingsovervågning og -blokering gælder stadig. Dens DNS-forespørgsler går til dit netværks resolver i stedet for VPN\'ets, og appen ser enhedens rigtige adresse — nogle apps har brug for det, for eksempel for at nå lokale enheder eller tjekke en captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Der er ikke opsat noget fjern-VPN, så al trafik forlader allerede enheden direkte.</string>
+    <string name="app_route_unavailable_bypassed">Denne app omgår TrackerControl helt, så der er ingen trafik at sende.</string>
+    <string name="app_route_unavailable_partial_routes">Dit fjern-VPN bærer ikke al trafik (dets AllowedIPs er ikke en fuld tunnel). Routing pr. app kræver en fuld tunnel, fordi ruter deles af alle apps.</string>
 </resources>

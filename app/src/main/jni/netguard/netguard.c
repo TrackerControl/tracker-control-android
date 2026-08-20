@@ -140,6 +140,10 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
 JNIEXPORT jlong JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
         JNIEnv *env, jobject instance, jint sdk) {
+    // Resolve the routing policy now: the packet path must never pay a dlopen,
+    // and a failure should be logged while there is still something to read it.
+    policy_ensure();
+
     struct context *ctx = ng_calloc(1, sizeof(struct context), "init");
     ctx->sdk = sdk;
 
@@ -454,6 +458,34 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1required(JNIEnv *env, 
 }
 
 JNIEXPORT void JNICALL
+Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1route(JNIEnv *env, jobject instance,
+                                                                jintArray uids_,
+                                                                jboolean default_tunnel,
+                                                                jboolean dns_direct) {
+    jint count = 0;
+    jint *uids = NULL;
+    if (uids_ != NULL) {
+        count = (*env)->GetArrayLength(env, uids_);
+        if (count > 0) {
+            uids = (*env)->GetIntArrayElements(env, uids_, NULL);
+            if (uids == NULL) {
+                log_android(ANDROID_LOG_ERROR, "wg route uids unavailable, keeping previous");
+                return;
+            }
+        }
+    }
+
+    set_route_uids(uids, count, default_tunnel ? 1 : 0, dns_direct ? 1 : 0);
+
+    if (uids != NULL)
+        (*env)->ReleaseIntArrayElements(env, uids_, uids, JNI_ABORT);
+
+    log_android(ANDROID_LOG_WARN,
+                "WireGuard routing: default %s, %d uid overrides, direct DNS %s",
+                default_tunnel ? "tunnel" : "direct", count, dns_direct ? "on" : "off");
+}
+
+JNIEXPORT void JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1wireguard_1stop(JNIEnv *env, jobject instance) {
     if (pthread_mutex_lock(&wg_outbound_lock)) {
         // Do not close without the lock: an in-flight writer may own the fd.
@@ -489,6 +521,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1done(
         ng_free(uid_cache, __FILE__, __LINE__);
     uid_cache_size = 0;
     uid_cache = NULL;
+
+    clear_route_uids();
 
     ng_free(ctx, __FILE__, __LINE__);
 }

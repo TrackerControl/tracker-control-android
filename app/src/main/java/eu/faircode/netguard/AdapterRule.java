@@ -58,6 +58,7 @@ import com.google.android.material.snackbar.Snackbar;
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.data.AppProtectionState;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 
@@ -242,10 +243,16 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Get rule
         final Rule rule = listFiltered.get(position);
-        // In minimal mode, tracker_protect is not user-controllable
-        final boolean active = BlockingMode.isMinimalMode(context)
-                ? rule.apply
-                : rule.apply && rule.tracker_protect;
+        final InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+        final boolean blockedInternet = internetBlocklist.blockedInternet(rule.uid);
+        final AppProtectionState state = AppProtectionState.resolve(
+                rule.apply, rule.tracker_protect, blockedInternet);
+        // The Internet toggle below is available for every app TrackerControl
+        // still sees. Reading it off the shared state model keeps the main list
+        // and the details screen in agreement — in particular, an app with its
+        // tracker protection turned off can still have its Internet blocked,
+        // which the old apply && tracker_protect test denied outside Minimal.
+        final boolean active = state != AppProtectionState.BYPASSED;
 
         // Show if non default rules
         holder.itemView.setBackgroundColor(rule.changed ? colorChanged : Color.TRANSPARENT);
@@ -270,8 +277,6 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
         // Show if Internet access blocked
         final ImageView iv = holder.ivIcon;
-        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
-        boolean blockedInternet = internetBlocklist.blockedInternet(rule.uid);
         setGreyscale(iv, rule.internet && active && blockedInternet);
         updateToggleContentDescription(iv, context, rule, active, blockedInternet);
         holder.ivIcon.setOnClickListener(view -> {
@@ -287,10 +292,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
 
             boolean wasBlocked = internetBlocklist.blockedInternet(rule.uid);
             if (wasBlocked) {
-                internetBlocklist.unblock(rule.uid);
+                internetBlocklist.unblock(context, rule.uid);
                 Toast.makeText(context, R.string.internet_unblocked, Toast.LENGTH_SHORT).show();
             } else {
-                internetBlocklist.block(rule.uid);
+                internetBlocklist.block(context, rule.uid);
                 Toast.makeText(context, R.string.internet_blocked, Toast.LENGTH_SHORT).show();
             }
             setGreyscale(iv, !wasBlocked);
@@ -376,7 +381,10 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         SharedPreferences notify = context.getSharedPreferences("notify", Context.MODE_PRIVATE);
 
         apply.edit().putBoolean(rule.packageName, rule.apply).apply();
-        BlockingMode.clearAutoExcludedApp(context, rule.packageName);
+        // Only a re-included app leaves the mode-managed exclusion set; clearing
+        // it on exclusion would make a Minimal-mode auto-exclusion permanent.
+        if (rule.apply)
+            BlockingMode.clearAutoExcludedApp(context, rule.packageName);
         tracker_protect.edit().putBoolean(rule.packageName, rule.tracker_protect).apply();
 
         if (rule.notify)

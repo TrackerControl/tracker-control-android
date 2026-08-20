@@ -116,6 +116,7 @@ struct allowed {
 int write_wireguard_packet(const void *packet, size_t length,
                            ssize_t *written, int *write_errno);
 
+
 struct segment {
     uint32_t seq;
     uint16_t len;
@@ -535,6 +536,41 @@ void dns_resolved(const struct arguments *args,
                   const char *qname, const char *aname, const char *resource, int ttl);
 
 jboolean is_domain_blocked(const struct arguments *args, const char *name);
+
+// Per-app remote routing (policy.c, deciding in wgbridge-rs/src/policy.rs).
+// Java pushes down only the UIDs whose routing differs from the global default;
+// the packet path only reads them.
+void policy_ensure();
+
+void set_route_uids(const jint *uids, int count, int default_tunnel, int dns_direct);
+
+void clear_route_uids();
+
+int is_tunnel_uid(jint uid);
+
+// Lock-free fast path: whether a UID lookup can change the answer at all, the
+// answer everything gets when it cannot, and whether DNS follows that answer.
+int route_uid_relevant();
+
+int route_default_is_tunnel();
+
+int route_dns_direct();
+
+int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct);
+
+// Per-flow verdict cache, so a flow that has already been routed keeps its
+// answer once its packets stop carrying a UID. Tunnel-thread only.
+int route_flow_lookup(int version, int protocol,
+                      const void *saddr, uint16_t sport,
+                      const void *daddr, uint16_t dport,
+                      int *tunnel);
+
+void route_flow_store(int version, int protocol,
+                      const void *saddr, uint16_t sport,
+                      const void *daddr, uint16_t dport,
+                      int tunnel);
+
+void route_flow_invalidate();
 
 jint get_uid_q(const struct arguments *args,
                jint version,

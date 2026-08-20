@@ -236,7 +236,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="tab_countries">Herrialdeak</string>
     <string name="tab_actions">Nire datuak</string>
     <string name="tracker_name">Aztarnariaren izena</string>
-    <string name="internet_access">Internet sarbidea</string>
     <string name="app_info">Aplikazioa kudeatu</string>
     <!-- Actions -->
     <string name="block_tracking">Aztarnariak blokeatu</string>
@@ -358,4 +357,30 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Babesa</string>
+    <string name="app_state_protected">Babestuta</string>
+    <string name="app_state_protected_explanation">Aplikazio honetarako jarraitzaileak blokeatu eta erregistratzen dira.</string>
+    <string name="app_state_trackers_allowed">Jarraitzaileak onartuta</string>
+    <string name="app_state_trackers_allowed_explanation">Aplikazioak TrackerControl bidez jarraitzen du, baina bere jarraitzaileak ez dira ez blokeatzen ez erregistratzen. Erabili hau blokeatzeak aplikazioa hondatzen badu.</string>
+    <string name="app_state_no_internet">Internetik ez</string>
+    <string name="app_state_no_internet_explanation">Aplikazio honen konexio guztiak blokeatuta daude. Pantaila nagusiko aplikazioaren ikonoa ere uki dezakezu.</string>
+    <string name="app_state_no_internet_shared_uid">%1$s aplikazioari ere aplikatzen zaio, Android erabiltzaile-ID bera partekatzen baitu honekin.</string>
+    <string name="app_state_bypassed">Saihestu TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplikazioa zuzenean konektatzen da, TrackerControletik kanpo. Ez zaio ezer monitorizatzen ez blokeatzen. Erabili hau azken aukera gisa aplikazioak oraindik funtzionatzen ez badu.\n\nOharra: Androiden VPN ezarpenetako \"Blokeatu VPNrik gabeko konexioak\" DESAKTIBATUTA egon behar da hau funtziona dezan.</string>
+
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Urruneko VPN bidez bideratu</string>
+    <string name="summary_wg_route_mode">Zein aplikazio bidaltzen diren urruneko VPN bidez. Gainerakoak guztiz monitorizatuta eta iragazita jarraitzen dute — gailu honen sare propiotik konektatzen dira, besterik ez.</string>
+    <string name="wg_route_mode_all">Aplikazio guztiak</string>
+    <string name="wg_route_mode_selected">Hautatutako aplikazioak bakarrik</string>
+    <string name="app_route_heading">Urruneko VPNa</string>
+    <string name="app_route_through">Urruneko VPN bidez</string>
+    <string name="app_route_through_explanation">Aplikazio hau zure urruneko VPN bidez konektatzen da, eta hark ikusten du bere trafikoa zure sarearen ordez.</string>
+    <string name="app_route_direct">Zuzenean gailu honetatik</string>
+    <string name="app_route_direct_explanation">Aplikazio hau zure sare propiotik konektatzen da. Jarraitzaileen monitorizazioa eta blokeoa indarrean daude oraindik. Bere DNS kontsultak zure sarearen ebazlera doaz, ez VPNarenera, eta gailu honen benetako helbidea ikusten du — aplikazio batzuek hori behar dute, adibidez tokiko gailuetara iristeko edo captive portal bat egiaztatzeko.</string>
+    <string name="app_route_unavailable_no_vpn">Ez dago urruneko VPNrik konfiguratuta, beraz trafiko guztia dagoeneko zuzenean ateratzen da gailu honetatik.</string>
+    <string name="app_route_unavailable_bypassed">Aplikazio honek TrackerControl guztiz saihesten du, beraz ez dago bideratzeko trafikorik.</string>
+    <string name="app_route_unavailable_partial_routes">Zure urruneko VPNak ez du trafiko guztia garraiatzen (bere AllowedIPs ez da tunel osoa). Aplikazioz aplikazioko bideratzeak tunel osoa behar du, ibilbideak aplikazio guztien artean partekatzen baitira.</string>
 </resources>

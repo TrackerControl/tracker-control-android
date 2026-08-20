@@ -76,6 +76,21 @@ jobs:
             test "$(unzip -Z1 "$APK" "lib/$ABI/libwgbridge.so")" = "lib/$ABI/libwgbridge.so"
           done
 
+          # The routing policy is reached by dlsym from libnetguard, so a
+          # stripped or renamed export degrades silently into "no per-app
+          # routing" rather than failing the build. readelf reads any
+          # architecture's ELF, unlike the host nm.
+          for ABI in armeabi-v7a arm64-v8a x86 x86_64; do
+            unzip -p "$APK" "lib/$ABI/libwgbridge.so" > /tmp/libwgbridge-$ABI.so
+            SYMS=$(readelf --dyn-syms --wide "/tmp/libwgbridge-$ABI.so" | awk '{print $NF}')
+            for SYM in tc_policy_abi_version tc_policy_set_route_uids \
+                       tc_policy_clear_route_uids tc_policy_is_tunnel_uid \
+                       tc_policy_wants_tunnel; do
+              echo "$SYMS" | grep -qx "$SYM" \
+                || { echo "missing dynamic symbol $SYM in $ABI"; exit 1; }
+            done
+          done
+
   instrumentation:
     runs-on: ubuntu-latest
 
