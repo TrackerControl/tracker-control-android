@@ -726,10 +726,12 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             boolean research = prefs.getBoolean(name, false);
             if (prefs.getBoolean("sni_enabled", false) != research)
                 prefs.edit().putBoolean("sni_enabled", research).apply();
+            refreshBlockingModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 
         else if ("sni_enabled".equals(name)) {
+            refreshBlockingModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
         }
 
@@ -891,6 +893,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         } else if ("wg_enabled".equals(name)) {
             updateWireGuardStatus();
+            refreshBlockingModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("wg_keepalive_when_screen_off".equals(name)) {
@@ -925,6 +928,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 new WgProfileManager(this).updateActiveProfileConfig(wg_config);
             configureWireGuardProfiles(getPreferenceScreen(), prefs);
             updateWireGuardStatus();
+            refreshBlockingModeSummary();
             ServiceSinkhole.reload("changed " + name, this, false);
 
         } else if ("pcap_record_size".equals(name) || "pcap_file_size".equals(name)) {
@@ -1037,12 +1041,35 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     }
 
     private void updateBlockingModeSummary(Preference pref, String mode) {
+        int summaryRes;
         if (BlockingMode.MODE_MINIMAL.equals(mode))
-            pref.setSummary(R.string.summary_blocking_mode_minimal);
+            summaryRes = R.string.summary_blocking_mode_minimal;
         else if (BlockingMode.MODE_STRICT.equals(mode))
-            pref.setSummary(R.string.summary_blocking_mode_strict);
+            summaryRes = R.string.summary_blocking_mode_strict;
         else
-            pref.setSummary(R.string.summary_blocking_mode_standard);
+            summaryRes = R.string.summary_blocking_mode_standard;
+
+        // SNI research mode reassembles the ClientHello on a per-flow session
+        // that only exists for directly-routed traffic (see handle_ip in
+        // ip.c): a flow the remote VPN tunnels never gets one, so research
+        // mode silently collects nothing for it. Say so here rather than
+        // letting the blocking-mode summary imply it still works.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (prefs.getBoolean("sni_enabled", false) &&
+                prefs.getBoolean("wg_enabled", false) &&
+                !TextUtils.isEmpty(prefs.getString("wg_config", null)))
+            pref.setSummary(getString(summaryRes) + " " + getString(R.string.summary_sni_wg_note));
+        else
+            pref.setSummary(summaryRes);
+    }
+
+    // Re-derives the blocking-mode summary after a preference other than
+    // blocking_mode itself changed the SNI-under-WireGuard note's condition
+    // (sni_enabled, wg_enabled, wg_config).
+    private void refreshBlockingModeSummary() {
+        Preference pref = getPreferenceScreen().findPreference("blocking_mode");
+        if (pref != null)
+            updateBlockingModeSummary(pref, BlockingMode.getMode(this));
     }
 
     private void setTrackerProtectionForAll(boolean enabled) {

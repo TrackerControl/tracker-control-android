@@ -626,6 +626,7 @@ Sincerely,\n\n]]></string>
     <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers stay routed through the VPN, but tracker protection is off by default. Known incompatible apps are excluded. Limited app breakage.</string>
     <string name="summary_blocking_mode_standard">Standard: Blocks all known trackers from multiple lists (X-Ray, Disconnect, DuckDuckGo). Essential services are allowed. Some apps will break and may need to be manually excluded (see Troubleshooting in the app menu).</string>
     <string name="summary_blocking_mode_strict">Strict: Blocks all known trackers including essential services and ambiguous shared-IP domains. Many apps will break and need to be manually excluded (see Troubleshooting in the app menu).</string>
+    <string name="summary_sni_wg_note">Note: SNI extraction does not apply to traffic routed through the remote VPN.</string>
     <string name="blocking_mode_minimal">Minimal</string>
     <string name="blocking_mode_standard">Standard</string>
     <string name="blocking_mode_strict">Strict</string>
