@@ -5,7 +5,10 @@ use tcdns::{process_response, record_answers, DnsPolicy, Outcome};
 
 const TYPE_A: u16 = 1;
 const TYPE_AAAA: u16 = 28;
+const TYPE_CNAME: u16 = 5;
 const TYPE_HTTPS: u16 = 65;
+const TYPE_RRSIG: u16 = 46;
+const TYPE_OPT: u16 = 41;
 const CLASS_IN: u16 = 1;
 
 #[derive(Default)]
@@ -85,6 +88,11 @@ fn response(questions: &[Vec<u8>], answers: &[Vec<u8>]) -> Vec<u8> {
 
 fn a_answer(encoded_name: &[u8]) -> Vec<u8> {
     answer(encoded_name, TYPE_A, 300, &[203, 0, 113, 7])
+}
+
+/// Encodes a compression pointer to `offset` in the message.
+fn ptr(offset: usize) -> [u8; 2] {
+    [0xc0 | ((offset >> 8) as u8), (offset & 0xff) as u8]
 }
 
 #[test]
@@ -415,6 +423,270 @@ fn over_long_uncompressed_answer_owner_name_is_still_rejected() {
 
     assert_eq!(process_response(&mut message, &policy), Outcome::Unchanged);
     assert!(policy.records.borrow().is_empty());
+}
+
+/// A CDN-fronted tracker's typical response shape: qname CNAME intermediate,
+/// intermediate CNAME target, target A <ip>. Each owner name after the
+/// question is a compression pointer into the previous record's RDATA, the
+/// way real resolvers encode chains. Only the terminal A is recorded, and it
+/// carries the *original question* qname (not the intermediate CNAME names)
+/// alongside its own owner name as `aname`.
+#[test]
+fn cname_chain_records_final_a_with_question_qname_and_answer_owner_aname() {
+    let qname_encoded = name("chain.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+
+    // cname1's owner name is a 2-byte pointer to the question's qname.
+    let mid_encoded = name("mid.chain.example");
+    let cname1 = answer(&ptr(12), TYPE_CNAME, 300, &mid_encoded);
+    // Every record here has a 2-byte pointer owner name, so the fixed
+    // header (name + type + class + ttl + rdlen) is always 12 bytes before
+    // RDATA starts.
+    let mid_rdata_offset = question_end + 12;
+    let cname1_end = question_end + cname1.len();
+
+    // cname2's owner name points at "mid.chain.example" inside cname1's own
+    // RDATA, exactly as a resolver compresses a chain it is building live.
+    let cdn_encoded = name("cdn.example");
+    let cname2 = answer(&ptr(mid_rdata_offset), TYPE_CNAME, 300, &cdn_encoded);
+    let cdn_rdata_offset = cname1_end + 12;
+
+    // The A record's owner name points at "cdn.example" inside cname2's
+    // RDATA.
+    let a_record = answer(&ptr(cdn_rdata_offset), TYPE_A, 300, &[203, 0, 113, 7]);
+
+    let message = response(
+        std::slice::from_ref(&question_bytes),
+        &[cname1, cname2, a_record],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1, "the two CNAMEs must not be recorded");
+    assert_eq!(records[0].0, "chain.example", "qname is the question name");
+    assert_eq!(
+        records[0].1, "cdn.example",
+        "aname is the A record's own owner"
+    );
+    assert_eq!(records[0].2, "203.0.113.7");
+    assert_eq!(records[0].3, 300);
+    drop(records);
+
+    let mut blanked = message;
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+    let outcome = process_response(&mut blanked, &policy);
+    assert!(matches!(
+        outcome,
+        Outcome::Blanked { new_len, qtype: TYPE_A, .. } if new_len == question_end
+    ));
+    assert_eq!(&blanked[6..12], &[0, 0, 0, 0, 0, 0]);
+}
+
+/// Same CNAME-chain shape as above, but the chain terminates in an AAAA
+/// record instead of A.
+#[test]
+fn cname_chain_ending_in_aaaa_records_final_answer_with_question_qname() {
+    let qname_encoded = name("chain6.example");
+    let question_bytes = question(&qname_encoded, TYPE_AAAA);
+    let question_end = 12 + question_bytes.len();
+
+    let mid_encoded = name("mid.chain6.example");
+    let cname1 = answer(&ptr(12), TYPE_CNAME, 300, &mid_encoded);
+    let mid_rdata_offset = question_end + 12;
+    let cname1_end = question_end + cname1.len();
+
+    let cdn_encoded = name("cdn6.example");
+    let cname2 = answer(&ptr(mid_rdata_offset), TYPE_CNAME, 300, &cdn_encoded);
+    let cdn_rdata_offset = cname1_end + 12;
+
+    let ip = [0x20, 0x01, 0x0d, 0xb8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2];
+    let aaaa_record = answer(&ptr(cdn_rdata_offset), TYPE_AAAA, 300, &ip);
+
+    let message = response(
+        std::slice::from_ref(&question_bytes),
+        &[cname1, cname2, aaaa_record],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1, "the two CNAMEs must not be recorded");
+    assert_eq!(records[0].0, "chain6.example");
+    assert_eq!(records[0].1, "cdn6.example");
+    assert_eq!(records[0].2, "2001:db8::2");
+    drop(records);
+
+    let mut blanked = message;
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+    let outcome = process_response(&mut blanked, &policy);
+    assert!(matches!(
+        outcome,
+        Outcome::Blanked { new_len, qtype: TYPE_AAAA, .. } if new_len == question_end
+    ));
+    assert_eq!(&blanked[6..12], &[0, 0, 0, 0, 0, 0]);
+}
+
+/// The parser only ever walks `ancount` answers; it never inspects nscount
+/// or arcount, so an EDNS(0) OPT pseudo-record in the additional section
+/// (root owner, TYPE=41, arcount=1) must not disturb answer recording. This
+/// documents that additional-section content is simply invisible to the
+/// parser, and that blanking's unconditional zeroing of bytes 6..12 (the
+/// ancount/nscount/arcount block) wipes arcount too even though it was
+/// never validated.
+#[test]
+fn opt_pseudo_record_in_additional_section_does_not_disturb_parsing_or_blanking() {
+    let qname_encoded = name("opt.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+
+    let mut message = response(std::slice::from_ref(&question_bytes), &[a_answer(&ptr(12))]);
+    message[10..12].copy_from_slice(&1u16.to_be_bytes()); // arcount = 1
+    message.push(0); // OPT owner name: root
+    message.extend_from_slice(&TYPE_OPT.to_be_bytes());
+    message.extend_from_slice(&4096u16.to_be_bytes()); // requestor UDP payload size
+    message.extend_from_slice(&0u32.to_be_bytes()); // extended RCODE/version/flags
+    message.extend_from_slice(&0u16.to_be_bytes()); // RDLENGTH = 0
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0].2, "203.0.113.7");
+    drop(records);
+
+    let mut blanked = message;
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+    let outcome = process_response(&mut blanked, &policy);
+    assert!(matches!(outcome, Outcome::Blanked { new_len, .. } if new_len == question_end));
+    assert_eq!(&blanked[6..12], &[0, 0, 0, 0, 0, 0]);
+}
+
+/// An RRSIG (type 46) sitting in the answer section alongside a valid A: the
+/// parser has no notion of DNSSEC, so RRSIG is simply an unrecognised type
+/// whose RDATA is skipped over like any other non-A/AAAA record.
+#[test]
+fn rrsig_alongside_a_answer_is_skipped_but_a_is_recorded_and_blanking_works() {
+    let qname_encoded = name("sig.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+
+    // Stub RDATA: the parser only reads RDLENGTH and skips the bytes, it
+    // never interprets RRSIG's internal fields (type covered, algorithm,
+    // labels, expiration/inception, key tag, signer name, signature).
+    let rrsig_rdata = vec![0u8; 20];
+    let rrsig = answer(&ptr(12), TYPE_RRSIG, 300, &rrsig_rdata);
+
+    let mut message = response(
+        std::slice::from_ref(&question_bytes),
+        &[a_answer(&ptr(12)), rrsig],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1, "RRSIG must not be recorded as an answer");
+    assert_eq!(records[0].2, "203.0.113.7");
+    drop(records);
+
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+    let outcome = process_response(&mut message, &policy);
+    assert!(matches!(outcome, Outcome::Blanked { new_len, .. } if new_len == question_end));
+    assert_eq!(&message[6..12], &[0, 0, 0, 0, 0, 0]);
+}
+
+/// After blanking, the truncated prefix (`msg[..new_len]`) must itself be a
+/// self-consistent DNS message: this asserts exactly the header fields the
+/// crate writes (`blank_dns_message`) and nothing more. In particular it
+/// does not assert RD/RA, which the crate deliberately does not preserve —
+/// `blank_dns_message` replaces the whole flags word with `0x8000 | rcode`,
+/// so RD/RA/AA/TC/Opcode all read back as zero regardless of the original
+/// request's flags.
+#[test]
+fn blanked_message_is_a_self_consistent_dns_message() {
+    let qname_encoded = name("blocked.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let mut message = response(std::slice::from_ref(&question_bytes), &[a_answer(&ptr(12))]);
+
+    let policy = TestPolicy {
+        blocked: true,
+        blocked_rcode: 3,
+        ..TestPolicy::default()
+    };
+    let outcome = process_response(&mut message, &policy);
+    let (new_len, rcode) = match outcome {
+        Outcome::Blanked { new_len, rcode, .. } => (new_len, rcode),
+        Outcome::Unchanged => panic!("expected Outcome::Blanked"),
+    };
+
+    // new_len is exactly the header plus the (untouched) question section.
+    assert_eq!(new_len, 12 + question_bytes.len());
+    let truncated = &message[..new_len];
+
+    // Exact flags word: QR=1, everything else the crate never sets stays 0,
+    // RCODE is the masked policy rcode.
+    let flags = u16::from_be_bytes([truncated[2], truncated[3]]);
+    assert_eq!(flags, 0x8000u16 | u16::from(rcode));
+
+    // qdcount preserved; ancount/nscount/arcount all zeroed.
+    assert_eq!(&truncated[4..6], &1u16.to_be_bytes());
+    assert_eq!(&truncated[6..12], &[0, 0, 0, 0, 0, 0]);
+
+    // The question section is untouched byte-for-byte.
+    assert_eq!(&truncated[12..], question_bytes.as_slice());
+}
+
+/// A UDP-style response with TC (truncation) set whose second answer is cut
+/// off mid-RDATA, as happens when a reply exceeds the path MTU. Per the
+/// incremental-parse contract, answers validated before the cut are still
+/// recorded, and the overall outcome fails open (`Unchanged`, no blanking)
+/// rather than acting on a partially-parsed message. The parser does not
+/// itself inspect the TC bit; the fail-open behaviour comes entirely from
+/// the length check on the truncated second record.
+#[test]
+fn tc_bit_set_and_truncated_second_answer_fails_open_but_records_first_answer() {
+    let qname_encoded = name("tc.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let full = response(
+        std::slice::from_ref(&question_bytes),
+        &[
+            a_answer(&ptr(12)),
+            answer(&ptr(12), TYPE_A, 300, &[198, 51, 100, 9]),
+        ],
+    );
+    // Cut off the last 2 of the second answer's 4 RDATA bytes.
+    let cut_at = full.len() - 2;
+    let mut message = full[..cut_at].to_vec();
+    // Set TC (bit 1 of the flags' high byte) on top of the standard
+    // QR|RD|RA flags `response` already set.
+    message[2] |= 0x02;
+
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+    let outcome = process_response(&mut message, &policy);
+    assert_eq!(outcome, Outcome::Unchanged);
+    let records = policy.records.borrow();
+    assert_eq!(
+        records.len(),
+        1,
+        "the answer before the cut is still recorded"
+    );
+    assert_eq!(records[0].2, "203.0.113.7");
 }
 
 #[test]
