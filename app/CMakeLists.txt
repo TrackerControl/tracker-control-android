@@ -15,6 +15,7 @@ add_library( netguard
              src/main/jni/netguard/policy.c
              src/main/jni/netguard/tls.c
              src/main/jni/netguard/tcp.c
+             src/main/jni/netguard/dns_frame.c
              src/main/jni/netguard/udp.c
              src/main/jni/netguard/icmp.c
              src/main/jni/netguard/dns.c
@@ -27,8 +28,20 @@ include_directories( src/main/jni/netguard/ )
 find_library( log-lib
               log )
 
+if(NOT DEFINED WGBRIDGE_LIB_DIR)
+    message(FATAL_ERROR "WGBRIDGE_LIB_DIR not set -- build through Gradle, which runs wgbridgeBuild first.")
+endif()
+
+add_library(wgbridge SHARED IMPORTED)
+set_target_properties(wgbridge PROPERTIES
+    IMPORTED_LOCATION "${WGBRIDGE_LIB_DIR}/${ANDROID_ABI}/libwgbridge.so"
+    # cargo-ndk's cdylib has no DT_SONAME; use -lwgbridge so DT_NEEDED is
+    # the packaged basename instead of a build-directory-relative path.
+    IMPORTED_NO_SONAME TRUE)
+
 target_link_libraries( netguard
-                       ${log-lib} )
+                       ${log-lib}
+                       wgbridge )
 
 target_link_options(netguard PRIVATE
     "-Wl,-z,max-page-size=16384"

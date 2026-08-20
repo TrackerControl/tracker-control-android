@@ -79,6 +79,12 @@ jclass clsUsage;
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     log_android(ANDROID_LOG_INFO, "JNI load");
 
+    if (tcdns_abi_version() != TCDNS_ABI_VERSION) {
+        log_android(ANDROID_LOG_ERROR, "tc-dns ABI mismatch: native %u, header %u",
+                    tcdns_abi_version(), TCDNS_ABI_VERSION);
+        return -1;
+    }
+
     JNIEnv *env;
     if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         log_android(ANDROID_LOG_INFO, "JNI load GetEnv failed");

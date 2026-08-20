@@ -6,10 +6,10 @@ flavour matrix, the native builds, and the reproducibility flags.
 ## Prerequisites
 
 JDK 17, Android SDK (compile/target SDK 37, min SDK 23), NDK `27.2.12479018`,
-CMake. For the WireGuard bridge you also need Rust ≥ 1.95 with the four Android
-targets and `cargo-ndk` — but the Gradle build wires that in for you (it even
-installs `cargo-ndk` if missing). See `wgbridge-rs/README.md` for the exact
-`rustup target add …` list and F-Droid build metadata.
+CMake. Native builds also need Rust ≥ 1.95 with the four Android targets;
+the WireGuard bridge additionally needs `cargo-ndk`. Gradle wires both Rust
+builds in but deliberately does not install tools or fetch crates. See
+`wgbridge-rs/README.md` for setup and F-Droid build metadata.
 
 ## Flavours
 
@@ -42,15 +42,20 @@ device, build **fdroid debug** instead — see `agents/docs/device-testing.md`.
 **Rust host tests** (config/DNS/key parsing — no device needed):
 
 ```bash
-cd wgbridge-rs && cargo test
+cd wgbridge-rs && cargo test --workspace
+cd wgbridge-rs && cargo test -p tc-dns --features capi
 ```
 
 ## Native code builds automatically with the app
 
-- The **C engine** builds via CMake through AGP's `externalNativeBuild`.
+- The **C engine** builds via CMake through AGP's `externalNativeBuild` and
+  calls `tc-dns` through the C ABI exported by `libwgbridge.so`. CMake
+  configure/build tasks depend on `wgbridgeBuild`; JVM compilation and unit
+  tests remain Rust-free.
 - The **Rust WireGuard bridge** builds via the `wgbridgeBuild` Gradle task, which
-  runs `cargo ndk` for all four ABIs and is a `dependsOn` of `preBuild`. It only
-  re-runs when `wgbridge-rs/src/**`, `Cargo.toml`, or `Cargo.lock` change.
+  runs `cargo ndk` for all four ABIs and is needed only by JNI-library packaging
+  tasks. It also tracks the shared `tc-dns` source because the bridge links the
+  same core.
   If Gradle can't find `cargo` (Android Studio sanitizes `PATH`), pass
   `-PcargoBin=/path/to/cargo` or put `~/.cargo/bin` on `PATH`.
 

@@ -34,7 +34,7 @@ covers — don't rely on what you remember of it.
 | `agents/docs/build-and-test.md` | anything beyond the commands below — prerequisites, flavours, the native C/Rust builds, the reproducibility flags |
 | `agents/docs/device-testing.md` | **before any `adb` command** — flavour choice, seeding away the permission prompts, editing preferences safely |
 | `agents/docs/triage.md` | reviewing, triaging or closing an issue — the verdict vocabulary and the two reusable close messages |
-| `wgbridge-rs/README.md` | touching `wgbridge-rs/` or `net.kollnig.missioncontrol.wg*` — architecture, the JNI API surface, building/testing the crate |
+| `wgbridge-rs/README.md` | touching `wgbridge-rs/`, `tc-dns`, DNS response rewriting, or `net.kollnig.missioncontrol.wg*` — architecture, the C/JNI API surfaces, building/testing the workspace |
 | `docs/RELEASING.md` | cutting a release — version bump, Fastlane changelog, tag-triggered unsigned build, local signing, smoke-test checklist |
 
 ---

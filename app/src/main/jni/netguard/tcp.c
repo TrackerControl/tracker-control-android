@@ -18,6 +18,7 @@
 */
 
 #include "netguard.h"
+#include "dns_frame.h"
 
 extern char socks5_addr[INET6_ADDRSTRLEN + 1];
 extern int socks5_port;
@@ -604,8 +605,20 @@ void check_tcp_socket(const struct arguments *args,
 
                         // Process DNS response
                         if (ntohs(s->tcp.dest) == 53 && bytes > 2) {
-                            ssize_t dlen = bytes - 2;
-                            parse_dns_response(args, s, buffer + 2, (size_t *) &dlen);
+                            size_t frame_len = ((size_t) buffer[0] << 8) | buffer[1];
+                            // recv() may split or coalesce DNS frames. The
+                            // header is blanked in place for every frame so
+                            // policy still applies, but only an isolated
+                            // complete frame can be shortened, because
+                            // trimming a coalesced or split read would
+                            // discard stream bytes.
+                            struct dns_frame_decision decision =
+                                    dns_frame_decide((size_t) bytes, frame_len);
+                            if (decision.should_parse) {
+                                size_t dlen = decision.dlen;
+                                parse_dns_response(args, s, buffer + 2, &dlen);
+                                dns_frame_apply_rewrite(buffer, &decision, dlen, &bytes);
+                            }
                         }
 
                         // Forward to tun

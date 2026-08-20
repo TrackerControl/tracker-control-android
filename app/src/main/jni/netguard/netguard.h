@@ -33,6 +33,8 @@
 #include <android/log.h>
 #include <sys/system_properties.h>
 
+#include "tcdns.h"
+
 #define TAG "TrackerControl.JNI"
 
 // #define PROFILE_JNI 5
@@ -404,10 +406,8 @@ void check_icmp_socket(const struct arguments *args, const struct epoll_event *e
 
 void check_udp_socket(const struct arguments *args, const struct epoll_event *ev);
 
-int32_t get_qname(const uint8_t *data, const size_t datalen, uint16_t off, char *qname);
-
 void parse_dns_response(const struct arguments *args, const struct ng_session *session,
-                        const uint8_t *data, size_t *datalen);
+                        uint8_t *data, size_t *datalen);
 
 uint32_t get_send_window(const struct tcp_session *cur);
 

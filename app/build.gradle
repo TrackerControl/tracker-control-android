@@ -58,7 +58,8 @@ android {
                 cppFlags ""
                 arguments "-DANDROID_PLATFORM=android-22",
                         "-DCMAKE_C_COMPILER_LAUNCHER=${ccacheLauncher}",
-                        "-DCMAKE_CXX_COMPILER_LAUNCHER=${ccacheLauncher}"
+                        "-DCMAKE_CXX_COMPILER_LAUNCHER=${ccacheLauncher}",
+                        "-DWGBRIDGE_LIB_DIR=${buildDir}/rustJniLibs"
                 // https://developer.android.com/ndk/guides/cmake.html
             }
         }
