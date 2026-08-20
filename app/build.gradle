@@ -28,7 +28,8 @@ tasks.register('prefetchOfflineBuildClasspaths') {
     doLast {
         ['fdroidDebugUnitTestRuntimeClasspath',
          'fdroidReleaseCompileClasspath',
-         'fdroidReleaseRuntimeClasspath'].each { name ->
+         'fdroidReleaseRuntimeClasspath',
+         'coreLibraryDesugaring'].each { name ->
             configurations.named(name).get().resolve()
         }
     }
