@@ -96,9 +96,7 @@ impl DnsInspector {
         tcp: &[u8],
         recorder: &dyn DnsSink,
     ) -> Option<TcpRewriteContext> {
-        let Some(segment) = tcp_segment(packet, tcp) else {
-            return None;
-        };
+        let segment = tcp_segment(packet, tcp)?;
         let mut context = TcpRewriteContext { frames: Vec::new() };
         let now = Instant::now();
         self.tcp_flows
@@ -280,9 +278,10 @@ pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
 
 impl DnsInspector {
     /// Inspects a decrypted packet and applies DNS policy before it reaches
-    /// the TUN. TCP rewriting is deliberately coupled to this inspector's
-    /// sequence/framing state; callers must not use the stateless UDP helper
-    /// for TCP segments.
+    /// the TUN. UDP responses are recorded and rewritten in a single parse.
+    /// TCP rewriting is deliberately coupled to this inspector's
+    /// sequence/framing state, so callers must route TCP segments through
+    /// this method rather than parsing them independently.
     pub fn inspect_and_rewrite(
         &mut self,
         packet: &mut [u8],
@@ -306,9 +305,7 @@ impl DnsInspector {
         }
 
         let tcp = &packet[view.transport_offset..view.ip_total_len];
-        let Some(context) = self.inspect_tcp(packet, tcp, policy) else {
-            return None;
-        };
+        let context = self.inspect_tcp(packet, tcp, policy)?;
         let mut rewritten = false;
         for range in context.frames {
             let msg_start = view.transport_offset + range.start;
@@ -328,37 +325,6 @@ impl DnsInspector {
         repair_packet(packet, &view, view.ip_total_len);
         Some(view.ip_total_len)
     }
-}
-
-/// Applies the native DNS response policy to one decrypted IP packet.
-///
-/// The caller must run [`DnsInspector::inspect`] first. That preserves the
-/// native ordering where A/AAAA answers are recorded before a response is
-/// blanked. UDP responses can be shortened because they are datagrams. TCP
-/// packets are never shortened: changing a DNS-over-TCP payload length would
-/// require sequence-number translation for every later segment. Instead, a
-/// complete UDP response has its counts cleared and is trimmed to the question
-/// section. TCP must go through [`DnsInspector::inspect_and_rewrite`], which
-/// aligns complete frames to the tracked TCP sequence frontier.
-///
-/// Returns the packet length to write when a response was rewritten. `None`
-/// means that the packet was not a DNS response or policy left it unchanged.
-pub fn rewrite_dns_response(packet: &mut [u8], policy: &dyn DnsSink) -> Option<usize> {
-    let view = dns_packet_view(packet)?;
-    if !view.is_udp {
-        return None;
-    }
-
-    let outcome = {
-        let msg = &mut packet[view.dns_start..view.dns_end];
-        apply_policy(msg, &SinkPolicy(policy))
-    };
-    let Outcome::Blanked { new_len, .. } = outcome else {
-        return None;
-    };
-    let new_total = view.dns_start + new_len;
-    repair_packet(packet, &view, new_total);
-    Some(new_total)
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -1093,13 +1059,12 @@ mod tests {
         let sink = CollectingSink(Mutex::new(Vec::new()));
         let mut inspector = DnsInspector::default();
 
-        // The A record is recorded before the response is blanked.
-        inspector.inspect(&packet, &sink);
-        assert_eq!(sink.0.lock().unwrap().len(), 1);
         // A non-zero incoming checksum exercises the rewrite path. IPv4 UDP
         // packets with checksum zero deliberately retain zero.
         packet[26..28].copy_from_slice(&0x1234u16.to_be_bytes());
-        let new_len = rewrite_dns_response(&mut packet, &sink).unwrap();
+        let new_len = inspector.inspect_and_rewrite(&mut packet, &sink).unwrap();
+        // The A record is recorded before the response is blanked.
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
 
         assert_eq!(new_len, 20 + 8 + question_end);
         packet.truncate(new_len);
@@ -1123,8 +1088,9 @@ mod tests {
         let question_end = question_end("tracker.example");
         let mut packet = ipv6_udp_with_destination_options(&msg);
         let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
 
-        let new_len = rewrite_dns_response(&mut packet, &sink).unwrap();
+        let new_len = inspector.inspect_and_rewrite(&mut packet, &sink).unwrap();
         assert_eq!(new_len, 48 + 8 + question_end);
         packet.truncate(new_len);
         assert_eq!(
@@ -1145,8 +1111,11 @@ mod tests {
         let question_end = question_end("blocked.example");
         let mut packet = ipv4_udp(&msg);
         packet[26..28].copy_from_slice(&0x1234u16.to_be_bytes());
+        let mut inspector = DnsInspector::default();
 
-        let new_len = rewrite_dns_response(&mut packet, &BlockingSink).unwrap();
+        let new_len = inspector
+            .inspect_and_rewrite(&mut packet, &BlockingSink)
+            .unwrap();
         assert_eq!(new_len, 20 + 8 + question_end);
         packet.truncate(new_len);
         let (_, segment) = transport_segment(&packet).unwrap();
@@ -1240,8 +1209,9 @@ mod tests {
         let mut packet = ipv4_udp(&msg);
         let before = packet.clone();
         let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
 
-        assert_eq!(rewrite_dns_response(&mut packet, &sink), None);
+        assert_eq!(inspector.inspect_and_rewrite(&mut packet, &sink), None);
         assert_eq!(packet, before);
     }
 
@@ -1256,8 +1226,9 @@ mod tests {
         let mut packet = ipv4_udp(&msg);
         let before = packet.clone();
         let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
 
-        assert_eq!(rewrite_dns_response(&mut packet, &sink), None);
+        assert_eq!(inspector.inspect_and_rewrite(&mut packet, &sink), None);
         assert_eq!(packet, before);
     }
 }

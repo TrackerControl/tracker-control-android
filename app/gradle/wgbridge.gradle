@@ -213,6 +213,46 @@ tasks.register('wgbridgeBuild') {
                 }.result.get().assertNormalExitValue()
             }
         }
+
+        // tc-dns is an rlib dependency of the wgbridge cdylib; its
+        // #[no_mangle] pub extern "C" symbols (tcdns_process_response,
+        // tcdns_abi_version — see app/src/main/jni/netguard/tcdns.h) only
+        // reach libwgbridge.so because rustc currently chooses to keep them.
+        // libnetguard.so links against libwgbridge.so for these symbols (the
+        // IMPORTED_NO_SONAME wgbridge target in app/CMakeLists.txt), so a
+        // future LTO / --gc-sections / rustc change that drops the re-export
+        // would silently build but fail at runtime with an
+        // UnsatisfiedLinkError. Catch that here instead.
+        def requiredTcdnsSymbols = ['tcdns_process_response', 'tcdns_abi_version']
+        def llvmNm = "${findNdkDirectory().absolutePath}/toolchains/llvm/prebuilt/${hostTag}/bin/llvm-nm"
+        wgbridgeAbis.each { abi ->
+            def lib = file("$wgbridgeOutDir/$abi/libwgbridge.so")
+            // A missing library is itself a failure here: this check exists
+            // precisely to stop an unusable artifact from shipping.
+            if (!lib.exists())
+                throw new GradleException("libwgbridge.so ($abi) was not produced by `cargo ndk`.")
+            def symbolOutput = new ByteArrayOutputStream()
+            wgbridgeExecOperations.exec {
+                commandLine llvmNm, '--defined-only', '--dynamic', lib.absolutePath
+                standardOutput = symbolOutput
+            }.assertNormalExitValue()
+            def exportedSymbols = symbolOutput.toString()
+            requiredTcdnsSymbols.each { symbol ->
+                if (!exportedSymbols.contains(symbol)) {
+                    throw new GradleException("""
+                        libwgbridge.so ($abi) is missing the expected dynamic
+                        symbol `$symbol` from the tc-dns crate. libnetguard.so
+                        has a hard runtime dependency on this symbol (see
+                        app/src/main/jni/netguard/tcdns.h); without it the app
+                        will crash with UnsatisfiedLinkError on device.
+                        This likely means a linker/LTO/rustc change stopped
+                        re-exporting tc-dns's #[no_mangle] symbols through the
+                        wgbridge cdylib — check wgbridge-rs/Cargo.toml and
+                        wgbridge-rs/tc-dns for crate-type / visibility changes.
+                    """.stripIndent())
+                }
+            }
+        }
     }
 }
 

@@ -231,10 +231,12 @@ fn read_dns_name_inner(
                 if pointer_end > msg.len() {
                     return None;
                 }
-                state.encoded_octets = state.encoded_octets.checked_add(2)?;
-                if state.encoded_octets > MAX_NAME_OCTETS {
-                    return None;
-                }
+                // The pointer itself contributes nothing to the
+                // uncompressed-name length: RFC 1035's 255-octet cap
+                // applies to the expanded name, not the wire encoding, so
+                // only label octets (below, the 0x00 arm) count toward
+                // `MAX_NAME_OCTETS`. Pointer-chasing is bounded separately
+                // by `MAX_NAME_DEPTH` and the bounds check above.
                 let ptr = ((length & 0x3f) << 8) | usize::from(*msg.get(offset + 1)?);
                 let (name, _) = read_dns_name_inner(msg, ptr, depth + 1, state)?;
                 if !name.is_empty() {

@@ -344,6 +344,79 @@ fn malformed_answer_after_valid_a_records_a_but_does_not_blank() {
     assert_eq!(policy.records.borrow().len(), 1);
 }
 
+/// A pointer's own 2 bytes must not be charged against the 255-octet
+/// uncompressed-name cap: that cap is RFC 1035's limit on the *expanded*
+/// name, and a legal near-maximum name reached through a compression
+/// pointer used to be wrongly rejected because the pointer bytes and the
+/// fully expanded target shared one budget.
+#[test]
+fn near_maximum_length_name_reached_via_pointer_is_accepted_and_can_be_blocked() {
+    // Wire-encoded QNAME of exactly 254 octets: labels 63/63/63/60 plus the
+    // root byte, i.e. a 249-character domain (comfortably inside the
+    // 253-character legal limit).
+    let label_lens = [63usize, 63, 63, 60];
+    let mut qname_encoded = Vec::new();
+    let mut labels = Vec::new();
+    for len in label_lens {
+        qname_encoded.push(len as u8);
+        let label = vec![b'a'; len];
+        qname_encoded.extend_from_slice(&label);
+        labels.push(String::from_utf8(label).expect("ascii label"));
+    }
+    qname_encoded.push(0);
+    assert_eq!(qname_encoded.len(), 254);
+    let expected_qname = labels.join(".");
+
+    let mut message = response(
+        &[question(&qname_encoded, TYPE_A)],
+        &[a_answer(&[0xc0, 12])],
+    );
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+
+    assert!(matches!(
+        process_response(&mut message, &policy),
+        Outcome::Blanked { .. }
+    ));
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0].0, expected_qname);
+    assert_eq!(records[0].1, expected_qname);
+    assert_eq!(records[0].2, "203.0.113.7");
+}
+
+/// A genuinely over-long uncompressed name (more than 255 octets of labels)
+/// must still be rejected — proving the cap on expanded-name label octets
+/// stays active after the pointer-charge fix. The question name stays
+/// short and valid; it is the answer's own (uncompressed) owner name that
+/// exceeds the limit, exercising the same `read_dns_name_inner` label
+/// accounting the fix touched.
+#[test]
+fn over_long_uncompressed_answer_owner_name_is_still_rejected() {
+    let qname = name("q.example");
+
+    // Four 63-octet labels alone already total 256 octets before the root
+    // byte, exceeding MAX_NAME_OCTETS regardless of compression.
+    let mut owner_name = Vec::new();
+    for _ in 0..4 {
+        owner_name.push(63u8);
+        owner_name.extend(std::iter::repeat_n(b'a', 63));
+    }
+    owner_name.push(0);
+    assert!(owner_name.len() > 255);
+
+    let mut message = response(&[question(&qname, TYPE_A)], &[a_answer(&owner_name)]);
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+
+    assert_eq!(process_response(&mut message, &policy), Outcome::Unchanged);
+    assert!(policy.records.borrow().is_empty());
+}
+
 #[test]
 fn process_response_fuzz_smoke_returns_for_fifty_thousand_inputs() {
     let mut state = 0x9e37_79b9u32;

@@ -605,13 +605,19 @@ void check_tcp_socket(const struct arguments *args,
                         // Process DNS response
                         if (ntohs(s->tcp.dest) == 53 && bytes > 2) {
                             size_t frame_len = ((size_t) buffer[0] << 8) | buffer[1];
-                            // recv() may split or coalesce DNS frames. Only
-                            // shorten an isolated complete frame; otherwise
-                            // trimming would discard bytes from the stream.
-                            if (frame_len + 2 == (size_t) bytes) {
-                                size_t dlen = frame_len;
+                            // recv() may split or coalesce DNS frames. The
+                            // header is blanked in place for every frame so
+                            // policy still applies, but only an isolated
+                            // complete frame can be shortened, because
+                            // trimming a coalesced or split read would
+                            // discard stream bytes.
+                            if (frame_len > 0) {
+                                int isolated = (frame_len + 2 == (size_t) bytes);
+                                size_t avail = (size_t) bytes - 2;
+                                // isolated implies frame_len == avail.
+                                size_t dlen = (frame_len < avail ? frame_len : avail);
                                 parse_dns_response(args, s, buffer + 2, &dlen);
-                                if (dlen != frame_len) {
+                                if (isolated && dlen != frame_len) {
                                     buffer[0] = (uint8_t) (dlen >> 8);
                                     buffer[1] = (uint8_t) dlen;
                                     bytes = (ssize_t) dlen + 2;
