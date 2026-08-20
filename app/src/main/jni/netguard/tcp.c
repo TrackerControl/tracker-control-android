@@ -18,6 +18,7 @@
 */
 
 #include "netguard.h"
+#include "dns_frame.h"
 
 extern char socks5_addr[INET6_ADDRSTRLEN + 1];
 extern int socks5_port;
@@ -611,17 +612,12 @@ void check_tcp_socket(const struct arguments *args,
                             // complete frame can be shortened, because
                             // trimming a coalesced or split read would
                             // discard stream bytes.
-                            if (frame_len > 0) {
-                                int isolated = (frame_len + 2 == (size_t) bytes);
-                                size_t avail = (size_t) bytes - 2;
-                                // isolated implies frame_len == avail.
-                                size_t dlen = (frame_len < avail ? frame_len : avail);
+                            struct dns_frame_decision decision =
+                                    dns_frame_decide((size_t) bytes, frame_len);
+                            if (decision.should_parse) {
+                                size_t dlen = decision.dlen;
                                 parse_dns_response(args, s, buffer + 2, &dlen);
-                                if (isolated && dlen != frame_len) {
-                                    buffer[0] = (uint8_t) (dlen >> 8);
-                                    buffer[1] = (uint8_t) dlen;
-                                    bytes = (ssize_t) dlen + 2;
-                                }
+                                dns_frame_apply_rewrite(buffer, &decision, dlen, &bytes);
                             }
                         }
 

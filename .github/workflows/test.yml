@@ -66,6 +66,13 @@ jobs:
           # FFI-boundary tests only compile with the feature enabled.
           cargo test --manifest-path wgbridge-rs/Cargo.toml -p tc-dns --features capi --locked --offline
 
+      - name: Run DNS-over-TCP framing host tests
+        run: |
+          cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
+            -o /tmp/dns_frame_test \
+            app/src/test/native/dns_frame_test.c app/src/main/jni/netguard/dns_frame.c
+          /tmp/dns_frame_test
+
       - name: Run unit tests
         run: ./gradlew testFdroidDebugUnitTest --offline
 

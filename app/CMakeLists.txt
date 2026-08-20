@@ -14,6 +14,7 @@ add_library( netguard
              src/main/jni/netguard/ip.c
              src/main/jni/netguard/tls.c
              src/main/jni/netguard/tcp.c
+             src/main/jni/netguard/dns_frame.c
              src/main/jni/netguard/udp.c
              src/main/jni/netguard/icmp.c
              src/main/jni/netguard/dns.c
