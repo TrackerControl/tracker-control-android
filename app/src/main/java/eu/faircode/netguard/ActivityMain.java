@@ -292,7 +292,9 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
                 if (isChecked) {
                     // Check always-on VPN settings only on Android < S (API 31)
-                    // From Android S+, these settings keys are restricted to system apps
+                    // From Android S+, these settings keys are restricted to system apps,
+                    // so lockdown cannot be detected there; coverage on S+ is limited to
+                    // the onboarding slide and the troubleshooting page (deliberate, see #743)
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
                         try {
                             String alwaysOn = Settings.Secure.getString(getContentResolver(), "always_on_vpn_app");

@@ -79,7 +79,7 @@
     <string name="troubleshooting_categories_desc">You can fine-tune blocking for each app by tapping it and toggling individual tracker categories (e.g. Analytics, Ads) on or off in the Trackers tab.</string>
 
     <string name="troubleshooting_alwayson_title">Always-on VPN</string>
-    <string name="troubleshooting_alwayson_desc">If \"Block connections without VPN\" (lockdown) is enabled in Android VPN settings, TrackerControl cannot work correctly. Disable this option. A notification will appear if this is detected.</string>
+    <string name="troubleshooting_alwayson_desc">If \"Block connections without VPN\" (lockdown) is enabled in Android VPN settings, TrackerControl cannot work correctly. Disable this option.</string>
     <string name="troubleshooting_alwayson_action">Open VPN settings</string>
     <string name="menu_apps">Other apps</string>
 
@@ -388,7 +388,6 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_ruid">Destination app</string>
     <string name="title_external">For an external server select \'nobody\'</string>
 
-    <string name="title_lockdown_enabled">Traffic is locked down</string>
     <string name="title_unmetered_allowed">Unmetered traffic is allowed</string>
     <string name="title_unmetered_blocked">Unmetered traffic is blocked</string>
     <string name="title_unmetered_disabled">Unmetered rules are not applied</string>
