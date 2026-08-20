@@ -1876,14 +1876,15 @@ public class ServiceSinkhole extends VpnService {
         final int rcode = Integer.parseInt(prefs.getString("rcode", "3"));
         // Port 53 is the only UDP traffic that skips the UID lookup entirely
         // today, so turning fwd53 on costs a lookup, a JNI upcall and a real
-        // UDP session per query. Only pay that when some app actually is routed
-        // around the tunnel — which is a property of the resolved rules, not of
-        // the mode: a per-app override sends an app direct in either mode, and
-        // gating on the mode alone left such an app tunnelling its DNS while
-        // its traffic went direct, exactly the split the redirect exists to
-        // avoid.
+        // UDP session per query. Only pay that when some app is routed around
+        // the tunnel and a non-null underlying resolver target is available —
+        // which are both properties of the resolved rules, not of the mode: a
+        // per-app override sends an app direct in either mode, and gating on
+        // the mode alone left such an app tunnelling its DNS while its traffic
+        // went direct, exactly the split the redirect exists to avoid.
         final boolean fwd53 = mapForward.containsKey(53)
-                || RemoteRoutingLogic.redirectDirectDns(anyDirectRouting);
+                || RemoteRoutingLogic.redirectDirectDns(anyDirectRouting,
+                        directDnsTarget != null);
         if (prefs.getBoolean("socks5_enabled", false))
             jni_socks5(
                     prefs.getString("socks5_addr", ""),
@@ -2103,7 +2104,8 @@ public class ServiceSinkhole extends VpnService {
         for (Integer uid : mapUidRouteOverride)
             uids[i++] = uid;
         boolean defaults = defaultTunnel;
-        boolean dnsDirect = RemoteRoutingLogic.redirectDirectDns(anyDirectRouting);
+        boolean dnsDirect = RemoteRoutingLogic.redirectDirectDns(anyDirectRouting,
+                directDnsTarget != null);
         lock.readLock().unlock();
 
         jni_wireguard_route(uids, defaults, dnsDirect);

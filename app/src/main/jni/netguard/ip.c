@@ -109,6 +109,20 @@ static jint get_session_uid(const struct arguments *args, int version, int proto
     return -1;
 }
 
+// Re-run the authoritative UID lookup only after both the flow cache and the
+// native session table miss. This is deliberately off the hot path: established
+// UDP/TCP packets normally hit the flow cache, while a miss can be caused by a
+// cache expiry or hash collision. Keep the Android <=28 procfs path identical
+// to the initial lookup and use ConnectivityManager on newer releases.
+static jint get_route_uid(const struct arguments *args, int version, int protocol,
+                          const void *saddr, uint16_t sport,
+                          const void *daddr, uint16_t dport,
+                          const char *source, const char *dest) {
+    if (args->ctx->sdk <= 28)
+        return get_uid(version, protocol, saddr, sport, daddr, dport);
+    return get_uid_q(args, version, protocol, source, sport, dest, dport);
+}
+
 uint16_t get_mtu() {
     return 10000;
 }
@@ -556,27 +570,50 @@ void handle_ip(const struct arguments *args,
         // everyone who has not opted in.
         int tunnel_uid;
         if (route_uid_relevant()) {
-            // A flow keeps the verdict its first packet was given. Tunnelled
-            // flows never create an ng_session — the WireGuard write below
-            // returns first — so without this their later packets have nothing
-            // to resolve a UID from and would be re-decided on the global
-            // default, mid-stream.
-            if (!route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
-                                   &tunnel_uid)) {
-                // Fall back to the session table rather than to the global
-                // default: defaulting would divert an already-NATted flow
-                // mid-stream. Never re-run the real lookup here — get_uid_q is
-                // a binder call.
-                jint route_uid = (uid >= 0
-                                  ? uid
-                                  : get_session_uid(args, version, protocol, pkt, payload));
+            // A flow keeps the verdict its first packet was given. A fresh UID
+            // is authoritative even when a previous flow happened to reuse the
+            // same 5-tuple, so do not consult the flow cache in that case.
+            jint route_uid = uid;
+            if (route_uid >= 0) {
                 tunnel_uid = is_tunnel_uid(route_uid);
+                route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                 tunnel_uid);
+            } else if (route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
+                                         &tunnel_uid)) {
+                // Established tunnelled flows never create an ng_session — the
+                // WireGuard write below returns first — so the cache preserves
+                // their first-packet answer without a per-packet UID lookup.
+            } else {
+                // A cache expiry or collision is rare, but falling back to the
+                // selected-mode default would divert an already-established
+                // tunnelled flow direct and can make TCP reset. Recover the UID
+                // from the native session table first, then from the
+                // authoritative Android/procfs lookup.
+                route_uid = get_session_uid(args, version, protocol, pkt, payload);
+                if (route_uid < 0)
+                    route_uid = get_route_uid(args, version, protocol,
+                                              saddr, sport, daddr, dport,
+                                              source, dest);
 
-                // Only remember a verdict that was actually decided on a UID;
-                // caching a guessed default would pin it for the whole flow.
-                if (route_uid >= 0)
+                if (route_uid >= 0) {
+                    tunnel_uid = is_tunnel_uid(route_uid);
                     route_flow_store(version, protocol, saddr, sport, daddr, dport,
                                      tunnel_uid);
+                } else {
+                    // Unknown ownership is privacy-sensitive: keep the packet
+                    // in the remote tunnel rather than fail-open to direct
+                    // routing in selected mode. Cache that explicit fail-closed
+                    // verdict so the rest of this flow does not repeat a Binder
+                    // or procfs lookup on every packet. A later flow with the
+                    // same tuple still wins because a freshly resolved UID is
+                    // handled before the cache above.
+                    tunnel_uid = 1;
+                    route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                                     tunnel_uid);
+                    log_android(ANDROID_LOG_WARN,
+                                "Route UID unavailable for v%d p%d %s/%u > %s/%u; tunnelling",
+                                version, protocol, source, sport, dest, dport);
+                }
             }
         } else
             tunnel_uid = route_default_is_tunnel();

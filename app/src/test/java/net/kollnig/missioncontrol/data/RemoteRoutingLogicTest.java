@@ -92,19 +92,25 @@ public class RemoteRoutingLogicTest {
 
     /**
      * The DNS redirect costs a UID lookup, a JNI upcall and a UDP session per
-     * query, so nobody pays for it until an app is actually routed direct.
-     * Keying this off the mode instead was wrong: a per-app override sends an
-     * app direct in "All apps" too, and that app then tunnelled its DNS while
-     * its traffic went direct — the very split the redirect exists to avoid.
+     * query, so nobody pays for it until an app is actually routed direct and
+     * an underlying resolver target exists. Keying this off the mode instead
+     * was wrong: a per-app override sends an app direct in "All apps" too, and
+     * that app then tunnelled its DNS while its traffic went direct — the very
+     * split the redirect exists to avoid.
      */
     @Test
     public void dnsRedirectFollowsActualDirectApps() {
-        assertFalse(RemoteRoutingLogic.redirectDirectDns(false));
-        assertTrue(RemoteRoutingLogic.redirectDirectDns(true));
+        assertFalse(RemoteRoutingLogic.redirectDirectDns(false, true));
+        assertTrue(RemoteRoutingLogic.redirectDirectDns(true, true));
+
+        // A direct route is not enough by itself: without an underlying
+        // resolver target, enabling fwd53 would only redirect queries into a
+        // null destination.
+        assertFalse(RemoteRoutingLogic.redirectDirectDns(true, false));
 
         boolean overriddenDirectInAllMode = !RemoteRoutingLogic.routesThroughTunnel(
                 RemoteRoutingLogic.MODE_ALL, Boolean.FALSE, true);
-        assertTrue(RemoteRoutingLogic.redirectDirectDns(overriddenDirectInAllMode));
+        assertTrue(RemoteRoutingLogic.redirectDirectDns(overriddenDirectInAllMode, true));
     }
 
     /**

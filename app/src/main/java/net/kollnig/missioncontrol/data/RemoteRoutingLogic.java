@@ -108,13 +108,15 @@ public final class RemoteRoutingLogic {
      * <p>
      * Turning this on makes every DNS query cost a UID lookup, an
      * isAddressAllowed upcall and a real UDP session — today port 53 skips all
-     * three. It is therefore only enabled once some app actually is routed
-     * around the tunnel, so everyone else keeps the existing zero-cost DNS
-     * path. Note this is a property of the resolved rules, not of the mode: a
-     * per-app override sends an app direct in either mode.
+     * three. It is therefore only enabled once some app is routed around the
+     * tunnel and a non-null underlying resolver target is available, so
+     * everyone else keeps the existing zero-cost DNS path. Note this is a
+     * property of the resolved rules, not of the mode: a per-app override
+     * sends an app direct in either mode.
      */
-    public static boolean redirectDirectDns(boolean anyAppRoutedDirect) {
-        return anyAppRoutedDirect;
+    public static boolean redirectDirectDns(boolean anyAppRoutedDirect,
+            boolean resolverTargetAvailable) {
+        return anyAppRoutedDirect && resolverTargetAvailable;
     }
 
     /**
