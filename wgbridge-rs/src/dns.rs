@@ -162,8 +162,7 @@ impl DnsInspector {
                 return Some(context);
             }
             if flow.framing_known {
-                let buffer_before = flow.buffer.clone();
-                for range in complete_frame_ranges(&buffer_before, payload) {
+                for range in complete_frame_ranges(&flow.buffer, payload) {
                     context.frames.push(
                         (segment.payload_offset + payload_start + range.start)
                             ..(segment.payload_offset + payload_start + range.end),
@@ -600,7 +599,8 @@ fn repair_packet(packet: &mut [u8], view: &DnsPacketView, new_total: usize) {
     let old_checksum = u16::from_be_bytes([packet[checksum_offset], packet[checksum_offset + 1]]);
     if !(view.is_udp && view.ip_version == 4 && old_checksum == 0) {
         packet[checksum_offset..checksum_offset + 2].fill(0);
-        let checksum = encode_transport_checksum(transport_checksum(packet, view, new_total));
+        let checksum =
+            encode_transport_checksum(transport_checksum(packet, view, new_total), view.is_udp);
         packet[checksum_offset..checksum_offset + 2].copy_from_slice(&checksum.to_be_bytes());
     }
     if view.ip_version == 4 {
@@ -610,8 +610,13 @@ fn repair_packet(packet: &mut [u8], view: &DnsPacketView, new_total: usize) {
     }
 }
 
-fn encode_transport_checksum(checksum: u16) -> u16 {
-    if checksum == 0 {
+/// Encodes a computed transport checksum for the wire.
+///
+/// Only UDP maps a computed zero to `0xffff` (RFC 768: zero means "no
+/// checksum"). TCP has no such convention, so a zero checksum is a valid
+/// value there and rewriting it would corrupt the segment.
+fn encode_transport_checksum(checksum: u16, is_udp: bool) -> u16 {
+    if is_udp && checksum == 0 {
         u16::MAX
     } else {
         checksum
@@ -1333,9 +1338,13 @@ mod tests {
     }
 
     #[test]
-    fn zero_transport_checksum_is_encoded_as_ffff() {
-        assert_eq!(encode_transport_checksum(0), u16::MAX);
-        assert_eq!(encode_transport_checksum(1), 1);
+    fn zero_transport_checksum_is_encoded_as_ffff_for_udp_only() {
+        assert_eq!(encode_transport_checksum(0, true), u16::MAX);
+        assert_eq!(encode_transport_checksum(1, true), 1);
+        // Zero is a valid TCP checksum; encoding it as 0xffff would make the
+        // receiver drop every copy of the rewritten segment.
+        assert_eq!(encode_transport_checksum(0, false), 0);
+        assert_eq!(encode_transport_checksum(1, false), 1);
     }
 
     #[test]
