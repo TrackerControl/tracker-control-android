@@ -460,7 +460,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else {
                 String explanation = mContext.getString(R.string.app_state_no_internet_explanation_shared,
                         mContext.getString(R.string.app_state_no_internet_explanation),
-                        relatedApps);
+                        mContext.getString(R.string.app_state_no_internet_shared_uid, relatedApps));
                 holder.mNoInternetExplanation.setText(explanation);
             }
 
