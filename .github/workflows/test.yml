@@ -60,7 +60,11 @@ jobs:
           ./gradlew :app:prefetchOfflineBuildClasspaths
 
       - name: Run Rust unit tests
-        run: cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
+        run: |
+          cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
+          # The capi feature gates the C ABI the NetGuard engine calls; its
+          # FFI-boundary tests only compile with the feature enabled.
+          cargo test --manifest-path wgbridge-rs/Cargo.toml -p tc-dns --features capi --locked --offline
 
       - name: Run unit tests
         run: ./gradlew testFdroidDebugUnitTest --offline
