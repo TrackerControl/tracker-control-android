@@ -78,61 +78,83 @@ def resolveCargoTargetDir = { ->
     return file("${System.getProperty('user.home')}/.cargo/tc-wgbridge-target")
 }
 
+def assertCargoAvailable = { cargoBin ->
+    def onPath = System.getenv('PATH')?.split(File.pathSeparator)?.any {
+        file("$it/cargo").canExecute()
+    }
+    if ((cargoBin == 'cargo' && !onPath) || (cargoBin != 'cargo' && !file(cargoBin).canExecute())) {
+        throw new GradleException("""
+            Could not find a `cargo` executable. Install Rust via rustup
+            (https://rustup.rs), then run:
+              ./scripts/setup_rust_android.sh
+            and either add ~/.cargo/bin to PATH (restart Android Studio),
+            or pass -PcargoBin=/path/to/cargo to Gradle.
+        """.stripIndent())
+    }
+    return cargoBin
+}
+
+// Build the cargo environment in one place. Keeping the target directory and
+// encoded flags stable is load-bearing: otherwise cargo alternates between
+// fingerprints and repeats the full cross-compile on every invocation.
+def buildCargoEnv = { ->
+    def cargoBin = assertCargoAvailable(findCargoBinary())
+    def cargoDir = file(cargoBin).parent
+    def env = new HashMap<String, String>(System.getenv())
+    def pathEntries = []
+    if (cargoDir) pathEntries << cargoDir
+    pathEntries << "${System.getProperty('user.home')}/.cargo/bin"
+    if (env['PATH']) pathEntries << env['PATH']
+    env['PATH'] = pathEntries.join(File.pathSeparator)
+    env['ANDROID_NDK_HOME'] = findNdkDirectory().absolutePath
+
+    // Shared, checkout-independent target dir so worktrees reuse artifacts.
+    def cargoTargetDir = resolveCargoTargetDir()
+    cargoTargetDir.mkdirs()
+    env['CARGO_TARGET_DIR'] = cargoTargetDir.absolutePath
+
+    // Android 15+ requires 16KB-aligned ELF LOAD segments. These flags are
+    // shared with every Rust build so cargo fingerprints stay stable.
+    def rustFlags = []
+    def separator = '\u001f'
+    if (env['CARGO_ENCODED_RUSTFLAGS']) {
+        rustFlags.addAll(env['CARGO_ENCODED_RUSTFLAGS'].split(separator).findAll { !it.isEmpty() })
+    } else if (env['RUSTFLAGS']) {
+        rustFlags.addAll(env['RUSTFLAGS'].trim().split(/\s+/))
+    }
+    def cargoHome = env['CARGO_HOME'] ?: "${System.getProperty('user.home')}/.cargo"
+    rustFlags.addAll([
+            '-Clink-arg=-Wl,-z,max-page-size=16384',
+            '-Clink-arg=-Wl,-z,common-page-size=16384',
+            '-Clink-arg=-Wl,--build-id=none',
+            "--remap-path-prefix=${file(cargoHome).absolutePath}=/cargo",
+            "--remap-path-prefix=${wgbridgeSrcDir.absolutePath}=/wgbridge-rs",
+    ])
+    // Unlike RUSTFLAGS, the encoded form preserves spaces inside paths.
+    env['CARGO_ENCODED_RUSTFLAGS'] = rustFlags.join(separator)
+    env.remove('RUSTFLAGS')
+
+    return [cargoBin: cargoBin, env: env, cargoTargetDir: cargoTargetDir]
+}
+
 tasks.register('wgbridgeBuild') {
     description = 'Builds libwgbridge.so via `cargo ndk`. Requires rustup with the four Android targets, cargo-ndk and the Android NDK.'
     group = 'build'
 
     inputs.files(fileTree(wgbridgeSrcDir) {
         include 'src/**'
+        include 'tc-dns/**'
         include 'Cargo.toml'
         include 'Cargo.lock'
     }).withPropertyName('wgbridgeSource').withPathSensitivity(PathSensitivity.RELATIVE)
+    inputs.file(file("$rootDir/rust-toolchain.toml")).withPropertyName('rustToolchain')
     outputs.dir(wgbridgeOutDir).withPropertyName('wgbridgeJniLibs')
     outputs.cacheIf { true }
 
     doLast {
-        def cargoBin = findCargoBinary()
-        if (cargoBin == 'cargo' && !System.getenv('PATH')?.split(File.pathSeparator)?.any { file("$it/cargo").canExecute() }) {
-            throw new GradleException("""
-                Could not find a `cargo` executable. Install Rust via rustup
-                (https://rustup.rs), then run:
-                  ./scripts/setup_rust_android.sh
-                and either add ~/.cargo/bin to PATH (restart Android Studio),
-                or pass -PcargoBin=/path/to/cargo to Gradle.
-            """.stripIndent())
-        }
-        def cargoDir = file(cargoBin).parent
-
-        def env = new HashMap<String, String>(System.getenv())
-        env['PATH'] = "${cargoDir}${File.pathSeparator}${System.getProperty('user.home')}/.cargo/bin${File.pathSeparator}${env['PATH'] ?: ''}"
-        env['ANDROID_NDK_HOME'] = findNdkDirectory().absolutePath
-        // Shared, checkout-independent target dir so worktrees reuse artifacts.
-        def cargoTargetDir = resolveCargoTargetDir()
-        cargoTargetDir.mkdirs()
-        env['CARGO_TARGET_DIR'] = cargoTargetDir.absolutePath
-        // Android 15+ requires 16KB-aligned ELF LOAD segments.
-        // --remap-path-prefix strips the checkout- and machine-specific
-        // absolute paths (cargo registry cache, wgbridge-rs checkout dir)
-        // that rustc otherwise bakes into panic/track_caller strings, so
-        // libwgbridge.so is reproducible across build machines.
-        def rustFlags = []
-        if (env['CARGO_ENCODED_RUSTFLAGS']) {
-            rustFlags.addAll(env['CARGO_ENCODED_RUSTFLAGS'].split('').findAll { !it.isEmpty() })
-        } else if (env['RUSTFLAGS']) {
-            // Cargo interprets RUSTFLAGS as whitespace-separated arguments.
-            rustFlags.addAll(env['RUSTFLAGS'].trim().split(/\s+/))
-        }
-        def cargoHome = env['CARGO_HOME'] ?: "${System.getProperty('user.home')}/.cargo"
-        rustFlags.addAll([
-                '-Clink-arg=-Wl,-z,max-page-size=16384',
-                '-Clink-arg=-Wl,-z,common-page-size=16384',
-                '-Clink-arg=-Wl,--build-id=none',
-                "--remap-path-prefix=${file(cargoHome).absolutePath}=/cargo",
-                "--remap-path-prefix=${wgbridgeSrcDir.absolutePath}=/wgbridge-rs",
-        ])
-        // Unlike RUSTFLAGS, the encoded form preserves spaces inside paths.
-        env['CARGO_ENCODED_RUSTFLAGS'] = rustFlags.join('')
-        env.remove('RUSTFLAGS')
+        def cargo = buildCargoEnv()
+        def cargoBin = cargo.cargoBin
+        def env = cargo.env
 
         // Tool installation must happen before Gradle runs. In particular,
         // F-Droid disables network access for the actual build phase.
@@ -150,7 +172,7 @@ tasks.register('wgbridgeBuild') {
         def args = [cargoBin, 'ndk']
         wgbridgeAbis.each { args += ['-t', it] }
         args += ['--platform', '23', '-o', wgbridgeOutDir.absolutePath,
-                 'build', '--release', '--locked', '--offline']
+                 'build', '-p', 'wgbridge', '--release', '--locked', '--offline']
 
         wgbridgeExecOperations.exec {
             workingDir wgbridgeSrcDir
@@ -198,6 +220,8 @@ tasks.register('wgbridgeBuild') {
 // preBuild is important: JVM unit tests compile app code but never load the
 // Android .so, and should not cross-compile four release ABIs first.
 tasks.configureEach { task ->
+    if (task.name ==~ /(configure|build)CMake.*/)
+        task.dependsOn 'wgbridgeBuild'
     if (task.name ==~ /merge.*JniLibFolders/)
         task.dependsOn 'wgbridgeBuild'
 }

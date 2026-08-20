@@ -604,8 +604,19 @@ void check_tcp_socket(const struct arguments *args,
 
                         // Process DNS response
                         if (ntohs(s->tcp.dest) == 53 && bytes > 2) {
-                            ssize_t dlen = bytes - 2;
-                            parse_dns_response(args, s, buffer + 2, (size_t *) &dlen);
+                            size_t frame_len = ((size_t) buffer[0] << 8) | buffer[1];
+                            // recv() may split or coalesce DNS frames. Only
+                            // shorten an isolated complete frame; otherwise
+                            // trimming would discard bytes from the stream.
+                            if (frame_len + 2 == (size_t) bytes) {
+                                size_t dlen = frame_len;
+                                parse_dns_response(args, s, buffer + 2, &dlen);
+                                if (dlen != frame_len) {
+                                    buffer[0] = (uint8_t) (dlen >> 8);
+                                    buffer[1] = (uint8_t) dlen;
+                                    bytes = (ssize_t) dlen + 2;
+                                }
+                            }
                         }
 
                         // Forward to tun

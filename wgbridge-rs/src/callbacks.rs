@@ -10,6 +10,10 @@ pub trait SocketProtector: Send + Sync + 'static {
 /// Receives DNS answers observed on decrypted inbound packets and exposes the
 /// DNS policy used when the response is sent back to the app.
 pub trait DnsSink: Send + Sync + 'static {
+    /// Implementations must not panic. DNS processing runs on the packet
+    /// path, and the shared `tc-dns` core intentionally does not catch panics;
+    /// the Android JNI implementation must convert Java failures to its
+    /// existing `Result` handling before returning here.
     fn record_dns(&self, qname: &str, aname: &str, resource: &str, ttl: i32);
 
     /// Whether a response for `qname` should be returned without answers.

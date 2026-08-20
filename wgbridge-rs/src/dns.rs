@@ -6,17 +6,12 @@
 use std::collections::HashMap;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 use std::ops::Range;
-use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::time::{Duration, Instant};
 
 use crate::callbacks::DnsSink;
-
-const DNS_TYPE_A: u16 = 1;
-const DNS_TYPE_AAAA: u16 = 28;
-const DNS_CLASS_IN: u16 = 1;
-const DNS_TYPE_SVCB: u16 = 64;
-const DNS_TYPE_HTTPS: u16 = 65;
-const DNS_HEADER_LEN: usize = 12;
+use tcdns::{
+    apply_policy, process_response, record_answers as record_dns_answers, DnsPolicy, Outcome,
+};
 
 const IP_PROTO_HOP_BY_HOP: u8 = 0;
 const IP_PROTO_TCP: u8 = 6;
@@ -28,6 +23,22 @@ const IP_PROTO_DST_OPTS: u8 = 60;
 const MAX_TCP_DNS_FLOWS: usize = 64;
 const MAX_TCP_DNS_BUFFER: usize = u16::MAX as usize + 2;
 const TCP_DNS_IDLE_TIMEOUT: Duration = Duration::from_secs(60);
+
+struct SinkPolicy<'a>(&'a dyn DnsSink);
+
+impl DnsPolicy for SinkPolicy<'_> {
+    fn record_answer(&self, qname: &str, aname: &str, resource: &str, ttl: i32) {
+        self.0.record_dns(qname, aname, resource, ttl);
+    }
+
+    fn is_domain_blocked(&self, qname: &str) -> bool {
+        self.0.is_domain_blocked(qname)
+    }
+
+    fn blocked_rcode(&self) -> u8 {
+        self.0.blocked_rcode()
+    }
+}
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 struct TcpFlowKey {
@@ -69,7 +80,7 @@ impl DnsInspector {
         match proto {
             IP_PROTO_UDP => {
                 if let Some(msg) = udp_dns_payload(segment) {
-                    record_answers(msg, recorder);
+                    record_dns_answers(msg, &SinkPolicy(recorder));
                 }
             }
             IP_PROTO_TCP => {
@@ -184,7 +195,7 @@ impl DnsInspector {
                 }
                 let msg = flow.buffer[2..2 + msg_len].to_vec();
                 flow.buffer.drain(..2 + msg_len);
-                record_answers(&msg, recorder);
+                record_dns_answers(&msg, &SinkPolicy(recorder));
             }
         }
 
@@ -282,8 +293,16 @@ impl DnsInspector {
             return None;
         };
         if view.is_udp {
-            self.inspect(packet, policy);
-            return rewrite_dns_response(packet, policy);
+            let outcome = {
+                let msg = &mut packet[view.dns_start..view.dns_end];
+                process_response(msg, &SinkPolicy(policy))
+            };
+            let Outcome::Blanked { new_len, .. } = outcome else {
+                return None;
+            };
+            let new_total = view.dns_start + new_len;
+            repair_packet(packet, &view, new_total);
+            return Some(new_total);
         }
 
         let tcp = &packet[view.transport_offset..view.ip_total_len];
@@ -297,15 +316,8 @@ impl DnsInspector {
             if msg_end > packet.len() {
                 continue;
             }
-            let msg = &packet[msg_start..msg_end];
-            let Some(layout) = parse_dns_layout(msg) else {
-                continue;
-            };
-            if layout.contains_svcb || policy_is_domain_blocked(policy, &layout.qname) {
-                blank_dns_message(
-                    &mut packet[msg_start..msg_end],
-                    policy_blocked_rcode(policy),
-                );
+            let outcome = apply_policy(&mut packet[msg_start..msg_end], &SinkPolicy(policy));
+            if matches!(outcome, Outcome::Blanked { .. }) {
                 rewritten = true;
             }
         }
@@ -337,15 +349,14 @@ pub fn rewrite_dns_response(packet: &mut [u8], policy: &dyn DnsSink) -> Option<u
         return None;
     }
 
-    let msg = &packet[view.dns_start..view.dns_end];
-    let layout = parse_dns_layout(msg)?;
-    if !layout.contains_svcb && !policy_is_domain_blocked(policy, &layout.qname) {
+    let outcome = {
+        let msg = &mut packet[view.dns_start..view.dns_end];
+        apply_policy(msg, &SinkPolicy(policy))
+    };
+    let Outcome::Blanked { new_len, .. } = outcome else {
         return None;
-    }
-
-    let msg = &mut packet[view.dns_start..view.dns_end];
-    blank_dns_message(msg, policy_blocked_rcode(policy));
-    let new_total = view.dns_start + layout.question_end;
+    };
+    let new_total = view.dns_start + new_len;
     repair_packet(packet, &view, new_total);
     Some(new_total)
 }
@@ -503,82 +514,6 @@ fn dns_packet_view(packet: &[u8]) -> Option<DnsPacketView> {
     }
 }
 
-#[derive(Debug)]
-struct DnsLayout {
-    qname: String,
-    question_end: usize,
-    contains_svcb: bool,
-}
-
-fn parse_dns_layout(msg: &[u8]) -> Option<DnsLayout> {
-    if msg.len() < DNS_HEADER_LEN {
-        return None;
-    }
-    let flags = u16::from_be_bytes([msg[2], msg[3]]);
-    if flags & 0x8000 == 0 || flags & 0x7800 != 0 {
-        return None;
-    }
-    let qdcount = u16::from_be_bytes([msg[4], msg[5]]) as usize;
-    let ancount = u16::from_be_bytes([msg[6], msg[7]]) as usize;
-    if qdcount == 0 || ancount == 0 {
-        return None;
-    }
-
-    let mut off = DNS_HEADER_LEN;
-    let mut qname = None;
-    for q in 0..qdcount {
-        let (name, next) = read_dns_name(msg, off, 0)?;
-        if next + 4 > msg.len() {
-            return None;
-        }
-        if q == 0 {
-            qname = Some(name);
-        }
-        off = next + 4;
-    }
-    let question_end = off;
-    let mut contains_svcb = false;
-    for _ in 0..ancount {
-        let (_name, next) = read_dns_name(msg, off, 0)?;
-        if next + 10 > msg.len() {
-            return None;
-        }
-        let typ = u16::from_be_bytes([msg[next], msg[next + 1]]);
-        let class = u16::from_be_bytes([msg[next + 2], msg[next + 3]]);
-        let rdlen = u16::from_be_bytes([msg[next + 8], msg[next + 9]]) as usize;
-        let rdata = next + 10;
-        if rdata + rdlen > msg.len() {
-            return None;
-        }
-        contains_svcb |= class == DNS_CLASS_IN && (typ == DNS_TYPE_SVCB || typ == DNS_TYPE_HTTPS);
-        off = rdata + rdlen;
-    }
-    Some(DnsLayout {
-        qname: qname?,
-        question_end,
-        contains_svcb,
-    })
-}
-
-fn blank_dns_message(msg: &mut [u8], rcode: u8) {
-    // Keep the ID and question section. The trailing answer bytes are left in
-    // place for TCP sequence safety; counts make them unreachable to DNS
-    // parsers. UDP callers trim the datagram at question_end afterwards.
-    let flags = 0x8000u16 | u16::from(rcode & 0x0f);
-    msg[2..4].copy_from_slice(&flags.to_be_bytes());
-    msg[6..12].fill(0);
-}
-
-fn policy_is_domain_blocked(policy: &dyn DnsSink, qname: &str) -> bool {
-    catch_unwind(AssertUnwindSafe(|| policy.is_domain_blocked(qname))).unwrap_or(false)
-}
-
-fn policy_blocked_rcode(policy: &dyn DnsSink) -> u8 {
-    catch_unwind(AssertUnwindSafe(|| policy.blocked_rcode()))
-        .unwrap_or(3)
-        .min(15)
-}
-
 fn repair_packet(packet: &mut [u8], view: &DnsPacketView, new_total: usize) {
     let transport_len = new_total.saturating_sub(view.transport_offset);
     if view.is_udp {
@@ -671,16 +606,6 @@ fn internet_checksum(data: &[u8]) -> u16 {
         sum = (sum & 0xffff) + (sum >> 16);
     }
     !(sum as u16)
-}
-
-fn record_answers(msg: &[u8], recorder: &dyn DnsSink) {
-    for rr in parse_dns_answers(msg) {
-        // The recorder crosses into Java; never let a failure there take
-        // down the packet path.
-        let _ = catch_unwind(AssertUnwindSafe(|| {
-            recorder.record_dns(&rr.qname, &rr.aname, &rr.resource, rr.ttl);
-        }));
-    }
 }
 
 fn tcp_segment<'a>(packet: &[u8], tcp: &'a [u8]) -> Option<TcpSegment<'a>> {
@@ -834,141 +759,14 @@ fn is_ipv6_ext_header(next: u8) -> bool {
     next == IP_PROTO_HOP_BY_HOP || next == IP_PROTO_ROUTING || next == IP_PROTO_DST_OPTS
 }
 
-#[derive(Debug, PartialEq, Eq)]
-struct DnsAnswer {
-    qname: String,
-    aname: String,
-    resource: String,
-    ttl: i32,
-}
-
-fn parse_dns_answers(msg: &[u8]) -> Vec<DnsAnswer> {
-    let mut answers = Vec::new();
-    if msg.len() < 12 {
-        return answers;
-    }
-    let flags = u16::from_be_bytes([msg[2], msg[3]]);
-    // Must be a response (QR=1) with opcode QUERY.
-    if flags & 0x8000 == 0 || flags & 0x7800 != 0 {
-        return answers;
-    }
-
-    let qdcount = u16::from_be_bytes([msg[4], msg[5]]) as usize;
-    let ancount = u16::from_be_bytes([msg[6], msg[7]]) as usize;
-    if qdcount == 0 || ancount == 0 {
-        return answers;
-    }
-
-    let mut off = 12usize;
-    let mut qname = String::new();
-    for q in 0..qdcount {
-        let Some((name, next)) = read_dns_name(msg, off, 0) else {
-            return answers;
-        };
-        if next + 4 > msg.len() {
-            return answers;
-        }
-        if q == 0 {
-            qname = name;
-        }
-        off = next + 4;
-    }
-    if qname.is_empty() {
-        return answers;
-    }
-
-    for _ in 0..ancount {
-        let Some((aname, next)) = read_dns_name(msg, off, 0) else {
-            return answers;
-        };
-        if next + 10 > msg.len() {
-            return answers;
-        }
-        let typ = u16::from_be_bytes([msg[next], msg[next + 1]]);
-        let class = u16::from_be_bytes([msg[next + 2], msg[next + 3]]);
-        let ttl = u32::from_be_bytes([msg[next + 4], msg[next + 5], msg[next + 6], msg[next + 7]]);
-        let rdlen = u16::from_be_bytes([msg[next + 8], msg[next + 9]]) as usize;
-        let rdata = next + 10;
-        if rdata + rdlen > msg.len() {
-            return answers;
-        }
-
-        if class == DNS_CLASS_IN {
-            match typ {
-                DNS_TYPE_A if rdlen == 4 => {
-                    let ip: [u8; 4] = msg[rdata..rdata + 4].try_into().unwrap();
-                    answers.push(DnsAnswer {
-                        qname: qname.clone(),
-                        aname,
-                        resource: Ipv4Addr::from(ip).to_string(),
-                        ttl: clamp_ttl(ttl),
-                    });
-                }
-                DNS_TYPE_AAAA if rdlen == 16 => {
-                    let ip: [u8; 16] = msg[rdata..rdata + 16].try_into().unwrap();
-                    answers.push(DnsAnswer {
-                        qname: qname.clone(),
-                        aname,
-                        resource: Ipv6Addr::from(ip).to_string(),
-                        ttl: clamp_ttl(ttl),
-                    });
-                }
-                _ => {}
-            }
-        }
-        off = rdata + rdlen;
-    }
-    answers
-}
-
-/// Reads a possibly-compressed DNS name. Returns the name and the offset of
-/// the byte following it. Compression pointers are followed to a depth of 8.
-fn read_dns_name(msg: &[u8], mut off: usize, depth: u32) -> Option<(String, usize)> {
-    if depth > 8 || off >= msg.len() {
-        return None;
-    }
-    let mut labels: Vec<String> = Vec::new();
-    loop {
-        if off >= msg.len() {
-            return None;
-        }
-        let l = msg[off] as usize;
-        match l & 0xc0 {
-            0xc0 => {
-                if off + 1 >= msg.len() {
-                    return None;
-                }
-                let ptr = ((l & 0x3f) << 8) | msg[off + 1] as usize;
-                let (name, _) = read_dns_name(msg, ptr, depth + 1)?;
-                if !name.is_empty() {
-                    labels.extend(name.split('.').map(str::to_owned));
-                }
-                return Some((labels.join("."), off + 2));
-            }
-            0x00 => {
-                if l == 0 {
-                    return Some((labels.join("."), off + 1));
-                }
-                off += 1;
-                if l > 63 || off + l > msg.len() {
-                    return None;
-                }
-                labels.push(String::from_utf8_lossy(&msg[off..off + l]).into_owned());
-                off += l;
-            }
-            _ => return None,
-        }
-    }
-}
-
-fn clamp_ttl(ttl: u32) -> i32 {
-    ttl.min(i32::MAX as u32) as i32
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::sync::Mutex;
+
+    const DNS_TYPE_A: u16 = 1;
+    const DNS_CLASS_IN: u16 = 1;
+    const DNS_TYPE_HTTPS: u16 = 65;
 
     struct CollectingSink(Mutex<Vec<(String, String, String, i32)>>);
 
@@ -980,14 +778,6 @@ mod tests {
                 resource.to_owned(),
                 ttl,
             ));
-        }
-    }
-
-    struct PanickingSink;
-
-    impl DnsSink for PanickingSink {
-        fn record_dns(&self, _: &str, _: &str, _: &str, _: i32) {
-            panic!("recording failed");
         }
     }
 
@@ -1028,6 +818,10 @@ mod tests {
         out.extend_from_slice(&(rdata.len() as u16).to_be_bytes());
         out.extend_from_slice(rdata);
         out
+    }
+
+    fn question_end(name: &str) -> usize {
+        12 + dns_name(name).len() + 4
     }
 
     fn ipv4_udp(payload: &[u8]) -> Vec<u8> {
@@ -1097,55 +891,6 @@ mod tests {
     }
 
     #[test]
-    fn parse_dns_answers_records_a_and_aaaa() {
-        let msg = dns_message(&[
-            dns_question("tracker.example", DNS_TYPE_A),
-            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
-            dns_answer_bytes(
-                "tracker.example",
-                DNS_TYPE_AAAA,
-                60,
-                &[0x20, 0x01, 0x0d, 0xb8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-            ),
-        ]);
-
-        let answers = parse_dns_answers(&msg);
-        assert_eq!(answers.len(), 2);
-        assert_eq!(answers[0].qname, "tracker.example");
-        assert_eq!(answers[0].aname, "tracker.example");
-        assert_eq!(answers[0].resource, "203.0.113.7");
-        assert_eq!(answers[0].ttl, 300);
-        assert_eq!(answers[1].resource, "2001:db8::1");
-        assert_eq!(answers[1].ttl, 60);
-    }
-
-    #[test]
-    fn parse_dns_answers_ignores_queries() {
-        let mut msg = dns_message(&[dns_question("tracker.example", DNS_TYPE_A)]);
-        msg[2] = 0x01;
-        msg[3] = 0x00;
-        assert!(parse_dns_answers(&msg).is_empty());
-    }
-
-    #[test]
-    fn parse_dns_answers_follows_compression_pointers() {
-        // Question at offset 12; answer name is a pointer back to it.
-        let mut msg = dns_message(&[dns_question("tracker.example", DNS_TYPE_A)]);
-        msg[6..8].copy_from_slice(&1u16.to_be_bytes()); // ancount = 1
-        msg.extend_from_slice(&[0xc0, 12]); // pointer to qname
-        msg.extend_from_slice(&DNS_TYPE_A.to_be_bytes());
-        msg.extend_from_slice(&DNS_CLASS_IN.to_be_bytes());
-        msg.extend_from_slice(&300u32.to_be_bytes());
-        msg.extend_from_slice(&4u16.to_be_bytes());
-        msg.extend_from_slice(&[203, 0, 113, 7]);
-
-        let answers = parse_dns_answers(&msg);
-        assert_eq!(answers.len(), 1);
-        assert_eq!(answers[0].aname, "tracker.example");
-        assert_eq!(answers[0].resource, "203.0.113.7");
-    }
-
-    #[test]
     fn udp_payload_uses_udp_length() {
         let msg = dns_message(&[
             dns_question("tracker.example", DNS_TYPE_A),
@@ -1192,10 +937,12 @@ mod tests {
         let payload = tcp_dns_payload(segment).expect("TCP payload not recognized");
         assert_eq!(payload, msg.as_slice());
 
-        let answers = parse_dns_answers(payload);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        inspect_dns_response(&packet, &sink);
+        let answers = sink.0.lock().unwrap();
         assert_eq!(answers.len(), 1);
-        assert_eq!(answers[0].qname, "tracker.example");
-        assert_eq!(answers[0].resource, "203.0.113.7");
+        assert_eq!(answers[0].0, "tracker.example");
+        assert_eq!(answers[0].2, "203.0.113.7");
     }
 
     #[test]
@@ -1286,15 +1033,6 @@ mod tests {
     }
 
     #[test]
-    fn recorder_panic_does_not_propagate() {
-        let msg = dns_message(&[
-            dns_question("tracker.example", DNS_TYPE_A),
-            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
-        ]);
-        inspect_dns_response(&ipv4_udp(&msg), &PanickingSink);
-    }
-
-    #[test]
     fn inspect_records_through_sink() {
         let msg = dns_message(&[
             dns_question("tracker.example", DNS_TYPE_A),
@@ -1350,7 +1088,7 @@ mod tests {
     #[test]
     fn rewrite_svcb_ipv4_udp_trims_and_repairs_checksums() {
         let msg = svcb_response();
-        let question_end = parse_dns_layout(&msg).unwrap().question_end;
+        let question_end = question_end("tracker.example");
         let mut packet = ipv4_udp(&msg);
         let sink = CollectingSink(Mutex::new(Vec::new()));
         let mut inspector = DnsInspector::default();
@@ -1382,7 +1120,7 @@ mod tests {
     #[test]
     fn rewrite_svcb_ipv6_udp_updates_payload_and_checksum() {
         let msg = svcb_response();
-        let question_end = parse_dns_layout(&msg).unwrap().question_end;
+        let question_end = question_end("tracker.example");
         let mut packet = ipv6_udp_with_destination_options(&msg);
         let sink = CollectingSink(Mutex::new(Vec::new()));
 
@@ -1404,7 +1142,7 @@ mod tests {
             dns_question("blocked.example", DNS_TYPE_A),
             dns_answer_bytes("blocked.example", DNS_TYPE_A, 300, &[203, 0, 113, 8]),
         ]);
-        let question_end = parse_dns_layout(&msg).unwrap().question_end;
+        let question_end = question_end("blocked.example");
         let mut packet = ipv4_udp(&msg);
         packet[26..28].copy_from_slice(&0x1234u16.to_be_bytes());
 
@@ -1513,8 +1251,7 @@ mod tests {
             dns_question("ordinary.example", DNS_TYPE_A),
             dns_answer_bytes("ordinary.example", DNS_TYPE_HTTPS, 300, &[]),
         ]);
-        let layout = parse_dns_layout(&msg).unwrap();
-        let (_, answer_name_end) = read_dns_name(&msg, layout.question_end, 0).unwrap();
+        let answer_name_end = question_end("ordinary.example") + dns_name("ordinary.example").len();
         msg[answer_name_end + 2..answer_name_end + 4].copy_from_slice(&2u16.to_be_bytes());
         let mut packet = ipv4_udp(&msg);
         let before = packet.clone();

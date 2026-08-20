@@ -1,5 +1,11 @@
 # wgbridge-rs
 
+This directory is a Cargo workspace with two members:
+
+- `wgbridge`, the Android WireGuard bridge described below;
+- `tc-dns`, the dependency-free DNS message parser and response-policy core
+  shared by the WireGuard and NetGuard C paths.
+
 A small Rust crate that lets TrackerControl run [gotatun] — Mullvad's
 WireGuard® implementation, a fork of Cloudflare's BoringTun — inside its own
 NetGuard-based VpnService. It replaces the earlier Go module that embedded
@@ -36,17 +42,20 @@ encrypted side), so we plug in:
 
 ## Build
 
-The `wgbridgeBuild` Gradle task runs `cargo ndk` automatically as part of
-the Android build, so once prerequisites are in place you don't need to
-invoke it directly:
+The `wgbridgeBuild` Gradle task runs `cargo ndk` for `libwgbridge.so`, which also
+exports the small C ABI used by the NetGuard engine to call `tc-dns`. It runs
+automatically as part of an Android native build, so once prerequisites are in
+place you don't need to invoke it directly:
 
 ```bash
 ./gradlew assembleGithubDebug   # libwgbridge.so is built on demand
 ```
 
-The task tracks `src/**`, `Cargo.toml` and `Cargo.lock` as inputs and the
-produced per-ABI libraries (`app/build/rustJniLibs/<abi>/libwgbridge.so`)
-as its output, so it's skipped when the Rust source hasn't changed.
+The task tracks the workspace sources, manifests, lockfile and pinned Rust
+toolchain. Its per-ABI outputs live under `app/build/rustJniLibs/` and are
+skipped when inputs have not changed. `libnetguard.so` links this shared library
+instead of embedding a second Rust static library, avoiding duplicate Rust
+runtime code in the APK.
 
 ### Prerequisites
 
@@ -79,11 +88,12 @@ Android 15+ devices with 16KB pages.
 
 ### Tests
 
-The protocol-independent parts (UAPI config parsing, DNS answer parsing,
+The protocol-independent parts (UAPI config parsing, DNS parsing and policy,
 key derivation) run on the host:
 
 ```bash
-cargo test
+cargo test --workspace
+cargo test -p tc-dns --features capi
 ```
 
 ## F-Droid build metadata

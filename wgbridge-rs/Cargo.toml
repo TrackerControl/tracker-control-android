@@ -5,10 +5,15 @@ edition = "2021"
 license = "GPL-3.0-only"
 publish = false
 
+[workspace]
+members = ["tc-dns"]
+resolver = "2"
+
 [lib]
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
+tc-dns = { path = "tc-dns", features = ["capi"] }
 gotatun = { version = "=0.8.1", default-features = false, features = ["ring", "device"] }
 tokio = { version = "1.43", features = ["rt-multi-thread", "net", "sync", "time", "macros"] }
 base64 = "0.23"
