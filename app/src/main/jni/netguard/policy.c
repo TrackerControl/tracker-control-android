@@ -16,8 +16,9 @@
 // wgbridge-rs/src/policy.rs, where `cargo test` covers it in CI; this file
 // reaches it, caches the handful of facts the packet path needs so the common
 // case never crosses the boundary at all, and remembers a flow's verdict.
-//
-// Nothing here decides anything, with one exception marked below.
+// The pure packet decision is mirrored below so the packet path does not cross
+// the Rust FFI boundary on every packet; the equivalent Rust function remains
+// the tested definition of that decision.
 
 #include "netguard.h"
 
@@ -92,12 +93,20 @@ void set_route_uids(const jint *uids, int count, int default_tunnel, int dns_dir
     if (policy_ok)
         p_set_route_uids(uids, count, default_tunnel);
 
-    atomic_store_explicit(&policy_default_tunnel, default_tunnel, memory_order_release);
-    atomic_store_explicit(&policy_dns_direct, dns_direct, memory_order_release);
+    // A missing/incompatible bridge cannot honour a selected-app policy. Keep
+    // the conservative state instead: all eligible traffic takes the tunnel,
+    // and direct-app DNS is not allowed to opt out of that protection. This is
+    // deliberately independent of the requested default; otherwise a failed
+    // load in selected mode would silently route the selected app directly.
+    int effective_default_tunnel = policy_ok ? (default_tunnel != 0) : 1;
+    int effective_dns_direct = policy_ok ? (dns_direct != 0) : 0;
+    atomic_store_explicit(&policy_default_tunnel, effective_default_tunnel,
+                          memory_order_release);
+    atomic_store_explicit(&policy_dns_direct, effective_dns_direct,
+                          memory_order_release);
     // Without the bridge there is no table to consult, so pin every UID to the
-    // global default. A per-app choice is then ignored, which is exactly the
-    // behaviour that shipped before per-app routing existed — never a leak out
-    // of the tunnel, never a new drop.
+    // safe global default. A per-app choice is ignored rather than leaking out
+    // of the tunnel.
     atomic_store_explicit(&policy_has_overrides,
                           (policy_ok && count > 0) ? 1 : 0, memory_order_release);
 
@@ -148,12 +157,10 @@ int route_dns_direct() {
 }
 
 int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direct) {
-    if (policy_ok)
-        return p_wants_tunnel(local_dest, is_dns, tunnel_uid, dns_direct);
-
-    // The one decision duplicated outside policy.rs, and only because a packet
-    // still has to be routed when the bridge could not be resolved. Keep it a
-    // literal transcription of policy::wants_tunnel.
+    // This is the literal transcription of policy::wants_tunnel. Keep the
+    // pure branch local: crossing the Rust boundary for every packet adds
+    // overhead without consulting any mutable policy state. The Rust function
+    // remains exported and exhaustively tested as the policy definition.
     if (local_dest && !is_dns)
         return 0;
     if (is_dns && !dns_direct)
