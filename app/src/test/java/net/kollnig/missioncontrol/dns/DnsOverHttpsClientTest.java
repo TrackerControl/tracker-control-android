@@ -46,6 +46,7 @@ public class DnsOverHttpsClientTest {
 
     @Before
     public void setUp() throws IOException {
+        DnsOverHttpsClient.setScreenOff(false);
         DnsOverHttpsClient.resetInstance();
         server = new MockWebServer();
         server.start();
@@ -53,6 +54,7 @@ public class DnsOverHttpsClientTest {
 
     @After
     public void tearDown() throws IOException {
+        DnsOverHttpsClient.setScreenOff(false);
         DnsOverHttpsClient.resetInstance();
         server.close();
     }
@@ -100,6 +102,22 @@ public class DnsOverHttpsClientTest {
         assertNull(client().resolve(QUERY));
 
         assertEquals(3, server.getRequestCount());
+    }
+
+    @Test
+    public void resolveDoesNotRetryWhenScreenOff() {
+        DnsOverHttpsClient.setScreenOff(true);
+        try {
+            server.enqueue(dnsResponse(503, new byte[0]));
+
+            assertNull(client().resolve(QUERY));
+
+            // A retry would be a second radio wakeup during doze; screen-off
+            // resolution must give up after the first failed round trip.
+            assertEquals(1, server.getRequestCount());
+        } finally {
+            DnsOverHttpsClient.setScreenOff(false);
+        }
     }
 
     @Test

@@ -2819,11 +2819,13 @@ public class ServiceSinkhole extends VpnService {
                                     }
                                 });
 
-                        // On screen-off, drop idle DoH keep-alive sockets so a
-                        // server-side reset during doze can't wake the radio.
-                        if (!last_interactive)
-                            net.kollnig.missioncontrol.dns.DnsProxyServer
-                                    .getInstance(ServiceSinkhole.this).onScreenOff();
+                        // Screen state gates the DoH battery policy: while the
+                        // screen is off the proxy drops retries and idle
+                        // keep-alive sockets so a server-side reset during doze
+                        // can't wake the radio.
+                        net.kollnig.missioncontrol.dns.DnsProxyServer
+                                .getInstance(ServiceSinkhole.this)
+                                .onScreenStateChanged(last_interactive);
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 

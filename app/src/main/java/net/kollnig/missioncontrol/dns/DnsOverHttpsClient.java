@@ -70,6 +70,9 @@ public class DnsOverHttpsClient {
     });
     private static DnsOverHttpsClient instance;
     private static Cache responseCache;
+    // Screen-off DoH battery policy: while the device is dozing we skip retries
+    // and evict keep-alive sockets so a server-side reset can't wake the radio.
+    private static volatile boolean screenOff = false;
     private final OkHttpClient client;
     private final String endpoint;
 
@@ -134,13 +137,14 @@ public class DnsOverHttpsClient {
     }
 
     /**
-     * Evict idle keep-alive connections from the current client, if any. Called on
-     * screen-off so an idle pooled TLS socket cannot be reset by the server during
-     * doze and wake the radio. In-flight requests are unaffected. No-op if no
-     * client has been created yet.
+     * Apply the screen-state DoH battery policy. While the screen is off the
+     * client drops retries and evicts keep-alive connections so an idle pooled
+     * TLS socket cannot be reset by the server during doze and wake the radio.
+     * In-flight requests are unaffected. No-op if no client has been created yet.
      */
-    public static synchronized void evictIdleConnections() {
-        if (instance != null) {
+    public static synchronized void setScreenOff(boolean off) {
+        screenOff = off;
+        if (off && instance != null) {
             instance.evictIdle();
         }
     }
@@ -191,7 +195,11 @@ public class DnsOverHttpsClient {
 
         Request request = buildRequest(endpoint, dnsQuery);
 
-        for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        // Screen off: do not retry. A second round trip would double the radio
+        // wakeups during doze for a query that is already failing.
+        int maxRetries = screenOff ? 0 : MAX_RETRIES;
+
+        for (int attempt = 0; attempt <= maxRetries; attempt++) {
             if (attempt > 0) {
                 try {
                     Thread.sleep(RETRY_DELAY_MS);
@@ -228,6 +236,13 @@ public class DnsOverHttpsClient {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "DoH request failed: " + e.getMessage());
+            } finally {
+                // Screen off: never leave an idle keep-alive socket behind — a
+                // server-side reset during doze would wake the radio. Cache
+                // hits are unaffected (no connection is created for them).
+                if (screenOff) {
+                    evictIdle();
+                }
             }
         }
 
