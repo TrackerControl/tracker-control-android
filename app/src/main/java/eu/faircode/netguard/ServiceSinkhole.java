@@ -139,6 +139,10 @@ public class ServiceSinkhole extends VpnService {
     // the 3s handover-retry sleep) with margin.
     private static final long WAKELOCK_TIMEOUT_MS = 30_000L;
 
+    // Bounds the update check's network calls so a hung connection cannot stall
+    // the command handler thread (and its wakelock) for the OS default timeout.
+    private static final int UPDATE_CHECK_TIMEOUT_MS = 10_000;
+
     private boolean registeredUser = false;
     private boolean registeredIdleState = false;
     private boolean registeredApState = false;
@@ -816,6 +820,8 @@ public class ServiceSinkhole extends VpnService {
             try {
                 URL url = new URL(BuildConfig.GITHUB_LATEST_API);
                 urlConnection = (HttpsURLConnection) url.openConnection();
+                urlConnection.setConnectTimeout(UPDATE_CHECK_TIMEOUT_MS);
+                urlConnection.setReadTimeout(UPDATE_CHECK_TIMEOUT_MS);
                 urlConnection.setRequestProperty("Accept-Encoding", "gzip");
                 BufferedReader br;
                 if ("gzip".equals(urlConnection.getContentEncoding()))
