@@ -197,8 +197,16 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
 private const val TAG = "WgConnMonitor"
 
 /**
- * Continuous WireGuard liveness watchdog. Owns the 1s polling thread and the
+ * Continuous WireGuard liveness watchdog. Owns the polling thread and the
  * Android clock, delegating the actual decision to [WgConnectivityChecker].
+ *
+ * The poll cadence adapts to screen state: 1s while the user is interactive,
+ * 15s while it is off. The monitor is purely passive — it reads transfer
+ * counters and never wakes the radio or holds a wakelock — but each poll still
+ * costs a CPU wake, and its whole purpose is catching stalls *while traffic
+ * flows*, which overwhelmingly happens with the screen on. Background sync at
+ * night still gets stall detection, just at ~1/15th the wakeups; deep doze
+ * suspends the thread entirely either way.
  *
  * Doze handling mirrors Mullvad's `SUSPEND_TIMEOUT` reset: if the loop notices
  * it was suspended longer than expected (the device dozed), the checker
@@ -219,14 +227,35 @@ internal class WgConnectivityMonitor(
     // only end-to-end proof the data path works (handshake success is not:
     // some paths pass handshakes but drop transport packets), so it is what
     // recovery backoff resets must key off.
-    private val onRxAdvanced: () -> Unit = {}
+    private val onRxAdvanced: () -> Unit = {},
+    // Screen state, sampled every iteration so the cadence follows the screen
+    // without restarting the thread. Backed by WgEgress.currentInteractive.
+    private val isInteractive: () -> Boolean = { true }
 ) {
-    private companion object {
-        /** How often the loop samples the tunnel counters. */
-        const val LOOP_SLEEP_MS = 1_000L
+    internal companion object {
+        /** How often the loop samples the tunnel counters while the screen is on. */
+        const val INTERACTIVE_LOOP_SLEEP_MS = 1_000L
 
-        /** A wall-clock gap larger than this means the device dozed. */
-        const val SUSPEND_TIMEOUT_MS = 6_000L
+        /**
+         * Sampling interval while the screen is off. Slow enough that the
+         * wakeup cost is negligible, fast enough that a background-sync stall
+         * is caught within one cycle and recovery still runs before the next
+         * maintenance window.
+         */
+        const val IDLE_LOOP_SLEEP_MS = 15_000L
+
+        /**
+         * A wall-clock gap past one full cycle plus this margin means the
+         * device dozed. Scales with the current interval, preserving the old
+         * fixed 6s threshold at the 1s interactive cadence.
+         */
+        const val SUSPEND_MARGIN_MS = 5_000L
+
+        fun pollIntervalMs(interactive: Boolean): Long =
+            if (interactive) INTERACTIVE_LOOP_SLEEP_MS else IDLE_LOOP_SLEEP_MS
+
+        fun isSuspendGap(sleptMs: Long, intervalMs: Long): Boolean =
+            sleptMs >= intervalMs + SUSPEND_MARGIN_MS
     }
 
     private val checker = WgConnectivityChecker(prod)
@@ -256,8 +285,9 @@ internal class WgConnectivityMonitor(
         var announcedConnected = false
 
         while (running && !Thread.currentThread().isInterrupted) {
+            val intervalMs = pollIntervalMs(isInteractive())
             try {
-                Thread.sleep(LOOP_SLEEP_MS)
+                Thread.sleep(intervalMs)
             } catch (e: InterruptedException) {
                 break
             }
@@ -267,7 +297,7 @@ internal class WgConnectivityMonitor(
             lastCheck = now
 
             // The device dozed; the elapsed gap is not evidence of a stall.
-            if (slept >= SUSPEND_TIMEOUT_MS) {
+            if (isSuspendGap(slept, intervalMs)) {
                 checker.onSuspended(now)
                 continue
             }
