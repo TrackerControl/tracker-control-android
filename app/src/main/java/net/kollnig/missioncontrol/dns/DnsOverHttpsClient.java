@@ -251,12 +251,19 @@ public class DnsOverHttpsClient {
                     long contentLength = responseBody.contentLength();
                     if (contentLength > MAX_DOH_RESPONSE_BYTES) {
                         Log.w(TAG, "DoH response too large: " + contentLength + " bytes");
+                        // An oversized body is a wasted attempt like any other unusable
+                        // response. Leaving it uncounted made the query worth a single
+                        // failure however many attempts it burned, so an endpoint
+                        // spraying junk took ten whole queries to trip the breaker
+                        // while every other failure mode took three.
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
 
                     byte[] dnsResponse = response.peekBody(MAX_DOH_RESPONSE_BYTES + 1L).bytes();
                     if (dnsResponse.length > MAX_DOH_RESPONSE_BYTES) {
                         Log.w(TAG, "DoH response too large: " + dnsResponse.length + " bytes");
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
                     if (dnsResponse.length < 12) {
