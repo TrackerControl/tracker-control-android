@@ -73,7 +73,8 @@ ambiguity + UID-global DNS evidence is the root of a whole cluster of reports.
 ## Known limitations (deliberate)
 
 * **Fragmented traffic is dropped on the direct path.** IPv4 packets with
-  `IP_MF` set (first fragments included) drop up front; IPv6 packets whose
+  `IP_MF` set or a non-zero fragment offset (first, middle and last
+  fragments alike) drop up front; IPv6 packets whose
   extension-header chain stops at a Fragment (44) or ESP (50) header never
   reach an L4 dispatch branch, so they drop too -- even when the destination
   would be allowed. No reassembly engine, on purpose: memory/battery cost
