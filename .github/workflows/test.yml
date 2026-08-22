@@ -73,6 +73,13 @@ jobs:
             app/src/test/native/dns_frame_test.c app/src/main/jni/netguard/dns_frame.c
           /tmp/dns_frame_test
 
+      - name: Run IPv6 extension header walk host tests
+        run: |
+          cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
+            -o /tmp/ip6_ext_test \
+            app/src/test/native/ip6_ext_test.c app/src/main/jni/netguard/ip6_ext.c
+          /tmp/ip6_ext_test
+
       - name: Run unit tests
         run: ./gradlew testFdroidDebugUnitTest --offline
 
