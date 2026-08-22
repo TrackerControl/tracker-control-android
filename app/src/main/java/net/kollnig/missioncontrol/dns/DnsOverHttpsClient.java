@@ -188,6 +188,22 @@ public class DnsOverHttpsClient {
 
     @Nullable
     public byte[] resolve(@NonNull byte[] dnsQuery) {
+        return resolve(dnsQuery, null);
+    }
+
+    /**
+     * Resolve a DNS query using DoH, reporting each wasted network attempt.
+     *
+     * @param dnsQuery         Raw DNS wire format query bytes
+     * @param onFailedAttempt  Invoked once per retryable failure (network error,
+     *                         server 5xx, or unusable response body), i.e. for
+     *                         every attempt that costs its full timeout budget.
+     *                         Not invoked for non-retryable client errors — the
+     *                         caller's own null handling still counts those once.
+     * @return DNS wire format response bytes, or null on failure
+     */
+    @Nullable
+    public byte[] resolve(@NonNull byte[] dnsQuery, @Nullable Runnable onFailedAttempt) {
         if (dnsQuery.length < 12) {
             Log.w(TAG, "DNS query too short: " + dnsQuery.length + " bytes");
             return null;
@@ -215,18 +231,21 @@ public class DnsOverHttpsClient {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
                         if (response.code() < 500) return null; // Don't retry client errors
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
 
                     ResponseBody responseBody = response.body();
                     if (responseBody == null) {
                         Log.w(TAG, "DoH response body is null");
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
 
                     byte[] dnsResponse = responseBody.bytes();
                     if (dnsResponse.length < 12) {
                         Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
                     dnsResponse = finalizeResponse(dnsResponse, response, dnsQuery);
@@ -236,6 +255,7 @@ public class DnsOverHttpsClient {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "DoH request failed: " + e.getMessage());
+                reportFailedAttempt(onFailedAttempt);
             } finally {
                 // Screen off: never leave an idle keep-alive socket behind — a
                 // server-side reset during doze would wake the radio. Cache
@@ -247,6 +267,14 @@ public class DnsOverHttpsClient {
         }
 
         return null;
+    }
+
+    private static void reportFailedAttempt(@Nullable Runnable onFailedAttempt) {
+        if (onFailedAttempt != null)
+            try {
+                onFailedAttempt.run();
+            } catch (Throwable ignored) {
+            }
     }
 
     static byte[] normalizeTransactionId(byte[] dnsQuery) {

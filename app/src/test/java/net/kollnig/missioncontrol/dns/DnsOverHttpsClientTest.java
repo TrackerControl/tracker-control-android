@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
@@ -127,6 +128,51 @@ public class DnsOverHttpsClientTest {
 
         assertArrayEquals(RESPONSE, client().resolve(QUERY));
 
+        assertEquals(2, server.getRequestCount());
+    }
+
+    // --- failed-attempt reporting (drives the DoH circuit breaker) --------
+
+    /**
+     * Every retryable failure — here three consecutive 5xx responses — must be
+     * reported individually: DnsProxyServer's circuit breaker counts wasted
+     * network attempts (each burns a full timeout budget), not queries.
+     */
+    @Test
+    public void resolveReportsEachRetryableServerError() {
+        server.enqueue(dnsResponse(503, new byte[0]));
+        server.enqueue(dnsResponse(503, new byte[0]));
+        server.enqueue(dnsResponse(503, new byte[0]));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertNull(client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(3, failures.get());
+        assertEquals(3, server.getRequestCount());
+    }
+
+    /** A non-retryable client error is not reported as a wasted attempt. */
+    @Test
+    public void resolveDoesNotReportClientErrorsAsAttempts() {
+        server.enqueue(dnsResponse(400, new byte[0]));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertNull(client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(0, failures.get());
+        assertEquals(1, server.getRequestCount());
+    }
+
+    /** An unusable 200 body is a wasted attempt and still retries to success. */
+    @Test
+    public void resolveReportsUnusableBodyThenRecovers() {
+        server.enqueue(dnsResponse(200, new byte[] { 1, 2, 3 }));
+        server.enqueue(dnsResponse(200, RESPONSE));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertArrayEquals(RESPONSE, client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(1, failures.get());
         assertEquals(2, server.getRequestCount());
     }
 
