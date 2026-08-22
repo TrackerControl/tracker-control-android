@@ -419,10 +419,6 @@ void check_tcp_socket(const struct arguments *args,
                       const struct epoll_event *ev,
                       const int epoll_fd);
 
-int is_lower_layer(int protocol);
-
-int is_upper_layer(int protocol);
-
 void handle_ip(const struct arguments *args,
                const uint8_t *buffer, size_t length,
                const int epoll_fd,

@@ -19,6 +19,7 @@
 
 #include "netguard.h"
 #include "tls.h"
+#include "ip6_ext.h"
 #include <stdatomic.h>
 
 int max_tun_msg = 0;
@@ -267,27 +268,6 @@ int check_tun(const struct arguments *args,
     return 0;
 }
 
-// https://en.wikipedia.org/wiki/IPv6_packet#Extension_headers
-// http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
-int is_lower_layer(int protocol) {
-    // No next header = 59
-    return (protocol == 0 || // Hop-by-Hop Options
-            protocol == 60 || // Destination Options (before routing header)
-            protocol == 43 || // Routing
-            protocol == 44 || // Fragment
-            protocol == 51 || // Authentication Header (AH)
-            protocol == 50 || // Encapsulating Security Payload (ESP)
-            protocol == 60 || // Destination Options (before upper-layer header)
-            protocol == 135); // Mobility
-}
-
-int is_upper_layer(int protocol) {
-    return (protocol == IPPROTO_TCP ||
-            protocol == IPPROTO_UDP ||
-            protocol == IPPROTO_ICMP ||
-            protocol == IPPROTO_ICMPV6);
-}
-
 // SNI extraction disabled by default: connecting to tracker IPs to read TLS
 // ClientHello leaks the user's IP address to the tracker server.
 // Can be enabled at runtime via jni_sni() for research purposes.
@@ -363,31 +343,18 @@ void handle_ip(const struct arguments *args,
 
         struct ip6_hdr *ip6hdr = (struct ip6_hdr *) pkt;
 
-        // Skip extension headers
-        uint16_t off = 0;
-        protocol = ip6hdr->ip6_nxt;
-        if (!is_upper_layer(protocol)) {
-            log_android(ANDROID_LOG_WARN, "IP6 extension %d", protocol);
-            off = sizeof(struct ip6_hdr);
-            struct ip6_ext *ext = (struct ip6_ext *) (pkt + off);
-            while (is_lower_layer(ext->ip6e_nxt) && !is_upper_layer(protocol)) {
-                protocol = ext->ip6e_nxt;
-                log_android(ANDROID_LOG_WARN, "IP6 extension %d", protocol);
-
-                off += (8 + ext->ip6e_len);
-                ext = (struct ip6_ext *) (pkt + off);
-            }
-            if (!is_upper_layer(protocol)) {
-                off = 0;
-                protocol = ip6hdr->ip6_nxt;
-                log_android(ANDROID_LOG_WARN, "IP6 final extension %d", protocol);
-            }
-        }
+        // Skip extension headers. ip6_skip_ext_headers() (ip6_ext.c) owns the
+        // walk -- RFC 8200 Hdr Ext Len arithmetic, hard bounds checks against
+        // `length`, and deciding which header types are walkable -- so it can
+        // be unit-tested on the host; see ip6_ext.h for the exact contract.
+        size_t payload_off;
+        if (!ip6_skip_ext_headers(pkt, length, &protocol, &payload_off))
+            log_android(ANDROID_LOG_WARN, "IP6 extension %d not walkable", protocol);
 
         saddr = &ip6hdr->ip6_src;
         daddr = &ip6hdr->ip6_dst;
 
-        payload = (uint8_t *) (pkt + sizeof(struct ip6_hdr) + off);
+        payload = (uint8_t *) (pkt + payload_off);
 
         // TODO checksum
     } else {
