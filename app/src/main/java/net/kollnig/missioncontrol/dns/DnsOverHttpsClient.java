@@ -63,6 +63,7 @@ public class DnsOverHttpsClient {
     private static final int WRITE_TIMEOUT_MS = 5000;
     private static final long HTTP_CACHE_MAX_BYTES = 2L * 1024L * 1024L;
     private static final int MAX_GET_URL_LENGTH = 2048;
+    private static final int MAX_DOH_RESPONSE_BYTES = 65535;
     private static final ExecutorService SHUTDOWN_EXECUTOR = Executors.newSingleThreadExecutor(r -> {
         Thread thread = new Thread(r, "DoH-shutdown");
         thread.setDaemon(true);
@@ -224,7 +225,17 @@ public class DnsOverHttpsClient {
                         continue;
                     }
 
-                    byte[] dnsResponse = responseBody.bytes();
+                    long contentLength = responseBody.contentLength();
+                    if (contentLength > MAX_DOH_RESPONSE_BYTES) {
+                        Log.w(TAG, "DoH response too large: " + contentLength + " bytes");
+                        continue;
+                    }
+
+                    byte[] dnsResponse = response.peekBody(MAX_DOH_RESPONSE_BYTES + 1L).bytes();
+                    if (dnsResponse.length > MAX_DOH_RESPONSE_BYTES) {
+                        Log.w(TAG, "DoH response too large: " + dnsResponse.length + " bytes");
+                        continue;
+                    }
                     if (dnsResponse.length < 12) {
                         Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
                         continue;

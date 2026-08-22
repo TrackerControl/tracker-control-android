@@ -131,6 +131,34 @@ public class DnsOverHttpsClientTest {
     }
 
     @Test
+    public void resolveRejectsOversizedDnsResponse() {
+        DnsOverHttpsClient.setScreenOff(true);
+        try {
+            server.enqueue(dnsResponse(200, responseOfLength(65536)));
+
+            assertNull(client().resolve(QUERY));
+
+            assertEquals(1, server.getRequestCount());
+        } finally {
+            DnsOverHttpsClient.setScreenOff(false);
+        }
+    }
+
+    @Test
+    public void resolveRejectsOversizedChunkedDnsResponse() {
+        DnsOverHttpsClient.setScreenOff(true);
+        try {
+            server.enqueue(chunkedDnsResponse(200, responseOfLength(65536)));
+
+            assertNull(client().resolve(QUERY));
+
+            assertEquals(1, server.getRequestCount());
+        } finally {
+            DnsOverHttpsClient.setScreenOff(false);
+        }
+    }
+
+    @Test
     public void normalizeTransactionIdUsesZeroWithoutMutatingQuery() {
         byte[] query = new byte[]{0x12, 0x34, 0x01, 0x00};
 
@@ -254,5 +282,17 @@ public class DnsOverHttpsClientTest {
                 .addHeader("Content-Type", "application/dns-message")
                 .body(new Buffer().write(body))
                 .build();
+    }
+
+    private static MockResponse chunkedDnsResponse(int status, byte[] body) {
+        return new MockResponse.Builder()
+                .code(status)
+                .addHeader("Content-Type", "application/dns-message")
+                .chunkedBody(new Buffer().write(body), 1024)
+                .build();
+    }
+
+    private static byte[] responseOfLength(int length) {
+        return Arrays.copyOf(RESPONSE, length);
     }
 }
