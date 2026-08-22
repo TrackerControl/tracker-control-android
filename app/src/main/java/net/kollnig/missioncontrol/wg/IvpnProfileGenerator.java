@@ -82,7 +82,8 @@ public class IvpnProfileGenerator {
         }
     }
 
-    private static class Relay {
+    // Package-private so tests can supply relay data without making HTTP calls.
+    static class Relay {
         String hostname;
         String countryCode;
         String countryName;
@@ -132,14 +133,14 @@ public class IvpnProfileGenerator {
         if (account.isEmpty())
             throw new IllegalArgumentException("IVPN account number is required");
 
+        Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         WgProfileManager.IvpnSession session = reusableSession;
         if (session == null || !session.isUsable()) {
-            String privateKey = Wgbridge.generatePrivateKey();
-            String publicKey = Wgbridge.publicKey(privateKey);
+            String privateKey = newPrivateKey();
+            String publicKey = derivePublicKey(privateKey);
             session = createSession(account, privateKey, publicKey, captchaId, captchaValue);
         }
 
-        Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         String config = buildConfig(session.privateKey, session.address, relay);
         return new GeneratedProfile("IVPN - " + relay.countryName, config, account,
                 relay.countryCode, relay.countryName, relay.hostname, session);
@@ -171,9 +172,18 @@ public class IvpnProfileGenerator {
         return new WgProfileManager.IvpnSession(session.token, newPrivateKey, newPublicKey, address);
     }
 
-    private WgProfileManager.IvpnSession createSession(String account, String privateKey,
-                                                       String publicKey, String captchaId,
-                                                       String captchaValue)
+    // Package-private seams keep generator tests independent of the native library and HTTP.
+    String newPrivateKey() {
+        return Wgbridge.generatePrivateKey();
+    }
+
+    String derivePublicKey(String privateKey) {
+        return Wgbridge.publicKey(privateKey);
+    }
+
+    WgProfileManager.IvpnSession createSession(String account, String privateKey,
+                                               String publicKey, String captchaId,
+                                               String captchaValue)
             throws Exception {
         JSONObject body = new JSONObject();
         body.put("username", account);
@@ -209,7 +219,7 @@ public class IvpnProfileGenerator {
         return new WgProfileManager.IvpnSession(token, privateKey, publicKey, address);
     }
 
-    private List<Relay> fetchRelays() throws Exception {
+    List<Relay> fetchRelays() throws Exception {
         Request request = new Request.Builder()
                 .url(API + "/v5/servers.json")
                 .build();
@@ -318,7 +328,7 @@ public class IvpnProfileGenerator {
         String trimmed = address == null ? "" : address.trim();
         if (trimmed.contains("/"))
             return trimmed;
-        return trimmed + "/32";
+        return trimmed + (trimmed.contains(":") ? "/128" : "/32");
     }
 
     private String dnsFromRelay(Relay relay) {
