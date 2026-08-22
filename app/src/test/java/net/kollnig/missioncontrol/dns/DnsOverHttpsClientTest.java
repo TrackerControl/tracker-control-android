@@ -204,6 +204,37 @@ public class DnsOverHttpsClientTest {
         assertEquals(0, failures.get());
     }
 
+    /**
+     * An oversized body is a wasted attempt and must be reported, so that an
+     * endpoint spraying junk trips the circuit breaker at the same rate as any
+     * other failing one — see issue #760.
+     */
+    @Test
+    public void resolveReportsOversizedDnsResponseAsFailedAttempt() {
+        server.enqueue(dnsResponse(200, responseOfLength(65536)));
+        server.enqueue(dnsResponse(200, responseOfLength(65536)));
+        server.enqueue(dnsResponse(200, responseOfLength(65536)));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertNull(client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(3, failures.get());
+        assertEquals(3, server.getRequestCount());
+    }
+
+    /** The chunked path (no declared Content-Length) reports the same way. */
+    @Test
+    public void resolveReportsOversizedChunkedResponseThenRecovers() {
+        server.enqueue(chunkedDnsResponse(200, responseOfLength(65536)));
+        server.enqueue(dnsResponse(200, RESPONSE));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertArrayEquals(RESPONSE, client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(1, failures.get());
+        assertEquals(2, server.getRequestCount());
+    }
+
     @Test
     public void resolveRejectsOversizedDnsResponse() {
         DnsOverHttpsClient.setScreenOff(true);
