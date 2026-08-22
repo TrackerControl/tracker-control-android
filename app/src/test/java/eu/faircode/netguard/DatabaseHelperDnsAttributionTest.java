@@ -20,6 +20,8 @@ import org.robolectric.RuntimeEnvironment;
 @RunWith(RobolectricTestRunner.class)
 public class DatabaseHelperDnsAttributionTest {
 
+    private static final long NOW = System.currentTimeMillis();
+
     @Test
     public void mostRecentlyObservedQnameIsReturnedFirst() {
         DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
@@ -27,10 +29,10 @@ public class DatabaseHelperDnsAttributionTest {
 
         String ip = "203.0.113.10";
         // Alphabetically "aaa..." would sort first, but "zzz..." was resolved later.
-        dh.insertDns(rr(1_000L, "aaa-old.example.com", "aaa-old.example.com", ip, 3600));
-        dh.insertDns(rr(2_000L, "zzz-new.example.com", "zzz-new.example.com", ip, 3600));
+        dh.insertDns(rr(NOW - 2_000L, "aaa-old.example.com", "aaa-old.example.com", ip, 3600));
+        dh.insertDns(rr(NOW - 1_000L, "zzz-new.example.com", "zzz-new.example.com", ip, 3600));
 
-        try (Cursor c = dh.getQAName(-1, ip, false)) {
+        try (Cursor c = dh.getQAName(-1, ip)) {
             assertEquals(2, c.getCount());
             assertTrue(c.moveToFirst());
             assertEquals("zzz-new.example.com", c.getString(c.getColumnIndexOrThrow("qname")));
@@ -46,16 +48,16 @@ public class DatabaseHelperDnsAttributionTest {
 
         String ip = "203.0.113.20";
         // Same qname, two distinct CNAME targets observed at different times.
-        dh.insertDns(rr(1_000L, "tracker.example.com", "old-cname.example.com", ip, 3600));
-        dh.insertDns(rr(5_000L, "tracker.example.com", "new-cname.example.com", ip, 3600));
+        dh.insertDns(rr(NOW - 5_000L, "tracker.example.com", "old-cname.example.com", ip, 3600));
+        dh.insertDns(rr(NOW - 1_000L, "tracker.example.com", "new-cname.example.com", ip, 3600));
 
-        try (Cursor c = dh.getQAName(-1, ip, false)) {
+        try (Cursor c = dh.getQAName(-1, ip)) {
             assertEquals("duplicate rows for the same qname must collapse to one", 1, c.getCount());
             assertTrue(c.moveToFirst());
             assertEquals("tracker.example.com", c.getString(c.getColumnIndexOrThrow("qname")));
             assertEquals("the freshest row's aname should win",
                     "new-cname.example.com", c.getString(c.getColumnIndexOrThrow("aname")));
-            assertEquals(5_000L, c.getLong(c.getColumnIndexOrThrow("time")));
+            assertEquals(NOW - 1_000L, c.getLong(c.getColumnIndexOrThrow("time")));
         }
     }
 
@@ -65,15 +67,15 @@ public class DatabaseHelperDnsAttributionTest {
         dh.clearDns();
 
         String ip = "203.0.113.25";
-        dh.insertDns(rr(1_000L, "Graph.Facebook.Com", "Alias.Example.Com", ip, 3600));
-        dh.insertDns(rr(5_000L, "graph.facebook.com", "alias.example.com", ip, 3600));
+        dh.insertDns(rr(NOW - 5_000L, "Graph.Facebook.Com", "Alias.Example.Com", ip, 3600));
+        dh.insertDns(rr(NOW - 1_000L, "graph.facebook.com", "alias.example.com", ip, 3600));
 
-        try (Cursor c = dh.getQAName(-1, ip, false)) {
+        try (Cursor c = dh.getQAName(-1, ip)) {
             assertEquals("case variants must share one stored qname", 1, c.getCount());
             assertTrue(c.moveToFirst());
             assertEquals("graph.facebook.com", c.getString(c.getColumnIndexOrThrow("qname")));
             assertEquals("alias.example.com", c.getString(c.getColumnIndexOrThrow("aname")));
-            assertEquals(5_000L, c.getLong(c.getColumnIndexOrThrow("time")));
+            assertEquals(NOW - 1_000L, c.getLong(c.getColumnIndexOrThrow("time")));
         }
     }
 
@@ -84,7 +86,7 @@ public class DatabaseHelperDnsAttributionTest {
 
         String ip = "203.0.113.30";
         // The freshest observation has already expired; an older one is still
-        // alive. With alive=true the expired row must not shadow the alive one.
+        // alive. The expired row must not shadow the alive one.
         // Rows are inserted directly because insertDns() clamps the TTL to the
         // "ttl" preference floor, which would keep the fresh row alive.
         long now = System.currentTimeMillis();
@@ -97,10 +99,42 @@ public class DatabaseHelperDnsAttributionTest {
                         + (now - 5_000) + ", 't2.example.com', 'expired-cname.example.com', '"
                         + ip + "', 1000)");
 
-        try (Cursor c = dh.getQAName(-1, ip, true)) {
+        try (Cursor c = dh.getQAName(-1, ip)) {
             assertEquals(1, c.getCount());
             assertTrue(c.moveToFirst());
             assertEquals("alive-cname.example.com", c.getString(c.getColumnIndexOrThrow("aname")));
+        }
+    }
+
+    /**
+     * Issue #759: an expired qname must not make an IP look shared. The UI
+     * derived its shared-IP marker from a row set that still contained
+     * expired evidence while the blocker had already dropped it, so the log
+     * flagged an ambiguity the blocking decision never saw.
+     */
+    @Test
+    public void expiredQnameDoesNotMakeIpLookShared() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearDns();
+
+        String ip = "203.0.113.40";
+        // Two different qnames on one IP, but only one is still alive. Rows are
+        // inserted directly because insertDns() clamps the TTL to the "ttl"
+        // preference floor, which would keep the expired one alive.
+        long now = System.currentTimeMillis();
+        dh.getWritableDatabase().execSQL(
+                "INSERT INTO dns (time, qname, aname, resource, ttl) VALUES ("
+                        + (now - 10_000) + ", 'alive.example.com', 'alive.example.com', '"
+                        + ip + "', 3600000)");
+        dh.getWritableDatabase().execSQL(
+                "INSERT INTO dns (time, qname, aname, resource, ttl) VALUES ("
+                        + (now - 5_000) + ", 'expired.example.com', 'expired.example.com', '"
+                        + ip + "', 1000)");
+
+        try (Cursor c = dh.getQAName(-1, ip)) {
+            assertEquals("an expired qname must not count towards shared-IP", 1, c.getCount());
+            assertTrue(c.moveToFirst());
+            assertEquals("alive.example.com", c.getString(c.getColumnIndexOrThrow("qname")));
         }
     }
 
