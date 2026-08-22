@@ -77,7 +77,9 @@ object WgEgress {
     // pfd object distinguishes "same TUN reused across a Native restart"
     // (same object) from "new TUN that happens to alias the fd number".
     private var currentTunPfd: ParcelFileDescriptor? = null
-    private var currentInteractive: Boolean = true
+    // Volatile: read on every poll by the wg-conn-monitor thread, written from
+    // the vpn handler thread (startOrUpdate / reapplyConfig).
+    @Volatile private var currentInteractive: Boolean = true
     private var currentKeepaliveAlwaysOn: Boolean = false
     @Volatile private var forceRestartPending: Boolean = false
     @Volatile private var lastCheapRecoveryMs: Long = 0
@@ -325,7 +327,8 @@ object WgEgress {
                 // a fresh handshake shortly after a restart is exactly the
                 // signal a handshake-passes-but-data-drops failure loop also
                 // produces, so resetting on it would defeat the backoff.
-                onRxAdvanced = { if (isCurrent(expected)) restartAttempts = 0 }
+                onRxAdvanced = { if (isCurrent(expected)) restartAttempts = 0 },
+                isInteractive = { currentInteractive }
             ).also { it.start() }
         }
     }
