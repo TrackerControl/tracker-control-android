@@ -125,6 +125,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
@@ -2457,6 +2458,13 @@ public class ServiceSinkhole extends VpnService {
             if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
                 ipToHost.remove(rr.Resource);
                 ipToTracker.remove(rr.Resource);
+                // Bump *after* the removes: a blockKnownTracker() read that
+                // started before this insert (and so may have missed this row)
+                // can still be mid-flight. Invalidating the generation here,
+                // after the cache is actually clear, is what makes its stale
+                // put() get discarded below instead of pinning pre-insert
+                // attribution behind this remove.
+                trackerCacheGeneration.incrementAndGet();
             }
         }
     }
@@ -2507,6 +2515,11 @@ public class ServiceSinkhole extends VpnService {
     private static final ConcurrentHashMap<Integer, String> uidToPackage = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
     static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
+    // Bumped by dnsResolved() whenever it invalidates an ipToHost/ipToTracker
+    // entry, so blockKnownTracker() can detect a DB read that raced a
+    // concurrent insert and drop its (possibly stale) result instead of
+    // caching it. See the comments at both call sites.
+    private static final AtomicLong trackerCacheGeneration = new AtomicLong();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
     // Negative results (no tracker / no dname for an IP) are cached only
@@ -2684,6 +2697,13 @@ public class ServiceSinkhole extends VpnService {
             }
 
             if (dname == null) { // TODO: Note that this does not implement any SNI code
+                // Snapshot before the DB read: if dnsResolved() invalidates this
+                // IP's cache entry while we're mid-read below, our result may be
+                // stale (it could miss a row that raced us, or reflect a row
+                // that no longer applies). Comparing after the read lets us
+                // drop the put and let the next packet re-read instead of
+                // pinning a possibly-wrong verdict.
+                long generationBefore = trackerCacheGeneration.get();
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                 long now = new Date().getTime();
@@ -2781,9 +2801,16 @@ public class ServiceSinkhole extends VpnService {
                             : firstTime + firstTtl;
                 }
 
-                // Save dname and tracker
-                ipToHost.put(daddr, new Expiring<>(dname, expiry));
-                ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
+                // Save dname and tracker, but only if no concurrent
+                // dnsResolved() invalidated this IP's cache while we were
+                // reading the DB above — otherwise this put could pin a
+                // stale verdict that a racing insert already made obsolete.
+                // Skipping is cheap and correct: the next packet to this IP
+                // simply re-reads the DB.
+                if (trackerCacheGeneration.get() == generationBefore) {
+                    ipToHost.put(daddr, new Expiring<>(dname, expiry));
+                    ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
+                }
             }
 
             // Do not block based on IP-only tracker evidence.
