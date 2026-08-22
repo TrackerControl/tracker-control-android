@@ -829,6 +829,8 @@ public class ServiceSinkhole extends VpnService {
             // Refresh mappings regularly
             ipToHost.clear();
             ipToTracker.clear();
+            // Same race as dnsResolved(): invalidate after clearing.
+            trackerCacheGeneration.incrementAndGet();
             uidToApp.clear();
             uidToPackage.clear();
 
@@ -2530,6 +2532,9 @@ public class ServiceSinkhole extends VpnService {
     public static void clearTrackerCaches() {
         ipToHost.clear();
         ipToTracker.clear();
+        // Same race as dnsResolved(): invalidate after clearing, so a
+        // blockKnownTracker() put in flight under the old mode is dropped.
+        trackerCacheGeneration.incrementAndGet();
     }
 
     // Called from native code
