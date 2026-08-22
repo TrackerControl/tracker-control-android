@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Call;
 import okhttp3.ConnectionPool;
 import okhttp3.Dns;
 import okhttp3.HttpUrl;
@@ -200,6 +201,9 @@ public class DnsOverHttpsClient {
      *                         every attempt that costs its full timeout budget.
      *                         Not invoked for non-retryable client errors — the
      *                         caller's own null handling still counts those once.
+     *                         Also not invoked when the request was canceled by
+     *                         our own {@link #getInstance} endpoint swap — that
+     *                         is not evidence the endpoint is unhealthy.
      * @return DNS wire format response bytes, or null on failure
      */
     @Nullable
@@ -226,8 +230,9 @@ public class DnsOverHttpsClient {
                 Log.d(TAG, "DoH retry attempt " + attempt);
             }
 
+            Call call = client.newCall(request);
             try {
-                try (Response response = client.newCall(request).execute()) {
+                try (Response response = call.execute()) {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
                         if (response.code() < 500) return null; // Don't retry client errors
@@ -254,6 +259,14 @@ public class DnsOverHttpsClient {
                     return dnsResponse;
                 }
             } catch (IOException e) {
+                if (call.isCanceled()) {
+                    // Canceled by our own getInstance()/shutdown() swap (a DoH
+                    // endpoint change), not a real network failure. Counting
+                    // this would let an endpoint switch alone trip the circuit
+                    // breaker against a perfectly healthy new endpoint.
+                    Log.d(TAG, "DoH request canceled (client shutdown), not counted as a failure");
+                    return null;
+                }
                 Log.e(TAG, "DoH request failed: " + e.getMessage());
                 reportFailedAttempt(onFailedAttempt);
             } finally {

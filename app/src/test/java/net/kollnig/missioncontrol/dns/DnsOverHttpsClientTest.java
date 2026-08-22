@@ -176,6 +176,34 @@ public class DnsOverHttpsClientTest {
         assertEquals(2, server.getRequestCount());
     }
 
+    /**
+     * A request canceled by our own client shutdown (e.g. a DoH endpoint
+     * switch via {@link DnsOverHttpsClient#getInstance}) must not be reported
+     * as a failed attempt — see issue #760: counting it would let switching
+     * endpoints alone trip the circuit breaker against the new, healthy one.
+     */
+    @Test
+    public void resolveDoesNotReportCanceledCallAsFailedAttempt() throws Exception {
+        server.enqueue(new MockResponse.Builder()
+                .code(200)
+                .addHeader("Content-Type", "application/dns-message")
+                .body(new Buffer().write(RESPONSE))
+                .headersDelay(2, TimeUnit.SECONDS)
+                .build());
+
+        DnsOverHttpsClient client = client();
+        AtomicInteger failures = new AtomicInteger(0);
+        Thread resolver = new Thread(() -> client.resolve(QUERY, failures::incrementAndGet));
+        resolver.start();
+
+        // Give the request time to actually be dispatched before shutting down.
+        server.takeRequest(1, TimeUnit.SECONDS);
+        client.shutdown();
+        resolver.join(5000);
+
+        assertEquals(0, failures.get());
+    }
+
     @Test
     public void normalizeTransactionIdUsesZeroWithoutMutatingQuery() {
         byte[] query = new byte[]{0x12, 0x34, 0x01, 0x00};
