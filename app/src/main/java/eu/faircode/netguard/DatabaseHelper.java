@@ -99,6 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final static int MSG_LOG = 1;
     private final static int MSG_ACCESS = 2;
     private final static int MSG_FORWARD = 3;
+    private static final long NOTIFY_BATCH_MS = 1000;
 
     private SharedPreferences prefs;
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -1430,32 +1431,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void notifyLogChanged() {
-        Message msg = handler.obtainMessage();
-        msg.what = MSG_LOG;
-        handler.sendMessage(msg);
+        if (!handler.hasMessages(MSG_LOG))
+            handler.sendEmptyMessageDelayed(MSG_LOG, NOTIFY_BATCH_MS);
     }
 
     private void notifyAccessChanged() {
-        Message msg = handler.obtainMessage();
-        msg.what = MSG_ACCESS;
-        handler.sendMessage(msg);
+        if (!handler.hasMessages(MSG_ACCESS))
+            handler.sendEmptyMessageDelayed(MSG_ACCESS, NOTIFY_BATCH_MS);
     }
 
     private void notifyForwardChanged() {
-        Message msg = handler.obtainMessage();
-        msg.what = MSG_FORWARD;
-        handler.sendMessage(msg);
+        if (!handler.hasMessages(MSG_FORWARD))
+            handler.sendEmptyMessageDelayed(MSG_FORWARD, NOTIFY_BATCH_MS);
     }
 
     private static void handleChangedNotification(Message msg) {
-        // Batch notifications
-        try {
-            Thread.sleep(1000);
-            if (handler.hasMessages(msg.what))
-                handler.removeMessages(msg.what);
-        } catch (InterruptedException ignored) {
-        }
-
         // Notify listeners
         if (msg.what == MSG_LOG) {
             for (LogChangedListener listener : logChangedListeners)
