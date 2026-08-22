@@ -4,11 +4,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import android.database.Cursor;
+import android.os.Handler;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
+import org.robolectric.shadows.ShadowLooper;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Covers the access/usage batching added to collapse per-flow SQLite writes
@@ -127,6 +137,84 @@ public class DatabaseHelperAccessBatchTest {
         try (Cursor c = dh.getAccess(uid)) {
             assertEquals(2, c.getCount());
         }
+    }
+
+    @Test
+    public void repeatedAccessNotificationsCoalesceWithinWindow() throws Exception {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        Handler handler = databaseHandler();
+        waitForHandlerIdle(handler);
+        handler.removeCallbacksAndMessages(null);
+
+        AtomicInteger callbacks = new AtomicInteger();
+        CountDownLatch firstCallback = new CountDownLatch(1);
+        DatabaseHelper.AccessChangedListener listener = () -> {
+            callbacks.incrementAndGet();
+            firstCallback.countDown();
+        };
+        dh.addAccessChangedListener(listener);
+        try {
+            notifyAccessChanged(dh);
+            notifyAccessChanged(dh);
+            notifyAccessChanged(dh);
+
+            ShadowLooper shadowLooper = Shadows.shadowOf(handler.getLooper());
+            shadowLooper.idleFor(1100, TimeUnit.MILLISECONDS);
+            assertTrue("batched notification was not delivered",
+                    firstCallback.await(3, TimeUnit.SECONDS));
+            waitForHandlerIdle(handler);
+            assertEquals("notifications in one window must coalesce", 1, callbacks.get());
+        } finally {
+            dh.removeAccessChangedListener(listener);
+        }
+    }
+
+    @Test
+    public void notificationBurstDoesNotBlockDatabaseHandler() throws Exception {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        Handler handler = databaseHandler();
+        waitForHandlerIdle(handler);
+        handler.removeCallbacksAndMessages(null);
+
+        notifyAccessChanged(dh);
+        notifyAccessChanged(dh);
+        notifyAccessChanged(dh);
+
+        try {
+            CountDownLatch runnableRan = new CountDownLatch(1);
+            AtomicLong elapsedMs = new AtomicLong();
+            long startNanos = System.nanoTime();
+            handler.post(() -> {
+                elapsedMs.set(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos));
+                runnableRan.countDown();
+            });
+
+            assertTrue("database handler runnable was delayed",
+                    runnableRan.await(3, TimeUnit.SECONDS));
+            assertTrue("database handler runnable took " + elapsedMs.get() + " ms",
+                    elapsedMs.get() < 500);
+        } finally {
+            handler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    private static Handler databaseHandler() throws Exception {
+        Field field = DatabaseHelper.class.getDeclaredField("handler");
+        field.setAccessible(true);
+        return (Handler) field.get(null);
+    }
+
+    private static void notifyAccessChanged(DatabaseHelper dh) throws Exception {
+        Method method = DatabaseHelper.class.getDeclaredMethod("notifyAccessChanged");
+        method.setAccessible(true);
+        method.invoke(dh);
+    }
+
+    private static void waitForHandlerIdle(Handler handler) throws InterruptedException {
+        CountDownLatch idle = new CountDownLatch(1);
+        handler.post(idle::countDown);
+        assertTrue("database handler did not become idle",
+                idle.await(3, TimeUnit.SECONDS));
     }
 
     private static Packet packet(int uid, String daddr, int dport, long time, boolean allowed) {
