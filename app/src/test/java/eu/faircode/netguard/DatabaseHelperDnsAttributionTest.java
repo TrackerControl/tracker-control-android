@@ -60,6 +60,24 @@ public class DatabaseHelperDnsAttributionTest {
     }
 
     @Test
+    public void caseVariantQnamesShareOneRowAndDoNotLookUncertain() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearDns();
+
+        String ip = "203.0.113.25";
+        dh.insertDns(rr(1_000L, "Graph.Facebook.Com", "Alias.Example.Com", ip, 3600));
+        dh.insertDns(rr(5_000L, "graph.facebook.com", "alias.example.com", ip, 3600));
+
+        try (Cursor c = dh.getQAName(-1, ip, false)) {
+            assertEquals("case variants must share one stored qname", 1, c.getCount());
+            assertTrue(c.moveToFirst());
+            assertEquals("graph.facebook.com", c.getString(c.getColumnIndexOrThrow("qname")));
+            assertEquals("alias.example.com", c.getString(c.getColumnIndexOrThrow("aname")));
+            assertEquals(5_000L, c.getLong(c.getColumnIndexOrThrow("time")));
+        }
+    }
+
+    @Test
     public void aliveFilterAppliesBeforeDedup() {
         DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
         dh.clearDns();

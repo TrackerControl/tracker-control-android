@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -84,7 +85,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "TrackerControl.Database";
 
     private static final String DB_NAME = "Netguard";
-    private static final int DB_VERSION = 22;
+    private static final int DB_VERSION = 23;
 
     private static boolean once = true;
     private static List<LogChangedListener> logChangedListeners = new ArrayList<>();
@@ -447,6 +448,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (oldVersion < 22) {
                 db.execSQL("ALTER TABLE access ADD COLUMN uncertain INTEGER");
                 oldVersion = 22;
+            }
+            if (oldVersion < 23) {
+                // Remove case-variant duplicates before lowercasing because idx_dns is UNIQUE.
+                // Keep the freshest row for each DNS identity, breaking time ties by ID.
+                db.execSQL("DELETE FROM dns WHERE ID NOT IN (" +
+                        "SELECT MAX(d.ID) FROM dns d" +
+                        " JOIN (" +
+                        "SELECT lower(qname) AS qname, lower(aname) AS aname, resource, MAX(time) AS time" +
+                        " FROM dns" +
+                        " GROUP BY lower(qname), lower(aname), resource" +
+                        ") latest ON lower(d.qname) = latest.qname" +
+                        " AND lower(d.aname) = latest.aname" +
+                        " AND d.resource = latest.resource" +
+                        " AND d.time = latest.time" +
+                        " GROUP BY latest.qname, latest.aname, latest.resource)");
+                db.execSQL("UPDATE dns SET qname = lower(qname), aname = lower(aname)");
+                oldVersion = 23;
             }
 
             if (oldVersion == DB_VERSION) {
@@ -936,7 +954,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // There is a segmented index on uid
             // There is no index on time for write performance
             String query = "SELECT a.ID AS _id, a.*";
-            query += ", (SELECT COUNT(DISTINCT d.qname) FROM dns d WHERE d.resource IN (SELECT d1.resource FROM dns d1 WHERE d1.qname = a.daddr)) count";
+            query += ", (SELECT COUNT(DISTINCT d.qname) FROM dns d WHERE d.resource IN (SELECT d1.resource FROM dns d1 WHERE d1.qname = lower(a.daddr))) count";
             query += " FROM access a";
             query += " WHERE a.uid = ?";
             query += " ORDER BY a.time DESC";
@@ -1054,6 +1072,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // DNS
 
+    private static String lower(String name) {
+        return (name == null ? null : name.toLowerCase(Locale.ROOT));
+    }
+
     public boolean insertDns(ResourceRecord rr) {
         lock.writeLock().lock();
         try {
@@ -1070,12 +1092,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cv.put("time", rr.Time);
                 cv.put("ttl", ttl * 1000L);
 
+                // DNS names are case-insensitive, but the tracker and hosts lookups
+                // are keyed in lowercase (see TrackerList.findTracker). Storing the
+                // wire case verbatim made a server-chosen CNAME case — or a resolver
+                // using 0x20 randomisation — a distinct row under the BINARY-collated
+                // idx_dns, splitting one domain across several rows and making
+                // getQAName report it as several qnames sharing an IP.
+                String qname = lower(rr.QName);
+                String aname = lower(rr.AName);
+
                 int rows = db.update("dns", cv, "qname = ? AND aname = ? AND resource = ?",
-                        new String[] { rr.QName, rr.AName, rr.Resource });
+                        new String[] { qname, aname, rr.Resource });
 
                 if (rows == 0) {
-                    cv.put("qname", rr.QName);
-                    cv.put("aname", rr.AName);
+                    cv.put("qname", qname);
+                    cv.put("aname", aname);
                     cv.put("resource", rr.Resource);
 
                     if (db.insert("dns", null, cv) == -1)
@@ -1200,6 +1231,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
+            qname = lower(qname);
             String query = "SELECT DISTINCT d2.qname";
             query += " FROM dns d1";
             query += " JOIN dns d2";
@@ -1217,6 +1249,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
+            qname = lower(qname);
             String query = "SELECT d.qname, d.aname, d.time, d.ttl";
             query += " FROM dns d";
             query += " WHERE d.qname = ?";
@@ -1249,13 +1282,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
+            // dns.qname is stored lowercase; access.daddr is written from it, so
+            // the parameter is matched against the indexed column as-is.
+            dname = lower(dname);
 
             // There is a segmented index on dns.qname
             // There is an index on access.daddr and access.block
             String query = "SELECT a.uid, a.version, a.protocol, a.daddr, d.resource, a.dport, a.block, d.time, d.ttl";
             query += " FROM access AS a";
             query += " LEFT JOIN dns AS d";
-            query += "   ON d.qname = a.daddr";
+            query += "   ON d.qname = lower(a.daddr)";
             query += " WHERE a.block >= 0";
             query += " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
             if (dname != null)

@@ -35,14 +35,18 @@ public class DatabaseHelperMigrationTest {
         database.execSQL("ALTER TABLE access ADD COLUMN sent INTEGER");
         database.execSQL("ALTER TABLE access ADD COLUMN received INTEGER");
         database.execSQL("ALTER TABLE access ADD COLUMN connections INTEGER");
+        database.execSQL("CREATE TABLE dns ("
+                + "ID INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, "
+                + "qname TEXT NOT NULL, aname TEXT NOT NULL, resource TEXT NOT NULL, ttl INTEGER)");
+        database.execSQL("CREATE UNIQUE INDEX idx_dns ON dns(qname, aname, resource)");
         database.execSQL("INSERT INTO access "
                 + "(uid, version, protocol, daddr, dport, time, allowed, block, sent, received, connections) "
                 + "VALUES (1001, 4, 6, 'tracker.example', 443, 123456, 0, 1, 10, 20, 3)");
         database.setVersion(21);
 
-        helper.onUpgrade(database, 21, 22);
+        helper.onUpgrade(database, 21, 23);
 
-        assertEquals(22, database.getVersion());
+        assertEquals(23, database.getVersion());
         assertTrue(columnExists("access", "uncertain"));
         try (Cursor cursor = database.rawQuery("SELECT * FROM access WHERE uid = 1001", null)) {
             assertTrue(cursor.moveToFirst());
@@ -70,9 +74,9 @@ public class DatabaseHelperMigrationTest {
                 + "VALUES (654321, 'example.org', 'alias.example.org', '1.2.3.4', 60)");
         database.setVersion(16);
 
-        helper.onUpgrade(database, 16, 22);
+        helper.onUpgrade(database, 16, 23);
 
-        assertEquals(22, database.getVersion());
+        assertEquals(23, database.getVersion());
         assertTrue(columnExists("access", "sent"));
         assertTrue(columnExists("access", "received"));
         assertTrue(columnExists("access", "connections"));
@@ -93,6 +97,31 @@ public class DatabaseHelperMigrationTest {
             assertEquals("example.org", cursor.getString(0));
             assertEquals("alias.example.org", cursor.getString(1));
             assertEquals("1.2.3.4", cursor.getString(2));
+        }
+    }
+
+    @Test
+    public void upgradeFrom22NormalizesAndDeduplicatesDns() {
+        database.execSQL("CREATE TABLE dns ("
+                + "ID INTEGER PRIMARY KEY AUTOINCREMENT, time INTEGER NOT NULL, "
+                + "qname TEXT NOT NULL, aname TEXT NOT NULL, resource TEXT NOT NULL, ttl INTEGER)");
+        database.execSQL("CREATE UNIQUE INDEX idx_dns ON dns(qname, aname, resource)");
+        database.execSQL("INSERT INTO dns (time, qname, aname, resource, ttl) "
+                + "VALUES (1000, 'Graph.Facebook.Com', 'Alias.Example.Com', '203.0.113.25', 60)");
+        database.execSQL("INSERT INTO dns (time, qname, aname, resource, ttl) "
+                + "VALUES (5000, 'graph.facebook.com', 'alias.example.com', '203.0.113.25', 60)");
+        database.setVersion(22);
+
+        helper.onUpgrade(database, 22, 23);
+
+        assertEquals(23, database.getVersion());
+        try (Cursor cursor = database.rawQuery("SELECT qname, aname, resource, time FROM dns", null)) {
+            assertEquals(1, cursor.getCount());
+            assertTrue(cursor.moveToFirst());
+            assertEquals("graph.facebook.com", cursor.getString(0));
+            assertEquals("alias.example.com", cursor.getString(1));
+            assertEquals("203.0.113.25", cursor.getString(2));
+            assertEquals(5000L, cursor.getLong(3));
         }
     }
 
