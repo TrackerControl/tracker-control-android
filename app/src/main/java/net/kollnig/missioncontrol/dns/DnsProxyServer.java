@@ -20,6 +20,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -241,10 +242,13 @@ public class DnsProxyServer {
      */
     private void handleQuery(byte[] queryData, InetAddress clientAddress, int clientPort) {
         try {
-            // Malformed datagrams get SERVFAIL locally instead of counting as
-            // DoH failures, so garbage can't trip the circuit breaker
+            // Malformed datagrams are dropped silently rather than answered:
+            // a query shorter than a 12-byte DNS header has no transaction ID
+            // to safely echo back, so there is nothing to build a SERVFAIL
+            // response from. This matches the TCP path below. Dropping here
+            // also means garbage doesn't count as a DoH failure and can't
+            // trip the circuit breaker.
             if (!isPlausibleDnsQuery(queryData)) {
-                sendServFailResponse(queryData, clientAddress, clientPort);
                 return;
             }
 
@@ -321,16 +325,15 @@ public class DnsProxyServer {
     }
 
     /**
-     * Send a SERVFAIL response to the client.
+     * Build a SERVFAIL response by echoing the query's header with the QR
+     * bit set and RCODE=SERVFAIL. Returns null (rather than throwing) if
+     * queryData is null or too short to carry a 12-byte DNS header, so
+     * callers can treat "can't build a response" as a normal, silent case.
+     * Package-private for unit testing.
      */
-    private void sendServFailResponse(byte[] queryData, InetAddress clientAddress, int clientPort)
-            throws IOException {
-        if (queryData.length < 12)
-            return;
-
-        DatagramSocket socket = serverSocket;
-        if (socket == null || socket.isClosed())
-            return;
+    static byte[] buildServFailResponse(byte[] queryData) {
+        if (queryData == null || queryData.length < 12)
+            return null;
 
         // Copy the query and modify it to be a SERVFAIL response
         byte[] response = new byte[queryData.length];
@@ -339,6 +342,21 @@ public class DnsProxyServer {
         // Set QR bit (response) and RCODE to SERVFAIL (2)
         response[2] = (byte) ((queryData[2] | 0x80) & 0xFB); // QR=1, keep other flags
         response[3] = (byte) ((queryData[3] & 0xF0) | 0x02); // RCODE = SERVFAIL
+        return response;
+    }
+
+    /**
+     * Send a SERVFAIL response to the client.
+     */
+    private void sendServFailResponse(byte[] queryData, InetAddress clientAddress, int clientPort)
+            throws IOException {
+        byte[] response = buildServFailResponse(queryData);
+        if (response == null)
+            return;
+
+        DatagramSocket socket = serverSocket;
+        if (socket == null || socket.isClosed())
+            return;
 
         DatagramPacket packet = new DatagramPacket(response, response.length, clientAddress, clientPort);
         socket.send(packet);
@@ -363,12 +381,11 @@ public class DnsProxyServer {
                 DataInputStream in = new DataInputStream(socket.getInputStream());
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
 
-            // Read the 2-byte length field; -1 means the peer hung up first
+            // DataInputStream#readUnsignedShort() never returns -1: per its
+            // contract it throws EOFException if the stream ends before two
+            // bytes are read, which is exactly what a bare TCP connect probe
+            // (no length prefix at all) looks like. Handled below, quietly.
             int length = in.readUnsignedShort();
-            if (length < 0) {
-                Log.d(TAG, "TCP peer closed before sending DNS length prefix");
-                return;
-            }
             byte[] queryData = new byte[length];
             in.readFully(queryData);
 
@@ -430,6 +447,10 @@ public class DnsProxyServer {
                 }
             }
 
+        } catch (EOFException e) {
+            // Peer closed before completing the length-prefixed frame (e.g. a
+            // bare connect probe with no payload) -- not an error, and not
+            // worth logging.
         } catch (Exception e) {
             Log.e(TAG, "Error handling TCP DNS query: " + e.getMessage());
         }
@@ -448,13 +469,21 @@ public class DnsProxyServer {
 
         for (InetAddress dnsServer : dnsServers) {
             try (DatagramSocket socket = new DatagramSocket()) {
+                // Connect the socket so the kernel drops any packet not from
+                // dnsServer:53 before it ever reaches us -- otherwise the
+                // socket is unconnected and any host reaching this ephemeral
+                // port qualifies.
+                socket.connect(dnsServer, 53);
+
                 DatagramPacket request = new DatagramPacket(
                         queryData, queryData.length, dnsServer, 53);
                 socket.send(request);
 
-                // Accept only responses echoing this query's transaction ID;
-                // anything else could be an off-path spoof or a stray NAT
-                // packet meant for another client behind the same address.
+                // Kernel-level connect() filters by sender address/port;
+                // additionally accept only responses echoing this query's
+                // transaction ID, so an off-path spoof from the real server's
+                // address (e.g. a compromised resolver, or another client
+                // behind the same NAT) still can't be mistaken for our reply.
                 byte[] buffer = new byte[4096];
                 long deadline = System.nanoTime()
                         + TimeUnit.MILLISECONDS.toNanos(FALLBACK_DNS_TIMEOUT_MS);
@@ -469,7 +498,7 @@ public class DnsProxyServer {
                     DatagramPacket response = new DatagramPacket(buffer, buffer.length);
                     socket.receive(response);
 
-                    if (response.getLength() < 2
+                    if (response.getLength() < 12
                             || response.getData()[0] != queryData[0]
                             || response.getData()[1] != queryData[1])
                         continue;
@@ -488,12 +517,9 @@ public class DnsProxyServer {
     }
 
     private void sendTcpServFail(DataOutputStream out, byte[] queryData) throws IOException {
-        if (queryData.length < 12)
+        byte[] response = buildServFailResponse(queryData);
+        if (response == null)
             return;
-        byte[] response = new byte[queryData.length];
-        System.arraycopy(queryData, 0, response, 0, queryData.length);
-        response[2] = (byte) ((queryData[2] | 0x80) & 0xFB);
-        response[3] = (byte) ((queryData[3] & 0xF0) | 0x02);
         out.writeShort(response.length);
         out.write(response);
         out.flush();
