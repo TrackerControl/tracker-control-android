@@ -219,9 +219,6 @@ public class BlocklistManager {
             return false;
         }
 
-        if (hostsFile.exists()) {
-            hostsFile.delete();
-        }
         return hostsTmp.renameTo(hostsFile);
     }
 }
