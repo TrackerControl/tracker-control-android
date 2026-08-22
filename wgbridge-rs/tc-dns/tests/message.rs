@@ -149,6 +149,19 @@ fn labels_then_pointer_resumes_after_pointer_and_records_answer() {
 }
 
 #[test]
+fn pointer_preserves_literal_dot_inside_wire_label() {
+    let qname = [3, b'a', b'.', b'b', 0];
+    let answer_name = [1, b'x', 0xc0, 12];
+    let message = response(&[question(&qname, TYPE_A)], &[a_answer(&answer_name)]);
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0].1, "x.a.b");
+}
+
+#[test]
 fn reserved_name_length_bits_are_rejected() {
     for reserved in [0x40u8, 0x80] {
         let message = response(&[question(&[reserved, 0], TYPE_A)], &[a_answer(&[0])]);

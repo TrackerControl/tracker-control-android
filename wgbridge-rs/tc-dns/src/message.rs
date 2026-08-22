@@ -204,7 +204,8 @@ pub(crate) fn read_dns_name(msg: &[u8], start: usize, depth: u32) -> Option<(Str
         labels: 0,
         encoded_octets: 0,
     };
-    read_dns_name_inner(msg, start, depth, &mut state)
+    let (labels, next) = read_dns_name_inner(msg, start, depth, &mut state)?;
+    Some((labels.join("."), next))
 }
 
 struct NameState {
@@ -217,7 +218,7 @@ fn read_dns_name_inner(
     start: usize,
     depth: u32,
     state: &mut NameState,
-) -> Option<(String, usize)> {
+) -> Option<(Vec<String>, usize)> {
     if depth > MAX_NAME_DEPTH || start >= msg.len() {
         return None;
     }
@@ -238,11 +239,9 @@ fn read_dns_name_inner(
                 // `MAX_NAME_OCTETS`. Pointer-chasing is bounded separately
                 // by `MAX_NAME_DEPTH` and the bounds check above.
                 let ptr = ((length & 0x3f) << 8) | usize::from(*msg.get(offset + 1)?);
-                let (name, _) = read_dns_name_inner(msg, ptr, depth + 1, state)?;
-                if !name.is_empty() {
-                    labels.extend(name.split('.').map(str::to_owned));
-                }
-                return Some((labels.join("."), pointer_end));
+                let (pointer_labels, _) = read_dns_name_inner(msg, ptr, depth + 1, state)?;
+                labels.extend(pointer_labels);
+                return Some((labels, pointer_end));
             }
             0x00 => {
                 state.encoded_octets = state.encoded_octets.checked_add(1)?;
@@ -250,7 +249,7 @@ fn read_dns_name_inner(
                     return None;
                 }
                 if length == 0 {
-                    return Some((labels.join("."), offset.checked_add(1)?));
+                    return Some((labels, offset.checked_add(1)?));
                 }
                 if length > 63 {
                     return None;
