@@ -23,8 +23,8 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Collections;
@@ -166,11 +166,13 @@ public class BlockingMode {
 
     private static Set<String> loadExcludedApps(Context c) {
         Set<String> apps = new HashSet<>();
-        try (InputStream is = c.getAssets().open("ddg-excluded-apps.json")) {
+        try (DataInputStream is = new DataInputStream(
+                c.getAssets().open("ddg-excluded-apps.json"))) {
             int size = is.available();
             byte[] buffer = new byte[size];
-            if (is.read(buffer) <= 0)
+            if (size <= 0)
                 throw new IOException("No bytes read.");
+            is.readFully(buffer);
 
             String json = new String(buffer, StandardCharsets.UTF_8);
             apps.addAll(BlockingModeLogic.parseExcludedAppsJson(json));
@@ -184,11 +186,13 @@ public class BlockingMode {
 
     private static Set<String> loadBrowserApps(Context c) {
         Set<String> apps = new HashSet<>();
-        try (InputStream is = c.getAssets().open("ddg-excluded-apps.json")) {
+        try (DataInputStream is = new DataInputStream(
+                c.getAssets().open("ddg-excluded-apps.json"))) {
             int size = is.available();
             byte[] buffer = new byte[size];
-            if (is.read(buffer) <= 0)
+            if (size <= 0)
                 throw new IOException("No bytes read.");
+            is.readFully(buffer);
 
             String json = new String(buffer, StandardCharsets.UTF_8);
             apps.addAll(BlockingModeLogic.parseBrowserAppsJson(json));

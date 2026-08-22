@@ -32,6 +32,7 @@ import androidx.preference.PreferenceManager;
 
 import eu.faircode.netguard.DatabaseHelper;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -582,11 +583,13 @@ public class TrackerList {
          * More here:
          * https://github.com/TrackerControl/tracker-control-android/issues/30
          */
-        try (InputStream is = c.getAssets().open("disconnect-blacklist.reversed.json")) {
+        try (DataInputStream is = new DataInputStream(
+                c.getAssets().open("disconnect-blacklist.reversed.json"))) {
             int size = is.available();
             byte[] buffer = new byte[size];
-            if (is.read(buffer) <= 0)
+            if (size <= 0)
                 throw new IOException("No bytes read.");
+            is.readFully(buffer);
 
             String reversedJson = new String(buffer, StandardCharsets.UTF_8);
             String json = new StringBuilder(reversedJson).reverse().toString();

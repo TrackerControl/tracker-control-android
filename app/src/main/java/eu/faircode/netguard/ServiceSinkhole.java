@@ -114,7 +114,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -2134,49 +2133,37 @@ public class ServiceSinkhole extends VpnService {
         InputStreamReader is = null;
         boolean locked = false;
         File hosts = new File(c.getFilesDir(), "hosts.txt");
+        boolean hostsFile = false;
+        long hostsModified = 0;
+        HostsBlocklistLogic.State hostsState = new HostsBlocklistLogic.State(
+                mapHostsBlocked, last_hosts_modified, message -> Log.i(TAG, message));
 
         try {
-            if (!hosts.exists() || !hosts.canRead()) {
+            hostsFile = hosts.exists() && hosts.canRead();
+            if (!hostsFile) {
                 if (mapHostsBlocked.size() > 0) {
                     Log.i(TAG, "Hosts file unchanged");
                     return;
                 }
                 is = new InputStreamReader(c.getAssets().open("hosts.txt"));
             } else {
-                boolean changed = (hosts.lastModified() != last_hosts_modified);
-                if (!changed && mapHostsBlocked.size() > 0) {
+                hostsModified = hosts.lastModified();
+                if (!hostsState.shouldReload(hostsModified)) {
                     Log.i(TAG, "Hosts file unchanged");
                     return;
                 }
-                last_hosts_modified = hosts.lastModified();
                 is = new FileReader(hosts);
             }
 
             lock.writeLock().lock();
             locked = true;
-            mapHostsBlocked.clear();
 
-            int count = 0;
             br = new BufferedReader(is);
-            String line;
-            while ((line = br.readLine()) != null) {
-                int hash = line.indexOf('#');
-                if (hash >= 0)
-                    line = line.substring(0, hash);
-                line = line.trim();
-                if (line.length() > 0) {
-                    String[] words = line.split("\\s+");
-                    if (words.length == 2) {
-                        count++;
-                        // Keyed lowercase to match TrackerList.findTracker(),
-                        // which normalises qnames before the hosts lookup.
-                        mapHostsBlocked.put(words[1].toLowerCase(Locale.ROOT), true);
-                    } else
-                        Log.i(TAG, "Invalid hosts file line: " + line);
-                }
-            }
-            mapHostsBlocked.put("test.netguard.me", true);
-            Log.i(TAG, count + " hosts read");
+            if (hostsFile) {
+                hostsState.load(br, hostsModified);
+                last_hosts_modified = hostsState.getLastModified();
+            } else
+                hostsState.parse(br);
         } catch (IOException ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         } finally {
