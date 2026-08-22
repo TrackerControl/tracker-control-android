@@ -649,6 +649,11 @@ jboolean handle_tcp(const struct arguments *args,
     const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
     const struct tcphdr *tcphdr = (struct tcphdr *) payload;
     const uint8_t tcpoptlen = (uint8_t) ((tcphdr->doff - 5) * 4);
+    if (tcphdr->doff < 5 ||
+        sizeof(struct tcphdr) + tcpoptlen > (size_t) (length - (payload - pkt))) {
+        log_android(ANDROID_LOG_WARN, "TCP invalid data offset");
+        return 0;
+    }
     const uint8_t *tcpoptions = payload + sizeof(struct tcphdr);
     const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
     const uint16_t datalen = (const uint16_t) (length - (data - pkt));
@@ -718,8 +723,20 @@ jboolean handle_tcp(const struct arguments *args,
             uint8_t *options = (uint8_t *) tcpoptions;
             while (optlen > 0) {
                 uint8_t kind = *options;
-                uint8_t len = *(options + 1);
                 if (kind == 0) // End of options list
+                    break;
+
+                if (kind == 1) {
+                    optlen--;
+                    options++;
+                    continue;
+                }
+
+                if (optlen < 2)
+                    break;
+
+                uint8_t len = *(options + 1);
+                if (len < 2 || len > optlen)
                     break;
 
                 if (kind == 2 && len == 4)
@@ -728,13 +745,8 @@ jboolean handle_tcp(const struct arguments *args,
                 else if (kind == 3 && len == 3)
                     ws = *(options + 2);
 
-                if (kind == 1) {
-                    optlen--;
-                    options++;
-                } else {
-                    optlen -= len;
-                    options += len;
-                }
+                optlen -= len;
+                options += len;
             }
 
             // In tethering compatibility mode, clamp the MSS we use for

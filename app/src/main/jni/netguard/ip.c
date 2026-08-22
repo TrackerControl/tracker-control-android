@@ -338,6 +338,11 @@ void handle_ip(const struct arguments *args,
         uint8_t ipoptlen = (uint8_t) ((ip4hdr->ihl - 5) * 4);
         payload = (uint8_t *) (pkt + sizeof(struct iphdr) + ipoptlen);
 
+        if (ip4hdr->ihl < 5 || sizeof(struct iphdr) + ipoptlen > length) {
+            log_android(ANDROID_LOG_WARN, "IP4 invalid header length");
+            return;
+        }
+
         if (ntohs(ip4hdr->tot_len) != length) {
             log_android(ANDROID_LOG_ERROR, "Invalid length %u header length %u",
                         length, ntohs(ip4hdr->tot_len));
@@ -563,6 +568,11 @@ void handle_ip(const struct arguments *args,
             const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
             const struct tcphdr *tcphdr = (struct tcphdr *) payload;
             const uint8_t tcpoptlen = (uint8_t) ((tcphdr->doff - 5) * 4);
+            if (tcphdr->doff < 5 ||
+                sizeof(struct tcphdr) + tcpoptlen > (size_t) (length - (payload - pkt))) {
+                log_android(ANDROID_LOG_WARN, "TCP invalid data offset");
+                return;
+            }
             const uint8_t *tcpoptions = payload + sizeof(struct tcphdr);
             const uint8_t *data = payload + sizeof(struct tcphdr) + tcpoptlen;
             const uint16_t datalen = (const uint16_t) (length - (data - pkt));
