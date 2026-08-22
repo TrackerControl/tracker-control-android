@@ -21,6 +21,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class TrackerBlocklistTest {
     private static final int UID = 1001;
 
@@ -201,5 +205,46 @@ public class TrackerBlocklistTest {
         blocklist.block(UID, tracker.category);
         blocklist.block(UID, tracker);
         assertTrue(blocklist.blockedTracker(UID, tracker));
+    }
+
+    @Test
+    public void concurrentReadersAndWritersDoNotThrow() throws Exception {
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        int uidCount = 8;
+        for (int uid = 0; uid < uidCount; uid++)
+            blocklist.ensureDefaults(uid, false);
+
+        final int iterations = 1000;
+        List<Throwable> errors = Collections.synchronizedList(new ArrayList<>());
+
+        Runnable writer = () -> {
+            try {
+                for (int i = 0; i < iterations; i++) {
+                    blocklist.applyStrictModeToAll(i % 2 == 0);
+                    blocklist.unblock(0, "Advertising | Writer");
+                    blocklist.block(0, "Advertising | Writer");
+                }
+            } catch (Throwable t) {
+                errors.add(t);
+            }
+        };
+        Runnable reader = () -> {
+            try {
+                for (int i = 0; i < iterations; i++)
+                    for (int uid = 0; uid < uidCount; uid++)
+                        blocklist.blocked(uid, "Content");
+            } catch (Throwable t) {
+                errors.add(t);
+            }
+        };
+
+        Thread[] threads = {new Thread(writer), new Thread(writer),
+                new Thread(reader), new Thread(reader)};
+        for (Thread thread : threads)
+            thread.start();
+        for (Thread thread : threads)
+            thread.join(30000);
+
+        assertTrue(errors.toString(), errors.isEmpty());
     }
 }

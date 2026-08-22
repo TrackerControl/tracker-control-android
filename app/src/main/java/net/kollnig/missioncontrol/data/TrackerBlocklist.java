@@ -58,7 +58,8 @@ public class TrackerBlocklist {
      * @return The current instance of the TrackerBlocklist, if none, a new instance
      *         is created.
      */
-    public static TrackerBlocklist getInstance(Context c) {
+    // Called from both native packet threads and UI threads.
+    public static synchronized TrackerBlocklist getInstance(Context c) {
         if (instance == null)
             instance = new TrackerBlocklist(c);
 
@@ -85,7 +86,7 @@ public class TrackerBlocklist {
      *
      * @param c Context
      */
-    public void loadSettings(Context c) {
+    public synchronized void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
         PackageUidResolver resolver = new PackageUidResolver() {
@@ -226,14 +227,14 @@ public class TrackerBlocklist {
      * @param uid Uid of the app
      * @return Information about what specific trackers are blocked
      */
-    public Set<String> getSubset(int uid) {
+    public synchronized Set<String> getSubset(int uid) {
         return blockmap.get(uid);
     }
 
     /**
      * Completely clear blocklist.
      */
-    public void clear() {
+    public synchronized void clear() {
         blockmap.clear();
     }
 
@@ -242,7 +243,7 @@ public class TrackerBlocklist {
      *
      * @param uid Uid of app
      */
-    public void clear(int uid) {
+    public synchronized void clear(int uid) {
         blockmap.remove(uid);
     }
 
@@ -303,7 +304,7 @@ public class TrackerBlocklist {
      * @param key Key of the tracker
      * @return Whether access to this tracker is blocked
      */
-    public boolean blocked(int uid, String key) {
+    public synchronized boolean blocked(int uid, String key) {
         Set<String> trackers = this.getSubset(uid);
         if (trackers == null) {
             return true;
@@ -319,7 +320,7 @@ public class TrackerBlocklist {
      * @param t   Tracker
      * @return Whether access to this tracker is blocked
      */
-    public boolean blockedTracker(int uid, Tracker t) {
+    public synchronized boolean blockedTracker(int uid, Tracker t) {
         return blocked(uid, t.category)
                 && blocked(uid, getBlockingKey(t));
     }
