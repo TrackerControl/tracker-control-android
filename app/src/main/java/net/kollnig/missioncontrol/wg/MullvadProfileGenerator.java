@@ -81,7 +81,8 @@ public class MullvadProfileGenerator {
         }
     }
 
-    private static class Relay {
+    // Package-private so tests can supply relay data without making HTTP calls.
+    static class Relay {
         String hostname;
         String countryCode;
         String countryName;
@@ -125,19 +126,18 @@ public class MullvadProfileGenerator {
             throw new IllegalArgumentException("Mullvad account number is required");
 
         WgConfig reusable = parseReusableConfig(reusableConfig);
+        Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         String privateKey;
         JSONObject device;
         if (reusable == null) {
-            privateKey = Wgbridge.generatePrivateKey();
-            String publicKey = Wgbridge.publicKey(privateKey);
+            privateKey = newPrivateKey();
+            String publicKey = derivePublicKey(privateKey);
             String token = fetchWebToken(account);
             device = createDevice(token, publicKey);
         } else {
             privateKey = reusable.getPrivateKey();
             device = deviceFromConfig(reusable);
         }
-        Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
-
         String config = buildConfig(privateKey, device, relay);
         return new GeneratedProfile("Mullvad - " + relay.countryName, config, account,
                 relay.countryCode, relay.countryName, relay.hostname, device.optString("id", ""));
@@ -209,7 +209,16 @@ public class MullvadProfileGenerator {
         return device;
     }
 
-    private String fetchWebToken(String accountNumber) throws Exception {
+    // Package-private seams keep generator tests independent of the native library and HTTP.
+    String newPrivateKey() {
+        return Wgbridge.generatePrivateKey();
+    }
+
+    String derivePublicKey(String privateKey) {
+        return Wgbridge.publicKey(privateKey);
+    }
+
+    String fetchWebToken(String accountNumber) throws Exception {
         JSONObject body = new JSONObject();
         body.put("account_number", accountNumber);
 
@@ -220,7 +229,7 @@ public class MullvadProfileGenerator {
         return token;
     }
 
-    private JSONObject createDevice(String token, String publicKey) throws Exception {
+    JSONObject createDevice(String token, String publicKey) throws Exception {
         JSONObject body = new JSONObject();
         body.put("pubkey", publicKey);
         body.put("hijack_dns", false);
@@ -248,7 +257,7 @@ public class MullvadProfileGenerator {
         }
     }
 
-    private List<Relay> fetchRelays() throws Exception {
+    List<Relay> fetchRelays() throws Exception {
         Request request = new Request.Builder()
                 .url(API + "/www/relays/all")
                 .build();
@@ -351,10 +360,9 @@ public class MullvadProfileGenerator {
         if (!TextUtils.isEmpty(deviceName))
             sb.append("# Mullvad device = ").append(deviceName).append('\n');
         sb.append("PrivateKey = ").append(privateKey).append('\n');
-        sb.append("Address = ").append(ipv4);
-        if (!TextUtils.isEmpty(ipv6))
-            sb.append(", ").append(ipv6);
-        sb.append('\n');
+        String address = TextUtils.isEmpty(ipv4) ? ipv6 :
+                TextUtils.isEmpty(ipv6) ? ipv4 : ipv4 + ", " + ipv6;
+        sb.append("Address = ").append(address).append('\n');
         sb.append("DNS = ").append(DEFAULT_DNS).append("\n\n");
         sb.append("[Peer]\n");
         sb.append("# Mullvad relay = ").append(relay.hostname).append('\n');

@@ -347,16 +347,9 @@ public class VpnKeyRotationManager {
                                           String newPublic, String mullvadDeviceId)
             throws Exception {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit()
-                .putString(key(provider, "previous_privkey"), previousPrivate)
-                .putString(key(provider, "previous_address"),
-                        currentAddress(manager.getProviderConfig(provider, account)))
-                .apply();
-
         long before = dependencies.runtime.now();
         boolean activeChanged = manager.rewriteProviderInterface(provider, account, newPrivate, newAddress);
         if (!activeChanged || !prefs.getBoolean("wg_enabled", false)) {
-            clearPrevious(prefs, provider);
             clearPending(prefs, provider);
             return;
         }
@@ -365,7 +358,6 @@ public class VpnKeyRotationManager {
         dependencies.runtime.sleep(HANDSHAKE_TIMEOUT_MS);
         Long latest = dependencies.runtime.latestHandshakeMillisOrNull();
         if (latest != null && latest >= before) {
-            clearPrevious(prefs, provider);
             clearPending(prefs, provider);
             return;
         }
@@ -379,7 +371,6 @@ public class VpnKeyRotationManager {
                                          String account, String previousPrivate,
                                          String previousPublic, String connectedPublic,
                                          String mullvadDeviceId) throws Exception {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (PROVIDER_MULLVAD.equals(provider)) {
             dependencies.mullvad.rotateDevicePubkey(account, mullvadDeviceId, previousPublic);
             manager.rewriteProviderInterface(provider, account, previousPrivate, null);
@@ -393,17 +384,7 @@ public class VpnKeyRotationManager {
                     addressWithCidr(rollback.address));
         }
         dependencies.runtime.reload("vpn provider key rotation rollback", context);
-        clearPrevious(prefs, provider);
         throw new RollbackException(label(provider) + " rolled back: missing handshake");
-    }
-
-    private static String currentAddress(String config) {
-        try {
-            WgConfig parsed = WgConfigParser.INSTANCE.parse(config);
-            return TextUtils.join(", ", parsed.getAddress());
-        } catch (Throwable ignored) {
-            return "";
-        }
     }
 
     private static void storePending(SharedPreferences prefs, String provider,
@@ -426,18 +407,11 @@ public class VpnKeyRotationManager {
                 .apply();
     }
 
-    private static void clearPrevious(SharedPreferences prefs, String provider) {
-        prefs.edit()
-                .remove(key(provider, "previous_privkey"))
-                .remove(key(provider, "previous_address"))
-                .apply();
-    }
-
     private static String addressWithCidr(String address) {
         String trimmed = address == null ? "" : address.trim();
         if (TextUtils.isEmpty(trimmed) || trimmed.contains("/"))
             return trimmed;
-        return trimmed + "/32";
+        return trimmed + (trimmed.contains(":") ? "/128" : "/32");
     }
 
     private static String key(String provider, String suffix) {

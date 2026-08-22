@@ -199,6 +199,19 @@ public class ApplicationEx extends Application {
     }
 
     static void migratePreferences(SharedPreferences prefs) {
+        if (prefs.contains("mullvad_previous_privkey") ||
+                prefs.contains("mullvad_previous_address") ||
+                prefs.contains("ivpn_previous_privkey") ||
+                prefs.contains("ivpn_previous_address")) {
+            prefs.edit()
+                    .remove("mullvad_previous_privkey")
+                    .remove("mullvad_previous_address")
+                    .remove("ivpn_previous_privkey")
+                    .remove("ivpn_previous_address")
+                    .apply();
+            Log.i(TAG, "Removed obsolete WireGuard previous-key preferences");
+        }
+
         if (prefs.contains("onboarding_complete") && !prefs.contains("onboarding_version")) {
             boolean completed = prefs.getBoolean("onboarding_complete", false);
             prefs.edit()
