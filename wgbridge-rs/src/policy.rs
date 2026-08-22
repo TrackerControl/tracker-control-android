@@ -121,7 +121,7 @@ pub extern "C" fn tc_policy_abi_version() -> core::ffi::c_int {
 /// # Safety
 /// If `uids` is non-null, it must point to at least `count` valid `i32`s.
 #[no_mangle]
-pub extern "C" fn tc_policy_set_route_uids(
+pub unsafe extern "C" fn tc_policy_set_route_uids(
     uids: *const i32,
     count: core::ffi::c_int,
     default_tunnel: core::ffi::c_int,
@@ -362,7 +362,7 @@ mod tests {
         // against an equivalent RouteTable built directly.
         let uids = [3i32, 1, 2, 1];
         let expected = RouteTable::new(&uids, false);
-        tc_policy_set_route_uids(uids.as_ptr(), uids.len() as core::ffi::c_int, 0);
+        unsafe { tc_policy_set_route_uids(uids.as_ptr(), uids.len() as core::ffi::c_int, 0) };
         for uid in [-5, 0, 1, 2, 3, 4, i32::MAX, i32::MIN] {
             assert_eq!(
                 tc_policy_is_tunnel_uid(uid) != 0,
@@ -371,21 +371,21 @@ mod tests {
         }
 
         // count = 0 with a real pointer yields an empty set.
-        tc_policy_set_route_uids(uids.as_ptr(), 0, 1);
+        unsafe { tc_policy_set_route_uids(uids.as_ptr(), 0, 1) };
         assert_eq!(tc_policy_is_tunnel_uid(999) != 0, true);
         assert_eq!(tc_policy_is_tunnel_uid(1) != 0, true);
 
         // count < 0 yields an empty set too.
-        tc_policy_set_route_uids(uids.as_ptr(), -1, 0);
+        unsafe { tc_policy_set_route_uids(uids.as_ptr(), -1, 0) };
         assert_eq!(tc_policy_is_tunnel_uid(1) != 0, false);
 
         // Null pointer with count > 0 must not be dereferenced, and also
         // yields an empty set.
-        tc_policy_set_route_uids(std::ptr::null(), 5, 1);
+        unsafe { tc_policy_set_route_uids(std::ptr::null(), 5, 1) };
         assert_eq!(tc_policy_is_tunnel_uid(123) != 0, true);
 
         // Re-apply overrides, then clear and confirm tunnel-everything.
-        tc_policy_set_route_uids(uids.as_ptr(), uids.len() as core::ffi::c_int, 1);
+        unsafe { tc_policy_set_route_uids(uids.as_ptr(), uids.len() as core::ffi::c_int, 1) };
         assert_eq!(tc_policy_is_tunnel_uid(1) != 0, false);
         tc_policy_clear_route_uids();
         assert_eq!(tc_policy_is_tunnel_uid(1) != 0, true);
