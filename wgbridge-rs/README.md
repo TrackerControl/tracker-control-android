@@ -183,8 +183,9 @@ hostnames, and re-resolves them on network changes via `updateEndpoint`).
 
 ## Potential improvements
 
-- **Split DNS-over-TCP rewriting**: inbound TCP DNS is recorded with bounded
-  reassembly, but response rewriting is limited to complete frames that begin
+- **Split DNS-over-TCP rewriting**: inbound TCP DNS is recorded only when the
+  inspector saw the connection's SYN (bounded reassembly), but response
+  rewriting is limited to complete frames that begin
   and end in one sequence-aligned segment. Rewriting a frame split across
   packets needs buffering plus TCP sequence translation; continuation segments
   are deliberately forwarded unchanged until that exists.

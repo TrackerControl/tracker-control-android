@@ -182,18 +182,20 @@ impl DnsInspector {
             flow.buffer.extend_from_slice(payload);
             flow.next_seq = flow.next_seq.wrapping_add(payload.len() as u32);
 
-            while flow.buffer.len() >= 2 {
-                let msg_len = u16::from_be_bytes([flow.buffer[0], flow.buffer[1]]) as usize;
-                if msg_len == 0 {
-                    flow.buffer.drain(..2);
-                    continue;
+            if flow.framing_known {
+                while flow.buffer.len() >= 2 {
+                    let msg_len = u16::from_be_bytes([flow.buffer[0], flow.buffer[1]]) as usize;
+                    if msg_len == 0 {
+                        flow.buffer.drain(..2);
+                        continue;
+                    }
+                    if flow.buffer.len() < msg_len + 2 {
+                        break;
+                    }
+                    let msg = flow.buffer[2..2 + msg_len].to_vec();
+                    flow.buffer.drain(..2 + msg_len);
+                    record_dns_answers(&msg, &SinkPolicy(recorder));
                 }
-                if flow.buffer.len() < msg_len + 2 {
-                    break;
-                }
-                let msg = flow.buffer[2..2 + msg_len].to_vec();
-                flow.buffer.drain(..2 + msg_len);
-                record_dns_answers(&msg, &SinkPolicy(recorder));
             }
         }
 
@@ -904,7 +906,10 @@ mod tests {
         assert_eq!(payload, msg.as_slice());
 
         let sink = CollectingSink(Mutex::new(Vec::new()));
-        inspect_dns_response(&packet, &sink);
+        let mut inspector = DnsInspector::default();
+        let syn = ipv4_tcp_segment(&[], 999, 0x12);
+        inspector.inspect(&syn, &sink);
+        inspector.inspect(&packet, &sink);
         let answers = sink.0.lock().unwrap();
         assert_eq!(answers.len(), 1);
         assert_eq!(answers[0].0, "tracker.example");
@@ -923,7 +928,9 @@ mod tests {
         let second = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
         let sink = CollectingSink(Mutex::new(Vec::new()));
         let mut inspector = DnsInspector::default();
+        let syn = ipv4_tcp_segment(&[], 999, 0x12);
 
+        inspector.inspect(&syn, &sink);
         inspector.inspect(&first, &sink);
         assert!(sink.0.lock().unwrap().is_empty());
         inspector.inspect(&second, &sink);
@@ -944,7 +951,9 @@ mod tests {
         let packet = ipv4_tcp_segment(&framed, 1000, 0x18);
         let sink = CollectingSink(Mutex::new(Vec::new()));
         let mut inspector = DnsInspector::default();
+        let syn = ipv4_tcp_segment(&[], 999, 0x12);
 
+        inspector.inspect(&syn, &sink);
         inspector.inspect(&packet, &sink);
         inspector.inspect(&packet, &sink);
 
@@ -966,7 +975,9 @@ mod tests {
         let second = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
         let sink = CollectingSink(Mutex::new(Vec::new()));
         let mut inspector = DnsInspector::default();
+        let syn = ipv4_tcp_segment(&[], 999, 0x12);
 
+        inspector.inspect(&syn, &sink);
         inspector.inspect(&first, &sink);
         assert!(sink.0.lock().unwrap().is_empty());
         inspector.inspect(&old_retransmit, &sink);
@@ -977,6 +988,21 @@ mod tests {
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].0, "tracker.example");
         assert_eq!(records[0].2, "203.0.113.7");
+    }
+
+    #[test]
+    fn stateful_inspector_does_not_record_without_known_tcp_framing() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let packet = ipv4_tcp_segment(&tcp_dns_framed(&msg), 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&packet, &sink);
+
+        assert!(sink.0.lock().unwrap().is_empty());
     }
 
     #[test]
