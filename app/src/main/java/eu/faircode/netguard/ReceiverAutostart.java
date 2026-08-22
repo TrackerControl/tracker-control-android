@@ -139,6 +139,9 @@ public class ReceiverAutostart extends BroadcastReceiver {
                         editor.putBoolean("show_user", true);
                 }
 
+                // Persist version only once initialized: a fresh install must not
+                // look like an existing install to blocking-mode migration
+                editor.putInt("version", newVersion);
             } else {
                 Log.i(TAG, "Initializing sdk=" + Build.VERSION.SDK_INT);
             }
@@ -164,7 +167,6 @@ public class ReceiverAutostart extends BroadcastReceiver {
             if (!Util.isDebuggable(context))
                 editor.remove("loglevel");
 
-            editor.putInt("version", newVersion);
             editor.apply();
         }
     }

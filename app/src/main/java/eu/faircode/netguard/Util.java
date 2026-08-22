@@ -83,6 +83,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -258,7 +259,7 @@ public class Util {
     }
 
     public static boolean isEU(String country) {
-        return (country != null && listEU.contains(country.toUpperCase()));
+        return (country != null && listEU.contains(country.toUpperCase(Locale.ROOT)));
     }
 
     public static String getNetworkGeneration(int networkType) {
