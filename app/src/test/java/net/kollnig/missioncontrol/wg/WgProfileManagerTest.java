@@ -163,7 +163,8 @@ public class WgProfileManagerTest {
         manager.saveMullvadAccount("another");
         assertEquals("", manager.getMullvadDeviceId());
 
-        manager.saveIvpnSession(new WgProfileManager.IvpnSession("token", "private", "public", "10.0.0.1/32"));
+        manager.saveIvpnSession("i-account",
+                new WgProfileManager.IvpnSession("token", "private", "public", "10.0.0.1/32"));
         assertNotNull(manager.getIvpnSession("i-account"));
         manager.saveIvpnAccount("different");
         assertNull(manager.getIvpnSession("i-account"));

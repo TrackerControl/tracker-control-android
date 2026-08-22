@@ -33,6 +33,12 @@ public class WgProfileManager {
     private final Context context;
     private final SharedPreferences prefs;
 
+    // Static because instances are created freely process-wide (activities,
+    // key-rotation executor, relay failover) while the backing preferences are
+    // global: every read-modify-write cycle must share one monitor, or two
+    // interleaved writers lose updates and stale JSON resurrects.
+    private static final Object STORE_LOCK = new Object();
+
     public WgProfileManager(Context context) {
         this.context = context.getApplicationContext();
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -99,38 +105,40 @@ public class WgProfileManager {
     }
 
     public void migrateIfNeeded() {
-        JSONArray profiles = readProfilesJson();
-        String active = prefs.getString(PREF_WG_PROFILE, "");
-        SharedPreferences.Editor editor = null;
+        synchronized (STORE_LOCK) {
+            JSONArray profiles = readProfilesJson();
+            String active = prefs.getString(PREF_WG_PROFILE, "");
+            SharedPreferences.Editor editor = null;
 
-        if (profiles.length() == 0) {
-            String config = prefs.getString(PREF_WG_CONFIG, "");
-            if (!TextUtils.isEmpty(config)) {
-                try {
-                    String id = newId();
-                    JSONObject profile = toJson(new Profile(
-                            id,
-                            context.getString(R.string.msg_wg_profile_default_name),
-                            config));
-                    profiles.put(profile);
+            if (profiles.length() == 0) {
+                String config = prefs.getString(PREF_WG_CONFIG, "");
+                if (!TextUtils.isEmpty(config)) {
+                    try {
+                        String id = newId();
+                        JSONObject profile = toJson(new Profile(
+                                id,
+                                context.getString(R.string.msg_wg_profile_default_name),
+                                config));
+                        profiles.put(profile);
+                        editor = prefs.edit();
+                        writeProfilesJson(editor, profiles);
+                        editor.putString(PREF_WG_PROFILE, id);
+                    } catch (JSONException ex) {
+                        Log.e(TAG, "Create default WireGuard profile failed: " + ex.getMessage());
+                    }
+                }
+            } else if (findJsonProfile(profiles, active) == null) {
+                JSONObject first = profiles.optJSONObject(0);
+                if (first != null) {
                     editor = prefs.edit();
-                    writeProfilesJson(editor, profiles);
-                    editor.putString(PREF_WG_PROFILE, id);
-                } catch (JSONException ex) {
-                    Log.e(TAG, "Create default WireGuard profile failed: " + ex.getMessage());
+                    editor.putString(PREF_WG_PROFILE, first.optString("id"));
+                    editor.putString(PREF_WG_CONFIG, first.optString("config", ""));
                 }
             }
-        } else if (findJsonProfile(profiles, active) == null) {
-            JSONObject first = profiles.optJSONObject(0);
-            if (first != null) {
-                editor = prefs.edit();
-                editor.putString(PREF_WG_PROFILE, first.optString("id"));
-                editor.putString(PREF_WG_CONFIG, first.optString("config", ""));
-            }
-        }
 
-        if (editor != null)
-            editor.apply();
+            if (editor != null)
+                editor.apply();
+        }
     }
 
     public List<Profile> getProfiles() {
@@ -158,14 +166,16 @@ public class WgProfileManager {
     }
 
     public void setActiveProfile(String id) {
-        Profile profile = getProfile(id);
-        if (profile == null)
-            return;
+        synchronized (STORE_LOCK) {
+            Profile profile = getProfile(id);
+            if (profile == null)
+                return;
 
-        prefs.edit()
-                .putString(PREF_WG_PROFILE, profile.id)
-                .putString(PREF_WG_CONFIG, profile.config)
-                .apply();
+            prefs.edit()
+                    .putString(PREF_WG_PROFILE, profile.id)
+                    .putString(PREF_WG_CONFIG, profile.config)
+                    .apply();
+        }
     }
 
     public void saveProfile(String id, String name, String config) throws JSONException {
@@ -178,58 +188,64 @@ public class WgProfileManager {
 
     public void saveProfile(String id, String name, String config, String provider, String account,
                             String countryCode, String countryName) throws JSONException {
-        JSONArray profiles = readProfilesJson();
-        JSONObject profile = TextUtils.isEmpty(id) ? null : findJsonProfile(profiles, id);
-        if (profile == null) {
-            profile = new JSONObject();
-            profile.put("id", newId());
-            profiles.put(profile);
+        synchronized (STORE_LOCK) {
+            JSONArray profiles = readProfilesJson();
+            JSONObject profile = TextUtils.isEmpty(id) ? null : findJsonProfile(profiles, id);
+            if (profile == null) {
+                profile = new JSONObject();
+                profile.put("id", newId());
+                profiles.put(profile);
+            }
+
+            profile.put("name", name);
+            profile.put("config", config);
+            profile.put("provider", provider == null ? "" : provider);
+            profile.put("account", account == null ? "" : account);
+            profile.put("countryCode", normalizeCountry(countryCode));
+            profile.put("countryName", countryName == null ? "" : countryName);
+
+            SharedPreferences.Editor editor = prefs.edit();
+            writeProfilesJson(editor, profiles);
+            editor.putString(PREF_WG_PROFILE, profile.optString("id"));
+            editor.putString(PREF_WG_CONFIG, config);
+            editor.apply();
         }
-
-        profile.put("name", name);
-        profile.put("config", config);
-        profile.put("provider", provider == null ? "" : provider);
-        profile.put("account", account == null ? "" : account);
-        profile.put("countryCode", normalizeCountry(countryCode));
-        profile.put("countryName", countryName == null ? "" : countryName);
-
-        SharedPreferences.Editor editor = prefs.edit();
-        writeProfilesJson(editor, profiles);
-        editor.putString(PREF_WG_PROFILE, profile.optString("id"));
-        editor.putString(PREF_WG_CONFIG, config);
-        editor.apply();
     }
 
     public void deleteProfile(String id) {
-        JSONArray profiles = readProfilesJson();
-        String active = getActiveProfileId();
-        JSONArray kept = new JSONArray();
-        for (int i = 0; i < profiles.length(); i++) {
-            JSONObject profile = profiles.optJSONObject(i);
-            if (profile != null && !id.equals(profile.optString("id")))
-                kept.put(profile);
-        }
-
-        SharedPreferences.Editor editor = prefs.edit();
-        writeProfilesJson(editor, kept);
-        if (kept.length() == 0) {
-            editor.remove(PREF_WG_PROFILE);
-            editor.remove(PREF_WG_CONFIG);
-        } else if (id.equals(active) || findJsonProfile(kept, active) == null) {
-            JSONObject next = kept.optJSONObject(0);
-            if (next != null) {
-                editor.putString(PREF_WG_PROFILE, next.optString("id"));
-                editor.putString(PREF_WG_CONFIG, next.optString("config", ""));
+        synchronized (STORE_LOCK) {
+            JSONArray profiles = readProfilesJson();
+            String active = getActiveProfileId();
+            JSONArray kept = new JSONArray();
+            for (int i = 0; i < profiles.length(); i++) {
+                JSONObject profile = profiles.optJSONObject(i);
+                if (profile != null && !id.equals(profile.optString("id")))
+                    kept.put(profile);
             }
+
+            SharedPreferences.Editor editor = prefs.edit();
+            writeProfilesJson(editor, kept);
+            if (kept.length() == 0) {
+                editor.remove(PREF_WG_PROFILE);
+                editor.remove(PREF_WG_CONFIG);
+            } else if (id.equals(active) || findJsonProfile(kept, active) == null) {
+                JSONObject next = kept.optJSONObject(0);
+                if (next != null) {
+                    editor.putString(PREF_WG_PROFILE, next.optString("id"));
+                    editor.putString(PREF_WG_CONFIG, next.optString("config", ""));
+                }
+            }
+            editor.apply();
         }
-        editor.apply();
     }
 
     public void updateActiveProfileConfig(String config) {
-        String active = getActiveProfileId();
-        if (TextUtils.isEmpty(active))
-            return;
-        updateProfileConfig(active, config);
+        synchronized (STORE_LOCK) {
+            String active = getActiveProfileId();
+            if (TextUtils.isEmpty(active))
+                return;
+            updateProfileConfig(active, config);
+        }
     }
 
     /**
@@ -241,27 +257,31 @@ public class WgProfileManager {
      * Returns whether the write happened.
      */
     public boolean updateProfileConfigIfActive(String profileId, String config) {
-        if (TextUtils.isEmpty(profileId) || !profileId.equals(getActiveProfileId()))
-            return false;
-        updateProfileConfig(profileId, config);
-        return true;
+        synchronized (STORE_LOCK) {
+            if (TextUtils.isEmpty(profileId) || !profileId.equals(getActiveProfileId()))
+                return false;
+            updateProfileConfig(profileId, config);
+            return true;
+        }
     }
 
     private void updateProfileConfig(String profileId, String config) {
-        JSONArray profiles = readProfilesJson();
-        JSONObject profile = findJsonProfile(profiles, profileId);
-        if (profile == null)
-            return;
+        synchronized (STORE_LOCK) {
+            JSONArray profiles = readProfilesJson();
+            JSONObject profile = findJsonProfile(profiles, profileId);
+            if (profile == null)
+                return;
 
-        try {
-            profile.put("config", config == null ? "" : config);
-            SharedPreferences.Editor editor = prefs.edit();
-            writeProfilesJson(editor, profiles);
-            if (profileId.equals(getActiveProfileId()))
-                editor.putString(PREF_WG_CONFIG, config == null ? "" : config);
-            editor.apply();
-        } catch (JSONException ex) {
-            Log.w(TAG, "Update WireGuard profile failed: " + ex.getMessage());
+            try {
+                profile.put("config", config == null ? "" : config);
+                SharedPreferences.Editor editor = prefs.edit();
+                writeProfilesJson(editor, profiles);
+                if (profileId.equals(getActiveProfileId()))
+                    editor.putString(PREF_WG_CONFIG, config == null ? "" : config);
+                editor.apply();
+            } catch (JSONException ex) {
+                Log.w(TAG, "Update WireGuard profile failed: " + ex.getMessage());
+            }
         }
     }
 
@@ -293,112 +313,134 @@ public class WgProfileManager {
     }
 
     public String getLastMullvadAccount() {
-        String saved = prefs.getString(PREF_MULLVAD_ACCOUNT, "");
-        if (!TextUtils.isEmpty(saved))
-            return saved;
+        synchronized (STORE_LOCK) {
+            String saved = prefs.getString(PREF_MULLVAD_ACCOUNT, "");
+            if (!TextUtils.isEmpty(saved))
+                return saved;
 
-        Profile active = getActiveProfile();
-        if (isMullvadProfileForAccount(active, null)) {
-            saveMullvadAccount(active.account);
-            return active.account;
-        }
-
-        for (Profile profile : getProfiles())
-            if (isMullvadProfileForAccount(profile, null)) {
-                saveMullvadAccount(profile.account);
-                return profile.account;
+            Profile active = getActiveProfile();
+            if (isMullvadProfileForAccount(active, null)) {
+                saveMullvadAccount(active.account);
+                return active.account;
             }
-        return "";
+
+            for (Profile profile : getProfiles())
+                if (isMullvadProfileForAccount(profile, null)) {
+                    saveMullvadAccount(profile.account);
+                    return profile.account;
+                }
+            return "";
+        }
     }
 
     public void saveMullvadAccount(String accountNumber) {
-        String next = accountNumber == null ? "" : accountNumber.trim();
-        String current = prefs.getString(PREF_MULLVAD_ACCOUNT, "");
-        SharedPreferences.Editor editor = prefs.edit()
-                .putString(PREF_MULLVAD_ACCOUNT, next);
-        if (!next.equals(current))
-            editor.remove(PREF_MULLVAD_DEVICE_ID);
-        editor.apply();
+        synchronized (STORE_LOCK) {
+            String next = accountNumber == null ? "" : accountNumber.trim();
+            String current = prefs.getString(PREF_MULLVAD_ACCOUNT, "");
+            SharedPreferences.Editor editor = prefs.edit()
+                    .putString(PREF_MULLVAD_ACCOUNT, next);
+            if (!next.equals(current))
+                editor.remove(PREF_MULLVAD_DEVICE_ID);
+            editor.apply();
+        }
     }
 
     public String getMullvadDeviceId() {
-        return prefs.getString(PREF_MULLVAD_DEVICE_ID, "");
+        synchronized (STORE_LOCK) {
+            return prefs.getString(PREF_MULLVAD_DEVICE_ID, "");
+        }
     }
 
     public void saveMullvadDeviceId(String deviceId) {
         if (TextUtils.isEmpty(deviceId))
             return;
-        prefs.edit()
-                .putString(PREF_MULLVAD_DEVICE_ID, deviceId.trim())
-                .apply();
+        synchronized (STORE_LOCK) {
+            prefs.edit()
+                    .putString(PREF_MULLVAD_DEVICE_ID, deviceId.trim())
+                    .apply();
+        }
     }
 
     public String getLastIvpnAccount() {
-        String saved = prefs.getString(PREF_IVPN_ACCOUNT, "");
-        if (!TextUtils.isEmpty(saved))
-            return saved;
+        synchronized (STORE_LOCK) {
+            String saved = prefs.getString(PREF_IVPN_ACCOUNT, "");
+            if (!TextUtils.isEmpty(saved))
+                return saved;
 
-        Profile active = getActiveProfile();
-        if (isProviderProfileForAccount(active, "ivpn", null)) {
-            saveIvpnAccount(active.account);
-            return active.account;
-        }
-
-        for (Profile profile : getProfiles())
-            if (isProviderProfileForAccount(profile, "ivpn", null)) {
-                saveIvpnAccount(profile.account);
-                return profile.account;
+            Profile active = getActiveProfile();
+            if (isProviderProfileForAccount(active, "ivpn", null)) {
+                saveIvpnAccount(active.account);
+                return active.account;
             }
-        return "";
+
+            for (Profile profile : getProfiles())
+                if (isProviderProfileForAccount(profile, "ivpn", null)) {
+                    saveIvpnAccount(profile.account);
+                    return profile.account;
+                }
+            return "";
+        }
     }
 
     public void saveIvpnAccount(String accountNumber) {
-        String next = accountNumber == null ? "" : accountNumber.trim();
-        String current = prefs.getString(PREF_IVPN_ACCOUNT, "");
-        SharedPreferences.Editor editor = prefs.edit()
-                .putString(PREF_IVPN_ACCOUNT, next);
-        if (!next.equals(current)) {
-            editor.remove(PREF_IVPN_SESSION_TOKEN);
-            editor.remove(PREF_IVPN_PRIVATE_KEY);
-            editor.remove(PREF_IVPN_PUBLIC_KEY);
-            editor.remove(PREF_IVPN_ADDRESS);
+        synchronized (STORE_LOCK) {
+            String next = accountNumber == null ? "" : accountNumber.trim();
+            String current = prefs.getString(PREF_IVPN_ACCOUNT, "");
+            SharedPreferences.Editor editor = prefs.edit()
+                    .putString(PREF_IVPN_ACCOUNT, next);
+            if (!next.equals(current)) {
+                editor.remove(PREF_IVPN_SESSION_TOKEN);
+                editor.remove(PREF_IVPN_PRIVATE_KEY);
+                editor.remove(PREF_IVPN_PUBLIC_KEY);
+                editor.remove(PREF_IVPN_ADDRESS);
+            }
+            editor.apply();
         }
-        editor.apply();
     }
 
     public IvpnSession getIvpnSession(String accountNumber) {
-        String account = accountNumber == null ? "" : accountNumber.trim();
-        if (TextUtils.isEmpty(account) || !account.equals(getLastIvpnAccount()))
-            return null;
-        IvpnSession session = new IvpnSession(
-                prefs.getString(PREF_IVPN_SESSION_TOKEN, ""),
-                prefs.getString(PREF_IVPN_PRIVATE_KEY, ""),
-                prefs.getString(PREF_IVPN_PUBLIC_KEY, ""),
-                prefs.getString(PREF_IVPN_ADDRESS, ""));
-        return session.isUsable() ? session : null;
+        synchronized (STORE_LOCK) {
+            String account = accountNumber == null ? "" : accountNumber.trim();
+            if (TextUtils.isEmpty(account) || !account.equals(getLastIvpnAccount()))
+                return null;
+            IvpnSession session = new IvpnSession(
+                    prefs.getString(PREF_IVPN_SESSION_TOKEN, ""),
+                    prefs.getString(PREF_IVPN_PRIVATE_KEY, ""),
+                    prefs.getString(PREF_IVPN_PUBLIC_KEY, ""),
+                    prefs.getString(PREF_IVPN_ADDRESS, ""));
+            return session.isUsable() ? session : null;
+        }
     }
 
-    public void saveIvpnSession(IvpnSession session) {
+    public void saveIvpnSession(String accountNumber, IvpnSession session) {
         if (session == null)
             return;
-        prefs.edit()
-                .putString(PREF_IVPN_SESSION_TOKEN, session.token)
-                .putString(PREF_IVPN_PRIVATE_KEY, session.privateKey)
-                .putString(PREF_IVPN_PUBLIC_KEY, session.publicKey)
-                .putString(PREF_IVPN_ADDRESS, session.address)
-                .apply();
+        String account = accountNumber == null ? "" : accountNumber.trim();
+        synchronized (STORE_LOCK) {
+            prefs.edit()
+                    .putString(PREF_IVPN_SESSION_TOKEN, session.token)
+                    .putString(PREF_IVPN_PRIVATE_KEY, session.privateKey)
+                    .putString(PREF_IVPN_PUBLIC_KEY, session.publicKey)
+                    .putString(PREF_IVPN_ADDRESS, session.address)
+                    // Account last: readers gate the session keys on it
+                    // (getIvpnSession), so it must never lag behind them.
+                    .putString(PREF_IVPN_ACCOUNT, account)
+                    .apply();
+        }
     }
 
     public String getProviderConfig(String provider, String account) {
-        String normalized = account == null ? "" : account.trim();
-        Profile active = getActiveProfile();
-        if (isProviderProfileForAccount(active, provider, normalized))
-            return active.config;
+        synchronized (STORE_LOCK) {
+            String normalized = account == null ? "" : account.trim();
+            Profile active = getActiveProfile();
+            if (isProviderProfileForAccount(active, provider, normalized))
+                return active.config;
 
-        for (Profile profile : getProfiles())
-            if (isProviderProfileForAccount(profile, provider, normalized))
-                return profile.config;
-        return "";
+            for (Profile profile : getProfiles())
+                if (isProviderProfileForAccount(profile, provider, normalized))
+                    return profile.config;
+            return "";
+        }
     }
 
     public boolean hasProviderProfiles(String provider, String account) {
@@ -412,43 +454,45 @@ public class WgProfileManager {
                 TextUtils.isEmpty(privateKey))
             return false;
 
-        JSONArray profiles = readProfilesJson();
-        String active = getActiveProfileId();
-        boolean changed = false;
-        boolean activeChanged = false;
-        String activeConfig = null;
+        synchronized (STORE_LOCK) {
+            JSONArray profiles = readProfilesJson();
+            String active = getActiveProfileId();
+            boolean changed = false;
+            boolean activeChanged = false;
+            String activeConfig = null;
 
-        for (int i = 0; i < profiles.length(); i++) {
-            JSONObject profile = profiles.optJSONObject(i);
-            if (profile == null)
-                continue;
-            if (!provider.equals(profile.optString("provider")) ||
-                    !normalized.equals(profile.optString("account")))
-                continue;
+            for (int i = 0; i < profiles.length(); i++) {
+                JSONObject profile = profiles.optJSONObject(i);
+                if (profile == null)
+                    continue;
+                if (!provider.equals(profile.optString("provider")) ||
+                        !normalized.equals(profile.optString("account")))
+                    continue;
 
-            String config = profile.optString("config", "");
-            String next = replaceInterfaceLine(config, "PrivateKey", privateKey);
-            if (!TextUtils.isEmpty(address))
-                next = replaceInterfaceLine(next, "Address", address);
-            if (!next.equals(config)) {
-                profile.put("config", next);
-                changed = true;
-                if (active.equals(profile.optString("id"))) {
-                    activeChanged = true;
-                    activeConfig = next;
+                String config = profile.optString("config", "");
+                String next = replaceInterfaceLine(config, "PrivateKey", privateKey);
+                if (!TextUtils.isEmpty(address))
+                    next = replaceInterfaceLine(next, "Address", address);
+                if (!next.equals(config)) {
+                    profile.put("config", next);
+                    changed = true;
+                    if (active.equals(profile.optString("id"))) {
+                        activeChanged = true;
+                        activeConfig = next;
+                    }
                 }
             }
+
+            if (!changed)
+                return false;
+
+            SharedPreferences.Editor editor = prefs.edit();
+            writeProfilesJson(editor, profiles);
+            if (activeChanged)
+                editor.putString(PREF_WG_CONFIG, activeConfig == null ? "" : activeConfig);
+            editor.apply();
+            return activeChanged;
         }
-
-        if (!changed)
-            return false;
-
-        SharedPreferences.Editor editor = prefs.edit();
-        writeProfilesJson(editor, profiles);
-        if (activeChanged)
-            editor.putString(PREF_WG_CONFIG, activeConfig == null ? "" : activeConfig);
-        editor.apply();
-        return activeChanged;
     }
 
     public String getReusableMullvadConfig(String accountNumber) {
