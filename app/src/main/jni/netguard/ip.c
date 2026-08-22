@@ -309,6 +309,13 @@ void handle_ip(const struct arguments *args,
         saddr = &ip4hdr->saddr;
         daddr = &ip4hdr->daddr;
 
+        // Deliberate: every IPv4 fragment (IP_MF set, first fragments
+        // included) is dropped on the direct path -- the L4 state machines
+        // have no reassembly, and a non-first fragment has no header they
+        // could parse. This return also fires before the WireGuard hijack
+        // below, so unlike IPv6 fragments, IPv4 ones die even when
+        // WireGuard-routed. Same standing limitation as the IPv6
+        // Fragment/ESP stop further down; see issue #779.
         if (ip4hdr->frag_off & IP_MF) {
             log_android(ANDROID_LOG_ERROR, "IP fragment offset %u",
                         (ip4hdr->frag_off & IP_OFFMASK) * 8);
@@ -350,6 +357,17 @@ void handle_ip(const struct arguments *args,
         size_t payload_off;
         if (!ip6_skip_ext_headers(pkt, length, &protocol, &payload_off))
             log_android(ANDROID_LOG_WARN, "IP6 extension %d not walkable", protocol);
+
+        // A stopped walk leaves protocol at the stopping header type --
+        // Fragment (44) or ESP (50) in practice -- which matches none of
+        // the dispatch branches below. On the direct path such a packet is
+        // therefore dropped even when the destination passes the allow
+        // check: there is no L4 header to parse, no session to attach to,
+        // and no raw-forward path in this userspace stack. WireGuard-routed
+        // flows are unaffected: the WG hijack below forwards them raw
+        // before dispatch. Fragment reassembly was considered and rejected
+        // (memory and battery cost against traffic PMTUD keeps rare); ESP
+        // stays a documented limitation permanently. See issue #779.
 
         saddr = &ip6hdr->ip6_src;
         daddr = &ip6hdr->ip6_dst;
@@ -720,6 +738,14 @@ void handle_ip(const struct arguments *args,
             handle_udp(args, pkt, length, payload, uid, redirect, epoll_fd);
         else if (protocol == IPPROTO_TCP)
             handle_tcp(args, pkt, length, payload, uid, allowed, redirect, epoll_fd);
+        else {
+            // Allowed but undispatchable: no L4 handler for this protocol
+            // (in practice a Fragment/ESP-stopped ext-header walk, see
+            // above). Drop visibly rather than vanish silently.
+            log_android(ANDROID_LOG_WARN,
+                        "Protocol %d allowed but not forwardable, dropping",
+                        protocol);
+        }
     } else {
         if (protocol == IPPROTO_UDP)
             block_udp(args, pkt, length, payload, uid);

@@ -69,3 +69,15 @@ which drives future block decisions recorded in `DatabaseHelper`.
 onboarding); *Standard* loads Disconnect + X-Ray + DDG and **allows** ambiguous
 shared-IP hosts; *Strict* **blocks** those ambiguous shared-IP hosts. Shared-IP
 ambiguity + UID-global DNS evidence is the root of a whole cluster of reports.
+
+## Known limitations (deliberate)
+
+* **Fragmented traffic is dropped on the direct path.** IPv4 packets with
+  `IP_MF` set (first fragments included) drop up front; IPv6 packets whose
+  extension-header chain stops at a Fragment (44) or ESP (50) header never
+  reach an L4 dispatch branch, so they drop too -- even when the destination
+  would be allowed. No reassembly engine, on purpose: memory/battery cost
+  outweighs traffic PMTUD keeps rare. IPv4 fragments drop before the
+  WireGuard hijack as well, while IPv6 fragmented flows pass through when
+  WireGuard-routed (raw forward). ESP stays a permanent limitation.
+  See issue #779.
