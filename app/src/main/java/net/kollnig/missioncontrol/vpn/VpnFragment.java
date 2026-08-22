@@ -512,7 +512,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             WgProfileManager.Profile existing =
                     manager.findIvpnProfileForCountry(generated.countryCode);
             manager.saveIvpnAccount(generated.accountNumber);
-            manager.saveIvpnSession(generated.session);
+            manager.saveIvpnSession(generated.accountNumber, generated.session);
             manager.saveProfile(existing == null ? null : existing.id,
                     generated.name,
                     generated.config,

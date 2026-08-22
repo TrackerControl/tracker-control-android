@@ -193,20 +193,23 @@ public class VpnKeyRotationManager {
         String currentPrivate = parsed.getPrivateKey();
         String currentPublic = dependencies.keys.publicKey(currentPrivate);
 
-        String cachedDeviceId = manager.getMullvadDeviceId();
-        if (!TextUtils.isEmpty(cachedDeviceId) &&
-                resolveMullvadPending(context, manager, dependencies, account,
-                        cachedDeviceId, currentPrivate, currentPublic))
-            return "Mullvad pending committed";
-
+        // Refresh the device id before verifying any pending key: verifying
+        // against an unverified cached id used to throw first, so a stale id
+        // aborted rotation before this lookup could repair it, and every
+        // retry failed identically forever. Resolve by the pending public key
+        // as a fallback: once the provider already serves that key, the
+        // current public key no longer matches any device.
         String deviceId = resolveMullvadDeviceId(manager, dependencies.mullvad, account,
                 currentPublic);
+        String pendingPublic = prefs.getString(key(PROVIDER_MULLVAD, "pending_pubkey"), "");
+        if (TextUtils.isEmpty(deviceId) && !TextUtils.isEmpty(pendingPublic))
+            deviceId = resolveMullvadDeviceId(manager, dependencies.mullvad, account,
+                    pendingPublic);
         if (TextUtils.isEmpty(deviceId))
             return "Mullvad skipped: no device";
 
-        if (!deviceId.equals(cachedDeviceId) &&
-                resolveMullvadPending(context, manager, dependencies, account, deviceId,
-                        currentPrivate, currentPublic))
+        if (resolveMullvadPending(context, manager, dependencies, account, deviceId,
+                currentPrivate, currentPublic))
             return "Mullvad pending committed";
 
         MullvadProfileGenerator.ApiRejectedException lastRejected = null;
@@ -274,7 +277,7 @@ public class VpnKeyRotationManager {
                 next = dependencies.ivpn.rotateSessionKey(session, pendingPrivate,
                         pendingPublic, pendingPublic);
             }
-            manager.saveIvpnSession(next);
+            manager.saveIvpnSession(account, next);
             commitProviderKey(context, manager, dependencies, PROVIDER_IVPN, account,
                     pendingPrivate, addressWithCidr(next.address), currentPrivate,
                     currentPublic, pendingPublic, "");
@@ -295,7 +298,7 @@ public class VpnKeyRotationManager {
             throw ex;
         }
 
-        manager.saveIvpnSession(next);
+        manager.saveIvpnSession(account, next);
         commitProviderKey(context, manager, dependencies, PROVIDER_IVPN, account,
                 newPrivate, addressWithCidr(next.address), currentPrivate, currentPublic,
                 newPublic, "");
@@ -385,7 +388,7 @@ public class VpnKeyRotationManager {
             WgProfileManager.IvpnSession rollback =
                     dependencies.ivpn.rotateSessionKey(session, previousPrivate,
                             previousPublic, connectedPublic);
-            manager.saveIvpnSession(rollback);
+            manager.saveIvpnSession(account, rollback);
             manager.rewriteProviderInterface(provider, account, previousPrivate,
                     addressWithCidr(rollback.address));
         }

@@ -67,7 +67,7 @@ public class WgRelayFailover {
                 // whether the switch below goes through, or the device/session
                 // this config now authenticates as is lost and never saved.
                 if (generated.session != null)
-                    manager.saveIvpnSession(generated.session);
+                    manager.saveIvpnSession(active.account, generated.session);
                 newConfig = generated.config;
                 newCountryCode = generated.countryCode;
             } else {

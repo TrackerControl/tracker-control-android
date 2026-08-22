@@ -162,6 +162,53 @@ public class VpnKeyRotationManagerTest {
     }
 
     @Test
+    public void mullvadStaleCachedDeviceIdStillCommitsAppliedPendingKey()
+            throws Exception {
+        // A cached id that verifies neither the pending nor the current public
+        // key used to throw before the device lookup could refresh it, so the
+        // commit failed identically on every retry. Resolution must run first
+        // and fall back to resolving by the pending public key.
+        saveMullvadProfile(OLD_PRIVATE);
+        manager.saveMullvadDeviceId("stale-device");
+        mullvad.devicePublicKey = PENDING_PUBLIC;
+        prefs.edit()
+                .putString("mullvad_pending_privkey", PENDING_PRIVATE)
+                .putString("mullvad_pending_pubkey", PENDING_PUBLIC)
+                .commit();
+
+        String result = rotate("mullvad", true);
+
+        assertEquals("Mullvad pending committed", result);
+        assertEquals(DEVICE_ID, manager.getMullvadDeviceId());
+        assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + PENDING_PRIVATE));
+        assertFalse(prefs.contains("mullvad_pending_privkey"));
+        assertEquals(runtime.now, prefs.getLong("mullvad_key_rotated_at", 0L));
+    }
+
+    @Test
+    public void mullvadStaleCachedDeviceIdClearsUnappliedPendingAndRotates()
+            throws Exception {
+        // Same stale-id shape, but the provider never applied the pending
+        // key: recovery here means dropping it and rotating afresh instead
+        // of throwing forever.
+        saveMullvadProfile(OLD_PRIVATE);
+        manager.saveMullvadDeviceId("stale-device");
+        mullvad.devicePublicKey = OLD_PUBLIC;
+        keys.queueGenerated(NEW_PRIVATE);
+        prefs.edit()
+                .putString("mullvad_pending_privkey", PENDING_PRIVATE)
+                .putString("mullvad_pending_pubkey", PENDING_PUBLIC)
+                .commit();
+
+        String result = rotate("mullvad", true);
+
+        assertEquals("Mullvad rotated", result);
+        assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + NEW_PRIVATE));
+        assertFalse(prefs.contains("mullvad_pending_privkey"));
+        assertEquals(runtime.now, prefs.getLong("mullvad_key_rotated_at", 0L));
+    }
+
+    @Test
     public void ivpnRotationUpdatesSessionAddressAndProviderProfiles()
             throws Exception {
         saveIvpnProfile(OLD_PRIVATE, "172.16.10.2/32");
@@ -240,7 +287,7 @@ public class VpnKeyRotationManagerTest {
 
     private void saveIvpnProfile(String privateKey, String address) throws Exception {
         manager.saveIvpnAccount(ACCOUNT);
-        manager.saveIvpnSession(new WgProfileManager.IvpnSession("session",
+        manager.saveIvpnSession(ACCOUNT, new WgProfileManager.IvpnSession("session",
                 OLD_PRIVATE, OLD_PUBLIC, "172.16.10.2"));
         manager.saveProfile("", "IVPN", config(privateKey, address),
                 "ivpn", ACCOUNT, "de", "Germany");
