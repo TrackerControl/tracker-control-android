@@ -74,7 +74,8 @@ extern "C" {
  *       - Fragment (44): ip6e_len is a reserved field for this header,
  *         not a length, so it cannot be walked; the packet may also not
  *         be first-fragment, so there may be no upper-layer header here
- *         at all.
+ *         at all. The resulting direct-path drop of fragmented flows is
+ *         a documented limitation (issue #779).
  *       - ESP (50): the payload is encrypted; nothing after it is
  *         parseable in plaintext.
  *       - An unrecognised/non-walkable next-header value.

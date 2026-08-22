@@ -29,6 +29,8 @@ extern _Atomic int wg_required;
 
 static atomic_long wg_drop_count = 0;
 static atomic_long wg_gap_drop_count = 0;
+static atomic_long undispatchable_drop_count = 0;
+static atomic_long undispatchable_log_count = 0;
 
 // Skip tunneling for addresses WireGuard cannot meaningfully forward
 // (multicast, link-local, loopback). Apps targeting these wouldn't gain
@@ -309,9 +311,20 @@ void handle_ip(const struct arguments *args,
         saddr = &ip4hdr->saddr;
         daddr = &ip4hdr->daddr;
 
-        if (ip4hdr->frag_off & IP_MF) {
-            log_android(ANDROID_LOG_ERROR, "IP fragment offset %u",
-                        (ip4hdr->frag_off & IP_OFFMASK) * 8);
+        uint16_t frag_off = ntohs(ip4hdr->frag_off);
+
+        // Deliberate: every IPv4 fragment -- MF set or a non-zero offset,
+        // so first, middle and last alike -- is dropped on the direct path.
+        // The L4 state machines have no reassembly, and a non-first
+        // fragment has no header they could parse. This return also fires before the WireGuard hijack
+        // below, so unlike IPv6 fragments, IPv4 ones die even when
+        // WireGuard-routed. Same standing limitation as the IPv6
+        // Fragment/ESP stop further down; see issue #779. The ntohs above
+        // is load-bearing: frag_off is network byte order but IP_MF and
+        // IP_OFFMASK are host-order constants; don't simplify it away.
+        if ((frag_off & IP_MF) || (frag_off & IP_OFFMASK)) {
+            log_android(ANDROID_LOG_ERROR, "IP fragment MF %d offset %u",
+                        (frag_off & IP_MF) != 0, (frag_off & IP_OFFMASK) * 8);
             return;
         }
 
@@ -350,6 +363,17 @@ void handle_ip(const struct arguments *args,
         size_t payload_off;
         if (!ip6_skip_ext_headers(pkt, length, &protocol, &payload_off))
             log_android(ANDROID_LOG_WARN, "IP6 extension %d not walkable", protocol);
+
+        // A stopped walk leaves protocol at the stopping header type --
+        // Fragment (44) or ESP (50) in practice -- which matches none of
+        // the dispatch branches below. On the direct path such a packet is
+        // therefore dropped even when the destination passes the allow
+        // check: there is no L4 header to parse, no session to attach to,
+        // and no raw-forward path in this userspace stack. WireGuard-routed
+        // flows are unaffected: the WG hijack below forwards them raw
+        // before dispatch. Fragment reassembly was considered and rejected
+        // (memory and battery cost against traffic PMTUD keeps rare); ESP
+        // stays a documented limitation permanently. See issue #779.
 
         saddr = &ip6hdr->ip6_src;
         daddr = &ip6hdr->ip6_dst;
@@ -720,6 +744,30 @@ void handle_ip(const struct arguments *args,
             handle_udp(args, pkt, length, payload, uid, redirect, epoll_fd);
         else if (protocol == IPPROTO_TCP)
             handle_tcp(args, pkt, length, payload, uid, allowed, redirect, epoll_fd);
+        else {
+            // Allowed but undispatchable: no L4 handler for this protocol
+            // (in practice a Fragment/ESP-stopped ext-header walk, see
+            // above). Drop visibly rather than vanish silently, but
+            // rate-limit: a single ESP/IPsec flow can hit this every
+            // packet and would otherwise spam logcat.
+            long drops = atomic_fetch_add_explicit(
+                    &undispatchable_drop_count, 1, memory_order_relaxed) + 1;
+            // HOPOPTS/IGMP/ESP are exempted from the log here too, mirroring
+            // the "Unknown protocol" exemption above -- still counted so the
+            // running total stays honest, just never logged. The throttle
+            // runs off its own counter: sharing one with the exempt
+            // protocols would let a steady ESP flow eat every slot and
+            // silence the protocols worth seeing.
+            if (protocol != IPPROTO_HOPOPTS && protocol != IPPROTO_IGMP &&
+                protocol != IPPROTO_ESP) {
+                long logged = atomic_fetch_add_explicit(
+                        &undispatchable_log_count, 1, memory_order_relaxed) + 1;
+                if ((logged & 1023L) == 1)
+                    log_android(ANDROID_LOG_WARN,
+                                "Protocol %d allowed but not forwardable, dropped %ld packets (%ld total)",
+                                protocol, logged, drops);
+            }
+        }
     } else {
         if (protocol == IPPROTO_UDP)
             block_udp(args, pkt, length, payload, uid);
