@@ -102,6 +102,47 @@ static void test_chain_of_three_headers(void) {
     CHECK(payload_off == off, "chain of three: payload after all three headers");
 }
 
+/* 3b. A walkable header carrying options (Hdr Ext Len > 0). This is the case
+ * that discriminates RFC 8200's 8 * (Hdr Ext Len + 1) from the original
+ * 8 + Hdr Ext Len: at Hdr Ext Len 0 the two agree, so a chain built only from
+ * minimum-size headers passes under either formula and proves nothing about
+ * the arithmetic this fix is mainly about. */
+static void test_hopbyhop_with_options_then_tcp(void) {
+    /* Hdr Ext Len 1 -> 8 * (1 + 1) = 16 bytes; the buggy form gives 9. */
+    uint8_t pkt[IP6_EXT_FIXED_HDR_LEN + 16 + 20];
+    set_ip6_next(pkt, 0 /* Hop-by-Hop */);
+    memset(pkt + IP6_EXT_FIXED_HDR_LEN, 0, 16);
+    set_ext_header(pkt, IP6_EXT_FIXED_HDR_LEN, IPPROTO_TCP_, 1);
+
+    uint8_t protocol;
+    size_t payload_off;
+    int ok = ip6_skip_ext_headers(pkt, sizeof(pkt), &protocol, &payload_off);
+
+    CHECK(ok == 1, "hop-by-hop with options: succeeds");
+    CHECK(protocol == IPPROTO_TCP_, "hop-by-hop with options: protocol is TCP");
+    CHECK(payload_off == IP6_EXT_FIXED_HDR_LEN + 16,
+          "hop-by-hop with options: advance is 8 * (len + 1), not 8 + len");
+}
+
+/* 3c. The same discrimination on a longer header of a different type, so the
+ * arithmetic is pinned rather than fitted to one case. */
+static void test_routing_with_options_then_udp(void) {
+    /* Hdr Ext Len 3 -> 8 * (3 + 1) = 32 bytes; the buggy form gives 11. */
+    uint8_t pkt[IP6_EXT_FIXED_HDR_LEN + 32 + 8];
+    set_ip6_next(pkt, 43 /* Routing */);
+    memset(pkt + IP6_EXT_FIXED_HDR_LEN, 0, 32);
+    set_ext_header(pkt, IP6_EXT_FIXED_HDR_LEN, IPPROTO_UDP_, 3);
+
+    uint8_t protocol;
+    size_t payload_off;
+    int ok = ip6_skip_ext_headers(pkt, sizeof(pkt), &protocol, &payload_off);
+
+    CHECK(ok == 1, "routing with options: succeeds");
+    CHECK(protocol == IPPROTO_UDP_, "routing with options: protocol is UDP");
+    CHECK(payload_off == IP6_EXT_FIXED_HDR_LEN + 32,
+          "routing with options: advance is 8 * (len + 1), not 8 + len");
+}
+
 /* 4. AH uses 4-octet units, not 8-octet units: (Hdr Ext Len + 2) * 4. */
 static void test_ah_then_udp(void) {
     uint8_t pkt[IP6_EXT_FIXED_HDR_LEN + 12 + 8];
@@ -225,6 +266,8 @@ int main(void) {
     test_no_extension_headers();
     test_single_hopbyhop_then_tcp();
     test_chain_of_three_headers();
+    test_hopbyhop_with_options_then_tcp();
+    test_routing_with_options_then_udp();
     test_ah_then_udp();
     test_declared_length_past_end();
     test_truncated_header_start();
