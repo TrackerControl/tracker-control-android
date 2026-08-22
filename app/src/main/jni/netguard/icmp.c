@@ -124,7 +124,7 @@ void check_icmp_socket(const struct arguments *args, const struct epoll_event *e
                     memset(&pseudo, 0, sizeof(struct ip6_hdr_pseudo));
                     memcpy(&pseudo.ip6ph_src, &s->icmp.daddr.ip6, 16);
                     memcpy(&pseudo.ip6ph_dst, &s->icmp.saddr.ip6, 16);
-                    pseudo.ip6ph_len = bytes - sizeof(struct ip6_hdr);
+                    pseudo.ip6ph_len = htonl((uint32_t) bytes);
                     pseudo.ip6ph_nxt = IPPROTO_ICMPV6;
                     csum = calc_checksum(
                             0, (uint8_t *) &pseudo, sizeof(struct ip6_hdr_pseudo));

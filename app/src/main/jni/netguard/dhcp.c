@@ -81,7 +81,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
         memset(&response->giaddr, 0, sizeof(response->giaddr));
 
         // https://tools.ietf.org/html/rfc2132
-        uint8_t *options = (uint8_t *) (response + sizeof(struct dhcp_packet));
+        uint8_t *options = (uint8_t *) (response + 1);
 
         int idx = 0;
         *(options + idx++) = 53; // Message type

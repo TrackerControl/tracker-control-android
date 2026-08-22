@@ -146,6 +146,8 @@ void JNI_OnUnload(JavaVM *vm, void *reserved) {
 JNIEXPORT jlong JNICALL
 Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
         JNIEnv *env, jobject instance, jint sdk) {
+    srand((unsigned int) (time(NULL) ^ getpid()));
+
     // Resolve the routing policy now: the packet path must never pay a dlopen,
     // and a failure should be logged while there is still something to read it.
     policy_ensure();
@@ -368,10 +370,15 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1socks5(JNIEnv *env, jobject insta
     ng_add_alloc(username, "username");
     ng_add_alloc(password, "password");
 
-    strcpy(socks5_addr, addr);
+    if (snprintf(socks5_addr, sizeof(socks5_addr), "%s", addr) >= (int) sizeof(socks5_addr))
+        log_android(ANDROID_LOG_WARN, "SOCKS5 address truncated");
     socks5_port = port;
-    strcpy(socks5_username, username);
-    strcpy(socks5_password, password);
+    if (snprintf(socks5_username, sizeof(socks5_username), "%s", username) >=
+        (int) sizeof(socks5_username))
+        log_android(ANDROID_LOG_WARN, "SOCKS5 username truncated");
+    if (snprintf(socks5_password, sizeof(socks5_password), "%s", password) >=
+        (int) sizeof(socks5_password))
+        log_android(ANDROID_LOG_WARN, "SOCKS5 password truncated");
 
     log_android(ANDROID_LOG_WARN, "SOCKS5 %s:%d user=%s",
                 socks5_addr, socks5_port, socks5_username);
@@ -584,7 +591,7 @@ void report_exit(const struct arguments *args, int error, const char *fmt, ...) 
         char line[1024];
         va_list argptr;
         va_start(argptr, fmt);
-        vsprintf(line, fmt, argptr);
+        vsnprintf(line, sizeof(line), fmt, argptr);
         jreason = (*args->env)->NewStringUTF(args->env, line);
         ng_add_alloc(jreason, "jreason");
         va_end(argptr);
@@ -611,7 +618,7 @@ void report_error(const struct arguments *args, jint error, const char *fmt, ...
         char line[1024];
         va_list argptr;
         va_start(argptr, fmt);
-        vsprintf(line, fmt, argptr);
+        vsnprintf(line, sizeof(line), fmt, argptr);
         jreason = (*args->env)->NewStringUTF(args->env, line);
         ng_add_alloc(jreason, "jreason");
         va_end(argptr);
