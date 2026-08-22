@@ -113,6 +113,10 @@ public class DnsProxyServer {
             // Start the main listener thread
             new Thread(this::runServer, "DnsProxyServer").start();
 
+            // Sync the screen-state policy so a start mid-doze (e.g. a network
+            // reload at night) doesn't inherit the screen-on behaviour.
+            DnsOverHttpsClient.setScreenOff(!eu.faircode.netguard.Util.isInteractive(context));
+
             Log.i(TAG, "DNS proxy server started on " + DNS_PROXY_ADDRESS + ":" + DNS_PROXY_PORT);
 
             // Start TCP server only if enabled (still in testing)
@@ -166,16 +170,17 @@ public class DnsProxyServer {
     }
 
     /**
-     * Called when the screen turns off. Evicts idle keep-alive HTTPS connections
-     * so an idle pooled TLS socket can't be reset by the server mid-doze and wake
-     * the radio. In-flight requests keep their connections. The response cache is
-     * intentionally preserved — it is most valuable precisely while the screen is
-     * off. No-op when the proxy is not running.
+     * Apply the screen-state DoH battery policy. While the screen is off the
+     * DoH client drops retries and evicts idle keep-alive HTTPS connections so
+     * a server-side reset mid-doze can't wake the radio. In-flight requests
+     * keep their connections; the response cache is intentionally preserved —
+     * it is most valuable precisely while the screen is off. No-op when the
+     * proxy is not running.
      */
-    public void onScreenOff() {
+    public void onScreenStateChanged(boolean interactive) {
         if (!running.get())
             return;
-        DnsOverHttpsClient.evictIdleConnections();
+        DnsOverHttpsClient.setScreenOff(!interactive);
     }
 
     /**
