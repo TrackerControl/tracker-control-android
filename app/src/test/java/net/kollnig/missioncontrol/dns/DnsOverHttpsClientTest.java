@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import mockwebserver3.MockResponse;
 import mockwebserver3.MockWebServer;
@@ -128,6 +129,79 @@ public class DnsOverHttpsClientTest {
         assertArrayEquals(RESPONSE, client().resolve(QUERY));
 
         assertEquals(2, server.getRequestCount());
+    }
+
+    // --- failed-attempt reporting (drives the DoH circuit breaker) --------
+
+    /**
+     * Every retryable failure — here three consecutive 5xx responses — must be
+     * reported individually: DnsProxyServer's circuit breaker counts wasted
+     * network attempts (each burns a full timeout budget), not queries.
+     */
+    @Test
+    public void resolveReportsEachRetryableServerError() {
+        server.enqueue(dnsResponse(503, new byte[0]));
+        server.enqueue(dnsResponse(503, new byte[0]));
+        server.enqueue(dnsResponse(503, new byte[0]));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertNull(client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(3, failures.get());
+        assertEquals(3, server.getRequestCount());
+    }
+
+    /** A non-retryable client error is not reported as a wasted attempt. */
+    @Test
+    public void resolveDoesNotReportClientErrorsAsAttempts() {
+        server.enqueue(dnsResponse(400, new byte[0]));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertNull(client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(0, failures.get());
+        assertEquals(1, server.getRequestCount());
+    }
+
+    /** An unusable 200 body is a wasted attempt and still retries to success. */
+    @Test
+    public void resolveReportsUnusableBodyThenRecovers() {
+        server.enqueue(dnsResponse(200, new byte[] { 1, 2, 3 }));
+        server.enqueue(dnsResponse(200, RESPONSE));
+
+        AtomicInteger failures = new AtomicInteger(0);
+        assertArrayEquals(RESPONSE, client().resolve(QUERY, failures::incrementAndGet));
+
+        assertEquals(1, failures.get());
+        assertEquals(2, server.getRequestCount());
+    }
+
+    /**
+     * A request canceled by our own client shutdown (e.g. a DoH endpoint
+     * switch via {@link DnsOverHttpsClient#getInstance}) must not be reported
+     * as a failed attempt — see issue #760: counting it would let switching
+     * endpoints alone trip the circuit breaker against the new, healthy one.
+     */
+    @Test
+    public void resolveDoesNotReportCanceledCallAsFailedAttempt() throws Exception {
+        server.enqueue(new MockResponse.Builder()
+                .code(200)
+                .addHeader("Content-Type", "application/dns-message")
+                .body(new Buffer().write(RESPONSE))
+                .headersDelay(2, TimeUnit.SECONDS)
+                .build());
+
+        DnsOverHttpsClient client = client();
+        AtomicInteger failures = new AtomicInteger(0);
+        Thread resolver = new Thread(() -> client.resolve(QUERY, failures::incrementAndGet));
+        resolver.start();
+
+        // Give the request time to actually be dispatched before shutting down.
+        server.takeRequest(1, TimeUnit.SECONDS);
+        client.shutdown();
+        resolver.join(5000);
+
+        assertEquals(0, failures.get());
     }
 
     @Test

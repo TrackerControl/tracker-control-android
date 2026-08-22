@@ -58,6 +58,9 @@ public class DnsProxyServer {
     private ServerSocket tcpServerSocket;
     private ExecutorService executor;
     private final AtomicInteger dohFailures = new AtomicInteger(0);
+    // Trips after this many consecutive failed network attempts (not queries):
+    // a single failing resolve burns up to three full timeout budgets, so a
+    // broken endpoint must stop being hammered within a few bad queries.
     private static final int CIRCUIT_BREAKER_THRESHOLD = 10;
     private static final long CIRCUIT_BREAKER_COOLDOWN_MS = 60_000;
     private static final int FALLBACK_DNS_TIMEOUT_MS = 5000;
@@ -262,10 +265,11 @@ public class DnsProxyServer {
 
             // Circuit breaker: skip DoH if we recently had too many failures
             boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
+            AtomicInteger queryFailedAttempts = new AtomicInteger(0);
             if (!circuitOpen) {
                 String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
                 DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
-                responseData = dohClient.resolve(queryData);
+                responseData = dohClient.resolve(queryData, queryFailedAttempts::incrementAndGet);
             }
 
             if (responseData != null) {
@@ -279,8 +283,13 @@ public class DnsProxyServer {
                 Log.d(TAG, "DoH query successful, response sent to " + clientAddress + ":" + clientPort);
             } else {
                 if (!circuitOpen) {
-                    int failures = dohFailures.incrementAndGet();
-                    Log.w(TAG, "DoH query returned null response, failures=" + failures);
+                    // Each wasted attempt counts: one broken query can burn
+                    // three full timeout budgets, and waiting for ten whole
+                    // queries before tripping kept ~30s of hung work alive
+                    // per query on a dead network.
+                    int failures = dohFailures.addAndGet(Math.max(1, queryFailedAttempts.get()));
+                    Log.w(TAG, "DoH query returned null response after "
+                            + queryFailedAttempts.get() + " attempt(s), failures=" + failures);
 
                     if (failures >= CIRCUIT_BREAKER_THRESHOLD) {
                         circuitOpenUntil = System.currentTimeMillis() + CIRCUIT_BREAKER_COOLDOWN_MS;
@@ -410,10 +419,11 @@ public class DnsProxyServer {
             byte[] responseData = null;
 
             boolean circuitOpen = System.currentTimeMillis() < circuitOpenUntil;
+            AtomicInteger queryFailedAttempts = new AtomicInteger(0);
             if (!circuitOpen) {
                 String endpoint = prefs.getString("doh_endpoint", BuildConfig.DEFAULT_DOH_ENDPOINT);
                 DnsOverHttpsClient dohClient = DnsOverHttpsClient.getInstance(context, endpoint);
-                responseData = dohClient.resolve(queryData);
+                responseData = dohClient.resolve(queryData, queryFailedAttempts::incrementAndGet);
             }
 
             if (responseData != null) {
@@ -425,7 +435,8 @@ public class DnsProxyServer {
                 Log.d(TAG, "DoH TCP query successful");
             } else {
                 if (!circuitOpen) {
-                    int failures = dohFailures.incrementAndGet();
+                    // Same attempt-based accounting as the UDP path above.
+                    int failures = dohFailures.addAndGet(Math.max(1, queryFailedAttempts.get()));
                     if (failures >= CIRCUIT_BREAKER_THRESHOLD) {
                         circuitOpenUntil = System.currentTimeMillis() + CIRCUIT_BREAKER_COOLDOWN_MS;
                         dohFailures.set(0);

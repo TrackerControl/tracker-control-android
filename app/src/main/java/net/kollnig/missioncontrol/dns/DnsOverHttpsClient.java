@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
+import okhttp3.Call;
 import okhttp3.ConnectionPool;
 import okhttp3.Dns;
 import okhttp3.HttpUrl;
@@ -189,6 +190,25 @@ public class DnsOverHttpsClient {
 
     @Nullable
     public byte[] resolve(@NonNull byte[] dnsQuery) {
+        return resolve(dnsQuery, null);
+    }
+
+    /**
+     * Resolve a DNS query using DoH, reporting each wasted network attempt.
+     *
+     * @param dnsQuery         Raw DNS wire format query bytes
+     * @param onFailedAttempt  Invoked once per retryable failure (network error,
+     *                         server 5xx, or unusable response body), i.e. for
+     *                         every attempt that costs its full timeout budget.
+     *                         Not invoked for non-retryable client errors — the
+     *                         caller's own null handling still counts those once.
+     *                         Also not invoked when the request was canceled by
+     *                         our own {@link #getInstance} endpoint swap — that
+     *                         is not evidence the endpoint is unhealthy.
+     * @return DNS wire format response bytes, or null on failure
+     */
+    @Nullable
+    public byte[] resolve(@NonNull byte[] dnsQuery, @Nullable Runnable onFailedAttempt) {
         if (dnsQuery.length < 12) {
             Log.w(TAG, "DNS query too short: " + dnsQuery.length + " bytes");
             return null;
@@ -211,17 +231,20 @@ public class DnsOverHttpsClient {
                 Log.d(TAG, "DoH retry attempt " + attempt);
             }
 
+            Call call = client.newCall(request);
             try {
-                try (Response response = client.newCall(request).execute()) {
+                try (Response response = call.execute()) {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
                         if (response.code() < 500) return null; // Don't retry client errors
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
 
                     ResponseBody responseBody = response.body();
                     if (responseBody == null) {
                         Log.w(TAG, "DoH response body is null");
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
 
@@ -238,6 +261,7 @@ public class DnsOverHttpsClient {
                     }
                     if (dnsResponse.length < 12) {
                         Log.w(TAG, "DoH response too short: " + dnsResponse.length + " bytes");
+                        reportFailedAttempt(onFailedAttempt);
                         continue;
                     }
                     dnsResponse = finalizeResponse(dnsResponse, response, dnsQuery);
@@ -246,7 +270,16 @@ public class DnsOverHttpsClient {
                     return dnsResponse;
                 }
             } catch (IOException e) {
+                if (call.isCanceled()) {
+                    // Canceled by our own getInstance()/shutdown() swap (a DoH
+                    // endpoint change), not a real network failure. Counting
+                    // this would let an endpoint switch alone trip the circuit
+                    // breaker against a perfectly healthy new endpoint.
+                    Log.d(TAG, "DoH request canceled (client shutdown), not counted as a failure");
+                    return null;
+                }
                 Log.e(TAG, "DoH request failed: " + e.getMessage());
+                reportFailedAttempt(onFailedAttempt);
             } finally {
                 // Screen off: never leave an idle keep-alive socket behind — a
                 // server-side reset during doze would wake the radio. Cache
@@ -258,6 +291,14 @@ public class DnsOverHttpsClient {
         }
 
         return null;
+    }
+
+    private static void reportFailedAttempt(@Nullable Runnable onFailedAttempt) {
+        if (onFailedAttempt != null)
+            try {
+                onFailedAttempt.run();
+            } catch (Throwable ignored) {
+            }
     }
 
     static byte[] normalizeTransactionId(byte[] dnsQuery) {

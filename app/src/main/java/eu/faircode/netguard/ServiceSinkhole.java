@@ -316,7 +316,6 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private static final String ACTION_HOUSE_HOLDING = "eu.faircode.netguard.HOUSE_HOLDING";
-    private static final String ACTION_SCREEN_OFF_DELAYED = "eu.faircode.netguard.SCREEN_OFF_DELAYED";
     private static final String ACTION_WATCHDOG = "eu.faircode.netguard.WATCHDOG";
 
     private native long jni_init(int sdk);
@@ -493,7 +492,6 @@ public class ServiceSinkhole extends VpnService {
                     IntentFilter ifInteractive = new IntentFilter();
                     ifInteractive.addAction(Intent.ACTION_SCREEN_ON);
                     ifInteractive.addAction(Intent.ACTION_SCREEN_OFF);
-                    ifInteractive.addAction(ACTION_SCREEN_OFF_DELAYED);
                     ContextCompat.registerReceiver(ServiceSinkhole.this, interactiveStateReceiver, ifInteractive,
                             ContextCompat.RECEIVER_NOT_EXPORTED);
                     registeredInteractiveState = true;
@@ -2854,13 +2852,6 @@ public class ServiceSinkhole extends VpnService {
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
-                    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                    Intent i = new Intent(ACTION_SCREEN_OFF_DELAYED);
-                    i.setPackage(context.getPackageName());
-                    PendingIntent pi = PendingIntentCompat.getBroadcast(context, 0, i,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-                    am.cancel(pi);
-
                     try {
                         last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
                         InteractiveStatePolicy.onScreenStateChanged(
@@ -2887,11 +2878,6 @@ public class ServiceSinkhole extends VpnService {
                                 .onScreenStateChanged(last_interactive);
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-                            am.set(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
-                        else
-                            am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, new Date().getTime() + 15 * 1000L, pi);
                     }
                 }
             });
