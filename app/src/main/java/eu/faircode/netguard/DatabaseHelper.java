@@ -1189,7 +1189,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getQAName(int uid, String ip, boolean alive) {
+    /**
+     * DNS evidence for an IP, freshest qname first, one row per qname.
+     *
+     * <p>Expired rows are always excluded. Both callers — the runtime
+     * blocking decision in {@code blockKnownTracker()} and the UI
+     * classification in {@code ServiceSinkhole.log()} — must answer "is this
+     * IP shared, and whose is it?" from the same row set. When the UI alone
+     * saw the full history (see issue #759), it drew the shared-IP marker and
+     * the ALLOWED/BLOCKED text from evidence the blocker had already
+     * discarded, so the log contradicted what actually happened.
+     */
+    public Cursor getQAName(int uid, String ip) {
         long now = new Date().getTime();
         lock.readLock().lock();
         try {
@@ -1197,9 +1208,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 readableDb = this.getReadableDatabase();
             SQLiteDatabase db = readableDb;
             String escapedIp = ip.replace("'", "''");
-            String aliveFilter = alive
-                    ? " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")"
-                    : "";
+            String aliveFilter = " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
             // There is a segmented index on resource. A shared IP can carry
             // DNS evidence for several qnames; keep only the most recently
             // observed row per qname (dedup) and order qnames by recency, so

@@ -999,7 +999,7 @@ public class ServiceSinkhole extends VpnService {
 
             int uncertain = DatabaseHelper.ACCESS_UNCERTAIN_NONE;
             boolean isTracker = false;
-            try (Cursor lookup = dh.getQAName(packet.uid, packet.daddr, false)) {
+            try (Cursor lookup = dh.getQAName(packet.uid, packet.daddr)) {
                 uncertain = (lookup != null
                         && lookup.getCount() > 1) ? DatabaseHelper.ACCESS_UNCERTAIN_SHARED_IP
                                 : DatabaseHelper.ACCESS_UNCERTAIN_NONE;
@@ -2697,7 +2697,7 @@ public class ServiceSinkhole extends VpnService {
                 boolean sawFirstRow = false;
                 boolean sawTrackerEvidence = false;
                 boolean sawNonTrackerEvidence = false;
-                try (Cursor lookup = dh.getQAName(uid, daddr, true)) {
+                try (Cursor lookup = dh.getQAName(uid, daddr)) {
                     // Loop through all fresh DNS candidates for this IP and only fail closed
                     // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
                     if (lookup != null) {
