@@ -122,6 +122,9 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
@@ -273,6 +276,24 @@ public class ServiceSinkhole extends VpnService {
     private static volatile PowerManager.WakeLock wlInstance = null;
 
     private ExecutorService executor = Executors.newCachedThreadPool();
+
+    // Shared resolver for the carrier ePDG lookup in getBuilder(). A fresh
+    // executor per build leaked one non-daemon worker thread per VPN rebuild.
+    private static final ExecutorService EPDG_RESOLVER = createEpdgResolver();
+
+    private static ExecutorService createEpdgResolver() {
+        ThreadPoolExecutor resolver = new ThreadPoolExecutor(
+                1, 1, 30L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(),
+                runnable -> {
+                    Thread thread = new Thread(runnable, "epdg-resolver");
+                    thread.setDaemon(true);
+                    return thread;
+                });
+        // Idle workers die instead of lingering between rebuilds
+        resolver.allowCoreThreadTimeOut(true);
+        return resolver;
+    }
 
     private static final String ACTION_HOUSE_HOLDING = "eu.faircode.netguard.HOUSE_HOLDING";
     private static final String ACTION_SCREEN_OFF_DELAYED = "eu.faircode.netguard.SCREEN_OFF_DELAYED";
@@ -935,12 +956,14 @@ public class ServiceSinkhole extends VpnService {
                         Log.e(TAG, "Unknown log message=" + msg.what);
                 }
 
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            } finally {
+                // Decrement even when log()/usage() threw, or failed messages
+                // would permanently consume queue slots until logging died
                 synchronized (this) {
                     queue--;
                 }
-
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
         }
 
@@ -1332,9 +1355,17 @@ public class ServiceSinkhole extends VpnService {
 
             // Show session/file count
             if (loglevel <= Log.WARN) {
-                int[] count = jni_get_stats(jni_context);
-                remoteViews.setTextViewText(R.id.tvSessions, count[0] + "/" + count[1] + "/" + count[2]);
-                remoteViews.setTextViewText(R.id.tvFiles, count[3] + "/" + count[4]);
+                // jni_lock: onDestroy can free the context while this tick is
+                // in flight; a stale pointer here would crash natively
+                int[] count = null;
+                synchronized (jni_lock) {
+                    if (jni_context != 0)
+                        count = jni_get_stats(jni_context);
+                }
+                if (count != null) {
+                    remoteViews.setTextViewText(R.id.tvSessions, count[0] + "/" + count[1] + "/" + count[2]);
+                    remoteViews.setTextViewText(R.id.tvFiles, count[3] + "/" + count[4]);
+                }
             } else {
                 remoteViews.setTextViewText(R.id.tvSessions, "");
                 remoteViews.setTextViewText(R.id.tvFiles, "");
@@ -1753,8 +1784,7 @@ public class ServiceSinkhole extends VpnService {
                     // Resolve with 1.5s timeout to avoid blocking VPN startup
                     final String domain = epdgDomain;
                     java.util.concurrent.Future<InetAddress[]> future =
-                            java.util.concurrent.Executors.newSingleThreadExecutor()
-                                    .submit(() -> InetAddress.getAllByName(domain));
+                            EPDG_RESOLVER.submit(() -> InetAddress.getAllByName(domain));
                     InetAddress[] addrs = future.get(1500, java.util.concurrent.TimeUnit.MILLISECONDS);
                     for (InetAddress addr : addrs) {
                         Log.i(TAG, "Excluding ePDG address=" + addr.getHostAddress());
@@ -3631,12 +3661,16 @@ public class ServiceSinkhole extends VpnService {
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
             cancelNativeRecovery(true);
 
-            commandLooper.quit();
-            logLooper.quit();
-            statsLooper.quit();
+            // onCreate can stopSelf() before creating the handler threads when
+            // startForeground is denied (Android 12+); there is nothing to quit
+            if (commandLooper != null) {
+                commandLooper.quit();
+                logLooper.quit();
+                statsLooper.quit();
 
-            for (Command command : Command.values())
-                commandHandler.removeMessages(command.ordinal());
+                for (Command command : Command.values())
+                    commandHandler.removeMessages(command.ordinal());
+            }
             releaseLock(this);
 
             // Registered in command loop
