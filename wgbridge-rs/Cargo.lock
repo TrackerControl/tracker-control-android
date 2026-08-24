@@ -405,9 +405,9 @@ dependencies = [
 
 [[package]]
 name = "gotatun"
-version = "0.8.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87942cf21be131088380c8b3cb3dc9a8528a7f840a8230bed0e79b2e202d0629"
+checksum = "121650b305d0ee6d45b08bbec1d5781a43b915a0a89a2fd869028647eb475cc9"
 dependencies = [
  "aead",
  "base64 0.22.1",
@@ -887,9 +887,9 @@ checksum = "8ed6a63f02c8539c91a8685a86f4099661ba3da017932f6ebbea6de3f0fa7c90"
 
 [[package]]
 name = "socket2"
-version = "0.6.4"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52d1cfed4120b4d927bf7c0f86d2087a4a7d6027c906d9f9d525a80573b9be51"
+checksum = "c3d1e2c7f27f8d4cb10542a02c49005dbd6e93095799d6f3be745fae9f8fedd4"
 dependencies = [
  "libc",
  "windows-sys 0.61.2",
