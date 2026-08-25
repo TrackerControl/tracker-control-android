@@ -183,7 +183,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.19.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.16.1'
-    testImplementation 'com.squareup.okhttp3:mockwebserver3:5.4.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver3:5.5.0'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test:runner:1.7.0'
 
@@ -200,7 +200,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
     implementation 'com.google.android.material:material:1.14.0'
     implementation 'androidx.work:work-runtime:2.11.2'
-    implementation 'com.google.guava:guava:33.6.0-android'
+    implementation 'com.google.guava:guava:33.7.1-android'
     annotationProcessor 'androidx.annotation:annotation:1.10.0'
 
     // fix errors with libraries
@@ -233,7 +233,7 @@ dependencies {
     implementation 'com.caverock:androidsvg-aar:1.4'
 
     // OkHttp for DNS-over-HTTPS
-    implementation 'com.squareup.okhttp3:okhttp:5.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.5.0'
     implementation 'dnsjava:dnsjava:3.6.5'
 }
 
