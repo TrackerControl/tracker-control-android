@@ -615,6 +615,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         if (Build.VERSION.SDK_INT < MIN_SDK || Util.hasXposed(this))
             return;
+
+        int horizontalPadding = getResources().getDimensionPixelSize(
+                R.dimen.activity_horizontal_margin);
+        updateHorizontalPadding(llAppsContent, horizontalPadding);
+        updateHorizontalPadding(findViewById(R.id.tvNotifications), horizontalPadding);
+        updateHorizontalPadding(findViewById(R.id.tvLocalNetwork), horizontalPadding);
+        updateHorizontalPadding(findViewById(R.id.tvPrivateDns), horizontalPadding);
+    }
+
+    private void updateHorizontalPadding(View view, int horizontalPadding) {
+        if (view != null)
+            view.setPaddingRelative(horizontalPadding, view.getPaddingTop(),
+                    horizontalPadding, view.getPaddingBottom());
     }
 
     @Override
