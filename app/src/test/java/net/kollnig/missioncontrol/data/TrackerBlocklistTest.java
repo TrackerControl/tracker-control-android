@@ -18,19 +18,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@RunWith(RobolectricTestRunner.class)
 public class TrackerBlocklistTest {
     private static final int UID = 1001;
 
     @Before
     public void setUp() {
         TrackerBlocklist.resetForTests();
+        RuntimeEnvironment.getApplication()
+                .getSharedPreferences(TrackerBlocklist.PREF_BLOCKLIST, Context.MODE_PRIVATE)
+                .edit().clear().commit();
     }
 
     @Test
@@ -116,14 +128,77 @@ public class TrackerBlocklistTest {
     }
 
     @Test
-    public void resolveStoredUidDropsUnknownLegacyPackageNames() {
-        assertEquals(-1, TrackerBlocklist.resolveStoredUid("com.example.missing",
-                new TrackerBlocklist.PackageUidResolver() {
-                    @Override
-                    public Integer resolve(String packageName) {
-                        return null;
-                    }
-                }));
+    public void unresolvedLegacyPackageNamesRemainUnrepresentedAtRuntime() {
+        SharedPreferences prefs = blocklistPreferences();
+        String rawId = "com.example.missing";
+        prefs.edit()
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY,
+                        Collections.singleton(rawId))
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId,
+                        Collections.singleton("Advertising | Example"))
+                .commit();
+
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(RuntimeEnvironment.getApplication());
+
+        assertTrue(blocklist.getBlocklist().isEmpty());
+    }
+
+    @Test
+    public void unresolvedLegacyPackageNamesRoundTripThroughLoadAndSave() {
+        SharedPreferences prefs = blocklistPreferences();
+        String rawId = "com.example.missing";
+        Set<String> subset = new HashSet<>(Collections.singleton("Uncategorised | Alphabet"));
+        prefs.edit()
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY,
+                        Collections.singleton(rawId))
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId, subset)
+                .commit();
+
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(RuntimeEnvironment.getApplication());
+        blocklist.saveSettings(RuntimeEnvironment.getApplication());
+
+        assertEquals(Collections.singleton(rawId),
+                prefs.getStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY, null));
+        assertEquals(subset,
+                prefs.getStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId, null));
+    }
+
+    @Test
+    public void numericUidWinsLegacyCollisionButLegacyEntryIsRetained() {
+        Context context = RuntimeEnvironment.getApplication();
+        SharedPreferences prefs = blocklistPreferences();
+        String rawId = context.getPackageName();
+        String numericId = Integer.toString(context.getApplicationInfo().uid);
+        Set<String> ids = new HashSet<>(java.util.Arrays.asList(numericId, rawId));
+        Set<String> numericSubset = new HashSet<>(Collections.singleton("numeric"));
+        Set<String> rawSubset = new HashSet<>(Collections.singleton("legacy"));
+        prefs.edit()
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY, ids)
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + numericId,
+                        numericSubset)
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId,
+                        rawSubset)
+                .commit();
+
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(context);
+        assertEquals(numericSubset, blocklist.getSubset(context.getApplicationInfo().uid));
+
+        blocklist.saveSettings(context);
+        assertEquals(ids, prefs.getStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY, null));
+        assertEquals(rawSubset,
+                prefs.getStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId, null));
+
+        blocklist.clear(context.getApplicationInfo().uid);
+        blocklist.saveSettings(context);
+        assertFalse(prefs.getStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY, null)
+                .contains(numericId));
+        assertFalse(prefs.getStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY, null)
+                .contains(rawId));
+    }
+
+    private SharedPreferences blocklistPreferences() {
+        return RuntimeEnvironment.getApplication()
+                .getSharedPreferences(TrackerBlocklist.PREF_BLOCKLIST, Context.MODE_PRIVATE);
     }
 
     @Test

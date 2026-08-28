@@ -982,6 +982,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         else if ("domain_based_blocking".equals(name)) {
             TrackerList.reloadTrackerData(this);
+            ServiceSinkhole.clearTrackerCaches();
         }
 
         // Android 17 blocks traffic to local network addresses unless the user
