@@ -324,6 +324,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="msg_error">An unexpected error has occurred: \'%s\'</string>
     <string name="msg_native_fd_recovery_exhausted">The VPN repeatedly ran out of file descriptors. Protection has stopped after all automatic restart attempts failed.</string>
     <string name="msg_native_fd_error">The VPN ran out of file descriptors. Close unused apps or restart your device, then restart protection.</string>
+    <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl could not re-establish the VPN. Traffic is being blocked.</string>
     <string name="msg_doh_unreachable">Secure DNS (DoH) cannot be reached even though you have an active internet connection. If this happens repeatedly, consider disabling it in the Network settings.</string>
     <string name="msg_start_failed">Android refused to start the VPN service at this moment. This is likely because of a bug in your Android version.</string>
     <string name="msg_try">Try TrackerControl</string>
