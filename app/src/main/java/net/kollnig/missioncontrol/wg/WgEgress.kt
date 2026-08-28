@@ -13,6 +13,72 @@ import net.kollnig.missioncontrol.wgbridge.Wgbridge
 import net.kollnig.missioncontrol.wgbridge.DnsRecorder as WgDnsRecorder
 
 /**
+ * Serializes monitor replacement without holding its lock while stopping an
+ * old monitor. A monitor callback can synchronously request replacement, so
+ * stopping under the lifecycle lock would deadlock against the monitor's
+ * callback gate. The epoch cancels a replacement that races a stop or another
+ * replacement.
+ */
+internal class WgMonitorLifecycle<T>(
+    private val lock: Any,
+    private val isRunning: (T) -> Boolean,
+    private val stop: (T) -> Unit,
+    private val start: (T) -> Unit
+) {
+    private var active: T? = null
+    private var epoch = 0L
+
+    /** Install and start [candidate], optionally only when no live monitor exists. */
+    fun replace(candidate: T, isCurrent: () -> Boolean, onlyIfDead: Boolean = false): Boolean {
+        if (!isCurrent()) {
+            stop(candidate)
+            return false
+        }
+
+        val old: T?
+        val transaction: Long
+        synchronized(lock) {
+            if (onlyIfDead && active?.let(isRunning) == true) return false
+            old = active
+            active = null
+            transaction = ++epoch
+        }
+
+        // Do not hold lock while stop() waits for callbacks to finish.
+        old?.let(stop)
+
+        if (!isCurrent()) {
+            stop(candidate)
+            return false
+        }
+
+        var installed = false
+        synchronized(lock) {
+            if (transaction == epoch) {
+                active = candidate
+                // Start while ownership is held, so a concurrent stop cannot
+                // detach an unstarted candidate that would be started later.
+                start(candidate)
+                installed = true
+            }
+        }
+        if (!installed) stop(candidate)
+        return installed
+    }
+
+    /** Detach the current monitor, then stop it without holding [lock]. */
+    fun stop() {
+        val old = synchronized(lock) {
+            ++epoch
+            active.also { active = null }
+        }
+        old?.let(stop)
+    }
+
+    fun isRunning(): Boolean = synchronized(lock) { active?.let(isRunning) == true }
+}
+
+/**
  * Owns the gotatun (Rust WireGuard) tunnel that sits behind NetGuard's
  * IP-layer hijack.
  *
@@ -142,8 +208,13 @@ object WgEgress {
     // Guarded by monitorLock: started/stopped from the vpn handler thread,
     // the wg-rebind thread, and the dying monitor thread itself. Unsynchronized
     // access could leak a second polling thread (double prods, double restarts).
-    private var monitor: WgConnectivityMonitor? = null
     private val monitorLock = Any()
+    private val monitorLifecycle = WgMonitorLifecycle<WgConnectivityMonitor>(
+        lock = monitorLock,
+        isRunning = { it.isRunning() },
+        stop = { it.stop() },
+        start = { it.start() }
+    )
 
     private val verifyHandler by lazy { Handler(Looper.getMainLooper()) }
     private val listeners = java.util.concurrent.CopyOnWriteArrayList<Runnable>()
@@ -218,6 +289,11 @@ object WgEgress {
             if (oldKeepaliveEnabled != newKeepaliveEnabled &&
                 !reapplyConfigOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
                 return false
+            // The tunnel can outlive a monitor whose initial stats read raced
+            // tunnel startup (or which exited after a stale sample). Keep the
+            // idempotent tunnel path, but recreate a dead watchdog so a
+            // same-config start does not silently leave connectivity unwatched.
+            startMonitorIfDead()
             Log.v(TAG, "startOrUpdate: same config + same TUN pfd, no-op")
             return true
         }
@@ -307,37 +383,44 @@ object WgEgress {
         startMonitor(expected)
     }
 
-    private fun startMonitor(expected: TunnelSnapshot) {
-        if (!isCurrent(expected)) return
-        synchronized(monitorLock) {
-            if (!isCurrent(expected)) return
-            monitor?.stop()
-            monitor = WgConnectivityMonitor(
-                statsProvider = { statsOrNull(expected) },
-                prod = {
-                    if (isCurrent(expected)) try {
-                        expected.tunnel.sendKeepalive()
-                    } catch (e: Throwable) {
-                        Log.w(TAG, "prod keepalive threw", e)
-                    }
-                },
-                onBroken = { if (isCurrent(expected)) onMonitorBroken(expected) },
-                onConnected = { if (isCurrent(expected)) notifyStateChanged() },
-                // Reset the restart backoff only on observed return traffic:
-                // a fresh handshake shortly after a restart is exactly the
-                // signal a handshake-passes-but-data-drops failure loop also
-                // produces, so resetting on it would defeat the backoff.
-                onRxAdvanced = { if (isCurrent(expected)) restartAttempts = 0 },
-                isInteractive = { currentInteractive }
-            ).also { it.start() }
-        }
+    private fun startMonitorIfDead() {
+        val expected = captureTunnel() ?: return
+        startMonitor(expected, onlyIfDead = true)
+    }
+
+    private fun startMonitor(expected: TunnelSnapshot, onlyIfDead: Boolean = false) {
+        // Build the candidate before entering the lifecycle transaction. The
+        // transaction itself never calls isCurrent while holding monitorLock:
+        // monitor callbacks call back into isCurrent (tunnelLifecycleLock), so
+        // nesting those locks would recreate the callback/replacement cycle.
+        val candidate = WgConnectivityMonitor(
+            statsProvider = { statsOrNull(expected) },
+            prod = {
+                if (isCurrent(expected)) try {
+                    expected.tunnel.sendKeepalive()
+                } catch (e: Exception) {
+                    Log.w(TAG, "prod keepalive threw", e)
+                }
+            },
+            onBroken = { if (isCurrent(expected)) onMonitorBroken(expected) },
+            onConnected = { if (isCurrent(expected)) notifyStateChanged() },
+            // Reset the restart backoff only on observed return traffic:
+            // a fresh handshake shortly after a restart is exactly the
+            // signal a handshake-passes-but-data-drops failure loop also
+            // produces, so resetting on it would defeat the backoff.
+            onRxAdvanced = { if (isCurrent(expected)) restartAttempts = 0 },
+            isInteractive = { currentInteractive },
+            isCurrent = { isCurrent(expected) }
+        )
+        monitorLifecycle.replace(
+            candidate,
+            isCurrent = { isCurrent(expected) },
+            onlyIfDead = onlyIfDead
+        )
     }
 
     private fun stopMonitor() {
-        synchronized(monitorLock) {
-            monitor?.stop()
-            monitor = null
-        }
+        monitorLifecycle.stop()
     }
 
     private fun onMonitorBroken(expected: TunnelSnapshot) {
@@ -558,7 +641,7 @@ object WgEgress {
                 it.latestHandshakeMillis > 0 && now() - it.latestHandshakeMillis < HANDSHAKE_DEAD_AFTER_MS
             )
         }
-    } catch (e: Throwable) {
+    } catch (e: Exception) {
         null
     }
 
@@ -689,7 +772,6 @@ object WgEgress {
     }
 
     private fun stopInternal(stopSocketpair: () -> Unit) {
-        stopMonitor()
         val t = synchronized(tunnelLifecycleLock) {
             val old = tunnel
             // Invalidate in-flight recovery before stopping the old object.
@@ -704,6 +786,10 @@ object WgEgress {
             pendingRestartTunnelGeneration = -1
             old
         }
+        // Invalidate the tunnel before cancelling the monitor. An in-progress
+        // monitor replacement can then observe the stale epoch and cannot
+        // install a watcher for the tunnel being torn down.
+        stopMonitor()
         currentConfig = null
         currentTunFd = -1
         currentTunPfd = null
