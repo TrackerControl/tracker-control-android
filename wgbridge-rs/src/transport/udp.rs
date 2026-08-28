@@ -26,9 +26,9 @@ impl ProtectedUdpFactory {
     }
 
     fn protect(&self, socket: &UdpSocket) -> io::Result<()> {
-        // gotatun 0.8.x hides the inner socket behind an enum; socket() exposes
-        // the underlying tokio UdpSocket (0.8.1+) so we can protect its fd.
-        let fd = socket.socket()?.as_raw_fd();
+        // gotatun hides the inner socket behind a struct; socket() exposes the
+        // underlying tokio UdpSocket so we can protect its fd.
+        let fd = socket.socket().as_raw_fd();
         if !self.protector.protect(fd) {
             // Fail closed: an unprotected socket would loop through the TUN.
             return Err(io::Error::other(format!(
@@ -40,20 +40,18 @@ impl ProtectedUdpFactory {
 }
 
 impl UdpTransportFactory for ProtectedUdpFactory {
-    type SendV4 = UdpSocket;
-    type SendV6 = UdpSocket;
-    type RecvV4 = UdpSocket;
-    type RecvV6 = UdpSocket;
+    type Send = UdpSocket;
+    type Recv = UdpSocket;
 
     async fn bind(
         &mut self,
         params: &UdpTransportFactoryParams,
-    ) -> io::Result<((Self::SendV4, Self::RecvV4), (Self::SendV6, Self::RecvV6))> {
-        let ((send_v4, recv_v4), (send_v6, recv_v6)) = self.inner.bind(params).await?;
-        // send/recv halves are clones of the same socket; protect each family once.
-        self.protect(&send_v4)?;
-        self.protect(&send_v6)?;
-        log::info!("bound and protected WG UDP sockets");
-        Ok(((send_v4, recv_v4), (send_v6, recv_v6)))
+    ) -> io::Result<(Self::Send, Self::Recv)> {
+        // gotatun 0.9 binds a single dual-stack socket; send/recv are clones of
+        // it, so protecting one half protects both.
+        let (send, recv) = self.inner.bind(params).await?;
+        self.protect(&send)?;
+        log::info!("bound and protected WG UDP socket");
+        Ok((send, recv))
     }
 }
