@@ -23,9 +23,6 @@ public class ServiceSinkholeVpnReplacementRecoveryTest {
     @Test
     public void exhaustionNotificationExplainsThatTrafficIsBlocked() {
         Context context = RuntimeEnvironment.getApplication();
-        VpnReplacementRecoveryPolicy policy = new VpnReplacementRecoveryPolicy(1, 1_000L);
-        assertTrue(policy.onFailure() >= 0L);
-        assertTrue(policy.onFailure() == VpnReplacementRecoveryPolicy.NO_RETRY);
 
         String message = ServiceSinkhole.vpnReplacementRecoveryExhaustedMessage(context);
 

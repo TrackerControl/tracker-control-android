@@ -81,7 +81,7 @@ public class VpnReplacementSequencerTest {
     public void failedReplacementCanRetryAndSuccessResetsBudget() {
         List<String> closed = new ArrayList<>();
         int[] replacementAttempts = {0};
-        VpnReplacementRecoveryPolicy policy = new VpnReplacementRecoveryPolicy(2, 1_000L);
+        FailureRecoveryPolicy policy = new FailureRecoveryPolicy(2, 1_000L, 120_000L);
 
         VpnReplacementSequencer.EstablishFailedException failure = assertThrows(
                 VpnReplacementSequencer.EstablishFailedException.class,
@@ -98,7 +98,7 @@ public class VpnReplacementSequencerTest {
 
         assertTrue(failure.isReplacementFailure());
         assertEquals(Arrays.asList("previous"), closed);
-        assertEquals(1_000L, policy.onFailure());
+        assertEquals(1_000L, policy.onFailure(0L));
 
         String result = VpnReplacementSequencer.replace(
                 "blocking",
@@ -114,7 +114,7 @@ public class VpnReplacementSequencerTest {
         assertEquals("replacement", result);
         assertEquals(2, replacementAttempts[0]);
         policy.reset();
-        assertEquals(1_000L, policy.onFailure());
+        assertEquals(1_000L, policy.onFailure(1L));
     }
 
     @Test

@@ -9,22 +9,32 @@
 
 package eu.faircode.netguard;
 
-final class VpnReplacementRecoveryPolicy {
+final class FailureRecoveryPolicy {
     static final long NO_RETRY = -1L;
+    static final int FILE_DESCRIPTOR_LIMIT_ERROR = 24;
 
     private final int maxRetries;
     private final long initialDelayMs;
-    private int failures;
+    private final long stableWindowMs;
 
-    VpnReplacementRecoveryPolicy(int maxRetries, long initialDelayMs) {
-        if (maxRetries < 1 || initialDelayMs < 0)
+    private int failures;
+    private long lastFailureMs = Long.MIN_VALUE;
+
+    FailureRecoveryPolicy(int maxRetries, long initialDelayMs, long stableWindowMs) {
+        if (maxRetries < 1 || initialDelayMs < 0 || stableWindowMs < 0)
             throw new IllegalArgumentException();
 
         this.maxRetries = maxRetries;
         this.initialDelayMs = initialDelayMs;
+        this.stableWindowMs = stableWindowMs;
     }
 
-    synchronized long onFailure() {
+    synchronized long onFailure(long nowMs) {
+        if (lastFailureMs != Long.MIN_VALUE &&
+                (nowMs < lastFailureMs || nowMs - lastFailureMs >= stableWindowMs))
+            failures = 0;
+
+        lastFailureMs = nowMs;
         if (failures >= maxRetries)
             return NO_RETRY;
 
@@ -39,5 +49,10 @@ final class VpnReplacementRecoveryPolicy {
 
     synchronized void reset() {
         failures = 0;
+        lastFailureMs = Long.MIN_VALUE;
+    }
+
+    static boolean isFileDescriptorExhaustion(int error) {
+        return error == FILE_DESCRIPTOR_LIMIT_ERROR;
     }
 }

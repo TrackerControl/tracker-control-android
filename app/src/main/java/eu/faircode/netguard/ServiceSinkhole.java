@@ -232,7 +232,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NATIVE_RECOVERY_MAX_RETRIES = 5;
     private static final long NATIVE_RECOVERY_INITIAL_DELAY_MS = 1_000L;
     private static final long NATIVE_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
-    private final NativeFailureRecoveryPolicy nativeRecoveryPolicy = new NativeFailureRecoveryPolicy(
+    private final FailureRecoveryPolicy nativeRecoveryPolicy = new FailureRecoveryPolicy(
             NATIVE_RECOVERY_MAX_RETRIES,
             NATIVE_RECOVERY_INITIAL_DELAY_MS,
             NATIVE_RECOVERY_STABLE_WINDOW_MS);
@@ -250,11 +250,17 @@ public class ServiceSinkhole extends VpnService {
 
     private static final int VPN_REPLACEMENT_RECOVERY_MAX_RETRIES = 5;
     private static final long VPN_REPLACEMENT_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    // The ladder above spans about half a minute. A failure this long after the
+    // previous one is a new episode rather than a continuation of the old one,
+    // so it starts from a full budget instead of inheriting an exhausted count
+    // that only a successful replacement would otherwise clear.
+    private static final long VPN_REPLACEMENT_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
     private static final String EXTRA_REPLACEMENT_RETRY = "ReplacementRetry";
-    private final VpnReplacementRecoveryPolicy vpnReplacementRecoveryPolicy =
-            new VpnReplacementRecoveryPolicy(
+    private final FailureRecoveryPolicy vpnReplacementRecoveryPolicy =
+            new FailureRecoveryPolicy(
                     VPN_REPLACEMENT_RECOVERY_MAX_RETRIES,
-                    VPN_REPLACEMENT_RECOVERY_INITIAL_DELAY_MS);
+                    VPN_REPLACEMENT_RECOVERY_INITIAL_DELAY_MS,
+                    VPN_REPLACEMENT_RECOVERY_STABLE_WINDOW_MS);
     private final Object vpnReplacementRecoveryLock = new Object();
     private final AtomicBoolean vpnReplacementRecoveryPending = new AtomicBoolean(false);
     private final Runnable vpnReplacementRecoveryRunnable = () -> {
@@ -2475,10 +2481,10 @@ public class ServiceSinkhole extends VpnService {
                 return;
 
             long delayMs = nativeRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
-            if (delayMs == NativeFailureRecoveryPolicy.NO_RETRY) {
+            if (delayMs == FailureRecoveryPolicy.NO_RETRY) {
                 // Recovery budget exhausted: TC is going down, so surface the failure to the user.
                 Log.e(TAG, "Native recovery retry budget exhausted");
-                showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                showErrorNotification(FailureRecoveryPolicy.isFileDescriptorExhaustion(error)
                         ? getString(R.string.msg_native_fd_recovery_exhausted)
                         : reason);
                 cancelNativeRecovery(false);
@@ -2498,7 +2504,7 @@ public class ServiceSinkhole extends VpnService {
     // Called from native code
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
-        showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+        showErrorNotification(FailureRecoveryPolicy.isFileDescriptorExhaustion(error)
                 ? getString(R.string.msg_native_fd_error)
                 : message);
     }
@@ -2524,14 +2530,14 @@ public class ServiceSinkhole extends VpnService {
                 Log.i(TAG, "VPN replacement recovery already pending");
                 return;
             }
-            delayMs = vpnReplacementRecoveryPolicy.onFailure();
-            if (delayMs != VpnReplacementRecoveryPolicy.NO_RETRY)
+            delayMs = vpnReplacementRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
+            if (delayMs != FailureRecoveryPolicy.NO_RETRY)
                 commandHandler.postDelayed(vpnReplacementRecoveryRunnable, delayMs);
         }
-        if (delayMs == VpnReplacementRecoveryPolicy.NO_RETRY) {
+        if (delayMs == FailureRecoveryPolicy.NO_RETRY) {
             Log.e(TAG, "VPN replacement recovery retry budget exhausted");
             cancelVpnReplacementRecovery(false);
-            showErrorNotification(vpnReplacementRecoveryExhaustedMessage(this));
+            showErrorNotification(vpnReplacementRecoveryExhaustedMessage(this), false);
             return;
         }
 
@@ -4051,13 +4057,25 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void showErrorNotification(String message) {
+        showErrorNotification(message, true);
+    }
+
+    /**
+     * @param unexpected whether to present the message as an unexpected error.
+     *                   A failure we diagnosed precisely — and whose message
+     *                   already says what happened and what it means for the
+     *                   user's traffic — reads as a crash once it is wrapped in
+     *                   "An unexpected error has occurred".
+     */
+    private void showErrorNotification(String message, boolean unexpected) {
+        String text = unexpected ? getString(R.string.msg_error, message) : message;
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntentCompat.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.msg_error, message))
+                .setContentText(text)
                 .setContentIntent(pi)
                 .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(false)
@@ -4068,7 +4086,7 @@ public class ServiceSinkhole extends VpnService {
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
-        notification.bigText(getString(R.string.msg_error, message));
+        notification.bigText(text);
         notification.setSummaryText(message);
 
         Util.notify(this, NOTIFY_ERROR, notification.build());
