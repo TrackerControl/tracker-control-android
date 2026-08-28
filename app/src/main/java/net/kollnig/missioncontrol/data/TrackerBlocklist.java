@@ -23,6 +23,11 @@ import android.content.pm.PackageManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +45,14 @@ public class TrackerBlocklist {
      * to block.
      */
     private final Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
+    /**
+     * Legacy package-name entries which cannot be represented by a runtime UID.
+     * Entries retained here are written back under their original raw key so a
+     * later install can resolve them.
+     */
+    private final Map<String, Set<String>> rawBlockmap = new HashMap<>();
+    /** Raw legacy keys retained because a canonical numeric UID won a collision. */
+    private final Map<String, Integer> retainedRawUids = new HashMap<>();
 
     interface PackageUidResolver {
         Integer resolve(String packageName);
@@ -101,49 +114,86 @@ public class TrackerBlocklist {
         };
 
         blockmap.clear();
+        rawBlockmap.clear();
+        retainedRawUids.clear();
         if (set != null) {
-            for (String appUid : set) {
+            List<String> storedIds = new ArrayList<>(set);
+            Collections.sort(storedIds);
+
+            // Numeric entries are canonical. This makes a collision with a
+            // legacy package-name entry deterministic rather than dependent on
+            // SharedPreferences' StringSet iteration order.
+            for (String appUid : storedIds) {
+                if (!StringUtils.isNumeric(appUid))
+                    continue;
+
+                Set<String> subset = loadSubset(prefs, appUid);
+                blockmap.put(Integer.parseInt(appUid), subset);
+            }
+
+            for (String appUid : storedIds) {
+                if (StringUtils.isNumeric(appUid))
+                    continue;
+
                 // Get saved blocklist for UID
-                Set<String> prefset = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
-
-                // Make an editable copy
-                Set<String> subset = new HashSet<>();
-                if (prefset != null)
-                    subset.addAll(prefset);
-
-                // Migrate from older TC version
-                if (subset.contains("Uncategorised | Alphabet")) {
-                    subset.remove("Uncategorised | Alphabet");
-                    subset.add("Uncategorised | Google");
-                }
-                if (subset.contains("Uncategorised | Adobe Systems")) {
-                    subset.remove("Uncategorised | Adobe Systems");
-                    subset.add("Uncategorised | Adobe");
-                }
-                if (subset.contains("FingerprintingGeneral")) {
-                    subset.remove("FingerprintingGeneral");
-                    subset.add("Fingerprinting");
-                }
-                if (subset.contains("FingerprintingInvasive")) {
-                    subset.remove("FingerprintingInvasive");
-                    subset.add("Fingerprinting");
-                }
-                if (subset.contains("EmailStrict")) {
-                    subset.remove("EmailStrict");
-                    subset.add("Email");
-                }
-                if (subset.contains("EmailAggressive")) {
-                    subset.remove("EmailAggressive");
-                    subset.add("Email");
-                }
+                Set<String> rawSubset = loadRawSubset(prefs, appUid);
 
                 // Retrieve uid
                 int uid = resolveStoredUid(appUid, resolver);
 
-                if (uid >= 0)
-                    blockmap.put(uid, subset);
+                if (uid < 0) {
+                    rawBlockmap.put(appUid, rawSubset);
+                } else if (blockmap.containsKey(uid)) {
+                    // A numeric entry wins. Retain the legacy entry under its
+                    // original key so its settings are not silently lost.
+                    rawBlockmap.put(appUid, rawSubset);
+                    retainedRawUids.put(appUid, uid);
+                } else {
+                    blockmap.put(uid, migrateSubset(rawSubset));
+                }
             }
         }
+    }
+
+    private Set<String> loadRawSubset(SharedPreferences prefs, String appUid) {
+        Set<String> prefset = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + appUid, null);
+        return prefset == null ? null : new HashSet<>(prefset);
+    }
+
+    private Set<String> loadSubset(SharedPreferences prefs, String appUid) {
+        return migrateSubset(loadRawSubset(prefs, appUid));
+    }
+
+    private Set<String> migrateSubset(Set<String> rawSubset) {
+        // Make an editable copy
+        Set<String> subset = rawSubset == null ? new HashSet<>() : new HashSet<>(rawSubset);
+
+        // Migrate from older TC version
+        if (subset.contains("Uncategorised | Alphabet")) {
+            subset.remove("Uncategorised | Alphabet");
+            subset.add("Uncategorised | Google");
+        }
+        if (subset.contains("Uncategorised | Adobe Systems")) {
+            subset.remove("Uncategorised | Adobe Systems");
+            subset.add("Uncategorised | Adobe");
+        }
+        if (subset.contains("FingerprintingGeneral")) {
+            subset.remove("FingerprintingGeneral");
+            subset.add("Fingerprinting");
+        }
+        if (subset.contains("FingerprintingInvasive")) {
+            subset.remove("FingerprintingInvasive");
+            subset.add("Fingerprinting");
+        }
+        if (subset.contains("EmailStrict")) {
+            subset.remove("EmailStrict");
+            subset.add("Email");
+        }
+        if (subset.contains("EmailAggressive")) {
+            subset.remove("EmailAggressive");
+            subset.add("Email");
+        }
+        return subset;
     }
 
     static int resolveStoredUid(String storedUid, PackageUidResolver resolver) {
@@ -204,10 +254,16 @@ public class TrackerBlocklist {
         Set<String> trackerSet = new HashSet<>();
         for (Integer uid : blockmap.keySet())
             trackerSet.add(Integer.toString(uid));
+        trackerSet.addAll(rawBlockmap.keySet());
         editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, trackerSet);
 
         for (Map.Entry<Integer, Set<String>> entry : blockmap.entrySet())
             editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + entry.getKey(), new HashSet<>(entry.getValue()));
+        for (Map.Entry<String, Set<String>> entry : rawBlockmap.entrySet()) {
+            if (entry.getValue() != null)
+                editor.putStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + entry.getKey(),
+                        new HashSet<>(entry.getValue()));
+        }
 
         editor.apply();
     }
@@ -236,6 +292,8 @@ public class TrackerBlocklist {
      */
     public synchronized void clear() {
         blockmap.clear();
+        rawBlockmap.clear();
+        retainedRawUids.clear();
     }
 
     /**
@@ -245,6 +303,18 @@ public class TrackerBlocklist {
      */
     public synchronized void clear(int uid) {
         blockmap.remove(uid);
+
+        // Drop any legacy package-name entry that lost a collision to this uid:
+        // the app is gone, so retaining it would resurrect stale settings if a
+        // different app later took the same uid.
+        Iterator<Map.Entry<String, Integer>> retained = retainedRawUids.entrySet().iterator();
+        while (retained.hasNext()) {
+            Map.Entry<String, Integer> entry = retained.next();
+            if (entry.getValue() == uid) {
+                rawBlockmap.remove(entry.getKey());
+                retained.remove();
+            }
+        }
     }
 
     /**

@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +58,48 @@ public class VpnRoutesTest {
         return false;
     }
 
+    private static long[] interval(String[] range) throws Exception {
+        int prefix = Integer.parseInt(range[1]);
+        long address = toLong(java.net.InetAddress.getByName(range[0]));
+        int hostBits = 32 - prefix;
+        long mask = hostBits == 32 ? 0 : 0xFFFFFFFFL << hostBits;
+        long start = address & mask;
+        return new long[]{start, start + (1L << hostBits) - 1};
+    }
+
+    private static String[][] privateRanges(String fieldName) throws Exception {
+        Field field = VpnRoutes.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return (String[][]) field.get(null);
+    }
+
     // --- default (WireGuard off) --------------------------------------------
+
+    @Test
+    public void alwaysExcludedRangesAreAlignedAndDoNotOverlapPrivateRanges() throws Exception {
+        String[][] alwaysExcluded = privateRanges("ALWAYS_EXCLUDED");
+        String[][] rfc1918Ranges = privateRanges("RFC1918_RANGES");
+
+        for (String[] range : alwaysExcluded) {
+            long[] actual = interval(range);
+            int hostBits = 32 - Integer.parseInt(range[1]);
+            long mask = hostBits == 32 ? 0 : 0xFFFFFFFFL << hostBits;
+            long address = toLong(java.net.InetAddress.getByName(range[0]));
+            assertEquals(range[0] + "/" + range[1], address & mask, address);
+        }
+
+        for (int i = 0; i < alwaysExcluded.length; i++) {
+            long[] left = interval(alwaysExcluded[i]);
+            for (int j = i + 1; j < alwaysExcluded.length; j++) {
+                long[] right = interval(alwaysExcluded[j]);
+                assertTrue(left[1] < right[0] || right[1] < left[0]);
+            }
+            for (String[] range : rfc1918Ranges) {
+                long[] right = interval(range);
+                assertTrue(left[1] < right[0] || right[1] < left[0]);
+            }
+        }
+    }
 
     @Test
     public void defaultRoutesExcludeAllRfc1918AndReserved() throws Exception {
