@@ -260,6 +260,49 @@ public class ServiceSinkhole extends VpnService {
         ServiceSinkhole.reload("native tunnel recovery", ServiceSinkhole.this, false);
     };
 
+    private static final int WG_STARTUP_RECOVERY_MAX_RETRIES = 5;
+    private static final long WG_STARTUP_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    private static final long WG_STARTUP_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
+    private static final String EXTRA_WG_STARTUP_RETRY = "WireGuardStartupRetry";
+    private final WireGuardStartupRecoveryPolicy wgStartupRecoveryPolicy =
+            new WireGuardStartupRecoveryPolicy(
+                    WG_STARTUP_RECOVERY_MAX_RETRIES,
+                    WG_STARTUP_RECOVERY_INITIAL_DELAY_MS,
+                    WG_STARTUP_RECOVERY_STABLE_WINDOW_MS);
+    private final Object wgStartupRecoveryLock = new Object();
+    private final Handler wgStartupRecoveryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable wgStartupRecoveryRunnable = () -> {
+        synchronized (ServiceSinkhole.this) {
+            synchronized (wgStartupRecoveryLock) {
+                if (!wgStartupRecoveryPolicy.claim())
+                    return;
+            }
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+            if (destroying || !initialized || commandHandler == null || state != State.enforcing
+                    || !user_foreground || !prefs.getBoolean("enabled", false)
+                    || temporarilyStopped || vpn == null) {
+                Log.i(TAG, "Skipping WireGuard startup recovery because protection is no longer active");
+                cancelWireGuardStartupRecovery(true);
+                return;
+            }
+            if (VpnService.prepare(ServiceSinkhole.this) != null) {
+                Log.i(TAG, "Skipping WireGuard startup recovery because VPN consent was revoked");
+                cancelWireGuardStartupRecovery(true);
+                return;
+            }
+
+            Log.i(TAG, "Queueing WireGuard startup recovery");
+            getLock(ServiceSinkhole.this).acquire(WAKELOCK_TIMEOUT_MS);
+            Intent intent = new Intent(ServiceSinkhole.this, ServiceSinkhole.class);
+            intent.putExtra(EXTRA_COMMAND, Command.reload);
+            intent.putExtra(EXTRA_REASON, "WireGuard startup recovery");
+            intent.putExtra(EXTRA_WG_STARTUP_RETRY, true);
+            intent.putExtra(EXTRA_INTERACTIVE, false);
+            commandHandler.queue(intent);
+        }
+    };
+
     private static final int VPN_REPLACEMENT_RECOVERY_MAX_RETRIES = 5;
     private static final long VPN_REPLACEMENT_RECOVERY_INITIAL_DELAY_MS = 1_000L;
     // The ladder above spans about half a minute. A failure this long after the
@@ -498,6 +541,9 @@ public class ServiceSinkhole extends VpnService {
                     handleIntent((Intent) msg.obj);
                 }
             } catch (Throwable ex) {
+                Intent intent = (Intent) msg.obj;
+                if (intent != null && intent.getBooleanExtra(EXTRA_WG_STARTUP_RETRY, false))
+                    cancelWireGuardStartupRecovery(true);
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             } finally {
                 synchronized (this) {
@@ -522,8 +568,22 @@ public class ServiceSinkhole extends VpnService {
 
             Command cmd = (Command) intent.getSerializableExtra(EXTRA_COMMAND);
             String reason = intent.getStringExtra(EXTRA_REASON);
+            final boolean wireGuardStartupRetry =
+                    intent.getBooleanExtra(EXTRA_WG_STARTUP_RETRY, false);
             Log.i(TAG, "Executing intent=" + intent + " command=" + cmd + " reason=" + reason +
                     " vpn=" + (vpn != null) + " user=" + (Process.myUid() / 100000));
+
+            // Consume the dispatch marker before any preflight gate can return.
+            // Otherwise a background-user or temporary-stop return strands the
+            // retry in the dispatched state and blocks all later failures.
+            if (wireGuardStartupRetry) {
+                synchronized (wgStartupRecoveryLock) {
+                    if (!wgStartupRecoveryPolicy.begin()) {
+                        Log.i(TAG, "Ignoring stale WireGuard startup recovery");
+                        return;
+                    }
+                }
+            }
 
             // Check if foreground
             if (cmd != Command.stop)
@@ -534,6 +594,8 @@ public class ServiceSinkhole extends VpnService {
                         user_foreground = true;
                         Log.i(TAG, "User-initiated start, clearing background user state");
                     } else {
+                        if (wireGuardStartupRetry)
+                            cancelWireGuardStartupRecovery(true);
                         Log.i(TAG, "Command " + cmd + " ignored for background user");
                         return;
                     }
@@ -546,6 +608,8 @@ public class ServiceSinkhole extends VpnService {
                 temporarilyStopped = false;
             else if (cmd == Command.reload && temporarilyStopped) {
                 // Prevent network/interactive changes from restarting the VPN
+                if (wireGuardStartupRetry)
+                    cancelWireGuardStartupRecovery(true);
                 Log.i(TAG, "Command " + cmd + " ignored because of temporary stop");
                 return;
             }
@@ -634,10 +698,16 @@ public class ServiceSinkhole extends VpnService {
                             cancelNativeRecovery(true);
                         if (vpn == null)
                             cancelVpnReplacementRecovery(true);
+                        if (vpn == null)
+                            cancelWireGuardStartupRecovery(true);
                         start();
                         break;
 
                     case reload:
+                        // The startup-retry dispatch marker was consumed before
+                        // preflight; ordinary reloads cancel stale retries.
+                        if (!wireGuardStartupRetry)
+                            cancelWireGuardStartupRecovery(false);
                         if (!intent.getBooleanExtra(EXTRA_REPLACEMENT_RETRY, false))
                             cancelVpnReplacementRecovery(false);
                         reload(intent.getBooleanExtra(EXTRA_INTERACTIVE, false));
@@ -646,6 +716,7 @@ public class ServiceSinkhole extends VpnService {
                     case stop:
                         cancelNativeRecovery(true);
                         cancelVpnReplacementRecovery(true);
+                        cancelWireGuardStartupRecovery(true);
                         stop(temporarilyStopped);
                         break;
 
@@ -692,6 +763,8 @@ public class ServiceSinkhole extends VpnService {
                         !prefs.getBoolean("show_stats", false))
                     stopForeground(true);
             } catch (Throwable ex) {
+                if (wireGuardStartupRetry)
+                    cancelWireGuardStartupRecovery(true);
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
                 if (cmd == Command.start || cmd == Command.reload) {
@@ -840,6 +913,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void stop(boolean temporary) {
+            cancelWireGuardStartupRecovery(true);
             if (vpn != null) {
                 stopNative(vpn);
                 stopVPN(vpn);
@@ -2081,8 +2155,10 @@ public class ServiceSinkhole extends VpnService {
             String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
             Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
             showWireGuardErrorNotification(wgError);
+            scheduleWireGuardStartupRecovery();
             return false;
         }
+        cancelWireGuardStartupRecovery(true);
         net.kollnig.missioncontrol.wg.VpnKeyRotationManager.maybeRotateDue(ServiceSinkhole.this);
 
         if (tunnelThread == null) {
@@ -2545,6 +2621,46 @@ public class ServiceSinkhole extends VpnService {
         nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
         if (resetBudget)
             nativeRecoveryPolicy.reset();
+    }
+
+    private void scheduleWireGuardStartupRecovery() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean active = !destroying && initialized && commandHandler != null
+                && state == State.enforcing && user_foreground
+                && prefs.getBoolean("enabled", false) && !temporarilyStopped
+                && vpn != null && VpnService.prepare(this) == null;
+        synchronized (wgStartupRecoveryLock) {
+            long delayMs = wgStartupRecoveryPolicy.onFailure(
+                    // Handler.postDelayed uses uptime; matching its clock
+                    // prevents deep sleep from aging a failure episode into
+                    // the stable window without a successful startup.
+                    SystemClock.uptimeMillis(), active);
+            if (!active) {
+                Log.i(TAG, "Skipping WireGuard startup recovery because protection is no longer active");
+                wgStartupRecoveryHandler.removeCallbacks(wgStartupRecoveryRunnable);
+                return;
+            }
+            if (delayMs == FailureRecoveryPolicy.NO_RETRY) {
+                if (wgStartupRecoveryPolicy.isPending())
+                    Log.i(TAG, "WireGuard startup recovery already pending");
+                else
+                    Log.e(TAG, "WireGuard startup recovery retry budget exhausted");
+                return;
+            }
+            if (!wgStartupRecoveryHandler.postDelayed(wgStartupRecoveryRunnable, delayMs)) {
+                wgStartupRecoveryPolicy.cancel(false);
+                Log.e(TAG, "Could not schedule WireGuard startup recovery");
+                return;
+            }
+            Log.w(TAG, "Scheduled WireGuard startup recovery in " + delayMs + " ms");
+        }
+    }
+
+    private void cancelWireGuardStartupRecovery(boolean resetBudget) {
+        synchronized (wgStartupRecoveryLock) {
+            wgStartupRecoveryHandler.removeCallbacks(wgStartupRecoveryRunnable);
+            wgStartupRecoveryPolicy.cancel(resetBudget);
+        }
     }
 
     private void scheduleVpnReplacementRecovery() {
@@ -3824,6 +3940,7 @@ public class ServiceSinkhole extends VpnService {
     @Override
     public void onRevoke() {
         Log.i(TAG, "Revoke");
+        cancelWireGuardStartupRecovery(true);
         cancelVpnReplacementRecovery(false);
 
         // Preserve the enabled state only while Android still designates us as
@@ -3885,6 +4002,7 @@ public class ServiceSinkhole extends VpnService {
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
             cancelNativeRecovery(true);
+            cancelWireGuardStartupRecovery(true);
             cancelVpnReplacementRecovery(true);
 
             // onCreate can stopSelf() before creating the handler threads when
