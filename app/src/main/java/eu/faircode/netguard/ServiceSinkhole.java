@@ -121,6 +121,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -3120,6 +3121,7 @@ public class ServiceSinkhole extends VpnService {
 
     ConnectivityManager.NetworkCallback networkMonitorCallback = new ConnectivityManager.NetworkCallback() {
         private String TAG = "TrackerControl.Monitor";
+        private final Set<Network> validating = ConcurrentHashMap.newKeySet();
 
         // https://android.googlesource.com/platform/frameworks/base/+/master/services/core/java/com/android/server/connectivity/NetworkMonitor.java
 
@@ -3182,33 +3184,58 @@ public class ServiceSinkhole extends VpnService {
                     }
                 }
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-                String host = prefs.getString("validate", "www.f-droid.org");
-                Log.i(TAG, "Validating " + network + " " + ni + " host=" + host);
+                if (!validating.add(network))
+                    return;
 
-                Socket socket = null;
                 try {
-                    socket = network.getSocketFactory().createSocket();
-                    socket.connect(new InetSocketAddress(host, 443), 10000);
-                    Log.i(TAG, "Validated " + network + " " + ni + " host=" + host);
-                    synchronized (mapValidated) {
-                        mapValidated.put(network, new Date().getTime());
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                        cm.reportNetworkConnectivity(network, true);
-                        Log.i(TAG, "Reported " + network + " " + ni);
-                    }
-                } catch (IOException ex) {
-                    Log.e(TAG, ex.toString());
-                    Log.i(TAG, "No connectivity " + network + " " + ni);
-                } finally {
-                    if (socket != null)
-                        try {
-                            socket.close();
-                        } catch (IOException ex) {
-                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                    executor.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+                                String host = prefs.getString("validate", "www.f-droid.org");
+                                Log.i(TAG, "Validating " + network + " " + ni + " host=" + host);
+
+                                synchronized (mapValidated) {
+                                    if (mapValidated.containsKey(network) &&
+                                            mapValidated.get(network) + 20 * 1000 > new Date().getTime()) {
+                                        Log.i(TAG, "Already validated " + network + " " + ni);
+                                        return;
+                                    }
+                                }
+
+                                Socket socket = null;
+                                try {
+                                    socket = network.getSocketFactory().createSocket();
+                                    socket.connect(new InetSocketAddress(host, 443), 10000);
+                                    Log.i(TAG, "Validated " + network + " " + ni + " host=" + host);
+                                    synchronized (mapValidated) {
+                                        mapValidated.put(network, new Date().getTime());
+                                    }
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                                        cm.reportNetworkConnectivity(network, true);
+                                        Log.i(TAG, "Reported " + network + " " + ni);
+                                    }
+                                } catch (IOException ex) {
+                                    Log.e(TAG, ex.toString());
+                                    Log.i(TAG, "No connectivity " + network + " " + ni);
+                                } finally {
+                                    if (socket != null)
+                                        try {
+                                            socket.close();
+                                        } catch (IOException ex) {
+                                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                                        }
+                                }
+                            } finally {
+                                validating.remove(network);
+                            }
                         }
+                    });
+                } catch (RejectedExecutionException ex) {
+                    validating.remove(network);
+                    Log.e(TAG, ex.toString());
                 }
             }
         }
