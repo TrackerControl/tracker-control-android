@@ -23,6 +23,42 @@ public class DatabaseHelperDnsAttributionTest {
     private static final long NOW = System.currentTimeMillis();
 
     @Test
+    public void firstDnsInsertReportsInserted() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearDns();
+
+        assertEquals(DatabaseHelper.DnsInsertOutcome.INSERTED,
+                dh.insertDns(rr(NOW, "tracker.example.com", "tracker.example.com",
+                        "203.0.113.1", 3600)));
+    }
+
+    @Test
+    public void repeatedDnsInsertReportsRefreshed() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearDns();
+
+        ResourceRecord record = rr(NOW - 2_000L, "tracker.example.com", "tracker.example.com",
+                "203.0.113.2", 3600);
+        assertEquals(DatabaseHelper.DnsInsertOutcome.INSERTED, dh.insertDns(record));
+        assertEquals(DatabaseHelper.DnsInsertOutcome.REFRESHED,
+                dh.insertDns(rr(NOW, "tracker.example.com", "tracker.example.com",
+                        "203.0.113.2", 120)));
+    }
+
+    @Test
+    public void differentResourceReportsInserted() {
+        DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
+        dh.clearDns();
+
+        assertEquals(DatabaseHelper.DnsInsertOutcome.INSERTED,
+                dh.insertDns(rr(NOW, "tracker.example.com", "tracker.example.com",
+                        "203.0.113.3", 3600)));
+        assertEquals(DatabaseHelper.DnsInsertOutcome.INSERTED,
+                dh.insertDns(rr(NOW, "tracker.example.com", "tracker.example.com",
+                        "203.0.113.4", 120)));
+    }
+
+    @Test
     public void mostRecentlyObservedQnameIsReturnedFirst() {
         DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
         dh.clearDns();
@@ -67,8 +103,10 @@ public class DatabaseHelperDnsAttributionTest {
         dh.clearDns();
 
         String ip = "203.0.113.25";
-        dh.insertDns(rr(NOW - 5_000L, "Graph.Facebook.Com", "Alias.Example.Com", ip, 3600));
-        dh.insertDns(rr(NOW - 1_000L, "graph.facebook.com", "alias.example.com", ip, 3600));
+        assertEquals(DatabaseHelper.DnsInsertOutcome.INSERTED,
+                dh.insertDns(rr(NOW - 5_000L, "graph.facebook.com", "alias.example.com", ip, 3600)));
+        assertEquals(DatabaseHelper.DnsInsertOutcome.REFRESHED,
+                dh.insertDns(rr(NOW - 1_000L, "Graph.Facebook.Com", "Alias.Example.Com", ip, 3600)));
 
         try (Cursor c = dh.getQAName(-1, ip)) {
             assertEquals("case variants must share one stored qname", 1, c.getCount());
