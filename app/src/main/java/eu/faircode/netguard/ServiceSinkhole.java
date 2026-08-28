@@ -4256,10 +4256,13 @@ public class ServiceSinkhole extends VpnService {
         private Network activeNetwork;
         private NetworkInfo networkInfo;
         private int mtu;
+        private boolean metered;
         private List<String> listAddress = new ArrayList<>();
         private List<String> listRoute = new ArrayList<>();
         private List<InetAddress> listDns = new ArrayList<>();
         private List<String> listDisallowed = new ArrayList<>();
+        private List<String> listSearchDomain = new ArrayList<>();
+        private List<IpPrefix> listExcludedRoute = new ArrayList<>();
 
         private Builder() {
             super();
@@ -4272,6 +4275,14 @@ public class ServiceSinkhole extends VpnService {
         public VpnService.Builder setMtu(int mtu) {
             this.mtu = mtu;
             super.setMtu(mtu);
+            return this;
+        }
+
+        @Override
+        @TargetApi(Build.VERSION_CODES.Q)
+        public Builder setMetered(boolean metered) {
+            this.metered = metered;
+            super.setMetered(metered);
             return this;
         }
 
@@ -4303,6 +4314,21 @@ public class ServiceSinkhole extends VpnService {
             return this;
         }
 
+        @Override
+        public Builder addSearchDomain(String domain) {
+            listSearchDomain.add(domain);
+            super.addSearchDomain(domain);
+            return this;
+        }
+
+        @Override
+        @TargetApi(Build.VERSION_CODES.TIRAMISU)
+        public Builder excludeRoute(IpPrefix prefix) {
+            listExcludedRoute.add(prefix);
+            super.excludeRoute(prefix);
+            return this;
+        }
+
         /**
          * Excludes apps, such as system apps if disabled, as well as deactivated apps
          * by user
@@ -4328,11 +4354,17 @@ public class ServiceSinkhole extends VpnService {
             if (!Objects.equals(this.activeNetwork, other.activeNetwork))
                 return false;
 
-            if (this.networkInfo == null || other.networkInfo == null ||
+            if ((this.networkInfo == null) != (other.networkInfo == null))
+                return false;
+
+            if (this.networkInfo != null &&
                     this.networkInfo.getType() != other.networkInfo.getType())
                 return false;
 
             if (this.mtu != other.mtu)
+                return false;
+
+            if (this.metered != other.metered)
                 return false;
 
             if (this.listAddress.size() != other.listAddress.size())
@@ -4345,6 +4377,12 @@ public class ServiceSinkhole extends VpnService {
                 return false;
 
             if (this.listDisallowed.size() != other.listDisallowed.size())
+                return false;
+
+            if (this.listSearchDomain.size() != other.listSearchDomain.size())
+                return false;
+
+            if (this.listExcludedRoute.size() != other.listExcludedRoute.size())
                 return false;
 
             for (String address : this.listAddress)
@@ -4361,6 +4399,14 @@ public class ServiceSinkhole extends VpnService {
 
             for (String pkg : this.listDisallowed)
                 if (!other.listDisallowed.contains(pkg))
+                    return false;
+
+            for (String domain : this.listSearchDomain)
+                if (!other.listSearchDomain.contains(domain))
+                    return false;
+
+            for (IpPrefix prefix : this.listExcludedRoute)
+                if (!other.listExcludedRoute.contains(prefix))
                     return false;
 
             return true;
