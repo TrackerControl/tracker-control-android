@@ -52,6 +52,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER = 2;
     public static final int ACCESS_UNCERTAIN_MULTIPLE_TRACKERS = 3;
 
+    public enum DnsInsertOutcome { FAILED, INSERTED, REFRESHED }
+
     public Cursor getHosts(int uid) {
         flushAccessBatch();
         flushUsageBatch();
@@ -1076,7 +1078,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return (name == null ? null : name.toLowerCase(Locale.ROOT));
     }
 
-    public boolean insertDns(ResourceRecord rr) {
+    public DnsInsertOutcome insertDns(ResourceRecord rr) {
         lock.writeLock().lock();
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -1109,21 +1111,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int rows = db.update("dns", cv, "qname = ? AND aname = ? AND resource = ?",
                         new String[] { qname, aname, rr.Resource });
 
+                DnsInsertOutcome outcome;
                 if (rows == 0) {
                     cv.put("qname", qname);
                     cv.put("aname", aname);
                     cv.put("resource", rr.Resource);
 
                     if (db.insert("dns", null, cv) == -1)
-                        Log.e(TAG, "Insert dns failed");
+                        outcome = DnsInsertOutcome.FAILED;
                     else
-                        rows = 1;
-                } else if (rows != 1)
-                    Log.e(TAG, "Update dns failed rows=" + rows);
+                        outcome = DnsInsertOutcome.INSERTED;
+                    if (outcome == DnsInsertOutcome.FAILED)
+                        Log.e(TAG, "Insert dns failed");
+                } else {
+                    if (rows != 1)
+                        Log.e(TAG, "Update dns failed rows=" + rows);
+                    outcome = DnsInsertOutcome.REFRESHED;
+                }
 
                 db.setTransactionSuccessful();
 
-                return (rows > 0);
+                return outcome;
             } finally {
                 db.endTransaction();
             }

@@ -2596,20 +2596,31 @@ public class ServiceSinkhole extends VpnService {
 
     // Called from native code
     private void dnsResolved(ResourceRecord rr) {
-        if (DatabaseHelper.getInstance(ServiceSinkhole.this).insertDns(rr)) {
-            Log.i(TAG, "New IP " + rr);
+        DatabaseHelper.DnsInsertOutcome outcome =
+                DatabaseHelper.getInstance(ServiceSinkhole.this).insertDns(rr);
+        if (outcome != DatabaseHelper.DnsInsertOutcome.FAILED) {
+            if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
+                Log.i(TAG, "New IP " + rr);
+            }
             prepareUidIPFilters(rr.QName);
 
-            if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
-                ipToHost.remove(rr.Resource);
-                ipToTracker.remove(rr.Resource);
-                // Bump *after* the removes: a blockKnownTracker() read that
-                // started before this insert (and so may have missed this row)
-                // can still be mid-flight. Invalidating the generation here,
-                // after the cache is actually clear, is what makes its stale
-                // put() get discarded below instead of pinning pre-insert
-                // attribution behind this remove.
-                trackerCacheGeneration.incrementAndGet();
+            if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
+                if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
+                    ipToHost.remove(rr.Resource);
+                    ipToTracker.remove(rr.Resource);
+                    // Bump *after* the removes: a blockKnownTracker() read that
+                    // started before this new mapping (and so may have missed
+                    // this row) can still be mid-flight. Invalidating the
+                    // generation here, after the cache is actually clear, is
+                    // what makes its stale put() get discarded below instead
+                    // of pinning pre-insert attribution behind this remove.
+                    // Pure refreshes deliberately skip invalidation: the cached
+                    // entry simply expires on the earlier deadline it was stored
+                    // with and is re-read then, so a stale-put race with a
+                    // refresh is harmless. The generation guard remains for new
+                    // mappings, where the verdict can actually change.
+                    trackerCacheGeneration.incrementAndGet();
+                }
             }
         }
     }
