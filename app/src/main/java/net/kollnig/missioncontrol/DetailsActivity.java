@@ -69,6 +69,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import eu.faircode.netguard.DatabaseHelper;
+import eu.faircode.netguard.Util;
 
 public class DetailsActivity extends AppCompatActivity {
     public static final String INTENT_EXTRA_APP_PACKAGENAME = "INTENT_APP_PACKAGENAME";
@@ -198,9 +199,16 @@ public class DetailsActivity extends AppCompatActivity {
             startActivityForResult(getIntentCreateExport(), REQUEST_EXPORT);
             return true;
         } else if (itemId == R.id.action_clear) {
-            DatabaseHelper dh = DatabaseHelper.getInstance(this);
-            dh.clearAccess(appUid, false);
-            detailsStateAdapter.updateTrackerLists();
+            Util.areYouSure(this, R.string.msg_clear_activity, new Util.DoubtListener() {
+                @Override
+                public void onSure() {
+                    if (running) {
+                        DatabaseHelper dh = DatabaseHelper.getInstance(DetailsActivity.this);
+                        dh.clearAccess(appUid, false);
+                        detailsStateAdapter.updateTrackerLists();
+                    }
+                }
+            });
             return true;
         } else if (itemId == R.id.action_launch) {
             Intent launch = Common.getLaunchIntent(this, appPackageName);
