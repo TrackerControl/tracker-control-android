@@ -114,7 +114,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     private static final String TAG = "TrackerControl.Settings";
 
     private boolean running = false;
-    private volatile boolean importHadLegacySettings;
     private final Handler wgStatusHandler = new Handler(Looper.getMainLooper());
     private final Runnable wgStatusListener = new Runnable() {
         @Override
@@ -1240,14 +1239,13 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 InputStream in = null;
                 try {
                     Log.i(TAG, "Reading URI=" + data.getData());
-                    importHadLegacySettings = false;
                     ContentResolver resolver = getContentResolver();
                     String[] streamTypes = resolver.getStreamTypes(data.getData(), "*/*");
                     String streamType = (streamTypes == null || streamTypes.length == 0 ? "*/*" : streamTypes[0]);
                     AssetFileDescriptor descriptor = resolver.openTypedAssetFileDescriptor(data.getData(), streamType,
                             null);
                     in = descriptor.createInputStream();
-                    importHadLegacySettings = xmlImport(in);
+                    xmlImport(in);
                     return null;
                 } catch (Throwable ex) {
                     Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
@@ -1267,9 +1265,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 if (running) {
                     if (ex == null) {
                         Toast.makeText(ActivitySettings.this, R.string.msg_completed, Toast.LENGTH_LONG).show();
-                        if (importHadLegacySettings)
-                            Toast.makeText(ActivitySettings.this,
-                                    R.string.msg_import_legacy_settings_ignored, Toast.LENGTH_LONG).show();
                         ServiceSinkhole.reloadStats("import", ActivitySettings.this);
                         // Update theme, request permissions
                         recreate();
@@ -1470,7 +1465,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         }
     }
 
-    private boolean xmlImport(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+    private void xmlImport(InputStream in) throws IOException, SAXException, ParserConfigurationException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.unregisterOnSharedPreferenceChangeListener(this);
         prefs.edit().putBoolean("enabled", false).apply();
@@ -1500,15 +1495,6 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Refresh UI
         prefs.edit().putBoolean("imported", true).apply();
         prefs.registerOnSharedPreferenceChangeListener(this);
-        return hasObsoleteImportSettings(handler.wifi, handler.mobile,
-                handler.screen_wifi, handler.screen_other, handler.roaming);
-    }
-
-    static boolean hasObsoleteImportSettings(Map<String, Object> wifi,
-            Map<String, Object> mobile, Map<String, Object> screenWifi,
-            Map<String, Object> screenOther, Map<String, Object> roaming) {
-        return !wifi.isEmpty() || !mobile.isEmpty() || !screenWifi.isEmpty()
-                || !screenOther.isEmpty() || !roaming.isEmpty();
     }
 
     private void xmlImport(Map<String, Object> settings, SharedPreferences prefs) {
