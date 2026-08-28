@@ -673,8 +673,16 @@ object WgEgress {
             return
         }
 
+        val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
+        val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
+        if (oldKeepaliveEnabled == newKeepaliveEnabled) {
+            currentInteractive = interactive
+            currentKeepaliveAlwaysOn = keepaliveAlwaysOn
+            return
+        }
+
         try {
-            reapplyConfig(configText!!, interactive || keepaliveAlwaysOn, interactive, keepaliveAlwaysOn)
+            reapplyConfig(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn)
         } catch (e: Throwable) {
             Log.w(TAG, "could not update WG keepalive for screen state", e)
         }

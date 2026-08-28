@@ -134,6 +134,17 @@ import javax.net.ssl.HttpsURLConnection;
 public class ServiceSinkhole extends VpnService {
     private static final String TAG = "TrackerControl.VPN";
 
+    private static int getIntPref(SharedPreferences prefs, String key, int def) {
+        String value = prefs.getString(key, null);
+        if (TextUtils.isEmpty(value))
+            return def;
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            return def;
+        }
+    }
+
     // Safety net for the per-command wakelock: a command that hangs or throws
     // before reaching the release in CommandHandler's finally block (or a
     // future code path that forgets to release) auto-releases instead of
@@ -602,11 +613,12 @@ public class ServiceSinkhole extends VpnService {
                 am.cancel(pi);
 
                 if (cmd != Command.stop) {
-                    int watchdog = Integer.parseInt(prefs.getString("watchdog", "0"));
+                    int watchdog = getIntPref(prefs, "watchdog", 0);
                     if (watchdog > 0) {
                         Log.i(TAG, "Watchdog " + watchdog + " minutes");
-                        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + watchdog * 60 * 1000,
-                                watchdog * 60 * 1000, pi);
+                        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                                SystemClock.elapsedRealtime() + watchdog * 60 * 1000L,
+                                watchdog * 60 * 1000L, pi);
                     }
                 }
             }
@@ -3488,7 +3500,7 @@ public class ServiceSinkhole extends VpnService {
             pi = PendingIntentCompat.getService(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        am.setInexactRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime() + 60 * 1000,
+        am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 60 * 1000,
                 AlarmManager.INTERVAL_HALF_DAY, pi);
 
         // Marks that onCreate ran to completion; onDestroy uses this to decide
@@ -3924,7 +3936,7 @@ public class ServiceSinkhole extends VpnService {
         i.setPackage(this.getPackageName());
         PendingIntent pauseIntent = PendingIntentCompat.getBroadcast(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
-        int pause = Integer.parseInt(prefs.getString("pause", "10"));
+        int pause = getIntPref(prefs, "pause", 10);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "foreground");
         builder.setSmallIcon(R.drawable.ic_rocket_white)
@@ -4420,7 +4432,9 @@ public class ServiceSinkhole extends VpnService {
 
         @Override
         public int hashCode() {
-            return (version << 40) | (protocol << 32) | (dport << 16) | uid;
+            // The previous (version << 40) | (protocol << 32) shifts wrapped
+            // mod 32 and collapsed fields onto each other.
+            return Objects.hash(version, protocol, dport, uid);
         }
 
         @Override

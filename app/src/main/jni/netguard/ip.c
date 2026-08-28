@@ -950,6 +950,8 @@ jint get_uid_sub(const int version, const int protocol,
             uid_cache[c].time = now;
         } else {
             log_android(ANDROID_LOG_ERROR, "Invalid field #%d: %s", fields, line);
+            if (fclose(fd))
+                log_android(ANDROID_LOG_ERROR, "fclose %s error %d: %s", fn, errno, strerror(errno));
             return -2;
         }
     }
