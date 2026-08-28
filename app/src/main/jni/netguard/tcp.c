@@ -27,6 +27,325 @@ extern char socks5_password[127 + 1];
 
 extern FILE *pcap_file;
 
+struct dns_frame_parse_context {
+    const struct arguments *args;
+    struct ng_session *session;
+};
+
+static size_t parse_dns_frame(void *opaque, uint8_t *payload, size_t length) {
+    const struct dns_frame_parse_context *ctx =
+            (const struct dns_frame_parse_context *) opaque;
+    size_t parsed_length = length;
+    parse_dns_response(ctx->args, ctx->session, payload, &parsed_length);
+    return parsed_length;
+}
+
+static int reserve_dns_frame(void *opaque, struct dns_frame_stream *stream,
+                             size_t required) {
+    (void) opaque;
+    if (required > DNS_FRAME_MAX_BUFFER)
+        return -1;
+    if (stream->buffer != NULL && stream->capacity >= required)
+        return 0;
+
+    uint8_t *storage = ng_malloc(required, "dns tcp reassembly");
+    if (storage == NULL)
+        return -1;
+    if (stream->buffer != NULL) {
+        memcpy(storage, stream->buffer, stream->buffered);
+        ng_free(stream->buffer, __FILE__, __LINE__);
+    }
+    stream->buffer = storage;
+    stream->capacity = required;
+    return 0;
+}
+
+static int reserve_dns_pending(void *opaque, struct dns_frame_stream *stream,
+                               size_t required) {
+    (void) opaque;
+    if (required > DNS_FRAME_MAX_PENDING)
+        return -1;
+    if (stream->pending != NULL && stream->pending_capacity >= required)
+        return 0;
+
+    /* Grow geometrically, but stop at half the cap before promoting to the
+     * final capacity. This bounds an old+new replacement allocation. */
+    size_t capacity = stream->pending_capacity;
+    const size_t half = DNS_FRAME_MAX_PENDING / 2;
+    if (capacity < 2)
+        capacity = 2;
+    while (capacity < required) {
+        if (capacity >= half) {
+            capacity = DNS_FRAME_MAX_PENDING;
+            break;
+        }
+        if (capacity > half / 2)
+            capacity = half;
+        else
+            capacity *= 2;
+    }
+    if (capacity < required)
+        return -1;
+
+    uint8_t *storage = ng_malloc(capacity, "dns tcp pending");
+    if (storage == NULL)
+        return -1;
+    if (stream->pending != NULL) {
+        const size_t pending = stream->pending_length - stream->pending_offset;
+        memcpy(storage, stream->pending + stream->pending_offset, pending);
+        ng_free(stream->pending, __FILE__, __LINE__);
+        stream->pending_offset = 0;
+        stream->pending_length = pending;
+    }
+    stream->pending = storage;
+    stream->pending_capacity = capacity;
+    return 0;
+}
+
+static void release_dns_pending(void *opaque, struct dns_frame_stream *stream) {
+    (void) opaque;
+    ng_free(stream->pending, __FILE__, __LINE__);
+}
+
+static int emit_dns_frame_chunk(void *opaque, const uint8_t *frame, size_t length) {
+    const struct dns_frame_parse_context *ctx =
+            (const struct dns_frame_parse_context *) opaque;
+    struct tcp_session *tcp = &ctx->session->tcp;
+    if (length == 0 || length > tcp->mss)
+        return -1;
+    if (write_data(ctx->args, tcp, frame, length) < 0)
+        return -1;
+    tcp->local_seq += length;
+    tcp->unconfirmed++;
+    return 0;
+}
+
+static void release_dns_frame_storage(struct tcp_session *tcp) {
+    if (tcp->dns_frames.buffer == NULL || tcp->dns_frames.buffered != 0)
+        return;
+
+    ng_free(tcp->dns_frames.buffer, __FILE__, __LINE__);
+    tcp->dns_frames.buffer = NULL;
+    tcp->dns_frames.capacity = 0;
+}
+
+static void release_dns_pending_storage(struct tcp_session *tcp) {
+    dns_frame_stream_release_pending(&tcp->dns_frames, release_dns_pending, NULL);
+}
+
+static void discard_dns_frame_state(struct tcp_session *tcp) {
+    dns_frame_stream_reset(&tcp->dns_frames);
+    release_dns_frame_storage(tcp);
+    release_dns_pending_storage(tcp);
+}
+
+static void terminate_dns_session(const struct arguments *args,
+                                  struct ng_session *session) {
+    write_rst(args, &session->tcp);
+    discard_dns_frame_state(&session->tcp);
+    session->tcp.state = TCP_CLOSING;
+    session->tcp.dns_terminal = DNS_FRAME_TERMINAL_NONE;
+}
+
+static int begin_dns_terminal(struct ng_session *session, int epoll_fd,
+                              int terminal_state) {
+    if ((terminal_state != DNS_FRAME_TERMINAL_FIN_DRAIN &&
+         !dns_frame_stream_has_pending(&session->tcp.dns_frames)) ||
+        session->tcp.dns_terminal != DNS_FRAME_TERMINAL_NONE)
+        return -1;
+    if (session->socket < 0)
+        return -1;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, session->socket, NULL)) {
+        log_android(ANDROID_LOG_WARN, "DNS TCP terminal epoll delete error %d: %s",
+                    errno, strerror(errno));
+        /* Closing the descriptor still removes HUP from epoll if deletion
+         * failed because the event was already detached. Keep queued output
+         * and use the reset-drain state; a failed detach cannot prove EOF. */
+        if (close(session->socket))
+            log_android(ANDROID_LOG_WARN, "DNS TCP terminal close error %d: %s",
+                        errno, strerror(errno));
+        session->socket = -1;
+        session->tcp.dns_terminal = DNS_FRAME_TERMINAL_DRAIN;
+        return 0;
+    }
+    if (close(session->socket))
+        log_android(ANDROID_LOG_WARN, "DNS TCP terminal close error %d: %s",
+                    errno, strerror(errno));
+    session->socket = -1;
+    session->tcp.dns_terminal = (uint8_t) terminal_state;
+    return 0;
+}
+
+/* HUP can arrive together with readable bytes. Detach it from epoll while
+ * downstream output drains, but retain the fd so those bytes can be consumed
+ * after an ACK reopens the downstream window. */
+static int begin_dns_hup_pending(struct ng_session *session, int epoll_fd) {
+    if (!dns_frame_stream_has_pending(&session->tcp.dns_frames) ||
+        session->tcp.dns_terminal != DNS_FRAME_TERMINAL_NONE ||
+        session->socket < 0)
+        return -1;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, session->socket, NULL)) {
+        log_android(ANDROID_LOG_WARN, "DNS TCP HUP epoll delete error %d: %s",
+                    errno, strerror(errno));
+        /* The pending response remains valid. Closing guarantees HUP cannot
+         * wake the loop forever; treat unread bytes as an explicit reset. */
+        if (close(session->socket))
+            log_android(ANDROID_LOG_WARN, "DNS TCP HUP close error %d: %s",
+                        errno, strerror(errno));
+        session->socket = -1;
+        session->tcp.dns_terminal = DNS_FRAME_TERMINAL_DRAIN;
+        return 0;
+    }
+    session->ev.events = EPOLLERR;
+    session->tcp.dns_terminal = DNS_FRAME_TERMINAL_HUP_PENDING;
+    return 0;
+}
+
+static int resume_dns_hup(struct ng_session *session, int epoll_fd) {
+    struct tcp_session *tcp = &session->tcp;
+    if (!dns_frame_should_resume_hup(
+                tcp->dns_terminal,
+                dns_frame_stream_has_pending(&tcp->dns_frames),
+                get_send_window(tcp)))
+        return 0;
+    if (session->socket < 0)
+        return -1;
+
+    session->ev.events = EPOLLIN | EPOLLERR;
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, session->socket, &session->ev)) {
+        log_android(ANDROID_LOG_WARN, "DNS TCP HUP epoll add error %d: %s",
+                    errno, strerror(errno));
+        if (close(session->socket))
+            log_android(ANDROID_LOG_WARN, "DNS TCP HUP resume close error %d: %s",
+                        errno, strerror(errno));
+        session->socket = -1;
+        /* The final emitted bytes are still valid. Wait for their ACKs and
+         * use the reset terminal path instead of sending an immediate RST. */
+        tcp->dns_terminal = dns_frame_hup_rearm_failure_state(tcp->dns_terminal);
+        return 0;
+    }
+    tcp->dns_terminal = DNS_FRAME_TERMINAL_NONE;
+    return 0;
+}
+
+static void finish_dns_terminal(const struct arguments *args,
+                                struct ng_session *session) {
+    terminate_dns_session(args, session);
+}
+
+static void finish_dns_fin(const struct arguments *args,
+                           struct ng_session *session) {
+    struct tcp_session *tcp = &session->tcp;
+    /* A FIN consumes sequence space and must not be sent into a closed
+     * downstream window. The next ACK/window update retries this path. */
+    if (get_send_window(tcp) == 0)
+        return;
+    if (write_fin_ack(args, tcp) < 0) {
+        tcp->dns_terminal = DNS_FRAME_TERMINAL_NONE;
+        return;
+    }
+    tcp->local_seq++; // local FIN
+    if (tcp->state == TCP_ESTABLISHED)
+        tcp->state = TCP_FIN_WAIT1;
+    else if (tcp->state == TCP_CLOSE_WAIT)
+        tcp->state = TCP_LAST_ACK;
+    else {
+        log_android(ANDROID_LOG_ERROR, "DNS TCP invalid EOF state %d", tcp->state);
+        write_rst(args, tcp);
+        tcp->dns_terminal = DNS_FRAME_TERMINAL_NONE;
+        return;
+    }
+    discard_dns_frame_state(tcp);
+    tcp->dns_terminal = DNS_FRAME_TERMINAL_NONE;
+}
+
+static int flush_dns_frames(const struct arguments *args, struct ng_session *session) {
+    struct tcp_session *tcp = &session->tcp;
+    if (!dns_frame_stream_has_pending(&tcp->dns_frames)) {
+        release_dns_pending_storage(tcp);
+        return 0;
+    }
+
+    struct dns_frame_parse_context context = {
+            .args = args,
+            .session = session,
+    };
+    size_t chunks = 0;
+    while (dns_frame_stream_has_pending(&tcp->dns_frames) &&
+           dns_frame_flush_chunk_allowed(chunks)) {
+        if (tcp->mss == 0)
+            return -1;
+        uint32_t window = get_send_window(tcp);
+        if (window == 0)
+            break;
+        size_t budget = dns_frame_send_budget(window, tcp->mss);
+        struct dns_frame_stream_result result;
+        if (dns_frame_stream_flush(&tcp->dns_frames, budget,
+                                   emit_dns_frame_chunk, &context, &result) < 0)
+            return -1;
+        if (result.emitted == 0)
+            break;
+        chunks++;
+    }
+    release_dns_pending_storage(tcp);
+    return 0;
+}
+
+static void flush_dns_ack(const struct arguments *args,
+                          struct ng_session *session, int epoll_fd) {
+    struct tcp_session *tcp = &session->tcp;
+    if (tcp->dns_terminal == DNS_FRAME_TERMINAL_WAIT_ACK) {
+        if (dns_frame_terminal_next(tcp->dns_terminal, 0, tcp->acked,
+                                    tcp->local_seq) == DNS_FRAME_TERMINAL_NONE)
+            finish_dns_terminal(args, session);
+        return;
+    }
+
+    if (tcp->dns_terminal == DNS_FRAME_TERMINAL_FIN_DRAIN) {
+        if (dns_frame_stream_has_pending(&tcp->dns_frames) &&
+            flush_dns_frames(args, session) < 0) {
+            log_android(ANDROID_LOG_WARN, "DNS TCP EOF output failed");
+            terminate_dns_session(args, session);
+        } else if (!dns_frame_stream_has_pending(&tcp->dns_frames))
+            finish_dns_fin(args, session);
+        return;
+    }
+
+    if (tcp->dns_terminal == DNS_FRAME_TERMINAL_HUP_PENDING) {
+        if (dns_frame_stream_has_pending(&tcp->dns_frames) &&
+            flush_dns_frames(args, session) < 0) {
+            log_android(ANDROID_LOG_WARN, "DNS TCP HUP output failed");
+            terminate_dns_session(args, session);
+        } else if (resume_dns_hup(session, epoll_fd) < 0) {
+            log_android(ANDROID_LOG_WARN, "DNS TCP HUP resume failed");
+            terminate_dns_session(args, session);
+        } else if (tcp->dns_terminal == DNS_FRAME_TERMINAL_DRAIN) {
+            /* Re-arm failure changed HUP_PENDING into reset-drain. Apply the
+             * ACK transition now; no later ACK is guaranteed. */
+            flush_dns_ack(args, session, epoll_fd);
+        }
+        return;
+    }
+
+    if (tcp->dns_terminal == DNS_FRAME_TERMINAL_DRAIN) {
+        if (flush_dns_frames(args, session) < 0) {
+            log_android(ANDROID_LOG_WARN, "DNS TCP terminal output failed");
+            terminate_dns_session(args, session);
+        } else {
+            tcp->dns_terminal = dns_frame_terminal_next(
+                    tcp->dns_terminal,
+                    dns_frame_stream_has_pending(&tcp->dns_frames),
+                    tcp->acked, tcp->local_seq);
+            if (tcp->dns_terminal == DNS_FRAME_TERMINAL_NONE)
+                finish_dns_terminal(args, session);
+        }
+    } else if (dns_frame_stream_has_pending(&tcp->dns_frames) &&
+               flush_dns_frames(args, session) < 0) {
+        log_android(ANDROID_LOG_WARN, "DNS TCP pending output failed");
+        terminate_dns_session(args, session);
+    }
+}
+
 void clear_tcp_data(struct tcp_session *cur) {
     struct segment *s = cur->forward;
     while (s != NULL) {
@@ -40,11 +359,24 @@ void clear_tcp_data(struct tcp_session *cur) {
         cur->tls_data = NULL;
         cur->tls_len = 0;
     }
+    if (cur->dns_frames.buffer != NULL) {
+        ng_free(cur->dns_frames.buffer, __FILE__, __LINE__);
+        cur->dns_frames.buffer = NULL;
+        cur->dns_frames.capacity = 0;
+    }
+    if (cur->dns_frames.pending != NULL)
+        ng_free(cur->dns_frames.pending, __FILE__, __LINE__);
+    dns_frame_stream_init(&cur->dns_frames, NULL, 0);
+    cur->dns_terminal = DNS_FRAME_TERMINAL_NONE;
 }
 
 int get_tcp_timeout(const struct tcp_session *t, int sessions, int maxsessions) {
     int timeout;
-    if (t->state == TCP_LISTEN || t->state == TCP_SYN_RECV)
+    int terminal_timeout = dns_frame_terminal_timeout(t->dns_terminal,
+                                                       TCP_CLOSE_TIMEOUT);
+    if (terminal_timeout != 0)
+        timeout = terminal_timeout;
+    else if (t->state == TCP_LISTEN || t->state == TCP_SYN_RECV)
         timeout = TCP_INIT_TIMEOUT;
     else if (t->state == TCP_ESTABLISHED)
         timeout = TCP_IDLE_TIMEOUT;
@@ -85,12 +417,18 @@ int check_tcp_session(const struct arguments *args, struct ng_session *s,
                     timeout);
         if (s->tcp.state == TCP_LISTEN)
             s->tcp.state = TCP_CLOSING;
+        else if (ntohs(s->tcp.dest) == 53)
+            terminate_dns_session(args, s);
         else
             write_rst(args, &s->tcp);
     }
 
     // Check closing sessions
     if (s->tcp.state == TCP_CLOSING) {
+        /* DNS buffers are session state, not part of the generic TCP linger
+         * period. Release them as soon as any terminal path reaches closing. */
+        discard_dns_frame_state(&s->tcp);
+
         // eof closes socket
         if (s->socket >= 0) {
             if (close(s->socket))
@@ -124,6 +462,12 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
     int recheck = 0;
     unsigned int events = EPOLLERR;
 
+    /* Terminal DNS sessions close their upstream descriptor and flush from
+     * handle_tcp() when an ACK reopens the TUN-side window. Never re-arm
+     * epoll or create a maintenance poll for this state. */
+    if (s->tcp.dns_terminal != DNS_FRAME_TERMINAL_NONE)
+        return 0;
+
     if (s->tcp.state == TCP_LISTEN) {
         // Check for connected = writable
         if (s->tcp.socks5 == SOCKS5_NONE)
@@ -131,15 +475,19 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
         else
             events = events | EPOLLIN;
     } else if (s->tcp.state == TCP_ESTABLISHED || s->tcp.state == TCP_CLOSE_WAIT) {
-
         // Check for incoming data
-        if (get_send_window(&s->tcp) > 0)
+        uint32_t send_window = get_send_window(&s->tcp);
+        if (s->tcp.state != TCP_CLOSING &&
+            dns_frame_should_read(s->tcp.dns_terminal,
+                                  dns_frame_stream_has_pending(&s->tcp.dns_frames),
+                                  send_window))
             events = events | EPOLLIN;
-        else {
+        else if (dns_frame_requires_recheck(send_window)) {
             recheck = 1;
 
             long long ms = get_ms();
-            if (ms - s->tcp.last_keep_alive > EPOLL_MIN_CHECK) {
+            if (dns_frame_recheck_due(ms, s->tcp.last_keep_alive,
+                                      EPOLL_MIN_CHECK)) {
                 s->tcp.last_keep_alive = ms;
                 log_android(ANDROID_LOG_WARN, "Sending keep alive to update send window");
                 s->tcp.remote_seq--;
@@ -162,7 +510,11 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
     if (events != s->ev.events) {
         s->ev.events = events;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, s->socket, &s->ev)) {
-            s->tcp.state = TCP_CLOSING;
+            if (ntohs(s->tcp.dest) == 53)
+                terminate_dns_session(args, s);
+            else
+                s->tcp.state = TCP_CLOSING;
+            recheck = 1;
             log_android(ANDROID_LOG_ERROR, "epoll mod tcp error %d: %s", errno, strerror(errno));
         } else
             log_android(ANDROID_LOG_DEBUG, "epoll mod tcp socket %d in %d out %d",
@@ -173,17 +525,11 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
 }
 
 uint32_t get_send_window(const struct tcp_session *cur) {
-    uint32_t behind;
-    if (cur->acked <= cur->local_seq)
-        behind = (cur->local_seq - cur->acked);
-    else
-        behind = (0x10000 + cur->local_seq - cur->acked);
-    behind += (cur->unconfirmed + 1) * 40; // Maximum header size
+    uint32_t total = dns_frame_send_window(cur->acked, cur->local_seq,
+                                           cur->unconfirmed, cur->send_window);
 
-    uint32_t total = (behind < cur->send_window ? cur->send_window - behind : 0);
-
-    log_android(ANDROID_LOG_DEBUG, "Send window behind %u window %u total %u",
-                behind, cur->send_window, total);
+    log_android(ANDROID_LOG_DEBUG, "Send window window %u total %u",
+                cur->send_window, total);
 
     return total;
 }
@@ -265,21 +611,73 @@ void check_tcp_socket(const struct arguments *args,
             s->tcp.local_seq - s->tcp.local_start,
             s->tcp.remote_seq - s->tcp.remote_start);
 
-    // Check socket error
-    if (ev->events & EPOLLERR) {
+    // Check socket error or hangup. EPOLLHUP is delivered even when EPOLLIN
+    // is masked, so it must detach the upstream descriptor or epoll spins.
+    const int socket_error = (ev->events & EPOLLERR) != 0;
+    const int socket_hup = (ev->events & EPOLLHUP) != 0;
+    const int pending_dns = dns_frame_stream_has_pending(&s->tcp.dns_frames);
+    const int hup_pending = dns_frame_hup_pending_state(
+            socket_error, socket_hup, pending_dns);
+    if (dns_frame_socket_terminal_event(
+                socket_error, socket_hup, (ev->events & EPOLLIN) != 0,
+                pending_dns)) {
         s->tcp.time = time(NULL);
 
         int serr = 0;
         socklen_t optlen = sizeof(int);
-        int err = getsockopt(s->socket, SOL_SOCKET, SO_ERROR, &serr, &optlen);
-        if (err < 0)
-            log_android(ANDROID_LOG_ERROR, "%s getsockopt error %d: %s",
-                        session, errno, strerror(errno));
-        else if (serr)
-            log_android(ANDROID_LOG_ERROR, "%s SO_ERROR %d: %s",
-                        session, serr, strerror(serr));
+        int err = 0;
+        if (socket_error) {
+            err = getsockopt(s->socket, SOL_SOCKET, SO_ERROR, &serr, &optlen);
+            if (err < 0)
+                log_android(ANDROID_LOG_ERROR, "%s getsockopt error %d: %s",
+                            session, errno, strerror(errno));
+            else if (serr)
+                log_android(ANDROID_LOG_ERROR, "%s SO_ERROR %d: %s",
+                            session, serr, strerror(serr));
+        }
 
-        write_rst(args, &s->tcp);
+        /* A socket error stops upstream reads. Keep complete rewritten DNS
+         * bytes queued while the downstream window drains; a zero window is
+         * reopened by a later ACK handled on the TUN side. */
+        int terminal_state = DNS_FRAME_TERMINAL_DRAIN;
+        if (!socket_error) {
+            terminal_state = dns_frame_eof_terminal_state(
+                    dns_frame_stream_has_pending(&s->tcp.dns_frames),
+                    s->tcp.dns_frames.buffered,
+                    s->tcp.forward != NULL);
+        }
+        int terminal_started = 0;
+        if ((s->tcp.state == TCP_ESTABLISHED || s->tcp.state == TCP_CLOSE_WAIT) &&
+            ntohs(s->tcp.dest) == 53 && hup_pending == DNS_FRAME_TERMINAL_HUP_PENDING &&
+            begin_dns_hup_pending(s, epoll_fd) == 0) {
+            flush_dns_ack(args, s, epoll_fd);
+            terminal_started = 1;
+        }
+        if (!terminal_started &&
+            (s->tcp.state == TCP_ESTABLISHED || s->tcp.state == TCP_CLOSE_WAIT) &&
+            terminal_state != DNS_FRAME_TERMINAL_NONE &&
+            ntohs(s->tcp.dest) == 53 &&
+            begin_dns_terminal(s, epoll_fd, terminal_state) == 0) {
+            flush_dns_ack(args, s, epoll_fd);
+            terminal_started = 1;
+        }
+        if (!terminal_started) {
+            /* Detach HUP descriptors even when no complete DNS response is
+             * available, otherwise epoll reports the same HUP forever. */
+            if (socket_hup && s->socket >= 0) {
+                if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, s->socket, NULL))
+                    log_android(ANDROID_LOG_WARN,
+                                "%s HUP epoll delete error %d: %s",
+                                session, errno, strerror(errno));
+                if (close(s->socket))
+                    log_android(ANDROID_LOG_WARN, "%s HUP close error %d: %s",
+                                session, errno, strerror(errno));
+                s->socket = -1;
+            }
+            /* Incomplete frames and any failed detach cannot be forwarded
+             * safely. Send an explicit reset and release all DNS state now. */
+            terminate_dns_session(args, s);
+        }
 
         // Connection refused
         if (0)
@@ -558,7 +956,11 @@ void check_tcp_socket(const struct arguments *args,
                 // Send window can be changed in the mean time
 
                 uint32_t send_window = get_send_window(&s->tcp);
-                if ((ev->events & EPOLLIN) && send_window > 0) {
+                if ((ev->events & EPOLLIN) &&
+                    dns_frame_should_read(
+                            s->tcp.dns_terminal,
+                            dns_frame_stream_has_pending(&s->tcp.dns_frames),
+                            send_window)) {
                     s->tcp.time = time(NULL);
 
                     uint32_t buffer_size = (send_window > s->tcp.mss
@@ -570,12 +972,40 @@ void check_tcp_socket(const struct arguments *args,
                         log_android(ANDROID_LOG_ERROR, "%s recv error %d: %s",
                                     session, errno, strerror(errno));
 
-                        if (errno != EINTR && errno != EAGAIN)
-                            write_rst(args, &s->tcp);
+                        if (errno != EINTR && errno != EAGAIN) {
+                            if (ntohs(s->tcp.dest) == 53)
+                                terminate_dns_session(args, s);
+                            else
+                                write_rst(args, &s->tcp);
+                        }
                     } else if (bytes == 0) {
                         log_android(ANDROID_LOG_WARN, "%s recv eof", session);
 
-                        if (s->tcp.forward == NULL) {
+                        int dns_stream = ntohs(s->tcp.dest) == 53;
+                        int preserve_dns_terminal = 0;
+                        int eof_terminal = dns_frame_eof_terminal_state(
+                                dns_stream && dns_frame_stream_has_pending(&s->tcp.dns_frames),
+                                s->tcp.dns_frames.buffered,
+                                s->tcp.forward != NULL);
+                        if (dns_stream && eof_terminal != DNS_FRAME_TERMINAL_NONE) {
+                            if (begin_dns_terminal(s, epoll_fd, eof_terminal) == 0) {
+                                /* Keep complete rewritten responses alive
+                                 * after upstream EOF; ACKs flush the queue and
+                                 * then finish_dns_fin or finish_dns_terminal. */
+                                preserve_dns_terminal = 1;
+                                flush_dns_ack(args, s, epoll_fd);
+                            } else {
+                                log_android(ANDROID_LOG_WARN,
+                                            "%s DNS TCP EOF detach failed; resetting",
+                                            session);
+                                terminate_dns_session(args, s);
+                            }
+                        } else if (dns_stream && s->tcp.dns_frames.buffered != 0) {
+                            log_android(ANDROID_LOG_WARN,
+                                        "%s DNS TCP EOF with incomplete frame; resetting",
+                                        session);
+                            write_rst(args, &s->tcp);
+                        } else if (s->tcp.forward == NULL) {
                             if (write_fin_ack(args, &s->tcp) >= 0) {
                                 log_android(ANDROID_LOG_WARN, "%s FIN sent", session);
                                 s->tcp.local_seq++; // local FIN
@@ -593,38 +1023,54 @@ void check_tcp_socket(const struct arguments *args,
                             write_rst(args, &s->tcp);
                         }
 
-                        if (close(s->socket))
-                            log_android(ANDROID_LOG_ERROR, "%s close error %d: %s",
-                                        session, errno, strerror(errno));
-                        s->socket = -1;
+                        if (s->socket >= 0) {
+                            if (close(s->socket))
+                                log_android(ANDROID_LOG_ERROR, "%s close error %d: %s",
+                                            session, errno, strerror(errno));
+                            s->socket = -1;
+                        }
+                        if (!preserve_dns_terminal)
+                            discard_dns_frame_state(&s->tcp);
 
                     } else {
                         // Socket read data
                         log_android(ANDROID_LOG_DEBUG, "%s recv bytes %d", session, bytes);
                         s->tcp.received += bytes;
 
-                        // Process DNS response
-                        if (ntohs(s->tcp.dest) == 53 && bytes > 2) {
-                            size_t frame_len = ((size_t) buffer[0] << 8) | buffer[1];
-                            // recv() may split or coalesce DNS frames. The
-                            // header is blanked in place for every frame so
-                            // policy still applies, but only an isolated
-                            // complete frame can be shortened, because
-                            // trimming a coalesced or split read would
-                            // discard stream bytes.
-                            struct dns_frame_decision decision =
-                                    dns_frame_decide((size_t) bytes, frame_len);
-                            if (decision.should_parse) {
-                                size_t dlen = decision.dlen;
-                                parse_dns_response(args, s, buffer + 2, &dlen);
-                                dns_frame_apply_rewrite(buffer, &decision, dlen, &bytes);
+                        // Process DNS response. TCP reads are arbitrary stream
+                        // chunks, so retain incomplete frames and inspect every
+                        // complete frame exactly once. Completed output stays
+                        // queued until the downstream send window permits it.
+                        int dns_stream = ntohs(s->tcp.dest) == 53;
+                        if (dns_stream) {
+                            struct dns_frame_parse_context parse_context = {
+                                    .args = args,
+                                    .session = s,
+                            };
+                            size_t stream_bytes = (size_t) bytes;
+                            struct dns_frame_stream_result result;
+                            int feed_error = dns_frame_stream_feed(
+                                    &s->tcp.dns_frames, buffer, &stream_bytes,
+                                    parse_dns_frame, reserve_dns_frame,
+                                    reserve_dns_pending, &parse_context, &result);
+                            if (feed_error < 0) {
+                                log_android(ANDROID_LOG_WARN,
+                                            "%s DNS TCP fail-open queue failed; closing",
+                                            session);
+                                terminate_dns_session(args, s);
+                            } else if (flush_dns_frames(args, s) < 0) {
+                                log_android(ANDROID_LOG_WARN,
+                                            "%s DNS TCP pending output failed",
+                                            session);
+                                terminate_dns_session(args, s);
                             }
-                        }
-
-                        // Forward to tun
-                        if (write_data(args, &s->tcp, buffer, (size_t) bytes) >= 0) {
-                            s->tcp.local_seq += bytes;
-                            s->tcp.unconfirmed++;
+                            release_dns_frame_storage(&s->tcp);
+                        } else {
+                            // Forward non-DNS data to tun.
+                            if (write_data(args, &s->tcp, buffer, (size_t) bytes) >= 0) {
+                                s->tcp.local_seq += bytes;
+                                s->tcp.unconfirmed++;
+                            }
                         }
                     }
                     ng_free(buffer, __FILE__, __LINE__);
@@ -797,6 +1243,8 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.checkedHostname = 0;
             s->tcp.tls_data = NULL;
             s->tcp.tls_len = 0;
+            dns_frame_stream_init(&s->tcp.dns_frames, NULL, 0);
+            s->tcp.dns_terminal = DNS_FRAME_TERMINAL_NONE;
             s->next = NULL;
 
             if (datalen) {
@@ -894,16 +1342,27 @@ jboolean handle_tcp(const struct arguments *args,
             // Queue data to forward
             if (datalen) {
                 if (cur->socket < 0) {
-                    log_android(ANDROID_LOG_ERROR, "%s data while local closed", session);
-                    write_rst(args, &cur->tcp);
-                    return 0;
-                }
-                if (cur->tcp.state == TCP_CLOSE_WAIT) {
+                    if (ntohs(cur->tcp.dest) != 53 ||
+                        cur->tcp.dns_terminal == DNS_FRAME_TERMINAL_NONE) {
+                        log_android(ANDROID_LOG_ERROR,
+                                    "%s data while local closed", session);
+                        write_rst(args, &cur->tcp);
+                        return 0;
+                    }
+                    /* A detached DNS upstream cannot accept another query,
+                     * but a valid response may still be queued downstream.
+                     * Keep that response alive and process this packet's ACK;
+                     * do not turn an ACK+payload into an unconditional RST. */
+                    log_android(ANDROID_LOG_WARN,
+                                "%s DNS data while upstream terminal; not forwarding",
+                                session);
+                } else if (cur->tcp.state == TCP_CLOSE_WAIT) {
                     log_android(ANDROID_LOG_ERROR, "%s data while remote closed", session);
                     write_rst(args, &cur->tcp);
                     return 0;
+                } else {
+                    queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
                 }
-                queue_tcp(args, tcphdr, session, &cur->tcp, data, datalen);
             }
 
             if (tcphdr->rst /* +ACK */) {
@@ -911,6 +1370,12 @@ jboolean handle_tcp(const struct arguments *args,
                 // http://tools.ietf.org/html/rfc1122#page-87
                 log_android(ANDROID_LOG_WARN, "%s received reset", session);
                 cur->tcp.state = TCP_CLOSING;
+                if (cur->tcp.dns_frames.buffered != 0)
+                    log_android(ANDROID_LOG_WARN,
+                                "%s DNS TCP reset with incomplete frame, dropping",
+                                session);
+                discard_dns_frame_state(&cur->tcp);
+                cur->tcp.dns_terminal = DNS_FRAME_TERMINAL_NONE;
                 return 0;
             } else {
                 if (!tcphdr->ack || ntohl(tcphdr->ack_seq) == cur->tcp.local_seq) {
@@ -967,7 +1432,7 @@ jboolean handle_tcp(const struct arguments *args,
                     uint32_t ack = ntohl(tcphdr->ack_seq);
                     if ((uint32_t) (ack + 1) == cur->tcp.local_seq) {
                         // Keep alive
-                        if (cur->tcp.state == TCP_ESTABLISHED) {
+                        if (cur->tcp.state == TCP_ESTABLISHED && cur->socket >= 0) {
                             int on = 1;
                             if (setsockopt(cur->socket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)))
                                 log_android(ANDROID_LOG_ERROR,
@@ -992,6 +1457,11 @@ jboolean handle_tcp(const struct arguments *args,
                             cur->tcp.acked = ack;
                         }
 
+                        if (dns_frame_should_flush_ack(
+                                    tcphdr->ack,
+                                    cur->tcp.dns_terminal,
+                                    dns_frame_stream_has_pending(&cur->tcp.dns_frames)))
+                            flush_dns_ack(args, cur, epoll_fd);
                         return 1;
                     } else {
                         log_android(ANDROID_LOG_ERROR, "%s future ACK", session);
@@ -1000,6 +1470,12 @@ jboolean handle_tcp(const struct arguments *args,
                     }
                 }
             }
+
+            if (dns_frame_should_flush_ack(
+                        tcphdr->ack,
+                        cur->tcp.dns_terminal,
+                        dns_frame_stream_has_pending(&cur->tcp.dns_frames)))
+                flush_dns_ack(args, cur, epoll_fd);
 
             if (cur->tcp.state != oldstate ||
                 cur->tcp.local_seq != oldlocal ||
@@ -1171,6 +1647,8 @@ int open_tcp_socket(const struct arguments *args,
 
 int write_syn_ack(const struct arguments *args, struct tcp_session *cur) {
     if (write_tcp(args, cur, NULL, 0, 1, 1, 0, 0) < 0) {
+        if (ntohs(cur->dest) == 53)
+            discard_dns_frame_state(cur);
         cur->state = TCP_CLOSING;
         return -1;
     }
@@ -1179,6 +1657,8 @@ int write_syn_ack(const struct arguments *args, struct tcp_session *cur) {
 
 int write_ack(const struct arguments *args, struct tcp_session *cur) {
     if (write_tcp(args, cur, NULL, 0, 0, 1, 0, 0) < 0) {
+        if (ntohs(cur->dest) == 53)
+            discard_dns_frame_state(cur);
         cur->state = TCP_CLOSING;
         return -1;
     }
@@ -1188,6 +1668,8 @@ int write_ack(const struct arguments *args, struct tcp_session *cur) {
 int write_data(const struct arguments *args, struct tcp_session *cur,
                const uint8_t *buffer, size_t length) {
     if (write_tcp(args, cur, buffer, length, 0, 1, 0, 0) < 0) {
+        if (ntohs(cur->dest) == 53)
+            discard_dns_frame_state(cur);
         cur->state = TCP_CLOSING;
         return -1;
     }
@@ -1196,6 +1678,8 @@ int write_data(const struct arguments *args, struct tcp_session *cur,
 
 int write_fin_ack(const struct arguments *args, struct tcp_session *cur) {
     if (write_tcp(args, cur, NULL, 0, 0, 1, 1, 0) < 0) {
+        if (ntohs(cur->dest) == 53)
+            discard_dns_frame_state(cur);
         cur->state = TCP_CLOSING;
         return -1;
     }
@@ -1204,6 +1688,7 @@ int write_fin_ack(const struct arguments *args, struct tcp_session *cur) {
 
 void write_rst(const struct arguments *args, struct tcp_session *cur) {
     // https://www.snellman.net/blog/archive/2016-02-01-tcp-rst/
+    const int dns_stream = ntohs(cur->dest) == 53;
     int ack = 0;
     if (cur->state == TCP_LISTEN) {
         ack = 1;
@@ -1212,6 +1697,10 @@ void write_rst(const struct arguments *args, struct tcp_session *cur) {
     write_tcp(args, cur, NULL, 0, 0, ack, 0, 1);
     if (cur->state != TCP_CLOSE)
         cur->state = TCP_CLOSING;
+    if (dns_stream) {
+        discard_dns_frame_state(cur);
+        cur->dns_terminal = DNS_FRAME_TERMINAL_NONE;
+    }
 }
 
 ssize_t write_tcp(const struct arguments *args, const struct tcp_session *cur,
