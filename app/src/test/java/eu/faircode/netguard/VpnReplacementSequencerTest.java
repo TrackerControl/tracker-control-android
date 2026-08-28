@@ -1,7 +1,9 @@
 package eu.faircode.netguard;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -72,6 +74,47 @@ public class VpnReplacementSequencerTest {
         assertEquals(1, active.size());
         assertEquals("blocking", active.get(0));
         assertEquals(Arrays.asList("previous"), closed);
+        assertFalse(closed.contains("blocking"));
+    }
+
+    @Test
+    public void failedReplacementCanRetryAndSuccessResetsBudget() {
+        List<String> closed = new ArrayList<>();
+        int[] replacementAttempts = {0};
+        FailureRecoveryPolicy policy = new FailureRecoveryPolicy(2, 1_000L, 120_000L);
+
+        VpnReplacementSequencer.EstablishFailedException failure = assertThrows(
+                VpnReplacementSequencer.EstablishFailedException.class,
+                () -> VpnReplacementSequencer.replace(
+                        "previous",
+                        () -> "blocking",
+                        () -> {
+                            replacementAttempts[0]++;
+                            return null;
+                        },
+                        value -> { },
+                        value -> { },
+                        closed::add));
+
+        assertTrue(failure.isReplacementFailure());
+        assertEquals(Arrays.asList("previous"), closed);
+        assertEquals(1_000L, policy.onFailure(0L));
+
+        String result = VpnReplacementSequencer.replace(
+                "blocking",
+                () -> "blocking retry",
+                () -> {
+                    replacementAttempts[0]++;
+                    return "replacement";
+                },
+                value -> { },
+                value -> { },
+                closed::add);
+
+        assertEquals("replacement", result);
+        assertEquals(2, replacementAttempts[0]);
+        policy.reset();
+        assertEquals(1_000L, policy.onFailure(1L));
     }
 
     @Test

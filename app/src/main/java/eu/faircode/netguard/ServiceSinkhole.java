@@ -227,11 +227,12 @@ public class ServiceSinkhole extends VpnService {
     // still-zero native context segfaults (netguard.c dereferences it
     // unconditionally).
     private volatile boolean initialized = false;
+    private volatile boolean destroying = false;
 
     private static final int NATIVE_RECOVERY_MAX_RETRIES = 5;
     private static final long NATIVE_RECOVERY_INITIAL_DELAY_MS = 1_000L;
     private static final long NATIVE_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
-    private final NativeFailureRecoveryPolicy nativeRecoveryPolicy = new NativeFailureRecoveryPolicy(
+    private final FailureRecoveryPolicy nativeRecoveryPolicy = new FailureRecoveryPolicy(
             NATIVE_RECOVERY_MAX_RETRIES,
             NATIVE_RECOVERY_INITIAL_DELAY_MS,
             NATIVE_RECOVERY_STABLE_WINDOW_MS);
@@ -245,6 +246,51 @@ public class ServiceSinkhole extends VpnService {
 
         Log.i(TAG, "Retrying native tunnel after failure");
         ServiceSinkhole.reload("native tunnel recovery", ServiceSinkhole.this, false);
+    };
+
+    private static final int VPN_REPLACEMENT_RECOVERY_MAX_RETRIES = 5;
+    private static final long VPN_REPLACEMENT_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    // The ladder above spans about half a minute. A failure this long after the
+    // previous one is a new episode rather than a continuation of the old one,
+    // so it starts from a full budget instead of inheriting an exhausted count
+    // that only a successful replacement would otherwise clear.
+    private static final long VPN_REPLACEMENT_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
+    private static final String EXTRA_REPLACEMENT_RETRY = "ReplacementRetry";
+    private final FailureRecoveryPolicy vpnReplacementRecoveryPolicy =
+            new FailureRecoveryPolicy(
+                    VPN_REPLACEMENT_RECOVERY_MAX_RETRIES,
+                    VPN_REPLACEMENT_RECOVERY_INITIAL_DELAY_MS,
+                    VPN_REPLACEMENT_RECOVERY_STABLE_WINDOW_MS);
+    private final Object vpnReplacementRecoveryLock = new Object();
+    private final AtomicBoolean vpnReplacementRecoveryPending = new AtomicBoolean(false);
+    private final Runnable vpnReplacementRecoveryRunnable = () -> {
+        synchronized (vpnReplacementRecoveryLock) {
+            if (!vpnReplacementRecoveryPending.compareAndSet(true, false))
+                return;
+        }
+
+        synchronized (ServiceSinkhole.this) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+            if (destroying || !initialized || commandHandler == null || state != State.enforcing
+                    || !user_foreground || !prefs.getBoolean("enabled", false)
+                    || temporarilyStopped || vpn == null || last_builder != null) {
+                Log.i(TAG, "Skipping VPN replacement recovery because protection is no longer active");
+                return;
+            }
+            if (VpnService.prepare(ServiceSinkhole.this) != null) {
+                Log.i(TAG, "Skipping VPN replacement recovery because VPN consent was revoked");
+                return;
+            }
+
+            Log.i(TAG, "Queueing VPN replacement recovery");
+            getLock(ServiceSinkhole.this).acquire(WAKELOCK_TIMEOUT_MS);
+            Intent intent = new Intent(ServiceSinkhole.this, ServiceSinkhole.class);
+            intent.putExtra(EXTRA_COMMAND, Command.reload);
+            intent.putExtra(EXTRA_REASON, "VPN replacement recovery");
+            intent.putExtra(EXTRA_REPLACEMENT_RETRY, true);
+            intent.putExtra(EXTRA_INTERACTIVE, false);
+            commandHandler.queue(intent);
+        }
     };
 
     // Cached preferences for shouldTrackApp() - refreshed in reload()
@@ -573,15 +619,20 @@ public class ServiceSinkhole extends VpnService {
                     case start:
                         if (vpn == null)
                             cancelNativeRecovery(true);
+                        if (vpn == null)
+                            cancelVpnReplacementRecovery(true);
                         start();
                         break;
 
                     case reload:
+                        if (!intent.getBooleanExtra(EXTRA_REPLACEMENT_RETRY, false))
+                            cancelVpnReplacementRecovery(false);
                         reload(intent.getBooleanExtra(EXTRA_INTERACTIVE, false));
                         break;
 
                     case stop:
                         cancelNativeRecovery(true);
+                        cancelVpnReplacementRecovery(true);
                         stop(temporarilyStopped);
                         break;
 
@@ -633,6 +684,9 @@ public class ServiceSinkhole extends VpnService {
                 if (cmd == Command.start || cmd == Command.reload) {
                     if (VpnService.prepare(ServiceSinkhole.this) == null) {
                         Log.w(TAG, "VPN prepared connected=" + last_connected);
+                        if (ex instanceof StartFailedException
+                                && ((StartFailedException) ex).isReplacementFailure())
+                            scheduleVpnReplacementRecovery();
                         if (last_connected && !(ex instanceof StartFailedException)) {
                             // showAutoStartNotification();
                             if (!Util.isPlayStoreInstall(ServiceSinkhole.this))
@@ -640,6 +694,7 @@ public class ServiceSinkhole extends VpnService {
                         }
                         // Retried on connectivity change
                     } else {
+                        cancelVpnReplacementRecovery(false);
                         showErrorNotification(ex.toString());
 
                         // Disable firewall
@@ -740,6 +795,7 @@ public class ServiceSinkhole extends VpnService {
                                     active -> vpn = active,
                                     ServiceSinkhole.this::stopNative,
                                     ServiceSinkhole.this::stopVPN);
+                            cancelVpnReplacementRecovery(true);
                         } catch (RuntimeException ex) {
                             // A blocking descriptor remains active after a
                             // replacement failure. Force the next reload down
@@ -748,7 +804,9 @@ public class ServiceSinkhole extends VpnService {
                             last_builder = null;
                             Log.w(TAG, ex.getMessage());
                             if (ex instanceof VpnReplacementSequencer.EstablishFailedException)
-                                throw new StartFailedException(getString(R.string.msg_start_failed));
+                                throw new StartFailedException(getString(R.string.msg_start_failed),
+                                        ((VpnReplacementSequencer.EstablishFailedException) ex)
+                                                .isReplacementFailure());
                             throw ex;
                         }
                     }
@@ -919,8 +977,19 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private class StartFailedException extends IllegalStateException {
+            private final boolean replacementFailure;
+
             public StartFailedException(String msg) {
+                this(msg, false);
+            }
+
+            public StartFailedException(String msg, boolean replacementFailure) {
                 super(msg);
+                this.replacementFailure = replacementFailure;
+            }
+
+            public boolean isReplacementFailure() {
+                return replacementFailure;
             }
         }
     }
@@ -2420,10 +2489,10 @@ public class ServiceSinkhole extends VpnService {
                 return;
 
             long delayMs = nativeRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
-            if (delayMs == NativeFailureRecoveryPolicy.NO_RETRY) {
+            if (delayMs == FailureRecoveryPolicy.NO_RETRY) {
                 // Recovery budget exhausted: TC is going down, so surface the failure to the user.
                 Log.e(TAG, "Native recovery retry budget exhausted");
-                showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+                showErrorNotification(FailureRecoveryPolicy.isFileDescriptorExhaustion(error)
                         ? getString(R.string.msg_native_fd_recovery_exhausted)
                         : reason);
                 cancelNativeRecovery(false);
@@ -2443,7 +2512,7 @@ public class ServiceSinkhole extends VpnService {
     // Called from native code
     private void nativeError(int error, String message) {
         Log.w(TAG, "Native error " + error + ": " + message);
-        showErrorNotification(NativeFailureRecoveryPolicy.isFileDescriptorExhaustion(error)
+        showErrorNotification(FailureRecoveryPolicy.isFileDescriptorExhaustion(error)
                 ? getString(R.string.msg_native_fd_error)
                 : message);
     }
@@ -2452,6 +2521,49 @@ public class ServiceSinkhole extends VpnService {
         nativeRecoveryHandler.removeCallbacks(nativeRecoveryRunnable);
         if (resetBudget)
             nativeRecoveryPolicy.reset();
+    }
+
+    private void scheduleVpnReplacementRecovery() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if (destroying || !initialized || commandHandler == null || state != State.enforcing
+                || !user_foreground || !prefs.getBoolean("enabled", false)
+                || temporarilyStopped || vpn == null || VpnService.prepare(this) != null) {
+            cancelVpnReplacementRecovery(false);
+            return;
+        }
+
+        long delayMs;
+        synchronized (vpnReplacementRecoveryLock) {
+            if (!vpnReplacementRecoveryPending.compareAndSet(false, true)) {
+                Log.i(TAG, "VPN replacement recovery already pending");
+                return;
+            }
+            delayMs = vpnReplacementRecoveryPolicy.onFailure(SystemClock.elapsedRealtime());
+            if (delayMs != FailureRecoveryPolicy.NO_RETRY)
+                commandHandler.postDelayed(vpnReplacementRecoveryRunnable, delayMs);
+        }
+        if (delayMs == FailureRecoveryPolicy.NO_RETRY) {
+            Log.e(TAG, "VPN replacement recovery retry budget exhausted");
+            cancelVpnReplacementRecovery(false);
+            showErrorNotification(vpnReplacementRecoveryExhaustedMessage(this), false);
+            return;
+        }
+
+        Log.w(TAG, "Scheduled VPN replacement recovery in " + delayMs + " ms");
+    }
+
+    private void cancelVpnReplacementRecovery(boolean resetBudget) {
+        synchronized (vpnReplacementRecoveryLock) {
+            vpnReplacementRecoveryPending.set(false);
+            if (commandHandler != null)
+                commandHandler.removeCallbacks(vpnReplacementRecoveryRunnable);
+            if (resetBudget)
+                vpnReplacementRecoveryPolicy.reset();
+        }
+    }
+
+    static String vpnReplacementRecoveryExhaustedMessage(Context context) {
+        return context.getString(R.string.msg_vpn_replacement_recovery_exhausted);
     }
 
     // Called from native code
@@ -3265,6 +3377,7 @@ public class ServiceSinkhole extends VpnService {
 
     @Override
     public void onCreate() {
+        destroying = false;
         Log.i(TAG, "Create version=" + Util.getSelfVersionName(this) + "/" + Util.getSelfVersionCode(this));
         try {
             startForeground(NOTIFY_WAITING, getWaitingNotification());
@@ -3501,6 +3614,7 @@ public class ServiceSinkhole extends VpnService {
 
     private void reloadAfterNetworkChange(final String reason) {
         // Callbacks arrive off the main thread; the reload runs on it.
+        cancelVpnReplacementRecovery(false);
         if (NetworkReloadPolicy.shouldRestartWireGuard(reason))
             pendingWireGuardRestart.set(true);
         networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
@@ -3649,6 +3763,7 @@ public class ServiceSinkhole extends VpnService {
     @Override
     public void onRevoke() {
         Log.i(TAG, "Revoke");
+        cancelVpnReplacementRecovery(false);
 
         // Preserve the enabled state only while Android still designates us as
         // the always-on VPN. In that case a transient system teardown should be
@@ -3695,6 +3810,7 @@ public class ServiceSinkhole extends VpnService {
     @Override
     public void onDestroy() {
         synchronized (this) {
+            destroying = true;
             Log.i(TAG, "Destroy");
 
             // Flush any pending batched writes before shutdown
@@ -3708,6 +3824,7 @@ public class ServiceSinkhole extends VpnService {
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
             cancelNativeRecovery(true);
+            cancelVpnReplacementRecovery(true);
 
             // onCreate can stopSelf() before creating the handler threads when
             // startForeground is denied (Android 12+); there is nothing to quit
@@ -3948,13 +4065,25 @@ public class ServiceSinkhole extends VpnService {
     }
 
     private void showErrorNotification(String message) {
+        showErrorNotification(message, true);
+    }
+
+    /**
+     * @param unexpected whether to present the message as an unexpected error.
+     *                   A failure we diagnosed precisely — and whose message
+     *                   already says what happened and what it means for the
+     *                   user's traffic — reads as a crash once it is wrapped in
+     *                   "An unexpected error has occurred".
+     */
+    private void showErrorNotification(String message, boolean unexpected) {
+        String text = unexpected ? getString(R.string.msg_error, message) : message;
         Intent main = new Intent(this, ActivityMain.class);
         PendingIntent pi = PendingIntentCompat.getActivity(this, 0, main, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
         builder.setSmallIcon(R.drawable.ic_error_white_24dp)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.msg_error, message))
+                .setContentText(text)
                 .setContentIntent(pi)
                 .setColor(getResources().getColor(R.color.colorTrackerControl))
                 .setOngoing(false)
@@ -3965,7 +4094,7 @@ public class ServiceSinkhole extends VpnService {
                     .setVisibility(NotificationCompat.VISIBILITY_SECRET);
 
         NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
-        notification.bigText(getString(R.string.msg_error, message));
+        notification.bigText(text);
         notification.setSummaryText(message);
 
         Util.notify(this, NOTIFY_ERROR, notification.build());

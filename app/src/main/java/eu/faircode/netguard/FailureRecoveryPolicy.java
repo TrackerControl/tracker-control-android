@@ -9,7 +9,7 @@
 
 package eu.faircode.netguard;
 
-final class NativeFailureRecoveryPolicy {
+final class FailureRecoveryPolicy {
     static final long NO_RETRY = -1L;
     static final int FILE_DESCRIPTOR_LIMIT_ERROR = 24;
 
@@ -20,7 +20,7 @@ final class NativeFailureRecoveryPolicy {
     private int failures;
     private long lastFailureMs = Long.MIN_VALUE;
 
-    NativeFailureRecoveryPolicy(int maxRetries, long initialDelayMs, long stableWindowMs) {
+    FailureRecoveryPolicy(int maxRetries, long initialDelayMs, long stableWindowMs) {
         if (maxRetries < 1 || initialDelayMs < 0 || stableWindowMs < 0)
             throw new IllegalArgumentException();
 

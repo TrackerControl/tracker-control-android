@@ -10,8 +10,20 @@ final class VpnReplacementSequencer {
     }
 
     static final class EstablishFailedException extends IllegalStateException {
+        private final String stage;
+
         EstablishFailedException(String stage) {
             super("Could not establish " + stage + " VPN");
+            this.stage = stage;
+        }
+
+        EstablishFailedException(String stage, RuntimeException cause) {
+            super("Could not establish " + stage + " VPN", cause);
+            this.stage = stage;
+        }
+
+        boolean isReplacementFailure() {
+            return "replacement".equals(stage);
         }
     }
 
@@ -38,7 +50,12 @@ final class VpnReplacementSequencer {
             close.run(previous);
         }
 
-        T replacement = establishReplacement.establish();
+        T replacement;
+        try {
+            replacement = establishReplacement.establish();
+        } catch (RuntimeException ex) {
+            throw new EstablishFailedException("replacement", ex);
+        }
         if (replacement == null)
             throw new EstablishFailedException("replacement");
 
