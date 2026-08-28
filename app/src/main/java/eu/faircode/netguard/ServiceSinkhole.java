@@ -1838,25 +1838,36 @@ public class ServiceSinkhole extends VpnService {
         // ULA resolvers are outside the 2000::/3 global-unicast route below.
         // Keeping both inside the tunnel ensures DNS remains reachable and passes
         // through TC's filtering path.
+        List<InetAddress> routedDnsServers = new ArrayList<>();
         for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
             if ((dns instanceof Inet4Address && dns.isSiteLocalAddress()) ||
                     dns instanceof Inet6Address)
                 try {
                     Log.i(TAG, "Adding DNS host route=" + dns.getHostAddress());
                     builder.addRoute(dns, dns instanceof Inet4Address ? 32 : 128);
+                    routedDnsServers.add(dns);
                 } catch (Throwable ex) {
                     Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                 }
 
+        // The route covers the whole address, not just port 53, and everything
+        // on it is now re-sent from our socket — so our permission decides its
+        // reachability for every app (#785). Replace this state once per tunnel
+        // build; it must not share the process-local runtime observation latch.
+        net.kollnig.missioncontrol.LocalNetworkAccess.setRoutedResolvers(routedDnsServers);
+
         // Android 17 refuses local network traffic without ACCESS_LOCAL_NETWORK:
         // TCP times out, UDP fails with EPERM. A LAN resolver routed into the tun
-        // above is re-sent from our own socket, so it goes silent (#701).
-        // The symptom is "nothing resolves", which no one attributes to a
-        // permission — and the banner only reaches someone who opens the app.
+        // above is re-sent from our own socket (#701). Port 53 survives Android's
+        // exemption, so name resolution keeps working while the rest of that
+        // address — the router's web UI is the common one — goes silent for every
+        // app behind the tunnel (#785). Neither symptom is attributed to a
+        // permission, and the banner only reaches someone who opens the app.
         // Notify, so the reason meets the user where the failure appears.
         if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(ServiceSinkhole.this)) {
-            Log.w(TAG, "Local network access not granted: configured LAN destinations" +
-                    " (custom DNS, Secure DNS resolver, WireGuard peer, proxy) are unreachable");
+            Log.w(TAG, "Local network access not granted: LAN destinations are" +
+                    " unreachable, whether configured (custom DNS, Secure DNS resolver," +
+                    " WireGuard peer, proxy) or routed into the tun as a resolver");
             showLocalNetworkNotification();
         } else
             clearLocalNetworkNotification();

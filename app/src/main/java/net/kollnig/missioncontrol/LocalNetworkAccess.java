@@ -42,16 +42,21 @@ import java.net.URI;
  * permission for apps targeting API 37 or higher. Without it, TCP connections
  * time out and UDP fails with {@code EPERM}.
  *
- * <p>Traffic other apps send to the LAN is unaffected by TrackerControl's
- * permission state: those are their own sockets, and TrackerControl keeps RFC
- * 1918 ranges out of its routes (see {@link eu.faircode.netguard.VpnRoutes}),
- * so that traffic never enters the tun. What does depend on this permission is
- * traffic TrackerControl itself sends to the local network:
+ * <p>Traffic other apps send to the LAN mostly stays unaffected by
+ * TrackerControl's permission state: those are their own sockets, and
+ * TrackerControl keeps RFC 1918 ranges out of its routes (see
+ * {@link eu.faircode.netguard.VpnRoutes}), so that traffic never enters the
+ * tun. The exception is an address a host route does pull in — a LAN resolver
+ * (see {@link #setRoutedResolvers(Iterable)}) — where the whole address, not
+ * just port 53, is re-sent from TrackerControl's socket. What else depends on
+ * this permission is traffic TrackerControl itself sends to the local network:
  *
  * <ul>
  *   <li>a custom VPN DNS server on the LAN (Pi-hole, AdGuard Home, the router).
  *       Such resolvers get a host route into the tun, so the queries are
- *       re-sent from TrackerControl's own socket (#701);</li>
+ *       re-sent from TrackerControl's own socket (#701). Port 53 survives the
+ *       exemption below, but the host route covers every other port on that
+ *       address too, for every app behind the tunnel (#785);</li>
  *   <li>Secure DNS (DoH) pointed at a local resolver — an ordinary HTTPS
  *       connection, with no DNS exemption to fall back on;</li>
  *   <li>tethering compatibility mode, which installs a full-tunnel default
@@ -61,12 +66,15 @@ import java.net.URI;
  *       socket in the same way.</li>
  * </ul>
  *
- * <p>The system's own resolvers are deliberately not treated as needing the
- * permission: Android exempts port 53 traffic to the network's DNS servers, so
- * the common "router is the DNS server" setup keeps working untouched. Only
- * configuration that points TrackerControl somewhere else on the LAN triggers
- * the prompt, which keeps the permission request off the path of users who
- * never need it.
+ * <p>The system's own resolvers are deliberately absent from
+ * {@link #isConfigured(SharedPreferences)}: Android exempts port 53 traffic to
+ * the network's DNS servers, so name resolution keeps working in the common
+ * "router is the DNS server" setup, and a permission request must not be
+ * provoked by a stored setting nobody chose. They are instead reported at
+ * tunnel-build time by {@link #setRoutedResolvers(Iterable)}, which replaces
+ * the current-build state with only the resolvers that actually receive a host
+ * route — so the prompt still stays off the path of users whose traffic never
+ * reaches the LAN.
  */
 public class LocalNetworkAccess {
     private LocalNetworkAccess() {
@@ -114,30 +122,33 @@ public class LocalNetworkAccess {
     }
 
     /**
-     * Whether local network access is both needed by the current configuration
-     * and not granted — i.e. whether something the user configured is about to
-     * break, or has already broken.
+     * Whether local network access is needed by the current configuration,
+     * current tunnel-build resolver set, or runtime destination observations,
+     * and is not granted.
      */
     public static boolean isMissing(Context context) {
         // Cheapest checks first: nothing to do below Android 17, and parsing the
         // WireGuard config is pointless once the permission is granted.
         return isEnforced() && !isGranted(context)
-                && (observedLocalDestination || isConfigured(context));
+                && (observedLocalDestination || routedLocalResolver || isConfigured(context));
     }
 
     /**
-     * A destination we resolved to a local network address, seen while running.
-     * Covers what {@link #isConfigured(SharedPreferences)} structurally cannot:
-     * a configuration that names a <em>host</em> rather than an address —
-     * {@code https://pi.hole/dns-query}, a WireGuard endpoint on a dynamic DNS
-     * name — where classifying it up front would mean resolving a name on
-     * whichever thread asked, including the main one.
+     * A destination we resolved to a local network address, seen while running
+     * for DoH or WireGuard. Covers what {@link #isConfigured(SharedPreferences)}
+     * structurally cannot: a configuration that names a <em>host</em> rather
+     * than an address — {@code https://pi.hole/dns-query}, a WireGuard endpoint
+     * on a dynamic DNS name — where classifying it up front would mean resolving
+     * a name on whichever thread asked, including the main one.
      *
      * <p>Not persisted. A stale observation survives no longer than the
      * process, and anything still pointing at the LAN re-reports itself as soon
      * as it is used again.
      */
     private static volatile boolean observedLocalDestination;
+
+    /** Whether the current tunnel build routed at least one local resolver. */
+    private static volatile boolean routedLocalResolver;
 
     /**
      * Report an address TrackerControl is about to talk to. Callers pass what
@@ -159,15 +170,45 @@ public class LocalNetworkAccess {
         }
     }
 
+    /**
+     * Replace the current tunnel-build resolver state.
+     *
+     * <p>The resolver set is scanned once while the tunnel is built, so a
+     * resolver from a previous network cannot keep the warning latched. Android
+     * exempts port 53 to the network's own resolvers, so DNS keeps resolving
+     * without the permission and {@link #isConfigured(SharedPreferences)} rightly
+     * ignores such a resolver. The host route does not stop at port 53: it
+     * captures the address as a whole, so the router's web UI and anything else
+     * on that address goes silent for <em>every</em> app behind the tunnel (#785).
+     * A null or empty set means that this build routed no local resolver.
+     */
+    public static void setRoutedResolvers(Iterable<InetAddress> resolvers) {
+        boolean local = false;
+        if (resolvers != null)
+            for (InetAddress resolver : resolvers)
+                if (resolver != null && isLocalAddress(resolver.getHostAddress())) {
+                    local = true;
+                    break;
+                }
+        routedLocalResolver = local;
+    }
+
     /** Whether a local destination has been seen since the last reset. */
     static boolean hasObservedLocalDestination() {
         return observedLocalDestination;
     }
 
+    /** Whether the current tunnel build routed a local resolver. */
+    static boolean hasRoutedLocalResolver() {
+        return routedLocalResolver;
+    }
+
     /**
-     * Drop what we observed, so a configuration that no longer points at the
-     * LAN stops warning. Called when a relevant setting changes; anything still
-     * local reports itself again on next use.
+     * Drop runtime destinations we observed, so a configuration that no longer
+     * points at the LAN stops warning. Called when a relevant setting changes;
+     * anything still local reports itself again on next use. The current tunnel
+     * build's routed-resolver state is replaced separately by
+     * {@link #setRoutedResolvers(Iterable)}.
      */
     public static void forgetObservations() {
         observedLocalDestination = false;
@@ -205,7 +246,8 @@ public class LocalNetworkAccess {
      * 1918 range, the RFC 6598 range some routers use on their LAN side, a
      * link-local address, or an IPv6 unique local address. Only literals are
      * considered — resolving a hostname here would mean a network lookup on the
-     * caller's (often main) thread.
+     * caller's (often main) thread. A LAN host reached over a global IPv6
+     * address is not recognised; that is a known gap.
      */
     static boolean isLocalAddress(String address) {
         if (TextUtils.isEmpty(address))
