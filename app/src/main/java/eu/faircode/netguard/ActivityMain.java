@@ -236,7 +236,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         if (!getIntent().hasExtra(EXTRA_APPROVE)) {
             if (enabled)
-                ServiceSinkhole.start("UI", this);
+                ServiceSinkhole.start("UI", this, true);
             else
                 ServiceSinkhole.stop("UI", this, false);
         }
@@ -692,7 +692,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 PendingIntent pi = PendingIntentCompat.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 am.cancel(pi);
 
-                ServiceSinkhole.start("prepared", this);
+                ServiceSinkhole.start("prepared", this, true);
             } else if (resultCode == RESULT_CANCELED)
                 Toast.makeText(this, R.string.msg_vpn_cancelled, Toast.LENGTH_LONG).show();
 

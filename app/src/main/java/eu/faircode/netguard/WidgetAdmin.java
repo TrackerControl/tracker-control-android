@@ -75,7 +75,7 @@ public class WidgetAdmin extends ReceiverAutostart {
                 boolean enabled = INTENT_ON.equals(intent.getAction());
                 prefs.edit().putBoolean("enabled", enabled).apply();
                 if (enabled)
-                    ServiceSinkhole.start("widget", context);
+                    ServiceSinkhole.start("widget", context, true);
                 else
                     ServiceSinkhole.stop("widget", context, false);
 
