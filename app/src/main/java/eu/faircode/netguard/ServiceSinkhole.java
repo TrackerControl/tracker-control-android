@@ -273,6 +273,7 @@ public class ServiceSinkhole extends VpnService {
     public static final String EXTRA_BLOCKED = "Blocked";
     public static final String EXTRA_INTERACTIVE = "Interactive";
     public static final String EXTRA_TEMPORARY = "Temporary";
+    private static final String EXTRA_USER_INITIATED = "UserInitiated";
 
     private static final int MSG_STATS_START = 1;
     private static final int MSG_STATS_STOP = 2;
@@ -469,8 +470,15 @@ public class ServiceSinkhole extends VpnService {
             // Check if foreground
             if (cmd != Command.stop)
                 if (!user_foreground) {
-                    Log.i(TAG, "Command " + cmd + " ignored for background user");
-                    return;
+                    if (cmd == Command.start && intent.getBooleanExtra(EXTRA_USER_INITIATED, false)) {
+                        // The user reached our UI in this profile, so it is in the foreground
+                        // regardless of whether a matching ACTION_USER_FOREGROUND ever arrived.
+                        user_foreground = true;
+                        Log.i(TAG, "User-initiated start, clearing background user state");
+                    } else {
+                        Log.i(TAG, "Command " + cmd + " ignored for background user");
+                        return;
+                    }
                 }
 
             // Handle temporary stop
@@ -4374,9 +4382,15 @@ public class ServiceSinkhole extends VpnService {
     }
 
     public static void start(String reason, Context context) {
+        start(reason, context, false);
+    }
+
+    public static void start(String reason, Context context, boolean userInitiated) {
         Intent intent = new Intent(context, ServiceSinkhole.class);
         intent.putExtra(EXTRA_COMMAND, Command.start);
         intent.putExtra(EXTRA_REASON, reason);
+        if (userInitiated)
+            intent.putExtra(EXTRA_USER_INITIATED, true);
         try {
             ContextCompat.startForegroundService(context, intent);
         } catch (Throwable ex) {
