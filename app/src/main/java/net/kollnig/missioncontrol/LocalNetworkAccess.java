@@ -47,10 +47,9 @@ import java.net.URI;
  * TrackerControl keeps RFC 1918 ranges out of its routes (see
  * {@link eu.faircode.netguard.VpnRoutes}), so that traffic never enters the
  * tun. The exception is an address a host route does pull in — a LAN resolver
- * (see {@link #reportRoutedResolver(InetAddress)}) — where the whole address,
- * not just port 53, is re-sent from TrackerControl's socket. What else depends
- * on this permission is traffic TrackerControl itself sends to the local
- * network:
+ * (see {@link #setRoutedResolvers(Iterable)}) — where the whole address, not
+ * just port 53, is re-sent from TrackerControl's socket. What else depends on
+ * this permission is traffic TrackerControl itself sends to the local network:
  *
  * <ul>
  *   <li>a custom VPN DNS server on the LAN (Pi-hole, AdGuard Home, the router).
@@ -72,9 +71,10 @@ import java.net.URI;
  * the network's DNS servers, so name resolution keeps working in the common
  * "router is the DNS server" setup, and a permission request must not be
  * provoked by a stored setting nobody chose. They are instead reported at
- * tunnel-build time by {@link #reportRoutedResolver(InetAddress)}, which fires
- * only for the resolvers that actually receive a host route — so the prompt
- * still stays off the path of users whose traffic never reaches the LAN.
+ * tunnel-build time by {@link #setRoutedResolvers(Iterable)}, which replaces
+ * the current-build state with only the resolvers that actually receive a host
+ * route — so the prompt still stays off the path of users whose traffic never
+ * reaches the LAN.
  */
 public class LocalNetworkAccess {
     private LocalNetworkAccess() {
@@ -122,30 +122,33 @@ public class LocalNetworkAccess {
     }
 
     /**
-     * Whether local network access is both needed by the current configuration
-     * and not granted — i.e. whether something the user configured is about to
-     * break, or has already broken.
+     * Whether local network access is needed by the current configuration,
+     * current tunnel-build resolver set, or runtime destination observations,
+     * and is not granted.
      */
     public static boolean isMissing(Context context) {
         // Cheapest checks first: nothing to do below Android 17, and parsing the
         // WireGuard config is pointless once the permission is granted.
         return isEnforced() && !isGranted(context)
-                && (observedLocalDestination || isConfigured(context));
+                && (observedLocalDestination || routedLocalResolver || isConfigured(context));
     }
 
     /**
-     * A destination we resolved to a local network address, seen while running.
-     * Covers what {@link #isConfigured(SharedPreferences)} structurally cannot:
-     * a configuration that names a <em>host</em> rather than an address —
-     * {@code https://pi.hole/dns-query}, a WireGuard endpoint on a dynamic DNS
-     * name — where classifying it up front would mean resolving a name on
-     * whichever thread asked, including the main one.
+     * A destination we resolved to a local network address, seen while running
+     * for DoH or WireGuard. Covers what {@link #isConfigured(SharedPreferences)}
+     * structurally cannot: a configuration that names a <em>host</em> rather
+     * than an address — {@code https://pi.hole/dns-query}, a WireGuard endpoint
+     * on a dynamic DNS name — where classifying it up front would mean resolving
+     * a name on whichever thread asked, including the main one.
      *
      * <p>Not persisted. A stale observation survives no longer than the
      * process, and anything still pointing at the LAN re-reports itself as soon
      * as it is used again.
      */
     private static volatile boolean observedLocalDestination;
+
+    /** Whether the current tunnel build routed at least one local resolver. */
+    private static volatile boolean routedLocalResolver;
 
     /**
      * Report an address TrackerControl is about to talk to. Callers pass what
@@ -168,20 +171,26 @@ public class LocalNetworkAccess {
     }
 
     /**
-     * Report a resolver that {@link eu.faircode.netguard.ServiceSinkhole} pulls
-     * into the tunnel with a host route.
+     * Replace the current tunnel-build resolver state.
      *
-     * <p>Android exempts port 53 to the network's own resolvers, so DNS keeps
-     * resolving without the permission and {@link #isConfigured(SharedPreferences)}
-     * rightly ignores such a resolver. The host route does not stop at port 53:
-     * it captures the address as a whole, so the router's web UI and anything
-     * else on that address goes silent for <em>every</em> app behind the tunnel
-     * (#785). Reporting here costs nothing per packet — the tunnel builder
-     * already iterates exactly these addresses.
+     * <p>The resolver set is scanned once while the tunnel is built, so a
+     * resolver from a previous network cannot keep the warning latched. Android
+     * exempts port 53 to the network's own resolvers, so DNS keeps resolving
+     * without the permission and {@link #isConfigured(SharedPreferences)} rightly
+     * ignores such a resolver. The host route does not stop at port 53: it
+     * captures the address as a whole, so the router's web UI and anything else
+     * on that address goes silent for <em>every</em> app behind the tunnel (#785).
+     * A null or empty set means that this build routed no local resolver.
      */
-    public static void reportRoutedResolver(InetAddress dns) {
-        if (dns != null)
-            reportDestination(dns.getHostAddress());
+    public static void setRoutedResolvers(Iterable<InetAddress> resolvers) {
+        boolean local = false;
+        if (resolvers != null)
+            for (InetAddress resolver : resolvers)
+                if (resolver != null && isLocalAddress(resolver.getHostAddress())) {
+                    local = true;
+                    break;
+                }
+        routedLocalResolver = local;
     }
 
     /** Whether a local destination has been seen since the last reset. */
@@ -189,10 +198,17 @@ public class LocalNetworkAccess {
         return observedLocalDestination;
     }
 
+    /** Whether the current tunnel build routed a local resolver. */
+    static boolean hasRoutedLocalResolver() {
+        return routedLocalResolver;
+    }
+
     /**
-     * Drop what we observed, so a configuration that no longer points at the
-     * LAN stops warning. Called when a relevant setting changes; anything still
-     * local reports itself again on next use.
+     * Drop runtime destinations we observed, so a configuration that no longer
+     * points at the LAN stops warning. Called when a relevant setting changes;
+     * anything still local reports itself again on next use. The current tunnel
+     * build's routed-resolver state is replaced separately by
+     * {@link #setRoutedResolvers(Iterable)}.
      */
     public static void forgetObservations() {
         observedLocalDestination = false;

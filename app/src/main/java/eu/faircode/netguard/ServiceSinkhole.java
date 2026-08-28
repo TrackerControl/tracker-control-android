@@ -1826,19 +1826,23 @@ public class ServiceSinkhole extends VpnService {
         // ULA resolvers are outside the 2000::/3 global-unicast route below.
         // Keeping both inside the tunnel ensures DNS remains reachable and passes
         // through TC's filtering path.
+        List<InetAddress> routedDnsServers = new ArrayList<>();
         for (InetAddress dns : dnsServers != null ? dnsServers : getDns(ServiceSinkhole.this))
             if ((dns instanceof Inet4Address && dns.isSiteLocalAddress()) ||
                     dns instanceof Inet6Address)
                 try {
                     Log.i(TAG, "Adding DNS host route=" + dns.getHostAddress());
                     builder.addRoute(dns, dns instanceof Inet4Address ? 32 : 128);
-                    // The route covers the whole address, not just port 53, and
-                    // everything on it is now re-sent from our socket — so our
-                    // permission decides its reachability for every app (#785).
-                    net.kollnig.missioncontrol.LocalNetworkAccess.reportRoutedResolver(dns);
+                    routedDnsServers.add(dns);
                 } catch (Throwable ex) {
                     Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                 }
+
+        // The route covers the whole address, not just port 53, and everything
+        // on it is now re-sent from our socket — so our permission decides its
+        // reachability for every app (#785). Replace this state once per tunnel
+        // build; it must not share the process-local runtime observation latch.
+        net.kollnig.missioncontrol.LocalNetworkAccess.setRoutedResolvers(routedDnsServers);
 
         // Android 17 refuses local network traffic without ACCESS_LOCAL_NETWORK:
         // TCP times out, UDP fails with EPERM. A LAN resolver routed into the tun

@@ -31,6 +31,8 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
 import java.net.InetAddress;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Which configurations make TrackerControl talk to the local network, and thus
@@ -58,6 +60,7 @@ public class LocalNetworkAccessTest {
         prefs = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         prefs.edit().clear().commit();
         LocalNetworkAccess.forgetObservations();
+        LocalNetworkAccess.setRoutedResolvers(null);
     }
 
     @Test
@@ -92,25 +95,49 @@ public class LocalNetworkAccessTest {
     }
 
     @Test
-    public void routedLanResolverIsObservedWithoutBeingConfigured() throws Exception {
+    public void routedLanResolverIsCurrentWithoutBeingConfigured() throws Exception {
         // The network's own resolver: nothing in the preferences names it, so
         // isConfigured() cannot see it — but the tunnel builder gives it a host
         // route, which captures the whole address rather than only port 53.
-        LocalNetworkAccess.reportRoutedResolver(InetAddress.getByName("192.168.178.1"));
+        LocalNetworkAccess.setRoutedResolvers(
+                Collections.singletonList(InetAddress.getByName("192.168.178.1")));
 
-        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+        assertTrue(LocalNetworkAccess.hasRoutedLocalResolver());
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
         assertFalse(LocalNetworkAccess.isConfigured(prefs));
     }
 
     @Test
-    public void routedPublicResolverIsNotObserved() throws Exception {
+    public void routedPublicResolverIsNotCurrent() throws Exception {
         // Global resolvers get a host route too when they are IPv6; only the
         // local ones depend on the permission.
-        LocalNetworkAccess.reportRoutedResolver(InetAddress.getByName("2620:fe::fe"));
+        LocalNetworkAccess.setRoutedResolvers(
+                Collections.singletonList(InetAddress.getByName("2620:fe::fe")));
+        assertFalse(LocalNetworkAccess.hasRoutedLocalResolver());
         assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
 
-        LocalNetworkAccess.reportRoutedResolver(null);
-        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+        LocalNetworkAccess.setRoutedResolvers(null);
+        assertFalse(LocalNetworkAccess.hasRoutedLocalResolver());
+    }
+
+    @Test
+    public void routedResolverStateFollowsCurrentBuildWithoutClearingRuntimeObservation()
+            throws Exception {
+        LocalNetworkAccess.reportDestination("192.168.1.10");
+        LocalNetworkAccess.setRoutedResolvers(
+                Arrays.asList(InetAddress.getByName("192.168.178.1")));
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+        assertTrue(LocalNetworkAccess.hasRoutedLocalResolver());
+
+        LocalNetworkAccess.setRoutedResolvers(
+                Arrays.asList(InetAddress.getByName("9.9.9.9")));
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+        assertFalse(LocalNetworkAccess.hasRoutedLocalResolver());
+
+        LocalNetworkAccess.setRoutedResolvers(Collections.emptyList());
+        assertFalse(LocalNetworkAccess.hasRoutedLocalResolver());
+        LocalNetworkAccess.setRoutedResolvers(null);
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
     }
 
     @Test
