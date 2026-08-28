@@ -1084,7 +1084,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 int ttl = rr.TTL;
 
-                int min = Integer.parseInt(prefs.getString("ttl", "259200"));
+                int min = 259200;
+                try {
+                    min = Integer.parseInt(prefs.getString("ttl", "259200"));
+                } catch (NumberFormatException ex) {
+                    // Keep the default minimum TTL.
+                }
                 if (ttl < min)
                     ttl = min;
 
