@@ -42,16 +42,22 @@ import java.net.URI;
  * permission for apps targeting API 37 or higher. Without it, TCP connections
  * time out and UDP fails with {@code EPERM}.
  *
- * <p>Traffic other apps send to the LAN is unaffected by TrackerControl's
- * permission state: those are their own sockets, and TrackerControl keeps RFC
- * 1918 ranges out of its routes (see {@link eu.faircode.netguard.VpnRoutes}),
- * so that traffic never enters the tun. What does depend on this permission is
- * traffic TrackerControl itself sends to the local network:
+ * <p>Traffic other apps send to the LAN mostly stays unaffected by
+ * TrackerControl's permission state: those are their own sockets, and
+ * TrackerControl keeps RFC 1918 ranges out of its routes (see
+ * {@link eu.faircode.netguard.VpnRoutes}), so that traffic never enters the
+ * tun. The exception is an address a host route does pull in — a LAN resolver
+ * (see {@link #reportRoutedResolver(InetAddress)}) — where the whole address,
+ * not just port 53, is re-sent from TrackerControl's socket. What else depends
+ * on this permission is traffic TrackerControl itself sends to the local
+ * network:
  *
  * <ul>
  *   <li>a custom VPN DNS server on the LAN (Pi-hole, AdGuard Home, the router).
  *       Such resolvers get a host route into the tun, so the queries are
- *       re-sent from TrackerControl's own socket (#701);</li>
+ *       re-sent from TrackerControl's own socket (#701). Port 53 survives the
+ *       exemption below, but the host route covers every other port on that
+ *       address too, for every app behind the tunnel (#785);</li>
  *   <li>Secure DNS (DoH) pointed at a local resolver — an ordinary HTTPS
  *       connection, with no DNS exemption to fall back on;</li>
  *   <li>tethering compatibility mode, which installs a full-tunnel default
@@ -61,12 +67,14 @@ import java.net.URI;
  *       socket in the same way.</li>
  * </ul>
  *
- * <p>The system's own resolvers are deliberately not treated as needing the
- * permission: Android exempts port 53 traffic to the network's DNS servers, so
- * the common "router is the DNS server" setup keeps working untouched. Only
- * configuration that points TrackerControl somewhere else on the LAN triggers
- * the prompt, which keeps the permission request off the path of users who
- * never need it.
+ * <p>The system's own resolvers are deliberately absent from
+ * {@link #isConfigured(SharedPreferences)}: Android exempts port 53 traffic to
+ * the network's DNS servers, so name resolution keeps working in the common
+ * "router is the DNS server" setup, and a permission request must not be
+ * provoked by a stored setting nobody chose. They are instead reported at
+ * tunnel-build time by {@link #reportRoutedResolver(InetAddress)}, which fires
+ * only for the resolvers that actually receive a host route — so the prompt
+ * still stays off the path of users whose traffic never reaches the LAN.
  */
 public class LocalNetworkAccess {
     private LocalNetworkAccess() {
@@ -159,6 +167,23 @@ public class LocalNetworkAccess {
         }
     }
 
+    /**
+     * Report a resolver that {@link eu.faircode.netguard.ServiceSinkhole} pulls
+     * into the tunnel with a host route.
+     *
+     * <p>Android exempts port 53 to the network's own resolvers, so DNS keeps
+     * resolving without the permission and {@link #isConfigured(SharedPreferences)}
+     * rightly ignores such a resolver. The host route does not stop at port 53:
+     * it captures the address as a whole, so the router's web UI and anything
+     * else on that address goes silent for <em>every</em> app behind the tunnel
+     * (#785). Reporting here costs nothing per packet — the tunnel builder
+     * already iterates exactly these addresses.
+     */
+    public static void reportRoutedResolver(InetAddress dns) {
+        if (dns != null)
+            reportDestination(dns.getHostAddress());
+    }
+
     /** Whether a local destination has been seen since the last reset. */
     static boolean hasObservedLocalDestination() {
         return observedLocalDestination;
@@ -205,7 +230,8 @@ public class LocalNetworkAccess {
      * 1918 range, the RFC 6598 range some routers use on their LAN side, a
      * link-local address, or an IPv6 unique local address. Only literals are
      * considered — resolving a hostname here would mean a network lookup on the
-     * caller's (often main) thread.
+     * caller's (often main) thread. A LAN host reached over a global IPv6
+     * address is not recognised; that is a known gap.
      */
     static boolean isLocalAddress(String address) {
         if (TextUtils.isEmpty(address))

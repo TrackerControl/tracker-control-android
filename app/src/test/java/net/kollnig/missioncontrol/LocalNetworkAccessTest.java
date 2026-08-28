@@ -30,6 +30,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
+import java.net.InetAddress;
+
 /**
  * Which configurations make TrackerControl talk to the local network, and thus
  * need the Android 17 {@code ACCESS_LOCAL_NETWORK} permission (#701). The SDK
@@ -86,6 +88,28 @@ public class LocalNetworkAccessTest {
         assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
 
         LocalNetworkAccess.forgetObservations();
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+    }
+
+    @Test
+    public void routedLanResolverIsObservedWithoutBeingConfigured() throws Exception {
+        // The network's own resolver: nothing in the preferences names it, so
+        // isConfigured() cannot see it — but the tunnel builder gives it a host
+        // route, which captures the whole address rather than only port 53.
+        LocalNetworkAccess.reportRoutedResolver(InetAddress.getByName("192.168.178.1"));
+
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+        assertFalse(LocalNetworkAccess.isConfigured(prefs));
+    }
+
+    @Test
+    public void routedPublicResolverIsNotObserved() throws Exception {
+        // Global resolvers get a host route too when they are IPv6; only the
+        // local ones depend on the permission.
+        LocalNetworkAccess.reportRoutedResolver(InetAddress.getByName("2620:fe::fe"));
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+
+        LocalNetworkAccess.reportRoutedResolver(null);
         assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
     }
 
