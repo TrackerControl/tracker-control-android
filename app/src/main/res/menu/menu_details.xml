@@ -14,6 +14,6 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_clear"
-        android:title="@string/menu_clear"
+        android:title="@string/menu_clear_activity"
         app:showAsAction="never" />
 </menu>
