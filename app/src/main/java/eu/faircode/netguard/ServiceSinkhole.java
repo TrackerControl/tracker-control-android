@@ -1767,15 +1767,15 @@ public class ServiceSinkhole extends VpnService {
                     Log.e(TAG, "addRoute DNS " + dns + ": " + ex);
                 }
 
-        // Android 17 refuses local network traffic without ACCESS_LOCAL_NETWORK:
-        // TCP times out, UDP fails with EPERM. A LAN resolver routed into the tun
-        // above is re-sent from our own socket, so it goes silent (#701).
-        // The symptom is "nothing resolves", which no one attributes to a
-        // permission — and the banner only reaches someone who opens the app.
+        // Android 17 applies local network protection to non-DNS traffic that
+        // enters the tun: TCP times out and UDP fails with EPERM for every app.
+        // DNS queries to port 53 survive the exemption, so a LAN resolver can
+        // keep resolving while other traffic silently fails (#701).
         // Notify, so the reason meets the user where the failure appears.
         if (net.kollnig.missioncontrol.LocalNetworkAccess.isMissing(ServiceSinkhole.this)) {
-            Log.w(TAG, "Local network access not granted: configured LAN destinations" +
-                    " (custom DNS, Secure DNS resolver, WireGuard peer, proxy) are unreachable");
+            Log.w(TAG, "Local network access not granted: LAN destinations are" +
+                    " unreachable, whether configured (custom DNS, Secure DNS resolver," +
+                    " WireGuard peer, proxy) or reached through the tun by another app");
             showLocalNetworkNotification();
         } else
             clearLocalNetworkNotification();
@@ -2591,6 +2591,12 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Blocking DoT " + packet);
             packet.allowed = false;
         }
+
+        // Report only traffic that will be forwarded, and never TC's own
+        // sockets. The helper's cheap gates run before it parses packet.daddr.
+        if (packet.allowed && packet.uid != Process.myUid()
+                && net.kollnig.missioncontrol.LocalNetworkAccess.shouldReportForwardedDestination())
+            net.kollnig.missioncontrol.LocalNetworkAccess.reportForwardedDestination(packet.daddr);
 
         if (packet.allowed)
             if (mapForward.containsKey(packet.dport)) {

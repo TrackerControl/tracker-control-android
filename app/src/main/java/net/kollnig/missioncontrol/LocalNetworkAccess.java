@@ -42,16 +42,19 @@ import java.net.URI;
  * permission for apps targeting API 37 or higher. Without it, TCP connections
  * time out and UDP fails with {@code EPERM}.
  *
- * <p>Traffic other apps send to the LAN is unaffected by TrackerControl's
- * permission state: those are their own sockets, and TrackerControl keeps RFC
- * 1918 ranges out of its routes (see {@link eu.faircode.netguard.VpnRoutes}),
- * so that traffic never enters the tun. What does depend on this permission is
- * traffic TrackerControl itself sends to the local network:
+ * <p>Traffic other apps send to the LAN normally remains unaffected by
+ * TrackerControl's permission state because TrackerControl keeps RFC 1918
+ * ranges out of its routes (see {@link eu.faircode.netguard.VpnRoutes}). The
+ * exception is traffic to a LAN host that another route pulls into the tun:
+ * DNS queries survive Android's port-53 exemption, but non-DNS traffic can
+ * fail for every app without this permission. What also depends on this
+ * permission is traffic TrackerControl itself sends to the local network:
  *
  * <ul>
  *   <li>a custom VPN DNS server on the LAN (Pi-hole, AdGuard Home, the router).
- *       Such resolvers get a host route into the tun, so the queries are
- *       re-sent from TrackerControl's own socket (#701);</li>
+ *       Such resolvers get a host route into the tun; DNS queries survive the
+ *       port-53 exemption, but non-DNS traffic to a LAN host pulled into the
+ *       tun can fail for every app (#701);</li>
  *   <li>Secure DNS (DoH) pointed at a local resolver — an ordinary HTTPS
  *       connection, with no DNS exemption to fall back on;</li>
  *   <li>tethering compatibility mode, which installs a full-tunnel default
@@ -113,15 +116,38 @@ public class LocalNetworkAccess {
                 == PackageManager.PERMISSION_GRANTED;
     }
 
+    /** Cached missing-permission state used by the per-flow forwarded-destination gate. */
+    private static volatile boolean missingPermission;
+
+    /**
+     * Refresh the permission cache. Called by {@link #isMissing(Context)} on
+     * tunnel rebuilds and from UI warning checks, never once per packet.
+     */
+    public static void refreshPermission(Context context) {
+        refreshPermission(isEnforced() && !isGranted(context));
+    }
+
+    /**
+     * The same refresh, given the answer rather than computing it. Robolectric
+     * caps at API 36, below enforcement, so this is the only way a test can
+     * reach the state the gate exists for.
+     */
+    static void refreshPermission(boolean missing) {
+        missingPermission = missing;
+    }
+
     /**
      * Whether local network access is both needed by the current configuration
      * and not granted — i.e. whether something the user configured is about to
      * break, or has already broken.
      */
     public static boolean isMissing(Context context) {
+        // Refresh outside the packet path: the tunnel builder and UI warning
+        // checks call here, while forwarded packets only read the cache below.
+        refreshPermission(context);
         // Cheapest checks first: nothing to do below Android 17, and parsing the
         // WireGuard config is pointless once the permission is granted.
-        return isEnforced() && !isGranted(context)
+        return missingPermission
                 && (observedLocalDestination || isConfigured(context));
     }
 
@@ -157,6 +183,20 @@ public class LocalNetworkAccess {
             Log.i(TAG, "Local network destination observed at runtime");
             observedLocalDestination = true;
         }
+    }
+
+    /**
+     * Report a destination from a flow another app sent through the tun.
+     * {@link eu.faircode.netguard.ServiceSinkhole} performs the cheap platform,
+     * permission, latch, and UID gates before calling this entry point.
+     */
+    public static void reportForwardedDestination(String address) {
+        reportDestination(address);
+    }
+
+    /** Whether a forwarded destination needs the one-time local-address check. */
+    public static boolean shouldReportForwardedDestination() {
+        return !observedLocalDestination && missingPermission;
     }
 
     /** Whether a local destination has been seen since the last reset. */
@@ -205,7 +245,8 @@ public class LocalNetworkAccess {
      * 1918 range, the RFC 6598 range some routers use on their LAN side, a
      * link-local address, or an IPv6 unique local address. Only literals are
      * considered — resolving a hostname here would mean a network lookup on the
-     * caller's (often main) thread.
+     * caller's (often main) thread. LAN hosts reached over a global IPv6 address
+     * are not recognised; that is a known gap.
      */
     static boolean isLocalAddress(String address) {
         if (TextUtils.isEmpty(address))

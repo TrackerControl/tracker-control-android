@@ -33,8 +33,8 @@ import org.robolectric.RuntimeEnvironment;
 /**
  * Which configurations make TrackerControl talk to the local network, and thus
  * need the Android 17 {@code ACCESS_LOCAL_NETWORK} permission (#701). The SDK
- * gating itself is not covered: Robolectric runs on API 36, below the level
- * where local network protections are enforced.
+ * is pinned to API 36, below the enforcement level, so forwarded-destination
+ * tests assert the observation latch directly and keep {@code isMissing()} false.
  */
 @RunWith(RobolectricTestRunner.class)
 public class LocalNetworkAccessTest {
@@ -56,6 +56,7 @@ public class LocalNetworkAccessTest {
         prefs = PreferenceManager.getDefaultSharedPreferences(RuntimeEnvironment.getApplication());
         prefs.edit().clear().commit();
         LocalNetworkAccess.forgetObservations();
+        LocalNetworkAccess.refreshPermission(false);
     }
 
     @Test
@@ -87,6 +88,51 @@ public class LocalNetworkAccessTest {
 
         LocalNetworkAccess.forgetObservations();
         assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+    }
+
+    @Test
+    public void localForwardedDestinationIsRememberedBelowEnforcement() {
+        LocalNetworkAccess.reportForwardedDestination("192.168.1.10");
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+        assertFalse(LocalNetworkAccess.isMissing(RuntimeEnvironment.getApplication()));
+    }
+
+    @Test
+    public void publicForwardedDestinationDoesNotLatchObservation() {
+        LocalNetworkAccess.reportForwardedDestination("9.9.9.9");
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+        assertFalse(LocalNetworkAccess.isMissing(RuntimeEnvironment.getApplication()));
+    }
+
+    @Test
+    public void forwardedDestinationObservationIsClearedOnReset() {
+        LocalNetworkAccess.reportForwardedDestination("192.168.1.10");
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+
+        LocalNetworkAccess.forgetObservations();
+        assertFalse(LocalNetworkAccess.hasObservedLocalDestination());
+        assertFalse(LocalNetworkAccess.isMissing(RuntimeEnvironment.getApplication()));
+    }
+
+    @Test
+    public void forwardedGateIsOpenWhileThePermissionIsMissing() {
+        // The gate the packet path consults: it must actually be satisfiable
+        // for a plain install, with nothing configured and nothing observed.
+        LocalNetworkAccess.refreshPermission(true);
+        assertTrue(LocalNetworkAccess.shouldReportForwardedDestination());
+
+        LocalNetworkAccess.reportForwardedDestination("192.168.1.10");
+        assertTrue(LocalNetworkAccess.hasObservedLocalDestination());
+
+        // Once latched there is nothing left to learn, so the per-flow check
+        // stops parsing addresses.
+        assertFalse(LocalNetworkAccess.shouldReportForwardedDestination());
+    }
+
+    @Test
+    public void forwardedGateStaysClosedWhileThePermissionIsHeld() {
+        LocalNetworkAccess.refreshPermission(false);
+        assertFalse(LocalNetworkAccess.shouldReportForwardedDestination());
     }
 
     @Test
