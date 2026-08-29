@@ -64,7 +64,6 @@
     <string name="troubleshooting_categories_title">Bloquer des catégories de traqueurs spécifiques</string>
     <string name="troubleshooting_categories_desc">Vous pouvez affiner le blocage pour chaque application en la touchant et en basculant les catégories individuelles de traqueurs (par exemple Analytics, Pubs) sur l\'onglet Traqueurs.</string>
     <string name="troubleshooting_alwayson_title">VPN permanent</string>
-    <string name="troubleshooting_alwayson_desc">Si \"Bloquer les connexions sans VPN\" (verrouillage) est activé dans les paramètres VPN d\'Android, TrackerControl ne peut pas fonctionner correctement. Désactiver cette option. Une notification apparaîtra si elle est détectée.</string>
     <string name="troubleshooting_alwayson_action">Ouvrir les paramètres VPN</string>
     <string name="menu_apps">Autres applications</string>
     <string name="menu_protocol_other">Autres</string>
@@ -306,7 +305,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_rport">Port de destination</string>
     <string name="title_ruid">Application de destination</string>
     <string name="title_external">Pour un serveur externe, sélectionnez \"personne\"</string>
-    <string name="title_lockdown_enabled">Le trafic est verrouillé</string>
     <string name="title_unmetered_allowed">Le trafic illimité est autorisé</string>
     <string name="title_unmetered_blocked">Le trafic illimité est bloqué</string>
     <string name="title_unmetered_disabled">Les règles illimitées ne sont pas appliquées</string>
@@ -385,8 +383,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="tab_countries">Pays</string>
     <string name="tab_actions">Mes données</string>
     <string name="tracker_name">Nom du traqueur</string>
-    <string name="internet_access">Accès à internet</string>
-    <string name="internet_access_explanation">Vous pouvez également appuyer sur l\'icône de l\'application sur l\'écran principal.</string>
     <string name="app_info">Gérer l\'application</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquer les traqueurs</string>
@@ -478,8 +474,8 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_blockingmode_standard_label">Standard</string>
     <string name="onboarding_blockingmode_strict_label">Strict</string>
     <string name="onboarding_blockingmode_research_label">Recherche</string>
-    <string name="exclude_vpn_explanation">Détecte et bloque les trackers pour cette application.</string>
-    <string name="vpn_exclude">Exclure du VPN</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>
@@ -541,8 +537,6 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_battery_sure">Sans désactiver l\'optimisation de la batterie, TrackerControl peut être couper par Android à tout moment. Êtes-vous sûr de vouloir continuer ?</string>
     <string name="onboarding_notify_title">Restez informé</string>
     <string name="onboarding_notify_action">Autoriser les notifications</string>
-    <string name="onboarding_privatedns_title">Désactiver le DNS privé</string>
-    <string name="onboarding_privatedns_action">Ouvrir les paramètres DNS</string>
     <string name="onboarding_lockdown_title">Paramètres de verrouillage VPN</string>
     <string name="onboarding_lockdown_action">Ouvrir les paramètres VPN</string>
     <string name="onboarding_dns_title">DNS sécurisé (fonctionnalité béta ; peut ne pas fonctionner comme prévu)</string>
