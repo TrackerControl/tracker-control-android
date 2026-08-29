@@ -370,6 +370,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="app_state_no_internet_shared_uid">Também se aplica a %1$s, que compartilha um ID de usuário do Android com este aplicativo.</string>
     <string name="app_state_bypassed">Ignorar o TrackerControl</string>
     <string name="app_state_bypassed_explanation">O aplicativo se conecta diretamente, fora do TrackerControl. Nada é monitorado nem bloqueado para ele. Use isto como último recurso se o aplicativo ainda não funcionar.\n\nObservação: \"Bloquear conexões sem VPN\" nas configurações de VPN do Android precisa estar DESATIVADO para que isto funcione.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Configurações do app &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilite o interruptor na tela principal e inicie o app para encontrar rastreadores</string>

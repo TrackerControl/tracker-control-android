@@ -358,6 +358,7 @@
     <string name="app_state_no_internet_shared_uid">ينطبق أيضًا على %1$s، الذي يشارك هذا التطبيق مُعرِّف مستخدم أندرويد.</string>
     <string name="app_state_bypassed">تجاوز TrackerControl</string>
     <string name="app_state_bypassed_explanation">يتصل التطبيق مباشرةً، خارج TrackerControl. لا تتم مراقبة أو حظر أي شيء له. استخدم هذا كملاذ أخير إذا كان التطبيق لا يزال لا يعمل.\n\nملاحظة: يجب تعطيل \"حظر الاتصالات بدون VPN\" في إعدادات VPN بنظام أندرويد حتى يعمل هذا.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">إلغاء التثبيت</string>
     <string name="settings_uninstall">إعدادات التطبيق وإلغاء التثبيت</string>
     <string name="no_trackers_found_message_disabled">قم بتمكين المفتاح في الشاشة الرئيسية، ثم قم بتشغيل التطبيق للعثور على أدوات التتبع</string>

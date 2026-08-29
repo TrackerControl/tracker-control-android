@@ -354,6 +354,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Koskee myös sovellusta %1$s, jolla on sama Android-käyttäjätunnus kuin tällä sovelluksella.</string>
     <string name="app_state_bypassed">Ohita TrackerControl</string>
     <string name="app_state_bypassed_explanation">Sovellus muodostaa yhteyden suoraan, TrackerControlin ohi. Sille ei valvota eikä estetä mitään. Käytä tätä viimeisenä keinona, jos sovellus ei vieläkään toimi.\n\nHuomaa: Androidin VPN-asetusten kohdan \"Estä yhteydet ilman VPN:ää\" on oltava POIS KÄYTÖSTÄ, jotta tämä toimii.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Poista asennus</string>
     <string name="settings_uninstall">Sovelluksen tiedot</string>
     <string name="no_trackers_found_message_disabled">Ota käyttöön päänäytön kytkimestä ja käynnistä sitten sovellus löytääksesi seuraimia</string>

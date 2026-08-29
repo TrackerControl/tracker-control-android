@@ -338,6 +338,7 @@ Sincerely,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">%1$s aplikazioari ere aplikatzen zaio, Android erabiltzaile-ID bera partekatzen baitu honekin.</string>
     <string name="app_state_bypassed">Saihestu TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikazioa zuzenean konektatzen da, TrackerControletik kanpo. Ez zaio ezer monitorizatzen ez blokeatzen. Erabili hau azken aukera gisa aplikazioak oraindik funtzionatzen ez badu.\n\nOharra: Androiden VPN ezarpenetako \"Blokeatu VPNrik gabeko konexioak\" DESAKTIBATUTA egon behar da hau funtziona dezan.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Desinstalatu</string>
     <string name="settings_uninstall">Aplikazioaren ezarpenak eta desinstalatzea</string>
     <string name="no_trackers_found_message_disabled">Aktibatu pantaila nagusiko aukera, ondoren abiarazi aplikazioa aztarnariak bilatzeko</string>

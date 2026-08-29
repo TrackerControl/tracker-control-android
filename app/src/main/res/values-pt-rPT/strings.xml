@@ -369,6 +369,7 @@ disso,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Aplica-se também a %1$s, que partilha um ID de utilizador Android com esta aplicação.</string>
     <string name="app_state_bypassed">Ignorar o TrackerControl</string>
     <string name="app_state_bypassed_explanation">A aplicação liga-se diretamente, fora do TrackerControl. Nada é monitorizado nem bloqueado para ela. Utilize isto como último recurso se a aplicação continuar a não funcionar.\n\nNota: \"Bloquear ligações sem VPN\" nas definições de VPN do Android tem de estar DESATIVADO para que isto funcione.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilitar interruptor na tela principal, depois lançar aplicativo para encontrar rastreadores</string>
     <string name="no_trackers_found_message">Lançar aplicativo para encontrar rastreadores</string>

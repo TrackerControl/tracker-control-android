@@ -337,6 +337,7 @@ Saygılarımla,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Bu uygulamayla Android kullanıcı kimliğini paylaşan %1$s için de geçerlidir.</string>
     <string name="app_state_bypassed">TrackerControl\'ü atla</string>
     <string name="app_state_bypassed_explanation">Uygulama, TrackerControl dışında doğrudan bağlanır. Onun için hiçbir şey izlenmez veya engellenmez. Uygulama hâlâ çalışmıyorsa son çare olarak bunu kullanın.\n\nNot: Bunun çalışması için Android VPN ayarlarındaki \"VPN olmadan bağlantıları engelle\" seçeneği KAPALI olmalıdır.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Kaldır</string>
     <string name="settings_uninstall">Uygulama ayarları &amp; Kaldır</string>
     <string name="no_trackers_found_message_disabled">Ana ekranda geçişi etkinleştirin, ardından izleyicileri bulmak için uygulamayı başlatın</string>

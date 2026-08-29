@@ -301,6 +301,7 @@
     <string name="app_state_no_internet_shared_uid">Ισχύει και για το %1$s, το οποίο μοιράζεται αναγνωριστικό χρήστη Android με αυτήν την εφαρμογή.</string>
     <string name="app_state_bypassed">Παράκαμψη του TrackerControl</string>
     <string name="app_state_bypassed_explanation">Η εφαρμογή συνδέεται απευθείας, εκτός του TrackerControl. Τίποτα δεν παρακολουθείται ούτε αποκλείεται για αυτήν. Χρησιμοποιήστε το ως έσχατη λύση αν η εφαρμογή εξακολουθεί να μη λειτουργεί.\n\nΣημείωση: Η επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις VPN του Android πρέπει να είναι ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΗ για να λειτουργήσει αυτό.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Απεγκατάσταση</string>
     <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
     <string name="no_trackers_found_message_disabled">Ενεργοποιήστε το διακόπτη στην κύρια οθόνη και στη συνέχεια ανοίξτε την εφαρμογή για να εντοπίστε ιχνηλάτες</string>

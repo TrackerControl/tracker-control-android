@@ -534,6 +534,7 @@
     <string name="app_state_no_internet_shared_uid">Стосується також %1$s, який має спільний із цим застосунком ідентифікатор користувача Android.</string>
     <string name="app_state_bypassed">Обійти TrackerControl</string>
     <string name="app_state_bypassed_explanation">Застосунок з\'єднується напряму, поза TrackerControl. Для нього нічого не відстежується й не блокується. Використовуйте це як останній засіб, якщо застосунок і далі не працює.\n\nПримітка: параметр \"Блокувати з\'єднання без VPN\" у налаштуваннях VPN Android має бути ВИМКНЕНИЙ, щоб це працювало.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Видалити</string>
     <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
     <string name="no_trackers_found_message_disabled">Увімкніть перемикач на головному екрані, а потім запустіть додаток, щоб знайти трекери</string>

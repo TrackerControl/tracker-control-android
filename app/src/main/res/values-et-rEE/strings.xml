@@ -216,6 +216,7 @@
     <string name="app_state_no_internet_shared_uid">Kehtib ka rakendusele %1$s, mis jagab selle rakendusega Androidi kasutaja-ID-d.</string>
     <string name="app_state_bypassed">TrackerControlist mööda</string>
     <string name="app_state_bypassed_explanation">Rakendus ühendub otse, TrackerControlist mööda. Tema jaoks ei jälgita ega blokeerita midagi. Kasuta seda viimase abinõuna, kui rakendus ikka ei tööta.\n\nMärkus: Androidi VPN-i sätetes peab \"Blokeeri ühendused ilma VPN-ita\" olema VÄLJA LÜLITATUD, et see toimiks.</string>
+    <!-- Per-app protection screen -->
     <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
     <string name="no_trackers_found_message">Jälitajate tuvastamiseks käivita rakendus</string>
     <string name="no_trackers_found_action">Käivita</string>
