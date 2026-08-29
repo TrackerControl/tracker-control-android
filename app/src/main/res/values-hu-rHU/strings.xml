@@ -159,7 +159,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_rport">Cél portszáma</string>
     <string name="title_ruid">Cél alkalmazás</string>
     <string name="title_external">Külső kiszolgálóhoz válassza a „senki” lehetőséget</string>
-    <string name="title_lockdown_enabled">A forgalom lezárva</string>
     <string name="title_unmetered_allowed">Méretlen forgalom engedélyezve</string>
     <string name="title_unmetered_blocked">Méretlen forgalom letiltva</string>
     <string name="title_unmetered_disabled">A méretlen hálózati szabályok nincsenek alkalmazva</string>
@@ -238,7 +237,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="tab_countries">Országok</string>
     <string name="tab_actions">Adataim</string>
     <string name="tracker_name">Nyomkövető neve</string>
-    <string name="internet_access">Internet-hozzáférés</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
     <string name="block_tracking">Nyomkövetők blokkolása</string>
@@ -316,6 +314,8 @@ Tisztelettel,\n\n]]></string>
     <string name="setting_strict_blocking">Szigorú blokkolás</string>
     <string name="summary_strict_blocking">Az újonnan telepített alkalmazások esetén blokkolja a lehető legtöbb adatmegosztást. Több alkalmazás meg fog törni.</string>
     <string name="strict_blocking_explanation">Ha nem szakértő akkor ajánlott letiltani ezt az opciót az alkalmazások törésének csökkentése érdekében. Ez azonban lehetővé teszi az alapvető adatmegosztást a vállalatokkal.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Eltávolítás</string>
     <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
     <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
