@@ -3048,6 +3048,13 @@ public class ServiceSinkhole extends VpnService {
             boolean sawEssentialCategory = false;
             boolean sawEssentialTrackerEvidence = false;
             boolean sawNonEssentialTrackerEvidence = false;
+            // Expiry of the DNS record essentialCategory was derived from,
+            // tracked separately from chosenTime/chosenTtl: the DDG row that
+            // supplies essentialCategory need not be the same row that
+            // supplies the (broader-map) tracker, so the verdict must expire
+            // with its own evidence rather than an unrelated row's TTL.
+            long essentialChosenTime = -1;
+            long essentialChosenTtl = -1;
             try (Cursor lookup = dh.getQAName(uid, daddr)) {
                 // Loop through all fresh DNS candidates for this IP and only fail closed
                 // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
@@ -3097,6 +3104,8 @@ public class ServiceSinkhole extends VpnService {
                             if (!sawEssentialCategory) {
                                 sawEssentialCategory = true;
                                 essentialCategory = candidateEssential.category;
+                                essentialChosenTime = rowTime;
+                                essentialChosenTtl = rowTtl;
                             }
                         } else if (qname != null || aname != null)
                             sawNonEssentialTrackerEvidence = true;
@@ -3151,6 +3160,14 @@ public class ServiceSinkhole extends VpnService {
                 expiry = (chosenTime >= 0)
                         ? chosenTime + chosenTtl
                         : firstTime + firstTtl;
+                // The essential (DDG) verdict can be derived from a
+                // different row than the broader-map tracker above; expire
+                // with whichever evidence goes stale first so a blocking
+                // verdict never outlives the record it came from.
+                if (essentialCategory != null && essentialChosenTime >= 0) {
+                    long essentialExpiry = essentialChosenTime + essentialChosenTtl;
+                    expiry = Math.min(expiry, essentialExpiry);
+                }
             }
 
             // Save dname and tracker, but only if no concurrent
