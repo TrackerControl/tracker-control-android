@@ -106,6 +106,8 @@
     <!-- Actions -->
     <string name="block_tracking">Bloker trackere</string>
     <string name="data_managment">Administrer data</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Afinstaller</string>
     <string name="back">Tilbage</string>
     <string name="your_privacy">Dit privatliv</string>
