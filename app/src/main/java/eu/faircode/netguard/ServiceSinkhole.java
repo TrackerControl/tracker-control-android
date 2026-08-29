@@ -126,7 +126,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
@@ -258,6 +257,49 @@ public class ServiceSinkhole extends VpnService {
 
         Log.i(TAG, "Retrying native tunnel after failure");
         ServiceSinkhole.reload("native tunnel recovery", ServiceSinkhole.this, false);
+    };
+
+    private static final int WG_STARTUP_RECOVERY_MAX_RETRIES = 5;
+    private static final long WG_STARTUP_RECOVERY_INITIAL_DELAY_MS = 1_000L;
+    private static final long WG_STARTUP_RECOVERY_STABLE_WINDOW_MS = 2 * 60_000L;
+    private static final String EXTRA_WG_STARTUP_RETRY = "WireGuardStartupRetry";
+    private final WireGuardStartupRecoveryPolicy wgStartupRecoveryPolicy =
+            new WireGuardStartupRecoveryPolicy(
+                    WG_STARTUP_RECOVERY_MAX_RETRIES,
+                    WG_STARTUP_RECOVERY_INITIAL_DELAY_MS,
+                    WG_STARTUP_RECOVERY_STABLE_WINDOW_MS);
+    private final Object wgStartupRecoveryLock = new Object();
+    private final Handler wgStartupRecoveryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable wgStartupRecoveryRunnable = () -> {
+        synchronized (ServiceSinkhole.this) {
+            synchronized (wgStartupRecoveryLock) {
+                if (!wgStartupRecoveryPolicy.claim())
+                    return;
+            }
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+            if (destroying || !initialized || commandHandler == null || state != State.enforcing
+                    || !user_foreground || !prefs.getBoolean("enabled", false)
+                    || temporarilyStopped || vpn == null) {
+                Log.i(TAG, "Skipping WireGuard startup recovery because protection is no longer active");
+                cancelWireGuardStartupRecovery(true);
+                return;
+            }
+            if (VpnService.prepare(ServiceSinkhole.this) != null) {
+                Log.i(TAG, "Skipping WireGuard startup recovery because VPN consent was revoked");
+                cancelWireGuardStartupRecovery(true);
+                return;
+            }
+
+            Log.i(TAG, "Queueing WireGuard startup recovery");
+            getLock(ServiceSinkhole.this).acquire(WAKELOCK_TIMEOUT_MS);
+            Intent intent = new Intent(ServiceSinkhole.this, ServiceSinkhole.class);
+            intent.putExtra(EXTRA_COMMAND, Command.reload);
+            intent.putExtra(EXTRA_REASON, "WireGuard startup recovery");
+            intent.putExtra(EXTRA_WG_STARTUP_RETRY, true);
+            intent.putExtra(EXTRA_INTERACTIVE, false);
+            commandHandler.queue(intent);
+        }
     };
 
     private static final int VPN_REPLACEMENT_RECOVERY_MAX_RETRIES = 5;
@@ -498,6 +540,9 @@ public class ServiceSinkhole extends VpnService {
                     handleIntent((Intent) msg.obj);
                 }
             } catch (Throwable ex) {
+                Intent intent = (Intent) msg.obj;
+                if (intent != null && intent.getBooleanExtra(EXTRA_WG_STARTUP_RETRY, false))
+                    cancelWireGuardStartupRecovery(true);
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             } finally {
                 synchronized (this) {
@@ -522,8 +567,22 @@ public class ServiceSinkhole extends VpnService {
 
             Command cmd = (Command) intent.getSerializableExtra(EXTRA_COMMAND);
             String reason = intent.getStringExtra(EXTRA_REASON);
+            final boolean wireGuardStartupRetry =
+                    intent.getBooleanExtra(EXTRA_WG_STARTUP_RETRY, false);
             Log.i(TAG, "Executing intent=" + intent + " command=" + cmd + " reason=" + reason +
                     " vpn=" + (vpn != null) + " user=" + (Process.myUid() / 100000));
+
+            // Consume the dispatch marker before any preflight gate can return.
+            // Otherwise a background-user or temporary-stop return strands the
+            // retry in the dispatched state and blocks all later failures.
+            if (wireGuardStartupRetry) {
+                synchronized (wgStartupRecoveryLock) {
+                    if (!wgStartupRecoveryPolicy.begin()) {
+                        Log.i(TAG, "Ignoring stale WireGuard startup recovery");
+                        return;
+                    }
+                }
+            }
 
             // Check if foreground
             if (cmd != Command.stop)
@@ -534,6 +593,8 @@ public class ServiceSinkhole extends VpnService {
                         user_foreground = true;
                         Log.i(TAG, "User-initiated start, clearing background user state");
                     } else {
+                        if (wireGuardStartupRetry)
+                            cancelWireGuardStartupRecovery(true);
                         Log.i(TAG, "Command " + cmd + " ignored for background user");
                         return;
                     }
@@ -546,6 +607,8 @@ public class ServiceSinkhole extends VpnService {
                 temporarilyStopped = false;
             else if (cmd == Command.reload && temporarilyStopped) {
                 // Prevent network/interactive changes from restarting the VPN
+                if (wireGuardStartupRetry)
+                    cancelWireGuardStartupRecovery(true);
                 Log.i(TAG, "Command " + cmd + " ignored because of temporary stop");
                 return;
             }
@@ -634,10 +697,16 @@ public class ServiceSinkhole extends VpnService {
                             cancelNativeRecovery(true);
                         if (vpn == null)
                             cancelVpnReplacementRecovery(true);
+                        if (vpn == null)
+                            cancelWireGuardStartupRecovery(true);
                         start();
                         break;
 
                     case reload:
+                        // The startup-retry dispatch marker was consumed before
+                        // preflight; ordinary reloads cancel stale retries.
+                        if (!wireGuardStartupRetry)
+                            cancelWireGuardStartupRecovery(false);
                         if (!intent.getBooleanExtra(EXTRA_REPLACEMENT_RETRY, false))
                             cancelVpnReplacementRecovery(false);
                         reload(intent.getBooleanExtra(EXTRA_INTERACTIVE, false));
@@ -646,6 +715,7 @@ public class ServiceSinkhole extends VpnService {
                     case stop:
                         cancelNativeRecovery(true);
                         cancelVpnReplacementRecovery(true);
+                        cancelWireGuardStartupRecovery(true);
                         stop(temporarilyStopped);
                         break;
 
@@ -692,6 +762,8 @@ public class ServiceSinkhole extends VpnService {
                         !prefs.getBoolean("show_stats", false))
                     stopForeground(true);
             } catch (Throwable ex) {
+                if (wireGuardStartupRetry)
+                    cancelWireGuardStartupRecovery(true);
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
 
                 if (cmd == Command.start || cmd == Command.reload) {
@@ -840,6 +912,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void stop(boolean temporary) {
+            cancelWireGuardStartupRecovery(true);
             if (vpn != null) {
                 stopNative(vpn);
                 stopVPN(vpn);
@@ -906,10 +979,7 @@ public class ServiceSinkhole extends VpnService {
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
 
             // Refresh mappings regularly
-            ipToHost.clear();
-            ipToTracker.clear();
-            // Same race as dnsResolved(): invalidate after clearing.
-            trackerCacheGeneration.incrementAndGet();
+            trackerCache.clear();
             uidToApp.clear();
             uidToPackage.clear();
 
@@ -2081,8 +2151,10 @@ public class ServiceSinkhole extends VpnService {
             String wgError = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.getLastError();
             Log.w(TAG, "WireGuard egress failed to start; blocking traffic: " + wgError);
             showWireGuardErrorNotification(wgError);
+            scheduleWireGuardStartupRecovery();
             return false;
         }
+        cancelWireGuardStartupRecovery(true);
         net.kollnig.missioncontrol.wg.VpnKeyRotationManager.maybeRotateDue(ServiceSinkhole.this);
 
         if (tunnelThread == null) {
@@ -2344,6 +2416,7 @@ public class ServiceSinkhole extends VpnService {
 
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
+        clearTrackerCaches();
     }
 
     private void prepareUidIPFilters(String dname) {
@@ -2547,6 +2620,46 @@ public class ServiceSinkhole extends VpnService {
             nativeRecoveryPolicy.reset();
     }
 
+    private void scheduleWireGuardStartupRecovery() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean active = !destroying && initialized && commandHandler != null
+                && state == State.enforcing && user_foreground
+                && prefs.getBoolean("enabled", false) && !temporarilyStopped
+                && vpn != null && VpnService.prepare(this) == null;
+        synchronized (wgStartupRecoveryLock) {
+            long delayMs = wgStartupRecoveryPolicy.onFailure(
+                    // Handler.postDelayed uses uptime; matching its clock
+                    // prevents deep sleep from aging a failure episode into
+                    // the stable window without a successful startup.
+                    SystemClock.uptimeMillis(), active);
+            if (!active) {
+                Log.i(TAG, "Skipping WireGuard startup recovery because protection is no longer active");
+                wgStartupRecoveryHandler.removeCallbacks(wgStartupRecoveryRunnable);
+                return;
+            }
+            if (delayMs == FailureRecoveryPolicy.NO_RETRY) {
+                if (wgStartupRecoveryPolicy.isPending())
+                    Log.i(TAG, "WireGuard startup recovery already pending");
+                else
+                    Log.e(TAG, "WireGuard startup recovery retry budget exhausted");
+                return;
+            }
+            if (!wgStartupRecoveryHandler.postDelayed(wgStartupRecoveryRunnable, delayMs)) {
+                wgStartupRecoveryPolicy.cancel(false);
+                Log.e(TAG, "Could not schedule WireGuard startup recovery");
+                return;
+            }
+            Log.w(TAG, "Scheduled WireGuard startup recovery in " + delayMs + " ms");
+        }
+    }
+
+    private void cancelWireGuardStartupRecovery(boolean resetBudget) {
+        synchronized (wgStartupRecoveryLock) {
+            wgStartupRecoveryHandler.removeCallbacks(wgStartupRecoveryRunnable);
+            wgStartupRecoveryPolicy.cancel(resetBudget);
+        }
+    }
+
     private void scheduleVpnReplacementRecovery() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (destroying || !initialized || commandHandler == null || state != State.enforcing
@@ -2607,20 +2720,12 @@ public class ServiceSinkhole extends VpnService {
 
             if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
                 if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
-                    ipToHost.remove(rr.Resource);
-                    ipToTracker.remove(rr.Resource);
-                    // Bump *after* the removes: a blockKnownTracker() read that
-                    // started before this new mapping (and so may have missed
-                    // this row) can still be mid-flight. Invalidating the
-                    // generation here, after the cache is actually clear, is
-                    // what makes its stale put() get discarded below instead
-                    // of pinning pre-insert attribution behind this remove.
+                    trackerCache.invalidate(rr.Resource);
                     // Pure refreshes deliberately skip invalidation: the cached
                     // entry simply expires on the earlier deadline it was stored
                     // with and is re-read then, so a stale-put race with a
-                    // refresh is harmless. The generation guard remains for new
-                    // mappings, where the verdict can actually change.
-                    trackerCacheGeneration.incrementAndGet();
+                    // refresh is harmless. The atomic cache generation guard
+                    // remains for new mappings, where the verdict can change.
                 }
             }
         }
@@ -2670,13 +2775,9 @@ public class ServiceSinkhole extends VpnService {
 
     static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Integer, String> uidToPackage = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
-    // Bumped by dnsResolved() whenever it invalidates an ipToHost/ipToTracker
-    // entry, so blockKnownTracker() can detect a DB read that raced a
-    // concurrent insert and drop its (possibly stale) result instead of
-    // caching it. See the comments at both call sites.
-    private static final AtomicLong trackerCacheGeneration = new AtomicLong();
+    // Hostname and tracker verdict are one immutable snapshot. Keeping them in
+    // one cache entry prevents a reader from observing only half a publication.
+    static final TrackerCache trackerCache = new TrackerCache();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
     // Negative results (no tracker / no dname for an IP) are cached only
@@ -2685,11 +2786,7 @@ public class ServiceSinkhole extends VpnService {
     private static final long NEGATIVE_TRACKER_CACHE_TTL_MS = 60 * 1000L;
 
     public static void clearTrackerCaches() {
-        ipToHost.clear();
-        ipToTracker.clear();
-        // Same race as dnsResolved(): invalidate after clearing, so a
-        // blockKnownTracker() put in flight under the old mode is dropped.
-        trackerCacheGeneration.incrementAndGet();
+        trackerCache.clear();
     }
 
     // Called from native code
@@ -2834,28 +2931,16 @@ public class ServiceSinkhole extends VpnService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String blockingMode = BlockingMode.getMode(this);
+        String blockingMode = TrackerList.getBlockingMode(this);
         boolean blockAmbiguousTrackers = BlockingModeLogic.blocksAmbiguousTrackerIp(blockingMode);
         Tracker tracker = null;
-        Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
-        if (expiringTracker != null) {
-            tracker = expiringTracker.getOrExpired();
-
-            if (tracker == null) // expired
-                ipToTracker.remove(daddr);
-        }
+        TrackerCache.Entry cached = trackerCache.get(daddr, System.currentTimeMillis());
+        if (cached != null)
+            tracker = cached.getTracker();
 
         if (tracker == null) {
             // Check if IP known
             String dname = null;
-            Expiring<String> expiringHost = ipToHost.get(daddr);
-            if (expiringHost != null) {
-                dname = expiringHost.getOrExpired();
-
-                if (dname == null) // expired
-                    ipToHost.remove(daddr);
-            }
-
             if (dname == null) { // TODO: Note that this does not implement any SNI code
                 // Snapshot before the DB read: if dnsResolved() invalidates this
                 // IP's cache entry while we're mid-read below, our result may be
@@ -2863,7 +2948,7 @@ public class ServiceSinkhole extends VpnService {
                 // that no longer applies). Comparing after the read lets us
                 // drop the put and let the next packet re-read instead of
                 // pinning a possibly-wrong verdict.
-                long generationBefore = trackerCacheGeneration.get();
+                long generationBefore = trackerCache.generation();
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                 long now = new Date().getTime();
@@ -2967,10 +3052,11 @@ public class ServiceSinkhole extends VpnService {
                 // stale verdict that a racing insert already made obsolete.
                 // Skipping is cheap and correct: the next packet to this IP
                 // simply re-reads the DB.
-                if (trackerCacheGeneration.get() == generationBefore) {
-                    ipToHost.put(daddr, new Expiring<>(dname, expiry));
-                    ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
-                }
+                TrackerCache.Entry cacheEntry = new TrackerCache.Entry(dname, tracker, expiry);
+                trackerCache.putIfGeneration(daddr, cacheEntry, generationBefore);
+                // Keep the exact snapshot used for the decision for logging;
+                // the shared cache may be invalidated or replaced meanwhile.
+                cached = cacheEntry;
             }
 
             // Do not block based on IP-only tracker evidence.
@@ -2985,17 +3071,12 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
-            // tracker can be null here when the host cache had an entry but the
-            // tracker cache was empty/expired, and ipToHost.get(daddr) can be
-            // null on an ipToTracker cache hit (the ipToHost.put(...) block is
-            // skipped). Guard both so log_logcat never NPEs the packet path.
             if (tracker != null) {
-                Expiring<String> expiringHost = ipToHost.get(daddr);
-                String host = (expiringHost == null ? null : expiringHost.getOrExpired());
+                String host = (cached == null ? null : cached.getHostname());
                 Log.i("TC-Log", app + " " + daddr + " " + host + " " + tracker.getName());
             }
         } else {
-            if (tracker != NO_TRACKER) {
+            if (tracker != null && tracker != NO_TRACKER) {
                 boolean blockedByGranularRule = false;
                 if (!BlockingMode.MODE_MINIMAL.equals(blockingMode)) {
                     TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
@@ -3824,6 +3905,7 @@ public class ServiceSinkhole extends VpnService {
     @Override
     public void onRevoke() {
         Log.i(TAG, "Revoke");
+        cancelWireGuardStartupRecovery(true);
         cancelVpnReplacementRecovery(false);
 
         // Preserve the enabled state only while Android still designates us as
@@ -3885,6 +3967,7 @@ public class ServiceSinkhole extends VpnService {
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
             cancelNativeRecovery(true);
+            cancelWireGuardStartupRecovery(true);
             cancelVpnReplacementRecovery(true);
 
             // onCreate can stopSelf() before creating the handler threads when
@@ -4489,27 +4572,6 @@ public class ServiceSinkhole extends VpnService {
         @Override
         public String toString() {
             return "v" + version + " p" + protocol + " port=" + dport + " uid=" + uid;
-        }
-    }
-
-    private class Expiring<T> {
-        private T t;
-        private long expires;
-
-        public Expiring(T t, long expires) {
-            this.t = t;
-            this.expires = expires;
-        }
-
-        public boolean isExpired() {
-            return System.currentTimeMillis() > this.expires;
-        }
-
-        public T getOrExpired() {
-            if (isExpired())
-                return null;
-
-            return t;
         }
     }
 
