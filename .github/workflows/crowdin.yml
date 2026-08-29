@@ -16,6 +16,11 @@ on:
         required: false
         default: false
         type: boolean
+      upload_translations:
+        description: Import reviewed repository translations into Crowdin before downloading
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: crowdin-l10n-master
@@ -41,7 +46,7 @@ jobs:
           # runs are download-only by default so stale checkout sources never
           # overwrite Crowdin.
           upload_sources: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.upload_sources) }}
-          upload_translations: false
+          upload_translations: ${{ github.event_name == 'workflow_dispatch' && inputs.upload_translations }}
           download_sources: false
           download_translations: true
           push_sources: false
