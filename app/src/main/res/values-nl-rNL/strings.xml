@@ -348,7 +348,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Trackers</string>
     <string name="tab_countries">Landen</string>
-    <string name="tab_actions">Mijn gegevens</string>
     <string name="tracker_name">Tracker naam</string>
     <string name="app_info">App beheren</string>
     <!-- Actions -->
@@ -431,6 +430,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="app_state_bypassed">TrackerControl omzeilen</string>
     <string name="app_state_bypassed_explanation">De app maakt rechtstreeks verbinding, buiten TrackerControl om. Er wordt niets voor gecontroleerd of geblokkeerd. Gebruik dit als laatste redmiddel als de app nog steeds niet werkt.\n\nLet op: \"Verbindingen zonder VPN blokkeren\" in de Android-VPN-instellingen moet UITGESCHAKELD zijn om dit te laten werken.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Deïnstalleren</string>
     <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Zet de schakelaar in het hoofdscherm op aan en start de app om trackers op te sporen</string>
@@ -463,6 +463,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="trackers_static_explanation">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.
 \n\nTrackerControl kan deze tracking blokkeren.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecteert tracking in de code (\'libraries\') en netwerkverkeer van apps.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">Analyse in wachtrij geplaatst…</string>
     <string name="blocked">GEBLOKKEERD</string>
     <string name="allowed">TOEGESTAAN</string>

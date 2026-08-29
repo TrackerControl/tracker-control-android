@@ -232,7 +232,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="title_activity_detail">Detaljer</string>
     <string name="tab_trackers">Sporere</string>
     <string name="tab_countries">Land</string>
-    <string name="tab_actions">Mine data</string>
     <string name="tracker_name">Sporernavn</string>
     <string name="app_info">Behandle app</string>
     <!-- Actions -->
@@ -336,6 +335,7 @@ Vennlig hilsen,\n\n]]></string>
     <string name="app_state_bypassed">Omgå TrackerControl</string>
     <string name="app_state_bypassed_explanation">Appen kobler til direkte, utenfor TrackerControl. Ingenting overvåkes eller blokkeres for den. Bruk dette som siste utvei hvis appen fortsatt ikke virker.\n\nMerk: \"Blokker tilkoblinger uten VPN\" i Androids VPN-innstillinger må være DEAKTIVERT for at dette skal virke.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Avinstaller</string>
     <string name="settings_uninstall">Appinnstillinger &amp; Avinstaller</string>
     <string name="no_trackers_found_message_disabled">Aktiver bryter på hovedskjermen, så start appen for å finne sporere</string>
@@ -364,6 +364,7 @@ Vennlig hilsen,\n\n]]></string>
     <string name="trackers_static">Sporingsbiblioteker</string>
     <string name="trackers_static_explanation">TrackerControl oppdager sporing i koden (\'biblioteker\') og nettverkstrafikken til apper.\n\nSporing som oppdages i nettverkstrafikken kan blokkeres med TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl oppdager sporing i koden (\'biblioteker\') og nettverkstrafikken til apper.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOKKERT</string>
     <string name="allowed">TILLATT</string>
     <string name="setting_domain_based_blocked">Domenebasert blokkering</string>

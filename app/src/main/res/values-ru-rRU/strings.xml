@@ -296,7 +296,6 @@
     <string name="title_activity_detail">Подробности</string>
     <string name="tab_trackers">Трекеры</string>
     <string name="tab_countries">Страны</string>
-    <string name="tab_actions">Мои данные</string>
     <string name="tracker_name">Название трекера</string>
     <string name="app_info">Управление приложением</string>
     <!-- Actions -->
@@ -386,6 +385,7 @@
     <string name="app_state_bypassed">В обход TrackerControl</string>
     <string name="app_state_bypassed_explanation">Приложение подключается напрямую, минуя TrackerControl. Для него ничего не отслеживается и не блокируется. Используйте это как крайнюю меру, если приложение по-прежнему не работает.\n\nПримечание: параметр \"Блокировать соединения без VPN\" в настройках VPN Android должен быть ОТКЛЮЧЁН, чтобы это работало.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Удаление</string>
     <string name="settings_uninstall">Настройки приложения и деинсталляция</string>
     <string name="no_trackers_found_message_disabled">Включите переключатель на главном экране, затем запустите приложение, чтобы найти трекеры</string>
@@ -421,6 +421,7 @@
     <string name="analyze_tracker_libraries">Анализ библиотек трекера</string>
     <string name="update_analysis">Обновить анализ</string>
     <string name="analysis_outdated_version">\n\nПримечание: Анализ предыдущей версии приложения. Возможно, это изменило встроенные отслеживающие библиотеки.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">Анализ в очереди…</string>
     <string name="blocked">ЗАБЛОКИРОВАНО</string>
     <string name="allowed">РАЗРЕШЕНО</string>

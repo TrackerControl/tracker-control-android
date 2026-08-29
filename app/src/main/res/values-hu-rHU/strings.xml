@@ -235,7 +235,6 @@ Az Ön internetes forgalmát nem küldi el egy távoli VPN-kiszolgálóra.</stri
     <string name="title_activity_detail">Részletek</string>
     <string name="tab_trackers">Nyomkövetők</string>
     <string name="tab_countries">Országok</string>
-    <string name="tab_actions">Adataim</string>
     <string name="tracker_name">Nyomkövető neve</string>
     <string name="app_info">Alkalmazáskezelés</string>
     <!-- Actions -->
@@ -339,6 +338,7 @@ Tisztelettel,\n\n]]></string>
     <string name="app_state_bypassed">TrackerControl megkerülése</string>
     <string name="app_state_bypassed_explanation">Az alkalmazás közvetlenül, a TrackerControlon kívül csatlakozik. Semmit sem figyel és blokkol nála. Végső megoldásként használja, ha az alkalmazás továbbra sem működik.\n\nMegjegyzés: az Android VPN-beállításaiban a \"Kapcsolatok blokkolása VPN nélkül\" beállításnak KIKAPCSOLVA kell lennie, hogy ez működjön.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Eltávolítás</string>
     <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
     <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>
@@ -367,6 +367,7 @@ Tisztelettel,\n\n]]></string>
     <string name="trackers_static">Nyomkövető könyvtárak</string>
     <string name="trackers_static_explanation">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.\n\nA hálózati forgalomban észlelt nyomkövetés a TrackerControllal blokkolható.</string>
     <string name="trackers_static_explanation_playstore">A TrackerControl észleli a nyomkövetést a kódokban (könyvtárak) és az alkalmazások hálózati forgalmában.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOKKOLT</string>
     <string name="allowed">ENGEDÉLYEZETT</string>
     <string name="setting_domain_based_blocked">Tartományalapú blokkolás</string>

@@ -271,7 +271,6 @@ Seu tráfego de Internet não está sendo enviado para um servidor VPN remoto.</
     <string name="title_activity_detail">Detalhes</string>
     <string name="tab_trackers">Rastreadores</string>
     <string name="tab_countries">Países</string>
-    <string name="tab_actions">Meus dados</string>
     <string name="tracker_name">Nome do Tracker</string>
     <string name="app_info">Gerenciar o aplicativo</string>
     <!-- Actions -->
@@ -370,6 +369,7 @@ disso,\n\n]]></string>
     <string name="app_state_bypassed">Ignorar o TrackerControl</string>
     <string name="app_state_bypassed_explanation">A aplicação liga-se diretamente, fora do TrackerControl. Nada é monitorizado nem bloqueado para ela. Utilize isto como último recurso se a aplicação continuar a não funcionar.\n\nNota: \"Bloquear ligações sem VPN\" nas definições de VPN do Android tem de estar DESATIVADO para que isto funcione.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilitar interruptor na tela principal, depois lançar aplicativo para encontrar rastreadores</string>
     <string name="no_trackers_found_message">Lançar aplicativo para encontrar rastreadores</string>
@@ -385,6 +385,7 @@ disso,\n\n]]></string>
     <string name="enable">Habilitar</string>
     <string name="internet_blocked">Acesso à Internet bloqueado</string>
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

@@ -131,10 +131,12 @@
     <string name="app_state_bypassed">Omgå TrackerControl</string>
     <string name="app_state_bypassed_explanation">Appen forbinder direkte, uden om TrackerControl. Intet overvåges eller blokeres for den. Brug dette som sidste udvej, hvis appen stadig ikke virker.\n\nBemærk: \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger skal være DEAKTIVERET, for at dette virker.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Afinstaller</string>
     <string name="back">Tilbage</string>
     <string name="your_privacy">Dit privatliv</string>
     <string name="enable">Aktivér</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

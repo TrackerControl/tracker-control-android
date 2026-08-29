@@ -284,7 +284,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="title_activity_detail">Detalhes</string>
     <string name="tab_trackers">Rastreadores</string>
     <string name="tab_countries">Países</string>
-    <string name="tab_actions">Meus dados</string>
     <string name="tracker_name">Nome do rastreador</string>
     <string name="app_info">Gerenciar app</string>
     <!-- Actions -->
@@ -371,6 +370,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="app_state_bypassed">Ignorar o TrackerControl</string>
     <string name="app_state_bypassed_explanation">O aplicativo se conecta diretamente, fora do TrackerControl. Nada é monitorado nem bloqueado para ele. Use isto como último recurso se o aplicativo ainda não funcionar.\n\nObservação: \"Bloquear conexões sem VPN\" nas configurações de VPN do Android precisa estar DESATIVADO para que isto funcione.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Configurações do app &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Habilite o interruptor na tela principal e inicie o app para encontrar rastreadores</string>
@@ -404,6 +404,7 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="trackers_static_explanation_playstore">TrackerControl detecta o rastreamento no código (\'bibliotecas\') e tráfego de rede de aplicativos.</string>
     <string name="trackers_static_disclaimer">Nota: Detecção do código da biblioteca de rastreadores não significa que ele está sendo ativamente usado. Alguns apps podem ter removido ou desabilitado essas bibliotecas, mas ainda é possível detectar rastros.</string>
     <string name="analyze_tracker_libraries">Analise bibliotecas rastreadoras</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
     <string name="setting_domain_based_blocked">Bloqueio baseado no domínio</string>

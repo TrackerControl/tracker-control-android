@@ -76,6 +76,8 @@
     <string name="app_state_bypassed">دور زدن TrackerControl</string>
     <string name="app_state_bypassed_explanation">برنامه مستقیماً و خارج از TrackerControl متصل می‌شود. هیچ چیزی برای آن پایش یا مسدود نمی‌شود. اگر برنامه هنوز کار نمی‌کند، این را به‌عنوان آخرین راه‌حل استفاده کنید.\n\nتوجه: گزینهٔ \"مسدودسازی اتصال‌های بدون VPN\" در تنظیمات VPN اندروید باید غیرفعال باشد تا این کار کند.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
