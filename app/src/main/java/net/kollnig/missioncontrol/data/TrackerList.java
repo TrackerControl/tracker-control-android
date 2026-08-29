@@ -69,12 +69,11 @@ public class TrackerList {
             "cloudfront.net",
             "fastly.net",
             "cloudflare.com"));
-    private static final Map<String, Tracker> hostnameToTracker = new ConcurrentHashMap<>();
+    private static volatile TrackerSnapshot trackerSnapshot = new TrackerSnapshot(
+            new ConcurrentHashMap<>(), false, false, BlockingMode.getDefaultMode());
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
-    private static TrackerList instance;
-    private static boolean domainBasedBlocking;
-    private static boolean minimalBlockingMode;
+    private static volatile TrackerList instance;
     private final DatabaseHelper databaseHelper;
     
     // Lock for synchronizing tracker data reload operations
@@ -85,9 +84,29 @@ public class TrackerList {
     private long lastTrackerCountComputeTime = 0;
     private static final long TRACKER_COUNT_CACHE_TTL_MS = 2000; // 2 second cache
 
+    /**
+     * The map and the mode flags must be published together. The map remains a
+     * concurrent map because findTracker caches hosts-file-derived entries in
+     * the active snapshot, while the snapshot reference itself is immutable
+     * after publication.
+     */
+    private static final class TrackerSnapshot {
+        private final Map<String, Tracker> hostnameToTracker;
+        private final boolean domainBasedBlocking;
+        private final boolean minimalBlockingMode;
+        private final String blockingMode;
+
+        private TrackerSnapshot(Map<String, Tracker> hostnameToTracker,
+                boolean domainBasedBlocking, boolean minimalBlockingMode, String blockingMode) {
+            this.hostnameToTracker = hostnameToTracker;
+            this.domainBasedBlocking = domainBasedBlocking;
+            this.minimalBlockingMode = minimalBlockingMode;
+            this.blockingMode = blockingMode;
+        }
+    }
+
     private TrackerList(Context c) {
         databaseHelper = DatabaseHelper.getInstance(c);
-        loadTrackers(c);
     }
 
     /**
@@ -97,10 +116,32 @@ public class TrackerList {
      * @return Instance of the tracker database
      */
     public static TrackerList getInstance(Context c) {
-        if (instance == null)
-            instance = new TrackerList(c);
+        TrackerList current = instance;
+        if (current != null)
+            return current;
 
-        return instance;
+        synchronized (reloadLock) {
+            current = instance;
+            if (current == null) {
+                TrackerList created = new TrackerList(c);
+                created.loadTrackers(c);
+                instance = created;
+                current = created;
+            }
+
+            return current;
+        }
+    }
+
+    /**
+     * Return the blocking mode published with the active tracker snapshot.
+     * Initialising through getInstance ensures the map and mode are never read
+     * from two different lifecycle states by packet-path callers.
+     */
+    public static String getBlockingMode(Context c) {
+        if (instance == null)
+            getInstance(c);
+        return trackerSnapshot.blockingMode;
     }
 
     static boolean isIgnoredDomain(String domain) {
@@ -121,6 +162,9 @@ public class TrackerList {
         // would slip past detection and blocking.
         hostname = hostname.toLowerCase(Locale.ROOT);
 
+        TrackerSnapshot snapshot = trackerSnapshot;
+        Map<String, Tracker> hostnameToTracker = snapshot.hostnameToTracker;
+
         Tracker t = null;
 
         if (hostnameToTracker.containsKey(hostname)) {
@@ -136,39 +180,44 @@ public class TrackerList {
         }
 
         // In minimal mode, skip hosts-file based lookups (only use DDG tracker list)
-        if (t == null && !minimalBlockingMode
+        if (t == null && !snapshot.minimalBlockingMode
                 && ServiceSinkhole.mapHostsBlocked.containsKey(hostname))
-            if (domainBasedBlocking)
+            if (snapshot.domainBasedBlocking)
                 return hostlistTracker;
             else {
                 t = new Tracker(hostname, UNCATEGORISED);
-                hostnameToTracker.put(hostname, t);
-                return t;
+                Tracker existing = hostnameToTracker.putIfAbsent(hostname, t);
+                return existing != null ? existing : t;
             }
 
         return t;
     }
 
     /**
-     * Reload tracker data by clearing all existing data and reloading from assets.
-     * This should be called when the hosts blocklist is updated to ensure TrackerList
-     * stays in sync with the updated hosts.
+     * Reload tracker data from assets and publish a complete snapshot if loading
+     * succeeds. This should be called when the hosts blocklist is updated to
+     * ensure TrackerList stays in sync with the updated hosts.
      *
      * @param c Context
+     * @return true if a complete new snapshot was published, false if the
+     *         previous snapshot was retained after a loading failure
      */
-    public static void reloadTrackerData(Context c) {
+    public static boolean reloadTrackerData(Context c) {
         Log.i(TAG, "Reloading tracker data");
-        
-        // Synchronize the entire reload operation to prevent race conditions
+
+        // loadTrackers builds and publishes under reloadLock. Readers do not
+        // take the lock and continue to use the old complete snapshot while
+        // assets are being parsed.
         synchronized (reloadLock) {
-            // Clear existing data (both are thread-safe collections)
-            hostnameToTracker.clear();
-            
-            // Ensure instance exists and reload trackers from assets
-            TrackerList trackerList = getInstance(c);
-            trackerList.loadTrackers(c);
-            // Invalidate cached tracker counts since tracker data has changed
-            trackerList.invalidateTrackerCountCache();
+            // Initialise and load once on the first reload call. Do not
+            // immediately load the same assets a second time.
+            if (instance == null) {
+                TrackerList created = new TrackerList(c);
+                boolean loaded = created.loadTrackers(c);
+                instance = created;
+                return loaded;
+            }
+            return instance.loadTrackers(c);
         }
     }
 
@@ -176,21 +225,37 @@ public class TrackerList {
      * Load tracker domain database
      *
      * @param c Context
+     * @return true if all selected assets loaded successfully, false otherwise
      */
-    public void loadTrackers(Context c) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        domainBasedBlocking = prefs.getBoolean("domain_based_blocking",
-                prefs.getBoolean("domain_based_blocked", false));
-        minimalBlockingMode = BlockingMode.isMinimalMode(c);
+    public boolean loadTrackers(Context c) {
+        synchronized (reloadLock) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            boolean domainBasedBlocking = prefs.getBoolean("domain_based_blocking",
+                    prefs.getBoolean("domain_based_blocked", false));
+            String blockingMode = BlockingMode.getMode(c);
+            boolean minimalBlockingMode = BlockingMode.MODE_MINIMAL.equals(blockingMode);
+            Map<String, Tracker> loadedTrackers = new ConcurrentHashMap<>();
 
-        if (minimalBlockingMode) {
-            // In minimal mode, only load DDG trackers (skip X-Ray and Disconnect)
-            // This ensures only confirmed, breakage-tested trackers are blocked
-            loadDuckDuckGoTrackers(c);
-        } else {
-            loadXrayTrackers(c);
-            loadDisconnectTrackers(c); // loaded last to overwrite X-Ray hosts with extra category information
-            loadDuckDuckGoTrackers(c); // DuckDuckGo tracker list for additional mobile-specific trackers
+            boolean loaded;
+            if (minimalBlockingMode) {
+                // In minimal mode, only load DDG trackers (skip X-Ray and Disconnect)
+                // This ensures only confirmed, breakage-tested trackers are blocked
+                loaded = loadDuckDuckGoTrackers(c, loadedTrackers, domainBasedBlocking);
+            } else {
+                loaded = loadXrayTrackers(c, loadedTrackers, domainBasedBlocking);
+                loaded = loaded && loadDisconnectTrackers(c, loadedTrackers, domainBasedBlocking);
+                loaded = loaded && loadDuckDuckGoTrackers(c, loadedTrackers, domainBasedBlocking);
+            }
+
+            if (!loaded) {
+                Log.w(TAG, "Keeping previous tracker snapshot after asset loading failure");
+                return false;
+            }
+
+            trackerSnapshot = new TrackerSnapshot(
+                    loadedTrackers, domainBasedBlocking, minimalBlockingMode, blockingMode);
+            invalidateTrackerCountCache();
+            return true;
         }
     }
 
@@ -399,7 +464,8 @@ public class TrackerList {
      *
      * @param c Context
      */
-    private void loadXrayTrackers(Context c) {
+    private boolean loadXrayTrackers(Context c, Map<String, Tracker> hostnameToTracker,
+            boolean domainBasedBlocking) {
         // Keep track of parent companies
         Map<String, Tracker> rootParents = new HashMap<>();
 
@@ -472,12 +538,14 @@ public class TrackerList {
                     if (isIgnoredDomain(dom))
                         continue;
 
-                    addTrackerDomain(tracker, dom);
+                    addTrackerDomain(tracker, dom, hostnameToTracker, domainBasedBlocking);
                 }
             }
             reader.endArray();
+            return true;
         } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "Loading X-Ray list failed.. ", e);
+            return false;
         }
     }
 
@@ -486,7 +554,8 @@ public class TrackerList {
      *
      * @param c Context
      */
-    private void loadDuckDuckGoTrackers(Context c) {
+    private boolean loadDuckDuckGoTrackers(Context c, Map<String, Tracker> hostnameToTracker,
+            boolean domainBasedBlocking) {
         // Stream-parse to avoid materialising the whole file as a String plus a
         // JSONObject DOM. Produces the exact same map as the previous DOM-based
         // parse (this list is loaded in every mode, so it also helps minimal mode).
@@ -559,13 +628,15 @@ public class TrackerList {
                     Tracker tracker = new Tracker(displayName, category);
 
                     // Add domain to tracker map
-                    addTrackerDomain(tracker, domain);
+                    addTrackerDomain(tracker, domain, hostnameToTracker, domainBasedBlocking);
                 }
                 reader.endObject();
             }
             reader.endObject();
+            return true;
         } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "Loading DuckDuckGo list failed.. ", e);
+            return false;
         }
     }
 
@@ -574,7 +645,8 @@ public class TrackerList {
      *
      * @param c Context
      */
-    private void loadDisconnectTrackers(Context c) {
+    private boolean loadDisconnectTrackers(Context c, Map<String, Tracker> hostnameToTracker,
+            boolean domainBasedBlocking) {
         /*
          * Read domain list:
          *
@@ -652,7 +724,7 @@ public class TrackerList {
                                         if (isIgnoredDomain(dom))
                                             continue;
 
-                                        addTrackerDomain(tracker, dom);
+                                        addTrackerDomain(tracker, dom, hostnameToTracker, domainBasedBlocking);
                                     }
                                     reader.endArray();
                                 }
@@ -666,8 +738,10 @@ public class TrackerList {
                 }
                 reader.endObject();
             }
+            return true;
         } catch (IOException | IllegalStateException e) {
             Log.e(TAG, "Loading Disconnect.me list failed.. ", e);
+            return false;
         }
     }
 
@@ -678,7 +752,8 @@ public class TrackerList {
      * @param tracker Tracker to be added
      * @param dom     Domain to be added
      */
-    private void addTrackerDomain(Tracker tracker, String dom) {
+    private void addTrackerDomain(Tracker tracker, String dom, Map<String, Tracker> hostnameToTracker,
+            boolean domainBasedBlocking) {
         if (domainBasedBlocking) {
             Tracker t = new Tracker(dom + " (" + tracker.getName() + ")", tracker.category);
             t.country = tracker.country;

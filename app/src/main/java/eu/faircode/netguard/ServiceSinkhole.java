@@ -2931,7 +2931,7 @@ public class ServiceSinkhole extends VpnService {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String blockingMode = BlockingMode.getMode(this);
+        String blockingMode = TrackerList.getBlockingMode(this);
         boolean blockAmbiguousTrackers = BlockingModeLogic.blocksAmbiguousTrackerIp(blockingMode);
         Tracker tracker = null;
         TrackerCache.Entry cached = trackerCache.get(daddr, System.currentTimeMillis());

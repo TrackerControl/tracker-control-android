@@ -247,8 +247,12 @@ public class BlockingMode {
         if (trackerBlocklist.applyStrictModeToAll(isStrictMode(c)))
             trackerBlocklist.saveSettings(c);
 
-        ServiceSinkhole.clearTrackerCaches();
-        TrackerList.reloadTrackerData(c);
+        if (TrackerList.reloadTrackerData(c)) {
+            // Clear caches only after the new tracker snapshot is published. A
+            // pre-reload clear allows packet-path lookups during asset loading
+            // to repopulate stale entries from the old mode.
+            ServiceSinkhole.clearTrackerCaches();
+        }
         ServiceSinkhole.reload("changed " + PREF_BLOCKING_MODE, c, false);
     }
 
