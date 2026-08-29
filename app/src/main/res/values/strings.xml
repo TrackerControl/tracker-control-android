@@ -5,6 +5,7 @@
     <string name="app_xposed">Xposed causes too many crashes, which might result in TrackerControl being removed from the Google Play Store, therefore TrackerControl isn\'t supported while Xposed is installed</string>
     <string name="app_eula">The usage of this app is at your own risk. No app can offer 100% protection against tracking.</string>
     <string name="app_privacy"><a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice">Privacy Policy</a> <a href="https://github.com/TrackerControl/tracker-control-android#cookie-policy">Cookie Policy</a></string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl is also available for iOS</a></string>
 
     <string name="channel_foreground">Running services</string>
     <string name="channel_notify">General notifications</string>
