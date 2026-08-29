@@ -17,7 +17,7 @@ on:
         default: false
         type: boolean
       upload_translations:
-        description: One-time migration import of existing repository translations
+        description: Import reviewed repository translations into Crowdin before downloading
         required: false
         default: false
         type: boolean
