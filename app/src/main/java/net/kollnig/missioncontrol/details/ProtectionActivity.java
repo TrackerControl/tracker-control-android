@@ -425,12 +425,13 @@ public class ProtectionActivity extends AppCompatActivity {
             boolean essentialOnly = state == AppProtectionState.ESSENTIAL_ONLY;
             boolean readOnlyMinimal = minimal || essentialOnly;
             categorySwitch.setEnabled(!readOnlyMinimal && state == AppProtectionState.PROTECTED);
-            boolean categoryEssentiallyBlocked = essentialOnly && category.getChildren().stream()
+            // Both read-only modes block exactly the non-Content DDG set, so the
+            // switch reflects whether anything in this category is in it, rather
+            // than assuming every non-Content category is blocked.
+            boolean categoryEssentiallyBlocked = readOnlyMinimal && category.getChildren().stream()
                     .anyMatch(TrackerList::isEssentiallyBlocked);
-            categorySwitch.setChecked(essentialOnly
+            categorySwitch.setChecked(readOnlyMinimal
                     ? trackerProtectionEnabled && categoryEssentiallyBlocked
-                    : readOnlyMinimal
-                    ? trackerProtectionEnabled && !TrackerBlocklist.NECESSARY_CATEGORY.equals(category.getCategoryName())
                     : blocklist.blocked(appUid, category.getCategoryName()));
             categorySwitch.setOnCheckedChangeListener((buttonView, checked) -> {
                 if (!buttonView.isPressed())
@@ -457,11 +458,17 @@ public class ProtectionActivity extends AppCompatActivity {
                 } else {
                     companyBlocked = state == AppProtectionState.PROTECTED
                             && trackerProtectionEnabled
-                            && (minimal ? TrackerBlocklist.blockedTrackerMinimal(tracker)
+                            && (minimal ? TrackerList.isEssentiallyBlocked(tracker)
                             : blocklist.blockedTracker(appUid, tracker));
                 }
+                // Same three states as the trackers list: in Minimal mode a
+                // company the DDG list does not know is monitored, not allowed.
+                boolean monitoredOnly = minimal && !companyBlocked
+                        && !TrackerList.isEssentiallyKnown(tracker);
                 String status = getString(ambiguousAllowed ? R.string.allowed_shared_ip
-                        : (companyBlocked ? R.string.blocked : R.string.allowed));
+                        : companyBlocked ? R.string.blocked
+                        : monitoredOnly ? R.string.tracker_monitored_minimal
+                        : R.string.allowed);
                 chip.setText(tracker.getName() + "  " + status);
                 chip.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 chip.setChipStrokeColorResource(R.color.colorPrimaryLight);

@@ -104,14 +104,6 @@ public class TrackerBlocklistTest {
     }
 
     @Test
-    public void minimalModeOnlyAllowsContentCategory() {
-        assertFalse(TrackerBlocklist.blockedTrackerMinimal(
-                new Tracker("Google", TrackerBlocklist.NECESSARY_CATEGORY)));
-        assertTrue(TrackerBlocklist.blockedTrackerMinimal(
-                new Tracker("Branch", "Advertising")));
-    }
-
-    @Test
     public void resolveStoredUidParsesNumericIdsWithoutResolver() {
         assertEquals(Integer.valueOf(UID),
                 UidKeyedStore.resolveStoredUid(Integer.toString(UID), null));

@@ -3041,6 +3041,13 @@ public class ServiceSinkhole extends VpnService {
             boolean sawFirstRow = false;
             boolean sawTrackerEvidence = false;
             boolean sawNonTrackerEvidence = false;
+            // Blocking evidence, classified against the DuckDuckGo-only map.
+            // Detection above uses the full map in every mode, so the blocking
+            // verdict has to be tracked separately to stay DDG-compatible.
+            String essentialCategory = null;
+            boolean sawEssentialCategory = false;
+            boolean sawEssentialTrackerEvidence = false;
+            boolean sawNonEssentialTrackerEvidence = false;
             try (Cursor lookup = dh.getQAName(uid, daddr)) {
                 // Loop through all fresh DNS candidates for this IP and only fail closed
                 // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
@@ -3077,6 +3084,23 @@ public class ServiceSinkhole extends VpnService {
                             }
                         }
 
+                        // Resolve the DDG verdict here, while both names are in
+                        // hand: a later lookup by the cached hostname alone would
+                        // miss a DDG match on an uncloaked CNAME target.
+                        Tracker candidateEssential = qname == null
+                                ? null : TrackerList.findEssentialTracker(qname);
+                        if (candidateEssential == null && aname != null)
+                            candidateEssential = TrackerList.findEssentialTracker(aname);
+
+                        if (candidateEssential != null) {
+                            sawEssentialTrackerEvidence = true;
+                            if (!sawEssentialCategory) {
+                                sawEssentialCategory = true;
+                                essentialCategory = candidateEssential.category;
+                            }
+                        } else if (qname != null || aname != null)
+                            sawNonEssentialTrackerEvidence = true;
+
                         if (candidateTracker != null) {
                             sawTrackerEvidence = true;
                             if (tracker == null) {
@@ -3098,6 +3122,10 @@ public class ServiceSinkhole extends VpnService {
                 Log.d(TAG, "Allowing mixed tracker evidence for " + daddr);
                 tracker = NO_TRACKER;
             }
+
+            if (sawEssentialTrackerEvidence && sawNonEssentialTrackerEvidence
+                    && !blockAmbiguousTrackers)
+                essentialCategory = null;
 
             // No success in finding dname or tracker?
             if (dname == null)
@@ -3131,7 +3159,8 @@ public class ServiceSinkhole extends VpnService {
             // stale verdict that a racing insert already made obsolete.
             // Skipping is cheap and correct: the next packet to this IP
             // simply re-reads the DB.
-            TrackerCache.Entry cacheEntry = new TrackerCache.Entry(dname, tracker, expiry);
+            TrackerCache.Entry cacheEntry = new TrackerCache.Entry(dname, tracker,
+                    essentialCategory, expiry);
             trackerCache.putIfGeneration(daddr, cacheEntry, generationBefore);
             // Keep the exact snapshot used for the decision for logging;
             // the shared cache may be invalidated or replaced meanwhile.
@@ -3155,27 +3184,15 @@ public class ServiceSinkhole extends VpnService {
             }
         } else {
             if (tracker != null && tracker != NO_TRACKER) {
-                if (!BlockingMode.MODE_MINIMAL.equals(blockingMode) && essentialOnlyApp(uid)) {
-                    String hostname = cached == null ? null : cached.getHostname();
-                    Tracker essentialTracker = hostname == null
-                            ? null : TrackerList.findEssentialTracker(hostname);
-                    // Strict mode retains tracker evidence for mixed-evidence
-                    // IPs where Minimal mode would collapse it to NO_TRACKER;
-                    // this accepted deviation can block slightly more here.
+                // Minimal mode and essential-only apps share one verdict: block
+                // exactly the non-Content DuckDuckGo set, whatever else the
+                // broader detection map knows about this flow.
+                if (BlockingMode.MODE_MINIMAL.equals(blockingMode) || essentialOnlyApp(uid))
                     return BlockingModeLogic.shouldBlockEssentialOnly(
-                            essentialTracker == null ? null : essentialTracker.category);
-                }
+                            cached == null ? null : cached.getEssentialCategory());
 
-                boolean blockedByGranularRule = false;
-                if (!BlockingMode.MODE_MINIMAL.equals(blockingMode)) {
-                    TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
-                    blockedByGranularRule = b.blockedTracker(uid, tracker);
-                }
-
-                return BlockingModeLogic.shouldBlockKnownTracker(
-                        blockingMode,
-                        tracker.category,
-                        blockedByGranularRule);
+                TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
+                return b.blockedTracker(uid, tracker);
             }
         }
 

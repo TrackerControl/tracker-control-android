@@ -324,17 +324,13 @@ class InsightsDataProvider(context: Context) {
             return false
         }
 
-        val blockedByGranularRule = if (BlockingMode.MODE_MINIMAL == blockingMode) {
-            false
-        } else {
-            trackerBlocklist.blockedTracker(uid, tracker)
+        if (BlockingMode.MODE_MINIMAL == blockingMode) {
+            // Minimal mode detects with every list but blocks only the DDG set.
+            val essentialTracker = TrackerList.findEssentialTracker(daddr)
+            return BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker?.category)
         }
 
-        return BlockingModeLogic.shouldBlockKnownTracker(
-            blockingMode,
-            tracker.category,
-            blockedByGranularRule
-        )
+        return trackerBlocklist.blockedTracker(uid, tracker)
     }
 
     companion object {

@@ -249,13 +249,18 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     Spannable spannable;
                     boolean showStatus;
                     boolean companyBlocked;
+                    // Minimal mode detects far more than it blocks; a company
+                    // known only to X-Ray/Disconnect is monitored, and saying
+                    // "allowed" would read as a deliberate exemption.
+                    boolean monitoredOnly = false;
 
                     if (!trackerProtectionEnabled) {
                         showStatus = true;
                         companyBlocked = false;
                     } else if (BlockingMode.isMinimalMode(getContext())) {
                         showStatus = true;
-                        companyBlocked = TrackerBlocklist.blockedTrackerMinimal(t);
+                        companyBlocked = TrackerList.isEssentiallyBlocked(t);
+                        monitoredOnly = !companyBlocked && !TrackerList.isEssentiallyKnown(t);
                     } else if (essentialOnlyApp) {
                         showStatus = true;
                         companyBlocked = TrackerList.isEssentiallyBlocked(t);
@@ -280,7 +285,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     } else {
                         String status = getContext().getString(uncertainAllowed
                                 ? R.string.allowed_shared_ip
-                                : (companyBlocked ? R.string.blocked : R.string.allowed));
+                                : companyBlocked ? R.string.blocked
+                                : monitoredOnly ? R.string.tracker_monitored_minimal
+                                : R.string.allowed);
                         int color = ContextCompat.getColor(getContext(),
                                 companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
 
@@ -311,8 +318,18 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 // Minimal-style modes: show read-only blocking status (no granular control)
                 holder.mSwitchTracker.setVisibility(View.VISIBLE);
                 holder.mSwitchTracker.setEnabled(false);
-                holder.mSwitchTracker.setChecked(trackerProtectionEnabled &&
-                        !TrackerBlocklist.NECESSARY_CATEGORY.equals(trackerCategoryName));
+                // Checked only if the category actually contains something that
+                // gets blocked: with detection broadened beyond the DDG list, a
+                // category whose observed members are all detection-only would
+                // otherwise show a "blocked" switch that lies.
+                boolean categoryEssentiallyBlocked = false;
+                for (Tracker t : trackerCategory.getChildren())
+                    if (TrackerList.isEssentiallyBlocked(t)) {
+                        categoryEssentiallyBlocked = true;
+                        break;
+                    }
+                holder.mSwitchTracker.setChecked(
+                        trackerProtectionEnabled && categoryEssentiallyBlocked);
                 holder.mSwitchTracker.setOnCheckedChangeListener(null);
                 holder.mCompaniesList.setOnItemClickListener(null);
             } else {

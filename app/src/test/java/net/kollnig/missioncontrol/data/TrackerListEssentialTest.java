@@ -15,9 +15,9 @@
 package net.kollnig.missioncontrol.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -75,16 +75,82 @@ public class TrackerListEssentialTest {
     }
 
     @Test
-    public void minimalModeUsesTheMainDdgMapForEssentialLookup() {
+    public void minimalModeDetectsWithEveryListButKeepsTheDdgMapForBlocking() {
+        switchToMinimalMode();
+
+        // Detected through X-Ray/Disconnect, so it shows up in the trackers
+        // list, counts and timeline — but it is not part of the DDG set that
+        // minimal mode blocks.
+        assertNotNull(TrackerList.findTracker("crashlytics.com"));
+        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+
+        // A DDG tracker stays blockable, with its DDG category.
+        Tracker essentialTracker = TrackerList.findEssentialTracker("2mdn.net");
+        assertNotNull(essentialTracker);
+        assertEquals("Google", essentialTracker.getName());
+        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker.category));
+    }
+
+    @Test
+    public void minimalModeStillSkipsHostsFileDetection() {
+        switchToMinimalMode();
+        ServiceSinkhole.mapHostsBlocked.put("hosts-only.example", true);
+
+        assertNull(TrackerList.findTracker("hosts-only.example"));
+        assertNull(TrackerList.findEssentialTracker("hosts-only.example"));
+    }
+
+    @Test
+    public void detectionMapKeepsDuckDuckGoCategoryConflictResolutionInMinimalMode() {
+        switchToMinimalMode();
+
+        // X-Ray claimed 2mdn.net with a real category; DDG must not overwrite it
+        // in the detection map, exactly as in standard mode.
+        Tracker mainTracker = TrackerList.findTracker("2mdn.net");
+        assertNotNull(mainTracker);
+        assertEquals("Fingerprinting", mainTracker.category);
+        assertEquals(TrackerCategory.UNCATEGORISED,
+                TrackerList.findEssentialTracker("2mdn.net").category);
+    }
+
+    @Test
+    public void essentialMapIsIdenticalAcrossModes() {
+        Tracker standard = TrackerList.findEssentialTracker("2mdn.net");
+        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+
+        switchToMinimalMode();
+        Tracker minimal = TrackerList.findEssentialTracker("2mdn.net");
+        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+
+        assertNotNull(minimal);
+        assertEquals(standard.getName(), minimal.getName());
+        assertEquals(standard.category, minimal.category);
+    }
+
+    @Test
+    public void detectionOnlyTrackerIsMonitoredRatherThanBlockedOrAllowed() {
+        switchToMinimalMode();
+
+        Tracker detectionOnly = TrackerList.findTracker("crashlytics.com");
+        detectionOnly.addHost("crashlytics.com");
+        assertFalse(TrackerList.isEssentiallyBlocked(detectionOnly));
+        assertFalse(TrackerList.isEssentiallyKnown(detectionOnly));
+
+        Tracker ddgTracker = TrackerList.findTracker("2mdn.net");
+        ddgTracker.addHost("2mdn.net");
+        assertTrue(TrackerList.isEssentiallyBlocked(ddgTracker));
+        assertTrue(TrackerList.isEssentiallyKnown(ddgTracker));
+
+        Tracker ddgContent = TrackerList.findTracker("ajax.googleapis.com");
+        ddgContent.addHost("ajax.googleapis.com");
+        assertFalse(TrackerList.isEssentiallyBlocked(ddgContent));
+        assertTrue(TrackerList.isEssentiallyKnown(ddgContent));
+    }
+
+    private void switchToMinimalMode() {
         PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(BlockingMode.PREF_BLOCKING_MODE, BlockingMode.MODE_MINIMAL)
                 .commit();
         assertTrue(TrackerList.reloadTrackerData(context));
-
-        assertSame(TrackerList.findTracker("2mdn.net"),
-                TrackerList.findEssentialTracker("2mdn.net"));
-        ServiceSinkhole.mapHostsBlocked.put("hosts-only.example", true);
-        assertNull(TrackerList.findTracker("hosts-only.example"));
-        assertNull(TrackerList.findEssentialTracker("hosts-only.example"));
     }
 }
