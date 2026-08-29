@@ -144,6 +144,31 @@ public class TrackerListReloadTest {
         assertEquals(BlockingMode.MODE_STANDARD, TrackerList.getBlockingMode(context));
     }
 
+    /**
+     * With no snapshot ever published there is no loaded mode to stay
+     * consistent with, so the preference must win. Reporting the bootstrap
+     * placeholder would silently drop a Strict-mode user to the default.
+     */
+    @Test
+    public void blockingModeFallsBackToThePrefWhenNoLoadEverSucceeded() throws Exception {
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putString(BLOCKING_MODE, BlockingMode.MODE_STRICT).commit();
+
+        Constructor<AssetManager> assetConstructor = AssetManager.class.getDeclaredConstructor();
+        assetConstructor.setAccessible(true);
+        AssetManager brokenAssets = assetConstructor.newInstance();
+        Context brokenContext = new ContextWrapper(context) {
+            @Override
+            public AssetManager getAssets() {
+                return brokenAssets;
+            }
+        };
+
+        assertFalse(TrackerList.reloadTrackerData(brokenContext));
+
+        assertEquals(BlockingMode.MODE_STRICT, TrackerList.getBlockingMode(context));
+    }
+
     @Test
     public void modeSelectionPublishesOnlyTheSelectedLists() {
         PreferenceManager.getDefaultSharedPreferences(context).edit()
@@ -198,11 +223,11 @@ public class TrackerListReloadTest {
         Class<?> snapshotClass = Class.forName(
                 "net.kollnig.missioncontrol.data.TrackerList$TrackerSnapshot");
         Constructor<?> constructor = snapshotClass.getDeclaredConstructor(
-                Map.class, boolean.class, boolean.class, String.class);
+                Map.class, boolean.class, boolean.class, String.class, boolean.class);
         constructor.setAccessible(true);
         Object emptySnapshot = constructor.newInstance(
                 new ConcurrentHashMap<String, Tracker>(), false, false,
-                BlockingMode.getDefaultMode());
+                BlockingMode.getDefaultMode(), false);
         Field snapshot = TrackerList.class.getDeclaredField("trackerSnapshot");
         snapshot.setAccessible(true);
         snapshot.set(null, emptySnapshot);

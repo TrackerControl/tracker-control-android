@@ -26,7 +26,9 @@ public class WireGuardStartupRecoveryPolicyTest {
 
         assertEquals(500L, policy.onFailure(0L, true));
         assertTrue(policy.claim());
-        policy.onSuccess();
+        // What startNative's success path does, via
+        // cancelWireGuardStartupRecovery(true).
+        policy.cancel(true);
         assertEquals(500L, policy.onFailure(1L, true));
     }
 
