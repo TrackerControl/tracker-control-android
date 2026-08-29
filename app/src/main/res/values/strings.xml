@@ -500,6 +500,8 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="widget_toggle_enable_description">Enable tracker blocking</string>
     <string name="widget_toggle_disable_description">Disable tracker blocking</string>
     <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="accessibility_tracker_blocking_enabled">Tracker blocking enabled</string>
+    <string name="accessibility_tracker_blocking_disabled">Tracker blocking disabled</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">contacted %d company last week</item>
         <item quantity="other">contacted %d companies last week</item>
