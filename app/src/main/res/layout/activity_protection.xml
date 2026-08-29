@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/trackerFeedBackground"
     tools:context="net.kollnig.missioncontrol.details.ProtectionActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -31,6 +32,7 @@
         android:id="@+id/protectionScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/trackerFeedBackground"
         android:clipToPadding="false"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -39,71 +41,75 @@
             android:id="@+id/protectionContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/trackerFeedBackground"
             android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="16dp"
             android:paddingBottom="24dp">
 
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:id="@+id/cardPause"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="1dp"
-                app:cardMaxElevation="@dimen/z_card">
+                android:background="@color/trackerFeedBackground"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvPauseStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:textColor="?android:textColorPrimary"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvPauseStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tvPauseSharedUid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="?android:textColorSecondary"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/tvPauseSharedUid"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="?android:textColorSecondary"
-                        android:textSize="13sp"
-                        android:visibility="gone" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPauseResume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:minHeight="48dp"
+                    android:textColor="@android:color/white" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnPauseResume"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:textColor="@android:color/white" />
+                <TextView
+                    android:id="@+id/tvLockdownNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/protection_lockdown_note"
+                    android:textColor="?android:textColorSecondary"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:visibility="gone" />
+            </LinearLayout>
 
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <TextView
-                android:id="@+id/tvLockdownNote"
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@string/protection_lockdown_note"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="13sp"
-                android:visibility="gone" />
+                android:layout_height="1dp"
+                android:background="@color/trackerFeedDivider"
+                android:importantForAccessibility="no" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:background="@color/trackerFeedSectionBackground"
+                android:minHeight="48dp"
+                android:paddingStart="16dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:accessibilityHeading="true"
                 android:text="@string/protection_blocked_last_24h"
+                android:textAllCaps="true"
+                android:gravity="center_vertical"
+                android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
                 android:textColor="?android:textColorPrimary"
-                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -116,8 +122,9 @@
                 android:id="@+id/tvBlockedEmpty"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:padding="16dp"
                 android:text="@string/protection_no_blocked_trackers"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="?android:textColorSecondary"
                 android:visibility="gone" />
 
@@ -125,32 +132,45 @@
                 android:id="@+id/tvRecordingUnavailable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:padding="16dp"
                 android:text="@string/protection_recording_unavailable"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="?android:textColorSecondary"
                 android:visibility="gone" />
 
-            <com.google.android.material.card.MaterialCardView
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/trackerFeedDivider"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardElevation="1dp"
-                app:cardMaxElevation="@dimen/z_card">
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trackerFeedSectionBackground"
+                    android:minHeight="48dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:accessibilityHeading="true"
+                    android:text="@string/app_state_heading"
+                    android:textAllCaps="true"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:text="@string/app_state_heading"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
 
                     <RadioGroup
                         android:id="@+id/rgAppState"
@@ -162,6 +182,7 @@
                             android:id="@+id/rbStateProtected"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:text="@string/app_state_protected"
                             android:textStyle="bold" />
 
@@ -171,12 +192,14 @@
                             android:layout_marginStart="32dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/app_state_protected_explanation"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                         <RadioButton
                             android:id="@+id/rbStateMinimalOnly"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:text="@string/app_state_essential_only"
                             android:textStyle="bold" />
 
@@ -187,12 +210,14 @@
                             android:layout_marginStart="32dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/app_state_essential_only_explanation"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                         <RadioButton
                             android:id="@+id/rbStateTrackersAllowed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:text="@string/app_state_trackers_allowed"
                             android:textStyle="bold" />
 
@@ -202,12 +227,14 @@
                             android:layout_marginStart="32dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/app_state_trackers_allowed_explanation"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                         <RadioButton
                             android:id="@+id/rbStateNoInternet"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:text="@string/app_state_no_internet"
                             android:textStyle="bold" />
 
@@ -217,12 +244,14 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="32dp"
                             android:layout_marginBottom="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                         <RadioButton
                             android:id="@+id/rbStateBypassed"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:minHeight="48dp"
                             android:text="@string/app_state_bypassed"
                             android:textStyle="bold" />
 
@@ -231,26 +260,42 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="32dp"
                             android:text="@string/app_state_bypassed_explanation"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                     </RadioGroup>
-
                 </LinearLayout>
+            </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/trackerFeedDivider"
+                android:importantForAccessibility="no" />
 
-            <!--
-              Remote-VPN routing lives beside the protection state because both
-              decide how this app's traffic is handled, but they stay separate
-              controls: filtering and tunnelling are independent choices (#723).
-            -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- Filtering and tunnelling are independent choices (#723). -->
+            <LinearLayout
                 android:id="@+id/cardAppRoute"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardElevation="1dp"
-                app:cardMaxElevation="@dimen/z_card">
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/trackerFeedSectionBackground"
+                    android:minHeight="48dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:accessibilityHeading="true"
+                    android:text="@string/protection_route_heading"
+                    android:textAllCaps="true"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                    android:textColor="?android:textColorPrimary"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -259,21 +304,11 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="12dp"
-                        android:accessibilityHeading="true"
-                        android:text="@string/protection_route_heading"
-                        android:textColor="?android:textColorPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
                         android:id="@+id/tvAppRouteUnavailable"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?android:textColorSecondary"
-                        android:textSize="13sp"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:visibility="gone" />
 
                     <RadioGroup
@@ -286,7 +321,7 @@
                             android:id="@+id/rbRouteTunnel"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
+                            android:minHeight="48dp"
                             android:text="@string/app_route_through"
                             android:textStyle="bold" />
 
@@ -295,15 +330,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="32dp"
-                            android:layout_marginBottom="12dp"
+                            android:layout_marginBottom="8dp"
                             android:text="@string/app_route_through_explanation"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                         <RadioButton
                             android:id="@+id/rbRouteDirect"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="4dp"
+                            android:minHeight="48dp"
                             android:text="@string/app_route_direct"
                             android:textStyle="bold" />
 
@@ -313,14 +349,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="32dp"
                             android:text="@string/app_route_direct_explanation"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="?android:textColorSecondary" />
 
                     </RadioGroup>
-
                 </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
+            </LinearLayout>
         </LinearLayout>
 
     </ScrollView>

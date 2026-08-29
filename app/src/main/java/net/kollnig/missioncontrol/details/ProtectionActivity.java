@@ -32,8 +32,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.ArrayList;
@@ -54,8 +52,8 @@ import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.data.TrackerStatusLogic;
 import androidx.preference.PreferenceManager;
-import androidx.cardview.widget.CardView;
 
 /** Full-screen per-app protection and temporary pause controls. */
 public class ProtectionActivity extends AppCompatActivity {
@@ -63,7 +61,7 @@ public class ProtectionActivity extends AppCompatActivity {
     private int appUid;
     private String appName;
 
-    private CardView cardPause;
+    private View cardPause;
     private TextView tvPauseStatus;
     private TextView tvPauseSharedUid;
     private MaterialButton btnPauseResume;
@@ -396,7 +394,7 @@ public class ProtectionActivity extends AppCompatActivity {
         blockedTrackerCategories = categories;
         blockedCategories.removeAllViews();
         tvRecordingUnavailable.setVisibility(View.GONE);
-        if (categories.isEmpty()) {
+        if (categories == null || categories.isEmpty()) {
             blockedCategories.setVisibility(View.GONE);
             tvBlockedEmpty.setVisibility(View.VISIBLE);
             return;
@@ -405,16 +403,25 @@ public class ProtectionActivity extends AppCompatActivity {
         tvBlockedEmpty.setVisibility(View.GONE);
         blockedCategories.setVisibility(View.VISIBLE);
         for (TrackerCategory category : categories) {
-            View item = getLayoutInflater().inflate(R.layout.item_protection_category,
+            View section = getLayoutInflater().inflate(R.layout.item_tracker_feed_section,
                     blockedCategories, false);
-            TextView categoryName = item.findViewById(R.id.tvProtectionCategory);
-            TextView categoryTime = item.findViewById(R.id.tvProtectionCategoryTime);
-            TextView uncertain = item.findViewById(R.id.tvProtectionUncertain);
-            MaterialSwitch categorySwitch = item.findViewById(R.id.switchProtectionCategory);
-            ChipGroup chipGroup = item.findViewById(R.id.chipGroupProtectionCompanies);
-            categoryName.setText(category.getDisplayName(this));
-            categoryTime.setText(Util.relativeTime(category.lastSeen));
-            uncertain.setVisibility(category.isUncertain() ? View.VISIBLE : View.GONE);
+            TextView categoryName = section.findViewById(R.id.tvSection);
+            TextView categoryTime = section.findViewById(R.id.tvSectionTime);
+            TextView explainer = section.findViewById(R.id.tvSectionExplainer);
+            MaterialSwitch categorySwitch = section.findViewById(R.id.switchSection);
+            String categoryDisplayName = category.getDisplayName(this);
+            categoryName.setText(categoryDisplayName);
+            if (category.lastSeen != null && category.lastSeen != 0) {
+                categoryTime.setVisibility(View.VISIBLE);
+                categoryTime.setText(String.format(getString(R.string.feed_section_last_contact),
+                        Util.relativeTime(category.lastSeen)));
+            } else {
+                categoryTime.setText("");
+                categoryTime.setVisibility(View.GONE);
+            }
+            explainer.setVisibility(category.isUncertain() ? View.VISIBLE : View.GONE);
+            if (category.isUncertain())
+                explainer.setText(R.string.uncertain_entry);
 
             TrackerBlocklist blocklist = TrackerBlocklist.getInstance(this);
             SharedPreferences trackerProtect = getSharedPreferences("tracker_protect", MODE_PRIVATE);
@@ -424,12 +431,15 @@ public class ProtectionActivity extends AppCompatActivity {
             AppProtectionState state = currentState();
             boolean minimalOnly = state == AppProtectionState.MINIMAL_ONLY;
             boolean readOnlyMinimal = minimal || minimalOnly;
-            categorySwitch.setEnabled(!readOnlyMinimal && state == AppProtectionState.PROTECTED);
             // Both read-only modes block exactly the non-Content DDG set, so the
             // switch reflects whether anything in this category is in it, rather
             // than assuming every non-Content category is blocked.
             boolean categoryMinimallyBlocked = readOnlyMinimal && category.getChildren().stream()
                     .anyMatch(TrackerList::isMinimallyBlocked);
+            categorySwitch.setContentDescription(String.format(
+                    getString(R.string.toggle_block_category_description), categoryDisplayName));
+            categorySwitch.setOnCheckedChangeListener(null);
+            categorySwitch.setEnabled(!readOnlyMinimal && state == AppProtectionState.PROTECTED);
             categorySwitch.setChecked(readOnlyMinimal
                     ? trackerProtectionEnabled && categoryMinimallyBlocked
                     : blocklist.blocked(appUid, category.getCategoryName()));
@@ -446,38 +456,53 @@ public class ProtectionActivity extends AppCompatActivity {
                 displayBlockedTrackers(blockedTrackerCategories);
             });
 
+            blockedCategories.addView(section);
             for (Tracker tracker : category.getChildren()) {
-                Chip chip = new Chip(this);
-                boolean ambiguousAllowed = state == AppProtectionState.PROTECTED
-                        && !minimal
-                        && !BlockingMode.isStrictMode(this)
-                        && tracker.isAllowedInStandardMode();
-                boolean companyBlocked;
-                if (minimalOnly) {
-                    companyBlocked = TrackerList.isMinimallyBlocked(tracker);
+                View company = getLayoutInflater().inflate(R.layout.item_tracker_feed_company,
+                        blockedCategories, false);
+                TextView companyName = company.findViewById(R.id.tvCompany);
+                TextView companyTime = company.findViewById(R.id.tvLastSeen);
+                TextView companyStatus = company.findViewById(R.id.tvStatus);
+                View expand = company.findViewById(R.id.ivExpand);
+                View expanded = company.findViewById(R.id.layoutExpanded);
+                MaterialSwitch companySwitch = company.findViewById(R.id.switchAllowCompany);
+                TrackerStatusLogic.Result status = TrackerStatusLogic.resolve(
+                        trackerProtectionEnabled,
+                        minimal,
+                        BlockingMode.isStrictMode(this),
+                        state,
+                        TrackerList.isMinimallyBlocked(tracker),
+                        TrackerList.isMinimallyKnown(tracker),
+                        blocklist.blocked(appUid, tracker.category),
+                        blocklist.blocked(appUid, TrackerBlocklist.getBlockingKey(tracker)),
+                        tracker.isAllowedInStandardMode());
+                companyName.setText(tracker.getName());
+                if (tracker.lastSeen != null && tracker.lastSeen != 0) {
+                    companyTime.setVisibility(View.VISIBLE);
+                    companyTime.setText(Util.relativeTime(tracker.lastSeen));
                 } else {
-                    companyBlocked = state == AppProtectionState.PROTECTED
-                            && trackerProtectionEnabled
-                            && (minimal ? TrackerList.isMinimallyBlocked(tracker)
-                            : blocklist.blockedTracker(appUid, tracker));
+                    companyTime.setText("");
+                    companyTime.setVisibility(View.GONE);
                 }
-                // Same three states as the trackers list: in Minimal mode a
-                // company the DDG list does not know is monitored, not allowed.
-                boolean monitoredOnly = minimal && !companyBlocked
-                        && !TrackerList.isMinimallyKnown(tracker);
-                String status = getString(ambiguousAllowed ? R.string.allowed_shared_ip
-                        : companyBlocked ? R.string.blocked
-                        : monitoredOnly ? R.string.tracker_monitored_minimal
-                        : R.string.allowed);
-                chip.setText(tracker.getName() + "  " + status);
-                chip.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
-                chip.setChipStrokeColorResource(R.color.colorPrimaryLight);
-                chip.setChipStrokeWidth(1f);
-                chip.setEnsureMinTouchTargetSize(false);
+                companyStatus.setText(statusString(status.status));
+                companyStatus.setTextColor(ContextCompat.getColor(this,
+                        status.status == TrackerStatusLogic.Status.BLOCKED
+                                ? R.color.colorPrimary : R.color.colorAccent));
+
+                // This summary has no expansion affordance: the whole row keeps
+                // the old chip's toggle action, while the feed layout's hidden
+                // children are explicitly disabled for recycled views.
+                expand.setVisibility(View.GONE);
+                expanded.setVisibility(View.GONE);
+                companySwitch.setVisibility(View.GONE);
+                company.setOnClickListener(null);
+                company.setClickable(false);
+                company.setFocusable(false);
                 boolean actionable = state == AppProtectionState.PROTECTED && !readOnlyMinimal;
-                chip.setEnabled(actionable);
-                if (actionable)
-                    chip.setOnClickListener(v -> {
+                if (actionable) {
+                    company.setClickable(true);
+                    company.setFocusable(true);
+                    company.setOnClickListener(v -> {
                         if (InternetBlocklist.getInstance(this).blockedInternet(appUid))
                             return;
                         if (!BlockingMode.isStrictMode(this) && tracker.isAllowedInStandardMode()) {
@@ -496,9 +521,25 @@ public class ProtectionActivity extends AppCompatActivity {
                             blocklist.block(appUid, tracker);
                         displayBlockedTrackers(blockedTrackerCategories);
                     });
-                chipGroup.addView(chip);
+                }
+                blockedCategories.addView(company);
             }
-            blockedCategories.addView(item);
+        }
+    }
+
+    private int statusString(TrackerStatusLogic.Status status) {
+        switch (status) {
+            case BLOCKED:
+                return R.string.timeline_tracker_blocked;
+            case ALLOWED_BY_USER:
+                return R.string.feed_allowed_by_you;
+            case ALLOWED_SHARED_IP:
+                return R.string.feed_allowed_shared_ip;
+            case MONITORED:
+                return R.string.feed_monitored;
+            case ALLOWED:
+            default:
+                return R.string.timeline_tracker_allowed;
         }
     }
 
