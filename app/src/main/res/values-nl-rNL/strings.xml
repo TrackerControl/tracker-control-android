@@ -65,7 +65,6 @@
     <string name="troubleshooting_categories_title">Blokkeren van specifieke trackercategorieën</string>
     <string name="troubleshooting_categories_desc">U kunt blokkering voor elke app fine-tunen door erop te tikken en individuele trackercategorieën (bv. Analytics, Advertenties) uit te schakelen in het tabblad Trackers.</string>
     <string name="troubleshooting_alwayson_title">Altijd-aan VPN</string>
-    <string name="troubleshooting_alwayson_desc">Als \"Blokkeren van verbindingen zonder VPN\" (lockdown) is ingeschakeld in Android VPN-instellingen, kan TrackerControl niet correct werken. Schakel deze optie uit. Een melding verschijnt als dit is gedetecteerd.</string>
     <string name="troubleshooting_alwayson_action">VPN-instellingen openen</string>
     <string name="menu_apps">Andere apps</string>
     <string name="menu_protocol_other">Andere</string>
@@ -137,7 +136,6 @@
     <string name="setting_watchdog">Bewaken: elke %s minuten</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Beveiligde DNS (DoH)</string>
-    <string name="summary_doh_enabled">Versleutel DNS-query\'s met behulp van DNS-over-HTTPS. Wordt automatisch gepauzeerd wanneer WireGuard DNS aanbiedt, omdat die query\'s in plaats daarvan de WireGuard tunnel gebruiken.</string>
     <string name="warning_beta">Bètafunctie. Werkt mogelijk niet zoals verwacht.</string>
     <string name="setting_doh_endpoint">DoH Eindpunt URL</string>
     <string name="summary_doh_endpoint">HTTPS URL voor DNS-over-HTTPS zoekopdrachten</string>
@@ -272,7 +270,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="title_rport">Doel poort</string>
     <string name="title_ruid">Bestemmings-app</string>
     <string name="title_external">Voor een externe server selecteer \"niemand\"</string>
-    <string name="title_lockdown_enabled">Verkeer is vergrendeld</string>
     <string name="title_unmetered_allowed">Onbeperkt verkeer is toegestaan</string>
     <string name="title_unmetered_blocked">Ongelimiteerd verkeer wordt geblokkeerd</string>
     <string name="title_unmetered_disabled">Niet bemeterde regels worden niet toegepast</string>
@@ -351,8 +348,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="tab_countries">Landen</string>
     <string name="tab_actions">Mijn gegevens</string>
     <string name="tracker_name">Tracker naam</string>
-    <string name="internet_access">Internettoegang</string>
-    <string name="internet_access_explanation">Je kunt ook op het app-icoon tikken in het hoofdscherm.</string>
     <string name="app_info">App beheren</string>
     <!-- Actions -->
     <string name="block_tracking">Trackers blokkeren</string>
@@ -400,7 +395,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="setting_block_ambiguous_trackers">Blokkeer ambigue trackers</string>
     <string name="summary_block_ambiguous_trackers">Als een IP zowel als tracker als als niet-tracker voorkomt, blokkeer het dan toch. Schakel dit uit om app-onbruikbaarheid te beperken.</string>
     <string name="setting_sni_enabled">SNI-extractie (onderzoek)</string>
-    <string name="summary_sni_enabled">Extraheer hostnamen uit TLS-verbindingen voor nauwkeurigere tracker detectie. Waarschuwing: dit lekt uw IP-adres naar tracker servers. Schakel alleen in voor onderzoek.</string>
     <string name="setting_blocking_mode">Blokkeermodus</string>
     <string name="blocking_mode_minimal">Minimaal</string>
     <string name="blocking_mode_standard">Standaard</string>
@@ -409,7 +403,8 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="onboarding_blockingmode_standard_label">Standaard</string>
     <string name="onboarding_blockingmode_strict_label">Strikt</string>
     <string name="onboarding_blockingmode_research_label">Onderzoek</string>
-    <string name="vpn_exclude">Uitsluiten van vpn</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Deïnstalleren</string>
     <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Zet de schakelaar in het hoofdscherm op aan en start de app om trackers op te sporen</string>
