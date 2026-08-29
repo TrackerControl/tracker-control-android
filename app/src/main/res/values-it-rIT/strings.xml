@@ -157,7 +157,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="title_rport">Porta destinazione</string>
     <string name="title_ruid">App destinazione</string>
     <string name="title_external">Per un server esterno selezionare \'nobody\'</string>
-    <string name="title_lockdown_enabled">Il traffico è bloccato</string>
     <string name="title_unmetered_allowed">Il traffico non a consumo è consentito</string>
     <string name="title_unmetered_blocked">Il traffico non a consumo è bloccato</string>
     <string name="title_unmetered_disabled">Le regole per il traffico non a consumo non sono applicate</string>
@@ -236,7 +235,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="tab_countries">Paesi</string>
     <string name="tab_actions">I miei dati</string>
     <string name="tracker_name">Nome del tracker</string>
-    <string name="internet_access">Accesso ad internet</string>
     <string name="app_info">Gestisci l\'applicazione</string>
     <!-- Actions -->
     <string name="block_tracking">Blocca i tracker</string>
@@ -314,6 +312,8 @@ Cordiali saluti,\n\n]]></string>
     <string name="setting_strict_blocking">Blocco rigoroso</string>
     <string name="summary_strict_blocking">Per le applicazioni appena installate, blocca quante più comunicazioni con aziende possibile. Un maggior numero di applicazioni non funzioneranno.</string>
     <string name="strict_blocking_explanation">Si consiglia agli utenti non esperti di disabilitare questa opzione per ridurre i malfunzionamenti nelle app. Tuttavia, questo permetterà alcune comunicazione essenziali con le aziende.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Disinstalla</string>
     <string name="settings_uninstall">Impostazioni dell\'applicazione &amp; Disinstalla</string>
     <string name="no_trackers_found_message_disabled">Attiva l\'interruttore nella schermata principale, poi avvia l\'applicazione per trovare i tracker</string>
