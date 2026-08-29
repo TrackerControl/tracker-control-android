@@ -57,7 +57,6 @@
     <string name="troubleshooting_categories_title">Блокировка определенных категорий трекера</string>
     <string name="troubleshooting_categories_desc">Вы можете тонко настроить блокировку для каждого приложения, нажав на него и переключая отдельные категории трекеров (например, аналитика, реклама) во вкладке Трекеры.</string>
     <string name="troubleshooting_alwayson_title">VPN всегда включен</string>
-    <string name="troubleshooting_alwayson_desc">Если в настройках Android VPN включено \"Блокировать соединения без VPN\" (блокировка), TrackerControl не может корректно работать. Отключите эту опцию. Если это будет обнаружено, то появится уведомление.</string>
     <string name="troubleshooting_alwayson_action">Открыть настройки VPN</string>
     <string name="menu_apps">Другие приложения</string>
     <string name="menu_protocol_other">Прочие</string>
@@ -216,7 +215,6 @@
     <string name="title_rport">Порт назначения</string>
     <string name="title_ruid">Целевое приложение</string>
     <string name="title_external">Для внешнего сервера выберите «никто»</string>
-    <string name="title_lockdown_enabled">Трафик заблокирован</string>
     <string name="title_unmetered_allowed">Нелимитированный трафик разрешен</string>
     <string name="title_unmetered_blocked">Нелимитированный трафик блокируется</string>
     <string name="title_unmetered_disabled">Правила для нелимитированных соединений не применены</string>
@@ -299,8 +297,6 @@
     <string name="tab_countries">Страны</string>
     <string name="tab_actions">Мои данные</string>
     <string name="tracker_name">Название трекера</string>
-    <string name="internet_access">Интернет-доступ</string>
-    <string name="internet_access_explanation">Вы также можете нажать на значок приложения на главном экране.</string>
     <string name="app_info">Управление приложением</string>
     <!-- Actions -->
     <string name="block_tracking">Блокировать трекеры</string>
@@ -347,7 +343,6 @@
     <string name="setting_block_ambiguous_trackers">Блокировать неоднозначные трекеры</string>
     <string name="summary_block_ambiguous_trackers">Когда IP-адрес имеет и трекер, и не трекер, он по-прежнему блокирует его. Отключите это, чтобы уменьшить разрыв приложения.</string>
     <string name="setting_sni_enabled">Извлечение SNI (исследования)</string>
-    <string name="summary_sni_enabled">Извлечь имена хостов из TLS соединений для более точного определения трекера. Внимание: это позволяет утечь вашему IP-адресу на серверы трекера. Включается только для исследований.</string>
     <string name="setting_blocking_mode">Режим блокировки</string>
     <string name="summary_blocking_mode_standard">Стандартный: Блокирует все известные трекеры из нескольких списков (X-Ray, Disconnect, DuckDuckGo). Основные сервисы разрешены. Некоторые приложения будут поломаны и могут быть исключены вручную (см. Устранение неполадок в меню приложения).</string>
     <string name="summary_blocking_mode_strict">Строгий: Блокирует все известные трекеры включая основные сервисы и неоднозначные общие IP-домены. Многие приложения сломаются и должны быть исключены вручную (см. Устранение неполадок в меню приложения).</string>
@@ -364,9 +359,8 @@
     <string name="onboarding_blockingmode_strict_desc">Блокирует все, включая основные сервисы и неоднозначные домены. Значительные поломки приложений — многие приложения должны быть исключены вручную.</string>
     <string name="onboarding_blockingmode_research_label">Исследование</string>
     <string name="onboarding_blockingmode_research_desc">Нет блокировки трекера. Логирует передачу в ADB и позволяет извлекать SNI для лучшего определения имени хоста. Только для исследований: это позволяет утечь вашему IP-адреу на сервера трекера.</string>
-    <string name="exclude_vpn_explanation">Обнаружает и блокирует трекеры для этого приложения.</string>
-    <string name="vpn_exclude">Исключить из VPN</string>
-    <string name="vpn_exclude_explanation">Включите, если вы столкнулись с проблемами. Приложение полностью обходит TrackerControl.\n\nПримечание: «Блокировать соединения без VPN» в настройках Android VPN должен быть отключен, чтобы это работало.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Удаление</string>
     <string name="settings_uninstall">Настройки приложения и деинсталляция</string>
     <string name="no_trackers_found_message_disabled">Включите переключатель на главном экране, затем запустите приложение, чтобы найти трекеры</string>
@@ -434,12 +428,6 @@
     <string name="onboarding_notify_desc">Разрешить уведомления, чтобы видеть обновления в режиме реального времени и управлять защитой непосредственно из строки состояния.</string>
     <string name="onboarding_notify_action">Разрешить уведомления</string>
     <string name="onboarding_notify_sure">Без разрешения на показ уведомлений вы не сможете видеть обновления или управлять защитой из строки состояния. Вы уверены?</string>
-    <string name="onboarding_privatedns_title">Отключить приватный DNS</string>
-    <string name="onboarding_privatedns_desc">Android-функция \"Private DNS\" препятствует возможности TrackerControl блокировать трекеры. Эта настройка <b>должна быть</b>  \"Выключено\" для продолжения.</string>
-    <string name="onboarding_privatedns_instruction">Настройки -&gt; Сеть &amp; Интернет -&gt; Частный DNS -&gt; Выключить.</string>
-    <string name="onboarding_privatedns_action">Открыть настройки DNS</string>
-    <string name="onboarding_privatedns_skip_title">Пропустить отключение приватного DNS?</string>
-    <string name="onboarding_privatedns_skip_msg">Включение приватного DNS сильно ограничит TrackerControl. Большинство треков не будет блокироваться, оставляя только анализ библиотеки трекеров. Кроме того, фильтр VPN будет отключен для обеспечения базовой функциональности.</string>
     <string name="onboarding_network_title">Не ограничивать сеть</string>
     <string name="onboarding_network_desc">Data Saving может предотвратить корректную работу TrackerControl в фоновом режиме. Предоставьте неограниченный доступ для наиболее надежной защиты.</string>
     <string name="onboarding_network_action">Предоставить неограниченный доступ</string>
