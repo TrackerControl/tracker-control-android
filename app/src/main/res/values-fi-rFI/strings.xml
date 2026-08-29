@@ -175,7 +175,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="title_rport">Kohdeportti</string>
     <string name="title_ruid">Kohdesovellus</string>
     <string name="title_external">Valitse ulkoiselle palvelimelle \'nobody\'</string>
-    <string name="title_lockdown_enabled">Liikenne on lukittu</string>
     <string name="title_unmetered_allowed">Liikenne, joka ei ole käytön mukaan laskutettava, on sallittu</string>
     <string name="title_unmetered_blocked">Liikenne, joka ei ole käytön mukaan laskutettava, on estetty</string>
     <string name="title_unmetered_disabled">Sääntöjä liikenteelle, joka ei ole käytön mukaan laskutettava, ei käytetä</string>
@@ -254,8 +253,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="tab_countries">Maat</string>
     <string name="tab_actions">Omat tiedot</string>
     <string name="tracker_name">Seuraimen nimi</string>
-    <string name="internet_access">Internet-yhteys</string>
-    <string name="internet_access_explanation">Voit myös napauttaa sovelluksen kuvaketta päänäytöllä.</string>
     <string name="app_info">Hallitse sovellusta</string>
     <!-- Actions -->
     <string name="block_tracking">Estä seuraimet</string>
@@ -333,9 +330,8 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="setting_strict_blocking">Tiukka Esto</string>
     <string name="summary_strict_blocking">Estä juuri asennettujen sovellusten tietojen jakamista yritysten kanssa mahdollisimman paljon. Useampi sovelluksista lakkaa toimimasta.</string>
     <string name="strict_blocking_explanation">On suositeltavaa, että muut kuin asiantuntijat poistavat tämän vaihtoehdon käytöstä sovelluksten toimintahäiriöiden vähentämiseksi. Tämä kuitenkin mahdollistaa joitain olennaisia tiedonvaihtoja yritysten kanssa.</string>
-    <string name="exclude_vpn_explanation">Havaitsee ja estää tämän sovelluksen seuraimet.</string>
-    <string name="vpn_exclude">Ohita VPN-yhteys</string>
-    <string name="vpn_exclude_explanation">Ota käyttöön, jos kohtaat ongelmia. Sovellus ohittaa TrackerControlin kokonaan.\n\nHuomaa: Jotta tämä toimisi, Android-VPN-asetusten kohta ”Estä yhteydet ilman VPN: ää” on oltava POISSA KÄYTÖSTÄ.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Poista asennus</string>
     <string name="settings_uninstall">Sovelluksen tiedot</string>
     <string name="no_trackers_found_message_disabled">Ota käyttöön päänäytön kytkimestä ja käynnistä sitten sovellus löytääksesi seuraimia</string>
@@ -400,12 +396,6 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="onboarding_notify_desc">Salli ilmoitukset, jotta voit nähdä reaaliaikaiset päivitykset ja hallita suojausta suoraan tilapalkista.</string>
     <string name="onboarding_notify_action">Salli ilmoitukset</string>
     <string name="onboarding_notify_sure">Ilman ilmoituslupaa et voi nähdä reaaliaikaisia päivityksiä tai hallita suojausta tilapalkista. Oletko varma?</string>
-    <string name="onboarding_privatedns_title">Poista yksityinen DNS käytöstä</string>
-    <string name="onboarding_privatedns_desc">Androidin ”Yksityinen DNS” -ominaisuus häiritsee TrackerControlin kykyä estää seurantalaitteita. Tämä asetus <b>on</b> asetettava ”Pois päältä” -tilaan, jotta voit jatkaa.</string>
-    <string name="onboarding_privatedns_instruction">Asetukset -&gt; Verkko &amp; Internet -&gt; Yksityinen DNS -&gt; POIS.</string>
-    <string name="onboarding_privatedns_action">Avaa DNS-asetukset</string>
-    <string name="onboarding_privatedns_skip_title">Ohita yksityisen DNS:n päältä poisto?</string>
-    <string name="onboarding_privatedns_skip_msg">Jatkaessasi yksityisen DNS:n ollessa käytössä TrackerControlin toiminta rajoittuu huomattavasti. Suurin osa seurannasta ei esty, vaan jäljelle jää vain seurantakirjaston analysointi. Lisäksi VPN-suodatin poistetaan käytöstä perusominaisuuksien toimivuuden varmistamiseksi.</string>
     <string name="onboarding_network_title">Rajoittamaton verkko</string>
     <string name="onboarding_network_desc">Tietojen tallennusasetukset voivat estää TrackerControlin toimimasta oikein taustalla. Anna rajoittamaton käyttöoikeus, jotta saat luotettavimman suojan.</string>
     <string name="onboarding_network_action">Myönnä rajoittamaton käyttöoikeus</string>
