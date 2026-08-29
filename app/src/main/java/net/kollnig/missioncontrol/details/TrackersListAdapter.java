@@ -24,8 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -35,9 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,14 +43,12 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
-import androidx.work.Data;
 import androidx.work.WorkInfo;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
-import net.kollnig.missioncontrol.analysis.TrackerAnalysisWorker;
 import net.kollnig.missioncontrol.data.AppProtectionState;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
@@ -71,7 +64,6 @@ import java.util.List;
 import java.util.Objects;
 
 import eu.faircode.netguard.Rule;
-import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 /**
@@ -89,16 +81,13 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final SharedPreferences tracker_protect;
     private List<TrackerCategory> mValues = new ArrayList<>();
 
-    // Analysis UI elements (populated when header is created)
-    private TextView mBtnAnalyze;
-    private TextView mTvDetectedTrackers;
-    private TextView mTvDisclaimer;
-    private View mLayoutProgress;
-    private TextView mTvAnalysisProgress;
-    private ProgressBar mPbTrackerDetection;
+    // Latest state of the library analysis, reflected in the summary row.
+    // The full report lives in LibrariesActivity.
+    @Nullable
+    private WorkInfo mAnalysisWork;
 
-    // At most one of the app-controls bottom sheets is open at a time.
-    private BottomSheetDialog mOpenSheet;
+    @Nullable
+    private RecyclerView mRecyclerView;
 
     public TrackersListAdapter(Context c,
             RecyclerView v,
@@ -138,9 +127,6 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     && !Util.isPlayStoreInstall())
                 view.findViewById(R.id.cardNotSupported).setVisibility(View.VISIBLE);
 
-            // Setup button for on-demand tracker analysis
-            setupTrackerAnalysisButton(view);
-
             return new VHHeader(view);
         }
 
@@ -149,112 +135,30 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Setup button for on-demand tracker library analysis.
-     * The Fragment is responsible for observing WorkManager and calling update
-     * methods.
-     *
-     * @param view The tracker view to add the button handler to
+     * Called by the Fragment when the analysis work state changes, so the
+     * summary row can show progress without the caller knowing how it is drawn.
      */
-    private void setupTrackerAnalysisButton(View view) {
-        mBtnAnalyze = view.findViewById(R.id.btnAnalyzeTrackers);
-        mTvDetectedTrackers = view.findViewById(R.id.tvDetectedTrackers);
-        mTvDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
-        mLayoutProgress = view.findViewById(R.id.layoutAnalysisProgress);
-        mTvAnalysisProgress = view.findViewById(R.id.tvAnalysisProgress);
-        mPbTrackerDetection = view.findViewById(R.id.pbDetectedTrackers);
+    public void updateAnalysisState(@Nullable WorkInfo workInfo) {
+        mAnalysisWork = workInfo;
 
-        TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
-
-        // Show cached results initially
-        String cachedResults = manager.getCachedResult(mAppId);
-        if (cachedResults != null) {
-            String res = String.format(mContext.getString(R.string.detected_trackers), cachedResults);
-            if (manager.isCacheStale(mAppId)) {
-                res += mContext.getString(R.string.analysis_outdated_version);
-                mBtnAnalyze.setText(R.string.update_analysis);
-            }
-            mTvDetectedTrackers.setText(res);
-            mTvDetectedTrackers.setVisibility(View.VISIBLE);
-            mTvDisclaimer.setVisibility(View.VISIBLE);
-        }
-
-        mBtnAnalyze.setOnClickListener(v -> {
-            manager.startAnalysis(mAppId);
-            // Fragment's observer will pick up the work state changes
-        });
-
-        if (manager.shouldStartAnalysis(mAppId))
-            manager.startAnalysis(mAppId);
+        // The observer can deliver mid-layout, and RecyclerView rejects a
+        // change notification while it is computing one.
+        if (mRecyclerView != null && mRecyclerView.isComputingLayout())
+            mRecyclerView.post(() -> notifyItemChanged(0));
+        else
+            notifyItemChanged(0);
     }
 
-    /**
-     * Called by Fragment when analysis state changes.
-     */
-    public void updateAnalysisState(WorkInfo workInfo) {
-        if (mBtnAnalyze == null)
-            return; // Header not yet created
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
 
-        if (workInfo == null) {
-            mLayoutProgress.setVisibility(View.GONE);
-            mBtnAnalyze.setEnabled(true);
-            return;
-        }
-
-        switch (workInfo.getState()) {
-            case ENQUEUED:
-            case BLOCKED:
-                mBtnAnalyze.setEnabled(false);
-                mLayoutProgress.setVisibility(View.VISIBLE);
-                mTvAnalysisProgress.setText(R.string.analysis_queued);
-                mPbTrackerDetection.setIndeterminate(true);
-                mTvDetectedTrackers.setVisibility(View.GONE);
-                mTvDisclaimer.setVisibility(View.GONE);
-                break;
-
-            case RUNNING:
-                mBtnAnalyze.setEnabled(false);
-                mLayoutProgress.setVisibility(View.VISIBLE);
-                mPbTrackerDetection.setIndeterminate(false);
-                mTvDetectedTrackers.setVisibility(View.GONE);
-                mTvDisclaimer.setVisibility(View.GONE);
-
-                Data progress = workInfo.getProgress();
-                int percent = progress.getInt(TrackerAnalysisWorker.KEY_PROGRESS, 0);
-                mPbTrackerDetection.setProgress(percent);
-                mTvAnalysisProgress.setText(String.format(
-                        mContext.getString(R.string.analyzing_classes_progress), percent));
-                break;
-
-            case SUCCEEDED:
-                mLayoutProgress.setVisibility(View.GONE);
-                mBtnAnalyze.setEnabled(true);
-                mBtnAnalyze.setText(R.string.analyze_tracker_libraries);
-
-                String result = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_RESULT);
-                if (result != null) {
-                    String res = String.format(mContext.getString(R.string.detected_trackers), result);
-                    mTvDetectedTrackers.setText(res);
-                    mTvDetectedTrackers.setVisibility(View.VISIBLE);
-                    mTvDisclaimer.setVisibility(View.VISIBLE);
-                }
-                break;
-
-            case FAILED:
-                mLayoutProgress.setVisibility(View.GONE);
-                mBtnAnalyze.setEnabled(true);
-
-                String error = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_ERROR);
-                if (error != null) {
-                    mTvDetectedTrackers.setText(error);
-                    mTvDetectedTrackers.setVisibility(View.VISIBLE);
-                }
-                break;
-
-            case CANCELLED:
-                mLayoutProgress.setVisibility(View.GONE);
-                mBtnAnalyze.setEnabled(true);
-                break;
-        }
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView = null;
     }
 
     @Override
@@ -459,10 +363,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else if (_holder instanceof VHHeader) {
             VHHeader holder = (VHHeader) _holder;
 
-            holder.mLibraryExplanation.setText(R.string.trackers_static_explanation);
-
             AppProtectionState state = currentState(w);
-            holder.mAppStateValue.setText(stateLabelRes(state));
+            holder.mAppStateValue.setText(describeStateAndRoute(state));
             if (PausedApps.isPaused(mContext, mAppId)) {
                 int remainingMinutes = PausedApps.getRemainingMinutes(mContext, mAppId);
                 holder.mAppStateHint.setText(mContext.getResources().getQuantityString(
@@ -480,143 +382,85 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mContext.startActivity(intent);
             });
 
-            bindRemoteRouting(holder);
+            bindLibrariesRow(holder);
         }
     }
 
     /**
-     * The remote-routing control, which is deliberately independent of the
-     * protection state above: whether an app is filtered and whether it is
-     * forwarded through the remote VPN are separate choices (#723).
+     * The one-line summary of how this app's traffic is handled. Protection and
+     * remote-VPN routing stay separate choices (#723), but they read as one
+     * sentence here and are both changed on the same screen.
      */
-    private void bindRemoteRouting(VHHeader holder) {
+    private String describeStateAndRoute(AppProtectionState state) {
+        String stateLabel = mContext.getString(stateLabelRes(state));
+        String route = routeSummary();
+        if (route == null)
+            return stateLabel;
+
+        return mContext.getString(R.string.protection_state_with_route, stateLabel, route);
+    }
+
+    /**
+     * How this app reaches the network, or null when there is no remote VPN to
+     * choose between — in which case saying "directly from this device" would
+     * add a word without adding a choice.
+     */
+    @Nullable
+    private String routeSummary() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean wgEnabled = prefs.getBoolean("wg_enabled", false)
                 && !TextUtils.isEmpty(prefs.getString("wg_config", ""));
         boolean applyApp = apply.getBoolean(mAppId, true);
-        boolean defaultRoutes = wgEnabled && hasDefaultRoutes(prefs);
+        boolean defaultRoutes = wgEnabled && RemoteRoutingHelper.hasDefaultRoutes(mContext, prefs);
 
-        RemoteRoutingLogic.Unavailable unavailable =
-                RemoteRoutingLogic.getUnavailableReason(wgEnabled, defaultRoutes, applyApp);
-        if (unavailable != null) {
-            holder.mRowAppRoute.setOnClickListener(null);
-            holder.mRowAppRoute.setClickable(false);
-            holder.mRowAppRoute.setEnabled(false);
-            holder.mAppRouteChevron.setVisibility(View.GONE);
-            holder.mAppRouteValue.setText(explainUnavailable(unavailable));
-            return;
-        }
+        if (RemoteRoutingLogic.getUnavailableReason(wgEnabled, defaultRoutes, applyApp) != null)
+            return null;
 
         String mode = RemoteRoutingLogic.normalizeMode(
                 prefs.getString(Rule.PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
-        boolean tunnelled = RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true);
-
-        holder.mRowAppRoute.setEnabled(true);
-        holder.mRowAppRoute.setClickable(true);
-        holder.mAppRouteChevron.setVisibility(View.VISIBLE);
-        holder.mAppRouteValue.setText(tunnelled ? R.string.app_route_through : R.string.app_route_direct);
-        holder.mRowAppRoute.setOnClickListener(v -> showRouteSheet());
+        boolean tunnelled = RemoteRoutingLogic.routesThroughTunnel(
+                mode, RemoteRoutingHelper.getRouteOverride(mContext, mAppId), true);
+        return mContext.getString(tunnelled
+                ? R.string.app_route_through : R.string.app_route_direct);
     }
 
     /**
-     * Shows the remote-routing bottom sheet, recomputing the current mode the
-     * same way {@link #bindRemoteRouting(VHHeader)} does.
+     * The tracker-library summary. The report itself is a separate screen: it is
+     * derived from the app's code rather than from the traffic listed below.
      */
-    private void showRouteSheet() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        String mode = RemoteRoutingLogic.normalizeMode(
-                prefs.getString(Rule.PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
-        boolean tunnelled = RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true);
-
-        BottomSheetDialog sheet = new BottomSheetDialog(mContext);
-        View view = LayoutInflater.from(mContext).inflate(R.layout.bottom_sheet_app_route, null);
-        sheet.setContentView(view);
-
-        RadioGroup rgAppRoute = view.findViewById(R.id.rgAppRoute);
-        rgAppRoute.check(tunnelled ? R.id.rbRouteTunnel : R.id.rbRouteDirect);
-        rgAppRoute.setOnCheckedChangeListener((group, checkedId) -> {
-            boolean wantsTunnel = (checkedId == R.id.rbRouteTunnel);
-
-            // Dismiss first: the reload triggered below shouldn't hold the
-            // sheet open while it runs.
-            sheet.dismiss();
-
-            if (wantsTunnel != RemoteRoutingLogic.routesThroughTunnel(mode, getRouteOverride(), true)) {
-                mContext.getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE)
-                        .edit().putBoolean(mAppId, wantsTunnel).apply();
-
-                AsyncTask.execute(() -> {
-                    Rule.clearCache(mContext);
-                    ServiceSinkhole.reload("app routing changed", mContext, false);
-                });
-
-                // The row subtitle now depends on this value.
-                notifyDataSetChanged();
-            }
+    private void bindLibrariesRow(VHHeader holder) {
+        holder.mAppLibrariesValue.setText(librarySummary());
+        holder.mRowAppLibraries.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, LibrariesActivity.class);
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, mAppId);
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, getAppName());
+            mContext.startActivity(intent);
         });
-
-        showSheet(sheet);
     }
 
-    /**
-     * Only one sheet should be open at a time, and it must not outlive the
-     * RecyclerView that hosts the row that opened it.
-     */
-    private void showSheet(BottomSheetDialog sheet) {
-        if (mOpenSheet != null)
-            mOpenSheet.dismiss();
+    private String librarySummary() {
+        TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(mContext);
+        String cached = manager.getCachedResult(mAppId);
 
-        mOpenSheet = sheet;
-        sheet.setOnDismissListener(d -> {
-            if (mOpenSheet == d)
-                mOpenSheet = null;
-        });
-        sheet.show();
-    }
+        if (mAnalysisWork != null && !mAnalysisWork.getState().isFinished())
+            return mContext.getString(R.string.libraries_analysing);
 
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-
-        if (mOpenSheet != null) {
-            mOpenSheet.dismiss();
-            mOpenSheet = null;
+        if (cached == null) {
+            if (mAnalysisWork != null && mAnalysisWork.getState() == WorkInfo.State.FAILED)
+                return mContext.getString(R.string.libraries_analysis_failed);
+            return mContext.getString(R.string.libraries_not_analysed);
         }
-    }
 
-    @Nullable
-    private Boolean getRouteOverride() {
-        SharedPreferences wgRoute = mContext.getSharedPreferences(Rule.PREF_WG_ROUTE,
-                Context.MODE_PRIVATE);
-        return wgRoute.contains(mAppId) ? wgRoute.getBoolean(mAppId, true) : null;
-    }
+        int count = TrackerAnalysisManager.countTrackers(cached);
+        String summary = count == 0
+                ? mContext.getString(R.string.libraries_none_found)
+                : mContext.getResources().getQuantityString(R.plurals.libraries_found, count, count);
 
-    private boolean hasDefaultRoutes(SharedPreferences prefs) {
-        try {
-            net.kollnig.missioncontrol.wg.WgConfig config =
-                    net.kollnig.missioncontrol.wg.WgConfigParser.INSTANCE
-                            .parse(prefs.getString("wg_config", ""));
-            List<String> allowedIps = new ArrayList<>();
-            for (net.kollnig.missioncontrol.wg.WgPeer peer : config.getPeers())
-                allowedIps.addAll(peer.getAllowedIPs());
-            return RemoteRoutingLogic.hasDefaultRoutes(allowedIps,
-                    prefs.getBoolean("ip6", true));
-        } catch (Throwable ex) {
-            Log.w(TAG, "Cannot read AllowedIPs, hiding per-app routing: " + ex);
-            return false;
-        }
-    }
+        // A stale result is still worth showing; it just needs the caveat.
+        if (manager.isCacheStale(mAppId))
+            summary = mContext.getString(R.string.libraries_outdated_suffix, summary);
 
-    private String explainUnavailable(RemoteRoutingLogic.Unavailable unavailable) {
-        switch (unavailable) {
-            case BYPASSED:
-                return mContext.getString(R.string.app_route_unavailable_bypassed);
-            case PARTIAL_ROUTES:
-                return mContext.getString(R.string.app_route_unavailable_partial_routes);
-            case NO_REMOTE_VPN:
-            default:
-                return mContext.getString(R.string.app_route_unavailable_no_vpn);
-        }
+        return summary;
     }
 
     private String getAppName() {
@@ -689,25 +533,19 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class VHHeader extends RecyclerView.ViewHolder {
-        final TextView mLibraryExplanation;
-        final TextView mLibraryDisclaimer;
         final View mRowAppState;
         final TextView mAppStateValue;
         final TextView mAppStateHint;
-        final View mRowAppRoute;
-        final TextView mAppRouteValue;
-        final View mAppRouteChevron;
+        final View mRowAppLibraries;
+        final TextView mAppLibrariesValue;
 
         VHHeader(View view) {
             super(view);
-            mLibraryExplanation = view.findViewById(R.id.tvLibraryExplanation);
-            mLibraryDisclaimer = view.findViewById(R.id.tvLibraryDisclaimer);
             mRowAppState = view.findViewById(R.id.rowAppState);
             mAppStateValue = view.findViewById(R.id.tvAppStateValue);
             mAppStateHint = view.findViewById(R.id.tvAppStateHint);
-            mRowAppRoute = view.findViewById(R.id.rowAppRoute);
-            mAppRouteValue = view.findViewById(R.id.tvAppRouteValue);
-            mAppRouteChevron = view.findViewById(R.id.ivAppRouteChevron);
+            mRowAppLibraries = view.findViewById(R.id.rowAppLibraries);
+            mAppLibrariesValue = view.findViewById(R.id.tvAppLibrariesValue);
         }
     }
 }

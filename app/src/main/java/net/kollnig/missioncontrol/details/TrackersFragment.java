@@ -95,13 +95,26 @@ public class TrackersFragment extends Fragment {
     }
 
     /**
-     * Sets up WorkManager observer for tracker analysis.
-     * The observer is tied to the Fragment's lifecycle.
+     * Sets up WorkManager observer for tracker analysis, and starts an analysis
+     * if this app has never been analysed or was updated since it last was.
+     *
+     * The analysis runs on opening this screen rather than in the background on
+     * every install or update: it is the one moment the result is about to be
+     * read, which keeps it off the battery budget the rest of the time. The
+     * {@link TrackerAnalysisManager#shouldStartAnalysis} gate makes this at most
+     * one run per app version, so re-opening the screen costs nothing.
      */
     private void setupAnalysisObserver() {
         TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(requireContext());
+
+        if (manager.shouldStartAnalysis(mAppId))
+            manager.startAnalysis(mAppId);
+
         manager.getWorkInfoByPackageLiveData(mAppId).observe(getViewLifecycleOwner(), workInfoList -> {
-            if (workInfoList == null || workInfoList.isEmpty()) {
+            if (adapter == null)
+                return;
+
+            if (workInfoList.isEmpty()) {
                 adapter.updateAnalysisState(null);
                 return;
             }
@@ -213,9 +226,8 @@ public class TrackersFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        // Explicitly detach the adapter while the RecyclerView still exists.
-        // This invokes onDetachedFromRecyclerView(), which dismisses any open
-        // BottomSheetDialog before the view's Activity context can be retained.
+        // Detach the adapter while the RecyclerView still exists, so neither
+        // outlives the view's Activity context when the Fragment is retained.
         if (recyclerView != null) {
             recyclerView.setAdapter(null);
             recyclerView = null;

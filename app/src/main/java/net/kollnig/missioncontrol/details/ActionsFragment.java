@@ -35,14 +35,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
 
 import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.PlayStore;
-
-import java.util.Objects;
 
 import eu.faircode.netguard.Util;
 
@@ -93,7 +90,6 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         appName = arguments.getString(ARG_APP_NAME);
 
         // Set up buttons
-        v.findViewById(R.id.btnTrackers).setOnClickListener(this);
         v.findViewById(R.id.btnAdSettings).setOnClickListener(this);
         v.findViewById(R.id.btnReqData).setOnClickListener(this);
         v.findViewById(R.id.btnReqDeletion).setOnClickListener(this);
@@ -109,13 +105,7 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.btnTrackers) {
-            Activity a = getActivity();
-            if (a == null)
-                return;
-            TabLayout tabs = a.findViewById(R.id.tabs);
-            Objects.requireNonNull(tabs.getTabAt(0)).select();
-        } else if (id == R.id.btnAdSettings) {
+        if (id == R.id.btnAdSettings) {
             if (Common.hasAdSettings(getContext())) {
                 startActivity(Common.adSettings());
             } else {

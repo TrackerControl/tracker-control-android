@@ -16,7 +16,6 @@
         app:cardElevation="1dp"
         app:cardMaxElevation="@dimen/z_card">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,6 +28,7 @@
                 android:id="@+id/root_name4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:accessibilityHeading="true"
                 android:text="@string/browsers_not_supported"
                 android:textColor="?android:textColorPrimary"
                 android:textSize="24sp"
@@ -50,137 +50,13 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        app:cardCornerRadius="4dp"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="@dimen/z_card">
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp">
-
-            <TextView
-                android:id="@+id/root_name3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/trackers_static"
-                android:textColor="?android:textColorPrimary"
-                android:textSize="24sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tvLibraryExplanation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="1dp"
-                android:text="@string/trackers_static_explanation"
-                android:textColor="?android:textColorSecondary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/root_name3" />
-
-            <TextView
-                android:id="@+id/tvDetectedTrackers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:padding="1dp"
-                android:text="@string/detected_trackers"
-                android:textColor="?android:textColorSecondary"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvLibraryExplanation" />
-
-            <TextView
-                android:id="@+id/tvLibraryDisclaimer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:padding="1dp"
-                android:text="@string/trackers_static_disclaimer"
-                android:textColor="?android:textColorSecondary"
-                android:textSize="12sp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvDetectedTrackers" />
-
-            <LinearLayout
-                android:id="@+id/layoutAnalysisProgress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvLibraryExplanation">
-
-                <TextView
-                    android:id="@+id/tvAnalysisProgress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/analyzing_classes"
-                    android:textColor="?android:textColorSecondary"
-                    android:textSize="13sp" />
-
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/pbDetectedTrackers"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:max="100"
-                    android:progress="0"
-                    app:trackCornerRadius="4dp"
-                    app:trackThickness="6dp"
-                    app:indicatorColor="@color/colorPrimary"
-                    app:trackColor="@color/colorPrimaryLight" />
-
-            </LinearLayout>
-
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrierResults"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="tvLibraryExplanation,tvLibraryDisclaimer,tvDetectedTrackers,layoutAnalysisProgress" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAnalyzeTrackers"
-                android:theme="@style/Theme.Material3.DayNight"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:paddingVertical="12dp"
-                android:text="@string/analyze_tracker_libraries"
-                android:textAllCaps="false"
-                android:textColor="@color/btn_analyze_text_color"
-                app:icon="@drawable/ic_scan_code"
-                app:iconGravity="textStart"
-                app:iconPadding="8dp"
-                app:iconTint="@color/btn_analyze_text_color"
-                app:cornerRadius="8dp"
-                app:strokeColor="@color/btn_analyze_text_color"
-                app:strokeWidth="1.5dp"
-                app:rippleColor="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/barrierResults" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- App controls: tap a row to change protection state or remote VPN routing -->
+    <!--
+      Two summary rows only. Protection and remote-VPN routing share one row
+      because both describe how this app's traffic is handled; the tracker
+      library report gets its own row because it comes from the app's code
+      rather than from observed traffic. Both open a dedicated screen, so the
+      per-company list below starts as close to the top as possible.
+    -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardAppControls"
         android:layout_width="match_parent"
@@ -261,7 +137,7 @@
                 android:background="?android:attr/listDivider" />
 
             <LinearLayout
-                android:id="@+id/rowAppRoute"
+                android:id="@+id/rowAppLibraries"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="56dp"
@@ -282,16 +158,16 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tvAppRouteTitle"
+                        android:id="@+id/tvAppLibrariesTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/app_route_heading"
+                        android:text="@string/libraries_row_heading"
                         android:textColor="?android:textColorPrimary"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tvAppRouteValue"
+                        android:id="@+id/tvAppLibrariesValue"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -301,7 +177,7 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/ivAppRouteChevron"
+                    android:id="@+id/ivAppLibrariesChevron"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="8dp"
