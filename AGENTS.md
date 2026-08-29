@@ -61,6 +61,8 @@ The non-negotiables that decide most changes:
    VPN UID — surface stats, don't re-investigate.
 4. **Attribution is global, not per-app** (the DNS table has no UID). Treat this as
    a known, deliberately-deferred limitation, not a bug to patch ad-hoc.
+5. **The legacy NetGuard screens** (`ActivityDns`, `ActivityForwarding`,
+   `ActivityLog`) are out of scope for design migrations.
 
 The still-live reasoning behind these constraints (screen-off DoH battery, the
 ParcelFileDescriptor close race, LAN/tethering routing, DNS attribution) lives in the
