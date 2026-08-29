@@ -241,7 +241,7 @@
     <string name="msg_wg_mullvad_generating">Creating WireGuard profile…</string>
     <string name="msg_wg_mullvad_failed">Mullvad setup failed: %s</string>
     <string name="msg_wg_mullvad_countries_failed">Could not load Mullvad countries: %s</string>
-    <string name="msg_wg_proton_note">TrackerControl cannot log in to Proton VPN: unlike Mullvad and IVPN, Proton has no supported API for third-party apps. Instead, sign in at account.protonvpn.com, go to Downloads → WireGuard configuration (paid plans only), download a config, and import it here.\n\nNote: Proton configs expire on the date chosen when creating them, and TrackerControl cannot renew them for you. If the tunnel stops connecting, download a fresh config and update the profile.</string>
+    <string name="msg_wg_proton_note">TrackerControl cannot log in to Proton VPN: unlike Mullvad and IVPN, Proton has no supported API for third-party apps. Instead, sign in at account.protonvpn.com, go to Downloads → WireGuard configuration, download a config, and import it here.\n\nIf the tunnel stops connecting, check Proton’s dashboard for a replacement config and update the profile.</string>
     <string name="msg_wg_proton_open_dashboard">Open protonvpn.com</string>
     <string name="msg_wg_proton_summary">Proton VPN · %s</string>
     <string name="vpn_status_connected">%s</string>

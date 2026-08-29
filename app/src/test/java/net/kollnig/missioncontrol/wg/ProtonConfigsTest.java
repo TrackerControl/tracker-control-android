@@ -42,10 +42,39 @@ public class ProtonConfigsTest {
     }
 
     @Test
-    public void detectsByAddressingWhenCommentsStripped() {
+    public void doesNotDetectAddressAndDnsPairWhenCommentsStripped() {
         String stripped = DASHBOARD_CONFIG.replaceAll("(?m)^#.*\\n", "");
-        assertTrue(ProtonConfigs.isProtonConfig(stripped));
+        assertFalse(ProtonConfigs.isProtonConfig(stripped));
         assertEquals("", ProtonConfigs.getServerName(stripped));
+    }
+
+    @Test
+    public void rejectsGenericFeatureComment() {
+        String generic = GENERIC_CONFIG.replace("[Interface]\\n", "[Interface]\\n# NetShield compatibility\\n");
+        assertFalse(ProtonConfigs.isProtonConfig(generic));
+    }
+
+    @Test
+    public void rejectsSingleWellFormedFeatureComment() {
+        String generic = GENERIC_CONFIG.replace("[Interface]\\n", "[Interface]\\n# NetShield = 1\\n");
+        assertFalse(ProtonConfigs.isProtonConfig(generic));
+    }
+
+    @Test
+    public void detectsDashboardConfigWithAlternateTunnelRange() {
+        String alternate = DASHBOARD_CONFIG
+                .replace("10.2.0.2/32", "10.3.0.2/32")
+                .replace("10.2.0.1", "10.3.0.1");
+        assertTrue(ProtonConfigs.isProtonConfig(alternate));
+    }
+
+    @Test
+    public void detectsFeatureSignatureWithoutCanonicalAddressOrServerComment() {
+        String alternate = DASHBOARD_CONFIG
+                .replace("# NO#21\n", "")
+                .replace("10.2.0.2/32", "10.5.0.2/32")
+                .replace("10.2.0.1", "10.5.0.1");
+        assertTrue(ProtonConfigs.isProtonConfig(alternate));
     }
 
     @Test
