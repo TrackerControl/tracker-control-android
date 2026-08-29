@@ -130,6 +130,3 @@ fn apply_parsed(msg: &mut [u8], parsed: message::DnsMessage, policy: &dyn DnsPol
         rcode,
     }
 }
-
-#[cfg(feature = "capi")]
-pub mod capi;
