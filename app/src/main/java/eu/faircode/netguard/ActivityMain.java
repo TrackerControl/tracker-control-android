@@ -492,6 +492,24 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             }
         });
 
+        TextView tvPrivateDnsBypass = findViewById(R.id.tvPrivateDnsBypass);
+        tvPrivateDnsBypass.setVisibility(View.GONE);
+        tvPrivateDnsBypass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settings;
+                if (ServiceSinkhole.getPrivateDnsWarningState(ActivityMain.this)
+                        == ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT)
+                    settings = new Intent(ActivityMain.this, ActivitySettings.class);
+                else {
+                    settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                    if (settings.resolveActivity(getPackageManager()) == null)
+                        settings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                }
+                startActivity(settings);
+            }
+        });
+
         // Application list
         RecyclerView rvApplication = findViewById(R.id.rvApplication);
         rvApplication.setHasFixedSize(false);
@@ -601,6 +619,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvPrivateDns.setVisibility(
                     vpnEnabled && Util.isPrivateDnsBlocked(this) ? View.VISIBLE : View.GONE);
         }
+        updatePrivateDnsBypassBanner();
 
         super.onResume();
     }
@@ -630,6 +649,28 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         updateHorizontalPadding(findViewById(R.id.tvNotifications), horizontalPadding);
         updateHorizontalPadding(findViewById(R.id.tvLocalNetwork), horizontalPadding);
         updateHorizontalPadding(findViewById(R.id.tvPrivateDns), horizontalPadding);
+        updateHorizontalPadding(findViewById(R.id.tvPrivateDnsBypass), horizontalPadding);
+        updatePrivateDnsBypassBanner();
+    }
+
+    private void updatePrivateDnsBypassBanner() {
+        TextView tvPrivateDnsBypass = findViewById(R.id.tvPrivateDnsBypass);
+        if (tvPrivateDnsBypass == null)
+            return;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean vpnEnabled = prefs.getBoolean("enabled", false);
+        int state = vpnEnabled ? ServiceSinkhole.getPrivateDnsWarningState(this)
+                : ServiceSinkhole.PRIVATE_DNS_WARNING_NONE;
+        if (state == ServiceSinkhole.PRIVATE_DNS_WARNING_HOSTNAME) {
+            String specifier = Util.getPrivateDnsSpecifier(this);
+            String resolver = TextUtils.isEmpty(specifier)
+                    ? getString(R.string.msg_private_dns_unknown_resolver) : specifier;
+            tvPrivateDnsBypass.setText(getString(R.string.msg_private_dns_bypass_notify, resolver));
+        } else if (state == ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT)
+            tvPrivateDnsBypass.setText(R.string.msg_private_dns_bypass_allowed_notify);
+        tvPrivateDnsBypass.setVisibility(
+                state != ServiceSinkhole.PRIVATE_DNS_WARNING_NONE ? View.VISIBLE : View.GONE);
     }
 
     private void updateHorizontalPadding(View view, int horizontalPadding) {
@@ -884,6 +925,11 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             MaterialSwitch swEnabled = getSupportActionBar().getCustomView().findViewById(R.id.swEnabled);
             if (swEnabled.isChecked() != enabled)
                 swEnabled.setChecked(enabled);
+
+            updatePrivateDnsBypassBanner();
+
+        } else if ("block_dot".equals(name) || "log".equals(name)) {
+            updatePrivateDnsBypassBanner();
 
         } else if ("show_user".equals(name) ||
                 "show_system".equals(name) ||
