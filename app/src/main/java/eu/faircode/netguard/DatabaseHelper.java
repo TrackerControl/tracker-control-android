@@ -1102,6 +1102,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public Cursor getBlockedAccess(int uid, long since) {
+        flushAccessBatch();
+        flushUsageBatch();
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT daddr, MAX(time) AS time, MAX(uncertain) AS uncertain " +
+                    "FROM access WHERE uid = ? AND time >= ? AND allowed = 0 " +
+                    "GROUP BY daddr ORDER BY MAX(time) DESC";
+            return db.rawQuery(query, new String[] { Integer.toString(uid), Long.toString(since) });
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
     public Cursor getRecentTrackerActivity() {
         flushAccessBatch();
         lock.readLock().lock();
