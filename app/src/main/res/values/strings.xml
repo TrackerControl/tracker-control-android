@@ -263,6 +263,8 @@
     <string name="vpn_intro_mullvad_body">A privacy-focused VPN provider. It costs €5 per month and uses account numbers instead of email addresses. Enter an account number, then choose a country in TrackerControl.</string>
     <string name="vpn_intro_ivpn_title">IVPN</string>
     <string name="vpn_intro_ivpn_body">A privacy-focused VPN provider with WireGuard support. Enter an IVPN account ID, then choose a country in TrackerControl.</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_proton_body">Download a WireGuard configuration from your Proton VPN account and paste it into TrackerControl. Your Proton credentials are never entered here.</string>
     <string name="vpn_intro_wireguard_title">WireGuard</string>
     <string name="vpn_intro_wireguard_body">Use this if you already have a WireGuard config from another VPN provider, your own server, or your workplace.</string>
     <string name="vpn_enter_mullvad_account">Enter account number</string>

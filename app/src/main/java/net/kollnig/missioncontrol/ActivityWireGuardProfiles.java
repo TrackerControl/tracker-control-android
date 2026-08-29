@@ -45,6 +45,12 @@ import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 public class ActivityWireGuardProfiles extends AppCompatActivity {
+    // Lets other screens (the VPN tab) jump straight to a setup route instead
+    // of hiding it behind the add-profile dialog.
+    public static final String EXTRA_SETUP = "setup";
+    public static final String SETUP_IMPORT = "import";
+    public static final String SETUP_PROTON = "proton";
+
     private static final String PROTON_DASHBOARD_URL =
             "https://account.protonvpn.com/downloads#wireguard-configuration";
 
@@ -76,6 +82,14 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         fab.setOnClickListener(v -> showAddProfileChoice());
 
         refresh();
+
+        if (savedInstanceState == null) {
+            String setup = getIntent() == null ? null : getIntent().getStringExtra(EXTRA_SETUP);
+            if (SETUP_PROTON.equals(setup))
+                showProtonDialog();
+            else if (SETUP_IMPORT.equals(setup))
+                showProfileDialog(null);
+        }
     }
 
     @Override
