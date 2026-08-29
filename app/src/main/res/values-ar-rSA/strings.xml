@@ -171,7 +171,6 @@
     <string name="title_rport">منفذ الوجهة</string>
     <string name="title_ruid">تطبيق الوجهة</string>
     <string name="title_external">بالنسبة لخادم خارجي، حدد \"لا أحد\"</string>
-    <string name="title_lockdown_enabled">تم حظر حركة المرور</string>
     <string name="title_unmetered_allowed">يسمح بمرور حركة المرور غير المقننة</string>
     <string name="title_unmetered_blocked">تم حظر حركة المرور غير المقننة</string>
     <string name="title_unmetered_disabled">قواعد المرور غير المقننة غير مطبقة</string>
@@ -258,7 +257,6 @@
     <string name="tab_countries">البلدان</string>
     <string name="tab_actions">بياناتي</string>
     <string name="tracker_name">اسم أداة التتبع</string>
-    <string name="internet_access">الوصول إلى الإنترنت</string>
     <string name="app_info">إدارة التطبيق</string>
     <!-- Actions -->
     <string name="block_tracking">حظر أدوات التتبع</string>
@@ -336,6 +334,8 @@
     <string name="setting_strict_blocking">حظر صارم</string>
     <string name="summary_strict_blocking">بالنسبة للتطبيقات المثبتة حديثًا، قم بحظر أكبر قدر ممكن من مشاركة البيانات مع الشركات. سيتم كسر المزيد من التطبيقات.</string>
     <string name="strict_blocking_explanation">يوصى بغير الخبراء بتعطيل هذا الخيار لتقليل تعطل التطبيق. ومع ذلك، فإن هذا يسمح ببعض المشاركة الأساسية مع الشركات.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">إلغاء التثبيت</string>
     <string name="settings_uninstall">إعدادات التطبيق وإلغاء التثبيت</string>
     <string name="no_trackers_found_message_disabled">قم بتمكين المفتاح في الشاشة الرئيسية، ثم قم بتشغيل التطبيق للعثور على أدوات التتبع</string>
