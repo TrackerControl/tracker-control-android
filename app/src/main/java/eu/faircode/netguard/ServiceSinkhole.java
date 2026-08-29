@@ -86,6 +86,7 @@ import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.BlockingModeLogic;
+import net.kollnig.missioncontrol.data.PausedApps;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.Tracker;
@@ -808,6 +809,9 @@ public class ServiceSinkhole extends VpnService {
         }
 
         private void start() {
+            // Expired pauses must be resolved before the first rule snapshot is
+            // built; the service command handler already runs off the UI thread.
+            PausedApps.sweep(ServiceSinkhole.this);
             if (vpn == null) {
                 if (state != State.none) {
                     Log.d(TAG, "Stop foreground state=" + state.toString());

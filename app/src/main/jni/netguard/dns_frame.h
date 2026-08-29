@@ -38,9 +38,25 @@
  * buffer and carries enough state to stay aligned into the next call without
  * buffering stream bytes. A frame is offered to the DNS parser only in the
  * recv() where its prefix is completed. If its payload continues into later
- * reads, only the bytes visible in that first call are parsed; continuation
- * bytes are skipped because they no longer include the DNS header. Policy
- * enforcement for such split frames therefore remains best-effort.
+ * reads, only the bytes visible in that first call are parsed; the parser is
+ * told that the frame is partial, and a blocking result causes the visible
+ * answer tail and all later continuation bytes to be zeroed in place. Policy
+ * enforcement for such split frames therefore remains best-effort: once the
+ * answer section is cut short, per-answer detection stops at the truncation
+ * point and SVCB-triggered blanking is unavailable, leaving the domain of the
+ * question as the only signal the block decision can use. That signal needs the
+ * header and the whole question inside the visible bytes, so a read split
+ * within the first few bytes of a response blocks nothing at all and the frame
+ * passes through intact.
+ *
+ * A blanked split frame keeps its original 2-byte length prefix, so what
+ * reaches the client is a DNS message with all three counts cleared followed by
+ * zero bytes out to the declared length. Clients that walk the counts (the
+ * common case) stop after the question and ignore the tail; a client that
+ * insists the message fill its frame exactly may instead call it malformed. The
+ * domain is blocked either way, so the cost of that is a noisier failure and
+ * never a leaked address. Only the fully-contained-frame path can avoid the
+ * padding, by shrinking the frame outright.
  *
  * Length rewrites (a blocking hit that shortens a DNS message) are applied
  * only to a frame whose 2-byte prefix *and* whole payload lie inside the
@@ -48,9 +64,10 @@
  * shrinking such a frame is sequence-safe, and the frames behind it are
  * memmove()d down. A frame whose prefix or payload carries over from an earlier
  * recv() can never be shortened because bytes committed earlier cannot be
- * taken back. When the prefix alone was split, its payload may still be parsed
- * and mutated in place; when the payload was split, later continuation bytes
- * are forwarded untouched.
+ * taken back. When the prefix alone was split, its payload is parsed as
+ * partial and may be mutated in place; when the payload was split, the
+ * blanking decision is carried to later continuation bytes, which are zeroed
+ * as they pass through.
  */
 
 #include <stddef.h>
@@ -69,6 +86,7 @@ struct dns_stream_state {
     uint32_t frame_remaining; /* payload bytes of the current frame whose prefix
                                  was seen in an earlier recv() and whose earlier
                                  bytes were already forwarded */
+    uint8_t blank_remaining;  /* zero continuation bytes while this is set */
     uint8_t prefix_hi;        /* stashed first byte of a length prefix split
                                  across recv()s */
     uint8_t have_prefix_hi;   /* nonzero when prefix_hi is valid */
@@ -76,11 +94,15 @@ struct dns_stream_state {
 
 /*
  * Called for each DNS payload (or the visible part of one) found in the
- * buffer; stands in for parse_dns_response(). Returns the possibly-shrunk
- * payload length; a return > dlen must be treated by the caller as
- * "unchanged" (defensive clamp).
+ * buffer; stands in for parse_dns_response(). partial != 0 means the frame is
+ * not wholly inside this buffer, so the callback must not shrink it. On a
+ * partial call, *blank_rest is set nonzero when the callback blanked the
+ * visible part and the caller must blank the frame's later continuation bytes.
+ * Returns the possibly-shrunk payload length for a complete frame; a return
+ * > dlen must be treated by the caller as "unchanged" (defensive clamp).
  */
-typedef size_t (*dns_frame_parse_fn)(void *ctx, uint8_t *data, size_t dlen);
+typedef size_t (*dns_frame_parse_fn)(void *ctx, uint8_t *data, size_t dlen,
+                                     int partial, int *blank_rest);
 
 /*
  * Processes one recv() buffer of a DNS-over-TCP stream in place.

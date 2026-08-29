@@ -4,7 +4,9 @@ This directory is a Cargo workspace with two members:
 
 - `wgbridge`, the Android WireGuard bridge described below;
 - `tc-dns`, the dependency-free DNS message parser and response-policy core
-  shared by the WireGuard and NetGuard C paths.
+  shared by the WireGuard and NetGuard C paths. It is pure safe Rust; the C ABI
+  the NetGuard engine calls lives in `wgbridge` (`src/tcdns_capi.rs`) so the
+  cdylib itself defines those exported symbols.
 
 A small Rust crate that lets TrackerControl run [gotatun] — Mullvad's
 WireGuard® implementation, a fork of Cloudflare's BoringTun — inside its own
@@ -93,7 +95,6 @@ key derivation) run on the host:
 
 ```bash
 cargo test --workspace
-cargo test -p tc-dns --features capi
 ```
 
 ## F-Droid build metadata
@@ -134,6 +135,22 @@ missing.
 
 These are exported from the `cdylib` and survive `strip = true`; CI asserts they
 are present in every ABI of the F-Droid APK.
+
+`src/tcdns_capi.rs` exports the DNS half of the surface, declared in
+`jni/netguard/tcdns.h`. Unlike `tc_policy_*`, `libnetguard.so` links these
+(the `IMPORTED_NO_SONAME` `wgbridge` target in `app/CMakeLists.txt`) and calls
+them with no fallback, so `wgbridgeBuild` fails the build if `llvm-nm` cannot
+find them.
+
+| Symbol | Purpose |
+|---|---|
+| `tcdns_abi_version()` | Guards the callback table against a mismatched library; currently `1`. |
+| `tcdns_process_response(data, len, callbacks, ctx)` | Records A/AAAA answers and applies the blanking policy to one bare DNS message in place. Returns the new length, or `SIZE_MAX` when unchanged. |
+| `tcdns_process_partial_response(data, len, callbacks, ctx)` | Same, for the visible prefix of a DNS-over-TCP frame whose remainder has not been read. Never shortens the message — earlier bytes are already on the wire — so the caller keeps forwarding the original length and uses the return only as a blanked/unchanged flag. |
+
+The module keeps the `deny(unwrap_used, expect_used, panic, indexing_slicing)`
+lints that `tc-dns` applies crate-wide: the release profile builds with
+`panic = "abort"`, so a panic across the FFI boundary aborts the app.
 
 ## Java/Kotlin API surface
 

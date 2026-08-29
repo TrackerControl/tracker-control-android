@@ -28,6 +28,7 @@ import android.util.Log;
 import androidx.core.app.NotificationManagerCompat;
 
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.PausedApps;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 
 public class ReceiverPackageRemoved extends BroadcastReceiver {
@@ -80,6 +81,8 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
         String action = (intent == null ? null : intent.getAction());
         if (Intent.ACTION_PACKAGE_FULLY_REMOVED.equals(action)) {
             int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
+            String packageName = intent.getData() == null ? null : intent.getData().getSchemeSpecificPart();
+            PausedApps.onPackageRemoved(context, packageName, uid);
             if (uid > 0) {
                 clearUidState(context, uid, new PackageUidLookup() {
                     @Override

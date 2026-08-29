@@ -78,6 +78,7 @@ import net.kollnig.missioncontrol.LocalNetworkAccess;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.PausedApps;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
 import net.kollnig.missioncontrol.wg.WgProfileManager;
@@ -1290,7 +1291,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         out.flush();
 
         serializer.startTag(null, "apply");
-        xmlExport(getSharedPreferences("apply", Context.MODE_PRIVATE), serializer);
+        // A temporary pause must not be exported as a permanent exclusion.
+        xmlExport(getSharedPreferences("apply", Context.MODE_PRIVATE),
+                PausedApps.applyValuesWithoutPauses(this), serializer);
         serializer.endTag(null, "apply");
 
         serializer.startTag(null, "tracker_protect");
@@ -1321,7 +1324,16 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
     }
 
     private void xmlExport(SharedPreferences prefs, XmlSerializer serializer) throws IOException {
+        xmlExport(prefs, null, serializer);
+    }
+
+    private void xmlExport(SharedPreferences prefs, Map<String, ?> overrides, XmlSerializer serializer) throws IOException {
         Map<String, ?> settings = prefs.getAll();
+        if (overrides != null && !overrides.isEmpty()) {
+            Map<String, Object> merged = new HashMap<>(settings);
+            merged.putAll(overrides);
+            settings = merged;
+        }
         for (String key : settings.keySet()) {
             Object value = settings.get(key);
 

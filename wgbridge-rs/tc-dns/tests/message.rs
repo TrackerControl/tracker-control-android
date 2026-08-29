@@ -1,7 +1,7 @@
 use std::cell::{Cell, RefCell};
 use std::ffi::CString;
 
-use tcdns::{process_response, record_answers, DnsPolicy, Outcome};
+use tcdns::{process_partial_response, process_response, record_answers, DnsPolicy, Outcome};
 
 const TYPE_A: u16 = 1;
 const TYPE_AAAA: u16 = 28;
@@ -365,6 +365,131 @@ fn malformed_answer_after_valid_a_records_a_but_does_not_blank() {
     assert_eq!(policy.records.borrow().len(), 1);
 }
 
+#[test]
+fn partial_blocked_response_blanks_visible_tail_without_shrinking() {
+    let qname_encoded = name("blocked.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+    let mut message = response(
+        std::slice::from_ref(&question_bytes),
+        &[a_answer(&[0xc0, 12])],
+    );
+    message.truncate(question_end + 5);
+    let original_len = message.len();
+
+    let policy = TestPolicy {
+        blocked: true,
+        blocked_rcode: 0x1f,
+        ..TestPolicy::default()
+    };
+    let outcome = process_partial_response(&mut message, &policy);
+
+    assert!(matches!(
+        outcome,
+        Outcome::Blanked {
+            new_len,
+            qname,
+            qtype: TYPE_A,
+            rcode: 0x0f,
+        } if new_len == question_end && qname == "blocked.example"
+    ));
+    assert_eq!(message.len(), original_len);
+    assert!(message[question_end..].iter().all(|byte| *byte == 0));
+    assert_eq!(&message[6..12], &[0, 0, 0, 0, 0, 0]);
+}
+
+#[test]
+fn partial_unblocked_response_is_untouched() {
+    let qname_encoded = name("allowed.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+    let mut message = response(
+        std::slice::from_ref(&question_bytes),
+        &[a_answer(&[0xc0, 12])],
+    );
+    message.truncate(question_end + 5);
+    let original = message.clone();
+    let policy = TestPolicy::default();
+
+    assert_eq!(
+        process_partial_response(&mut message, &policy),
+        Outcome::Unchanged
+    );
+    assert_eq!(message, original);
+    assert!(policy.records.borrow().is_empty());
+}
+
+#[test]
+fn partial_response_records_answers_before_truncation() {
+    let qname_encoded = name("tracker.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+    let first = a_answer(&[0xc0, 12]);
+    let second = a_answer(&[0xc0, 12]);
+    let mut message = response(
+        std::slice::from_ref(&question_bytes),
+        &[first.clone(), second],
+    );
+    message.truncate(question_end + first.len() + 5);
+
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+    let outcome = process_partial_response(&mut message, &policy);
+
+    assert!(matches!(
+        outcome,
+        Outcome::Blanked { new_len, .. } if new_len == question_end
+    ));
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 1);
+    assert_eq!(records[0].0, "tracker.example");
+    assert_eq!(records[0].2, "203.0.113.7");
+    drop(records);
+    assert!(message[question_end..].iter().all(|byte| *byte == 0));
+}
+
+#[test]
+fn partial_response_with_truncated_question_is_unchanged() {
+    let qname_encoded = name("truncated.example");
+    let question_bytes = question(&qname_encoded, TYPE_A);
+    let full = response(
+        std::slice::from_ref(&question_bytes),
+        &[a_answer(&[0xc0, 12])],
+    );
+    let mut message = full[..15].to_vec();
+    let original = message.clone();
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+
+    assert_eq!(
+        process_partial_response(&mut message, &policy),
+        Outcome::Unchanged
+    );
+    assert_eq!(message, original);
+    assert_eq!(policy.policy_calls.get(), 0);
+}
+
+#[test]
+fn partial_response_with_empty_qname_is_unchanged() {
+    let mut message = response(&[question(&[0], TYPE_A)], &[a_answer(&[0xc0, 12])]);
+    let original = message.clone();
+    let policy = TestPolicy {
+        blocked: true,
+        ..TestPolicy::default()
+    };
+
+    assert_eq!(
+        process_partial_response(&mut message, &policy),
+        Outcome::Unchanged
+    );
+    assert_eq!(message, original);
+    assert_eq!(policy.policy_calls.get(), 0);
+}
+
 /// A pointer's own 2 bytes must not be charged against the 255-octet
 /// uncompressed-name cap: that cap is RFC 1035's limit on the *expanded*
 /// name, and a legal near-maximum name reached through a compression
@@ -723,4 +848,59 @@ fn process_response_fuzz_smoke_returns_for_fifty_thousand_inputs() {
         }
         let _ = process_response(&mut message, &NoopPolicy);
     }
+}
+
+/// A frame whose length prefix was split across reads is handled by the
+/// partial path even when its whole payload is present. The decision there
+/// must not be weaker than the complete path's, so an SVCB/HTTPS answer still
+/// blanks a domain the policy does not block.
+#[test]
+fn partial_response_blanks_svcb_when_answers_are_complete() {
+    let qname = name("cdn.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+    let mut message = response(
+        std::slice::from_ref(&question_bytes),
+        &[answer(&[0xc0, 12], TYPE_HTTPS, 300, &[0, 1, 0])],
+    );
+    let policy = TestPolicy::default(); // not blocked
+    let outcome = process_partial_response(&mut message, &policy);
+
+    assert!(
+        matches!(outcome, Outcome::Blanked { new_len, .. } if new_len == question_end),
+        "SVCB answer must blank even when the domain is not blocked"
+    );
+    assert!(message[question_end..].iter().all(|byte| *byte == 0));
+    // Same verdict as the complete path would reach.
+    let mut twin = response(
+        std::slice::from_ref(&question_bytes),
+        &[answer(&[0xc0, 12], TYPE_HTTPS, 300, &[0, 1, 0])],
+    );
+    assert!(matches!(
+        process_response(&mut twin, &TestPolicy::default()),
+        Outcome::Blanked { .. }
+    ));
+}
+
+/// The truncated fallback loses only the answer-derived signals: an SVCB
+/// answer cut short by the read boundary can no longer be detected, so an
+/// unblocked domain passes through untouched.
+#[test]
+fn partial_response_cannot_detect_svcb_past_the_truncation_point() {
+    let qname = name("cdn.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let question_end = 12 + question_bytes.len();
+    let full = response(
+        std::slice::from_ref(&question_bytes),
+        &[answer(&[0xc0, 12], TYPE_HTTPS, 300, &[0, 1, 0])],
+    );
+    let mut message = full[..question_end + 6].to_vec();
+    let original = message.clone();
+    let policy = TestPolicy::default(); // not blocked
+
+    assert_eq!(
+        process_partial_response(&mut message, &policy),
+        Outcome::Unchanged
+    );
+    assert_eq!(message, original);
 }

@@ -25,9 +25,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
+
+import net.kollnig.missioncontrol.data.PausedApps;
 
 import java.util.Map;
 
@@ -40,23 +43,33 @@ public class ReceiverAutostart extends BroadcastReceiver {
         Util.logExtras(intent);
 
         String action = (intent == null ? null : intent.getAction());
-        if (Intent.ACTION_BOOT_COMPLETED.equals(action) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action))
-            try {
-                // Upgrade settings
-                upgrade(true, context);
+        if (Intent.ACTION_BOOT_COMPLETED.equals(action) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
+            final BroadcastReceiver.PendingResult pendingResult = goAsync();
+            AsyncTask.execute(() -> {
+                try {
+                    // Upgrade settings
+                    upgrade(true, context);
 
-                // Start service
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                if (prefs.getBoolean("enabled", false))
-                    ServiceSinkhole.start("receiver", context);
-                else if (prefs.getBoolean("show_stats", false))
-                    ServiceSinkhole.run("receiver", context);
+                    // Restore any pauses that expired while the process was not
+                    // running before the VPN service rebuilds its rules.
+                    PausedApps.sweep(context);
 
-                if (Util.isInteractive(context))
-                    ServiceSinkhole.reloadStats("receiver", context);
-            } catch (Throwable ex) {
-                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-            }
+                    // Start service
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    if (prefs.getBoolean("enabled", false))
+                        ServiceSinkhole.start("receiver", context);
+                    else if (prefs.getBoolean("show_stats", false))
+                        ServiceSinkhole.run("receiver", context);
+
+                    if (Util.isInteractive(context))
+                        ServiceSinkhole.reloadStats("receiver", context);
+                } catch (Throwable ex) {
+                    Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                } finally {
+                    pendingResult.finish();
+                }
+            });
+        }
     }
 
     public static void upgrade(boolean initialized, Context context) {

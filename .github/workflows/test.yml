@@ -61,10 +61,9 @@ jobs:
 
       - name: Run Rust unit tests
         run: |
-          cargo test --manifest-path wgbridge-rs/Cargo.toml --locked --offline
-          # The capi feature gates the C ABI the NetGuard engine calls; its
-          # FFI-boundary tests only compile with the feature enabled.
-          cargo test --manifest-path wgbridge-rs/Cargo.toml -p tc-dns --features capi --locked --offline
+          # Covers the whole workspace, including the FFI-boundary tests for
+          # the C ABI the NetGuard engine calls (wgbridge-rs/tests/).
+          cargo test --manifest-path wgbridge-rs/Cargo.toml --workspace --locked --offline
 
       - name: Run DNS-over-TCP framing host tests
         run: |

@@ -677,6 +677,22 @@ Sincerely,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Also applies to %1$s, which shares an Android user ID with this app.</string>
     <string name="app_state_bypassed">Bypass TrackerControl</string>
     <string name="app_state_bypassed_explanation">The app connects directly, outside TrackerControl. Nothing is monitored or blocked for it. Use this as a last resort if the app still does not work.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED for this to work.</string>
+    <!-- Per-app protection screen -->
+    <string name="protection_title">Protection</string>
+    <string name="protection_app_not_working">App not working? Tap here</string>
+    <plurals name="protection_paused_resumes">
+        <item quantity="one">Paused — resumes in %d min</item>
+        <item quantity="other">Paused — resumes in %d mins</item>
+    </plurals>
+    <string name="protection_resume">Resume now</string>
+    <string name="protection_pause_shared_uid">Pausing this app also pauses %1$s because they share an Android user ID.</string>
+    <string name="protection_pause_lockdown_warning">Android lockdown is enabled. Pausing this app will block its connections until protection resumes.</string>
+    <string name="protection_lockdown_note">Android does not expose the lockdown status here. If &quot;Block connections without VPN&quot; is enabled, a paused app may lose network access.</string>
+    <string name="protection_blocked_last_24h">Blocked in the last 24 hours</string>
+    <string name="protection_no_blocked_trackers">Nothing was blocked recently — probably not TrackerControl.</string>
+    <string name="protection_recording_unavailable">Tracker recording is unavailable because &quot;Search new trackers&quot; is turned off.</string>
+    <string name="protection_temporary">Temporary, while paused</string>
+
     <string name="uninstall">Uninstall</string>
     <string name="settings_uninstall">App Settings &amp; Uninstall</string>
 

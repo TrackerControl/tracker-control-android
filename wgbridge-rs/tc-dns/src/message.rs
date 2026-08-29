@@ -27,12 +27,12 @@ pub(crate) struct DnsMessage {
 }
 
 #[derive(Debug)]
-struct QuestionLayout {
-    qname: String,
-    qtype: u16,
-    question_end: usize,
-    ancount: usize,
-    answer_offset: usize,
+pub(crate) struct QuestionLayout {
+    pub(crate) qname: String,
+    pub(crate) qtype: u16,
+    pub(crate) question_end: usize,
+    pub(crate) ancount: usize,
+    pub(crate) answer_offset: usize,
 }
 
 fn read_u16(msg: &[u8], offset: usize) -> Option<u16> {
@@ -50,7 +50,7 @@ fn read_u32(msg: &[u8], offset: usize) -> Option<u32> {
     ]))
 }
 
-fn read_question_layout(msg: &[u8]) -> Option<QuestionLayout> {
+pub(crate) fn read_question_layout(msg: &[u8]) -> Option<QuestionLayout> {
     if msg.len() < DNS_HEADER_LEN {
         return None;
     }
@@ -109,6 +109,12 @@ pub(crate) fn parse_message(msg: &[u8]) -> Option<DnsMessage> {
 /// Parses the question section and then answers one at a time. A malformed
 /// later answer returns `None`, so callers can retain records already emitted
 /// from earlier answers while refusing to blank a partially validated message.
+///
+/// `process_partial_response` is the one caller that does not honour that
+/// refusal: on a DNS-over-TCP frame the visible prefix is expected to end
+/// mid-answer, so `None` there carries no signal about whether the bytes are
+/// malformed or merely unread, and it falls back to the question section. See
+/// its documentation for why that is safe.
 pub(crate) fn parse_answers_incrementally(
     msg: &[u8],
     mut on_answer: impl FnMut(&DnsAnswer),

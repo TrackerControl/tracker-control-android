@@ -387,6 +387,44 @@ public class Util {
         }
     }
 
+    public enum LockdownState {
+        ENABLED,
+        DISABLED,
+        UNKNOWN
+    }
+
+    public static LockdownState lockdownState(Context context) {
+        return lockdownState(context, context.getPackageName());
+    }
+
+    /**
+     * Resolve Android's always-on VPN lockdown for a package. Android S and
+     * later restrict these secure settings to system apps, so their state is
+     * deliberately unknown rather than guessed.
+     */
+    public static LockdownState lockdownState(Context context, String packageName) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            return LockdownState.UNKNOWN;
+
+        try {
+            String alwaysOn = Settings.Secure.getString(
+                    context.getContentResolver(), "always_on_vpn_app");
+            if (TextUtils.isEmpty(alwaysOn))
+                return LockdownState.DISABLED;
+            String checkedPackage = TextUtils.isEmpty(packageName)
+                    ? context.getPackageName() : packageName;
+            if (!checkedPackage.equals(alwaysOn))
+                return LockdownState.DISABLED;
+
+            int lockdown = Settings.Secure.getInt(
+                    context.getContentResolver(), "always_on_vpn_lockdown", 0);
+            return lockdown == 0 ? LockdownState.DISABLED : LockdownState.ENABLED;
+        } catch (Throwable ex) {
+            Log.w(TAG, "Cannot read VPN lockdown state: " + ex);
+            return LockdownState.UNKNOWN;
+        }
+    }
+
     public static boolean hasInternet(int uid, Context context) {
         PackageManager pm = context.getPackageManager();
         String[] pkgs = getPackagesForUid(pm, uid);

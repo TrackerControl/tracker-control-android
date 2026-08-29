@@ -45,7 +45,6 @@ configuration, especially WireGuard profiles and the Mullvad login — see
 
 ```bash
 cd wgbridge-rs && cargo test --workspace
-cd wgbridge-rs && cargo test -p tc-dns --features capi
 ```
 
 ## Native code builds automatically with the app
