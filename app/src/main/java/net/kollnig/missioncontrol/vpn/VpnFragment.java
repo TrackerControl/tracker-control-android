@@ -356,8 +356,15 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
     }
 
     private void openWireGuardProfiles() {
+        openWireGuardProfiles(null);
+    }
+
+    private void openWireGuardProfiles(String setup) {
         prefs.edit().putString(PREF_VPN_MODE, MODE_WIREGUARD).apply();
-        startActivity(new Intent(requireContext(), ActivityWireGuardProfiles.class));
+        Intent intent = new Intent(requireContext(), ActivityWireGuardProfiles.class);
+        if (setup != null)
+            intent.putExtra(ActivityWireGuardProfiles.EXTRA_SETUP, setup);
+        startActivity(intent);
     }
 
     private void setProviderMode(String mode) {
@@ -935,6 +942,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             holder.ivpn.setOnClickListener(v -> openIvpnSetup());
             holder.ivpnAccount.setOnClickListener(v -> openIvpnAccountPage());
             holder.wireGuard.setOnClickListener(v -> openWireGuardProfiles());
+            holder.proton.setOnClickListener(v ->
+                    openWireGuardProfiles(ActivityWireGuardProfiles.SETUP_PROTON));
         }
 
         private int listStartPosition() {
@@ -1088,7 +1097,9 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             holder.text.setText(customProfiles().isEmpty()
                     ? R.string.vpn_import_wireguard_profile
                     : R.string.vpn_manage_wireguard_profiles);
-            holder.itemView.setOnClickListener(v -> openWireGuardProfiles());
+            holder.text.setOnClickListener(v -> openWireGuardProfiles());
+            holder.proton.setOnClickListener(v ->
+                    openWireGuardProfiles(ActivityWireGuardProfiles.SETUP_PROTON));
         }
     }
 
@@ -1136,6 +1147,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         final Button ivpn;
         final Button ivpnAccount;
         final Button wireGuard;
+        final Button proton;
 
         IntroViewHolder(View itemView) {
             super(itemView);
@@ -1144,6 +1156,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             ivpn = itemView.findViewById(R.id.vpnIntroIvpnAction);
             ivpnAccount = itemView.findViewById(R.id.vpnIntroIvpnAccountAction);
             wireGuard = itemView.findViewById(R.id.vpnIntroWireGuardAction);
+            proton = itemView.findViewById(R.id.vpnIntroProtonAction);
         }
     }
 
@@ -1204,10 +1217,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
 
     private static class FooterViewHolder extends RecyclerView.ViewHolder {
         final TextView text;
+        final TextView proton;
 
         FooterViewHolder(View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.vpnCustomProfiles);
+            proton = itemView.findViewById(R.id.vpnProtonSetup);
         }
     }
 }
