@@ -412,6 +412,10 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
 void parse_dns_response(const struct arguments *args, const struct ng_session *session,
                         uint8_t *data, size_t *datalen);
 
+void parse_dns_partial_response(const struct arguments *args,
+                                const struct ng_session *session,
+                                uint8_t *data, size_t *datalen, int *blanked);
+
 uint32_t get_send_window(const struct tcp_session *cur);
 
 uint32_t get_receive_buffer(const struct ng_session *cur);

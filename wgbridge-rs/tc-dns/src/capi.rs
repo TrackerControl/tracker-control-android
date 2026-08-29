@@ -4,7 +4,7 @@
 
 use std::ffi::{c_char, c_void, CString};
 
-use crate::{process_response, DnsPolicy, Outcome};
+use crate::{process_partial_response, process_response, DnsPolicy, Outcome};
 
 pub const TCDNS_ABI_VERSION: u32 = 1;
 pub const TCDNS_UNCHANGED: usize = usize::MAX;
@@ -132,6 +132,55 @@ pub unsafe extern "C" fn tcdns_process_response(
     };
     let policy = CapiPolicy { callbacks, ctx };
     match process_response(message, &policy) {
+        Outcome::Unchanged => TCDNS_UNCHANGED,
+        Outcome::Blanked {
+            new_len,
+            qname,
+            qtype,
+            rcode,
+        } => {
+            if let (Some(on_blanked), Some(qname)) =
+                (callbacks.on_blanked, CString::new(qname).ok())
+            {
+                // SAFETY: callback validity is checked above and the CString
+                // pointer remains valid for this callback.
+                on_blanked(ctx, qname.as_ptr(), qtype, rcode);
+            }
+            new_len
+        }
+    }
+}
+
+/// Processes the visible prefix of one bare DNS message in place. See
+/// `tcdns.h` for the complete pointer and callback lifetime contract.
+///
+/// # Safety
+///
+/// `data` must be writable for `len` bytes when `len` is nonzero, `callbacks`
+/// must point to a valid callback table for the duration of the call, and all
+/// callbacks must obey the non-reentrancy and no-panic contract.
+#[no_mangle]
+pub unsafe extern "C" fn tcdns_process_partial_response(
+    data: *mut u8,
+    len: usize,
+    callbacks: *const TcdnsCallbacks,
+    ctx: *mut c_void,
+) -> usize {
+    let Some(callbacks) = callbacks.as_ref() else {
+        return TCDNS_UNCHANGED;
+    };
+    if !callbacks.is_valid() || (len != 0 && data.is_null()) {
+        return TCDNS_UNCHANGED;
+    }
+    let message = if len == 0 {
+        &mut []
+    } else {
+        // SAFETY: the C contract requires `data` to be writable for `len`
+        // bytes, and null was rejected above.
+        std::slice::from_raw_parts_mut(data, len)
+    };
+    let policy = CapiPolicy { callbacks, ctx };
+    match process_partial_response(message, &policy) {
         Outcome::Unchanged => TCDNS_UNCHANGED,
         Outcome::Blanked {
             new_len,

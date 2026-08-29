@@ -38,8 +38,12 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
         size_t remaining = end - cursor;
         size_t skip = (state->frame_remaining < remaining
                        ? (size_t) state->frame_remaining : remaining);
+        if (state->blank_remaining != 0 && skip > 0)
+            memset(buffer + cursor, 0, skip);
         state->frame_remaining -= (uint32_t) skip;
         cursor += skip;
+        if (state->frame_remaining == 0)
+            state->blank_remaining = 0;
         if (cursor >= end)
             return end;
     }
@@ -56,13 +60,16 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
 
         size_t avail = end - cursor;
         if (frame_len > avail) {
+            int blank_rest = 0;
             if (avail > 0)
-                (void) parse(ctx, buffer + cursor, avail);
+                (void) parse(ctx, buffer + cursor, avail, 1, &blank_rest);
             state->frame_remaining = (uint32_t) (frame_len - avail);
+            state->blank_remaining = (uint8_t) (blank_rest != 0);
             return end;
         }
         if (frame_len > 0) {
-            (void) parse(ctx, buffer + cursor, frame_len); // shrink ignored
+            int blank_rest = 0;
+            (void) parse(ctx, buffer + cursor, frame_len, 1, &blank_rest); // shrink ignored
             cursor += frame_len;
         }
     }
@@ -92,15 +99,18 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
         if (frame_len > avail) {
             // Frame runs past this read: parse what is visible (blanking only,
             // any shrink is ignored) and remember the overflow.
+            int blank_rest = 0;
             if (avail > 0)
-                (void) parse(ctx, buffer + cursor, avail);
+                (void) parse(ctx, buffer + cursor, avail, 1, &blank_rest);
             state->frame_remaining = (uint32_t) (frame_len - avail);
+            state->blank_remaining = (uint8_t) (blank_rest != 0);
             return end;
         }
 
         // Complete frame, prefix and payload both inside this buffer: nothing
         // here has been forwarded yet, so it may be shortened.
-        size_t new_dlen = parse(ctx, buffer + cursor, frame_len);
+        int blank_rest = 0;
+        size_t new_dlen = parse(ctx, buffer + cursor, frame_len, 0, &blank_rest);
         if (new_dlen > frame_len)
             new_dlen = frame_len; // defensive: a parser must never grow a frame
 

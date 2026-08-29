@@ -4,8 +4,8 @@ use std::ffi::{c_char, c_void, CStr};
 use std::mem::{offset_of, size_of};
 
 use tcdns::capi::{
-    tcdns_abi_version, tcdns_process_response, BlockedRcode, IsDomainBlocked, OnBlanked,
-    RecordAnswer, TcdnsCallbacks, TCDNS_ABI_VERSION, TCDNS_UNCHANGED,
+    tcdns_abi_version, tcdns_process_partial_response, tcdns_process_response, BlockedRcode,
+    IsDomainBlocked, OnBlanked, RecordAnswer, TcdnsCallbacks, TCDNS_ABI_VERSION, TCDNS_UNCHANGED,
 };
 
 const TYPE_A: u16 = 1;
@@ -235,4 +235,39 @@ fn callbacks_receive_terminated_strings_and_new_length() {
         .iter()
         .all(|(name, _, _)| !name.as_bytes().contains(&0)));
     assert_eq!(capture.blanked, vec![("��a".to_owned(), TYPE_A, 0x0f)]);
+}
+
+#[test]
+fn partial_response_preserves_buffer_length_and_reports_blanking() {
+    let raw_name = question_name("tracker.example");
+    let question_end = 12 + question(&raw_name).len();
+    let first_answer = answer(&[0xc0, 12], TYPE_A, &[203, 0, 113, 7]);
+    let mut message = response(
+        &raw_name,
+        &[first_answer.clone(), answer(&[0xc0, 12], TYPE_HTTPS, &[])],
+    );
+    message.truncate(question_end + first_answer.len() + 5);
+    let original_len = message.len();
+    let mut capture = Capture {
+        blocked: true,
+        ..Capture::default()
+    };
+    let callbacks = callbacks();
+    let result = unsafe {
+        tcdns_process_partial_response(
+            message.as_mut_ptr(),
+            message.len(),
+            &callbacks,
+            (&mut capture as *mut Capture).cast(),
+        )
+    };
+
+    assert_eq!(result, question_end);
+    assert_eq!(message.len(), original_len);
+    assert!(message[question_end..].iter().all(|byte| *byte == 0));
+    assert_eq!(capture.records.len(), 1);
+    assert_eq!(
+        capture.blanked,
+        vec![("tracker.example".to_owned(), TYPE_A, 0x0f)]
+    );
 }

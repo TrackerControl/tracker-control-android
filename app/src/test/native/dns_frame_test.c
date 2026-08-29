@@ -7,8 +7,9 @@
  * on any host -- see .github/workflows/test.yml. It intentionally does not
  * link netguard.h, JNI, or parse_dns_response: dns_frame_process_stream()
  * takes the DNS parser as a callback, so a parse outcome is simulated with
- * stub callbacks (one recording every (offset, dlen) invocation, optionally
- * shrinking a chosen frame) instead of calling the real parser.
+ * stub callbacks (one recording every (offset, dlen, partial) invocation,
+ * optionally shrinking a chosen complete frame or blanking a partial one)
+ * instead of calling the real parser.
  *
  * Background: this framing logic shipped a real blocking bypass once
  * already, fixed in commit 9c49cc09 ("Fix DNS filtering regressions from
@@ -16,11 +17,12 @@
  * entirely unless a recv() held exactly one complete frame, so coalesced or
  * split reads went unfiltered. The cursor now parses every complete frame in
  * a read and the initially visible bytes of a split frame, while later payload
- * continuation bytes remain unparsed. These tests pin down which frames get
- * parsed, which may be shortened (only those lying wholly inside the current
- * read, since nothing in it has been forwarded yet), and -- the subtler
- * failure mode -- that the carry-over state and the returned byte count agree,
- * so the stream cannot silently desynchronise one recv() later.
+ * continuation bytes are blanked when the partial parser reports a block.
+ * These tests pin down which frames get parsed, which may be shortened (only
+ * those lying wholly inside the current read, since nothing in it has been
+ * forwarded yet), and -- the subtler failure mode -- that the carry-over
+ * state and the returned byte count agree, so the stream cannot silently
+ * desynchronise one recv() later.
  */
 
 #include <stdint.h>
@@ -61,6 +63,7 @@ struct parse_recorder {
     size_t calls;
     size_t off[MAX_CALLS];
     size_t len[MAX_CALLS];
+    int partial[MAX_CALLS];
     size_t shrink_call; /* 1-based invocation to shrink; 0 = never shrink */
     size_t shrink_to;
     size_t shrink_many_count;
@@ -68,6 +71,9 @@ struct parse_recorder {
     int shrink_on_marker;
     uint8_t shrink_marker;
     size_t shrink_marker_to;
+    int blank_partial_on_marker;
+    uint8_t blank_marker;
+    size_t blank_from;
 };
 
 static void recorder_init(struct parse_recorder *r, const uint8_t *base) {
@@ -75,13 +81,22 @@ static void recorder_init(struct parse_recorder *r, const uint8_t *base) {
     r->base = base;
 }
 
-static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen) {
+static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen, int partial,
+                         int *blank_rest) {
     struct parse_recorder *r = (struct parse_recorder *) ctx;
+    *blank_rest = 0;
     if (r->calls < MAX_CALLS) {
         r->off[r->calls] = (size_t) (data - r->base);
         r->len[r->calls] = dlen;
+        r->partial[r->calls] = partial;
     }
     r->calls++;
+    if (r->blank_partial_on_marker && partial != 0 && dlen > 0 &&
+        data[0] == r->blank_marker) {
+        if (r->blank_from < dlen)
+            memset(data + r->blank_from, 0, dlen - r->blank_from);
+        *blank_rest = 1;
+    }
     if (r->shrink_call != 0 && r->calls == r->shrink_call)
         return r->shrink_to;
     if (r->shrink_many_count > 0 && r->calls <= r->shrink_many_count)
@@ -92,16 +107,18 @@ static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen) {
 /* Records like stub_parse(), but shrinks every payload whose first byte is
  * the configured marker. This models a rule-based parser outcome without
  * depending on callback invocation order. */
-static size_t stub_parse_by_marker(void *ctx, uint8_t *data, size_t dlen) {
+static size_t stub_parse_by_marker(void *ctx, uint8_t *data, size_t dlen,
+                                   int partial, int *blank_rest) {
     struct parse_recorder *r = (struct parse_recorder *) ctx;
-    (void) stub_parse(ctx, data, dlen);
+    (void) stub_parse(ctx, data, dlen, partial, blank_rest);
     if (r->shrink_on_marker && dlen > 0 && data[0] == r->shrink_marker)
         return r->shrink_marker_to;
     return dlen;
 }
 
 static int state_is_clean(const struct dns_stream_state *state) {
-    return state->frame_remaining == 0 && state->have_prefix_hi == 0;
+    return state->frame_remaining == 0 && state->blank_remaining == 0 &&
+           state->have_prefix_hi == 0;
 }
 
 static size_t append_frame(uint8_t *buffer, size_t offset, size_t frame_len,
@@ -144,7 +161,7 @@ static void run_coalesced_shrink_case(const char *label,
     original[bytes++] = 0xE5; /* trailing byte after the last complete frame */
     memcpy(copy, original, bytes);
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, copy);
     r.shrink_many_count = 4;
@@ -188,7 +205,7 @@ static void test_coalesced_multiple_frames(void) {
         bytes = append_frame(original, bytes, frame_lens[i], fills[i]);
     memcpy(copy, original, bytes);
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, copy);
     size_t out = dns_frame_process_stream(copy, bytes, &state, stub_parse, &r);
@@ -233,7 +250,7 @@ static void test_single_frame_shortened(void) {
     set_prefix(buffer, frame_len);
     memset(buffer + 2, 0xAA, frame_len);
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, buffer);
     r.shrink_call = 1;
@@ -261,7 +278,7 @@ static void test_single_frame_unchanged(void) {
     uint8_t snapshot[sizeof(buffer)];
     memcpy(snapshot, buffer, sizeof(buffer));
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, buffer);
 
@@ -274,7 +291,7 @@ static void test_single_frame_unchanged(void) {
     CHECK(state_is_clean(&state), "single frame unchanged: no carry-over state");
 
     /* Defensive clamp: a bogus grow is ignored. */
-    struct dns_stream_state state2 = {0, 0, 0};
+    struct dns_stream_state state2 = {0};
     struct parse_recorder r2;
     recorder_init(&r2, buffer);
     r2.shrink_call = 1;
@@ -304,7 +321,7 @@ static void test_coalesced_read(void) {
         uint8_t copy[sizeof(buffer)];
         memcpy(copy, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, copy);
 
@@ -325,7 +342,7 @@ static void test_coalesced_read(void) {
         uint8_t copy[sizeof(buffer)];
         memcpy(copy, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, copy);
         r.shrink_call = 1;
@@ -356,7 +373,7 @@ static void test_shrink_to_zero_alignment(void) {
     uint8_t buffer[sizeof(original)];
     memcpy(buffer, original, bytes);
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, buffer);
     r.shrink_call = 1;
@@ -383,7 +400,7 @@ static void test_shrink_to_zero_alignment(void) {
  * middle continuation is only skipped, and the final continuation exposes
  * subsequent complete frames at the correct offset. */
 static void test_payload_spanning_three_reads(void) {
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
 
     {
         uint8_t buffer[2 + 2];
@@ -448,11 +465,97 @@ static void test_payload_spanning_three_reads(void) {
     }
 }
 
+/* A blocked partial frame is blanked in the first read and its continuation
+ * bytes are blanked without changing the forwarded count. Exercise both a
+ * two-read frame and a three-read frame whose final read also contains the
+ * next frame, proving blank_remaining clears at the exact boundary. */
+static void test_blocked_split_frames(void) {
+    {
+        struct dns_stream_state state = {0};
+        uint8_t first[2 + 3];
+        set_prefix(first, 7);
+        memset(first + 2, 0xA1, 3);
+
+        struct parse_recorder r;
+        recorder_init(&r, first);
+        r.blank_partial_on_marker = 1;
+        r.blank_marker = 0xA1;
+        r.blank_from = 1;
+        size_t out = dns_frame_process_stream(first, sizeof(first), &state,
+                                               stub_parse, &r);
+
+        CHECK(out == sizeof(first), "blocked two-read: first count unchanged");
+        CHECK(r.calls == 1 && r.partial[0] != 0,
+              "blocked two-read: partial frame parsed as partial");
+        CHECK(first[2] == 0xA1 && first[3] == 0 && first[4] == 0,
+              "blocked two-read: visible answer tail blanked");
+        CHECK(state.frame_remaining == 4 && state.blank_remaining != 0,
+              "blocked two-read: blank continuation remembered");
+
+        uint8_t second[4];
+        memset(second, 0xA1, sizeof(second));
+        size_t out2 = dns_frame_process_stream(second, sizeof(second), &state,
+                                                stub_parse, &r);
+        CHECK(out2 == sizeof(second), "blocked two-read: continuation count unchanged");
+        CHECK(second[0] == 0 && second[1] == 0 && second[2] == 0 && second[3] == 0,
+              "blocked two-read: continuation blanked");
+        CHECK(state.frame_remaining == 0 && state.blank_remaining == 0,
+              "blocked two-read: blank continuation cleared at frame end");
+    }
+
+    {
+        struct dns_stream_state state = {0};
+        uint8_t first[2 + 2];
+        set_prefix(first, 8);
+        memset(first + 2, 0xB1, 2);
+
+        struct parse_recorder r;
+        recorder_init(&r, first);
+        r.blank_partial_on_marker = 1;
+        r.blank_marker = 0xB1;
+        r.blank_from = 1;
+        size_t out = dns_frame_process_stream(first, sizeof(first), &state,
+                                               stub_parse, &r);
+        CHECK(out == sizeof(first), "blocked three-read: first count unchanged");
+        CHECK(state.frame_remaining == 6 && state.blank_remaining != 0,
+              "blocked three-read: first overflow remembered");
+        CHECK(first[2] == 0xB1 && first[3] == 0,
+              "blocked three-read: visible answer tail blanked");
+
+        uint8_t second[3];
+        memset(second, 0xB1, sizeof(second));
+        size_t out2 = dns_frame_process_stream(second, sizeof(second), &state,
+                                                stub_parse, &r);
+        CHECK(out2 == sizeof(second), "blocked three-read: middle count unchanged");
+        CHECK(second[0] == 0 && second[1] == 0 && second[2] == 0,
+              "blocked three-read: middle continuation blanked");
+        CHECK(state.frame_remaining == 3 && state.blank_remaining != 0,
+              "blocked three-read: middle overflow remembered");
+
+        uint8_t third[3 + 2 + 1];
+        memset(third, 0xB1, 3);
+        set_prefix(third + 3, 1);
+        third[5] = 0xC2;
+        struct parse_recorder r3;
+        recorder_init(&r3, third);
+        size_t out3 = dns_frame_process_stream(third, sizeof(third), &state,
+                                                stub_parse, &r3);
+        CHECK(out3 == sizeof(third), "blocked three-read: final count unchanged");
+        CHECK(third[0] == 0 && third[1] == 0 && third[2] == 0,
+              "blocked three-read: final continuation blanked");
+        CHECK(r3.calls == 1 && r3.off[0] == 5 && r3.len[0] == 1 &&
+                  r3.partial[0] == 0,
+              "blocked three-read: next frame parsed after exact drain");
+        CHECK(state_is_clean(&state),
+              "blocked three-read: blank continuation cleared at frame end");
+    }
+}
+
 /* A high prefix byte is forwarded first. The next read completes the prefix
  * and exposes a partial, parse-only payload; later reads drain that payload
  * before parsing a new frame. */
 static void test_split_prefix_payload_handoff(void) {
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
 
     {
         uint8_t buffer[1] = {0x00};
@@ -532,7 +635,7 @@ static void test_zero_frames_between_real_frames(void) {
     offset += 2;
     (void) append_frame(buffer, offset, 1, 0x33);
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, buffer);
     size_t out = dns_frame_process_stream(buffer, sizeof(buffer), &state,
@@ -560,7 +663,7 @@ static void test_split_frame(void) {
     uint8_t snapshot[sizeof(buffer)];
     memcpy(snapshot, buffer, sizeof(buffer));
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, buffer);
     r.shrink_call = 1; /* a shrink on a partial frame must be ignored */
@@ -602,7 +705,7 @@ static void test_zero_frame_len(void) {
     set_prefix(buffer + 2, 8);
     memset(buffer + 4, 0x33, 8);
 
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
     struct parse_recorder r;
     recorder_init(&r, buffer);
     r.shrink_call = 1;
@@ -627,7 +730,7 @@ static void test_minimal_reads(void) {
         set_prefix(buffer, 1);
         buffer[2] = 0x44;
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, buffer);
         r.shrink_call = 1;
@@ -647,7 +750,7 @@ static void test_minimal_reads(void) {
         set_prefix(buffer, 5);
         buffer[2] = 0x55;
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, buffer);
 
@@ -664,7 +767,7 @@ static void test_minimal_reads(void) {
     {
         uint8_t buffer[1] = {0x01};
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, buffer);
 
@@ -685,7 +788,7 @@ static void test_minimal_reads(void) {
         uint8_t snapshot[sizeof(buffer)];
         memcpy(snapshot, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, buffer);
         size_t out = dns_frame_process_stream(buffer, sizeof(buffer), &state,
@@ -705,7 +808,7 @@ static void test_minimal_reads(void) {
         uint8_t snapshot[sizeof(buffer)];
         memcpy(snapshot, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {5, 0, 0};
+        struct dns_stream_state state = {5, 0, 0, 0};
         struct parse_recorder r;
         recorder_init(&r, buffer);
         size_t out = dns_frame_process_stream(buffer, sizeof(buffer), &state,
@@ -734,7 +837,7 @@ static void test_frame_len_u16_boundary(void) {
             set_prefix(buffer, frame_len);
             memset(buffer + 2, 0x66, frame_len);
 
-            struct dns_stream_state state = {0, 0, 0};
+            struct dns_stream_state state = {0};
             struct parse_recorder r;
             recorder_init(&r, buffer);
             r.shrink_call = 1;
@@ -760,7 +863,7 @@ static void test_frame_len_u16_boundary(void) {
         uint8_t snapshot[sizeof(buffer)];
         memcpy(snapshot, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {0, 0, 0};
+        struct dns_stream_state state = {0};
         struct parse_recorder r;
         recorder_init(&r, buffer);
 
@@ -782,7 +885,7 @@ static void test_frame_len_u16_boundary(void) {
  * a wrong forwarded count in a *later* call -- which no single-buffer test
  * can catch. */
 static void test_multi_call_no_desync(void) {
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
 
     /* Read 1: frame A (40 bytes, complete, shrunk to 10) followed by the
      * prefix of frame B (60 bytes) with only 20 of its payload present. */
@@ -904,7 +1007,7 @@ static void run_chunk_partition(const uint8_t *stream, size_t stream_bytes,
     size_t actual_bytes = 0;
     size_t returned_bytes = 0;
     size_t chunk_start = 0;
-    struct dns_stream_state state = {0, 0, 0};
+    struct dns_stream_state state = {0};
 
     for (size_t i = 0; i < chunk_count; i++) {
         size_t chunk_end = chunk_ends[i];
@@ -920,6 +1023,9 @@ static void run_chunk_partition(const uint8_t *stream, size_t stream_bytes,
         r.shrink_on_marker = 1;
         r.shrink_marker = 0xA5;
         r.shrink_marker_to = 3;
+        r.blank_partial_on_marker = 1;
+        r.blank_marker = 0xA5;
+        r.blank_from = 1;
 
         size_t out = dns_frame_process_stream(buffer, chunk_bytes, &state,
                                                stub_parse_by_marker, &r);
@@ -961,6 +1067,22 @@ static void run_chunk_partition(const uint8_t *stream, size_t stream_bytes,
     uint8_t expected[CHUNKING_STREAM_BYTES];
     size_t expected_bytes = build_expected_frames(stream, frame_lens, new_lens,
                                                   3, expected);
+    int partial_blocked = 0;
+    for (size_t i = 0; i < chunk_count; i++) {
+        size_t chunk_start_for_frame = i == 0 ? 0 : chunk_ends[i - 1];
+        size_t chunk_end_for_frame = chunk_ends[i];
+        if (designated_start + 1 == chunk_start_for_frame &&
+            chunk_end_for_frame > designated_start + 2) {
+            partial_blocked = 1;
+        }
+        if (designated_start >= chunk_start_for_frame &&
+            designated_start + 2 < chunk_end_for_frame &&
+            designated_end > chunk_end_for_frame) {
+            partial_blocked = 1;
+        }
+    }
+    if (partial_blocked)
+        memset(expected + designated_start + 3, 0, designated_end - designated_start - 3);
     CHECK(returned_bytes == expected_bytes,
           "chunking property: returned counts sum to expected length");
     CHECK(actual_bytes == expected_bytes,
@@ -977,8 +1099,9 @@ static void run_chunk_partition(const uint8_t *stream, size_t stream_bytes,
 }
 
 /* Every two-way and three-way partition exercises prefix splits, payload
- * splits, coalesced frames, in-place rewrites, and output collection from the
- * returned count. Only a wholly contained designated frame may shrink. */
+ * splits, coalesced frames, in-place rewrites, partial-frame blanking, and
+ * output collection from the returned count. Only a wholly contained
+ * designated frame may shrink; a split blocked frame keeps its length. */
 static void test_exhaustive_chunking(void) {
     uint8_t stream[CHUNKING_STREAM_BYTES];
     size_t stream_bytes = build_chunking_reference(stream);
@@ -1005,6 +1128,7 @@ int main(void) {
     test_shrink_to_zero_alignment();
     test_split_frame();
     test_payload_spanning_three_reads();
+    test_blocked_split_frames();
     test_split_prefix_payload_handoff();
     test_zero_frame_len();
     test_zero_frames_between_real_frames();

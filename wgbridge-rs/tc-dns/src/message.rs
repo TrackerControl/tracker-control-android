@@ -27,12 +27,12 @@ pub(crate) struct DnsMessage {
 }
 
 #[derive(Debug)]
-struct QuestionLayout {
-    qname: String,
-    qtype: u16,
-    question_end: usize,
-    ancount: usize,
-    answer_offset: usize,
+pub(crate) struct QuestionLayout {
+    pub(crate) qname: String,
+    pub(crate) qtype: u16,
+    pub(crate) question_end: usize,
+    pub(crate) ancount: usize,
+    pub(crate) answer_offset: usize,
 }
 
 fn read_u16(msg: &[u8], offset: usize) -> Option<u16> {
@@ -50,7 +50,7 @@ fn read_u32(msg: &[u8], offset: usize) -> Option<u32> {
     ]))
 }
 
-fn read_question_layout(msg: &[u8]) -> Option<QuestionLayout> {
+pub(crate) fn read_question_layout(msg: &[u8]) -> Option<QuestionLayout> {
     if msg.len() < DNS_HEADER_LEN {
         return None;
     }
