@@ -1239,8 +1239,15 @@ public class ServiceSinkhole extends VpnService {
                 Log.d(TAG, "Found uncertain entry: " + dname);
 
             // Traffic log
-            if (log)
+            if (log) {
                 dh.insertLog(packet, dname, connection, interactive);
+                // The encrypted-DNS warning is evidence-driven. Re-evaluate as
+                // soon as the first allowed DoT flow is recorded rather than
+                // waiting for a later VPN restart or network change.
+                if (packet.allowed && packet.dport == 853 &&
+                        !prefs.getBoolean("block_dot", true))
+                    updatePrivateDnsBypassWarning();
+            }
 
             // Application log
             if (log_app && isTracker && shouldTrackApp(packet.uid) && packet.uid >= 0 &&
