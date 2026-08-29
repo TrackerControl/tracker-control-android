@@ -17,7 +17,7 @@ import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
 
 /**
- * Writes the three existing stores behind the per-app protection state.
+ * Writes the four stores behind the per-app protection state.
  */
 public final class AppProtectionWriter {
     private AppProtectionWriter() {
@@ -43,7 +43,7 @@ public final class AppProtectionWriter {
     public static void applyScheduled(Context context, String packageName, int uid,
             boolean applyValue) {
         Context appContext = context.getApplicationContext();
-        apply(appContext, packageName, uid, applyValue, null, null);
+        apply(appContext, packageName, uid, applyValue, null, null, null);
     }
 
     /** Apply one scheduled apply value to a UID's packages in one preference edit. */
@@ -73,13 +73,15 @@ public final class AppProtectionWriter {
     private static void apply(Context context, String packageName, int uid,
             AppProtectionState.Change change) {
         apply(context, packageName, uid, change.apply, change.trackerProtect,
-                change.internetBlocked);
+                change.internetBlocked, change.essentialOnly);
     }
 
     private static void apply(Context context, String packageName, int uid,
-            boolean applyValue, Boolean trackerProtectValue, Boolean internetBlocked) {
+            boolean applyValue, Boolean trackerProtectValue, Boolean internetBlocked,
+            Boolean essentialOnlyValue) {
         SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         SharedPreferences trackerProtect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
+        SharedPreferences essentialOnly = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
 
         boolean applyBefore = apply.getBoolean(packageName, true);
         boolean protectBefore = BlockingMode.isTrackerProtectionEnabled(context, trackerProtect, packageName);
@@ -90,9 +92,13 @@ public final class AppProtectionWriter {
 
         if (trackerProtectValue != null)
             trackerProtect.edit().putBoolean(packageName, trackerProtectValue).apply();
+        if (essentialOnlyValue != null)
+            essentialOnly.edit().putBoolean(packageName, essentialOnlyValue).apply();
 
         InternetBlocklist.getInstance(context).apply(context, uid, internetBlocked);
 
+        // The service reads this per-package flag through the live preferences
+        // handle, so changing it alone needs no service reload.
         boolean needsReload = applyValue != applyBefore
                 || (trackerProtectValue != null && trackerProtectValue != protectBefore);
         if (!needsReload)

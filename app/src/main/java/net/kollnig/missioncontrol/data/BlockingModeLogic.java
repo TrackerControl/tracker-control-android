@@ -14,6 +14,8 @@
 
 package net.kollnig.missioncontrol.data;
 
+import androidx.annotation.Nullable;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +45,10 @@ public final class BlockingModeLogic {
             return !CONTENT_CATEGORY.equals(trackerCategory);
 
         return blockedByGranularRule;
+    }
+
+    public static boolean shouldBlockEssentialOnly(@Nullable String essentialCategory) {
+        return essentialCategory != null && !CONTENT_CATEGORY.equals(essentialCategory);
     }
 
     public static ExclusionSyncResult syncVpnExclusions(Set<String> excludedApps,

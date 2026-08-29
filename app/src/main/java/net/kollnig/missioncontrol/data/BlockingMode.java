@@ -97,6 +97,17 @@ public class BlockingMode {
         return resolveTrackerProtection(isBrowserApp(c, packageName), configured);
     }
 
+    /**
+     * Check whether this package has selected essential-only protection. The
+     * global Minimal mode already applies the same policy to every app, so a
+     * stored per-app flag must not change the state shown there.
+     */
+    public static boolean isEssentialOnlyApp(Context c,
+            SharedPreferences essentialPrefs,
+            String packageName) {
+        return !isMinimalMode(c) && essentialPrefs.getBoolean(packageName, false);
+    }
+
     static boolean resolveTrackerProtection(boolean browser, Boolean configured) {
         return configured == null ? !browser : configured;
     }

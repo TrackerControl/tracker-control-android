@@ -351,6 +351,7 @@ public class ServiceSinkhole extends VpnService {
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
     private volatile SharedPreferences cachedApplyPrefs;
+    private volatile SharedPreferences cachedEssentialPrefs;
     private volatile boolean cachedManageSystem;
 
     private static final int NOTIFY_ENFORCING = 1;
@@ -848,6 +849,7 @@ public class ServiceSinkhole extends VpnService {
             // Refresh cached preferences for shouldTrackApp()
             cachedTrackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
             cachedApplyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+            cachedEssentialPrefs = getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
             cachedManageSystem = prefs.getBoolean("manage_system", false);
 
             if (state != State.enforcing) {
@@ -2989,6 +2991,19 @@ public class ServiceSinkhole extends VpnService {
         return true;
     }
 
+    private boolean essentialOnlyApp(int uid) {
+        String packageName = uidToPackage.get(uid);
+        if (packageName == null)
+            return false;
+
+        SharedPreferences essentialPrefs = cachedEssentialPrefs;
+        if (essentialPrefs == null)
+            essentialPrefs = getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        // Shared-UID attribution deliberately follows shouldTrackApp: use the
+        // first package cached for the UID, inheriting that method's caveat.
+        return BlockingMode.isEssentialOnlyApp(this, essentialPrefs, packageName);
+    }
+
     private boolean blockKnownTracker(String daddr, int uid) {
         if (!shouldTrackApp(uid)) {
             return false;
@@ -3140,6 +3155,17 @@ public class ServiceSinkhole extends VpnService {
             }
         } else {
             if (tracker != null && tracker != NO_TRACKER) {
+                if (!BlockingMode.MODE_MINIMAL.equals(blockingMode) && essentialOnlyApp(uid)) {
+                    String hostname = cached == null ? null : cached.getHostname();
+                    Tracker essentialTracker = hostname == null
+                            ? null : TrackerList.findEssentialTracker(hostname);
+                    // Strict mode retains tracker evidence for mixed-evidence
+                    // IPs where Minimal mode would collapse it to NO_TRACKER;
+                    // this accepted deviation can block slightly more here.
+                    return BlockingModeLogic.shouldBlockEssentialOnly(
+                            essentialTracker == null ? null : essentialTracker.category);
+                }
+
                 boolean blockedByGranularRule = false;
                 if (!BlockingMode.MODE_MINIMAL.equals(blockingMode)) {
                     TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);

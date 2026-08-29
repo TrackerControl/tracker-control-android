@@ -56,6 +56,15 @@ public class BlockingModeLogicTest {
     }
 
     @Test
+    public void essentialOnlyBlocksOnlyNonContentCategories() {
+        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly("Advertising"));
+        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly("Uncategorised"));
+        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(
+                BlockingModeLogic.CONTENT_CATEGORY));
+        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(null));
+    }
+
+    @Test
     public void onlyStrictBlocksAmbiguousTrackerIps() {
         assertFalse(BlockingModeLogic.blocksAmbiguousTrackerIp(BlockingModeLogic.MODE_MINIMAL));
         assertFalse(BlockingModeLogic.blocksAmbiguousTrackerIp(BlockingModeLogic.MODE_STANDARD));

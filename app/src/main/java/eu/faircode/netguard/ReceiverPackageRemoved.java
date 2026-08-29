@@ -43,6 +43,9 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
             int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
             String packageName = intent.getData() == null ? null : intent.getData().getSchemeSpecificPart();
             PausedApps.onPackageRemoved(context, packageName, uid);
+            if (packageName != null)
+                context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE)
+                        .edit().remove(packageName).apply();
             if (uid > 0) {
                 DatabaseHelper dh = DatabaseHelper.getInstance(context);
                 dh.clearLog(uid);

@@ -112,6 +112,7 @@ public class ProtectionActivity extends AppCompatActivity {
         tvRecordingUnavailable = findViewById(R.id.tvRecordingUnavailable);
         tvStateNoInternetDesc = findViewById(R.id.tvStateNoInternetDesc);
         stateGroup = findViewById(R.id.rgAppState);
+        updateEssentialOnlyVisibility();
 
         btnPauseResume.setOnClickListener(v -> pauseOrResume());
         stateGroup.setOnCheckedChangeListener((group, checkedId) -> {
@@ -154,6 +155,7 @@ public class ProtectionActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (stateGroup != null) {
+            updateEssentialOnlyVisibility();
             updateProtectionState();
             loadBlockedTrackers();
         }
@@ -173,7 +175,8 @@ public class ProtectionActivity extends AppCompatActivity {
         AppProtectionState state = AppProtectionState.resolve(
                 stores.apply.getBoolean(appPackageName, true),
                 BlockingMode.isTrackerProtectionEnabled(this, stores.trackerProtect, appPackageName),
-                InternetBlocklist.getInstance(this).blockedInternet(appUid));
+                InternetBlocklist.getInstance(this).blockedInternet(appUid),
+                BlockingMode.isEssentialOnlyApp(this, stores.essentialOnly, appPackageName));
         boolean paused = PausedApps.isPaused(this, appPackageName);
 
         List<String> sharedPackages = PausedApps.getSharedUidPackages(this, appPackageName, appUid);
@@ -191,6 +194,7 @@ public class ProtectionActivity extends AppCompatActivity {
             expiryHandler.postDelayed(expiryRunnable,
                     PausedApps.remainingMillis(this, appPackageName) + 1_000L);
         } else if (state == AppProtectionState.PROTECTED
+                || state == AppProtectionState.ESSENTIAL_ONLY
                 || state == AppProtectionState.TRACKERS_ALLOWED) {
             cardPause.setVisibility(View.VISIBLE);
             tvPauseStatus.setText(stateLabel(state));
@@ -257,8 +261,11 @@ public class ProtectionActivity extends AppCompatActivity {
         AppProtectionState state = AppProtectionState.resolve(
                 stores.apply.getBoolean(appPackageName, true),
                 BlockingMode.isTrackerProtectionEnabled(this, stores.trackerProtect, appPackageName),
-                InternetBlocklist.getInstance(this).blockedInternet(appUid));
-        if (state != AppProtectionState.PROTECTED && state != AppProtectionState.TRACKERS_ALLOWED)
+                InternetBlocklist.getInstance(this).blockedInternet(appUid),
+                BlockingMode.isEssentialOnlyApp(this, stores.essentialOnly, appPackageName));
+        if (state != AppProtectionState.PROTECTED
+                && state != AppProtectionState.ESSENTIAL_ONLY
+                && state != AppProtectionState.TRACKERS_ALLOWED)
             return;
 
         if (Util.lockdownState(this) == Util.LockdownState.ENABLED) {
@@ -319,8 +326,10 @@ public class ProtectionActivity extends AppCompatActivity {
                     this, trackerProtect, appPackageName);
             boolean minimal = BlockingMode.isMinimalMode(this);
             AppProtectionState state = currentState();
-            categorySwitch.setEnabled(!minimal && state == AppProtectionState.PROTECTED);
-            categorySwitch.setChecked(minimal
+            boolean essentialOnly = state == AppProtectionState.ESSENTIAL_ONLY;
+            boolean readOnlyMinimal = minimal || essentialOnly;
+            categorySwitch.setEnabled(!readOnlyMinimal && state == AppProtectionState.PROTECTED);
+            categorySwitch.setChecked(readOnlyMinimal
                     ? trackerProtectionEnabled && !TrackerBlocklist.NECESSARY_CATEGORY.equals(category.getCategoryName())
                     : blocklist.blocked(appUid, category.getCategoryName()));
             categorySwitch.setOnCheckedChangeListener((buttonView, checked) -> {
@@ -342,10 +351,15 @@ public class ProtectionActivity extends AppCompatActivity {
                         && !minimal
                         && !BlockingMode.isStrictMode(this)
                         && tracker.isAllowedInStandardMode();
-                boolean companyBlocked = state == AppProtectionState.PROTECTED
-                        && trackerProtectionEnabled
-                        && (minimal ? TrackerBlocklist.blockedTrackerMinimal(tracker)
-                        : blocklist.blockedTracker(appUid, tracker));
+                boolean companyBlocked;
+                if (essentialOnly) {
+                    companyBlocked = TrackerList.isEssentiallyBlocked(tracker);
+                } else {
+                    companyBlocked = state == AppProtectionState.PROTECTED
+                            && trackerProtectionEnabled
+                            && (minimal ? TrackerBlocklist.blockedTrackerMinimal(tracker)
+                            : blocklist.blockedTracker(appUid, tracker));
+                }
                 String status = getString(ambiguousAllowed ? R.string.allowed_shared_ip
                         : (companyBlocked ? R.string.blocked : R.string.allowed));
                 chip.setText(tracker.getName() + "  " + status);
@@ -353,7 +367,7 @@ public class ProtectionActivity extends AppCompatActivity {
                 chip.setChipStrokeColorResource(R.color.colorPrimaryLight);
                 chip.setChipStrokeWidth(1f);
                 chip.setEnsureMinTouchTargetSize(false);
-                boolean actionable = state == AppProtectionState.PROTECTED && !minimal;
+                boolean actionable = state == AppProtectionState.PROTECTED && !readOnlyMinimal;
                 chip.setEnabled(actionable);
                 if (actionable)
                     chip.setOnClickListener(v -> {
@@ -398,6 +412,8 @@ public class ProtectionActivity extends AppCompatActivity {
         switch (state) {
             case TRACKERS_ALLOWED:
                 return getString(R.string.app_state_trackers_allowed);
+            case ESSENTIAL_ONLY:
+                return getString(R.string.app_state_essential_only);
             case NO_INTERNET:
                 return getString(R.string.app_state_no_internet);
             case BYPASSED:
@@ -411,14 +427,18 @@ public class ProtectionActivity extends AppCompatActivity {
     private AppProtectionState currentState() {
         SharedPreferences apply = getSharedPreferences("apply", MODE_PRIVATE);
         SharedPreferences trackerProtect = getSharedPreferences("tracker_protect", MODE_PRIVATE);
+        SharedPreferences essentialOnly = getSharedPreferences("tracker_essential", MODE_PRIVATE);
         return AppProtectionState.resolve(
                 apply.getBoolean(appPackageName, true),
                 BlockingMode.isTrackerProtectionEnabled(this, trackerProtect, appPackageName),
-                InternetBlocklist.getInstance(this).blockedInternet(appUid));
+                InternetBlocklist.getInstance(this).blockedInternet(appUid),
+                BlockingMode.isEssentialOnlyApp(this, essentialOnly, appPackageName));
     }
 
     private static int radioIdFor(AppProtectionState state) {
         switch (state) {
+            case ESSENTIAL_ONLY:
+                return R.id.rbStateEssentialOnly;
             case TRACKERS_ALLOWED:
                 return R.id.rbStateTrackersAllowed;
             case NO_INTERNET:
@@ -434,6 +454,8 @@ public class ProtectionActivity extends AppCompatActivity {
     private static AppProtectionState stateForRadioId(int checkedId) {
         if (checkedId == R.id.rbStateProtected)
             return AppProtectionState.PROTECTED;
+        if (checkedId == R.id.rbStateEssentialOnly)
+            return AppProtectionState.ESSENTIAL_ONLY;
         if (checkedId == R.id.rbStateTrackersAllowed)
             return AppProtectionState.TRACKERS_ALLOWED;
         if (checkedId == R.id.rbStateNoInternet)
@@ -455,5 +477,14 @@ public class ProtectionActivity extends AppCompatActivity {
                 getSharedPreferences("apply", MODE_PRIVATE);
         final android.content.SharedPreferences trackerProtect =
                 getSharedPreferences("tracker_protect", MODE_PRIVATE);
+        final android.content.SharedPreferences essentialOnly =
+                getSharedPreferences("tracker_essential", MODE_PRIVATE);
+    }
+
+    private void updateEssentialOnlyVisibility() {
+        int visibility = BlockingMode.isMinimalMode(this) || Util.isPlayStoreInstall(this)
+                ? View.GONE : View.VISIBLE;
+        findViewById(R.id.rbStateEssentialOnly).setVisibility(visibility);
+        findViewById(R.id.tvStateEssentialOnlyDesc).setVisibility(visibility);
     }
 }
