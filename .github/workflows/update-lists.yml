@@ -76,7 +76,7 @@ jobs:
             --force-with-lease="refs/heads/$BRANCH:$REMOTE_SHA" \
             origin "$BRANCH"
 
-          if gh pr view "$BRANCH" >/dev/null 2>&1; then
+          if gh pr list --head "$BRANCH" --state open --json number --jq 'length > 0' | grep -qx true; then
             echo "PR already open for $BRANCH — updated in place."
           else
             gh pr create \
