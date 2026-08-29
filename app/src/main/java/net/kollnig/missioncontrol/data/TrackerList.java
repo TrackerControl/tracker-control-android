@@ -475,6 +475,80 @@ public class TrackerList {
     }
 
     /**
+     * Retrieve tracker companies blocked for an app in the requested period.
+     * Categories are ordered by their freshest blocked contact, and companies
+     * within a category are ordered by their freshest contact too.
+     */
+    public synchronized List<TrackerCategory> getBlockedAppTrackers(Context c, int uid, long since) {
+        Map<String, TrackerCategory> categoryToTracker = new ArrayMap<>();
+
+        try (Cursor cursor = databaseHelper.getBlockedAccess(uid, since)) {
+            if (cursor.moveToFirst()) {
+                outer: do {
+                    String host = cursor.getString(cursor.getColumnIndexOrThrow("daddr"));
+                    long lastSeen = cursor.getLong(cursor.getColumnIndexOrThrow("time"));
+                    int uncertainty = cursor.getInt(cursor.getColumnIndexOrThrow("uncertain"));
+                    boolean uncertain = uncertainty >= DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER;
+                    boolean allowedInStandardMode =
+                            uncertainty == DatabaseHelper.ACCESS_UNCERTAIN_MIXED_TRACKER_AND_NON_TRACKER;
+
+                    Tracker tracker = findTracker(host);
+                    if (tracker == null)
+                        continue;
+
+                    String category = TrackerCategory.canonicalise(tracker.category);
+                    String name = tracker.getName();
+
+                    TrackerCategory categoryCompany = categoryToTracker.get(category);
+                    if (categoryCompany == null) {
+                        categoryCompany = new TrackerCategory(category, lastSeen);
+                        categoryToTracker.put(category, categoryCompany);
+                    } else if (categoryCompany.lastSeen < lastSeen)
+                        categoryCompany.lastSeen = lastSeen;
+
+                    if (uncertain) {
+                        host = host + " *";
+                        categoryCompany.setUncertain(true);
+                    }
+
+                    for (Tracker child : categoryCompany.getChildren()) {
+                        if (child.name != null && child.name.equals(name)) {
+                            child.addHost(host);
+                            if (uncertain)
+                                child.setUncertain(true);
+                            if (allowedInStandardMode)
+                                child.setAllowedInStandardMode(true);
+                            if (child.lastSeen < lastSeen)
+                                child.lastSeen = lastSeen;
+                            continue outer;
+                        }
+                    }
+
+                    Tracker child = new Tracker(name, category, lastSeen);
+                    child.addHost(host);
+                    child.setUncertain(uncertain);
+                    child.setAllowedInStandardMode(allowedInStandardMode);
+                    categoryCompany.getChildren().add(child);
+                } while (cursor.moveToNext());
+            }
+        }
+
+        List<TrackerCategory> trackerCategoryList = new ArrayList<>(categoryToTracker.values());
+        Collections.sort(trackerCategoryList, (o1, o2) -> Long.compare(o2.lastSeen, o1.lastSeen));
+        for (TrackerCategory category : trackerCategoryList)
+            Collections.sort(category.getChildren(), (o1, o2) -> o2.lastSeen.compareTo(o1.lastSeen));
+
+        return trackerCategoryList;
+    }
+
+    /**
+     * Retrieve tracker companies blocked in the last 24 hours.
+     */
+    public synchronized List<TrackerCategory> getBlockedAppTrackers(Context c, int uid) {
+        return getBlockedAppTrackers(c, uid, System.currentTimeMillis() - 24L * 60L * 60L * 1000L);
+    }
+
+    /**
      * Loads X-Ray tracker list
      *
      * @param c Context
