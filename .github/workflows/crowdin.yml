@@ -1,0 +1,63 @@
+name: Synchronize Crowdin translations
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - app/src/main/res/values/strings.xml
+      - fastlane/metadata/android/en-US/full_description.txt
+      - fastlane/metadata/android/en-US/short_description.txt
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      upload_sources:
+        description: Upload the master source files before downloading translations
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: crowdin-l10n-master
+  cancel-in-progress: false
+
+jobs:
+  synchronize:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'push' && github.sha || 'master' }}
+
+      - name: Synchronize with Crowdin
+        uses: crowdin/github-action@v3
+        with:
+          crowdin_branch_name: master
+          # Source pushes upload first and then download; scheduled/manual
+          # runs are download-only by default so stale checkout sources never
+          # overwrite Crowdin.
+          upload_sources: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.upload_sources) }}
+          upload_translations: false
+          download_sources: false
+          download_translations: true
+          push_sources: false
+          push_translations: true
+          localization_branch_name: l10n_master
+          commit_message: Update translations from Crowdin
+          create_pull_request: true
+          pull_request_title: New Crowdin translations
+          pull_request_body: |
+            Automated translation update from Crowdin.
+
+            The PR targets `master` and continues using the existing
+            `l10n_master` localization branch from the native integration.
+          pull_request_base_branch_name: master
+          skip_ref_checkout: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
