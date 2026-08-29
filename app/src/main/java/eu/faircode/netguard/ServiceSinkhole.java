@@ -126,7 +126,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.GZIPInputStream;
 
@@ -980,10 +979,7 @@ public class ServiceSinkhole extends VpnService {
             DatabaseHelper.getInstance(ServiceSinkhole.this).cleanupDns();
 
             // Refresh mappings regularly
-            ipToHost.clear();
-            ipToTracker.clear();
-            // Same race as dnsResolved(): invalidate after clearing.
-            trackerCacheGeneration.incrementAndGet();
+            trackerCache.clear();
             uidToApp.clear();
             uidToPackage.clear();
 
@@ -2420,6 +2416,7 @@ public class ServiceSinkhole extends VpnService {
 
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
+        clearTrackerCaches();
     }
 
     private void prepareUidIPFilters(String dname) {
@@ -2723,20 +2720,12 @@ public class ServiceSinkhole extends VpnService {
 
             if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
                 if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
-                    ipToHost.remove(rr.Resource);
-                    ipToTracker.remove(rr.Resource);
-                    // Bump *after* the removes: a blockKnownTracker() read that
-                    // started before this new mapping (and so may have missed
-                    // this row) can still be mid-flight. Invalidating the
-                    // generation here, after the cache is actually clear, is
-                    // what makes its stale put() get discarded below instead
-                    // of pinning pre-insert attribution behind this remove.
+                    trackerCache.invalidate(rr.Resource);
                     // Pure refreshes deliberately skip invalidation: the cached
                     // entry simply expires on the earlier deadline it was stored
                     // with and is re-read then, so a stale-put race with a
-                    // refresh is harmless. The generation guard remains for new
-                    // mappings, where the verdict can actually change.
-                    trackerCacheGeneration.incrementAndGet();
+                    // refresh is harmless. The atomic cache generation guard
+                    // remains for new mappings, where the verdict can change.
                 }
             }
         }
@@ -2786,13 +2775,9 @@ public class ServiceSinkhole extends VpnService {
 
     static ConcurrentHashMap<Integer, String> uidToApp = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<Integer, String> uidToPackage = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, Expiring<String>> ipToHost = new ConcurrentHashMap<>();
-    static ConcurrentHashMap<String, Expiring<Tracker>> ipToTracker = new ConcurrentHashMap<>();
-    // Bumped by dnsResolved() whenever it invalidates an ipToHost/ipToTracker
-    // entry, so blockKnownTracker() can detect a DB read that raced a
-    // concurrent insert and drop its (possibly stale) result instead of
-    // caching it. See the comments at both call sites.
-    private static final AtomicLong trackerCacheGeneration = new AtomicLong();
+    // Hostname and tracker verdict are one immutable snapshot. Keeping them in
+    // one cache entry prevents a reader from observing only half a publication.
+    static final TrackerCache trackerCache = new TrackerCache();
     static String NO_DNAME = "null"; // use a String, unequal the real null
     static Tracker NO_TRACKER = new Tracker(null, null, 0);
     // Negative results (no tracker / no dname for an IP) are cached only
@@ -2801,11 +2786,7 @@ public class ServiceSinkhole extends VpnService {
     private static final long NEGATIVE_TRACKER_CACHE_TTL_MS = 60 * 1000L;
 
     public static void clearTrackerCaches() {
-        ipToHost.clear();
-        ipToTracker.clear();
-        // Same race as dnsResolved(): invalidate after clearing, so a
-        // blockKnownTracker() put in flight under the old mode is dropped.
-        trackerCacheGeneration.incrementAndGet();
+        trackerCache.clear();
     }
 
     // Called from native code
@@ -2953,25 +2934,13 @@ public class ServiceSinkhole extends VpnService {
         String blockingMode = BlockingMode.getMode(this);
         boolean blockAmbiguousTrackers = BlockingModeLogic.blocksAmbiguousTrackerIp(blockingMode);
         Tracker tracker = null;
-        Expiring<Tracker> expiringTracker = ipToTracker.get(daddr);
-        if (expiringTracker != null) {
-            tracker = expiringTracker.getOrExpired();
-
-            if (tracker == null) // expired
-                ipToTracker.remove(daddr);
-        }
+        TrackerCache.Entry cached = trackerCache.get(daddr, System.currentTimeMillis());
+        if (cached != null)
+            tracker = cached.getTracker();
 
         if (tracker == null) {
             // Check if IP known
             String dname = null;
-            Expiring<String> expiringHost = ipToHost.get(daddr);
-            if (expiringHost != null) {
-                dname = expiringHost.getOrExpired();
-
-                if (dname == null) // expired
-                    ipToHost.remove(daddr);
-            }
-
             if (dname == null) { // TODO: Note that this does not implement any SNI code
                 // Snapshot before the DB read: if dnsResolved() invalidates this
                 // IP's cache entry while we're mid-read below, our result may be
@@ -2979,7 +2948,7 @@ public class ServiceSinkhole extends VpnService {
                 // that no longer applies). Comparing after the read lets us
                 // drop the put and let the next packet re-read instead of
                 // pinning a possibly-wrong verdict.
-                long generationBefore = trackerCacheGeneration.get();
+                long generationBefore = trackerCache.generation();
                 // Retrieve dname from DB
                 DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
                 long now = new Date().getTime();
@@ -3083,10 +3052,11 @@ public class ServiceSinkhole extends VpnService {
                 // stale verdict that a racing insert already made obsolete.
                 // Skipping is cheap and correct: the next packet to this IP
                 // simply re-reads the DB.
-                if (trackerCacheGeneration.get() == generationBefore) {
-                    ipToHost.put(daddr, new Expiring<>(dname, expiry));
-                    ipToTracker.put(daddr, new Expiring<>(tracker, expiry));
-                }
+                TrackerCache.Entry cacheEntry = new TrackerCache.Entry(dname, tracker, expiry);
+                trackerCache.putIfGeneration(daddr, cacheEntry, generationBefore);
+                // Keep the exact snapshot used for the decision for logging;
+                // the shared cache may be invalidated or replaced meanwhile.
+                cached = cacheEntry;
             }
 
             // Do not block based on IP-only tracker evidence.
@@ -3101,17 +3071,12 @@ public class ServiceSinkhole extends VpnService {
                 app = Common.getAppName(pm, uid);
                 uidToApp.put(uid, app);
             }
-            // tracker can be null here when the host cache had an entry but the
-            // tracker cache was empty/expired, and ipToHost.get(daddr) can be
-            // null on an ipToTracker cache hit (the ipToHost.put(...) block is
-            // skipped). Guard both so log_logcat never NPEs the packet path.
             if (tracker != null) {
-                Expiring<String> expiringHost = ipToHost.get(daddr);
-                String host = (expiringHost == null ? null : expiringHost.getOrExpired());
+                String host = (cached == null ? null : cached.getHostname());
                 Log.i("TC-Log", app + " " + daddr + " " + host + " " + tracker.getName());
             }
         } else {
-            if (tracker != NO_TRACKER) {
+            if (tracker != null && tracker != NO_TRACKER) {
                 boolean blockedByGranularRule = false;
                 if (!BlockingMode.MODE_MINIMAL.equals(blockingMode)) {
                     TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
@@ -4607,27 +4572,6 @@ public class ServiceSinkhole extends VpnService {
         @Override
         public String toString() {
             return "v" + version + " p" + protocol + " port=" + dport + " uid=" + uid;
-        }
-    }
-
-    private class Expiring<T> {
-        private T t;
-        private long expires;
-
-        public Expiring(T t, long expires) {
-            this.t = t;
-            this.expires = expires;
-        }
-
-        public boolean isExpired() {
-            return System.currentTimeMillis() > this.expires;
-        }
-
-        public T getOrExpired() {
-            if (isExpired())
-                return null;
-
-            return t;
         }
     }
 
