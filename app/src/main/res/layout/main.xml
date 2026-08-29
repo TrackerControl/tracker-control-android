@@ -84,6 +84,21 @@
         android:textColor="?attr/colorOff"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/tvPrivateDnsBypass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_warning_amber"
+        android:drawablePadding="8dp"
+        android:drawableTint="?attr/colorError"
+        android:padding="8dp"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:text="@string/msg_private_dns_bypass_allowed_notify"
+        android:textAppearance="@style/TextSmall"
+        android:textColor="?attr/colorOff"
+        android:visibility="gone" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
