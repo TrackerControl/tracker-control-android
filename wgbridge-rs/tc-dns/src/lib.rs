@@ -64,6 +64,20 @@ pub fn process_response(msg: &mut [u8], policy: &dyn DnsPolicy) -> Outcome {
 /// the truncation point are still recorded, but SVCB/HTTPS records cannot be
 /// detected, so SVCB-triggered blanking is unavailable for such frames.
 ///
+/// That fallback deliberately relaxes one rule of the complete path. Nothing
+/// here can tell a *truncated* answer section from a *malformed* one — both
+/// surface as `None` — so a malformed response `process_response` would leave
+/// alone is blanked here whenever its question names a blocked domain. The
+/// blocklist gate is unchanged, so this can only ever act on a domain the
+/// complete path would also have blocked; it is never a wider policy, only a
+/// less forgiving one about malformed input.
+///
+/// The block is not airtight in the other direction either: the header and the
+/// whole question must lie inside the visible prefix, or `read_question_layout`
+/// yields nothing and the frame is forwarded untouched. A read split inside the
+/// first ~12 + qname bytes of a response therefore blocks nothing. Closing that
+/// would need the reassembly buffer this path exists to avoid.
+///
 /// On a blanking hit the bytes after the question are zeroed, so a client that
 /// ignores the cleared `ancount` cannot recover the original answers. The
 /// returned `new_len` reports where the message proper ends; the caller must

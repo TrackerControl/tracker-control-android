@@ -44,7 +44,19 @@
  * enforcement for such split frames therefore remains best-effort: once the
  * answer section is cut short, per-answer detection stops at the truncation
  * point and SVCB-triggered blanking is unavailable, leaving the domain of the
- * question as the only signal the block decision can use.
+ * question as the only signal the block decision can use. That signal needs the
+ * header and the whole question inside the visible bytes, so a read split
+ * within the first few bytes of a response blocks nothing at all and the frame
+ * passes through intact.
+ *
+ * A blanked split frame keeps its original 2-byte length prefix, so what
+ * reaches the client is a DNS message with all three counts cleared followed by
+ * zero bytes out to the declared length. Clients that walk the counts (the
+ * common case) stop after the question and ignore the tail; a client that
+ * insists the message fill its frame exactly may instead call it malformed. The
+ * domain is blocked either way, so the cost of that is a noisier failure and
+ * never a leaked address. Only the fully-contained-frame path can avoid the
+ * padding, by shrinking the frame outright.
  *
  * Length rewrites (a blocking hit that shortens a DNS message) are applied
  * only to a frame whose 2-byte prefix *and* whole payload lie inside the

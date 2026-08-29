@@ -109,6 +109,12 @@ pub(crate) fn parse_message(msg: &[u8]) -> Option<DnsMessage> {
 /// Parses the question section and then answers one at a time. A malformed
 /// later answer returns `None`, so callers can retain records already emitted
 /// from earlier answers while refusing to blank a partially validated message.
+///
+/// `process_partial_response` is the one caller that does not honour that
+/// refusal: on a DNS-over-TCP frame the visible prefix is expected to end
+/// mid-answer, so `None` there carries no signal about whether the bytes are
+/// malformed or merely unread, and it falls back to the question section. See
+/// its documentation for why that is safe.
 pub(crate) fn parse_answers_incrementally(
     msg: &[u8],
     mut on_answer: impl FnMut(&DnsAnswer),
