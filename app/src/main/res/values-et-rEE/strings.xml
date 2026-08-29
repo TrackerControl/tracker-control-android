@@ -161,8 +161,6 @@
     <string name="tab_countries">Maad</string>
     <string name="tab_actions">Minu andmed</string>
     <string name="tracker_name">Jälitaja nimi</string>
-    <string name="internet_access">Internetiühendus</string>
-    <string name="internet_access_explanation">Võida ka klõpsata rakenduse ikooni põhivaates.</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
     <string name="block_tracking">Blokeeri jälitajaid</string>
@@ -194,6 +192,8 @@
     <string name="tracker_email">E-post</string>
     <string name="tracker_consent">Nõusoleku haldus</string>
     <string name="tracker_uncategorised">Kategoriseerimata</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
     <string name="no_trackers_found_message">Jälitajate tuvastamiseks käivita rakendus</string>
     <string name="no_trackers_found_action">Käivita</string>
