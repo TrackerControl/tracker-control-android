@@ -1,6 +1,8 @@
 package net.kollnig.missioncontrol;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -43,6 +45,9 @@ import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 public class ActivityWireGuardProfiles extends AppCompatActivity {
+    private static final String PROTON_DASHBOARD_URL =
+            "https://account.protonvpn.com/downloads#wireguard-configuration";
+
     private WgProfileManager manager;
     private ProfileAdapter adapter;
     private TextView empty;
@@ -103,13 +108,32 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         new MaterialAlertDialogBuilder(this)
                 .setItems(new CharSequence[]{
                         getString(R.string.setting_wg_profile_import),
-                        getString(R.string.setting_wg_mullvad_setup)
+                        getString(R.string.setting_wg_mullvad_setup),
+                        getString(R.string.setting_wg_proton_setup)
                 }, (dialog, which) -> {
                     if (which == 0)
                         showProfileDialog(null);
-                    else
+                    else if (which == 1)
                         showMullvadDialog();
+                    else
+                        showProtonDialog();
                 })
+                .show();
+    }
+
+    // Proton documents downloading a standard WireGuard config for third-party
+    // clients. TrackerControl only guides users through that credential-free
+    // route and imports the result as a regular custom profile.
+    private void showProtonDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.setting_wg_proton_setup)
+                .setMessage(R.string.msg_wg_proton_note)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton(R.string.msg_wg_proton_open_dashboard, (dialog, which) ->
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(PROTON_DASHBOARD_URL))))
+                .setPositiveButton(R.string.setting_wg_profile_import, (dialog, which) ->
+                        showProfileDialog(null))
                 .show();
     }
 
