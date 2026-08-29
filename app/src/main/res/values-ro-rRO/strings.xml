@@ -65,6 +65,8 @@
     <string name="contact_playstore">Google</string>
     <string name="tracker_social">Social</string>
     <string name="tracker_email">Email</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Dezinstalează</string>
     <string name="back">Înapoi</string>
     <string name="forever_free">Întotdeauna Gratuit</string>
