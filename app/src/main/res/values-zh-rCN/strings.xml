@@ -97,6 +97,7 @@
     <string name="setting_ip6">允许 IPv6 流量</string>
     <string name="setting_call">在通话期间禁用</string>
     <string name="setting_reload_onconnectivity">在每次连接更改时重新加载</string>
+    <string name="setting_tcp_mss_clamp">网络共享兼容模式</string>
     <string name="setting_advanced_options">高级选项(供专家使用)</string>
     <string name="setting_system">显示系统应用</string>
     <string name="setting_log_app">搜索新的跟踪器</string>
@@ -107,6 +108,10 @@
     <string name="setting_track_usage">追踪网络使用情况</string>
     <string name="setting_reset_usage">重置网络使用量</string>
     <string name="setting_show_resolved">显示已解析的域名</string>
+    <string name="setting_exclude_all_tracking">将所有应用排除在跟踪保护之外</string>
+    <string name="summary_exclude_all_tracking">禁用所有应用的跟踪器监控。您可以重新启用个别应用的监控。</string>
+    <string name="setting_include_all_tracking">将所有应用包含在跟踪保护中</string>
+    <string name="summary_include_all_tracking">重新启用所有应用的跟踪监视。</string>
     <string name="setting_block_domains">启用 hosts 文件</string>
     <string name="setting_rcode">主机拦截响应： %s</string>
     <string name="setting_vpn4">VPN IPv4地址: %s</string>
@@ -279,11 +284,14 @@
     <string name="msg_installed_tracker_libraries_found">包含 %d 个跟踪库</string>
     <string name="msg_installed_n">已被安装</string>
     <string name="msg_completed">操作已完成</string>
+    <string name="msg_no_file_manager">没有找到文件管理器来选择文件。</string>
     <string name="msg_vpn">TrackerControl使用一个本地VPN来过滤互联网流量。
 因此，请在下一个对话框中允许VPN连接。
 您的互联网流量没有被发送到远程VPN服务器。</string>
     <string name="msg_autostart">TrackerControl 无法自动启动。这可能是由于您 Android 版本中的一个错误。</string>
     <string name="msg_error">发生一个未知错误: \'%s\'</string>
+    <string name="msg_native_fd_recovery_exhausted">VPN 多次失去文件描述符。在所有自动重启尝试失败后保护已停止。</string>
+    <string name="msg_native_fd_error">VPN 缺少文件描述符。关闭未使用的应用或重新启动您的设备，然后重新启动保护。</string>
     <string name="msg_doh_unreachable">即使您有活跃的互联网连接，也无法连接到安全的DNS(DoH)。如果反复发生这种情况，请考虑在网络设置中禁用它。</string>
     <string name="msg_start_failed">Android此时拒绝启动VPN服务。这可能你的Android版本中的一个bug造成的。</string>
     <string name="msg_try">尝试TrackerControl</string>
@@ -331,7 +339,6 @@
     <string name="title_rport">目标端口</string>
     <string name="title_ruid">目标应用</string>
     <string name="title_external">对于外部服务器，选择\'无人\'</string>
-    <string name="title_lockdown_enabled">流量已被锁定</string>
     <string name="title_unmetered_allowed">已允许非按流量计费的网络数据</string>
     <string name="title_unmetered_blocked">已拦截非按流量计费的网络数据</string>
     <string name="title_unmetered_disabled">未应用不按流量计费网络的规则</string>
@@ -382,8 +389,16 @@
     <string name="tracked_app_icon">禁止此应用访问互联网</string>
     <string name="tracked_app_name">应用程序名称</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <string name="toggle_block_internet_description">阻止 %1$s 的互联网访问</string>
+    <string name="toggle_allow_internet_description">允许 %1$s 的互联网访问</string>
+    <string name="toggle_no_internet_description">%1$s 没有互联网访问权</string>
+    <string name="toggle_internet_unavailable_description">%1$s 的互联网访问控制不可用</string>
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <string name="toggle_block_category_description">%1$s类别的跟踪屏蔽器</string>
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
+    <string name="widget_toggle_enable_description">启用跟踪屏蔽功能</string>
+    <string name="widget_toggle_disable_description">禁用跟踪屏蔽功能</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <plurals name="n_companies_found_week">
         <item quantity="other">上周联系了 %d 个公司</item>
     </plurals>
@@ -470,6 +485,7 @@
     <string name="device_not_supported_title">不支持此设备</string>
     <string name="device_not_supported_msg">您设备的操作系统不允许监视和过滤网络通信。这是TrackerControl正常运作所需要的。</string>
     <string name="launch_app">启动 &amp; 查找追踪器</string>
+    <string name="launch_app_failed">无法启动此应用</string>
     <string name="countries">目的地国家</string>
     <string name="countries_explanation">找出你的手机把跟踪数据发到哪去了。\n\n信息基于DNS查找和IP信息，可能不准确。</string>
     <string name="countries_loading_failed">糟糕，国家/地区地图无法加载。 请告诉tc@kollnig.net这是怎么发生的。</string>
@@ -506,6 +522,30 @@
     <string name="onboarding_blockingmode_strict_desc">屏蔽一切，包括基本服务和模糊域。严重的应用程序异常 — 需手动排除众多应用。</string>
     <string name="onboarding_blockingmode_research_label">研究</string>
     <string name="onboarding_blockingmode_research_desc">无跟踪器屏蔽。传输日志到 ADB 并允许提取SNI以更好地检测主机名。仅研究：这将泄漏您的 IP 地址到跟踪服务器。</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">通过远程 VPN 转发</string>
+    <string name="summary_wg_route_mode">哪些应用经远程 VPN 转发。未转发的应用仍然受到完整的跟踪器监测与拦截，只是改从本机自己的网络连接。</string>
+    <string name="wg_route_mode_all">所有应用</string>
+    <string name="wg_route_mode_selected">仅所选应用</string>
+    <string name="app_route_heading">远程 VPN</string>
+    <string name="app_route_through">经远程 VPN</string>
+    <string name="app_route_through_explanation">此应用经你的远程 VPN 连接，由 VPN 而非你的网络看到它的流量。</string>
+    <string name="app_route_direct">直接从本机连接</string>
+    <string name="app_route_direct_explanation">此应用从你自己的网络连接。跟踪器监测与拦截依然生效。它的 DNS 查询会发往你网络的解析器而非 VPN 的，并且它看到的是本机的真实地址——某些应用需要这样，例如访问局域网设备或检测强制门户。</string>
+    <string name="app_route_unavailable_no_vpn">尚未设置远程 VPN，因此所有流量已经直接从本机发出。</string>
+    <string name="app_route_unavailable_bypassed">此应用完全绕过 TrackerControl，因此没有可转发的流量。</string>
+    <string name="app_route_unavailable_partial_routes">你的远程 VPN 并未承载全部流量（其 AllowedIPs 不是全隧道）。路由由所有应用共享，因此按应用分流需要全隧道。</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">保护</string>
+    <string name="app_state_protected">已保护</string>
+    <string name="app_state_protected_explanation">为此应用拦截并记录跟踪器。</string>
+    <string name="app_state_trackers_allowed">允许跟踪器</string>
+    <string name="app_state_trackers_allowed_explanation">应用仍然通过 TrackerControl 联网，但其跟踪器既不被拦截也不被记录。如果拦截导致应用无法正常使用，可选择此项。</string>
+    <string name="app_state_no_internet">无网络</string>
+    <string name="app_state_no_internet_explanation">此应用的所有连接都会被拦截。你也可以在主界面点按应用图标。</string>
+    <string name="app_state_no_internet_shared_uid">同样适用于 %1$s，它与此应用共用同一个 Android 用户 ID。</string>
+    <string name="app_state_bypassed">绕过 TrackerControl</string>
+    <string name="app_state_bypassed_explanation">应用将绕过 TrackerControl 直接联网，不会对其进行任何监测或拦截。仅在应用仍然无法使用时作为最后手段使用。\n\n注意：必须在 Android 的 VPN 设置中停用\"屏蔽不使用 VPN 的连接\"，此项才能生效。</string>
     <string name="uninstall">卸载</string>
     <string name="settings_uninstall">应用设置 &amp; 卸载</string>
     <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
@@ -544,6 +584,7 @@
     <string name="analysis_queued">已加入分析队列…</string>
     <string name="blocked">已屏蔽</string>
     <string name="allowed">已允许</string>
+    <string name="allowed_shared_ip">已允许 — 共享IP; 启用严格模式进行拦截</string>
     <string name="setting_domain_based_blocked">基于域的屏蔽</string>
     <string name="summary_domain_based_blocking">允许进行更高数据粒度的阻止。 仍在开发中。</string>
     <string name="untap_unblock">提示：您可以轻按解除对单独条目的屏蔽。</string>
@@ -553,6 +594,8 @@
     <string name="static_analysis">检测应用代码中的跟踪器</string>
     <string name="failed_loading_cached_analysis">加载缓存的跟踪器结果失败。请通过 hello@trackercontrol.org 向开发人员报告。</string>
     <string name="msg_notifications">点击授予通知权限 (用于错误消息等)</string>
+    <string name="setting_monitor_system">监视系统应用</string>
+    <string name="summary_monitor_system">通过 VPN 路由系统应用 (PlayServices, 运营商服务等)来检测和屏蔽它们的跟踪器，并在应用列表中显示它们。\n\n默认关闭：排除系统应用程序对电池更友好，因为它们的后台流量不再唤醒VPN。 此选项与Android VPN 设置中\"屏蔽没有VPN的连接\"发生冲突，必须禁用。</string>
     <!-- Onboarding -->
     <string name="title_next">下一步</string>
     <string name="title_skip">跳过</string>
@@ -634,30 +677,14 @@
     <string name="msg_apply_blocklists_failed">应用主机文件失败</string>
     <string name="msg_last_update">上次更新：%s</string>
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">保护</string>
-    <string name="app_state_protected">已保护</string>
-    <string name="app_state_protected_explanation">为此应用拦截并记录跟踪器。</string>
-    <string name="app_state_trackers_allowed">允许跟踪器</string>
-    <string name="app_state_trackers_allowed_explanation">应用仍然通过 TrackerControl 联网，但其跟踪器既不被拦截也不被记录。如果拦截导致应用无法正常使用，可选择此项。</string>
-    <string name="app_state_no_internet">无网络</string>
-    <string name="app_state_no_internet_explanation">此应用的所有连接都会被拦截。你也可以在主界面点按应用图标。</string>
-    <string name="app_state_no_internet_shared_uid">同样适用于 %1$s，它与此应用共用同一个 Android 用户 ID。</string>
-    <string name="app_state_bypassed">绕过 TrackerControl</string>
-    <string name="app_state_bypassed_explanation">应用将绕过 TrackerControl 直接联网，不会对其进行任何监测或拦截。仅在应用仍然无法使用时作为最后手段使用。\n\n注意：必须在 Android 的 VPN 设置中停用\"屏蔽不使用 VPN 的连接\"，此项才能生效。</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">通过远程 VPN 转发</string>
-    <string name="summary_wg_route_mode">哪些应用经远程 VPN 转发。未转发的应用仍然受到完整的跟踪器监测与拦截，只是改从本机自己的网络连接。</string>
-    <string name="wg_route_mode_all">所有应用</string>
-    <string name="wg_route_mode_selected">仅所选应用</string>
-    <string name="app_route_heading">远程 VPN</string>
-    <string name="app_route_through">经远程 VPN</string>
-    <string name="app_route_through_explanation">此应用经你的远程 VPN 连接，由 VPN 而非你的网络看到它的流量。</string>
-    <string name="app_route_direct">直接从本机连接</string>
-    <string name="app_route_direct_explanation">此应用从你自己的网络连接。跟踪器监测与拦截依然生效。它的 DNS 查询会发往你网络的解析器而非 VPN 的，并且它看到的是本机的真实地址——某些应用需要这样，例如访问局域网设备或检测强制门户。</string>
-    <string name="app_route_unavailable_no_vpn">尚未设置远程 VPN，因此所有流量已经直接从本机发出。</string>
-    <string name="app_route_unavailable_bypassed">此应用完全绕过 TrackerControl，因此没有可转发的流量。</string>
-    <string name="app_route_unavailable_partial_routes">你的远程 VPN 并未承载全部流量（其 AllowedIPs 不是全隧道）。路由由所有应用共享，因此按应用分流需要全隧道。</string>
+    <string name="switch_tracker_control_description">跟踪器拦截</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">删除黑名单</string>
+    <string name="blocklist_enable_description">启用黑名单 %s</string>
+    <string name="log_connection_allowed">已允许</string>
+    <string name="log_connection_blocked">已拦截</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="log_connection_other">其他网络</string>
+    <string name="log_screen_on">屏幕开启</string>
+    <string name="log_app_icon">应用图标</string>
 </resources>

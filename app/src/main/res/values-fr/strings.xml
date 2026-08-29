@@ -306,7 +306,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_rport">Port de destination</string>
     <string name="title_ruid">Application de destination</string>
     <string name="title_external">Pour un serveur externe, sélectionnez \"personne\"</string>
-    <string name="title_lockdown_enabled">Le trafic est verrouillé</string>
     <string name="title_unmetered_allowed">Le trafic illimité est autorisé</string>
     <string name="title_unmetered_blocked">Le trafic illimité est bloqué</string>
     <string name="title_unmetered_disabled">Les règles illimitées ne sont pas appliquées</string>
@@ -476,6 +475,29 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_blockingmode_standard_label">Standard</string>
     <string name="onboarding_blockingmode_strict_label">Strict</string>
     <string name="onboarding_blockingmode_research_label">Recherche</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Faire passer par le VPN distant</string>
+    <string name="summary_wg_route_mode">Quelles applications sont acheminées via le VPN distant. Celles qui ne le sont pas restent entièrement surveillées et filtrées — elles se connectent simplement depuis le réseau de cet appareil.</string>
+    <string name="wg_route_mode_all">Toutes les applications</string>
+    <string name="wg_route_mode_selected">Seulement les applications sélectionnées</string>
+    <string name="app_route_heading">VPN distant</string>
+    <string name="app_route_through">Via le VPN distant</string>
+    <string name="app_route_through_explanation">Cette application se connecte via votre VPN distant, qui voit son trafic à la place de votre réseau.</string>
+    <string name="app_route_direct">Directement depuis cet appareil</string>
+    <string name="app_route_direct_explanation">Cette application se connecte depuis votre propre réseau. La surveillance et le blocage des traqueurs continuent de s\'appliquer. Ses requêtes DNS vont au résolveur de votre réseau plutôt qu\'à celui du VPN, et elle voit l\'adresse réelle de cet appareil — certaines applications en ont besoin, par exemple pour joindre des appareils locaux ou vérifier un portail captif.</string>
+    <string name="app_route_unavailable_no_vpn">Aucun VPN distant n\'est configuré, tout le trafic quitte donc déjà cet appareil directement.</string>
+    <string name="app_route_unavailable_bypassed">Cette application contourne entièrement TrackerControl, il n\'y a donc aucun trafic à acheminer.</string>
+    <string name="app_route_unavailable_partial_routes">Votre VPN distant ne transporte pas tout le trafic (ses AllowedIPs ne forment pas un tunnel complet). Le routage par application nécessite un tunnel complet, car les routes sont partagées par toutes les applications.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_protected">Protégée</string>
+    <string name="app_state_protected_explanation">Les traqueurs sont bloqués et enregistrés pour cette application.</string>
+    <string name="app_state_trackers_allowed">Traqueurs autorisés</string>
+    <string name="app_state_trackers_allowed_explanation">L\'application continue de passer par TrackerControl, mais ses traqueurs ne sont ni bloqués ni enregistrés. À utiliser si le blocage empêche l\'application de fonctionner.</string>
+    <string name="app_state_no_internet">Pas d\'Internet</string>
+    <string name="app_state_no_internet_explanation">Toutes les connexions de cette application sont bloquées. Vous pouvez aussi appuyer sur l\'icône de l\'application dans l\'écran principal.</string>
+    <string name="app_state_no_internet_shared_uid">S\'applique également à %1$s, qui partage un identifiant utilisateur Android avec cette application.</string>
+    <string name="app_state_bypassed">Contourner TrackerControl</string>
+    <string name="app_state_bypassed_explanation">L\'application se connecte directement, en dehors de TrackerControl. Rien n\'est surveillé ni bloqué pour elle. À utiliser en dernier recours si l\'application ne fonctionne toujours pas.\n\nRemarque : \"Bloquer les connexions sans VPN\" doit être DÉSACTIVÉ dans les paramètres VPN d\'Android pour que cela fonctionne.</string>
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>
@@ -574,30 +596,4 @@ Cordialement,\n\n]]></string>
     <string name="msg_apply_blocklists_failed">Échec de l\'application des fichiers hôtes</string>
     <string name="msg_last_update">Dernière mise à jour : %s</string>
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Protection</string>
-    <string name="app_state_protected">Protégée</string>
-    <string name="app_state_protected_explanation">Les traqueurs sont bloqués et enregistrés pour cette application.</string>
-    <string name="app_state_trackers_allowed">Traqueurs autorisés</string>
-    <string name="app_state_trackers_allowed_explanation">L\'application continue de passer par TrackerControl, mais ses traqueurs ne sont ni bloqués ni enregistrés. À utiliser si le blocage empêche l\'application de fonctionner.</string>
-    <string name="app_state_no_internet">Pas d\'Internet</string>
-    <string name="app_state_no_internet_explanation">Toutes les connexions de cette application sont bloquées. Vous pouvez aussi appuyer sur l\'icône de l\'application dans l\'écran principal.</string>
-    <string name="app_state_no_internet_shared_uid">S\'applique également à %1$s, qui partage un identifiant utilisateur Android avec cette application.</string>
-    <string name="app_state_bypassed">Contourner TrackerControl</string>
-    <string name="app_state_bypassed_explanation">L\'application se connecte directement, en dehors de TrackerControl. Rien n\'est surveillé ni bloqué pour elle. À utiliser en dernier recours si l\'application ne fonctionne toujours pas.\n\nRemarque : \"Bloquer les connexions sans VPN\" doit être DÉSACTIVÉ dans les paramètres VPN d\'Android pour que cela fonctionne.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Faire passer par le VPN distant</string>
-    <string name="summary_wg_route_mode">Quelles applications sont acheminées via le VPN distant. Celles qui ne le sont pas restent entièrement surveillées et filtrées — elles se connectent simplement depuis le réseau de cet appareil.</string>
-    <string name="wg_route_mode_all">Toutes les applications</string>
-    <string name="wg_route_mode_selected">Seulement les applications sélectionnées</string>
-    <string name="app_route_heading">VPN distant</string>
-    <string name="app_route_through">Via le VPN distant</string>
-    <string name="app_route_through_explanation">Cette application se connecte via votre VPN distant, qui voit son trafic à la place de votre réseau.</string>
-    <string name="app_route_direct">Directement depuis cet appareil</string>
-    <string name="app_route_direct_explanation">Cette application se connecte depuis votre propre réseau. La surveillance et le blocage des traqueurs continuent de s\'appliquer. Ses requêtes DNS vont au résolveur de votre réseau plutôt qu\'à celui du VPN, et elle voit l\'adresse réelle de cet appareil — certaines applications en ont besoin, par exemple pour joindre des appareils locaux ou vérifier un portail captif.</string>
-    <string name="app_route_unavailable_no_vpn">Aucun VPN distant n\'est configuré, tout le trafic quitte donc déjà cet appareil directement.</string>
-    <string name="app_route_unavailable_bypassed">Cette application contourne entièrement TrackerControl, il n\'y a donc aucun trafic à acheminer.</string>
-    <string name="app_route_unavailable_partial_routes">Votre VPN distant ne transporte pas tout le trafic (ses AllowedIPs ne forment pas un tunnel complet). Le routage par application nécessite un tunnel complet, car les routes sont partagées par toutes les applications.</string>
 </resources>

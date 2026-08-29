@@ -100,6 +100,7 @@
     <string name="setting_ip6">Omogoči promet IPv6</string>
     <string name="setting_call">Onemogoči ob klicu</string>
     <string name="setting_reload_onconnectivity">Ponovno naloži ob vsaki spremembi povezljivosti</string>
+    <string name="setting_tcp_mss_clamp">Način združljivosti s privezovanjem</string>
     <string name="setting_advanced_options">Napredne nastavitve</string>
     <string name="setting_system">Prikaži sistemske programe</string>
     <string name="setting_log_app">Poišči nove sledilce</string>
@@ -110,6 +111,10 @@
     <string name="setting_track_usage">Sledi porabi omrežja</string>
     <string name="setting_reset_usage">Ponastavi porabo omrežja</string>
     <string name="setting_show_resolved">Pokaži razrešena imena domen</string>
+    <string name="setting_exclude_all_tracking">Izključi vse programe iz nadzora sledenja</string>
+    <string name="summary_exclude_all_tracking">Onemogoči nadzornika sledenja za vse programe.  Lahko ga nato omogočite za posamezne programe.</string>
+    <string name="setting_include_all_tracking">Vključi vse programe v nadzor sledenja</string>
+    <string name="summary_include_all_tracking">Ponovno omogoči nadzor sledenja za vse programe.</string>
     <string name="setting_block_domains">Omogoči datoteko gostiteljev</string>
     <string name="setting_rcode">Odgovor blokiranja gostiteljev: %s</string>
     <string name="setting_vpn4">IPv4 VPN: %s</string>
@@ -184,6 +189,7 @@
     <string name="summary_wg_status_off">Izklopljeno</string>
     <string name="summary_wg_status_missing_config">Izklopljeno — ni nastavljeno</string>
     <string name="summary_wg_status_connected">Povezano</string>
+    <string name="summary_wg_status_handshaking">Rokovanje …</string>
     <string name="summary_wg_status_blocked">Blokirano — %s</string>
     <string name="summary_wg_status_starting">Začenjanje</string>
     <string name="summary_vpn_key_rotate_now">Vsili menjavo ključev Mullvada in WireGuarda zaradi razhroščevanja</string>
@@ -268,6 +274,7 @@
     <string name="msg_wg_blocked_title">Prehod WireGuard ni na voljo.</string>
     <string name="msg_wg_blocked">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene.</string>
     <string name="msg_wg_blocked_detail">Dostop do interneta je blokiran, dokler se WireGuard ne začne ali pa so WitreGuardove nastavitve onemogočene. %s</string>
+    <string name="msg_wg_recovery_failed">WireGuard se je prenehal odzivati.  TrackerControl se poizkuša ponovno povezati.  Dostop do interneta bo morda blokiran, dokler se WireGuard ne obnovi.</string>
     <string name="summary_watchdog">Občasno preveri, ali se TrackerControl še izvaja (vnesite 0 za onemogočanje te možnosti).  To lahko povzroči dodatno porabo energije.</string>
     <string name="summary_log_logcat">Raziskovani način: prepoznani sledilce se beležijo v ADB in izločitev SNI je omogočena zaradi boljšega zaznavanja gostiteljskih imen.  Dnevnike lahko pridobite z \'adb logcat\' z uporabo oznake \'TC-Log\'.</string>
     <string name="msg_sure">Ali ste prepričani?</string>
@@ -280,11 +287,14 @@
     <string name="msg_installed_tracker_libraries_found">Vsebuje %d sledilnih knjižnic.</string>
     <string name="msg_installed_n">Je bil nameščen</string>
     <string name="msg_completed">Dejanje je končano.</string>
+    <string name="msg_no_file_manager">Upravljalnika datotek za izbiro datoteke ni bilo mogoče najti.</string>
     <string name="msg_vpn">TrackerControl za filtriranje internetnega prometa uporablja krajevni VPN.
 V ta namen v naslednjem pogovornem oknu dovolite povezavo VPN.
 Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_autostart">Programa ni bilo mogoče samodejno začeti.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
     <string name="msg_error">Pojavila se je nepričakovana napaka: \'%s\'</string>
+    <string name="msg_native_fd_recovery_exhausted">VPN-u je večkrat zmanjkalo opisnikov datotek.  Po vseh spodletelih poizkusih ponovnega zagona se je zaščita ustavila.</string>
+    <string name="msg_native_fd_error">VPN-u je večkrat zmanjkalo opisnikov datotek.  Zaprite neuporabljene programe ali ponovno zaženite napravo, in nato ponovno vklopite zaščito.</string>
     <string name="msg_doh_unreachable">Varnega DNS-a (DoH) ni mogoče doseči, čeprav imate dejavno internetno povezavo.  Če se to pogosto dogaja, bi ga morda bilo dobro v nastavitvah omrežja onemogočiti.</string>
     <string name="msg_start_failed">Android je trenutno zavrnil zagon storitve VPN.  To je verjetno zaradi hrošča v vaši različici Androida.</string>
     <string name="msg_try">Poizkusite TrackerControl</string>
@@ -332,7 +342,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="title_rport">Ciljna vrata</string>
     <string name="title_ruid">Ciljni program</string>
     <string name="title_external">Za zunanji strežnik izberite \'nihče\'</string>
-    <string name="title_lockdown_enabled">Promet je zaklenjen.</string>
     <string name="title_unmetered_allowed">Nemerjen promet je dovoljen.</string>
     <string name="title_unmetered_blocked">Nemerjen promet je blokiran.</string>
     <string name="title_unmetered_disabled">Nemerjena pravila niso v uporabi.</string>
@@ -383,8 +392,16 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="tracked_app_icon">Onemogoči dostop do interneta za ta program</string>
     <string name="tracked_app_name">Ime programa</string>
     <!-- Dynamic content descriptions for the app-icon Internet toggle in the app list (issue #231) -->
+    <string name="toggle_block_internet_description">Blokiraj dostop do interneta za %1$s</string>
+    <string name="toggle_allow_internet_description">Dovoli dostop do interneta za %1$s</string>
+    <string name="toggle_no_internet_description">%1$s nima dostopa do interneta</string>
+    <string name="toggle_internet_unavailable_description">Nadzor dostopa do interneta za %1$s ni na voljo.</string>
     <!-- Dynamic content description for the per-category tracker-blocking switch -->
+    <string name="toggle_block_category_description">Blokiranje sledilcev za kategorijo %1$s</string>
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
+    <string name="widget_toggle_enable_description">Omogoči blokiranje sledilcev</string>
+    <string name="widget_toggle_disable_description">Onemogoči blokiranje sledilcev</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
     <plurals name="n_companies_found_week">
         <item quantity="one">je prejšnji teden navezal stik z %d-im podjetjem</item>
         <item quantity="two">je prejšnji teden navezal stik z %d-mi podjetji</item>
@@ -444,6 +461,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="device_not_supported_title">Naprava ni podprta</string>
     <string name="device_not_supported_msg">Operacijski sistem vaše naprave ne dovoli nadzora in filtriranja omrežnih komunikacij.  TrackerControl to zahteva.</string>
     <string name="launch_app">Zaženi in poišči sledilce</string>
+    <string name="launch_app_failed">Tega programa ni mogoče zagnati.</string>
     <string name="countries">Ciljne države</string>
     <string name="countries_explanation">Spoznajte, kam vaš telefon pošilja sledilne podatke.\n\nPodatki so osnovani glede na poizvedbe DNS in podatke o IP-jih, in so lahko netočni.</string>
     <string name="countries_loading_failed">Ups.  Nalaganje zemljevida držav je spodletelo.  Prosimo, na tc@kollnig.net sporočite, kako se je to zgodilo.</string>
@@ -480,6 +498,30 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="onboarding_blockingmode_strict_desc">Blokira vse, vključno z osnovnimi storitvami in nejasnimi domenami.  Delovanje nekaterih programov bo znatno prizadeto in jih boste morali ročno izključiti.</string>
     <string name="onboarding_blockingmode_research_label">Raziskovalno</string>
     <string name="onboarding_blockingmode_research_desc">Brez blokiranja sledilcev.  Beleži prenose v ADB in omogoči izločitev SNI za boljše zaznavanje gostiteljskih imen.  Samo za raziskave: to sledilnim strežnikom razkrije vaš naslov IP.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Usmeri prek oddaljenega VPN</string>
+    <string name="summary_wg_route_mode">Katere aplikacije gredo prek oddaljenega VPN. Preostale so še naprej v celoti nadzorovane in filtrirane — le povežejo se prek omrežja te naprave.</string>
+    <string name="wg_route_mode_all">Vse aplikacije</string>
+    <string name="wg_route_mode_selected">Samo izbrane aplikacije</string>
+    <string name="app_route_heading">Oddaljeni VPN</string>
+    <string name="app_route_through">Prek oddaljenega VPN</string>
+    <string name="app_route_through_explanation">Ta aplikacija se poveže prek vašega oddaljenega VPN, ki namesto vašega omrežja vidi njen promet.</string>
+    <string name="app_route_direct">Neposredno s te naprave</string>
+    <string name="app_route_direct_explanation">Ta aplikacija se poveže iz vašega omrežja. Nadzor in blokiranje sledilnikov še naprej veljata. Njene poizvedbe DNS gredo na razreševalnik vašega omrežja namesto na VPN, aplikacija pa vidi pravi naslov te naprave — nekatere aplikacije to potrebujejo, na primer za dostop do lokalnih naprav ali preverjanje captive portala.</string>
+    <string name="app_route_unavailable_no_vpn">Oddaljeni VPN ni nastavljen, zato ves promet že zdaj odhaja neposredno s te naprave.</string>
+    <string name="app_route_unavailable_bypassed">Ta aplikacija povsem obide TrackerControl, zato ni prometa za usmerjanje.</string>
+    <string name="app_route_unavailable_partial_routes">Vaš oddaljeni VPN ne prenaša vsega prometa (njegov AllowedIPs ni poln predor). Usmerjanje po aplikacijah zahteva poln predor, ker si poti delijo vse aplikacije.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Zaščita</string>
+    <string name="app_state_protected">Zaščiteno</string>
+    <string name="app_state_protected_explanation">Sledilniki so za to aplikacijo blokirani in zabeleženi.</string>
+    <string name="app_state_trackers_allowed">Sledilniki dovoljeni</string>
+    <string name="app_state_trackers_allowed_explanation">Aplikacija še naprej teče prek TrackerControla, njeni sledilniki pa niso ne blokirani ne zabeleženi. Uporabite to, če blokiranje pokvari aplikacijo.</string>
+    <string name="app_state_no_internet">Brez interneta</string>
+    <string name="app_state_no_internet_explanation">Vse povezave te aplikacije so blokirane. Lahko se tudi dotaknete ikone aplikacije na glavnem zaslonu.</string>
+    <string name="app_state_no_internet_shared_uid">Velja tudi za %1$s, ki si s to aplikacijo deli Androidov ID uporabnika.</string>
+    <string name="app_state_bypassed">Obidi TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplikacija se poveže neposredno, mimo TrackerControla. Zanjo se nič ne spremlja in nič ne blokira. Uporabite to kot zadnjo možnost, če aplikacija še vedno ne deluje.\n\nOpomba: možnost \"Blokiraj povezave brez VPN\" v Androidovih nastavitvah VPN mora biti IZKLOPLJENA, da to deluje.</string>
     <string name="uninstall">Odstrani</string>
     <string name="settings_uninstall">Nastavitve programa in odstranitev</string>
     <string name="no_trackers_found_message_disabled">Omogočite stikalo na glavnem zaslonu, nato zaženite program, da poiščete sledilce.</string>
@@ -518,6 +560,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="analysis_queued">Preučitev je bila dodana v čakalno vrsto …</string>
     <string name="blocked">BLOKIRANO</string>
     <string name="allowed">DOVOLJENO</string>
+    <string name="allowed_shared_ip">Dovoljeno — IP v souporabi; za blokiranje omogočite strogi način</string>
     <string name="setting_domain_based_blocked">Blokiranje glede na domeno</string>
     <string name="summary_domain_based_blocking">Dovoli bolj prefinjeno blokiranje.  To je še vedno v razvoju.</string>
     <string name="untap_unblock">Nasvet: posamezne vnose lahko blokirate tako, da se jih dotaknete.</string>
@@ -527,6 +570,8 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="static_analysis">Zaznaj sledilce v kodi programov</string>
     <string name="failed_loading_cached_analysis">Nalaganje predpomnjenih rezultatov sledilcev je spodletelo.  Prosimo, sporočite to razvijalcu na hello@trackercontrol.org.</string>
     <string name="msg_notifications">Dotaknite se, da odobrite dovoljenja za obvestila (za sporočila o napakah itd.)</string>
+    <string name="setting_monitor_system">Nadziraj sistemske programe</string>
+    <string name="summary_monitor_system">Preusmeri sistemske programe (Storitve Play, storitve ponudnika itd.) preko VPN-a, da se zaznajo blokirajo njihovi sledilci in prikažejo na seznamu programov,\n\nPrivzeto izklopljeno: izključitev sistemskih programov je prijaznejše do baterije, ker njihov promet v ozadju ne zbudi VPN-a.  Vklop te možnosti je v sporu z možnostjo \"Blokiraj povezave brez VPN-a\" v Androidovih nastavitvah za VPN, zato je treba slednjo IZKLOPITI.</string>
     <!-- Onboarding -->
     <string name="title_next">Naprej</string>
     <string name="title_skip">Preskoči</string>
@@ -608,30 +653,14 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="msg_apply_blocklists_failed">Uporaba datotek z gostitelji je spodletela.</string>
     <string name="msg_last_update">Zadnja posodobitev: %s</string>
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Zaščita</string>
-    <string name="app_state_protected">Zaščiteno</string>
-    <string name="app_state_protected_explanation">Sledilniki so za to aplikacijo blokirani in zabeleženi.</string>
-    <string name="app_state_trackers_allowed">Sledilniki dovoljeni</string>
-    <string name="app_state_trackers_allowed_explanation">Aplikacija še naprej teče prek TrackerControla, njeni sledilniki pa niso ne blokirani ne zabeleženi. Uporabite to, če blokiranje pokvari aplikacijo.</string>
-    <string name="app_state_no_internet">Brez interneta</string>
-    <string name="app_state_no_internet_explanation">Vse povezave te aplikacije so blokirane. Lahko se tudi dotaknete ikone aplikacije na glavnem zaslonu.</string>
-    <string name="app_state_no_internet_shared_uid">Velja tudi za %1$s, ki si s to aplikacijo deli Androidov ID uporabnika.</string>
-    <string name="app_state_bypassed">Obidi TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Aplikacija se poveže neposredno, mimo TrackerControla. Zanjo se nič ne spremlja in nič ne blokira. Uporabite to kot zadnjo možnost, če aplikacija še vedno ne deluje.\n\nOpomba: možnost \"Blokiraj povezave brez VPN\" v Androidovih nastavitvah VPN mora biti IZKLOPLJENA, da to deluje.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Usmeri prek oddaljenega VPN</string>
-    <string name="summary_wg_route_mode">Katere aplikacije gredo prek oddaljenega VPN. Preostale so še naprej v celoti nadzorovane in filtrirane — le povežejo se prek omrežja te naprave.</string>
-    <string name="wg_route_mode_all">Vse aplikacije</string>
-    <string name="wg_route_mode_selected">Samo izbrane aplikacije</string>
-    <string name="app_route_heading">Oddaljeni VPN</string>
-    <string name="app_route_through">Prek oddaljenega VPN</string>
-    <string name="app_route_through_explanation">Ta aplikacija se poveže prek vašega oddaljenega VPN, ki namesto vašega omrežja vidi njen promet.</string>
-    <string name="app_route_direct">Neposredno s te naprave</string>
-    <string name="app_route_direct_explanation">Ta aplikacija se poveže iz vašega omrežja. Nadzor in blokiranje sledilnikov še naprej veljata. Njene poizvedbe DNS gredo na razreševalnik vašega omrežja namesto na VPN, aplikacija pa vidi pravi naslov te naprave — nekatere aplikacije to potrebujejo, na primer za dostop do lokalnih naprav ali preverjanje captive portala.</string>
-    <string name="app_route_unavailable_no_vpn">Oddaljeni VPN ni nastavljen, zato ves promet že zdaj odhaja neposredno s te naprave.</string>
-    <string name="app_route_unavailable_bypassed">Ta aplikacija povsem obide TrackerControl, zato ni prometa za usmerjanje.</string>
-    <string name="app_route_unavailable_partial_routes">Vaš oddaljeni VPN ne prenaša vsega prometa (njegov AllowedIPs ni poln predor). Usmerjanje po aplikacijah zahteva poln predor, ker si poti delijo vse aplikacije.</string>
+    <string name="switch_tracker_control_description">Blokiranje sledilcev</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">Izbriši seznam blokiranih</string>
+    <string name="blocklist_enable_description">Omogoči seznam blokiranih %s</string>
+    <string name="log_connection_allowed">Dovoljeno</string>
+    <string name="log_connection_blocked">Blokirano</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="log_connection_other">Drugo omrežje</string>
+    <string name="log_screen_on">Zaslon je vkl.</string>
+    <string name="log_app_icon">Ikona programa</string>
 </resources>

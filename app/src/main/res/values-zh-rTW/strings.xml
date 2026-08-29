@@ -155,28 +155,6 @@
     <string name="countries_explanation">查看您的手機資料會被傳送到哪裡。\n\n地理資訊基於 DNS lookups 和 IP 資料，有可能不準確。</string>
     <string name="countries_loading_failed">糟糕.. 國家地圖載入失敗。請告訴 tc@kollnig.net 怎麼會這樣。</string>
     <string name="tracker_content">基本</string>
-    <string name="uninstall">解除安裝</string>
-    <string name="no_internet">沒有網際網路連線</string>
-    <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>
-    <string name="internet_blocked">已封鎖網路連線</string>
-    <string name="internet_unblocked">已解除封鎖網路連線</string>
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">保護</string>
-    <string name="app_state_protected">已保護</string>
-    <string name="app_state_protected_explanation">為此應用程式封鎖並記錄追蹤器。</string>
-    <string name="app_state_trackers_allowed">允許追蹤器</string>
-    <string name="app_state_trackers_allowed_explanation">應用程式仍會經由 TrackerControl 連線，但其追蹤器既不會被封鎖也不會被記錄。若封鎖導致應用程式無法正常運作，請選擇此項。</string>
-    <string name="app_state_no_internet">無網際網路</string>
-    <string name="app_state_no_internet_explanation">此應用程式的所有連線都會被封鎖。你也可以在主畫面點按應用程式圖示。</string>
-    <string name="app_state_no_internet_shared_uid">同樣適用於 %1$s，它與此應用程式共用同一個 Android 使用者 ID。</string>
-    <string name="app_state_bypassed">略過 TrackerControl</string>
-    <string name="app_state_bypassed_explanation">應用程式會略過 TrackerControl 直接連線，不會對其進行任何監控或封鎖。僅在應用程式仍無法使用時作為最後手段使用。\n\n注意：必須在 Android 的 VPN 設定中停用\"封鎖不使用 VPN 的連線\"，此項才會生效。</string>
-
     <!-- Per-app remote VPN routing -->
     <string name="setting_wg_route_mode">透過遠端 VPN 轉送</string>
     <string name="summary_wg_route_mode">哪些應用程式經遠端 VPN 轉送。未轉送的應用程式仍受到完整的追蹤器監控與封鎖，只是改從本機自己的網路連線。</string>
@@ -190,4 +168,24 @@
     <string name="app_route_unavailable_no_vpn">尚未設定遠端 VPN，因此所有流量已經直接從本機送出。</string>
     <string name="app_route_unavailable_bypassed">此應用程式完全略過 TrackerControl，因此沒有可轉送的流量。</string>
     <string name="app_route_unavailable_partial_routes">你的遠端 VPN 並未承載全部流量（其 AllowedIPs 不是全隧道）。路由由所有應用程式共用，因此依應用程式分流需要全隧道。</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">保護</string>
+    <string name="app_state_protected">已保護</string>
+    <string name="app_state_protected_explanation">為此應用程式封鎖並記錄追蹤器。</string>
+    <string name="app_state_trackers_allowed">允許追蹤器</string>
+    <string name="app_state_trackers_allowed_explanation">應用程式仍會經由 TrackerControl 連線，但其追蹤器既不會被封鎖也不會被記錄。若封鎖導致應用程式無法正常運作，請選擇此項。</string>
+    <string name="app_state_no_internet">無網際網路</string>
+    <string name="app_state_no_internet_explanation">此應用程式的所有連線都會被封鎖。你也可以在主畫面點按應用程式圖示。</string>
+    <string name="app_state_no_internet_shared_uid">同樣適用於 %1$s，它與此應用程式共用同一個 Android 使用者 ID。</string>
+    <string name="app_state_bypassed">略過 TrackerControl</string>
+    <string name="app_state_bypassed_explanation">應用程式會略過 TrackerControl 直接連線，不會對其進行任何監控或封鎖。僅在應用程式仍無法使用時作為最後手段使用。\n\n注意：必須在 Android 的 VPN 設定中停用\"封鎖不使用 VPN 的連線\"，此項才會生效。</string>
+    <string name="uninstall">解除安裝</string>
+    <string name="no_internet">沒有網際網路連線</string>
+    <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>
+    <string name="internet_blocked">已封鎖網路連線</string>
+    <string name="internet_unblocked">已解除封鎖網路連線</string>
+    <!-- Onboarding -->
+    <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

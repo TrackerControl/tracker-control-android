@@ -216,7 +216,6 @@
     <string name="title_rport">Порт назначения</string>
     <string name="title_ruid">Целевое приложение</string>
     <string name="title_external">Для внешнего сервера выберите «никто»</string>
-    <string name="title_lockdown_enabled">Трафик заблокирован</string>
     <string name="title_unmetered_allowed">Нелимитированный трафик разрешен</string>
     <string name="title_unmetered_blocked">Нелимитированный трафик блокируется</string>
     <string name="title_unmetered_disabled">Правила для нелимитированных соединений не применены</string>
@@ -362,6 +361,30 @@
     <string name="onboarding_blockingmode_strict_desc">Блокирует все, включая основные сервисы и неоднозначные домены. Значительные поломки приложений — многие приложения должны быть исключены вручную.</string>
     <string name="onboarding_blockingmode_research_label">Исследование</string>
     <string name="onboarding_blockingmode_research_desc">Нет блокировки трекера. Логирует передачу в ADB и позволяет извлекать SNI для лучшего определения имени хоста. Только для исследований: это позволяет утечь вашему IP-адреу на сервера трекера.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Направлять через удалённый VPN</string>
+    <string name="summary_wg_route_mode">Какие приложения направляются через удалённый VPN. Остальные по-прежнему полностью отслеживаются и фильтруются — они просто подключаются через сеть этого устройства.</string>
+    <string name="wg_route_mode_all">Все приложения</string>
+    <string name="wg_route_mode_selected">Только выбранные приложения</string>
+    <string name="app_route_heading">Удалённый VPN</string>
+    <string name="app_route_through">Через удалённый VPN</string>
+    <string name="app_route_through_explanation">Это приложение подключается через ваш удалённый VPN, который видит его трафик вместо вашей сети.</string>
+    <string name="app_route_direct">Напрямую с этого устройства</string>
+    <string name="app_route_direct_explanation">Это приложение подключается через вашу собственную сеть. Отслеживание и блокировка трекеров по-прежнему действуют. Его DNS-запросы идут к резолверу вашей сети, а не VPN, и оно видит настоящий адрес устройства — некоторым приложениям это нужно, например для доступа к локальным устройствам или проверки captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Удалённый VPN не настроен, поэтому весь трафик и так уходит напрямую с этого устройства.</string>
+    <string name="app_route_unavailable_bypassed">Это приложение полностью обходит TrackerControl, поэтому направлять нечего.</string>
+    <string name="app_route_unavailable_partial_routes">Ваш удалённый VPN передаёт не весь трафик (его AllowedIPs не образует полный туннель). Маршрутизация по приложениям требует полного туннеля, так как маршруты общие для всех приложений.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Защита</string>
+    <string name="app_state_protected">Защищено</string>
+    <string name="app_state_protected_explanation">Трекеры для этого приложения блокируются и записываются.</string>
+    <string name="app_state_trackers_allowed">Трекеры разрешены</string>
+    <string name="app_state_trackers_allowed_explanation">Приложение по-прежнему работает через TrackerControl, но его трекеры не блокируются и не записываются. Выберите этот вариант, если блокировка ломает приложение.</string>
+    <string name="app_state_no_internet">Без Интернета</string>
+    <string name="app_state_no_internet_explanation">Все соединения этого приложения заблокированы. Также можно нажать на значок приложения на главном экране.</string>
+    <string name="app_state_no_internet_shared_uid">Относится и к %1$s: это приложение использует общий с ним идентификатор пользователя Android.</string>
+    <string name="app_state_bypassed">В обход TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Приложение подключается напрямую, минуя TrackerControl. Для него ничего не отслеживается и не блокируется. Используйте это как крайнюю меру, если приложение по-прежнему не работает.\n\nПримечание: параметр \"Блокировать соединения без VPN\" в настройках VPN Android должен быть ОТКЛЮЧЁН, чтобы это работало.</string>
     <string name="uninstall">Удаление</string>
     <string name="settings_uninstall">Настройки приложения и деинсталляция</string>
     <string name="no_trackers_found_message_disabled">Включите переключатель на главном экране, затем запустите приложение, чтобы найти трекеры</string>
@@ -486,30 +509,4 @@
     <string name="msg_apply_blocklists_failed">Не удалось применить hosts файлы</string>
     <string name="msg_last_update">Последнее обновление: %s</string>
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Защита</string>
-    <string name="app_state_protected">Защищено</string>
-    <string name="app_state_protected_explanation">Трекеры для этого приложения блокируются и записываются.</string>
-    <string name="app_state_trackers_allowed">Трекеры разрешены</string>
-    <string name="app_state_trackers_allowed_explanation">Приложение по-прежнему работает через TrackerControl, но его трекеры не блокируются и не записываются. Выберите этот вариант, если блокировка ломает приложение.</string>
-    <string name="app_state_no_internet">Без Интернета</string>
-    <string name="app_state_no_internet_explanation">Все соединения этого приложения заблокированы. Также можно нажать на значок приложения на главном экране.</string>
-    <string name="app_state_no_internet_shared_uid">Относится и к %1$s: это приложение использует общий с ним идентификатор пользователя Android.</string>
-    <string name="app_state_bypassed">В обход TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Приложение подключается напрямую, минуя TrackerControl. Для него ничего не отслеживается и не блокируется. Используйте это как крайнюю меру, если приложение по-прежнему не работает.\n\nПримечание: параметр \"Блокировать соединения без VPN\" в настройках VPN Android должен быть ОТКЛЮЧЁН, чтобы это работало.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Направлять через удалённый VPN</string>
-    <string name="summary_wg_route_mode">Какие приложения направляются через удалённый VPN. Остальные по-прежнему полностью отслеживаются и фильтруются — они просто подключаются через сеть этого устройства.</string>
-    <string name="wg_route_mode_all">Все приложения</string>
-    <string name="wg_route_mode_selected">Только выбранные приложения</string>
-    <string name="app_route_heading">Удалённый VPN</string>
-    <string name="app_route_through">Через удалённый VPN</string>
-    <string name="app_route_through_explanation">Это приложение подключается через ваш удалённый VPN, который видит его трафик вместо вашей сети.</string>
-    <string name="app_route_direct">Напрямую с этого устройства</string>
-    <string name="app_route_direct_explanation">Это приложение подключается через вашу собственную сеть. Отслеживание и блокировка трекеров по-прежнему действуют. Его DNS-запросы идут к резолверу вашей сети, а не VPN, и оно видит настоящий адрес устройства — некоторым приложениям это нужно, например для доступа к локальным устройствам или проверки captive portal.</string>
-    <string name="app_route_unavailable_no_vpn">Удалённый VPN не настроен, поэтому весь трафик и так уходит напрямую с этого устройства.</string>
-    <string name="app_route_unavailable_bypassed">Это приложение полностью обходит TrackerControl, поэтому направлять нечего.</string>
-    <string name="app_route_unavailable_partial_routes">Ваш удалённый VPN передаёт не весь трафик (его AllowedIPs не образует полный туннель). Маршрутизация по приложениям требует полного туннеля, так как маршруты общие для всех приложений.</string>
 </resources>

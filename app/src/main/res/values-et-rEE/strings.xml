@@ -192,6 +192,30 @@
     <string name="tracker_email">E-post</string>
     <string name="tracker_consent">Nõusoleku haldus</string>
     <string name="tracker_uncategorised">Kategoriseerimata</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Suuna läbi kaug-VPN-i</string>
+    <string name="summary_wg_route_mode">Millised rakendused suunatakse läbi kaug-VPN-i. Ülejäänud jäävad täielikult jälgituks ja filtreerituks — nad lihtsalt ühenduvad selle seadme enda võrgust.</string>
+    <string name="wg_route_mode_all">Kõik rakendused</string>
+    <string name="wg_route_mode_selected">Ainult valitud rakendused</string>
+    <string name="app_route_heading">Kaug-VPN</string>
+    <string name="app_route_through">Läbi kaug-VPN-i</string>
+    <string name="app_route_through_explanation">See rakendus ühendub sinu kaug-VPN-i kaudu, mis näeb selle liiklust sinu võrgu asemel.</string>
+    <string name="app_route_direct">Otse sellest seadmest</string>
+    <string name="app_route_direct_explanation">See rakendus ühendub sinu enda võrgust. Jälitajate seire ja blokeerimine kehtivad edasi. Selle DNS-päringud lähevad sinu võrgu nimeserverisse, mitte VPN-i omasse, ja rakendus näeb seadme tegelikku aadressi — mõni rakendus vajab seda, näiteks kohalike seadmete jaoks või captive portali kontrolliks.</string>
+    <string name="app_route_unavailable_no_vpn">Kaug-VPN-i pole seadistatud, seega kogu liiklus lahkub juba otse sellest seadmest.</string>
+    <string name="app_route_unavailable_bypassed">See rakendus möödub TrackerControlist täielikult, seega pole liiklust, mida suunata.</string>
+    <string name="app_route_unavailable_partial_routes">Sinu kaug-VPN ei kanna kogu liiklust (selle AllowedIPs pole täistunnel). Rakendusepõhine suunamine vajab täistunnelit, sest marsruudid on kõigil rakendustel ühised.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Kaitse</string>
+    <string name="app_state_protected">Kaitstud</string>
+    <string name="app_state_protected_explanation">Jälitajad blokeeritakse ja salvestatakse selle rakenduse puhul.</string>
+    <string name="app_state_trackers_allowed">Jälitajad lubatud</string>
+    <string name="app_state_trackers_allowed_explanation">Rakendus töötab endiselt TrackerControli kaudu, kuid selle jälitajaid ei blokeerita ega salvestata. Kasuta seda, kui blokeerimine rikub rakenduse.</string>
+    <string name="app_state_no_internet">Internetita</string>
+    <string name="app_state_no_internet_explanation">Kõik selle rakenduse ühendused on blokeeritud. Võid ka põhiekraanil rakenduse ikoonile vajutada.</string>
+    <string name="app_state_no_internet_shared_uid">Kehtib ka rakendusele %1$s, mis jagab selle rakendusega Androidi kasutaja-ID-d.</string>
+    <string name="app_state_bypassed">TrackerControlist mööda</string>
+    <string name="app_state_bypassed_explanation">Rakendus ühendub otse, TrackerControlist mööda. Tema jaoks ei jälgita ega blokeerita midagi. Kasuta seda viimase abinõuna, kui rakendus ikka ei tööta.\n\nMärkus: Androidi VPN-i sätetes peab \"Blokeeri ühendused ilma VPN-ita\" olema VÄLJA LÜLITATUD, et see toimiks.</string>
     <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
     <string name="no_trackers_found_message">Jälitajate tuvastamiseks käivita rakendus</string>
     <string name="no_trackers_found_action">Käivita</string>
@@ -236,30 +260,4 @@
     <string name="log_connection_wifi">WiFi</string>
     <string name="log_connection_other">Muu võrk</string>
     <string name="log_app_icon">Rakenduse ikoon</string>
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Kaitse</string>
-    <string name="app_state_protected">Kaitstud</string>
-    <string name="app_state_protected_explanation">Jälitajad blokeeritakse ja salvestatakse selle rakenduse puhul.</string>
-    <string name="app_state_trackers_allowed">Jälitajad lubatud</string>
-    <string name="app_state_trackers_allowed_explanation">Rakendus töötab endiselt TrackerControli kaudu, kuid selle jälitajaid ei blokeerita ega salvestata. Kasuta seda, kui blokeerimine rikub rakenduse.</string>
-    <string name="app_state_no_internet">Internetita</string>
-    <string name="app_state_no_internet_explanation">Kõik selle rakenduse ühendused on blokeeritud. Võid ka põhiekraanil rakenduse ikoonile vajutada.</string>
-    <string name="app_state_no_internet_shared_uid">Kehtib ka rakendusele %1$s, mis jagab selle rakendusega Androidi kasutaja-ID-d.</string>
-    <string name="app_state_bypassed">TrackerControlist mööda</string>
-    <string name="app_state_bypassed_explanation">Rakendus ühendub otse, TrackerControlist mööda. Tema jaoks ei jälgita ega blokeerita midagi. Kasuta seda viimase abinõuna, kui rakendus ikka ei tööta.\n\nMärkus: Androidi VPN-i sätetes peab \"Blokeeri ühendused ilma VPN-ita\" olema VÄLJA LÜLITATUD, et see toimiks.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Suuna läbi kaug-VPN-i</string>
-    <string name="summary_wg_route_mode">Millised rakendused suunatakse läbi kaug-VPN-i. Ülejäänud jäävad täielikult jälgituks ja filtreerituks — nad lihtsalt ühenduvad selle seadme enda võrgust.</string>
-    <string name="wg_route_mode_all">Kõik rakendused</string>
-    <string name="wg_route_mode_selected">Ainult valitud rakendused</string>
-    <string name="app_route_heading">Kaug-VPN</string>
-    <string name="app_route_through">Läbi kaug-VPN-i</string>
-    <string name="app_route_through_explanation">See rakendus ühendub sinu kaug-VPN-i kaudu, mis näeb selle liiklust sinu võrgu asemel.</string>
-    <string name="app_route_direct">Otse sellest seadmest</string>
-    <string name="app_route_direct_explanation">See rakendus ühendub sinu enda võrgust. Jälitajate seire ja blokeerimine kehtivad edasi. Selle DNS-päringud lähevad sinu võrgu nimeserverisse, mitte VPN-i omasse, ja rakendus näeb seadme tegelikku aadressi — mõni rakendus vajab seda, näiteks kohalike seadmete jaoks või captive portali kontrolliks.</string>
-    <string name="app_route_unavailable_no_vpn">Kaug-VPN-i pole seadistatud, seega kogu liiklus lahkub juba otse sellest seadmest.</string>
-    <string name="app_route_unavailable_bypassed">See rakendus möödub TrackerControlist täielikult, seega pole liiklust, mida suunata.</string>
-    <string name="app_route_unavailable_partial_routes">Sinu kaug-VPN ei kanna kogu liiklust (selle AllowedIPs pole täistunnel). Rakendusepõhine suunamine vajab täistunnelit, sest marsruudid on kõigil rakendustel ühised.</string>
 </resources>

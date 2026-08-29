@@ -156,7 +156,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="title_rport">Destinasjonsport</string>
     <string name="title_ruid">Destinasjonsapp</string>
     <string name="title_external">For en ekstern tjener, velg «ingen»</string>
-    <string name="title_lockdown_enabled">Trafikk er blokkert</string>
     <string name="title_unmetered_allowed">Ikke-forbruksmålt trafikk er tillatt</string>
     <string name="title_unmetered_blocked">Ikke-forbruksmålt trafikk er blokkert</string>
     <string name="title_unmetered_disabled">Regler for ikke-forbruksmålt trafikk er ikke i bruk</string>
@@ -312,6 +311,30 @@ Vennlig hilsen,\n\n]]></string>
     <string name="setting_strict_blocking">Streng blokkering</string>
     <string name="summary_strict_blocking">For nylig installerte apper kan du blokkere så mye datadeling med bedrifter som mulig. Flere apper vil slutte å fungere.</string>
     <string name="strict_blocking_explanation">Det anbefales at ikke-eksperter deaktiverer denne instillingen for å redusere appfeil. Dette tillater imidlertid noe grunnleggende deling med selskaper.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Send gjennom ekstern VPN</string>
+    <string name="summary_wg_route_mode">Hvilke apper som sendes gjennom den eksterne VPN-en. De øvrige overvåkes og filtreres fortsatt fullt ut — de kobler bare til fra enhetens eget nettverk.</string>
+    <string name="wg_route_mode_all">Alle apper</string>
+    <string name="wg_route_mode_selected">Bare valgte apper</string>
+    <string name="app_route_heading">Ekstern VPN</string>
+    <string name="app_route_through">Gjennom den eksterne VPN-en</string>
+    <string name="app_route_through_explanation">Denne appen kobler til gjennom din eksterne VPN, som ser trafikken dens i stedet for nettverket ditt.</string>
+    <string name="app_route_direct">Direkte fra denne enheten</string>
+    <string name="app_route_direct_explanation">Denne appen kobler til fra ditt eget nettverk. Sporerovervåking og blokkering gjelder fortsatt. DNS-forespørslene går til nettverkets resolver i stedet for VPN-ens, og appen ser enhetens virkelige adresse — noen apper trenger det, for eksempel for å nå lokale enheter eller sjekke en captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Ingen ekstern VPN er satt opp, så all trafikk forlater allerede enheten direkte.</string>
+    <string name="app_route_unavailable_bypassed">Denne appen omgår TrackerControl helt, så det finnes ingen trafikk å sende.</string>
+    <string name="app_route_unavailable_partial_routes">Den eksterne VPN-en bærer ikke all trafikk (AllowedIPs er ikke en full tunnel). Ruting per app krever en full tunnel, siden ruter deles av alle apper.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Beskyttelse</string>
+    <string name="app_state_protected">Beskyttet</string>
+    <string name="app_state_protected_explanation">Sporere blokkeres og registreres for denne appen.</string>
+    <string name="app_state_trackers_allowed">Sporere tillatt</string>
+    <string name="app_state_trackers_allowed_explanation">Appen går fortsatt gjennom TrackerControl, men sporerne blir verken blokkert eller registrert. Bruk dette hvis blokkering ødelegger appen.</string>
+    <string name="app_state_no_internet">Ingen internett</string>
+    <string name="app_state_no_internet_explanation">Alle tilkoblinger fra denne appen blokkeres. Du kan også trykke på appikonet på hovedskjermen.</string>
+    <string name="app_state_no_internet_shared_uid">Gjelder også %1$s, som deler en Android-bruker-ID med denne appen.</string>
+    <string name="app_state_bypassed">Omgå TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Appen kobler til direkte, utenfor TrackerControl. Ingenting overvåkes eller blokkeres for den. Bruk dette som siste utvei hvis appen fortsatt ikke virker.\n\nMerk: \"Blokker tilkoblinger uten VPN\" i Androids VPN-innstillinger må være DEAKTIVERT for at dette skal virke.</string>
     <string name="uninstall">Avinstaller</string>
     <string name="settings_uninstall">Appinnstillinger &amp; Avinstaller</string>
     <string name="no_trackers_found_message_disabled">Aktiver bryter på hovedskjermen, så start appen for å finne sporere</string>
@@ -353,30 +376,4 @@ Vennlig hilsen,\n\n]]></string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Beskyttelse</string>
-    <string name="app_state_protected">Beskyttet</string>
-    <string name="app_state_protected_explanation">Sporere blokkeres og registreres for denne appen.</string>
-    <string name="app_state_trackers_allowed">Sporere tillatt</string>
-    <string name="app_state_trackers_allowed_explanation">Appen går fortsatt gjennom TrackerControl, men sporerne blir verken blokkert eller registrert. Bruk dette hvis blokkering ødelegger appen.</string>
-    <string name="app_state_no_internet">Ingen internett</string>
-    <string name="app_state_no_internet_explanation">Alle tilkoblinger fra denne appen blokkeres. Du kan også trykke på appikonet på hovedskjermen.</string>
-    <string name="app_state_no_internet_shared_uid">Gjelder også %1$s, som deler en Android-bruker-ID med denne appen.</string>
-    <string name="app_state_bypassed">Omgå TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Appen kobler til direkte, utenfor TrackerControl. Ingenting overvåkes eller blokkeres for den. Bruk dette som siste utvei hvis appen fortsatt ikke virker.\n\nMerk: \"Blokker tilkoblinger uten VPN\" i Androids VPN-innstillinger må være DEAKTIVERT for at dette skal virke.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Send gjennom ekstern VPN</string>
-    <string name="summary_wg_route_mode">Hvilke apper som sendes gjennom den eksterne VPN-en. De øvrige overvåkes og filtreres fortsatt fullt ut — de kobler bare til fra enhetens eget nettverk.</string>
-    <string name="wg_route_mode_all">Alle apper</string>
-    <string name="wg_route_mode_selected">Bare valgte apper</string>
-    <string name="app_route_heading">Ekstern VPN</string>
-    <string name="app_route_through">Gjennom den eksterne VPN-en</string>
-    <string name="app_route_through_explanation">Denne appen kobler til gjennom din eksterne VPN, som ser trafikken dens i stedet for nettverket ditt.</string>
-    <string name="app_route_direct">Direkte fra denne enheten</string>
-    <string name="app_route_direct_explanation">Denne appen kobler til fra ditt eget nettverk. Sporerovervåking og blokkering gjelder fortsatt. DNS-forespørslene går til nettverkets resolver i stedet for VPN-ens, og appen ser enhetens virkelige adresse — noen apper trenger det, for eksempel for å nå lokale enheter eller sjekke en captive portal.</string>
-    <string name="app_route_unavailable_no_vpn">Ingen ekstern VPN er satt opp, så all trafikk forlater allerede enheten direkte.</string>
-    <string name="app_route_unavailable_bypassed">Denne appen omgår TrackerControl helt, så det finnes ingen trafikk å sende.</string>
-    <string name="app_route_unavailable_partial_routes">Den eksterne VPN-en bærer ikke all trafikk (AllowedIPs er ikke en full tunnel). Ruting per app krever en full tunnel, siden ruter deles av alle apper.</string>
 </resources>
