@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="48dp"
@@ -48,6 +49,16 @@
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivExpand"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="4dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:src="@drawable/expander_black"
+            app:tint="?android:attr/textColorSecondary" />
     </LinearLayout>
 
     <LinearLayout
@@ -80,7 +91,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:minHeight="0dp"
-            android:textColor="?android:textColorPrimary" />
+            android:textColor="?android:textColorPrimary"
+            app:thumbTint="@color/switch_rocket_thumb_color"
+            app:trackDecorationTint="@android:color/transparent"
+            app:trackTint="@color/switch_rocket_track_color" />
 
         <TextView
             android:id="@+id/tvSharedIpNote"
@@ -90,4 +104,11 @@
             android:textColor="?android:textColorSecondary"
             android:visibility="gone" />
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/trackerFeedDivider"
+        android:importantForAccessibility="no" />
 </LinearLayout>

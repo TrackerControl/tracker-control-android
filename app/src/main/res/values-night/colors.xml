@@ -19,4 +19,7 @@
          (near-black) surface, e.g. the "Manage WireGuard profiles" footer
          link. See issue #560. -->
     <color name="colorFooterLink">#80cbc4</color>
+
+    <color name="trackerFeedSectionBackground">#242424</color>
+    <color name="trackerFeedDivider">#424242</color>
 </resources>

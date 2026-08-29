@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +80,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private final Integer mAppUid;
     private final String mAppId;
+    private final String mAppName;
     private final Context mContext;
     private final SharedPreferences apply;
     private final SharedPreferences tracker_protect;
@@ -103,6 +105,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mContext = c;
         mAppUid = appUid;
         mAppId = appId;
+        mAppName = resolveAppName();
 
         apply = mContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
         tracker_protect = mContext.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
@@ -248,7 +251,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mSectionExplainer.setVisibility(View.VISIBLE);
             holder.mSectionExplainer.setText(mContext.getString(categoryEffectivelyBlocked
                     ? R.string.feed_essential_explainer_blocked
-                    : R.string.feed_essential_explainer, getAppName()));
+                    : R.string.feed_essential_explainer, mAppName));
         }
 
         holder.mSwitchSection.setContentDescription(
@@ -317,6 +320,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.mStatus.setTextColor(ContextCompat.getColor(mContext,
                 status.status == TrackerStatusLogic.Status.BLOCKED
                         ? R.color.colorPrimary : R.color.colorAccent));
+        holder.mExpand.setImageLevel(row.expanded ? 1 : 0);
         ViewCompat.setStateDescription(holder.itemView, mContext.getString(row.expanded
                 ? R.string.feed_company_expanded : R.string.feed_company_collapsed));
 
@@ -342,12 +346,17 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 if (status.status == TrackerStatusLogic.Status.MONITORED) {
                     holder.mSharedIpNote.setText(R.string.tracker_monitored_minimal);
                     holder.mSharedIpNote.setVisibility(View.VISIBLE);
+                } else if (status.status == TrackerStatusLogic.Status.ALLOWED
+                        && state == AppProtectionState.PROTECTED
+                        && !categoryBlocked) {
+                    holder.mSharedIpNote.setText(R.string.category_unblocked_warning);
+                    holder.mSharedIpNote.setVisibility(View.VISIBLE);
                 }
                 String displayName = tracker.getName();
                 if (TRACKER_HOSTLIST.equals(displayName))
                     displayName = mContext.getString(R.string.tracker_hostlist);
                 holder.mSwitchAllowCompany.setText(String.format(
-                        mContext.getString(R.string.feed_allow_company_in_app), displayName, getAppName()));
+                        mContext.getString(R.string.feed_allow_company_in_app), displayName, mAppName));
                 // The switch represents effective access, not only the raw
                 // company key. This matters when a stale key survives a
                 // category whitelist.
@@ -395,9 +404,9 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case ALLOWED_BY_USER:
                 return R.string.feed_allowed_by_you;
             case ALLOWED_SHARED_IP:
-                return R.string.timeline_tracker_allowed;
+                return R.string.feed_allowed_shared_ip;
             case MONITORED:
-                return R.string.tracker_monitored_minimal;
+                return R.string.feed_monitored;
             case ALLOWED:
             default:
                 return R.string.timeline_tracker_allowed;
@@ -435,7 +444,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
         } else if (state == AppProtectionState.PROTECTED) {
             if (BlockingMode.isMinimalMode(mContext))
-                holder.mAppStateHint.setText(R.string.app_state_subtitle_change);
+                holder.mAppStateHint.setText(R.string.protection_app_not_working);
             else
                 holder.mAppStateHint.setText(R.string.app_state_subtitle_misbehaving);
             holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
@@ -447,7 +456,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Intent intent = new Intent(mContext, ProtectionActivity.class);
             intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, mAppId);
             intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, mAppUid);
-            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, getAppName());
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, mAppName);
             mContext.startActivity(intent);
         });
 
@@ -495,7 +504,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.mRowAppLibraries.setOnClickListener(v -> {
             Intent intent = new Intent(mContext, LibrariesActivity.class);
             intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, mAppId);
-            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, getAppName());
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, mAppName);
             mContext.startActivity(intent);
         });
     }
@@ -525,7 +534,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return summary;
     }
 
-    private String getAppName() {
+    private String resolveAppName() {
         try {
             return mContext.getPackageManager()
                     .getApplicationLabel(mContext.getPackageManager().getApplicationInfo(mAppId, 0))
@@ -598,6 +607,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mCompany;
         final TextView mLastSeen;
         final TextView mStatus;
+        final ImageView mExpand;
         final View mLayoutExpanded;
         final TextView mHosts;
         final TextView mUncertainNote;
@@ -609,6 +619,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mCompany = view.findViewById(R.id.tvCompany);
             mLastSeen = view.findViewById(R.id.tvLastSeen);
             mStatus = view.findViewById(R.id.tvStatus);
+            mExpand = view.findViewById(R.id.ivExpand);
             mLayoutExpanded = view.findViewById(R.id.layoutExpanded);
             mHosts = view.findViewById(R.id.tvHosts);
             mUncertainNote = view.findViewById(R.id.tvUncertainNote);

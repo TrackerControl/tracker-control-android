@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/trackerFeedSectionBackground"
     android:minHeight="48dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="8dp"
-    android:paddingBottom="4dp">
+    android:paddingBottom="8dp">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -23,7 +25,8 @@
             android:accessibilityHeading="true"
             android:textAllCaps="true"
             android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="?android:textColorPrimary"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvSectionTime"
@@ -48,5 +51,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="0dp"
-        android:textColor="?android:textColorPrimary" />
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:textColor="?android:textColorPrimary"
+        app:thumbTint="@color/switch_rocket_thumb_color"
+        app:trackDecorationTint="@android:color/transparent"
+        app:trackTint="@color/switch_rocket_track_color" />
 </LinearLayout>

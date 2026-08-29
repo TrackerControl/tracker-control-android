@@ -66,6 +66,8 @@
     </plurals>
     <string name="feed_allow_company_in_app">Allow %1$s in %2$s</string>
     <string name="feed_allowed_by_you">Allowed by you</string>
+    <string name="feed_allowed_shared_ip">Allowed · shared IP</string>
+    <string name="feed_monitored">Monitored</string>
     <string name="feed_company_expanded">Expanded</string>
     <string name="feed_company_collapsed">Collapsed</string>
     <string name="feed_essential_explainer">Needed by apps — allowed so %s keeps working</string>
@@ -686,7 +688,6 @@ Sincerely,\n\n]]></string>
     <string name="app_state_title_standard">Standard blocking</string>
     <string name="app_state_title_strict">Strict blocking</string>
     <string name="app_state_subtitle_misbehaving">App misbehaving? Switch to Minimal blocking here.</string>
-    <string name="app_state_subtitle_change">Tap to change this app\'s protection</string>
     <string name="app_state_protected">Protected</string>
     <string name="app_state_protected_explanation">Trackers are blocked and recorded for this app.</string>
     <string name="app_state_essential_only">Minimal blocking only</string>
@@ -742,7 +743,7 @@ Sincerely,\n\n]]></string>
 
     <string name="category_blocked">Trackers in category blocked</string>
     <string name="category_unblocked">Trackers in category allowed</string>
-    <string name="category_unblocked_warning">First block category!</string>
+    <string name="category_unblocked_warning">Allowed with this category — block the category to change individual companies.</string>
     <string name="switch_strict_blocking">Block essential data sharing</string>
  
     <string name="tracking_detection_failed">Tracker library detection failed.</string>

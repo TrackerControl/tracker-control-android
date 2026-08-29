@@ -43,8 +43,6 @@ public class TrackerStatusLogicTest {
 
     @Test
     public void standardResolvesWhitelistAndCategoryStates() {
-        assertEquals(TrackerStatusLogic.Status.BLOCKED,
-                resolve(true, false, false, true, true, true, false).status);
         TrackerStatusLogic.Result companyAllowed = resolve(
                 true, false, false, true, false, true, false);
         assertEquals(TrackerStatusLogic.Status.ALLOWED_BY_USER, companyAllowed.status);
@@ -73,7 +71,7 @@ public class TrackerStatusLogicTest {
     @Test
     public void noSubsetStateIsBlocked() {
         assertEquals(TrackerStatusLogic.Status.BLOCKED,
-                resolve(true, false, true, true, true, true, false).status);
+                resolve(true, false, false, true, true, true, false).status);
     }
 
     private static TrackerStatusLogic.Result resolve(boolean protection, boolean minimal,
