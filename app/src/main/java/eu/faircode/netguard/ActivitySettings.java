@@ -1502,6 +1502,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         // Upgrade imported settings
         ReceiverAutostart.upgrade(true, this);
 
+        // Reconcile imported apply preferences with auto-exclusions immediately,
+        // rather than waiting for the next process start.
+        BlockingMode.syncAutoExclusions(this);
+
         DatabaseHelper.clearCache();
 
         // Refresh UI

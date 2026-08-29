@@ -51,6 +51,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
     private TimelineAdapter timelineAdapter;
     private InsightsHeaderAdapter insightsAdapter;
     private TimelineEmptyAdapter emptyAdapter;
+    private TimelineHintAdapter hintAdapter;
     private RecyclerView rvTimeline;
     private SwipeRefreshLayout swipeRefresh;
 
@@ -88,9 +89,15 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
         rvTimeline.setLayoutManager(new LinearLayoutManager(requireContext()));
         insightsAdapter = new InsightsHeaderAdapter(requireContext());
         emptyAdapter = new TimelineEmptyAdapter();
+        hintAdapter = new TimelineHintAdapter(() -> {
+            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                    .putBoolean("hint_timeline_tap_entry", false)
+                    .apply();
+            hintAdapter.setVisible(false);
+        });
         timelineAdapter = new TimelineAdapter(requireContext(), this);
 
-        ConcatAdapter concat = new ConcatAdapter(insightsAdapter, emptyAdapter, timelineAdapter);
+        ConcatAdapter concat = new ConcatAdapter(insightsAdapter, emptyAdapter, hintAdapter, timelineAdapter);
         rvTimeline.setAdapter(concat);
 
         swipeRefresh.setOnRefreshListener(this::refreshAll);
@@ -151,7 +158,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
             @Override
             protected void onPostExecute(List<TimelineEntry> entries) {
-                if (!isAdded())
+                if (!isAdded() || getView() == null)
                     return;
                 timelineAdapter.setEntries(entries);
                 swipeRefresh.setRefreshing(false);
@@ -162,6 +169,9 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
                 emptyAdapter.setTrackerRecordingAvailable(
                         !Util.isPlayStoreInstall(requireContext()));
                 emptyAdapter.setVisible(entries.isEmpty());
+                hintAdapter.setVisible(TimelineHintAdapter.shouldShow(
+                        !entries.isEmpty(),
+                        prefs.getBoolean("hint_timeline_tap_entry", true)));
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

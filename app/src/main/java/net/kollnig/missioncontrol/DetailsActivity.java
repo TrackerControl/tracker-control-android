@@ -42,6 +42,7 @@ import androidx.core.app.NavUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.appbar.AppBarLayout;
@@ -129,6 +130,10 @@ public class DetailsActivity extends AppCompatActivity {
         appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
         appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
         String appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
+        // Opening Details means the user has found where to adjust protection.
+        PreferenceManager.getDefaultSharedPreferences(this).edit()
+                .putBoolean("hint_timeline_tap_entry", false)
+                .apply();
 
         // Set up paging
         detailsStateAdapter = new DetailsStateAdapter(

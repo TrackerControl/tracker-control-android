@@ -46,6 +46,8 @@
     <string name="timeline_empty_recording_unavailable_subtitle">This version of TrackerControl does not expose tracker activity recording. Blocking still works, but this Timeline will stay empty.</string>
     <string name="timeline_open_app">Open an app</string>
     <string name="timeline_open_settings">Open settings</string>
+    <string name="timeline_hint_tap_entry">An app not working? Tap its entry to adjust its protection.</string>
+    <string name="timeline_hint_dismiss">Got it</string>
     <string name="unidentified_app_uid">Unidentified app (UID %1$d)</string>
     <string name="tab_timeline">Timeline</string>
     <string name="tab_apps">Apps</string>

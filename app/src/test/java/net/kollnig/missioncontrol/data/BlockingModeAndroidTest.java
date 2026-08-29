@@ -42,30 +42,38 @@ public class BlockingModeAndroidTest {
     }
 
     @Test
-    public void syncModeExclusionsUsesRealExcludedAppsAsset() throws Exception {
+    public void syncAutoExclusionsUsesRealExcludedAppsAsset() throws Exception {
         Set<String> excludedApps = BlockingModeLogic.parseExcludedAppsJson(readExcludedAppsAsset());
         Map<String, Boolean> applyPrefs = new HashMap<>();
         applyPrefs.put("manual.false", false);
 
-        BlockingModeLogic.ExclusionSyncResult minimalResult = BlockingModeLogic.syncVpnExclusions(
-                BlockingMode.MODE_MINIMAL,
+        BlockingModeLogic.ExclusionSyncResult initialResult = BlockingModeLogic.syncVpnExclusions(
                 excludedApps,
                 applyPrefs,
                 Collections.emptySet());
 
-        assertFalse(minimalResult.applyFalsePackages.contains("com.android.chrome"));
-        assertTrue(minimalResult.applyFalsePackages.contains("com.whatsapp"));
-        assertFalse(minimalResult.applyRemovals.contains("manual.false"));
+        assertFalse(initialResult.applyFalsePackages.contains("com.android.chrome"));
+        assertTrue(initialResult.applyFalsePackages.contains("com.whatsapp"));
+        assertFalse(initialResult.applyRemovals.contains("manual.false"));
 
         applyPrefs.put("com.whatsapp", false);
-        BlockingModeLogic.ExclusionSyncResult standardResult = BlockingModeLogic.syncVpnExclusions(
-                BlockingMode.MODE_STANDARD,
-                excludedApps,
+        BlockingModeLogic.ExclusionSyncResult stableResult = BlockingModeLogic.syncVpnExclusions(
+                Set.of("com.whatsapp"),
                 applyPrefs,
                 Set.of("com.whatsapp"));
 
-        assertTrue(standardResult.applyRemovals.contains("com.whatsapp"));
-        assertFalse(standardResult.applyRemovals.contains("manual.false"));
+        assertTrue(stableResult.applyFalsePackages.isEmpty());
+        assertTrue(stableResult.applyRemovals.isEmpty());
+        assertTrue(stableResult.autoExcludedApps.contains("com.whatsapp"));
+
+        BlockingModeLogic.ExclusionSyncResult restoredResult = BlockingModeLogic.syncVpnExclusions(
+                Collections.emptySet(),
+                applyPrefs,
+                stableResult.autoExcludedApps);
+
+        assertTrue(restoredResult.applyRemovals.contains("com.whatsapp"));
+        assertFalse(restoredResult.applyRemovals.contains("manual.false"));
+        assertTrue(restoredResult.autoExcludedApps.isEmpty());
     }
 
     @Test
@@ -77,7 +85,6 @@ public class BlockingModeAndroidTest {
         applyPrefs.put("com.whatsapp", true);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingMode.MODE_MINIMAL,
                 Set.of("com.whatsapp"),
                 applyPrefs,
                 Set.of("com.whatsapp"));

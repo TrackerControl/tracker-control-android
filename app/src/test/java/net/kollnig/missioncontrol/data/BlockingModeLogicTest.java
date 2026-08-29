@@ -63,9 +63,8 @@ public class BlockingModeLogicTest {
     }
 
     @Test
-    public void enteringMinimalAutoExcludesUnsetIncompatibleApps() {
+    public void unsetIncompatibleAppIsAutoExcluded() {
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingModeLogic.MODE_MINIMAL,
                 Set.of("incompatible"),
                 Collections.emptyMap(),
                 Collections.emptySet());
@@ -76,14 +75,13 @@ public class BlockingModeLogicTest {
     }
 
     @Test
-    public void leavingMinimalRestoresOnlyAutoExcludedApps() {
+    public void leavingExcludedListRestoresOnlyAutoExcludedApps() {
         Map<String, Boolean> applyPrefs = new HashMap<>();
         applyPrefs.put("incompatible", false);
         applyPrefs.put("manual", false);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingModeLogic.MODE_STANDARD,
-                Set.of("incompatible"),
+                Collections.emptySet(),
                 applyPrefs,
                 Set.of("incompatible"));
 
@@ -94,12 +92,11 @@ public class BlockingModeLogicTest {
     }
 
     @Test
-    public void explicitVpnInclusionStopsFutureAutoRestore() {
+    public void explicitVpnInclusionIsNeverOverriddenAndClearsAutoManagement() {
         Map<String, Boolean> applyPrefs = new HashMap<>();
         applyPrefs.put("incompatible", true);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingModeLogic.MODE_MINIMAL,
                 Set.of("incompatible"),
                 applyPrefs,
                 Set.of("incompatible"));
@@ -115,7 +112,6 @@ public class BlockingModeLogicTest {
         applyPrefs.put("browser", false);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingModeLogic.MODE_MINIMAL,
                 Collections.emptySet(),
                 applyPrefs,
                 Set.of("browser"));
@@ -133,24 +129,27 @@ public class BlockingModeLogicTest {
 
     /**
      * The UI must keep an auto-excluded app in the managed set while it stays
-     * excluded, otherwise toggling it off and on again before the next mode
-     * switch silently converts a Minimal-mode auto-exclusion into a permanent
-     * one. This is the pre-sync window: syncVpnExclusions self-heals on the
-     * next mode switch, but only if membership survived until then.
+     * excluded, otherwise it silently converts a compatibility auto-exclusion
+     * into a permanent one. The app is restored only after leaving the DDG list.
      */
     @Test
-    public void reExcludedAutoExcludedAppStillRestoresOnModeSwitch() {
+    public void reExcludedAutoExcludedAppRemainsManagedUntilItLeavesList() {
         Map<String, Boolean> applyPrefs = new HashMap<>();
         applyPrefs.put("incompatible", false);
 
-        // Membership is retained because the resulting apply is false.
-        Set<String> autoExcludedApps = Set.of("incompatible");
-
-        BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingModeLogic.MODE_STANDARD,
+        BlockingModeLogic.ExclusionSyncResult stable = BlockingModeLogic.syncVpnExclusions(
                 Set.of("incompatible"),
                 applyPrefs,
-                autoExcludedApps);
+                Set.of("incompatible"));
+
+        assertTrue(stable.applyFalsePackages.isEmpty());
+        assertTrue(stable.applyRemovals.isEmpty());
+        assertEquals(Set.of("incompatible"), stable.autoExcludedApps);
+
+        BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
+                Collections.emptySet(),
+                applyPrefs,
+                stable.autoExcludedApps);
 
         assertEquals(Set.of("incompatible"), result.applyRemovals);
         assertTrue(result.autoExcludedApps.isEmpty());
@@ -170,7 +169,6 @@ public class BlockingModeLogicTest {
         applyPrefs.put("incompatible", true);
 
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                BlockingModeLogic.MODE_MINIMAL,
                 Set.of("incompatible"),
                 applyPrefs,
                 autoExcludedApps);
