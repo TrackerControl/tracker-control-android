@@ -156,7 +156,6 @@
     <string name="title_rport">Θύρα προορισμού</string>
     <string name="title_ruid">Εφαρμογή προορισμού</string>
     <string name="title_external">Για έναν εξωτερικό διακομιστή, επιλέξτε \'nobody\'</string>
-    <string name="title_lockdown_enabled">Η κυκλοφορία είναι κλειδωμένη</string>
     <string name="title_unmetered_allowed">Επιτρέπεται η χρονικά απεριόριστη κίνηση</string>
     <string name="title_unmetered_blocked">Αποκλείεται η χρονικά απεριόριστη κυκλοφορία</string>
     <string name="title_unmetered_disabled">Οι κανόνες της χρονικά απεριόριστης κυκλοφορίας δεν εφαρμόζονται</string>
@@ -278,6 +277,30 @@
     <string name="setting_strict_blocking">Αυστηρός Αποκλεισμός</string>
     <string name="summary_strict_blocking">Για νέες εφαρμογές, αποκλείστε όσο το δυνατόν περισσότερα δεδομένα μοιράζονται με εταιρείες. Περισσότερες εφαρμογές θα έχουν προβλήματα.</string>
     <string name="strict_blocking_explanation">Συνιστάται για μη ειδικούς η απενεργοποίηση αυτής της επιλογής για τη μείωση προβλημάτων στις εφαρμογές. Ωστόσο, αυτό επιτρέπει ουσιαστική κοινή χρήση δεδομένων με εταιρείες.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Δρομολόγηση μέσω απομακρυσμένου VPN</string>
+    <string name="summary_wg_route_mode">Ποιες εφαρμογές προωθούνται μέσω του απομακρυσμένου VPN. Όσες δεν προωθούνται παραμένουν πλήρως παρακολουθούμενες και φιλτραρισμένες — απλώς συνδέονται από το δίκτυο αυτής της συσκευής.</string>
+    <string name="wg_route_mode_all">Όλες οι εφαρμογές</string>
+    <string name="wg_route_mode_selected">Μόνο επιλεγμένες εφαρμογές</string>
+    <string name="app_route_heading">Απομακρυσμένο VPN</string>
+    <string name="app_route_through">Μέσω του απομακρυσμένου VPN</string>
+    <string name="app_route_through_explanation">Αυτή η εφαρμογή συνδέεται μέσω του απομακρυσμένου VPN σας, το οποίο βλέπει την κίνησή της αντί για το δίκτυό σας.</string>
+    <string name="app_route_direct">Απευθείας από αυτήν τη συσκευή</string>
+    <string name="app_route_direct_explanation">Αυτή η εφαρμογή συνδέεται από το δικό σας δίκτυο. Η παρακολούθηση και ο αποκλεισμός ιχνηλατών εξακολουθούν να ισχύουν. Τα ερωτήματα DNS της πηγαίνουν στον resolver του δικτύου σας αντί του VPN, και βλέπει την πραγματική διεύθυνση της συσκευής — ορισμένες εφαρμογές το χρειάζονται, π.χ. για πρόσβαση σε τοπικές συσκευές ή έλεγχο captive portal.</string>
+    <string name="app_route_unavailable_no_vpn">Δεν έχει ρυθμιστεί απομακρυσμένο VPN, οπότε όλη η κίνηση φεύγει ήδη απευθείας από αυτήν τη συσκευή.</string>
+    <string name="app_route_unavailable_bypassed">Αυτή η εφαρμογή παρακάμπτει πλήρως το TrackerControl, οπότε δεν υπάρχει κίνηση προς δρομολόγηση.</string>
+    <string name="app_route_unavailable_partial_routes">Το απομακρυσμένο VPN σας δεν μεταφέρει όλη την κίνηση (τα AllowedIPs του δεν είναι πλήρης σήραγγα). Η δρομολόγηση ανά εφαρμογή απαιτεί πλήρη σήραγγα, καθώς οι διαδρομές είναι κοινές για όλες τις εφαρμογές.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Προστασία</string>
+    <string name="app_state_protected">Προστατευμένη</string>
+    <string name="app_state_protected_explanation">Οι ιχνηλάτες αποκλείονται και καταγράφονται για αυτήν την εφαρμογή.</string>
+    <string name="app_state_trackers_allowed">Ιχνηλάτες επιτρεπτοί</string>
+    <string name="app_state_trackers_allowed_explanation">Η εφαρμογή συνεχίζει να περνά από το TrackerControl, αλλά οι ιχνηλάτες της ούτε αποκλείονται ούτε καταγράφονται. Χρησιμοποιήστε το αν ο αποκλεισμός χαλάει την εφαρμογή.</string>
+    <string name="app_state_no_internet">Χωρίς Internet</string>
+    <string name="app_state_no_internet_explanation">Όλες οι συνδέσεις αυτής της εφαρμογής αποκλείονται. Μπορείτε επίσης να πατήσετε το εικονίδιο της εφαρμογής στην κύρια οθόνη.</string>
+    <string name="app_state_no_internet_shared_uid">Ισχύει και για το %1$s, το οποίο μοιράζεται αναγνωριστικό χρήστη Android με αυτήν την εφαρμογή.</string>
+    <string name="app_state_bypassed">Παράκαμψη του TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Η εφαρμογή συνδέεται απευθείας, εκτός του TrackerControl. Τίποτα δεν παρακολουθείται ούτε αποκλείεται για αυτήν. Χρησιμοποιήστε το ως έσχατη λύση αν η εφαρμογή εξακολουθεί να μη λειτουργεί.\n\nΣημείωση: Η επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις VPN του Android πρέπει να είναι ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΗ για να λειτουργήσει αυτό.</string>
     <string name="uninstall">Απεγκατάσταση</string>
     <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
     <string name="no_trackers_found_message_disabled">Ενεργοποιήστε το διακόπτη στην κύρια οθόνη και στη συνέχεια ανοίξτε την εφαρμογή για να εντοπίστε ιχνηλάτες</string>
@@ -318,30 +341,4 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Προστασία</string>
-    <string name="app_state_protected">Προστατευμένη</string>
-    <string name="app_state_protected_explanation">Οι ιχνηλάτες αποκλείονται και καταγράφονται για αυτήν την εφαρμογή.</string>
-    <string name="app_state_trackers_allowed">Ιχνηλάτες επιτρεπτοί</string>
-    <string name="app_state_trackers_allowed_explanation">Η εφαρμογή συνεχίζει να περνά από το TrackerControl, αλλά οι ιχνηλάτες της ούτε αποκλείονται ούτε καταγράφονται. Χρησιμοποιήστε το αν ο αποκλεισμός χαλάει την εφαρμογή.</string>
-    <string name="app_state_no_internet">Χωρίς Internet</string>
-    <string name="app_state_no_internet_explanation">Όλες οι συνδέσεις αυτής της εφαρμογής αποκλείονται. Μπορείτε επίσης να πατήσετε το εικονίδιο της εφαρμογής στην κύρια οθόνη.</string>
-    <string name="app_state_no_internet_shared_uid">Ισχύει και για το %1$s, το οποίο μοιράζεται αναγνωριστικό χρήστη Android με αυτήν την εφαρμογή.</string>
-    <string name="app_state_bypassed">Παράκαμψη του TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Η εφαρμογή συνδέεται απευθείας, εκτός του TrackerControl. Τίποτα δεν παρακολουθείται ούτε αποκλείεται για αυτήν. Χρησιμοποιήστε το ως έσχατη λύση αν η εφαρμογή εξακολουθεί να μη λειτουργεί.\n\nΣημείωση: Η επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις VPN του Android πρέπει να είναι ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΗ για να λειτουργήσει αυτό.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Δρομολόγηση μέσω απομακρυσμένου VPN</string>
-    <string name="summary_wg_route_mode">Ποιες εφαρμογές προωθούνται μέσω του απομακρυσμένου VPN. Όσες δεν προωθούνται παραμένουν πλήρως παρακολουθούμενες και φιλτραρισμένες — απλώς συνδέονται από το δίκτυο αυτής της συσκευής.</string>
-    <string name="wg_route_mode_all">Όλες οι εφαρμογές</string>
-    <string name="wg_route_mode_selected">Μόνο επιλεγμένες εφαρμογές</string>
-    <string name="app_route_heading">Απομακρυσμένο VPN</string>
-    <string name="app_route_through">Μέσω του απομακρυσμένου VPN</string>
-    <string name="app_route_through_explanation">Αυτή η εφαρμογή συνδέεται μέσω του απομακρυσμένου VPN σας, το οποίο βλέπει την κίνησή της αντί για το δίκτυό σας.</string>
-    <string name="app_route_direct">Απευθείας από αυτήν τη συσκευή</string>
-    <string name="app_route_direct_explanation">Αυτή η εφαρμογή συνδέεται από το δικό σας δίκτυο. Η παρακολούθηση και ο αποκλεισμός ιχνηλατών εξακολουθούν να ισχύουν. Τα ερωτήματα DNS της πηγαίνουν στον resolver του δικτύου σας αντί του VPN, και βλέπει την πραγματική διεύθυνση της συσκευής — ορισμένες εφαρμογές το χρειάζονται, π.χ. για πρόσβαση σε τοπικές συσκευές ή έλεγχο captive portal.</string>
-    <string name="app_route_unavailable_no_vpn">Δεν έχει ρυθμιστεί απομακρυσμένο VPN, οπότε όλη η κίνηση φεύγει ήδη απευθείας από αυτήν τη συσκευή.</string>
-    <string name="app_route_unavailable_bypassed">Αυτή η εφαρμογή παρακάμπτει πλήρως το TrackerControl, οπότε δεν υπάρχει κίνηση προς δρομολόγηση.</string>
-    <string name="app_route_unavailable_partial_routes">Το απομακρυσμένο VPN σας δεν μεταφέρει όλη την κίνηση (τα AllowedIPs του δεν είναι πλήρης σήραγγα). Η δρομολόγηση ανά εφαρμογή απαιτεί πλήρη σήραγγα, καθώς οι διαδρομές είναι κοινές για όλες τις εφαρμογές.</string>
 </resources>

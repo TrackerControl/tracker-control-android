@@ -153,7 +153,6 @@
     <string name="title_rport">転送先ポート</string>
     <string name="title_ruid">送信先アプリ</string>
     <string name="title_external">外部サーバの場合は「nobody」を選択してください</string>
-    <string name="title_lockdown_enabled">トラフィックは封鎖されています</string>
     <string name="title_unmetered_allowed">定額制のトラフィックは許可されています</string>
     <string name="title_unmetered_blocked">定額制のトラフィックはブロックされています</string>
     <string name="title_unmetered_disabled">定額制のルールは適用されません</string>
@@ -273,6 +272,30 @@
     <string name="setting_strict_blocking">厳格なブロッキング</string>
     <string name="summary_strict_blocking">新しくインストールされたアプリの場合、できるかぎり多くのデータシェアリングをブロックます。アプリが動かなくなる可能性が高くなります。</string>
     <string name="strict_blocking_explanation">十分な知識がある方以外は、アプリの破損を減らすためにこのオプションを無効にすることをお勧めします。ただし、これにより、企業へのいくつかのデータが送信可能になります。</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">リモート VPN 経由で通す</string>
+    <string name="summary_wg_route_mode">どのアプリをリモート VPN 経由で通すか。通さないアプリも引き続き完全に監視・ブロックされ、この端末自身のネットワークから接続するだけです。</string>
+    <string name="wg_route_mode_all">すべてのアプリ</string>
+    <string name="wg_route_mode_selected">選択したアプリのみ</string>
+    <string name="app_route_heading">リモート VPN</string>
+    <string name="app_route_through">リモート VPN 経由</string>
+    <string name="app_route_through_explanation">このアプリはリモート VPN 経由で接続し、あなたのネットワークではなく VPN が通信内容を見ます。</string>
+    <string name="app_route_direct">この端末から直接</string>
+    <string name="app_route_direct_explanation">このアプリはあなた自身のネットワークから接続します。トラッカーの監視とブロックは引き続き適用されます。DNS クエリは VPN ではなくネットワークのリゾルバに送られ、アプリはこの端末の実際のアドレスを見ます。ローカル機器への接続やキャプティブポータルの確認など、これを必要とするアプリもあります。</string>
+    <string name="app_route_unavailable_no_vpn">リモート VPN が設定されていないため、すべての通信はすでにこの端末から直接出ています。</string>
+    <string name="app_route_unavailable_bypassed">このアプリは TrackerControl を完全に迂回するため、通すべき通信がありません。</string>
+    <string name="app_route_unavailable_partial_routes">リモート VPN がすべての通信を運んでいません（AllowedIPs がフルトンネルではありません）。経路はすべてのアプリで共有されるため、アプリ単位の切り替えにはフルトンネルが必要です。</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">保護</string>
+    <string name="app_state_protected">保護中</string>
+    <string name="app_state_protected_explanation">このアプリのトラッカーをブロックし、記録します。</string>
+    <string name="app_state_trackers_allowed">トラッカーを許可</string>
+    <string name="app_state_trackers_allowed_explanation">アプリは引き続き TrackerControl を経由しますが、トラッカーはブロックも記録もされません。ブロックによってアプリが正常に動作しない場合に使用してください。</string>
+    <string name="app_state_no_internet">インターネットなし</string>
+    <string name="app_state_no_internet_explanation">このアプリのすべての接続をブロックします。メイン画面のアプリアイコンをタップしても切り替えられます。</string>
+    <string name="app_state_no_internet_shared_uid">このアプリと Android のユーザー ID を共有する %1$s にも適用されます。</string>
+    <string name="app_state_bypassed">TrackerControl を迂回</string>
+    <string name="app_state_bypassed_explanation">アプリは TrackerControl を経由せず直接接続します。監視もブロックも行われません。アプリがそれでも動作しない場合の最終手段として使用してください。\n\n注意: これを機能させるには、Android の VPN 設定で \"VPN なしの接続をブロック\" を無効にする必要があります。</string>
     <string name="uninstall">アンインストール</string>
     <string name="settings_uninstall">アプリの設定やアンインストール</string>
     <string name="no_trackers_found_message_disabled">メイン画面でスイッチを有効にしてから、アプリを起動してトラッカーを検出します</string>
@@ -313,30 +336,4 @@
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">保護</string>
-    <string name="app_state_protected">保護中</string>
-    <string name="app_state_protected_explanation">このアプリのトラッカーをブロックし、記録します。</string>
-    <string name="app_state_trackers_allowed">トラッカーを許可</string>
-    <string name="app_state_trackers_allowed_explanation">アプリは引き続き TrackerControl を経由しますが、トラッカーはブロックも記録もされません。ブロックによってアプリが正常に動作しない場合に使用してください。</string>
-    <string name="app_state_no_internet">インターネットなし</string>
-    <string name="app_state_no_internet_explanation">このアプリのすべての接続をブロックします。メイン画面のアプリアイコンをタップしても切り替えられます。</string>
-    <string name="app_state_no_internet_shared_uid">このアプリと Android のユーザー ID を共有する %1$s にも適用されます。</string>
-    <string name="app_state_bypassed">TrackerControl を迂回</string>
-    <string name="app_state_bypassed_explanation">アプリは TrackerControl を経由せず直接接続します。監視もブロックも行われません。アプリがそれでも動作しない場合の最終手段として使用してください。\n\n注意: これを機能させるには、Android の VPN 設定で \"VPN なしの接続をブロック\" を無効にする必要があります。</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">リモート VPN 経由で通す</string>
-    <string name="summary_wg_route_mode">どのアプリをリモート VPN 経由で通すか。通さないアプリも引き続き完全に監視・ブロックされ、この端末自身のネットワークから接続するだけです。</string>
-    <string name="wg_route_mode_all">すべてのアプリ</string>
-    <string name="wg_route_mode_selected">選択したアプリのみ</string>
-    <string name="app_route_heading">リモート VPN</string>
-    <string name="app_route_through">リモート VPN 経由</string>
-    <string name="app_route_through_explanation">このアプリはリモート VPN 経由で接続し、あなたのネットワークではなく VPN が通信内容を見ます。</string>
-    <string name="app_route_direct">この端末から直接</string>
-    <string name="app_route_direct_explanation">このアプリはあなた自身のネットワークから接続します。トラッカーの監視とブロックは引き続き適用されます。DNS クエリは VPN ではなくネットワークのリゾルバに送られ、アプリはこの端末の実際のアドレスを見ます。ローカル機器への接続やキャプティブポータルの確認など、これを必要とするアプリもあります。</string>
-    <string name="app_route_unavailable_no_vpn">リモート VPN が設定されていないため、すべての通信はすでにこの端末から直接出ています。</string>
-    <string name="app_route_unavailable_bypassed">このアプリは TrackerControl を完全に迂回するため、通すべき通信がありません。</string>
-    <string name="app_route_unavailable_partial_routes">リモート VPN がすべての通信を運んでいません（AllowedIPs がフルトンネルではありません）。経路はすべてのアプリで共有されるため、アプリ単位の切り替えにはフルトンネルが必要です。</string>
 </resources>

@@ -65,27 +65,6 @@
     <string name="contact_playstore">Google</string>
     <string name="tracker_social">Social</string>
     <string name="tracker_email">Email</string>
-    <string name="uninstall">Dezinstalează</string>
-    <string name="back">Înapoi</string>
-    <string name="forever_free">Întotdeauna Gratuit</string>
-    <string name="blocked">BLOCAT</string>
-    <!-- Onboarding -->
-    <!-- Insights Screen -->
-    <!-- What's New onboarding slide (not translated) -->
-    <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Protecție</string>
-    <string name="app_state_protected">Protejată</string>
-    <string name="app_state_protected_explanation">Urmăritorii sunt blocați și înregistrați pentru această aplicație.</string>
-    <string name="app_state_trackers_allowed">Urmăritori permiși</string>
-    <string name="app_state_trackers_allowed_explanation">Aplicația trece în continuare prin TrackerControl, dar urmăritorii ei nu sunt nici blocați, nici înregistrați. Folosiți această opțiune dacă blocarea strică aplicația.</string>
-    <string name="app_state_no_internet">Fără Internet</string>
-    <string name="app_state_no_internet_explanation">Toate conexiunile acestei aplicații sunt blocate. Puteți atinge și pictograma aplicației din ecranul principal.</string>
-    <string name="app_state_no_internet_shared_uid">Se aplică și pentru %1$s, care împarte un ID de utilizator Android cu această aplicație.</string>
-    <string name="app_state_bypassed">Ocolește TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
-
     <!-- Per-app remote VPN routing -->
     <string name="setting_wg_route_mode">Rutează prin VPN-ul la distanță</string>
     <string name="summary_wg_route_mode">Care aplicații sunt trimise prin VPN-ul la distanță. Celelalte rămân complet monitorizate și filtrate — doar se conectează din rețeaua acestui dispozitiv.</string>
@@ -99,4 +78,23 @@
     <string name="app_route_unavailable_no_vpn">Nu este configurat niciun VPN la distanță, așa că tot traficul iese deja direct de pe acest dispozitiv.</string>
     <string name="app_route_unavailable_bypassed">Această aplicație ocolește complet TrackerControl, deci nu există trafic de rutat.</string>
     <string name="app_route_unavailable_partial_routes">VPN-ul dvs. la distanță nu transportă tot traficul (AllowedIPs nu formează un tunel complet). Rutarea per aplicație necesită un tunel complet, deoarece rutele sunt partajate de toate aplicațiile.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Protecție</string>
+    <string name="app_state_protected">Protejată</string>
+    <string name="app_state_protected_explanation">Urmăritorii sunt blocați și înregistrați pentru această aplicație.</string>
+    <string name="app_state_trackers_allowed">Urmăritori permiși</string>
+    <string name="app_state_trackers_allowed_explanation">Aplicația trece în continuare prin TrackerControl, dar urmăritorii ei nu sunt nici blocați, nici înregistrați. Folosiți această opțiune dacă blocarea strică aplicația.</string>
+    <string name="app_state_no_internet">Fără Internet</string>
+    <string name="app_state_no_internet_explanation">Toate conexiunile acestei aplicații sunt blocate. Puteți atinge și pictograma aplicației din ecranul principal.</string>
+    <string name="app_state_no_internet_shared_uid">Se aplică și pentru %1$s, care împarte un ID de utilizator Android cu această aplicație.</string>
+    <string name="app_state_bypassed">Ocolește TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
+    <string name="uninstall">Dezinstalează</string>
+    <string name="back">Înapoi</string>
+    <string name="forever_free">Întotdeauna Gratuit</string>
+    <string name="blocked">BLOCAT</string>
+    <!-- Onboarding -->
+    <!-- Insights Screen -->
+    <!-- What's New onboarding slide (not translated) -->
+    <!-- Accessibility labels -->
 </resources>

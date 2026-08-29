@@ -177,7 +177,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="title_rport">Cílový port</string>
     <string name="title_ruid">Cílová aplikace</string>
     <string name="title_external">Pro externí server zvolte \'nikdo\'</string>
-    <string name="title_lockdown_enabled">Veškeré přenosy jsou blokovány</string>
     <string name="title_unmetered_allowed">Neomezené přenosy jsou povoleny</string>
     <string name="title_unmetered_blocked">Neomezené přenosy jsou blokovány</string>
     <string name="title_unmetered_disabled">Pravidla pro neomezená připojení nejsou aplikována</string>
@@ -338,6 +337,30 @@ Privátní DNS musí být vypnutá.</string>
     <string name="setting_strict_blocking">Přísné blokování</string>
     <string name="summary_strict_blocking">Blokovat skoro všechno sdílení dat nově nainstalovaných aplikací. Aplikace nemusí fungovat.</string>
     <string name="strict_blocking_explanation">Je doporučeno vypnout tuto možnost pro snížení počtu nefungujících aplikací. Je ale třeba k zakázání veškerého sdílení.</string>
+    <!-- Per-app remote VPN routing -->
+    <string name="setting_wg_route_mode">Směrovat přes vzdálenou VPN</string>
+    <string name="summary_wg_route_mode">Které aplikace se přeposílají přes vzdálenou VPN. Ostatní zůstávají plně sledované a filtrované — jen se připojují ze sítě tohoto zařízení.</string>
+    <string name="wg_route_mode_all">Všechny aplikace</string>
+    <string name="wg_route_mode_selected">Jen vybrané aplikace</string>
+    <string name="app_route_heading">Vzdálená VPN</string>
+    <string name="app_route_through">Přes vzdálenou VPN</string>
+    <string name="app_route_through_explanation">Tato aplikace se připojuje přes vaši vzdálenou VPN, která místo vaší sítě vidí její provoz.</string>
+    <string name="app_route_direct">Přímo z tohoto zařízení</string>
+    <string name="app_route_direct_explanation">Tato aplikace se připojuje z vaší vlastní sítě. Sledování a blokování trackerů dál platí. Její DNS dotazy míří na resolver vaší sítě místo na VPN a aplikace vidí skutečnou adresu tohoto zařízení — některé aplikace to potřebují, třeba k dosažení místních zařízení nebo kontrole captive portálu.</string>
+    <string name="app_route_unavailable_no_vpn">Není nastavena žádná vzdálená VPN, takže veškerý provoz už z tohoto zařízení odchází přímo.</string>
+    <string name="app_route_unavailable_bypassed">Tato aplikace TrackerControl zcela obchází, takže není co směrovat.</string>
+    <string name="app_route_unavailable_partial_routes">Vaše vzdálená VPN nepřenáší veškerý provoz (její AllowedIPs netvoří úplný tunel). Směrování po aplikacích vyžaduje úplný tunel, protože trasy sdílejí všechny aplikace.</string>
+    <!-- Per-app protection state -->
+    <string name="app_state_heading">Ochrana</string>
+    <string name="app_state_protected">Chráněno</string>
+    <string name="app_state_protected_explanation">Trackery jsou pro tuto aplikaci blokovány a zaznamenávány.</string>
+    <string name="app_state_trackers_allowed">Trackery povoleny</string>
+    <string name="app_state_trackers_allowed_explanation">Aplikace dál běží přes TrackerControl, ale její trackery se neblokují ani nezaznamenávají. Použijte, pokud blokování aplikaci rozbíjí.</string>
+    <string name="app_state_no_internet">Bez internetu</string>
+    <string name="app_state_no_internet_explanation">Všechna připojení této aplikace jsou blokována. Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
+    <string name="app_state_no_internet_shared_uid">Platí i pro %1$s, která s touto aplikací sdílí uživatelské ID systému Android.</string>
+    <string name="app_state_bypassed">Obejít TrackerControl</string>
+    <string name="app_state_bypassed_explanation">Aplikace se připojuje přímo, mimo TrackerControl. Nic se pro ni nesleduje ani neblokuje. Použijte jako poslední možnost, pokud aplikace stále nefunguje.\n\nPoznámka: Aby to fungovalo, musí být volba \"Blokovat připojení bez VPN\" v nastavení VPN systému Android VYPNUTA.</string>
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
@@ -392,30 +415,4 @@ Privátní DNS musí být vypnutá.</string>
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
-
-    <!-- Per-app protection state -->
-    <string name="app_state_heading">Ochrana</string>
-    <string name="app_state_protected">Chráněno</string>
-    <string name="app_state_protected_explanation">Trackery jsou pro tuto aplikaci blokovány a zaznamenávány.</string>
-    <string name="app_state_trackers_allowed">Trackery povoleny</string>
-    <string name="app_state_trackers_allowed_explanation">Aplikace dál běží přes TrackerControl, ale její trackery se neblokují ani nezaznamenávají. Použijte, pokud blokování aplikaci rozbíjí.</string>
-    <string name="app_state_no_internet">Bez internetu</string>
-    <string name="app_state_no_internet_explanation">Všechna připojení této aplikace jsou blokována. Můžete také klepnout na ikonu aplikace na hlavní obrazovce.</string>
-    <string name="app_state_no_internet_shared_uid">Platí i pro %1$s, která s touto aplikací sdílí uživatelské ID systému Android.</string>
-    <string name="app_state_bypassed">Obejít TrackerControl</string>
-    <string name="app_state_bypassed_explanation">Aplikace se připojuje přímo, mimo TrackerControl. Nic se pro ni nesleduje ani neblokuje. Použijte jako poslední možnost, pokud aplikace stále nefunguje.\n\nPoznámka: Aby to fungovalo, musí být volba \"Blokovat připojení bez VPN\" v nastavení VPN systému Android VYPNUTA.</string>
-
-    <!-- Per-app remote VPN routing -->
-    <string name="setting_wg_route_mode">Směrovat přes vzdálenou VPN</string>
-    <string name="summary_wg_route_mode">Které aplikace se přeposílají přes vzdálenou VPN. Ostatní zůstávají plně sledované a filtrované — jen se připojují ze sítě tohoto zařízení.</string>
-    <string name="wg_route_mode_all">Všechny aplikace</string>
-    <string name="wg_route_mode_selected">Jen vybrané aplikace</string>
-    <string name="app_route_heading">Vzdálená VPN</string>
-    <string name="app_route_through">Přes vzdálenou VPN</string>
-    <string name="app_route_through_explanation">Tato aplikace se připojuje přes vaši vzdálenou VPN, která místo vaší sítě vidí její provoz.</string>
-    <string name="app_route_direct">Přímo z tohoto zařízení</string>
-    <string name="app_route_direct_explanation">Tato aplikace se připojuje z vaší vlastní sítě. Sledování a blokování trackerů dál platí. Její DNS dotazy míří na resolver vaší sítě místo na VPN a aplikace vidí skutečnou adresu tohoto zařízení — některé aplikace to potřebují, třeba k dosažení místních zařízení nebo kontrole captive portálu.</string>
-    <string name="app_route_unavailable_no_vpn">Není nastavena žádná vzdálená VPN, takže veškerý provoz už z tohoto zařízení odchází přímo.</string>
-    <string name="app_route_unavailable_bypassed">Tato aplikace TrackerControl zcela obchází, takže není co směrovat.</string>
-    <string name="app_route_unavailable_partial_routes">Vaše vzdálená VPN nepřenáší veškerý provoz (její AllowedIPs netvoří úplný tunel). Směrování po aplikacích vyžaduje úplný tunel, protože trasy sdílejí všechny aplikace.</string>
 </resources>
