@@ -19,7 +19,7 @@
         android:padding="16dp">
 
         <!-- Hero Card: Total Tracking Attempts -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -78,7 +78,7 @@
                     tools:text="Your apps tried to contact 34 tracking companies this week!" />
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Protection Stats Row -->
         <LinearLayout
@@ -278,7 +278,7 @@
             android:layout_marginTop="8dp"
             android:visibility="gone" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -296,7 +296,7 @@
                 <!-- Will be populated dynamically -->
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Top Tracker Companies Section (hidden - unclear metric) -->
         <TextView
@@ -308,7 +308,7 @@
             android:layout_marginBottom="8dp"
             android:visibility="gone" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -326,7 +326,7 @@
                 <!-- Will be populated dynamically -->
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Pervasive Trackers Section -->
         <TextView
@@ -337,7 +337,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -354,7 +354,7 @@
                 <!-- Will be populated dynamically -->
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Top Domains Section -->
         <TextView
@@ -365,7 +365,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -382,7 +382,7 @@
                 <!-- Will be populated dynamically -->
 
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Protection Badge -->
 
