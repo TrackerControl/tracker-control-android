@@ -196,7 +196,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_rport">Puerto de destino</string>
     <string name="title_ruid">Aplicación de destino</string>
     <string name="title_external">Para un servidor externo seleccione \'nadie\'</string>
-    <string name="title_lockdown_enabled">El tráfico está bloqueado</string>
     <string name="title_unmetered_allowed">Se permite el tráfico no medido</string>
     <string name="title_unmetered_blocked">El tráfico no medido está bloqueado</string>
     <string name="title_unmetered_disabled">No se aplican las reglas de no medición</string>
@@ -275,7 +274,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="tab_countries">Países</string>
     <string name="tab_actions">Mis datos</string>
     <string name="tracker_name">Nombre del rastreador</string>
-    <string name="internet_access">Acceso a Internet</string>
     <string name="app_info">Gestionar App</string>
     <!-- Actions -->
     <string name="block_tracking">Bloquear rastreadores</string>
@@ -353,6 +351,8 @@ Atentamente,\n\n]]></string>
     <string name="setting_strict_blocking">Bloqueo estricto</string>
     <string name="summary_strict_blocking">Para apps recién instaladas, bloquea tantos datos compartidos con empresas como sea posible. Más apps se romperán.</string>
     <string name="strict_blocking_explanation">Se recomienda a los no expertos deshabilitar esta opción para evitar el mal funcionamiento de las apps. Sin embargo, esto permite compartir lo esencial con las empresas.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Ajustes de la aplicación &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Activa el interruptor en la pantalla principal, y después ejecuta la aplicación para encontrar rastreadores</string>
