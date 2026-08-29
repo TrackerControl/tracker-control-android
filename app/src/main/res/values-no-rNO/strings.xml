@@ -156,7 +156,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="title_rport">Destinasjonsport</string>
     <string name="title_ruid">Destinasjonsapp</string>
     <string name="title_external">For en ekstern tjener, velg «ingen»</string>
-    <string name="title_lockdown_enabled">Trafikk er blokkert</string>
     <string name="title_unmetered_allowed">Ikke-forbruksmålt trafikk er tillatt</string>
     <string name="title_unmetered_blocked">Ikke-forbruksmålt trafikk er blokkert</string>
     <string name="title_unmetered_disabled">Regler for ikke-forbruksmålt trafikk er ikke i bruk</string>
@@ -235,7 +234,6 @@ Internett-trafikken din blir ikke sendt til en ekstern VPN-server.</string>
     <string name="tab_countries">Land</string>
     <string name="tab_actions">Mine data</string>
     <string name="tracker_name">Sporernavn</string>
-    <string name="internet_access">Internett-tilgang</string>
     <string name="app_info">Behandle app</string>
     <!-- Actions -->
     <string name="block_tracking">Block sporere</string>
@@ -313,6 +311,8 @@ Vennlig hilsen,\n\n]]></string>
     <string name="setting_strict_blocking">Streng blokkering</string>
     <string name="summary_strict_blocking">For nylig installerte apper kan du blokkere så mye datadeling med bedrifter som mulig. Flere apper vil slutte å fungere.</string>
     <string name="strict_blocking_explanation">Det anbefales at ikke-eksperter deaktiverer denne instillingen for å redusere appfeil. Dette tillater imidlertid noe grunnleggende deling med selskaper.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Avinstaller</string>
     <string name="settings_uninstall">Appinnstillinger &amp; Avinstaller</string>
     <string name="no_trackers_found_message_disabled">Aktiver bryter på hovedskjermen, så start appen for å finne sporere</string>
