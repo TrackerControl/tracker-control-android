@@ -217,7 +217,6 @@
     <string name="title_rport">Cổng đích</string>
     <string name="title_ruid">Ứng dụng đích</string>
     <string name="title_external">Đối với một máy chủ ngoài chọn \'nobody\'</string>
-    <string name="title_lockdown_enabled">Lưu lượng bị khóa chặt</string>
     <string name="title_unmetered_allowed">Lưu lượng không trả phí được cho phép</string>
     <string name="title_unmetered_blocked">Lưu lượng không trả phí bị chặn</string>
     <string name="title_unmetered_disabled">Các quy tắc không trả phí không được áp dụng</string>
@@ -294,7 +293,6 @@
     <string name="tab_countries">Quốc gia</string>
     <string name="tab_actions">Dữ liệu của tôi</string>
     <string name="tracker_name">Tên trình theo dõi</string>
-    <string name="internet_access">Truy cập Internet</string>
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
     <string name="block_tracking">Chặn trình theo dõi</string>
@@ -335,6 +333,8 @@
     <string name="setting_strict_blocking">Chặn chặt chẽ</string>
     <string name="summary_strict_blocking">Đối với các ứng dụng mới cài đặt, chặn việc chia sẻ dữ liệu với các công ty nhiều nhất có thể. Nhiều ứng dụng hơn sẽ bị hỏng.</string>
     <string name="strict_blocking_explanation">Chúng tôi khuyên những người không phải chuyên gia tắt tuỳ chọn này để giảm sự hỏng hóc trong các ứng dụng. Tuy nhiên, việc này sẽ cho phép một ít sự chia sẻ cần thiết với các công ty.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Gỡ cài đặt</string>
     <string name="settings_uninstall">Cài đặt của ứng dụng &amp; Gỡ cài đặt</string>
     <string name="no_trackers_found_message_disabled">Bật công tắc trong màn hình chính, sau đó chạy ứng dụng để tìm trình theo dõi</string>
