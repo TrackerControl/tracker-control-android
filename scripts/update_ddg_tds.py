@@ -9,6 +9,16 @@ entities the app never touches, so the committed asset
 ``app/src/main/assets/duckduckgo-android-tds.json`` keeps only the consumed
 fields: ``{ owner: {name, displayName}, default }`` per tracker (≈100 KB).
 
+One class of upstream ``rules`` does survive the strip: under a ``default:
+"block"`` tracker, a rule whose regex is a bare hostname (no path, no wildcard)
+with ``action: "ignore"`` and no exception/option context is DDG's curated
+breakage fix at a granularity a DNS-level blocker can honour (e.g.
+``oauth.reddit.com`` under blocked ``reddit.com``). Each such hostname is
+emitted as its own ``default: "ignore"`` entry; ``TrackerList.findTracker``
+checks the exact hostname before walking parent domains, so the exception wins
+without any loader changes. Everything else in ``rules`` is URL-path- or
+context-scoped and is invisible to DNS blocking, so it stays dropped.
+
 This script fetches the current TDS, strips it to those fields, validates that
 every entry still exposes a string ``default`` and ``owner.displayName`` (the
 Java loader aborts the whole list otherwise), and rewrites the asset only when
@@ -35,6 +45,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import urllib.request
 from pathlib import Path
@@ -46,6 +57,28 @@ ASSET_PATH = REPO_ROOT / "app" / "src" / "main" / "assets" / "duckduckgo-android
 
 # Guard against an obviously-broken/truncated response.
 MIN_TRACKERS = 100
+
+# A TDS rule regex that is nothing but a literal hostname: label characters
+# joined by escaped dots. Anything with a path (``\/``), a wildcard, a
+# character class, or an alternation does not match and is dropped as before.
+HOSTNAME_ONLY_RULE = re.compile(r"^[a-z0-9-]+(?:\\\.[a-z0-9-]+)+$")
+
+
+def hostname_exception(rule) -> str | None:
+    """The hostname a rule exempts from blocking, or None.
+
+    Only an unconditional ``action: "ignore"`` rule counts: one carrying
+    ``exceptions`` or ``options`` applies in site contexts a DNS-level blocker
+    cannot see, so honouring it unconditionally would under-block.
+    """
+    if not isinstance(rule, dict) or rule.get("action") != "ignore":
+        return None
+    if rule.get("exceptions") or rule.get("options"):
+        return None
+    pattern = rule.get("rule")
+    if not isinstance(pattern, str) or not HOSTNAME_ONLY_RULE.match(pattern):
+        return None
+    return pattern.replace("\\.", ".")
 
 
 def fetch(url: str) -> str:
@@ -76,6 +109,7 @@ def strip(raw: str) -> tuple[str, dict]:
         )
 
     stripped: dict = {}
+    exceptions: dict = {}
     for domain, entry in trackers.items():
         if not isinstance(entry, dict):
             raise RuntimeError(f"tracker '{domain}' is not an object")
@@ -89,11 +123,27 @@ def strip(raw: str) -> tuple[str, dict]:
             "owner": {"name": owner.get("name"), "displayName": owner["displayName"]},
             "default": default,
         }
+        if default == "block":
+            for rule in entry.get("rules") or []:
+                host = hostname_exception(rule)
+                if host is not None:
+                    exceptions[host] = {
+                        "owner": {"name": owner.get("name"), "displayName": owner["displayName"]},
+                        "default": "ignore",
+                    }
+
+    # Breakage exceptions become ordinary entries; a hostname upstream already
+    # lists as a tracker in its own right keeps its upstream default.
+    emitted_exceptions = 0
+    for host, entry in exceptions.items():
+        if host not in stripped:
+            stripped[host] = entry
+            emitted_exceptions += 1
 
     asset = {"version": root.get("version"), "trackers": stripped}
     # Compact + sorted keys: deterministic output so future diffs are meaningful.
     text = json.dumps(asset, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return text, {"trackers": len(stripped)}
+    return text, {"trackers": len(stripped), "exceptions": emitted_exceptions}
 
 
 def main() -> int:
@@ -134,6 +184,7 @@ def main() -> int:
 
     print(f"Fetched from: {source}")
     print(f"  trackers (after field-strip): {stats['trackers']}")
+    print(f"  of which hostname-level breakage exceptions: {stats['exceptions']}")
 
     if args.check:
         print("Validation OK (--check: asset not written).")
