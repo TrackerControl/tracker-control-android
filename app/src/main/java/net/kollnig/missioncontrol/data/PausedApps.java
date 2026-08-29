@@ -227,6 +227,37 @@ public final class PausedApps {
         return result;
     }
 
+    /**
+     * The values the "apply" preferences would hold with every pause reverted.
+     *
+     * A pause is a temporary state that lives only in this device's snapshot
+     * store, which is deliberately not part of a settings backup. Exporting the
+     * live values would therefore bake a pause into the backup permanently,
+     * with nothing left to revert it on import.
+     *
+     * @return the overriding values only, keyed by package; empty when nothing
+     * is paused
+     */
+    public static Map<String, Object> applyValuesWithoutPauses(Context context) {
+        Context appContext = context.getApplicationContext();
+        SharedPreferences paused = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences apply = appContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
+
+        Map<String, Object> overrides = new HashMap<>();
+        for (Map.Entry<String, ?> entry : paused.getAll().entrySet()) {
+            if (!(entry.getValue() instanceof String))
+                continue;
+
+            Snapshot snapshot = readSnapshot((String) entry.getValue());
+            // Same reasoning as the revert path: a true value means someone
+            // else changed this package after the pause, so the snapshot is
+            // stale and the live value is the one worth exporting.
+            if (snapshot != null && !apply.getBoolean(entry.getKey(), true))
+                overrides.put(entry.getKey(), snapshot.previousApply);
+        }
+        return overrides;
+    }
+
     private static Snapshot getSnapshot(Context context, String packageName) {
         if (packageName == null)
             return null;

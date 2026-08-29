@@ -100,4 +100,33 @@ public class PausedAppsTest {
 
         assertEquals(10, PausedApps.getConfiguredDurationMinutes(context));
     }
+
+    @Test
+    public void exportViewRestoresPausedApplyValue() {
+        apply.edit().putBoolean("com.example.app", false).commit();
+        paused.edit().putString("com.example.app",
+                (System.currentTimeMillis() + 600_000L) + "|1").commit();
+
+        assertEquals(Boolean.TRUE,
+                PausedApps.applyValuesWithoutPauses(context).get("com.example.app"));
+    }
+
+    @Test
+    public void exportViewKeepsAValueChangedDuringThePause() {
+        // Another writer re-included the app while it was paused. The snapshot
+        // is stale, so the live value is the one worth exporting.
+        apply.edit().putBoolean("com.example.app", true).commit();
+        paused.edit().putString("com.example.app",
+                (System.currentTimeMillis() + 600_000L) + "|0").commit();
+
+        assertFalse(PausedApps.applyValuesWithoutPauses(context)
+                .containsKey("com.example.app"));
+    }
+
+    @Test
+    public void exportViewIsEmptyWithoutPauses() {
+        apply.edit().putBoolean("com.example.app", false).commit();
+
+        assertTrue(PausedApps.applyValuesWithoutPauses(context).isEmpty());
+    }
 }
