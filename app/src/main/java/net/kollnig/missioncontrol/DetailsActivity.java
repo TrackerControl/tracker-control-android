@@ -29,6 +29,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -120,14 +121,25 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Receive about details
+        Intent intent = getIntent();
+        appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
+
+        // The whole screen is about one app, and every tab needs its package
+        // name. This activity is exported, so an intent without one can arrive
+        // from anywhere; without this the Trackers tab crashes on a null
+        // WorkManager tag. There is nothing to show, so close instead.
+        if (TextUtils.isEmpty(appPackageName)) {
+            finish();
+            return;
+        }
+
         // Edge-to-edge is enabled globally by ApplicationEx via EdgeToEdge.enable()
         setContentView(R.layout.activity_details);
 
         running = true;
 
-        // Receive about details
-        Intent intent = getIntent();
-        appPackageName = intent.getStringExtra(INTENT_EXTRA_APP_PACKAGENAME);
         appUid = intent.getIntExtra(INTENT_EXTRA_APP_UID, -1);
         String appName = intent.getStringExtra(INTENT_EXTRA_APP_NAME);
         // Opening Details means the user has found where to adjust protection.
