@@ -11,12 +11,17 @@ package eu.faircode.netguard;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Xml;
 
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Set;
+
+import org.xmlpull.v1.XmlSerializer;
 
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
@@ -64,5 +69,31 @@ public class ActivitySettingsTest {
         assertFalse(trackerBlocklist.hasSubset(1001));
 
         assertFalse(internetBlocklist.resolvePendingPackages(context));
+    }
+
+    @Test
+    public void exportCarriesAnUnresolvedPackagesSubset() throws Exception {
+        String packageName = "com.example.importedlater";
+        SharedPreferences prefs = context
+                .getSharedPreferences(TrackerBlocklist.PREF_BLOCKLIST, Context.MODE_PRIVATE);
+        prefs.edit()
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + packageName,
+                        Collections.singleton("Advertising | Example"))
+                .commit();
+
+        StringWriter writer = new StringWriter();
+        XmlSerializer serializer = Xml.newSerializer();
+        serializer.setOutput(writer);
+        serializer.startDocument("UTF-8", true);
+        serializer.startTag(null, "application");
+        // A pending entry is keyed by package name on both sides, so it is
+        // exported verbatim rather than dropped for failing to parse as a UID.
+        ActivitySettings.exportTrackerSubset(prefs, serializer, packageName, packageName);
+        serializer.endTag(null, "application");
+        serializer.endDocument();
+
+        String xml = writer.toString();
+        assertTrue(xml, xml.contains("APPS_BLOCKLIST_PACKAGES_KEY_" + packageName));
+        assertTrue(xml, xml.contains("Advertising | Example"));
     }
 }

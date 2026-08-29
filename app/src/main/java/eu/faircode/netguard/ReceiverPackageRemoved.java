@@ -28,17 +28,14 @@ import android.util.Log;
 import androidx.core.app.NotificationManagerCompat;
 
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.PackageUids;
 import net.kollnig.missioncontrol.data.PausedApps;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 
 public class ReceiverPackageRemoved extends BroadcastReceiver {
     private static final String TAG = "TrackerControl.Receiver";
 
-    interface PackageUidLookup {
-        String[] getPackagesForUid(int uid);
-    }
-
-    static boolean shouldClearUid(PackageUidLookup lookup, int uid) {
+    static boolean shouldClearUid(PackageUids.Lookup lookup, int uid) {
         // UID-keyed state may still be in use by another package of a shared UID.
         // Clear it only once the UID has no package left, otherwise a reinstall
         // silently comes back with the old app's settings.
@@ -53,7 +50,7 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
         }
     }
 
-    static void clearUidState(Context context, int uid, PackageUidLookup lookup) {
+    static void clearUidState(Context context, int uid, PackageUids.Lookup lookup) {
         if (!shouldClearUid(lookup, uid))
             return;
 
@@ -66,8 +63,10 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
             internetBlocklist.unblock(context, uid);
 
         TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(context);
-        trackerBlocklist.clear(uid);
-        trackerBlocklist.saveSettings(context);
+        // saveSettings rewrites every key in the preferences file, so only pay
+        // for it when the uid actually had tracker state.
+        if (trackerBlocklist.clear(uid))
+            trackerBlocklist.saveSettings(context);
 
         NotificationManagerCompat.from(context).cancel(uid); // installed notification
         NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
@@ -84,12 +83,7 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
             String packageName = intent.getData() == null ? null : intent.getData().getSchemeSpecificPart();
             PausedApps.onPackageRemoved(context, packageName, uid);
             if (uid > 0) {
-                clearUidState(context, uid, new PackageUidLookup() {
-                    @Override
-                    public String[] getPackagesForUid(int uid) {
-                        return context.getPackageManager().getPackagesForUid(uid);
-                    }
-                });
+                clearUidState(context, uid, PackageUids.lookup(context));
             }
         }
     }

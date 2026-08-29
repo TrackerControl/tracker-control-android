@@ -3428,13 +3428,26 @@ public class ServiceSinkhole extends VpnService {
             Rule.clearCache(context);
 
             InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
-            boolean internetChanged = internetBlocklist.resolvePendingPackages(context);
             TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-            boolean trackerChanged = b.resolvePendingPackages(context);
+            boolean internetChanged = false;
+            boolean trackerChanged = false;
 
+            // A replaced package was already installed, so it resolved at load
+            // time and its uid does not change on update. Only a genuinely new
+            // install can claim a pending entry.
             if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
+
+                // Resolve only the package this broadcast is about. Sweeping
+                // every pending entry would cost a PackageManager call each,
+                // on every install, for entries that may never resolve — this
+                // runs on the service's main thread with the screen off.
+                String packageName = (intent.getData() == null
+                        ? null : intent.getData().getSchemeSpecificPart());
+                internetChanged = internetBlocklist.resolvePendingPackage(context, packageName);
+                trackerChanged = b.resolvePendingPackage(context, packageName);
+
                 if (uid > -1) {
                     // Set tracker defaults based on blocking mode
                     trackerChanged |= b.ensureDefaults(uid, BlockingMode.isStrictMode(context));
