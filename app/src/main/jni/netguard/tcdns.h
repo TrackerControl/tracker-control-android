@@ -54,6 +54,15 @@ _Static_assert(offsetof(tcdns_callbacks, log) == (sizeof(void *) == 8 ? 40 : 20)
 size_t tcdns_process_response(uint8_t *data, size_t len,
                                const tcdns_callbacks *cb, void *ctx);
 
+/*
+ * Processes the visible prefix of a DNS-over-TCP message in place. The
+ * caller must not shrink the buffer on a non-TCDNS_UNCHANGED return. A return
+ * value other than TCDNS_UNCHANGED means "blanked in place; keep blanking the
+ * rest of this frame"; the caller must keep forwarding the original length.
+ */
+size_t tcdns_process_partial_response(uint8_t *data, size_t len,
+                                       const tcdns_callbacks *cb, void *ctx);
+
 uint32_t tcdns_abi_version(void);
 
 #endif /* TCDNS_H */

@@ -53,6 +53,79 @@ pub fn process_response(msg: &mut [u8], policy: &dyn DnsPolicy) -> Outcome {
     apply_parsed(msg, parsed, policy)
 }
 
+/// Applies blocking policy to the visible prefix of a DNS-over-TCP response
+/// whose remainder may not have been read yet, mutating it in place without
+/// ever shortening it: earlier bytes of the frame are already on the wire, so
+/// its length can no longer change.
+///
+/// When the answer section happens to be complete the decision is exactly the
+/// one `process_response` would make, SVCB included. When it is truncated the
+/// decision falls back to the question section alone: answers validated before
+/// the truncation point are still recorded, but SVCB/HTTPS records cannot be
+/// detected, so SVCB-triggered blanking is unavailable for such frames.
+///
+/// That fallback deliberately relaxes one rule of the complete path. Nothing
+/// here can tell a *truncated* answer section from a *malformed* one — both
+/// surface as `None` — so a malformed response `process_response` would leave
+/// alone is blanked here whenever its question names a blocked domain. The
+/// blocklist gate is unchanged, so this can only ever act on a domain the
+/// complete path would also have blocked; it is never a wider policy, only a
+/// less forgiving one about malformed input.
+///
+/// The block is not airtight in the other direction either: the header and the
+/// whole question must lie inside the visible prefix, or `read_question_layout`
+/// yields nothing and the frame is forwarded untouched. A read split inside the
+/// first ~12 + qname bytes of a response therefore blocks nothing. Closing that
+/// would need the reassembly buffer this path exists to avoid.
+///
+/// On a blanking hit the bytes after the question are zeroed, so a client that
+/// ignores the cleared `ancount` cannot recover the original answers. The
+/// returned `new_len` reports where the message proper ends; the caller must
+/// keep forwarding the original length.
+pub fn process_partial_response(msg: &mut [u8], policy: &dyn DnsPolicy) -> Outcome {
+    let parsed = message::parse_answers_incrementally(msg, |answer| {
+        policy.record_answer(&answer.qname, &answer.aname, &answer.resource, answer.ttl);
+    });
+
+    // A fully parsed message is decided exactly as the complete path decides
+    // it; only a truncated one loses the answer-derived signals.
+    let (qname, qtype, question_end, contains_svcb) = match parsed {
+        Some(parsed) => (
+            parsed.qname,
+            parsed.qtype,
+            parsed.question_end,
+            parsed.contains_svcb,
+        ),
+        None => {
+            let Some(layout) = message::read_question_layout(msg) else {
+                return Outcome::Unchanged;
+            };
+            (layout.qname, layout.qtype, layout.question_end, false)
+        }
+    };
+
+    // An empty root qname is valid DNS syntax but is not a policy subject.
+    // In particular, do not call a Java-backed policy with an empty string.
+    if qname.is_empty() {
+        return Outcome::Unchanged;
+    }
+    if !contains_svcb && !policy.is_domain_blocked(&qname) {
+        return Outcome::Unchanged;
+    }
+
+    let rcode = policy.blocked_rcode() & 0x0f;
+    message::blank_dns_message(msg, rcode);
+    if let Some(tail) = msg.get_mut(question_end..) {
+        tail.fill(0);
+    }
+    Outcome::Blanked {
+        new_len: question_end,
+        qname,
+        qtype,
+        rcode,
+    }
+}
+
 fn apply_parsed(msg: &mut [u8], parsed: message::DnsMessage, policy: &dyn DnsPolicy) -> Outcome {
     // An empty root qname is valid DNS syntax but is not a policy subject.
     // In particular, do not call a Java-backed policy with an empty string.

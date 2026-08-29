@@ -105,3 +105,13 @@ void parse_dns_response(const struct arguments *args, const struct ng_session *s
     if (new_len != TCDNS_UNCHANGED)
         *datalen = new_len;
 }
+
+void parse_dns_partial_response(const struct arguments *args, const struct ng_session *s,
+                                uint8_t *data, size_t *datalen, int *blanked) {
+    struct tcdns_ctx ctx = { .args = args, .s = s };
+    tcdns_callbacks cb = TCDNS_CALLBACKS_INIT;
+    *blanked = 0;
+    size_t result = tcdns_process_partial_response(data, *datalen, &cb, &ctx);
+    if (result != TCDNS_UNCHANGED)
+        *blanked = 1;
+}

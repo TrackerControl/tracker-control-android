@@ -215,9 +215,11 @@ tasks.register('wgbridgeBuild') {
         }
 
         // wgbridge-rs/src/tcdns_capi.rs defines the #[no_mangle] pub extern
-        // "C" symbols (tcdns_process_response, tcdns_abi_version — see
-        // app/src/main/jni/netguard/tcdns.h) in the cdylib crate itself, so
-        // rustc exports them by construction. libnetguard.so links against
+        // "C" symbols (tcdns_process_response, tcdns_process_partial_response,
+        // tcdns_abi_version — see app/src/main/jni/netguard/tcdns.h) in the
+        // cdylib crate itself, so rustc exports them by construction. Every
+        // symbol tcdns.h declares belongs in the list below: a new export that
+        // is not listed is unguarded. libnetguard.so links against
         // libwgbridge.so for them (the IMPORTED_NO_SONAME wgbridge target in
         // app/CMakeLists.txt) and calls them without a null check, so a future
         // LTO / --gc-sections change that dropped one would silently build but
@@ -226,7 +228,9 @@ tasks.register('wgbridgeBuild') {
         // tc_policy_* deliberately stay out of this list: policy.c resolves
         // them with dlsym and degrades to a conservative all-tunnel policy when
         // they are absent, so a missing symbol there is survivable by design.
-        def requiredTcdnsSymbols = ['tcdns_process_response', 'tcdns_abi_version']
+        def requiredTcdnsSymbols = ['tcdns_process_response',
+                                    'tcdns_process_partial_response',
+                                    'tcdns_abi_version']
         def llvmNm = "${findNdkDirectory().absolutePath}/toolchains/llvm/prebuilt/${hostTag}/bin/llvm-nm"
         wgbridgeAbis.each { abi ->
             def lib = file("$wgbridgeOutDir/$abi/libwgbridge.so")

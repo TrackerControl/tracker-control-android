@@ -246,10 +246,19 @@ struct dns_stream_parse_ctx {
     const struct ng_session *s;
 };
 
-// Adapter matching dns_frame_parse_fn: parse_dns_response() may blank the
-// payload in place and may shrink it (blocking rewrite).
-static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen) {
+// Adapter matching dns_frame_parse_fn: complete frames use
+// parse_dns_response() and may shrink; partial frames use the in-place path
+// and report whether their later continuation bytes must be blanked.
+static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen,
+                                  int partial, int *blank_rest) {
     struct dns_stream_parse_ctx *pctx = (struct dns_stream_parse_ctx *) ctx;
+    if (partial != 0) {
+        int blanked = 0;
+        parse_dns_partial_response(pctx->args, pctx->s, data, &dlen, &blanked);
+        *blank_rest = blanked;
+        return dlen;
+    }
+
     size_t len = dlen;
     parse_dns_response(pctx->args, pctx->s, data, &len);
     return len;
@@ -625,9 +634,9 @@ void check_tcp_socket(const struct arguments *args,
                             // the split-frame cursor across reads. Frames lying
                             // wholly inside this buffer may be shortened (none
                             // of it has been forwarded yet). Split frames stay
-                            // aligned, but payload continuation bytes are
-                            // forwarded without parsing until buffered
-                            // reassembly exists.
+                            // aligned and are blanked in place when blocked;
+                            // their continuation bytes are blanked as they
+                            // pass through, without changing byte counts.
                             struct dns_stream_parse_ctx pctx = {.args = args, .s = s};
                             bytes = (ssize_t) dns_frame_process_stream(
                                     buffer, (size_t) bytes, &s->tcp.dns_stream,
@@ -810,9 +819,7 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.checkedHostname = 0;
             s->tcp.tls_data = NULL;
             s->tcp.tls_len = 0;
-            s->tcp.dns_stream.frame_remaining = 0;
-            s->tcp.dns_stream.prefix_hi = 0;
-            s->tcp.dns_stream.have_prefix_hi = 0;
+            memset(&s->tcp.dns_stream, 0, sizeof(s->tcp.dns_stream));
             s->next = NULL;
 
             if (datalen) {
