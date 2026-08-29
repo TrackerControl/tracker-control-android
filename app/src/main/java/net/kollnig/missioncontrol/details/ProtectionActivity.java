@@ -144,9 +144,6 @@ public class ProtectionActivity extends AppCompatActivity {
             AppProtectionWriter.applyManual(this, appPackageName, appUid,
                     AppProtectionState.of(selected));
             updateProtectionState();
-            // A bypassed app has no traffic to route, so the choice above can
-            // make this one appear or disappear.
-            updateRouteState();
         });
 
         AppBarLayout appBar = findViewById(R.id.appbar);
@@ -170,7 +167,6 @@ public class ProtectionActivity extends AppCompatActivity {
         tvLockdownNote.setVisibility(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 ? View.VISIBLE : View.GONE);
         updateProtectionState();
-        updateRouteState();
     }
 
     @Override
@@ -178,7 +174,6 @@ public class ProtectionActivity extends AppCompatActivity {
         super.onResume();
         if (stateGroup != null) {
             updateProtectionState();
-            updateRouteState();
             loadBlockedTrackers();
         }
     }
@@ -253,6 +248,12 @@ public class ProtectionActivity extends AppCompatActivity {
                     noInternetExplanation,
                     getString(R.string.app_state_no_internet_shared_uid, packageLabels(sharedPackages)));
         tvStateNoInternetDesc.setText(noInternetExplanation);
+
+        // A pause, a resume, an expiry and the radio above all write the same
+        // "apply" preference the routing control reads: a bypassed app has no
+        // traffic to route. Rebinding here means no caller can change the
+        // protection state and leave a stale routing control behind.
+        updateRouteState();
     }
 
     /**
