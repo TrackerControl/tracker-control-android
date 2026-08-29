@@ -201,7 +201,10 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if (holder instanceof VHSection && row instanceof TrackerFeedLogic.SectionRow) {
             bindSection((VHSection) holder, ((TrackerFeedLogic.SectionRow) row).category);
         } else if (holder instanceof VHCompany && row instanceof TrackerFeedLogic.CompanyRow) {
-            bindCompany((VHCompany) holder, (TrackerFeedLogic.CompanyRow) row);
+            Object nextRow = position >= 0 && position < mRows.size() ? mRows.get(position) : null;
+            boolean showDivider = nextRow instanceof TrackerFeedLogic.CompanyRow
+                    || nextRow instanceof TrackerFeedLogic.ShowMoreRow;
+            bindCompany((VHCompany) holder, (TrackerFeedLogic.CompanyRow) row, showDivider);
         } else if (holder instanceof VHShowMore && row instanceof TrackerFeedLogic.ShowMoreRow) {
             bindShowMore((VHShowMore) holder, (TrackerFeedLogic.ShowMoreRow) row);
         }
@@ -285,7 +288,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    private void bindCompany(VHCompany holder, TrackerFeedLogic.CompanyRow row) {
+    private void bindCompany(VHCompany holder, TrackerFeedLogic.CompanyRow row, boolean showDivider) {
+        holder.mDividerCompany.setVisibility(showDivider ? View.VISIBLE : View.GONE);
         final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
         final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
         final Tracker tracker = row.tracker;
@@ -616,6 +620,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final TextView mUncertainNote;
         final MaterialSwitch mSwitchAllowCompany;
         final TextView mSharedIpNote;
+        final View mDividerCompany;
 
         VHCompany(View view) {
             super(view);
@@ -628,6 +633,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mUncertainNote = view.findViewById(R.id.tvUncertainNote);
             mSwitchAllowCompany = view.findViewById(R.id.switchAllowCompany);
             mSharedIpNote = view.findViewById(R.id.tvSharedIpNote);
+            mDividerCompany = view.findViewById(R.id.dividerCompany);
         }
     }
 

@@ -457,7 +457,9 @@ public class ProtectionActivity extends AppCompatActivity {
             });
 
             blockedCategories.addView(section);
-            for (Tracker tracker : category.getChildren()) {
+            List<Tracker> trackers = category.getChildren();
+            for (int trackerIndex = 0; trackerIndex < trackers.size(); trackerIndex++) {
+                Tracker tracker = trackers.get(trackerIndex);
                 View company = getLayoutInflater().inflate(R.layout.item_tracker_feed_company,
                         blockedCategories, false);
                 TextView companyName = company.findViewById(R.id.tvCompany);
@@ -466,6 +468,9 @@ public class ProtectionActivity extends AppCompatActivity {
                 View expand = company.findViewById(R.id.ivExpand);
                 View expanded = company.findViewById(R.id.layoutExpanded);
                 MaterialSwitch companySwitch = company.findViewById(R.id.switchAllowCompany);
+                View dividerCompany = company.findViewById(R.id.dividerCompany);
+                dividerCompany.setVisibility(trackerIndex == trackers.size() - 1
+                        ? View.GONE : View.VISIBLE);
                 TrackerStatusLogic.Result status = TrackerStatusLogic.resolve(
                         trackerProtectionEnabled,
                         minimal,
