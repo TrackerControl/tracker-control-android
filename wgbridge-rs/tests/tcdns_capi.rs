@@ -1,9 +1,8 @@
-#![cfg(feature = "capi")]
 
 use std::ffi::{c_char, c_void, CStr};
 use std::mem::{offset_of, size_of};
 
-use tcdns::capi::{
+use wgbridge::tcdns_capi::{
     tcdns_abi_version, tcdns_process_response, BlockedRcode, IsDomainBlocked, OnBlanked,
     RecordAnswer, TcdnsCallbacks, TCDNS_ABI_VERSION, TCDNS_UNCHANGED,
 };
