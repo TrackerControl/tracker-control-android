@@ -3,17 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="16dp">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/cardNotSupported"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="@dimen/z_card">
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -47,47 +46,51 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
     <!--
       Plain intro text in the same shape as the Countries tab's lead-in: a
-      24sp heading and a paragraph, no card. Horizontal insets come from the
-      RecyclerView's own 16dp padding, so this adds none of its own.
+      heading and paragraph, no card. The feed is full-bleed, so these views
+      carry their own horizontal insets.
     -->
     <TextView
         android:id="@+id/tvTrackersIntroTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:accessibilityHeading="true"
         android:gravity="bottom"
         android:minHeight="24dp"
         android:text="@string/block_tracking"
         android:textColor="?android:textColorPrimary"
-        android:textSize="24sp" />
+        android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
     <TextView
         android:id="@+id/tvTrackersIntroText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/block_tracking_description" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:text="@string/block_tracking_description"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+        android:textColor="?android:textColorSecondary" />
 
     <!--
-      Two summary rows only. Protection and remote-VPN routing share one row
+      Two flat summary rows only. Protection and remote-VPN routing share one row
       because both describe how this app's traffic is handled; the tracker
       library report gets its own row because it comes from the app's code
       rather than from observed traffic. Both open a dedicated screen, so the
       per-company list below starts as close to the top as possible.
     -->
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/cardAppControls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        app:cardElevation="1dp"
-        app:cardMaxElevation="@dimen/z_card">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -156,6 +159,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:background="?android:attr/listDivider" />
 
             <LinearLayout
@@ -211,6 +215,6 @@
 
         </LinearLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 
 </LinearLayout>

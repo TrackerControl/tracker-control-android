@@ -29,4 +29,10 @@
 
     <color name="timeline_blocked">#C62828</color>
     <color name="timeline_allowed">#2E7D32</color>
+
+    <!-- Neutral surfaces for the tracker feed. Material 3 otherwise derives
+         container colours from the red brand seed, which makes cards and
+         section chrome look pink. -->
+    <color name="trackerFeedSectionBackground">#F5F5F5</color>
+    <color name="trackerFeedDivider">#E0E0E0</color>
 </resources>
