@@ -14,12 +14,13 @@
  * already, fixed in commit 9c49cc09 ("Fix DNS filtering regressions from
  * the tc-dns extraction") -- an earlier refactor skipped parse_dns_response
  * entirely unless a recv() held exactly one complete frame, so coalesced or
- * split reads went unfiltered. The cursor now parses *every* frame it can
- * see, so these tests pin down which frames get parsed, which may be
- * shortened (only those lying wholly inside the current read, since nothing
- * in it has been forwarded yet), and -- the subtler failure mode -- that the
- * carry-over state and the returned byte count agree, so the stream cannot
- * silently desynchronise one recv() later.
+ * split reads went unfiltered. The cursor now parses every complete frame in
+ * a read and the initially visible bytes of a split frame, while later payload
+ * continuation bytes remain unparsed. These tests pin down which frames get
+ * parsed, which may be shortened (only those lying wholly inside the current
+ * read, since nothing in it has been forwarded yet), and -- the subtler
+ * failure mode -- that the carry-over state and the returned byte count agree,
+ * so the stream cannot silently desynchronise one recv() later.
  */
 
 #include <stdint.h>

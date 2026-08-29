@@ -35,19 +35,22 @@
  *   - a lone byte that is the first half of a length prefix.
  *
  * dns_frame_process_stream() walks every frame boundary inside one recv()
- * buffer, hands each payload it can see to the DNS parser (so header
- * blanking/policy enforcement always applies), and carries the little bit of
- * state needed to stay aligned into the next call -- without ever buffering
- * stream bytes.
+ * buffer and carries enough state to stay aligned into the next call without
+ * buffering stream bytes. A frame is offered to the DNS parser only in the
+ * recv() where its prefix is completed. If its payload continues into later
+ * reads, only the bytes visible in that first call are parsed; continuation
+ * bytes are skipped because they no longer include the DNS header. Policy
+ * enforcement for such split frames therefore remains best-effort.
  *
  * Length rewrites (a blocking hit that shortens a DNS message) are applied
  * only to a frame whose 2-byte prefix *and* whole payload lie inside the
  * current buffer: nothing in this buffer has been forwarded to the tun yet, so
  * shrinking such a frame is sequence-safe, and the frames behind it are
- * memmove()d down. A frame that carries over from an earlier recv() -- its
- * prefix, or part of its payload, already forwarded -- can only ever be
- * mutated in place, never shortened, because the bytes committed earlier
- * cannot be taken back.
+ * memmove()d down. A frame whose prefix or payload carries over from an earlier
+ * recv() can never be shortened because bytes committed earlier cannot be
+ * taken back. When the prefix alone was split, its payload may still be parsed
+ * and mutated in place; when the payload was split, later continuation bytes
+ * are forwarded untouched.
  */
 
 #include <stddef.h>

@@ -624,8 +624,10 @@ void check_tcp_socket(const struct arguments *args,
                             // walk every frame boundary in this read, carrying
                             // the split-frame cursor across reads. Frames lying
                             // wholly inside this buffer may be shortened (none
-                            // of it has been forwarded yet); frames carried over
-                            // from an earlier read are parsed in place only.
+                            // of it has been forwarded yet). Split frames stay
+                            // aligned, but payload continuation bytes are
+                            // forwarded without parsing until buffered
+                            // reassembly exists.
                             struct dns_stream_parse_ctx pctx = {.args = args, .s = s};
                             bytes = (ssize_t) dns_frame_process_stream(
                                     buffer, (size_t) bytes, &s->tcp.dns_stream,
