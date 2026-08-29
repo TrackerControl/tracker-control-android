@@ -4,7 +4,7 @@
     android:layout_width="400dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="?attr/colorPrimary"
+    android:background="@color/colorTrackerControl"
     android:padding="24dp">
 
     <!-- Header: TrackerControl branding -->
@@ -19,7 +19,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@mipmap/ic_launcher_round"
-            android:contentDescription="@string/app_name" />
+            android:contentDescription="@null"
+            android:importantForAccessibility="no" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +40,7 @@
         android:text="@string/insights_subtitle_7days"
         android:textColor="@android:color/white"
         android:textSize="12sp"
-        android:alpha="0.85" />
+        android:alpha="1.0" />
 
     <!-- Hero stat: Total Hosts (Used to be blocked) -->
     <TextView
@@ -88,7 +89,7 @@
                 android:text="@string/insights_share_trackers_blocked"
                 android:textColor="@android:color/white"
                 android:textSize="11sp"
-                android:alpha="0.85" />
+                android:alpha="1.0" />
 
         </LinearLayout>
 
@@ -113,7 +114,7 @@
                 android:text="@string/insights_tracker_companies"
                 android:textColor="@android:color/white"
                 android:textSize="11sp"
-                android:alpha="0.85" />
+                android:alpha="1.0" />
 
         </LinearLayout>
 
@@ -152,6 +153,6 @@
         android:textSize="14sp"
         android:textStyle="italic"
         android:gravity="center"
-        android:alpha="0.9" />
+        android:alpha="1.0" />
 
 </LinearLayout>

@@ -367,6 +367,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                     ServiceSinkhole.stop("switch off", ActivityMain.this, false);
             }
         });
+        swEnabled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                view.announceForAccessibility(getString(swEnabled.isChecked()
+                        ? R.string.accessibility_tracker_blocking_enabled
+                        : R.string.accessibility_tracker_blocking_disabled));
+            }
+        });
         // Network is metered
         ivMetered.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
