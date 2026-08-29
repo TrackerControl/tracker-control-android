@@ -157,7 +157,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="title_rport">Helburuaren ataka</string>
     <string name="title_ruid">Helburuaren aplikazioa</string>
     <string name="title_external">Kanpo zerbitzari baterako aukeratu \'inor ez\'</string>
-    <string name="title_lockdown_enabled">Trafikoa blokeatuta dago</string>
     <string name="title_unmetered_allowed">Neurtu gabeko trafikoa onartzen da</string>
     <string name="title_unmetered_blocked">Neurtu gabeko trafikoa blokeatzen da</string>
     <string name="title_unmetered_disabled">Neurtu gabeko sareen arauak ez dira aplikatzen</string>
@@ -236,7 +235,6 @@ Zure internet trafikoa ez da kanpo VPN zerbitzari batera bidaltzen.</string>
     <string name="tab_countries">Herrialdeak</string>
     <string name="tab_actions">Nire datuak</string>
     <string name="tracker_name">Aztarnariaren izena</string>
-    <string name="internet_access">Internet sarbidea</string>
     <string name="app_info">Aplikazioa kudeatu</string>
     <!-- Actions -->
     <string name="block_tracking">Aztarnariak blokeatu</string>
@@ -316,6 +314,8 @@ Sincerely,\n\n]]></string>
     <string name="setting_strict_blocking">Blokeatze zurruna</string>
     <string name="summary_strict_blocking">Instalatutako aplikazio berrientzat, blokeatu ahalik eta datu partekatze gehien konpainiekin. Aplikazio gehiago hautsiko ditu.</string>
     <string name="strict_blocking_explanation">Erabiltzaile ez adituentzako aukera hau ezgaitzea aholkatzen da, aplikazioen haustura ekiditeko. Hala ere, honek ezinbesteko partekatze batzuk onartzen ditu konpainiekin.</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Desinstalatu</string>
     <string name="settings_uninstall">Aplikazioaren ezarpenak eta desinstalatzea</string>
     <string name="no_trackers_found_message_disabled">Aktibatu pantaila nagusiko aukera, ondoren abiarazi aplikazioa aztarnariak bilatzeko</string>
