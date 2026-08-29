@@ -371,6 +371,13 @@ public class ServiceSinkhole extends VpnService {
     static final int PRIVATE_DNS_WARNING_ALLOWED_DOT = 2;
     private static final long PRIVATE_DNS_WARNING_WINDOW_MS = 60 * 60 * 1000L;
     private int privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
+    private final Handler privateDnsWarningExpiryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable privateDnsWarningExpiryRunnable = this::requestPrivateDnsWarningUpdate;
+    private final SharedPreferences.OnSharedPreferenceChangeListener privateDnsPreferenceListener =
+            (preferences, key) -> {
+                if ("block_dot".equals(key) || "log".equals(key))
+                    requestPrivateDnsWarningUpdate();
+            };
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -1244,7 +1251,7 @@ public class ServiceSinkhole extends VpnService {
                 // The encrypted-DNS warning is evidence-driven. Re-evaluate as
                 // soon as the first allowed DoT flow is recorded rather than
                 // waiting for a later VPN restart or network change.
-                if (packet.allowed && packet.dport == 853 &&
+                if (DatabaseHelper.isAllowedDotEvidence(packet) &&
                         !prefs.getBoolean("block_dot", true))
                     updatePrivateDnsBypassWarning();
             }
@@ -1815,6 +1822,12 @@ public class ServiceSinkhole extends VpnService {
 
     static boolean shouldClearPrivateDnsWarning(int currentState) {
         return currentState == PRIVATE_DNS_WARNING_NONE;
+    }
+
+    static long getPrivateDnsWarningExpiryDelay(long nowMs, long latestEvidenceMs) {
+        if (latestEvidenceMs < 0)
+            return -1;
+        return Math.max(1, latestEvidenceMs + PRIVATE_DNS_WARNING_WINDOW_MS - nowMs);
     }
 
     private void updateUnderlyingNetworks() {
@@ -3616,6 +3629,7 @@ public class ServiceSinkhole extends VpnService {
         commandHandler = new CommandHandler(commandLooper);
         logHandler = new LogHandler(logLooper);
         statsHandler = new StatsHandler(statsLooper);
+        prefs.registerOnSharedPreferenceChangeListener(privateDnsPreferenceListener);
 
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.addStateListener(wgStateListener);
 
@@ -3745,7 +3759,7 @@ public class ServiceSinkhole extends VpnService {
                     reloadAfterNetworkChange(reason);
                 }
                 if (vpn != null)
-                    updatePrivateDnsBypassWarning();
+                    requestPrivateDnsWarningUpdate();
             }
 
             @Override
@@ -4014,6 +4028,9 @@ public class ServiceSinkhole extends VpnService {
 
             // Cancel any debounced network-change reload so it doesn't fire post-teardown
             networkReloadDebounceHandler.removeCallbacksAndMessages(NETWORK_RELOAD_TOKEN);
+            privateDnsWarningExpiryHandler.removeCallbacks(privateDnsWarningExpiryRunnable);
+            PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this)
+                    .unregisterOnSharedPreferenceChangeListener(privateDnsPreferenceListener);
             cancelNativeRecovery(true);
             cancelWireGuardStartupRecovery(true);
             cancelVpnReplacementRecovery(true);
@@ -4440,10 +4457,41 @@ public class ServiceSinkhole extends VpnService {
         NotificationManagerCompat.from(this).cancel(NOTIFY_PRIVATE_DNS);
     }
 
+    private void requestPrivateDnsWarningUpdate() {
+        Handler handler = logHandler;
+        if (handler != null && !destroying)
+            handler.post(() -> {
+                if (!destroying)
+                    updatePrivateDnsBypassWarning();
+            });
+    }
+
+    private synchronized void schedulePrivateDnsWarningExpiry() {
+        privateDnsWarningExpiryHandler.removeCallbacks(privateDnsWarningExpiryRunnable);
+        long now = System.currentTimeMillis();
+        long latest = DatabaseHelper.getInstance(this).getLatestAllowedDot(
+                now - PRIVATE_DNS_WARNING_WINDOW_MS);
+        long delay = getPrivateDnsWarningExpiryDelay(now, latest);
+        if (delay >= 0 && !destroying)
+            privateDnsWarningExpiryHandler.postDelayed(privateDnsWarningExpiryRunnable, delay);
+    }
+
+    private synchronized void cancelPrivateDnsWarningExpiry() {
+        privateDnsWarningExpiryHandler.removeCallbacks(privateDnsWarningExpiryRunnable);
+    }
+
+    private void publishPrivateDnsWarningState(int state) {
+        Intent intent = new Intent(ActivityMain.ACTION_PRIVATE_DNS_WARNING_CHANGED);
+        intent.putExtra(ActivityMain.EXTRA_PRIVATE_DNS_WARNING_STATE, state);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     private synchronized void updatePrivateDnsBypassWarning() {
         if (Util.isPrivateDnsBlocked(this)) {
             clearPrivateDnsBypassNotification();
+            cancelPrivateDnsWarningExpiry();
             privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
+            publishPrivateDnsWarningState(privateDnsWarningState);
             return;
         }
 
@@ -4453,17 +4501,25 @@ public class ServiceSinkhole extends VpnService {
         int state = getPrivateDnsWarningState(this);
         if (shouldClearPrivateDnsWarning(state)) {
             clearPrivateDnsBypassNotification();
+            cancelPrivateDnsWarningExpiry();
             privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
         } else {
             if (shouldShowPrivateDnsWarning(privateDnsWarningState, state))
                 showPrivateDnsBypassNotification(state);
             privateDnsWarningState = state;
+            if (state == PRIVATE_DNS_WARNING_ALLOWED_DOT)
+                schedulePrivateDnsWarningExpiry();
+            else
+                cancelPrivateDnsWarningExpiry();
         }
+        publishPrivateDnsWarningState(privateDnsWarningState);
     }
 
     private synchronized void resetPrivateDnsBypassWarning() {
+        cancelPrivateDnsWarningExpiry();
         clearPrivateDnsBypassNotification();
         privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
+        publishPrivateDnsWarningState(privateDnsWarningState);
     }
 
     private void showPrivateDnsBypassNotification(int state) {

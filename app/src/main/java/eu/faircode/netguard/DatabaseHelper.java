@@ -646,15 +646,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * intentionally empty when that preference is off, and the application log
      * is only a tracker-contact subset that cannot answer this question.</p>
      */
+    static boolean isAllowedDotEvidence(Packet packet) {
+        return packet != null && packet.allowed && packet.protocol == 6 && packet.dport == 853
+                && packet.flags != null && packet.flags.indexOf('A') >= 0
+                && packet.flags.indexOf('S') < 0 && packet.flags.indexOf('R') < 0;
+    }
+
+    private static final String ALLOWED_DOT_WHERE =
+            "protocol = 6 AND dport = 853 AND allowed = 1 " +
+                    "AND flags GLOB '*A*' AND flags NOT GLOB '*S*' " +
+                    "AND flags NOT GLOB '*R*' AND time >= ?";
+
     public boolean hasRecentAllowedDot(long sinceMs) {
         flushLogBatch();
         lock.readLock().lock();
         try {
             SQLiteDatabase db = this.getReadableDatabase();
             try (Cursor cursor = db.rawQuery(
-                    "SELECT 1 FROM log WHERE dport = ? AND allowed = 1 AND time >= ? LIMIT 1",
-                    new String[] { "853", Long.toString(sinceMs) })) {
+                    "SELECT 1 FROM log WHERE " + ALLOWED_DOT_WHERE + " LIMIT 1",
+                    new String[] { Long.toString(sinceMs) })) {
                 return cursor.moveToFirst();
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /** Return the newest qualifying DoT flow at or after {@code sinceMs}. */
+    public long getLatestAllowedDot(long sinceMs) {
+        flushLogBatch();
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            try (Cursor cursor = db.rawQuery(
+                    "SELECT MAX(time) FROM log WHERE " + ALLOWED_DOT_WHERE,
+                    new String[] { Long.toString(sinceMs) })) {
+                if (!cursor.moveToFirst() || cursor.isNull(0))
+                    return -1;
+                return cursor.getLong(0);
             }
         } finally {
             lock.readLock().unlock();

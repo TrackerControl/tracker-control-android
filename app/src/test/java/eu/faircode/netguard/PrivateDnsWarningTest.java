@@ -60,7 +60,7 @@ public class PrivateDnsWarningTest {
     @Test
     public void hostnameWarningTakesPrecedenceOverAllowedDotFlow() {
         long now = System.currentTimeMillis();
-        database.insertLog(packet(now, 853, true), null, 0, false);
+        database.insertLog(packet(now, 6, 853, true, "A"), null, 0, false);
 
         setPrivateDns("hostname", "dns.google");
         prefs.edit().putBoolean("block_dot", false).putBoolean("log", true).commit();
@@ -72,7 +72,7 @@ public class PrivateDnsWarningTest {
     @Test
     public void allowedDotWarningRequiresTrafficLog() {
         long now = System.currentTimeMillis();
-        database.insertLog(packet(now, 853, true), null, 0, false);
+        database.insertLog(packet(now, 6, 853, true, "A"), null, 0, false);
         setPrivateDns("opportunistic", null);
         prefs.edit().putBoolean("block_dot", false).commit();
 
@@ -87,14 +87,41 @@ public class PrivateDnsWarningTest {
     @Test
     public void allowedDotQueryRequiresRecentAllowedFlow() {
         long now = System.currentTimeMillis();
-        database.insertLog(packet(now - 2 * 60 * 60 * 1000L, 853, true), null, 0, false);
-        database.insertLog(packet(now, 853, false), null, 0, false);
-        database.insertLog(packet(now, 443, true), null, 0, false);
+        database.insertLog(packet(now - 2 * 60 * 60 * 1000L, 6, 853, true, "A"), null, 0, false);
+        database.insertLog(packet(now, 6, 853, false, "A"), null, 0, false);
+        database.insertLog(packet(now, 6, 443, true, "A"), null, 0, false);
+        database.insertLog(packet(now, 6, 853, true, "S"), null, 0, false);
+        database.insertLog(packet(now, 6, 853, true, "RA"), null, 0, false);
+        database.insertLog(packet(now, 17, 853, true, "A"), null, 0, false);
 
         assertFalse(database.hasRecentAllowedDot(now - 60 * 60 * 1000L));
 
-        database.insertLog(packet(now, 853, true), null, 0, false);
+        database.insertLog(packet(now, 6, 853, true, "A"), null, 0, false);
         assertTrue(database.hasRecentAllowedDot(now - 60 * 60 * 1000L));
+    }
+
+    @Test
+    public void onlyEstablishedAllowedTcpDotQualifies() {
+        assertTrue(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, true, "A")));
+        assertTrue(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, true, "PA")));
+        assertFalse(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, true, "S")));
+        assertFalse(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, true, "SA")));
+        assertFalse(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, true, "RA")));
+        assertFalse(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, true, "a")));
+        assertFalse(DatabaseHelper.isAllowedDotEvidence(packet(0, 17, 853, true, "")));
+        assertFalse(DatabaseHelper.isAllowedDotEvidence(packet(0, 6, 853, false, "A")));
+    }
+
+    @Test
+    public void expiryDelayFollowsLatestEvidence() {
+        long now = 10_000L;
+        assertEquals(60 * 60 * 1000L - 500L,
+                ServiceSinkhole.getPrivateDnsWarningExpiryDelay(now, 9_500L));
+        assertEquals(60 * 60 * 1000L + 500L,
+                ServiceSinkhole.getPrivateDnsWarningExpiryDelay(now, 10_500L));
+        assertEquals(1L,
+                ServiceSinkhole.getPrivateDnsWarningExpiryDelay(now + 60 * 60 * 1000L, 10_000L));
+        assertEquals(-1L, ServiceSinkhole.getPrivateDnsWarningExpiryDelay(now, -1L));
     }
 
     @Test
@@ -111,17 +138,17 @@ public class PrivateDnsWarningTest {
                 ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT));
     }
 
-    private static Packet packet(long time, int dport, boolean allowed) {
+    private static Packet packet(long time, int protocol, int dport, boolean allowed, String flags) {
         Packet packet = new Packet();
         packet.time = time;
         packet.version = 4;
-        packet.protocol = 6;
+        packet.protocol = protocol;
         packet.saddr = "10.0.0.2";
         packet.sport = 12345;
         packet.daddr = "1.1.1.1";
         packet.dport = dport;
         packet.allowed = allowed;
-        packet.flags = "";
+        packet.flags = flags;
         return packet;
     }
 }

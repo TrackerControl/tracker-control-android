@@ -150,6 +150,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     private static final int MIN_SDK = Build.VERSION_CODES.LOLLIPOP_MR1;
 
     public static final String ACTION_RULES_CHANGED = "eu.faircode.netguard.ACTION_RULES_CHANGED";
+    public static final String ACTION_PRIVATE_DNS_WARNING_CHANGED =
+            "eu.faircode.netguard.ACTION_PRIVATE_DNS_WARNING_CHANGED";
     public static final String ACTION_QUEUE_CHANGED = "eu.faircode.netguard.ACTION_QUEUE_CHANGED";
     public static final String EXTRA_REFRESH = "Refresh";
     public static final String EXTRA_SEARCH = "Search";
@@ -159,6 +161,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
     public static final String EXTRA_CONNECTED = "Connected";
     public static final String EXTRA_METERED = "Metered";
     public static final String EXTRA_SIZE = "Size";
+    public static final String EXTRA_PRIVATE_DNS_WARNING_STATE = "PrivateDnsWarningState";
+
+    private int privateDnsWarningState = ServiceSinkhole.PRIVATE_DNS_WARNING_NONE;
+    private int privateDnsWarningQueryGeneration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -498,7 +504,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             @Override
             public void onClick(View v) {
                 Intent settings;
-                if (ServiceSinkhole.getPrivateDnsWarningState(ActivityMain.this)
+                if (privateDnsWarningState
                         == ServiceSinkhole.PRIVATE_DNS_WARNING_ALLOWED_DOT)
                     settings = new Intent(ActivityMain.this, ActivitySettings.class);
                 else {
@@ -537,6 +543,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Listen for rule set changes
         IntentFilter ifr = new IntentFilter(ACTION_RULES_CHANGED);
+        ifr.addAction(ACTION_PRIVATE_DNS_WARNING_CHANGED);
         LocalBroadcastManager.getInstance(this).registerReceiver(onRulesChanged, ifr);
 
         // Listen for queue changes
@@ -619,7 +626,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvPrivateDns.setVisibility(
                     vpnEnabled && Util.isPrivateDnsBlocked(this) ? View.VISIBLE : View.GONE);
         }
-        updatePrivateDnsBypassBanner();
+        refreshPrivateDnsBypassBanner();
 
         super.onResume();
     }
@@ -660,7 +667,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean vpnEnabled = prefs.getBoolean("enabled", false);
-        int state = vpnEnabled ? ServiceSinkhole.getPrivateDnsWarningState(this)
+        int state = vpnEnabled ? privateDnsWarningState
                 : ServiceSinkhole.PRIVATE_DNS_WARNING_NONE;
         if (state == ServiceSinkhole.PRIVATE_DNS_WARNING_HOSTNAME) {
             String specifier = Util.getPrivateDnsSpecifier(this);
@@ -671,6 +678,28 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             tvPrivateDnsBypass.setText(R.string.msg_private_dns_bypass_allowed_notify);
         tvPrivateDnsBypass.setVisibility(
                 state != ServiceSinkhole.PRIVATE_DNS_WARNING_NONE ? View.VISIBLE : View.GONE);
+    }
+
+    private void refreshPrivateDnsBypassBanner() {
+        updatePrivateDnsBypassBanner();
+        final int generation = ++privateDnsWarningQueryGeneration;
+        new AsyncTask<Void, Void, Integer>() {
+            @Override
+            protected Integer doInBackground(Void... ignored) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ActivityMain.this);
+                if (!prefs.getBoolean("enabled", false))
+                    return ServiceSinkhole.PRIVATE_DNS_WARNING_NONE;
+                return ServiceSinkhole.getPrivateDnsWarningState(ActivityMain.this);
+            }
+
+            @Override
+            protected void onPostExecute(Integer state) {
+                if (!running || generation != privateDnsWarningQueryGeneration)
+                    return;
+                privateDnsWarningState = state;
+                updatePrivateDnsBypassBanner();
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void updateHorizontalPadding(View view, int horizontalPadding) {
@@ -929,7 +958,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             updatePrivateDnsBypassBanner();
 
         } else if ("block_dot".equals(name) || "log".equals(name)) {
-            updatePrivateDnsBypassBanner();
+            refreshPrivateDnsBypassBanner();
 
         } else if ("show_user".equals(name) ||
                 "show_system".equals(name) ||
@@ -971,6 +1000,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         public void onReceive(Context context, Intent intent) {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
+
+            if (ACTION_PRIVATE_DNS_WARNING_CHANGED.equals(intent.getAction())) {
+                privateDnsWarningQueryGeneration++;
+                privateDnsWarningState = intent.getIntExtra(EXTRA_PRIVATE_DNS_WARNING_STATE,
+                        ServiceSinkhole.PRIVATE_DNS_WARNING_NONE);
+                updatePrivateDnsBypassBanner();
+                return;
+            }
 
             if (adapter != null)
                 if (intent.hasExtra(EXTRA_CONNECTED) && intent.hasExtra(EXTRA_METERED)) {
