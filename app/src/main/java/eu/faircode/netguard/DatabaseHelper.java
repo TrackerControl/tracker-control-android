@@ -639,6 +639,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Check whether the traffic log contains a recent allowed DoT flow.
+     *
+     * <p>The caller gates this on the full traffic-log preference: the log is
+     * intentionally empty when that preference is off, and the application log
+     * is only a tracker-contact subset that cannot answer this question.</p>
+     */
+    public boolean hasRecentAllowedDot(long sinceMs) {
+        flushLogBatch();
+        lock.readLock().lock();
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            try (Cursor cursor = db.rawQuery(
+                    "SELECT 1 FROM log WHERE dport = ? AND allowed = 1 AND time >= ? LIMIT 1",
+                    new String[] { "853", Long.toString(sinceMs) })) {
+                return cursor.moveToFirst();
+            }
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
     public Cursor searchLog(String find) {
         lock.readLock().lock();
         try {

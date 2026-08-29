@@ -364,6 +364,13 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_WG_ERROR = 12;
     private static final int NOTIFY_LOCAL_NETWORK = 13;
     private static final int NOTIFY_PRIVATE_DNS = 14;
+    private static final int NOTIFY_PRIVATE_DNS_BYPASS = 15;
+
+    static final int PRIVATE_DNS_WARNING_NONE = 0;
+    static final int PRIVATE_DNS_WARNING_HOSTNAME = 1;
+    static final int PRIVATE_DNS_WARNING_ALLOWED_DOT = 2;
+    private static final long PRIVATE_DNS_WARNING_WINDOW_MS = 60 * 60 * 1000L;
+    private int privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
 
     public static final String EXTRA_COMMAND = "Command";
     private static final String EXTRA_REASON = "Reason";
@@ -927,8 +934,8 @@ public class ServiceSinkhole extends VpnService {
                 // the case it cannot see, a start that failed without ever
                 // producing a tunnel, where stop() finds nothing to notify about.
                 clearWireGuardErrorNotification();
-                // The other two are config warnings nothing else retracts, and
-                // both describe a tunnel that is no longer running — but leave
+                // The other three are config warnings nothing else retracts, and
+                // all describe a tunnel that is no longer running — but leave
                 // them on a temporary stop (a call, say): the VPN is coming
                 // straight back, and re-posting a cancelled notification alerts
                 // again, so the user would be buzzed on every call.
@@ -940,6 +947,9 @@ public class ServiceSinkhole extends VpnService {
 
                 // Stop DoH proxy
                 net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).stop();
+            }
+            if (!temporary) {
+                resetPrivateDnsBypassWarning();
             }
             if (state == State.enforcing && !temporary) {
                 Log.d(TAG, "Stop foreground state=" + state.toString());
@@ -1772,6 +1782,34 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
+    static int getPrivateDnsWarningState(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean blockDot = prefs.getBoolean("block_dot", true);
+        if (blockDot)
+            return PRIVATE_DNS_WARNING_NONE;
+
+        // Case A takes precedence and avoids querying the log. Case B is only
+        // meaningful when the full traffic log is enabled: insertLog runs only
+        // on that path. log_app defaults to true but records recognized tracker
+        // contacts in access, not all flows, so it cannot support this warning.
+        if (Util.isPrivateDnsDetectionDefeated(context))
+            return PRIVATE_DNS_WARNING_HOSTNAME;
+        if (!prefs.getBoolean("log", false))
+            return PRIVATE_DNS_WARNING_NONE;
+
+        return DatabaseHelper.getInstance(context).hasRecentAllowedDot(
+                System.currentTimeMillis() - PRIVATE_DNS_WARNING_WINDOW_MS)
+                ? PRIVATE_DNS_WARNING_ALLOWED_DOT : PRIVATE_DNS_WARNING_NONE;
+    }
+
+    static boolean shouldShowPrivateDnsWarning(int previousState, int currentState) {
+        return currentState != PRIVATE_DNS_WARNING_NONE && previousState != currentState;
+    }
+
+    static boolean shouldClearPrivateDnsWarning(int currentState) {
+        return currentState == PRIVATE_DNS_WARNING_NONE;
+    }
+
     private void updateUnderlyingNetworks() {
         // Set underlying network so Android can correctly assess connectivity,
         // metering, and network scoring for the VPN.
@@ -1954,6 +1992,8 @@ public class ServiceSinkhole extends VpnService {
             showPrivateDnsNotification(Util.getPrivateDnsSpecifier(this));
         } else
             clearPrivateDnsNotification();
+
+        updatePrivateDnsBypassWarning();
 
         // Dynamically exclude carrier ePDG IPs so Wi-Fi calling works globally.
         // ePDG domains follow 3GPP standard: epdg.epc.mnc{MNC}.mcc{MCC}.pub.3gppnetwork.org
@@ -3697,6 +3737,8 @@ public class ServiceSinkhole extends VpnService {
                     last_private_dns = private_dns;
                     reloadAfterNetworkChange(reason);
                 }
+                if (vpn != null)
+                    updatePrivateDnsBypassWarning();
             }
 
             @Override
@@ -4389,6 +4431,77 @@ public class ServiceSinkhole extends VpnService {
 
     private void clearPrivateDnsNotification() {
         NotificationManagerCompat.from(this).cancel(NOTIFY_PRIVATE_DNS);
+    }
+
+    private synchronized void updatePrivateDnsBypassWarning() {
+        if (Util.isPrivateDnsBlocked(this)) {
+            clearPrivateDnsBypassNotification();
+            privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
+            return;
+        }
+
+        // The loud warning may have been posted by an earlier evaluation before
+        // the user changed block_dot; keep the two notification IDs exclusive.
+        clearPrivateDnsNotification();
+        int state = getPrivateDnsWarningState(this);
+        if (shouldClearPrivateDnsWarning(state)) {
+            clearPrivateDnsBypassNotification();
+            privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
+        } else {
+            if (shouldShowPrivateDnsWarning(privateDnsWarningState, state))
+                showPrivateDnsBypassNotification(state);
+            privateDnsWarningState = state;
+        }
+    }
+
+    private synchronized void resetPrivateDnsBypassWarning() {
+        clearPrivateDnsBypassNotification();
+        privateDnsWarningState = PRIVATE_DNS_WARNING_NONE;
+    }
+
+    private void showPrivateDnsBypassNotification(int state) {
+        Intent settings;
+        if (state == PRIVATE_DNS_WARNING_ALLOWED_DOT)
+            settings = new Intent(this, ActivitySettings.class);
+        else {
+            settings = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+            if (settings.resolveActivity(getPackageManager()) == null)
+                settings = new Intent(Settings.ACTION_WIFI_SETTINGS);
+        }
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_PRIVATE_DNS_BYPASS, settings,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String detail;
+        if (state == PRIVATE_DNS_WARNING_HOSTNAME) {
+            String specifier = Util.getPrivateDnsSpecifier(this);
+            String resolver = TextUtils.isEmpty(specifier)
+                    ? getString(R.string.msg_private_dns_unknown_resolver) : specifier;
+            detail = getString(R.string.msg_private_dns_bypass_notify, resolver);
+        } else
+            detail = getString(R.string.msg_private_dns_bypass_allowed_notify);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_error_white_24dp)
+                .setContentTitle(getString(R.string.msg_private_dns_bypass_title))
+                .setContentText(detail)
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setOngoing(false)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(detail);
+
+        Util.notify(this, NOTIFY_PRIVATE_DNS_BYPASS, notification.build());
+    }
+
+    private void clearPrivateDnsBypassNotification() {
+        NotificationManagerCompat.from(this).cancel(NOTIFY_PRIVATE_DNS_BYPASS);
     }
 
     private void showUpdateNotification(String name, String url) {

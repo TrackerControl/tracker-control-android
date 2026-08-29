@@ -586,6 +586,16 @@ public class Util {
                 && isPrivateDnsHostnameMode(context);
     }
 
+    /**
+     * Whether a pinned Private DNS resolver can bypass tracker detection because
+     * DoT blocking is disabled.
+     */
+    public static boolean isPrivateDnsDetectionDefeated(Context context) {
+        return !PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean("block_dot", true)
+                && isPrivateDnsHostnameMode(context);
+    }
+
     public interface DoubtListener {
         void onSure();
     }
