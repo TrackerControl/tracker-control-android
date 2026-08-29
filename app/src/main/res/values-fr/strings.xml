@@ -498,6 +498,7 @@ Cordialement,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">S\'applique également à %1$s, qui partage un identifiant utilisateur Android avec cette application.</string>
     <string name="app_state_bypassed">Contourner TrackerControl</string>
     <string name="app_state_bypassed_explanation">L\'application se connecte directement, en dehors de TrackerControl. Rien n\'est surveillé ni bloqué pour elle. À utiliser en dernier recours si l\'application ne fonctionne toujours pas.\n\nRemarque : \"Bloquer les connexions sans VPN\" doit être DÉSACTIVÉ dans les paramètres VPN d\'Android pour que cela fonctionne.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>

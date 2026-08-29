@@ -351,6 +351,7 @@ public class ServiceSinkhole extends VpnService {
     // Cached preferences for shouldTrackApp() - refreshed in reload()
     private volatile SharedPreferences cachedTrackerProtectPrefs;
     private volatile SharedPreferences cachedApplyPrefs;
+    private volatile SharedPreferences cachedEssentialPrefs;
     private volatile boolean cachedManageSystem;
 
     private static final int NOTIFY_ENFORCING = 1;
@@ -848,6 +849,7 @@ public class ServiceSinkhole extends VpnService {
             // Refresh cached preferences for shouldTrackApp()
             cachedTrackerProtectPrefs = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
             cachedApplyPrefs = getSharedPreferences("apply", Context.MODE_PRIVATE);
+            cachedEssentialPrefs = getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
             cachedManageSystem = prefs.getBoolean("manage_system", false);
 
             if (state != State.enforcing) {
@@ -2989,6 +2991,19 @@ public class ServiceSinkhole extends VpnService {
         return true;
     }
 
+    private boolean essentialOnlyApp(int uid) {
+        String packageName = uidToPackage.get(uid);
+        if (packageName == null)
+            return false;
+
+        SharedPreferences essentialPrefs = cachedEssentialPrefs;
+        if (essentialPrefs == null)
+            essentialPrefs = getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        // Shared-UID attribution deliberately follows shouldTrackApp: use the
+        // first package cached for the UID, inheriting that method's caveat.
+        return BlockingMode.isEssentialOnlyApp(this, essentialPrefs, packageName);
+    }
+
     private boolean blockKnownTracker(String daddr, int uid) {
         if (!shouldTrackApp(uid)) {
             return false;
@@ -3140,6 +3155,17 @@ public class ServiceSinkhole extends VpnService {
             }
         } else {
             if (tracker != null && tracker != NO_TRACKER) {
+                if (!BlockingMode.MODE_MINIMAL.equals(blockingMode) && essentialOnlyApp(uid)) {
+                    String hostname = cached == null ? null : cached.getHostname();
+                    Tracker essentialTracker = hostname == null
+                            ? null : TrackerList.findEssentialTracker(hostname);
+                    // Strict mode retains tracker evidence for mixed-evidence
+                    // IPs where Minimal mode would collapse it to NO_TRACKER;
+                    // this accepted deviation can block slightly more here.
+                    return BlockingModeLogic.shouldBlockEssentialOnly(
+                            essentialTracker == null ? null : essentialTracker.category);
+                }
+
                 boolean blockedByGranularRule = false;
                 if (!BlockingMode.MODE_MINIMAL.equals(blockingMode)) {
                     TrackerBlocklist b = TrackerBlocklist.getInstance(ServiceSinkhole.this);
@@ -3427,20 +3453,41 @@ public class ServiceSinkhole extends VpnService {
             // Application added
             Rule.clearCache(context);
 
+            InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+            TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+            boolean internetChanged = false;
+            boolean trackerChanged = false;
+
+            // A replaced package was already installed, so it resolved at load
+            // time and its uid does not change on update. Only a genuinely new
+            // install can claim a pending entry.
             if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
+
+                // Resolve only the package this broadcast is about. Sweeping
+                // every pending entry would cost a PackageManager call each,
+                // on every install, for entries that may never resolve — this
+                // runs on the service's main thread with the screen off.
+                String packageName = (intent.getData() == null
+                        ? null : intent.getData().getSchemeSpecificPart());
+                internetChanged = internetBlocklist.resolvePendingPackage(context, packageName);
+                trackerChanged = b.resolvePendingPackage(context, packageName);
+
                 if (uid > -1) {
                     // Set tracker defaults based on blocking mode
-                    TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                    if (b.ensureDefaults(uid, BlockingMode.isStrictMode(context)))
-                        b.saveSettings(context);
+                    trackerChanged |= b.ensureDefaults(uid, BlockingMode.isStrictMode(context));
 
                     // Show install notification
                     if (prefs.getBoolean("installed", true))
                         notifyNewApplication(uid, true);
                 }
             }
+
+            if (trackerChanged)
+                b.saveSettings(context);
+            if (internetChanged)
+                internetBlocklist.saveSettings(context);
 
             reload("package added", context, false);
 
@@ -3477,19 +3524,19 @@ public class ServiceSinkhole extends VpnService {
                             InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
                             if (internetBlocklist.blockedInternet(uid))
                                 internetBlocklist.unblock(context, uid);
+
+                            DatabaseHelper dh = DatabaseHelper.getInstance(context);
+                            dh.clearLog(uid);
+                            dh.clearAccess(uid, false);
+                            uidToApp.remove(uid);
+                            uidToPackage.remove(uid);
+
+                            NotificationManagerCompat.from(context).cancel(uid); // installed notification
+                            NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
                         }
                     } catch (SecurityException ex) {
                         Log.w(TAG, "Keeping internet block uid=" + uid + ": " + ex.getMessage());
                     }
-
-                    DatabaseHelper dh = DatabaseHelper.getInstance(context);
-                    dh.clearLog(uid);
-                    dh.clearAccess(uid, false);
-                    uidToApp.remove(uid);
-                    uidToPackage.remove(uid);
-
-                    NotificationManagerCompat.from(context).cancel(uid); // installed notification
-                    NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
                 }
             }
 

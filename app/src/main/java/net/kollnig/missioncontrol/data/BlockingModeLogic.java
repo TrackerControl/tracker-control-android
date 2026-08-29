@@ -14,6 +14,8 @@
 
 package net.kollnig.missioncontrol.data;
 
+import androidx.annotation.Nullable;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Pure helpers for mode-specific blocking behavior and VPN exclusion syncing.
+ * Pure helpers for mode-specific blocking behavior and compatibility VPN exclusion syncing.
  */
 public final class BlockingModeLogic {
     public static final String MODE_MINIMAL = "minimal";
@@ -45,36 +47,32 @@ public final class BlockingModeLogic {
         return blockedByGranularRule;
     }
 
-    public static ExclusionSyncResult syncVpnExclusions(String mode,
-            Set<String> excludedApps,
+    public static boolean shouldBlockEssentialOnly(@Nullable String essentialCategory) {
+        return essentialCategory != null && !CONTENT_CATEGORY.equals(essentialCategory);
+    }
+
+    public static ExclusionSyncResult syncVpnExclusions(Set<String> excludedApps,
             Map<String, Boolean> applyPrefs,
             Set<String> autoExcludedApps) {
         Set<String> nextAutoExcludedApps = new HashSet<>(autoExcludedApps);
         Set<String> applyFalsePackages = new HashSet<>();
         Set<String> applyRemovals = new HashSet<>();
 
-        if (MODE_MINIMAL.equals(mode)) {
-            for (String packageName : new HashSet<>(nextAutoExcludedApps)) {
-                if (!excludedApps.contains(packageName)) {
-                    if (Boolean.FALSE.equals(applyPrefs.get(packageName)))
-                        applyRemovals.add(packageName);
-                    nextAutoExcludedApps.remove(packageName);
-                }
-            }
-
-            for (String packageName : excludedApps) {
-                if (!applyPrefs.containsKey(packageName)) {
-                    applyFalsePackages.add(packageName);
-                    nextAutoExcludedApps.add(packageName);
-                } else if (Boolean.TRUE.equals(applyPrefs.get(packageName))) {
-                    nextAutoExcludedApps.remove(packageName);
-                }
-            }
-        } else {
-            for (String packageName : nextAutoExcludedApps)
+        for (String packageName : new HashSet<>(nextAutoExcludedApps)) {
+            if (!excludedApps.contains(packageName)) {
                 if (Boolean.FALSE.equals(applyPrefs.get(packageName)))
                     applyRemovals.add(packageName);
-            nextAutoExcludedApps.clear();
+                nextAutoExcludedApps.remove(packageName);
+            }
+        }
+
+        for (String packageName : excludedApps) {
+            if (!applyPrefs.containsKey(packageName)) {
+                applyFalsePackages.add(packageName);
+                nextAutoExcludedApps.add(packageName);
+            } else if (Boolean.TRUE.equals(applyPrefs.get(packageName))) {
+                nextAutoExcludedApps.remove(packageName);
+            }
         }
 
         return new ExclusionSyncResult(nextAutoExcludedApps, applyFalsePackages, applyRemovals);

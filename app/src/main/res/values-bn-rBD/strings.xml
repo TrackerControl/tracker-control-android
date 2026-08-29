@@ -79,6 +79,7 @@
     <string name="app_state_no_internet_shared_uid">%1$s-এর ক্ষেত্রেও প্রযোজ্য, যেটি এই অ্যাপের সঙ্গে একই Android ব্যবহারকারী আইডি ভাগ করে।</string>
     <string name="app_state_bypassed">TrackerControl এড়িয়ে যান</string>
     <string name="app_state_bypassed_explanation">অ্যাপটি TrackerControl-এর বাইরে সরাসরি সংযোগ করে। এর জন্য কিছুই পর্যবেক্ষণ বা ব্লক করা হয় না। অ্যাপ তবুও কাজ না করলে শেষ উপায় হিসেবে এটি ব্যবহার করুন।\n\nদ্রষ্টব্য: এটি কাজ করতে হলে Android-এর VPN সেটিংসে \"VPN ছাড়া সংযোগ ব্লক করুন\" বন্ধ থাকতে হবে।</string>
+    <!-- Per-app protection screen -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

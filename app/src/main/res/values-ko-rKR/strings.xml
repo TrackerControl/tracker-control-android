@@ -108,6 +108,7 @@
     <string name="app_state_no_internet_shared_uid">이 앱과 Android 사용자 ID를 공유하는 %1$s에도 적용됩니다.</string>
     <string name="app_state_bypassed">TrackerControl 우회</string>
     <string name="app_state_bypassed_explanation">앱이 TrackerControl을 거치지 않고 직접 연결합니다. 이 앱에 대해서는 아무것도 감시하거나 차단하지 않습니다. 앱이 여전히 동작하지 않을 때 최후의 수단으로 사용하세요.\n\n참고: 이 기능이 동작하려면 Android VPN 설정에서 \"VPN 없이 연결 차단\"이 사용 중지되어 있어야 합니다.</string>
+    <!-- Per-app protection screen -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

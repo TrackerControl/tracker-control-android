@@ -32,6 +32,7 @@
     <string name="app_state_no_internet_shared_uid">இந்த ஆப்ஸுடன் Android பயனர் ஐடியைப் பகிர்ந்துகொள்ளும் %1$s-க்கும் இது பொருந்தும்.</string>
     <string name="app_state_bypassed">TrackerControl-ஐத் தவிர்</string>
     <string name="app_state_bypassed_explanation">ஆப்ஸ் TrackerControl-ஐத் தவிர்த்து நேரடியாக இணைகிறது. அதற்காக எதுவும் கண்காணிக்கப்படுவதோ தடுக்கப்படுவதோ இல்லை. ஆப்ஸ் இன்னும் வேலை செய்யாவிட்டால் கடைசி வழியாக இதைப் பயன்படுத்தவும்.\n\nகுறிப்பு: இது வேலை செய்ய Android VPN அமைப்புகளில் \"VPN இல்லாத இணைப்புகளைத் தடு\" முடக்கப்பட்டிருக்க வேண்டும்.</string>
+    <!-- Per-app protection screen -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

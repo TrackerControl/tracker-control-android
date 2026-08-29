@@ -323,6 +323,7 @@
     <string name="app_state_no_internet_shared_uid">Gilt auch für %1$s, da diese App sich eine Android-Benutzer-ID mit dieser App teilt.</string>
     <string name="app_state_bypassed">TrackerControl umgehen</string>
     <string name="app_state_bypassed_explanation">Die App verbindet sich direkt, außerhalb von TrackerControl. Nichts wird für sie überwacht oder blockiert. Nutze dies als letzten Ausweg, wenn die App weiterhin nicht funktioniert.\n\nHinweis: \"Verbindungen ohne VPN blockieren\" in den Android-VPN-Einstellungen muss DEAKTIVIERT sein, damit dies funktioniert.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Deinstallieren</string>
     <string name="settings_uninstall">App-Einstellungen &amp; Deinstallation</string>
     <string name="no_trackers_found_message_disabled">Den Hauptbildschirm aktivieren und die App starten um Tracker zu finden</string>

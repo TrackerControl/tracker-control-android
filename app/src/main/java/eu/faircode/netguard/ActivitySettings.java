@@ -78,6 +78,7 @@ import net.kollnig.missioncontrol.LocalNetworkAccess;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.PackageUids;
 import net.kollnig.missioncontrol.data.PausedApps;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -1084,6 +1085,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         SharedPreferences tracker_protect = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = tracker_protect.edit();
 
+        // Deliberately leave tracker_essential alone: bulk disabling and then
+        // re-enabling tracker protection returns an essential-only app to its
+        // previous ESSENTIAL_ONLY choice.
         for (android.content.pm.PackageInfo pkg : Rule.getPackages(this))
             editor.putBoolean(pkg.packageName, enabled);
 
@@ -1300,6 +1304,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlExport(getSharedPreferences("tracker_protect", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "tracker_protect");
 
+        serializer.startTag(null, "tracker_essential");
+        xmlExport(getSharedPreferences("tracker_essential", Context.MODE_PRIVATE), serializer);
+        serializer.endTag(null, "tracker_essential");
+
         serializer.startTag(null, Rule.PREF_WG_ROUTE);
         xmlExport(getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, Rule.PREF_WG_ROUTE);
@@ -1376,7 +1384,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                                 Collections.addAll(packageNames, packages);
                             }
                         } catch (NumberFormatException e) {
-                            Log.w(TAG, "Invalid UID in blocklist: " + uidStr);
+                            // Not a UID, so already stored under a package name:
+                            // an imported entry whose app is not installed yet.
+                            // The export is package-keyed anyway, so pass it
+                            // through rather than dropping the setting.
+                            packageNames.add(uidStr);
                         }
                     }
 
@@ -1397,23 +1409,15 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                             if (packages != null) {
                                 for (String pkg : packages) {
                                     packageNames.add(pkg);
-
-                                    // Also export the per-app settings for this UID
-                                    // The key format for per-app settings is APPS_BLOCKLIST_APPS_KEY + "_" + uid
-                                    String perAppKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uidStr;
-                                    Set<String> perAppSettings = prefs.getStringSet(perAppKey, null);
-                                    if (perAppSettings != null) {
-                                        serializer.startTag(null, "setting");
-                                        // Use a package-based key: APPS_BLOCKLIST_PACKAGES_KEY + "_" + packageName
-                                        serializer.attribute(null, "key", "APPS_BLOCKLIST_PACKAGES_KEY" + "_" + pkg);
-                                        serializer.attribute(null, "type", "set");
-                                        serializer.attribute(null, "value", TextUtils.join("\n", perAppSettings));
-                                        serializer.endTag(null, "setting");
-                                    }
+                                    exportTrackerSubset(prefs, serializer, uidStr, pkg);
                                 }
                             }
                         } catch (NumberFormatException e) {
-                            Log.w(TAG, "Invalid UID in blocklist: " + uidStr);
+                            // Not a UID, so already stored under a package name:
+                            // an imported entry whose app is not installed yet.
+                            // Carry it and its subset through unchanged.
+                            packageNames.add(uidStr);
+                            exportTrackerSubset(prefs, serializer, uidStr, uidStr);
                         }
                     }
 
@@ -1439,6 +1443,31 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             } else
                 Log.e(TAG, "Unknown key=" + key);
         }
+    }
+
+    /**
+     * Write one app's tracker subset under its package-name key.
+     *
+     * @param prefs     Blocklist preferences
+     * @param serializer Serializer to write to
+     * @param storedKey The key the subset is stored under: a UID, or a package
+     *                  name for an entry that could not be resolved
+     * @param pkg       The package name to export it under
+     */
+    static void exportTrackerSubset(SharedPreferences prefs, XmlSerializer serializer,
+                                    String storedKey, String pkg) throws IOException {
+        // The key format for per-app settings is APPS_BLOCKLIST_APPS_KEY + "_" + uid
+        Set<String> perAppSettings = prefs.getStringSet(
+                TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + storedKey, null);
+        if (perAppSettings == null)
+            return;
+
+        serializer.startTag(null, "setting");
+        // Use a package-based key: APPS_BLOCKLIST_PACKAGES_KEY + "_" + packageName
+        serializer.attribute(null, "key", "APPS_BLOCKLIST_PACKAGES_KEY" + "_" + pkg);
+        serializer.attribute(null, "type", "set");
+        serializer.attribute(null, "value", TextUtils.join("\n", perAppSettings));
+        serializer.endTag(null, "setting");
     }
 
     private void forwardExport(XmlSerializer serializer) throws IOException {
@@ -1491,6 +1520,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.application, prefs);
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
+        xmlImport(handler.tracker_essential, getSharedPreferences("tracker_essential", Context.MODE_PRIVATE));
         xmlImport(handler.wg_route, getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
         xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
@@ -1501,6 +1531,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Upgrade imported settings
         ReceiverAutostart.upgrade(true, this);
+
+        // Reconcile imported apply preferences with auto-exclusions immediately,
+        // rather than waiting for the next process start.
+        BlockingMode.syncAutoExclusions(this);
 
         DatabaseHelper.clearCache();
 
@@ -1535,6 +1569,27 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         editor.apply();
     }
 
+    static Set<String> resolveImportedUids(Context context, String value) {
+        Set<String> uids = new HashSet<>();
+        if (TextUtils.isEmpty(value))
+            return uids;
+
+        for (String pkg : value.split("\n")) {
+            if (TextUtils.isEmpty(pkg))
+                continue;
+
+            Integer uid = PackageUids.resolve(context, pkg);
+            if (uid == null) {
+                // Retain the package name so a later install can resolve it.
+                uids.add(pkg);
+                Log.w(TAG, "Retaining unresolved package during import: " + pkg);
+            } else {
+                uids.add(Integer.toString(uid));
+            }
+        }
+        return uids;
+    }
+
     private class XmlImportHandler extends DefaultHandler {
         private Context context;
         public boolean enabled = false;
@@ -1546,6 +1601,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> roaming = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
         public Map<String, Object> tracker_protect = new HashMap<>();
+        public Map<String, Object> tracker_essential = new HashMap<>();
         public Map<String, Object> wg_route = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
         public Map<String, Object> blocklist = new HashMap<>();
@@ -1586,6 +1642,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             else if (qName.equals("tracker_protect"))
                 current = tracker_protect;
+            else if (qName.equals("tracker_essential"))
+                current = tracker_essential;
             else if (qName.equals(Rule.PREF_WG_ROUTE))
                 current = wg_route;
 
@@ -1618,18 +1676,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
                         // InternetBlocklist: convert package names back to UIDs
                         if ("INTERNET_BLOCKLIST_PACKAGES_KEY".equals(key) && "set".equals(type)) {
-                            Set<String> uids = new HashSet<>();
-                            if (!TextUtils.isEmpty(value)) {
-                                PackageManager pm = context.getPackageManager();
-                                for (String pkg : value.split("\n")) {
-                                    try {
-                                        int uid = pm.getApplicationInfo(pkg, 0).uid;
-                                        uids.add(Integer.toString(uid));
-                                    } catch (PackageManager.NameNotFoundException e) {
-                                        Log.w(TAG, "Package not found during import: " + pkg);
-                                    }
-                                }
-                            }
+                            Set<String> uids = resolveImportedUids(context, value);
                             // Store under original key
                             String originalKey = InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
                             current.put(originalKey, uids);
@@ -1638,18 +1685,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
                         // TrackerBlocklist: convert package names back to UIDs
                         if ("APPS_BLOCKLIST_PACKAGES_KEY".equals(key) && "set".equals(type)) {
-                            Set<String> uids = new HashSet<>();
-                            if (!TextUtils.isEmpty(value)) {
-                                PackageManager pm = context.getPackageManager();
-                                for (String pkg : value.split("\n")) {
-                                    try {
-                                        int uid = pm.getApplicationInfo(pkg, 0).uid;
-                                        uids.add(Integer.toString(uid));
-                                    } catch (PackageManager.NameNotFoundException e) {
-                                        Log.w(TAG, "Package not found during import: " + pkg);
-                                    }
-                                }
-                            }
+                            Set<String> uids = resolveImportedUids(context, value);
                             // Store under original key
                             String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
                             current.put(originalKey, uids);
@@ -1660,21 +1696,19 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                         if (key.startsWith("APPS_BLOCKLIST_PACKAGES_KEY_") && "set".equals(type)) {
                             // Extract package name
                             String pkg = key.substring("APPS_BLOCKLIST_PACKAGES_KEY_".length());
-                            try {
-                                PackageManager pm = context.getPackageManager();
-                                int uid = pm.getApplicationInfo(pkg, 0).uid;
+                            Set<String> set = new HashSet<>();
+                            if (!TextUtils.isEmpty(value))
+                                for (String s : value.split("\n"))
+                                    set.add(s);
 
-                                Set<String> set = new HashSet<>();
-                                if (!TextUtils.isEmpty(value))
-                                    for (String s : value.split("\n"))
-                                        set.add(s);
-
+                            Integer uid = PackageUids.resolve(context, pkg);
+                            if (uid == null) {
+                                // Retain the package-name key so a later install can resolve it.
+                                current.put(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + pkg, set);
+                                Log.w(TAG, "Retaining unresolved package during import of settings: " + pkg);
+                            } else {
                                 // Store under original UID-based key
-                                String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid;
-                                current.put(originalKey, set);
-
-                            } catch (PackageManager.NameNotFoundException e) {
-                                Log.w(TAG, "Package not found during import of settings: " + pkg);
+                                current.put(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, set);
                             }
                             return;
                         }

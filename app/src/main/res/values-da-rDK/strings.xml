@@ -130,6 +130,7 @@
     <string name="app_state_no_internet_shared_uid">Gælder også %1$s, som deler et Android-bruger-id med denne app.</string>
     <string name="app_state_bypassed">Omgå TrackerControl</string>
     <string name="app_state_bypassed_explanation">Appen forbinder direkte, uden om TrackerControl. Intet overvåges eller blokeres for den. Brug dette som sidste udvej, hvis appen stadig ikke virker.\n\nBemærk: \"Bloker forbindelser uden VPN\" i Androids VPN-indstillinger skal være DEAKTIVERET, for at dette virker.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Afinstaller</string>
     <string name="back">Tilbage</string>
     <string name="your_privacy">Dit privatliv</string>

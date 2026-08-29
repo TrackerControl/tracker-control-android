@@ -125,7 +125,7 @@ public class ApplicationEx extends Application {
         BlockingMode.enforcePlayStoreMode(this);
 
         // Keep VPN exclusions aligned with the selected blocking mode on startup.
-        BlockingMode.syncModeExclusions(this);
+        BlockingMode.syncAutoExclusions(this);
 
         registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
             @Override

@@ -338,6 +338,7 @@ Tisztelettel,\n\n]]></string>
     <string name="app_state_no_internet_shared_uid">Erre is vonatkozik: %1$s, amely Android-felhasználóazonosítón osztozik ezzel az alkalmazással.</string>
     <string name="app_state_bypassed">TrackerControl megkerülése</string>
     <string name="app_state_bypassed_explanation">Az alkalmazás közvetlenül, a TrackerControlon kívül csatlakozik. Semmit sem figyel és blokkol nála. Végső megoldásként használja, ha az alkalmazás továbbra sem működik.\n\nMegjegyzés: az Android VPN-beállításaiban a \"Kapcsolatok blokkolása VPN nélkül\" beállításnak KIKAPCSOLVA kell lennie, hogy ez működjön.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Eltávolítás</string>
     <string name="settings_uninstall">App beállításai &amp; Eltávolítás</string>
     <string name="no_trackers_found_message_disabled">Engedélyezze a kapcsolót a fő képernyőn, majd indítsa el az alkalmazást a nyomkövetők megtalálásához</string>

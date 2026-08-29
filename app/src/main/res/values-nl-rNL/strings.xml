@@ -430,6 +430,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="app_state_no_internet_shared_uid">Geldt ook voor %1$s, die een Android-gebruikers-ID deelt met deze app.</string>
     <string name="app_state_bypassed">TrackerControl omzeilen</string>
     <string name="app_state_bypassed_explanation">De app maakt rechtstreeks verbinding, buiten TrackerControl om. Er wordt niets voor gecontroleerd of geblokkeerd. Gebruik dit als laatste redmiddel als de app nog steeds niet werkt.\n\nLet op: \"Verbindingen zonder VPN blokkeren\" in de Android-VPN-instellingen moet UITGESCHAKELD zijn om dit te laten werken.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Deïnstalleren</string>
     <string name="settings_uninstall">App-instellingen &amp; deïnstalleren</string>
     <string name="no_trackers_found_message_disabled">Zet de schakelaar in het hoofdscherm op aan en start de app om trackers op te sporen</string>

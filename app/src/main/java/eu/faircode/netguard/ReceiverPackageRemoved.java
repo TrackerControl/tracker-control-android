@@ -27,11 +27,50 @@ import android.util.Log;
 
 import androidx.core.app.NotificationManagerCompat;
 
+import net.kollnig.missioncontrol.data.InternetBlocklist;
+import net.kollnig.missioncontrol.data.PackageUids;
 import net.kollnig.missioncontrol.data.PausedApps;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 
 public class ReceiverPackageRemoved extends BroadcastReceiver {
     private static final String TAG = "TrackerControl.Receiver";
+
+    static boolean shouldClearUid(PackageUids.Lookup lookup, int uid) {
+        // UID-keyed state may still be in use by another package of a shared UID.
+        // Clear it only once the UID has no package left, otherwise a reinstall
+        // silently comes back with the old app's settings.
+        // A SecurityException (other user/profile on Android 16+)
+        // means "unknown", which must not be read as "none left".
+        try {
+            String[] packages = lookup.getPackagesForUid(uid);
+            return packages == null || packages.length == 0;
+        } catch (SecurityException ex) {
+            Log.w(TAG, "Keeping UID state for uid " + uid + ": " + ex.getMessage());
+            return false;
+        }
+    }
+
+    static void clearUidState(Context context, int uid, PackageUids.Lookup lookup) {
+        if (!shouldClearUid(lookup, uid))
+            return;
+
+        DatabaseHelper dh = DatabaseHelper.getInstance(context);
+        dh.clearLog(uid);
+        dh.clearAccess(uid, false);
+
+        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+        if (internetBlocklist.blockedInternet(uid))
+            internetBlocklist.unblock(context, uid);
+
+        TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(context);
+        // saveSettings rewrites every key in the preferences file, so only pay
+        // for it when the uid actually had tracker state.
+        if (trackerBlocklist.clear(uid))
+            trackerBlocklist.saveSettings(context);
+
+        NotificationManagerCompat.from(context).cancel(uid); // installed notification
+        NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
+    }
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -43,16 +82,11 @@ public class ReceiverPackageRemoved extends BroadcastReceiver {
             int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
             String packageName = intent.getData() == null ? null : intent.getData().getSchemeSpecificPart();
             PausedApps.onPackageRemoved(context, packageName, uid);
+            if (packageName != null)
+                context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE)
+                        .edit().remove(packageName).apply();
             if (uid > 0) {
-                DatabaseHelper dh = DatabaseHelper.getInstance(context);
-                dh.clearLog(uid);
-                dh.clearAccess(uid, false);
-
-                TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                b.clear(uid);
-
-                NotificationManagerCompat.from(context).cancel(uid); // installed notification
-                NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
+                clearUidState(context, uid, PackageUids.lookup(context));
             }
         }
     }

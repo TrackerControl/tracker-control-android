@@ -27,12 +27,12 @@ import java.util.Set;
 /**
  * Stores those apps whose access to internet is blocked.
  * <p>
- * Analogous implementation to TrackerBlocklist.
+ * Membership is the whole per-app state, so the {@link UidKeyedStore} payload
+ * is a placeholder and only the key set matters.
  */
-public class InternetBlocklist {
+public class InternetBlocklist extends UidKeyedStore<Boolean> {
     public static final String SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY = "INTERNET_BLOCKLIST_APPS_KEY";
     private static InternetBlocklist instance;
-    private final HashSet<Integer> blockmap = new HashSet<>();
 
     private InternetBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
@@ -47,10 +47,19 @@ public class InternetBlocklist {
      * @param c context used to access InternetBlocklist from
      * @return The current instance of the InternetBlocklist, if none, a new instance is created.
      */
-    public static InternetBlocklist getInstance(Context c) {
+    // Called from both native packet threads and UI threads.
+    public static synchronized InternetBlocklist getInstance(Context c) {
         if (instance == null)
             instance = new InternetBlocklist(c);
         return instance;
+    }
+
+    @Override
+    protected Resolution absorb(int uid, String rawKey, Boolean raw) {
+        // Membership is the whole state, so a collision with an existing UID
+        // has nothing to lose: the raw entry can always be dropped.
+        blockmap.put(uid, Boolean.TRUE);
+        return Resolution.ABSORBED;
     }
 
     /**
@@ -58,16 +67,23 @@ public class InternetBlocklist {
      *
      * @param c Context
      */
-    public void loadSettings(Context c) {
+    public synchronized void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, null);
+        PackageUids.Resolver resolver = PackageUids.resolver(c);
 
-        if (set != null) {
-            blockmap.clear();
-            for (String id : set) {
-                int uid = Integer.parseInt(id);
-                blockmap.add(uid);
-            }
+        clear();
+        if (set == null)
+            return;
+
+        // Numeric entries are canonical. Keep unresolved package names so
+        // they can be resolved when the app is installed later.
+        for (String id : set) {
+            Integer uid = resolveStoredUid(id, resolver);
+            if (uid == null)
+                rawBlockmap.put(id, Boolean.TRUE);
+            else
+                blockmap.put(uid, Boolean.TRUE);
         }
     }
 
@@ -77,14 +93,7 @@ public class InternetBlocklist {
      * @return Set of uids
      */
     public Set<Integer> getBlocklist() {
-        return blockmap;
-    }
-
-    /**
-     * Clear blocklist
-     */
-    public void clear() {
-        blockmap.clear();
+        return blockmap.keySet();
     }
 
     /**
@@ -100,8 +109,9 @@ public class InternetBlocklist {
     public synchronized void saveSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = new HashSet<>();
-        for (Integer uid : blockmap)
+        for (Integer uid : blockmap.keySet())
             set.add(Integer.toString(uid));
+        set.addAll(rawBlockmap.keySet());
 
         prefs.edit().putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, set).apply();
     }
@@ -112,7 +122,7 @@ public class InternetBlocklist {
      * @param uid Uid of app to block internet
      */
     public synchronized void block(int uid) {
-        blockmap.add(uid);
+        blockmap.put(uid, Boolean.TRUE);
     }
 
     /**
@@ -172,6 +182,6 @@ public class InternetBlocklist {
      * @return If internet is blocked for given app
      */
     public synchronized boolean blockedInternet(int uid) {
-        return blockmap.contains(uid);
+        return blockmap.containsKey(uid);
     }
 }

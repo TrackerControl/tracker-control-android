@@ -40,9 +40,32 @@ public class AppProtectionStateTest {
     @Test
     public void internetBlockWinsOverProtectionFlag() {
         assertEquals(AppProtectionState.NO_INTERNET,
-                AppProtectionState.resolve(true, true, true));
+                AppProtectionState.resolve(true, true, true, true));
         assertEquals(AppProtectionState.NO_INTERNET,
-                AppProtectionState.resolve(true, false, true));
+                AppProtectionState.resolve(true, false, true, true));
+    }
+
+    @Test
+    public void fourArgResolveTruthTable() {
+        for (boolean apply : new boolean[] { true, false })
+            for (boolean trackerProtect : new boolean[] { true, false })
+                for (boolean internetBlocked : new boolean[] { true, false })
+                    for (boolean essentialOnly : new boolean[] { true, false }) {
+                        AppProtectionState expected;
+                        if (!apply)
+                            expected = AppProtectionState.BYPASSED;
+                        else if (internetBlocked)
+                            expected = AppProtectionState.NO_INTERNET;
+                        else if (!trackerProtect)
+                            expected = AppProtectionState.TRACKERS_ALLOWED;
+                        else
+                            expected = essentialOnly
+                                    ? AppProtectionState.ESSENTIAL_ONLY
+                                    : AppProtectionState.PROTECTED;
+
+                        assertEquals(expected, AppProtectionState.resolve(
+                                apply, trackerProtect, internetBlocked, essentialOnly));
+                    }
     }
 
     /**
@@ -58,19 +81,21 @@ public class AppProtectionStateTest {
     }
 
     /**
-     * XML import restores the three stores independently and never normalises
-     * them, so resolve() must be total over all eight inputs.
+     * XML import restores the four stores independently and never normalises
+     * them, so resolve() must be total over all sixteen inputs.
      */
     @Test
     public void resolveIsTotalOverAllCombinations() {
         int combinations = 0;
         for (boolean apply : new boolean[] { true, false })
             for (boolean trackerProtect : new boolean[] { true, false })
-                for (boolean internetBlocked : new boolean[] { true, false }) {
-                    assertNotNull(AppProtectionState.resolve(apply, trackerProtect, internetBlocked));
-                    combinations++;
-                }
-        assertEquals(8, combinations);
+                for (boolean internetBlocked : new boolean[] { true, false })
+                    for (boolean essentialOnly : new boolean[] { true, false }) {
+                        assertNotNull(AppProtectionState.resolve(
+                                apply, trackerProtect, internetBlocked, essentialOnly));
+                        combinations++;
+                    }
+        assertEquals(16, combinations);
     }
 
     @Test
@@ -80,16 +105,20 @@ public class AppProtectionStateTest {
 
             // Worst case: apply the change on top of every possible prior state.
             for (boolean priorProtect : new boolean[] { true, false })
-                for (boolean priorInternet : new boolean[] { true, false }) {
-                    boolean protect = change.trackerProtect == null
-                            ? priorProtect
-                            : change.trackerProtect;
-                    boolean internet = change.internetBlocked == null
-                            ? priorInternet
-                            : change.internetBlocked;
-                    assertEquals(state,
-                            AppProtectionState.resolve(change.apply, protect, internet));
-                }
+                for (boolean priorInternet : new boolean[] { true, false })
+                    for (boolean priorEssential : new boolean[] { true, false }) {
+                        boolean protect = change.trackerProtect == null
+                                ? priorProtect
+                                : change.trackerProtect;
+                        boolean internet = change.internetBlocked == null
+                                ? priorInternet
+                                : change.internetBlocked;
+                        boolean essential = change.essentialOnly == null
+                                ? priorEssential
+                                : change.essentialOnly;
+                        assertEquals(state,
+                                AppProtectionState.resolve(change.apply, protect, internet, essential));
+                    }
         }
     }
 
@@ -97,6 +126,7 @@ public class AppProtectionStateTest {
     public void noInternetKeepsTrackerProtectionChoice() {
         Change change = AppProtectionState.of(AppProtectionState.NO_INTERNET);
         assertNull(change.trackerProtect);
+        assertNull(change.essentialOnly);
         assertTrue(change.apply);
         assertEquals(Boolean.TRUE, change.internetBlocked);
     }
@@ -106,6 +136,18 @@ public class AppProtectionStateTest {
         Change change = AppProtectionState.of(AppProtectionState.BYPASSED);
         assertNull(change.trackerProtect);
         assertNull(change.internetBlocked);
+        assertNull(change.essentialOnly);
+    }
+
+    @Test
+    public void protectedAndEssentialOnlyWriteExplicitFlagValues() {
+        assertEquals(Boolean.FALSE,
+                AppProtectionState.of(AppProtectionState.PROTECTED).essentialOnly);
+        assertEquals(Boolean.TRUE,
+                AppProtectionState.of(AppProtectionState.ESSENTIAL_ONLY).essentialOnly);
+        assertNull(AppProtectionState.of(AppProtectionState.TRACKERS_ALLOWED).essentialOnly);
+        assertNull(AppProtectionState.of(AppProtectionState.NO_INTERNET).essentialOnly);
+        assertNull(AppProtectionState.of(AppProtectionState.BYPASSED).essentialOnly);
     }
 
     /**
