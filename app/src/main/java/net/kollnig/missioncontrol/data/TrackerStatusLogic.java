@@ -74,6 +74,14 @@ public final class TrackerStatusLogic {
             boolean categoryBlocked,
             boolean companyKeyBlocked,
             boolean allowedInStandardMode) {
+        // App routing state takes precedence over dormant tracker policy.
+        // A bypassed app is outside TrackerControl, while a no-internet app
+        // has every connection dropped regardless of its stored whitelist.
+        if (state == AppProtectionState.BYPASSED)
+            return new Result(Status.ALLOWED, Interactivity.READ_ONLY);
+        if (state == AppProtectionState.NO_INTERNET)
+            return new Result(Status.BLOCKED, Interactivity.READ_ONLY);
+
         if (!trackerProtectionEnabled)
             return new Result(Status.ALLOWED, Interactivity.READ_ONLY);
 

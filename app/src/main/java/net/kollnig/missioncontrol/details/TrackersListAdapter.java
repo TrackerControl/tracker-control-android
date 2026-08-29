@@ -244,8 +244,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
         }
-        boolean categoryEffectivelyBlocked = trackerProtectionEnabled
-                && (readOnlyMinimal ? categoryMinimallyBlocked : categoryBlocked);
+        boolean trackerPolicyActive = state == AppProtectionState.PROTECTED
+                || state == AppProtectionState.MINIMAL_ONLY;
+        boolean categoryEffectivelyBlocked = state == AppProtectionState.NO_INTERNET
+                || (trackerProtectionEnabled && trackerPolicyActive
+                && (readOnlyMinimal ? categoryMinimallyBlocked : categoryBlocked));
 
         if (TrackerBlocklist.NECESSARY_CATEGORY.equals(categoryName)) {
             holder.mSectionExplainer.setVisibility(View.VISIBLE);

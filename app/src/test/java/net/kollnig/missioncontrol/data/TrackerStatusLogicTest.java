@@ -15,6 +15,21 @@ public class TrackerStatusLogicTest {
     }
 
     @Test
+    public void appRoutingStatePrecedesDormantTrackerPolicy() {
+        TrackerStatusLogic.Result bypassed = TrackerStatusLogic.resolve(
+                true, true, true, AppProtectionState.BYPASSED,
+                true, true, true, true, false);
+        assertEquals(TrackerStatusLogic.Status.ALLOWED, bypassed.status);
+        assertEquals(TrackerStatusLogic.Interactivity.READ_ONLY, bypassed.interactivity);
+
+        TrackerStatusLogic.Result noInternet = TrackerStatusLogic.resolve(
+                false, false, false, AppProtectionState.NO_INTERNET,
+                false, false, false, false, true);
+        assertEquals(TrackerStatusLogic.Status.BLOCKED, noInternet.status);
+        assertEquals(TrackerStatusLogic.Interactivity.READ_ONLY, noInternet.interactivity);
+    }
+
+    @Test
     public void minimalModeDistinguishesBlockedMonitoredAndAllowed() {
         TrackerStatusLogic.Result blocked = resolve(
                 true, true, false, true, true, true, false);
