@@ -146,6 +146,7 @@ find them.
 |---|---|
 | `tcdns_abi_version()` | Guards the callback table against a mismatched library; currently `1`. |
 | `tcdns_process_response(data, len, callbacks, ctx)` | Records A/AAAA answers and applies the blanking policy to one bare DNS message in place. Returns the new length, or `SIZE_MAX` when unchanged. |
+| `tcdns_process_partial_response(data, len, callbacks, ctx)` | Same, for the visible prefix of a DNS-over-TCP frame whose remainder has not been read. Never shortens the message — earlier bytes are already on the wire — so the caller keeps forwarding the original length and uses the return only as a blanked/unchanged flag. |
 
 The module keeps the `deny(unwrap_used, expect_used, panic, indexing_slicing)`
 lints that `tc-dns` applies crate-wide: the release profile builds with
