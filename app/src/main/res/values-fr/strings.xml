@@ -382,7 +382,6 @@ Votre trafic internet n\'est pas envoyé vers un serveur VPN distant.</string>
     <string name="title_activity_detail">Détails</string>
     <string name="tab_trackers">Traqueurs</string>
     <string name="tab_countries">Pays</string>
-    <string name="tab_actions">Mes données</string>
     <string name="tracker_name">Nom du traqueur</string>
     <string name="app_info">Gérer l\'application</string>
     <!-- Actions -->
@@ -499,6 +498,7 @@ Cordialement,\n\n]]></string>
     <string name="app_state_bypassed">Contourner TrackerControl</string>
     <string name="app_state_bypassed_explanation">L\'application se connecte directement, en dehors de TrackerControl. Rien n\'est surveillé ni bloqué pour elle. À utiliser en dernier recours si l\'application ne fonctionne toujours pas.\n\nRemarque : \"Bloquer les connexions sans VPN\" doit être DÉSACTIVÉ dans les paramètres VPN d\'Android pour que cela fonctionne.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Désinstaller</string>
     <string name="settings_uninstall">Paramètres de l\'application &amp; Désinstaller</string>
     <string name="no_trackers_found_message_disabled">Activer l\'interrupteur sur l\'écran principal, puis lancer l\'application pour trouver des traqueurs</string>
@@ -533,6 +533,7 @@ Cordialement,\n\n]]></string>
     <string name="analyze_tracker_libraries">Analyser les bibliothèques de traqueurs</string>
     <string name="update_analysis">Mettre à jour l\'analyse</string>
     <string name="analysis_outdated_version">\n\nNote : l\'analyse est d\'une version précédente de l\'application. Elle peut avoir changé les bibliothèques de traqueurs intégrées.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">Analyse en attente…</string>
     <string name="blocked">BLOQUÉ</string>
     <string name="allowed">AUTORISÉ</string>

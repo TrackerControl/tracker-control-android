@@ -233,7 +233,6 @@ Il tuo traffico di rete non è inoltrato verso un server remoto, ma viene monito
     <string name="title_activity_detail">Dettagli</string>
     <string name="tab_trackers">Tracker</string>
     <string name="tab_countries">Paesi</string>
-    <string name="tab_actions">I miei dati</string>
     <string name="tracker_name">Nome del tracker</string>
     <string name="app_info">Gestisci l\'applicazione</string>
     <!-- Actions -->
@@ -337,6 +336,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="app_state_bypassed">Ignora TrackerControl</string>
     <string name="app_state_bypassed_explanation">L\'app si connette direttamente, al di fuori di TrackerControl. Per essa non viene monitorato né bloccato nulla. Usa questa opzione come ultima risorsa se l\'app continua a non funzionare.\n\nNota: \"Blocca connessioni senza VPN\" nelle impostazioni VPN di Android deve essere DISATTIVATO perché funzioni.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Disinstalla</string>
     <string name="settings_uninstall">Impostazioni dell\'applicazione &amp; Disinstalla</string>
     <string name="no_trackers_found_message_disabled">Attiva l\'interruttore nella schermata principale, poi avvia l\'applicazione per trovare i tracker</string>
@@ -365,6 +365,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="trackers_static">Librerie tracker</string>
     <string name="trackers_static_explanation">TrackerControl rileva codice di tracking (\'librerie\') e il traffico di rete delle applicazioni.\n\nIl tracciamento che viene rilevato nel traffico di rete può essere bloccato con TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl rileva codice di tracking (\'librerie\') e il traffico di rete delle applicazioni.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOCCATO</string>
     <string name="allowed">CONSENTITO</string>
     <string name="setting_domain_based_blocked">Blocco basato sul dominio</string>

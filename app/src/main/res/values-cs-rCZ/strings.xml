@@ -257,7 +257,6 @@ Váš internetový provoz není odesílán žádnému vzdálenému VPN serveru.<
     <string name="title_activity_detail">Podrobnosti</string>
     <string name="tab_trackers">Trackery</string>
     <string name="tab_countries">Země</string>
-    <string name="tab_actions">Moje data</string>
     <string name="tracker_name">Název trackeru</string>
     <string name="app_info">Spravovat aplikace</string>
     <!-- Actions -->
@@ -362,6 +361,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="app_state_bypassed">Obejít TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikace se připojuje přímo, mimo TrackerControl. Nic se pro ni nesleduje ani neblokuje. Použijte jako poslední možnost, pokud aplikace stále nefunguje.\n\nPoznámka: Aby to fungovalo, musí být volba \"Blokovat připojení bez VPN\" v nastavení VPN systému Android VYPNUTA.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>
@@ -396,6 +396,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="analyze_tracker_libraries">Analýza knihoven trackerů</string>
     <string name="update_analysis">Aktualizovat analýzu</string>
     <string name="analysis_outdated_version">\n\nNote: Analýza se týká předchozí verze aplikace. Mohlo dojít ke změně integrovaných knihoven pro sledování.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">Analýza ve frontě…</string>
     <string name="blocked">BLOKOVÁNO</string>
     <string name="allowed">POVOLENO</string>

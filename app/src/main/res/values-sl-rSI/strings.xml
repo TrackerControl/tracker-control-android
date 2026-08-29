@@ -430,7 +430,6 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="title_activity_detail">Podrobnosti</string>
     <string name="tab_trackers">Sledilci</string>
     <string name="tab_countries">Države</string>
-    <string name="tab_actions">Moji podatki</string>
     <string name="tracker_name">Ime sledilca</string>
     <string name="app_info">Upravljanje programa</string>
     <!-- Actions -->
@@ -523,6 +522,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="app_state_bypassed">Obidi TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikacija se poveže neposredno, mimo TrackerControla. Zanjo se nič ne spremlja in nič ne blokira. Uporabite to kot zadnjo možnost, če aplikacija še vedno ne deluje.\n\nOpomba: možnost \"Blokiraj povezave brez VPN\" v Androidovih nastavitvah VPN mora biti IZKLOPLJENA, da to deluje.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Odstrani</string>
     <string name="settings_uninstall">Nastavitve programa in odstranitev</string>
     <string name="no_trackers_found_message_disabled">Omogočite stikalo na glavnem zaslonu, nato zaženite program, da poiščete sledilce.</string>
@@ -558,6 +558,7 @@ Vaš internetni promet se ne pošilja na oddaljeni strežnik VPN.</string>
     <string name="analyze_tracker_libraries">Preuči knjižnice sledilcev</string>
     <string name="update_analysis">Posodobi preučitev</string>
     <string name="analysis_outdated_version">\n\nOpomba: preučevanje je od prejšnje različice programa.  To je lahko spremenilo vgrajene knjižnice sledilcev.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">Preučitev je bila dodana v čakalno vrsto …</string>
     <string name="blocked">BLOKIRANO</string>
     <string name="allowed">DOVOLJENO</string>

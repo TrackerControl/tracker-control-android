@@ -421,7 +421,6 @@
     <string name="title_activity_detail">详情</string>
     <string name="tab_trackers">跟踪器</string>
     <string name="tab_countries">国家</string>
-    <string name="tab_actions">我的数据</string>
     <string name="tracker_name">追踪器名称</string>
     <string name="app_info">管理应用</string>
     <!-- Actions -->
@@ -547,6 +546,7 @@
     <string name="app_state_bypassed">绕过 TrackerControl</string>
     <string name="app_state_bypassed_explanation">应用将绕过 TrackerControl 直接联网，不会对其进行任何监测或拦截。仅在应用仍然无法使用时作为最后手段使用。\n\n注意：必须在 Android 的 VPN 设置中停用\"屏蔽不使用 VPN 的连接\"，此项才能生效。</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">卸载</string>
     <string name="settings_uninstall">应用设置 &amp; 卸载</string>
     <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
@@ -582,6 +582,7 @@
     <string name="analyze_tracker_libraries">分析追踪库</string>
     <string name="update_analysis">更新分析</string>
     <string name="analysis_outdated_version">\n\n注意：分析是以前的应用版本。新版本可能已经改变了集成的跟踪库。</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">已加入分析队列…</string>
     <string name="blocked">已屏蔽</string>
     <string name="allowed">已允许</string>

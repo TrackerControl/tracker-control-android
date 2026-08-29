@@ -124,7 +124,6 @@
     <string name="title_activity_detail">詳細資訊</string>
     <string name="tab_trackers">追蹤器</string>
     <string name="tab_countries">國家</string>
-    <string name="tab_actions">我的資料</string>
     <string name="tracker_name">追蹤器名稱</string>
     <string name="app_info">管理應用程式</string>
     <!-- Actions -->
@@ -180,11 +179,13 @@
     <string name="app_state_bypassed">略過 TrackerControl</string>
     <string name="app_state_bypassed_explanation">應用程式會略過 TrackerControl 直接連線，不會對其進行任何監控或封鎖。僅在應用程式仍無法使用時作為最後手段使用。\n\n注意：必須在 Android 的 VPN 設定中停用\"封鎖不使用 VPN 的連線\"，此項才會生效。</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">解除安裝</string>
     <string name="no_internet">沒有網際網路連線</string>
     <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>
     <string name="internet_blocked">已封鎖網路連線</string>
     <string name="internet_unblocked">已解除封鎖網路連線</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

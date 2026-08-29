@@ -291,7 +291,6 @@
     <string name="title_activity_detail">Chi tiết</string>
     <string name="tab_trackers">Trình theo dõi</string>
     <string name="tab_countries">Quốc gia</string>
-    <string name="tab_actions">Dữ liệu của tôi</string>
     <string name="tracker_name">Tên trình theo dõi</string>
     <string name="app_info">Quản lý ứng dụng</string>
     <!-- Actions -->
@@ -358,6 +357,7 @@
     <string name="app_state_bypassed">Bỏ qua TrackerControl</string>
     <string name="app_state_bypassed_explanation">Ứng dụng kết nối trực tiếp, bên ngoài TrackerControl. Không có gì được giám sát hay chặn cho nó. Hãy dùng tuỳ chọn này như biện pháp cuối cùng nếu ứng dụng vẫn không hoạt động.\n\nLưu ý: \"Chặn kết nối khi không có VPN\" trong cài đặt VPN của Android phải được TẮT thì tuỳ chọn này mới hoạt động.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Gỡ cài đặt</string>
     <string name="settings_uninstall">Cài đặt của ứng dụng &amp; Gỡ cài đặt</string>
     <string name="no_trackers_found_message_disabled">Bật công tắc trong màn hình chính, sau đó chạy ứng dụng để tìm trình theo dõi</string>
@@ -386,6 +386,7 @@
     <string name="trackers_static">Thư viện trình theo dõi</string>
     <string name="trackers_static_explanation">TrackerControl phát hiện việc theo dõi trong mã (\'các thư viện\') và lưu lượng mạng của các ứng dụng.\n\nViệc theo dõi được phát hiện trong lưu lượng mạng có thể được TrackerControl chặn.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl phát hiện việc theo dõi trong mã (\'thư viện\') và lưu lượng mạng của các ứng dụng.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">ĐÃ CHẶN</string>
     <string name="allowed">ĐÃ CHO PHÉP</string>
     <string name="setting_domain_based_blocked">Chặn dựa trên miền</string>
