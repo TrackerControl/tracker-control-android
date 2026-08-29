@@ -547,10 +547,14 @@ internal class WgConnectivityMonitor(
                 when (checker.tick(now, stats)) {
                     WgVerdict.HEALTHY, WgVerdict.WAITING -> {}
                     WgVerdict.BROKEN -> {
-                        if (!isInteractive()) {
-                            checker.onSuspended(now)
-                            continue
-                        }
+                        // Recover regardless of screen state. Unlike a null
+                        // stats sample, BROKEN is direct evidence that the
+                        // data path is dead: tx advanced, no rx followed, and
+                        // the keepalive prod did not revive it. Deferring the
+                        // restart until the screen comes on would strand every
+                        // app without network (the hijack is fail-closed) while
+                        // still prodding the radio each idle poll, so it costs
+                        // battery without buying recovery.
                         reportBroken(generation, "tunnel unresponsive after prod; reporting broken state")
                         return
                     }

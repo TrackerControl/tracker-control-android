@@ -293,6 +293,46 @@ class WgConnectivityMonitorTest {
         assertFalse(monitor.isRunning())
     }
 
+    /**
+     * BROKEN is direct evidence of a dead data path (tx advanced, no rx, and
+     * the prod did not revive it), unlike an ambiguous null stats sample. The
+     * hijack is fail-closed, so deferring recovery to the next screen-on would
+     * strand every app without network while still prodding each idle poll.
+     */
+    @Test
+    fun screenOffBrokenTunnelStillEntersRecovery() {
+        val now = AtomicLong(0)
+        val broken = CountDownLatch(1)
+        val delays = mutableListOf<Long>()
+        var reads = 0
+        var sleeps = 0
+        var monitor: WgConnectivityMonitor? = null
+        monitor = WgConnectivityMonitor(
+            // rx never advances while tx does: an unanswered send.
+            statsProvider = { WgStats(0, (reads++).toLong(), 0) },
+            prod = {},
+            onBroken = { broken.countDown() },
+            isInteractive = { false },
+            sleep = { delay ->
+                delays += delay
+                // Stay under isSuspendGap so the stall is not mistaken for doze.
+                when (++sleeps) {
+                    1 -> now.set(1_000L)
+                    2 -> now.set(7_000L)
+                    3 -> now.set(25_000L)
+                    else -> monitor!!.stop()
+                }
+            },
+            clock = { now.get() }
+        )
+
+        monitor.start()
+        assertTrue("screen-off BROKEN did not reach recovery", broken.await(5, TimeUnit.SECONDS))
+        awaitStopped(monitor)
+        assertEquals(WgConnectivityMonitor.IDLE_LOOP_SLEEP_MS, delays.first())
+        assertEquals(3, sleeps)
+    }
+
     @Test
     fun stopBetweenCallbackAuthorizationAndDispatchSuppressesOldCallback() {
         val callbackReady = CountDownLatch(1)
