@@ -68,10 +68,13 @@ jobs:
           BRANCH="automation/update-lists"
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          REMOTE_SHA="$(git ls-remote --heads origin "$BRANCH" | cut -f1)"
           git checkout -B "$BRANCH"
           git add app/src/main/assets
           git commit -m "Update bundled tracker/host lists"
-          git push --force-with-lease origin "$BRANCH"
+          git push \
+            --force-with-lease="refs/heads/$BRANCH:$REMOTE_SHA" \
+            origin "$BRANCH"
 
           if gh pr view "$BRANCH" >/dev/null 2>&1; then
             echo "PR already open for $BRANCH — updated in place."
