@@ -45,12 +45,11 @@
             android:paddingEnd="16dp"
             android:paddingBottom="24dp">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardPause"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="1dp"
                 app:cardMaxElevation="@dimen/z_card">
 
@@ -86,7 +85,7 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:id="@+id/tvLockdownNote"
@@ -131,11 +130,10 @@
                 android:textColor="?android:textColorSecondary"
                 android:visibility="gone" />
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="1dp"
                 app:cardMaxElevation="@dimen/z_card">
 
@@ -239,19 +237,18 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!--
               Remote-VPN routing lives beside the protection state because both
               decide how this app's traffic is handled, but they stay separate
               controls: filtering and tunnelling are independent choices (#723).
             -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardAppRoute"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="1dp"
                 app:cardMaxElevation="@dimen/z_card">
 
@@ -322,7 +319,7 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

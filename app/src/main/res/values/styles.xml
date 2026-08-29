@@ -1,15 +1,6 @@
 <resources>
     <attr name="colorOn" format="reference" />
     <attr name="colorOff" format="reference" />
-    <attr name="expander" format="reference" />
-    <attr name="iconQueue" format="reference" />
-    <attr name="iconMetered" format="reference" />
-    <attr name="iconSettings" format="reference" />
-    <attr name="iconDatasaver" format="reference" />
-    <attr name="iconLaunch" format="reference" />
-    <attr name="iconDelete" format="reference" />
-    <attr name="iconPlay" format="reference" />
-    <attr name="iconPause" format="reference" />
 
     <style name="AppTheme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -20,49 +11,24 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar"/>
 
     <style name="PrimaryFlatButton" parent="Theme.Material3.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 
-    <style name="BaseThemeDark" parent="Theme.Material3.Light">
+    <!-- Single base theme. Day/night is handled by Theme.Material3.DayNight;
+         icons are tinted via ?attr/colorControlNormal rather than duplicated
+         as black/white drawables behind theme attributes. -->
+    <style name="BaseTheme" parent="Theme.Material3.DayNight">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
-        <item name="expander">@drawable/expander_black</item>
-        <item name="iconQueue">@drawable/ic_hourglass_empty_black_24dp</item>
-        <item name="iconMetered">@drawable/ic_attach_money_black_24dp</item>
-        <item name="iconSettings">@drawable/ic_settings_black_24dp</item>
-        <item name="iconDatasaver">@drawable/ic_perm_data_setting_black_24dp</item>
-        <item name="iconLaunch">@drawable/ic_launch_black_24dp</item>
-        <item name="iconDelete">@drawable/ic_delete_black_24dp</item>
-        <item name="iconPlay">@drawable/ic_play_arrow_black_24dp</item>
-        <item name="iconPause">@drawable/ic_pause_black_24dp</item>
         <item name="android:windowDisablePreview">true</item>
         <item name="actionBarStyle">@style/ActionBar.Red</item>
         <item name="actionBarTheme">@style/ActionBarTheme.Red</item>
         <item name="toolbarStyle">@style/Toolbar.Red</item>
     </style>
 
-    <style name="BaseThemeLight" parent="Theme.Material3.DayNight">
-        <item name="windowActionBar">true</item>
-        <item name="windowNoTitle">false</item>
-        <item name="expander">@drawable/expander_white</item>
-        <item name="iconQueue">@drawable/ic_hourglass_empty_white_24dp</item>
-        <item name="iconMetered">@drawable/ic_attach_money_white_24dp</item>
-        <item name="iconSettings">@drawable/ic_settings_white_24dp</item>
-        <item name="iconDatasaver">@drawable/ic_perm_data_setting_white_24dp</item>
-        <item name="iconLaunch">@drawable/ic_launch_white_24dp</item>
-        <item name="iconDelete">@drawable/ic_delete_white_24dp</item>
-        <item name="iconPlay">@drawable/ic_play_arrow_white_24dp</item>
-        <item name="iconPause">@drawable/ic_pause_white_24dp</item>
-        <item name="android:windowDisablePreview">true</item>
-        <item name="actionBarStyle">@style/ActionBar.Red</item>
-        <item name="actionBarTheme">@style/ActionBarTheme.Red</item>
-        <item name="toolbarStyle">@style/Toolbar.Red</item>
-    </style>
-
-    <style name="AppThemeRed" parent="BaseThemeDark">
+    <style name="AppThemeRed" parent="BaseTheme">
         <item name="colorPrimary">@color/colorRedPrimary</item>
         <item name="colorPrimaryDark">@color/colorRedPrimaryDark</item>
         <item name="colorAccent">@color/colorRedAccent</item>
@@ -101,7 +67,7 @@
     </style>
 
     <!-- ActionBar with colorPrimary background and white icons/text -->
-    <style name="ActionBar.Red" parent="Widget.AppCompat.ActionBar.Solid">
+    <style name="ActionBar.Red" parent="Widget.Material3.ActionBar.Solid">
         <item name="background">@color/colorPrimary</item>
         <item name="backgroundTint">@color/colorPrimary</item>
         <item name="titleTextStyle">@style/ActionBarTitleText</item>

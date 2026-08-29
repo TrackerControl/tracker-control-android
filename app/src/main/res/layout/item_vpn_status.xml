@@ -56,7 +56,8 @@
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/vpn_settings"
             android:padding="12dp"
-            android:src="?attr/iconSettings" />
+            android:src="@drawable/ic_settings_black_24dp"
+            app:tint="?attr/colorControlNormal" />
 
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/vpnEnabledSwitch"

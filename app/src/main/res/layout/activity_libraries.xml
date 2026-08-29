@@ -44,11 +44,10 @@
             android:paddingEnd="16dp"
             android:paddingBottom="24dp">
 
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="1dp"
                 app:cardMaxElevation="@dimen/z_card">
 
@@ -135,7 +134,7 @@
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 

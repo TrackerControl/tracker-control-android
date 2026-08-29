@@ -5,14 +5,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardNotSupported"
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
         android:clipToPadding="false"
-        app:cardCornerRadius="4dp"
         app:cardElevation="1dp"
         app:cardMaxElevation="@dimen/z_card">
 
@@ -48,7 +47,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!--
       Two summary rows only. Protection and remote-VPN routing share one row
@@ -57,13 +56,12 @@
       rather than from observed traffic. Both open a dedicated screen, so the
       per-company list below starts as close to the top as possible.
     -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardAppControls"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:clipToPadding="false"
-        app:cardCornerRadius="4dp"
         app:cardElevation="1dp"
         app:cardMaxElevation="@dimen/z_card">
 
@@ -189,6 +187,6 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>
