@@ -170,17 +170,22 @@ public class TrackerListReloadTest {
     }
 
     @Test
-    public void modeSelectionPublishesOnlyTheSelectedLists() {
+    public void everyModePublishesTheFullDetectionMapAndTheDdgBlockingMap() {
         PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(BLOCKING_MODE, BlockingMode.MODE_MINIMAL).commit();
         TrackerList.getInstance(context);
+        // Detection is mode-independent...
         assertNotNull(TrackerList.findTracker("creativecdn.com"));
-        assertNull(TrackerList.findTracker("crashlytics.com"));
+        assertNotNull(TrackerList.findTracker("crashlytics.com"));
+        // ...while blocking stays limited to the DuckDuckGo list.
+        assertNotNull(TrackerList.findEssentialTracker("creativecdn.com"));
+        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
 
         PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(BLOCKING_MODE, BlockingMode.MODE_STANDARD).commit();
         assertTrue(TrackerList.reloadTrackerData(context));
         assertNotNull(TrackerList.findTracker("crashlytics.com"));
+        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
     }
 
     @Test

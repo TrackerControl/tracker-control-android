@@ -191,7 +191,9 @@ public class TrackerList {
         Map<String, Tracker> hostnameToTracker = snapshot.hostnameToTracker;
         Tracker t = lookupHost(hostnameToTracker, hostname);
 
-        // In minimal mode, skip hosts-file based lookups (only use DDG tracker list)
+        // In minimal mode, skip hosts-file based lookups: the hosts list is a
+        // blocking feature of unattributed single-domain entries, not curated
+        // tracker intelligence, so it stays out of minimal-mode detection.
         if (t == null && !snapshot.minimalBlockingMode
                 && ServiceSinkhole.mapHostsBlocked.containsKey(hostname))
             if (snapshot.domainBasedBlocking)
@@ -237,6 +239,20 @@ public class TrackerList {
      * Whether any observed host belongs to a non-Content DDG tracker.
      */
     public static boolean isEssentiallyBlocked(Tracker tracker) {
+        return anyHostMatchesEssential(tracker, true);
+    }
+
+    /**
+     * Whether any observed host is known to the DDG list at all, whatever its
+     * action. A tracker that is detected only through X-Ray, Disconnect or the
+     * hosts file is neither blocked nor "allowed" by DDG — it is merely
+     * monitored, and the UI must say so rather than implying either verdict.
+     */
+    public static boolean isEssentiallyKnown(Tracker tracker) {
+        return anyHostMatchesEssential(tracker, false);
+    }
+
+    private static boolean anyHostMatchesEssential(Tracker tracker, boolean requireBlocked) {
         if (tracker == null)
             return false;
 
@@ -246,8 +262,10 @@ public class TrackerList {
             String hostname = host.endsWith(" *")
                     ? host.substring(0, host.length() - 2) : host;
             Tracker essentialTracker = findEssentialTracker(hostname);
-            if (essentialTracker != null
-                    && BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker.category))
+            if (essentialTracker == null)
+                continue;
+            if (!requireBlocked
+                    || BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker.category))
                 return true;
         }
 
@@ -296,21 +314,17 @@ public class TrackerList {
             String blockingMode = BlockingMode.getMode(c);
             boolean minimalBlockingMode = BlockingMode.MODE_MINIMAL.equals(blockingMode);
             Map<String, Tracker> loadedTrackers = new ConcurrentHashMap<>();
-            Map<String, Tracker> essentialTrackers = minimalBlockingMode
-                    ? loadedTrackers : new HashMap<>();
+            Map<String, Tracker> essentialTrackers = new HashMap<>();
 
-            boolean loaded;
-            if (minimalBlockingMode) {
-                // In minimal mode, only load DDG trackers (skip X-Ray and Disconnect)
-                // This ensures only confirmed, breakage-tested trackers are blocked
-                loaded = loadDuckDuckGoTrackers(c, loadedTrackers, essentialTrackers,
-                        domainBasedBlocking);
-            } else {
-                loaded = loadXrayTrackers(c, loadedTrackers, domainBasedBlocking);
-                loaded = loaded && loadDisconnectTrackers(c, loadedTrackers, domainBasedBlocking);
-                loaded = loaded && loadDuckDuckGoTrackers(c, loadedTrackers, essentialTrackers,
-                        domainBasedBlocking);
-            }
+            // Detection is mode-independent: every mode loads all curated lists
+            // into the detection map, so the trackers list, counts, timeline and
+            // traffic log show the same evidence everywhere. What minimal mode
+            // narrows is *blocking*, and that verdict comes from the separate
+            // DDG-only map below (see BlockingModeLogic#shouldBlockEssentialOnly).
+            boolean loaded = loadXrayTrackers(c, loadedTrackers, domainBasedBlocking);
+            loaded = loaded && loadDisconnectTrackers(c, loadedTrackers, domainBasedBlocking);
+            loaded = loaded && loadDuckDuckGoTrackers(c, loadedTrackers, essentialTrackers,
+                    domainBasedBlocking);
 
             if (!loaded) {
                 Log.w(TAG, "Keeping previous tracker snapshot after asset loading failure");
@@ -319,7 +333,7 @@ public class TrackerList {
 
             trackerSnapshot = new TrackerSnapshot(
                     loadedTrackers,
-                    minimalBlockingMode ? essentialTrackers : Collections.unmodifiableMap(essentialTrackers),
+                    Collections.unmodifiableMap(essentialTrackers),
                     domainBasedBlocking, minimalBlockingMode, blockingMode, true);
             invalidateTrackerCountCache();
             return true;

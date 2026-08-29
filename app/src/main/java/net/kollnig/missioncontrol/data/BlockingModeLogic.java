@@ -38,15 +38,11 @@ public final class BlockingModeLogic {
         return MODE_STRICT.equals(mode);
     }
 
-    public static boolean shouldBlockKnownTracker(String mode,
-            String trackerCategory,
-            boolean blockedByGranularRule) {
-        if (MODE_MINIMAL.equals(mode))
-            return !CONTENT_CATEGORY.equals(trackerCategory);
-
-        return blockedByGranularRule;
-    }
-
+    /**
+     * The blocking verdict for Minimal mode and for essential-only apps: block
+     * iff the flow matched a non-Content DuckDuckGo tracker. The category must
+     * come from the DDG-only map, never from the (broader) detection map.
+     */
     public static boolean shouldBlockEssentialOnly(@Nullable String essentialCategory) {
         return essentialCategory != null && !CONTENT_CATEGORY.equals(essentialCategory);
     }

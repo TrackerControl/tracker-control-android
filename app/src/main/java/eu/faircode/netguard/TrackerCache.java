@@ -28,11 +28,13 @@ final class TrackerCache {
     static final class Entry {
         private final String hostname;
         private final Tracker tracker;
+        private final String essentialCategory;
         private final long expires;
 
-        Entry(String hostname, Tracker tracker, long expires) {
+        Entry(String hostname, Tracker tracker, String essentialCategory, long expires) {
             this.hostname = Objects.requireNonNull(hostname);
             this.tracker = Objects.requireNonNull(tracker);
+            this.essentialCategory = essentialCategory;
             this.expires = expires;
         }
 
@@ -42,6 +44,17 @@ final class TrackerCache {
 
         Tracker getTracker() {
             return tracker;
+        }
+
+        /**
+         * The DuckDuckGo category behind the blocking verdict for this IP, or
+         * null when no DDG tracker was seen. Resolved while both the qname and
+         * the aname are still in hand, so a DDG match on an uncloaked CNAME
+         * target is not lost the way a verdict-time hostname lookup would lose
+         * it.
+         */
+        String getEssentialCategory() {
+            return essentialCategory;
         }
 
         boolean isExpired(long now) {

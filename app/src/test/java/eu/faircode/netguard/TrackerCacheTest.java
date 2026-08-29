@@ -25,7 +25,7 @@ public class TrackerCacheTest {
     public void publicationNeverExposesHalfEntry() throws Exception {
         TrackerCache cache = new TrackerCache();
         Tracker tracker = tracker("Example");
-        TrackerCache.Entry entry = new TrackerCache.Entry("tracker.example", tracker, NEVER_EXPIRES);
+        TrackerCache.Entry entry = new TrackerCache.Entry("tracker.example", tracker, null, NEVER_EXPIRES);
         CountDownLatch readerReady = new CountDownLatch(1);
         CountDownLatch start = new CountDownLatch(1);
         CountDownLatch published = new CountDownLatch(1);
@@ -77,7 +77,7 @@ public class TrackerCacheTest {
     public void expiredEntryIsRemovedAsOneSnapshot() {
         TrackerCache cache = new TrackerCache();
         TrackerCache.Entry entry = new TrackerCache.Entry(
-                "tracker.example", tracker("Example"), System.currentTimeMillis() - 1);
+                "tracker.example", tracker("Example"), null, System.currentTimeMillis() - 1);
 
         assertTrue(cache.putIfGeneration(ADDRESS, entry, cache.generation()));
         assertNull(cache.get(ADDRESS, System.currentTimeMillis()));
@@ -86,7 +86,7 @@ public class TrackerCacheTest {
     @Test
     public void expiryBoundaryIsStillValid() {
         TrackerCache cache = new TrackerCache();
-        TrackerCache.Entry entry = new TrackerCache.Entry("tracker.example", tracker("Example"), 100L);
+        TrackerCache.Entry entry = new TrackerCache.Entry("tracker.example", tracker("Example"), null, 100L);
 
         assertTrue(cache.putIfGeneration(ADDRESS, entry, cache.generation()));
         assertNotNull(cache.get(ADDRESS, 100L));
@@ -96,7 +96,7 @@ public class TrackerCacheTest {
     @Test
     public void invalidationRejectsStalePublication() {
         TrackerCache cache = new TrackerCache();
-        TrackerCache.Entry entry = new TrackerCache.Entry("old.example", tracker("Old"), NEVER_EXPIRES);
+        TrackerCache.Entry entry = new TrackerCache.Entry("old.example", tracker("Old"), null, NEVER_EXPIRES);
         long generationBefore = cache.generation();
         assertTrue(cache.putIfGeneration(ADDRESS, entry, generationBefore));
 
@@ -105,7 +105,7 @@ public class TrackerCacheTest {
         assertNull(cache.get(ADDRESS, System.currentTimeMillis()));
         assertFalse(cache.putIfGeneration(
                 ADDRESS,
-                new TrackerCache.Entry("stale.example", tracker("Stale"), NEVER_EXPIRES),
+                new TrackerCache.Entry("stale.example", tracker("Stale"), null, NEVER_EXPIRES),
                 generationBefore));
         assertNull(cache.get(ADDRESS, System.currentTimeMillis()));
         assertEquals(generationBefore + 1, cache.generation());
@@ -117,11 +117,11 @@ public class TrackerCacheTest {
         long generationBefore = cache.generation();
         assertTrue(cache.putIfGeneration(
                 ADDRESS,
-                new TrackerCache.Entry("one.example", tracker("One"), NEVER_EXPIRES),
+                new TrackerCache.Entry("one.example", tracker("One"), null, NEVER_EXPIRES),
                 generationBefore));
         assertTrue(cache.putIfGeneration(
                 "192.0.2.2",
-                new TrackerCache.Entry("two.example", tracker("Two"), NEVER_EXPIRES),
+                new TrackerCache.Entry("two.example", tracker("Two"), null, NEVER_EXPIRES),
                 generationBefore));
 
         cache.clear();
@@ -145,7 +145,7 @@ public class TrackerCacheTest {
     public void blockingSnapshotAlwaysContainsTracker() {
         TrackerCache cache = new TrackerCache();
         TrackerCache.Entry entry = new TrackerCache.Entry(
-                ServiceSinkhole.NO_DNAME, ServiceSinkhole.NO_TRACKER, NEVER_EXPIRES);
+                ServiceSinkhole.NO_DNAME, ServiceSinkhole.NO_TRACKER, null, NEVER_EXPIRES);
 
         assertTrue(cache.putIfGeneration(ADDRESS, entry, cache.generation()));
         TrackerCache.Entry blockingSnapshot = cache.get(ADDRESS, System.currentTimeMillis());
@@ -157,7 +157,7 @@ public class TrackerCacheTest {
     @Test
     public void nullTrackerCannotEnterCache() {
         try {
-            new TrackerCache.Entry("tracker.example", null, NEVER_EXPIRES);
+            new TrackerCache.Entry("tracker.example", null, null, NEVER_EXPIRES);
             fail("null tracker must not be cacheable");
         } catch (NullPointerException expected) {
             // The blocking path can only read entries made through this value.
@@ -167,7 +167,7 @@ public class TrackerCacheTest {
     @Test
     public void nullHostnameCannotEnterCache() {
         try {
-            new TrackerCache.Entry(null, tracker("Example"), NEVER_EXPIRES);
+            new TrackerCache.Entry(null, tracker("Example"), null, NEVER_EXPIRES);
             fail("null hostname must not be cacheable");
         } catch (NullPointerException expected) {
             // The blocking path can only read complete snapshots.
@@ -180,7 +180,7 @@ public class TrackerCacheTest {
             long generation = cache.generation();
             assertTrue(cache.putIfGeneration(
                     ADDRESS,
-                    new TrackerCache.Entry("old.example", tracker("Old"), NEVER_EXPIRES),
+                    new TrackerCache.Entry("old.example", tracker("Old"), null, NEVER_EXPIRES),
                     generation));
             CyclicBarrier barrier = new CyclicBarrier(3);
             AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -190,7 +190,7 @@ public class TrackerCacheTest {
                     barrier.await();
                     cache.putIfGeneration(
                             ADDRESS,
-                            new TrackerCache.Entry("stale.example", tracker("Stale"), NEVER_EXPIRES),
+                            new TrackerCache.Entry("stale.example", tracker("Stale"), null, NEVER_EXPIRES),
                             generation);
                 } catch (Throwable ex) {
                     failure.compareAndSet(null, ex);

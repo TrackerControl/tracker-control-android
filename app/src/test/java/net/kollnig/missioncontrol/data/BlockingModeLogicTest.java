@@ -28,31 +28,12 @@ import java.util.Set;
 public class BlockingModeLogicTest {
 
     @Test
-    public void minimalBlocksOnlyNonContentTrackers() {
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_MINIMAL,
-                "Advertising",
-                false));
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_MINIMAL,
-                BlockingModeLogic.CONTENT_CATEGORY,
-                true));
-    }
-
-    @Test
-    public void standardAndStrictFollowGranularRules() {
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STANDARD,
-                "Advertising",
-                false));
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STANDARD,
-                BlockingModeLogic.CONTENT_CATEGORY,
-                true));
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STRICT,
-                BlockingModeLogic.CONTENT_CATEGORY,
-                true));
+    public void minimalBlocksOnlyNonContentDuckDuckGoTrackers() {
+        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly("Advertising"));
+        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(
+                BlockingModeLogic.CONTENT_CATEGORY));
+        // Detected by another list, but unknown to DuckDuckGo: monitored, not blocked.
+        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(null));
     }
 
     @Test
@@ -208,66 +189,40 @@ public class BlockingModeLogicTest {
     }
 
     @Test
-    public void minimalIgnoresGranularRuleParameter() {
-        // Even when blockedByGranularRule is false, minimal still blocks non-Content
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_MINIMAL,
-                "Advertising",
-                false));
-        // Even when blockedByGranularRule is true, minimal still allows Content
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_MINIMAL,
-                BlockingModeLogic.CONTENT_CATEGORY,
-                true));
-    }
-
-    @Test
-    public void minimalBlocksAllNonContentCategories() {
+    public void minimalBlocksAllNonContentDuckDuckGoCategories() {
         for (String category : new String[]{
                 "Advertising", "Analytics", "Social", "Fingerprinting",
                 "Email", "Uncategorised"}) {
             assertTrue("Should block " + category,
-                    BlockingModeLogic.shouldBlockKnownTracker(
-                            BlockingModeLogic.MODE_MINIMAL, category, false));
+                    BlockingModeLogic.shouldBlockEssentialOnly(category));
         }
     }
 
     @Test
     public void standardWithGranularFalseDoesNotBlock() {
-        // In standard mode, if granular rule says not blocked, it's not blocked
-        // regardless of category
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STANDARD,
-                "Advertising",
-                false));
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STANDARD,
-                "Analytics",
-                false));
-    }
+        // In standard mode, the granular rule is the whole verdict
+        TrackerBlocklist.resetForTests();
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
+        int uid = 1001;
 
-    @Test
-    public void strictWithGranularTrueBlocksContent() {
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STRICT,
-                BlockingModeLogic.CONTENT_CATEGORY,
-                true));
+        blocklist.ensureDefaults(uid, false);
+        Tracker tracker = new Tracker("Branch", "Advertising");
+        blocklist.unblock(uid, tracker.category);
+
+        assertFalse(blocklist.blockedTracker(uid, tracker));
     }
 
     @Test
     public void endToEndMinimalBlocksAdvertisingTrackerRegardlessOfBlocklist() {
-        // Simulates the full decision chain for minimal mode:
-        // TrackerBlocklist is not consulted, only category matters
+        // Minimal mode never consults TrackerBlocklist: the DuckDuckGo category
+        // of the flow is the whole verdict.
         TrackerBlocklist.resetForTests();
         TrackerBlocklist blocklist = TrackerBlocklist.getInstance(null);
         Tracker tracker = new Tracker("Branch", "Advertising");
 
-        // Even if user hasn't set up any rules (no ensureDefaults), minimal blocks
-        boolean blockedByGranular = blocklist.blockedTracker(1001, tracker);
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_MINIMAL,
-                tracker.category,
-                blockedByGranular));
+        blocklist.unblock(1001, tracker.category);
+        assertFalse(blocklist.blockedTracker(1001, tracker));
+        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly(tracker.category));
     }
 
     @Test
@@ -282,10 +237,6 @@ public class BlockingModeLogicTest {
         boolean blockedByGranular = blocklist.blockedTracker(uid, contentTracker);
         assertFalse("Content should not be blocked by granular rule in standard defaults",
                 blockedByGranular);
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STANDARD,
-                contentTracker.category,
-                blockedByGranular));
     }
 
     @Test
@@ -300,10 +251,6 @@ public class BlockingModeLogicTest {
         boolean blockedByGranular = blocklist.blockedTracker(uid, contentTracker);
         assertTrue("Content should be blocked by granular rule in strict defaults",
                 blockedByGranular);
-        assertTrue(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STRICT,
-                contentTracker.category,
-                blockedByGranular));
     }
 
     @Test
@@ -319,10 +266,6 @@ public class BlockingModeLogicTest {
 
         // User unblocks Branch specifically
         blocklist.unblock(uid, tracker);
-        boolean blockedByGranular = blocklist.blockedTracker(uid, tracker);
-        assertFalse(BlockingModeLogic.shouldBlockKnownTracker(
-                BlockingModeLogic.MODE_STANDARD,
-                tracker.category,
-                blockedByGranular));
+        assertFalse(blocklist.blockedTracker(uid, tracker));
     }
 }
