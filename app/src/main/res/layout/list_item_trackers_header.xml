@@ -11,8 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:clipToPadding="false"
-        app:cardElevation="1dp"
+        app:cardElevation="0dp"
         app:cardMaxElevation="@dimen/z_card">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,6 +60,8 @@
         android:id="@+id/tvTrackersIntroTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:accessibilityHeading="true"
         android:gravity="bottom"
         android:minHeight="24dp"
@@ -69,7 +73,9 @@
         android:id="@+id/tvTrackersIntroText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:text="@string/block_tracking_description" />
 
@@ -85,8 +91,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:clipToPadding="false"
-        app:cardElevation="1dp"
+        app:cardElevation="0dp"
         app:cardMaxElevation="@dimen/z_card">
 
         <LinearLayout

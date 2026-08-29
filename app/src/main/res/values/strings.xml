@@ -59,6 +59,17 @@
     <string name="timeline_more_trackers">+%d more</string>
     <string name="timeline_tracker_blocked">Blocked</string>
     <string name="timeline_tracker_allowed">Allowed</string>
+    <string name="feed_section_last_contact">last contact %s</string>
+    <plurals name="feed_show_more_companies">
+        <item quantity="one">Show %d more company</item>
+        <item quantity="other">Show %d more companies</item>
+    </plurals>
+    <string name="feed_allow_company_in_app">Allow %1$s in %2$s</string>
+    <string name="feed_allowed_by_you">Allowed by you</string>
+    <string name="feed_company_expanded">Expanded</string>
+    <string name="feed_company_collapsed">Collapsed</string>
+    <string name="feed_essential_explainer">Needed by apps — allowed so %s keeps working</string>
+    <string name="feed_essential_explainer_blocked">Needed by apps — blocking these may break %s</string>
     <string name="timeline_summary_all_blocked">%d trackers blocked</string>
     <string name="timeline_summary_none_blocked">%d trackers allowed</string>
     <string name="timeline_summary_mixed">%1$d blocked · %2$d allowed</string>
@@ -671,6 +682,11 @@ Sincerely,\n\n]]></string>
 
     <!-- Per-app protection state -->
     <string name="app_state_heading">Protection</string>
+    <string name="app_state_title_minimal">Minimal blocking</string>
+    <string name="app_state_title_standard">Standard blocking</string>
+    <string name="app_state_title_strict">Strict blocking</string>
+    <string name="app_state_subtitle_misbehaving">App misbehaving? Switch to Minimal blocking here.</string>
+    <string name="app_state_subtitle_change">Tap to change this app\'s protection</string>
     <string name="app_state_protected">Protected</string>
     <string name="app_state_protected_explanation">Trackers are blocked and recorded for this app.</string>
     <string name="app_state_essential_only">Minimal blocking only</string>

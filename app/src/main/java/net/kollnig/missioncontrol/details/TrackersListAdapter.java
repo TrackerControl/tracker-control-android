@@ -24,22 +24,19 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -51,37 +48,45 @@ import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.data.AppProtectionState;
 import net.kollnig.missioncontrol.data.BlockingMode;
-import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.PausedApps;
+import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
+import net.kollnig.missioncontrol.data.TrackerFeedLogic;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.data.TrackerStatusLogic;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.Util;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link TrackerCategory}.
+ * {@link RecyclerView.Adapter} for the flat per-app tracker feed.
  */
 public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_HEADER = 0;
-    private static final int TYPE_ITEM = 1;
+    private static final int TYPE_SECTION = 1;
+    private static final int TYPE_COMPANY = 2;
+    private static final int TYPE_SHOW_MORE = 3;
 
-    private final String TAG = TrackersListAdapter.class.getSimpleName();
     private final Integer mAppUid;
     private final String mAppId;
     private final Context mContext;
     private final SharedPreferences apply;
     private final SharedPreferences tracker_protect;
     private final SharedPreferences minimalOnlyPrefs;
-    private List<TrackerCategory> mValues = new ArrayList<>();
+    private List<TrackerCategory> mCategories = new ArrayList<>();
+    private List<Object> mRows = new ArrayList<>();
+    private final Set<String> mExpandedCompanyKeys = new HashSet<>();
+    private final Set<String> mExpandedSections = new HashSet<>();
 
     // Latest state of the library analysis, reflected in the summary row.
     // The full report lives in LibrariesActivity.
@@ -108,17 +113,35 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void set(List<TrackerCategory> items) {
-        mValues = items;
+        mCategories = items == null ? new ArrayList<>() : new ArrayList<>(items);
+        rebuildRows();
+        notifyDataSetChanged();
+    }
+
+    private void rebuildRows() {
+        mRows = TrackerFeedLogic.buildRows(mCategories, mExpandedCompanyKeys, mExpandedSections);
+    }
+
+    private void rebuildRowsAndNotify() {
+        rebuildRows();
         notifyDataSetChanged();
     }
 
     @Override
     @NonNull
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (viewType == TYPE_ITEM) {
+        if (viewType == TYPE_SECTION) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item_trackers, parent, false);
-            return new VHItem(view);
+                    .inflate(R.layout.item_tracker_feed_section, parent, false);
+            return new VHSection(view);
+        } else if (viewType == TYPE_COMPANY) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_tracker_feed_company, parent, false);
+            return new VHCompany(view);
+        } else if (viewType == TYPE_SHOW_MORE) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_tracker_feed_show_more, parent, false);
+            return new VHShowMore(view);
         } else if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_item_trackers_header, parent, false);
@@ -165,266 +188,278 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder _holder, int position) {
-        final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof VHHeader) {
+            bindHeader((VHHeader) holder);
+            return;
+        }
 
-        if (_holder instanceof VHItem) {
-            VHItem holder = (VHItem) _holder;
-
-            boolean trackerProtectionEnabled = BlockingMode.isTrackerProtectionEnabled(
-                    mContext, tracker_protect, mAppId);
-            boolean minimal = BlockingMode.isMinimalMode(mContext);
-            AppProtectionState state = currentState(w);
-            boolean minimalOnlyApp = state == AppProtectionState.MINIMAL_ONLY;
-            boolean readOnlyMinimal = minimal || minimalOnlyApp;
-            boolean allowGranularControl = !readOnlyMinimal;
-            holder.mBlockingTip.setVisibility(allowGranularControl ? View.VISIBLE : View.GONE);
-
-            // Load data
-            final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
-            final TrackerCategory trackerCategory = getItem(position);
-            final String trackerCategoryName = trackerCategory.getCategoryName();
-
-            // Display uncertainty
-            holder.mUncertain.setVisibility(trackerCategory.isUncertain() ? View.VISIBLE : View.GONE);
-
-            // Add data to view
-            String categoryDisplayName = trackerCategory.getDisplayName(mContext);
-            holder.mTrackerCategoryName.setText(categoryDisplayName);
-            holder.mSwitchTracker.setContentDescription(
-                    String.format(mContext.getString(R.string.toggle_block_category_description),
-                            categoryDisplayName));
-            final ArrayAdapter<Tracker> trackersAdapter = new ArrayAdapter<Tracker>(mContext,
-                    R.layout.list_item_trackers_details, trackerCategory.getChildren()) {
-                @Override
-                public @NonNull View getView(int pos, @Nullable View convertView,
-                        @NonNull ViewGroup parent) {
-                    TextView tv = (TextView) super.getView(pos, convertView, parent);
-                    Tracker t = getItem(pos);
-                    if (t != null)
-                        updateText(tv, t);
-                    return tv;
-                }
-
-                @Override
-                public boolean areAllItemsEnabled() {
-                    return false;
-                }
-
-                @Override
-                public boolean isEnabled(int pos) {
-                    Tracker t = getItem(pos);
-                    return t == null || !isAmbiguousDeadToggle(t);
-                }
-
-                /**
-                 * Ambiguous shared-IP trackers are always allowed at runtime outside
-                 * Strict mode (see BlockingModeLogic#blocksAmbiguousTrackerIp), no
-                 * matter their configured blocked state. Tapping such a row would
-                 * silently toggle hidden state with no runtime effect, so it must be
-                 * treated as non-interactive rather than shown as a dead toggle.
-                 */
-                private boolean isAmbiguousDeadToggle(Tracker t) {
-                    return trackerProtectionEnabled
-                            && !readOnlyMinimal
-                            && !BlockingMode.isStrictMode(getContext())
-                            && t.isAllowedInStandardMode();
-                }
-
-                private void updateText(TextView tv, Tracker t) {
-                    String name = t.getName();
-                    if (name.equals(TRACKER_HOSTLIST))
-                        name = getContext().getString(R.string.tracker_hostlist);
-
-                    String title = name;
-                    if (t.lastSeen != 0)
-                        title += " (" + Util.relativeTime(t.lastSeen) + ")";
-
-                    List<String> sortedHosts = new ArrayList<>(t.getHosts());
-                    Collections.sort(sortedHosts);
-                    String hosts = TextUtils.join("\n• ", sortedHosts);
-
-                    boolean uncertainAllowed = isAmbiguousDeadToggle(t);
-
-                    Spannable spannable;
-                    boolean showStatus;
-                    boolean companyBlocked;
-                    // Minimal mode detects far more than it blocks; a company
-                    // known only to X-Ray/Disconnect is monitored, and saying
-                    // "allowed" would read as a deliberate exemption.
-                    boolean monitoredOnly = false;
-
-                    if (!trackerProtectionEnabled) {
-                        showStatus = true;
-                        companyBlocked = false;
-                    } else if (BlockingMode.isMinimalMode(getContext())) {
-                        showStatus = true;
-                        companyBlocked = TrackerList.isMinimallyBlocked(t);
-                        monitoredOnly = !companyBlocked && !TrackerList.isMinimallyKnown(t);
-                    } else if (minimalOnlyApp) {
-                        showStatus = true;
-                        companyBlocked = TrackerList.isMinimallyBlocked(t);
-                    } else {
-                        boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
-                        showStatus = true;
-                        companyBlocked = categoryBlocked && b.blocked(mAppUid,
-                                TrackerBlocklist.getBlockingKey(t));
-
-                        // In standard mode, ambiguous trackers are allowed at runtime
-                        // even if configured as blocked — reflect that in the UI
-                        if (companyBlocked
-                                && !BlockingMode.isStrictMode(getContext())
-                                && t.isAllowedInStandardMode()) {
-                            companyBlocked = false;
-                        }
-                    }
-
-                    if (!showStatus) {
-                        String text = String.format("%s\n• %s", title, hosts);
-                        spannable = new SpannableString(text);
-                    } else {
-                        String status = getContext().getString(uncertainAllowed
-                                ? R.string.allowed_shared_ip
-                                : companyBlocked ? R.string.blocked
-                                : monitoredOnly ? R.string.tracker_monitored_minimal
-                                : R.string.allowed);
-                        int color = ContextCompat.getColor(getContext(),
-                                companyBlocked ? R.color.colorPrimary : R.color.colorAccent);
-
-                        String text = String.format("%s %s\n• %s", title, status, hosts);
-
-                        spannable = new SpannableString(text);
-
-                        spannable.setSpan(new ForegroundColorSpan(color),
-                                title.length() + 1,
-                                (title + status).length() + 1,
-                                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    }
-
-                    spannable.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),
-                            0,
-                            name.length(),
-                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    tv.setText(spannable, TextView.BufferType.SPANNABLE);
-                    // Grey out ambiguous shared-IP rows: they are non-interactive
-                    // (see isEnabled above), so the toggle isn't a dead click.
-                    tv.setEnabled(!uncertainAllowed);
-                }
-            };
-            holder.mCompaniesList.setAdapter(trackersAdapter);
-
-            if (readOnlyMinimal) {
-                // Minimal-style modes: show read-only blocking status (no granular control)
-                holder.mSwitchTracker.setVisibility(View.VISIBLE);
-                holder.mSwitchTracker.setEnabled(false);
-                // Checked only if the category actually contains something that
-                // gets blocked: with detection broadened beyond the DDG list, a
-                // category whose observed members are all detection-only would
-                // otherwise show a "blocked" switch that lies.
-                boolean categoryMinimallyBlocked = false;
-                for (Tracker t : trackerCategory.getChildren())
-                    if (TrackerList.isMinimallyBlocked(t)) {
-                        categoryMinimallyBlocked = true;
-                        break;
-                    }
-                holder.mSwitchTracker.setChecked(
-                        trackerProtectionEnabled && categoryMinimallyBlocked);
-                holder.mSwitchTracker.setOnCheckedChangeListener(null);
-                holder.mCompaniesList.setOnItemClickListener(null);
-            } else {
-                boolean enabled = currentState(w) == AppProtectionState.PROTECTED;
-                holder.mSwitchTracker.setEnabled(enabled);
-                holder.mSwitchTracker.setChecked(
-                        b.blocked(mAppUid, trackerCategoryName));
-                holder.mSwitchTracker.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
-                    if (!buttonView.isPressed())
-                        return; // to fix errors
-
-                    if (hasBecomeChecked)
-                        b.block(mAppUid, trackerCategoryName);
-                    else {
-                        b.unblock(mAppUid, trackerCategoryName);
-                        Toast.makeText(mContext, R.string.category_unblocked, Toast.LENGTH_SHORT).show();
-                    }
-
-                    trackersAdapter.notifyDataSetChanged();
-                });
-                if (enabled)
-                    holder.mCompaniesList.setOnItemClickListener((adapterView, v, i, l) -> {
-                        if (w.blockedInternet(mAppUid))
-                            return;
-
-                        Tracker t = trackersAdapter.getItem(i);
-                        if (t == null)
-                            return;
-
-                        // Ambiguous shared-IP trackers are always allowed at runtime
-                        // outside Strict mode. The row is marked non-interactive via
-                        // the adapter's isEnabled(), but guard here too in case a
-                        // click still reaches us, instead of silently doing nothing.
-                        if (!BlockingMode.isStrictMode(mContext) && t.isAllowedInStandardMode()) {
-                            Toast.makeText(mContext, R.string.allowed_shared_ip, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        final boolean blockedTrackerCategory = b.blocked(mAppUid, t.category);
-                        if (!blockedTrackerCategory) {
-                            Toast.makeText(mContext, R.string.category_unblocked_warning, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        boolean blockedTracker = b.blockedTracker(mAppUid, t);
-                        if (blockedTracker)
-                            b.unblock(mAppUid, t);
-                        else
-                            b.block(mAppUid, t);
-
-                        trackersAdapter.notifyDataSetChanged();
-                    });
-                else
-                    holder.mCompaniesList.setOnItemClickListener(null);
-            }
-
-            // cast holder to VHItem and set data
-        } else if (_holder instanceof VHHeader) {
-            VHHeader holder = (VHHeader) _holder;
-
-            AppProtectionState state = currentState(w);
-            holder.mAppStateValue.setText(describeStateAndRoute(state));
-            if (PausedApps.isPaused(mContext, mAppId)) {
-                int remainingMinutes = PausedApps.getRemainingMinutes(mContext, mAppId);
-                holder.mAppStateHint.setText(mContext.getResources().getQuantityString(
-                        R.plurals.protection_paused_resumes, remainingMinutes, remainingMinutes));
-                holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-            } else {
-                holder.mAppStateHint.setText(R.string.protection_app_not_working);
-                holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
-            }
-            holder.mRowAppState.setOnClickListener(v -> {
-                Intent intent = new Intent(mContext, ProtectionActivity.class);
-                intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, mAppId);
-                intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, mAppUid);
-                intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, getAppName());
-                mContext.startActivity(intent);
-            });
-
-            bindLibrariesRow(holder);
+        Object row = mRows.get(position - 1);
+        if (holder instanceof VHSection && row instanceof TrackerFeedLogic.SectionRow) {
+            bindSection((VHSection) holder, ((TrackerFeedLogic.SectionRow) row).category);
+        } else if (holder instanceof VHCompany && row instanceof TrackerFeedLogic.CompanyRow) {
+            bindCompany((VHCompany) holder, (TrackerFeedLogic.CompanyRow) row);
+        } else if (holder instanceof VHShowMore && row instanceof TrackerFeedLogic.ShowMoreRow) {
+            bindShowMore((VHShowMore) holder, (TrackerFeedLogic.ShowMoreRow) row);
         }
     }
 
-    /**
-     * The one-line summary of how this app's traffic is handled. Protection and
-     * remote-VPN routing stay separate choices (#723), but they read as one
-     * sentence here and are both changed on the same screen.
-     */
-    private String describeStateAndRoute(AppProtectionState state) {
-        String stateLabel = mContext.getString(stateLabelRes(state));
-        String route = routeSummary();
-        if (route == null)
-            return stateLabel;
+    private void bindSection(VHSection holder, TrackerCategory category) {
+        final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
+        final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
+        final String categoryName = category.getCategoryName();
+        final String categoryDisplayName = category.getDisplayName(mContext);
 
-        return mContext.getString(R.string.protection_state_with_route, stateLabel, route);
+        holder.mSectionTitle.setText(categoryDisplayName);
+        if (category.lastSeen != null && category.lastSeen != 0) {
+            holder.mSectionTime.setVisibility(View.VISIBLE);
+            holder.mSectionTime.setText(String.format(mContext.getString(R.string.feed_section_last_contact),
+                    Util.relativeTime(category.lastSeen)));
+        } else {
+            holder.mSectionTime.setText("");
+            holder.mSectionTime.setVisibility(View.GONE);
+        }
+
+        // Reset conditional state before applying this category's state.
+        holder.mSectionExplainer.setVisibility(View.GONE);
+        holder.mSwitchSection.setVisibility(View.VISIBLE);
+        holder.mSwitchSection.setOnCheckedChangeListener(null);
+
+        boolean trackerProtectionEnabled = BlockingMode.isTrackerProtectionEnabled(
+                mContext, tracker_protect, mAppId);
+        boolean minimal = BlockingMode.isMinimalMode(mContext);
+        AppProtectionState state = currentState(w);
+        boolean readOnlyMinimal = minimal || state == AppProtectionState.MINIMAL_ONLY;
+        boolean categoryBlocked = b.blocked(mAppUid, categoryName);
+
+        boolean categoryMinimallyBlocked = false;
+        if (readOnlyMinimal) {
+            for (Tracker tracker : category.getChildren()) {
+                if (TrackerList.isMinimallyBlocked(tracker)) {
+                    categoryMinimallyBlocked = true;
+                    break;
+                }
+            }
+        }
+        boolean categoryEffectivelyBlocked = trackerProtectionEnabled
+                && (readOnlyMinimal ? categoryMinimallyBlocked : categoryBlocked);
+
+        if (TrackerBlocklist.NECESSARY_CATEGORY.equals(categoryName)) {
+            holder.mSectionExplainer.setVisibility(View.VISIBLE);
+            holder.mSectionExplainer.setText(mContext.getString(categoryEffectivelyBlocked
+                    ? R.string.feed_essential_explainer_blocked
+                    : R.string.feed_essential_explainer, getAppName()));
+        }
+
+        holder.mSwitchSection.setContentDescription(
+                String.format(mContext.getString(R.string.toggle_block_category_description),
+                        categoryDisplayName));
+        if (readOnlyMinimal) {
+            holder.mSwitchSection.setEnabled(false);
+            holder.mSwitchSection.setChecked(trackerProtectionEnabled && categoryMinimallyBlocked);
+        } else {
+            boolean enabled = state == AppProtectionState.PROTECTED;
+            holder.mSwitchSection.setEnabled(enabled);
+            holder.mSwitchSection.setChecked(categoryBlocked);
+            if (enabled) {
+                holder.mSwitchSection.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
+                    if (!buttonView.isPressed())
+                        return;
+
+                    if (hasBecomeChecked)
+                        b.block(mAppUid, categoryName);
+                    else {
+                        b.unblock(mAppUid, categoryName);
+                        Toast.makeText(mContext, R.string.category_unblocked, Toast.LENGTH_SHORT).show();
+                    }
+
+                    rebuildRowsAndNotify();
+                });
+            }
+        }
+    }
+
+    private void bindCompany(VHCompany holder, TrackerFeedLogic.CompanyRow row) {
+        final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
+        final TrackerBlocklist b = TrackerBlocklist.getInstance(mContext);
+        final Tracker tracker = row.tracker;
+        final String categoryName = row.categoryName;
+        final String blockingKey = TrackerBlocklist.getBlockingKey(tracker);
+        final boolean trackerProtectionEnabled = BlockingMode.isTrackerProtectionEnabled(
+                mContext, tracker_protect, mAppId);
+        final boolean minimal = BlockingMode.isMinimalMode(mContext);
+        final AppProtectionState state = currentState(w);
+        final boolean categoryBlocked = b.blocked(mAppUid, categoryName);
+        final boolean companyKeyBlocked = b.blocked(mAppUid, blockingKey);
+        final TrackerStatusLogic.Result status = TrackerStatusLogic.resolve(
+                trackerProtectionEnabled,
+                minimal,
+                BlockingMode.isStrictMode(mContext),
+                state,
+                TrackerList.isMinimallyBlocked(tracker),
+                TrackerList.isMinimallyKnown(tracker),
+                categoryBlocked,
+                companyKeyBlocked,
+                tracker.isAllowedInStandardMode());
+
+        String companyName = tracker.getName();
+        if (TRACKER_HOSTLIST.equals(companyName))
+            companyName = mContext.getString(R.string.tracker_hostlist);
+        holder.mCompany.setText(companyName);
+        if (tracker.lastSeen != null && tracker.lastSeen != 0) {
+            holder.mLastSeen.setVisibility(View.VISIBLE);
+            holder.mLastSeen.setText(Util.relativeTime(tracker.lastSeen));
+        } else {
+            holder.mLastSeen.setText("");
+            holder.mLastSeen.setVisibility(View.GONE);
+        }
+        holder.mStatus.setText(statusString(status.status));
+        holder.mStatus.setTextColor(ContextCompat.getColor(mContext,
+                status.status == TrackerStatusLogic.Status.BLOCKED
+                        ? R.color.colorPrimary : R.color.colorAccent));
+        ViewCompat.setStateDescription(holder.itemView, mContext.getString(row.expanded
+                ? R.string.feed_company_expanded : R.string.feed_company_collapsed));
+
+        // Reset every conditional child so recycled holders cannot leak the
+        // previous row's expansion, uncertainty, or shared-IP explanation.
+        holder.mLayoutExpanded.setVisibility(row.expanded ? View.VISIBLE : View.GONE);
+        holder.mUncertainNote.setVisibility(row.expanded && tracker.isUncertain()
+                ? View.VISIBLE : View.GONE);
+        holder.mSharedIpNote.setVisibility(View.GONE);
+        holder.mSwitchAllowCompany.setVisibility(View.VISIBLE);
+        holder.mSwitchAllowCompany.setOnCheckedChangeListener(null);
+
+        if (row.expanded) {
+            List<String> sortedHosts = new ArrayList<>(tracker.getHosts());
+            Collections.sort(sortedHosts);
+            holder.mHosts.setText(TextUtils.join("\n", sortedHosts));
+
+            if (status.status == TrackerStatusLogic.Status.ALLOWED_SHARED_IP) {
+                holder.mSharedIpNote.setText(R.string.allowed_shared_ip);
+                holder.mSharedIpNote.setVisibility(View.VISIBLE);
+                holder.mSwitchAllowCompany.setVisibility(View.GONE);
+            } else {
+                if (status.status == TrackerStatusLogic.Status.MONITORED) {
+                    holder.mSharedIpNote.setText(R.string.tracker_monitored_minimal);
+                    holder.mSharedIpNote.setVisibility(View.VISIBLE);
+                }
+                String displayName = tracker.getName();
+                if (TRACKER_HOSTLIST.equals(displayName))
+                    displayName = mContext.getString(R.string.tracker_hostlist);
+                holder.mSwitchAllowCompany.setText(String.format(
+                        mContext.getString(R.string.feed_allow_company_in_app), displayName, getAppName()));
+                // The switch represents effective access, not only the raw
+                // company key. This matters when a stale key survives a
+                // category whitelist.
+                holder.mSwitchAllowCompany.setChecked(status.status != TrackerStatusLogic.Status.BLOCKED);
+                boolean enabled = status.interactivity == TrackerStatusLogic.Interactivity.TOGGLEABLE
+                        && state == AppProtectionState.PROTECTED
+                        && categoryBlocked
+                        && !w.blockedInternet(mAppUid);
+                holder.mSwitchAllowCompany.setEnabled(enabled);
+                if (status.interactivity == TrackerStatusLogic.Interactivity.TOGGLEABLE) {
+                    holder.mSwitchAllowCompany.setOnCheckedChangeListener((buttonView, hasBecomeChecked) -> {
+                        if (!buttonView.isPressed())
+                            return;
+
+                        if (hasBecomeChecked)
+                            b.unblock(mAppUid, tracker);
+                        else
+                            b.block(mAppUid, tracker);
+
+                        rebuildRowsAndNotify();
+                    });
+                }
+            }
+        } else {
+            holder.mHosts.setText("");
+            holder.mSwitchAllowCompany.setText("");
+            holder.mSwitchAllowCompany.setChecked(false);
+            holder.mSwitchAllowCompany.setEnabled(false);
+        }
+
+        holder.itemView.setOnClickListener(v -> {
+            String key = TrackerBlocklist.getBlockingKey(tracker);
+            if (mExpandedCompanyKeys.contains(key))
+                mExpandedCompanyKeys.remove(key);
+            else
+                mExpandedCompanyKeys.add(key);
+            rebuildRowsAndNotify();
+        });
+    }
+
+    private int statusString(TrackerStatusLogic.Status status) {
+        switch (status) {
+            case BLOCKED:
+                return R.string.timeline_tracker_blocked;
+            case ALLOWED_BY_USER:
+                return R.string.feed_allowed_by_you;
+            case ALLOWED_SHARED_IP:
+                return R.string.timeline_tracker_allowed;
+            case MONITORED:
+                return R.string.tracker_monitored_minimal;
+            case ALLOWED:
+            default:
+                return R.string.timeline_tracker_allowed;
+        }
+    }
+
+    private void bindShowMore(VHShowMore holder, TrackerFeedLogic.ShowMoreRow row) {
+        holder.mShowMore.setText(mContext.getResources().getQuantityString(
+                R.plurals.feed_show_more_companies, row.hiddenCount, row.hiddenCount));
+        holder.itemView.setOnClickListener(v -> {
+            mExpandedSections.add(row.categoryName);
+            rebuildRowsAndNotify();
+        });
+    }
+
+    private void bindHeader(VHHeader holder) {
+        final InternetBlocklist w = InternetBlocklist.getInstance(mContext);
+        AppProtectionState state = currentState(w);
+        holder.mAppStateTitle.setText(state == AppProtectionState.PROTECTED
+                ? protectedTitleRes() : stateLabelRes(state));
+
+        String route = routeSummary();
+        if (route == null) {
+            holder.mAppStateValue.setText("");
+            holder.mAppStateValue.setVisibility(View.GONE);
+        } else {
+            holder.mAppStateValue.setText(route);
+            holder.mAppStateValue.setVisibility(View.VISIBLE);
+        }
+
+        if (PausedApps.isPaused(mContext, mAppId)) {
+            int remainingMinutes = PausedApps.getRemainingMinutes(mContext, mAppId);
+            holder.mAppStateHint.setText(mContext.getResources().getQuantityString(
+                    R.plurals.protection_paused_resumes, remainingMinutes, remainingMinutes));
+            holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+        } else if (state == AppProtectionState.PROTECTED) {
+            if (BlockingMode.isMinimalMode(mContext))
+                holder.mAppStateHint.setText(R.string.app_state_subtitle_change);
+            else
+                holder.mAppStateHint.setText(R.string.app_state_subtitle_misbehaving);
+            holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        } else {
+            holder.mAppStateHint.setText(R.string.protection_app_not_working);
+            holder.mAppStateHint.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        }
+        holder.mRowAppState.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, ProtectionActivity.class);
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, mAppId);
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, mAppUid);
+            intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, getAppName());
+            mContext.startActivity(intent);
+        });
+
+        bindLibrariesRow(holder);
+    }
+
+    private int protectedTitleRes() {
+        if (BlockingMode.isMinimalMode(mContext))
+            return R.string.app_state_title_minimal;
+        if (BlockingMode.isStrictMode(mContext))
+            return R.string.app_state_title_strict;
+        return R.string.app_state_title_standard;
     }
 
     /**
@@ -452,8 +487,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * The tracker-library summary. The report itself is a separate screen: it is
-     * derived from the app's code rather than from the traffic listed below.
+     * The tracker-library summary. The report itself is a separate screen: it
+     * is derived from the app's code rather than from the traffic listed below.
      */
     private void bindLibrariesRow(VHHeader holder) {
         holder.mAppLibrariesValue.setText(librarySummary());
@@ -526,44 +561,74 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return mValues.size() + 1;
+        return mRows.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (isPositionHeader(position))
+        if (position == 0)
             return TYPE_HEADER;
 
-        return TYPE_ITEM;
+        Object row = mRows.get(position - 1);
+        if (row instanceof TrackerFeedLogic.SectionRow)
+            return TYPE_SECTION;
+        if (row instanceof TrackerFeedLogic.CompanyRow)
+            return TYPE_COMPANY;
+        if (row instanceof TrackerFeedLogic.ShowMoreRow)
+            return TYPE_SHOW_MORE;
+        throw new IllegalStateException("Unknown tracker feed row: " + row);
     }
 
-    private boolean isPositionHeader(int position) {
-        return position == 0;
-    }
+    static class VHSection extends RecyclerView.ViewHolder {
+        final TextView mSectionTitle;
+        final TextView mSectionTime;
+        final TextView mSectionExplainer;
+        final MaterialSwitch mSwitchSection;
 
-    private TrackerCategory getItem(int position) {
-        return mValues.get(position - 1);
-    }
-
-    static class VHItem extends RecyclerView.ViewHolder {
-        final TextView mTrackerCategoryName;
-        final ListView mCompaniesList;
-        final MaterialSwitch mSwitchTracker;
-        final TextView mBlockingTip;
-        final TextView mUncertain;
-
-        VHItem(View view) {
+        VHSection(View view) {
             super(view);
-            mTrackerCategoryName = view.findViewById(R.id.root_name);
-            mCompaniesList = view.findViewById(R.id.details_list);
-            mSwitchTracker = view.findViewById(R.id.switch_tracker);
-            mBlockingTip = view.findViewById(R.id.tvBlockingTip);
-            mUncertain = view.findViewById(R.id.tvUncertain);
+            mSectionTitle = view.findViewById(R.id.tvSection);
+            mSectionTime = view.findViewById(R.id.tvSectionTime);
+            mSectionExplainer = view.findViewById(R.id.tvSectionExplainer);
+            mSwitchSection = view.findViewById(R.id.switchSection);
+        }
+    }
+
+    static class VHCompany extends RecyclerView.ViewHolder {
+        final TextView mCompany;
+        final TextView mLastSeen;
+        final TextView mStatus;
+        final View mLayoutExpanded;
+        final TextView mHosts;
+        final TextView mUncertainNote;
+        final MaterialSwitch mSwitchAllowCompany;
+        final TextView mSharedIpNote;
+
+        VHCompany(View view) {
+            super(view);
+            mCompany = view.findViewById(R.id.tvCompany);
+            mLastSeen = view.findViewById(R.id.tvLastSeen);
+            mStatus = view.findViewById(R.id.tvStatus);
+            mLayoutExpanded = view.findViewById(R.id.layoutExpanded);
+            mHosts = view.findViewById(R.id.tvHosts);
+            mUncertainNote = view.findViewById(R.id.tvUncertainNote);
+            mSwitchAllowCompany = view.findViewById(R.id.switchAllowCompany);
+            mSharedIpNote = view.findViewById(R.id.tvSharedIpNote);
+        }
+    }
+
+    static class VHShowMore extends RecyclerView.ViewHolder {
+        final TextView mShowMore;
+
+        VHShowMore(View view) {
+            super(view);
+            mShowMore = view.findViewById(R.id.tvShowMore);
         }
     }
 
     static class VHHeader extends RecyclerView.ViewHolder {
         final View mRowAppState;
+        final TextView mAppStateTitle;
         final TextView mAppStateValue;
         final TextView mAppStateHint;
         final View mRowAppLibraries;
@@ -572,6 +637,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         VHHeader(View view) {
             super(view);
             mRowAppState = view.findViewById(R.id.rowAppState);
+            mAppStateTitle = view.findViewById(R.id.tvAppStateTitle);
             mAppStateValue = view.findViewById(R.id.tvAppStateValue);
             mAppStateHint = view.findViewById(R.id.tvAppStateHint);
             mRowAppLibraries = view.findViewById(R.id.rowAppLibraries);
