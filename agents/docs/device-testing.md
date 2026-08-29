@@ -1,26 +1,27 @@
 # Connected-device testing
 
-Read this before any `adb` work. The two rules in AGENTS.md — never destroy
-state without asking, and announce the VPN-consent side effect — are restated
-here in full because they are the ones that cost a maintainer real data.
+Read this before any `adb` work. The three rules in AGENTS.md — use GitHub
+debug with a configuration backup, never destroy state without asking, and
+announce the VPN-consent side effect — are restated here in full because they
+are the ones that cost a maintainer real data.
 
-## Use the fdroid debug variant
+## Use the GitHub debug variant
 
-Build and install **fdroid debug**, which installs as
-`net.kollnig.missioncontrol.fdroid.test`.
+Build and install **GitHub debug**, which installs as
+`net.kollnig.missioncontrol.test`.
 
 ```bash
-./gradlew assembleFdroidDebug
-adb install -r app/build/outputs/apk/fdroid/debug/TrackerControl-fdroidDebug-latest.apk
+./gradlew assembleGithubDebug
+adb install -r app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
 ```
 
-Not github debug: that installs as `net.kollnig.missioncontrol.test`, which is
-also what a maintainer's own day-to-day dev build installs as. Testing against it
-overwrites their real preferences, and enabling its VPN takes the consent slot
-from whatever they were running. The flavours differ only in the update-check
-API, so nothing is lost by using fdroid for device work. (Working on the
-update-check itself is the exception — that needs github, and needs asking
-first.)
+GitHub debug is the required real-device flavour, including for update-check
+work. If `net.kollnig.missioncontrol.test` is already installed, first back up
+its configuration — especially WireGuard profiles and the Mullvad login — and
+ask before accessing that sensitive data. An in-place `adb install -r`
+preserves the existing app data; do not use an F-Droid install as a substitute
+for that backup. Enabling the VPN still takes the consent slot from whatever
+VPN was running.
 
 ## Never destroy state without asking
 
@@ -44,11 +45,11 @@ Onboarding, the VPN consent dialog and the runtime permission prompts can all be
 pre-satisfied from adb, so an agent never has to tap through them.
 
 ```bash
-PKG=net.kollnig.missioncontrol.fdroid.test
+PKG=net.kollnig.missioncontrol.test
 
 # 1. Runtime permissions. -g grants everything the manifest declares, so revoke
 #    whichever one you are actually testing (checkSelfPermission would lie).
-adb install -r -g app/build/outputs/apk/fdroid/debug/TrackerControl-fdroidDebug-latest.apk
+adb install -r -g app/build/outputs/apk/github/debug/TrackerControl-githubDebug-latest.apk
 adb shell pm revoke $PKG android.permission.ACCESS_LOCAL_NETWORK
 
 # 2. VPN consent. Makes VpnService.prepare() return null, which skips BOTH the

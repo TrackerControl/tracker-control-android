@@ -14,9 +14,11 @@ builds in but deliberately does not install tools or fetch crates. See
 ## Flavours
 
 Three product flavours — **github**, **fdroid**, **play** — differ only in the
-update-check API; **github** is the normal local dev flavour. Debug builds
-install side-by-side (`applicationIdSuffix ".test"`). For anything on a real
-device, build **fdroid debug** instead — see `agents/docs/device-testing.md`.
+update-check API; **github** is the normal local dev and real-device flavour.
+Debug builds install side-by-side (`applicationIdSuffix ".test"`). Before
+updating an existing GitHub debug install on a real device, back up its
+configuration, especially WireGuard profiles and the Mullvad login — see
+`agents/docs/device-testing.md`.
 
 ## Commands
 
