@@ -28,8 +28,8 @@ package net.kollnig.missioncontrol.data;
 public enum AppProtectionState {
     /** Routed through the VPN, trackers blocked and recorded. */
     PROTECTED,
-    /** Routed through the VPN, with only essential trackers blocked and recorded. */
-    ESSENTIAL_ONLY,
+    /** Routed through the VPN, with only minimal trackers blocked and recorded. */
+    MINIMAL_ONLY,
     /** Routed through the VPN, but trackers are neither blocked nor recorded. */
     TRACKERS_ALLOWED,
     /** Routed through the VPN, but all connections are dropped. */
@@ -52,7 +52,7 @@ public enum AppProtectionState {
      *                        already applied (see
      *                        {@link BlockingMode#isTrackerProtectionEnabled})
      * @param internetBlocked whether the app's UID is in the internet blocklist
-     * @param essentialOnly   whether only essential trackers should be blocked
+     * @param minimalOnly     whether only minimal trackers should be blocked
      */
     public static AppProtectionState resolve(boolean apply,
             boolean trackerProtect,
@@ -63,14 +63,14 @@ public enum AppProtectionState {
     public static AppProtectionState resolve(boolean apply,
             boolean trackerProtect,
             boolean internetBlocked,
-            boolean essentialOnly) {
+            boolean minimalOnly) {
         if (!apply)
             return BYPASSED;
         if (internetBlocked)
             return NO_INTERNET;
         if (!trackerProtect)
             return TRACKERS_ALLOWED;
-        return essentialOnly ? ESSENTIAL_ONLY : PROTECTED;
+        return minimalOnly ? MINIMAL_ONLY : PROTECTED;
     }
 
     /**
@@ -84,7 +84,7 @@ public enum AppProtectionState {
         switch (target) {
             case PROTECTED:
                 return new Change(true, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
-            case ESSENTIAL_ONLY:
+            case MINIMAL_ONLY:
                 return new Change(true, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE);
             case TRACKERS_ALLOWED:
                 return new Change(true, Boolean.FALSE, Boolean.FALSE, null);
@@ -105,14 +105,14 @@ public enum AppProtectionState {
         public final boolean apply;
         public final Boolean trackerProtect;
         public final Boolean internetBlocked;
-        public final Boolean essentialOnly;
+        public final Boolean minimalOnly;
 
         Change(boolean apply, Boolean trackerProtect, Boolean internetBlocked,
-                Boolean essentialOnly) {
+                Boolean minimalOnly) {
             this.apply = apply;
             this.trackerProtect = trackerProtect;
             this.internetBlocked = internetBlocked;
-            this.essentialOnly = essentialOnly;
+            this.minimalOnly = minimalOnly;
         }
     }
 }

@@ -73,15 +73,15 @@ public final class AppProtectionWriter {
     private static void apply(Context context, String packageName, int uid,
             AppProtectionState.Change change) {
         apply(context, packageName, uid, change.apply, change.trackerProtect,
-                change.internetBlocked, change.essentialOnly);
+                change.internetBlocked, change.minimalOnly);
     }
 
     private static void apply(Context context, String packageName, int uid,
             boolean applyValue, Boolean trackerProtectValue, Boolean internetBlocked,
-            Boolean essentialOnlyValue) {
+            Boolean minimalOnlyValue) {
         SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         SharedPreferences trackerProtect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
-        SharedPreferences essentialOnly = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        SharedPreferences minimalOnlyPrefs = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
 
         boolean applyBefore = apply.getBoolean(packageName, true);
         boolean protectBefore = BlockingMode.isTrackerProtectionEnabled(context, trackerProtect, packageName);
@@ -92,8 +92,8 @@ public final class AppProtectionWriter {
 
         if (trackerProtectValue != null)
             trackerProtect.edit().putBoolean(packageName, trackerProtectValue).apply();
-        if (essentialOnlyValue != null)
-            essentialOnly.edit().putBoolean(packageName, essentialOnlyValue).apply();
+        if (minimalOnlyValue != null)
+            minimalOnlyPrefs.edit().putBoolean(packageName, minimalOnlyValue).apply();
 
         InternetBlocklist.getInstance(context).apply(context, uid, internetBlocked);
 

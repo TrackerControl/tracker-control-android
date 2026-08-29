@@ -56,7 +56,7 @@ class InsightsDataProvider(context: Context) {
         val showSystem = prefs.getBoolean("show_system", false)
         val applyPrefs = context.getSharedPreferences("apply", Context.MODE_PRIVATE)
         val trackerProtectPrefs = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE)
-        val essentialOnlyPrefs = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE)
+        val minimalOnlyPrefs = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE)
         val blockingMode = BlockingMode.getMode(context)
 
         // Cache for UID -> package info lookups
@@ -117,8 +117,8 @@ class InsightsDataProvider(context: Context) {
                         if (!BlockingMode.isTrackerProtectionEnabled(context, trackerProtectPrefs, packageName)) continue
                     }
 
-                    val essentialOnly = packageName != null
-                        && BlockingMode.isEssentialOnlyApp(context, essentialOnlyPrefs, packageName)
+                    val minimalOnly = packageName != null
+                        && BlockingMode.isMinimalOnlyApp(context, minimalOnlyPrefs, packageName)
 
                     // Find tracker company for this hostname
                     val tracker = TrackerList.findTracker(daddr) ?: continue
@@ -145,7 +145,7 @@ class InsightsDataProvider(context: Context) {
                         allowed,
                         uncertainty,
                         blockingMode,
-                        essentialOnly
+                        minimalOnly
                     )
                     if (isBlocked) {
                         data.blockedTrackingAttempts += 1
@@ -309,14 +309,14 @@ class InsightsDataProvider(context: Context) {
         allowed: Int,
         uncertainty: Int,
         blockingMode: String,
-        essentialOnly: Boolean
+        minimalOnly: Boolean
     ): Boolean {
         if (allowed >= 0)
             return allowed == 0
 
-        if (blockingMode != BlockingMode.MODE_MINIMAL && essentialOnly) {
-            val essentialTracker = TrackerList.findEssentialTracker(daddr)
-            return BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker?.category)
+        if (blockingMode != BlockingMode.MODE_MINIMAL && minimalOnly) {
+            val minimalTracker = TrackerList.findMinimalTracker(daddr)
+            return BlockingModeLogic.shouldBlockMinimalOnly(minimalTracker?.category)
         }
 
         if (!BlockingMode.isStrictMode(context)
@@ -326,8 +326,8 @@ class InsightsDataProvider(context: Context) {
 
         if (BlockingMode.MODE_MINIMAL == blockingMode) {
             // Minimal mode detects with every list but blocks only the DDG set.
-            val essentialTracker = TrackerList.findEssentialTracker(daddr)
-            return BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker?.category)
+            val minimalTracker = TrackerList.findMinimalTracker(daddr)
+            return BlockingModeLogic.shouldBlockMinimalOnly(minimalTracker?.category)
         }
 
         return trackerBlocklist.blockedTracker(uid, tracker)

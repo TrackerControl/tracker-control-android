@@ -1086,8 +1086,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         SharedPreferences.Editor editor = tracker_protect.edit();
 
         // Deliberately leave tracker_essential alone: bulk disabling and then
-        // re-enabling tracker protection returns an essential-only app to its
-        // previous ESSENTIAL_ONLY choice.
+        // re-enabling tracker protection returns a minimal-only app to its
+        // previous MINIMAL_ONLY choice.
         for (android.content.pm.PackageInfo pkg : Rule.getPackages(this))
             editor.putBoolean(pkg.packageName, enabled);
 

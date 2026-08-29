@@ -29,20 +29,20 @@ public class BlockingModeLogicTest {
 
     @Test
     public void minimalBlocksOnlyNonContentDuckDuckGoTrackers() {
-        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly("Advertising"));
-        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(
+        assertTrue(BlockingModeLogic.shouldBlockMinimalOnly("Advertising"));
+        assertFalse(BlockingModeLogic.shouldBlockMinimalOnly(
                 BlockingModeLogic.CONTENT_CATEGORY));
         // Detected by another list, but unknown to DuckDuckGo: monitored, not blocked.
-        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(null));
+        assertFalse(BlockingModeLogic.shouldBlockMinimalOnly(null));
     }
 
     @Test
-    public void essentialOnlyBlocksOnlyNonContentCategories() {
-        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly("Advertising"));
-        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly("Uncategorised"));
-        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(
+    public void minimalOnlyBlocksOnlyNonContentCategories() {
+        assertTrue(BlockingModeLogic.shouldBlockMinimalOnly("Advertising"));
+        assertTrue(BlockingModeLogic.shouldBlockMinimalOnly("Uncategorised"));
+        assertFalse(BlockingModeLogic.shouldBlockMinimalOnly(
                 BlockingModeLogic.CONTENT_CATEGORY));
-        assertFalse(BlockingModeLogic.shouldBlockEssentialOnly(null));
+        assertFalse(BlockingModeLogic.shouldBlockMinimalOnly(null));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class BlockingModeLogicTest {
                 "Advertising", "Analytics", "Social", "Fingerprinting",
                 "Email", "Uncategorised"}) {
             assertTrue("Should block " + category,
-                    BlockingModeLogic.shouldBlockEssentialOnly(category));
+                    BlockingModeLogic.shouldBlockMinimalOnly(category));
         }
     }
 
@@ -222,7 +222,7 @@ public class BlockingModeLogicTest {
 
         blocklist.unblock(1001, tracker.category);
         assertFalse(blocklist.blockedTracker(1001, tracker));
-        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly(tracker.category));
+        assertTrue(BlockingModeLogic.shouldBlockMinimalOnly(tracker.category));
     }
 
     @Test
