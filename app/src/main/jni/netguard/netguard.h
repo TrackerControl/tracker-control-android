@@ -34,6 +34,7 @@
 #include <sys/system_properties.h>
 
 #include "tcdns.h"
+#include "dns_frame.h" // libc-only: no JNI/session dependencies
 
 #define TAG "TrackerControl.JNI"
 
@@ -218,6 +219,8 @@ struct tcp_session {
     int checkedHostname;
     uint8_t *tls_data; // buffered ClientHello for cross-segment SNI reassembly (research mode)
     uint16_t tls_len;  // bytes currently buffered in tls_data
+
+    struct dns_stream_state dns_stream; // DNS-over-TCP framing cursor (port 53)
 };
 
 struct ng_session {

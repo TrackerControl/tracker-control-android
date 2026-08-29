@@ -240,6 +240,21 @@ uint32_t get_receive_window(const struct ng_session *cur) {
     return total;
 }
 
+// Context threaded through dns_frame_process_stream() to the DNS parser.
+struct dns_stream_parse_ctx {
+    const struct arguments *args;
+    const struct ng_session *s;
+};
+
+// Adapter matching dns_frame_parse_fn: parse_dns_response() may blank the
+// payload in place and may shrink it (blocking rewrite).
+static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen) {
+    struct dns_stream_parse_ctx *pctx = (struct dns_stream_parse_ctx *) ctx;
+    size_t len = dlen;
+    parse_dns_response(pctx->args, pctx->s, data, &len);
+    return len;
+}
+
 void check_tcp_socket(const struct arguments *args,
                       const struct epoll_event *ev,
                       const int epoll_fd) {
@@ -604,21 +619,17 @@ void check_tcp_socket(const struct arguments *args,
                         s->tcp.received += bytes;
 
                         // Process DNS response
-                        if (ntohs(s->tcp.dest) == 53 && bytes > 2) {
-                            size_t frame_len = ((size_t) buffer[0] << 8) | buffer[1];
-                            // recv() may split or coalesce DNS frames. The
-                            // header is blanked in place for every frame so
-                            // policy still applies, but only an isolated
-                            // complete frame can be shortened, because
-                            // trimming a coalesced or split read would
-                            // discard stream bytes.
-                            struct dns_frame_decision decision =
-                                    dns_frame_decide((size_t) bytes, frame_len);
-                            if (decision.should_parse) {
-                                size_t dlen = decision.dlen;
-                                parse_dns_response(args, s, buffer + 2, &dlen);
-                                dns_frame_apply_rewrite(buffer, &decision, dlen, &bytes);
-                            }
+                        if (ntohs(s->tcp.dest) == 53 && bytes > 0) {
+                            // recv() is not aligned to DNS-over-TCP framing, so
+                            // walk every frame boundary in this read, carrying
+                            // the split-frame cursor across reads. Frames lying
+                            // wholly inside this buffer may be shortened (none
+                            // of it has been forwarded yet); frames carried over
+                            // from an earlier read are parsed in place only.
+                            struct dns_stream_parse_ctx pctx = {.args = args, .s = s};
+                            bytes = (ssize_t) dns_frame_process_stream(
+                                    buffer, (size_t) bytes, &s->tcp.dns_stream,
+                                    tcp_dns_parse_frame, &pctx);
                         }
 
                         // Forward to tun
@@ -797,6 +808,9 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.checkedHostname = 0;
             s->tcp.tls_data = NULL;
             s->tcp.tls_len = 0;
+            s->tcp.dns_stream.frame_remaining = 0;
+            s->tcp.dns_stream.prefix_hi = 0;
+            s->tcp.dns_stream.have_prefix_hi = 0;
             s->next = NULL;
 
             if (datalen) {
