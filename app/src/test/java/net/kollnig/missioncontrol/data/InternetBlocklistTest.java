@@ -141,7 +141,7 @@ public class InternetBlocklistTest {
         InternetBlocklist blocklist = InternetBlocklist.getInstance(context);
         assertFalse(blocklist.blockedInternet(1001));
 
-        assertTrue(blocklist.resolvePendingPackages(new InternetBlocklist.PackageUidResolver() {
+        assertTrue(blocklist.resolvePendingPackages(new PackageUids.Resolver() {
             @Override
             public Integer resolve(String storedPackageName) {
                 assertEquals(packageName, storedPackageName);
@@ -149,5 +149,34 @@ public class InternetBlocklistTest {
             }
         }));
         assertTrue(blocklist.blockedInternet(1001));
+    }
+
+    @Test
+    public void resolvingOnePackageSkipsThePackageManagerWhenNothingIsPending() {
+        String packageName = "com.example.later";
+        SharedPreferences prefs = context.getSharedPreferences(
+                TrackerBlocklist.PREF_BLOCKLIST, Context.MODE_PRIVATE);
+        prefs.edit().putStringSet(
+                InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY,
+                Collections.singleton(packageName)).commit();
+
+        InternetBlocklist blocklist = InternetBlocklist.getInstance(context);
+        PackageUids.Resolver strict = new PackageUids.Resolver() {
+            @Override
+            public Integer resolve(String storedPackageName) {
+                assertEquals(packageName, storedPackageName);
+                return 1001;
+            }
+        };
+
+        // A package-added broadcast for any other app must not cost a
+        // PackageManager call.
+        assertFalse(blocklist.resolvePendingPackage(strict, "com.example.unrelated"));
+        assertFalse(blocklist.resolvePendingPackage(strict, null));
+        assertFalse(blocklist.blockedInternet(1001));
+
+        assertTrue(blocklist.resolvePendingPackage(strict, packageName));
+        assertTrue(blocklist.blockedInternet(1001));
+        assertFalse(blocklist.resolvePendingPackage(strict, packageName));
     }
 }

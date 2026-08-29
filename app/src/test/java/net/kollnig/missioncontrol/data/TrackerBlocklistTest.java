@@ -16,6 +16,7 @@ package net.kollnig.missioncontrol.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -112,19 +113,32 @@ public class TrackerBlocklistTest {
 
     @Test
     public void resolveStoredUidParsesNumericIdsWithoutResolver() {
-        assertEquals(UID, TrackerBlocklist.resolveStoredUid(Integer.toString(UID), null));
+        assertEquals(Integer.valueOf(UID),
+                UidKeyedStore.resolveStoredUid(Integer.toString(UID), null));
     }
 
     @Test
     public void resolveStoredUidMigratesLegacyPackageNames() {
-        assertEquals(UID, TrackerBlocklist.resolveStoredUid("com.example.app",
-                new TrackerBlocklist.PackageUidResolver() {
+        assertEquals(Integer.valueOf(UID), UidKeyedStore.resolveStoredUid("com.example.app",
+                new PackageUids.Resolver() {
                     @Override
                     public Integer resolve(String packageName) {
                         assertEquals("com.example.app", packageName);
                         return UID;
                     }
                 }));
+    }
+
+    @Test
+    public void resolveStoredUidNeverOffersANumericKeyToTheResolver() {
+        // "Numeric but unparseable" is not a package name, so it must not cost
+        // a PackageManager call.
+        assertNull(UidKeyedStore.resolveStoredUid("2147483648", new PackageUids.Resolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                throw new AssertionError("resolver called for " + packageName);
+            }
+        }));
     }
 
     @Test
@@ -177,7 +191,7 @@ public class TrackerBlocklistTest {
         TrackerBlocklist blocklist = TrackerBlocklist.getInstance(RuntimeEnvironment.getApplication());
         assertTrue(blocklist.getBlocklist().isEmpty());
 
-        assertTrue(blocklist.resolvePendingPackages(new TrackerBlocklist.PackageUidResolver() {
+        assertTrue(blocklist.resolvePendingPackages(new PackageUids.Resolver() {
             @Override
             public Integer resolve(String packageName) {
                 assertEquals(rawId, packageName);
@@ -185,6 +199,38 @@ public class TrackerBlocklistTest {
             }
         }));
         assertEquals(subset, blocklist.getSubset(UID));
+    }
+
+    @Test
+    public void resolvingOnePackageSkipsThePackageManagerWhenNothingIsPending() {
+        SharedPreferences prefs = blocklistPreferences();
+        String rawId = "com.example.later";
+        Set<String> subset = new HashSet<>(Collections.singleton("Advertising | Example"));
+        prefs.edit()
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY,
+                        Collections.singleton(rawId))
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId, subset)
+                .commit();
+
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(RuntimeEnvironment.getApplication());
+        PackageUids.Resolver strict = new PackageUids.Resolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                assertEquals(rawId, packageName);
+                return UID;
+            }
+        };
+
+        // The overwhelmingly common case: some other app was installed, so no
+        // PackageManager call may be made at all.
+        assertFalse(blocklist.resolvePendingPackage(strict, "com.example.unrelated"));
+        assertFalse(blocklist.resolvePendingPackage(strict, null));
+        assertTrue(blocklist.getBlocklist().isEmpty());
+
+        // The package that is actually pending resolves, once.
+        assertTrue(blocklist.resolvePendingPackage(strict, rawId));
+        assertEquals(subset, blocklist.getSubset(UID));
+        assertFalse(blocklist.resolvePendingPackage(strict, rawId));
     }
 
     @Test

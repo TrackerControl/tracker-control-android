@@ -18,45 +18,25 @@ package net.kollnig.missioncontrol.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Stores what trackers are blocked, for each app.
  */
-public class TrackerBlocklist {
+public class TrackerBlocklist extends UidKeyedStore<Set<String>> {
     public static final String SHARED_PREFS_BLOCKLIST_APPS_KEY = "APPS_BLOCKLIST_APPS_KEY";
     final public static String PREF_BLOCKLIST = "blocklist";
     public static String NECESSARY_CATEGORY = "Content";
     private static TrackerBlocklist instance;
-    /**
-     * Whilst blockmap is a list of apps to block, the set is a set of trackers not
-     * to block.
-     */
-    private final Map<Integer, Set<String>> blockmap = new ConcurrentHashMap<>();
-    /**
-     * Legacy package-name entries which cannot be represented by a runtime UID.
-     * Entries retained here are written back under their original raw key so a
-     * later install can resolve them.
-     */
-    private final Map<String, Set<String>> rawBlockmap = new HashMap<>();
-    /** Raw legacy keys retained because a canonical numeric UID won a collision. */
-    private final Map<String, Integer> retainedRawUids = new HashMap<>();
-
-    interface PackageUidResolver {
-        Integer resolve(String packageName);
-    }
 
     private TrackerBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
@@ -102,22 +82,9 @@ public class TrackerBlocklist {
     public synchronized void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_BLOCKLIST_APPS_KEY, null);
-        PackageUidResolver resolver = new PackageUidResolver() {
-            @Override
-            public Integer resolve(String packageName) {
-                try {
-                    return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
-                } catch (PackageManager.NameNotFoundException ignored) {
-                    return null;
-                } catch (SecurityException ignored) {
-                    return null;
-                }
-            }
-        };
+        PackageUids.Resolver resolver = PackageUids.resolver(c);
 
-        blockmap.clear();
-        rawBlockmap.clear();
-        retainedRawUids.clear();
+        clear();
         if (set != null) {
             List<String> storedIds = new ArrayList<>(set);
             Collections.sort(storedIds);
@@ -129,8 +96,8 @@ public class TrackerBlocklist {
                 if (!StringUtils.isNumeric(appUid))
                     continue;
 
-                int uid = resolveStoredUid(appUid, null);
-                if (uid >= 0)
+                Integer uid = resolveStoredUid(appUid, null);
+                if (uid != null)
                     blockmap.put(uid, loadSubset(prefs, appUid));
                 else
                     // Numeric, but too large to be a UID. Keep the entry as
@@ -146,9 +113,9 @@ public class TrackerBlocklist {
                 Set<String> rawSubset = loadRawSubset(prefs, appUid);
 
                 // Retrieve uid
-                int uid = resolveStoredUid(appUid, resolver);
+                Integer uid = resolveStoredUid(appUid, resolver);
 
-                if (uid < 0) {
+                if (uid == null) {
                     rawBlockmap.put(appUid, rawSubset);
                 } else if (blockmap.containsKey(uid)) {
                     // A numeric entry wins. Retain the legacy entry under its
@@ -203,70 +170,19 @@ public class TrackerBlocklist {
         return subset;
     }
 
-    static int resolveStoredUid(String storedUid, PackageUidResolver resolver) {
-        if (storedUid == null)
-            return -1;
-
-        if (StringUtils.isNumeric(storedUid)) {
-            try {
-                return Integer.parseInt(storedUid);
-            } catch (NumberFormatException ignored) {
-                return -1;
-            }
+    @Override
+    protected Resolution absorb(int uid, String rawKey, Set<String> raw) {
+        if (!blockmap.containsKey(uid)) {
+            blockmap.put(uid, migrateSubset(raw));
+            return Resolution.ABSORBED;
         }
 
-        if (resolver == null)
-            return -1;
-
-        Integer uid = resolver.resolve(storedUid);
-        return uid == null ? -1 : uid;
-    }
-
-    /**
-     * Resolve package-name entries which were unavailable when settings were loaded.
-     *
-     * @param c Context
-     * @return Whether any pending entry was resolved
-     */
-    public synchronized boolean resolvePendingPackages(Context c) {
-        PackageUidResolver resolver = new PackageUidResolver() {
-            @Override
-            public Integer resolve(String packageName) {
-                try {
-                    return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
-                } catch (PackageManager.NameNotFoundException ignored) {
-                    return null;
-                } catch (SecurityException ignored) {
-                    return null;
-                }
-            }
-        };
-
-        return resolvePendingPackages(resolver);
-    }
-
-    synchronized boolean resolvePendingPackages(PackageUidResolver resolver) {
-        boolean changed = false;
-        Iterator<Map.Entry<String, Set<String>>> pending = rawBlockmap.entrySet().iterator();
-        while (pending.hasNext()) {
-            Map.Entry<String, Set<String>> entry = pending.next();
-            int uid = resolveStoredUid(entry.getKey(), resolver);
-            if (uid < 0)
-                continue;
-
-            if (blockmap.containsKey(uid)) {
-                // A numeric entry remains canonical if a package-name entry
-                // resolves to the same UID. The entry stays pending, so report
-                // the collision only the first time: otherwise every later call
-                // would claim a change and force a needless save.
-                changed |= retainedRawUids.put(entry.getKey(), uid) == null;
-            } else {
-                blockmap.put(uid, migrateSubset(entry.getValue()));
-                pending.remove();
-                changed = true;
-            }
-        }
-        return changed;
+        // A numeric entry remains canonical if a package-name entry resolves to
+        // the same UID. The entry stays pending, so report the collision only
+        // the first time: otherwise every later call would claim a change and
+        // force a needless save.
+        return retainedRawUids.put(rawKey, uid) == null
+                ? Resolution.RETAINED : Resolution.UNCHANGED;
     }
 
     public synchronized boolean hasSubset(int uid) {
@@ -350,21 +266,15 @@ public class TrackerBlocklist {
     }
 
     /**
-     * Completely clear blocklist.
-     */
-    public synchronized void clear() {
-        blockmap.clear();
-        rawBlockmap.clear();
-        retainedRawUids.clear();
-    }
-
-    /**
      * Clear all blocked trackers for a specific app
      *
      * @param uid Uid of app
+     * @return Whether anything was cleared. {@link #saveSettings(Context)}
+     * rewrites every key in the preferences file, so callers use this to skip
+     * that work when the app had no state to begin with.
      */
-    public synchronized void clear(int uid) {
-        blockmap.remove(uid);
+    public synchronized boolean clear(int uid) {
+        boolean changed = blockmap.remove(uid) != null;
 
         // Drop any legacy package-name entry that lost a collision to this uid:
         // the app is gone, so retaining it would resurrect stale settings if a
@@ -375,8 +285,10 @@ public class TrackerBlocklist {
             if (entry.getValue() == uid) {
                 rawBlockmap.remove(entry.getKey());
                 retained.remove();
+                changed = true;
             }
         }
+        return changed;
     }
 
     /**

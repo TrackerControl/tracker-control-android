@@ -42,6 +42,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.Pair;
 import net.kollnig.missioncontrol.data.BlockingMode;
+import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerList;
@@ -395,7 +396,16 @@ public class Rule {
 
             DatabaseHelper dh = DatabaseHelper.getInstance(context);
             TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(context);
-            boolean trackerDefaultsChanged = false;
+
+            // Let an imported entry claim its app before ensureDefaults runs.
+            // A numeric default created first wins the collision, which would
+            // strand the imported subset under its package-name key. This is
+            // also the only path covering an install made while the VPN was
+            // stopped, when packageChangedReceiver is not registered.
+            InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+            if (internetBlocklist.resolvePendingPackages(context))
+                internetBlocklist.saveSettings(context);
+            boolean trackerDefaultsChanged = trackerBlocklist.resolvePendingPackages(context);
             for (PackageInfo info : listPI)
                 try {
                     // Skip self
