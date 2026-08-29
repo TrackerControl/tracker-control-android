@@ -537,7 +537,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Trackers</string>
     <string name="tab_countries">Countries</string>
-    <string name="tab_actions">My Data</string>
+    <string name="tab_actions">Data Rights</string>
     <string name="tracker_name">Tracker Name</string>
     <string name="app_info">Manage App</string>
 
@@ -683,6 +683,9 @@ Sincerely,\n\n]]></string>
     <string name="app_state_bypassed_explanation">The app connects directly, outside TrackerControl. Nothing is monitored or blocked for it. Use this as a last resort if the app still does not work.\n\nNote: \"Block connections without VPN\" in the Android VPN settings must be DISABLED for this to work.</string>
     <!-- Per-app protection screen -->
     <string name="protection_title">Protection</string>
+    <string name="protection_route_heading">Remote VPN</string>
+    <!-- Protection state and remote-VPN routing shown together on one row -->
+    <string name="protection_state_with_route" translatable="false">%1$s \u00b7 %2$s</string>
     <string name="protection_app_not_working">App not working? Tap here</string>
     <plurals name="protection_paused_resumes">
         <item quantity="one">Paused — resumes in %d min</item>
@@ -739,6 +742,18 @@ Sincerely,\n\n]]></string>
     <string name="analyze_tracker_libraries">Analyse tracker libraries</string>
     <string name="update_analysis">Update analysis</string>
     <string name="analysis_outdated_version">\n\nNote: Analysis is of a previous app version. This might have changed integrated tracking libraries.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
+    <string name="libraries_title">Tracker libraries</string>
+    <string name="libraries_row_heading">Tracker libraries</string>
+    <string name="libraries_none_found">No tracker libraries found in the app code</string>
+    <string name="libraries_not_analysed">Not analysed yet</string>
+    <string name="libraries_analysing">Analysing app code\u2026</string>
+    <string name="libraries_analysis_failed">Analysis failed \u2014 tap to retry</string>
+    <string name="libraries_outdated_suffix">%1$s (previous app version)</string>
+    <plurals name="libraries_found">
+        <item quantity="one">%d tracker library found in the app code</item>
+        <item quantity="other">%d tracker libraries found in the app code</item>
+    </plurals>
     <string name="analysis_queued">Analysis queued…</string>
     <string name="blocked">BLOCKED</string>
     <string name="allowed">ALLOWED</string>

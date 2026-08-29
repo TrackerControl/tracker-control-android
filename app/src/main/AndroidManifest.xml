@@ -223,6 +223,17 @@
                 android:value="net.kollnig.missioncontrol.DetailsActivity" />
         </activity>
 
+        <activity
+            android:name="net.kollnig.missioncontrol.details.LibrariesActivity"
+            android:exported="false"
+            android:label="@string/libraries_title"
+            android:parentActivityName="net.kollnig.missioncontrol.DetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.kollnig.missioncontrol.DetailsActivity" />
+        </activity>
+
         <service
 
             android:name="eu.faircode.netguard.ServiceSinkhole"

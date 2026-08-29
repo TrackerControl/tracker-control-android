@@ -39,6 +39,8 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.faircode.netguard.Rule;
+import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
@@ -47,6 +49,7 @@ import net.kollnig.missioncontrol.data.AppProtectionWriter;
 import net.kollnig.missioncontrol.data.BlockingMode;
 import net.kollnig.missioncontrol.data.InternetBlocklist;
 import net.kollnig.missioncontrol.data.PausedApps;
+import net.kollnig.missioncontrol.data.RemoteRoutingLogic;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerBlocklist;
 import net.kollnig.missioncontrol.data.TrackerCategory;
@@ -70,6 +73,11 @@ public class ProtectionActivity extends AppCompatActivity {
     private TextView tvRecordingUnavailable;
     private TextView tvStateNoInternetDesc;
     private RadioGroup stateGroup;
+    private RadioGroup routeGroup;
+    private TextView tvRouteUnavailable;
+    private TextView tvRouteTunnelDesc;
+    private TextView tvRouteDirectDesc;
+    private boolean bindingRoute;
     private List<TrackerCategory> blockedTrackerCategories = new ArrayList<>();
     private boolean bindingState;
     /** What the pause button currently offers, so a tap never contradicts its label. */
@@ -112,6 +120,18 @@ public class ProtectionActivity extends AppCompatActivity {
         tvRecordingUnavailable = findViewById(R.id.tvRecordingUnavailable);
         tvStateNoInternetDesc = findViewById(R.id.tvStateNoInternetDesc);
         stateGroup = findViewById(R.id.rgAppState);
+        routeGroup = findViewById(R.id.rgAppRoute);
+        tvRouteUnavailable = findViewById(R.id.tvAppRouteUnavailable);
+        tvRouteTunnelDesc = findViewById(R.id.tvRouteTunnelDesc);
+        tvRouteDirectDesc = findViewById(R.id.tvRouteDirectDesc);
+
+        routeGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (bindingRoute)
+                return;
+
+            applyRoute(checkedId == R.id.rbRouteTunnel);
+        });
+
         updateEssentialOnlyVisibility();
 
         btnPauseResume.setOnClickListener(v -> pauseOrResume());
@@ -235,6 +255,80 @@ public class ProtectionActivity extends AppCompatActivity {
                     noInternetExplanation,
                     getString(R.string.app_state_no_internet_shared_uid, packageLabels(sharedPackages)));
         tvStateNoInternetDesc.setText(noInternetExplanation);
+
+        // A pause, a resume, an expiry and the radio above all write the same
+        // "apply" preference the routing control reads: a bypassed app has no
+        // traffic to route. Rebinding here means no caller can change the
+        // protection state and leave a stale routing control behind.
+        updateRouteState();
+    }
+
+    /**
+     * Binds the remote-VPN routing control. Whether an app is filtered and
+     * whether it is forwarded through the remote VPN are separate choices
+     * (#723), so this never follows the protection state above — it only goes
+     * away when there is genuinely nothing to choose.
+     */
+    private void updateRouteState() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean wgEnabled = prefs.getBoolean("wg_enabled", false)
+                && !TextUtils.isEmpty(prefs.getString("wg_config", ""));
+        boolean applyApp = getSharedPreferences("apply", MODE_PRIVATE)
+                .getBoolean(appPackageName, true);
+        boolean defaultRoutes = wgEnabled && RemoteRoutingHelper.hasDefaultRoutes(this, prefs);
+
+        RemoteRoutingLogic.Unavailable unavailable =
+                RemoteRoutingLogic.getUnavailableReason(wgEnabled, defaultRoutes, applyApp);
+        if (unavailable != null) {
+            routeGroup.setVisibility(View.GONE);
+            tvRouteTunnelDesc.setVisibility(View.GONE);
+            tvRouteDirectDesc.setVisibility(View.GONE);
+            tvRouteUnavailable.setVisibility(View.VISIBLE);
+            tvRouteUnavailable.setText(explainUnavailable(unavailable));
+            return;
+        }
+
+        tvRouteUnavailable.setVisibility(View.GONE);
+        routeGroup.setVisibility(View.VISIBLE);
+        tvRouteTunnelDesc.setVisibility(View.VISIBLE);
+        tvRouteDirectDesc.setVisibility(View.VISIBLE);
+
+        bindingRoute = true;
+        routeGroup.check(routesThroughTunnel() ? R.id.rbRouteTunnel : R.id.rbRouteDirect);
+        bindingRoute = false;
+    }
+
+    private void applyRoute(boolean wantsTunnel) {
+        if (wantsTunnel == routesThroughTunnel())
+            return;
+
+        getSharedPreferences(Rule.PREF_WG_ROUTE, MODE_PRIVATE)
+                .edit().putBoolean(appPackageName, wantsTunnel).apply();
+
+        AsyncTask.execute(() -> {
+            Rule.clearCache(this);
+            ServiceSinkhole.reload("app routing changed", this, false);
+        });
+    }
+
+    private boolean routesThroughTunnel() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String mode = RemoteRoutingLogic.normalizeMode(
+                prefs.getString(Rule.PREF_WG_ROUTE_MODE, RemoteRoutingLogic.getDefaultMode()));
+        return RemoteRoutingLogic.routesThroughTunnel(mode,
+                RemoteRoutingHelper.getRouteOverride(this, appPackageName), true);
+    }
+
+    private String explainUnavailable(RemoteRoutingLogic.Unavailable unavailable) {
+        switch (unavailable) {
+            case BYPASSED:
+                return getString(R.string.app_route_unavailable_bypassed);
+            case PARTIAL_ROUTES:
+                return getString(R.string.app_route_unavailable_partial_routes);
+            case NO_REMOTE_VPN:
+            default:
+                return getString(R.string.app_route_unavailable_no_vpn);
+        }
     }
 
     /**

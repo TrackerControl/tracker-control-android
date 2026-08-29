@@ -13,80 +13,6 @@
         android:padding="16dp">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/adsettings_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:clipToPadding="false"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="1dp">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:accessibilityHeading="true"
-                    android:gravity="bottom"
-                    android:minHeight="24dp"
-                    android:text="@string/personalised_ads"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="24sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:text="@string/personalised_ads_description"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/img"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/img"
-                        android:layout_width="@dimen/card_img"
-                        android:layout_height="@dimen/card_img"
-                        android:importantForAccessibility="no"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_advertising" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <Button
-                    android:id="@+id/btnAdSettings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ad_settings"
-                    android:theme="@style/PrimaryFlatButton"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/description" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
-
-
-        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -283,7 +209,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/tracker_card"
+            android:id="@+id/adsettings_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -296,7 +222,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -304,14 +230,14 @@
                     android:accessibilityHeading="true"
                     android:gravity="bottom"
                     android:minHeight="24dp"
-                    android:text="@string/block_tracking"
+                    android:text="@string/personalised_ads"
                     android:textColor="?android:textColorPrimary"
                     android:textSize="24sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/description4"
+                    android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -319,41 +245,42 @@
                     android:layout_marginEnd="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView12">
+                    app:layout_constraintTop_toBottomOf="@+id/textView4">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
-                        android:text="@string/block_tracking_description"
+                        android:text="@string/personalised_ads_description"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/img4"
+                        app:layout_constraintEnd_toStartOf="@+id/img"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
-                        android:id="@+id/img4"
+                        android:id="@+id/img"
                         android:layout_width="@dimen/card_img"
                         android:layout_height="@dimen/card_img"
                         android:importantForAccessibility="no"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_rocket2" />
+                        app:srcCompat="@drawable/ic_advertising" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <Button
-                    android:id="@+id/btnTrackers"
+                    android:id="@+id/btnAdSettings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/blocking_settings"
+                    android:text="@string/ad_settings"
                     android:theme="@style/PrimaryFlatButton"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/description4" />
+                    app:layout_constraintTop_toBottomOf="@+id/description" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
+
 
     </LinearLayout>
 </ScrollView>

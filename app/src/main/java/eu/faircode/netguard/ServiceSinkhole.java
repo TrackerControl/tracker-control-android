@@ -3505,6 +3505,11 @@ public class ServiceSinkhole extends VpnService {
                 context.getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE).edit().remove(packageName).apply();
                 context.getSharedPreferences("notify", Context.MODE_PRIVATE).edit().remove(packageName).apply();
 
+                // EXTRA_DATA_REMOVED is false for the PACKAGE_REMOVED an update
+                // sends, so the analysis cache survives updates as intended and
+                // is dropped only when the app is really gone.
+                TrackerAnalysisManager.clearCache(context, packageName);
+
                 int uid = intent.getIntExtra(Intent.EXTRA_UID, 0);
                 if (uid > 0) {
                     // The internet block is keyed by UID, not by package, so it

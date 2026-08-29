@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -35,9 +36,12 @@ import androidx.work.WorkManager;
  * via WorkManager.
  */
 public class TrackerAnalysisManager {
+    private static final String TAG = TrackerAnalysisManager.class.getSimpleName();
     private static final String PREFS_NAME = "library_analysis";
     private static final String WORK_NAME_PREFIX = "tracker_analysis_";
     private static final String ATTEMPTED_VERSION_PREFIX = "attempted_versioncode_";
+    private static final String RESULT_PREFIX = "trackers_";
+    private static final String VERSION_PREFIX = "versioncode_";
 
     private static TrackerAnalysisManager instance;
     private final Context mContext;
@@ -112,14 +116,14 @@ public class TrackerAnalysisManager {
 
     @Nullable
     public String getCachedResult(String packageName) {
-        return getPrefs().getString("trackers_" + packageName, null);
+        return getPrefs().getString(RESULT_PREFIX + packageName, null);
     }
 
     public boolean isCacheStale(String packageName) {
         try {
             PackageInfo pkg = getPackageInfo(packageName);
             SharedPreferences prefs = getPrefs();
-            int cachedVersionCode = prefs.getInt("versioncode_" + packageName, Integer.MIN_VALUE);
+            int cachedVersionCode = prefs.getInt(VERSION_PREFIX + packageName, Integer.MIN_VALUE);
             return pkg.versionCode > cachedVersionCode;
         } catch (PackageManager.NameNotFoundException e) {
             return true;
@@ -136,9 +140,38 @@ public class TrackerAnalysisManager {
      */
     public void cacheResult(String packageName, String result, int versionCode) {
         getPrefs().edit()
-                .putInt("versioncode_" + packageName, versionCode)
-                .putString("trackers_" + packageName, result)
+                .putInt(VERSION_PREFIX + packageName, versionCode)
+                .putString(RESULT_PREFIX + packageName, result)
                 .apply();
+    }
+
+    /**
+     * Forgets everything cached about a package: its analysis result, the
+     * version that result describes, and the version last attempted.
+     *
+     * Call this only on a real uninstall. An app update deliberately keeps the
+     * cache — the stale result is still shown, with a caveat, until the next
+     * open re-analyses it — so the caller must exclude the PACKAGE_REMOVED
+     * broadcast that an update sends.
+     *
+     * Static so it needs no WorkManager-backed instance: an uninstall broadcast
+     * should not be the thing that first spins one up.
+     */
+    public static void clearCache(Context context, String packageName) {
+        Context appContext = context.getApplicationContext();
+        appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+                .remove(RESULT_PREFIX + packageName)
+                .remove(VERSION_PREFIX + packageName)
+                .remove(ATTEMPTED_VERSION_PREFIX + packageName)
+                .apply();
+
+        // Analysing a package that no longer exists can only fail. Best-effort:
+        // losing the cancellation must not cost us the cache removal above.
+        try {
+            WorkManager.getInstance(appContext).cancelUniqueWork(getWorkName(packageName));
+        } catch (Throwable ex) {
+            Log.w(TAG, "Cannot cancel analysis for removed package=" + packageName + ": " + ex);
+        }
     }
 
     public static int countTrackers(String result) {
