@@ -50,6 +50,30 @@
     </com.google.android.material.card.MaterialCardView>
 
     <!--
+      Plain intro text in the same shape as the Countries tab's lead-in: a
+      24sp heading and a paragraph, no card. Horizontal insets come from the
+      RecyclerView's own 16dp padding, so this adds none of its own.
+    -->
+    <TextView
+        android:id="@+id/tvTrackersIntroTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:accessibilityHeading="true"
+        android:gravity="bottom"
+        android:minHeight="24dp"
+        android:text="@string/block_tracking"
+        android:textColor="?android:textColorPrimary"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tvTrackersIntroText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/block_tracking_description" />
+
+    <!--
       Two summary rows only. Protection and remote-VPN routing share one row
       because both describe how this app's traffic is handled; the tracker
       library report gets its own row because it comes from the app's code
