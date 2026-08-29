@@ -227,7 +227,6 @@
     <string name="title_activity_detail">詳細</string>
     <string name="tab_trackers">トラッカー</string>
     <string name="tab_countries">国</string>
-    <string name="tab_actions">自分のデータ</string>
     <string name="tracker_name">トラッカー名</string>
     <string name="app_info">アプリの管理</string>
     <!-- Actions -->
@@ -297,6 +296,7 @@
     <string name="app_state_bypassed">TrackerControl を迂回</string>
     <string name="app_state_bypassed_explanation">アプリは TrackerControl を経由せず直接接続します。監視もブロックも行われません。アプリがそれでも動作しない場合の最終手段として使用してください。\n\n注意: これを機能させるには、Android の VPN 設定で \"VPN なしの接続をブロック\" を無効にする必要があります。</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">アンインストール</string>
     <string name="settings_uninstall">アプリの設定やアンインストール</string>
     <string name="no_trackers_found_message_disabled">メイン画面でスイッチを有効にしてから、アプリを起動してトラッカーを検出します</string>
@@ -325,6 +325,7 @@
     <string name="trackers_static">トラッカーライブラリ</string>
     <string name="trackers_static_explanation">TrackerControl は、コード(ライブラリ)とアプリのネットワークトラフィックを解析し、トラッキングを検出します。\n\nネットワークトラフィックで検出されたトラッキングは、TrackerControl でブロックできます。</string>
     <string name="trackers_static_explanation_playstore">TrackerControl は、アプリのコード(ライブラリ)とネットワークトラフィックから、トラッキングを検出します。</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">ブロック</string>
     <string name="allowed">許可</string>
     <string name="setting_domain_based_blocked">ドメインベースのブロッキング</string>

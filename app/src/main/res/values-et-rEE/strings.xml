@@ -159,7 +159,6 @@
     <string name="title_activity_detail">Üksikasjad</string>
     <string name="tab_trackers">Jälitajad</string>
     <string name="tab_countries">Maad</string>
-    <string name="tab_actions">Minu andmed</string>
     <string name="tracker_name">Jälitaja nimi</string>
     <string name="app_info">Halda rakendust</string>
     <!-- Actions -->
@@ -217,6 +216,7 @@
     <string name="app_state_bypassed">TrackerControlist mööda</string>
     <string name="app_state_bypassed_explanation">Rakendus ühendub otse, TrackerControlist mööda. Tema jaoks ei jälgita ega blokeerita midagi. Kasuta seda viimase abinõuna, kui rakendus ikka ei tööta.\n\nMärkus: Androidi VPN-i sätetes peab \"Blokeeri ühendused ilma VPN-ita\" olema VÄLJA LÜLITATUD, et see toimiks.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="no_trackers_found_message_disabled">Viipa põhivaatest liugurlüliti sisse ja käivita soovitud rakendus jälitajate otsimiseks</string>
     <string name="no_trackers_found_message">Jälitajate tuvastamiseks käivita rakendus</string>
     <string name="no_trackers_found_action">Käivita</string>
@@ -235,6 +235,7 @@
     <string name="detected_trackers">Tuvastatud jälitajate teegid: %s</string>
     <string name="none">Puudub</string>
     <string name="trackers_static">Jälitajate teegid</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOKEERITUD</string>
     <string name="allowed">LUBATUD</string>
     <string name="setting_domain_based_blocked">Domeenipõhine blokeerimine</string>

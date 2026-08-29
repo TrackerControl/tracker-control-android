@@ -100,6 +100,8 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="app_state_bypassed">Omitir TrackerControl</string>
     <string name="app_state_bypassed_explanation">A aplicación conéctase directamente, fóra de TrackerControl. Non se supervisa nin se bloquea nada para ela. Usa isto como último recurso se a aplicación segue sen funcionar.\n\nNota: \"Bloquear conexións sen VPN\" nos axustes de VPN de Android debe estar DESACTIVADO para que isto funcione.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->

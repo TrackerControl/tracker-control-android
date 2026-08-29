@@ -254,7 +254,6 @@
     <string name="title_activity_detail">Details</string>
     <string name="tab_trackers">Tracker</string>
     <string name="tab_countries">Länder</string>
-    <string name="tab_actions">Meine Daten</string>
     <string name="tracker_name">Trackername</string>
     <string name="app_info">App verwalten</string>
     <!-- Actions -->
@@ -324,6 +323,7 @@
     <string name="app_state_bypassed">TrackerControl umgehen</string>
     <string name="app_state_bypassed_explanation">Die App verbindet sich direkt, außerhalb von TrackerControl. Nichts wird für sie überwacht oder blockiert. Nutze dies als letzten Ausweg, wenn die App weiterhin nicht funktioniert.\n\nHinweis: \"Verbindungen ohne VPN blockieren\" in den Android-VPN-Einstellungen muss DEAKTIVIERT sein, damit dies funktioniert.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Deinstallieren</string>
     <string name="settings_uninstall">App-Einstellungen &amp; Deinstallation</string>
     <string name="no_trackers_found_message_disabled">Den Hauptbildschirm aktivieren und die App starten um Tracker zu finden</string>
@@ -352,6 +352,7 @@
     <string name="trackers_static">Tracker-Bibliotheken</string>
     <string name="trackers_static_explanation">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.\n\nTracking, das im Netzwerkverkehr erkannt wird, kann mit TrackerControl blockiert werden.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl erkennt Tracking im Code (\'Bibliotheken\') und im Netzwerkverkehr von Apps.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOCKIERT</string>
     <string name="allowed">ERLAUBT</string>
     <string name="setting_domain_based_blocked">Domänenbasierte Blockierung</string>

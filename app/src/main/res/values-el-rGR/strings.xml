@@ -232,7 +232,6 @@
     <string name="title_activity_detail">Λεπτομέρειες</string>
     <string name="tab_trackers">Ιχνηλάτες</string>
     <string name="tab_countries">Χώρες</string>
-    <string name="tab_actions">Τα δεδομένα μου</string>
     <string name="tracker_name">Όνομα ιχνηλάτη</string>
     <string name="app_info">Διαχείριση Εφαρμογής</string>
     <!-- Actions -->
@@ -302,6 +301,7 @@
     <string name="app_state_bypassed">Παράκαμψη του TrackerControl</string>
     <string name="app_state_bypassed_explanation">Η εφαρμογή συνδέεται απευθείας, εκτός του TrackerControl. Τίποτα δεν παρακολουθείται ούτε αποκλείεται για αυτήν. Χρησιμοποιήστε το ως έσχατη λύση αν η εφαρμογή εξακολουθεί να μη λειτουργεί.\n\nΣημείωση: Η επιλογή \"Αποκλεισμός συνδέσεων χωρίς VPN\" στις ρυθμίσεις VPN του Android πρέπει να είναι ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΗ για να λειτουργήσει αυτό.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Απεγκατάσταση</string>
     <string name="settings_uninstall">Ρυθμίσεις Εφαρμογής &amp; Απεγκατάσταση</string>
     <string name="no_trackers_found_message_disabled">Ενεργοποιήστε το διακόπτη στην κύρια οθόνη και στη συνέχεια ανοίξτε την εφαρμογή για να εντοπίστε ιχνηλάτες</string>
@@ -330,6 +330,7 @@
     <string name="trackers_static">Βιβλιοθήκες ιχνηλατών</string>
     <string name="trackers_static_explanation">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κυκλοφορία στο δίκτυο των εφαρμογών.\n\nΗ παρακολούθηση που ανιχνεύεται στην κίνηση δικτύου μπορεί να αποκλειστεί με το TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">Το TrackerControl ανιχνεύει την παρακολούθηση στον κώδικα (\'βιβλιοθήκες\') και την κίνηση στο δίκτυο των εφαρμογών.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">ΑΠΟΚΛΕΙΣΜΕΝΟ</string>
     <string name="allowed">ΕΠΙΤΡΕΠΟΜΕΝΟ</string>
     <string name="setting_domain_based_blocked">Μπλοκάρισμα μέσω domain</string>

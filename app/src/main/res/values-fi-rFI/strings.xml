@@ -251,7 +251,6 @@ Internet-liikennettäsi ei lähetetä VPN-etäpalvelimeen.</string>
     <string name="title_activity_detail">Yksityiskohdat</string>
     <string name="tab_trackers">Seuraimet</string>
     <string name="tab_countries">Maat</string>
-    <string name="tab_actions">Omat tiedot</string>
     <string name="tracker_name">Seuraimen nimi</string>
     <string name="app_info">Hallitse sovellusta</string>
     <!-- Actions -->
@@ -355,6 +354,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="app_state_bypassed">Ohita TrackerControl</string>
     <string name="app_state_bypassed_explanation">Sovellus muodostaa yhteyden suoraan, TrackerControlin ohi. Sille ei valvota eikä estetä mitään. Käytä tätä viimeisenä keinona, jos sovellus ei vieläkään toimi.\n\nHuomaa: Androidin VPN-asetusten kohdan \"Estä yhteydet ilman VPN:ää\" on oltava POIS KÄYTÖSTÄ, jotta tämä toimii.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Poista asennus</string>
     <string name="settings_uninstall">Sovelluksen tiedot</string>
     <string name="no_trackers_found_message_disabled">Ota käyttöön päänäytön kytkimestä ja käynnistä sitten sovellus löytääksesi seuraimia</string>
@@ -390,6 +390,7 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="analyze_tracker_libraries">Analysoi seurantakirjastot</string>
     <string name="update_analysis">Päivitä analyysi</string>
     <string name="analysis_outdated_version">\n\nHuomautus: Analyysi koskee aiempaa sovellusversiota. Tämä saattaa olla muuttanut integroituja seurantakirjastoja.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="analysis_queued">Analyysi jonossa…</string>
     <string name="blocked">ESTETTY</string>
     <string name="allowed">SALLITTU</string>

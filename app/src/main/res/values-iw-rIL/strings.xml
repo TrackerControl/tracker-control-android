@@ -236,7 +236,6 @@
     <string name="title_activity_detail">פרטים</string>
     <string name="tab_trackers">טראקרים</string>
     <string name="tab_countries">מדינות</string>
-    <string name="tab_actions">הנתונים שלי</string>
     <string name="tracker_name">שם עוקב</string>
     <string name="app_info">ניהול אפליקציה</string>
     <!-- Actions -->
@@ -318,6 +317,7 @@
     <string name="app_state_bypassed">עקיפת TrackerControl</string>
     <string name="app_state_bypassed_explanation">האפליקציה מתחברת ישירות, מחוץ ל-TrackerControl. דבר אינו מנוטר או נחסם עבורה. השתמשו בכך כמוצא אחרון אם האפליקציה עדיין לא עובדת.\n\nהערה: האפשרות \"חסום חיבורים ללא VPN\" בהגדרות ה-VPN של Android חייבת להיות מושבתת כדי שזה יעבוד.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">הסר את ההתקנה</string>
     <string name="settings_uninstall">הגדרות אפליקציה &amp; הסר את ההתקנה</string>
     <string name="no_trackers_found_message_disabled">הפעל את המתג במסך הראשי, ולאחר מכן הפעל את האפליקציה כדי למצוא עוקבים</string>
@@ -346,6 +346,7 @@
     <string name="trackers_static">ספריות גשש</string>
     <string name="trackers_static_explanation">TrackerControl מזהה מעקב בקוד (\'ספריות\') ותעבורת רשת של אפליקציות.\n\nניתן לחסום מעקב שמתגלה בתעבורת הרשת באמצעות TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl מזהה מעקב בקוד (\'ספריות\') ותעבורת רשת של אפליקציות.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">חסום</string>
     <string name="allowed">מאופשר</string>
     <string name="setting_domain_based_blocked">חסימה מבוססת דומיין</string>

@@ -272,7 +272,6 @@ El tráfico de internet no será envíado a un servidor VPN ajeno.</string>
     <string name="title_activity_detail">Detalles</string>
     <string name="tab_trackers">Rastreadores</string>
     <string name="tab_countries">Países</string>
-    <string name="tab_actions">Mis datos</string>
     <string name="tracker_name">Nombre del rastreador</string>
     <string name="app_info">Gestionar App</string>
     <!-- Actions -->
@@ -376,6 +375,7 @@ Atentamente,\n\n]]></string>
     <string name="app_state_bypassed">Omitir TrackerControl</string>
     <string name="app_state_bypassed_explanation">La aplicación se conecta directamente, fuera de TrackerControl. No se supervisa ni se bloquea nada para ella. Usa esto como último recurso si la aplicación sigue sin funcionar.\n\nNota: \"Bloquear conexiones sin VPN\" en los ajustes de VPN de Android debe estar DESACTIVADO para que esto funcione.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Desinstalar</string>
     <string name="settings_uninstall">Ajustes de la aplicación &amp; Desinstalar</string>
     <string name="no_trackers_found_message_disabled">Activa el interruptor en la pantalla principal, y después ejecuta la aplicación para encontrar rastreadores</string>
@@ -404,6 +404,7 @@ Atentamente,\n\n]]></string>
     <string name="trackers_static">Librerías de rastreadores</string>
     <string name="trackers_static_explanation">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.\n\nEl rastreo detectado en el tráfico de red puede ser bloqueado con TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl detecta el rastreo en las librerías (\'libraries\') del código y en el tráfico red de apps.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOQUEADO</string>
     <string name="allowed">PERMITIDO</string>
     <string name="setting_domain_based_blocked">Bloqueo basado en dominios</string>

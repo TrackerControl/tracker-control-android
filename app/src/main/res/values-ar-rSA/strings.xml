@@ -255,7 +255,6 @@
     <string name="title_activity_detail">التفاصيل</string>
     <string name="tab_trackers">أدوات التتبع</string>
     <string name="tab_countries">البلدان</string>
-    <string name="tab_actions">بياناتي</string>
     <string name="tracker_name">اسم أداة التتبع</string>
     <string name="app_info">إدارة التطبيق</string>
     <!-- Actions -->
@@ -359,6 +358,7 @@
     <string name="app_state_bypassed">تجاوز TrackerControl</string>
     <string name="app_state_bypassed_explanation">يتصل التطبيق مباشرةً، خارج TrackerControl. لا تتم مراقبة أو حظر أي شيء له. استخدم هذا كملاذ أخير إذا كان التطبيق لا يزال لا يعمل.\n\nملاحظة: يجب تعطيل \"حظر الاتصالات بدون VPN\" في إعدادات VPN بنظام أندرويد حتى يعمل هذا.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">إلغاء التثبيت</string>
     <string name="settings_uninstall">إعدادات التطبيق وإلغاء التثبيت</string>
     <string name="no_trackers_found_message_disabled">قم بتمكين المفتاح في الشاشة الرئيسية، ثم قم بتشغيل التطبيق للعثور على أدوات التتبع</string>
@@ -387,6 +387,7 @@
     <string name="trackers_static">مكتبات التتبع</string>
     <string name="trackers_static_explanation">يكتشف التحكم في التتبع التتبع في التعليمات البرمجية (\"المكتبات\") وحركة مرور الشبكة للتطبيقات.\n\nيمكن حظر التتبع الذي يتم اكتشافه في حركة مرور الشبكة باستخدام التحكم في التتبع.</string>
     <string name="trackers_static_explanation_playstore">يكتشف التحكم في التتبع التتبع في التعليمات البرمجية (\"المكتبات\") وحركة مرور الشبكة للتطبيقات.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">محظور</string>
     <string name="allowed">مسموح</string>
     <string name="setting_domain_based_blocked">الحظر المستند إلى المجال</string>

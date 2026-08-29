@@ -240,7 +240,6 @@ Twój ruch internetowy nie jest wysyłany do zdalnego serwera VPN.</string>
     <string name="title_activity_detail">Szczegóły</string>
     <string name="tab_trackers">Trackery</string>
     <string name="tab_countries">Kraje</string>
-    <string name="tab_actions">Moje dane</string>
     <string name="tracker_name">Nazwa znacznika</string>
     <string name="app_info">Zarządzaj aplikacją</string>
     <!-- Actions -->
@@ -344,6 +343,7 @@ Z poważaniem,\n\n]]></string>
     <string name="app_state_bypassed">Pomiń TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikacja łączy się bezpośrednio, poza TrackerControl. Nic nie jest dla niej monitorowane ani blokowane. Użyj tego w ostateczności, jeśli aplikacja nadal nie działa.\n\nUwaga: opcja \"Blokuj połączenia bez VPN\" w ustawieniach VPN Androida musi być WYŁĄCZONA, aby to zadziałało.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Odinstaluj</string>
     <string name="settings_uninstall">Ustawienia aplikacji &amp; Odinstaluj</string>
     <string name="no_trackers_found_message_disabled">Włączyć przełącznik na głównym ekranie, a następnie uruchomić aplikację w celu znalezienia trackerów</string>
@@ -372,6 +372,7 @@ Z poważaniem,\n\n]]></string>
     <string name="trackers_static">Biblioteki trackerów</string>
     <string name="trackers_static_explanation">TrackerControl wykrywa śledzenie w kodzie (\"bibliotekach\") i ruch sieciowy aplikacji.\n\nŚledzenie, które jest wykrywane w ruchu sieciowym, może być blokowane za pomocą TrackerControl.</string>
     <string name="trackers_static_explanation_playstore">TrackerControl wykrywa śledzenie w kodzie (\"bibliotekach\") i ruch sieciowy aplikacji.</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">ZABLOKOWANE</string>
     <string name="allowed">DOZWOLONE</string>
     <string name="setting_domain_based_blocked">Blokowanie na podstawie domeny</string>

@@ -90,9 +90,11 @@
     <string name="app_state_bypassed">Ocolește TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplicația se conectează direct, în afara TrackerControl. Nimic nu este monitorizat sau blocat pentru ea. Folosiți această opțiune ca ultimă soluție dacă aplicația tot nu funcționează.\n\nNotă: \"Blochează conexiunile fără VPN\" din setările VPN Android trebuie să fie DEZACTIVAT pentru ca aceasta să funcționeze.</string>
     <!-- Per-app protection screen -->
+    <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">Dezinstalează</string>
     <string name="back">Înapoi</string>
     <string name="forever_free">Întotdeauna Gratuit</string>
+    <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <string name="blocked">BLOCAT</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
