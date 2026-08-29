@@ -21,7 +21,7 @@ public class PausedAppsTest {
     private SharedPreferences paused;
     private SharedPreferences apply;
     private SharedPreferences trackerProtect;
-    private SharedPreferences essentialOnly;
+    private SharedPreferences minimalOnlyPrefs;
 
     @Before
     public void setUp() {
@@ -29,11 +29,11 @@ public class PausedAppsTest {
         paused = context.getSharedPreferences(PausedApps.PREFS_NAME, Context.MODE_PRIVATE);
         apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         trackerProtect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
-        essentialOnly = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        minimalOnlyPrefs = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
         paused.edit().clear().commit();
         apply.edit().clear().commit();
         trackerProtect.edit().clear().commit();
-        essentialOnly.edit().clear().commit();
+        minimalOnlyPrefs.edit().clear().commit();
     }
 
     @Test
@@ -137,11 +137,11 @@ public class PausedAppsTest {
     }
 
     @Test
-    public void essentialOnlyAppCanBePausedAndSweepRestoresItsState() {
+    public void minimalOnlyAppCanBePausedAndSweepRestoresItsState() {
         String packageName = "com.example.app";
         apply.edit().putBoolean(packageName, true).commit();
         trackerProtect.edit().putBoolean(packageName, true).commit();
-        essentialOnly.edit().putBoolean(packageName, true).commit();
+        minimalOnlyPrefs.edit().putBoolean(packageName, true).commit();
 
         PausedApps.pause(context, packageName, 0, 600_000L);
         assertTrue(PausedApps.isPaused(context, packageName));
@@ -151,18 +151,18 @@ public class PausedAppsTest {
         PausedApps.sweep(context);
 
         assertTrue(apply.getBoolean(packageName, false));
-        assertEquals(AppProtectionState.ESSENTIAL_ONLY,
+        assertEquals(AppProtectionState.MINIMAL_ONLY,
                 AppProtectionState.resolve(apply.getBoolean(packageName, true),
                         trackerProtect.getBoolean(packageName, false), false,
-                        essentialOnly.getBoolean(packageName, false)));
+                        minimalOnlyPrefs.getBoolean(packageName, false)));
     }
 
     @Test
-    public void selectingProtectedAfterBypassClearsEssentialOnlyFlag() {
+    public void selectingProtectedAfterBypassClearsMinimalOnlyFlag() {
         String packageName = "com.example.app";
         apply.edit().putBoolean(packageName, false).commit();
         trackerProtect.edit().putBoolean(packageName, true).commit();
-        essentialOnly.edit().putBoolean(packageName, true).commit();
+        minimalOnlyPrefs.edit().putBoolean(packageName, true).commit();
 
         assertEquals(AppProtectionState.BYPASSED,
                 AppProtectionState.resolve(false, true, false, true));
@@ -170,9 +170,9 @@ public class PausedAppsTest {
                 AppProtectionState.of(AppProtectionState.PROTECTED));
 
         assertTrue(apply.getBoolean(packageName, false));
-        assertFalse(essentialOnly.getBoolean(packageName, true));
+        assertFalse(minimalOnlyPrefs.getBoolean(packageName, true));
         assertEquals(AppProtectionState.PROTECTED,
                 AppProtectionState.resolve(true, true, false,
-                        essentialOnly.getBoolean(packageName, false)));
+                        minimalOnlyPrefs.getBoolean(packageName, false)));
     }
 }

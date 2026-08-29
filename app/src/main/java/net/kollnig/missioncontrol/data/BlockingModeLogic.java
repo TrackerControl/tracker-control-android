@@ -39,12 +39,12 @@ public final class BlockingModeLogic {
     }
 
     /**
-     * The blocking verdict for Minimal mode and for essential-only apps: block
+     * The blocking verdict for Minimal mode and for minimal-only apps: block
      * iff the flow matched a non-Content DuckDuckGo tracker. The category must
      * come from the DDG-only map, never from the (broader) detection map.
      */
-    public static boolean shouldBlockEssentialOnly(@Nullable String essentialCategory) {
-        return essentialCategory != null && !CONTENT_CATEGORY.equals(essentialCategory);
+    public static boolean shouldBlockMinimalOnly(@Nullable String minimalCategory) {
+        return minimalCategory != null && !CONTENT_CATEGORY.equals(minimalCategory);
     }
 
     public static ExclusionSyncResult syncVpnExclusions(Set<String> excludedApps,

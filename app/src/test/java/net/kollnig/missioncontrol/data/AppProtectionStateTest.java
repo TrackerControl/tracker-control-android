@@ -50,7 +50,7 @@ public class AppProtectionStateTest {
         for (boolean apply : new boolean[] { true, false })
             for (boolean trackerProtect : new boolean[] { true, false })
                 for (boolean internetBlocked : new boolean[] { true, false })
-                    for (boolean essentialOnly : new boolean[] { true, false }) {
+                    for (boolean minimalOnly : new boolean[] { true, false }) {
                         AppProtectionState expected;
                         if (!apply)
                             expected = AppProtectionState.BYPASSED;
@@ -59,12 +59,12 @@ public class AppProtectionStateTest {
                         else if (!trackerProtect)
                             expected = AppProtectionState.TRACKERS_ALLOWED;
                         else
-                            expected = essentialOnly
-                                    ? AppProtectionState.ESSENTIAL_ONLY
+                            expected = minimalOnly
+                                    ? AppProtectionState.MINIMAL_ONLY
                                     : AppProtectionState.PROTECTED;
 
                         assertEquals(expected, AppProtectionState.resolve(
-                                apply, trackerProtect, internetBlocked, essentialOnly));
+                                apply, trackerProtect, internetBlocked, minimalOnly));
                     }
     }
 
@@ -90,9 +90,9 @@ public class AppProtectionStateTest {
         for (boolean apply : new boolean[] { true, false })
             for (boolean trackerProtect : new boolean[] { true, false })
                 for (boolean internetBlocked : new boolean[] { true, false })
-                    for (boolean essentialOnly : new boolean[] { true, false }) {
+                    for (boolean minimalOnly : new boolean[] { true, false }) {
                         assertNotNull(AppProtectionState.resolve(
-                                apply, trackerProtect, internetBlocked, essentialOnly));
+                                apply, trackerProtect, internetBlocked, minimalOnly));
                         combinations++;
                     }
         assertEquals(16, combinations);
@@ -106,18 +106,18 @@ public class AppProtectionStateTest {
             // Worst case: apply the change on top of every possible prior state.
             for (boolean priorProtect : new boolean[] { true, false })
                 for (boolean priorInternet : new boolean[] { true, false })
-                    for (boolean priorEssential : new boolean[] { true, false }) {
+                    for (boolean priorMinimal : new boolean[] { true, false }) {
                         boolean protect = change.trackerProtect == null
                                 ? priorProtect
                                 : change.trackerProtect;
                         boolean internet = change.internetBlocked == null
                                 ? priorInternet
                                 : change.internetBlocked;
-                        boolean essential = change.essentialOnly == null
-                                ? priorEssential
-                                : change.essentialOnly;
+                        boolean minimal = change.minimalOnly == null
+                                ? priorMinimal
+                                : change.minimalOnly;
                         assertEquals(state,
-                                AppProtectionState.resolve(change.apply, protect, internet, essential));
+                                AppProtectionState.resolve(change.apply, protect, internet, minimal));
                     }
         }
     }
@@ -126,7 +126,7 @@ public class AppProtectionStateTest {
     public void noInternetKeepsTrackerProtectionChoice() {
         Change change = AppProtectionState.of(AppProtectionState.NO_INTERNET);
         assertNull(change.trackerProtect);
-        assertNull(change.essentialOnly);
+        assertNull(change.minimalOnly);
         assertTrue(change.apply);
         assertEquals(Boolean.TRUE, change.internetBlocked);
     }
@@ -136,18 +136,18 @@ public class AppProtectionStateTest {
         Change change = AppProtectionState.of(AppProtectionState.BYPASSED);
         assertNull(change.trackerProtect);
         assertNull(change.internetBlocked);
-        assertNull(change.essentialOnly);
+        assertNull(change.minimalOnly);
     }
 
     @Test
-    public void protectedAndEssentialOnlyWriteExplicitFlagValues() {
+    public void protectedAndMinimalOnlyWriteExplicitFlagValues() {
         assertEquals(Boolean.FALSE,
-                AppProtectionState.of(AppProtectionState.PROTECTED).essentialOnly);
+                AppProtectionState.of(AppProtectionState.PROTECTED).minimalOnly);
         assertEquals(Boolean.TRUE,
-                AppProtectionState.of(AppProtectionState.ESSENTIAL_ONLY).essentialOnly);
-        assertNull(AppProtectionState.of(AppProtectionState.TRACKERS_ALLOWED).essentialOnly);
-        assertNull(AppProtectionState.of(AppProtectionState.NO_INTERNET).essentialOnly);
-        assertNull(AppProtectionState.of(AppProtectionState.BYPASSED).essentialOnly);
+                AppProtectionState.of(AppProtectionState.MINIMAL_ONLY).minimalOnly);
+        assertNull(AppProtectionState.of(AppProtectionState.TRACKERS_ALLOWED).minimalOnly);
+        assertNull(AppProtectionState.of(AppProtectionState.NO_INTERNET).minimalOnly);
+        assertNull(AppProtectionState.of(AppProtectionState.BYPASSED).minimalOnly);
     }
 
     /**

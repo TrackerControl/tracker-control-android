@@ -80,7 +80,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Context mContext;
     private final SharedPreferences apply;
     private final SharedPreferences tracker_protect;
-    private final SharedPreferences essentialOnly;
+    private final SharedPreferences minimalOnlyPrefs;
     private List<TrackerCategory> mValues = new ArrayList<>();
 
     // Latest state of the library analysis, reflected in the summary row.
@@ -101,7 +101,7 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         apply = mContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
         tracker_protect = mContext.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
-        essentialOnly = mContext.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        minimalOnlyPrefs = mContext.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
 
         // Removes blinks
         ((SimpleItemAnimator) Objects.requireNonNull(v.getItemAnimator())).setSupportsChangeAnimations(false);
@@ -175,8 +175,8 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     mContext, tracker_protect, mAppId);
             boolean minimal = BlockingMode.isMinimalMode(mContext);
             AppProtectionState state = currentState(w);
-            boolean essentialOnlyApp = state == AppProtectionState.ESSENTIAL_ONLY;
-            boolean readOnlyMinimal = minimal || essentialOnlyApp;
+            boolean minimalOnlyApp = state == AppProtectionState.MINIMAL_ONLY;
+            boolean readOnlyMinimal = minimal || minimalOnlyApp;
             boolean allowGranularControl = !readOnlyMinimal;
             holder.mBlockingTip.setVisibility(allowGranularControl ? View.VISIBLE : View.GONE);
 
@@ -259,11 +259,11 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         companyBlocked = false;
                     } else if (BlockingMode.isMinimalMode(getContext())) {
                         showStatus = true;
-                        companyBlocked = TrackerList.isEssentiallyBlocked(t);
-                        monitoredOnly = !companyBlocked && !TrackerList.isEssentiallyKnown(t);
-                    } else if (essentialOnlyApp) {
+                        companyBlocked = TrackerList.isMinimallyBlocked(t);
+                        monitoredOnly = !companyBlocked && !TrackerList.isMinimallyKnown(t);
+                    } else if (minimalOnlyApp) {
                         showStatus = true;
-                        companyBlocked = TrackerList.isEssentiallyBlocked(t);
+                        companyBlocked = TrackerList.isMinimallyBlocked(t);
                     } else {
                         boolean categoryBlocked = b.blocked(mAppUid, trackerCategoryName);
                         showStatus = true;
@@ -322,14 +322,14 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 // gets blocked: with detection broadened beyond the DDG list, a
                 // category whose observed members are all detection-only would
                 // otherwise show a "blocked" switch that lies.
-                boolean categoryEssentiallyBlocked = false;
+                boolean categoryMinimallyBlocked = false;
                 for (Tracker t : trackerCategory.getChildren())
-                    if (TrackerList.isEssentiallyBlocked(t)) {
-                        categoryEssentiallyBlocked = true;
+                    if (TrackerList.isMinimallyBlocked(t)) {
+                        categoryMinimallyBlocked = true;
                         break;
                     }
                 holder.mSwitchTracker.setChecked(
-                        trackerProtectionEnabled && categoryEssentiallyBlocked);
+                        trackerProtectionEnabled && categoryMinimallyBlocked);
                 holder.mSwitchTracker.setOnCheckedChangeListener(null);
                 holder.mCompaniesList.setOnItemClickListener(null);
             } else {
@@ -505,12 +505,12 @@ public class TrackersListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 apply.getBoolean(mAppId, true),
                 BlockingMode.isTrackerProtectionEnabled(mContext, tracker_protect, mAppId),
                 w.blockedInternet(mAppUid),
-                BlockingMode.isEssentialOnlyApp(mContext, essentialOnly, mAppId));
+                BlockingMode.isMinimalOnlyApp(mContext, minimalOnlyPrefs, mAppId));
     }
 
     private static int stateLabelRes(AppProtectionState state) {
         switch (state) {
-            case ESSENTIAL_ONLY:
+            case MINIMAL_ONLY:
                 return R.string.app_state_essential_only;
             case TRACKERS_ALLOWED:
                 return R.string.app_state_trackers_allowed;

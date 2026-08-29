@@ -671,7 +671,7 @@ Sincerely,\n\n]]></string>
     <string name="app_state_heading">Protection</string>
     <string name="app_state_protected">Protected</string>
     <string name="app_state_protected_explanation">Trackers are blocked and recorded for this app.</string>
-    <string name="app_state_essential_only">Essential blocking only</string>
+    <string name="app_state_essential_only">Minimal blocking only</string>
     <string name="app_state_essential_only_explanation">Blocks only the confirmed trackers that Minimal mode blocks. Other trackers are still recorded, but allowed. Use this if standard blocking breaks the app.</string>
     <string name="app_state_trackers_allowed">Trackers allowed</string>
     <string name="app_state_trackers_allowed_explanation">The app keeps running through TrackerControl, but its trackers are neither blocked nor recorded. Use this if blocking breaks the app.</string>

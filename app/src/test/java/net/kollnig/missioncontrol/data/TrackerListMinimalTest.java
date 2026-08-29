@@ -34,7 +34,7 @@ import org.robolectric.RuntimeEnvironment;
 import eu.faircode.netguard.ServiceSinkhole;
 
 @RunWith(RobolectricTestRunner.class)
-public class TrackerListEssentialTest {
+public class TrackerListMinimalTest {
     private Context context;
 
     @Before
@@ -54,24 +54,24 @@ public class TrackerListEssentialTest {
     }
 
     @Test
-    public void xrayClaimedDomainStillUsesItsDdgCategoryForEssentialLookup() {
+    public void xrayClaimedDomainStillUsesItsDdgCategoryForMinimalLookup() {
         Tracker mainTracker = TrackerList.findTracker("2mdn.net");
-        Tracker essentialTracker = TrackerList.findEssentialTracker("2mdn.net");
+        Tracker minimalTracker = TrackerList.findMinimalTracker("2mdn.net");
 
         assertNotNull(mainTracker);
-        assertNotNull(essentialTracker);
-        assertEquals("Google", essentialTracker.getName());
-        assertEquals(TrackerCategory.UNCATEGORISED, essentialTracker.category);
+        assertNotNull(minimalTracker);
+        assertEquals("Google", minimalTracker.getName());
+        assertEquals(TrackerCategory.UNCATEGORISED, minimalTracker.category);
     }
 
     @Test
-    public void hostsOnlyAndXrayOnlyHostsAreNotEssentialTrackers() {
+    public void hostsOnlyAndXrayOnlyHostsAreNotMinimalTrackers() {
         ServiceSinkhole.mapHostsBlocked.put("hosts-only.example", true);
 
         assertNotNull(TrackerList.findTracker("hosts-only.example"));
-        assertNull(TrackerList.findEssentialTracker("hosts-only.example"));
+        assertNull(TrackerList.findMinimalTracker("hosts-only.example"));
         assertNotNull(TrackerList.findTracker("crashlytics.com"));
-        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+        assertNull(TrackerList.findMinimalTracker("crashlytics.com"));
     }
 
     @Test
@@ -82,13 +82,13 @@ public class TrackerListEssentialTest {
         // list, counts and timeline — but it is not part of the DDG set that
         // minimal mode blocks.
         assertNotNull(TrackerList.findTracker("crashlytics.com"));
-        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+        assertNull(TrackerList.findMinimalTracker("crashlytics.com"));
 
         // A DDG tracker stays blockable, with its DDG category.
-        Tracker essentialTracker = TrackerList.findEssentialTracker("2mdn.net");
-        assertNotNull(essentialTracker);
-        assertEquals("Google", essentialTracker.getName());
-        assertTrue(BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker.category));
+        Tracker minimalTracker = TrackerList.findMinimalTracker("2mdn.net");
+        assertNotNull(minimalTracker);
+        assertEquals("Google", minimalTracker.getName());
+        assertTrue(BlockingModeLogic.shouldBlockMinimalOnly(minimalTracker.category));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class TrackerListEssentialTest {
         ServiceSinkhole.mapHostsBlocked.put("hosts-only.example", true);
 
         assertNull(TrackerList.findTracker("hosts-only.example"));
-        assertNull(TrackerList.findEssentialTracker("hosts-only.example"));
+        assertNull(TrackerList.findMinimalTracker("hosts-only.example"));
     }
 
     @Test
@@ -110,17 +110,17 @@ public class TrackerListEssentialTest {
         assertNotNull(mainTracker);
         assertEquals("Fingerprinting", mainTracker.category);
         assertEquals(TrackerCategory.UNCATEGORISED,
-                TrackerList.findEssentialTracker("2mdn.net").category);
+                TrackerList.findMinimalTracker("2mdn.net").category);
     }
 
     @Test
-    public void essentialMapIsIdenticalAcrossModes() {
-        Tracker standard = TrackerList.findEssentialTracker("2mdn.net");
-        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+    public void minimalMapIsIdenticalAcrossModes() {
+        Tracker standard = TrackerList.findMinimalTracker("2mdn.net");
+        assertNull(TrackerList.findMinimalTracker("crashlytics.com"));
 
         switchToMinimalMode();
-        Tracker minimal = TrackerList.findEssentialTracker("2mdn.net");
-        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+        Tracker minimal = TrackerList.findMinimalTracker("2mdn.net");
+        assertNull(TrackerList.findMinimalTracker("crashlytics.com"));
 
         assertNotNull(minimal);
         assertEquals(standard.getName(), minimal.getName());
@@ -133,18 +133,18 @@ public class TrackerListEssentialTest {
 
         Tracker detectionOnly = TrackerList.findTracker("crashlytics.com");
         detectionOnly.addHost("crashlytics.com");
-        assertFalse(TrackerList.isEssentiallyBlocked(detectionOnly));
-        assertFalse(TrackerList.isEssentiallyKnown(detectionOnly));
+        assertFalse(TrackerList.isMinimallyBlocked(detectionOnly));
+        assertFalse(TrackerList.isMinimallyKnown(detectionOnly));
 
         Tracker ddgTracker = TrackerList.findTracker("2mdn.net");
         ddgTracker.addHost("2mdn.net");
-        assertTrue(TrackerList.isEssentiallyBlocked(ddgTracker));
-        assertTrue(TrackerList.isEssentiallyKnown(ddgTracker));
+        assertTrue(TrackerList.isMinimallyBlocked(ddgTracker));
+        assertTrue(TrackerList.isMinimallyKnown(ddgTracker));
 
         Tracker ddgContent = TrackerList.findTracker("ajax.googleapis.com");
         ddgContent.addHost("ajax.googleapis.com");
-        assertFalse(TrackerList.isEssentiallyBlocked(ddgContent));
-        assertTrue(TrackerList.isEssentiallyKnown(ddgContent));
+        assertFalse(TrackerList.isMinimallyBlocked(ddgContent));
+        assertTrue(TrackerList.isMinimallyKnown(ddgContent));
     }
 
     private void switchToMinimalMode() {

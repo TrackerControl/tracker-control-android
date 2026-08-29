@@ -178,14 +178,14 @@ public class TrackerListReloadTest {
         assertNotNull(TrackerList.findTracker("creativecdn.com"));
         assertNotNull(TrackerList.findTracker("crashlytics.com"));
         // ...while blocking stays limited to the DuckDuckGo list.
-        assertNotNull(TrackerList.findEssentialTracker("creativecdn.com"));
-        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+        assertNotNull(TrackerList.findMinimalTracker("creativecdn.com"));
+        assertNull(TrackerList.findMinimalTracker("crashlytics.com"));
 
         PreferenceManager.getDefaultSharedPreferences(context).edit()
                 .putString(BLOCKING_MODE, BlockingMode.MODE_STANDARD).commit();
         assertTrue(TrackerList.reloadTrackerData(context));
         assertNotNull(TrackerList.findTracker("crashlytics.com"));
-        assertNull(TrackerList.findEssentialTracker("crashlytics.com"));
+        assertNull(TrackerList.findMinimalTracker("crashlytics.com"));
     }
 
     @Test

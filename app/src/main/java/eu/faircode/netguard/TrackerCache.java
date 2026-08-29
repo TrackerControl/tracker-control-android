@@ -28,13 +28,13 @@ final class TrackerCache {
     static final class Entry {
         private final String hostname;
         private final Tracker tracker;
-        private final String essentialCategory;
+        private final String minimalCategory;
         private final long expires;
 
-        Entry(String hostname, Tracker tracker, String essentialCategory, long expires) {
+        Entry(String hostname, Tracker tracker, String minimalCategory, long expires) {
             this.hostname = Objects.requireNonNull(hostname);
             this.tracker = Objects.requireNonNull(tracker);
-            this.essentialCategory = essentialCategory;
+            this.minimalCategory = minimalCategory;
             this.expires = expires;
         }
 
@@ -53,8 +53,8 @@ final class TrackerCache {
          * target is not lost the way a verdict-time hostname lookup would lose
          * it.
          */
-        String getEssentialCategory() {
-            return essentialCategory;
+        String getMinimalCategory() {
+            return minimalCategory;
         }
 
         boolean isExpired(long now) {

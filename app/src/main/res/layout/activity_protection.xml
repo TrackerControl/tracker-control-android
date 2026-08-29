@@ -176,14 +176,14 @@
                             android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
                         <RadioButton
-                            android:id="@+id/rbStateEssentialOnly"
+                            android:id="@+id/rbStateMinimalOnly"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/app_state_essential_only"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tvStateEssentialOnlyDesc"
+                            android:id="@+id/tvStateMinimalOnlyDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="32dp"

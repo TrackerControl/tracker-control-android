@@ -245,11 +245,11 @@ public class AdapterRule extends RecyclerView.Adapter<AdapterRule.ViewHolder> im
         final Rule rule = listFiltered.get(position);
         final InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
         final boolean blockedInternet = internetBlocklist.blockedInternet(rule.uid);
-        final SharedPreferences essentialOnly =
+        final SharedPreferences minimalOnlyPrefs =
                 context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
         final AppProtectionState state = AppProtectionState.resolve(
                 rule.apply, rule.tracker_protect, blockedInternet,
-                BlockingMode.isEssentialOnlyApp(context, essentialOnly, rule.packageName));
+                BlockingMode.isMinimalOnlyApp(context, minimalOnlyPrefs, rule.packageName));
         // The Internet toggle below is available for every app TrackerControl
         // still sees. Reading it off the shared state model keeps the main list
         // and the details screen in agreement — in particular, an app with its
