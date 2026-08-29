@@ -357,6 +357,7 @@
     <string name="app_state_no_internet_shared_uid">Cũng áp dụng cho %1$s, ứng dụng dùng chung ID người dùng Android với ứng dụng này.</string>
     <string name="app_state_bypassed">Bỏ qua TrackerControl</string>
     <string name="app_state_bypassed_explanation">Ứng dụng kết nối trực tiếp, bên ngoài TrackerControl. Không có gì được giám sát hay chặn cho nó. Hãy dùng tuỳ chọn này như biện pháp cuối cùng nếu ứng dụng vẫn không hoạt động.\n\nLưu ý: \"Chặn kết nối khi không có VPN\" trong cài đặt VPN của Android phải được TẮT thì tuỳ chọn này mới hoạt động.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Gỡ cài đặt</string>
     <string name="settings_uninstall">Cài đặt của ứng dụng &amp; Gỡ cài đặt</string>
     <string name="no_trackers_found_message_disabled">Bật công tắc trong màn hình chính, sau đó chạy ứng dụng để tìm trình theo dõi</string>

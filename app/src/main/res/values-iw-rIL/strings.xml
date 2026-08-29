@@ -317,6 +317,7 @@
     <string name="app_state_no_internet_shared_uid">חל גם על %1$s, שחולקת מזהה משתמש של Android עם אפליקציה זו.</string>
     <string name="app_state_bypassed">עקיפת TrackerControl</string>
     <string name="app_state_bypassed_explanation">האפליקציה מתחברת ישירות, מחוץ ל-TrackerControl. דבר אינו מנוטר או נחסם עבורה. השתמשו בכך כמוצא אחרון אם האפליקציה עדיין לא עובדת.\n\nהערה: האפשרות \"חסום חיבורים ללא VPN\" בהגדרות ה-VPN של Android חייבת להיות מושבתת כדי שזה יעבוד.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">הסר את ההתקנה</string>
     <string name="settings_uninstall">הגדרות אפליקציה &amp; הסר את ההתקנה</string>
     <string name="no_trackers_found_message_disabled">הפעל את המתג במסך הראשי, ולאחר מכן הפעל את האפליקציה כדי למצוא עוקבים</string>

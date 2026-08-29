@@ -361,6 +361,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="app_state_no_internet_shared_uid">Platí i pro %1$s, která s touto aplikací sdílí uživatelské ID systému Android.</string>
     <string name="app_state_bypassed">Obejít TrackerControl</string>
     <string name="app_state_bypassed_explanation">Aplikace se připojuje přímo, mimo TrackerControl. Nic se pro ni nesleduje ani neblokuje. Použijte jako poslední možnost, pokud aplikace stále nefunguje.\n\nPoznámka: Aby to fungovalo, musí být volba \"Blokovat připojení bez VPN\" v nastavení VPN systému Android VYPNUTA.</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">Odinstalovat</string>
     <string name="settings_uninstall">Nastavení aplikace a odinstalace</string>
     <string name="no_trackers_found_message_disabled">Zapni switch v hlavním okně, pak zapni aplikaci pro nalezení trackerů</string>

@@ -179,6 +179,7 @@
     <string name="app_state_no_internet_shared_uid">同樣適用於 %1$s，它與此應用程式共用同一個 Android 使用者 ID。</string>
     <string name="app_state_bypassed">略過 TrackerControl</string>
     <string name="app_state_bypassed_explanation">應用程式會略過 TrackerControl 直接連線，不會對其進行任何監控或封鎖。僅在應用程式仍無法使用時作為最後手段使用。\n\n注意：必須在 Android 的 VPN 設定中停用\"封鎖不使用 VPN 的連線\"，此項才會生效。</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">解除安裝</string>
     <string name="no_internet">沒有網際網路連線</string>
     <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>

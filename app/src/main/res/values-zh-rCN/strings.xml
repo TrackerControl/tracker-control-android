@@ -546,6 +546,7 @@
     <string name="app_state_no_internet_shared_uid">同样适用于 %1$s，它与此应用共用同一个 Android 用户 ID。</string>
     <string name="app_state_bypassed">绕过 TrackerControl</string>
     <string name="app_state_bypassed_explanation">应用将绕过 TrackerControl 直接联网，不会对其进行任何监测或拦截。仅在应用仍然无法使用时作为最后手段使用。\n\n注意：必须在 Android 的 VPN 设置中停用\"屏蔽不使用 VPN 的连接\"，此项才能生效。</string>
+    <!-- Per-app protection screen -->
     <string name="uninstall">卸载</string>
     <string name="settings_uninstall">应用设置 &amp; 卸载</string>
     <string name="no_trackers_found_message_disabled">在主界面开启开关，然后启动应用寻找追踪器</string>
