@@ -155,7 +155,7 @@
     <string name="setting_wg_profile_manage">Custom WireGuard profiles</string>
     <string name="setting_wg_profile_import">Import WireGuard config</string>
     <string name="setting_wg_mullvad_setup">Set up Mullvad</string>
-    <string name="setting_wg_proton_setup">Set up Proton VPN</string>
+    <string name="setting_wg_proton_setup">Use a Proton VPN config</string>
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
     <string name="setting_wg_profile_save">Save profile</string>
     <string name="setting_wg_profile_delete">Delete profile</string>
@@ -241,9 +241,8 @@
     <string name="msg_wg_mullvad_generating">Creating WireGuard profile…</string>
     <string name="msg_wg_mullvad_failed">Mullvad setup failed: %s</string>
     <string name="msg_wg_mullvad_countries_failed">Could not load Mullvad countries: %s</string>
-    <string name="msg_wg_proton_note">TrackerControl cannot log in to Proton VPN: unlike Mullvad and IVPN, Proton has no supported API for third-party apps. Instead, sign in at account.protonvpn.com, go to Downloads → WireGuard configuration, download a config, and import it here.\n\nIf the tunnel stops connecting, check Proton’s dashboard for a replacement config and update the profile.</string>
-    <string name="msg_wg_proton_open_dashboard">Open protonvpn.com</string>
-    <string name="msg_wg_proton_summary">Proton VPN · %s</string>
+    <string name="msg_wg_proton_note">Proton’s documented third-party setup uses downloadable WireGuard configurations. TrackerControl does not need your Proton credentials and cannot refresh the configuration automatically.\n\nSign in at account.protonvpn.com, go to Downloads → WireGuard configuration, download a config, open it in a text editor, then copy and paste its contents here.</string>
+    <string name="msg_wg_proton_open_dashboard">Open Proton VPN dashboard</string>
     <string name="vpn_status_connected">%s</string>
     <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
     <string name="vpn_status_mullvad">Mullvad</string>

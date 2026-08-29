@@ -528,12 +528,6 @@ public class WgProfileManager {
         if (!TextUtils.isEmpty(relay))
             return relay;
 
-        if (ProtonConfigs.PROVIDER.equals(profile.provider)) {
-            String server = ProtonConfigs.getServerName(profile.config);
-            if (!TextUtils.isEmpty(server))
-                return context.getString(R.string.msg_wg_proton_summary, server);
-        }
-
         try {
             WgConfig config = WgConfigParser.INSTANCE.parse(profile.config);
             List<WgPeer> peers = config.getPeers();
