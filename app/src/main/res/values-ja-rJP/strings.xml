@@ -153,7 +153,6 @@
     <string name="title_rport">転送先ポート</string>
     <string name="title_ruid">送信先アプリ</string>
     <string name="title_external">外部サーバの場合は「nobody」を選択してください</string>
-    <string name="title_lockdown_enabled">トラフィックは封鎖されています</string>
     <string name="title_unmetered_allowed">定額制のトラフィックは許可されています</string>
     <string name="title_unmetered_blocked">定額制のトラフィックはブロックされています</string>
     <string name="title_unmetered_disabled">定額制のルールは適用されません</string>
@@ -230,7 +229,6 @@
     <string name="tab_countries">国</string>
     <string name="tab_actions">自分のデータ</string>
     <string name="tracker_name">トラッカー名</string>
-    <string name="internet_access">インターネットアクセス</string>
     <string name="app_info">アプリの管理</string>
     <!-- Actions -->
     <string name="block_tracking">トラッカーをブロック</string>
@@ -274,6 +272,8 @@
     <string name="setting_strict_blocking">厳格なブロッキング</string>
     <string name="summary_strict_blocking">新しくインストールされたアプリの場合、できるかぎり多くのデータシェアリングをブロックます。アプリが動かなくなる可能性が高くなります。</string>
     <string name="strict_blocking_explanation">十分な知識がある方以外は、アプリの破損を減らすためにこのオプションを無効にすることをお勧めします。ただし、これにより、企業へのいくつかのデータが送信可能になります。</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">アンインストール</string>
     <string name="settings_uninstall">アプリの設定やアンインストール</string>
     <string name="no_trackers_found_message_disabled">メイン画面でスイッチを有効にしてから、アプリを起動してトラッカーを検出します</string>
