@@ -1,6 +1,8 @@
 package net.kollnig.missioncontrol;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import net.kollnig.missioncontrol.wg.WgProfileManager;
 import net.kollnig.missioncontrol.wg.WgConfigParser;
 import net.kollnig.missioncontrol.wg.MullvadProfileGenerator;
+import net.kollnig.missioncontrol.wg.ProtonConfigs;
 
 import org.json.JSONException;
 
@@ -103,13 +106,33 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         new MaterialAlertDialogBuilder(this)
                 .setItems(new CharSequence[]{
                         getString(R.string.setting_wg_profile_import),
-                        getString(R.string.setting_wg_mullvad_setup)
+                        getString(R.string.setting_wg_mullvad_setup),
+                        getString(R.string.setting_wg_proton_setup)
                 }, (dialog, which) -> {
                     if (which == 0)
                         showProfileDialog(null);
-                    else
+                    else if (which == 1)
                         showMullvadDialog();
+                    else
+                        showProtonDialog();
                 })
+                .show();
+    }
+
+    // Proton has no supported third-party API (unlike Mullvad/IVPN), so this
+    // is guidance around the officially supported manual route: download a
+    // config from the Proton dashboard, then import it here. Imported Proton
+    // configs are recognised and labelled by ProtonConfigs.
+    private void showProtonDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.setting_wg_proton_setup)
+                .setMessage(R.string.msg_wg_proton_note)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setNeutralButton(R.string.msg_wg_proton_open_dashboard, (dialog, which) ->
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(ProtonConfigs.DASHBOARD_URL))))
+                .setPositiveButton(R.string.setting_wg_profile_import, (dialog, which) ->
+                        showProfileDialog(null))
                 .show();
     }
 
@@ -275,6 +298,9 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
                 String profileName = name.getText().toString().trim();
                 String profileConfig = config.getText().toString().trim();
+                boolean proton = ProtonConfigs.isProtonConfig(profileConfig);
+                if (TextUtils.isEmpty(profileName) && proton)
+                    profileName = ProtonConfigs.getServerName(profileConfig);
                 if (TextUtils.isEmpty(profileName)) {
                     name.setError(getString(R.string.msg_wg_profile_name));
                     return;
@@ -285,7 +311,11 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                 }
                 try {
                     WgConfigParser.INSTANCE.parse(profileConfig);
-                    manager.saveProfile(item == null ? null : item.id, profileName, profileConfig);
+                    if (proton)
+                        manager.saveProfile(item == null ? null : item.id, profileName,
+                                profileConfig, ProtonConfigs.PROVIDER, "");
+                    else
+                        manager.saveProfile(item == null ? null : item.id, profileName, profileConfig);
                     applyProfiles();
                     refresh();
                     Toast.makeText(this, R.string.msg_wg_profile_saved, Toast.LENGTH_LONG).show();
