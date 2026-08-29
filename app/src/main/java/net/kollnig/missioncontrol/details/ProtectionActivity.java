@@ -126,6 +126,8 @@ public class ProtectionActivity extends AppCompatActivity {
             AppProtectionWriter.applyManual(this, appPackageName, appUid,
                     AppProtectionState.of(selected));
             updateProtectionState();
+            if (blockedTrackerCategories != null)
+                displayBlockedTrackers(blockedTrackerCategories);
         });
 
         AppBarLayout appBar = findViewById(R.id.appbar);
@@ -329,7 +331,11 @@ public class ProtectionActivity extends AppCompatActivity {
             boolean essentialOnly = state == AppProtectionState.ESSENTIAL_ONLY;
             boolean readOnlyMinimal = minimal || essentialOnly;
             categorySwitch.setEnabled(!readOnlyMinimal && state == AppProtectionState.PROTECTED);
-            categorySwitch.setChecked(readOnlyMinimal
+            boolean categoryEssentiallyBlocked = essentialOnly && category.getChildren().stream()
+                    .anyMatch(TrackerList::isEssentiallyBlocked);
+            categorySwitch.setChecked(essentialOnly
+                    ? trackerProtectionEnabled && categoryEssentiallyBlocked
+                    : readOnlyMinimal
                     ? trackerProtectionEnabled && !TrackerBlocklist.NECESSARY_CATEGORY.equals(category.getCategoryName())
                     : blocklist.blocked(appUid, category.getCategoryName()));
             categorySwitch.setOnCheckedChangeListener((buttonView, checked) -> {
