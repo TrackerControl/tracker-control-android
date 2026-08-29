@@ -104,12 +104,12 @@
                 android:textStyle="italic"
                 android:visibility="gone" />
 
-            <!-- Excluding Apps -->
+            <!-- App breakage -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/troubleshooting_exclude_title"
+                android:text="@string/troubleshooting_app_breakage_title"
                 android:textAppearance="@style/TextMedium"
                 android:textStyle="bold" />
 
@@ -117,7 +117,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/troubleshooting_exclude_desc"
+                android:text="@string/troubleshooting_app_breakage_desc"
                 android:textAppearance="@style/TextSmall" />
 
             <!-- Tracker Categories -->

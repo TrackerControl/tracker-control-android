@@ -88,8 +88,8 @@
     <string name="troubleshooting_datasaver_action">Allow unrestricted data</string>
     <string name="troubleshooting_datasaver_ok">Data saver is not restricting TrackerControl.</string>
 
-    <string name="troubleshooting_exclude_title">Excluding apps from VPN</string>
-    <string name="troubleshooting_exclude_desc">If an app does not work correctly with TrackerControl, you can exclude it: tap the app in the main list, then disable the VPN toggle for that app.</string>
+    <string name="troubleshooting_app_breakage_title">An app stopped working</string>
+    <string name="troubleshooting_app_breakage_desc">Tap the app in the main list, then tap Protection. Try "Minimal blocking only" first. If the app still has problems, choose "Trackers allowed". Use "Bypass TrackerControl" only as a last resort.</string>
 
     <string name="troubleshooting_categories_title">Blocking specific tracker categories</string>
     <string name="troubleshooting_categories_desc">You can fine-tune blocking for each app by tapping it and toggling individual tracker categories (e.g. Analytics, Ads) on or off in the Trackers tab.</string>
@@ -649,8 +649,8 @@ Sincerely,\n\n]]></string>
 
     <string name="setting_blocking_mode">Blocking Mode</string>
     <string name="summary_blocking_mode_minimal">Minimal: Only blocks trackers from the DuckDuckGo list that are safe to block. Browsers stay routed through the VPN, but tracker protection is off by default. Known incompatible apps are excluded. Limited app breakage.</string>
-    <string name="summary_blocking_mode_standard">Standard: Blocks all known trackers from multiple lists (X-Ray, Disconnect, DuckDuckGo). Essential services are allowed. Some apps will break and may need to be manually excluded (see Troubleshooting in the app menu).</string>
-    <string name="summary_blocking_mode_strict">Strict: Blocks all known trackers including essential services and ambiguous shared-IP domains. Many apps will break and need to be manually excluded (see Troubleshooting in the app menu).</string>
+    <string name="summary_blocking_mode_standard">Standard: Blocks all known trackers from multiple lists (X-Ray, Disconnect, DuckDuckGo). Essential services are allowed. If an app stops working, adjust its Protection setting (see Troubleshooting in the app menu).</string>
+    <string name="summary_blocking_mode_strict">Strict: Blocks all known trackers including essential services and ambiguous shared-IP domains. Many apps will need a less restrictive Protection setting (see Troubleshooting in the app menu).</string>
     <string name="summary_sni_wg_note">Note: SNI extraction does not apply to traffic routed through the remote VPN.</string>
     <string name="blocking_mode_minimal">Minimal</string>
     <string name="blocking_mode_standard">Standard</string>
@@ -661,9 +661,9 @@ Sincerely,\n\n]]></string>
     <string name="onboarding_blockingmode_minimal_label">Minimal (Recommended for new users)</string>
     <string name="onboarding_blockingmode_minimal_desc">Blocks only confirmed trackers that are safe to block. Limited app breakage. Good for most users.</string>
     <string name="onboarding_blockingmode_standard_label">Standard</string>
-    <string name="onboarding_blockingmode_standard_desc">Blocks all known trackers from multiple lists. Some apps will break and need to be manually excluded.</string>
+    <string name="onboarding_blockingmode_standard_desc">Blocks all known trackers from multiple lists. Some apps may need a less restrictive Protection setting.</string>
     <string name="onboarding_blockingmode_strict_label">Strict</string>
-    <string name="onboarding_blockingmode_strict_desc">Blocks everything including essential services and ambiguous domains. Significant app breakage — many apps will need to be manually excluded.</string>
+    <string name="onboarding_blockingmode_strict_desc">Blocks everything including essential services and ambiguous domains. Significant app breakage — many apps will need a less restrictive Protection setting.</string>
     <string name="onboarding_blockingmode_research_label">Research</string>
     <string name="onboarding_blockingmode_research_desc">No tracker blocking. Logs transmissions to ADB and enables SNI extraction for better hostname detection. Research only: this leaks your IP address to tracker servers.</string>
 
@@ -727,7 +727,7 @@ Sincerely,\n\n]]></string>
     <string name="no_trackers_found_action">Launch</string>
     <string name="no_internet_message">"This app has no Internet access. It might still track you by exchanging data with other apps."</string>
     <string name="no_internet">No Internet access</string>
-    <string name="bypass_vpn_error">"Cannot block Internet. App is excluded from TrackerControl."</string>
+    <string name="bypass_vpn_error">"Cannot block Internet while the app bypasses TrackerControl."</string>
 
     <string name="back">Back</string>
 
