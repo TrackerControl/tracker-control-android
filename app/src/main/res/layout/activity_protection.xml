@@ -154,14 +154,6 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tvStateNoInternetDesc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:textColor="?android:textColorSecondary"
-                        android:textSize="13sp" />
-
                     <RadioGroup
                         android:id="@+id/rgAppState"
                         android:layout_width="match_parent"
@@ -204,6 +196,14 @@
                             android:layout_height="wrap_content"
                             android:text="@string/app_state_no_internet"
                             android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvStateNoInternetDesc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="32dp"
+                            android:layout_marginBottom="8dp"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
 
                         <RadioButton
                             android:id="@+id/rbStateBypassed"

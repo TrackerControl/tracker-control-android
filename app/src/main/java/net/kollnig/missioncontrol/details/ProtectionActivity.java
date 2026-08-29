@@ -13,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,6 +72,10 @@ public class ProtectionActivity extends AppCompatActivity {
     private RadioGroup stateGroup;
     private List<TrackerCategory> blockedTrackerCategories = new ArrayList<>();
     private boolean bindingState;
+    /** What the pause button currently offers, so a tap never contradicts its label. */
+    private boolean showingResume;
+    private final Handler expiryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable expiryRunnable = this::onPauseExpired;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,12 +177,19 @@ public class ProtectionActivity extends AppCompatActivity {
         boolean paused = PausedApps.isPaused(this, appPackageName);
 
         List<String> sharedPackages = PausedApps.getSharedUidPackages(this, appPackageName, appUid);
+        // The pause ends on its own. Rebind once when it does, so a screen left
+        // open never shows a countdown that has run out. One message, armed only
+        // while this screen is in the foreground, so nothing polls.
+        expiryHandler.removeCallbacks(expiryRunnable);
+        showingResume = paused;
         if (paused) {
             cardPause.setVisibility(View.VISIBLE);
             int remainingMinutes = PausedApps.getRemainingMinutes(this, appPackageName);
             tvPauseStatus.setText(getResources().getQuantityString(
                     R.plurals.protection_paused_resumes, remainingMinutes, remainingMinutes));
             btnPauseResume.setText(R.string.protection_resume);
+            expiryHandler.postDelayed(expiryRunnable,
+                    PausedApps.remainingMillis(this, appPackageName) + 1_000L);
         } else if (state == AppProtectionState.PROTECTED
                 || state == AppProtectionState.TRACKERS_ALLOWED) {
             cardPause.setVisibility(View.VISIBLE);
@@ -218,8 +231,23 @@ public class ProtectionActivity extends AppCompatActivity {
         tvStateNoInternetDesc.setText(noInternetExplanation);
     }
 
+    /**
+     * The pause alarm fired while this screen was open. Do the revert here too:
+     * {@link PausedApps#sweep} is idempotent, so racing the receiver is safe, and
+     * doing it means the rebind below never shows a half-reverted state.
+     */
+    private void onPauseExpired() {
+        AsyncTask.execute(() -> {
+            PausedApps.sweep(this);
+            runOnUiThread(this::updateProtectionState);
+        });
+    }
+
     private void pauseOrResume() {
-        if (PausedApps.isPaused(this, appPackageName)) {
+        // Act on what the button offered, not on a fresh read: the pause may have
+        // expired between binding and this tap, and resuming an app that is no
+        // longer paused is a no-op, while pausing one that just resumed is not.
+        if (showingResume) {
             PausedApps.resume(this, appPackageName, appUid);
             updateProtectionState();
             return;
@@ -418,6 +446,7 @@ public class ProtectionActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        expiryHandler.removeCallbacks(expiryRunnable);
         DetailsActivity.savePrefs(this);
     }
 
