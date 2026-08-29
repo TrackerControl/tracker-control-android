@@ -104,6 +104,8 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
             holder.tvBlocked.setText("--");
             holder.tvCompanies.setText("--");
             holder.tvBlockedPct.setText("--");
+            String placeholder = holder.tvBlocked.getText().toString();
+            setStatContentDescriptions(holder, placeholder, placeholder, placeholder);
             return;
         }
 
@@ -118,17 +120,7 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         String pctText = pct + "%";
         holder.tvBlockedPct.setText(pctText);
 
-        // Group each stat number + label so TalkBack announces them as a
-        // single unit instead of two separate reads.
-        holder.llBlockedStat.setContentDescription(
-                context.getString(R.string.accessibility_stat_description, blockedText,
-                        context.getString(R.string.insights_tracking_attempts)));
-        holder.llCompaniesStat.setContentDescription(
-                context.getString(R.string.accessibility_stat_description, companiesText,
-                        context.getString(R.string.insights_tracker_companies)));
-        holder.llBlockedPctStat.setContentDescription(
-                context.getString(R.string.accessibility_stat_description, pctText,
-                        context.getString(R.string.insights_blocked)));
+        setStatContentDescriptions(holder, blockedText, companiesText, pctText);
         LinearLayout.LayoutParams blockedLp =
                 (LinearLayout.LayoutParams) holder.vBlockedProgress.getLayoutParams();
         blockedLp.weight = pct;
@@ -145,6 +137,22 @@ public class InsightsHeaderAdapter extends RecyclerView.Adapter<InsightsHeaderAd
         holder.itemView.setOnClickListener(v -> {
             context.startActivity(new Intent(context, InsightsActivity.class));
         });
+    }
+
+    private void setStatContentDescriptions(ViewHolder holder, String blockedText,
+            String companiesText, String pctText) {
+        // Group each stat number + label so TalkBack announces them as a
+        // single unit instead of two separate reads. Keep this in the bind
+        // path so descriptions follow adapter updates, including placeholders.
+        holder.llBlockedStat.setContentDescription(
+                context.getString(R.string.accessibility_stat_description, blockedText,
+                        context.getString(R.string.insights_tracking_attempts)));
+        holder.llCompaniesStat.setContentDescription(
+                context.getString(R.string.accessibility_stat_description, companiesText,
+                        context.getString(R.string.insights_tracker_companies)));
+        holder.llBlockedPctStat.setContentDescription(
+                context.getString(R.string.accessibility_stat_description, pctText,
+                        context.getString(R.string.insights_blocked)));
     }
 
     private void shareInsights() {
