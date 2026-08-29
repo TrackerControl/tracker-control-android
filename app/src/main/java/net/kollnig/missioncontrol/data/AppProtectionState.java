@@ -17,17 +17,19 @@ package net.kollnig.missioncontrol.data;
 /**
  * The single per-app protection state shown in the app details header.
  * <p>
- * It is a derived view over three pre-existing stores — the per-package
- * "apply" and "tracker_protect" preferences and the per-UID internet
- * blocklist — none of which change format here. Those stores are written by
+ * It is a derived view over four stores — the per-package "apply",
+ * "tracker_protect", and "tracker_essential" preferences and the per-UID
+ * internet blocklist — none of which change format here. Those stores are written by
  * more actors than the two UI paths (bulk settings actions, the beta
  * vpn_exclude migration, blocking-mode exclusion sync, XML import), so every
- * one of the eight combinations can legitimately exist on disk.
+ * one of the sixteen combinations can legitimately exist on disk.
  * {@link #resolve} is therefore a total derivation, not an invariant.
  */
 public enum AppProtectionState {
     /** Routed through the VPN, trackers blocked and recorded. */
     PROTECTED,
+    /** Routed through the VPN, with only essential trackers blocked and recorded. */
+    ESSENTIAL_ONLY,
     /** Routed through the VPN, but trackers are neither blocked nor recorded. */
     TRACKERS_ALLOWED,
     /** Routed through the VPN, but all connections are dropped. */
@@ -36,7 +38,7 @@ public enum AppProtectionState {
     BYPASSED;
 
     /**
-     * Derive the state from the three stores.
+     * Derive the state from the four stores.
      * <p>
      * Precedence is Bypass, then No-internet, then the protection flag. Bypass
      * dominates for a mechanical reason rather than as a UI convention: an app
@@ -50,15 +52,25 @@ public enum AppProtectionState {
      *                        already applied (see
      *                        {@link BlockingMode#isTrackerProtectionEnabled})
      * @param internetBlocked whether the app's UID is in the internet blocklist
+     * @param essentialOnly   whether only essential trackers should be blocked
      */
     public static AppProtectionState resolve(boolean apply,
             boolean trackerProtect,
             boolean internetBlocked) {
+        return resolve(apply, trackerProtect, internetBlocked, false);
+    }
+
+    public static AppProtectionState resolve(boolean apply,
+            boolean trackerProtect,
+            boolean internetBlocked,
+            boolean essentialOnly) {
         if (!apply)
             return BYPASSED;
         if (internetBlocked)
             return NO_INTERNET;
-        return trackerProtect ? PROTECTED : TRACKERS_ALLOWED;
+        if (!trackerProtect)
+            return TRACKERS_ALLOWED;
+        return essentialOnly ? ESSENTIAL_ONLY : PROTECTED;
     }
 
     /**
@@ -71,31 +83,36 @@ public enum AppProtectionState {
     public static Change of(AppProtectionState target) {
         switch (target) {
             case PROTECTED:
-                return new Change(true, Boolean.TRUE, Boolean.FALSE);
+                return new Change(true, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE);
+            case ESSENTIAL_ONLY:
+                return new Change(true, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE);
             case TRACKERS_ALLOWED:
-                return new Change(true, Boolean.FALSE, Boolean.FALSE);
+                return new Change(true, Boolean.FALSE, Boolean.FALSE, null);
             case NO_INTERNET:
-                return new Change(true, null, Boolean.TRUE);
+                return new Change(true, null, Boolean.TRUE, null);
             case BYPASSED:
-                return new Change(false, null, null);
+                return new Change(false, null, null, null);
             default:
                 throw new IllegalArgumentException("Unknown state " + target);
         }
     }
 
     /**
-     * A write plan over the three stores. A {@code null} field means the store
-     * is left untouched.
+     * A write plan over the four stores. A {@code null} field means the store is
+     * left untouched.
      */
     public static final class Change {
         public final boolean apply;
         public final Boolean trackerProtect;
         public final Boolean internetBlocked;
+        public final Boolean essentialOnly;
 
-        Change(boolean apply, Boolean trackerProtect, Boolean internetBlocked) {
+        Change(boolean apply, Boolean trackerProtect, Boolean internetBlocked,
+                Boolean essentialOnly) {
             this.apply = apply;
             this.trackerProtect = trackerProtect;
             this.internetBlocked = internetBlocked;
+            this.essentialOnly = essentialOnly;
         }
     }
 }

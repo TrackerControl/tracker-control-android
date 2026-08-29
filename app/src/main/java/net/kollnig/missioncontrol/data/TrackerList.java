@@ -95,6 +95,7 @@ public class TrackerList {
      */
     private static final class TrackerSnapshot {
         private final Map<String, Tracker> hostnameToTracker;
+        private final Map<String, Tracker> essentialHostnameToTracker;
         private final boolean domainBasedBlocking;
         private final boolean minimalBlockingMode;
         private final String blockingMode;
@@ -106,7 +107,16 @@ public class TrackerList {
         private TrackerSnapshot(Map<String, Tracker> hostnameToTracker,
                 boolean domainBasedBlocking, boolean minimalBlockingMode, String blockingMode,
                 boolean loaded) {
+            this(hostnameToTracker, hostnameToTracker, domainBasedBlocking,
+                    minimalBlockingMode, blockingMode, loaded);
+        }
+
+        private TrackerSnapshot(Map<String, Tracker> hostnameToTracker,
+                Map<String, Tracker> essentialHostnameToTracker,
+                boolean domainBasedBlocking, boolean minimalBlockingMode, String blockingMode,
+                boolean loaded) {
             this.hostnameToTracker = hostnameToTracker;
+            this.essentialHostnameToTracker = essentialHostnameToTracker;
             this.domainBasedBlocking = domainBasedBlocking;
             this.minimalBlockingMode = minimalBlockingMode;
             this.blockingMode = blockingMode;
@@ -179,20 +189,7 @@ public class TrackerList {
 
         TrackerSnapshot snapshot = trackerSnapshot;
         Map<String, Tracker> hostnameToTracker = snapshot.hostnameToTracker;
-
-        Tracker t = null;
-
-        if (hostnameToTracker.containsKey(hostname)) {
-            t = hostnameToTracker.get(hostname);
-        } else { // check subdomains
-            for (int i = 0; i < hostname.length(); i++) {
-                if (hostname.charAt(i) == '.') {
-                    t = hostnameToTracker.get(hostname.substring(i + 1));
-                    if (t != null)
-                        break;
-                }
-            }
-        }
+        Tracker t = lookupHost(hostnameToTracker, hostname);
 
         // In minimal mode, skip hosts-file based lookups (only use DDG tracker list)
         if (t == null && !snapshot.minimalBlockingMode
@@ -206,6 +203,55 @@ public class TrackerList {
             }
 
         return t;
+    }
+
+    /**
+     * Find a hostname in a tracker map, including its parent domains.
+     */
+    private static Tracker lookupHost(Map<String, Tracker> hostnameToTracker, String hostname) {
+        Tracker t = hostnameToTracker.get(hostname);
+        if (t != null)
+            return t;
+
+        for (int i = 0; i < hostname.length(); i++) {
+            if (hostname.charAt(i) == '.') {
+                t = hostnameToTracker.get(hostname.substring(i + 1));
+                if (t != null)
+                    return t;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Find a hostname in the DDG-only map. Unlike {@link #findTracker}, this
+     * never consults or mutates the hosts-file map.
+     */
+    public static Tracker findEssentialTracker(@NonNull String hostname) {
+        hostname = hostname.toLowerCase(Locale.ROOT);
+        return lookupHost(trackerSnapshot.essentialHostnameToTracker, hostname);
+    }
+
+    /**
+     * Whether any observed host belongs to a non-Content DDG tracker.
+     */
+    public static boolean isEssentiallyBlocked(Tracker tracker) {
+        if (tracker == null)
+            return false;
+
+        for (String host : tracker.getHosts()) {
+            if (host == null)
+                continue;
+            String hostname = host.endsWith(" *")
+                    ? host.substring(0, host.length() - 2) : host;
+            Tracker essentialTracker = findEssentialTracker(hostname);
+            if (essentialTracker != null
+                    && BlockingModeLogic.shouldBlockEssentialOnly(essentialTracker.category))
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -250,16 +296,20 @@ public class TrackerList {
             String blockingMode = BlockingMode.getMode(c);
             boolean minimalBlockingMode = BlockingMode.MODE_MINIMAL.equals(blockingMode);
             Map<String, Tracker> loadedTrackers = new ConcurrentHashMap<>();
+            Map<String, Tracker> essentialTrackers = minimalBlockingMode
+                    ? loadedTrackers : new HashMap<>();
 
             boolean loaded;
             if (minimalBlockingMode) {
                 // In minimal mode, only load DDG trackers (skip X-Ray and Disconnect)
                 // This ensures only confirmed, breakage-tested trackers are blocked
-                loaded = loadDuckDuckGoTrackers(c, loadedTrackers, domainBasedBlocking);
+                loaded = loadDuckDuckGoTrackers(c, loadedTrackers, essentialTrackers,
+                        domainBasedBlocking);
             } else {
                 loaded = loadXrayTrackers(c, loadedTrackers, domainBasedBlocking);
                 loaded = loaded && loadDisconnectTrackers(c, loadedTrackers, domainBasedBlocking);
-                loaded = loaded && loadDuckDuckGoTrackers(c, loadedTrackers, domainBasedBlocking);
+                loaded = loaded && loadDuckDuckGoTrackers(c, loadedTrackers, essentialTrackers,
+                        domainBasedBlocking);
             }
 
             if (!loaded) {
@@ -268,7 +318,9 @@ public class TrackerList {
             }
 
             trackerSnapshot = new TrackerSnapshot(
-                    loadedTrackers, domainBasedBlocking, minimalBlockingMode, blockingMode, true);
+                    loadedTrackers,
+                    minimalBlockingMode ? essentialTrackers : Collections.unmodifiableMap(essentialTrackers),
+                    domainBasedBlocking, minimalBlockingMode, blockingMode, true);
             invalidateTrackerCountCache();
             return true;
         }
@@ -644,7 +696,7 @@ public class TrackerList {
      * @param c Context
      */
     private boolean loadDuckDuckGoTrackers(Context c, Map<String, Tracker> hostnameToTracker,
-            boolean domainBasedBlocking) {
+            Map<String, Tracker> essentialHostnameToTracker, boolean domainBasedBlocking) {
         // Stream-parse to avoid materialising the whole file as a String plus a
         // JSONObject DOM. Produces the exact same map as the previous DOM-based
         // parse (this list is loaded in every mode, so it also helps minimal mode).
@@ -694,6 +746,18 @@ public class TrackerList {
                     if (isIgnoredDomain(domain))
                         continue;
 
+                    // Keep the DDG category before checking whether another
+                    // blocklist already claimed the domain in the main map.
+                    String category;
+                    if ("ignore".equals(defaultAction)) {
+                        category = "Content"; // Similar to necessary trackers
+                    } else {
+                        category = UNCATEGORISED; // Default to uncategorised instead of Advertisement
+                    }
+
+                    Tracker tracker = new Tracker(displayName, category);
+                    addTrackerDomain(tracker, domain, essentialHostnameToTracker, domainBasedBlocking);
+
                     // Check if tracker already exists (e.g., from Disconnect list)
                     Tracker existingTracker = hostnameToTracker.get(domain);
 
@@ -704,17 +768,6 @@ public class TrackerList {
                         // Don't overwrite non-Content categories from Disconnect
                         continue;
                     }
-
-                    // Determine category based on default action
-                    String category;
-                    if ("ignore".equals(defaultAction)) {
-                        category = "Content"; // Similar to necessary trackers
-                    } else {
-                        category = UNCATEGORISED; // Default to uncategorised instead of Advertisement
-                    }
-
-                    // Create tracker with owner's display name
-                    Tracker tracker = new Tracker(displayName, category);
 
                     // Add domain to tracker map
                     addTrackerDomain(tracker, domain, hostnameToTracker, domainBasedBlocking);

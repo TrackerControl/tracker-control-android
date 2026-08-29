@@ -1085,6 +1085,9 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         SharedPreferences tracker_protect = getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = tracker_protect.edit();
 
+        // Deliberately leave tracker_essential alone: bulk disabling and then
+        // re-enabling tracker protection returns an essential-only app to its
+        // previous ESSENTIAL_ONLY choice.
         for (android.content.pm.PackageInfo pkg : Rule.getPackages(this))
             editor.putBoolean(pkg.packageName, enabled);
 
@@ -1301,6 +1304,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlExport(getSharedPreferences("tracker_protect", Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, "tracker_protect");
 
+        serializer.startTag(null, "tracker_essential");
+        xmlExport(getSharedPreferences("tracker_essential", Context.MODE_PRIVATE), serializer);
+        serializer.endTag(null, "tracker_essential");
+
         serializer.startTag(null, Rule.PREF_WG_ROUTE);
         xmlExport(getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE), serializer);
         serializer.endTag(null, Rule.PREF_WG_ROUTE);
@@ -1513,6 +1520,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         xmlImport(handler.application, prefs);
         xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
         xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
+        xmlImport(handler.tracker_essential, getSharedPreferences("tracker_essential", Context.MODE_PRIVATE));
         xmlImport(handler.wg_route, getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE));
         xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
         xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
@@ -1523,6 +1531,10 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
         // Upgrade imported settings
         ReceiverAutostart.upgrade(true, this);
+
+        // Reconcile imported apply preferences with auto-exclusions immediately,
+        // rather than waiting for the next process start.
+        BlockingMode.syncAutoExclusions(this);
 
         DatabaseHelper.clearCache();
 
@@ -1589,6 +1601,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> roaming = new HashMap<>();
         public Map<String, Object> apply = new HashMap<>();
         public Map<String, Object> tracker_protect = new HashMap<>();
+        public Map<String, Object> tracker_essential = new HashMap<>();
         public Map<String, Object> wg_route = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
         public Map<String, Object> blocklist = new HashMap<>();
@@ -1629,6 +1642,8 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             else if (qName.equals("tracker_protect"))
                 current = tracker_protect;
+            else if (qName.equals("tracker_essential"))
+                current = tracker_essential;
             else if (qName.equals(Rule.PREF_WG_ROUTE))
                 current = wg_route;
 

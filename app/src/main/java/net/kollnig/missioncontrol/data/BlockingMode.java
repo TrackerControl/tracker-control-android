@@ -36,12 +36,14 @@ import eu.faircode.netguard.ServiceSinkhole;
 import net.kollnig.missioncontrol.BuildConfig;
 
 /**
- * Manages the DDG Minimal Blocking mode.
+ * Manages DDG blocking-mode behavior and compatibility VPN exclusions.
+ *
+ * Mode-independent behavior:
+ * - Known VPN-incompatible apps are auto-excluded from VPN
  *
  * In minimal mode:
  * - Only DDG trackers with "block" action are blocked (not "ignore")
  * - Browsers stay routed through the VPN, but tracker protection defaults off
- * - Known VPN-incompatible apps are auto-excluded from VPN
  * - Hosts-file based blocking is disabled
  * - The "Content" category is never blocked (no strict_blocking)
  * - No granular per-tracker controls
@@ -49,6 +51,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 public class BlockingMode {
     private static final String TAG = BlockingMode.class.getSimpleName();
     public static final String PREF_BLOCKING_MODE = "blocking_mode";
+    // Keep the legacy key name so existing auto-exclusion bookkeeping survives upgrades.
     private static final String PREF_MINIMAL_AUTO_EXCLUDED_APPS = "minimal_auto_excluded_apps";
     public static final String MODE_MINIMAL = BlockingModeLogic.MODE_MINIMAL;
     public static final String MODE_STANDARD = BlockingModeLogic.MODE_STANDARD;
@@ -94,6 +97,17 @@ public class BlockingMode {
         return resolveTrackerProtection(isBrowserApp(c, packageName), configured);
     }
 
+    /**
+     * Check whether this package has selected essential-only protection. The
+     * global Minimal mode already applies the same policy to every app, so a
+     * stored per-app flag must not change the state shown there.
+     */
+    public static boolean isEssentialOnlyApp(Context c,
+            SharedPreferences essentialPrefs,
+            String packageName) {
+        return !isMinimalMode(c) && essentialPrefs.getBoolean(packageName, false);
+    }
+
     static boolean resolveTrackerProtection(boolean browser, Boolean configured) {
         return configured == null ? !browser : configured;
     }
@@ -134,7 +148,7 @@ public class BlockingMode {
     }
 
     /**
-     * Get the set of package names that should be excluded from VPN in minimal mode.
+     * Get the set of package names that should be excluded from VPN for compatibility.
      * Browser packages are deliberately excluded from this set; browser
      * compatibility is handled by disabling tracker protection by default, not
      * by bypassing the VPN route.
@@ -144,15 +158,6 @@ public class BlockingMode {
             excludedApps = loadExcludedApps(c);
 
         return excludedApps;
-    }
-
-    /**
-     * Check if a specific app should be excluded in minimal mode.
-     */
-    public static boolean isAppExcludedInMinimalMode(Context c, String packageName) {
-        if (!isMinimalMode(c))
-            return false;
-        return getExcludedApps(c).contains(packageName);
     }
 
     /**
@@ -177,7 +182,7 @@ public class BlockingMode {
             String json = new String(buffer, StandardCharsets.UTF_8);
             apps.addAll(BlockingModeLogic.parseExcludedAppsJson(json));
 
-            Log.i(TAG, "Loaded " + apps.size() + " excluded apps for minimal mode");
+            Log.i(TAG, "Loaded " + apps.size() + " compatibility VPN exclusions");
         } catch (IOException e) {
             Log.e(TAG, "Failed to load excluded apps", e);
         }
@@ -205,15 +210,12 @@ public class BlockingMode {
     }
 
     /**
-     * Synchronize auto-managed VPN exclusions with the selected blocking mode.
-     * Minimal mode auto-excludes known incompatible apps; standard/strict restore
-     * any exclusions that were added automatically when minimal mode was active.
+     * Synchronize auto-managed compatibility VPN exclusions with the DDG list.
      */
-    public static void syncModeExclusions(Context c) {
+    public static void syncAutoExclusions(Context c) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
         SharedPreferences apply = c.getSharedPreferences("apply", Context.MODE_PRIVATE);
         BlockingModeLogic.ExclusionSyncResult result = BlockingModeLogic.syncVpnExclusions(
-                getMode(c),
                 getExcludedApps(c),
                 getBooleanPrefs(apply),
                 getAutoExcludedApps(prefs));
@@ -234,14 +236,14 @@ public class BlockingMode {
             prefsEditor.putStringSet(PREF_MINIMAL_AUTO_EXCLUDED_APPS, result.autoExcludedApps);
         prefsEditor.apply();
 
-        Log.i(TAG, (isMinimalMode(c) ? "Applied" : "Restored") + " mode-managed VPN exclusions");
+        Log.i(TAG, "Synchronized compatibility VPN exclusions");
     }
 
     /**
      * Apply all runtime side effects of the current blocking mode.
      */
     public static void applyMode(Context c) {
-        syncModeExclusions(c);
+        syncAutoExclusions(c);
 
         TrackerBlocklist trackerBlocklist = TrackerBlocklist.getInstance(c);
         if (trackerBlocklist.applyStrictModeToAll(isStrictMode(c)))
@@ -261,7 +263,7 @@ public class BlockingMode {
      * minimal mode exclusions.
      */
     public static void applyMinimalModeExclusions(Context c) {
-        syncModeExclusions(c);
+        syncAutoExclusions(c);
     }
 
     public static void clearAutoExcludedApp(Context c, String packageName) {
