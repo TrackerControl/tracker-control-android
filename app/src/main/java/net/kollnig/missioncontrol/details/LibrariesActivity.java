@@ -15,11 +15,15 @@
 
 package net.kollnig.missioncontrol.details;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,8 +42,16 @@ import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisManager;
 import net.kollnig.missioncontrol.analysis.TrackerAnalysisWorker;
+import net.kollnig.missioncontrol.analysis.TrackerSignatureManager;
+import net.kollnig.missioncontrol.data.ExodusTracker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.faircode.netguard.Util;
 
@@ -60,9 +72,16 @@ public class LibrariesActivity extends AppCompatActivity {
     private MaterialButton btnAnalyze;
     private TextView tvDetectedTrackers;
     private TextView tvDisclaimer;
+    private View layoutDetectedTrackersResult;
+    private LinearLayout trackerLibrariesList;
     private View layoutProgress;
     private TextView tvAnalysisProgress;
     private LinearProgressIndicator pbDetectedTrackers;
+    private final Map<String, String> trackerWebsites = new HashMap<>();
+    private final ExecutorService trackerMetadataExecutor = Executors.newSingleThreadExecutor();
+    private String currentTrackerResult;
+    private boolean currentTrackerResultStale;
+    private boolean trackerResultVisible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +110,8 @@ public class LibrariesActivity extends AppCompatActivity {
         btnAnalyze = findViewById(R.id.btnAnalyzeTrackers);
         tvDetectedTrackers = findViewById(R.id.tvDetectedTrackers);
         tvDisclaimer = findViewById(R.id.tvLibraryDisclaimer);
+        layoutDetectedTrackersResult = findViewById(R.id.layoutDetectedTrackersResult);
+        trackerLibrariesList = findViewById(R.id.trackerLibrariesList);
         layoutProgress = findViewById(R.id.layoutAnalysisProgress);
         tvAnalysisProgress = findViewById(R.id.tvAnalysisProgress);
         pbDetectedTrackers = findViewById(R.id.pbDetectedTrackers);
@@ -102,6 +123,7 @@ public class LibrariesActivity extends AppCompatActivity {
 
         manager = TrackerAnalysisManager.getInstance(this);
         showCachedResult();
+        loadTrackerWebsites();
 
         btnAnalyze.setOnClickListener(v -> manager.startAnalysis(appPackageName));
 
@@ -136,19 +158,139 @@ public class LibrariesActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onDestroy() {
+        trackerMetadataExecutor.shutdownNow();
+        super.onDestroy();
+    }
+
     private void showCachedResult() {
         String cachedResults = manager.getCachedResult(appPackageName);
         if (cachedResults == null)
             return;
 
-        String res = getString(R.string.detected_trackers, cachedResults);
-        if (manager.isCacheStale(appPackageName)) {
-            res += getString(R.string.analysis_outdated_version);
+        boolean stale = manager.isCacheStale(appPackageName);
+        renderTrackerResult(cachedResults, stale);
+        if (stale) {
             btnAnalyze.setText(R.string.update_analysis);
         }
-        tvDetectedTrackers.setText(res);
-        tvDetectedTrackers.setVisibility(View.VISIBLE);
+    }
+
+    private void loadTrackerWebsites() {
+        trackerMetadataExecutor.execute(() -> {
+            Map<String, String> websites = new HashMap<>();
+            List<ExodusTracker> trackers = new TrackerSignatureManager(this).getTrackers();
+            if (trackers != null) {
+                for (ExodusTracker tracker : trackers) {
+                    if (TextUtils.isEmpty(tracker.getName())
+                            || TextUtils.isEmpty(tracker.getWebsite()))
+                        continue;
+                    websites.put(normalizeTrackerName(tracker.getName()), tracker.getWebsite());
+                }
+            }
+
+            runOnUiThread(() -> {
+                if (isFinishing() || isDestroyed())
+                    return;
+                trackerWebsites.clear();
+                trackerWebsites.putAll(websites);
+                if (trackerResultVisible && currentTrackerResult != null)
+                    renderTrackerResult(currentTrackerResult, currentTrackerResultStale);
+            });
+        });
+    }
+
+    private void renderTrackerResult(String result, boolean stale) {
+        hideTrackerResult();
+        currentTrackerResult = result;
+        currentTrackerResultStale = stale;
+
+        List<String> trackerNames = parseTrackerNames(result);
+        if (trackerNames.isEmpty()) {
+            tvDetectedTrackers.setText(getString(R.string.detected_trackers, result));
+            tvDetectedTrackers.setVisibility(View.VISIBLE);
+        } else {
+            for (String trackerName : trackerNames)
+                addTrackerRow(trackerName);
+            layoutDetectedTrackersResult.setVisibility(View.VISIBLE);
+        }
+
+        String disclaimer = getString(R.string.trackers_static_disclaimer);
+        if (stale)
+            disclaimer += getString(R.string.analysis_outdated_version);
+        tvDisclaimer.setText(disclaimer);
         tvDisclaimer.setVisibility(View.VISIBLE);
+        trackerResultVisible = true;
+    }
+
+    private void hideTrackerResult() {
+        trackerResultVisible = false;
+        layoutDetectedTrackersResult.setVisibility(View.GONE);
+        trackerLibrariesList.removeAllViews();
+        tvDetectedTrackers.setVisibility(View.GONE);
+        tvDisclaimer.setVisibility(View.GONE);
+    }
+
+    private void addTrackerRow(String trackerName) {
+        View row = getLayoutInflater().inflate(
+                R.layout.item_tracker_library, trackerLibrariesList, false);
+        TextView name = row.findViewById(R.id.tvTrackerLibraryName);
+        ImageView linkIcon = row.findViewById(R.id.ivTrackerLibraryLink);
+        name.setText(trackerName);
+
+        Uri website = getWebsiteUri(trackerWebsites.get(normalizeTrackerName(trackerName)));
+        if (website == null) {
+            row.setBackground(null);
+            linkIcon.setVisibility(View.GONE);
+            name.setAlpha(0.72f);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_VIEW, website);
+            row.setContentDescription(getString(R.string.open_tracker_website, trackerName));
+            row.setFocusable(true);
+            row.setOnClickListener(v -> {
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException ignored) {
+                    // A browser is optional; keep the detected library visible.
+                }
+            });
+        }
+
+        trackerLibrariesList.addView(row);
+    }
+
+    private static Uri getWebsiteUri(String website) {
+        if (TextUtils.isEmpty(website))
+            return null;
+
+        Uri uri = Uri.parse(website);
+        String scheme = uri.getScheme();
+        if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme))
+            return null;
+        return uri;
+    }
+
+    private static List<String> parseTrackerNames(String result) {
+        List<String> trackerNames = new ArrayList<>();
+        if (result == null)
+            return trackerNames;
+
+        for (String line : result.split("\\n")) {
+            String candidate = line.trim();
+            if (!candidate.startsWith("•"))
+                continue;
+
+            String name = candidate.substring(1).trim();
+            if (!name.isEmpty())
+                trackerNames.add(name);
+        }
+        return trackerNames;
+    }
+
+    private static String normalizeTrackerName(String name) {
+        return name.replaceAll("[°²?µ]", "")
+                .trim()
+                .toLowerCase(Locale.ROOT);
     }
 
     private void onWorkInfoChanged(List<WorkInfo> workInfoList) {
@@ -185,16 +327,14 @@ public class LibrariesActivity extends AppCompatActivity {
                 layoutProgress.setVisibility(View.VISIBLE);
                 tvAnalysisProgress.setText(R.string.analysis_queued);
                 pbDetectedTrackers.setIndeterminate(true);
-                tvDetectedTrackers.setVisibility(View.GONE);
-                tvDisclaimer.setVisibility(View.GONE);
+                hideTrackerResult();
                 break;
 
             case RUNNING:
                 btnAnalyze.setEnabled(false);
                 layoutProgress.setVisibility(View.VISIBLE);
                 pbDetectedTrackers.setIndeterminate(false);
-                tvDetectedTrackers.setVisibility(View.GONE);
-                tvDisclaimer.setVisibility(View.GONE);
+                hideTrackerResult();
 
                 Data progress = workInfo.getProgress();
                 int percent = progress.getInt(TrackerAnalysisWorker.KEY_PROGRESS, 0);
@@ -210,9 +350,7 @@ public class LibrariesActivity extends AppCompatActivity {
 
                 String result = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_RESULT);
                 if (result != null) {
-                    tvDetectedTrackers.setText(getString(R.string.detected_trackers, result));
-                    tvDetectedTrackers.setVisibility(View.VISIBLE);
-                    tvDisclaimer.setVisibility(View.VISIBLE);
+                    renderTrackerResult(result, false);
                 } else {
                     // A finished run this screen did not start; fall back to the cache.
                     showCachedResult();
@@ -222,6 +360,7 @@ public class LibrariesActivity extends AppCompatActivity {
             case FAILED:
                 layoutProgress.setVisibility(View.GONE);
                 btnAnalyze.setEnabled(true);
+                hideTrackerResult();
 
                 String error = workInfo.getOutputData().getString(TrackerAnalysisWorker.KEY_ERROR);
                 if (error != null) {
@@ -233,6 +372,7 @@ public class LibrariesActivity extends AppCompatActivity {
             case CANCELLED:
                 layoutProgress.setVisibility(View.GONE);
                 btnAnalyze.setEnabled(true);
+                showCachedResult();
                 break;
         }
     }

@@ -750,6 +750,9 @@ Sincerely,\n\n]]></string>
     <string name="libraries_analysing">Analysing app code\u2026</string>
     <string name="libraries_analysis_failed">Analysis failed \u2014 tap to retry</string>
     <string name="libraries_outdated_suffix">%1$s (previous app version)</string>
+    <string name="detected_tracker_libraries_heading">Detected in app code</string>
+    <string name="tracker_libraries_source">Websites from Exodus Privacy tracker data</string>
+    <string name="open_tracker_website">Open %1$s website</string>
     <plurals name="libraries_found">
         <item quantity="one">%d tracker library found in the app code</item>
         <item quantity="other">%d tracker libraries found in the app code</item>
