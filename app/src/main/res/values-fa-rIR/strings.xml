@@ -4,6 +4,45 @@
     <string name="app_android">TrackerControl requires Android 5.1 or later</string>
     <string name="app_eula">https://github.com/TrackerControl/tracker-control-android#privacy-notice</string>
     <string name="app_privacy">&lt;a href="https://github.com/TrackerControl/tracker-control-android#privacy-notice"&gt;</string>
+    <string name="channel_foreground">سرویس‌های در حال اجرا</string>
+    <string name="channel_notify">اعلان‌های عمومی</string>
+    <string name="menu_search">جستوجوی برنامه</string>
+    <string name="menu_app_system">نمایش برنامه‌های سیستمی</string>
+    <string name="menu_app_nointernet">نمایش برنامه‌ها بدون اینترنت</string>
+    <string name="menu_app_unprotected">نمایش برنامه‌های محافظت نشده</string>
+    <string name="menu_sort">مرتب‌سازی برنامه‌ها</string>
+    <string name="menu_sort_name">ترتیب بر اساس نام</string>
+    <string name="menu_sort_companies">نمایش بر اساس شرکت ها</string>
+    <string name="menu_log">گزارش ترافیک</string>
+    <string name="menu_settings">تنظیمات</string>
+    <string name="menu_invite">دعوت</string>
+    <string name="menu_support">حمایت از این برنامه</string>
+    <string name="menu_log_support">توضیحات</string>
+    <string name="menu_troubleshooting">عیب یابی</string>
+    <string name="menu_about">درباره ما</string>
+    <string name="tab_apps">برنامه‌ها</string>
+    <string name="tab_vpn">فیلترشکن</string>
+    <string name="timeline_section_last_hour">١ساعت پیش</string>
+    <string name="timeline_section_today">امروز</string>
+    <string name="timeline_section_yesterday">دیروز</string>
+    <string name="timeline_section_this_week">این هفته</string>
+    <string name="timeline_tracker_blocked">مسدود شده</string>
+    <string name="timeline_tracker_allowed">مجاز</string>
+    <string name="troubleshooting_battery_title">بهینه‌سازی باتری</string>
+    <string name="troubleshooting_battery_action">غیرفعال کردن بهینه‌سازی باتری</string>
+    <string name="troubleshooting_battery_ok">بهینه‌سازی باتری غیرفعال است</string>
+    <string name="troubleshooting_datasaver_title">صرفه‌جویی در مصرف اینترنت همراه</string>
+    <string name="menu_apps">سایر برنامه‌ها</string>
+    <string name="menu_traffic_allowed">مجاز</string>
+    <string name="menu_traffic_blocked">مسدود شده</string>
+    <string name="menu_live">به‌روزرسانی‌های زنده</string>
+    <string name="menu_resolve">نمایش اسامی</string>
+    <string name="menu_organization">نمایش سازمان</string>
+    <string name="menu_pcap_enabled">PCAP فعال شد</string>
+    <string name="menu_pcap_export">اکسپورت کردن PCAP</string>
+    <string name="setting_install">آگاه‌سازی هنگام نصب جدید</string>
+    <string name="setting_network_options">گزینه‌های مربوط به شبکه</string>
+    <string name="setting_ip6">فعال کردن ترافیک IPv6</string>
     <!-- Secure DNS (DoH) -->
     <!-- Block DNS-over-TLS (DoT) -->
     <!-- App Overview -->
@@ -12,6 +51,8 @@
     <!-- Dynamic content description for the home-screen widget toggle (accessibility follow-up, issue #636) -->
     <!-- App Details -->
     <!-- Actions -->
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
     <!-- What's New onboarding slide (not translated) -->
