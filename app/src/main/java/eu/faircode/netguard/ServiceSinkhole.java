@@ -3423,20 +3423,28 @@ public class ServiceSinkhole extends VpnService {
             // Application added
             Rule.clearCache(context);
 
+            InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
+            boolean internetChanged = internetBlocklist.resolvePendingPackages(context);
+            TrackerBlocklist b = TrackerBlocklist.getInstance(context);
+            boolean trackerChanged = b.resolvePendingPackages(context);
+
             if (!intent.getBooleanExtra(Intent.EXTRA_REPLACING, false)) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 int uid = intent.getIntExtra(Intent.EXTRA_UID, -1);
                 if (uid > -1) {
                     // Set tracker defaults based on blocking mode
-                    TrackerBlocklist b = TrackerBlocklist.getInstance(context);
-                    if (b.ensureDefaults(uid, BlockingMode.isStrictMode(context)))
-                        b.saveSettings(context);
+                    trackerChanged |= b.ensureDefaults(uid, BlockingMode.isStrictMode(context));
 
                     // Show install notification
                     if (prefs.getBoolean("installed", true))
                         notifyNewApplication(uid, true);
                 }
             }
+
+            if (trackerChanged)
+                b.saveSettings(context);
+            if (internetChanged)
+                internetBlocklist.saveSettings(context);
 
             reload("package added", context, false);
 
@@ -3468,19 +3476,19 @@ public class ServiceSinkhole extends VpnService {
                             InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
                             if (internetBlocklist.blockedInternet(uid))
                                 internetBlocklist.unblock(context, uid);
+
+                            DatabaseHelper dh = DatabaseHelper.getInstance(context);
+                            dh.clearLog(uid);
+                            dh.clearAccess(uid, false);
+                            uidToApp.remove(uid);
+                            uidToPackage.remove(uid);
+
+                            NotificationManagerCompat.from(context).cancel(uid); // installed notification
+                            NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
                         }
                     } catch (SecurityException ex) {
                         Log.w(TAG, "Keeping internet block uid=" + uid + ": " + ex.getMessage());
                     }
-
-                    DatabaseHelper dh = DatabaseHelper.getInstance(context);
-                    dh.clearLog(uid);
-                    dh.clearAccess(uid, false);
-                    uidToApp.remove(uid);
-                    uidToPackage.remove(uid);
-
-                    NotificationManagerCompat.from(context).cancel(uid); // installed notification
-                    NotificationManagerCompat.from(context).cancel(uid + 10000); // access notification
                 }
             }
 

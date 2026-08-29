@@ -109,6 +109,8 @@ public class TrackerBlocklist {
                     return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
                 } catch (PackageManager.NameNotFoundException ignored) {
                     return null;
+                } catch (SecurityException ignored) {
+                    return null;
                 }
             }
         };
@@ -127,8 +129,13 @@ public class TrackerBlocklist {
                 if (!StringUtils.isNumeric(appUid))
                     continue;
 
-                Set<String> subset = loadSubset(prefs, appUid);
-                blockmap.put(Integer.parseInt(appUid), subset);
+                int uid = resolveStoredUid(appUid, null);
+                if (uid >= 0)
+                    blockmap.put(uid, loadSubset(prefs, appUid));
+                else
+                    // Numeric, but too large to be a UID. Keep the entry as
+                    // written rather than dropping settings we cannot parse.
+                    rawBlockmap.put(appUid, loadRawSubset(prefs, appUid));
             }
 
             for (String appUid : storedIds) {
@@ -197,14 +204,69 @@ public class TrackerBlocklist {
     }
 
     static int resolveStoredUid(String storedUid, PackageUidResolver resolver) {
-        if (StringUtils.isNumeric(storedUid))
-            return Integer.parseInt(storedUid);
+        if (storedUid == null)
+            return -1;
+
+        if (StringUtils.isNumeric(storedUid)) {
+            try {
+                return Integer.parseInt(storedUid);
+            } catch (NumberFormatException ignored) {
+                return -1;
+            }
+        }
 
         if (resolver == null)
             return -1;
 
         Integer uid = resolver.resolve(storedUid);
         return uid == null ? -1 : uid;
+    }
+
+    /**
+     * Resolve package-name entries which were unavailable when settings were loaded.
+     *
+     * @param c Context
+     * @return Whether any pending entry was resolved
+     */
+    public synchronized boolean resolvePendingPackages(Context c) {
+        PackageUidResolver resolver = new PackageUidResolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                try {
+                    return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
+                } catch (PackageManager.NameNotFoundException ignored) {
+                    return null;
+                } catch (SecurityException ignored) {
+                    return null;
+                }
+            }
+        };
+
+        return resolvePendingPackages(resolver);
+    }
+
+    synchronized boolean resolvePendingPackages(PackageUidResolver resolver) {
+        boolean changed = false;
+        Iterator<Map.Entry<String, Set<String>>> pending = rawBlockmap.entrySet().iterator();
+        while (pending.hasNext()) {
+            Map.Entry<String, Set<String>> entry = pending.next();
+            int uid = resolveStoredUid(entry.getKey(), resolver);
+            if (uid < 0)
+                continue;
+
+            if (blockmap.containsKey(uid)) {
+                // A numeric entry remains canonical if a package-name entry
+                // resolves to the same UID. The entry stays pending, so report
+                // the collision only the first time: otherwise every later call
+                // would claim a change and force a needless save.
+                changed |= retainedRawUids.put(entry.getKey(), uid) == null;
+            } else {
+                blockmap.put(uid, migrateSubset(entry.getValue()));
+                pending.remove();
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     public synchronized boolean hasSubset(int uid) {
