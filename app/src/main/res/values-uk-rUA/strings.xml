@@ -65,7 +65,6 @@
     <string name="troubleshooting_categories_title">Блокування певних категорій трекерів</string>
     <string name="troubleshooting_categories_desc">Ви можете точно налаштувати блокування для кожного додатка, натиснувши на нього та увімкнувши або вимкнувши окремі категорії трекерів (наприклад, «Аналітика», «Реклама») на вкладці «Трекери».</string>
     <string name="troubleshooting_alwayson_title">Завжди увімкнений VPN</string>
-    <string name="troubleshooting_alwayson_desc">Якщо в налаштуваннях VPN для Android увімкнено опцію «Блокування з’єднань без VPN» (блокування), TrackerControl не працюватиме належним чином. Вимкніть цю опцію. У разі виявлення цього з’явиться сповіщення.</string>
     <string name="troubleshooting_alwayson_action">Відкрити налаштування VPN</string>
     <string name="menu_apps">Інші додатки</string>
     <string name="menu_protocol_other">Інше</string>
@@ -139,7 +138,6 @@
     <string name="setting_watchdog">Сторожовий пес: кожні %s хвилин</string>
     <!-- Secure DNS (DoH) -->
     <string name="setting_doh_enabled">Безпечний DNS (DoH)</string>
-    <string name="summary_doh_enabled">Шифруйте DNS-запити за допомогою протоколу DNS-over-HTTPS. Функція автоматично призупиняється, коли WireGuard забезпечує роботу DNS, оскільки ці запити надсилаються через тунель WireGuard.</string>
     <string name="warning_beta">Бета-функція. Може працювати не так, як очікується.</string>
     <string name="setting_doh_endpoint">URL-адреса кінцевої точки DoH</string>
     <string name="summary_doh_endpoint">URL-адреса HTTPS для запитів DNS через HTTPS</string>
@@ -329,7 +327,6 @@
     <string name="title_rport">Порт призначення</string>
     <string name="title_ruid">Додаток призначення</string>
     <string name="title_external">Для зовнішнього сервера виберіть «ніхто»</string>
-    <string name="title_lockdown_enabled">Трафік блокується</string>
     <string name="title_unmetered_allowed">Дозволено необмежений трафік</string>
     <string name="title_unmetered_blocked">Необмежений трафік заблоковано</string>
     <string name="title_unmetered_disabled">Нелімітовані правила не застосовуються</string>
@@ -412,8 +409,6 @@
     <string name="tab_countries">Країни</string>
     <string name="tab_actions">Мої дані</string>
     <string name="tracker_name">Назва трекера</string>
-    <string name="internet_access">Доступ до Інтернету</string>
-    <string name="internet_access_explanation">Ви також можете натиснути на значок програми на головному екрані.</string>
     <string name="app_info">Керувати додатком</string>
     <!-- Actions -->
     <string name="block_tracking">Блокувати трекери</string>
@@ -495,7 +490,6 @@
     <string name="setting_block_ambiguous_trackers">Блокувати неоднозначні трекери</string>
     <string name="summary_block_ambiguous_trackers">Якщо для IP-адреси є дані як про хост-імена з трекерами, так і без них, її все одно слід заблокувати. Вимкніть цю опцію, щоб зменшити кількість збоїв у роботі додатків.</string>
     <string name="setting_sni_enabled">Витяг даних SNI (дослідження)</string>
-    <string name="summary_sni_enabled">Витягувати імена хостів із TLS-з’єднань для точнішого виявлення трекерів. Увага: це призводить до витоку вашої IP-адреси на сервери трекерів. Увімкнути лише для дослідження.</string>
     <string name="setting_blocking_mode">Режим блокування</string>
     <string name="summary_blocking_mode_minimal">Мінімальний: блокує лише ті трекери зі списку DuckDuckGo, які можна безпечно блокувати. Трафік браузерів і надалі проходить через VPN, але захист від трекерів за замовчуванням вимкнено. Відомі несумісні програми виключено. Мінімальні порушення роботи програм.</string>
     <string name="summary_blocking_mode_standard">Стандартний: блокує всі відомі трекери з різних списків (X-Ray, Disconnect, DuckDuckGo). Доступ до основних служб залишається відкритим. Деякі програми можуть працювати з перебоями, і їх, можливо, доведеться виключити вручну (див. розділ «Усунення несправностей» у меню програми).</string>
@@ -513,9 +507,8 @@
     <string name="onboarding_blockingmode_strict_desc">Блокує все, включаючи важливі служби та неоднозначні домени. Значні пошкодження програм — багато програм потрібно буде виключити вручну.</string>
     <string name="onboarding_blockingmode_research_label">Дослідження</string>
     <string name="onboarding_blockingmode_research_desc">Не блокує трекери. Реєструє передачу даних до ADB та вмикає вилучення SNI для кращого виявлення імені хоста. Тільки для дослідницьких цілей: це призводить до витоку вашої IP-адреси на сервери трекерів.</string>
-    <string name="exclude_vpn_explanation">Виявляє та блокує трекери для цієї програми.</string>
-    <string name="vpn_exclude">Виключити з VPN</string>
-    <string name="vpn_exclude_explanation">Увімкніть, якщо виникнуть проблеми. Додаток повністю обійде TrackerControl.\n\nПримітка: щоб це працювало, у налаштуваннях VPN Android необхідно вимкнути опцію «Блокувати з\'єднання без VPN».</string>
+    <!-- Per-app remote VPN routing -->
+    <!-- Per-app protection state -->
     <string name="uninstall">Видалити</string>
     <string name="settings_uninstall">Налаштування Програми &amp; Видалення</string>
     <string name="no_trackers_found_message_disabled">Увімкніть перемикач на головному екрані, а потім запустіть додаток, щоб знайти трекери</string>
@@ -585,12 +578,6 @@
     <string name="onboarding_notify_desc">Дозвольте сповіщення, щоб бачити оновлення в режимі реального часу та керувати захистом безпосередньо зі смуги стану.</string>
     <string name="onboarding_notify_action">Дозволити сповіщення</string>
     <string name="onboarding_notify_sure">Без дозволу на отримання сповіщень ви не зможете бачити оновлення в режимі реального часу та керувати захистом із панелі стану. Ви впевнені?</string>
-    <string name="onboarding_privatedns_title">Вимкнути приватний DNS</string>
-    <string name="onboarding_privatedns_desc">Функція «Приватний DNS» в Android заважає TrackerControl блокувати трекери. Щоб продовжити, це налаштування <b>необхідно</b> встановити в положення «Вимкнено».</string>
-    <string name="onboarding_privatedns_instruction">Налаштування -&gt; Мережа &amp; інтернет -&gt; Приватний DNS -&gt; Вимкнено.</string>
-    <string name="onboarding_privatedns_action">Відкрити налаштування DNS</string>
-    <string name="onboarding_privatedns_skip_title">Пропустити вимкнення приватного DNS?</string>
-    <string name="onboarding_privatedns_skip_msg">Продовження роботи з увімкненим приватним DNS значно обмежить роботу TrackerControl. Більшість відстежень не буде заблоковано, залишиться лише аналіз бібліотеки трекерів. Крім того, фільтр VPN буде вимкнено, щоб забезпечити базову функціональність.</string>
     <string name="onboarding_timeline_title">Спостерігайте за заповненням часової шкали</string>
     <string name="onboarding_timeline_desc">TrackerControl запускається на часовій шкалі. Спочатку вона може бути порожньою: зазвичай програми зв’язуються з трекерами лише під час їхнього використання.\n\nПісля завершення налаштування відкрийте кілька програм, а потім поверніться до TrackerControl, щоб переглянути виявлену та заблоковану активність трекерів.</string>
     <string name="onboarding_network_title">Необмежена мережа</string>
