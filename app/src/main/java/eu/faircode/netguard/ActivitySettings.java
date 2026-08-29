@@ -1535,6 +1535,29 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         editor.apply();
     }
 
+    static Set<String> resolveImportedUids(Context context, String value) {
+        Set<String> uids = new HashSet<>();
+        if (TextUtils.isEmpty(value))
+            return uids;
+
+        PackageManager pm = context.getPackageManager();
+        for (String pkg : value.split("\n")) {
+            if (TextUtils.isEmpty(pkg))
+                continue;
+            try {
+                int uid = pm.getApplicationInfo(pkg, 0).uid;
+                uids.add(Integer.toString(uid));
+            } catch (PackageManager.NameNotFoundException e) {
+                uids.add(pkg);
+                Log.w(TAG, "Package not found during import: " + pkg);
+            } catch (SecurityException e) {
+                uids.add(pkg);
+                Log.w(TAG, "Cannot resolve package during import: " + pkg);
+            }
+        }
+        return uids;
+    }
+
     private class XmlImportHandler extends DefaultHandler {
         private Context context;
         public boolean enabled = false;
@@ -1618,18 +1641,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
                         // InternetBlocklist: convert package names back to UIDs
                         if ("INTERNET_BLOCKLIST_PACKAGES_KEY".equals(key) && "set".equals(type)) {
-                            Set<String> uids = new HashSet<>();
-                            if (!TextUtils.isEmpty(value)) {
-                                PackageManager pm = context.getPackageManager();
-                                for (String pkg : value.split("\n")) {
-                                    try {
-                                        int uid = pm.getApplicationInfo(pkg, 0).uid;
-                                        uids.add(Integer.toString(uid));
-                                    } catch (PackageManager.NameNotFoundException e) {
-                                        Log.w(TAG, "Package not found during import: " + pkg);
-                                    }
-                                }
-                            }
+                            Set<String> uids = resolveImportedUids(context, value);
                             // Store under original key
                             String originalKey = InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
                             current.put(originalKey, uids);
@@ -1638,18 +1650,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
                         // TrackerBlocklist: convert package names back to UIDs
                         if ("APPS_BLOCKLIST_PACKAGES_KEY".equals(key) && "set".equals(type)) {
-                            Set<String> uids = new HashSet<>();
-                            if (!TextUtils.isEmpty(value)) {
-                                PackageManager pm = context.getPackageManager();
-                                for (String pkg : value.split("\n")) {
-                                    try {
-                                        int uid = pm.getApplicationInfo(pkg, 0).uid;
-                                        uids.add(Integer.toString(uid));
-                                    } catch (PackageManager.NameNotFoundException e) {
-                                        Log.w(TAG, "Package not found during import: " + pkg);
-                                    }
-                                }
-                            }
+                            Set<String> uids = resolveImportedUids(context, value);
                             // Store under original key
                             String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
                             current.put(originalKey, uids);
@@ -1660,21 +1661,27 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                         if (key.startsWith("APPS_BLOCKLIST_PACKAGES_KEY_") && "set".equals(type)) {
                             // Extract package name
                             String pkg = key.substring("APPS_BLOCKLIST_PACKAGES_KEY_".length());
+                            Set<String> set = new HashSet<>();
+                            if (!TextUtils.isEmpty(value))
+                                for (String s : value.split("\n"))
+                                    set.add(s);
+
+                            String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + pkg;
                             try {
                                 PackageManager pm = context.getPackageManager();
                                 int uid = pm.getApplicationInfo(pkg, 0).uid;
 
-                                Set<String> set = new HashSet<>();
-                                if (!TextUtils.isEmpty(value))
-                                    for (String s : value.split("\n"))
-                                        set.add(s);
-
                                 // Store under original UID-based key
-                                String originalKey = TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid;
-                                current.put(originalKey, set);
+                                current.put(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + uid, set);
 
                             } catch (PackageManager.NameNotFoundException e) {
+                                // Retain the package-name key so a later install can resolve it.
+                                current.put(originalKey, set);
                                 Log.w(TAG, "Package not found during import of settings: " + pkg);
+                            } catch (SecurityException e) {
+                                // Retain the package-name key when its UID cannot be inspected.
+                                current.put(originalKey, set);
+                                Log.w(TAG, "Cannot resolve package during import of settings: " + pkg);
                             }
                             return;
                         }

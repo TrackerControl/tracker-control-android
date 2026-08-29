@@ -20,8 +20,10 @@ import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -33,6 +35,11 @@ public class InternetBlocklist {
     public static final String SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY = "INTERNET_BLOCKLIST_APPS_KEY";
     private static InternetBlocklist instance;
     private final HashSet<Integer> blockmap = new HashSet<>();
+    private final Set<String> rawBlockmap = new HashSet<>();
+
+    interface PackageUidResolver {
+        Integer resolve(String packageName);
+    }
 
     private InternetBlocklist(Context c) {
         // Initialize Concurrent Set using values from shared preferences if possible.
@@ -47,7 +54,7 @@ public class InternetBlocklist {
      * @param c context used to access InternetBlocklist from
      * @return The current instance of the InternetBlocklist, if none, a new instance is created.
      */
-    public static InternetBlocklist getInstance(Context c) {
+    public static synchronized InternetBlocklist getInstance(Context c) {
         if (instance == null)
             instance = new InternetBlocklist(c);
         return instance;
@@ -58,17 +65,86 @@ public class InternetBlocklist {
      *
      * @param c Context
      */
-    public void loadSettings(Context c) {
+    public synchronized void loadSettings(Context c) {
         SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
         Set<String> set = prefs.getStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, null);
 
+        PackageUidResolver resolver = new PackageUidResolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                try {
+                    return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
+                } catch (PackageManager.NameNotFoundException ignored) {
+                    return null;
+                } catch (SecurityException ignored) {
+                    return null;
+                }
+            }
+        };
+
+        blockmap.clear();
+        rawBlockmap.clear();
         if (set != null) {
-            blockmap.clear();
+            // Numeric entries are canonical. Keep unresolved package names so
+            // they can be resolved when the app is installed later.
             for (String id : set) {
-                int uid = Integer.parseInt(id);
-                blockmap.add(uid);
+                Integer uid = resolveStoredUid(id, resolver);
+                if (uid == null)
+                    rawBlockmap.add(id);
+                else
+                    blockmap.add(uid);
             }
         }
+    }
+
+    private static Integer resolveStoredUid(String storedUid, PackageUidResolver resolver) {
+        if (storedUid == null || storedUid.length() == 0)
+            return null;
+
+        try {
+            return Integer.parseInt(storedUid);
+        } catch (NumberFormatException ignored) {
+            // Legacy exports may contain package names. Resolve those below.
+        }
+
+        return resolver == null ? null : resolver.resolve(storedUid);
+    }
+
+    /**
+     * Resolve package-name entries which were unavailable when settings were loaded.
+     *
+     * @param c Context
+     * @return Whether any pending entry was resolved
+     */
+    public synchronized boolean resolvePendingPackages(Context c) {
+        PackageUidResolver resolver = new PackageUidResolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                try {
+                    return c.getPackageManager().getApplicationInfo(packageName, 0).uid;
+                } catch (PackageManager.NameNotFoundException ignored) {
+                    return null;
+                } catch (SecurityException ignored) {
+                    return null;
+                }
+            }
+        };
+
+        return resolvePendingPackages(resolver);
+    }
+
+    synchronized boolean resolvePendingPackages(PackageUidResolver resolver) {
+        boolean changed = false;
+        Iterator<String> pending = rawBlockmap.iterator();
+        while (pending.hasNext()) {
+            Integer uid = resolveStoredUid(pending.next(), resolver);
+            if (uid != null) {
+                blockmap.add(uid);
+                pending.remove();
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     /**
@@ -85,6 +161,7 @@ public class InternetBlocklist {
      */
     public void clear() {
         blockmap.clear();
+        rawBlockmap.clear();
     }
 
     /**
@@ -102,6 +179,7 @@ public class InternetBlocklist {
         Set<String> set = new HashSet<>();
         for (Integer uid : blockmap)
             set.add(Integer.toString(uid));
+        set.addAll(rawBlockmap);
 
         prefs.edit().putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, set).apply();
     }

@@ -164,6 +164,30 @@ public class TrackerBlocklistTest {
     }
 
     @Test
+    public void unresolvedLegacyPackageNamesResolveLater() {
+        SharedPreferences prefs = blocklistPreferences();
+        String rawId = "com.example.later";
+        Set<String> subset = new HashSet<>(Collections.singleton("Advertising | Example"));
+        prefs.edit()
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY,
+                        Collections.singleton(rawId))
+                .putStringSet(TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY + "_" + rawId, subset)
+                .commit();
+
+        TrackerBlocklist blocklist = TrackerBlocklist.getInstance(RuntimeEnvironment.getApplication());
+        assertTrue(blocklist.getBlocklist().isEmpty());
+
+        assertTrue(blocklist.resolvePendingPackages(new TrackerBlocklist.PackageUidResolver() {
+            @Override
+            public Integer resolve(String packageName) {
+                assertEquals(rawId, packageName);
+                return UID;
+            }
+        }));
+        assertEquals(subset, blocklist.getSubset(UID));
+    }
+
+    @Test
     public void numericUidWinsLegacyCollisionButLegacyEntryIsRetained() {
         Context context = RuntimeEnvironment.getApplication();
         SharedPreferences prefs = blocklistPreferences();
