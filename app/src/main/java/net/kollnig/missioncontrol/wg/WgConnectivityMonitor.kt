@@ -178,7 +178,10 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
         if (!cadenceOk) return
         try {
             prod()
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // The prod reaches sendKeepalive() across JNI. Errors raised on
+            // that boundary are not the caller's to die on: swallow them the
+            // same way a thrown exception is, so the polling loop survives.
             Log.w(TAG, "prod threw", e)
         }
         if (initialProdTs == null) initialProdTs = now
@@ -372,7 +375,11 @@ internal class WgConnectivityMonitor(
         return try {
             try {
                 statsProvider()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                // statsProvider crosses JNI into the Rust tunnel. Let an
+                // Error from there be treated as a failed sample rather than
+                // killing the monitor thread, which would leave the tunnel
+                // unwatched until the next same-config startOrUpdate.
                 warn("stats read threw", e)
                 null
             }
@@ -407,7 +414,9 @@ internal class WgConnectivityMonitor(
 
             try {
                 callback()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                // prod reaches sendKeepalive() across JNI; the other callbacks
+                // run app code. Neither may end the polling loop.
                 warn("$label threw", e)
             }
         }
@@ -434,7 +443,8 @@ internal class WgConnectivityMonitor(
 
             try {
                 onBroken()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                // onBroken restarts the tunnel across JNI.
                 warn("onBroken threw", e)
             }
         }

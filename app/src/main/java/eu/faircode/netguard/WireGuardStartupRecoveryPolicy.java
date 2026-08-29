@@ -63,14 +63,15 @@ final class WireGuardStartupRecoveryPolicy {
         return true;
     }
 
-    /** Successful startup clears a pending callback and restores the budget. */
-    synchronized void onSuccess() {
-        pending = false;
-        dispatched = false;
-        retryPolicy.reset();
-    }
-
-    /** Cancels queued work; callers choose whether this is a new episode. */
+    /**
+     * Cancels queued work; callers choose whether this is a new episode.
+     *
+     * <p>A successful startup is just {@code cancel(true)}: it has no state to
+     * clear beyond the pending callback and the spent budget. ServiceSinkhole
+     * calls it through cancelWireGuardStartupRecovery, which also drops the
+     * queued Handler callback, so a separate onSuccess would either duplicate
+     * this or silently skip that removal.</p>
+     */
     synchronized void cancel(boolean resetBudget) {
         pending = false;
         dispatched = false;

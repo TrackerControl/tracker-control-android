@@ -69,8 +69,11 @@ public class TrackerList {
             "cloudfront.net",
             "fastly.net",
             "cloudflare.com"));
+    // Bootstrap snapshot: never published by a load, so its mode is a
+    // placeholder rather than the user's. getBlockingMode falls back to the
+    // preference while this is still current.
     private static volatile TrackerSnapshot trackerSnapshot = new TrackerSnapshot(
-            new ConcurrentHashMap<>(), false, false, BlockingMode.getDefaultMode());
+            new ConcurrentHashMap<>(), false, false, BlockingMode.getDefaultMode(), false);
     public static String TRACKER_HOSTLIST = "TRACKER_HOSTLIST";
     private static final Tracker hostlistTracker = new Tracker(TRACKER_HOSTLIST, UNCATEGORISED);
     private static volatile TrackerList instance;
@@ -95,13 +98,19 @@ public class TrackerList {
         private final boolean domainBasedBlocking;
         private final boolean minimalBlockingMode;
         private final String blockingMode;
+        // False only for the bootstrap snapshot, i.e. before any load has
+        // succeeded. Distinguishes "loaded, and this is the mode it was built
+        // for" from "nothing has ever loaded".
+        private final boolean loaded;
 
         private TrackerSnapshot(Map<String, Tracker> hostnameToTracker,
-                boolean domainBasedBlocking, boolean minimalBlockingMode, String blockingMode) {
+                boolean domainBasedBlocking, boolean minimalBlockingMode, String blockingMode,
+                boolean loaded) {
             this.hostnameToTracker = hostnameToTracker;
             this.domainBasedBlocking = domainBasedBlocking;
             this.minimalBlockingMode = minimalBlockingMode;
             this.blockingMode = blockingMode;
+            this.loaded = loaded;
         }
     }
 
@@ -137,11 +146,17 @@ public class TrackerList {
      * Return the blocking mode published with the active tracker snapshot.
      * Initialising through getInstance ensures the map and mode are never read
      * from two different lifecycle states by packet-path callers.
+     *
+     * <p>If no load has ever succeeded there is no published mode to be
+     * consistent with, so fall back to the preference. Reporting the bootstrap
+     * placeholder instead would silently downgrade a Strict-mode user to the
+     * default for as long as asset loading keeps failing.</p>
      */
     public static String getBlockingMode(Context c) {
         if (instance == null)
             getInstance(c);
-        return trackerSnapshot.blockingMode;
+        TrackerSnapshot snapshot = trackerSnapshot;
+        return snapshot.loaded ? snapshot.blockingMode : BlockingMode.getMode(c);
     }
 
     static boolean isIgnoredDomain(String domain) {
@@ -253,7 +268,7 @@ public class TrackerList {
             }
 
             trackerSnapshot = new TrackerSnapshot(
-                    loadedTrackers, domainBasedBlocking, minimalBlockingMode, blockingMode);
+                    loadedTrackers, domainBasedBlocking, minimalBlockingMode, blockingMode, true);
             invalidateTrackerCountCache();
             return true;
         }

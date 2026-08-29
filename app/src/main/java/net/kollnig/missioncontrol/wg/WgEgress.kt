@@ -398,7 +398,7 @@ object WgEgress {
             prod = {
                 if (isCurrent(expected)) try {
                     expected.tunnel.sendKeepalive()
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Log.w(TAG, "prod keepalive threw", e)
                 }
             },
@@ -641,7 +641,10 @@ object WgEgress {
                 it.latestHandshakeMillis > 0 && now() - it.latestHandshakeMillis < HANDSHAKE_DEAD_AFTER_MS
             )
         }
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
+        // Tunnel.stats() crosses JNI. A missing sample is ambiguous by
+        // design and the monitor already bounds how long it tolerates one,
+        // so an Error here must not escape into the polling loop.
         null
     }
 

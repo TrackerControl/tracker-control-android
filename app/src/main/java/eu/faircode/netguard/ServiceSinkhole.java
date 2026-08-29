@@ -2941,123 +2941,122 @@ public class ServiceSinkhole extends VpnService {
         if (tracker == null) {
             // Check if IP known
             String dname = null;
-            if (dname == null) { // TODO: Note that this does not implement any SNI code
-                // Snapshot before the DB read: if dnsResolved() invalidates this
-                // IP's cache entry while we're mid-read below, our result may be
-                // stale (it could miss a row that raced us, or reflect a row
-                // that no longer applies). Comparing after the read lets us
-                // drop the put and let the next packet re-read instead of
-                // pinning a possibly-wrong verdict.
-                long generationBefore = trackerCache.generation();
-                // Retrieve dname from DB
-                DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
-                long now = new Date().getTime();
-                // Expiry of the DNS record the chosen dname/tracker came from;
-                // -1 until we lock onto a tracker row, so a host-only result can
-                // fall back to the first candidate row's expiry instead.
-                long chosenTime = -1;
-                long chosenTtl = -1;
-                long firstTime = now;
-                long firstTtl = 7 * 24 * 3600 * 1000L;
-                boolean sawFirstRow = false;
-                boolean sawTrackerEvidence = false;
-                boolean sawNonTrackerEvidence = false;
-                try (Cursor lookup = dh.getQAName(uid, daddr)) {
-                    // Loop through all fresh DNS candidates for this IP and only fail closed
-                    // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
-                    if (lookup != null) {
-                        while (lookup.moveToNext()) {
-                            // Get DNS expiry details for this candidate row
-                            int colTime = lookup.getColumnIndex("time");
-                            int colTTL = lookup.getColumnIndex("ttl");
-                            long rowTime = lookup.isNull(colTime) ? now : lookup.getLong(colTime);
-                            long rowTtl = lookup.isNull(colTTL) ? firstTtl : lookup.getLong(colTTL);
-                            if (!sawFirstRow) {
-                                firstTime = rowTime;
-                                firstTtl = rowTtl;
-                                sawFirstRow = true;
-                            }
+            // TODO: Note that this does not implement any SNI code
+            // Snapshot before the DB read: if dnsResolved() invalidates this
+            // IP's cache entry while we're mid-read below, our result may be
+            // stale (it could miss a row that raced us, or reflect a row
+            // that no longer applies). Comparing after the read lets us
+            // drop the put and let the next packet re-read instead of
+            // pinning a possibly-wrong verdict.
+            long generationBefore = trackerCache.generation();
+            // Retrieve dname from DB
+            DatabaseHelper dh = DatabaseHelper.getInstance(ServiceSinkhole.this);
+            long now = new Date().getTime();
+            // Expiry of the DNS record the chosen dname/tracker came from;
+            // -1 until we lock onto a tracker row, so a host-only result can
+            // fall back to the first candidate row's expiry instead.
+            long chosenTime = -1;
+            long chosenTtl = -1;
+            long firstTime = now;
+            long firstTtl = 7 * 24 * 3600 * 1000L;
+            boolean sawFirstRow = false;
+            boolean sawTrackerEvidence = false;
+            boolean sawNonTrackerEvidence = false;
+            try (Cursor lookup = dh.getQAName(uid, daddr)) {
+                // Loop through all fresh DNS candidates for this IP and only fail closed
+                // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
+                if (lookup != null) {
+                    while (lookup.moveToNext()) {
+                        // Get DNS expiry details for this candidate row
+                        int colTime = lookup.getColumnIndex("time");
+                        int colTTL = lookup.getColumnIndex("ttl");
+                        long rowTime = lookup.isNull(colTime) ? now : lookup.getLong(colTime);
+                        long rowTtl = lookup.isNull(colTTL) ? firstTtl : lookup.getLong(colTTL);
+                        if (!sawFirstRow) {
+                            firstTime = rowTime;
+                            firstTtl = rowTtl;
+                            sawFirstRow = true;
+                        }
 
-                            // Check tracker
-                            String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
-                            String qname = lookup.getString(lookup.getColumnIndexOrThrow("qname"));
-                            String candidateDname = qname;
-                            Tracker candidateTracker = TrackerList.findTracker(qname);
+                        // Check tracker
+                        String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
+                        String qname = lookup.getString(lookup.getColumnIndexOrThrow("qname"));
+                        String candidateDname = qname;
+                        Tracker candidateTracker = TrackerList.findTracker(qname);
 
-                            if (dname == null && qname != null)
-                                dname = qname;
+                        if (dname == null && qname != null)
+                            dname = qname;
 
-                            // If no tracker found, try DNS uncloaking
-                            if (candidateTracker == null
-                                    && aname != null) {
-                                candidateTracker = TrackerList.findTracker(aname);
-
-                                if (candidateTracker != null) {
-                                    candidateDname = aname;
-                                    Log.d(TAG, "Uncloaked: " + qname + " -> " + aname);
-                                }
-                            }
+                        // If no tracker found, try DNS uncloaking
+                        if (candidateTracker == null
+                                && aname != null) {
+                            candidateTracker = TrackerList.findTracker(aname);
 
                             if (candidateTracker != null) {
-                                sawTrackerEvidence = true;
-                                if (tracker == null) {
-                                    tracker = candidateTracker;
-                                    dname = candidateDname;
-                                    // Expire the cache entry with the DNS record
-                                    // this tracker was derived from, not whatever
-                                    // row happened to be read last.
-                                    chosenTime = rowTime;
-                                    chosenTtl = rowTtl;
-                                }
-                            } else if (qname != null || aname != null)
-                                sawNonTrackerEvidence = true;
+                                candidateDname = aname;
+                                Log.d(TAG, "Uncloaked: " + qname + " -> " + aname);
+                            }
                         }
+
+                        if (candidateTracker != null) {
+                            sawTrackerEvidence = true;
+                            if (tracker == null) {
+                                tracker = candidateTracker;
+                                dname = candidateDname;
+                                // Expire the cache entry with the DNS record
+                                // this tracker was derived from, not whatever
+                                // row happened to be read last.
+                                chosenTime = rowTime;
+                                chosenTtl = rowTtl;
+                            }
+                        } else if (qname != null || aname != null)
+                            sawNonTrackerEvidence = true;
                     }
                 }
-
-                if (sawTrackerEvidence && sawNonTrackerEvidence && !blockAmbiguousTrackers) {
-                    Log.d(TAG, "Allowing mixed tracker evidence for " + daddr);
-                    tracker = NO_TRACKER;
-                }
-
-                // No success in finding dname or tracker?
-                if (dname == null)
-                    dname = NO_DNAME;
-                if (tracker == null)
-                    tracker = NO_TRACKER;
-
-                // Choose the cache expiry:
-                long expiry;
-                if (dname == NO_DNAME) {
-                    // No DNS mapping was captured for this IP at all — the query
-                    // may have gone over DoT, arrived before the service
-                    // started, or been lost to a split TCP response. This is an
-                    // unconfident miss: re-check soon rather than caching it for
-                    // the full DNS TTL (up to 7 days), which would keep any
-                    // tracker traffic to this IP invisible and unblocked until
-                    // then.
-                    expiry = now + NEGATIVE_TRACKER_CACHE_TTL_MS;
-                } else {
-                    // DNS evidence exists (tracker or confident non-tracker);
-                    // expire with the record the decision was derived from, not
-                    // whatever row happened to be read last.
-                    expiry = (chosenTime >= 0)
-                            ? chosenTime + chosenTtl
-                            : firstTime + firstTtl;
-                }
-
-                // Save dname and tracker, but only if no concurrent
-                // dnsResolved() invalidated this IP's cache while we were
-                // reading the DB above — otherwise this put could pin a
-                // stale verdict that a racing insert already made obsolete.
-                // Skipping is cheap and correct: the next packet to this IP
-                // simply re-reads the DB.
-                TrackerCache.Entry cacheEntry = new TrackerCache.Entry(dname, tracker, expiry);
-                trackerCache.putIfGeneration(daddr, cacheEntry, generationBefore);
-                // Keep the exact snapshot used for the decision for logging;
-                // the shared cache may be invalidated or replaced meanwhile.
-                cached = cacheEntry;
             }
+
+            if (sawTrackerEvidence && sawNonTrackerEvidence && !blockAmbiguousTrackers) {
+                Log.d(TAG, "Allowing mixed tracker evidence for " + daddr);
+                tracker = NO_TRACKER;
+            }
+
+            // No success in finding dname or tracker?
+            if (dname == null)
+                dname = NO_DNAME;
+            if (tracker == null)
+                tracker = NO_TRACKER;
+
+            // Choose the cache expiry:
+            long expiry;
+            if (dname == NO_DNAME) {
+                // No DNS mapping was captured for this IP at all — the query
+                // may have gone over DoT, arrived before the service
+                // started, or been lost to a split TCP response. This is an
+                // unconfident miss: re-check soon rather than caching it for
+                // the full DNS TTL (up to 7 days), which would keep any
+                // tracker traffic to this IP invisible and unblocked until
+                // then.
+                expiry = now + NEGATIVE_TRACKER_CACHE_TTL_MS;
+            } else {
+                // DNS evidence exists (tracker or confident non-tracker);
+                // expire with the record the decision was derived from, not
+                // whatever row happened to be read last.
+                expiry = (chosenTime >= 0)
+                        ? chosenTime + chosenTtl
+                        : firstTime + firstTtl;
+            }
+
+            // Save dname and tracker, but only if no concurrent
+            // dnsResolved() invalidated this IP's cache while we were
+            // reading the DB above — otherwise this put could pin a
+            // stale verdict that a racing insert already made obsolete.
+            // Skipping is cheap and correct: the next packet to this IP
+            // simply re-reads the DB.
+            TrackerCache.Entry cacheEntry = new TrackerCache.Entry(dname, tracker, expiry);
+            trackerCache.putIfGeneration(daddr, cacheEntry, generationBefore);
+            // Keep the exact snapshot used for the decision for logging;
+            // the shared cache may be invalidated or replaced meanwhile.
+            cached = cacheEntry;
 
             // Do not block based on IP-only tracker evidence.
             // Shared IPs are too ambiguous without hostname evidence.
