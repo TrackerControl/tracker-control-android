@@ -2,9 +2,22 @@
 //! path. The caller owns the message buffer; callback strings are owned by
 //! this library and remain valid only for the duration of their callback.
 
+// Carried over from tc-dns, which denies these crate-wide: this module holds
+// the FFI boundary, and the C contract requires it never to panic (the Android
+// release profile builds with `panic = "abort"`).
+#![cfg_attr(
+    not(test),
+    deny(
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::indexing_slicing
+    )
+)]
+
 use std::ffi::{c_char, c_void, CString};
 
-use crate::{process_response, DnsPolicy, Outcome};
+use tcdns::{process_response, DnsPolicy, Outcome};
 
 pub const TCDNS_ABI_VERSION: u32 = 1;
 pub const TCDNS_UNCHANGED: usize = usize::MAX;
