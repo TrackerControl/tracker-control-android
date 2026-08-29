@@ -17,41 +17,107 @@
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
+#include <string.h>
+
 #include "dns_frame.h"
 
-struct dns_frame_decision dns_frame_decide(size_t bytes, size_t frame_len) {
-    struct dns_frame_decision d;
-    d.frame_len = frame_len;
+size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
+                                struct dns_stream_state *state,
+                                dns_frame_parse_fn parse, void *ctx) {
+    // Defensive: nothing sensible to do without a buffer, state or parser.
+    if (buffer == NULL || state == NULL || parse == NULL)
+        return bytes;
 
-    if (frame_len == 0) {
-        // A zero-length declared frame is not something the parser can
-        // act on; skip it entirely, matching the original "if (frame_len
-        // > 0)" guard.
-        d.should_parse = 0;
-        d.isolated = 0;
-        d.dlen = 0;
-        return d;
+    size_t cursor = 0;  // bytes of the buffer already accounted for
+    size_t end = bytes; // bytes to forward; only ever shrinks, never below cursor
+
+    // 1. Continuation of a frame whose earlier bytes were already forwarded in
+    //    a previous recv(). Those bytes are neither parsed (their DNS header is
+    //    gone) nor rewritten (their prefix is already on the wire).
+    if (state->frame_remaining > 0) {
+        size_t remaining = end - cursor;
+        size_t skip = (state->frame_remaining < remaining
+                       ? (size_t) state->frame_remaining : remaining);
+        state->frame_remaining -= (uint32_t) skip;
+        cursor += skip;
+        if (cursor >= end)
+            return end;
     }
 
-    d.should_parse = 1;
-    d.isolated = (frame_len + 2 == bytes) ? 1 : 0;
+    // 2. A length prefix split across recv()s: the high byte was stashed (and
+    //    forwarded) last time, its low byte is the first byte here. This
+    //    frame's prefix is already on the wire, so it is parse-only: the
+    //    payload may be mutated in place, but its length can never change.
+    if (state->have_prefix_hi && cursor < end) {
+        size_t frame_len = ((size_t) state->prefix_hi << 8) | buffer[cursor];
+        cursor++;
+        state->prefix_hi = 0;
+        state->have_prefix_hi = 0;
 
-    // avail is the payload available in this recv() after the 2-byte
-    // prefix. The caller guarantees bytes > 2, so avail >= 1.
-    size_t avail = bytes - 2;
-    // isolated implies frame_len == avail.
-    d.dlen = (frame_len < avail) ? frame_len : avail;
-
-    return d;
-}
-
-void dns_frame_apply_rewrite(uint8_t *buffer,
-                              const struct dns_frame_decision *decision,
-                              size_t post_parse_dlen,
-                              ssize_t *bytes) {
-    if (decision->isolated && post_parse_dlen != decision->frame_len) {
-        buffer[0] = (uint8_t) (post_parse_dlen >> 8);
-        buffer[1] = (uint8_t) post_parse_dlen;
-        *bytes = (ssize_t) post_parse_dlen + 2;
+        size_t avail = end - cursor;
+        if (frame_len > avail) {
+            if (avail > 0)
+                (void) parse(ctx, buffer + cursor, avail);
+            state->frame_remaining = (uint32_t) (frame_len - avail);
+            return end;
+        }
+        if (frame_len > 0) {
+            (void) parse(ctx, buffer + cursor, frame_len); // shrink ignored
+            cursor += frame_len;
+        }
     }
+
+    // 3. Frames whose 2-byte prefix starts inside this buffer.
+    while (cursor < end) {
+        size_t remaining = end - cursor;
+
+        // A lone trailing byte is the high half of the next frame's length
+        // prefix. It cannot be withheld (that would need buffering), so it is
+        // forwarded as-is and stashed for the next call.
+        if (remaining == 1) {
+            state->prefix_hi = buffer[cursor];
+            state->have_prefix_hi = 1;
+            return end;
+        }
+
+        size_t frame_len = ((size_t) buffer[cursor] << 8) | buffer[cursor + 1];
+        cursor += 2;
+
+        // A zero-length frame is a legal no-op; its two bytes forward as-is.
+        if (frame_len == 0)
+            continue;
+
+        size_t avail = end - cursor;
+
+        if (frame_len > avail) {
+            // Frame runs past this read: parse what is visible (blanking only,
+            // any shrink is ignored) and remember the overflow.
+            if (avail > 0)
+                (void) parse(ctx, buffer + cursor, avail);
+            state->frame_remaining = (uint32_t) (frame_len - avail);
+            return end;
+        }
+
+        // Complete frame, prefix and payload both inside this buffer: nothing
+        // here has been forwarded yet, so it may be shortened.
+        size_t new_dlen = parse(ctx, buffer + cursor, frame_len);
+        if (new_dlen > frame_len)
+            new_dlen = frame_len; // defensive: a parser must never grow a frame
+
+        if (new_dlen < frame_len) {
+            buffer[cursor - 2] = (uint8_t) (new_dlen >> 8);
+            buffer[cursor - 1] = (uint8_t) new_dlen;
+
+            size_t tail_start = cursor + frame_len; // <= end
+            size_t tail_len = end - tail_start;
+            if (tail_len > 0)
+                memmove(buffer + cursor + new_dlen, buffer + tail_start, tail_len);
+
+            end -= (frame_len - new_dlen);
+        }
+
+        cursor += new_dlen; // cursor <= end still holds
+    }
+
+    return end;
 }
