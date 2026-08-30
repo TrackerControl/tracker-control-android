@@ -59,6 +59,7 @@
     <string name="timeline_more_trackers">+%d more</string>
     <string name="timeline_tracker_blocked">Blocked</string>
     <string name="timeline_tracker_allowed">Allowed</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
     <string name="feed_section_last_contact">last contact %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Show %d more company</item>
