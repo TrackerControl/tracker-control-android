@@ -6,22 +6,29 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.compose.ui.platform.ComposeView;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.ConcatAdapter;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import net.kollnig.missioncontrol.data.InsightsData;
 import net.kollnig.missioncontrol.data.InsightsDataProvider;
@@ -29,7 +36,14 @@ import net.kollnig.missioncontrol.data.TimelineEntry;
 import net.kollnig.missioncontrol.data.Tracker;
 import net.kollnig.missioncontrol.data.TrackerContact;
 import net.kollnig.missioncontrol.data.TrackerList;
+import net.kollnig.missioncontrol.ui.compose.TimelineEmptyState;
+import net.kollnig.missioncontrol.ui.compose.TimelineScreen;
+import net.kollnig.missioncontrol.ui.compose.TimelineScreenCallbacks;
+import net.kollnig.missioncontrol.ui.compose.TimelineScreenController;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,19 +55,21 @@ import java.util.concurrent.Executors;
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.Util;
 
-public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntryClickListener {
+public class TimelineFragment extends Fragment {
 
+    private static final String TAG = "TimelineFragment";
     private static final long REFRESH_DEBOUNCE_MS = 500L;
     // Catch stale relative timestamps and any missed AccessChangedListener
     // callbacks by re-querying on a slow tick while the screen is open.
     private static final long PERIODIC_REFRESH_MS = 30_000L;
 
-    private TimelineAdapter timelineAdapter;
-    private InsightsHeaderAdapter insightsAdapter;
-    private TimelineEmptyAdapter emptyAdapter;
-    private TimelineHintAdapter hintAdapter;
-    private RecyclerView rvTimeline;
-    private SwipeRefreshLayout swipeRefresh;
+    @Nullable
+    private ComposeView composeView;
+    @Nullable
+    private TimelineScreenController screenController;
+    @Nullable
+    private InsightsData insightsData;
+    private int viewGeneration;
 
     private final Handler refreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable refreshRunnable = this::refreshAll;
@@ -70,39 +86,70 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
                 refreshHandler.postDelayed(refreshRunnable, REFRESH_DEBOUNCE_MS);
             };
 
-    private ExecutorService insightsExecutor;
+    @Nullable
+    private ExecutorService lifecycleExecutor;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_timeline, container, false);
+        ComposeView view = new ComposeView(requireContext());
+        view.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        composeView = view;
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvTimeline = view.findViewById(R.id.rvTimeline);
-        swipeRefresh = view.findViewById(R.id.swipeRefreshTimeline);
+        final int generation = ++viewGeneration;
+        composeView = (ComposeView) view;
+        screenController = TimelineScreen.install(
+                composeView,
+                new TimelineScreenCallbacks() {
+                    @Override
+                    public void onEntryClick(int uid, String appName, String packageName) {
+                        openEntry(uid, appName, packageName);
+                    }
 
-        rvTimeline.setLayoutManager(new LinearLayoutManager(requireContext()));
-        insightsAdapter = new InsightsHeaderAdapter(requireContext());
-        emptyAdapter = new TimelineEmptyAdapter();
-        hintAdapter = new TimelineHintAdapter(() -> {
-            PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
-                    .putBoolean("hint_timeline_tap_entry", false)
-                    .apply();
-            hintAdapter.setVisible(false);
-        });
-        timelineAdapter = new TimelineAdapter(requireContext(), this);
+                    @Override
+                    public void onOpenApp() {
+                        Intent home = new Intent(Intent.ACTION_MAIN);
+                        home.addCategory(Intent.CATEGORY_HOME);
+                        home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(home);
+                    }
 
-        ConcatAdapter concat = new ConcatAdapter(insightsAdapter, emptyAdapter, hintAdapter, timelineAdapter);
-        rvTimeline.setAdapter(concat);
+                    @Override
+                    public void onOpenSettings() {
+                        startActivity(new Intent(requireContext(),
+                                eu.faircode.netguard.ActivitySettings.class));
+                    }
 
-        swipeRefresh.setOnRefreshListener(this::refreshAll);
+                    @Override
+                    public void onOpenInsights() {
+                        startActivity(new Intent(requireContext(), InsightsActivity.class));
+                    }
 
-        insightsExecutor = Executors.newSingleThreadExecutor();
+                    @Override
+                    public void onShareInsights() {
+                        shareInsights(generation);
+                    }
+
+                    @Override
+                    public void onDismissHint() {
+                        SharedPreferences prefs = PreferenceManager
+                                .getDefaultSharedPreferences(requireContext());
+                        prefs.edit().putBoolean("hint_timeline_tap_entry", false).apply();
+                        if (isCurrentView(generation) && screenController != null) {
+                            screenController.dismissHint();
+                        }
+                    }
+                });
+        lifecycleExecutor = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -110,6 +157,7 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
         super.onResume();
         DatabaseHelper.getInstance(requireContext()).addAccessChangedListener(accessListener);
         refreshAll();
+        refreshHandler.removeCallbacks(periodicRunnable);
         refreshHandler.postDelayed(periodicRunnable, PERIODIC_REFRESH_MS);
     }
 
@@ -123,77 +171,226 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        if (insightsExecutor != null) {
-            insightsExecutor.shutdownNow();
-            insightsExecutor = null;
+        refreshHandler.removeCallbacks(refreshRunnable);
+        refreshHandler.removeCallbacks(periodicRunnable);
+        if (screenController != null) {
+            screenController.invalidate();
+            screenController = null;
         }
+        if (lifecycleExecutor != null) {
+            lifecycleExecutor.shutdownNow();
+            lifecycleExecutor = null;
+        }
+        insightsData = null;
+        composeView = null;
+        viewGeneration++;
+        super.onDestroyView();
     }
 
-    @Override
-    public void onEntryClick(TimelineEntry entry) {
-        // Details are looked up per package; entries for UIDs without a
-        // resolvable package are listed but have nothing to open.
-        if (entry.packageName == null)
+    private boolean isCurrentView(int generation) {
+        return generation == viewGeneration
+                && isAdded()
+                && getView() != null
+                && screenController != null;
+    }
+
+    private void openEntry(int uid, String appName, String packageName) {
+        if (packageName == null || !isAdded())
             return;
 
         Intent intent = new Intent(requireContext(), DetailsActivity.class);
-        intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, entry.appName);
-        intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, entry.packageName);
-        intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, entry.uid);
+        intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_NAME, appName);
+        intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_PACKAGENAME, packageName);
+        intent.putExtra(DetailsActivity.INTENT_EXTRA_APP_UID, uid);
         startActivity(intent);
     }
 
     private void refreshAll() {
-        loadTimeline();
-        loadInsights();
+        if (screenController == null || getView() == null)
+            return;
+        int generation = viewGeneration;
+        loadTimeline(generation);
+        loadInsights(generation);
     }
 
-    private void loadTimeline() {
+    private void loadTimeline(final int generation) {
+        if (!isCurrentView(generation))
+            return;
+        final Context context = requireContext().getApplicationContext();
         new AsyncTask<Void, Void, List<TimelineEntry>>() {
             @Override
             protected List<TimelineEntry> doInBackground(Void... voids) {
-                return buildTimeline();
+                return buildTimeline(context);
             }
 
             @Override
             protected void onPostExecute(List<TimelineEntry> entries) {
-                if (!isAdded() || getView() == null)
+                if (!isCurrentView(generation) || screenController == null)
                     return;
-                timelineAdapter.setEntries(entries);
-                swipeRefresh.setRefreshing(false);
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
-                emptyAdapter.setTrackerControlEnabled(prefs.getBoolean("enabled", false));
-                emptyAdapter.setTrackerRecordingEnabled(prefs.getBoolean("log_app", true));
-                emptyAdapter.setTrackerRecordingAvailable(
-                        !Util.isPlayStoreInstall(requireContext()));
-                emptyAdapter.setVisible(entries.isEmpty());
-                hintAdapter.setVisible(TimelineHintAdapter.shouldShow(
+                SharedPreferences prefs = PreferenceManager
+                        .getDefaultSharedPreferences(requireContext());
+                boolean trackerControlEnabled = prefs.getBoolean("enabled", false);
+                boolean trackerRecordingEnabled = prefs.getBoolean("log_app", true);
+                boolean trackerRecordingAvailable = !Util.isPlayStoreInstall(requireContext());
+                TimelineEmptyAdapter.EmptyState emptyState = TimelineEmptyAdapter.stateFor(
+                        trackerControlEnabled,
+                        trackerRecordingEnabled,
+                        trackerRecordingAvailable);
+                TimelineEmptyState composeEmptyState = TimelineEmptyState.valueOf(emptyState.name());
+                boolean showHint = TimelineHintAdapter.shouldShow(
                         !entries.isEmpty(),
-                        prefs.getBoolean("hint_timeline_tap_entry", true)));
+                        prefs.getBoolean("hint_timeline_tap_entry", true));
+                screenController.updateTimeline(
+                        entries,
+                        requireContext(),
+                        composeEmptyState,
+                        showHint);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void loadInsights() {
-        if (insightsExecutor == null || insightsExecutor.isShutdown())
+    private void loadInsights(final int generation) {
+        final ExecutorService executor = lifecycleExecutor;
+        if (executor == null || executor.isShutdown() || !isCurrentView(generation))
             return;
-        insightsExecutor.execute(() -> {
-            if (!isAdded())
-                return;
-            InsightsDataProvider provider = new InsightsDataProvider(requireContext());
-            InsightsData data = provider.computeInsights();
-            Handler main = new Handler(Looper.getMainLooper());
-            main.post(() -> {
-                if (isAdded() && insightsAdapter != null)
-                    insightsAdapter.setData(data);
+        final Context context = requireContext().getApplicationContext();
+        executor.execute(() -> {
+            InsightsData data = new InsightsDataProvider(context).computeInsights();
+            refreshHandler.post(() -> {
+                if (!isCurrentView(generation) || screenController == null)
+                    return;
+                insightsData = data;
+                screenController.updateInsights(data);
             });
         });
     }
 
-    private List<TimelineEntry> buildTimeline() {
-        Context context = requireContext();
+    private void shareInsights(final int generation) {
+        final InsightsData data = insightsData;
+        final ExecutorService executor = lifecycleExecutor;
+        if (data == null || executor == null || executor.isShutdown() || !isCurrentView(generation))
+            return;
+        final Context context = requireContext().getApplicationContext();
+        executor.execute(() -> {
+            try {
+                File imageFile = generateShareImage(context, data);
+                if (imageFile == null)
+                    return;
+                refreshHandler.post(() -> {
+                    if (!isCurrentView(generation))
+                        return;
+                    try {
+                        android.net.Uri uri = FileProvider.getUriForFile(
+                                context,
+                                context.getPackageName() + ".provider",
+                                imageFile);
+                        String shareText = context.getString(
+                                R.string.insights_share_message,
+                                data.getBlockedTrackingAttempts(),
+                                data.getUniqueTrackerCompanies());
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("image/png");
+                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                        intent.putExtra(Intent.EXTRA_TEXT, shareText);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(Intent.createChooser(intent,
+                                context.getString(R.string.insights_share))
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    } catch (Exception e) {
+                        android.util.Log.e(TAG, "Failed to share", e);
+                        Toast.makeText(context, R.string.export_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                android.util.Log.e(TAG, "Failed to generate share image", e);
+            }
+        });
+    }
+
+    private File generateShareImage(Context context, InsightsData data) {
+        try {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View shareView = inflater.inflate(R.layout.layout_insights_share, null);
+
+            TextView tvTotalBlocked = shareView.findViewById(R.id.tvShareTotalBlocked);
+            LinearLayout llBlockedStat = shareView.findViewById(R.id.llShareBlockedStat);
+            TextView tvBlockedCount = shareView.findViewById(R.id.tvShareBlockedCount);
+            TextView tvCompanies = shareView.findViewById(R.id.tvShareCompanies);
+            LinearLayout llTopCompanies = shareView.findViewById(R.id.llShareTopCompanies);
+
+            NumberFormat nf = NumberFormat.getNumberInstance(java.util.Locale.getDefault());
+            tvTotalBlocked.setText(nf.format(data.getTotalTrackingAttempts()));
+            llBlockedStat.setVisibility(View.VISIBLE);
+            tvBlockedCount.setText(nf.format(data.getBlockedTrackingAttempts()));
+            tvCompanies.setText(String.valueOf(data.getUniqueTrackerCompanies()));
+
+            List<Pair<String, Integer>> top3 = data.getPervasiveTrackers().subList(
+                    0, Math.min(data.getPervasiveTrackers().size(), 3));
+            float density = context.getResources().getDisplayMetrics().density;
+            for (Pair<String, Integer> company : top3) {
+                LinearLayout row = new LinearLayout(context);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                rowParams.topMargin = (int) (4 * density);
+                row.setLayoutParams(rowParams);
+                row.setOrientation(LinearLayout.HORIZONTAL);
+
+                TextView nameView = new TextView(context);
+                nameView.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+                nameView.setText(company.first);
+                nameView.setTextColor(Color.WHITE);
+                nameView.setTextSize(12f);
+
+                TextView countView = new TextView(context);
+                countView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                countView.setText(context.getString(R.string.insights_in_apps, company.second));
+                countView.setTextColor(Color.WHITE);
+                countView.setTextSize(12f);
+                countView.setTypeface(null, Typeface.BOLD);
+
+                row.addView(nameView);
+                row.addView(countView);
+                llTopCompanies.addView(row);
+            }
+
+            int widthPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    400f,
+                    context.getResources().getDisplayMetrics());
+            int widthSpec = View.MeasureSpec.makeMeasureSpec(widthPx, View.MeasureSpec.EXACTLY);
+            int heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+            shareView.measure(widthSpec, heightSpec);
+            shareView.layout(0, 0, shareView.getMeasuredWidth(), shareView.getMeasuredHeight());
+
+            Bitmap bitmap = Bitmap.createBitmap(
+                    shareView.getMeasuredWidth(),
+                    shareView.getMeasuredHeight(),
+                    Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            shareView.draw(canvas);
+
+            File shareDir = new File(context.getCacheDir(), "share");
+            if (!shareDir.exists() && !shareDir.mkdirs() && !shareDir.isDirectory())
+                return null;
+            File imageFile = new File(shareDir, "trackercontrol_insights.png");
+            try (FileOutputStream out = new FileOutputStream(imageFile)) {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            }
+            bitmap.recycle();
+            return imageFile;
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Failed to generate share image", e);
+            return null;
+        }
+    }
+
+    private List<TimelineEntry> buildTimeline(Context context) {
         DatabaseHelper dh = DatabaseHelper.getInstance(context);
         PackageManager pm = context.getPackageManager();
         // findTracker() reads from a static map populated lazily by
@@ -232,7 +429,6 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
 
                 boolean blocked = allowed == 0;
                 String category = tracker.getCategory();
-
                 Map<String, TrackerContact> companyMap = uidTrackers.get(uid);
                 if (companyMap == null) {
                     companyMap = new LinkedHashMap<>();
@@ -246,18 +442,12 @@ public class TimelineFragment extends Fragment implements TimelineAdapter.OnEntr
                 }
 
                 Long currentLatest = uidLatestTime.get(uid);
-                if (currentLatest == null || lastTime > currentLatest) {
+                if (currentLatest == null || lastTime > currentLatest)
                     uidLatestTime.put(uid, lastTime);
-                }
 
                 if (!uidAppInfo.containsKey(uid)) {
-                    // A UID that cannot be resolved to a package (another
-                    // profile — work profile, Secure Folder, private space,
-                    // cloned app — or an app uninstalled since the contact)
-                    // still gets its tracker access recorded: shouldTrackApp()
-                    // deliberately defaults unknown UIDs to tracked. Show that
-                    // activity under a UID label instead of dropping it, which
-                    // would leave the recorded data permanently invisible.
+                    // Keep activity for UIDs that belong to another profile,
+                    // a clone, private space, or an app uninstalled since contact.
                     String appName = context.getString(R.string.unidentified_app_uid, uid);
                     String packageName = null;
                     String[] packages = Util.getPackagesForUid(pm, uid);
