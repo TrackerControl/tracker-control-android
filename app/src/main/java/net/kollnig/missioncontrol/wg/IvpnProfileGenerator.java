@@ -228,8 +228,10 @@ public class IvpnProfileGenerator {
             // is gone.
             if (status == 601 || response.code() == 401)
                 return false;
-            throw new IOException(errorMessage(json,
-                    "IVPN session status request failed: " + response.code()));
+            if (status != 0)
+                throw new ApiRejectedException(errorMessage(json,
+                        "IVPN session status request failed: " + response.code()));
+            throw new IOException("IVPN session status request failed: " + response.code());
         }
     }
 
@@ -254,15 +256,18 @@ public class IvpnProfileGenerator {
         if (status == 70001 || !TextUtils.isEmpty(captcha) || !TextUtils.isEmpty(nextCaptchaId))
             throw new CaptchaRequiredException(nextCaptchaId, captcha,
                     response.optString("message", ""));
+        // IVPN answers HTTP 200 with a status field for its own refusals — a
+        // session limit, an inactive account. Those are rejections the caller
+        // can act on and show the user, not transport failures.
         if (status != 200)
-            throw new IOException(errorMessage(response, "IVPN session request failed"));
+            throw new ApiRejectedException(errorMessage(response, "IVPN session request failed"));
 
         JSONObject wireGuard = response.optJSONObject("wireguard");
         if (wireGuard == null)
             throw new IOException("IVPN did not return WireGuard session data");
         int wgStatus = wireGuard.optInt("status", 0);
         if (wgStatus != 200)
-            throw new IOException(errorMessage(wireGuard, "IVPN WireGuard setup failed"));
+            throw new ApiRejectedException(errorMessage(wireGuard, "IVPN WireGuard setup failed"));
 
         String token = response.optString("token", "");
         String address = wireGuard.optString("ip_address", "");

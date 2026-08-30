@@ -2211,9 +2211,16 @@ public class ServiceSinkhole extends VpnService {
 
                             @Override
                             public void onProviderRejected(String providerLabel, String message) {
-                                showWireGuardErrorNotification(getString(
-                                        R.string.msg_wg_provider_rejected, providerLabel,
-                                        message == null ? "" : message));
+                                String detail = getString(R.string.msg_wg_provider_rejected,
+                                        providerLabel, message == null ? "" : message);
+                                // Record it before notifying: the recovery check
+                                // fires 30s after the restart that triggered this
+                                // failover and reposts on the same notification id,
+                                // so without this it would replace the provider's
+                                // explanation with "tunnel unresponsive".
+                                net.kollnig.missioncontrol.wg.WgEgress.INSTANCE
+                                        .reportProviderFailure(detail);
+                                showWireGuardErrorNotification(detail);
                             }
                         }));
         jni_wireguard_required(prefs.getBoolean("wg_enabled", false)

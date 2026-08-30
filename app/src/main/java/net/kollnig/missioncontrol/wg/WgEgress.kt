@@ -133,6 +133,12 @@ object WgEgress {
     private val tunnelGeneration = java.util.concurrent.atomic.AtomicLong(0)
     private val tunnelLifecycleLock = Any()
     @Volatile private var lastError: String? = null
+    // A provider's own explanation for why the tunnel cannot come up — an
+    // exhausted device limit, a lapsed account. It outlives the failover
+    // attempt that learned it, because the generic recovery check runs
+    // afterwards and would otherwise overwrite it with "unresponsive". Cleared
+    // once a handshake proves the tunnel works, or when it is torn down.
+    @Volatile private var providerFailureReason: String? = null
     @Volatile private var verificationGeneration: Long = 0
     @Volatile private var currentConfig: String? = null
     private var currentTunFd: Int = -1
@@ -566,10 +572,11 @@ object WgEgress {
             val latest = latestHandshakeMillisOrNull() ?: 0L
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
+                providerFailureReason = null
                 notifyStateChanged()
                 return@postDelayed
             }
-            lastError = "WireGuard tunnel unresponsive"
+            lastError = providerFailureReason ?: "WireGuard tunnel unresponsive"
             notifyStateChanged()
             notifyBrokenCb?.run()
         }, RECOVERY_NOTIFY_AFTER_MS)
@@ -661,6 +668,15 @@ object WgEgress {
     fun isRunning(): Boolean = tunnel != null
 
     fun getLastError(): String? = lastError
+
+    /**
+     * Records why the provider refused to bring this tunnel up, so the blocked
+     * state names the actual problem instead of the generic "unresponsive"
+     * message the recovery check would otherwise post over it.
+     */
+    fun reportProviderFailure(reason: String?) {
+        providerFailureReason = reason?.takeIf { it.isNotBlank() }
+    }
 
     fun latestHandshakeMillisOrNull(): Long? =
         try { tunnel?.latestHandshakeMillis() } catch (_: Throwable) { null }
@@ -804,6 +820,7 @@ object WgEgress {
         // without ever producing a tunnel still reports — so leaving it set
         // here kept a stopped tunnel reporting its final error forever.
         lastError = null
+        providerFailureReason = null
         if (t != null) {
             try {
                 t.stop()
@@ -853,6 +870,7 @@ object WgEgress {
     private fun clearRecoveryState() {
         verificationGeneration++
         recoveryNotificationGeneration++
+        providerFailureReason = null
         forceRestartPending = false
         pendingRestartTunnel = null
         pendingRestartTunnelGeneration = -1
@@ -880,6 +898,7 @@ object WgEgress {
             if (gen != verificationGeneration) return@postDelayed
             if (fresh) {
                 lastError = null
+                providerFailureReason = null
                 recoveryNotificationGeneration++
                 notifyStateChanged()
             }
