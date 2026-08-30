@@ -57,6 +57,7 @@ jobs:
       - name: Prefetch Gradle dependencies
         run: |
           ./gradlew :app:dependencies :app:prefetchAndroidLintDependencies \
+            :app:prefetchOfflineBuildClasspaths \
             --no-daemon --no-configuration-cache
           # AGP resolves its platform-specific AAPT2 binary lazily while
           # generating the locale config; cache it before the offline build.
