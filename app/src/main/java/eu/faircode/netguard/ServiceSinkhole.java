@@ -367,6 +367,7 @@ public class ServiceSinkhole extends VpnService {
     private static final int NOTIFY_LOCAL_NETWORK = 13;
     private static final int NOTIFY_PRIVATE_DNS = 14;
     private static final int NOTIFY_PRIVATE_DNS_BYPASS = 15;
+    private static final int NOTIFY_WG_IDENTITY = 16;
 
     static final int PRIVATE_DNS_WARNING_NONE = 0;
     static final int PRIVATE_DNS_WARNING_HOSTNAME = 1;
@@ -2201,7 +2202,20 @@ public class ServiceSinkhole extends VpnService {
         net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.setRecoveryCallbacks(
                 () -> ServiceSinkhole.reload("wireguard connectivity repair", ServiceSinkhole.this, false),
                 () -> showWireGuardErrorNotification(getString(R.string.msg_wg_recovery_failed)),
-                () -> net.kollnig.missioncontrol.wg.WgRelayFailover.attemptFailover(ServiceSinkhole.this));
+                () -> net.kollnig.missioncontrol.wg.WgRelayFailover.attemptFailover(ServiceSinkhole.this,
+                        new net.kollnig.missioncontrol.wg.WgRelayFailover.Listener() {
+                            @Override
+                            public void onIdentityRenewed(String providerLabel) {
+                                showWireGuardIdentityNotification(providerLabel);
+                            }
+
+                            @Override
+                            public void onProviderRejected(String providerLabel, String message) {
+                                showWireGuardErrorNotification(getString(
+                                        R.string.msg_wg_provider_rejected, providerLabel,
+                                        message == null ? "" : message));
+                            }
+                        }));
         jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
                 && !TextUtils.isEmpty(prefs.getString("wg_config", "")));
         boolean wgOk = net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.startOrUpdate(
@@ -4465,6 +4479,38 @@ public class ServiceSinkhole extends VpnService {
         notification.bigText(detail);
 
         Util.notify(this, NOTIFY_WG_ERROR, notification.build());
+    }
+
+    /**
+     * The provider had forgotten this device, so the failover path registered a
+     * fresh one and rewrote the saved profiles. Worth saying out loud: the user
+     * otherwise only ever sees "tunnel unavailable" while their profiles change
+     * underneath them (#860).
+     */
+    private void showWireGuardIdentityNotification(String providerLabel) {
+        Intent main = new Intent(this, ActivitySettings.class);
+        PendingIntent pi = PendingIntentCompat.getActivity(this, NOTIFY_WG_IDENTITY, main,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String detail = getString(R.string.msg_wg_identity_renewed,
+                providerLabel == null ? "" : providerLabel);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "notify");
+        builder.setSmallIcon(R.drawable.ic_lock_outline_white_24dp)
+                .setContentTitle(getString(R.string.msg_wg_identity_renewed_title))
+                .setContentText(detail)
+                .setContentIntent(pi)
+                .setColor(getResources().getColor(R.color.colorTrackerControl))
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            builder.setCategory(NotificationCompat.CATEGORY_STATUS)
+                    .setVisibility(NotificationCompat.VISIBILITY_SECRET);
+
+        NotificationCompat.BigTextStyle notification = new NotificationCompat.BigTextStyle(builder);
+        notification.bigText(detail);
+
+        Util.notify(this, NOTIFY_WG_IDENTITY, notification.build());
     }
 
     private void clearWireGuardErrorNotification() {

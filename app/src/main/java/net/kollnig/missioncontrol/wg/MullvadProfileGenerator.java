@@ -56,10 +56,19 @@ public class MullvadProfileGenerator {
         public final String countryName;
         public final String relayHostname;
         public final String deviceId;
+        public final String privateKey;
+        public final String address;
+        /**
+         * True when the saved identity could not be reused and a fresh Mullvad
+         * device was registered. Callers must then rewrite the account's other
+         * profiles, which still carry the identity Mullvad no longer knows.
+         */
+        public final boolean identityReplaced;
 
         public GeneratedProfile(String name, String config, String accountNumber,
                                 String countryCode, String countryName, String relayHostname,
-                                String deviceId) {
+                                String deviceId, String privateKey, String address,
+                                boolean identityReplaced) {
             this.name = name;
             this.config = config;
             this.accountNumber = accountNumber;
@@ -67,6 +76,9 @@ public class MullvadProfileGenerator {
             this.countryName = countryName == null ? "" : countryName;
             this.relayHostname = relayHostname == null ? "" : relayHostname;
             this.deviceId = deviceId == null ? "" : deviceId;
+            this.privateKey = privateKey == null ? "" : privateKey;
+            this.address = address == null ? "" : address;
+            this.identityReplaced = identityReplaced;
         }
     }
 
@@ -129,18 +141,32 @@ public class MullvadProfileGenerator {
         Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         String privateKey;
         JSONObject device;
+        boolean identityReplaced = false;
         if (reusable == null) {
             privateKey = newPrivateKey();
             String publicKey = derivePublicKey(privateKey);
             String token = fetchWebToken(account);
             device = createDevice(token, publicKey);
         } else {
-            privateKey = reusable.getPrivateKey();
-            device = deviceFromConfig(reusable);
+            // A saved identity is only reusable while Mullvad still knows it.
+            // Once the device is deleted from the account, reusing its key
+            // yields a tunnel that never completes a handshake, so register a
+            // fresh device instead of inheriting the dead identity.
+            String token = fetchWebToken(account);
+            JSONObject registered = findDevice(token, publicKeyOf(reusable.getPrivateKey()));
+            if (registered == null) {
+                privateKey = newPrivateKey();
+                device = createDevice(token, derivePublicKey(privateKey));
+                identityReplaced = true;
+            } else {
+                privateKey = reusable.getPrivateKey();
+                device = deviceForReuse(registered, reusable);
+            }
         }
         String config = buildConfig(privateKey, device, relay);
         return new GeneratedProfile("Mullvad - " + relay.countryName, config, account,
-                relay.countryCode, relay.countryName, relay.hostname, device.optString("id", ""));
+                relay.countryCode, relay.countryName, relay.hostname, device.optString("id", ""),
+                privateKey, addressOf(device), identityReplaced);
     }
 
     public String findDeviceIdForPubkey(String accountNumber, String publicKey) throws Exception {
@@ -193,6 +219,42 @@ public class MullvadProfileGenerator {
         }
     }
 
+    private String publicKeyOf(String privateKey) {
+        if (TextUtils.isEmpty(privateKey))
+            return "";
+        try {
+            String publicKey = derivePublicKey(privateKey);
+            return publicKey == null ? "" : publicKey;
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    private JSONObject findDevice(String token, String publicKey) throws Exception {
+        if (TextUtils.isEmpty(publicKey))
+            return null;
+        for (JSONObject device : listDevices(token))
+            if (publicKey.equals(device.optString("pubkey")))
+                return device;
+        return null;
+    }
+
+    /**
+     * The account's device record is authoritative for the tunnel addresses;
+     * the saved config only fills in what the record does not carry.
+     */
+    private JSONObject deviceForReuse(JSONObject registered, WgConfig config) throws Exception {
+        if (TextUtils.isEmpty(registered.optString("ipv4_address")) &&
+                TextUtils.isEmpty(registered.optString("ipv6_address"))) {
+            JSONObject device = deviceFromConfig(config);
+            device.put("id", registered.optString("id", ""));
+            if (!TextUtils.isEmpty(registered.optString("name")))
+                device.put("name", registered.optString("name"));
+            return device;
+        }
+        return registered;
+    }
+
     private JSONObject deviceFromConfig(WgConfig config) throws Exception {
         JSONObject device = new JSONObject();
         for (String address : config.getAddress()) {
@@ -236,7 +298,8 @@ public class MullvadProfileGenerator {
         return postJson(API + "/accounts/v1/devices", token, body);
     }
 
-    private List<JSONObject> listDevices(String token) throws Exception {
+    // Package-private so tests can supply device data without making HTTP calls.
+    List<JSONObject> listDevices(String token) throws Exception {
         Request.Builder builder = new Request.Builder()
                 .url(API + "/accounts/v1/devices");
         if (!TextUtils.isEmpty(token))
@@ -350,9 +413,14 @@ public class MullvadProfileGenerator {
         return result;
     }
 
-    private String buildConfig(String privateKey, JSONObject device, Relay relay) {
+    private static String addressOf(JSONObject device) {
         String ipv4 = device.optString("ipv4_address");
         String ipv6 = device.optString("ipv6_address");
+        return TextUtils.isEmpty(ipv4) ? ipv6 :
+                TextUtils.isEmpty(ipv6) ? ipv4 : ipv4 + ", " + ipv6;
+    }
+
+    private String buildConfig(String privateKey, JSONObject device, Relay relay) {
         String deviceName = device.optString("name");
 
         StringBuilder sb = new StringBuilder();
@@ -360,9 +428,7 @@ public class MullvadProfileGenerator {
         if (!TextUtils.isEmpty(deviceName))
             sb.append("# Mullvad device = ").append(deviceName).append('\n');
         sb.append("PrivateKey = ").append(privateKey).append('\n');
-        String address = TextUtils.isEmpty(ipv4) ? ipv6 :
-                TextUtils.isEmpty(ipv6) ? ipv4 : ipv4 + ", " + ipv6;
-        sb.append("Address = ").append(address).append('\n');
+        sb.append("Address = ").append(addressOf(device)).append('\n');
         sb.append("DNS = ").append(DEFAULT_DNS).append("\n\n");
         sb.append("[Peer]\n");
         sb.append("# Mullvad relay = ").append(relay.hostname).append('\n');

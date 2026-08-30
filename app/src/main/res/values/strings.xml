@@ -324,6 +324,9 @@
     <string name="msg_wg_blocked_title">WireGuard tunnel unavailable</string>
     <string name="msg_wg_blocked">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled.</string>
     <string name="msg_wg_blocked_detail">Internet access is blocked until WireGuard starts or the WireGuard setting is disabled. %s</string>
+    <string name="msg_wg_identity_renewed_title">VPN device re-registered</string>
+    <string name="msg_wg_identity_renewed">%1$s no longer knew this device, so TrackerControl registered a new one and updated the %1$s profiles on this device.</string>
+    <string name="msg_wg_provider_rejected">%1$s refused to set up this device: %2$s</string>
     <string name="msg_wg_recovery_failed">WireGuard stopped responding. TrackerControl is trying to reconnect, and internet access may remain blocked until WireGuard recovers.</string>
     <string name="summary_watchdog">Periodically check if TrackerControl is still running (enter zero to disable this option). This might result in extra battery usage.</string>
     <string name="summary_log_logcat">Research mode: identified trackers are logged to ADB and SNI extraction is enabled for better hostname detection. Retrieve logs with adb logcat using tag \'TC-Log\'.</string>

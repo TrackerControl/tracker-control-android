@@ -246,6 +246,13 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                     progress.dismiss();
                     try {
                         manager.saveMullvadAccount(generated.accountNumber);
+                        manager.saveMullvadDeviceId(generated.deviceId);
+                        if (generated.identityReplaced)
+                            // Stale profiles for this account still reference the
+                            // deleted device, so move them onto the new identity.
+                            manager.rewriteProviderInterface("mullvad",
+                                    generated.accountNumber, generated.privateKey,
+                                    generated.address);
                         manager.saveProfile(null, generated.name, generated.config,
                                 "mullvad", generated.accountNumber,
                                 generated.countryCode, generated.countryName);

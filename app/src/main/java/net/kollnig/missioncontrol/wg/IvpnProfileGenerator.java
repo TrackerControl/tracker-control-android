@@ -51,10 +51,18 @@ public class IvpnProfileGenerator {
         public final String countryName;
         public final String relayHostname;
         public final WgProfileManager.IvpnSession session;
+        public final String address;
+        /**
+         * True when the saved session could not be reused and a fresh IVPN
+         * session was created. Callers must then rewrite the account's other
+         * profiles, which still carry the key IVPN no longer knows.
+         */
+        public final boolean identityReplaced;
 
         public GeneratedProfile(String name, String config, String accountNumber,
                                 String countryCode, String countryName, String relayHostname,
-                                WgProfileManager.IvpnSession session) {
+                                WgProfileManager.IvpnSession session, String address,
+                                boolean identityReplaced) {
             this.name = name;
             this.config = config;
             this.accountNumber = accountNumber;
@@ -62,6 +70,8 @@ public class IvpnProfileGenerator {
             this.countryName = countryName == null ? "" : countryName;
             this.relayHostname = relayHostname == null ? "" : relayHostname;
             this.session = session;
+            this.address = address == null ? "" : address;
+            this.identityReplaced = identityReplaced;
         }
     }
 
@@ -135,6 +145,15 @@ public class IvpnProfileGenerator {
 
         Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         WgProfileManager.IvpnSession session = reusableSession;
+        boolean identityReplaced = false;
+        // A saved session is only reusable while IVPN still knows it. Once it
+        // is gone — deleted in the account's device list, or logged out
+        // elsewhere — its key never completes a handshake, so start a new
+        // session rather than inheriting the dead identity.
+        if (session != null && session.isUsable() && !sessionIsRegistered(session.token)) {
+            session = null;
+            identityReplaced = true;
+        }
         if (session == null || !session.isUsable()) {
             String privateKey = newPrivateKey();
             String publicKey = derivePublicKey(privateKey);
@@ -143,7 +162,8 @@ public class IvpnProfileGenerator {
 
         String config = buildConfig(session.privateKey, session.address, relay);
         return new GeneratedProfile("IVPN - " + relay.countryName, config, account,
-                relay.countryCode, relay.countryName, relay.hostname, session);
+                relay.countryCode, relay.countryName, relay.hostname, session,
+                addressWithCidr(session.address), identityReplaced);
     }
 
     public WgProfileManager.IvpnSession rotateSessionKey(WgProfileManager.IvpnSession session,
@@ -179,6 +199,38 @@ public class IvpnProfileGenerator {
 
     String derivePublicKey(String privateKey) {
         return Wgbridge.publicKey(privateKey);
+    }
+
+    /**
+     * Asks IVPN whether the saved session token is still valid. Throws rather
+     * than guessing when the answer is inconclusive: creating a session
+     * consumes one of the account's device slots.
+     */
+    boolean sessionIsRegistered(String sessionToken) throws Exception {
+        if (TextUtils.isEmpty(sessionToken))
+            return false;
+
+        JSONObject body = new JSONObject();
+        body.put("session_token", sessionToken);
+        Request request = new Request.Builder()
+                .url(API + "/v4/session/status")
+                .post(RequestBody.create(body.toString(), JSON))
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String text = responseText(response);
+            JSONObject json = TextUtils.isEmpty(text) ? new JSONObject() : new JSONObject(text);
+            int status = json.optInt("status", 0);
+            if (status == 200)
+                return true;
+            // 601 is IVPN's "session not found"; a 401 says the same thing at
+            // the HTTP layer. Anything else is not evidence that the session
+            // is gone.
+            if (status == 601 || response.code() == 401)
+                return false;
+            throw new IOException(errorMessage(json,
+                    "IVPN session status request failed: " + response.code()));
+        }
     }
 
     WgProfileManager.IvpnSession createSession(String account, String privateKey,

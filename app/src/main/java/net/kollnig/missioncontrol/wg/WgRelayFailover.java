@@ -31,6 +31,22 @@ public class WgRelayFailover {
     private static final Pattern IVPN_RELAY_PATTERN =
             Pattern.compile("(?m)^#\\s*IVPN relay\\s*=\\s*(\\S+)");
 
+    /**
+     * Receives what a failover attempt learned about the provider account, so
+     * the service can tell the user instead of leaving them with the generic
+     * "tunnel unresponsive" notification.
+     */
+    public interface Listener {
+        /**
+         * The saved device/session was gone from the provider account and a
+         * fresh one was registered; the account's profiles now use it.
+         */
+        void onIdentityRenewed(String providerLabel);
+
+        /** The provider refused the request, e.g. an exhausted device limit. */
+        void onProviderRejected(String providerLabel, String message);
+    }
+
     private WgRelayFailover() {
     }
 
@@ -40,6 +56,10 @@ public class WgRelayFailover {
      * rewritten to a different server.
      */
     public static boolean attemptFailover(Context context) {
+        return attemptFailover(context, null);
+    }
+
+    public static boolean attemptFailover(Context context, Listener listener) {
         WgProfileManager manager = new WgProfileManager(context);
         WgProfileManager.Profile active = manager.getActiveProfile();
         if (active == null || TextUtils.isEmpty(active.provider) || TextUtils.isEmpty(active.config)) {
@@ -55,6 +75,17 @@ public class WgRelayFailover {
                 String excludeHostname = currentRelayHostname(active.config, MULLVAD_RELAY_PATTERN);
                 MullvadProfileGenerator.GeneratedProfile generated = new MullvadProfileGenerator()
                         .generate(active.account, active.countryCode, active.config, excludeHostname);
+                // generate() registers a fresh device when the saved one is
+                // gone from the account; persist that identity regardless of
+                // whether the relay switch below goes through, or the device
+                // this config now authenticates as is lost, and the account's
+                // other profiles keep a key Mullvad no longer knows.
+                if (generated.identityReplaced) {
+                    manager.saveMullvadDeviceId(generated.deviceId);
+                    manager.rewriteProviderInterface("mullvad", active.account,
+                            generated.privateKey, generated.address);
+                    notifyIdentityRenewed(listener, "Mullvad");
+                }
                 newConfig = generated.config;
                 newCountryCode = generated.countryCode;
             } else if ("ivpn".equals(active.provider)) {
@@ -68,6 +99,11 @@ public class WgRelayFailover {
                 // this config now authenticates as is lost and never saved.
                 if (generated.session != null)
                     manager.saveIvpnSession(active.account, generated.session);
+                if (generated.identityReplaced && generated.session != null) {
+                    manager.rewriteProviderInterface("ivpn", active.account,
+                            generated.session.privateKey, generated.address);
+                    notifyIdentityRenewed(listener, "IVPN");
+                }
                 newConfig = generated.config;
                 newCountryCode = generated.countryCode;
             } else {
@@ -99,6 +135,11 @@ public class WgRelayFailover {
         } catch (MullvadProfileGenerator.ApiRejectedException | IvpnProfileGenerator.ApiRejectedException ex) {
             Log.w(TAG, "Relay failover for " + active.provider + " was rejected by the provider API: "
                     + ex.getMessage());
+            // Worth telling the user about: an exhausted device limit or a
+            // lapsed account keeps the tunnel down until they act, and the
+            // generic "tunnel unresponsive" notification says none of that.
+            if (listener != null)
+                listener.onProviderRejected(providerLabel(active.provider), ex.getMessage());
             return false;
         } catch (IvpnProfileGenerator.CaptchaRequiredException ex) {
             Log.w(TAG, "Relay failover for " + active.provider
@@ -108,6 +149,17 @@ public class WgRelayFailover {
             Log.w(TAG, "Relay failover for " + active.provider + " failed: " + ex.getMessage());
             return false;
         }
+    }
+
+    private static void notifyIdentityRenewed(Listener listener, String providerLabel) {
+        Log.w(TAG, providerLabel + " no longer knew this device; registered a fresh one "
+                + "and moved the account's profiles onto it");
+        if (listener != null)
+            listener.onIdentityRenewed(providerLabel);
+    }
+
+    private static String providerLabel(String provider) {
+        return "ivpn".equals(provider) ? "IVPN" : "Mullvad";
     }
 
     private static String currentRelayHostname(String config, Pattern pattern) {

@@ -490,6 +490,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                     manager.findMullvadProfileForCountry(generated.countryCode);
             manager.saveMullvadAccount(generated.accountNumber);
             manager.saveMullvadDeviceId(generated.deviceId);
+            if (generated.identityReplaced)
+                // The account's other profiles still carry the identity Mullvad
+                // dropped; leaving them alone would keep them unable to hand
+                // shake, so move them onto the freshly registered device.
+                manager.rewriteProviderInterface("mullvad", generated.accountNumber,
+                        generated.privateKey, generated.address);
             manager.saveProfile(existing == null ? null : existing.id,
                     generated.name,
                     generated.config,
@@ -520,6 +526,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                     manager.findIvpnProfileForCountry(generated.countryCode);
             manager.saveIvpnAccount(generated.accountNumber);
             manager.saveIvpnSession(generated.accountNumber, generated.session);
+            if (generated.identityReplaced)
+                // The account's other profiles still carry the key IVPN
+                // dropped; leaving them alone would keep them unable to hand
+                // shake, so move them onto the new session.
+                manager.rewriteProviderInterface("ivpn", generated.accountNumber,
+                        generated.session.privateKey, generated.address);
             manager.saveProfile(existing == null ? null : existing.id,
                     generated.name,
                     generated.config,
