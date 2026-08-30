@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -84,7 +85,7 @@ internal fun DataRightsScreen(
             description = stringResource(R.string.data_management_description),
             illustration = R.drawable.ic_email
         ) {
-            DetailsTextAction(
+            DetailsPrimaryAction(
                 text = stringResource(R.string.request_data),
                 onClick = { onAction(R.id.btnReqData) }
             )
@@ -101,7 +102,7 @@ internal fun DataRightsScreen(
             description = stringResource(R.string.contacts_description),
             illustration = R.drawable.ic_megaphone
         ) {
-            DetailsTextAction(
+            DetailsPrimaryAction(
                 text = stringResource(R.string.contact_developer),
                 onClick = { onAction(R.id.btnContactDev) }
             )
@@ -122,7 +123,7 @@ internal fun DataRightsScreen(
                 description = stringResource(R.string.personalised_ads_description),
                 illustration = R.drawable.ic_advertising
             ) {
-                DetailsTextAction(
+                DetailsPrimaryAction(
                     text = stringResource(R.string.ad_settings),
                     onClick = { onAction(R.id.btnAdSettings) }
                 )
@@ -168,7 +169,8 @@ private fun DataRightsSection(
                 painter = painterResource(illustration),
                 contentDescription = null,
                 modifier = Modifier.size(dimensionResource(R.dimen.card_img)),
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
             )
         }
         Column(modifier = Modifier.fillMaxWidth()) {

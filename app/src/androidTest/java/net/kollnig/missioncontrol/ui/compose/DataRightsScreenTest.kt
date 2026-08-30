@@ -25,18 +25,19 @@ class DataRightsScreenTest {
     @Test
     fun rendersOptionalSectionAndForwardsActions() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        var selectedAction = 0
+        val selectedActions = mutableListOf<Int>()
 
         composeRule.setContent {
             TrackerControlTheme {
-                DataRightsScreen(showAdSettings = true) { selectedAction = it }
+                DataRightsScreen(showAdSettings = true) { selectedActions += it }
             }
         }
 
         composeRule.onNodeWithText(context.getString(R.string.personalised_ads)).assertExists()
         composeRule.onNodeWithText(context.getString(R.string.request_data)).performClick()
+        composeRule.onNodeWithText(context.getString(R.string.request_deletion)).performClick()
         composeRule.runOnIdle {
-            assertEquals(R.id.btnReqData, selectedAction)
+            assertEquals(listOf(R.id.btnReqData, R.id.btnReqDeletion), selectedActions)
         }
     }
 }

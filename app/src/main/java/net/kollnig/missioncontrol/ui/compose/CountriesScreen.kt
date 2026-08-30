@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -86,24 +88,27 @@ internal fun CountriesScreenContent(state: CountriesMapState) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            when (state) {
-                CountriesMapState.Loading -> CircularProgressIndicator()
-                CountriesMapState.Failed -> Text(
-                    text = stringResource(R.string.countries_loading_failed),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontStyle = FontStyle.Italic,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                is CountriesMapState.Loaded -> CountryMap(state)
+        when (state) {
+            CountriesMapState.Loading -> Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            CountriesMapState.Failed -> Text(
+                text = stringResource(R.string.countries_loading_failed),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                style = MaterialTheme.typography.bodyMedium,
+                fontStyle = FontStyle.Italic,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            is CountriesMapState.Loaded -> {
+                Spacer(modifier = Modifier.height(8.dp))
+                CountryMap(state, Modifier.weight(1f).fillMaxWidth())
             }
         }
     }
@@ -118,15 +123,17 @@ private fun CountriesScreenPreview() {
 }
 
 @Composable
-private fun CountryMap(state: CountriesMapState.Loaded) {
+private fun CountryMap(
+    state: CountriesMapState.Loaded,
+    modifier: Modifier = Modifier
+) {
     val description = if (state.countryCodes.isEmpty()) {
         stringResource(R.string.countries_map_none)
     } else {
         stringResource(R.string.countries_map_highlighted, state.countryCodes)
     }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .semantics { contentDescription = description }
     ) {
         AndroidView(
