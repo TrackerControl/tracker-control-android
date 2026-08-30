@@ -64,7 +64,7 @@ public class ProfileGeneratorTest {
         TestMullvadGenerator generator = new TestMullvadGenerator(null);
         generator.registerDevice(PUBLIC_KEY, "", IPV6);
 
-        String config = generator.generate(ACCOUNT, "de", reusableConfig(IPV6)).config;
+        String config = generator.generate(ACCOUNT, "de", reusableConfig(IPV6), null, true).config;
 
         assertTrue(config.contains("Address = " + IPV6));
         assertFalse(config.contains("Address = ,"));
@@ -76,7 +76,7 @@ public class ProfileGeneratorTest {
         generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
 
         String config = generator.generate(ACCOUNT, "de",
-                reusableConfig(IPV4 + ", " + IPV6)).config;
+                reusableConfig(IPV4 + ", " + IPV6), null, true).config;
 
         assertTrue(config.contains("Address = " + IPV4 + ", " + IPV6));
     }
@@ -87,7 +87,7 @@ public class ProfileGeneratorTest {
         generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
 
         MullvadProfileGenerator.GeneratedProfile generated =
-                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6));
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6), null, true);
 
         assertFalse(generated.identityReplaced);
         assertEquals(0, generator.createDeviceCalls);
@@ -105,7 +105,7 @@ public class ProfileGeneratorTest {
         generator.registerDevice(key(7), IPV4, IPV6);
 
         MullvadProfileGenerator.GeneratedProfile generated =
-                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6));
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6), null, true);
 
         assertTrue(generated.identityReplaced);
         assertEquals(1, generator.createDeviceCalls);
@@ -116,13 +116,45 @@ public class ProfileGeneratorTest {
     }
 
     @Test
+    public void mullvadReuseDoesNotAskProviderByDefault() throws Exception {
+        // The handshake is the authoritative test of a saved identity, and it
+        // only needs the relay endpoint. Reusing must not depend on reaching
+        // the API host, or a profile that would have worked fails to generate.
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.deviceListFailure = new IOException("API unreachable");
+
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6));
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.fetchWebTokenCalls);
+        assertEquals(0, generator.createDeviceCalls);
+        assertTrue(generated.config.contains("PrivateKey = " + PRIVATE_KEY));
+    }
+
+    @Test
+    public void ivpnReuseDoesNotAskProviderByDefault() throws Exception {
+        TestIvpnGenerator generator = new TestIvpnGenerator(null);
+        generator.sessionStatusFailure = new IOException("API unreachable");
+        WgProfileManager.IvpnSession session = new WgProfileManager.IvpnSession(
+                "token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
+
+        IvpnProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", session);
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.createSessionCalls);
+        assertTrue(generated.config.contains("Address = 10.64.0.9/32"));
+    }
+
+    @Test
     public void mullvadDeviceListFailureDoesNotCreateDevice() throws Exception {
         IOException failure = new IOException("device list failed");
         TestMullvadGenerator generator = new TestMullvadGenerator(null);
         generator.deviceListFailure = failure;
 
         try {
-            generator.generate(ACCOUNT, "de", reusableConfig(IPV4));
+            generator.generate(ACCOUNT, "de", reusableConfig(IPV4), null, true);
             fail("Expected device list failure");
         } catch (IOException ex) {
             assertSame(failure, ex);
@@ -139,7 +171,7 @@ public class ProfileGeneratorTest {
                 "stale-token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
 
         IvpnProfileGenerator.GeneratedProfile generated =
-                generator.generate(ACCOUNT, "de", stale);
+                generator.generate(ACCOUNT, "de", stale, "", "", null, true);
 
         assertTrue(generated.identityReplaced);
         assertEquals(1, generator.createSessionCalls);
@@ -154,7 +186,7 @@ public class ProfileGeneratorTest {
                 "token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
 
         IvpnProfileGenerator.GeneratedProfile generated =
-                generator.generate(ACCOUNT, "de", session);
+                generator.generate(ACCOUNT, "de", session, "", "", null, true);
 
         assertFalse(generated.identityReplaced);
         assertEquals(0, generator.createSessionCalls);
@@ -170,7 +202,7 @@ public class ProfileGeneratorTest {
                 "token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
 
         try {
-            generator.generate(ACCOUNT, "de", session);
+            generator.generate(ACCOUNT, "de", session, "", "", null, true);
             fail("Expected session status failure");
         } catch (IOException ex) {
             assertSame(failure, ex);

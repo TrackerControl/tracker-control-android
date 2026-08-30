@@ -123,16 +123,28 @@ public class MullvadProfileGenerator {
     }
 
     public GeneratedProfile generate(String accountNumber, String requestedCountryCode, String reusableConfig) throws Exception {
-        return generate(accountNumber, requestedCountryCode, reusableConfig, null);
+        return generate(accountNumber, requestedCountryCode, reusableConfig, null, false);
+    }
+
+    public GeneratedProfile generate(String accountNumber, String requestedCountryCode, String reusableConfig,
+                                     String excludeHostname) throws Exception {
+        return generate(accountNumber, requestedCountryCode, reusableConfig, excludeHostname, false);
     }
 
     /**
-     * @param excludeHostname a relay hostname to avoid re-picking when another
-     *                        candidate is available in the chosen pool, e.g. a
-     *                        relay a caller just failed over away from.
+     * @param excludeHostname          a relay hostname to avoid re-picking when another
+     *                                 candidate is available in the chosen pool, e.g. a
+     *                                 relay a caller just failed over away from.
+     * @param verifyReusableIdentity   ask Mullvad whether the saved identity is still
+     *                                 registered before reusing it, and register a fresh
+     *                                 device when it is not. Only for callers that already
+     *                                 know the tunnel does not work: the handshake is the
+     *                                 authoritative test, and it needs nothing but the
+     *                                 relay endpoint, while this asks an API host that a
+     *                                 working tunnel never has to reach.
      */
     public GeneratedProfile generate(String accountNumber, String requestedCountryCode, String reusableConfig,
-                                     String excludeHostname) throws Exception {
+                                     String excludeHostname, boolean verifyReusableIdentity) throws Exception {
         String account = accountNumber == null ? "" : accountNumber.trim();
         if (account.isEmpty())
             throw new IllegalArgumentException("Mullvad account number is required");
@@ -147,11 +159,15 @@ public class MullvadProfileGenerator {
             String publicKey = derivePublicKey(privateKey);
             String token = fetchWebToken(account);
             device = createDevice(token, publicKey);
+        } else if (!verifyReusableIdentity) {
+            privateKey = reusable.getPrivateKey();
+            device = deviceFromConfig(reusable);
         } else {
-            // A saved identity is only reusable while Mullvad still knows it.
-            // Once the device is deleted from the account, reusing its key
-            // yields a tunnel that never completes a handshake, so register a
-            // fresh device instead of inheriting the dead identity.
+            // The caller has already established that this identity does not
+            // work. A saved identity is only usable while Mullvad still knows
+            // it — once the device is deleted from the account, its key never
+            // completes a handshake — so ask, and register a fresh device
+            // rather than inheriting the dead identity.
             String token = fetchWebToken(account);
             JSONObject registered = findDevice(token, publicKeyOf(reusable.getPrivateKey()));
             if (registered == null) {

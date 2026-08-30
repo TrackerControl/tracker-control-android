@@ -126,18 +126,35 @@ public class IvpnProfileGenerator {
                                      WgProfileManager.IvpnSession reusableSession,
                                      String captchaId, String captchaValue)
             throws Exception {
-        return generate(accountNumber, requestedCountryCode, reusableSession, captchaId, captchaValue, null);
+        return generate(accountNumber, requestedCountryCode, reusableSession, captchaId,
+                captchaValue, null, false);
     }
 
-    /**
-     * @param excludeHostname a relay hostname to avoid re-picking when another
-     *                        candidate is available in the chosen pool, e.g. a
-     *                        relay a caller just failed over away from.
-     */
     public GeneratedProfile generate(String accountNumber, String requestedCountryCode,
                                      WgProfileManager.IvpnSession reusableSession,
                                      String captchaId, String captchaValue,
                                      String excludeHostname)
+            throws Exception {
+        return generate(accountNumber, requestedCountryCode, reusableSession, captchaId,
+                captchaValue, excludeHostname, false);
+    }
+
+    /**
+     * @param excludeHostname         a relay hostname to avoid re-picking when another
+     *                                candidate is available in the chosen pool, e.g. a
+     *                                relay a caller just failed over away from.
+     * @param verifyReusableSession   ask IVPN whether the saved session still exists
+     *                                before reusing it, and start a new one when it does
+     *                                not. Only for callers that already know the tunnel
+     *                                does not work: the handshake is the authoritative
+     *                                test, and it needs nothing but the relay endpoint,
+     *                                while this asks an API host that a working tunnel
+     *                                never has to reach.
+     */
+    public GeneratedProfile generate(String accountNumber, String requestedCountryCode,
+                                     WgProfileManager.IvpnSession reusableSession,
+                                     String captchaId, String captchaValue,
+                                     String excludeHostname, boolean verifyReusableSession)
             throws Exception {
         String account = accountNumber == null ? "" : accountNumber.trim();
         if (account.isEmpty())
@@ -146,11 +163,13 @@ public class IvpnProfileGenerator {
         Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         WgProfileManager.IvpnSession session = reusableSession;
         boolean identityReplaced = false;
-        // A saved session is only reusable while IVPN still knows it. Once it
-        // is gone — deleted in the account's device list, or logged out
-        // elsewhere — its key never completes a handshake, so start a new
-        // session rather than inheriting the dead identity.
-        if (session != null && session.isUsable() && !sessionIsRegistered(session.token)) {
+        // The caller has already established that this session does not work.
+        // A saved session is only usable while IVPN still knows it — once it is
+        // gone, deleted in the account's device list or logged out elsewhere,
+        // its key never completes a handshake — so ask, and start a new session
+        // rather than inheriting the dead identity.
+        if (verifyReusableSession && session != null && session.isUsable() &&
+                !sessionIsRegistered(session.token)) {
             session = null;
             identityReplaced = true;
         }

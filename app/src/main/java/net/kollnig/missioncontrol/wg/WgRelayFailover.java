@@ -74,7 +74,11 @@ public class WgRelayFailover {
             if ("mullvad".equals(active.provider)) {
                 String excludeHostname = currentRelayHostname(active.config, MULLVAD_RELAY_PATTERN);
                 MullvadProfileGenerator.GeneratedProfile generated = new MullvadProfileGenerator()
-                        .generate(active.account, active.countryCode, active.config, excludeHostname);
+                        // verify=true: the tunnel is already known broken, so
+                        // this is the fallback where asking Mullvad about the
+                        // identity is worth a round trip.
+                        .generate(active.account, active.countryCode, active.config,
+                                excludeHostname, true);
                 // generate() registers a fresh device when the saved one is
                 // gone from the account; persist that identity regardless of
                 // whether the relay switch below goes through, or the device
@@ -92,7 +96,8 @@ public class WgRelayFailover {
                 String excludeHostname = currentRelayHostname(active.config, IVPN_RELAY_PATTERN);
                 WgProfileManager.IvpnSession session = manager.getIvpnSession(active.account);
                 IvpnProfileGenerator.GeneratedProfile generated = new IvpnProfileGenerator()
-                        .generate(active.account, active.countryCode, session, "", "", excludeHostname);
+                        .generate(active.account, active.countryCode, session, "", "",
+                                excludeHostname, true);
                 // generate() may have had to mint a fresh session (no reusable
                 // one, or the reusable one was stale); persist it regardless of
                 // whether the switch below goes through, or the device/session
