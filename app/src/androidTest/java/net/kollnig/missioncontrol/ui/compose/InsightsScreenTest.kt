@@ -85,7 +85,8 @@ class InsightsScreenTest {
                                 ),
                                 topDomains = listOf(
                                     InsightsListItem("metrics.example.com", 8),
-                                    InsightsListItem("ads.example.net", 5)
+                                    InsightsListItem("ads.example.net", 5),
+                                    InsightsListItem("single.example.org", 1)
                                 )
                             )
                         )
@@ -106,10 +107,15 @@ class InsightsScreenTest {
             .performScrollTo()
             .assertExists()
         composeRule.onNodeWithText("Example Analytics").performScrollTo().assertExists()
+        composeRule.onAllNodes(hasTestTag("insights-reach-card"), useUnmergedTree = true)
+            .assertCountEquals(1)
         composeRule.onNodeWithText(context.getString(R.string.insights_top_domains))
             .performScrollTo()
             .assertExists()
         composeRule.onNodeWithText("metrics.example.com").performScrollTo().assertExists()
+        composeRule.onNodeWithText(
+            context.resources.getQuantityString(R.plurals.insights_apps_count, 1, 1)
+        ).performScrollTo().assertExists()
         composeRule.onNodeWithContentDescription(context.getString(R.string.insights_share))
             .performClick()
         composeRule.runOnIdle {

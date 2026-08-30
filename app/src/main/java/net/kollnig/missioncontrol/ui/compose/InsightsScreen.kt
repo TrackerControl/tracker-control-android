@@ -40,8 +40,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
@@ -220,35 +220,44 @@ private fun PopulatedContent(
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+        contentPadding = PaddingValues(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item(key = "overview") {
-            InsightsOverviewCard(data, callbacks::onShare)
+            InsightsOverviewCard(
+                data = data,
+                onShare = callbacks::onShare,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
         item(key = "reach") {
-            InsightsReachCard(data)
+            InsightsReachCard(
+                data = data,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
         item(key = "pervasive-heading") {
-            InsightsSectionHeading(stringResource(R.string.insights_pervasive_trackers))
+            DetailsSectionHeading(text = stringResource(R.string.insights_pervasive_trackers))
         }
         item(key = "pervasive-list") {
             InsightsListCard(
                 items = data.pervasiveTrackers,
                 showAsAppCount = true,
-                progressColor = MaterialTheme.colorScheme.error,
-                progressTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                progressColor = MaterialTheme.colorScheme.primary,
+                progressTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
         item(key = "domains-heading") {
-            InsightsSectionHeading(stringResource(R.string.insights_top_domains))
+            DetailsSectionHeading(text = stringResource(R.string.insights_top_domains))
         }
         item(key = "domains-list") {
             InsightsListCard(
                 items = data.topDomains,
                 showAsAppCount = true,
-                progressColor = MaterialTheme.colorScheme.secondary,
-                progressTrackColor = MaterialTheme.colorScheme.surfaceVariant
+                progressColor = MaterialTheme.colorScheme.primary,
+                progressTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
         item(key = "bottom-spacer") {
@@ -260,7 +269,8 @@ private fun PopulatedContent(
 @Composable
 private fun InsightsOverviewCard(
     data: InsightsScreenData,
-    onShare: () -> Unit
+    onShare: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val statusText = stringResource(
         R.string.insights_overview_status,
@@ -270,7 +280,7 @@ private fun InsightsOverviewCard(
         stringResource(R.string.insights_allowed)
     )
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .testTag("insights-hero"),
         shape = RoundedCornerShape(24.dp),
@@ -370,9 +380,14 @@ private fun InsightsOverviewCard(
 }
 
 @Composable
-private fun InsightsReachCard(data: InsightsScreenData) {
+private fun InsightsReachCard(
+    data: InsightsScreenData,
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag("insights-reach-card"),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onSurface
@@ -443,27 +458,15 @@ private fun InsightReachMetric(
 }
 
 @Composable
-private fun InsightsSectionHeading(text: String) {
-    Text(
-        text = text,
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics { heading() },
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.onBackground
-    )
-}
-
-@Composable
 private fun InsightsListCard(
     items: List<InsightsListItem>,
     showAsAppCount: Boolean,
     progressColor: Color,
-    progressTrackColor: Color
+    progressTrackColor: Color,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
@@ -531,7 +534,7 @@ private fun InsightListRow(
             )
             Text(
                 text = if (showAsAppCount) {
-                    stringResource(R.string.insights_in_apps, item.count)
+                    pluralStringResource(R.plurals.insights_apps_count, item.count, item.count)
                 } else {
                     formatNumber(item.count)
                 },
