@@ -23,4 +23,11 @@
     <color name="trackerFeedBackground">#000000</color>
     <color name="trackerFeedSectionBackground">#242424</color>
     <color name="trackerFeedDivider">#424242</color>
+
+    <color name="bottom_nav_background">#000000</color>
+    <color name="bottom_nav_active_indicator">#5B1B1B</color>
+
+    <style name="TrackerControlBottomNavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/bottom_nav_active_indicator</item>
+    </style>
 </resources>

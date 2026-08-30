@@ -273,7 +273,7 @@ internal fun TimelineScreenContent(
         model.rows.forEachIndexed { index, row ->
             item(key = row.key) {
                 when (row) {
-                    is TimelineRow.Section -> TimelineSectionHeading(row.title)
+                    is TimelineRow.Section -> DetailsSectionHeading(text = row.title)
                     is TimelineRow.App -> {
                         val next = model.rows.getOrNull(index + 1)
                         val showDivider = next is TimelineRow.App &&
@@ -604,19 +604,6 @@ private fun TimelineHintContent(callbacks: TimelineScreenCallbacks) {
 }
 
 @Composable
-private fun TimelineSectionHeading(title: String) {
-    Text(
-        text = title,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .semantics { heading() },
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary
-    )
-}
-
-@Composable
 private fun TimelineAppRow(
     row: TimelineRow.App,
     showDivider: Boolean,
@@ -782,9 +769,17 @@ private fun timelineRows(entries: List<TimelineEntry>, context: Context): List<T
             blockedCount > 0 && allowedCount > 0 ->
                 context.getString(R.string.timeline_summary_mixed, blockedCount, allowedCount)
             blockedCount > 0 ->
-                context.getString(R.string.timeline_summary_all_blocked, blockedCount)
+                context.resources.getQuantityString(
+                    R.plurals.timeline_trackers_blocked,
+                    blockedCount,
+                    blockedCount
+                )
             else ->
-                context.getString(R.string.timeline_summary_none_blocked, allowedCount)
+                context.resources.getQuantityString(
+                    R.plurals.timeline_trackers_allowed,
+                    allowedCount,
+                    allowedCount
+                )
         }
         val contacts = entry.trackers.take(3).map { tracker ->
             val statusLabel = context.getString(

@@ -34,6 +34,12 @@
     <string name="timeline_tracker_allowed">Lubatud</string>
     <string name="timeline_summary_all_blocked">%d jälitajat on blokeeritud</string>
     <string name="timeline_summary_none_blocked">%d jälitajat on lubatud</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="other">%d jälitajat on blokeeritud</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="other">%d jälitajat on lubatud</item>
+    </plurals>
     <string name="timeline_summary_mixed">%1$d blokeeritud · %2$d lubatud</string>
     <string name="troubleshooting_title">Veaotsing</string>
     <string name="troubleshooting_battery_title">Akukasutuse optimeerimine</string>
