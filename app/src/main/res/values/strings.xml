@@ -178,6 +178,8 @@
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
     <string name="setting_wg_profile_save">Save profile</string>
     <string name="setting_wg_profile_delete">Delete profile</string>
+    <string name="accessibility_wg_profile_edit">Edit WireGuard profile %1$s</string>
+    <string name="accessibility_wg_profile_delete">Delete WireGuard profile %1$s</string>
     <string name="setting_wireguard">WireGuard (preview)</string>
     <string name="setting_wg_status">Status</string>
     <string name="setting_vpn_key_rotate_now">Rotate VPN provider keys now</string>
