@@ -65,6 +65,7 @@
         <item quantity="other">Show %d more companies</item>
     </plurals>
     <string name="feed_allow_company_in_app">Allow %1$s in %2$s</string>
+    <string name="feed_block_company_in_app">Block %1$s in %2$s</string>
     <string name="feed_allowed_by_you">Allowed by you</string>
     <string name="feed_allowed_shared_ip">Allowed · shared IP</string>
     <string name="feed_monitored">Monitored</string>
