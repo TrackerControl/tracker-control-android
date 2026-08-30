@@ -139,6 +139,9 @@ object WgEgress {
     // afterwards and would otherwise overwrite it with "unresponsive". Cleared
     // once a handshake proves the tunnel works, or when it is torn down.
     @Volatile private var providerFailureReason: String? = null
+    // What the in-flight failover has learned so far, not yet applied. See
+    // [reportProviderFailure].
+    @Volatile private var pendingProviderFailure: String? = null
     @Volatile private var verificationGeneration: Long = 0
     @Volatile private var currentConfig: String? = null
     private var currentTunFd: Int = -1
@@ -526,9 +529,11 @@ object WgEgress {
             return
         }
         val resolved = java.util.concurrent.atomic.AtomicBoolean(false)
+        pendingProviderFailure = null
         val timeoutRunnable = Runnable {
             if (resolved.compareAndSet(false, true)) {
                 failoverInFlight.set(false)
+                pendingProviderFailure = null
                 if (isCurrent(expected)) {
                     Log.w(TAG, "relay failover timed out after ${FAILOVER_TIMEOUT_MS}ms; falling back to backoff")
                     scheduleRestart(attempt)
@@ -547,8 +552,18 @@ object WgEgress {
                     failoverInFlight.set(false)
                 }
                 verifyHandler.removeCallbacks(timeoutRunnable)
+                val refusal = pendingProviderFailure
+                pendingProviderFailure = null
                 if (!resolved.compareAndSet(false, true)) return@execute
                 if (!isCurrent(expected)) return@execute
+                if (refusal != null) {
+                    // The provider explained why this tunnel cannot come up.
+                    // Publishing it here, on the tunnel it belongs to, both
+                    // notifies now and outlives the generic recovery check.
+                    providerFailureReason = refusal
+                    lastError = refusal
+                    notifyStateChanged()
+                }
                 if (switched) {
                     Log.w(TAG, "relay failover: switched the active profile to a different server")
                     restartAttempts = 0
@@ -560,6 +575,7 @@ object WgEgress {
         } catch (e: java.util.concurrent.RejectedExecutionException) {
             verifyHandler.removeCallbacks(timeoutRunnable)
             failoverInFlight.set(false)
+            pendingProviderFailure = null
             if (resolved.compareAndSet(false, true)) scheduleRestart(attempt)
         }
     }
@@ -675,7 +691,13 @@ object WgEgress {
      * message the recovery check would otherwise post over it.
      */
     fun reportProviderFailure(reason: String?) {
-        providerFailureReason = reason?.takeIf { it.isNotBlank() }
+        // Staged rather than applied: the failover that learned this runs
+        // off-thread and can finish after its tunnel was replaced — the user
+        // switched profiles, or turned WireGuard off. [tryRelayFailover]
+        // commits it only while that tunnel is still current, so a refusal
+        // from an abandoned attempt cannot surface against the profile the
+        // user moved to.
+        pendingProviderFailure = reason?.takeIf { it.isNotBlank() }
     }
 
     fun latestHandshakeMillisOrNull(): Long? =
@@ -821,6 +843,7 @@ object WgEgress {
         // here kept a stopped tunnel reporting its final error forever.
         lastError = null
         providerFailureReason = null
+        pendingProviderFailure = null
         if (t != null) {
             try {
                 t.stop()
@@ -871,6 +894,7 @@ object WgEgress {
         verificationGeneration++
         recoveryNotificationGeneration++
         providerFailureReason = null
+        pendingProviderFailure = null
         forceRestartPending = false
         pendingRestartTunnel = null
         pendingRestartTunnelGeneration = -1

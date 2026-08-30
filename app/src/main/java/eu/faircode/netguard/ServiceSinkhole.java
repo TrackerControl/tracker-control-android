@@ -2211,16 +2211,18 @@ public class ServiceSinkhole extends VpnService {
 
                             @Override
                             public void onProviderRejected(String providerLabel, String message) {
-                                String detail = getString(R.string.msg_wg_provider_rejected,
-                                        providerLabel, message == null ? "" : message);
-                                // Record it before notifying: the recovery check
-                                // fires 30s after the restart that triggered this
-                                // failover and reposts on the same notification id,
-                                // so without this it would replace the provider's
-                                // explanation with "tunnel unresponsive".
+                                // Handing this to WgEgress rather than
+                                // notifying from here is deliberate: this runs
+                                // mid-failover, off-thread, and the tunnel it
+                                // describes may already have been replaced.
+                                // WgEgress publishes it against the tunnel it
+                                // belongs to, which notifies through the state
+                                // listener and outlives the generic recovery
+                                // check that would otherwise overwrite it.
                                 net.kollnig.missioncontrol.wg.WgEgress.INSTANCE
-                                        .reportProviderFailure(detail);
-                                showWireGuardErrorNotification(detail);
+                                        .reportProviderFailure(getString(
+                                                R.string.msg_wg_provider_rejected, providerLabel,
+                                                message == null ? "" : message));
                             }
                         }));
         jni_wireguard_required(prefs.getBoolean("wg_enabled", false)
