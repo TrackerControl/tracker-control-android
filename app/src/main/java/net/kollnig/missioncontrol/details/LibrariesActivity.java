@@ -76,6 +76,7 @@ public class LibrariesActivity extends AppCompatActivity {
     private LibrariesScreenController screenController;
     private final Map<String, String> trackerWebsites = new HashMap<>();
     private final ExecutorService trackerMetadataExecutor = Executors.newSingleThreadExecutor();
+    private boolean trackerMetadataLoading = true;
     private String currentTrackerResult;
     private boolean currentTrackerResultStale;
     private boolean trackerResultVisible;
@@ -201,6 +202,7 @@ public class LibrariesActivity extends AppCompatActivity {
                     return;
                 trackerWebsites.clear();
                 trackerWebsites.putAll(websites);
+                trackerMetadataLoading = false;
                 if (trackerResultVisible && currentTrackerResult != null)
                     renderTrackerResult(currentTrackerResult, currentTrackerResultStale);
                 else
@@ -400,6 +402,7 @@ public class LibrariesActivity extends AppCompatActivity {
         return new LibrariesScreenModel(
                 explanation,
                 result,
+                trackerMetadataLoading,
                 progress,
                 getString(analyzeText),
                 analyzeEnabled);

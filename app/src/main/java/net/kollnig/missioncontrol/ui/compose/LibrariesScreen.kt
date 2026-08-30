@@ -9,15 +9,18 @@ package net.kollnig.missioncontrol.ui.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -27,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -45,6 +49,7 @@ import net.kollnig.missioncontrol.R
 data class LibrariesScreenModel(
     val explanation: String,
     val result: LibrariesResult?,
+    val metadataLoading: Boolean,
     val progress: LibrariesProgress?,
     val actionText: String,
     val actionEnabled: Boolean
@@ -134,14 +139,27 @@ internal fun LibrariesScreenContent(
                     )
                 }
                 item(key = "result-source") {
-                    Text(
-                        text = stringResource(R.string.tracker_libraries_source),
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.tracker_libraries_source),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (model.metadataLoading) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .testTag("libraries-metadata-loading"),
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
                 }
                 itemsIndexed(
                     items = result.libraries,
@@ -265,11 +283,7 @@ private fun LibraryListItem(
             Text(
                 text = library.name,
                 style = MaterialTheme.typography.bodyLarge,
-                color = if (website != null) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                }
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         trailingContent = if (website != null) {
@@ -302,6 +316,7 @@ private fun LibrariesScreenPreview() {
                     rawText = null,
                     disclaimer = "Detection does not mean that a library is actively used."
                 ),
+                metadataLoading = false,
                 progress = null,
                 actionText = "Analyse tracker libraries",
                 actionEnabled = true

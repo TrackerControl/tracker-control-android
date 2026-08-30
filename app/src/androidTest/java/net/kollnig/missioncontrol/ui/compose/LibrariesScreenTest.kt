@@ -44,6 +44,7 @@ class LibrariesScreenTest {
                             rawText = null,
                             disclaimer = "Disclaimer"
                         ),
+                        metadataLoading = true,
                         progress = null,
                         actionText = "Analyse tracker libraries",
                         actionEnabled = true
@@ -64,6 +65,7 @@ class LibrariesScreenTest {
         composeRule.onNodeWithText(
             context.getString(R.string.detected_tracker_libraries_heading)
         ).assertExists()
+        composeRule.onNode(hasTestTag("libraries-metadata-loading")).assertExists()
         composeRule.onNodeWithText("Analyse tracker libraries").performClick()
         composeRule.onNodeWithContentDescription(
             context.getString(R.string.open_tracker_website, "Example Analytics")
