@@ -627,6 +627,8 @@ Sincerely,\n\n]]></string>
     <string name="countries">Destination Countries</string>
     <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
     <string name="countries_loading_failed">Oops.. The country map failed to load. Please tell tc@kollnig.net how this happened.</string>
+    <string name="countries_map_highlighted">Tracking destinations highlighted: %1$s</string>
+    <string name="countries_map_none">No tracking destinations are highlighted.</string>
 
     <string name="tracker_advertising">Advertising</string>
     <string name="tracker_analytics">Analytics</string>

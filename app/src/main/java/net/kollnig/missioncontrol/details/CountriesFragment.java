@@ -22,18 +22,17 @@ import static net.kollnig.missioncontrol.data.TrackerList.findTracker;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Picture;
-import android.graphics.drawable.PictureDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.fragment.app.Fragment;
 
 import com.caverock.androidsvg.RenderOptions;
@@ -46,10 +45,14 @@ import com.maxmind.geoip2.model.CountryResponse;
 import com.maxmind.geoip2.record.Country;
 
 import net.kollnig.missioncontrol.R;
+import net.kollnig.missioncontrol.ui.compose.CountriesScreen;
+import net.kollnig.missioncontrol.ui.compose.CountriesScreenController;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 import eu.faircode.netguard.DatabaseHelper;
@@ -58,6 +61,9 @@ public class CountriesFragment extends Fragment {
     private static final String ARG_APP_UID = "app-uid";
     private final String TAG = CountriesFragment.class.getSimpleName();
     private int mAppUid;
+    private CountriesScreenController screenController;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private int viewGeneration;
 
     public CountriesFragment() {
         // Required empty public constructor
@@ -88,13 +94,16 @@ public class CountriesFragment extends Fragment {
      * @return A list of seen trackers
      */
     public synchronized Map<String, Integer> getHostCountriesCount(int uid) {
-        Map<String, Integer> countryToCount = new ArrayMap<>();
-
         Context context = getContext();
         if (context == null)
-            return countryToCount;
+            return new ArrayMap<>();
+        return getHostCountriesCount(context, uid);
+    }
 
-        DatabaseHelper dh = DatabaseHelper.getInstance(getContext());
+    private synchronized Map<String, Integer> getHostCountriesCount(Context context, int uid) {
+        Map<String, Integer> countryToCount = new ArrayMap<>();
+
+        DatabaseHelper dh = DatabaseHelper.getInstance(context);
         try (Cursor cursor = dh.getHosts(uid)) {
             InputStream database = context.getAssets().open("GeoLite2-Country.mmdb");
             try (DatabaseReader reader = new DatabaseReader.Builder(database).withCache(new CHMCache()).build()) {
@@ -136,28 +145,22 @@ public class CountriesFragment extends Fragment {
         assert arguments != null;
         mAppUid = arguments.getInt(ARG_APP_UID);
 
-        ProgressBar pbLoading = v.findViewById(R.id.pbLoading);
-
-        ImageView mv = v.findViewById(R.id.svgView);
-        TextView txtFailure = v.findViewById(R.id.txtFailure);
-
-        new Thread(() -> {
-            showCountriesMap(pbLoading, mv, txtFailure);
-        }).start();
+        ComposeView composeCountries = v.findViewById(R.id.composeCountries);
+        screenController = CountriesScreen.install(composeCountries);
+        int generation = ++viewGeneration;
+        Context context = requireContext().getApplicationContext();
+        int uid = mAppUid;
+        new Thread(() -> loadCountriesMap(context, uid, generation)).start();
     }
 
     /**
-     * Show a country map of the tracking destinations
-     *
-     * @param pbLoading  A progress bar to show progress
-     * @param mv         An image view to render the resulting country map
-     * @param txtFailure A text view to show a message in case of failure
+     * Load the country map while Compose owns only the presentation state.
      */
-    private void showCountriesMap(ProgressBar pbLoading, ImageView mv, TextView txtFailure) {
+    private void loadCountriesMap(Context context, int uid, int generation) {
         try {
-            SVG svg = SVG.getFromAsset(requireContext().getAssets(), "world.svg");
+            SVG svg = SVG.getFromAsset(context.getAssets(), "world.svg");
 
-            Map<String, Integer> hostCountriesCount = getHostCountriesCount(mAppUid);
+            Map<String, Integer> hostCountriesCount = getHostCountriesCount(context, uid);
 
             final RenderOptions renderOptions = new RenderOptions();
             String countries = TextUtils.join(",#", hostCountriesCount.keySet());
@@ -168,19 +171,33 @@ public class CountriesFragment extends Fragment {
             // malformed-CSS exception is caught by the outer try below rather
             // than crashing the UI thread.
             final Picture picture = svg.renderToPicture(renderOptions);
-
-            mv.post(() -> {
-                mv.setImageDrawable(new PictureDrawable(picture));
-                pbLoading.setVisibility(View.GONE);
-            });
+            ArrayList<String> countryCodes = new ArrayList<>(hostCountriesCount.keySet());
+            Collections.sort(countryCodes);
+            postMap(picture, TextUtils.join(", ", countryCodes), generation);
         } catch (IllegalStateException | IOException | SVGParseException e) {
             e.printStackTrace();
-
-            mv.post(() -> {
-                mv.setVisibility(View.GONE);
-                txtFailure.setVisibility(View.VISIBLE);
-                pbLoading.setVisibility(View.GONE);
-            });
+            postFailure(generation);
         }
+    }
+
+    private void postMap(Picture picture, String countryCodes, int generation) {
+        mainHandler.post(() -> {
+            if (generation == viewGeneration && screenController != null)
+                screenController.showMap(picture, countryCodes);
+        });
+    }
+
+    private void postFailure(int generation) {
+        mainHandler.post(() -> {
+            if (generation == viewGeneration && screenController != null)
+                screenController.showFailure();
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        viewGeneration++;
+        screenController = null;
+        super.onDestroyView();
     }
 }
