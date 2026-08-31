@@ -165,6 +165,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
     private int privateDnsWarningState = ServiceSinkhole.PRIVATE_DNS_WARNING_NONE;
     private int privateDnsWarningQueryGeneration;
+    private Boolean lastLocalNetworkGrant;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -616,6 +617,14 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         if (tvLocalNetwork != null)
             tvLocalNetwork.setVisibility(
                     LocalNetworkAccess.isMissing(this) ? View.VISIBLE : View.GONE);
+        boolean localNetworkGranted = LocalNetworkAccess.isGranted(this);
+        if (lastLocalNetworkGrant != null && !lastLocalNetworkGrant && localNetworkGranted)
+            ServiceSinkhole.reload("permission granted", this, false);
+        lastLocalNetworkGrant = localNetworkGranted;
+        if (dialogTroubleshooting != null && dialogTroubleshooting.isShowing() &&
+                dialogTroubleshooting.getWindow() != null)
+            renderLocalNetworkAccess(dialogTroubleshooting.getWindow().getDecorView(),
+                    LocalNetworkAccess.isEnforced(), localNetworkGranted);
 
         // Only while we are actually filtering: with the VPN off, port 853 is
         // not blocked and a pinned resolver works fine.
@@ -914,12 +923,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         } else if (requestCode == REQUEST_LOCAL_NETWORK) {
             boolean granted = (grantResults.length > 0 &&
                     grantResults[0] == PackageManager.PERMISSION_GRANTED);
+            lastLocalNetworkGrant = LocalNetworkAccess.isGranted(this);
             TextView tvLocalNetwork = findViewById(R.id.tvLocalNetwork);
             if (tvLocalNetwork != null)
                 // Derived, not inferred from the grant result: the row is about
                 // the configuration needing access, which onResume decides too.
                 tvLocalNetwork.setVisibility(
                         LocalNetworkAccess.isMissing(this) ? View.VISIBLE : View.GONE);
+            if (dialogTroubleshooting != null && dialogTroubleshooting.isShowing() &&
+                    dialogTroubleshooting.getWindow() != null)
+                renderLocalNetworkAccess(dialogTroubleshooting.getWindow().getDecorView(),
+                        LocalNetworkAccess.isEnforced(), LocalNetworkAccess.isGranted(this));
             if (granted)
                 // The tunnel keeps its sockets across a reload, but the native
                 // engine reopens them, so LAN destinations become reachable.
@@ -1450,6 +1464,15 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             view.findViewById(R.id.tvDataSaverStatus).setVisibility(View.VISIBLE);
         }
 
+        renderLocalNetworkAccess(view, LocalNetworkAccess.isEnforced(),
+                LocalNetworkAccess.isGranted(this));
+        view.findViewById(R.id.btnLocalNetworkAccess).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestPermissions(new String[] { LocalNetworkAccess.PERMISSION }, REQUEST_LOCAL_NETWORK);
+            }
+        });
+
         // VPN settings button
         view.findViewById(R.id.btnVpnSettings).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1474,6 +1497,17 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 })
                 .create();
         dialogTroubleshooting.show();
+    }
+
+    static void renderLocalNetworkAccess(View popupRoot, boolean enforced, boolean granted) {
+        View section = popupRoot.findViewById(R.id.localNetworkAccessSection);
+        View action = popupRoot.findViewById(R.id.btnLocalNetworkAccess);
+        View status = popupRoot.findViewById(R.id.tvLocalNetworkAccessStatus);
+
+        boolean showSection = enforced;
+        section.setVisibility(showSection ? View.VISIBLE : View.GONE);
+        action.setVisibility(showSection && !granted ? View.VISIBLE : View.GONE);
+        status.setVisibility(showSection && granted ? View.VISIBLE : View.GONE);
     }
 
     private void menu_legend() {

@@ -147,7 +147,6 @@
     <string name="vpn_ivpn_captcha_hint">Chữ CAPTCHA</string>
     <string name="vpn_account_save">Lưu</string>
     <string name="vpn_account_saved">Tài khoản đã được lưu</string>
-    <string name="vpn_wireguard_profiles">Hồ sơ WireGuard</string>
     <string name="vpn_no_wireguard_profiles">Chưa có hồ số WireGuard tùy chỉnh</string>
     <string name="vpn_import_wireguard_profile">Nhập hồ số WireGuard</string>
     <string name="vpn_manage_wireguard_profiles">Quản lý các hồ sơ WireGuard</string>

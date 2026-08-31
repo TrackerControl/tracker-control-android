@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Stable Java/Compose bridge IDs retained from fragment_actions.xml. -->
+    <item name="btnAdSettings" type="id" />
+    <item name="btnReqData" type="id" />
+    <item name="btnReqDeletion" type="id" />
+    <item name="btnContactDev" type="id" />
+    <item name="btnContactGoogle" type="id" />
+    <item name="btnContactOfficials" type="id" />
+</resources>

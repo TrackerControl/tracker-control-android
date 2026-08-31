@@ -48,8 +48,6 @@
     <string name="timeline_more_trackers">+%d meer</string>
     <string name="timeline_tracker_blocked">Geblokkeerd</string>
     <string name="timeline_tracker_allowed">Toegestaan</string>
-    <string name="timeline_summary_all_blocked">%d trackers geblokkeerd</string>
-    <string name="timeline_summary_none_blocked">%d trackers toegestaan</string>
     <string name="timeline_summary_mixed">%1$d geblokkeerd · %2$d toegestaan</string>
     <string name="troubleshooting_title">Problemen oplossen</string>
     <string name="troubleshooting_battery_title">Batterijoptimalisatie</string>

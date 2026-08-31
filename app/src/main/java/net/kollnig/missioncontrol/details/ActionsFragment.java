@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.compose.ui.platform.ComposeView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.fragment.app.Fragment;
@@ -40,6 +41,7 @@ import net.kollnig.missioncontrol.Common;
 import net.kollnig.missioncontrol.DetailsActivity;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.PlayStore;
+import net.kollnig.missioncontrol.ui.compose.ActionsScreen;
 
 import eu.faircode.netguard.Util;
 
@@ -48,7 +50,7 @@ import eu.faircode.netguard.Util;
  * Use the {@link ActionsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ActionsFragment extends Fragment implements View.OnClickListener {
+public class ActionsFragment extends Fragment {
     private static final String ARG_APP_ID = "app-id";
     private static final String ARG_APP_NAME = "app-name";
     private final String TAG = ActionsFragment.class.getSimpleName();
@@ -89,39 +91,29 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
         appId = arguments.getString(ARG_APP_ID);
         appName = arguments.getString(ARG_APP_NAME);
 
-        // Set up buttons
-        v.findViewById(R.id.btnAdSettings).setOnClickListener(this);
-        v.findViewById(R.id.btnReqData).setOnClickListener(this);
-        v.findViewById(R.id.btnReqDeletion).setOnClickListener(this);
-        v.findViewById(R.id.btnContactDev).setOnClickListener(this);
-        v.findViewById(R.id.btnContactGoogle).setOnClickListener(this);
-        v.findViewById(R.id.btnContactOfficials).setOnClickListener(this);
-
-        if (!Common.hasAdSettings(getContext()))
-            v.findViewById(R.id.adsettings_card).setVisibility(View.GONE);
-
+        ComposeView composeActions = v.findViewById(R.id.composeActions);
+        ActionsScreen.install(
+                composeActions,
+                Common.hasAdSettings(getContext()),
+                actionId -> handleAction(composeActions, actionId));
     }
 
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
+    private void handleAction(View anchor, int id) {
         if (id == R.id.btnAdSettings) {
             if (Common.hasAdSettings(getContext())) {
                 startActivity(Common.adSettings());
             } else {
-                View vx = getView();
-                if (vx != null)
-                    Snackbar.make(vx, R.string.play_services_required, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(anchor, R.string.play_services_required, Snackbar.LENGTH_LONG).show();
             }
         } else if (id == R.id.btnReqData || id == R.id.btnReqDeletion || id == R.id.btnContactDev) {
             if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null) {
                 String mail = DetailsActivity.app.developerMail;
-                contactDeveloper(v, mail);
+                contactDeveloper(id, mail);
                 return;
             }
 
             if (Util.isFDroidInstall()) {
-                contactDeveloper(v, null);
+                contactDeveloper(id, null);
                 return;
             }
 
@@ -146,14 +138,14 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
                                     if (DetailsActivity.app != null && DetailsActivity.app.developerMail != null)
                                         mail = DetailsActivity.app.developerMail;
 
-                                    contactDeveloper(v, mail);
+                                    contactDeveloper(id, mail);
                                 }
                             });
                         }).start();
                         dialog.dismiss();
                     })
                     .setNegativeButton(R.string.no, (dialog, id2) -> {
-                        contactDeveloper(v, null);
+                        contactDeveloper(id, null);
                         dialog.dismiss();
                     });
             AlertDialog dialog = builder.create();
@@ -171,17 +163,17 @@ public class ActionsFragment extends Fragment implements View.OnClickListener {
     /**
      * Create GDPR subject access request
      *
-     * @param v    Current view
+     * @param actionId Selected Compose action
      * @param mail Email address of contact, e.g. app developer
      */
-    private void contactDeveloper(View v, String mail) {
+    private void contactDeveloper(int actionId, String mail) {
         String subject = null, body = null;
-        if (v.getId() == R.id.btnReqData) {
+        if (actionId == R.id.btnReqData) {
             subject = getString(R.string.subject_request_data);
             body = getString(R.string.body_request_data, appName, appId);
         }
 
-        if (v.getId() == R.id.btnReqDeletion) {
+        if (actionId == R.id.btnReqDeletion) {
             subject = getString(R.string.subject_request_data);
             body = getString(R.string.body_delete_data, appName, appId);
         }

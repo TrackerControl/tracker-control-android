@@ -28,6 +28,55 @@ import net.kollnig.missioncontrol.Common
 import net.kollnig.missioncontrol.R
 import java.util.Locale
 
+/** One observed TLD+1 domain and the apps that contacted it. */
+internal data class DomainObservation(
+    val aliases: Set<String>,
+    val appUids: Set<Int>
+)
+
+/** A deterministic domain row for the Insights screen. */
+internal data class AggregatedDomain(
+    val label: String,
+    val appCount: Int
+)
+
+/** How many aliases a single domain label may name before it is truncated. */
+private const val MAX_LABEL_ALIASES = 2
+
+/** Merge observations that share a domain label, counting each UID once. */
+internal fun aggregateDomainObservations(
+    observations: Iterable<DomainObservation>,
+    limit: Int = 20,
+    // The provider is a plain class rather than a Context wrapper, so the
+    // caller resolves the localised separator and passes it in.
+    aliasSeparator: String = " or "
+): List<AggregatedDomain> {
+    if (limit <= 0) return emptyList()
+
+    // Group by the label the row will actually show, not by the alias set.
+    // Truncation makes {a, b, c} and {a, b, d} indistinguishable on screen, so
+    // grouping by alias set would list the same label twice with two different
+    // app counts and no way to tell the rows apart. Their apps are counted
+    // together instead, which is what a reader of the shared label expects.
+    val groups = linkedMapOf<String, MutableSet<Int>>()
+    observations.forEach { observation ->
+        val aliases = observation.aliases
+            .filter { it.isNotBlank() }
+            .sorted()
+        if (aliases.isEmpty()) return@forEach
+
+        // Cap the joined label at two aliases: the Insights row is a single
+        // line, and a longer join simply overflows it.
+        val label = aliases.take(MAX_LABEL_ALIASES).joinToString(aliasSeparator)
+        groups.getOrPut(label) { mutableSetOf() }.addAll(observation.appUids)
+    }
+
+    return groups
+        .map { (label, appUids) -> AggregatedDomain(label, appUids.size) }
+        .sortedWith(compareByDescending<AggregatedDomain> { it.appCount }.thenBy { it.label })
+        .take(limit)
+}
+
 /**
  * Provider class that computes InsightsData from the database.
  * Aggregates tracking statistics for the past 7 days.
@@ -206,28 +255,22 @@ class InsightsDataProvider(context: Context) {
             .map { Pair(it.key, it.value.size) }
             .toMutableList()
 
-        // Build top domains list (by number of apps)
-        // Group by TLD+1 (e.g., ads.google.com -> google.com) to reduce clutter
-        // For uncertain entries, show alternate tracker domains inline
-        val tldPlusOneToApps = mutableMapOf<String, MutableSet<Int>>()
-
-        for ((daddr, uids) in domainToApps) {
-            val tldPlusOne = extractTldPlusOne(daddr)
-            
-            // Build label - for uncertain domains, show alternates
-            val label = if (uncertainDomains.contains(daddr)) {
-                buildUncertainLabel(daddr, tldPlusOne)
-            } else {
-                tldPlusOne
+        // Build top domains list (by number of apps), naming every uncertain
+        // domain by the alternatives it could stand for.
+        val domainObservations = domainToApps.map { (daddr, uids) ->
+            val primary = extractTldPlusOne(daddr)
+            val aliases = mutableSetOf(primary)
+            if (uncertainDomains.contains(daddr)) {
+                aliases += getTrackerAlternateTldPlusOnes(daddr, primary)
             }
-            
-            tldPlusOneToApps.getOrPut(label) { mutableSetOf() }.addAll(uids)
+            DomainObservation(aliases = aliases, appUids = uids)
         }
-        
-        data.topDomains = tldPlusOneToApps.entries
-            .sortedByDescending { it.value.size }
-            .take(20)
-            .map { Pair(it.key, it.value.size) }
+
+        data.topDomains = aggregateDomainObservations(
+            domainObservations,
+            aliasSeparator = context.getString(R.string.insights_domain_alias_separator)
+        )
+            .map { Pair(it.label, it.appCount) }
             .toMutableList()
 
         return data
@@ -274,32 +317,24 @@ class InsightsDataProvider(context: Context) {
             suffix
     }
     
-    /**
-     * Build a label for uncertain entries showing alternate tracker domains.
-     * E.g., "google.com (or doubleclick.net)"
-     */
-    private fun buildUncertainLabel(daddr: String, tldPlusOne: String): String {
+    /** Return tracker alternate TLD+1 values for an uncertain observation. */
+    private fun getTrackerAlternateTldPlusOnes(
+        daddr: String,
+        primary: String
+    ): Set<String> {
         val alternateTldPlusOnes = mutableSetOf<String>()
-        
-        // Query alternate domains that share the same IP
         databaseHelper.getAlternateQNames(daddr).use { altCursor ->
             if (altCursor != null && altCursor.moveToFirst()) {
                 do {
                     val altDomain = altCursor.getString(0)
-                    // Only include if it's a different TLD+1 and is a tracker
                     val altTldPlusOne = extractTldPlusOne(altDomain)
-                    if (altTldPlusOne != tldPlusOne && TrackerList.findTracker(altDomain) != null) {
+                    if (altTldPlusOne != primary && TrackerList.findTracker(altDomain) != null) {
                         alternateTldPlusOnes.add(altTldPlusOne)
                     }
                 } while (altCursor.moveToNext())
             }
         }
-        
-        return if (alternateTldPlusOnes.isNotEmpty()) {
-            "$tldPlusOne (or ${alternateTldPlusOnes.sorted().take(2).joinToString(", ")})"
-        } else {
-            tldPlusOne
-        }
+        return alternateTldPlusOnes
     }
 
     private fun isTrackerContactBlocked(

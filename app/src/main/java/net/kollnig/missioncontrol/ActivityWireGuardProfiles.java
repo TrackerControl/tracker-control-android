@@ -1,6 +1,5 @@
 package net.kollnig.missioncontrol;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,28 +7,25 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.compose.ui.platform.ComposeView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import net.kollnig.missioncontrol.ui.compose.WireGuardProfileRow;
+import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreen;
+import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreenCallbacks;
+import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreenController;
+import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreenModel;
 import net.kollnig.missioncontrol.wg.WgProfileManager;
 import net.kollnig.missioncontrol.wg.WgConfigParser;
 import net.kollnig.missioncontrol.wg.MullvadProfileGenerator;
@@ -55,8 +51,7 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
             "https://account.protonvpn.com/downloads#wireguard-configuration";
 
     private WgProfileManager manager;
-    private ProfileAdapter adapter;
-    private TextView empty;
+    private WireGuardProfilesScreenController screenController;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -64,7 +59,12 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wg_profiles);
+
+        ComposeView composeView = new ComposeView(this);
+        // A stable ID gives Compose's saveable state registry a key to persist
+        // under, so the LazyColumn scroll position survives recreation.
+        composeView.setId(R.id.compose_wg_profiles);
+        setContentView(composeView);
 
         getSupportActionBar().setTitle(R.string.setting_wg_profile_manage);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -72,14 +72,29 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         manager = new WgProfileManager(this);
         manager.migrateIfNeeded();
 
-        empty = findViewById(R.id.empty);
-        RecyclerView list = findViewById(R.id.list);
-        list.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ProfileAdapter(this);
-        list.setAdapter(adapter);
+        screenController = WireGuardProfilesScreen.install(
+                composeView,
+                buildScreenModel(),
+                new WireGuardProfilesScreenCallbacks() {
+                    @Override
+                    public void onAdd() {
+                        showAddProfileChoice();
+                    }
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> showAddProfileChoice());
+                    @Override
+                    public void onEdit(String id) {
+                        WgProfileManager.Profile profile = manager.getProfile(id);
+                        if (profile != null)
+                            showProfileDialog(profile);
+                    }
+
+                    @Override
+                    public void onDelete(String id) {
+                        WgProfileManager.Profile profile = manager.getProfile(id);
+                        if (profile != null)
+                            confirmDelete(profile);
+                    }
+                });
 
         refresh();
 
@@ -114,8 +129,23 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
     }
 
     private void refresh() {
-        adapter.refresh();
-        empty.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        screenController.update(buildScreenModel());
+    }
+
+    private WireGuardProfilesScreenModel buildScreenModel() {
+        String activeId = manager.getActiveProfileId();
+        List<WireGuardProfileRow> rows = new ArrayList<>();
+        for (WgProfileManager.Profile profile : manager.getProfiles()) {
+            boolean active = profile.id.equals(activeId);
+            rows.add(new WireGuardProfileRow(
+                    profile.id,
+                    profile.name,
+                    manager.getProfileSummary(profile),
+                    active,
+                    getString(R.string.msg_wg_profile_active)));
+        }
+        return new WireGuardProfilesScreenModel(
+                rows, getString(R.string.setting_wg_profile_save));
     }
 
     private void showAddProfileChoice() {
@@ -364,62 +394,5 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
 
     private void applyProfiles() {
         ServiceSinkhole.reload("wireguard profile changed", this, false);
-    }
-
-    private class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
-        private final Context context;
-        private List<WgProfileManager.Profile> profiles;
-
-        ProfileAdapter(Context context) {
-            this.context = context;
-            this.profiles = manager.getProfiles();
-        }
-
-        void refresh() {
-            this.profiles = manager.getProfiles();
-            notifyDataSetChanged();
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_wg_profile, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            WgProfileManager.Profile item = profiles.get(position);
-            boolean active = item.id.equals(manager.getActiveProfileId());
-            String summary = manager.getProfileSummary(item);
-
-            holder.textName.setText(item.name);
-            holder.textSummary.setText(summary);
-            holder.textSummary.setVisibility(TextUtils.isEmpty(summary) ? View.GONE : View.VISIBLE);
-            holder.textActive.setVisibility(active ? View.VISIBLE : View.GONE);
-            holder.itemView.setOnClickListener(v -> showProfileDialog(item));
-            holder.btnDelete.setOnClickListener(v -> confirmDelete(item));
-        }
-
-        @Override
-        public int getItemCount() {
-            return profiles.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textName;
-            TextView textSummary;
-            TextView textActive;
-            ImageButton btnDelete;
-
-            ViewHolder(View itemView) {
-                super(itemView);
-                textName = itemView.findViewById(R.id.textName);
-                textSummary = itemView.findViewById(R.id.textSummary);
-                textActive = itemView.findViewById(R.id.textActive);
-                btnDelete = itemView.findViewById(R.id.btnDelete);
-            }
-        }
     }
 }

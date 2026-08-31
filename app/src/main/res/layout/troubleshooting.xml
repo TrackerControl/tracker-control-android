@@ -104,6 +104,48 @@
                 android:textStyle="italic"
                 android:visibility="gone" />
 
+            <!-- Local Network Access -->
+            <LinearLayout
+                android:id="@+id/localNetworkAccessSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/troubleshooting_local_network_title"
+                    android:textAppearance="@style/TextMedium"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/troubleshooting_local_network_desc"
+                    android:textAppearance="@style/TextSmall" />
+
+                <Button
+                    android:id="@+id/btnLocalNetworkAccess"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/troubleshooting_local_network_action"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvLocalNetworkAccessStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/troubleshooting_local_network_ok"
+                    android:textAppearance="@style/TextSmall"
+                    android:textStyle="italic"
+                    android:visibility="gone" />
+            </LinearLayout>
+
             <!-- App breakage -->
             <TextView
                 android:layout_width="wrap_content"

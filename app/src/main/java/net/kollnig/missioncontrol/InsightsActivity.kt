@@ -17,41 +17,33 @@
 
 package net.kollnig.missioncontrol
 
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
-import android.util.Pair
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.content.FileProvider
-import androidx.core.graphics.Insets
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import eu.faircode.netguard.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.kollnig.missioncontrol.data.InsightsData
 import net.kollnig.missioncontrol.data.InsightsDataProvider
+import net.kollnig.missioncontrol.ui.compose.InsightsScreen
+import net.kollnig.missioncontrol.ui.compose.InsightsScreenCallbacks
+import net.kollnig.missioncontrol.ui.compose.InsightsScreenController
+import net.kollnig.missioncontrol.ui.compose.InsightsScreenModel
 import java.io.File
 import java.io.FileOutputStream
 import java.text.NumberFormat
@@ -63,29 +55,17 @@ import java.util.Locale
  */
 class InsightsActivity : AppCompatActivity() {
 
-    private lateinit var tvTotalAttempts: TextView
-    private lateinit var tvShockingFact: TextView
-    private lateinit var tvBlockedCount: TextView
-    private lateinit var tvBlockedPercent: TextView
-    private lateinit var tvAllowedCount: TextView
-    private lateinit var tvAllowedPercent: TextView
-    private lateinit var tvCompaniesCount: TextView
-    private lateinit var tvAppsCount: TextView
-    private lateinit var llTopApps: LinearLayout
-    private lateinit var llTopCompanies: LinearLayout
-    private lateinit var llPervasiveTrackers: LinearLayout
-    private lateinit var llTopDomains: LinearLayout
-    private lateinit var llNoData: LinearLayout
-    private lateinit var llBlockedAllowed: LinearLayout
-    private lateinit var progressBar: ProgressBar
-    private lateinit var fabShare: FloatingActionButton
-
     private lateinit var dataProvider: InsightsDataProvider
+    private lateinit var screenController: InsightsScreenController
     private var currentData: InsightsData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_insights)
+        val composeView = ComposeView(this)
+        // A stable ID gives Compose's saveable state registry a key to persist
+        // under, so the LazyColumn scroll position survives recreation.
+        composeView.id = R.id.compose_insights
+        setContentView(composeView)
 
         // Set up action bar
         supportActionBar?.apply {
@@ -93,37 +73,17 @@ class InsightsActivity : AppCompatActivity() {
             setTitle(R.string.insights_title)
         }
 
-        // Initialize views
-        tvTotalAttempts = findViewById(R.id.tvTotalAttempts)
-        tvShockingFact = findViewById(R.id.tvShockingFact)
-        tvBlockedCount = findViewById(R.id.tvBlockedCount)
-        tvBlockedPercent = findViewById(R.id.tvBlockedPercent)
-        tvAllowedCount = findViewById(R.id.tvAllowedCount)
-        tvAllowedPercent = findViewById(R.id.tvAllowedPercent)
-        tvCompaniesCount = findViewById(R.id.tvCompaniesCount)
-        tvAppsCount = findViewById(R.id.tvAppsCount)
-        llTopApps = findViewById(R.id.llTopApps)
-        llTopCompanies = findViewById(R.id.llTopCompanies)
-        llPervasiveTrackers = findViewById(R.id.llPervasiveTrackers)
-        llTopDomains = findViewById(R.id.llTopDomains)
-        llNoData = findViewById(R.id.llNoData)
-        llBlockedAllowed = findViewById(R.id.llBlockedAllowed)
-        progressBar = findViewById(R.id.progressBar)
-        fabShare = findViewById(R.id.fabShare)
-
-        fabShare.setOnClickListener {
-            shareInsights()
-        }
-
-        // Pad the scroll content so the last card isn't hidden behind the navigation bar.
-        val scroll = findViewById<ScrollView>(R.id.insightsScroll)
-        scroll.clipToPadding = false
-        val scrollInitialBottom = scroll.paddingBottom
-        ViewCompat.setOnApplyWindowInsetsListener(scroll) { v, insets ->
-            val sysBars: Insets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, scrollInitialBottom + sysBars.bottom)
-            insets
-        }
+        screenController = InsightsScreen.install(
+            composeView = composeView,
+            initialModel = InsightsScreenModel.loading(),
+            callbacks = object : InsightsScreenCallbacks {
+                override fun onShare() {
+                    if (!isDestroyed && !isFinishing) {
+                        shareInsights()
+                    }
+                }
+            }
+        )
 
         dataProvider = InsightsDataProvider(this)
 
@@ -141,162 +101,25 @@ class InsightsActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        progressBar.visibility = View.VISIBLE
+        screenController.update(InsightsScreenModel.loading())
 
         lifecycleScope.launch {
             val data = withContext(Dispatchers.IO) {
                 dataProvider.computeInsights()
             }
-            progressBar.visibility = View.GONE
+            if (isDestroyed) return@launch
             displayData(data)
         }
     }
 
     private fun displayData(data: InsightsData) {
         if (!data.hasData()) {
-            llNoData.visibility = View.VISIBLE
-            fabShare.visibility = View.GONE
+            screenController.update(InsightsScreenModel.from(data))
             return
         }
 
-        llNoData.visibility = View.GONE
         currentData = data
-        fabShare.visibility = View.VISIBLE
-
-        // Animate main number
-        animateNumber(tvTotalAttempts, 0, data.totalTrackingAttempts)
-
-        llBlockedAllowed.visibility = View.VISIBLE
-        tvShockingFact.text = getString(
-            R.string.insights_shocking_fact,
-            data.uniqueTrackerCompanies,
-            data.totalTrackingAttempts
-        )
-
-        // Blocked/Allowed stats
-        animateNumber(tvBlockedCount, 0, data.blockedTrackingAttempts)
-        val blockedPercent = data.getBlockedPercentage()
-        tvBlockedPercent.text = String.format(Locale.getDefault(), "(%d%%)", blockedPercent)
-
-        animateNumber(tvAllowedCount, 0, data.allowedTrackingAttempts)
-        val allowedPercent = 100 - blockedPercent
-        tvAllowedPercent.text = String.format(Locale.getDefault(), "(%d%%)", allowedPercent)
-
-        // Summary stats
-        animateNumber(tvCompaniesCount, 0, data.uniqueTrackerCompanies)
-        animateNumber(tvAppsCount, 0, data.appsWithTrackers)
-
-        // Populate top apps
-        populateTopList(llTopApps, data.topTrackingApps, false)
-
-        // Populate top companies
-        populateTopList(llTopCompanies, data.topTrackerCompanies, false)
-
-        // Populate pervasive trackers (with "in X apps" format)
-        populateTopList(llPervasiveTrackers, data.pervasiveTrackers, true)
-
-        // Populate top domains (with "in X apps" format)
-        populateTopList(llTopDomains, data.topDomains, true)
-    }
-
-    private fun animateNumber(textView: TextView, start: Int, end: Int) {
-        ValueAnimator.ofInt(start, end).apply {
-            duration = 1000
-            interpolator = DecelerateInterpolator()
-            addUpdateListener { animation ->
-                val value = animation.animatedValue as Int
-                textView.text = NumberFormat.getNumberInstance(Locale.getDefault()).format(value)
-            }
-            start()
-        }
-    }
-
-    private fun populateTopList(container: LinearLayout, items: List<Pair<String, Int>>, showAsAppCount: Boolean) {
-        container.removeAllViews()
-
-        if (items.isEmpty()) {
-            val emptyText = TextView(this).apply {
-                setText(R.string.none)
-                alpha = 0.5f
-            }
-            container.addView(emptyText)
-            return
-        }
-
-        val maxCount = items.firstOrNull()?.second ?: 1
-
-        // Gradient palette: darker red at top (most pervasive), tapering lighter
-        val palette = intArrayOf(
-            Color.parseColor("#8B0000"),  // dark red
-            Color.parseColor("#B71C1C"),
-            Color.parseColor("#C62828"),
-            Color.parseColor("#D32F2F"),
-            Color.parseColor("#E53935"),
-            Color.parseColor("#EF5350"),
-            Color.parseColor("#EF9A9A"),
-            Color.parseColor("#FFCDD2")
-        )
-
-        for ((index, item) in items.withIndex()) {
-            // Use vertical layout: name on top, bar+count below
-            val row = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                setPadding(0, 8, 0, 8)
-            }
-
-            // Name (on top)
-            val nameView = TextView(this).apply {
-                text = item.first
-                maxLines = 1
-                setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            }
-            row.addView(nameView)
-
-            // Bar + Count wrapper (below)
-            val barWrapper = LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                gravity = Gravity.CENTER_VERTICAL
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    topMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics).toInt()
-                }
-            }
-
-            // Progress bar visualization
-            var barWidth = (150 * (item.second.toFloat() / maxCount)).toInt()
-            barWidth = barWidth.coerceAtLeast(8)
-
-            val bar = View(this).apply {
-                layoutParams = LinearLayout.LayoutParams(
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, barWidth.toFloat(), resources.displayMetrics).toInt(),
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics).toInt()
-                ).apply {
-                    marginEnd = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
-                }
-                background = GradientDrawable().apply {
-                    shape = GradientDrawable.RECTANGLE
-                    cornerRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics)
-                    setColor(palette[index.coerceAtMost(palette.size - 1)])
-                }
-            }
-            barWrapper.addView(bar)
-
-            // Count - format differently for app counts
-            val countView = TextView(this).apply {
-                text = if (showAsAppCount) {
-                    getString(R.string.insights_in_apps, item.second)
-                } else {
-                    NumberFormat.getNumberInstance(Locale.getDefault()).format(item.second)
-                }
-                textSize = 12f
-            }
-            barWrapper.addView(countView)
-
-            row.addView(barWrapper)
-            container.addView(row)
-        }
+        screenController.update(InsightsScreenModel.from(data))
     }
 
     /**

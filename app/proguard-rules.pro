@@ -63,6 +63,11 @@
 -keep class androidx.appcompat.app.AppCompatViewInflater { <init>(...); }
 -keepclassmembers class * implements android.os.Parcelable { static ** CREATOR; }
 
+# Compose transitively references optional OEM-provided Window extension and
+# sidecar APIs; they may be absent from the device and are not packaged here.
+-dontwarn androidx.window.extensions.**
+-dontwarn androidx.window.sidecar.**
+
 #Glide
 -keep public class * implements com.bumptech.glide.module.GlideModule
 -keep public class * extends com.bumptech.glide.module.AppGlideModule

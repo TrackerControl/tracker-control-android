@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!-- androidx.compose.ui:ui-test-manifest contributes this host activity
+             for createComposeRule(), themed with the framework's
+             @android:style/Theme.Material.Light.NoActionBar. That theme carries
+             none of the Material Components attributes, so TrackerControlTheme
+             cannot resolve colorOnBackground and friends and every Compose
+             screen test fails. Host the tests on the real app theme instead. -->
+        <activity
+            android:name="androidx.activity.ComponentActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:replace="android:theme" />
+    </application>
+
+</manifest>

@@ -17,7 +17,8 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
             android:background="@color/colorPrimary"
             app:theme="@style/ThemeOverlay.Material3.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.Material3.Light"
@@ -32,7 +33,8 @@
             android:background="@color/colorPrimary"
             app:tabTextColor="@color/colorPrimaryLight"
             app:tabSelectedTextColor="@android:color/white"
-            app:tabIndicatorColor="@android:color/white" />
+            app:tabIndicatorColor="@android:color/white"
+            app:tabMode="auto" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
