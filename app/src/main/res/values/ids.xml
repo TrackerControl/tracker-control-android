@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Stable view IDs for the programmatically created ComposeView hosts.
+        Without an ID, Compose's saveable state registry has no key to persist
+        under, so LazyListState scroll positions are lost across configuration
+        changes and process death.
+    -->
+    <item name="compose_timeline" type="id" />
+    <item name="compose_insights" type="id" />
+    <item name="compose_blocklists" type="id" />
+    <item name="compose_wg_profiles" type="id" />
+</resources>
