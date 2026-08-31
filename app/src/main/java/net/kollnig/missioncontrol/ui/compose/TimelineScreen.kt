@@ -74,7 +74,6 @@ import net.kollnig.missioncontrol.R
 import net.kollnig.missioncontrol.data.InsightsData
 import net.kollnig.missioncontrol.data.TimelineEntry
 import java.text.NumberFormat
-import java.util.UUID
 
 /** The four reasons an empty Timeline can be shown. */
 enum class TimelineEmptyState {
@@ -845,7 +844,7 @@ private fun timelineRows(entries: List<TimelineEntry>, context: Context): List<T
         }
         if (sectionTitle != currentSection) {
             currentSection = sectionTitle
-            currentSectionKey = stableKey("section:$sectionTitle")
+            currentSectionKey = "section:$sectionTitle"
             rows += TimelineRow.Section(currentSectionKey!!, sectionTitle)
         }
 
@@ -873,7 +872,7 @@ private fun timelineRows(entries: List<TimelineEntry>, context: Context): List<T
                 else R.string.timeline_tracker_allowed
             )
             TimelineTrackerContact(
-                key = stableKey("contact:${entry.uid}:${tracker.companyName}:${tracker.blocked}"),
+                key = "contact:${entry.uid}:${tracker.companyName}:${tracker.blocked}",
                 companyName = tracker.companyName,
                 category = tracker.category,
                 blocked = tracker.blocked,
@@ -887,7 +886,7 @@ private fun timelineRows(entries: List<TimelineEntry>, context: Context): List<T
             DateUtils.FORMAT_ABBREV_RELATIVE
         ).toString()
         rows += TimelineRow.App(
-            key = stableKey("entry:${entry.uid}"),
+            key = "entry:${entry.uid}",
             sectionKey = currentSectionKey!!,
             uid = entry.uid,
             appName = entry.appName,
@@ -912,9 +911,6 @@ private fun startOfDay(daysAgo: Int): Long {
     calendar.set(java.util.Calendar.MILLISECOND, 0)
     return calendar.timeInMillis
 }
-
-private fun stableKey(identity: String): String =
-    UUID.nameUUIDFromBytes(identity.toByteArray(Charsets.UTF_8)).toString()
 
 @Preview(showBackground = true)
 @Composable

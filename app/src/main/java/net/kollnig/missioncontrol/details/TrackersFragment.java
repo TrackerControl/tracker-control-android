@@ -74,6 +74,13 @@ public class TrackersFragment extends Fragment {
     private final Map<String, Tracker> trackersByKey = new HashMap<>();
     @Nullable
     private WorkInfo analysisWork;
+    /**
+     * Cached result of the "can this app open a browser?" check used for the
+     * warning banner. Depends only on mAppId and the install type, both fixed
+     * for the fragment's lifetime, so it is computed once and reused.
+     */
+    @Nullable
+    private Boolean browserWarning;
 
     private boolean running = false;
     /** True while the async tracker query runs; drives the loading spinner. */
@@ -327,6 +334,14 @@ public class TrackersFragment extends Fragment {
             hintAccent = false;
         }
 
+        // Category blocked state is looked up once per category per render (not
+        // memoised across renders, since toggles change it), rather than being
+        // re-queried per row that references the same category.
+        Map<String, Boolean> categoryBlockedByName = new HashMap<>();
+        for (TrackerCategory category : categories)
+            categoryBlockedByName.put(category.getCategoryName(),
+                    blocklist.blocked(mAppUid, category.getCategoryName()));
+
         List<TrackersRow> rows = new ArrayList<>();
         List<Object> feedRows = TrackerFeedLogic.buildRows(
                 categories, expandedCompanyKeys, expandedSections);
@@ -334,16 +349,18 @@ public class TrackersFragment extends Fragment {
             Object feedRow = feedRows.get(index);
             if (feedRow instanceof TrackerFeedLogic.SectionRow) {
                 TrackerCategory category = ((TrackerFeedLogic.SectionRow) feedRow).getCategory();
-                rows.add(buildSectionRow(context, blocklist, state,
-                        trackerProtectionEnabled, minimal, category));
+                boolean categoryBlocked = categoryBlockedByName.get(category.getCategoryName());
+                rows.add(buildSectionRow(context, state,
+                        trackerProtectionEnabled, minimal, category, categoryBlocked));
             } else if (feedRow instanceof TrackerFeedLogic.CompanyRow) {
                 TrackerFeedLogic.CompanyRow company = (TrackerFeedLogic.CompanyRow) feedRow;
                 Object nextRow = index + 1 < feedRows.size() ? feedRows.get(index + 1) : null;
                 boolean showDivider = nextRow instanceof TrackerFeedLogic.CompanyRow
                         || nextRow instanceof TrackerFeedLogic.ShowMoreRow;
+                boolean categoryBlocked = categoryBlockedByName.get(company.getCategoryName());
                 rows.add(buildCompanyRow(context, blocklist, state,
                         trackerProtectionEnabled, minimal, strict, internetBlocked,
-                        company, showDivider));
+                        company, showDivider, categoryBlocked));
             } else if (feedRow instanceof TrackerFeedLogic.ShowMoreRow) {
                 TrackerFeedLogic.ShowMoreRow showMore = (TrackerFeedLogic.ShowMoreRow) feedRow;
                 rows.add(new TrackersRow.ShowMore(
@@ -355,9 +372,11 @@ public class TrackersFragment extends Fragment {
             }
         }
 
-        Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.wikipedia.org/"));
-        urlIntent.setPackage(mAppId);
-        boolean browserWarning = Common.isCallable(context, urlIntent) && !Util.isPlayStoreInstall();
+        if (browserWarning == null) {
+            Intent urlIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.wikipedia.org/"));
+            urlIntent.setPackage(mAppId);
+            browserWarning = Common.isCallable(context, urlIntent) && !Util.isPlayStoreInstall();
+        }
         return new TrackersScreenModel(
                 browserWarning,
                 context.getString(state == AppProtectionState.PROTECTED
@@ -371,15 +390,14 @@ public class TrackersFragment extends Fragment {
     }
 
     private TrackersRow.Section buildSectionRow(Context context,
-            TrackerBlocklist blocklist,
             AppProtectionState state,
             boolean trackerProtectionEnabled,
             boolean minimal,
-            TrackerCategory category) {
+            TrackerCategory category,
+            boolean categoryBlocked) {
         final String categoryName = category.getCategoryName();
         final String displayName = category.getDisplayName(context);
         boolean readOnlyMinimal = minimal || state == AppProtectionState.MINIMAL_ONLY;
-        boolean categoryBlocked = blocklist.blocked(mAppUid, categoryName);
         boolean categoryMinimallyBlocked = false;
         if (readOnlyMinimal) {
             for (Tracker tracker : category.getChildren()) {
@@ -425,11 +443,11 @@ public class TrackersFragment extends Fragment {
             boolean strict,
             boolean internetBlocked,
             TrackerFeedLogic.CompanyRow row,
-            boolean showDivider) {
+            boolean showDivider,
+            boolean categoryBlocked) {
         Tracker tracker = row.getTracker();
         String categoryName = row.getCategoryName();
         String blockingKey = TrackerBlocklist.getBlockingKey(tracker);
-        boolean categoryBlocked = blocklist.blocked(mAppUid, categoryName);
         boolean companyKeyBlocked = blocklist.blocked(mAppUid, blockingKey);
         TrackerStatusLogic.Result status = TrackerStatusLogic.resolve(
                 trackerProtectionEnabled,
