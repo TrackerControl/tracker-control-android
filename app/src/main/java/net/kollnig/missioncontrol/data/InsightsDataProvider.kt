@@ -40,6 +40,9 @@ internal data class AggregatedDomain(
     val appCount: Int
 )
 
+/** How many aliases a single domain label may name before it is truncated. */
+private const val MAX_LABEL_ALIASES = 2
+
 /** Merge observations with exactly the same alias set, counting each UID once. */
 internal fun aggregateDomainObservations(
     observations: Iterable<DomainObservation>,
@@ -60,7 +63,9 @@ internal fun aggregateDomainObservations(
     return groups
         .map { (aliases, appUids) ->
             AggregatedDomain(
-                label = aliases.sorted().joinToString(" or "),
+                // Cap the joined label at two aliases: the Insights row is a
+                // single line, and a longer join simply overflows it.
+                label = aliases.sorted().take(MAX_LABEL_ALIASES).joinToString(" or "),
                 appCount = appUids.size
             )
         }
