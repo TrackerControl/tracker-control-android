@@ -639,20 +639,20 @@ private fun TimelineAppRow(
                     .padding(start = 12.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = row.relativeTime,
                 modifier = Modifier.padding(start = 8.dp),
-                style = MaterialTheme.typography.labelSmall,
+                style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Text(
             text = row.summary,
             modifier = Modifier.padding(start = 48.dp, top = 2.dp),
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Column(
@@ -697,7 +697,7 @@ private fun TimelineTrackerRow(contact: TimelineTrackerContact) {
         Text(
             text = contact.statusLabel,
             modifier = Modifier.padding(end = 8.dp),
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelMedium,
             color = statusColour,
             fontWeight = FontWeight.Bold
         )

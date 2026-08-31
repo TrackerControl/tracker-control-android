@@ -222,7 +222,6 @@
     <string name="vpn_status_wireguard_connected">WireGuard 已连接</string>
     <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">未连接</string>
-    <string name="vpn_choose_country">选择国家/地区</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN 预览</string>
@@ -260,7 +259,6 @@
     <string name="vpn_ivpn_captcha_hint">CAPTCHA 文本</string>
     <string name="vpn_account_save">保存</string>
     <string name="vpn_account_saved">账户已保存</string>
-    <string name="vpn_wireguard_profiles">WireGuard 配置</string>
     <string name="vpn_no_wireguard_profiles">尚无自定义的WireGuard配置</string>
     <string name="vpn_import_wireguard_profile">导入WireGuard配置</string>
     <string name="vpn_manage_wireguard_profiles">管理WireGuard配置</string>

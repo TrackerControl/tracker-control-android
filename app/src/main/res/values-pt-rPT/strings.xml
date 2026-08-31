@@ -145,7 +145,6 @@
     <string name="vpn_status_mullvad">Mullvad</string>
     <string name="vpn_status_wireguard_connected">WireGuard ligado</string>
     <string name="vpn_status_disconnected">Não ligado</string>
-    <string name="vpn_choose_country">Escolher país</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_mullvad_title">Mullvad</string>

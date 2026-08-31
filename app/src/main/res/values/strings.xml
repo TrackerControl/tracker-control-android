@@ -285,7 +285,6 @@
     <string name="vpn_status_wireguard_connected">WireGuard connected</string>
     <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">Not connected</string>
-    <string name="vpn_choose_country">Choose country</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN preview</string>
@@ -325,7 +324,6 @@
     <string name="vpn_ivpn_captcha_hint">CAPTCHA text</string>
     <string name="vpn_account_save">Save</string>
     <string name="vpn_account_saved">Account saved</string>
-    <string name="vpn_wireguard_profiles">WireGuard profiles</string>
     <string name="vpn_no_wireguard_profiles">No custom WireGuard profiles yet</string>
     <string name="vpn_import_wireguard_profile">Import WireGuard profile</string>
     <string name="vpn_manage_wireguard_profiles">Manage WireGuard profiles</string>

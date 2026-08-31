@@ -219,7 +219,6 @@
     <string name="vpn_status_wireguard_connected">WireGuard підключено</string>
     <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">Не підключено</string>
-    <string name="vpn_choose_country">Виберіть країну</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">Попередній перегляд VPN</string>
@@ -257,7 +256,6 @@
     <string name="vpn_ivpn_captcha_hint">Текст CAPTCHA</string>
     <string name="vpn_account_save">Save</string>
     <string name="vpn_account_saved">Обліковий запис збережено</string>
-    <string name="vpn_wireguard_profiles">Профілі WireGuard</string>
     <string name="vpn_no_wireguard_profiles">Поки що немає користувацьких профілів WireGuard</string>
     <string name="vpn_import_wireguard_profile">Імпортувати профіль WireGuard</string>
     <string name="vpn_manage_wireguard_profiles">Керування профілями WireGuard</string>
