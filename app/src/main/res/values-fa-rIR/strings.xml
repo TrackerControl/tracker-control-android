@@ -28,6 +28,7 @@
     <string name="timeline_section_this_week">این هفته</string>
     <string name="timeline_tracker_blocked">مسدود شده</string>
     <string name="timeline_tracker_allowed">مجاز</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="troubleshooting_battery_title">بهینه‌سازی باتری</string>
     <string name="troubleshooting_battery_action">غیرفعال کردن بهینه‌سازی باتری</string>
     <string name="troubleshooting_battery_ok">بهینه‌سازی باتری غیرفعال است</string>
@@ -65,7 +66,6 @@
     <string name="app_route_unavailable_bypassed">این برنامه به‌طور کامل TrackerControl را دور می‌زند، بنابراین ترافیکی برای مسیریابی وجود ندارد.</string>
     <string name="app_route_unavailable_partial_routes">VPN راه دور شما همهٔ ترافیک را حمل نمی‌کند (AllowedIPs آن تونل کامل نیست). مسیریابی جداگانه برای هر برنامه به تونل کامل نیاز دارد، چون مسیرها میان همهٔ برنامه‌ها مشترک است.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">محافظت</string>
     <string name="app_state_protected">محافظت‌شده</string>
     <string name="app_state_protected_explanation">ردیاب‌ها برای این برنامه مسدود و ثبت می‌شوند.</string>
     <string name="app_state_trackers_allowed">ردیاب‌ها مجاز</string>
@@ -80,6 +80,7 @@
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

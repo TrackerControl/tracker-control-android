@@ -26,6 +26,7 @@
     <string name="menu_support">Podpořit aplikaci</string>
     <string name="menu_log_support">Vysvětlení</string>
     <string name="menu_about">O aplikaci</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Další aplikace</string>
     <string name="menu_protocol_other">Další</string>
     <string name="menu_traffic_allowed">Povolené</string>
@@ -350,7 +351,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="app_route_unavailable_bypassed">Tato aplikace TrackerControl zcela obchází, takže není co směrovat.</string>
     <string name="app_route_unavailable_partial_routes">Vaše vzdálená VPN nepřenáší veškerý provoz (její AllowedIPs netvoří úplný tunel). Směrování po aplikacích vyžaduje úplný tunel, protože trasy sdílejí všechny aplikace.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Ochrana</string>
     <string name="app_state_protected">Chráněno</string>
     <string name="app_state_protected_explanation">Trackery jsou pro tuto aplikaci blokovány a zaznamenávány.</string>
     <string name="app_state_trackers_allowed">Trackery povoleny</string>
@@ -369,7 +369,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="no_trackers_found_action">Spustit</string>
     <string name="no_internet_message">"Bez přístupu k síti. Může jen trackovat sdílením dat s jinými aplikacemi."</string>
     <string name="no_internet">Není připojení k Internetu</string>
-    <string name="bypass_vpn_error">"Nelze blokovat internet. Aplikace je vyloučena z TrackerControl."</string>
     <string name="back">Zpět</string>
     <string name="forever_free">Navždy zdarma</string>
     <string name="your_privacy">Vaše soukromí</string>
@@ -380,7 +379,6 @@ Privátní DNS musí být vypnutá.</string>
     <string name="internet_unblocked">Přístup k síti povolen</string>
     <string name="category_blocked">Trackery v kategorii blokovány</string>
     <string name="category_unblocked">Trackery v kategorii povoleny</string>
-    <string name="category_unblocked_warning">První blokuj kategorii!</string>
     <string name="switch_strict_blocking">Blokovat sdílení základních dat</string>
     <string name="tracking_detection_failed">Detekce tracker library se nepovedla.</string>
     <string name="tracking_detection_failed_ram">Detekce tracker library se nepovedla. Nedostatek RAM.</string>
@@ -415,6 +413,7 @@ Privátní DNS musí být vypnutá.</string>
     <string name="onboarding_welcome_title">Převezměte kontrolu nad svým soukromím</string>
     <string name="onboarding_blocking_title">Blokovat trackery</string>
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

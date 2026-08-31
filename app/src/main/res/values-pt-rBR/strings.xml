@@ -40,6 +40,7 @@
     <string name="timeline_section_this_week">Essa semana</string>
     <string name="timeline_tracker_blocked">Bloqueado</string>
     <string name="timeline_tracker_allowed">Permitidos</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d bloqueado · %2$d permitido</string>
     <string name="troubleshooting_title">Soluções</string>
     <string name="troubleshooting_battery_title">Otimização de bateria</string>
@@ -50,7 +51,6 @@
     <string name="troubleshooting_datasaver_desc">Se o TrackerControl não conseguir conectar quando a economia de dados estiver ativada, permita o uso irrestrito de dados para o TrackerControl. Ative \"Dados em segundo plano\" e \"Uso irrestrito de dados\".</string>
     <string name="troubleshooting_datasaver_action">Permitir dados irrestritos</string>
     <string name="troubleshooting_datasaver_ok">A Economia de dados não está restringindo o TrackerControl.</string>
-    <string name="troubleshooting_exclude_title">Excluindo apps da VPN</string>
     <string name="troubleshooting_categories_title">Bloqueando categorias específicas de rastreamento</string>
     <string name="troubleshooting_alwayson_title">VPN sempre ativa</string>
     <string name="troubleshooting_alwayson_desc">Se \"Bloquear conexões sem VPN\" (lockdown) estiver ativado nas configurações de VPN do Android, o TrackerControl não pode funcionar corretamente. Desativar esta opção. Uma notificação aparecerá se for detectada.</string>
@@ -329,8 +329,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="setting_block_ambiguous_trackers">Bloquear rastreadores ambíguos</string>
     <string name="setting_sni_enabled">Extração SNI (pesquisa)</string>
     <string name="setting_blocking_mode">Modo de Bloqueio</string>
-    <string name="summary_blocking_mode_standard">Padrão: Bloqueia todos os rastreadores conhecidos de várias listas (X-Ray, Disconnect, DuckDuckGo). Serviços essenciais são permitidos. Alguns apps irão quebrar e podem ser excluídos manualmente (ver soluções no menu do app).</string>
-    <string name="summary_blocking_mode_strict">Rigoroso: Bloqueia todos os rastreadores conhecidos, incluindo serviços essenciais e domínios com IP compartilhado. Muitos apps irão falhar e precisam ser excluídos manualmente (ver soluções no menu do app).</string>
     <string name="blocking_mode_minimal">Mínimo</string>
     <string name="blocking_mode_standard">Padrão</string>
     <string name="blocking_mode_strict">Rigoroso</string>
@@ -340,7 +338,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="onboarding_blockingmode_minimal_desc">Bloqueia apenas rastreadores que são seguros para bloquear. Quebra de apps limitada. Bom para a maioria dos usuários.</string>
     <string name="onboarding_blockingmode_standard_label">Padrão</string>
     <string name="onboarding_blockingmode_strict_label">Rigoroso</string>
-    <string name="onboarding_blockingmode_strict_desc">Bloqueia tudo, incluindo serviços essenciais e domínios ambíguos. Falhas significativas em aplicativos — muitos aplicativos precisarão ser excluídos manualmente.</string>
     <string name="onboarding_blockingmode_research_label">Pesquisa</string>
     <string name="onboarding_blockingmode_research_desc">Sem bloqueio do rastreador. Transmissões de logs para ADB e permite a extração SNI para melhor detecção de nome de host. Apenas pesquisa: isso vaza seu endereço IP para servidores de rastreadores.</string>
     <!-- Per-app remote VPN routing -->
@@ -357,7 +354,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="app_route_unavailable_bypassed">Este aplicativo ignora o TrackerControl por completo, então não há tráfego a rotear.</string>
     <string name="app_route_unavailable_partial_routes">Sua VPN remota não transporta todo o tráfego (os AllowedIPs dela não formam um túnel completo). O roteamento por aplicativo exige um túnel completo, porque as rotas são compartilhadas por todos os aplicativos.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Proteção</string>
     <string name="app_state_protected">Protegido</string>
     <string name="app_state_protected_explanation">Os rastreadores são bloqueados e registrados para este aplicativo.</string>
     <string name="app_state_trackers_allowed">Rastreadores permitidos</string>
@@ -376,7 +372,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="no_trackers_found_action">Iniciar</string>
     <string name="no_internet_message">"Este app não tem acesso à Internet. Ele ainda pode rastreá-lo trocando dados com outros apps."</string>
     <string name="no_internet">Sem acesso à Internet</string>
-    <string name="bypass_vpn_error">"Impossível bloquear acesso à Internet. O app está excluso do TrackerControl."</string>
     <string name="back">Voltar</string>
     <string name="forever_free">Para sempre grátis</string>
     <string name="your_privacy">Sua privacidade</string>
@@ -387,7 +382,6 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="internet_unblocked">Acesso à Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores na categoria bloqueados</string>
     <string name="category_unblocked">Rastreadores na categoria permitidos</string>
-    <string name="category_unblocked_warning">Primeira categoria bloqueada!</string>
     <string name="switch_strict_blocking">Bloquear compartilhamento de dados essenciais</string>
     <string name="tracking_detection_failed">Falha na detecção da biblioteca do rastreador.</string>
     <string name="tracking_detection_failed_ram">A detecção da biblioteca do rastreador falhou. Não há RAM suficiente.</string>
@@ -447,14 +441,10 @@ O seu tráfego de internet não está sendo enviado para um servidor VPN remoto.
     <string name="onboarding_action_optimized">Otimizado</string>
     <string name="onboarding_action_unrestricted">Irrestrito</string>
     <!-- Insights Screen -->
-    <string name="insights_subtitle_7days">Últimos 7 dias</string>
     <string name="insights_blocked">Bloqueados</string>
     <string name="insights_allowed">Permitidos</string>
-    <string name="insights_tracker_companies">Empresas de Rastreamento</string>
-    <string name="insights_apps_with_trackers">Apps com Rastreadores</string>
     <string name="insights_top_companies">Empresas de rastreamento mais ativas</string>
-    <string name="insights_pervasive_trackers">Rastreadores mais extensivos</string>
-    <string name="insights_top_domains">Principais domínios de rastreadores</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_in_apps">em %d apps</string>
     <string name="insights_no_data">Ainda não há dados de rastreamento. Use seus apps e tente novamente!</string>
     <string name="insights_shocking_fact">Seus aplicativos entraram em contato com %1$d empresas de rastreamento por meio de %2$d hosts de rastreamento nesta semana!</string>

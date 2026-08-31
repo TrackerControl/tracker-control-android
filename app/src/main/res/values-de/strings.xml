@@ -41,6 +41,7 @@
     <string name="timeline_section_this_week">Diese Woche</string>
     <string name="timeline_tracker_blocked">Blockiert</string>
     <string name="timeline_tracker_allowed">Zugelassen</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="troubleshooting_title">Fehlerbehebung</string>
     <string name="troubleshooting_alwayson_action">Öffne VPN-Einstellungen</string>
     <string name="menu_apps">Andere Apps</string>
@@ -312,7 +313,6 @@
     <string name="app_route_unavailable_bypassed">Diese App umgeht TrackerControl vollständig, daher gibt es keinen Verkehr zu leiten.</string>
     <string name="app_route_unavailable_partial_routes">Dein Remote-VPN überträgt nicht den gesamten Verkehr (seine AllowedIPs bilden keinen vollständigen Tunnel). Per-App-Routing benötigt einen vollständigen Tunnel, da Routen von allen Apps geteilt werden.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Schutz</string>
     <string name="app_state_protected">Geschützt</string>
     <string name="app_state_protected_explanation">Tracker werden für diese App blockiert und aufgezeichnet.</string>
     <string name="app_state_trackers_allowed">Tracker erlaubt</string>
@@ -331,7 +331,6 @@
     <string name="no_trackers_found_action">Starten</string>
     <string name="no_internet_message">"Diese App hat keinen Internetzugang. Sie kann Sie trotzdem verfolgen, indem sie Daten mit anderen Anwendungen austauscht."</string>
     <string name="no_internet">Kein Internetzugang</string>
-    <string name="bypass_vpn_error">"Internet kann nicht blockiert werden. App ist von TrackerControl ausgeschlossen."</string>
     <string name="back">Zurück</string>
     <string name="forever_free">Für immer kostenlos</string>
     <string name="your_privacy">Deine Privatsphäre</string>
@@ -342,7 +341,6 @@
     <string name="internet_unblocked">Internetzugang freigegeben</string>
     <string name="category_blocked">Tracker in dieser Kategorie blockiert</string>
     <string name="category_unblocked">Tracker in dieser Kategorie erlaubt</string>
-    <string name="category_unblocked_warning">Bitte zuerst die Kategorie blockieren!</string>
     <string name="switch_strict_blocking">Essentielle Datenübertragung blockieren</string>
     <string name="tracking_detection_failed">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen.</string>
     <string name="tracking_detection_failed_ram">Die Erkennung der Tracker-Bibliothek ist fehlgeschlagen. Nicht genügend Arbeitsspeicher vorhanden.</string>
@@ -364,6 +362,7 @@
     <string name="msg_notifications">Tippen, um Benachrichtigungen zu erlauben (für Fehlermeldungen, etc.)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

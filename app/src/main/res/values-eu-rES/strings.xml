@@ -25,6 +25,7 @@
     <string name="menu_support">Aplikazio hau babestu</string>
     <string name="menu_log_support">Azalpena</string>
     <string name="menu_about">Honi buruz</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Beste aplikazioak</string>
     <string name="menu_protocol_other">Bestelakoak</string>
     <string name="menu_traffic_allowed">Baimendutakoak</string>
@@ -327,7 +328,6 @@ Sincerely,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Aplikazio honek TrackerControl guztiz saihesten du, beraz ez dago bideratzeko trafikorik.</string>
     <string name="app_route_unavailable_partial_routes">Zure urruneko VPNak ez du trafiko guztia garraiatzen (bere AllowedIPs ez da tunel osoa). Aplikazioz aplikazioko bideratzeak tunel osoa behar du, ibilbideak aplikazio guztien artean partekatzen baitira.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Babesa</string>
     <string name="app_state_protected">Babestuta</string>
     <string name="app_state_protected_explanation">Aplikazio honetarako jarraitzaileak blokeatu eta erregistratzen dira.</string>
     <string name="app_state_trackers_allowed">Jarraitzaileak onartuta</string>
@@ -346,7 +346,6 @@ Sincerely,\n\n]]></string>
     <string name="no_trackers_found_action">Abiarazi</string>
     <string name="no_internet_message">"Aplikazio honek ez du Interneterako sarbiderik. Hala ere beste aplikazio batzuekin datuak trukatuz jarraitu zaitzake."</string>
     <string name="no_internet">Internet sarbiderik ez</string>
-    <string name="bypass_vpn_error">"Ezin da Internet blokeatu. Aplikazioa TrackerControletik baztertu da."</string>
     <string name="back">Atzera</string>
     <string name="forever_free">Betiko doan</string>
     <string name="your_privacy">Zure pribatutasuna</string>
@@ -357,7 +356,6 @@ Sincerely,\n\n]]></string>
     <string name="internet_unblocked">Internet sarbidea desblokeatuta</string>
     <string name="category_blocked">Blokeatutako kategoriako aztarnariak</string>
     <string name="category_unblocked">Kategoriako aztarnariak baimenduta</string>
-    <string name="category_unblocked_warning">Blokeatu kategoria lehenago!</string>
     <string name="switch_strict_blocking">Ezinbesteko datu partekatzeak blokeatu</string>
     <string name="tracking_detection_failed">Huts egin du tracker liburutegia detektatzeak.</string>
     <string name="tracking_detection_failed_ram">Huts egin du tracker liburutegia detektatzeak. Ez dago behar beste RAM.</string>
@@ -380,6 +378,7 @@ Sareko trafikoan antzematen diren aztarnariak TrackerControl-ekin blokeatu daite
     <string name="failed_loading_cached_analysis">Cacheatutako aztarnarien emaitzak kargatzeak huts egin du. Mesedez eman honen berri garatzaileari hemen: hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

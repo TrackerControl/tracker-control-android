@@ -25,6 +25,7 @@
     <string name="menu_support">Supporta questa app</string>
     <string name="menu_log_support">Spiegazioni</string>
     <string name="menu_about">Informazioni</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Altre applicazioni</string>
     <string name="menu_protocol_other">Altro</string>
     <string name="menu_traffic_allowed">Consentito</string>
@@ -325,7 +326,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Questa app ignora completamente TrackerControl, quindi non c\'è traffico da instradare.</string>
     <string name="app_route_unavailable_partial_routes">La tua VPN remota non trasporta tutto il traffico (i suoi AllowedIPs non formano un tunnel completo). L\'instradamento per app richiede un tunnel completo, perché le rotte sono condivise da tutte le app.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Protezione</string>
     <string name="app_state_protected">Protetta</string>
     <string name="app_state_protected_explanation">I tracker vengono bloccati e registrati per questa app.</string>
     <string name="app_state_trackers_allowed">Tracker consentiti</string>
@@ -344,7 +344,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="no_trackers_found_action">Avvia</string>
     <string name="no_internet_message">"Questa applicazione non ha accesso a internet. Potrebbe comunque tracciarti scambiando dati con altre applicazioni."</string>
     <string name="no_internet">Nessun accesso a internet</string>
-    <string name="bypass_vpn_error">"Impossibile bloccare l'accesso a internet. L'applicazione è esclusa da TrackerControl."</string>
     <string name="back">Indietro</string>
     <string name="forever_free">Gratuito per sempre</string>
     <string name="your_privacy">La tua Privacy</string>
@@ -355,7 +354,6 @@ Cordiali saluti,\n\n]]></string>
     <string name="internet_unblocked">Accesso a internet non bloccato</string>
     <string name="category_blocked">Tracker nella categoria bloccati</string>
     <string name="category_unblocked">Tracker nella categoria consentiti</string>
-    <string name="category_unblocked_warning">Prima categoria di blocchi!</string>
     <string name="switch_strict_blocking">Blocca la condivisione di dati essenziali</string>
     <string name="tracking_detection_failed">Rilevamento libreria tracciante non riuscito.</string>
     <string name="tracking_detection_failed_ram">Rilevamento libreria tracciante non riuscito. RAM insufficiente.</string>
@@ -376,6 +374,7 @@ Cordiali saluti,\n\n]]></string>
     <string name="failed_loading_cached_analysis">Caricamento dei risultati del tracker nella cache fallito. Per favore segnalalo allo sviluppatore su hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

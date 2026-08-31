@@ -25,6 +25,7 @@
     <string name="menu_support">Υποστηρίξτε αυτήν την εφαρμογή</string>
     <string name="menu_log_support">Επεξήγηση</string>
     <string name="menu_about">Σχετικά</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Άλλες εφαρμογές</string>
     <string name="menu_protocol_other">Άλλο</string>
     <string name="menu_traffic_allowed">Επιτρέπεται</string>
@@ -290,7 +291,6 @@
     <string name="app_route_unavailable_bypassed">Αυτή η εφαρμογή παρακάμπτει πλήρως το TrackerControl, οπότε δεν υπάρχει κίνηση προς δρομολόγηση.</string>
     <string name="app_route_unavailable_partial_routes">Το απομακρυσμένο VPN σας δεν μεταφέρει όλη την κίνηση (τα AllowedIPs του δεν είναι πλήρης σήραγγα). Η δρομολόγηση ανά εφαρμογή απαιτεί πλήρη σήραγγα, καθώς οι διαδρομές είναι κοινές για όλες τις εφαρμογές.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Προστασία</string>
     <string name="app_state_protected">Προστατευμένη</string>
     <string name="app_state_protected_explanation">Οι ιχνηλάτες αποκλείονται και καταγράφονται για αυτήν την εφαρμογή.</string>
     <string name="app_state_trackers_allowed">Ιχνηλάτες επιτρεπτοί</string>
@@ -309,7 +309,6 @@
     <string name="no_trackers_found_action">Έναρξη</string>
     <string name="no_internet_message">"Αυτή η εφαρμογή δεν έχει πρόσβαση στο Διαδίκτυο. Μπορεί ακόμα να σας παρακολουθεί ανταλλάσσοντας δεδομένα με άλλες εφαρμογές."</string>
     <string name="no_internet">Χωρίς πρόσβαση στο διαδίκτυο</string>
-    <string name="bypass_vpn_error">"Δεν είναι δυνατός ο αποκλεισμός του διαδικτύου. Η εφαρμογή εξαιρείται από το TrackerControl."</string>
     <string name="back">Πίσω</string>
     <string name="forever_free">Για Πάντα Δωρεάν</string>
     <string name="your_privacy">Η Ιδιωτικότητα σας</string>
@@ -320,7 +319,6 @@
     <string name="internet_unblocked">Η πρόσβαση στο διαδίκτυο επιτράπηκε</string>
     <string name="category_blocked">Οι ιχνηλάτες στην κατηγορία, αποκλείστηκαν</string>
     <string name="category_unblocked">Επιτρεπόμενοι ιχνηλάτες στην κατηγορία</string>
-    <string name="category_unblocked_warning">Πρώτη κατηγορία αποκλεισμού!</string>
     <string name="switch_strict_blocking">Αποκλεισμός ουσιαστικής κοινής χρήσης δεδομένων</string>
     <string name="tracking_detection_failed">Ο εντοπισμός της βιβλιοθήκης ιχνηλατών απέτυχε.</string>
     <string name="tracking_detection_failed_ram">Ο εντοπισμός της βιβλιοθήκης ιχνηλατών απέτυχε. Μη επαρκής μνήμη RAM.</string>
@@ -341,6 +339,7 @@
     <string name="failed_loading_cached_analysis">Η φόρτωση αποτελεσμάτων cached tracker απέτυχε. Παρακαλώ αναφέρετε το στον προγραμματιστή στο hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

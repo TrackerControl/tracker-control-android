@@ -26,6 +26,7 @@
     <string name="menu_support">Támogassa az alkalmazást</string>
     <string name="menu_log_support">Magyarázat</string>
     <string name="menu_about">Névjegy</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">További alkalmazások</string>
     <string name="menu_protocol_other">Egyéb</string>
     <string name="menu_traffic_allowed">Engedélyezett</string>
@@ -327,7 +328,6 @@ Tisztelettel,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Ez az alkalmazás teljesen megkerüli a TrackerControlt, így nincs mit átirányítani.</string>
     <string name="app_route_unavailable_partial_routes">A távoli VPN nem viszi az összes forgalmat (az AllowedIPs nem teljes alagút). Az alkalmazásonkénti átirányításhoz teljes alagút kell, mert az útvonalakat minden alkalmazás megosztja.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Védelem</string>
     <string name="app_state_protected">Védett</string>
     <string name="app_state_protected_explanation">A követők blokkolva és rögzítve vannak ennél az alkalmazásnál.</string>
     <string name="app_state_trackers_allowed">Követők engedélyezve</string>
@@ -346,7 +346,6 @@ Tisztelettel,\n\n]]></string>
     <string name="no_trackers_found_action">Indítás</string>
     <string name="no_internet_message">"Ez az alkalmazás nem rendelkezik internet-hozzáféréssel. Lehet, hogy továbbra is nyomon követi az adatokat más alkalmazásokkal."</string>
     <string name="no_internet">Nincs internet-hozzáférés</string>
-    <string name="bypass_vpn_error">"Nem tudja blokkolni az internetet. Az alkalmazás ki van zárva TrackerControlból."</string>
     <string name="back">Vissza</string>
     <string name="forever_free">Örökre ingyenes</string>
     <string name="your_privacy">Az Ön adatainak védelme</string>
@@ -357,7 +356,6 @@ Tisztelettel,\n\n]]></string>
     <string name="internet_unblocked">Internet-hozzáférés feloldva</string>
     <string name="category_blocked">A kategóriába tartozó nyomkövetők blokkolva</string>
     <string name="category_unblocked">A kategóriába tartozó nyomkövetők engedélyezve</string>
-    <string name="category_unblocked_warning">Előbb blokkolja a kategóriát!</string>
     <string name="switch_strict_blocking">Blokkolja az alapvető adatmegosztást</string>
     <string name="tracking_detection_failed">Nyomkövető könyvtár észlelési hiba.</string>
     <string name="tracking_detection_failed_ram">Nyomkövető könyvtár észlelési hiba. Kevés a RAM.</string>
@@ -379,6 +377,7 @@ Tisztelettel,\n\n]]></string>
     <string name="msg_notifications">Érintse meg az értesítési engedélyek megadásához (hibaüzenetekhez, stb.)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

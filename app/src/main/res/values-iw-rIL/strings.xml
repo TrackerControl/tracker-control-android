@@ -25,6 +25,7 @@
     <string name="menu_support">תמכו באפליקציה הזו</string>
     <string name="menu_log_support">הדרכה</string>
     <string name="menu_about">אודות</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">אפליקציות נוספות שלנו</string>
     <string name="menu_protocol_other">אחר</string>
     <string name="menu_traffic_allowed">מאושר</string>
@@ -306,7 +307,6 @@
     <string name="app_route_unavailable_bypassed">אפליקציה זו עוקפת את TrackerControl לחלוטין, ולכן אין תעבורה לנתב.</string>
     <string name="app_route_unavailable_partial_routes">ה-VPN המרוחק שלך אינו נושא את כל התעבורה (ה-AllowedIPs שלו אינו מנהרה מלאה). ניתוב לכל אפליקציה דורש מנהרה מלאה, מכיוון שהנתיבים משותפים לכל האפליקציות.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">הגנה</string>
     <string name="app_state_protected">מוגן</string>
     <string name="app_state_protected_explanation">רכיבי מעקב נחסמים ונרשמים עבור אפליקציה זו.</string>
     <string name="app_state_trackers_allowed">רכיבי מעקב מותרים</string>
@@ -325,7 +325,6 @@
     <string name="no_trackers_found_action">פתח</string>
     <string name="no_internet_message">"לאפליקציה הזו אין גישה לאינטרנט. ייתכן שהוא עדיין עוקב אחריך על ידי החלפת נתונים עם אפליקציות אחרות."</string>
     <string name="no_internet">אין גישה לאינטרנט</string>
-    <string name="bypass_vpn_error">"לא ניתן לחסום את האינטרנט. האפליקציה אינה נכללת ב-TrackerControl."</string>
     <string name="back">חזור</string>
     <string name="forever_free">לעולם חופשי</string>
     <string name="your_privacy">הפרטיות שלך</string>
@@ -336,7 +335,6 @@
     <string name="internet_unblocked">בוטלה חסימת הגישה לאינטרנט</string>
     <string name="category_blocked">עוקבים בקטגוריה חסומים</string>
     <string name="category_unblocked">עוקבים בקטגוריה מותרים</string>
-    <string name="category_unblocked_warning">קטגוריית הבלוק הראשון!</string>
     <string name="switch_strict_blocking">חסום שיתוף נתונים חיוני</string>
     <string name="tracking_detection_failed">זיהוי ספריית המעקב נכשל.</string>
     <string name="tracking_detection_failed_ram">זיהוי ספריית המעקב נכשל. אין מספיק זיכרון RAM.</string>
@@ -357,6 +355,7 @@
     <string name="failed_loading_cached_analysis">טעינת תוצאות המעקב בקובץ השמור נכשלה. אנא דווח על כך למפתח בכתובת hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

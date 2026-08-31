@@ -32,6 +32,7 @@
     <string name="timeline_more_trackers">Veel %d</string>
     <string name="timeline_tracker_blocked">Blokeeritud</string>
     <string name="timeline_tracker_allowed">Lubatud</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d blokeeritud · %2$d lubatud</string>
     <string name="troubleshooting_title">Veaotsing</string>
     <string name="troubleshooting_battery_title">Akukasutuse optimeerimine</string>
@@ -203,7 +204,6 @@
     <string name="app_route_unavailable_bypassed">See rakendus möödub TrackerControlist täielikult, seega pole liiklust, mida suunata.</string>
     <string name="app_route_unavailable_partial_routes">Sinu kaug-VPN ei kanna kogu liiklust (selle AllowedIPs pole täistunnel). Rakendusepõhine suunamine vajab täistunnelit, sest marsruudid on kõigil rakendustel ühised.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Kaitse</string>
     <string name="app_state_protected">Kaitstud</string>
     <string name="app_state_protected_explanation">Jälitajad blokeeritakse ja salvestatakse selle rakenduse puhul.</string>
     <string name="app_state_trackers_allowed">Jälitajad lubatud</string>
@@ -220,12 +220,10 @@
     <string name="no_trackers_found_action">Käivita</string>
     <string name="no_internet_message">"See rakendus ei kasuta internetiühendust. Sellele vaatamata võib ta vahetades andmeid teiste rakendustega sind ikkagi jälitada."</string>
     <string name="no_internet">Puudub toimiv internetiühendus</string>
-    <string name="bypass_vpn_error">"Internetiühendust ei õnnestu blokeerida. See rakendus on TrackerControli tööst välistatud."</string>
     <string name="back">Tagasi</string>
     <string name="your_privacy">Sinu privaatsus</string>
     <string name="category_blocked">Blokeeritud jälitajad</string>
     <string name="category_unblocked">Lubatud jälitajad</string>
-    <string name="category_unblocked_warning">Esmalt blokeeri kategooria!</string>
     <string name="switch_strict_blocking">Blokeeri põhiline andmejagamine</string>
     <string name="tracking_detection_failed">Jälitajate teekide tuvastamine ei õnnestunud.</string>
     <string name="tracking_detection_failed_ram">Jälitajate teekide tuvastamine ei õnnestunud. Pole piisavalt muutmälu.</string>
@@ -244,6 +242,7 @@
     <string name="title_skip">Jäta vahele</string>
     <string name="title_previous">Eelmine</string>
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_share">Jaga sõpradega</string>
     <string name="insights_see_more">Vaata lisaks →</string>
     <string name="insights_view_timeline">Vaata hiljutist jälitajate tegevust</string>

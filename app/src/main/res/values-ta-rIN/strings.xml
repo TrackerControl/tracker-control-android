@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <!-- Secure DNS (DoH) -->
     <!-- Block DNS-over-TLS (DoT) -->
     <!-- App Overview -->
@@ -22,7 +23,6 @@
     <string name="app_route_unavailable_bypassed">இந்த ஆப்ஸ் TrackerControl-ஐ முழுமையாகத் தவிர்க்கிறது, எனவே அனுப்ப எந்தப் போக்குவரத்தும் இல்லை.</string>
     <string name="app_route_unavailable_partial_routes">உங்கள் தொலைநிலை VPN எல்லாப் போக்குவரத்தையும் எடுத்துச் செல்வதில்லை (அதன் AllowedIPs முழு சுரங்கம் அல்ல). வழிகள் எல்லா ஆப்ஸாலும் பகிரப்படுவதால், ஆப்ஸ்வாரி வழியமைப்புக்கு முழு சுரங்கம் தேவை.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">பாதுகாப்பு</string>
     <string name="app_state_protected">பாதுகாக்கப்பட்டது</string>
     <string name="app_state_protected_explanation">இந்த ஆப்ஸுக்கான டிராக்கர்கள் தடுக்கப்பட்டு பதிவு செய்யப்படுகின்றன.</string>
     <string name="app_state_trackers_allowed">டிராக்கர்கள் அனுமதிக்கப்பட்டன</string>
@@ -37,6 +37,7 @@
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

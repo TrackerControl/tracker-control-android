@@ -47,6 +47,7 @@
     <string name="timeline_more_trackers">+%d en plus</string>
     <string name="timeline_tracker_blocked">Bloqué</string>
     <string name="timeline_tracker_allowed">Autorisé</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d bloqués · %2$d autorisés</string>
     <string name="troubleshooting_title">Diagnostic des anomalies</string>
     <string name="troubleshooting_battery_title">Optimisation de batterie</string>
@@ -57,8 +58,6 @@
     <string name="troubleshooting_datasaver_desc">Si TrackerControl ne peut pas se connecter lorsque l\'économiseur de données est activé, autoriser l\'utilisation sans restriction des données pour TrackerControl. Activez \"Données en arrière-plan\" et \"Utilisation illimitée des données\".</string>
     <string name="troubleshooting_datasaver_action">Autoriser les données illimitées</string>
     <string name="troubleshooting_datasaver_ok">L\'économiseur de données ne limite pas TrackerControl.</string>
-    <string name="troubleshooting_exclude_title">Exclure des applications du VPN</string>
-    <string name="troubleshooting_exclude_desc">Si une application ne fonctionne pas correctement avec TrackerControl, vous pouvez l\'exclure : tapez sur l\'application dans la liste principale, puis désactivez le bouton VPN pour cette application.</string>
     <string name="troubleshooting_categories_title">Bloquer des catégories de traqueurs spécifiques</string>
     <string name="troubleshooting_categories_desc">Vous pouvez affiner le blocage pour chaque application en la touchant et en basculant les catégories individuelles de traqueurs (par exemple Analytics, Pubs) sur l\'onglet Traqueurs.</string>
     <string name="troubleshooting_alwayson_title">VPN permanent</string>
@@ -460,8 +459,6 @@ Cordialement,\n\n]]></string>
     <string name="summary_block_ambiguous_trackers">Lorsqu\'une IP a des preuves de nom d\'hôte à la fois de traqueur et de non-traqueur, la bloquer malgré tout. Désactivez ceci pour réduire les dysfonctionnements d\'\'applications.</string>
     <string name="setting_sni_enabled">Extraction SNI (recherche)</string>
     <string name="setting_blocking_mode">Mode de blocage</string>
-    <string name="summary_blocking_mode_standard">Standard : bloque tous les traqueurs connus à partir de listes multiples (X-Ray, Disconnect, DuckDuckGo). Les services essentiels sont autorisés. Certaines applications vont dysfonctionner et devront peut-être être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
-    <string name="summary_blocking_mode_strict">Strict : bloque tous les traqueurs connus, y compris les services essentiels et les domaines ambigus partageant la même IP. De nombreuses applications vont dysfonctionner et doivent être exclues manuellement (voir Diagnostic des anomalies dans le menu de l\'application).</string>
     <string name="blocking_mode_minimal">Minimum</string>
     <string name="blocking_mode_standard">Standard</string>
     <string name="blocking_mode_strict">Strict</string>
@@ -502,7 +499,6 @@ Cordialement,\n\n]]></string>
     <string name="no_trackers_found_action">Démarrer</string>
     <string name="no_internet_message">"Cette application n'a pas accès à Internet. Elle peut toujours vous suivre en échangeant des données avec d'autres applications."</string>
     <string name="no_internet">Pas d\'accès à Internet</string>
-    <string name="bypass_vpn_error">"Impossible de bloquer Internet. L'application est exclue de TrackerControl."</string>
     <string name="back">Précédent</string>
     <string name="forever_free">Toujours libre</string>
     <string name="your_privacy">Votre vie privée</string>
@@ -513,7 +509,6 @@ Cordialement,\n\n]]></string>
     <string name="internet_unblocked">Accès à Internet débloqué</string>
     <string name="category_blocked">Traqueurs dans la catégorie bloqués</string>
     <string name="category_unblocked">Traceurs dans la catégorie bloqués</string>
-    <string name="category_unblocked_warning">Nécessite de bloquer la catégorie d\'abord !</string>
     <string name="switch_strict_blocking">Bloquer le partage de données essentielles</string>
     <string name="tracking_detection_failed">La détection de la librairie de traceur a échoué.</string>
     <string name="tracking_detection_failed_ram">La détection de la librairie de traceur a échoué. Pas assez de RAM.</string>
@@ -571,9 +566,8 @@ Cordialement,\n\n]]></string>
     <string name="onboarding_action_optimized">Optimisé</string>
     <string name="onboarding_action_unrestricted">Sans restriction</string>
     <!-- Insights Screen -->
-    <string name="insights_subtitle_7days">7 derniers jours</string>
-    <string name="insights_tracking_attempts">Hôtes du traqueur contactés</string>
     <string name="insights_blocked">Bloqué</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_in_apps">dans %d applications</string>
     <string name="insights_no_data">Aucune donnée de traqueur pour le moment. Utilisez vos applications et revenez plus tard !</string>
     <string name="insights_shocking_fact">Vos applications ont contacté %1$d sociétés de traqueurs via %2$d hôtes de traqueur cette semaine !</string>

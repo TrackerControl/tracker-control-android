@@ -25,6 +25,7 @@
     <string name="menu_support">Støt appen</string>
     <string name="menu_log_support">Forklaring</string>
     <string name="menu_about">Om</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Andre apps</string>
     <string name="menu_protocol_other">Andet</string>
     <string name="menu_traffic_allowed">Tilladt</string>
@@ -120,7 +121,6 @@
     <string name="app_route_unavailable_bypassed">Denne app omgår TrackerControl helt, så der er ingen trafik at sende.</string>
     <string name="app_route_unavailable_partial_routes">Dit fjern-VPN bærer ikke al trafik (dets AllowedIPs er ikke en fuld tunnel). Routing pr. app kræver en fuld tunnel, fordi ruter deles af alle apps.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Beskyttelse</string>
     <string name="app_state_protected">Beskyttet</string>
     <string name="app_state_protected_explanation">Sporere blokeres og registreres for denne app.</string>
     <string name="app_state_trackers_allowed">Sporere tilladt</string>
@@ -139,6 +139,7 @@
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

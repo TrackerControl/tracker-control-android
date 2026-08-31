@@ -22,6 +22,7 @@
     <string name="menu_support">支持這款應用程式</string>
     <string name="menu_log_support">說明</string>
     <string name="menu_about">相關資訊</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">其他應用程式</string>
     <string name="menu_protocol_other">其他</string>
     <string name="menu_traffic_allowed">已允許</string>
@@ -168,7 +169,6 @@
     <string name="app_route_unavailable_bypassed">此應用程式完全略過 TrackerControl，因此沒有可轉送的流量。</string>
     <string name="app_route_unavailable_partial_routes">你的遠端 VPN 並未承載全部流量（其 AllowedIPs 不是全隧道）。路由由所有應用程式共用，因此依應用程式分流需要全隧道。</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">保護</string>
     <string name="app_state_protected">已保護</string>
     <string name="app_state_protected_explanation">為此應用程式封鎖並記錄追蹤器。</string>
     <string name="app_state_trackers_allowed">允許追蹤器</string>
@@ -182,12 +182,12 @@
     <!-- Protection state and remote-VPN routing shown together on one row -->
     <string name="uninstall">解除安裝</string>
     <string name="no_internet">沒有網際網路連線</string>
-    <string name="bypass_vpn_error">"無法封鎖網際網路。App 被 TrackerControl 排除在外。"</string>
     <string name="internet_blocked">已封鎖網路連線</string>
     <string name="internet_unblocked">已解除封鎖網路連線</string>
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

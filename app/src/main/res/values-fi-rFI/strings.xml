@@ -26,6 +26,7 @@
     <string name="menu_support">Tue sovellusta</string>
     <string name="menu_log_support">Selitys</string>
     <string name="menu_about">Tietoja</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Muut sovellukset</string>
     <string name="menu_protocol_other">Muut</string>
     <string name="menu_traffic_allowed">Sallittu</string>
@@ -343,7 +344,6 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Tämä sovellus ohittaa TrackerControlin kokonaan, joten reititettävää liikennettä ei ole.</string>
     <string name="app_route_unavailable_partial_routes">Etä-VPN:si ei kuljeta kaikkea liikennettä (sen AllowedIPs ei ole täysi tunneli). Sovelluskohtainen reititys vaatii täyden tunnelin, koska reitit ovat kaikille sovelluksille yhteiset.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Suojaus</string>
     <string name="app_state_protected">Suojattu</string>
     <string name="app_state_protected_explanation">Seuraimet estetään ja kirjataan tälle sovellukselle.</string>
     <string name="app_state_trackers_allowed">Seuraimet sallittu</string>
@@ -362,7 +362,6 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="no_trackers_found_action">Avaa</string>
     <string name="no_internet_message">"Tällä sovelluksella ei ole Internet-yhteyttä. Se saattaa silti seurata sinua vaihtamalla tietoja muiden sovellusten kanssa."</string>
     <string name="no_internet">Ei Internet-yhteyttä</string>
-    <string name="bypass_vpn_error">"Internetiä ei voi estää. Sovellus on suljettu pois TrackerControlista."</string>
     <string name="back">Takaisin</string>
     <string name="forever_free">Ikuisesti vapaa</string>
     <string name="your_privacy">Yksityisyytesi</string>
@@ -373,7 +372,6 @@ Ystävällisin terveisin,\n\n]]></string>
     <string name="internet_unblocked">Internet-yhteys sallitti</string>
     <string name="category_blocked">Estetyt seuraimet</string>
     <string name="category_unblocked">Sallitut seuraimet</string>
-    <string name="category_unblocked_warning">Ensimmäinen estoluokka!</string>
     <string name="switch_strict_blocking">Estä olennaisten tietojen jakaminen</string>
     <string name="tracking_detection_failed">Seurainkirjastojen tunnistus epäonnistui.</string>
     <string name="tracking_detection_failed_ram">Seurainkirjastojen tunnistus epäonnistui. Ei tarpeeksi muistia.</string>
@@ -445,16 +443,11 @@ Ystävällisin terveisin,\n\n]]></string>
     <!-- Insights Screen -->
     <string name="menu_insights">Katsaus</string>
     <string name="insights_title">Yksityisyysnäkymäsi</string>
-    <string name="insights_subtitle_7days">Viimeiset 7 päivää</string>
-    <string name="insights_tracking_attempts">Seuranta‑palvelimeen on otettu yhteys</string>
     <string name="insights_blocked">Estetty</string>
     <string name="insights_allowed">Sallittu yhteys</string>
-    <string name="insights_tracker_companies">Seurantatahoja</string>
-    <string name="insights_apps_with_trackers">Sovellusta joissa seuraimia</string>
     <string name="insights_top_tracking_apps">Pahimmat seurantasovellukset</string>
     <string name="insights_top_companies">Aktiivisimmat seurantatahot</string>
-    <string name="insights_pervasive_trackers">Yleisimmin esiintyvät seuraimet</string>
-    <string name="insights_top_domains">Yleisimmät seuranta-verkkotunnukset</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_in_apps">%d sovelluksessa</string>
     <string name="insights_no_data">Seurantatietoja ei vielä ole. Käytä sovelluksiasi ja tarkista myöhemmin!</string>
     <string name="insights_shocking_fact">Sovelluksesi ottivat yhteyttä %1$d seurantatahoon %2$d seuranta-verkkotunnukseen kautta tällä viikolla!</string>

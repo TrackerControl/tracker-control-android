@@ -24,6 +24,7 @@
     <string name="menu_support">Apoia esta aplicación</string>
     <string name="menu_log_support">Explicación</string>
     <string name="menu_about">Acerca de</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Outras aplicacións</string>
     <string name="menu_protocol_other">Outros</string>
     <string name="menu_traffic_allowed">Permitido</string>
@@ -89,7 +90,6 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <string name="app_route_unavailable_bypassed">Esta aplicación omite TrackerControl por completo, así que non hai tráfico que encamiñar.</string>
     <string name="app_route_unavailable_partial_routes">O teu VPN remoto non transporta todo o tráfico (os seus AllowedIPs non forman un túnel completo). O encamiñamento por aplicación precisa un túnel completo, porque as rutas compártenas todas as aplicacións.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Protección</string>
     <string name="app_state_protected">Protexida</string>
     <string name="app_state_protected_explanation">Os rastrexadores bloquéanse e rexístranse para esta aplicación.</string>
     <string name="app_state_trackers_allowed">Rastrexadores permitidos</string>
@@ -104,6 +104,7 @@ O seu tráfico de internet non será enviado a ningún servidor VPN remoto.</str
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

@@ -48,6 +48,7 @@
     <string name="timeline_more_trackers">+%d meer</string>
     <string name="timeline_tracker_blocked">Geblokkeerd</string>
     <string name="timeline_tracker_allowed">Toegestaan</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d geblokkeerd · %2$d toegestaan</string>
     <string name="troubleshooting_title">Problemen oplossen</string>
     <string name="troubleshooting_battery_title">Batterijoptimalisatie</string>
@@ -58,8 +59,6 @@
     <string name="troubleshooting_datasaver_desc">Als TrackerControl geen verbinding kan maken wanneer Databesparing is ingeschakeld, sta onbeperkt datagebruik toe voor TrackerControl. Schakel \"Achtergrondgegevens\" en \"Onbeperkt datagebruik\" in.</string>
     <string name="troubleshooting_datasaver_action">Onbeperkte data toestaan</string>
     <string name="troubleshooting_datasaver_ok">Databesparing beperkt TrackerControl niet.</string>
-    <string name="troubleshooting_exclude_title">Apps uitsluiten van VPN</string>
-    <string name="troubleshooting_exclude_desc">Als een app niet goed werkt met TrackerControl, kan je het uitsluiten: tik op de app in de hoofdlijst en schakel vervolgens de VPN-schakelaar voor die app uit.</string>
     <string name="troubleshooting_categories_title">Blokkeren van specifieke trackercategorieën</string>
     <string name="troubleshooting_categories_desc">U kunt blokkering voor elke app fine-tunen door erop te tikken en individuele trackercategorieën (bv. Analytics, Advertenties) uit te schakelen in het tabblad Trackers.</string>
     <string name="troubleshooting_alwayson_title">Altijd-aan VPN</string>
@@ -417,7 +416,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="app_route_unavailable_bypassed">Deze app omzeilt TrackerControl volledig, dus er is geen verkeer om te leiden.</string>
     <string name="app_route_unavailable_partial_routes">Je externe VPN draagt niet al het verkeer (de AllowedIPs vormen geen volledige tunnel). Routering per app vereist een volledige tunnel, omdat routes door alle apps worden gedeeld.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Bescherming</string>
     <string name="app_state_protected">Beschermd</string>
     <string name="app_state_protected_explanation">Trackers worden voor deze app geblokkeerd en geregistreerd.</string>
     <string name="app_state_trackers_allowed">Trackers toegestaan</string>
@@ -436,7 +434,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="no_trackers_found_action">Starten</string>
     <string name="no_internet_message">"Deze app heeft geen internettoegang. Hij kan u nog steeds volgen door gegevens uit te wisselen met andere apps."</string>
     <string name="no_internet">Geen internettoegang</string>
-    <string name="bypass_vpn_error">"Kan het internet niet blokkeren. App is uitgesloten van TrackerControl."</string>
     <string name="back">Terug</string>
     <string name="forever_free">Volledig Vrij</string>
     <string name="your_privacy">Je Privacy</string>
@@ -447,7 +444,6 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="internet_unblocked">Internettoegang gedeblokkeerd</string>
     <string name="category_blocked">Trackers in categorie geblokkeerd</string>
     <string name="category_unblocked">Trackers in categorie toegestaan</string>
-    <string name="category_unblocked_warning">Eerst categorie blokkeren!</string>
     <string name="switch_strict_blocking">Blokkeer het delen van essentiële gegevens</string>
     <string name="tracking_detection_failed">Tracker bibliotheek niet gedetecteerd</string>
     <string name="tracking_detection_failed_ram">Detectie tracker bibliotheek niet gelukt. Onvoldoende RAM.</string>
@@ -481,6 +477,7 @@ Het internetverkeer wordt niet naar een externe VPN-server gestuurd.</string>
     <string name="onboarding_welcome_title">Neem controle over je privacy</string>
     <string name="onboarding_notify_title">Blijf op de hoogte</string>
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

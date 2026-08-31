@@ -40,6 +40,7 @@
     <string name="timeline_more_trackers">+ ещё %d</string>
     <string name="timeline_tracker_blocked">Заблокировано</string>
     <string name="timeline_tracker_allowed">Разрешено</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d заблокировано ·  %2$d разрешено</string>
     <string name="troubleshooting_title">Устранение неполадок</string>
     <string name="troubleshooting_battery_title">Оптимизация батареи</string>
@@ -50,8 +51,6 @@
     <string name="troubleshooting_datasaver_desc">Если TrackerControl не может подключаться, разрешите неограниченное использование данных для TrackerControl. Включите \"Фоновые данные\" и \"Неограниченное использование данных\".</string>
     <string name="troubleshooting_datasaver_action">Разрешить неограниченный доступ к данным</string>
     <string name="troubleshooting_datasaver_ok">Экономия трафика не ограничивает TrackerControl.</string>
-    <string name="troubleshooting_exclude_title">Исключение приложений из VPN</string>
-    <string name="troubleshooting_exclude_desc">Если приложение не работает корректно с TrackerControl, вы можете его исключить: коснитесь приложения в главном списке, затем отключите VPN переключатель для этого приложения.</string>
     <string name="troubleshooting_categories_title">Блокировка определенных категорий трекера</string>
     <string name="troubleshooting_categories_desc">Вы можете тонко настроить блокировку для каждого приложения, нажав на него и переключая отдельные категории трекеров (например, аналитика, реклама) во вкладке Трекеры.</string>
     <string name="troubleshooting_alwayson_title">VPN всегда включен</string>
@@ -343,8 +342,6 @@
     <string name="setting_sni_enabled">Извлечение SNI (исследования)</string>
     <string name="summary_sni_enabled">Извлечь имена хостов из TLS соединений для более точного определения трекера. Внимание: это позволяет утечь вашему IP-адресу на серверы трекера. Включается только для исследований.</string>
     <string name="setting_blocking_mode">Режим блокировки</string>
-    <string name="summary_blocking_mode_standard">Стандартный: Блокирует все известные трекеры из нескольких списков (X-Ray, Disconnect, DuckDuckGo). Основные сервисы разрешены. Некоторые приложения будут поломаны и могут быть исключены вручную (см. Устранение неполадок в меню приложения).</string>
-    <string name="summary_blocking_mode_strict">Строгий: Блокирует все известные трекеры включая основные сервисы и неоднозначные общие IP-домены. Многие приложения сломаются и должны быть исключены вручную (см. Устранение неполадок в меню приложения).</string>
     <string name="blocking_mode_minimal">Минимальный</string>
     <string name="blocking_mode_standard">Стандартный</string>
     <string name="blocking_mode_strict">Строгий</string>
@@ -353,9 +350,7 @@
     <string name="onboarding_blockingmode_minimal_label">Минимальный (рекомендуется для новых пользователей)</string>
     <string name="onboarding_blockingmode_minimal_desc">Блокировать только подтвержденные трекеры, которые безопасны для блокировки. Минимальная поломка приложения. Хорошо для большинства пользователей.</string>
     <string name="onboarding_blockingmode_standard_label">Стандартный</string>
-    <string name="onboarding_blockingmode_standard_desc">Блокирует все известные трекеры из нескольких списков. Некоторые приложения будут ломаться и должны быть исключены вручную.</string>
     <string name="onboarding_blockingmode_strict_label">Строгий</string>
-    <string name="onboarding_blockingmode_strict_desc">Блокирует все, включая основные сервисы и неоднозначные домены. Значительные поломки приложений — многие приложения должны быть исключены вручную.</string>
     <string name="onboarding_blockingmode_research_label">Исследование</string>
     <string name="onboarding_blockingmode_research_desc">Нет блокировки трекера. Логирует передачу в ADB и позволяет извлекать SNI для лучшего определения имени хоста. Только для исследований: это позволяет утечь вашему IP-адреу на сервера трекера.</string>
     <!-- Per-app remote VPN routing -->
@@ -372,7 +367,6 @@
     <string name="app_route_unavailable_bypassed">Это приложение полностью обходит TrackerControl, поэтому направлять нечего.</string>
     <string name="app_route_unavailable_partial_routes">Ваш удалённый VPN передаёт не весь трафик (его AllowedIPs не образует полный туннель). Маршрутизация по приложениям требует полного туннеля, так как маршруты общие для всех приложений.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Защита</string>
     <string name="app_state_protected">Защищено</string>
     <string name="app_state_protected_explanation">Трекеры для этого приложения блокируются и записываются.</string>
     <string name="app_state_trackers_allowed">Трекеры разрешены</string>
@@ -391,7 +385,6 @@
     <string name="no_trackers_found_action">Запустить</string>
     <string name="no_internet_message">"У этого приложения нет разрешения на доступ в интернет. Оно всё ещё может отслеживать вас, обмениваясь данными с другими приложениями."</string>
     <string name="no_internet">Не имеет разрешения на доступ в интернет</string>
-    <string name="bypass_vpn_error">"Невозможно заблокировать интернет. Приложение исключено из TrackerControl."</string>
     <string name="back">Назад</string>
     <string name="forever_free">Всегда бесплатно</string>
     <string name="your_privacy">Ваша приватность</string>
@@ -402,7 +395,6 @@
     <string name="internet_unblocked">Доступ в интернет разблокирован</string>
     <string name="category_blocked">Трекеры в категории заблокированы</string>
     <string name="category_unblocked">Трекеры в категории разрешены</string>
-    <string name="category_unblocked_warning">Сначала заблокируйте категорию!</string>
     <string name="switch_strict_blocking">Блокировка основных (необходимых для работы) данных</string>
     <string name="tracking_detection_failed">Сбой обнаружения библиотек трекеров.</string>
     <string name="tracking_detection_failed_ram">Сбой обнаружения библиотек трекеров. Недостаточно памяти.</string>
@@ -477,16 +469,11 @@
     <!-- Insights Screen -->
     <string name="menu_insights">Статистика (Insights)</string>
     <string name="insights_title">Ваша статистика конфиденциальности</string>
-    <string name="insights_subtitle_7days">Последние 7 дней</string>
-    <string name="insights_tracking_attempts">Tracker хосты связались</string>
     <string name="insights_blocked">Заблокировано</string>
     <string name="insights_allowed">Разрешено прохождение</string>
-    <string name="insights_tracker_companies">Отслеживающие Компании</string>
-    <string name="insights_apps_with_trackers">Приложения с трекерами</string>
     <string name="insights_top_tracking_apps">Худшие по отслеживанию приложения</string>
     <string name="insights_top_companies">Самые активные отслеживающие компании</string>
-    <string name="insights_pervasive_trackers">Самые распространенные трекеры</string>
-    <string name="insights_top_domains">Самые популярные домены отслеживания</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_in_apps">в %d приложениях</string>
     <string name="insights_no_data">Пока нет отслеживаемых данных. Используйте свои приложения и проверьте снова!</string>
     <string name="insights_shocking_fact">Ваши приложения связались с %1$d отслеживающими компаниями через %2$d трекеров на этой неделе!</string>
