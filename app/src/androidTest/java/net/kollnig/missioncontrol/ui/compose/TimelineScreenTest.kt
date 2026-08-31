@@ -11,10 +11,12 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertRangeInfoEquals
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -125,6 +127,14 @@ class TimelineScreenTest {
         composeRule.onNodeWithText("+1 more").performScrollTo().assertExists()
         composeRule.onAllNodes(hasTestTag("timeline-divider"), useUnmergedTree = true)
             .assertCountEquals(1)
+        val rootBounds = composeRule.onRoot(useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val dividerBounds = composeRule
+            .onNodeWithTag("timeline-divider", useUnmergedTree = true)
+            .getUnclippedBoundsInRoot()
+        assertEquals(
+            dividerBounds.left - rootBounds.left,
+            rootBounds.right - dividerBounds.right
+        )
         composeRule.runOnIdle {
             assertEquals(1, callbacks.dismissHint)
             assertEquals(1, callbacks.entryClicks)

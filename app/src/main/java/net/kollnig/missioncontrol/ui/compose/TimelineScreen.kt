@@ -741,7 +741,7 @@ private fun TimelineAppRow(
         if (showDivider) {
             HorizontalDivider(
                 modifier = Modifier
-                    .padding(start = 48.dp, top = 12.dp)
+                    .padding(top = 12.dp)
                     .testTag("timeline-divider"),
                 color = MaterialTheme.colorScheme.outlineVariant
             )
