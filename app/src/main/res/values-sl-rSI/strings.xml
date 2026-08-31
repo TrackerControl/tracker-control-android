@@ -48,8 +48,6 @@
     <string name="timeline_more_trackers">in še %d</string>
     <string name="timeline_tracker_blocked">Blokirano</string>
     <string name="timeline_tracker_allowed">Dovoljeno</string>
-    <string name="timeline_summary_all_blocked">Blokiranih sledilcev: %d</string>
-    <string name="timeline_summary_none_blocked">Dovoljenih sledilcev: %d</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="other">Blokiranih sledilcev: %d</item>
     </plurals>

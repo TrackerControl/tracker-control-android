@@ -40,8 +40,6 @@
     <string name="timeline_section_this_week">Essa semana</string>
     <string name="timeline_tracker_blocked">Bloqueado</string>
     <string name="timeline_tracker_allowed">Permitidos</string>
-    <string name="timeline_summary_all_blocked">%d rastreadores bloqueados</string>
-    <string name="timeline_summary_none_blocked">%d rastreadores permitidos</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="other">%d rastreadores bloqueados</item>
     </plurals>

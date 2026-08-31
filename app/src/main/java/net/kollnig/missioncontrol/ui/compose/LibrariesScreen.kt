@@ -32,6 +32,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.platform.testTag
@@ -44,6 +45,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.kollnig.missioncontrol.R
+
+/** Opacity the pre-Compose list used for a library with no website to open. */
+private const val LINKLESS_LIBRARY_ALPHA = 0.72f
 
 /** Immutable presentation state calculated by the Java activity controller. */
 data class LibrariesScreenModel(
@@ -276,7 +280,11 @@ private fun LibraryListItem(
                 role = Role.Button
             }
     } else {
-        Modifier.fillMaxWidth()
+        // The pre-Compose row faded a library with no website to 72% so the
+        // missing link icon did not read as a row that failed to load.
+        Modifier
+            .fillMaxWidth()
+            .alpha(LINKLESS_LIBRARY_ALPHA)
     }
     ListItem(
         headlineContent = {

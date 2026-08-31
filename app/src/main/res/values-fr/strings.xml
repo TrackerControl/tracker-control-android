@@ -47,8 +47,6 @@
     <string name="timeline_more_trackers">+%d en plus</string>
     <string name="timeline_tracker_blocked">Bloqué</string>
     <string name="timeline_tracker_allowed">Autorisé</string>
-    <string name="timeline_summary_all_blocked">%d traqueurs bloqués</string>
-    <string name="timeline_summary_none_blocked">%d traqueurs autorisés</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="other">%d traqueurs bloqués</item>
     </plurals>
