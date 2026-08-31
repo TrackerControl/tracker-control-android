@@ -186,6 +186,7 @@
     <string name="setting_wg_profile">WireGuard profile</string>
     <string name="setting_wg_profile_manage">Custom WireGuard profiles</string>
     <string name="setting_wg_profile_import">Import WireGuard config</string>
+    <string name="setting_wg_profile_scan">Scan QR code</string>
     <string name="setting_wg_mullvad_setup">Set up Mullvad</string>
     <string name="setting_wg_proton_setup">Use a Proton VPN config</string>
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
@@ -269,6 +270,11 @@
     <string name="msg_wg_profile_set_active">Set active</string>
     <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
     <string name="msg_wg_profile_delete_confirm">Delete this WireGuard profile?</string>
+    <string name="msg_wg_profile_scan_hint">Point the camera at the WireGuard QR code shown by your VPN provider. The scan happens on your device.</string>
+    <string name="msg_wg_profile_scan_no_camera">This device has no camera to scan with</string>
+    <string name="msg_wg_profile_scan_no_camera_permission">Camera permission is needed to scan a QR code</string>
+    <string name="msg_wg_profile_scan_failed">Could not start the camera: %1$s</string>
+    <string name="msg_wg_profile_scan_not_config">This QR code is not a WireGuard config: %1$s</string>
     <string name="msg_wg_mullvad_account">Mullvad account number</string>
     <string name="msg_wg_mullvad_recommended">Recommended location</string>
     <string name="msg_wg_mullvad_note">TrackerControl creates a Mullvad WireGuard profile. The account number is saved locally for future Mullvad profiles. Tokens are not stored, and deleting the profile here does not remove the device from Mullvad.</string>

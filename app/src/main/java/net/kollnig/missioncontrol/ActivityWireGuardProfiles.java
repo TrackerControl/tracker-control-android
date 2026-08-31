@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.content.pm.PackageManager;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -16,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
@@ -52,6 +55,7 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
 
     private WgProfileManager manager;
     private WireGuardProfilesScreenController screenController;
+    private ActivityResultLauncher<Intent> scanLauncher;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -71,6 +75,13 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
 
         manager = new WgProfileManager(this);
         manager.migrateIfNeeded();
+
+        scanLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() != RESULT_OK || result.getData() == null)
+                        return;
+                    onQrScanned(result.getData().getStringExtra(ActivityScanQr.EXTRA_RESULT));
+                });
 
         screenController = WireGuardProfilesScreen.install(
                 composeView,
@@ -152,12 +163,15 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         new MaterialAlertDialogBuilder(this)
                 .setItems(new CharSequence[]{
                         getString(R.string.setting_wg_profile_import),
+                        getString(R.string.setting_wg_profile_scan),
                         getString(R.string.setting_wg_mullvad_setup),
                         getString(R.string.setting_wg_proton_setup)
                 }, (dialog, which) -> {
                     if (which == 0)
                         showProfileDialog(null);
                     else if (which == 1)
+                        startScan();
+                    else if (which == 2)
                         showMullvadDialog();
                     else
                         showProtonDialog();
@@ -298,7 +312,36 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         });
     }
 
+    // WireGuard providers routinely publish a config as a QR code; scanning it
+    // saves users from moving a config file onto the phone by hand.
+    private void startScan() {
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            Toast.makeText(this, R.string.msg_wg_profile_scan_no_camera, Toast.LENGTH_LONG).show();
+            return;
+        }
+        scanLauncher.launch(new Intent(this, ActivityScanQr.class));
+    }
+
+    private void onQrScanned(String text) {
+        if (TextUtils.isEmpty(text))
+            return;
+        try {
+            WgConfigParser.INSTANCE.parse(text);
+        } catch (Throwable ex) {
+            // Any QR code will scan, so tell the user when it was not a config
+            // rather than dropping them into an import dialog full of noise.
+            Toast.makeText(this, getString(R.string.msg_wg_profile_scan_not_config,
+                    ex.getMessage()), Toast.LENGTH_LONG).show();
+            return;
+        }
+        showProfileDialog(null, text);
+    }
+
     private void showProfileDialog(WgProfileManager.Profile item) {
+        showProfileDialog(item, null);
+    }
+
+    private void showProfileDialog(WgProfileManager.Profile item, String prefillConfig) {
         LinearLayout form = new LinearLayout(this);
         form.setOrientation(LinearLayout.VERTICAL);
         int pad = (int) (20 * getResources().getDisplayMetrics().density);
@@ -322,6 +365,8 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                 InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         if (item != null)
             config.setText(item.config);
+        else if (prefillConfig != null)
+            config.setText(prefillConfig);
         form.addView(config, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
