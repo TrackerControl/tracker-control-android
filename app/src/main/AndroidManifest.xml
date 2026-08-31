@@ -28,8 +28,19 @@
         and no frame ever leaves the device.
     -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!--
+        Declaring CAMERA makes Play infer android.hardware.camera and
+        .autofocus as required, which would hide the app from camera-less
+        devices; scanning is optional, so mark all three optional.
+    -->
     <uses-feature
         android:name="android.hardware.camera.any"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
     <!-- https://developer.android.com/preview/privacy/package-visibility -->

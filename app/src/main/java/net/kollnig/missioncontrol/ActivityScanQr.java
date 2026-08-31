@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -120,9 +121,16 @@ public class ActivityScanQr extends AppCompatActivity {
                         .build();
                 analysis.setAnalyzer(analysisExecutor, this::analyze);
 
+                CameraSelector selector = selectCamera(provider);
+                if (selector == null) {
+                    Toast.makeText(this, R.string.msg_wg_profile_scan_no_camera,
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                }
+
                 provider.unbindAll();
-                provider.bindToLifecycle(this, CameraSelector.DEFAULT_BACK_CAMERA,
-                        preview, analysis);
+                provider.bindToLifecycle(this, selector, preview, analysis);
             } catch (Throwable ex) {
                 Log.e(TAG, "Cannot start camera", ex);
                 Toast.makeText(this, getString(R.string.msg_wg_profile_scan_failed,
@@ -130,6 +138,20 @@ public class ActivityScanQr extends AppCompatActivity {
                 finish();
             }
         }, ContextCompat.getMainExecutor(this));
+    }
+
+    /**
+     * Prefers the back camera, but front-camera-only devices (some tablets and
+     * Chromebooks) must still be able to scan. Analysis frames are not mirrored
+     * even when the front preview is, so decoding works either way.
+     */
+    private static CameraSelector selectCamera(ProcessCameraProvider provider)
+            throws CameraInfoUnavailableException {
+        if (provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA))
+            return CameraSelector.DEFAULT_BACK_CAMERA;
+        if (provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA))
+            return CameraSelector.DEFAULT_FRONT_CAMERA;
+        return null;
     }
 
     private void analyze(ImageProxy image) {
