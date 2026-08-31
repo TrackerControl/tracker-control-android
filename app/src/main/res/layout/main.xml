@@ -233,5 +233,10 @@
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/bottom_nav_background"
+        app:backgroundTint="@color/bottom_nav_background"
+        app:itemActiveIndicatorStyle="@style/TrackerControlBottomNavActiveIndicator"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
         app:menu="@menu/bottom_nav" />
 </LinearLayout>

@@ -28,6 +28,46 @@ import net.kollnig.missioncontrol.Common
 import net.kollnig.missioncontrol.R
 import java.util.Locale
 
+/** One observed TLD+1 domain and the apps that contacted it. */
+internal data class DomainObservation(
+    val aliases: Set<String>,
+    val appUids: Set<Int>
+)
+
+/** A deterministic domain row for the Insights screen. */
+internal data class AggregatedDomain(
+    val label: String,
+    val appCount: Int
+)
+
+/** Merge observations with exactly the same alias set, counting each UID once. */
+internal fun aggregateDomainObservations(
+    observations: Iterable<DomainObservation>,
+    limit: Int = 20
+): List<AggregatedDomain> {
+    if (limit <= 0) return emptyList()
+
+    val groups = linkedMapOf<Set<String>, MutableSet<Int>>()
+    observations.forEach { observation ->
+        val aliases = observation.aliases
+            .filter { it.isNotBlank() }
+            .toSet()
+        if (aliases.isEmpty()) return@forEach
+
+        groups.getOrPut(aliases) { mutableSetOf() }.addAll(observation.appUids)
+    }
+
+    return groups
+        .map { (aliases, appUids) ->
+            AggregatedDomain(
+                label = aliases.sorted().joinToString(" or "),
+                appCount = appUids.size
+            )
+        }
+        .sortedWith(compareByDescending<AggregatedDomain> { it.appCount }.thenBy { it.label })
+        .take(limit)
+}
+
 /**
  * Provider class that computes InsightsData from the database.
  * Aggregates tracking statistics for the past 7 days.
@@ -206,28 +246,19 @@ class InsightsDataProvider(context: Context) {
             .map { Pair(it.key, it.value.size) }
             .toMutableList()
 
-        // Build top domains list (by number of apps)
-        // Group by TLD+1 (e.g., ads.google.com -> google.com) to reduce clutter
-        // For uncertain entries, show alternate tracker domains inline
-        val tldPlusOneToApps = mutableMapOf<String, MutableSet<Int>>()
-
-        for ((daddr, uids) in domainToApps) {
-            val tldPlusOne = extractTldPlusOne(daddr)
-            
-            // Build label - for uncertain domains, show alternates
-            val label = if (uncertainDomains.contains(daddr)) {
-                buildUncertainLabel(daddr, tldPlusOne)
-            } else {
-                tldPlusOne
+        // Build top domains list (by number of apps), grouping only identical
+        // uncertain alias sets while keeping distinct ambiguity sets separate.
+        val domainObservations = domainToApps.map { (daddr, uids) ->
+            val primary = extractTldPlusOne(daddr)
+            val aliases = mutableSetOf(primary)
+            if (uncertainDomains.contains(daddr)) {
+                aliases += getTrackerAlternateTldPlusOnes(daddr, primary)
             }
-            
-            tldPlusOneToApps.getOrPut(label) { mutableSetOf() }.addAll(uids)
+            DomainObservation(aliases = aliases, appUids = uids)
         }
-        
-        data.topDomains = tldPlusOneToApps.entries
-            .sortedByDescending { it.value.size }
-            .take(20)
-            .map { Pair(it.key, it.value.size) }
+
+        data.topDomains = aggregateDomainObservations(domainObservations)
+            .map { Pair(it.label, it.appCount) }
             .toMutableList()
 
         return data
@@ -274,32 +305,24 @@ class InsightsDataProvider(context: Context) {
             suffix
     }
     
-    /**
-     * Build a label for uncertain entries showing alternate tracker domains.
-     * E.g., "google.com (or doubleclick.net)"
-     */
-    private fun buildUncertainLabel(daddr: String, tldPlusOne: String): String {
+    /** Return tracker alternate TLD+1 values for an uncertain observation. */
+    private fun getTrackerAlternateTldPlusOnes(
+        daddr: String,
+        primary: String
+    ): Set<String> {
         val alternateTldPlusOnes = mutableSetOf<String>()
-        
-        // Query alternate domains that share the same IP
         databaseHelper.getAlternateQNames(daddr).use { altCursor ->
             if (altCursor != null && altCursor.moveToFirst()) {
                 do {
                     val altDomain = altCursor.getString(0)
-                    // Only include if it's a different TLD+1 and is a tracker
                     val altTldPlusOne = extractTldPlusOne(altDomain)
-                    if (altTldPlusOne != tldPlusOne && TrackerList.findTracker(altDomain) != null) {
+                    if (altTldPlusOne != primary && TrackerList.findTracker(altDomain) != null) {
                         alternateTldPlusOnes.add(altTldPlusOne)
                     }
                 } while (altCursor.moveToNext())
             }
         }
-        
-        return if (alternateTldPlusOnes.isNotEmpty()) {
-            "$tldPlusOne (or ${alternateTldPlusOnes.sorted().take(2).joinToString(", ")})"
-        } else {
-            tldPlusOne
-        }
+        return alternateTldPlusOnes
     }
 
     private fun isTrackerContactBlocked(

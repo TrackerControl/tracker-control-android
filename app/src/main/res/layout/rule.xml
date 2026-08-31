@@ -36,8 +36,8 @@
             android:minHeight="32dp"
             android:singleLine="true"
             android:text="@string/tracked_app_name"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="16sp" />
+            android:textAppearance="@style/TextMedium"
+            android:textColor="?android:textColorPrimary" />
 
         <TextView
             android:id="@+id/app_details"
@@ -48,8 +48,8 @@
             android:minHeight="20dp"
             android:singleLine="true"
             android:text="@string/tracked_app_name"
+            android:textAppearance="@style/TextSmall"
             android:textColor="?android:textColorTertiary"
-            android:textSize="14sp"
             android:visibility="gone" />
 
     </LinearLayout>

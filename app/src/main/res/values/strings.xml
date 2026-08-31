@@ -59,12 +59,15 @@
     <string name="timeline_more_trackers">+%d more</string>
     <string name="timeline_tracker_blocked">Blocked</string>
     <string name="timeline_tracker_allowed">Allowed</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
     <string name="feed_section_last_contact">last contact %s</string>
     <plurals name="feed_show_more_companies">
         <item quantity="one">Show %d more company</item>
         <item quantity="other">Show %d more companies</item>
     </plurals>
     <string name="feed_allow_company_in_app">Allow %1$s in %2$s</string>
+    <string name="feed_block_company_in_app">Block %1$s in %2$s</string>
     <string name="feed_allowed_by_you">Allowed by you</string>
     <string name="feed_allowed_shared_ip">Allowed · shared IP</string>
     <string name="feed_monitored">Monitored</string>
@@ -75,6 +78,14 @@
     <string name="timeline_summary_all_blocked">%d trackers blocked</string>
     <string name="timeline_summary_none_blocked">%d trackers allowed</string>
     <string name="timeline_summary_mixed">%1$d blocked · %2$d allowed</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="one">%d tracker blocked</item>
+        <item quantity="other">%d trackers blocked</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="one">%d tracker allowed</item>
+        <item quantity="other">%d trackers allowed</item>
+    </plurals>
 
     <string name="troubleshooting_title">Troubleshooting</string>
 
@@ -87,6 +98,11 @@
     <string name="troubleshooting_datasaver_desc">If TrackerControl cannot connect when Data Saver is on, allow unrestricted data usage for TrackerControl. Enable \"Background data\" and \"Unrestricted data usage\".</string>
     <string name="troubleshooting_datasaver_action">Allow unrestricted data</string>
     <string name="troubleshooting_datasaver_ok">Data saver is not restricting TrackerControl.</string>
+
+    <string name="troubleshooting_local_network_title">Local network access</string>
+    <string name="troubleshooting_local_network_desc">Permission is needed for local DNS servers, WireGuard peers, and proxies.</string>
+    <string name="troubleshooting_local_network_action">Allow local network access</string>
+    <string name="troubleshooting_local_network_ok">Local network access is allowed.</string>
 
     <string name="troubleshooting_app_breakage_title">An app stopped working</string>
     <string name="troubleshooting_app_breakage_desc">Tap the app in the main list, then tap Protection. Try "Minimal blocking only" first. If the app still has problems, choose "Trackers allowed". Use "Bypass TrackerControl" only as a last resort.</string>
@@ -175,6 +191,8 @@
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
     <string name="setting_wg_profile_save">Save profile</string>
     <string name="setting_wg_profile_delete">Delete profile</string>
+    <string name="accessibility_wg_profile_edit">Edit WireGuard profile %1$s</string>
+    <string name="accessibility_wg_profile_delete">Delete WireGuard profile %1$s</string>
     <string name="setting_wireguard">WireGuard (preview)</string>
     <string name="setting_wg_status">Status</string>
     <string name="setting_vpn_key_rotate_now">Rotate VPN provider keys now</string>
@@ -267,7 +285,6 @@
     <string name="vpn_status_wireguard_connected">WireGuard connected</string>
     <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">Not connected</string>
-    <string name="vpn_choose_country">Choose country</string>
     <string name="vpn_provider_mullvad">Mullvad VPN</string>
     <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">VPN preview</string>
@@ -307,7 +324,6 @@
     <string name="vpn_ivpn_captcha_hint">CAPTCHA text</string>
     <string name="vpn_account_save">Save</string>
     <string name="vpn_account_saved">Account saved</string>
-    <string name="vpn_wireguard_profiles">WireGuard profiles</string>
     <string name="vpn_no_wireguard_profiles">No custom WireGuard profiles yet</string>
     <string name="vpn_import_wireguard_profile">Import WireGuard profile</string>
     <string name="vpn_manage_wireguard_profiles">Manage WireGuard profiles</string>
@@ -559,11 +575,11 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <!-- Actions -->
     <string name="block_tracking">Block trackers</string>
     <string name="block_tracking_description">Many apps send data to third-parties, so-called trackers. TrackerControl allows to block these network transmissions selectively. Yet, use this wisely, since app developers rely on these services, notably advertising.</string>
-    <string name="personalised_ads">Limit Personalisation</string>
+    <string name="personalised_ads">Limit personalisation</string>
     <string name="personalised_ads_description">Android offers to limit apps\' access to the Google Advertising ID of your device. However, apps can potentially ignore this setting, and still use this ID. They can also continue to collect this ID for analytics purposes, according to Google\'s policies. You need trust in Google and the data-collecting company.</string>
-    <string name="data_managment">Manage Data</string>
+    <string name="data_managment">Manage data</string>
     <string name="data_management_description">The EU General Data Protection Regulation (GDPR) allows users from the EU to manage any data related to them. This app provides email templates to reach out to the developer. The developer has to answer within one month.</string>
-    <string name="contacts">Contact </string>
+    <string name="contacts">Contact</string>
     <string name="contacts_description">If you think an application violates data protection principles, you may want to contact the responsible entities directly.</string>
     <string name="play_services_required">This is a setting of the Google Play Services, which were not found on your device.</string>
     <string name="no_mail_service">Please install an email client.</string>
@@ -573,7 +589,7 @@ Your internet traffic is not being sent to a remote VPN server.</string>
     <string name="request_deletion">Request deletion</string>
     <string name="contact_developer">Developer</string>
     <string name="contact_playstore">Google</string>
-    <string name="contact_officials">EU Officials</string>
+    <string name="contact_officials">EU officials</string>
     <string name="google_dpo_mail">data-protection-office@google.com</string>
     <string name="dpas_overview_url">https://edpb.europa.eu/about-edpb/board/members</string>
     <string name="subject_request_data">GDPR Subject Access Request</string>
@@ -624,9 +640,11 @@ Sincerely,\n\n]]></string>
 
     <string name="launch_app">Launch &amp; Find trackers</string>
     <string name="launch_app_failed">This app can\'t be launched</string>
-    <string name="countries">Destination Countries</string>
+    <string name="countries">Destination countries</string>
     <string name="countries_explanation">Find out where your phone sends tracking data.\n\nInformation is based on DNS lookups and IP information, and might be inaccurate.</string>
     <string name="countries_loading_failed">Oops.. The country map failed to load. Please tell tc@kollnig.net how this happened.</string>
+    <string name="countries_map_highlighted">Tracking destinations highlighted: %1$s</string>
+    <string name="countries_map_none">No tracking destinations are highlighted.</string>
 
     <string name="tracker_advertising">Advertising</string>
     <string name="tracker_analytics">Analytics</string>
@@ -683,7 +701,7 @@ Sincerely,\n\n]]></string>
     <string name="app_route_unavailable_partial_routes">Your remote VPN does not carry all traffic (its AllowedIPs is not a full tunnel). Per-app routing needs a full tunnel, because routes are shared by every app.</string>
 
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Protection</string>
+    <string name="app_state_heading">Blocking mode</string>
     <string name="app_state_title_minimal">Minimal blocking</string>
     <string name="app_state_title_standard">Standard blocking</string>
     <string name="app_state_title_strict">Strict blocking</string>
@@ -867,17 +885,21 @@ Sincerely,\n\n]]></string>
     <!-- Insights Screen -->
     <string name="menu_insights">Insights</string>
     <string name="insights_title">Your Privacy Insights</string>
-    <string name="insights_subtitle_7days">Last 7 Days</string>
-    <string name="insights_tracking_attempts">Tracker Hosts Contacted</string>
+    <string name="insights_subtitle_7days">Last 7 days</string>
+    <string name="insights_tracking_attempts">Tracker hosts contacted</string>
     <string name="insights_blocked">Blocked</string>
     <string name="insights_allowed">Allowed Through</string>
-    <string name="insights_tracker_companies">Tracking Companies</string>
-    <string name="insights_apps_with_trackers">Apps with Trackers</string>
+    <string name="insights_tracker_companies">Tracking companies</string>
+    <string name="insights_apps_with_trackers">Apps with trackers</string>
     <string name="insights_top_tracking_apps">Worst Offending Apps</string>
     <string name="insights_top_companies">Most Active Tracking Companies</string>
-    <string name="insights_pervasive_trackers">Most Pervasive Trackers</string>
-    <string name="insights_top_domains">Top Tracker Domains</string>
+    <string name="insights_pervasive_trackers">Most pervasive trackers</string>
+    <string name="insights_top_domains">Top tracker domains</string>
     <string name="insights_in_apps">in %d apps</string>
+    <plurals name="insights_apps_count">
+        <item quantity="one">in %d app</item>
+        <item quantity="other">in %d apps</item>
+    </plurals>
     <string name="insights_no_data">No tracking data yet. Use your apps and check back!</string>
     <string name="insights_shocking_fact">Your apps contacted %1$d tracking companies via %2$d tracker hosts this week!</string>
     <string name="insights_shocking_fact_playstore">Your apps contacted %1$d tracking companies this week!</string>

@@ -24,7 +24,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.view.View
-import androidx.core.content.ContextCompat
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import eu.faircode.netguard.Util
 import java.io.BufferedReader
@@ -217,7 +217,9 @@ object Common {
             msg,
             Snackbar.LENGTH_LONG
         )
-        s.setActionTextColor(ContextCompat.getColor(activity, R.color.colorPrimary))
+        s.setActionTextColor(
+            MaterialColors.getColor(s.view, com.google.android.material.R.attr.colorPrimaryInverse)
+        )
         return s
     }
 

@@ -1,34 +1,29 @@
 package net.kollnig.missioncontrol;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.ui.platform.ComposeView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.materialswitch.MaterialSwitch;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.kollnig.missioncontrol.data.Blocklist;
 import net.kollnig.missioncontrol.data.BlocklistManager;
+import net.kollnig.missioncontrol.ui.compose.BlocklistRow;
+import net.kollnig.missioncontrol.ui.compose.BlocklistsScreen;
+import net.kollnig.missioncontrol.ui.compose.BlocklistsScreenCallbacks;
+import net.kollnig.missioncontrol.ui.compose.BlocklistsScreenController;
+import net.kollnig.missioncontrol.ui.compose.BlocklistsScreenModel;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,14 +31,16 @@ import eu.faircode.netguard.ServiceSinkhole;
 import eu.faircode.netguard.Util;
 
 public class ActivityBlocklists extends AppCompatActivity {
-    private BlocklistAdapter adapter;
     private BlocklistManager manager;
+    private BlocklistsScreenController screenController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Util.setTheme(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_blocklists);
+
+        ComposeView composeView = new ComposeView(this);
+        setContentView(composeView);
 
         getSupportActionBar().setTitle(R.string.title_blocklists);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -51,13 +48,30 @@ public class ActivityBlocklists extends AppCompatActivity {
         manager = BlocklistManager.getInstance(this);
         manager.migrateIfNeeded();
 
-        RecyclerView list = findViewById(R.id.list);
-        list.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new BlocklistAdapter(this, manager);
-        list.setAdapter(adapter);
+        screenController = BlocklistsScreen.install(
+                composeView,
+                buildScreenModel(),
+                new BlocklistsScreenCallbacks() {
+                    @Override
+                    public void onAdd() {
+                        showAddDialog(null);
+                    }
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> showAddDialog(null));
+                    @Override
+                    public void onEdit(String uuid) {
+                        showAddDialog(uuid);
+                    }
+
+                    @Override
+                    public void onEnabledChanged(String uuid, boolean enabled) {
+                        updateEnabled(uuid, enabled);
+                    }
+
+                    @Override
+                    public void onDelete(String uuid) {
+                        showDeleteDialog(uuid);
+                    }
+                });
     }
 
     @Override
@@ -69,15 +83,57 @@ public class ActivityBlocklists extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showAddDialog(Blocklist item) {
+    private BlocklistsScreenModel buildScreenModel() {
+        List<BlocklistRow> rows = new ArrayList<>();
+        for (Blocklist item : manager.getBlocklists()) {
+            String lastUpdate = null;
+            if (item.lastModified > 0) {
+                String last = SimpleDateFormat.getDateTimeInstance().format(new Date(item.lastModified));
+                lastUpdate = getString(R.string.msg_last_update, last);
+            }
+
+            String error = item.lastDownloadSuccess ? null : item.lastErrorMessage;
+            rows.add(new BlocklistRow(
+                    item.uuid,
+                    item.url,
+                    lastUpdate,
+                    error,
+                    item.enabled,
+                    getString(R.string.blocklist_enable_description, item.url),
+                    getString(R.string.blocklist_delete_description)));
+        }
+        return new BlocklistsScreenModel(rows);
+    }
+
+    private void refreshScreen() {
+        screenController.update(buildScreenModel());
+    }
+
+    private Blocklist findBlocklist(String uuid) {
+        for (Blocklist item : manager.getBlocklists()) {
+            if (item.uuid.equals(uuid))
+                return item;
+        }
+        return null;
+    }
+
+    private void showAddDialog(String uuid) {
+        String initialUrl = null;
+        if (uuid != null) {
+            Blocklist item = findBlocklist(uuid);
+            if (item == null)
+                return;
+            initialUrl = item.url;
+        }
+
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle(item == null ? R.string.title_add_blocklist : R.string.title_blocklists);
+        builder.setTitle(uuid == null ? R.string.title_add_blocklist : R.string.title_blocklists);
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
         input.setHint("https://example.com/hosts.txt");
-        if (item != null)
-            input.setText(item.url);
+        if (initialUrl != null)
+            input.setText(initialUrl);
         builder.setView(input);
 
         builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
@@ -87,6 +143,11 @@ public class ActivityBlocklists extends AppCompatActivity {
                     URL parsed = new URL(url); // Validate URL
                     if (!"https".equalsIgnoreCase(parsed.getProtocol()))
                         throw new MalformedURLException("Only HTTPS blocklist URLs are supported");
+
+                    Blocklist item = uuid == null ? null : findBlocklist(uuid);
+                    if (uuid != null && item == null)
+                        return;
+
                     if (item == null) {
                         Blocklist newItem = new Blocklist(url, true);
                         manager.addBlocklist(newItem);
@@ -101,7 +162,7 @@ public class ActivityBlocklists extends AppCompatActivity {
                         manager.updateBlocklist(item);
                     }
                     applyBlocklists();
-                    adapter.refresh();
+                    refreshScreen();
                 } catch (MalformedURLException e) {
                     Toast.makeText(ActivityBlocklists.this, R.string.msg_invalid_url, Toast.LENGTH_SHORT).show();
                 }
@@ -112,96 +173,34 @@ public class ActivityBlocklists extends AppCompatActivity {
         builder.show();
     }
 
-    private class BlocklistAdapter extends RecyclerView.Adapter<BlocklistAdapter.ViewHolder> {
-        private List<Blocklist> list;
-        private Context context;
-        private BlocklistManager manager;
+    private void updateEnabled(String uuid, boolean enabled) {
+        Blocklist item = findBlocklist(uuid);
+        if (item == null)
+            return;
 
-        public BlocklistAdapter(Context context, BlocklistManager manager) {
-            this.context = context;
-            this.manager = manager;
-            this.list = manager.getBlocklists();
-        }
+        item.enabled = enabled;
+        manager.updateBlocklist(item);
+        applyBlocklists();
+        refreshScreen();
+    }
 
-        public void refresh() {
-            this.list = manager.getBlocklists();
-            notifyDataSetChanged();
-        }
+    private void showDeleteDialog(String uuid) {
+        if (findBlocklist(uuid) == null)
+            return;
 
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_blocklist, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Blocklist item = list.get(position);
-            holder.textUrl.setText(item.url);
-
-            if (item.lastModified > 0) {
-                String last = SimpleDateFormat.getDateTimeInstance().format(new Date(item.lastModified));
-                holder.textLastUpdate.setText(context.getString(R.string.msg_last_update, last));
-                holder.textLastUpdate.setVisibility(View.VISIBLE);
-            } else {
-                holder.textLastUpdate.setVisibility(View.GONE);
-            }
-
-            if (item.lastDownloadSuccess) {
-                holder.textError.setVisibility(View.GONE);
-            } else {
-                holder.textError.setText(item.lastErrorMessage);
-                holder.textError.setVisibility(View.VISIBLE);
-            }
-
-            holder.switchEnabled.setContentDescription(
-                    context.getString(R.string.blocklist_enable_description, item.url));
-            holder.switchEnabled.setChecked(item.enabled);
-            holder.switchEnabled.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                item.enabled = isChecked;
-                manager.updateBlocklist(item);
-                applyBlocklists();
-            });
-
-            // Edit on click
-            holder.itemView.setOnClickListener(v -> showAddDialog(item));
-
-            holder.btnDelete.setOnClickListener(v -> {
-                new MaterialAlertDialogBuilder(context)
-                        .setTitle(R.string.title_delete_blocklist)
-                        .setMessage(R.string.msg_delete_blocklist_confirm)
-                        .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                            manager.removeBlocklist(item.uuid);
-                            applyBlocklists();
-                            refresh();
-                        })
-                        .setNegativeButton(android.R.string.no, null)
-                        .show();
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textUrl;
-            TextView textLastUpdate;
-            TextView textError;
-            MaterialSwitch switchEnabled;
-            ImageButton btnDelete;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                textUrl = itemView.findViewById(R.id.textUrl);
-                textLastUpdate = itemView.findViewById(R.id.textLastUpdate);
-                textError = itemView.findViewById(R.id.textError);
-                switchEnabled = itemView.findViewById(R.id.switchEnabled);
-                btnDelete = itemView.findViewById(R.id.btnDelete);
-            }
-        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.title_delete_blocklist)
+                .setMessage(R.string.msg_delete_blocklist_confirm)
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    Blocklist item = findBlocklist(uuid);
+                    if (item == null)
+                        return;
+                    manager.removeBlocklist(item.uuid);
+                    applyBlocklists();
+                    refreshScreen();
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     private void applyBlocklists() {

@@ -50,6 +50,12 @@
     <string name="timeline_tracker_allowed">Dovoljeno</string>
     <string name="timeline_summary_all_blocked">Blokiranih sledilcev: %d</string>
     <string name="timeline_summary_none_blocked">Dovoljenih sledilcev: %d</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="other">Blokiranih sledilcev: %d</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="other">Dovoljenih sledilcev: %d</item>
+    </plurals>
     <string name="timeline_summary_mixed">Blokirano: %1$d · Dovoljeno: %2$d</string>
     <string name="troubleshooting_title">Odpravljaje težav</string>
     <string name="troubleshooting_battery_title">Optimizacija baterije</string>
@@ -219,7 +225,6 @@
     <string name="vpn_status_wireguard_connected">WireGuard je povezan.</string>
     <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
     <string name="vpn_status_disconnected">Ni povezano.</string>
-    <string name="vpn_choose_country">Izberite državo.</string>
     <string name="vpn_provider_mullvad">VPN Mullvad</string>
     <string name="vpn_provider_ivpn">IVPN</string>
     <string name="vpn_intro_title">Predogled VPN-a</string>
@@ -257,7 +262,6 @@
     <string name="vpn_ivpn_captcha_hint">Besedilo CAPTCHA</string>
     <string name="vpn_account_save">Shrani</string>
     <string name="vpn_account_saved">Račun je bil shranjen.</string>
-    <string name="vpn_wireguard_profiles">Profili WireGuard</string>
     <string name="vpn_no_wireguard_profiles">Noben profil WireGuard po meri še ni bil ustvarjen.</string>
     <string name="vpn_import_wireguard_profile">Uvozi profil WireGuard</string>
     <string name="vpn_manage_wireguard_profiles">Upravljaj s profilom WireGuard</string>

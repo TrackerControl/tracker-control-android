@@ -374,6 +374,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             if (loadingCountries)
                 clearProgress();
         } else {
+            List<VpnCountry> cache = MODE_IVPN.equals(mode)
+                    ? ivpnCountryCache
+                    : mullvadCountryCache;
+            adapter.setCountries(cache.isEmpty() ? savedProviderCountries(mode) : cache);
             loadCountries(false);
         }
         refreshUi();
@@ -815,12 +819,12 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         private static final int TYPE_INTRO = 1;
         private static final int TYPE_MODE = 2;
         private static final int TYPE_PROGRESS = 3;
-        private static final int TYPE_SECTION = 4;
-        private static final int TYPE_ERROR = 5;
-        private static final int TYPE_COUNTRY = 6;
-        private static final int TYPE_CUSTOM_PROFILE = 7;
-        private static final int TYPE_EMPTY = 8;
-        private static final int TYPE_FOOTER = 9;
+        private static final int TYPE_ERROR = 4;
+        private static final int TYPE_COUNTRY = 5;
+        private static final int TYPE_CUSTOM_PROFILE = 6;
+        private static final int TYPE_EMPTY = 7;
+        private static final int TYPE_FOOTER = 8;
+        private static final int TYPE_PROVIDER_SETUP = 9;
 
         private final List<VpnCountry> countries = new ArrayList<>();
 
@@ -849,15 +853,14 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 position--;
             }
 
-            if (position == 0)
-                return TYPE_SECTION;
-            position--;
-
             if (!isWireGuardMode() && countryErrorVisible) {
                 if (position == 0)
                     return TYPE_ERROR;
                 position--;
             }
+
+            if (showProviderSetup())
+                return TYPE_PROVIDER_SETUP;
 
             if (isWireGuardMode()) {
                 int customCount = customProfiles().size();
@@ -883,10 +886,11 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 return new ModeViewHolder(inflater.inflate(R.layout.item_vpn_mode, parent, false));
             if (viewType == TYPE_PROGRESS)
                 return new ProgressViewHolder(inflater.inflate(R.layout.item_vpn_progress, parent, false));
-            if (viewType == TYPE_SECTION)
-                return new SectionViewHolder(inflater.inflate(R.layout.item_vpn_section, parent, false));
             if (viewType == TYPE_ERROR)
                 return new ErrorViewHolder(inflater.inflate(R.layout.item_vpn_error, parent, false));
+            if (viewType == TYPE_PROVIDER_SETUP)
+                return new ProviderSetupViewHolder(inflater.inflate(
+                        R.layout.item_vpn_provider_setup, parent, false));
             if (viewType == TYPE_EMPTY)
                 return new RecyclerView.ViewHolder(inflater.inflate(R.layout.item_vpn_empty, parent, false)) {};
             if (viewType == TYPE_FOOTER)
@@ -908,12 +912,10 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 bindMode((ModeViewHolder) holder);
             else if (viewType == TYPE_PROGRESS)
                 ((ProgressViewHolder) holder).text.setText(progressMessage);
-            else if (viewType == TYPE_SECTION)
-                ((SectionViewHolder) holder).title.setText(isWireGuardMode()
-                        ? R.string.vpn_wireguard_profiles
-                        : R.string.vpn_choose_country);
             else if (viewType == TYPE_ERROR)
                 ((ErrorViewHolder) holder).retry.setOnClickListener(v -> loadCountries(true));
+            else if (viewType == TYPE_PROVIDER_SETUP)
+                bindProviderSetup((ProviderSetupViewHolder) holder);
             else if (viewType == TYPE_FOOTER)
                 bindFooter((FooterViewHolder) holder);
             else if (viewType == TYPE_CUSTOM_PROFILE)
@@ -931,6 +933,8 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             int count = listStartPosition();
             if (isWireGuardMode())
                 count += Math.max(1, customProfiles().size());
+            else if (showProviderSetup())
+                count++;
             else
                 count += countries.size();
             return isWireGuardMode() ? count + 1 : count;
@@ -950,10 +954,30 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
             int position = 2;
             if (progressVisible)
                 position++;
-            position++;
             if (!isWireGuardMode() && countryErrorVisible)
                 position++;
             return position;
+        }
+
+        private boolean showProviderSetup() {
+            return !isWireGuardMode() && countries.isEmpty() &&
+                    !hasProviderAccount(currentProviderMode());
+        }
+
+        private void bindProviderSetup(ProviderSetupViewHolder holder) {
+            boolean ivpnMode = isIvpnMode();
+            holder.message.setText(ivpnMode
+                    ? R.string.vpn_ivpn_intro
+                    : R.string.vpn_mullvad_intro);
+            holder.action.setText(ivpnMode
+                    ? R.string.vpn_enter_ivpn_account
+                    : R.string.vpn_enter_mullvad_account);
+            holder.action.setOnClickListener(v -> {
+                if (ivpnMode)
+                    openIvpnSetup();
+                else
+                    openMullvadSetup();
+            });
         }
 
         private void bindMode(ModeViewHolder holder) {
@@ -1059,7 +1083,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
                 holder.summary.setText("");
                 holder.summary.setVisibility(View.GONE);
             }
-            holder.setTextStartMargin(holder.flag.getVisibility() == View.VISIBLE ? 12 : 0);
+            holder.setTextStartMargin(holder.flag.getVisibility() == View.VISIBLE ? 8 : 0);
         }
 
         private void bindCountry(CountryViewHolder holder, VpnCountry country) {
@@ -1124,7 +1148,7 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         void setTextStartMargin(int dp) {
             ViewGroup.MarginLayoutParams params =
                     (ViewGroup.MarginLayoutParams) text.getLayoutParams();
-            int margin = (int) (dp * itemView.getResources().getDisplayMetrics().density);
+            int margin = Math.round(dp * itemView.getResources().getDisplayMetrics().density);
             if (params.getMarginStart() == margin)
                 return;
             params.setMarginStart(margin);
@@ -1169,21 +1193,23 @@ public class VpnFragment extends Fragment implements SharedPreferences.OnSharedP
         }
     }
 
-    private static class SectionViewHolder extends RecyclerView.ViewHolder {
-        final TextView title;
-
-        SectionViewHolder(View itemView) {
-            super(itemView);
-            title = itemView.findViewById(R.id.vpnSectionTitle);
-        }
-    }
-
     private static class ErrorViewHolder extends RecyclerView.ViewHolder {
         final Button retry;
 
         ErrorViewHolder(View itemView) {
             super(itemView);
             retry = itemView.findViewById(R.id.vpnRetryCountries);
+        }
+    }
+
+    private static class ProviderSetupViewHolder extends RecyclerView.ViewHolder {
+        final TextView message;
+        final Button action;
+
+        ProviderSetupViewHolder(View itemView) {
+            super(itemView);
+            message = itemView.findViewById(R.id.vpnProviderSetupMessage);
+            action = itemView.findViewById(R.id.vpnProviderSetupAction);
         }
     }
 

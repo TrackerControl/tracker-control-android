@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 def ccacheLauncher = file("$projectDir/gradle/ccache-launcher.sh").absolutePath
 
@@ -29,6 +30,9 @@ tasks.register('prefetchOfflineBuildClasspaths') {
         ['fdroidDebugUnitTestRuntimeClasspath',
          'fdroidReleaseCompileClasspath',
          'fdroidReleaseRuntimeClasspath',
+         // The Compose compiler resolves this only during release packaging;
+         // :app:dependencies and compilation do not cache its artifact.
+         'composeMappingProducerClasspath',
          'coreLibraryDesugaring'].each { name ->
             configurations.named(name).get().resolve()
         }
@@ -164,6 +168,7 @@ android {
     namespace = 'net.kollnig.missioncontrol'
     buildFeatures {
         buildConfig = true
+        compose = true
     }
 
     androidResources {
@@ -181,11 +186,22 @@ androidComponents {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.19.0'
+    implementation platform('androidx.compose:compose-bom:2026.08.00')
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.16.1'
     testImplementation 'com.squareup.okhttp3:mockwebserver3:5.5.0'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test:runner:1.7.0'
+    // Compose UI test 1.12.0 still requests Espresso 3.5.0 transitively.
+    // Use the stable release that supports current Android input injection.
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    androidTestImplementation platform('androidx.compose:compose-bom:2026.08.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
