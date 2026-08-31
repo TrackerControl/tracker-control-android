@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
- * Kollnig (University of Oxford)
+ * Copyright © 2015–2020 Marcel Bokhorst (M66B)
+ * Copyright © 2019–2026 Konrad Kollnig
  */
 
 package eu.faircode.netguard;

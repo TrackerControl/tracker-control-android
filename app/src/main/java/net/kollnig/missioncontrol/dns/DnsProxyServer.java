@@ -4,7 +4,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Copyright © 2024 Konrad Kollnig (University of Oxford)
+ * Copyright © 2024–2026 Konrad Kollnig
  */
 
 package net.kollnig.missioncontrol.dns;
