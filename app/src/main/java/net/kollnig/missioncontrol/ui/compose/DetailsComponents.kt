@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -97,7 +98,27 @@ fun DetailsPrimaryAction(
         enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .heightIn(min = 48.dp)
+    ) {
+        Text(text = text)
+    }
+}
+
+/** A left-aligned outlined action for secondary operations in a detail section. */
+@Composable
+fun DetailsSecondaryAction(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    OutlinedButton(
+        onClick = onClick,
+        enabled = enabled,
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp)
             .heightIn(min = 48.dp)
     ) {
         Text(text = text)
