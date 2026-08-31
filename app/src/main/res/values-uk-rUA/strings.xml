@@ -48,8 +48,6 @@
     <string name="timeline_more_trackers">+ ще %d</string>
     <string name="timeline_tracker_blocked">Заблоковано</string>
     <string name="timeline_tracker_allowed">Дозволено</string>
-    <string name="timeline_summary_all_blocked">Заблоковано %d трекерів</string>
-    <string name="timeline_summary_none_blocked">Дозволено %d трекерів</string>
     <string name="timeline_summary_mixed">%1$d заблоковано · %2$d дозволено</string>
     <string name="troubleshooting_title">Усунення несправностей</string>
     <string name="troubleshooting_battery_title">Оптимізація роботи батареї</string>

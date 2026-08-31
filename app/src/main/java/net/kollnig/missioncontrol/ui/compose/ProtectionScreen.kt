@@ -31,11 +31,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
@@ -47,6 +50,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.kollnig.missioncontrol.R
 import net.kollnig.missioncontrol.data.AppProtectionState
+
+/** Material 3's disabled-content opacity, used for rows that cannot be tapped. */
+private const val DISABLED_ROW_ALPHA = 0.38f
 
 /** Immutable pause presentation calculated by ProtectionActivity. */
 data class PauseSection(
@@ -368,6 +374,20 @@ private fun CategoryRow(
                 )
             }
         }
+        // The pre-Compose row labelled the switch "Block" next to it; without
+        // it the bare toggle does not say what it turns on.
+        Text(
+            text = stringResource(R.string.title_block),
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .clearAndSetSemantics { },
+            style = MaterialTheme.typography.labelLarge,
+            color = if (category.switchEnabled) {
+                MaterialTheme.colorScheme.onBackground
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
+        )
         Switch(
             checked = category.switchChecked,
             onCheckedChange = onToggle,
@@ -404,7 +424,11 @@ private fun CompanyRow(
                 role = Role.Button
             }
     } else {
-        Modifier.fillMaxWidth()
+        // The chips this row replaced were disabled here, which greyed them
+        // out; keep that "you cannot act on this" cue.
+        Modifier
+            .fillMaxWidth()
+            .alpha(DISABLED_ROW_ALPHA)
     }
     Column(
         modifier = rowModifier.padding(horizontal = 16.dp, vertical = 8.dp)

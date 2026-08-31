@@ -272,12 +272,22 @@ private fun InsightsOverviewCard(
     onShare: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // The pre-Compose screen printed each count's share of the total beside it;
+    // the hero keeps the blocked share large, so both shares live here.
     val statusText = stringResource(
         R.string.insights_overview_status,
         formatNumber(data.blockedTrackingAttempts),
-        stringResource(R.string.insights_blocked),
+        stringResource(
+            R.string.insights_overview_status_share,
+            stringResource(R.string.insights_blocked),
+            formatPercentage(data.blockedPercentage)
+        ),
         formatNumber(data.allowedTrackingAttempts),
-        stringResource(R.string.insights_allowed)
+        stringResource(
+            R.string.insights_overview_status_share,
+            stringResource(R.string.insights_allowed),
+            formatPercentage(data.allowedPercentage)
+        )
     )
     Card(
         modifier = modifier

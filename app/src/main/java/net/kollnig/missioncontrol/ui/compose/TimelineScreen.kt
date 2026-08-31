@@ -380,6 +380,12 @@ private fun TimelineInsightsCard(
                 totalText,
                 stringResource(R.string.insights_tracking_attempts)
             )
+            val companiesText = numberFormat.format(data.uniqueTrackerCompanies)
+            val companiesDescription = stringResource(
+                R.string.accessibility_stat_description,
+                companiesText,
+                stringResource(R.string.insights_tracker_companies)
+            )
             val percentageDescription = stringResource(
                 R.string.accessibility_stat_description,
                 blockedPercentageText,
@@ -464,6 +470,28 @@ private fun TimelineInsightsCard(
                             )
                             Text(
                                 text = stringResource(R.string.insights_tracking_attempts),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        // Middle stat of the pre-Compose hero row: how many
+                        // distinct tracking companies the week's contacts came
+                        // from, between the attempt count and the blocked share.
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics(mergeDescendants = true) {
+                                    contentDescription = companiesDescription
+                                }
+                        ) {
+                            Text(
+                                text = companiesText,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.headlineLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = stringResource(R.string.insights_tracker_companies),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodySmall
                             )

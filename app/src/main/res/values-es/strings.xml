@@ -46,8 +46,6 @@
     <string name="timeline_more_trackers">+%d más</string>
     <string name="timeline_tracker_blocked">Bloqueado</string>
     <string name="timeline_tracker_allowed">Permitido</string>
-    <string name="timeline_summary_all_blocked">%d rastreadores bloqueados</string>
-    <string name="timeline_summary_none_blocked">%d rastreadores permitidos</string>
     <string name="timeline_summary_mixed">%1$d bloqueado · %2$d permitido</string>
     <string name="troubleshooting_title">Solución de problemas</string>
     <string name="troubleshooting_battery_title">Optimización de batería</string>

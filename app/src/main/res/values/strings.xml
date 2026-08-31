@@ -60,6 +60,8 @@
     <string name="timeline_tracker_blocked">Blocked</string>
     <string name="timeline_tracker_allowed">Allowed</string>
     <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
     <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
     <string name="feed_section_last_contact">last contact %s</string>
     <plurals name="feed_show_more_companies">
@@ -75,8 +77,6 @@
     <string name="feed_company_collapsed">Collapsed</string>
     <string name="feed_essential_explainer">Needed by apps — allowed so %s keeps working</string>
     <string name="feed_essential_explainer_blocked">Needed by apps — blocking these may break %s</string>
-    <string name="timeline_summary_all_blocked">%d trackers blocked</string>
-    <string name="timeline_summary_none_blocked">%d trackers allowed</string>
     <string name="timeline_summary_mixed">%1$d blocked · %2$d allowed</string>
     <plurals name="timeline_trackers_blocked">
         <item quantity="one">%d tracker blocked</item>
@@ -895,6 +895,8 @@ Sincerely,\n\n]]></string>
     <string name="insights_top_companies">Most Active Tracking Companies</string>
     <string name="insights_pervasive_trackers">Most pervasive trackers</string>
     <string name="insights_top_domains">Top tracker domains</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
+    <string name="insights_domain_alias_separator">" or "</string>
     <string name="insights_in_apps">in %d apps</string>
     <plurals name="insights_apps_count">
         <item quantity="one">in %d app</item>

@@ -46,7 +46,10 @@ private const val MAX_LABEL_ALIASES = 2
 /** Merge observations with exactly the same alias set, counting each UID once. */
 internal fun aggregateDomainObservations(
     observations: Iterable<DomainObservation>,
-    limit: Int = 20
+    limit: Int = 20,
+    // The provider is a plain class rather than a Context wrapper, so the
+    // caller resolves the localised separator and passes it in.
+    aliasSeparator: String = " or "
 ): List<AggregatedDomain> {
     if (limit <= 0) return emptyList()
 
@@ -65,7 +68,7 @@ internal fun aggregateDomainObservations(
             AggregatedDomain(
                 // Cap the joined label at two aliases: the Insights row is a
                 // single line, and a longer join simply overflows it.
-                label = aliases.sorted().take(MAX_LABEL_ALIASES).joinToString(" or "),
+                label = aliases.sorted().take(MAX_LABEL_ALIASES).joinToString(aliasSeparator),
                 appCount = appUids.size
             )
         }
@@ -262,7 +265,10 @@ class InsightsDataProvider(context: Context) {
             DomainObservation(aliases = aliases, appUids = uids)
         }
 
-        data.topDomains = aggregateDomainObservations(domainObservations)
+        data.topDomains = aggregateDomainObservations(
+            domainObservations,
+            aliasSeparator = context.getString(R.string.insights_domain_alias_separator)
+        )
             .map { Pair(it.label, it.appCount) }
             .toMutableList()
 
