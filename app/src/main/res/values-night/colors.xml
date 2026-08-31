@@ -20,10 +20,6 @@
          link. See issue #560. -->
     <color name="colorFooterLink">#80cbc4</color>
 
-    <color name="trackerFeedBackground">#000000</color>
-    <color name="trackerFeedSectionBackground">#242424</color>
-    <color name="trackerFeedDivider">#424242</color>
-
     <color name="bottom_nav_background">#000000</color>
     <color name="bottom_nav_active_indicator">#5B1B1B</color>
 

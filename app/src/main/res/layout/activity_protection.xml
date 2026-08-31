@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/trackerFeedBackground"
+    android:background="?android:attr/colorBackground"
     tools:context="net.kollnig.missioncontrol.details.ProtectionActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -32,7 +32,7 @@
         android:id="@+id/composeProtection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/trackerFeedBackground"
+        android:background="?android:attr/colorBackground"
         android:clipToPadding="false"
         android:paddingBottom="24dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

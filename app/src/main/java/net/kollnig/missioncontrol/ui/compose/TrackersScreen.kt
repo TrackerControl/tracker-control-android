@@ -308,7 +308,7 @@ private fun TrackerSummaryRow(
 private fun HeaderDivider() {
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = 16.dp),
-        color = colorResource(R.color.trackerFeedDivider),
+        color = MaterialTheme.colorScheme.outlineVariant,
         thickness = 1.dp
     )
 }
@@ -328,7 +328,7 @@ private fun TrackerSectionRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(colorResource(R.color.trackerFeedSectionBackground))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .heightIn(min = 48.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -480,7 +480,7 @@ private fun TrackerCompanyRow(
         if (row.showDivider) {
             HorizontalDivider(
                 modifier = Modifier.padding(top = 8.dp),
-                color = colorResource(R.color.trackerFeedDivider),
+                color = MaterialTheme.colorScheme.outlineVariant,
                 thickness = 1.dp
             )
         }

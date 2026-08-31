@@ -16,6 +16,8 @@ package net.kollnig.missioncontrol.ui.compose
 
 import android.content.Context
 import android.content.res.Configuration
+import android.util.TypedValue
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -32,10 +34,10 @@ import net.kollnig.missioncontrol.R
  * Material theme for Compose content embedded in TrackerControl's existing
  * view hierarchy.
  *
- * Colours are resolved from Android resources so the existing values-night
- * palette remains the source of truth. Dynamic colour is intentionally not
- * used: the app's red/teal identity and neutral detail surfaces must match
- * the surrounding View-based screens.
+ * DECISION: Hybrid Compose/View screens resolve semantic surface roles from the
+ * surrounding Material 3 View theme so their tonal backgrounds remain
+ * identical. Dynamic colour remains intentionally disabled to preserve
+ * TrackerControl's red/teal identity.
  */
 @Composable
 fun TrackerControlTheme(content: @Composable () -> Unit) {
@@ -59,7 +61,7 @@ fun TrackerControlTheme(content: @Composable () -> Unit) {
 
 private val TrackerControlTypography = Typography()
 
-private fun trackerControlLightColours(context: Context) = lightColorScheme(
+internal fun trackerControlLightColours(context: Context) = lightColorScheme(
     primary = context.colour(R.color.colorRedOn),
     onPrimary = Color.White,
     primaryContainer = context.colour(R.color.colorPrimaryLight),
@@ -68,21 +70,21 @@ private fun trackerControlLightColours(context: Context) = lightColorScheme(
     onSecondary = Color.White,
     secondaryContainer = context.colour(R.color.colorAccent),
     onSecondaryContainer = Color.White,
-    background = context.colour(R.color.trackerFeedBackground),
-    onBackground = Color.Black,
-    surface = context.colour(R.color.trackerFeedBackground),
-    onSurface = Color.Black,
-    surfaceVariant = context.colour(R.color.trackerFeedSectionBackground),
-    onSurfaceVariant = Color(0xFF424242),
-    outline = context.colour(R.color.trackerFeedDivider),
-    outlineVariant = context.colour(R.color.trackerFeedDivider),
+    background = context.themeColour(android.R.attr.colorBackground),
+    onBackground = context.themeColour(com.google.android.material.R.attr.colorOnBackground),
+    surface = context.themeColour(com.google.android.material.R.attr.colorSurface),
+    onSurface = context.themeColour(com.google.android.material.R.attr.colorOnSurface),
+    surfaceVariant = context.themeColour(com.google.android.material.R.attr.colorSurfaceContainer),
+    onSurfaceVariant = context.themeColour(com.google.android.material.R.attr.colorOnSurfaceVariant),
+    outline = context.themeColour(com.google.android.material.R.attr.colorOutline),
+    outlineVariant = context.themeColour(com.google.android.material.R.attr.colorOutlineVariant),
     error = context.colour(R.color.colorRedOn),
     onError = Color.White
 )
 
-private fun trackerControlDarkColours(context: Context) = darkColorScheme(
+internal fun trackerControlDarkColours(context: Context) = darkColorScheme(
     // colorRedOn is deliberately brighter in values-night so small actions and
-    // status labels retain contrast on the black detail-screen background.
+    // status labels retain contrast on the theme-derived dark surface.
     primary = context.colour(R.color.colorRedOn),
     onPrimary = Color.Black,
     primaryContainer = context.colour(R.color.colorPrimaryDark),
@@ -91,17 +93,31 @@ private fun trackerControlDarkColours(context: Context) = darkColorScheme(
     onSecondary = Color.Black,
     secondaryContainer = context.colour(R.color.colorAccent),
     onSecondaryContainer = Color.Black,
-    background = context.colour(R.color.trackerFeedBackground),
-    onBackground = Color.White,
-    surface = context.colour(R.color.trackerFeedBackground),
-    onSurface = Color.White,
-    surfaceVariant = context.colour(R.color.trackerFeedSectionBackground),
-    onSurfaceVariant = Color(0xFFE0E0E0),
-    outline = context.colour(R.color.trackerFeedDivider),
-    outlineVariant = context.colour(R.color.trackerFeedDivider),
+    background = context.themeColour(android.R.attr.colorBackground),
+    onBackground = context.themeColour(com.google.android.material.R.attr.colorOnBackground),
+    surface = context.themeColour(com.google.android.material.R.attr.colorSurface),
+    onSurface = context.themeColour(com.google.android.material.R.attr.colorOnSurface),
+    surfaceVariant = context.themeColour(com.google.android.material.R.attr.colorSurfaceContainer),
+    onSurfaceVariant = context.themeColour(com.google.android.material.R.attr.colorOnSurfaceVariant),
+    outline = context.themeColour(com.google.android.material.R.attr.colorOutline),
+    outlineVariant = context.themeColour(com.google.android.material.R.attr.colorOutlineVariant),
     error = context.colour(R.color.colorRedOn),
     onError = Color.Black
 )
+
+private fun Context.themeColour(@AttrRes attribute: Int): Color {
+    val value = TypedValue()
+    check(theme.resolveAttribute(attribute, value, true)) {
+        "Required theme colour attribute $attribute is missing"
+    }
+
+    return when {
+        value.resourceId != 0 -> Color(ContextCompat.getColor(this, value.resourceId))
+        value.type in TypedValue.TYPE_FIRST_COLOR_INT..TypedValue.TYPE_LAST_COLOR_INT ->
+            Color(value.data)
+        else -> error("Required theme colour attribute $attribute is not a colour")
+    }
+}
 
 private fun Context.colour(@ColorRes resource: Int): Color =
     Color(ContextCompat.getColor(this, resource))

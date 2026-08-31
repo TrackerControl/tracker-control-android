@@ -3,6 +3,6 @@
     android:id="@+id/composeTrackers"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/trackerFeedBackground"
+    android:background="?android:attr/colorBackground"
     xmlns:android="http://schemas.android.com/apk/res/android"
     tools:mContext=".details.TrackersFragment" />
