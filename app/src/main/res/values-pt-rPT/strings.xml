@@ -43,6 +43,7 @@
     <string name="timeline_more_trackers">+Mais %d</string>
     <string name="timeline_tracker_blocked">Bloqueado</string>
     <string name="timeline_tracker_allowed">Permitido</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="troubleshooting_title">Resolução de Problemas</string>
     <string name="troubleshooting_battery_title">Otimização da bateria</string>
     <string name="troubleshooting_battery_action">Desativar otimização de bateria</string>
@@ -357,7 +358,6 @@ disso,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Esta aplicação ignora o TrackerControl por completo, por isso não há tráfego a encaminhar.</string>
     <string name="app_route_unavailable_partial_routes">A sua VPN remota não transporta todo o tráfego (os AllowedIPs dela não formam um túnel completo). O encaminhamento por aplicação exige um túnel completo, porque as rotas são partilhadas por todas as aplicações.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Proteção</string>
     <string name="app_state_protected">Protegida</string>
     <string name="app_state_protected_explanation">Os rastreadores são bloqueados e registados para esta aplicação.</string>
     <string name="app_state_trackers_allowed">Rastreadores permitidos</string>
@@ -375,7 +375,6 @@ disso,\n\n]]></string>
     <string name="no_trackers_found_action">Lançamento</string>
     <string name="no_internet_message">"Este aplicativo não tem acesso à Internet. Ele ainda pode rastreá-lo através da troca de dados com outros aplicativos."</string>
     <string name="no_internet">Não há acesso à Internet</string>
-    <string name="bypass_vpn_error">"Não é possível bloquear a Internet. O aplicativo está excluído do TrackerControl."</string>
     <string name="back">Voltar</string>
     <string name="forever_free">Para sempre livre</string>
     <string name="your_privacy">Sua privacidade</string>
@@ -387,6 +386,7 @@ disso,\n\n]]></string>
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

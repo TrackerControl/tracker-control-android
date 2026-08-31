@@ -48,6 +48,7 @@
     <string name="timeline_more_trackers">另 %d 个</string>
     <string name="timeline_tracker_blocked">已拦截</string>
     <string name="timeline_tracker_allowed">已放行</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d 已拦截 · %2$d 已放行</string>
     <string name="troubleshooting_title">故障排除</string>
     <string name="troubleshooting_battery_title">电池优化</string>
@@ -58,8 +59,6 @@
     <string name="troubleshooting_datasaver_desc">如果在流量节省器开启时TrackControl无法连接，请允许TrackerControl不受限制地使用数据。启用“后台数据”和“不受限制的数据使用”。</string>
     <string name="troubleshooting_datasaver_action">允许不受限制的数据</string>
     <string name="troubleshooting_datasaver_ok">流量节省程序没有在限制TrackerControl。</string>
-    <string name="troubleshooting_exclude_title">将应用排除在VPN之外</string>
-    <string name="troubleshooting_exclude_desc">如果某个应用在 TrackerControl 中无法正常工作，您可以排除它：点击主列表中的应用，然后关闭有问题应用的VPN开关。</string>
     <string name="troubleshooting_categories_title">阻止特定的跟踪器类别</string>
     <string name="troubleshooting_categories_desc">您可以微调每个应用的拦截，方法时点击应用并在跟踪器选项卡中开启/关闭单个跟踪器类别（如分析、广告）。</string>
     <string name="troubleshooting_alwayson_title">始终开启的 VPN</string>
@@ -502,8 +501,6 @@
     <string name="summary_sni_enabled">从 TLS 连接中提取主机名以更准确地检测到跟踪器。警告：这将泄漏您的 IP 地址到跟踪服务器。仅出于研究目的启用它。</string>
     <string name="setting_blocking_mode">屏蔽模式</string>
     <string name="summary_blocking_mode_minimal">最小：只屏蔽DuckGo列表中可以安全拦截的跟踪器。 浏览器流量仍然通过 VPN 路由，但是跟踪器保护默认关闭。已知的不兼容应用被排除。有限度的应用功能不正常。</string>
-    <string name="summary_blocking_mode_standard">标准：阻止来自多个列表的所有已知跟踪器 (X-Ray, Disconnect, DuckDuckGo)。允许必要的服务。 某些应用无法正常工作，可能需要手动排除(见应用菜单中的故障排除)。</string>
-    <string name="summary_blocking_mode_strict">严格：阻止所有已知的追踪器，包括基本服务和模糊的共享IP域。 许多应用无法正常工作，需要手动排除(见应用菜单中的故障排除)。</string>
     <string name="blocking_mode_minimal">最小</string>
     <string name="blocking_mode_standard">标准</string>
     <string name="blocking_mode_strict">严格</string>
@@ -512,9 +509,7 @@
     <string name="onboarding_blockingmode_minimal_label">最小(推荐给新用户)</string>
     <string name="onboarding_blockingmode_minimal_desc">只屏蔽可安全屏蔽的已确认跟踪器。有限的应用不正常。适多数用户。</string>
     <string name="onboarding_blockingmode_standard_label">标准</string>
-    <string name="onboarding_blockingmode_standard_desc">屏蔽来自多个列表的所有已知跟踪器。一些应用无法正常工作，需要手动排除。</string>
     <string name="onboarding_blockingmode_strict_label">严格</string>
-    <string name="onboarding_blockingmode_strict_desc">屏蔽一切，包括基本服务和模糊域。严重的应用程序异常 — 需手动排除众多应用。</string>
     <string name="onboarding_blockingmode_research_label">研究</string>
     <string name="onboarding_blockingmode_research_desc">无跟踪器屏蔽。传输日志到 ADB 并允许提取SNI以更好地检测主机名。仅研究：这将泄漏您的 IP 地址到跟踪服务器。</string>
     <!-- Per-app remote VPN routing -->
@@ -531,7 +526,6 @@
     <string name="app_route_unavailable_bypassed">此应用完全绕过 TrackerControl，因此没有可转发的流量。</string>
     <string name="app_route_unavailable_partial_routes">你的远程 VPN 并未承载全部流量（其 AllowedIPs 不是全隧道）。路由由所有应用共享，因此按应用分流需要全隧道。</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">保护</string>
     <string name="app_state_protected">已保护</string>
     <string name="app_state_protected_explanation">为此应用拦截并记录跟踪器。</string>
     <string name="app_state_trackers_allowed">允许跟踪器</string>
@@ -550,7 +544,6 @@
     <string name="no_trackers_found_action">启动</string>
     <string name="no_internet_message">"这个应用程序不能联网，但它可能会通过与其他应用程序交换数据来跟踪你。"</string>
     <string name="no_internet">无联网权限</string>
-    <string name="bypass_vpn_error">"不能屏蔽互联网。应用程序被排除在TrackerControl之外。"</string>
     <string name="back">返回</string>
     <string name="forever_free">永远免费</string>
     <string name="your_privacy">您的隐私</string>
@@ -561,7 +554,6 @@
     <string name="internet_unblocked">已解除联网限制</string>
     <string name="category_blocked">已阻止类别中的追踪器</string>
     <string name="category_unblocked">已允许此类别中的追踪器</string>
-    <string name="category_unblocked_warning">第一个拦截分类！</string>
     <string name="switch_strict_blocking">组织必要的数据共享</string>
     <string name="tracking_detection_failed">追踪器库检测失败。</string>
     <string name="tracking_detection_failed_ram">追踪器库检测失败。内存不足。</string>
@@ -643,16 +635,11 @@
     <!-- Insights Screen -->
     <string name="menu_insights">洞察分析</string>
     <string name="insights_title">您的隐私洞察</string>
-    <string name="insights_subtitle_7days">最近 7 天</string>
-    <string name="insights_tracking_attempts">联系的跟踪主机</string>
     <string name="insights_blocked">已屏蔽</string>
     <string name="insights_allowed">允许通过</string>
-    <string name="insights_tracker_companies">跟踪公司</string>
-    <string name="insights_apps_with_trackers">带跟踪器的应用</string>
     <string name="insights_top_tracking_apps">最恶劣的违规应用</string>
     <string name="insights_top_companies">最活跃的跟踪公司</string>
-    <string name="insights_pervasive_trackers">最常见的跟踪器</string>
-    <string name="insights_top_domains">顶级跟踪域名</string>
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <string name="insights_in_apps">在 %d 个应用中</string>
     <string name="insights_no_data">尚无跟踪数据。继续使用您的应用，之后回来看看！</string>
     <string name="insights_shocking_fact">您的应用本周通过 %2$d 个追踪主机联系了 %1$d 家追踪公司！</string>

@@ -17,6 +17,7 @@
     <string name="menu_legend">Legendă</string>
     <string name="menu_support">Susțineți această aplicație</string>
     <string name="menu_about">Despre</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Alte aplicații</string>
     <string name="menu_traffic_allowed">Permis</string>
     <string name="menu_traffic_blocked">Blocat</string>
@@ -79,7 +80,6 @@
     <string name="app_route_unavailable_bypassed">Această aplicație ocolește complet TrackerControl, deci nu există trafic de rutat.</string>
     <string name="app_route_unavailable_partial_routes">VPN-ul dvs. la distanță nu transportă tot traficul (AllowedIPs nu formează un tunel complet). Rutarea per aplicație necesită un tunel complet, deoarece rutele sunt partajate de toate aplicațiile.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Protecție</string>
     <string name="app_state_protected">Protejată</string>
     <string name="app_state_protected_explanation">Urmăritorii sunt blocați și înregistrați pentru această aplicație.</string>
     <string name="app_state_trackers_allowed">Urmăritori permiși</string>
@@ -98,6 +98,7 @@
     <string name="blocked">BLOCAT</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

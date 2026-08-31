@@ -25,6 +25,7 @@
     <string name="menu_support">Støtt denne applikasjonen</string>
     <string name="menu_log_support">Forklaring</string>
     <string name="menu_about">Om</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Andre apper</string>
     <string name="menu_protocol_other">Annen</string>
     <string name="menu_traffic_allowed">Tillatt</string>
@@ -324,7 +325,6 @@ Vennlig hilsen,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Denne appen omgår TrackerControl helt, så det finnes ingen trafikk å sende.</string>
     <string name="app_route_unavailable_partial_routes">Den eksterne VPN-en bærer ikke all trafikk (AllowedIPs er ikke en full tunnel). Ruting per app krever en full tunnel, siden ruter deles av alle apper.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Beskyttelse</string>
     <string name="app_state_protected">Beskyttet</string>
     <string name="app_state_protected_explanation">Sporere blokkeres og registreres for denne appen.</string>
     <string name="app_state_trackers_allowed">Sporere tillatt</string>
@@ -343,7 +343,6 @@ Vennlig hilsen,\n\n]]></string>
     <string name="no_trackers_found_action">Åpne</string>
     <string name="no_internet_message">"Denne appen har ingen internettilgang. Det kan fortsatt spore deg ved å utveksle data med andre apper."</string>
     <string name="no_internet">Ingen internettilgang</string>
-    <string name="bypass_vpn_error">"Kan ikke blokkere Internett. Appen er ekskludert fra TrackerControl."</string>
     <string name="back">Tilbake</string>
     <string name="forever_free">Alltid gratis</string>
     <string name="your_privacy">Ditt Personvern</string>
@@ -354,7 +353,6 @@ Vennlig hilsen,\n\n]]></string>
     <string name="internet_unblocked">Internettilgang ublokkert</string>
     <string name="category_blocked">Sporere i kategorien blokkert</string>
     <string name="category_unblocked">Sporere i kategorien tillatt</string>
-    <string name="category_unblocked_warning">Første blokkekategori!</string>
     <string name="switch_strict_blocking">Blokker essensiell datadeling</string>
     <string name="tracking_detection_failed">Kunne ikke oppdage sporeringsbiblioteket.</string>
     <string name="tracking_detection_failed_ram">Oppdagelse av sporingsbiblioteket feilet. Ikke nok RAM.</string>
@@ -376,6 +374,7 @@ Vennlig hilsen,\n\n]]></string>
     <string name="msg_notifications">Trykk for å gi varslingsrettigheter (for feilmeldinger osv.)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

@@ -25,6 +25,7 @@
     <string name="menu_support">Wesprzyj tę aplikację</string>
     <string name="menu_log_support">Objaśnienie</string>
     <string name="menu_about">O aplikacji</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Inne aplikacje</string>
     <string name="menu_protocol_other">Inne</string>
     <string name="menu_traffic_allowed">Dozwolone</string>
@@ -332,7 +333,6 @@ Z poważaniem,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Ta aplikacja całkowicie pomija TrackerControl, więc nie ma ruchu do kierowania.</string>
     <string name="app_route_unavailable_partial_routes">Twój zdalny VPN nie przenosi całego ruchu (jego AllowedIPs nie tworzy pełnego tunelu). Kierowanie na poziomie aplikacji wymaga pełnego tunelu, ponieważ trasy są wspólne dla wszystkich aplikacji.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Ochrona</string>
     <string name="app_state_protected">Chroniona</string>
     <string name="app_state_protected_explanation">Trackery są blokowane i rejestrowane dla tej aplikacji.</string>
     <string name="app_state_trackers_allowed">Trackery dozwolone</string>
@@ -351,7 +351,6 @@ Z poważaniem,\n\n]]></string>
     <string name="no_trackers_found_action">Uruchomienie</string>
     <string name="no_internet_message">"Ta aplikacja nie ma dostępu do Internetu. Może nadal śledzić Cię poprzez wymianę danych z innymi aplikacjami."</string>
     <string name="no_internet">Brak dostępu do Internetu</string>
-    <string name="bypass_vpn_error">"Nie może blokować Internetu. Aplikacja jest wyłączona z systemu TrackerControl."</string>
     <string name="back">Wróć</string>
     <string name="forever_free">Na zawsze Wolny</string>
     <string name="your_privacy">Twoja prywatność</string>
@@ -362,7 +361,6 @@ Z poważaniem,\n\n]]></string>
     <string name="internet_unblocked">Odblokowany dostęp do Internetu</string>
     <string name="category_blocked">Trackery w kategorii zablokowane</string>
     <string name="category_unblocked">Dozwolone trackery w kategorii</string>
-    <string name="category_unblocked_warning">Pierwsza kategoria bloku!</string>
     <string name="switch_strict_blocking">Blokuj podstawowe udostępnianie danych</string>
     <string name="tracking_detection_failed">Wykrywanie biblioteki tropiciela nie powiodło się.</string>
     <string name="tracking_detection_failed_ram">Wykrywanie biblioteki trackerów nie powiodło się. Za mało pamięci RAM.</string>
@@ -384,6 +382,7 @@ Z poważaniem,\n\n]]></string>
     <string name="msg_notifications">Dotknij, aby przyznać uprawnienia do powiadomień (dla komunikatów o błędach itp.)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

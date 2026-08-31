@@ -25,6 +25,7 @@
     <string name="menu_support">Bu uygulamayı destekleyin</string>
     <string name="menu_log_support">Açıklama</string>
     <string name="menu_about">Hakkında</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Diğer Uygulamalar</string>
     <string name="menu_protocol_other">Diğer</string>
     <string name="menu_traffic_allowed">İzin verildi</string>
@@ -326,7 +327,6 @@ Saygılarımla,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Bu uygulama TrackerControl\'ü tamamen atlıyor, dolayısıyla yönlendirilecek trafik yok.</string>
     <string name="app_route_unavailable_partial_routes">Uzak VPN\'iniz tüm trafiği taşımıyor (AllowedIPs değeri tam tünel değil). Uygulama başına yönlendirme tam tünel gerektirir, çünkü rotalar tüm uygulamalarca paylaşılır.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Koruma</string>
     <string name="app_state_protected">Korunuyor</string>
     <string name="app_state_protected_explanation">Bu uygulama için izleyiciler engelleniyor ve kaydediliyor.</string>
     <string name="app_state_trackers_allowed">İzleyicilere izin ver</string>
@@ -345,7 +345,6 @@ Saygılarımla,\n\n]]></string>
     <string name="no_trackers_found_action">Başlat</string>
     <string name="no_internet_message">"Bu uygulamanın İnternet erişimi yok. Diğer uygulamalarla veri alışverişi yaparak sizi izlemeye devam edebilir."</string>
     <string name="no_internet">İnternet erişimi yok</string>
-    <string name="bypass_vpn_error">"İnternet engellenemiyor. Uygulama, TrackerControl'den hariç tutulur."</string>
     <string name="back">Geri</string>
     <string name="forever_free">Ömür Boyu Ücretsiz</string>
     <string name="your_privacy">Kişisel Gizliliğiniz</string>
@@ -356,7 +355,6 @@ Saygılarımla,\n\n]]></string>
     <string name="internet_unblocked">İnternet erişimi engellenmedi</string>
     <string name="category_blocked">Kategorideki izleyiciler engellendi</string>
     <string name="category_unblocked">Kategorideki izleyicilere izin verildi</string>
-    <string name="category_unblocked_warning">Önce kategoriyi engelleyin!</string>
     <string name="switch_strict_blocking">Temel veri paylaşımını engelleyin</string>
     <string name="tracking_detection_failed">İzleyici kitaplığı algılama başarısız oldu.</string>
     <string name="tracking_detection_failed_ram">İzleyici kitaplığı algılama başarısız oldu. Yeterli RAM yok.</string>
@@ -378,6 +376,7 @@ Saygılarımla,\n\n]]></string>
     <string name="msg_notifications">Bildirim izinleri vermek için dokunun (hata mesajları vb. için)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

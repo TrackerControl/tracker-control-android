@@ -46,6 +46,7 @@
     <string name="timeline_more_trackers">+%d más</string>
     <string name="timeline_tracker_blocked">Bloqueado</string>
     <string name="timeline_tracker_allowed">Permitido</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="timeline_summary_mixed">%1$d bloqueado · %2$d permitido</string>
     <string name="troubleshooting_title">Solución de problemas</string>
     <string name="troubleshooting_battery_title">Optimización de batería</string>
@@ -56,8 +57,6 @@
     <string name="troubleshooting_datasaver_desc">Si TrackerControl no puede conectarse cuando el Ahorro de datos está activado, permite el uso de datos sin restricciones para TrackerControl. Activa \"Datos en segundo plano\" y \"Uso de datos sin restricciones\".</string>
     <string name="troubleshooting_datasaver_action">Permitir datos sin restricciones</string>
     <string name="troubleshooting_datasaver_ok">Ahorro de datos no está restringiendo TrackerControl.</string>
-    <string name="troubleshooting_exclude_title">Excluyendo aplicaciones de la VPN</string>
-    <string name="troubleshooting_exclude_desc">Si una aplicación no funciona correctamente con TrackerControl, puedes excluirla: pulsa la aplicación en la lista principal, luego desactiva la opción VPN para esa aplicación.</string>
     <string name="troubleshooting_categories_title">Bloqueando categorías específicas de rastreadores</string>
     <string name="troubleshooting_categories_desc">Puedes ajustar el bloqueo para cada aplicación presionándola y activando o desactivando categorías individuales (p. ej., Análisis, Publicidad) en la pestaña de Rastreadores.</string>
     <string name="troubleshooting_alwayson_title">VPN siempre activa</string>
@@ -362,7 +361,6 @@ Atentamente,\n\n]]></string>
     <string name="app_route_unavailable_bypassed">Esta aplicación omite TrackerControl por completo, así que no hay tráfico que enrutar.</string>
     <string name="app_route_unavailable_partial_routes">Tu VPN remoto no transporta todo el tráfico (sus AllowedIPs no forman un túnel completo). El enrutamiento por aplicación necesita un túnel completo, porque las rutas las comparten todas las aplicaciones.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Protección</string>
     <string name="app_state_protected">Protegida</string>
     <string name="app_state_protected_explanation">Los rastreadores se bloquean y se registran para esta aplicación.</string>
     <string name="app_state_trackers_allowed">Rastreadores permitidos</string>
@@ -381,7 +379,6 @@ Atentamente,\n\n]]></string>
     <string name="no_trackers_found_action">Ejecutar</string>
     <string name="no_internet_message">"Esta aplicación no tiene acceso a Internet. Puede que todavía te rastree intercambiando datos con otras aplicaciones."</string>
     <string name="no_internet">No hay acceso a Internet</string>
-    <string name="bypass_vpn_error">"No se puede bloquear Internet. La aplicación está excluida de TrackerControl."</string>
     <string name="back">Volver</string>
     <string name="forever_free">Libre por siempre</string>
     <string name="your_privacy">Tu privacidad</string>
@@ -392,7 +389,6 @@ Atentamente,\n\n]]></string>
     <string name="internet_unblocked">Acceso a Internet desbloqueado</string>
     <string name="category_blocked">Rastreadores en la categoría bloqueados</string>
     <string name="category_unblocked">Rastreadores en categoría permitidos</string>
-    <string name="category_unblocked_warning">¡Primero bloquee la categoría!</string>
     <string name="switch_strict_blocking">Bloquear que se compartan datos esenciales</string>
     <string name="tracking_detection_failed">Falló la detección de biblioteca de rastreadores.</string>
     <string name="tracking_detection_failed_ram">Falló la detección de biblioteca de rastreadores. No hay suficiente RAM.</string>
@@ -414,6 +410,7 @@ Atentamente,\n\n]]></string>
     <string name="msg_notifications">Toca para conceder permisos de notificación</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

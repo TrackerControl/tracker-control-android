@@ -23,6 +23,7 @@
     <string name="menu_support">앱 지원하기</string>
     <string name="menu_log_support">설명</string>
     <string name="menu_about">소개</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">다른 앱</string>
     <string name="menu_protocol_other">기타</string>
     <string name="menu_traffic_allowed">허용됨</string>
@@ -98,7 +99,6 @@
     <string name="app_route_unavailable_bypassed">이 앱은 TrackerControl을 완전히 우회하므로 보낼 트래픽이 없습니다.</string>
     <string name="app_route_unavailable_partial_routes">원격 VPN이 모든 트래픽을 나르지 않습니다(AllowedIPs가 전체 터널이 아닙니다). 경로는 모든 앱이 공유하므로 앱별 라우팅에는 전체 터널이 필요합니다.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">보호</string>
     <string name="app_state_protected">보호됨</string>
     <string name="app_state_protected_explanation">이 앱의 트래커를 차단하고 기록합니다.</string>
     <string name="app_state_trackers_allowed">트래커 허용</string>
@@ -113,6 +113,7 @@
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

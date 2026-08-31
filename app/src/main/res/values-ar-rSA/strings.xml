@@ -36,6 +36,7 @@
     <string name="timeline_section_this_week">هذا الأسبوع</string>
     <string name="timeline_tracker_blocked">المحظورات</string>
     <string name="timeline_tracker_allowed">مسموح</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="troubleshooting_title">استكشاف الأعطال</string>
     <string name="menu_apps">تطبيقات أخرى</string>
     <string name="menu_protocol_other">أخرى</string>
@@ -347,7 +348,6 @@
     <string name="app_route_unavailable_bypassed">يتجاوز هذا التطبيق TrackerControl تمامًا، لذا لا توجد حركة لتوجيهها.</string>
     <string name="app_route_unavailable_partial_routes">لا ينقل VPN البعيد كل الحركة (قيمة AllowedIPs لديه ليست نفقًا كاملاً). يتطلب التوجيه لكل تطبيق نفقًا كاملاً، لأن المسارات مشتركة بين كل التطبيقات.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">الحماية</string>
     <string name="app_state_protected">محمي</string>
     <string name="app_state_protected_explanation">يتم حظر أدوات التتبع وتسجيلها لهذا التطبيق.</string>
     <string name="app_state_trackers_allowed">السماح بأدوات التتبع</string>
@@ -366,7 +366,6 @@
     <string name="no_trackers_found_action">تشغيل</string>
     <string name="no_internet_message">"لا يمكن لهذا التطبيق الوصول إلى الإنترنت. قد يظل يتتبعك عن طريق تبادل البيانات مع تطبيقات أخرى."</string>
     <string name="no_internet">لا يوجد وصول إلى الإنترنت</string>
-    <string name="bypass_vpn_error">"لا يمكن حظر الإنترنت. تم استبعاد التطبيق من التحكم في التتبع."</string>
     <string name="back">رجوع</string>
     <string name="forever_free">مجاني دائمًا</string>
     <string name="your_privacy">خصوصيتك</string>
@@ -377,7 +376,6 @@
     <string name="internet_unblocked">تم إلغاء حظر الوصول إلى الإنترنت</string>
     <string name="category_blocked">تم حظر أدوات التتبع في الفئة</string>
     <string name="category_unblocked">تم السماح بأدوات التتبع في الفئة</string>
-    <string name="category_unblocked_warning">أولاً، قم بحظر الفئة!</string>
     <string name="switch_strict_blocking">حظر مشاركة البيانات الأساسية</string>
     <string name="tracking_detection_failed">فشل اكتشاف مكتبة التتبع.</string>
     <string name="tracking_detection_failed_ram">فشل اكتشاف مكتبة التتبع. الذاكرة العشوائية غير كافية.</string>
@@ -399,6 +397,7 @@
     <string name="msg_notifications">انقر لمنح أذونات الإشعارات (لرسائل الخطأ، إلخ.)</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

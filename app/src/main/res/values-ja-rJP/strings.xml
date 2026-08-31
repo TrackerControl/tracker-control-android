@@ -25,6 +25,7 @@
     <string name="menu_support">TrackerControl を応援する</string>
     <string name="menu_log_support">説明</string>
     <string name="menu_about">TrackerControl について</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">その他のアプリ</string>
     <string name="menu_protocol_other">その他</string>
     <string name="menu_traffic_allowed">許可</string>
@@ -285,7 +286,6 @@
     <string name="app_route_unavailable_bypassed">このアプリは TrackerControl を完全に迂回するため、通すべき通信がありません。</string>
     <string name="app_route_unavailable_partial_routes">リモート VPN がすべての通信を運んでいません（AllowedIPs がフルトンネルではありません）。経路はすべてのアプリで共有されるため、アプリ単位の切り替えにはフルトンネルが必要です。</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">保護</string>
     <string name="app_state_protected">保護中</string>
     <string name="app_state_protected_explanation">このアプリのトラッカーをブロックし、記録します。</string>
     <string name="app_state_trackers_allowed">トラッカーを許可</string>
@@ -304,7 +304,6 @@
     <string name="no_trackers_found_action">起動</string>
     <string name="no_internet_message">"このアプリはインターネットに接続する権限を持っていませんが、他のアプリとやり取りすることでトラッキングできる可能性があります。"</string>
     <string name="no_internet">インターネットに接続する権限を持っていません</string>
-    <string name="bypass_vpn_error">"インターネットをブロックできません。アプリは TrackerControl から除外されます。"</string>
     <string name="back">戻る</string>
     <string name="forever_free">フリー、永久に。</string>
     <string name="your_privacy">あなたのプライバシー</string>
@@ -315,7 +314,6 @@
     <string name="internet_unblocked">インターネットアクセスのブロックが解除されました</string>
     <string name="category_blocked">ブロックされたカテゴリ内のトラッカー</string>
     <string name="category_unblocked">許可されたカテゴリ内のトラッカー</string>
-    <string name="category_unblocked_warning">最初のブロックカテゴリ！</string>
     <string name="switch_strict_blocking">不可欠なデータ共有をブロック</string>
     <string name="tracking_detection_failed">トラッカーライブラリの検出に失敗しました。</string>
     <string name="tracking_detection_failed_ram">トラッカーライブラリの検出に失敗しました。メモリが足りません。</string>
@@ -336,6 +334,7 @@
     <string name="failed_loading_cached_analysis">キャッシュされたトラッカーの結果の読み込みに失敗しました。 hello@trackercontrol.orgで開発者にこれを報告してください</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

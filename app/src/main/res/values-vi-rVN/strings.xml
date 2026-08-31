@@ -46,6 +46,7 @@
     <string name="timeline_more_trackers">+%d thêm</string>
     <string name="timeline_tracker_blocked">Đã chặn</string>
     <string name="timeline_tracker_allowed">Đã cho phép</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">Ứng dụng khác</string>
     <string name="menu_protocol_other">Khác</string>
     <string name="menu_traffic_allowed">Đã cho phép</string>
@@ -345,7 +346,6 @@
     <string name="app_route_unavailable_bypassed">Ứng dụng này bỏ qua hoàn toàn TrackerControl, nên không có lưu lượng để định tuyến.</string>
     <string name="app_route_unavailable_partial_routes">VPN từ xa của bạn không mang toàn bộ lưu lượng (AllowedIPs của nó không phải đường hầm đầy đủ). Định tuyến theo ứng dụng cần đường hầm đầy đủ, vì các tuyến được mọi ứng dụng dùng chung.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">Bảo vệ</string>
     <string name="app_state_protected">Được bảo vệ</string>
     <string name="app_state_protected_explanation">Trình theo dõi bị chặn và được ghi lại cho ứng dụng này.</string>
     <string name="app_state_trackers_allowed">Cho phép trình theo dõi</string>
@@ -364,7 +364,6 @@
     <string name="no_trackers_found_action">Chạy</string>
     <string name="no_internet_message">"Ứng dụng này không truy cập Internet. Nó có thể sẽ vẫn theo dõi bạn bằng cách trao đổi dữ liệu với các ứng dụng khác."</string>
     <string name="no_internet">Không có truy cập Internet</string>
-    <string name="bypass_vpn_error">"Không thể chặn Internet. Ứng dụng được loại trừ khỏi TrackerControl."</string>
     <string name="back">Quay lại</string>
     <string name="forever_free">Miễn phí mãi mãi</string>
     <string name="your_privacy">Sự riêng tư của bạn</string>
@@ -375,7 +374,6 @@
     <string name="internet_unblocked">Đã bỏ chặn quyền truy cập internet</string>
     <string name="category_blocked">Đã chặn các trình theo dõi trong thể loại</string>
     <string name="category_unblocked">Đã cho phép các trình theo dõi trong thể loại</string>
-    <string name="category_unblocked_warning">Trước tiên hãy chặn thể loại!</string>
     <string name="switch_strict_blocking">Chặn việc chia sẻ dữ liệu cần thiết</string>
     <string name="tracking_detection_failed">Phát hiện thư viện trình theo dõi thất bại.</string>
     <string name="tracking_detection_failed_ram">Phát hiện thư viện trình theo dõi thất bại. Không đủ RAM.</string>
@@ -396,6 +394,7 @@
     <string name="failed_loading_cached_analysis">Tải kết quả trình theo dõi trong bộ nhớ đệm thất bại. Vui lòng báo cáo điều này đến nhà phát triển tại hello@trackercontrol.org</string>
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

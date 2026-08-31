@@ -19,6 +19,7 @@
     <string name="menu_support">এই এপপ্ কে সাহায্য করুন</string>
     <string name="menu_log_support">ব্যাখ্যা</string>
     <string name="menu_about">সম্পর্কে</string>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <string name="menu_apps">অন্যান্য অ্যাপ্স</string>
     <string name="menu_protocol_other">অন্যান্য</string>
     <string name="menu_traffic_allowed">অনুমোদিত</string>
@@ -69,7 +70,6 @@
     <string name="app_route_unavailable_bypassed">এই অ্যাপটি TrackerControl সম্পূর্ণ এড়িয়ে যায়, তাই পাঠানোর মতো কোনও ট্রাফিক নেই।</string>
     <string name="app_route_unavailable_partial_routes">আপনার দূরবর্তী VPN সব ট্রাফিক বহন করে না (এর AllowedIPs পূর্ণ টানেল নয়)। অ্যাপভিত্তিক রাউটিংয়ের জন্য পূর্ণ টানেল দরকার, কারণ রুটগুলি সব অ্যাপ ভাগ করে নেয়।</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">সুরক্ষা</string>
     <string name="app_state_protected">সুরক্ষিত</string>
     <string name="app_state_protected_explanation">এই অ্যাপের জন্য ট্র্যাকার ব্লক ও রেকর্ড করা হয়।</string>
     <string name="app_state_trackers_allowed">ট্র্যাকার অনুমোদিত</string>
@@ -84,6 +84,7 @@
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- A blocked/allowed label followed by its share of all tracking attempts. -->
     <!-- Secure DNS (DoH) -->
     <!-- Block DNS-over-TLS (DoT) -->
     <!-- App Overview -->
@@ -22,7 +23,6 @@
     <string name="app_route_unavailable_bypassed">ఈ యాప్ TrackerControlను పూర్తిగా దాటవేస్తుంది, కాబట్టి పంపడానికి ట్రాఫిక్ లేదు.</string>
     <string name="app_route_unavailable_partial_routes">మీ రిమోట్ VPN మొత్తం ట్రాఫిక్‌ను మోయదు (దాని AllowedIPs పూర్తి టన్నెల్ కాదు). మార్గాలను అన్ని యాప్‌లు పంచుకుంటాయి కాబట్టి యాప్‌వారీ రూటింగ్‌కు పూర్తి టన్నెల్ అవసరం.</string>
     <!-- Per-app protection state -->
-    <string name="app_state_heading">రక్షణ</string>
     <string name="app_state_protected">రక్షించబడింది</string>
     <string name="app_state_protected_explanation">ఈ యాప్ కోసం ట్రాకర్‌లు నిరోధించబడతాయి మరియు రికార్డ్ చేయబడతాయి.</string>
     <string name="app_state_trackers_allowed">ట్రాకర్‌లు అనుమతించబడ్డాయి</string>
@@ -37,6 +37,7 @@
     <!-- Tracker library screen, reached from the summary row on the Trackers tab -->
     <!-- Onboarding -->
     <!-- Insights Screen -->
+    <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
 </resources>
