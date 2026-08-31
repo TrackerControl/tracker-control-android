@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -169,8 +168,7 @@ private fun DataRightsSection(
                 painter = painterResource(illustration),
                 contentDescription = null,
                 modifier = Modifier.size(dimensionResource(R.dimen.card_img)),
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                contentScale = ContentScale.Fit
             )
         }
         Column(modifier = Modifier.fillMaxWidth()) {
