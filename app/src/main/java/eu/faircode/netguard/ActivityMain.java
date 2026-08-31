@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with NetGuard.  If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright © 2015–2020 by Marcel Bokhorst (M66B), Konrad
- * Kollnig (University of Oxford)
+ * Copyright © 2015–2020 Marcel Bokhorst (M66B)
+ * Copyright © 2019–2026 Konrad Kollnig
  */
 
 package eu.faircode.netguard;
@@ -102,6 +102,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityMain extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Main";
@@ -186,6 +187,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "SDK=" + Build.VERSION.SDK_INT);
             super.onCreate(savedInstanceState);
             setContentView(R.layout.android);
+            setCopyright(findViewById(android.R.id.content));
             return;
         }
 
@@ -194,6 +196,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             Log.i(TAG, "Xposed running");
             super.onCreate(savedInstanceState);
             setContentView(R.layout.xposed);
+            setCopyright(findViewById(android.R.id.content));
             return;
         }
 
@@ -1559,10 +1562,19 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         dialogLegend.show();
     }
 
+    private void setCopyright(View view) {
+        TextView tvCopyright = view.findViewById(R.id.tvCopyright);
+        if (tvCopyright != null)
+            tvCopyright.setText(getString(R.string.app_copyright).replaceFirst(
+                    "(?<=2019[–-])20\\d{2}",
+                    new SimpleDateFormat("yyyy", Locale.US).format(new Date())));
+    }
+
     private void menu_about() {
         // Create view
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.about, null, false);
+        setCopyright(view);
         TextView tvVersionName = view.findViewById(R.id.tvVersionName);
         TextView tvVersionCode = view.findViewById(R.id.tvVersionCode);
         Button btnRate = view.findViewById(R.id.btnRate);

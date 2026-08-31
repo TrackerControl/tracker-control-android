@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with TrackerControl. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright © 2019–2020 Konrad Kollnig (University of Oxford)
+ * Copyright © 2019–2026 Konrad Kollnig
  */
 package net.kollnig.missioncontrol
 
