@@ -51,7 +51,9 @@ class TimelineScreenTest {
         composeRule.runOnIdle { model.value = populatedModel() }
         composeRule.onNodeWithText("12").assertExists()
         composeRule.onNodeWithText(NumberFormat.getPercentInstance().format(0.75)).assertExists()
-        composeRule.onNodeWithTag("timeline-insights-progress")
+        // The card is clickable, so it merges its descendants: the progress
+        // bar is only addressable in the unmerged tree.
+        composeRule.onNodeWithTag("timeline-insights-progress", useUnmergedTree = true)
             .assertRangeInfoEquals(ProgressBarRangeInfo(0.75f, 0f..1f))
         composeRule.onNodeWithTag("timeline-insights-card").performClick()
         composeRule.onNodeWithContentDescription(context.getString(R.string.insights_share))
@@ -121,7 +123,8 @@ class TimelineScreenTest {
         composeRule.onNodeWithTag("timeline-app-10001").performScrollTo().performClick()
         composeRule.onNodeWithTag("timeline-app-10002").performScrollTo().assertHasNoClickAction()
         composeRule.onNodeWithText("+1 more").performScrollTo().assertExists()
-        composeRule.onAllNodes(hasTestTag("timeline-divider")).assertCountEquals(1)
+        composeRule.onAllNodes(hasTestTag("timeline-divider"), useUnmergedTree = true)
+            .assertCountEquals(1)
         composeRule.runOnIdle {
             assertEquals(1, callbacks.dismissHint)
             assertEquals(1, callbacks.entryClicks)

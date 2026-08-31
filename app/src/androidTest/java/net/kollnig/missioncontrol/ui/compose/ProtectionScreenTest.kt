@@ -6,6 +6,9 @@
  */
 package net.kollnig.missioncontrol.ui.compose
 
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -120,7 +123,10 @@ class ProtectionScreenTest {
         composeRule.onNodeWithText(context.getString(R.string.protection_blocked_last_24h)).assertExists()
         composeRule.onNodeWithText("Pause now").performClick()
         composeRule.onNodeWithContentDescription(categoryDescription).performClick()
-        composeRule.onNodeWithContentDescription("Allow Example Analytics in Example App").performClick()
+        // The row names its action with onClickLabel rather than a
+        // contentDescription, so that its own children stay announced.
+        composeRule.onNode(hasClickLabel("Allow Example Analytics in Example App"))
+            .performClick()
         composeRule.onAllNodes(hasTestTag("protection-company-divider"), useUnmergedTree = true)
             .assertCountEquals(1)
         composeRule.onNodeWithText(context.getString(R.string.app_state_heading))
@@ -138,5 +144,9 @@ class ProtectionScreenTest {
             assertEquals("analytics" to false, categoryToggle)
             assertEquals("example-analytics", companyClicked)
         }
+    }
+
+    private fun hasClickLabel(label: String) = SemanticsMatcher("onClickLabel is '$label'") { node ->
+        node.config.getOrNull(SemanticsActions.OnClick)?.label == label
     }
 }
