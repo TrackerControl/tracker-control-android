@@ -22,6 +22,7 @@ import java.util.List;
 public class ProfileGeneratorTest {
     private static final String ACCOUNT = "test-account";
     private static final String PRIVATE_KEY = key(0);
+    private static final String OTHER_PRIVATE_KEY = key(2);
     private static final String PUBLIC_KEY = key(1);
     private static final String PEER_KEY = key(9);
     private static final String IPV6 = "fc00:bbbb:bbbb:bb01::2/128";
@@ -61,8 +62,9 @@ public class ProfileGeneratorTest {
     @Test
     public void mullvadIpv6OnlyReusableConfigHasNoLeadingAddressComma() throws Exception {
         TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.registerDevice(PUBLIC_KEY, "", IPV6);
 
-        String config = generator.generate(ACCOUNT, "de", reusableConfig(IPV6)).config;
+        String config = generator.generate(ACCOUNT, "de", reusableConfig(IPV6), null, true).config;
 
         assertTrue(config.contains("Address = " + IPV6));
         assertFalse(config.contains("Address = ,"));
@@ -71,11 +73,142 @@ public class ProfileGeneratorTest {
     @Test
     public void mullvadReusableConfigKeepsBothAddresses() throws Exception {
         TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
 
         String config = generator.generate(ACCOUNT, "de",
-                reusableConfig(IPV4 + ", " + IPV6)).config;
+                reusableConfig(IPV4 + ", " + IPV6), null, true).config;
 
         assertTrue(config.contains("Address = " + IPV4 + ", " + IPV6));
+    }
+
+    @Test
+    public void mullvadRegisteredReusableConfigKeepsIdentity() throws Exception {
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.registerDevice(PUBLIC_KEY, IPV4, IPV6);
+
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6), null, true);
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.createDeviceCalls);
+        assertEquals(PRIVATE_KEY, generated.privateKey);
+        assertEquals("device", generated.deviceId);
+        assertTrue(generated.config.contains("PrivateKey = " + PRIVATE_KEY));
+    }
+
+    @Test
+    public void mullvadDeletedDeviceRegistersFreshIdentity() throws Exception {
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.newPrivateKey = OTHER_PRIVATE_KEY;
+        // The account lists a device, but not the one the saved profile uses:
+        // this is the state left behind by deleting the device at Mullvad.
+        generator.registerDevice(key(7), IPV4, IPV6);
+
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6), null, true);
+
+        assertTrue(generated.identityReplaced);
+        assertEquals(1, generator.createDeviceCalls);
+        assertEquals(OTHER_PRIVATE_KEY, generated.privateKey);
+        assertEquals("device", generated.deviceId);
+        assertEquals(IPV4 + ", " + IPV6, generated.address);
+        assertTrue(generated.config.contains("PrivateKey = " + OTHER_PRIVATE_KEY));
+    }
+
+    @Test
+    public void mullvadReuseDoesNotAskProviderByDefault() throws Exception {
+        // The handshake is the authoritative test of a saved identity, and it
+        // only needs the relay endpoint. Reusing must not depend on reaching
+        // the API host, or a profile that would have worked fails to generate.
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.deviceListFailure = new IOException("API unreachable");
+
+        MullvadProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", reusableConfig(IPV4 + ", " + IPV6));
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.fetchWebTokenCalls);
+        assertEquals(0, generator.createDeviceCalls);
+        assertTrue(generated.config.contains("PrivateKey = " + PRIVATE_KEY));
+    }
+
+    @Test
+    public void ivpnReuseDoesNotAskProviderByDefault() throws Exception {
+        TestIvpnGenerator generator = new TestIvpnGenerator(null);
+        generator.sessionStatusFailure = new IOException("API unreachable");
+        WgProfileManager.IvpnSession session = new WgProfileManager.IvpnSession(
+                "token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
+
+        IvpnProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", session);
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.createSessionCalls);
+        assertTrue(generated.config.contains("Address = 10.64.0.9/32"));
+    }
+
+    @Test
+    public void mullvadDeviceListFailureDoesNotCreateDevice() throws Exception {
+        IOException failure = new IOException("device list failed");
+        TestMullvadGenerator generator = new TestMullvadGenerator(null);
+        generator.deviceListFailure = failure;
+
+        try {
+            generator.generate(ACCOUNT, "de", reusableConfig(IPV4), null, true);
+            fail("Expected device list failure");
+        } catch (IOException ex) {
+            assertSame(failure, ex);
+        }
+
+        assertEquals(0, generator.createDeviceCalls);
+    }
+
+    @Test
+    public void ivpnDeletedSessionCreatesFreshSession() throws Exception {
+        TestIvpnGenerator generator = new TestIvpnGenerator(null);
+        generator.sessionRegistered = false;
+        WgProfileManager.IvpnSession stale = new WgProfileManager.IvpnSession(
+                "stale-token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
+
+        IvpnProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", stale, "", "", null, true);
+
+        assertTrue(generated.identityReplaced);
+        assertEquals(1, generator.createSessionCalls);
+        assertEquals("10.64.0.2/32", generated.address);
+        assertTrue(generated.config.contains("Address = 10.64.0.2/32"));
+    }
+
+    @Test
+    public void ivpnRegisteredSessionIsReused() throws Exception {
+        TestIvpnGenerator generator = new TestIvpnGenerator(null);
+        WgProfileManager.IvpnSession session = new WgProfileManager.IvpnSession(
+                "token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
+
+        IvpnProfileGenerator.GeneratedProfile generated =
+                generator.generate(ACCOUNT, "de", session, "", "", null, true);
+
+        assertFalse(generated.identityReplaced);
+        assertEquals(0, generator.createSessionCalls);
+        assertTrue(generated.config.contains("Address = 10.64.0.9/32"));
+    }
+
+    @Test
+    public void ivpnSessionStatusFailureDoesNotCreateSession() throws Exception {
+        IOException failure = new IOException("session status failed");
+        TestIvpnGenerator generator = new TestIvpnGenerator(null);
+        generator.sessionStatusFailure = failure;
+        WgProfileManager.IvpnSession session = new WgProfileManager.IvpnSession(
+                "token", PRIVATE_KEY, PUBLIC_KEY, "10.64.0.9");
+
+        try {
+            generator.generate(ACCOUNT, "de", session, "", "", null, true);
+            fail("Expected session status failure");
+        } catch (IOException ex) {
+            assertSame(failure, ex);
+        }
+
+        assertEquals(0, generator.createSessionCalls);
     }
 
     @Test
@@ -129,11 +262,30 @@ public class ProfileGeneratorTest {
 
     private static class TestMullvadGenerator extends MullvadProfileGenerator {
         private final IOException relayFailure;
+        private final List<JSONObject> devices = new java.util.ArrayList<>();
+        IOException deviceListFailure;
+        String newPrivateKey = PRIVATE_KEY;
         int fetchWebTokenCalls;
         int createDeviceCalls;
 
         TestMullvadGenerator(IOException relayFailure) {
             this.relayFailure = relayFailure;
+        }
+
+        void registerDevice(String publicKey, String ipv4, String ipv6) throws Exception {
+            devices.add(new JSONObject()
+                    .put("id", "device")
+                    .put("name", "registered")
+                    .put("pubkey", publicKey)
+                    .put("ipv4_address", ipv4)
+                    .put("ipv6_address", ipv6));
+        }
+
+        @Override
+        List<JSONObject> listDevices(String token) throws Exception {
+            if (deviceListFailure != null)
+                throw deviceListFailure;
+            return devices;
         }
 
         @Override
@@ -161,21 +313,30 @@ public class ProfileGeneratorTest {
 
         @Override
         String newPrivateKey() {
-            return PRIVATE_KEY;
+            return newPrivateKey;
         }
 
         @Override
         String derivePublicKey(String privateKey) {
-            return PUBLIC_KEY;
+            return PRIVATE_KEY.equals(privateKey) ? PUBLIC_KEY : key(3);
         }
     }
 
     private static class TestIvpnGenerator extends IvpnProfileGenerator {
         private final IOException relayFailure;
+        IOException sessionStatusFailure;
+        boolean sessionRegistered = true;
         int createSessionCalls;
 
         TestIvpnGenerator(IOException relayFailure) {
             this.relayFailure = relayFailure;
+        }
+
+        @Override
+        boolean sessionIsRegistered(String sessionToken) throws Exception {
+            if (sessionStatusFailure != null)
+                throw sessionStatusFailure;
+            return sessionRegistered;
         }
 
         @Override

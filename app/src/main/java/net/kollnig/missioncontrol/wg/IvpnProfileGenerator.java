@@ -51,10 +51,18 @@ public class IvpnProfileGenerator {
         public final String countryName;
         public final String relayHostname;
         public final WgProfileManager.IvpnSession session;
+        public final String address;
+        /**
+         * True when the saved session could not be reused and a fresh IVPN
+         * session was created. Callers must then rewrite the account's other
+         * profiles, which still carry the key IVPN no longer knows.
+         */
+        public final boolean identityReplaced;
 
         public GeneratedProfile(String name, String config, String accountNumber,
                                 String countryCode, String countryName, String relayHostname,
-                                WgProfileManager.IvpnSession session) {
+                                WgProfileManager.IvpnSession session, String address,
+                                boolean identityReplaced) {
             this.name = name;
             this.config = config;
             this.accountNumber = accountNumber;
@@ -62,6 +70,8 @@ public class IvpnProfileGenerator {
             this.countryName = countryName == null ? "" : countryName;
             this.relayHostname = relayHostname == null ? "" : relayHostname;
             this.session = session;
+            this.address = address == null ? "" : address;
+            this.identityReplaced = identityReplaced;
         }
     }
 
@@ -116,18 +126,35 @@ public class IvpnProfileGenerator {
                                      WgProfileManager.IvpnSession reusableSession,
                                      String captchaId, String captchaValue)
             throws Exception {
-        return generate(accountNumber, requestedCountryCode, reusableSession, captchaId, captchaValue, null);
+        return generate(accountNumber, requestedCountryCode, reusableSession, captchaId,
+                captchaValue, null, false);
     }
 
-    /**
-     * @param excludeHostname a relay hostname to avoid re-picking when another
-     *                        candidate is available in the chosen pool, e.g. a
-     *                        relay a caller just failed over away from.
-     */
     public GeneratedProfile generate(String accountNumber, String requestedCountryCode,
                                      WgProfileManager.IvpnSession reusableSession,
                                      String captchaId, String captchaValue,
                                      String excludeHostname)
+            throws Exception {
+        return generate(accountNumber, requestedCountryCode, reusableSession, captchaId,
+                captchaValue, excludeHostname, false);
+    }
+
+    /**
+     * @param excludeHostname         a relay hostname to avoid re-picking when another
+     *                                candidate is available in the chosen pool, e.g. a
+     *                                relay a caller just failed over away from.
+     * @param verifyReusableSession   ask IVPN whether the saved session still exists
+     *                                before reusing it, and start a new one when it does
+     *                                not. Only for callers that already know the tunnel
+     *                                does not work: the handshake is the authoritative
+     *                                test, and it needs nothing but the relay endpoint,
+     *                                while this asks an API host that a working tunnel
+     *                                never has to reach.
+     */
+    public GeneratedProfile generate(String accountNumber, String requestedCountryCode,
+                                     WgProfileManager.IvpnSession reusableSession,
+                                     String captchaId, String captchaValue,
+                                     String excludeHostname, boolean verifyReusableSession)
             throws Exception {
         String account = accountNumber == null ? "" : accountNumber.trim();
         if (account.isEmpty())
@@ -135,6 +162,17 @@ public class IvpnProfileGenerator {
 
         Relay relay = chooseRelay(fetchRelays(), requestedCountryCode, excludeHostname);
         WgProfileManager.IvpnSession session = reusableSession;
+        boolean identityReplaced = false;
+        // The caller has already established that this session does not work.
+        // A saved session is only usable while IVPN still knows it — once it is
+        // gone, deleted in the account's device list or logged out elsewhere,
+        // its key never completes a handshake — so ask, and start a new session
+        // rather than inheriting the dead identity.
+        if (verifyReusableSession && session != null && session.isUsable() &&
+                !sessionIsRegistered(session.token)) {
+            session = null;
+            identityReplaced = true;
+        }
         if (session == null || !session.isUsable()) {
             String privateKey = newPrivateKey();
             String publicKey = derivePublicKey(privateKey);
@@ -143,7 +181,8 @@ public class IvpnProfileGenerator {
 
         String config = buildConfig(session.privateKey, session.address, relay);
         return new GeneratedProfile("IVPN - " + relay.countryName, config, account,
-                relay.countryCode, relay.countryName, relay.hostname, session);
+                relay.countryCode, relay.countryName, relay.hostname, session,
+                addressWithCidr(session.address), identityReplaced);
     }
 
     public WgProfileManager.IvpnSession rotateSessionKey(WgProfileManager.IvpnSession session,
@@ -181,6 +220,40 @@ public class IvpnProfileGenerator {
         return Wgbridge.publicKey(privateKey);
     }
 
+    /**
+     * Asks IVPN whether the saved session token is still valid. Throws rather
+     * than guessing when the answer is inconclusive: creating a session
+     * consumes one of the account's device slots.
+     */
+    boolean sessionIsRegistered(String sessionToken) throws Exception {
+        if (TextUtils.isEmpty(sessionToken))
+            return false;
+
+        JSONObject body = new JSONObject();
+        body.put("session_token", sessionToken);
+        Request request = new Request.Builder()
+                .url(API + "/v4/session/status")
+                .post(RequestBody.create(body.toString(), JSON))
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String text = responseText(response);
+            JSONObject json = TextUtils.isEmpty(text) ? new JSONObject() : new JSONObject(text);
+            int status = json.optInt("status", 0);
+            if (status == 200)
+                return true;
+            // 601 is IVPN's "session not found"; a 401 says the same thing at
+            // the HTTP layer. Anything else is not evidence that the session
+            // is gone.
+            if (status == 601 || response.code() == 401)
+                return false;
+            if (status != 0)
+                throw new ApiRejectedException(errorMessage(json,
+                        "IVPN session status request failed: " + response.code()));
+            throw new IOException("IVPN session status request failed: " + response.code());
+        }
+    }
+
     WgProfileManager.IvpnSession createSession(String account, String privateKey,
                                                String publicKey, String captchaId,
                                                String captchaValue)
@@ -202,15 +275,18 @@ public class IvpnProfileGenerator {
         if (status == 70001 || !TextUtils.isEmpty(captcha) || !TextUtils.isEmpty(nextCaptchaId))
             throw new CaptchaRequiredException(nextCaptchaId, captcha,
                     response.optString("message", ""));
+        // IVPN answers HTTP 200 with a status field for its own refusals — a
+        // session limit, an inactive account. Those are rejections the caller
+        // can act on and show the user, not transport failures.
         if (status != 200)
-            throw new IOException(errorMessage(response, "IVPN session request failed"));
+            throw new ApiRejectedException(errorMessage(response, "IVPN session request failed"));
 
         JSONObject wireGuard = response.optJSONObject("wireguard");
         if (wireGuard == null)
             throw new IOException("IVPN did not return WireGuard session data");
         int wgStatus = wireGuard.optInt("status", 0);
         if (wgStatus != 200)
-            throw new IOException(errorMessage(wireGuard, "IVPN WireGuard setup failed"));
+            throw new ApiRejectedException(errorMessage(wireGuard, "IVPN WireGuard setup failed"));
 
         String token = response.optString("token", "");
         String address = wireGuard.optString("ip_address", "");

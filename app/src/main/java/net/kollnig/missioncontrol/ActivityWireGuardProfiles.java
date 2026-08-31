@@ -276,6 +276,7 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                     progress.dismiss();
                     try {
                         manager.saveMullvadAccount(generated.accountNumber);
+                        manager.saveMullvadDeviceId(generated.deviceId);
                         manager.saveProfile(null, generated.name, generated.config,
                                 "mullvad", generated.accountNumber,
                                 generated.countryCode, generated.countryName);
