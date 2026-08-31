@@ -22,6 +22,27 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
 
+    <!--
+        Only used by net.kollnig.missioncontrol.ActivityScanQr to read a
+        WireGuard configuration off a QR code; nothing else opens the camera,
+        and no frame ever leaves the device.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--
+        Declaring CAMERA makes Play infer android.hardware.camera and
+        .autofocus as required, which would hide the app from camera-less
+        devices; scanning is optional, so mark all three optional.
+    -->
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
     <!-- https://developer.android.com/preview/privacy/package-visibility -->
     <uses-permission
         android:name="android.permission.QUERY_ALL_PACKAGES"
@@ -190,6 +211,17 @@
                 android:value="eu.faircode.netguard.ActivitySettings" />
         </activity>
 
+
+        <activity
+            android:name="net.kollnig.missioncontrol.ActivityScanQr"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:label="@string/setting_wg_profile_scan"
+            android:parentActivityName="net.kollnig.missioncontrol.ActivityWireGuardProfiles">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.kollnig.missioncontrol.ActivityWireGuardProfiles" />
+        </activity>
 
         <activity
             android:name="net.kollnig.missioncontrol.DetailsActivity"
