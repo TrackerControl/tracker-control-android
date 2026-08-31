@@ -94,6 +94,9 @@ public class TimelineFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         ComposeView view = new ComposeView(requireContext());
+        // A stable ID gives Compose's saveable state registry a key to persist
+        // under, so the LazyColumn scroll position survives recreation.
+        view.setId(R.id.compose_timeline);
         view.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -147,6 +150,16 @@ public class TimelineFragment extends Fragment {
                         if (isCurrentView(generation) && screenController != null) {
                             screenController.dismissHint();
                         }
+                    }
+
+                    @Override
+                    public void onRefresh() {
+                        if (!isCurrentView(generation) || screenController == null)
+                            return;
+                        // loadTimeline() clears the indicator once the rebuilt
+                        // rows arrive, as the SwipeRefreshLayout used to.
+                        screenController.setRefreshing(true);
+                        refreshAll();
                     }
                 });
         lifecycleExecutor = Executors.newSingleThreadExecutor();

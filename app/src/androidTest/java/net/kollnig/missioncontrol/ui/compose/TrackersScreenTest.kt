@@ -33,6 +33,7 @@ class TrackersScreenTest {
             override fun onCompanyClick(blockingKey: String) = Unit
             override fun onCompanyToggle(blockingKey: String, checked: Boolean) = Unit
             override fun onShowMore(categoryName: String) = Unit
+            override fun onRefresh() = Unit
         }
 
         composeRule.setContent {

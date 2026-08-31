@@ -182,6 +182,7 @@ class TimelineScreenTest {
         var openApp = 0
         var openSettings = 0
         var dismissHint = 0
+        var refreshes = 0
 
         override fun onEntryClick(uid: Int, appName: String, packageName: String) {
             entryClicks++
@@ -205,6 +206,10 @@ class TimelineScreenTest {
 
         override fun onDismissHint() {
             dismissHint++
+        }
+
+        override fun onRefresh() {
+            refreshes++
         }
     }
 }
