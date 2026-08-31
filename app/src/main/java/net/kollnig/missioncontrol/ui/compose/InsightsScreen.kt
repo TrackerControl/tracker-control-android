@@ -313,15 +313,16 @@ private fun InsightsOverviewCard(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                // No size() here: IconButton's own 48dp minimum touch target
+                // must survive; the glyph is sized on the Icon instead.
                 IconButton(
                     onClick = onShare,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .testTag("insights-share")
+                    modifier = Modifier.testTag("insights-share")
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_ios_share),
                         contentDescription = stringResource(R.string.insights_share),
+                        modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -373,6 +374,18 @@ private fun InsightsOverviewCard(
                 text = statusText,
                 modifier = Modifier.padding(top = 8.dp),
                 style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = stringResource(
+                    R.string.insights_shocking_fact,
+                    data.uniqueTrackerCompanies,
+                    data.totalTrackingAttempts
+                ),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .testTag("insights-shocking-fact"),
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

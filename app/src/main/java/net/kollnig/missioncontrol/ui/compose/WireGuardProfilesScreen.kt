@@ -46,8 +46,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -171,7 +169,8 @@ private fun WireGuardProfilesList(
         modifier = Modifier
             .fillMaxSize()
             .padding(contentPadding),
-        contentPadding = PaddingValues(vertical = 8.dp)
+        // Leave room for the FAB so the last row can be scrolled clear of it.
+        contentPadding = PaddingValues(top = 8.dp, bottom = 80.dp)
     ) {
         itemsIndexed(
             items = rows,
@@ -240,10 +239,12 @@ private fun WireGuardProfileListItem(
                 )
             }
         },
+        // Name the action with onClickLabel rather than a row-level
+        // contentDescription: overriding the description on this merging row
+        // would hide the summary and the "Active" marker from TalkBack.
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { callbacks.onEdit(row.id) }
-            .semantics { contentDescription = editDescription }
+            .clickable(onClickLabel = editDescription) { callbacks.onEdit(row.id) }
             .testTag("wg-profile-row-${row.id}")
     )
 }

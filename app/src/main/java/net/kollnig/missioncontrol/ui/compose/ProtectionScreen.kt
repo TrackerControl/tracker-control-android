@@ -339,9 +339,14 @@ private fun CategoryRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
+            // TalkBack spells real uppercase out letter by letter, so keep the
+            // visual casing but announce the untouched title.
             Text(
                 text = category.title.uppercase(locale),
-                modifier = Modifier.semantics { heading() },
+                modifier = Modifier.semantics {
+                    heading()
+                    contentDescription = category.title
+                },
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -389,9 +394,13 @@ private fun CompanyRow(
     val rowModifier = if (company.actionable) {
         Modifier
             .fillMaxWidth()
-            .clickable { onClick(company.blockingKey) }
+            // Name the action with onClickLabel and let the merged children
+            // announce themselves: a row-level contentDescription here would
+            // swallow the last-seen time and the Blocked/Allowed status.
+            .clickable(onClickLabel = company.actionDescription) {
+                onClick(company.blockingKey)
+            }
             .semantics(mergeDescendants = true) {
-                contentDescription = company.actionDescription
                 role = Role.Button
             }
     } else {

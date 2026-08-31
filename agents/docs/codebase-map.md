@@ -40,7 +40,7 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
     lives here (`loadTrackers`). Watch memory.
   - `data/InsightsData*.java`, `InsightsActivity.kt` — the insights/summary UI.
   - `analysis/` — static tracker-library detection in app code (dexlib2 signatures).
-  - `details/`, `DetailsActivity.java`, `TrackersListAdapter` — per-app tracker
+  - `details/`, `DetailsActivity.java`, `ProtectionActivity.java` — per-app tracker
     list + the ALLOWED/BLOCKED toggles.
   - `dns/DnsOverHttpsClient.java`, `dns/DnsProxyServer.java` — Secure DNS (DoH).
   - `wg/` (Kotlin) — WireGuard config/egress: `WgConfig.kt` (wg-quick → UAPI),

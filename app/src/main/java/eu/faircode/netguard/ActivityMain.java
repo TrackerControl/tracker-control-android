@@ -930,7 +930,8 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 // the configuration needing access, which onResume decides too.
                 tvLocalNetwork.setVisibility(
                         LocalNetworkAccess.isMissing(this) ? View.VISIBLE : View.GONE);
-            if (dialogTroubleshooting != null && dialogTroubleshooting.isShowing())
+            if (dialogTroubleshooting != null && dialogTroubleshooting.isShowing() &&
+                    dialogTroubleshooting.getWindow() != null)
                 renderLocalNetworkAccess(dialogTroubleshooting.getWindow().getDecorView(),
                         LocalNetworkAccess.isEnforced(), LocalNetworkAccess.isGranted(this));
             if (granted)
