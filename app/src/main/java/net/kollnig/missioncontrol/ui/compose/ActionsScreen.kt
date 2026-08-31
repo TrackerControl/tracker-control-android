@@ -88,7 +88,7 @@ internal fun DataRightsScreen(
                 text = stringResource(R.string.request_data),
                 onClick = { onAction(R.id.btnReqData) }
             )
-            DetailsSecondaryAction(
+            DetailsPrimaryAction(
                 text = stringResource(R.string.request_deletion),
                 onClick = { onAction(R.id.btnReqDeletion) }
             )
@@ -105,11 +105,11 @@ internal fun DataRightsScreen(
                 text = stringResource(R.string.contact_developer),
                 onClick = { onAction(R.id.btnContactDev) }
             )
-            DetailsSecondaryAction(
+            DetailsPrimaryAction(
                 text = stringResource(R.string.contact_playstore),
                 onClick = { onAction(R.id.btnContactGoogle) }
             )
-            DetailsSecondaryAction(
+            DetailsPrimaryAction(
                 text = stringResource(R.string.contact_officials),
                 onClick = { onAction(R.id.btnContactOfficials) }
             )
