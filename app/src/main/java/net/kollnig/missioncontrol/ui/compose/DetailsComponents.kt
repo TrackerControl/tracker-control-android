@@ -19,8 +19,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -84,7 +84,7 @@ fun DetailsTextAction(
     }
 }
 
-/** A left-aligned filled action for an operation in a detail section. */
+/** A left-aligned light action for an operation in a detail section. */
 @Composable
 fun DetailsPrimaryAction(
     text: String,
@@ -92,7 +92,7 @@ fun DetailsPrimaryAction(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
 ) {
-    Button(
+    OutlinedButton(
         onClick = onClick,
         enabled = enabled,
         shape = MaterialTheme.shapes.medium,
