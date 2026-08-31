@@ -272,12 +272,22 @@ private fun InsightsOverviewCard(
     onShare: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // The pre-Compose screen printed each count's share of the total beside it;
+    // the hero keeps the blocked share large, so both shares live here.
     val statusText = stringResource(
         R.string.insights_overview_status,
         formatNumber(data.blockedTrackingAttempts),
-        stringResource(R.string.insights_blocked),
+        stringResource(
+            R.string.insights_overview_status_share,
+            stringResource(R.string.insights_blocked),
+            formatPercentage(data.blockedPercentage)
+        ),
         formatNumber(data.allowedTrackingAttempts),
-        stringResource(R.string.insights_allowed)
+        stringResource(
+            R.string.insights_overview_status_share,
+            stringResource(R.string.insights_allowed),
+            formatPercentage(data.allowedPercentage)
+        )
     )
     Card(
         modifier = modifier
@@ -313,15 +323,16 @@ private fun InsightsOverviewCard(
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                // No size() here: IconButton's own 48dp minimum touch target
+                // must survive; the glyph is sized on the Icon instead.
                 IconButton(
                     onClick = onShare,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .testTag("insights-share")
+                    modifier = Modifier.testTag("insights-share")
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_ios_share),
                         contentDescription = stringResource(R.string.insights_share),
+                        modifier = Modifier.size(24.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -373,6 +384,18 @@ private fun InsightsOverviewCard(
                 text = statusText,
                 modifier = Modifier.padding(top = 8.dp),
                 style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = stringResource(
+                    R.string.insights_shocking_fact,
+                    data.uniqueTrackerCompanies,
+                    data.totalTrackingAttempts
+                ),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .testTag("insights-shocking-fact"),
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

@@ -337,7 +337,7 @@ public class ProtectionActivity extends AppCompatActivity {
                             tracker.getName(), appName)));
         }
         String lastContact = category.lastSeen != null && category.lastSeen != 0
-                ? String.format(getString(R.string.feed_section_last_contact),
+                ? getString(R.string.feed_section_last_contact,
                         Util.relativeTime(category.lastSeen)) : null;
         String explainer = category.isUncertain() ? getString(R.string.uncertain_entry) : null;
         return new CategoryModel(
@@ -348,7 +348,7 @@ public class ProtectionActivity extends AppCompatActivity {
                 explainer,
                 categoryChecked,
                 categoryEnabled,
-                String.format(getString(R.string.toggle_block_category_description), categoryDisplayName),
+                getString(R.string.toggle_block_category_description, categoryDisplayName),
                 Collections.unmodifiableList(companies));
     }
 

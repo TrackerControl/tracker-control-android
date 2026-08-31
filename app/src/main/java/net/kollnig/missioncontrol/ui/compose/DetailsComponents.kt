@@ -49,11 +49,13 @@ fun DetailsSectionHeading(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 48.dp)
-                .semantics { heading() }
                 .padding(horizontal = 16.dp, vertical = 12.dp)
         ) {
+            // The heading flag belongs on the Text: this Row does not merge its
+            // descendants, so a flag set here would reach no TalkBack node.
             Text(
                 text = text,
+                modifier = Modifier.semantics { heading() },
                 style = MaterialTheme.typography.titleMedium
             )
         }

@@ -76,6 +76,8 @@ public class TrackersFragment extends Fragment {
     private WorkInfo analysisWork;
 
     private boolean running = false;
+    /** True while the async tracker query runs; drives the loading spinner. */
+    private boolean refreshing = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -148,6 +150,11 @@ public class TrackersFragment extends Fragment {
                         expandedSections.add(categoryName);
                         render();
                     }
+
+                    @Override
+                    public void onRefresh() {
+                        updateTrackerList();
+                    }
                 });
 
         // Observe analysis work status and update the Compose model.
@@ -212,6 +219,8 @@ public class TrackersFragment extends Fragment {
      * given app
      */
     public void updateTrackerList() {
+        refreshing = true;
+        render();
         new AsyncTask<Object, Object, List<TrackerCategory>>() {
             @Override
             protected List<TrackerCategory> doInBackground(Object... arg) {
@@ -225,6 +234,7 @@ public class TrackersFragment extends Fragment {
 
             @Override
             protected void onPostExecute(List<TrackerCategory> result) {
+                refreshing = false;
                 if (running && screenController != null) {
                     categories = result == null ? new ArrayList<>() : new ArrayList<>(result);
                     rebuildTrackerIndex();
@@ -289,7 +299,8 @@ public class TrackersFragment extends Fragment {
     private TrackersScreenModel buildScreenModel() {
         Context context = getContext();
         if (context == null)
-            return new TrackersScreenModel(false, "", null, "", false, "", new ArrayList<>());
+            return new TrackersScreenModel(
+                    false, "", null, "", false, "", new ArrayList<>(), refreshing);
 
         InternetBlocklist internet = InternetBlocklist.getInstance(context);
         TrackerBlocklist blocklist = TrackerBlocklist.getInstance(context);
@@ -355,7 +366,8 @@ public class TrackersFragment extends Fragment {
                 appStateHint,
                 hintAccent,
                 librarySummary(context),
-                Collections.unmodifiableList(rows));
+                Collections.unmodifiableList(rows),
+                refreshing);
     }
 
     private TrackersRow.Section buildSectionRow(Context context,

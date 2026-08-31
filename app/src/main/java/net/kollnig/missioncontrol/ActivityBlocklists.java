@@ -40,6 +40,9 @@ public class ActivityBlocklists extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         ComposeView composeView = new ComposeView(this);
+        // A stable ID gives Compose's saveable state registry a key to persist
+        // under, so the LazyColumn scroll position survives recreation.
+        composeView.setId(R.id.compose_blocklists);
         setContentView(composeView);
 
         getSupportActionBar().setTitle(R.string.title_blocklists);

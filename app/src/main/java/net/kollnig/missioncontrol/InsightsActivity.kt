@@ -62,6 +62,9 @@ class InsightsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val composeView = ComposeView(this)
+        // A stable ID gives Compose's saveable state registry a key to persist
+        // under, so the LazyColumn scroll position survives recreation.
+        composeView.id = R.id.compose_insights
         setContentView(composeView)
 
         // Set up action bar

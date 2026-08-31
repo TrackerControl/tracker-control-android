@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
@@ -29,16 +30,21 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -155,7 +161,8 @@ data class TimelineScreenModel(
     val insights: TimelineInsightsState,
     val emptyState: TimelineEmptyState?,
     val showHint: Boolean,
-    val rows: List<TimelineRow>
+    val rows: List<TimelineRow>,
+    val isRefreshing: Boolean = false
 ) {
     companion object {
         @JvmStatic
@@ -163,7 +170,8 @@ data class TimelineScreenModel(
             insights = TimelineInsightsState.Loading,
             emptyState = null,
             showHint = false,
-            rows = emptyList()
+            rows = emptyList(),
+            isRefreshing = false
         )
     }
 }
@@ -176,6 +184,9 @@ interface TimelineScreenCallbacks {
     fun onOpenInsights()
     fun onShareInsights()
     fun onDismissHint()
+
+    /** Pull-to-refresh gesture; rebuilds the timeline and the insights card. */
+    fun onRefresh()
 }
 
 /** Handle used by Java to update Compose while retaining controller lifecycle ownership. */
@@ -195,8 +206,17 @@ class TimelineScreenController internal constructor(
         state.value = state.value.copy(
             emptyState = if (entries.isEmpty()) emptyState else null,
             showHint = showHint,
-            rows = timelineRows(entries, context)
+            rows = timelineRows(entries, context),
+            // The rebuilt list is the completion signal for a pull-to-refresh,
+            // as it was for the SwipeRefreshLayout this screen replaced.
+            isRefreshing = false
         )
+    }
+
+    /** Show or hide the pull-to-refresh indicator. */
+    fun setRefreshing(refreshing: Boolean) {
+        if (!valid) return
+        state.value = state.value.copy(isRefreshing = refreshing)
     }
 
     fun updateInsights(data: InsightsData) {
@@ -243,8 +263,28 @@ object TimelineScreen {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TimelineScreenContent(
+    model: TimelineScreenModel,
+    callbacks: TimelineScreenCallbacks
+) {
+    val iconCache = remember { mutableMapOf<String, Drawable?>() }
+    CompositionLocalProvider(LocalAppIconCache provides iconCache) {
+        PullToRefreshBox(
+            isRefreshing = model.isRefreshing,
+            onRefresh = callbacks::onRefresh,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            TimelineList(model, callbacks)
+        }
+    }
+}
+
+@Composable
+private fun TimelineList(
     model: TimelineScreenModel,
     callbacks: TimelineScreenCallbacks
 ) {
@@ -340,6 +380,12 @@ private fun TimelineInsightsCard(
                 totalText,
                 stringResource(R.string.insights_tracking_attempts)
             )
+            val companiesText = numberFormat.format(data.uniqueTrackerCompanies)
+            val companiesDescription = stringResource(
+                R.string.accessibility_stat_description,
+                companiesText,
+                stringResource(R.string.insights_tracker_companies)
+            )
             val percentageDescription = stringResource(
                 R.string.accessibility_stat_description,
                 blockedPercentageText,
@@ -388,15 +434,16 @@ private fun TimelineInsightsCard(
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.SemiBold
                         )
+                        // No size() here: IconButton's own 48dp minimum touch
+                        // target must survive; the glyph is sized on the Icon.
                         IconButton(
                             onClick = callbacks::onShareInsights,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .semantics { contentDescription = shareLabel }
+                            modifier = Modifier.semantics { contentDescription = shareLabel }
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_ios_share),
                                 contentDescription = null,
+                                modifier = Modifier.size(24.dp),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -423,6 +470,28 @@ private fun TimelineInsightsCard(
                             )
                             Text(
                                 text = stringResource(R.string.insights_tracking_attempts),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        // Middle stat of the pre-Compose hero row: how many
+                        // distinct tracking companies the week's contacts came
+                        // from, between the attempt count and the blocked share.
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .semantics(mergeDescendants = true) {
+                                    contentDescription = companiesDescription
+                                }
+                        ) {
+                            Text(
+                                text = companiesText,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.headlineLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = stringResource(R.string.insights_tracker_companies),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 style = MaterialTheme.typography.bodySmall
                             )
@@ -711,8 +780,19 @@ private fun TimelineTrackerRow(contact: TimelineTrackerContact) {
     }
 }
 
+/**
+ * Per-screen icon cache. The Timeline re-renders every 30 seconds, and without
+ * this every visible row would hit the PackageManager again on each tick.
+ * Scoped to the composition (rather than a process-wide map) so the drawables
+ * are released with the screen.
+ */
+private val LocalAppIconCache = staticCompositionLocalOf<MutableMap<String, Drawable?>> {
+    mutableMapOf()
+}
+
 @Composable
 private fun TimelineAppIcon(packageName: String?) {
+    val iconCache = LocalAppIconCache.current
     AndroidView(
         factory = { viewContext ->
             ImageView(viewContext).apply {
@@ -721,7 +801,13 @@ private fun TimelineAppIcon(packageName: String?) {
             }
         },
         update = { imageView ->
-            val icon = packageName?.let { findAppIcon(imageView.context, it) }
+            val icon = packageName?.let { name ->
+                if (iconCache.containsKey(name)) {
+                    iconCache[name]
+                } else {
+                    findAppIcon(imageView.context, name).also { iconCache[name] = it }
+                }
+            }
             if (icon != null) {
                 imageView.setImageDrawable(icon)
             } else {
@@ -878,4 +964,5 @@ private object PreviewTimelineCallbacks : TimelineScreenCallbacks {
     override fun onOpenInsights() = Unit
     override fun onShareInsights() = Unit
     override fun onDismissHint() = Unit
+    override fun onRefresh() = Unit
 }

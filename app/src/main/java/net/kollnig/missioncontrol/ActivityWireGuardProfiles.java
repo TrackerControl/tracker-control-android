@@ -61,6 +61,9 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         ComposeView composeView = new ComposeView(this);
+        // A stable ID gives Compose's saveable state registry a key to persist
+        // under, so the LazyColumn scroll position survives recreation.
+        composeView.setId(R.id.compose_wg_profiles);
         setContentView(composeView);
 
         getSupportActionBar().setTitle(R.string.setting_wg_profile_manage);

@@ -22,12 +22,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +63,9 @@ data class TrackersScreenModel(
     val appStateHint: String,
     val appStateHintAccent: Boolean,
     val librarySummary: String,
-    val rows: List<TrackersRow>
+    val rows: List<TrackersRow>,
+    /** True while the tracker query runs; drives the pull-to-refresh spinner. */
+    val isRefreshing: Boolean = false
 )
 
 /** Immutable row data; policy and persistence decisions stay in Java. */
@@ -114,6 +118,9 @@ interface TrackersScreenCallbacks {
     fun onCompanyClick(blockingKey: String)
     fun onCompanyToggle(blockingKey: String, checked: Boolean)
     fun onShowMore(categoryName: String)
+
+    /** Pull-to-refresh gesture; re-runs the tracker query for this app. */
+    fun onRefresh()
 }
 
 /** Handle used by Java to update Compose without moving data/lifecycle logic. */
@@ -146,8 +153,27 @@ object TrackersScreen {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TrackersScreenContent(
+    model: TrackersScreenModel,
+    callbacks: TrackersScreenCallbacks
+) {
+    // isRefreshing also covers the initial async tracker query, which is what
+    // the pre-Compose SwipeRefreshLayout spinner reported.
+    PullToRefreshBox(
+        isRefreshing = model.isRefreshing,
+        onRefresh = callbacks::onRefresh,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+    ) {
+        TrackersList(model, callbacks)
+    }
+}
+
+@Composable
+private fun TrackersList(
     model: TrackersScreenModel,
     callbacks: TrackersScreenCallbacks
 ) {
@@ -334,9 +360,14 @@ private fun TrackerSectionRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
+            // TalkBack spells real uppercase out letter by letter, so keep the
+            // visual casing but announce the untouched title.
             Text(
                 text = row.title.uppercase(locale),
-                modifier = Modifier.semantics { heading() },
+                modifier = Modifier.semantics {
+                    heading()
+                    contentDescription = row.title
+                },
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold
@@ -601,4 +632,5 @@ private object NoOpTrackersCallbacks : TrackersScreenCallbacks {
     override fun onCompanyClick(blockingKey: String) = Unit
     override fun onCompanyToggle(blockingKey: String, checked: Boolean) = Unit
     override fun onShowMore(categoryName: String) = Unit
+    override fun onRefresh() = Unit
 }
