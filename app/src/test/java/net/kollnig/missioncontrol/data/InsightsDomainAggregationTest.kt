@@ -46,6 +46,29 @@ class InsightsDomainAggregationTest {
     }
 
     @Test
+    fun aliasSetsSharingATruncatedLabelMergeIntoOneRow() {
+        val result = aggregateDomainObservations(
+            listOf(
+                DomainObservation(
+                    setOf("alpha.example", "beta.example", "gamma.example"),
+                    setOf(1, 2)
+                ),
+                DomainObservation(
+                    setOf("alpha.example", "beta.example", "delta.example"),
+                    setOf(2, 3)
+                )
+            )
+        )
+
+        // Both sets render as "alpha.example or beta.example", so listing them
+        // twice would give the reader two identical rows with different counts.
+        assertEquals(
+            listOf(AggregatedDomain("alpha.example or beta.example", 3)),
+            result
+        )
+    }
+
+    @Test
     fun appUidsAreCountedOncePerConnectedGroup() {
         val result = aggregateDomainObservations(
             listOf(

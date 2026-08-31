@@ -43,7 +43,7 @@ internal data class AggregatedDomain(
 /** How many aliases a single domain label may name before it is truncated. */
 private const val MAX_LABEL_ALIASES = 2
 
-/** Merge observations with exactly the same alias set, counting each UID once. */
+/** Merge observations that share a domain label, counting each UID once. */
 internal fun aggregateDomainObservations(
     observations: Iterable<DomainObservation>,
     limit: Int = 20,
@@ -53,25 +53,26 @@ internal fun aggregateDomainObservations(
 ): List<AggregatedDomain> {
     if (limit <= 0) return emptyList()
 
-    val groups = linkedMapOf<Set<String>, MutableSet<Int>>()
+    // Group by the label the row will actually show, not by the alias set.
+    // Truncation makes {a, b, c} and {a, b, d} indistinguishable on screen, so
+    // grouping by alias set would list the same label twice with two different
+    // app counts and no way to tell the rows apart. Their apps are counted
+    // together instead, which is what a reader of the shared label expects.
+    val groups = linkedMapOf<String, MutableSet<Int>>()
     observations.forEach { observation ->
         val aliases = observation.aliases
             .filter { it.isNotBlank() }
-            .toSet()
+            .sorted()
         if (aliases.isEmpty()) return@forEach
 
-        groups.getOrPut(aliases) { mutableSetOf() }.addAll(observation.appUids)
+        // Cap the joined label at two aliases: the Insights row is a single
+        // line, and a longer join simply overflows it.
+        val label = aliases.take(MAX_LABEL_ALIASES).joinToString(aliasSeparator)
+        groups.getOrPut(label) { mutableSetOf() }.addAll(observation.appUids)
     }
 
     return groups
-        .map { (aliases, appUids) ->
-            AggregatedDomain(
-                // Cap the joined label at two aliases: the Insights row is a
-                // single line, and a longer join simply overflows it.
-                label = aliases.sorted().take(MAX_LABEL_ALIASES).joinToString(aliasSeparator),
-                appCount = appUids.size
-            )
-        }
+        .map { (label, appUids) -> AggregatedDomain(label, appUids.size) }
         .sortedWith(compareByDescending<AggregatedDomain> { it.appCount }.thenBy { it.label })
         .take(limit)
 }
@@ -254,8 +255,8 @@ class InsightsDataProvider(context: Context) {
             .map { Pair(it.key, it.value.size) }
             .toMutableList()
 
-        // Build top domains list (by number of apps), grouping only identical
-        // uncertain alias sets while keeping distinct ambiguity sets separate.
+        // Build top domains list (by number of apps), naming every uncertain
+        // domain by the alternatives it could stand for.
         val domainObservations = domainToApps.map { (daddr, uids) ->
             val primary = extractTldPlusOne(daddr)
             val aliases = mutableSetOf(primary)
