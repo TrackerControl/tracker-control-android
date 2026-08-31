@@ -76,8 +76,9 @@ public class TrackersFragment extends Fragment {
     private WorkInfo analysisWork;
     /**
      * Cached result of the "can this app open a browser?" check used for the
-     * warning banner. Depends only on mAppId and the install type, both fixed
-     * for the fragment's lifetime, so it is computed once and reused.
+     * warning banner. It can only change through package state the user alters
+     * outside this screen, so it is invalidated on resume rather than paying
+     * the PackageManager IPC on every render.
      */
     @Nullable
     private Boolean browserWarning;
@@ -218,6 +219,7 @@ public class TrackersFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        browserWarning = null;
         updateTrackerList();
     }
 
