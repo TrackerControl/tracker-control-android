@@ -405,9 +405,9 @@ dependencies = [
 
 [[package]]
 name = "gotatun"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "121650b305d0ee6d45b08bbec1d5781a43b915a0a89a2fd869028647eb475cc9"
+checksum = "e9275d1c102aab3fa53182a0a55daff1f19eebf13e7aff336bec0c3c02e56658"
 dependencies = [
  "aead",
  "base64 0.22.1",
@@ -567,9 +567,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.33"
+version = "0.4.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ceec5bc11778974d1bcb055b18002eba7f4b3518b6a0081b3af5f21666da9ad"
+checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
 
 [[package]]
 name = "memchr"
