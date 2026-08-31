@@ -50,12 +50,6 @@
     <string name="timeline_tracker_allowed">Toegestaan</string>
     <string name="timeline_summary_all_blocked">%d trackers geblokkeerd</string>
     <string name="timeline_summary_none_blocked">%d trackers toegestaan</string>
-    <plurals name="timeline_trackers_blocked">
-        <item quantity="other">%d trackers geblokkeerd</item>
-    </plurals>
-    <plurals name="timeline_trackers_allowed">
-        <item quantity="other">%d trackers toegestaan</item>
-    </plurals>
     <string name="timeline_summary_mixed">%1$d geblokkeerd · %2$d toegestaan</string>
     <string name="troubleshooting_title">Problemen oplossen</string>
     <string name="troubleshooting_battery_title">Batterijoptimalisatie</string>

@@ -26,6 +26,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import net.kollnig.missioncontrol.R
@@ -42,7 +43,8 @@ import net.kollnig.missioncontrol.R
 @Composable
 fun TrackerControlTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current
-    val isDarkTheme = (context.resources.configuration.uiMode and
+    val configuration = LocalConfiguration.current
+    val isDarkTheme = (configuration.uiMode and
         Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     val colourScheme = remember(context, isDarkTheme) {
         if (isDarkTheme) {

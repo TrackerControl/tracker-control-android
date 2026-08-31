@@ -42,12 +42,6 @@
     <string name="timeline_tracker_allowed">Разрешено</string>
     <string name="timeline_summary_all_blocked">%d трекеров заблокировано</string>
     <string name="timeline_summary_none_blocked"> %d трекеров разрешено</string>
-    <plurals name="timeline_trackers_blocked">
-        <item quantity="other">%d трекеров заблокировано</item>
-    </plurals>
-    <plurals name="timeline_trackers_allowed">
-        <item quantity="other"> %d трекеров разрешено</item>
-    </plurals>
     <string name="timeline_summary_mixed">%1$d заблокировано ·  %2$d разрешено</string>
     <string name="troubleshooting_title">Устранение неполадок</string>
     <string name="troubleshooting_battery_title">Оптимизация батареи</string>
