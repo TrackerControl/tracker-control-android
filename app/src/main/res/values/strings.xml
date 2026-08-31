@@ -99,6 +99,11 @@
     <string name="troubleshooting_datasaver_action">Allow unrestricted data</string>
     <string name="troubleshooting_datasaver_ok">Data saver is not restricting TrackerControl.</string>
 
+    <string name="troubleshooting_local_network_title">Local network access</string>
+    <string name="troubleshooting_local_network_desc">Permission is needed for local DNS servers, WireGuard peers, and proxies.</string>
+    <string name="troubleshooting_local_network_action">Allow local network access</string>
+    <string name="troubleshooting_local_network_ok">Local network access is allowed.</string>
+
     <string name="troubleshooting_app_breakage_title">An app stopped working</string>
     <string name="troubleshooting_app_breakage_desc">Tap the app in the main list, then tap Protection. Try "Minimal blocking only" first. If the app still has problems, choose "Trackers allowed". Use "Bypass TrackerControl" only as a last resort.</string>
 
