@@ -7,6 +7,7 @@
 
 package net.kollnig.missioncontrol.details;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -76,6 +77,13 @@ public class ProtectionActivity extends AppCompatActivity {
     private boolean activityDestroyed;
     /** What the pause button currently offers, so a tap never contradicts its label. */
     private boolean showingResume;
+    /**
+     * What the last tap promised, shown until the write behind it lands. The
+     * write runs off the main thread, so without this the screen would redraw
+     * the state still on disk and only flip once that write returned.
+     */
+    private VisibleState pendingState;
+    private int protectionWriteGeneration;
     private final Handler expiryHandler = new Handler(Looper.getMainLooper());
     private final Runnable expiryRunnable = this::onPauseExpired;
 
@@ -107,7 +115,7 @@ public class ProtectionActivity extends AppCompatActivity {
         composeProtection = findViewById(R.id.composeProtection);
         screenController = ProtectionScreen.install(
                 composeProtection,
-                buildScreenModel(),
+                buildScreenModel(visibleState()),
                 new ProtectionScreenCallbacks() {
                     @Override
                     public void onPauseResume() {
@@ -116,9 +124,7 @@ public class ProtectionActivity extends AppCompatActivity {
 
                     @Override
                     public void onStateSelected(AppProtectionState value) {
-                        AppProtectionWriter.applyManual(ProtectionActivity.this,
-                                appPackageName, appUid, AppProtectionState.of(value));
-                        updateProtectionState();
+                        selectState(value);
                     }
 
                     @Override
@@ -185,23 +191,83 @@ public class ProtectionActivity extends AppCompatActivity {
     }
 
     private void updateProtectionState() {
-        boolean paused = PausedApps.isPaused(this, appPackageName);
+        VisibleState visible = visibleState();
         // The pause ends on its own. Rebind once when it does, so a screen left
         // open never shows a countdown that has run out. One message, armed only
         // while this screen is in the foreground, so nothing polls.
         expiryHandler.removeCallbacks(expiryRunnable);
-        showingResume = paused;
-        if (paused) {
-            expiryHandler.postDelayed(expiryRunnable,
-                    PausedApps.remainingMillis(this, appPackageName) + 1_000L);
-        }
-        render();
+        showingResume = visible.paused();
+        if (visible.paused())
+            expiryHandler.postDelayed(expiryRunnable, visible.remainingMillis() + 1_000L);
+        render(visible);
     }
 
-    /** Builds the complete immutable body model from the current preferences. */
-    private ProtectionScreenModel buildScreenModel() {
-        AppProtectionState state = currentState();
-        boolean paused = PausedApps.isPaused(this, appPackageName);
+    /**
+     * The protection state and pause the screen shows: what the last tap
+     * promised while its write is still in flight, the stores otherwise.
+     */
+    private VisibleState visibleState() {
+        if (pendingState != null)
+            return pendingState;
+        return new VisibleState(currentState(null), PausedApps.getExpiry(this, appPackageName));
+    }
+
+    /**
+     * Show {@code optimistic} at once, run {@code write} off the main thread,
+     * then rebind from the stores it wrote. Only the newest tap rebinds, so a
+     * slower earlier write never flashes its own outcome over a later one.
+     */
+    private void applyOffMainThread(VisibleState optimistic, Runnable write) {
+        final int generation = ++protectionWriteGeneration;
+        pendingState = optimistic;
+        updateProtectionState();
+        AppProtectionWriter.post(() -> {
+            write.run();
+            runOnUiThread(() -> {
+                if (activityDestroyed || generation != protectionWriteGeneration)
+                    return;
+                pendingState = null;
+                updateProtectionState();
+            });
+        });
+    }
+
+    /**
+     * Apply a user-selected state. {@link AppProtectionState#of} is a total
+     * mapping, so the state the screen shows is the selected one itself, and a
+     * manual selection always ends a pause.
+     */
+    private void selectState(AppProtectionState value) {
+        Context appContext = getApplicationContext();
+        AppProtectionState.Change change = AppProtectionState.of(value);
+        applyOffMainThread(new VisibleState(value, 0L),
+                () -> AppProtectionWriter.applyManual(appContext, appPackageName, appUid, change));
+    }
+
+    /** The protection state and pause one render works from. */
+    private static final class VisibleState {
+        final AppProtectionState state;
+        /** Wall-clock end of the pause, or 0 when the app is not paused. */
+        final long pauseExpiry;
+
+        VisibleState(AppProtectionState state, long pauseExpiry) {
+            this.state = state;
+            this.pauseExpiry = pauseExpiry;
+        }
+
+        boolean paused() {
+            return pauseExpiry > System.currentTimeMillis();
+        }
+
+        long remainingMillis() {
+            return Math.max(0L, pauseExpiry - System.currentTimeMillis());
+        }
+    }
+
+    /** Builds the complete immutable body model from the state being shown. */
+    private ProtectionScreenModel buildScreenModel(VisibleState visible) {
+        AppProtectionState state = visible.state;
+        boolean paused = visible.paused();
         showingResume = paused;
         List<String> sharedPackages = PausedApps.getSharedUidPackages(this, appPackageName, appUid);
 
@@ -213,7 +279,7 @@ public class ProtectionActivity extends AppCompatActivity {
             String status;
             String action;
             if (paused) {
-                int remainingMinutes = PausedApps.getRemainingMinutes(this, appPackageName);
+                int remainingMinutes = PausedApps.toRemainingMinutes(visible.remainingMillis());
                 status = getResources().getQuantityString(
                         R.plurals.protection_paused_resumes, remainingMinutes, remainingMinutes);
                 action = getString(R.string.protection_resume);
@@ -419,8 +485,9 @@ public class ProtectionActivity extends AppCompatActivity {
      * doing it means the rebind below never shows a half-reverted state.
      */
     private void onPauseExpired() {
-        AsyncTask.execute(() -> {
-            PausedApps.sweep(this);
+        Context appContext = getApplicationContext();
+        AppProtectionWriter.post(() -> {
+            PausedApps.sweep(appContext);
             runOnUiThread(() -> {
                 if (!activityDestroyed)
                     updateProtectionState();
@@ -433,8 +500,7 @@ public class ProtectionActivity extends AppCompatActivity {
         // expired between binding and this tap, and resuming an app that is no
         // longer paused is a no-op, while pausing one that just resumed is not.
         if (showingResume) {
-            PausedApps.resume(this, appPackageName, appUid);
-            updateProtectionState();
+            resumeNow();
             return;
         }
 
@@ -458,8 +524,20 @@ public class ProtectionActivity extends AppCompatActivity {
     }
 
     private void pauseNow() {
-        PausedApps.pause(this, appPackageName, appUid);
-        updateProtectionState();
+        Context appContext = getApplicationContext();
+        long durationMs = PausedApps.getConfiguredDurationMinutes(this) * 60_000L;
+        // Pass the duration the screen just showed rather than letting the write
+        // re-read the preference, so the countdown cannot disagree with the alarm.
+        long expiry = System.currentTimeMillis() + durationMs;
+        applyOffMainThread(new VisibleState(AppProtectionState.BYPASSED, expiry),
+                () -> PausedApps.pause(appContext, appPackageName, appUid, durationMs));
+    }
+
+    private void resumeNow() {
+        Context appContext = getApplicationContext();
+        applyOffMainThread(
+                new VisibleState(currentState(PausedApps.getRestoredApplyValue(this, appPackageName)), 0L),
+                () -> PausedApps.resume(appContext, appPackageName, appUid));
     }
 
     private void loadBlockedTrackers() {
@@ -550,8 +628,12 @@ public class ProtectionActivity extends AppCompatActivity {
     }
 
     private void render() {
+        render(visibleState());
+    }
+
+    private void render(VisibleState visible) {
         if (!activityDestroyed && screenController != null)
-            screenController.update(buildScreenModel());
+            screenController.update(buildScreenModel(visible));
     }
 
     private String statusString(TrackerStatusLogic.Status status) {
@@ -599,12 +681,18 @@ public class ProtectionActivity extends AppCompatActivity {
         }
     }
 
-    private AppProtectionState currentState() {
+    /**
+     * @param applyOverride the "apply" value to derive from, or null to read the
+     *                      stored one. Resuming a pause restores the snapshot's
+     *                      value, which the screen shows before the write that
+     *                      restores it has run.
+     */
+    private AppProtectionState currentState(Boolean applyOverride) {
         SharedPreferences apply = getSharedPreferences("apply", MODE_PRIVATE);
         SharedPreferences trackerProtect = getSharedPreferences("tracker_protect", MODE_PRIVATE);
         SharedPreferences minimalOnlyPrefs = getSharedPreferences("tracker_essential", MODE_PRIVATE);
         return AppProtectionState.resolve(
-                apply.getBoolean(appPackageName, true),
+                applyOverride == null ? apply.getBoolean(appPackageName, true) : applyOverride,
                 BlockingMode.isTrackerProtectionEnabled(this, trackerProtect, appPackageName),
                 InternetBlocklist.getInstance(this).blockedInternet(appUid),
                 BlockingMode.isMinimalOnlyApp(this, minimalOnlyPrefs, appPackageName));

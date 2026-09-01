@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.ServiceSinkhole;
@@ -20,7 +22,24 @@ import eu.faircode.netguard.ServiceSinkhole;
  * Writes the four stores behind the per-app protection state.
  */
 public final class AppProtectionWriter {
+    /**
+     * Where a UI-triggered protection write belongs.
+     *
+     * Every write here commits a snapshot to disk, asks the package manager for
+     * the UID's packages and reschedules the pause alarm, and it contends with
+     * the VPN service's rule rebuild — enough main-thread work to drop frames
+     * and, in the worst case, to ANR on the tap that started it. One thread, so
+     * two quick taps still land in the order they were made.
+     */
+    private static final ExecutorService WRITER = Executors.newSingleThreadExecutor(
+            runnable -> new Thread(runnable, "TrackerControl protection"));
+
     private AppProtectionWriter() {
+    }
+
+    /** Run a protection write off the calling thread, after any already queued. */
+    public static void post(Runnable write) {
+        WRITER.execute(write);
     }
 
     /**
