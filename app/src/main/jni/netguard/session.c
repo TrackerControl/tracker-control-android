@@ -125,6 +125,12 @@ void *handle_events(void *a) {
         if (ms - last_check > EPOLL_MIN_CHECK) {
             last_check = ms;
 
+            // jni_get_stats() (netguard.c) walks ctx->ng_session under this
+            // same lock from the stats-reporting thread; take it here too so
+            // a session freed below can never be a session it is reading.
+            if (pthread_mutex_lock(&args->ctx->lock))
+                log_android(ANDROID_LOG_ERROR, "pthread_mutex_lock failed");
+
             time_t now = time(NULL);
             struct ng_session *sl = NULL;
             s = args->ctx->ng_session;
@@ -172,6 +178,9 @@ void *handle_events(void *a) {
                     s = s->next;
                 }
             }
+
+            if (pthread_mutex_unlock(&args->ctx->lock))
+                log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
         } else {
             recheck = 1;
             log_android(ANDROID_LOG_DEBUG, "Skipped session checks");

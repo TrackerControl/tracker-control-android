@@ -498,7 +498,11 @@ public class ServiceSinkhole extends VpnService {
             String f = prefs.getString("pcap_file_size", null);
             if (TextUtils.isEmpty(f))
                 f = "2";
-            file_size = Integer.parseInt(f) * 1024 * 1024;
+            // jni_pcap takes a jint, so compute in long first: an in-int
+            // multiplication of a few thousand (MB) overflows to a negative
+            // file size, which native then truncates on every write.
+            long sizeBytes = Long.parseLong(f) * 1024 * 1024;
+            file_size = (int) Math.min(sizeBytes, Integer.MAX_VALUE);
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }

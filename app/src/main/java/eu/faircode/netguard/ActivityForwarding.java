@@ -195,13 +195,18 @@ public class ActivityForwarding extends AppCompatActivity {
                                     String[] values = getResources().getStringArray(R.array.protocolValues);
                                     final int protocol = Integer.valueOf(values[pos]);
                                     final int dport = Integer.parseInt(etDPort.getText().toString());
-                                    final String raddr = etRAddr.getText().toString();
                                     final int rport = Integer.parseInt(etRPort.getText().toString());
                                     final int ruid = ((Rule) spRuid.getSelectedItem()).uid;
 
-                                    InetAddress iraddr = InetAddress.getByName(raddr);
+                                    InetAddress iraddr = InetAddress.getByName(etRAddr.getText().toString());
                                     if (rport < 1024 && (iraddr.isLoopbackAddress() || iraddr.isAnyLocalAddress()))
                                         throw new IllegalArgumentException("Port forwarding to privileged port on local address not possible");
+                                    // Store the resolved numeric address, not the raw
+                                    // (possibly hostname) text: the native side copies
+                                    // this into a fixed INET6_ADDRSTRLEN buffer, and a
+                                    // hostname is neither bounded in length nor
+                                    // resolvable from native code.
+                                    final String raddr = iraddr.getHostAddress();
 
                                     new AsyncTask<Object, Object, Throwable>() {
                                         @Override

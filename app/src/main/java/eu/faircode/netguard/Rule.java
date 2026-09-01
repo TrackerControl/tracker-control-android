@@ -106,12 +106,18 @@ public class Rule {
     public boolean expanded = false;
 
     private static List<PackageInfo> cachePackageInfo = null;
-    private static Map<PackageInfo, String> cacheLabel = new HashMap<>();
-    private static Map<String, Boolean> cacheSystem = new HashMap<>();
+    // ConcurrentHashMap + computeIfAbsent: isSystem() is called from the
+    // packet path (ServiceSinkhole.isAddressAllowed) while clearCache() runs
+    // from package-change broadcasts on another thread. A plain HashMap with
+    // separate containsKey()/get() calls let a concurrent clear() land
+    // between them, auto-unboxing a null Boolean into an NPE inside a JNI
+    // callback; computeIfAbsent() makes the lookup-or-compute atomic instead.
+    private static Map<PackageInfo, String> cacheLabel = new java.util.concurrent.ConcurrentHashMap<>();
+    private static Map<String, Boolean> cacheSystem = new java.util.concurrent.ConcurrentHashMap<>();
     private static final Object predefinedLock = new Object();
     private static PredefinedRules cachePredefinedRules;
-    private static Map<String, Boolean> cacheInternet = new HashMap<>();
-    private static Map<PackageInfo, Boolean> cacheEnabled = new HashMap<>();
+    private static Map<String, Boolean> cacheInternet = new java.util.concurrent.ConcurrentHashMap<>();
+    private static Map<PackageInfo, Boolean> cacheEnabled = new java.util.concurrent.ConcurrentHashMap<>();
     private static Map<Integer, Long> trackerRecent = new HashMap<>();
 
     private static final class PredefinedRules {
@@ -135,20 +141,18 @@ public class Rule {
     }
 
     private static String getLabel(PackageInfo info, Context context) {
-        if (!cacheLabel.containsKey(info)) {
+        return cacheLabel.computeIfAbsent(info, i -> {
             PackageManager pm = context.getPackageManager();
-            cacheLabel.put(info, info.applicationInfo.loadLabel(pm).toString());
-        }
-        return cacheLabel.get(info);
+            return i.applicationInfo.loadLabel(pm).toString();
+        });
     }
 
     public static boolean isSystem(String packageName, Context context) {
-        if (!cacheSystem.containsKey(packageName)) {
-            boolean system = Util.isSystem(packageName, context);
-            Boolean predefined = getPredefinedRules(context).system.get(packageName);
-            cacheSystem.put(packageName, resolveSystemClassification(system, predefined));
-        }
-        return cacheSystem.get(packageName);
+        return cacheSystem.computeIfAbsent(packageName, pkg -> {
+            boolean system = Util.isSystem(pkg, context);
+            Boolean predefined = getPredefinedRules(context).system.get(pkg);
+            return resolveSystemClassification(system, predefined);
+        });
     }
 
     static boolean resolveSystemClassification(boolean system, Boolean predefined) {
@@ -196,15 +200,11 @@ public class Rule {
     }
 
     private static boolean hasInternet(String packageName, Context context) {
-        if (!cacheInternet.containsKey(packageName))
-            cacheInternet.put(packageName, Util.hasInternet(packageName, context));
-        return cacheInternet.get(packageName);
+        return cacheInternet.computeIfAbsent(packageName, pkg -> Util.hasInternet(pkg, context));
     }
 
     private static boolean isEnabled(PackageInfo info, Context context) {
-        if (!cacheEnabled.containsKey(info))
-            cacheEnabled.put(info, Util.isEnabled(info, context));
-        return cacheEnabled.get(info);
+        return cacheEnabled.computeIfAbsent(info, i -> Util.isEnabled(i, context));
     }
 
     public static void clearCache(Context context) {

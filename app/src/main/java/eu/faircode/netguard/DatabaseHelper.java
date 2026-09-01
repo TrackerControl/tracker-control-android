@@ -90,9 +90,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 23;
 
     private static boolean once = true;
-    private static List<LogChangedListener> logChangedListeners = new ArrayList<>();
-    private static List<AccessChangedListener> accessChangedListeners = new ArrayList<>();
-    private static List<ForwardChangedListener> forwardChangedListeners = new ArrayList<>();
+    // CopyOnWriteArrayList: listeners are added/removed from activity/fragment
+    // lifecycle methods on the main thread while handleChangedNotification()
+    // iterates them on the DB handler thread. A plain ArrayList let a
+    // same-tick removal throw ConcurrentModificationException out of that
+    // iteration, which is not covered by the per-listener try/catch below and
+    // kills the notification thread.
+    private static List<LogChangedListener> logChangedListeners = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static List<AccessChangedListener> accessChangedListeners = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static List<ForwardChangedListener> forwardChangedListeners = new java.util.concurrent.CopyOnWriteArrayList<>();
 
     private static HandlerThread hthread = null;
     private static Handler handler = null;

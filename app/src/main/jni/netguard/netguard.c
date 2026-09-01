@@ -172,7 +172,17 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1init(
             log_android(ANDROID_LOG_ERROR, "wg outbound unlock failed during init");
     }
     atomic_store_explicit(&wg_required, 0, memory_order_release);
-    pcap_file = NULL;
+
+    // A prior instance in this process may have left a capture open (jni_done
+    // does not necessarily run before a fresh jni_init, e.g. process reuse);
+    // never just overwrite the pointer and leak the fd.
+    if (pthread_mutex_lock(&pcap_lock))
+        log_android(ANDROID_LOG_ERROR, "pcap_lock lock failed");
+    else {
+        pcap_close_locked();
+        if (pthread_mutex_unlock(&pcap_lock))
+            log_android(ANDROID_LOG_ERROR, "pcap_lock unlock failed");
+    }
 
     if (pthread_mutex_init(&ctx->lock, NULL))
         log_android(ANDROID_LOG_ERROR, "pthread_mutex_init failed");
@@ -309,24 +319,14 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1pcap(
     pcap_record_size = (size_t) record_size;
     pcap_file_size = file_size;
 
-    //if (pthread_mutex_lock(&lock))
-    //    log_android(ANDROID_LOG_ERROR, "pthread_mutex_lock failed");
+    // Guards pcap_file (and the two settings above) against the packet
+    // threads, which check pcap_file and write through it via
+    // write_pcap_rec() without otherwise synchronizing with this function.
+    if (pthread_mutex_lock(&pcap_lock))
+        log_android(ANDROID_LOG_ERROR, "pcap_lock lock failed");
 
     if (name_ == NULL) {
-        if (pcap_file != NULL) {
-            int flags = fcntl(fileno(pcap_file), F_GETFL, 0);
-            if (flags < 0 || fcntl(fileno(pcap_file), F_SETFL, flags & ~O_NONBLOCK) < 0)
-                log_android(ANDROID_LOG_ERROR, "PCAP fcntl ~O_NONBLOCK error %d: %s",
-                            errno, strerror(errno));
-
-            if (fsync(fileno(pcap_file)))
-                log_android(ANDROID_LOG_ERROR, "PCAP fsync error %d: %s", errno, strerror(errno));
-
-            if (fclose(pcap_file))
-                log_android(ANDROID_LOG_ERROR, "PCAP fclose error %d: %s", errno, strerror(errno));
-
-            pcap_file = NULL;
-        }
+        pcap_close_locked();
         log_android(ANDROID_LOG_WARN, "PCAP disabled");
     } else {
         const char *name = (*env)->GetStringUTFChars(env, name_, 0);
@@ -346,7 +346,7 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1pcap(
             long size = ftell(pcap_file);
             if (size == 0) {
                 log_android(ANDROID_LOG_WARN, "PCAP initialize");
-                write_pcap_hdr();
+                write_pcap_hdr_locked();
             } else
                 log_android(ANDROID_LOG_WARN, "PCAP current size %ld", size);
         }
@@ -355,8 +355,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1pcap(
         ng_delete_alloc(name, __FILE__, __LINE__);
     }
 
-    //if (pthread_mutex_unlock(&lock))
-    //    log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
+    if (pthread_mutex_unlock(&pcap_lock))
+        log_android(ANDROID_LOG_ERROR, "pcap_lock unlock failed");
 }
 
 JNIEXPORT void JNICALL
@@ -522,6 +522,16 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1done(
     log_android(ANDROID_LOG_INFO, "Done");
 
     clear(ctx);
+
+    // Service teardown: any capture still enabled must be flushed and closed
+    // here, since nothing else closes it once this context goes away.
+    if (pthread_mutex_lock(&pcap_lock))
+        log_android(ANDROID_LOG_ERROR, "pcap_lock lock failed");
+    else {
+        pcap_close_locked();
+        if (pthread_mutex_unlock(&pcap_lock))
+            log_android(ANDROID_LOG_ERROR, "pcap_lock unlock failed");
+    }
 
     if (pthread_mutex_destroy(&ctx->lock))
         log_android(ANDROID_LOG_ERROR, "pthread_mutex_destroy failed");
@@ -959,7 +969,11 @@ struct allowed *is_address_allowed(const struct arguments *args, jobject jpacket
         else {
             const char *raddr = (*args->env)->GetStringUTFChars(args->env, jraddr, NULL);
             ng_add_alloc(raddr, "raddr");
-            strcpy(allowed.raddr, raddr);
+            // Defense in depth: allowed.raddr is a fixed INET6_ADDRSTRLEN
+            // buffer. The Java caller is expected to hand back a numeric
+            // address, but never trust that from native code.
+            strncpy(allowed.raddr, raddr, sizeof(allowed.raddr) - 1);
+            allowed.raddr[sizeof(allowed.raddr) - 1] = 0;
             (*args->env)->ReleaseStringUTFChars(args->env, jraddr, raddr);
             ng_delete_alloc(raddr, __FILE__, __LINE__);
         }
