@@ -15,6 +15,12 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 @RunWith(RobolectricTestRunner.class)
 public class PausedAppsTest {
     private Context context;
@@ -174,5 +180,44 @@ public class PausedAppsTest {
         assertEquals(AppProtectionState.PROTECTED,
                 AppProtectionState.resolve(true, true, false,
                         minimalOnlyPrefs.getBoolean(packageName, false)));
+    }
+
+    /**
+     * A pause write must not queue behind the application-context monitor, which
+     * {@code Rule.getRules} holds for the whole of a rule rebuild on the VPN
+     * service's command thread. It used to, and a tap that ended a pause waited
+     * for that rebuild — long enough to ANR.
+     */
+    @Test
+    public void pauseWritesDoNotWaitOnTheRuleCacheLock() throws Exception {
+        paused.edit().putString("com.example.app", "9999999999999|1").commit();
+
+        final Object contextLock = context.getApplicationContext();
+        final CountDownLatch held = new CountDownLatch(1);
+        final CountDownLatch release = new CountDownLatch(1);
+        Thread holder = new Thread(() -> {
+            synchronized (contextLock) {
+                held.countDown();
+                try {
+                    release.await(30, TimeUnit.SECONDS);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        });
+        holder.start();
+        assertTrue(held.await(5, TimeUnit.SECONDS));
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            Future<?> write = executor.submit(
+                    () -> PausedApps.cancel(context, "com.example.app", 0));
+            // A TimeoutException here is the regression: the write is blocked.
+            write.get(5, TimeUnit.SECONDS);
+            assertFalse(paused.contains("com.example.app"));
+        } finally {
+            executor.shutdownNow();
+            release.countDown();
+            holder.join();
+        }
     }
 }

@@ -50,14 +50,18 @@ import net.kollnig.missioncontrol.data.TrackerList;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.text.Collator;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class Rule {
     private static final String TAG = "TrackerControl.Rule";
@@ -192,6 +196,61 @@ public class Rule {
             }
             cachePredefinedRules = rules;
             return rules;
+        }
+    }
+
+    /**
+     * The packages that one per-UID protection change has to cover: the
+     * shared-UID siblings of {@code packageName}, plus the predefined "related"
+     * packages that resolve to the same UID.
+     *
+     * {@link #getRules} exposes the same relation through {@link #related}, but
+     * only as a by-product of building the whole rule list — a database read, a
+     * host count query and a tracker count for every installed package. A caller
+     * that needs the relation for a single UID resolves it here instead, so a UI
+     * action never pays for a full rule rebuild.
+     */
+    public static List<String> getRelatedPackages(Context context, String packageName, int uid) {
+        LinkedHashSet<String> result = new LinkedHashSet<>();
+        if (packageName == null)
+            return new ArrayList<>(result);
+        result.add(packageName);
+
+        PackageManager pm = context.getPackageManager();
+        String[] uidPackages = Util.getPackagesForUid(pm, uid);
+        if (uidPackages != null)
+            result.addAll(Arrays.asList(uidPackages));
+
+        try {
+            Map<String, String[]> related = getPredefinedRules(context).related;
+            ArrayDeque<String> pending = new ArrayDeque<>(result);
+            Set<String> visited = new HashSet<>();
+            while (!pending.isEmpty()) {
+                String current = pending.removeFirst();
+                if (!visited.add(current))
+                    continue;
+                String[] relations = related.get(current);
+                if (relations == null)
+                    continue;
+                // Only a relation that actually shares the UID is covered: the
+                // stores behind a protection change are keyed by package, but
+                // what the tun enforces is the UID.
+                for (String candidate : relations)
+                    if (sharesUid(pm, candidate, uid) && result.add(candidate))
+                        pending.addLast(candidate);
+            }
+        } catch (Throwable ex) {
+            Log.w(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
+
+        return new ArrayList<>(result);
+    }
+
+    private static boolean sharesUid(PackageManager pm, String packageName, int uid) {
+        try {
+            return pm.getApplicationInfo(packageName, 0).uid == uid;
+        } catch (Throwable ex) {
+            return false;
         }
     }
 

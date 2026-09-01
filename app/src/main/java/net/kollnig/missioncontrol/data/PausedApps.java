@@ -17,15 +17,11 @@ import android.util.Log;
 
 import androidx.preference.PreferenceManager;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import eu.faircode.netguard.Rule;
 import eu.faircode.netguard.Util;
@@ -41,6 +37,20 @@ public final class PausedApps {
 
     private static final String TAG = "TrackerControl.PausedApps";
     private static final int ALARM_REQUEST_CODE = 20260829;
+
+    /**
+     * Guards the snapshot store and the routing values a pause flips.
+     *
+     * This used to be the application-context monitor, which {@link Rule} also
+     * holds for the whole of {@code getRules}. A tap that ended a pause then
+     * queued behind a full rule rebuild on the service's command thread —
+     * hundreds of package rows and their SQLite writes — which is long enough
+     * to ANR. The snapshot store belongs to this class, so it gets its own lock.
+     * Nothing takes this lock while holding the context monitor, so the one
+     * nesting that remains, {@link #resolvePackages} reaching into {@link Rule},
+     * cannot deadlock.
+     */
+    private static final Object LOCK = new Object();
 
     private PausedApps() {
     }
@@ -66,7 +76,7 @@ public final class PausedApps {
 
     public static void pause(Context context, String packageName, int uid, long durationMs) {
         Context appContext = context.getApplicationContext();
-        synchronized (appContext) {
+        synchronized (LOCK) {
             SharedPreferences paused = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences apply = appContext.getSharedPreferences("apply", Context.MODE_PRIVATE);
             long expiry = System.currentTimeMillis() + Math.max(1L, durationMs);
@@ -99,7 +109,7 @@ public final class PausedApps {
      */
     public static void resume(Context context, String packageName, int uid) {
         Context appContext = context.getApplicationContext();
-        synchronized (appContext) {
+        synchronized (LOCK) {
             restorePackages(appContext, resolvePackages(appContext, packageName, uid));
             scheduleAlarm(appContext);
         }
@@ -108,7 +118,7 @@ public final class PausedApps {
     /** Drop a pause without changing any protection state. */
     public static void cancel(Context context, String packageName, int uid) {
         Context appContext = context.getApplicationContext();
-        synchronized (appContext) {
+        synchronized (LOCK) {
             SharedPreferences paused = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = paused.edit();
             for (String pkg : resolvePackages(appContext, packageName, uid))
@@ -123,7 +133,7 @@ public final class PausedApps {
         if (packageName == null)
             return;
         Context appContext = context.getApplicationContext();
-        synchronized (appContext) {
+        synchronized (LOCK) {
             appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                     .edit().remove(packageName).commit();
             scheduleAlarm(appContext);
@@ -136,7 +146,7 @@ public final class PausedApps {
      */
     public static void sweep(Context context) {
         Context appContext = context.getApplicationContext();
-        synchronized (appContext) {
+        synchronized (LOCK) {
             SharedPreferences paused = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
             long now = System.currentTimeMillis();
             List<String> expired = new ArrayList<>();
@@ -167,7 +177,7 @@ public final class PausedApps {
             return;
 
         Context appContext = context.getApplicationContext();
-        synchronized (appContext) {
+        synchronized (LOCK) {
             appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                     .edit().remove(packageName).commit();
             scheduleAlarm(appContext);
@@ -305,41 +315,7 @@ public final class PausedApps {
     }
 
     private static List<String> resolvePackages(Context context, String packageName, int uid) {
-        LinkedHashSet<String> result = new LinkedHashSet<>();
-        if (packageName == null)
-            return new ArrayList<>(result);
-        result.add(packageName);
-
-        String[] uidPackages = Util.getPackagesForUid(context.getPackageManager(), uid);
-        if (uidPackages != null)
-            result.addAll(Arrays.asList(uidPackages));
-
-        try {
-            List<Rule> rules = Rule.getRules(true, true, context);
-            Map<String, Rule> byPackage = new HashMap<>();
-            for (Rule rule : rules)
-                byPackage.put(rule.packageName, rule);
-
-            ArrayDeque<String> pending = new ArrayDeque<>(result);
-            Set<String> visited = new LinkedHashSet<>();
-            while (!pending.isEmpty()) {
-                String current = pending.removeFirst();
-                if (!visited.add(current))
-                    continue;
-                Rule rule = byPackage.get(current);
-                if (rule == null || rule.related == null || rule.uid != uid)
-                    continue;
-                for (String related : rule.related) {
-                    Rule relatedRule = byPackage.get(related);
-                    if (relatedRule != null && relatedRule.uid == uid && result.add(related))
-                        pending.addLast(related);
-                }
-            }
-        } catch (Throwable ex) {
-            Log.w(TAG, "Cannot resolve Rule.related packages: " + ex);
-        }
-
-        return new ArrayList<>(result);
+        return Rule.getRelatedPackages(context, packageName, uid);
     }
 
     private static String encode(long expiry, boolean previousApply) {
