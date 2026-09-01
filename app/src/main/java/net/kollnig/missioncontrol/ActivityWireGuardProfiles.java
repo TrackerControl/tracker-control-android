@@ -1,5 +1,6 @@
 package net.kollnig.missioncontrol;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -187,9 +188,14 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                 .setTitle(R.string.setting_wg_proton_setup)
                 .setMessage(R.string.msg_wg_proton_note)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setNeutralButton(R.string.msg_wg_proton_open_dashboard, (dialog, which) ->
+                .setNeutralButton(R.string.msg_wg_proton_open_dashboard, (dialog, which) -> {
+                    try {
                         startActivity(new Intent(Intent.ACTION_VIEW,
-                                Uri.parse(PROTON_DASHBOARD_URL))))
+                                Uri.parse(PROTON_DASHBOARD_URL)));
+                    } catch (ActivityNotFoundException ex) {
+                        Toast.makeText(this, R.string.msg_no_browser, Toast.LENGTH_LONG).show();
+                    }
+                })
                 .setPositiveButton(R.string.setting_wg_profile_import, (dialog, which) ->
                         showProfileDialog(null))
                 .show();

@@ -156,7 +156,13 @@ public class ActionsFragment extends Fragment {
             sendEmail(getString(R.string.google_dpo_mail), null, null);
         } else if (id == R.id.btnContactOfficials) {
             Intent browserIntent = Common.browse(getString(R.string.dpas_overview_url));
-            startActivity(browserIntent);
+            try {
+                startActivity(browserIntent);
+            } catch (android.content.ActivityNotFoundException ex) {
+                View v = getView();
+                if (v != null)
+                    Snackbar.make(v, R.string.msg_no_browser, Snackbar.LENGTH_LONG).show();
+            }
         }
     }
 
