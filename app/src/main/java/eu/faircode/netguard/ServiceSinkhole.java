@@ -3319,13 +3319,28 @@ public class ServiceSinkhole extends VpnService {
             Util.logExtras(intent);
 
             PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            Log.i(TAG, "device idle=" + pm.isDeviceIdleMode());
+            boolean deviceIdleMode = pm.isDeviceIdleMode();
+            Log.i(TAG, "device idle=" + deviceIdleMode);
 
-            // Reload rules when coming from idle mode
-            if (!pm.isDeviceIdleMode()) {
-                reload("idle state changed", ServiceSinkhole.this, false);
-                updateWireGuardInteractiveState(Util.isInteractive(ServiceSinkhole.this));
-            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this);
+            IdleStatePolicy.onDeviceIdleModeChanged(
+                    deviceIdleMode,
+                    prefs.getBoolean("enabled", false) && vpn == null,
+                    Util.isInteractive(ServiceSinkhole.this),
+                    new IdleStatePolicy.Callbacks() {
+                        @Override
+                        public void onWireGuardInteractiveStateChanged(boolean interactive) {
+                            updateWireGuardInteractiveState(interactive);
+                        }
+
+                        @Override
+                        public void onReload() {
+                            // Only reached when the VPN died while the device was idle. A
+                            // reload on every Doze exit closed every native session, so
+                            // apps reconnected after each maintenance window for nothing.
+                            reload("idle state changed", ServiceSinkhole.this, false);
+                        }
+                    });
         }
     };
 
