@@ -195,29 +195,16 @@ public final class PausedApps {
     }
 
     public static int getRemainingMinutes(Context context, String packageName) {
-        return toRemainingMinutes(remainingMillis(context, packageName));
-    }
-
-    /** Round a remaining pause up to whole minutes, never below one. */
-    public static int toRemainingMinutes(long remainingMillis) {
-        if (remainingMillis <= 0)
+        long expiry = getExpiry(context, packageName);
+        long remaining = expiry - System.currentTimeMillis();
+        if (remaining <= 0)
             return 0;
-        return (int) Math.max(1L, (remainingMillis + 59_999L) / 60_000L);
+        return (int) Math.max(1L, (remaining + 59_999L) / 60_000L);
     }
 
     public static long remainingMillis(Context context, String packageName) {
         long expiry = getExpiry(context, packageName);
         return Math.max(0L, expiry - System.currentTimeMillis());
-    }
-
-    /**
-     * The "apply" value a resume would restore, or null when the package has no
-     * snapshot. A screen that resumes off the main thread needs this to show the
-     * restored state before the write that restores it has run.
-     */
-    public static Boolean getRestoredApplyValue(Context context, String packageName) {
-        Snapshot snapshot = getSnapshot(context, packageName);
-        return snapshot == null ? null : snapshot.previousApply;
     }
 
     public static int getConfiguredDurationMinutes(Context context) {
