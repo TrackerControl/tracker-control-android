@@ -87,7 +87,13 @@ public class DnsOverHttpsClient {
                 .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
                 .cache(getResponseCache(context))
-                .retryOnConnectionFailure(true)
+                // OkHttp's own silent retry-on-a-new-connection is independent of
+                // screen state, so a query that fails while off would still cost
+                // two connection attempts where the screen-off policy below (see
+                // maxRetries in resolve()) intends exactly one. The explicit retry
+                // loop in resolve() is the one that knows about screen state, so
+                // it alone should decide whether a failed attempt is retried.
+                .retryOnConnectionFailure(false)
                 // An endpoint given as a host name can still be a resolver on
                 // the user's own network, which Android 17 blocks us from
                 // reaching without ACCESS_LOCAL_NETWORK. OkHttp resolves it
@@ -186,6 +192,7 @@ public class DnsOverHttpsClient {
      * @return DNS wire format response bytes, or null on failure
      */
     private static final int MAX_RETRIES = 2;
+    private static final int HTTP_CLIENT_TIMEOUT = 408;
     private static final long RETRY_DELAY_MS = 200;
 
     @Nullable
@@ -236,7 +243,14 @@ public class DnsOverHttpsClient {
                 try (Response response = call.execute()) {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
-                        if (response.code() < 500) return null; // Don't retry client errors
+                        // 408 is a transient upstream timeout, not a client error.
+                        // OkHttp used to follow it up itself, but that follow-up is
+                        // gated on retryOnConnectionFailure, which is now off, so the
+                        // explicit loop has to carry it. Screen-off policy is
+                        // unaffected: maxRetries is 0 there, so the loop still ends
+                        // after one attempt.
+                        if (response.code() < 500 && response.code() != HTTP_CLIENT_TIMEOUT)
+                            return null; // Don't retry client errors
                         reportFailedAttempt(onFailedAttempt);
                         continue;
                     }

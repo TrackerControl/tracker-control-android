@@ -206,6 +206,9 @@ public class ServiceSinkhole extends VpnService {
     private static long last_hosts_modified = 0;
     public static Map<String, Boolean> mapHostsBlocked = new ConcurrentHashMap<>();
     private static final Map<Network, Long> mapValidated = new ConcurrentHashMap<>();
+    // Per-network connectivity-probe backoff: {lastFailureUptimeMs, backoffMs} (SystemClock.elapsedRealtime()-based).
+    // Cleared on probe success and on onLost() so a fresh Network starts unbacked-off.
+    private static final Map<Network, long[]> mapValidateFailure = new ConcurrentHashMap<>();
     private Map<Integer, Boolean> mapUidAllowed = new HashMap<>();
     private Map<Integer, Integer> mapUidKnown = new HashMap<>();
     // UIDs whose routing differs from the global default. Pushed down to the
@@ -3293,6 +3296,9 @@ public class ServiceSinkhole extends VpnService {
                         net.kollnig.missioncontrol.dns.DnsProxyServer
                                 .getInstance(ServiceSinkhole.this)
                                 .onScreenStateChanged(last_interactive);
+
+                        if (last_interactive)
+                            recheckNetworkValidation();
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }
@@ -3429,6 +3435,7 @@ public class ServiceSinkhole extends VpnService {
             synchronized (mapValidated) {
                 mapValidated.remove(network);
             }
+            mapValidateFailure.remove(network);
         }
 
         @Override
@@ -3449,6 +3456,25 @@ public class ServiceSinkhole extends VpnService {
                     if (mapValidated.containsKey(network) &&
                             mapValidated.get(network) + 20 * 1000 > new Date().getTime()) {
                         Log.i(TAG, "Already validated " + network + " " + ni);
+                        return;
+                    }
+                }
+
+                long[] failure = mapValidateFailure.get(network);
+                if (failure != null) {
+                    long nowUptimeMs = SystemClock.elapsedRealtime();
+                    if (isValidationBackoffOpen(failure[0], failure[1], nowUptimeMs)) {
+                        Log.i(TAG, "Validation backoff open for " + network + " " + ni);
+                        return;
+                    }
+                    // The backoff window elapsed, so this would be a retry (a failure
+                    // entry only exists after at least one failed probe). The very
+                    // first probe of a network is never gated here, so a network first
+                    // seen during doze still gets validated; only repeated retries are
+                    // held back while non-interactive, and without advancing the
+                    // backoff, so a screen-off stretch doesn't itself lengthen it.
+                    if (!Util.isInteractive(ServiceSinkhole.this)) {
+                        Log.i(TAG, "Skipping validation retry while non-interactive " + network + " " + ni);
                         return;
                     }
                 }
@@ -3481,6 +3507,7 @@ public class ServiceSinkhole extends VpnService {
                                     synchronized (mapValidated) {
                                         mapValidated.put(network, new Date().getTime());
                                     }
+                                    mapValidateFailure.remove(network);
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
                                         cm.reportNetworkConnectivity(network, true);
@@ -3489,6 +3516,11 @@ public class ServiceSinkhole extends VpnService {
                                 } catch (IOException ex) {
                                     Log.e(TAG, ex.toString());
                                     Log.i(TAG, "No connectivity " + network + " " + ni);
+                                    long[] previousFailure = mapValidateFailure.get(network);
+                                    long previousBackoffMs = previousFailure == null ? 0L : previousFailure[1];
+                                    mapValidateFailure.put(network, new long[]{
+                                            SystemClock.elapsedRealtime(),
+                                            nextValidationBackoffMs(previousBackoffMs)});
                                 } finally {
                                     if (socket != null)
                                         try {
@@ -5102,6 +5134,49 @@ public class ServiceSinkhole extends VpnService {
             return false;
         synchronized (mapValidated) {
             return mapValidated.containsKey(network);
+        }
+    }
+
+    // Connectivity-probe backoff arithmetic, extracted so it can be exercised by a
+    // plain-JVM unit test without a NetworkCallback/Network instance.
+    static final long VALIDATION_BACKOFF_INITIAL_MS = 30 * 1000L; // 30s
+    static final long VALIDATION_BACKOFF_MAX_MS = 10 * 60 * 1000L; // 10 min
+
+    /** Backoff to apply after a consecutive probe failure: doubles from a 30s floor, capped at 10 min. */
+    static long nextValidationBackoffMs(long previousBackoffMs) {
+        long base = previousBackoffMs <= 0 ? VALIDATION_BACKOFF_INITIAL_MS : previousBackoffMs * 2;
+        return Math.min(base, VALIDATION_BACKOFF_MAX_MS);
+    }
+
+    /** True while a retry should still be withheld, i.e. less than backoffMs has elapsed since the last failure. */
+    static boolean isValidationBackoffOpen(long lastFailureUptimeMs, long backoffMs, long nowUptimeMs) {
+        return nowUptimeMs < lastFailureUptimeMs + backoffMs;
+    }
+
+    /**
+     * Re-runs the connectivity probe for the active network on screen-on.
+     *
+     * Nothing schedules work for a backoff window's expiry, and retries are held
+     * back while non-interactive, so a network whose probe failed would otherwise
+     * wait for another capabilities callback that Android may never emit — leaving
+     * isValidated() false indefinitely for a route that has since recovered.
+     * Screen-on is exactly when a retry is allowed again, so re-entering the
+     * callback here is the cheapest way to give the probe another chance.
+     */
+    private void recheckNetworkValidation() {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null)
+                return;
+            Network active = cm.getActiveNetwork();
+            if (active == null)
+                return;
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(active);
+            if (capabilities == null)
+                return;
+            networkMonitorCallback.onCapabilitiesChanged(active, capabilities);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
     }
 }
