@@ -1515,6 +1515,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         prefs.edit().putBoolean("enabled", false).apply();
         ServiceSinkhole.stop("import", this, false);
 
+        boolean applied = false;
         try {
             XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             XmlImportHandler handler = new XmlImportHandler(this);
@@ -1524,6 +1525,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             // Only now that the whole file has parsed successfully do we
             // touch the forwarding rules, so a malformed file never leaves
             // the old rules deleted with no replacement.
+            applied = true;
             if (handler.forwardSeen)
                 DatabaseHelper.getInstance(this).replaceForwards(handler.forwards);
 
@@ -1551,11 +1553,18 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             // Refresh UI
             prefs.edit().putBoolean("imported", true).apply();
         } catch (Throwable ex) {
-            // Restore the pre-import state: a failed import must not leave
-            // the VPN off when it was running before the import began.
-            prefs.edit().putBoolean("enabled", wasEnabled).apply();
-            if (wasEnabled)
-                ServiceSinkhole.start("import", this);
+            if (applied) {
+                // Some stores were already overwritten, so the configuration
+                // is a mix of old and imported settings. Leave the VPN off
+                // rather than start it on a state nobody chose.
+                Log.w(TAG, "Import failed after applying; leaving disabled");
+            } else {
+                // Nothing was touched yet: restore the pre-import state, as a
+                // failed parse must not leave the VPN off when it was running.
+                prefs.edit().putBoolean("enabled", wasEnabled).apply();
+                if (wasEnabled)
+                    ServiceSinkhole.start("import", this);
+            }
             throw ex;
         } finally {
             prefs.registerOnSharedPreferenceChangeListener(this);

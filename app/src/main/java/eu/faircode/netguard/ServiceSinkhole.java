@@ -2183,8 +2183,9 @@ public class ServiceSinkhole extends VpnService {
         // per-app override sends an app direct in either mode, and gating on
         // the mode alone left such an app tunnelling its DNS while its traffic
         // went direct, exactly the split the redirect exists to avoid.
-        final boolean fwd53 = mapForward.containsKey(forwardKey(6 /* TCP */, 53))
-                || mapForward.containsKey(forwardKey(17 /* UDP */, 53))
+        // Native consumes fwd53 for UDP only (udp.c), so a TCP-only port 53
+        // rule must not turn it on: rules are keyed by protocol now.
+        final boolean fwd53 = mapForward.containsKey(forwardKey(17 /* UDP */, 53))
                 || RemoteRoutingLogic.redirectDirectDns(anyDirectRouting,
                         directDnsTarget != null);
         if (prefs.getBoolean("socks5_enabled", false))
