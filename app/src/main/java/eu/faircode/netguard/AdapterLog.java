@@ -59,7 +59,6 @@ public class AdapterLog extends CursorAdapter {
 
     private boolean resolve;
     private boolean organization;
-    private int colId;
     private int colTime;
     private int colVersion;
     private int colProtocol;
@@ -91,7 +90,6 @@ public class AdapterLog extends CursorAdapter {
         super(context, cursor, 0);
         this.resolve = resolve;
         this.organization = organization;
-        colId = cursor.getColumnIndex("_id");
         colTime = cursor.getColumnIndex("time");
         colVersion = cursor.getColumnIndex("version");
         colProtocol = cursor.getColumnIndex("protocol");
@@ -152,9 +150,6 @@ public class AdapterLog extends CursorAdapter {
     @Override
     public void bindView(final View view, final Context context, final Cursor cursor) {
         // Get values
-        // Stable row identity: recycled views must not accept a lookup result
-        // meant for whichever row they showed when the task was started.
-        final Long rowId = cursor.getLong(colId);
         long time = cursor.getLong(colTime);
         int version = (cursor.isNull(colVersion) ? -1 : cursor.getInt(colVersion));
         int protocol = (cursor.isNull(colProtocol) ? -1 : cursor.getInt(colProtocol));
@@ -179,6 +174,13 @@ public class AdapterLog extends CursorAdapter {
         final TextView tvDaddr = view.findViewById(R.id.tvDAddr);
         TextView tvDPort = view.findViewById(R.id.tvDPort);
         final TextView tvOrganization = view.findViewById(R.id.tvOrganization);
+        // One token per binding: a lookup result is applied only if the view
+        // still carries the token of the binding that started it. Any rebind
+        // (a different row, or the same row after Resolve/Organization was
+        // toggled) replaces the token, so a late result is dropped.
+        final Object bindToken = new Object();
+        tvDaddr.setTag(bindToken);
+        tvOrganization.setTag(bindToken);
         TextView tvStatus = view.findViewById(R.id.tvStatus);
         final ImageView ivIcon = view.findViewById(R.id.ivIcon);
         TextView tvUid = view.findViewById(R.id.tvUid);
@@ -294,7 +296,6 @@ public class AdapterLog extends CursorAdapter {
         if (!we && resolve && !isKnownAddress(daddr))
             if (dname == null) {
                 tvDaddr.setText(daddr);
-                tvDaddr.setTag(rowId);
                 new AsyncTask<String, Object, String>() {
                     // Held weakly so a destroyed activity is not kept alive by this task.
                     private final WeakReference<TextView> viewRef = new WeakReference<>(tvDaddr);
@@ -321,7 +322,7 @@ public class AdapterLog extends CursorAdapter {
                         if (tv == null)
                             return;
 
-                        if (rowId.equals(tv.getTag())) {
+                        if (tv.getTag() == bindToken) {
                             tv.setText(">" + name);
 
                             if (TrackerList.findTracker(name) != null)
@@ -350,7 +351,6 @@ public class AdapterLog extends CursorAdapter {
         tvOrganization.setVisibility(View.GONE);
         if (!we && organization) {
             if (!isKnownAddress(daddr)) {
-                tvOrganization.setTag(rowId);
                 new AsyncTask<String, Object, String>() {
                     // Held weakly so a destroyed activity is not kept alive by this task.
                     private final WeakReference<TextView> viewRef = new WeakReference<>(tvOrganization);
@@ -378,7 +378,7 @@ public class AdapterLog extends CursorAdapter {
                         if (tv == null)
                             return;
 
-                        if (organization != null && rowId.equals(tv.getTag())) {
+                        if (organization != null && tv.getTag() == bindToken) {
                             tv.setText(organization);
                             tv.setVisibility(View.VISIBLE);
                         }
