@@ -12,7 +12,7 @@ use jni::{jni_sig, jni_str, Env, EnvUnowned, JavaVM};
 
 use crate::callbacks::{BridgeLogger, DnsSink, NullLogger, SocketProtector};
 use crate::keys;
-use crate::tunnel::{start_tunnel, Tunnel};
+use crate::tunnel::{keepalive_from_secs, start_tunnel, Tunnel};
 
 static LOGGER_INIT: Once = Once::new();
 
@@ -413,6 +413,43 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeUpd
             }
         };
         if let Err(e) = tunnel.update_endpoint(&key, &endpoint) {
+            throw(env, &e);
+        }
+    })
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSetKeepalive(
+    mut unowned_env: EnvUnowned,
+    _class: JClass,
+    handle: jlong,
+    public_key: JString,
+    seconds: jint,
+) {
+    with_native_env!(unowned_env, env, {
+        let Some(tunnel) = tunnel_from_handle(handle) else {
+            throw(env, "tunnel stopped");
+            return;
+        };
+        let Some(public_key) = get_string(env, &public_key) else {
+            throw(env, "publicKey must not be null");
+            return;
+        };
+        let key = match keys::parse_public_key_b64(&public_key) {
+            Ok(key) => key,
+            Err(e) => {
+                throw(env, &e);
+                return;
+            }
+        };
+        let keepalive = match keepalive_from_secs(seconds) {
+            Ok(keepalive) => keepalive,
+            Err(e) => {
+                throw(env, &e);
+                return;
+            }
+        };
+        if let Err(e) = tunnel.set_keepalive(&key, keepalive) {
             throw(env, &e);
         }
     })

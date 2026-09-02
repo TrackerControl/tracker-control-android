@@ -7,6 +7,10 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.Collections;
+
+import kotlin.Pair;
+
 public class WgConfigParserTest {
     private static final String KEY = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
 
@@ -72,6 +76,21 @@ public class WgConfigParserTest {
                 () -> WgConfigParser.INSTANCE.parse(configWithAllowedIps("2001:db8::1%wlan0/64")));
         assertThrows(WgConfigException.class,
                 () -> WgConfigParser.INSTANCE.parse(configWithAllowedIps("::ffff:999.0.2.0/120")));
+    }
+
+    @Test
+    public void keepaliveUpdatesFollowThePolicy() throws Exception {
+        WgConfig config = WgConfigParser.INSTANCE.parse(config("PersistentKeepalive = 25"));
+
+        assertEquals(Collections.singletonList(new Pair<>(KEY, 25)), config.keepaliveUpdates(true));
+        assertEquals(Collections.singletonList(new Pair<>(KEY, 0)), config.keepaliveUpdates(false));
+    }
+
+    @Test
+    public void keepaliveUpdatesSkipPeersWithoutKeepalive() throws Exception {
+        WgConfig config = WgConfigParser.INSTANCE.parse(config(""));
+
+        assertTrue(config.keepaliveUpdates(true).isEmpty());
     }
 
     private static String config(String keepaliveLine) {
