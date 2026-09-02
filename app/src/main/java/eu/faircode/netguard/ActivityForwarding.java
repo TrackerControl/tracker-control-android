@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -198,7 +199,11 @@ public class ActivityForwarding extends AppCompatActivity {
                                     final int rport = Integer.parseInt(etRPort.getText().toString());
                                     final int ruid = ((Rule) spRuid.getSelectedItem()).uid;
 
-                                    InetAddress iraddr = InetAddress.getByName(etRAddr.getText().toString());
+                                    String raddrInput = etRAddr.getText().toString();
+                                    if (TextUtils.isEmpty(raddrInput))
+                                        throw new IllegalArgumentException("Forwarding address is required");
+
+                                    InetAddress iraddr = InetAddress.getByName(raddrInput);
                                     if (rport < 1024 && (iraddr.isLoopbackAddress() || iraddr.isAnyLocalAddress()))
                                         throw new IllegalArgumentException("Port forwarding to privileged port on local address not possible");
                                     // Store the resolved numeric address, not the raw

@@ -64,6 +64,12 @@ public class ActivityForwardApproval extends Activity {
         // native side copies it into a fixed INET6_ADDRSTRLEN buffer.
         String resolved = "127.0.0.1";
         try {
+            // A blank address is malformed input, not a request to forward to
+            // localhost: InetAddress.getByName("") resolves to the loopback
+            // address, which would silently turn it into a working redirect.
+            if (addr != null && TextUtils.isEmpty(addr))
+                throw new IllegalArgumentException("Forwarding address is empty");
+
             InetAddress iraddr = InetAddress.getByName(addr == null ? "127.0.0.1" : addr);
             if (rport < 1024 && (iraddr.isLoopbackAddress() || iraddr.isAnyLocalAddress()))
                 throw new IllegalArgumentException("Port forwarding to privileged port on local address not possible");
