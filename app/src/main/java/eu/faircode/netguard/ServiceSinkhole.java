@@ -2293,9 +2293,21 @@ public class ServiceSinkhole extends VpnService {
             }
             tunnelThread = null;
 
-            jni_clear(jni_context);
-
             Log.i(TAG, "Stopped tunnel thread");
+        }
+
+        // Clear the session list even when there was no thread to join. When
+        // jni_run() returns on a native error the tunnel thread nulls
+        // tunnelThread itself, so the recovery restart arrives here with
+        // nothing to stop — but the context still holds every session that run
+        // built up. jni_start() keeps ctx->ng_session, and the new epoll
+        // instance registers only the pipe and tun, so those UDP/ICMP sockets
+        // would never be polled again while still holding their descriptors.
+        // Nothing can race this: either the thread was joined above, or it has
+        // already exited.
+        synchronized (jni_lock) {
+            if (jni_context != 0)
+                jni_clear(jni_context);
         }
 
         // NOTE: WireGuard is intentionally NOT torn down here. NetGuard's
@@ -4233,6 +4245,22 @@ public class ServiceSinkhole extends VpnService {
                     vpn = null;
                     unprepare();
                 }
+            } catch (Throwable ex) {
+                Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            }
+
+            // Final teardown of the egress side, mirroring CommandHandler.stop().
+            // Only that command path used to do this, so a destroy that did not
+            // come through it — a system revoke (onRevoke -> stopSelf), or
+            // stopService — left the Rust tunnel, its duplicated descriptors,
+            // the connectivity monitor and callbacks capturing this now-dead
+            // service alive until some later start replaced them. Both stops
+            // are idempotent, and both must precede jni_done() below.
+            try {
+                net.kollnig.missioncontrol.wg.WgEgress.INSTANCE.stop(
+                        () -> { jni_wireguard_stop(); return kotlin.Unit.INSTANCE; });
+                jni_wireguard_required(false);
+                net.kollnig.missioncontrol.dns.DnsProxyServer.getInstance(ServiceSinkhole.this).stop();
             } catch (Throwable ex) {
                 Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             }
