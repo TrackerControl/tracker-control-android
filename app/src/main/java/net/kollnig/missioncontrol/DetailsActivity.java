@@ -17,10 +17,6 @@
 
 package net.kollnig.missioncontrol;
 
-import static net.kollnig.missioncontrol.data.InternetBlocklist.SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY;
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.PREF_BLOCKLIST;
-import static net.kollnig.missioncontrol.data.TrackerBlocklist.SHARED_PREFS_BLOCKLIST_APPS_KEY;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -68,7 +64,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 
 import eu.faircode.netguard.DatabaseHelper;
 import eu.faircode.netguard.Util;
@@ -91,19 +86,15 @@ public class DetailsActivity extends AppCompatActivity {
      * @param c The context
      */
     public static void savePrefs(Context c) {
-        SharedPreferences prefs = c.getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE);
-
         // Tracker settings
         TrackerBlocklist b = TrackerBlocklist.getInstance(c);
         b.saveSettings(c);
 
-        // Internet settings
-        SharedPreferences.Editor editor = prefs.edit();
-        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(c);
-        Set<String> internetSet = Common.intToStringSet(internetBlocklist.getBlocklist());
-        editor.putStringSet(SHARED_PREFS_INTERNET_BLOCKLIST_APPS_KEY, internetSet);
-
-        editor.apply();
+        // Internet settings. Routed through InternetBlocklist itself so that
+        // package names pending resolution (apps blocked while not yet
+        // installed) are persisted alongside the resolved UIDs, rather than
+        // being dropped by a numeric-only rewrite of the preference.
+        InternetBlocklist.getInstance(c).saveSettings(c);
     }
 
     @Override
