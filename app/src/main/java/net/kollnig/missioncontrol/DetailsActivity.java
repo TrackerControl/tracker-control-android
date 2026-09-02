@@ -78,6 +78,7 @@ public class DetailsActivity extends AppCompatActivity {
     private Integer appUid;
     private String appPackageName;
     private DetailsStateAdapter detailsStateAdapter;
+    private ExportDatabaseCSVTask exportTask;
 
     /**
      * Saves the changed tracker settings
@@ -100,8 +101,10 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // Export to CSV?
         if (requestCode == REQUEST_EXPORT) {
-            if (resultCode == RESULT_OK && data != null)
-                new ExportDatabaseCSVTask(data).execute(); // export to CSV
+            if (resultCode == RESULT_OK && data != null) {
+                exportTask = new ExportDatabaseCSVTask(data);
+                exportTask.execute(); // export to CSV
+            }
         } else {
             Log.w(TAG, "Unknown activity result request=" + requestCode);
             super.onActivityResult(requestCode, resultCode, data);
@@ -258,6 +261,15 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Leaving mid-export must not leak this activity via the dialog, nor
+        // via the task itself (WindowLeaked otherwise, and the task keeps
+        // running until it finishes). The export continues writing to a
+        // partial file at the user-chosen URI, which is left as-is.
+        if (exportTask != null) {
+            if (exportTask.dialog.isShowing())
+                exportTask.dialog.dismiss();
+            exportTask.cancel(false);
+        }
         app = null;
         running = false;
     }
@@ -321,6 +333,9 @@ public class DetailsActivity extends AppCompatActivity {
 
                     csv.writeNext(columnNames.toArray(new String[0]));
                     while (data.moveToNext()) {
+                        if (isCancelled())
+                            break;
+
                         String[] row = new String[data.getColumnNames().length + 2];
                         for (int i = 0; i < data.getColumnNames().length; i++) {
                             row[i] = data.getString(i);
@@ -343,10 +358,11 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(final Boolean success) {
-            if (running) {
-                if (this.dialog.isShowing())
-                    this.dialog.dismiss();
+            exportTask = null;
+            if (this.dialog.isShowing())
+                this.dialog.dismiss();
 
+            if (running) {
                 if (success) {
                     View v = findViewById(R.id.view_pager);
                     Snackbar s = Snackbar.make(v, R.string.exported, Snackbar.LENGTH_LONG);
@@ -355,6 +371,15 @@ public class DetailsActivity extends AppCompatActivity {
                     Toast.makeText(DetailsActivity.this, R.string.export_failed, Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+
+        @Override
+        protected void onCancelled() {
+            // Reached when onDestroy() cancelled us: nothing left to show, and
+            // the dialog was already dismissed there if it was still showing.
+            exportTask = null;
+            if (this.dialog.isShowing())
+                this.dialog.dismiss();
         }
     }
 }

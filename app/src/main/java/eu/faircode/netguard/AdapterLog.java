@@ -48,6 +48,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.TrackerList;
 
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -173,6 +174,13 @@ public class AdapterLog extends CursorAdapter {
         final TextView tvDaddr = view.findViewById(R.id.tvDAddr);
         TextView tvDPort = view.findViewById(R.id.tvDPort);
         final TextView tvOrganization = view.findViewById(R.id.tvOrganization);
+        // One token per binding: a lookup result is applied only if the view
+        // still carries the token of the binding that started it. Any rebind
+        // (a different row, or the same row after Resolve/Organization was
+        // toggled) replaces the token, so a late result is dropped.
+        final Object bindToken = new Object();
+        tvDaddr.setTag(bindToken);
+        tvOrganization.setTag(bindToken);
         TextView tvStatus = view.findViewById(R.id.tvStatus);
         final ImageView ivIcon = view.findViewById(R.id.ivIcon);
         TextView tvUid = view.findViewById(R.id.tvUid);
@@ -289,9 +297,14 @@ public class AdapterLog extends CursorAdapter {
             if (dname == null) {
                 tvDaddr.setText(daddr);
                 new AsyncTask<String, Object, String>() {
+                    // Held weakly so a destroyed activity is not kept alive by this task.
+                    private final WeakReference<TextView> viewRef = new WeakReference<>(tvDaddr);
+
                     @Override
                     protected void onPreExecute() {
-                        ViewCompat.setHasTransientState(tvDaddr, true);
+                        TextView tv = viewRef.get();
+                        if (tv != null)
+                            ViewCompat.setHasTransientState(tv, true);
                     }
 
                     @Override
@@ -305,14 +318,22 @@ public class AdapterLog extends CursorAdapter {
 
                     @Override
                     protected void onPostExecute(String name) {
-                        tvDaddr.setText(">" + name);
+                        TextView tv = viewRef.get();
+                        if (tv == null)
+                            return;
 
-                        if (TrackerList.findTracker(name) != null)
-                            tvDaddr.setTypeface(null, Typeface.BOLD);
-                        else
-                            tvDaddr.setTypeface(null, Typeface.NORMAL);
+                        if (tv.getTag() == bindToken) {
+                            tv.setText(">" + name);
 
-                        ViewCompat.setHasTransientState(tvDaddr, false);
+                            if (TrackerList.findTracker(name) != null)
+                                tv.setTypeface(null, Typeface.BOLD);
+                            else
+                                tv.setTypeface(null, Typeface.NORMAL);
+                        }
+                        // Either applied above, or this view was rebound to another row
+                        // that never got the chance to clear the flag itself – clear it
+                        // unconditionally so the transient-state bookkeeping stays balanced.
+                        ViewCompat.setHasTransientState(tv, false);
                     }
                 }.execute(daddr);
             } else {
@@ -329,11 +350,16 @@ public class AdapterLog extends CursorAdapter {
         // Show organization
         tvOrganization.setVisibility(View.GONE);
         if (!we && organization) {
-            if (!isKnownAddress(daddr))
+            if (!isKnownAddress(daddr)) {
                 new AsyncTask<String, Object, String>() {
+                    // Held weakly so a destroyed activity is not kept alive by this task.
+                    private final WeakReference<TextView> viewRef = new WeakReference<>(tvOrganization);
+
                     @Override
                     protected void onPreExecute() {
-                        ViewCompat.setHasTransientState(tvOrganization, true);
+                        TextView tv = viewRef.get();
+                        if (tv != null)
+                            ViewCompat.setHasTransientState(tv, true);
                     }
 
                     @Override
@@ -348,13 +374,21 @@ public class AdapterLog extends CursorAdapter {
 
                     @Override
                     protected void onPostExecute(String organization) {
-                        if (organization != null) {
-                            tvOrganization.setText(organization);
-                            tvOrganization.setVisibility(View.VISIBLE);
+                        TextView tv = viewRef.get();
+                        if (tv == null)
+                            return;
+
+                        if (organization != null && tv.getTag() == bindToken) {
+                            tv.setText(organization);
+                            tv.setVisibility(View.VISIBLE);
                         }
-                        ViewCompat.setHasTransientState(tvOrganization, false);
+                        // Either applied above, or this view was rebound to another row
+                        // that never got the chance to clear the flag itself – clear it
+                        // unconditionally so the transient-state bookkeeping stays balanced.
+                        ViewCompat.setHasTransientState(tv, false);
                     }
                 }.execute(daddr);
+            }
         }
 
         // Show extra data, but not for TLS (because we retrieve the SNI from the data field)

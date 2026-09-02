@@ -70,6 +70,11 @@ public class TimelineFragment extends Fragment {
     @Nullable
     private InsightsData insightsData;
     private int viewGeneration;
+    // Monotonically increasing per loader, so a request started earlier (but
+    // finishing later, e.g. after a subsequent pull-to-refresh) never
+    // overwrites a result from a request that was started after it.
+    private int timelineRequestId;
+    private int insightsRequestId;
 
     private final Handler refreshHandler = new Handler(Looper.getMainLooper());
     private final Runnable refreshRunnable = this::refreshAll;
@@ -229,6 +234,7 @@ public class TimelineFragment extends Fragment {
     private void loadTimeline(final int generation) {
         if (!isCurrentView(generation))
             return;
+        final int requestId = ++timelineRequestId;
         final Context context = requireContext().getApplicationContext();
         new AsyncTask<Void, Void, List<TimelineEntry>>() {
             @Override
@@ -240,6 +246,8 @@ public class TimelineFragment extends Fragment {
             protected void onPostExecute(List<TimelineEntry> entries) {
                 if (!isCurrentView(generation) || screenController == null)
                     return;
+                if (requestId != timelineRequestId)
+                    return; // superseded by a request started after this one
 
                 SharedPreferences prefs = PreferenceManager
                         .getDefaultSharedPreferences(requireContext());
@@ -267,12 +275,15 @@ public class TimelineFragment extends Fragment {
         final ExecutorService executor = lifecycleExecutor;
         if (executor == null || executor.isShutdown() || !isCurrentView(generation))
             return;
+        final int requestId = ++insightsRequestId;
         final Context context = requireContext().getApplicationContext();
         executor.execute(() -> {
             InsightsData data = new InsightsDataProvider(context).computeInsights();
             refreshHandler.post(() -> {
                 if (!isCurrentView(generation) || screenController == null)
                     return;
+                if (requestId != insightsRequestId)
+                    return; // superseded by a request started after this one
                 insightsData = data;
                 screenController.updateInsights(data);
             });

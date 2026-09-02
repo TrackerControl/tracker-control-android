@@ -64,6 +64,8 @@ public class CountriesFragment extends Fragment {
     private CountriesScreenController screenController;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private int viewGeneration;
+    /** The worker started for the current view, so leaving the screen can stop it. */
+    private Thread loadThread;
 
     public CountriesFragment() {
         // Required empty public constructor
@@ -150,7 +152,8 @@ public class CountriesFragment extends Fragment {
         int generation = ++viewGeneration;
         Context context = requireContext().getApplicationContext();
         int uid = mAppUid;
-        new Thread(() -> loadCountriesMap(context, uid, generation)).start();
+        loadThread = new Thread(() -> loadCountriesMap(context, uid, generation));
+        loadThread.start();
     }
 
     /**
@@ -159,12 +162,22 @@ public class CountriesFragment extends Fragment {
     private void loadCountriesMap(Context context, int uid, int generation) {
         try {
             SVG svg = SVG.getFromAsset(context.getAssets(), "world.svg");
+            if (Thread.currentThread().isInterrupted())
+                return; // the screen was left while the SVG asset was being parsed
 
+            // The SQLite query inside this call is not itself interruptible,
+            // so it always runs to completion; only the steps around it are
+            // worth bailing out of early.
             Map<String, Integer> hostCountriesCount = getHostCountriesCount(context, uid);
+            if (Thread.currentThread().isInterrupted())
+                return; // the screen was left while the database was being queried
 
             final RenderOptions renderOptions = new RenderOptions();
             String countries = TextUtils.join(",#", hostCountriesCount.keySet());
             renderOptions.css(String.format("#%s { fill: #B71C1C; }", countries.toUpperCase()));
+
+            if (Thread.currentThread().isInterrupted())
+                return; // the screen was left before rendering started
 
             // Render on this background thread; the resulting Picture is
             // immutable and safe to hand to the UI thread. This also means a
@@ -198,6 +211,10 @@ public class CountriesFragment extends Fragment {
     public void onDestroyView() {
         viewGeneration++;
         screenController = null;
+        if (loadThread != null) {
+            loadThread.interrupt();
+            loadThread = null;
+        }
         super.onDestroyView();
     }
 }
