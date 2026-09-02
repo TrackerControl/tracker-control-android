@@ -58,16 +58,27 @@ public class ActivityForwardApproval extends Activity {
         String addr = getIntent().getStringExtra("raddr");
         final int rport = getIntent().getIntExtra("rport", 0);
         final int ruid = getIntent().getIntExtra("ruid", 0);
-        final String raddr = (addr == null ? "127.0.0.1" : addr);
 
+        // Resolve and re-derive as the numeric address: this activity is
+        // exported, so raddr is attacker-controlled from any app, and the
+        // native side copies it into a fixed INET6_ADDRSTRLEN buffer.
+        String resolved = "127.0.0.1";
         try {
-            InetAddress iraddr = InetAddress.getByName(raddr);
+            // A blank address is malformed input, not a request to forward to
+            // localhost: InetAddress.getByName("") resolves to the loopback
+            // address, which would silently turn it into a working redirect.
+            if (addr != null && TextUtils.isEmpty(addr))
+                throw new IllegalArgumentException("Forwarding address is empty");
+
+            InetAddress iraddr = InetAddress.getByName(addr == null ? "127.0.0.1" : addr);
             if (rport < 1024 && (iraddr.isLoopbackAddress() || iraddr.isAnyLocalAddress()))
                 throw new IllegalArgumentException("Port forwarding to privileged port on local address not possible");
+            resolved = iraddr.getHostAddress();
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
             finish();
         }
+        final String raddr = resolved;
 
         String pname;
         if (protocol == 6)

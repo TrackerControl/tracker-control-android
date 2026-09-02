@@ -600,11 +600,14 @@ jobject create_packet(const struct arguments *args,
 void account_usage(const struct arguments *args, jint version, jint protocol,
                    const char *daddr, jint dport, jint uid, jlong sent, jlong received);
 
-void write_pcap_hdr();
+extern pthread_mutex_t pcap_lock;
+
+// Caller must hold pcap_lock; see pcap.c.
+void write_pcap_hdr_locked();
+
+void pcap_close_locked();
 
 void write_pcap_rec(const uint8_t *buffer, size_t len);
-
-void write_pcap(const void *ptr, size_t len);
 
 int compare_u32(uint32_t seq1, uint32_t seq2);
 

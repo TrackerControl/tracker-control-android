@@ -24,6 +24,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -195,13 +196,22 @@ public class ActivityForwarding extends AppCompatActivity {
                                     String[] values = getResources().getStringArray(R.array.protocolValues);
                                     final int protocol = Integer.valueOf(values[pos]);
                                     final int dport = Integer.parseInt(etDPort.getText().toString());
-                                    final String raddr = etRAddr.getText().toString();
                                     final int rport = Integer.parseInt(etRPort.getText().toString());
                                     final int ruid = ((Rule) spRuid.getSelectedItem()).uid;
 
-                                    InetAddress iraddr = InetAddress.getByName(raddr);
+                                    String raddrInput = etRAddr.getText().toString();
+                                    if (TextUtils.isEmpty(raddrInput))
+                                        throw new IllegalArgumentException("Forwarding address is required");
+
+                                    InetAddress iraddr = InetAddress.getByName(raddrInput);
                                     if (rport < 1024 && (iraddr.isLoopbackAddress() || iraddr.isAnyLocalAddress()))
                                         throw new IllegalArgumentException("Port forwarding to privileged port on local address not possible");
+                                    // Store the resolved numeric address, not the raw
+                                    // (possibly hostname) text: the native side copies
+                                    // this into a fixed INET6_ADDRSTRLEN buffer, and a
+                                    // hostname is neither bounded in length nor
+                                    // resolvable from native code.
+                                    final String raddr = iraddr.getHostAddress();
 
                                     new AsyncTask<Object, Object, Throwable>() {
                                         @Override

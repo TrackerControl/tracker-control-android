@@ -1738,10 +1738,20 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                 int rport = Integer.parseInt(attributes.getValue("rport"));
 
                 try {
+                    // Re-derive as the numeric address: the imported file is
+                    // untrusted input, and the native side copies raddr into a
+                    // fixed INET6_ADDRSTRLEN buffer. A blank address is left
+                    // alone: native treats it as "no redirect", and resolving
+                    // it would turn an inert exported rule into a live
+                    // redirect to loopback on re-import.
+                    if (!TextUtils.isEmpty(raddr))
+                        raddr = InetAddress.getByName(raddr).getHostAddress();
                     int uid = getUid(pkg);
                     DatabaseHelper.getInstance(context).addForward(protocol, dport, raddr, rport, uid);
                 } catch (PackageManager.NameNotFoundException ex) {
                     Log.w(TAG, "Package not found pkg=" + pkg);
+                } catch (java.io.IOException ex) {
+                    Log.w(TAG, "Invalid forward raddr=" + raddr + ": " + ex);
                 }
 
             } else
