@@ -72,7 +72,9 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
         */
 
         memcpy(response, request, sizeof(struct dhcp_packet));
-        response->opcode = (uint8_t) (request->siaddr == 0 ? 2 /* Offer */ : /* Ack */ 4);
+        // RFC 951/2131: every reply is op = 2 (BOOTREPLY); offer vs ack is
+        // carried in option 53 below, not in the BOOTP opcode.
+        response->opcode = 2; // Reply
         response->secs = 0;
         response->flags = 0;
         memset(&response->ciaddr, 0, sizeof(response->ciaddr));
@@ -110,7 +112,8 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
 
         *(options + idx++) = 51; // lease time
         *(options + idx++) = 4; // quad
-        *((uint32_t *) (options + idx)) = 3600;
+        uint32_t lease = htonl(3600); // seconds, network byte order
+        memcpy(options + idx, &lease, sizeof lease); // options + idx is not aligned
         idx += 4;
 
         *(options + idx++) = 54; // DHCP
