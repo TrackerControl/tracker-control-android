@@ -582,9 +582,14 @@ object WgEgress {
 
     private fun scheduleRecoveryNotificationCheck() {
         val gen = ++recoveryNotificationGeneration
+        // Pin the tunnel this check is about: a reload can swap in a
+        // different tunnel before the delayed callback fires, and without
+        // this the callback would read the new tunnel's handshake state and
+        // report it as the still-broken old one.
+        val expected = captureTunnel()
         verifyHandler.postDelayed({
             if (gen != recoveryNotificationGeneration) return@postDelayed
-            if (tunnel == null) return@postDelayed
+            if (expected == null || !isCurrent(expected)) return@postDelayed
             val latest = latestHandshakeMillisOrNull() ?: 0L
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
@@ -819,6 +824,11 @@ object WgEgress {
             // Any later success/failure result is now harmlessly stale.
             tunnel = null
             tunnelGeneration.incrementAndGet()
+            // Also covers the plain restart path (config/fd/recovery-state
+            // change with a tunnel already up), which replaces the tunnel
+            // without going through stop()/clearRecoveryState first – a
+            // scheduled recovery-notification check must not survive it.
+            recoveryNotificationGeneration++
             // stop() calls clearRecoveryState first, but a recovery failure may
             // land between that call and this invalidation. Clear again while
             // holding the same lock used to install pending restart state.

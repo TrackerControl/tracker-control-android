@@ -85,7 +85,14 @@ public class WgRelayFailover {
                 // this config now authenticates as is lost, and the account's
                 // other profiles keep a key Mullvad no longer knows.
                 if (generated.identityReplaced) {
-                    manager.saveMullvadDeviceId(generated.deviceId);
+                    // If the Mullvad account changed underneath this generate()
+                    // call, the device above belongs to an account no longer in
+                    // use – do not attach it to whichever account is now active.
+                    if (!manager.saveMullvadDeviceIdIfAccount(active.account, generated.deviceId)) {
+                        Log.w(TAG, "Relay failover for mullvad found a new device, but the "
+                                + "account changed meanwhile; discarding");
+                        return false;
+                    }
                     manager.rewriteProviderInterface("mullvad", active.account,
                             generated.privateKey, generated.address);
                     notifyIdentityRenewed(listener, "Mullvad");
@@ -102,8 +109,15 @@ public class WgRelayFailover {
                 // one, or the reusable one was stale); persist it regardless of
                 // whether the switch below goes through, or the device/session
                 // this config now authenticates as is lost and never saved.
-                if (generated.session != null)
-                    manager.saveIvpnSession(active.account, generated.session);
+                // If the IVPN account changed underneath the generate() call,
+                // the session above belongs to an account no longer in use –
+                // do not restore it over whichever account is now active.
+                if (generated.session != null &&
+                        !manager.saveIvpnSessionIfAccount(active.account, generated.session)) {
+                    Log.w(TAG, "Relay failover for ivpn found a new session, but the "
+                            + "account changed meanwhile; discarding");
+                    return false;
+                }
                 if (generated.identityReplaced && generated.session != null) {
                     manager.rewriteProviderInterface("ivpn", active.account,
                             generated.session.privateKey, generated.address);
