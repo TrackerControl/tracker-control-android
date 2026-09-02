@@ -590,7 +590,11 @@ object WgEgress {
         verifyHandler.postDelayed({
             if (gen != recoveryNotificationGeneration) return@postDelayed
             if (expected == null || !isCurrent(expected)) return@postDelayed
-            val latest = latestHandshakeMillisOrNull() ?: 0L
+            // Read the captured tunnel, not the global field, and re-validate
+            // afterwards: a restart can swap the tunnel between the check
+            // above and the JNI read.
+            val latest = try { expected.tunnel.latestHandshakeMillis() } catch (_: Throwable) { null } ?: 0L
+            if (gen != recoveryNotificationGeneration || !isCurrent(expected)) return@postDelayed
             if (latest > 0 && now() - latest < HANDSHAKE_DEAD_AFTER_MS) {
                 lastError = null
                 providerFailureReason = null

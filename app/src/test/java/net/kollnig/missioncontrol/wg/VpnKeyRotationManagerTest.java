@@ -259,10 +259,13 @@ public class VpnKeyRotationManagerTest {
 
         String result = rotate("ivpn", true);
 
-        assertEquals("IVPN skipped: account changed", result);
+        assertEquals("IVPN rotated: account changed, session not restored", result);
         assertNull(manager.getIvpnSession("other-account"));
         assertEquals("other-account", prefs.getString("ivpn_account", ""));
-        assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + OLD_PRIVATE));
+        // IVPN already holds the new key for the old account, so its saved
+        // profiles must follow it; only the session store stays untouched.
+        assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + NEW_PRIVATE));
+        assertFalse(prefs.contains("ivpn_pending_privkey"));
     }
 
     @Test

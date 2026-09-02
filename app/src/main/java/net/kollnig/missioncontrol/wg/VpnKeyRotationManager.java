@@ -284,10 +284,9 @@ public class VpnKeyRotationManager {
             // The pending key belongs to whichever account was active when it
             // was stored; if that account changed underneath this run, the
             // session below is not the newly active account's to keep.
-            if (!manager.saveIvpnSessionIfAccount(account, next)) {
-                clearPending(prefs, PROVIDER_IVPN);
-                return "IVPN skipped: account changed";
-            }
+            if (!manager.saveIvpnSessionIfAccount(account, next))
+                return commitIvpnForInactiveAccount(prefs, manager, account, pendingPrivate,
+                        next);
             commitProviderKey(context, manager, dependencies, PROVIDER_IVPN, account,
                     pendingPrivate, addressWithCidr(next.address), currentPrivate,
                     currentPublic, pendingPublic, "");
@@ -311,15 +310,31 @@ public class VpnKeyRotationManager {
             throw ex;
         }
 
-        if (!manager.saveIvpnSessionIfAccount(account, next)) {
-            clearPending(prefs, PROVIDER_IVPN);
-            return "IVPN skipped: account changed";
-        }
+        if (!manager.saveIvpnSessionIfAccount(account, next))
+            return commitIvpnForInactiveAccount(prefs, manager, account, newPrivate, next);
         commitProviderKey(context, manager, dependencies, PROVIDER_IVPN, account,
                 newPrivate, addressWithCidr(next.address), currentPrivate, currentPublic,
                 newPublic, "");
         clearPending(prefs, PROVIDER_IVPN);
         return "IVPN rotated";
+    }
+
+    /**
+     * The user switched IVPN accounts while the provider call was in flight,
+     * and the provider has already replaced the old account's key. Its saved
+     * profiles must follow that key or they can never handshake again, but
+     * the global session store now belongs to the new account and is left
+     * alone; no reload or handshake check is run for an account that is not
+     * active.
+     */
+    private static String commitIvpnForInactiveAccount(SharedPreferences prefs,
+                                                       WgProfileManager manager,
+                                                       String account, String newPrivate,
+                                                       WgProfileManager.IvpnSession next) {
+        manager.rewriteProviderInterface(PROVIDER_IVPN, account, newPrivate,
+                addressWithCidr(next.address));
+        clearPending(prefs, PROVIDER_IVPN);
+        return "IVPN rotated: account changed, session not restored";
     }
 
     private static boolean resolveMullvadPending(Context context, WgProfileManager manager,
@@ -408,11 +423,16 @@ public class VpnKeyRotationManager {
     }
 
     private static void storePending(SharedPreferences prefs, String provider,
-                                     String privateKey, String publicKey) {
-        prefs.edit()
+                                     String privateKey, String publicKey) throws IOException {
+        // Synchronous on purpose: this runs before the provider call, and an
+        // apply() that has not reached disk when the process dies leaves
+        // exactly the window it exists to close.
+        boolean written = prefs.edit()
                 .putString(key(provider, "pending_privkey"), privateKey)
                 .putString(key(provider, "pending_pubkey"), publicKey)
-                .apply();
+                .commit();
+        if (!written)
+            throw new IOException("could not persist pending " + provider + " key");
     }
 
     private static boolean hasPendingKey(SharedPreferences prefs, String provider) {
