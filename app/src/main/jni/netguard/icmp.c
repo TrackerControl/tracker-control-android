@@ -163,7 +163,8 @@ jboolean handle_icmp(const struct arguments *args,
         inet_ntop(AF_INET6, &ip6->ip6_dst, dest, sizeof(dest));
     }
 
-    if (icmp->icmp_type != ICMP_ECHO) {
+    if (!((version == 4 && icmp->icmp_type == ICMP_ECHO) ||
+          (version == 6 && icmp->icmp_type == ICMP6_ECHO_REQUEST))) {
         log_android(ANDROID_LOG_WARN, "ICMP type %d code %d from %s to %s not supported",
                     icmp->icmp_type, icmp->icmp_code, source, dest);
         return 0;
@@ -282,7 +283,8 @@ int open_icmp_socket(const struct arguments *args, const struct icmp_session *cu
     int sock;
 
     // Get UDP socket
-    sock = socket(cur->version == 4 ? PF_INET : PF_INET6, SOCK_DGRAM, IPPROTO_ICMP);
+    sock = socket(cur->version == 4 ? PF_INET : PF_INET6, SOCK_DGRAM,
+                  cur->version == 4 ? IPPROTO_ICMP : IPPROTO_ICMPV6);
     if (sock < 0) {
         log_android(ANDROID_LOG_ERROR, "ICMP socket error %d: %s", errno, strerror(errno));
         return -1;

@@ -764,8 +764,19 @@ jboolean handle_tcp(const struct arguments *args,
                 if (kind == 2 && len == 4)
                     mss = ntohs(*((uint16_t *) (options + 2)));
 
-                else if (kind == 3 && len == 3)
+                else if (kind == 3 && len == 3) {
                     ws = *(options + 2);
+                    // RFC 7323 §2.3: a Shift.cnt exceeding 14 "MUST" be treated as 14.
+                    // ws is later used as a shift amount on a 32-bit value, so an
+                    // unclamped peer-supplied value up to 255 would be undefined
+                    // behaviour; clamp here so every later use sees the safe value.
+                    if (ws > 14) {
+                        log_android(ANDROID_LOG_WARN,
+                                    "%s clamping oversized window scale %u to 14",
+                                    packet, ws);
+                        ws = 14;
+                    }
+                }
 
                 optlen -= len;
                 options += len;

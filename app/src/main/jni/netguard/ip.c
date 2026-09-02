@@ -898,10 +898,28 @@ jint get_uid_sub(const int version, const int protocol,
     // Scan proc file
     int l = 0;
     *line = 0;
-    int c = 0;
     const char *fmt = (version == 4
                        ? "%*d: %8s:%X %8s:%X %*X %*lX:%*lX %*X:%*X %*X %d %*d %*ld"
                        : "%*d: %32s:%X %32s:%X %*X %*lX:%*lX %*X:%*X %*X %d %*d %*ld");
+    // Each file is a complete snapshot of one (version, protocol) table, so
+    // entries cached by an earlier scan of it are either re-read below or
+    // belong to sockets that have since gone. Drop them, and every expired
+    // entry of any protocol, in one pass before the scan; the rows are then
+    // appended without searching the cache, keeping a lookup O(cache + rows)
+    // and the cache itself bounded by UID_CACHE_MAX (allocated once).
+    if (uid_cache == NULL)
+        uid_cache = ng_malloc(sizeof(struct uid_cache_entry) * UID_CACHE_MAX, "uid_cache");
+    int kept = 0;
+    for (int i = 0; i < uid_cache_size; i++)
+        if (now - uid_cache[i].time <= UID_MAX_AGE &&
+            !(uid_cache[i].version == version && uid_cache[i].protocol == protocol)) {
+            if (kept != i)
+                uid_cache[kept] = uid_cache[i];
+            kept++;
+        }
+    uid_cache_size = kept;
+    int cache_full_logged = 0;
+
     while (fgets(line, sizeof(line), fd) != NULL) {
         if (!l++)
             continue;
@@ -925,29 +943,24 @@ jint get_uid_sub(const int version, const int protocol,
                  memcmp(_daddr, zero, (size_t) (ws * 4)) == 0))
                 uid = _uid;
 
-            for (; c < uid_cache_size; c++)
-                if (now - uid_cache[c].time > UID_MAX_AGE)
-                    break;
-
-            if (c >= uid_cache_size) {
-                if (uid_cache_size == 0)
-                    uid_cache = ng_malloc(sizeof(struct uid_cache_entry), "uid_cache init");
-                else
-                    uid_cache = ng_realloc(uid_cache,
-                                           sizeof(struct uid_cache_entry) *
-                                           (uid_cache_size + 1), "uid_cache extend");
-                c = uid_cache_size;
-                uid_cache_size++;
+            // Append this row; the compaction above already made room for
+            // it by dropping the previous snapshot of this table, so no
+            // per-row search of the cache is needed.
+            if (uid_cache_size < UID_CACHE_MAX) {
+                struct uid_cache_entry *e = &uid_cache[uid_cache_size++];
+                e->version = (uint8_t) version;
+                e->protocol = (uint8_t) protocol;
+                memcpy(e->saddr, _saddr, (size_t) (ws * 4));
+                e->sport = (uint16_t) _sport;
+                memcpy(e->daddr, _daddr, (size_t) (ws * 4));
+                e->dport = (uint16_t) _dport;
+                e->uid = _uid;
+                e->time = now;
+            } else if (!cache_full_logged) {
+                cache_full_logged = 1;
+                log_android(ANDROID_LOG_WARN, "uid cache full (%d entries), not caching remaining %s rows",
+                            UID_CACHE_MAX, fn);
             }
-
-            uid_cache[c].version = (uint8_t) version;
-            uid_cache[c].protocol = (uint8_t) protocol;
-            memcpy(uid_cache[c].saddr, _saddr, (size_t) (ws * 4));
-            uid_cache[c].sport = (uint16_t) _sport;
-            memcpy(uid_cache[c].daddr, _daddr, (size_t) (ws * 4));
-            uid_cache[c].dport = (uint16_t) _dport;
-            uid_cache[c].uid = _uid;
-            uid_cache[c].time = now;
         } else {
             log_android(ANDROID_LOG_ERROR, "Invalid field #%d: %s", fields, line);
             if (fclose(fd))
