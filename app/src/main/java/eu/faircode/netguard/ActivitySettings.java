@@ -101,10 +101,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -1508,39 +1510,56 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
     private void xmlImport(InputStream in) throws IOException, SAXException, ParserConfigurationException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean wasEnabled = prefs.getBoolean("enabled", false);
         prefs.unregisterOnSharedPreferenceChangeListener(this);
         prefs.edit().putBoolean("enabled", false).apply();
         ServiceSinkhole.stop("import", this, false);
 
-        XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-        XmlImportHandler handler = new XmlImportHandler(this);
-        reader.setContentHandler(handler);
-        reader.parse(new InputSource(in));
+        try {
+            XMLReader reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            XmlImportHandler handler = new XmlImportHandler(this);
+            reader.setContentHandler(handler);
+            reader.parse(new InputSource(in));
 
-        xmlImport(handler.application, prefs);
-        xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
-        xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
-        xmlImport(handler.tracker_essential, getSharedPreferences("tracker_essential", Context.MODE_PRIVATE));
-        xmlImport(handler.wg_route, getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE));
-        xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
-        xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
+            // Only now that the whole file has parsed successfully do we
+            // touch the forwarding rules, so a malformed file never leaves
+            // the old rules deleted with no replacement.
+            if (handler.forwardSeen)
+                DatabaseHelper.getInstance(this).replaceForwards(handler.forwards);
 
-        // Reload blocklist
-        TrackerBlocklist.getInstance(this).loadSettings(this);
-        InternetBlocklist.getInstance(this).loadSettings(this);
+            xmlImport(handler.application, prefs);
+            xmlImport(handler.apply, getSharedPreferences("apply", Context.MODE_PRIVATE));
+            xmlImport(handler.tracker_protect, getSharedPreferences("tracker_protect", Context.MODE_PRIVATE));
+            xmlImport(handler.tracker_essential, getSharedPreferences("tracker_essential", Context.MODE_PRIVATE));
+            xmlImport(handler.wg_route, getSharedPreferences(Rule.PREF_WG_ROUTE, Context.MODE_PRIVATE));
+            xmlImport(handler.notify, getSharedPreferences("notify", Context.MODE_PRIVATE));
+            xmlImport(handler.blocklist, getSharedPreferences(PREF_BLOCKLIST, Context.MODE_PRIVATE));
 
-        // Upgrade imported settings
-        ReceiverAutostart.upgrade(true, this);
+            // Reload blocklist
+            TrackerBlocklist.getInstance(this).loadSettings(this);
+            InternetBlocklist.getInstance(this).loadSettings(this);
 
-        // Reconcile imported apply preferences with auto-exclusions immediately,
-        // rather than waiting for the next process start.
-        BlockingMode.syncAutoExclusions(this);
+            // Upgrade imported settings
+            ReceiverAutostart.upgrade(true, this);
 
-        DatabaseHelper.clearCache();
+            // Reconcile imported apply preferences with auto-exclusions immediately,
+            // rather than waiting for the next process start.
+            BlockingMode.syncAutoExclusions(this);
 
-        // Refresh UI
-        prefs.edit().putBoolean("imported", true).apply();
-        prefs.registerOnSharedPreferenceChangeListener(this);
+            DatabaseHelper.clearCache();
+
+            // Refresh UI
+            prefs.edit().putBoolean("imported", true).apply();
+        } catch (Throwable ex) {
+            // Restore the pre-import state: a failed import must not leave
+            // the VPN off when it was running before the import began.
+            prefs.edit().putBoolean("enabled", wasEnabled).apply();
+            if (wasEnabled)
+                ServiceSinkhole.start("import", this);
+            throw ex;
+        } finally {
+            prefs.registerOnSharedPreferenceChangeListener(this);
+        }
     }
 
     private void xmlImport(Map<String, Object> settings, SharedPreferences prefs) {
@@ -1605,6 +1624,11 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
         public Map<String, Object> wg_route = new HashMap<>();
         public Map<String, Object> notify = new HashMap<>();
         public Map<String, Object> blocklist = new HashMap<>();
+        // Forwarding rules parsed from the file: collected here rather than
+        // written straight to the database, so a malformed <port> further
+        // down never leaves the old rules deleted with no replacement.
+        public boolean forwardSeen = false;
+        public List<Forward> forwards = new ArrayList<>();
         private Map<String, Object> current = null;
 
         public XmlImportHandler(Context context) {
@@ -1652,8 +1676,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
 
             else if (qName.equals("forward")) {
                 current = null;
-                Log.i(TAG, "Clearing forwards");
-                DatabaseHelper.getInstance(context).deleteForward();
+                forwardSeen = true;
 
             } else if (qName.equals("blocklist"))
                 current = blocklist;
@@ -1747,7 +1770,14 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
                     if (!TextUtils.isEmpty(raddr))
                         raddr = InetAddress.getByName(raddr).getHostAddress();
                     int uid = getUid(pkg);
-                    DatabaseHelper.getInstance(context).addForward(protocol, dport, raddr, rport, uid);
+
+                    Forward forward = new Forward();
+                    forward.protocol = protocol;
+                    forward.dport = dport;
+                    forward.raddr = raddr;
+                    forward.rport = rport;
+                    forward.ruid = uid;
+                    forwards.add(forward);
                 } catch (PackageManager.NameNotFoundException ex) {
                     Log.w(TAG, "Package not found pkg=" + pkg);
                 } catch (java.io.IOException ex) {

@@ -2183,7 +2183,8 @@ public class ServiceSinkhole extends VpnService {
         // per-app override sends an app direct in either mode, and gating on
         // the mode alone left such an app tunnelling its DNS while its traffic
         // went direct, exactly the split the redirect exists to avoid.
-        final boolean fwd53 = mapForward.containsKey(53)
+        final boolean fwd53 = mapForward.containsKey(forwardKey(6 /* TCP */, 53))
+                || mapForward.containsKey(forwardKey(17 /* UDP */, 53))
                 || RemoteRoutingLogic.redirectDirectDns(anyDirectRouting,
                         directDnsTarget != null);
         if (prefs.getBoolean("socks5_enabled", false))
@@ -2596,6 +2597,13 @@ public class ServiceSinkhole extends VpnService {
         }
     }
 
+    // mapForward is keyed by protocol and port together, not port alone: a
+    // TCP rule and a UDP rule for the same port are independent, and must
+    // not overwrite or match each other.
+    private static int forwardKey(int protocol, int dport) {
+        return (protocol << 16) | dport;
+    }
+
     private void prepareForwarding() {
         lock.writeLock().lock();
         try {
@@ -2615,7 +2623,7 @@ public class ServiceSinkhole extends VpnService {
                 fwd.raddr = cursor.getString(colRAddr);
                 fwd.rport = cursor.getInt(colRPort);
                 fwd.ruid = cursor.getInt(colRUid);
-                mapForward.put(fwd.dport, fwd);
+                mapForward.put(forwardKey(fwd.protocol, fwd.dport), fwd);
                 Log.i(TAG, "Forward " + fwd);
             }
         }
@@ -2631,10 +2639,19 @@ public class ServiceSinkhole extends VpnService {
             dnsFwd.raddr = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_ADDRESS;
             dnsFwd.rport = net.kollnig.missioncontrol.dns.DnsProxyServer.DNS_PROXY_PORT;
             dnsFwd.ruid = android.os.Process.myUid();
-            mapForward.put(dnsFwd.dport, dnsFwd);
-
-            // TCP uses the same port map, as mapForward is keyed by dport.
+            mapForward.put(forwardKey(dnsFwd.protocol, dnsFwd.dport), dnsFwd);
             Log.i(TAG, "DoH Forward " + dnsFwd);
+
+            // mapForward is now keyed by protocol and port, so port 53 TCP
+            // needs its own entry to still be caught alongside UDP.
+            Forward dnsFwdTcp = new Forward();
+            dnsFwdTcp.protocol = 6; // TCP
+            dnsFwdTcp.dport = 53;
+            dnsFwdTcp.raddr = dnsFwd.raddr;
+            dnsFwdTcp.rport = dnsFwd.rport;
+            dnsFwdTcp.ruid = dnsFwd.ruid;
+            mapForward.put(forwardKey(dnsFwdTcp.protocol, dnsFwdTcp.dport), dnsFwdTcp);
+            Log.i(TAG, "DoH Forward " + dnsFwdTcp);
         }
 
         } finally {
@@ -2942,8 +2959,8 @@ public class ServiceSinkhole extends VpnService {
         }
 
         if (packet.allowed)
-            if (mapForward.containsKey(packet.dport)) {
-                Forward fwd = mapForward.get(packet.dport);
+            if (mapForward.containsKey(forwardKey(packet.protocol, packet.dport))) {
+                Forward fwd = mapForward.get(forwardKey(packet.protocol, packet.dport));
                 if (fwd.ruid == packet.uid) {
                     allowed = new Allowed();
                 } else {

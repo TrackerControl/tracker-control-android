@@ -1445,6 +1445,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         notifyForwardChanged();
     }
 
+    // Replaces all forwarding rules with the given list in a single
+    // transaction, so a reader never observes the old rules gone with the
+    // replacement not yet in place (used by import, where the rules are
+    // known valid before anything is deleted).
+    public void replaceForwards(List<Forward> forwards) {
+        lock.writeLock().lock();
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.beginTransactionNonExclusive();
+            try {
+                db.delete("forward", null, null);
+
+                for (Forward forward : forwards) {
+                    ContentValues cv = new ContentValues();
+                    cv.put("protocol", forward.protocol);
+                    cv.put("dport", forward.dport);
+                    cv.put("raddr", forward.raddr);
+                    cv.put("rport", forward.rport);
+                    cv.put("ruid", forward.ruid);
+
+                    if (db.insert("forward", null, cv) < 0)
+                        Log.e(TAG, "Insert forward failed");
+                }
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        notifyForwardChanged();
+    }
+
     public void deleteForward(int protocol, int dport) {
         lock.writeLock().lock();
         try {
