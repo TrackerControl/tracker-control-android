@@ -184,7 +184,11 @@ public class TrackersFragment extends Fragment {
     private void setupAnalysisObserver() {
         TrackerAnalysisManager manager = TrackerAnalysisManager.getInstance(requireContext());
 
-        if (manager.shouldStartAnalysis(mAppId))
+        // hasDeferredAnalysis covers the case shouldStartAnalysis cannot see: the
+        // install broadcast already enqueued battery-deferred work and marked the
+        // version attempted, so the gate says no while the screen would sit on a
+        // spinner until the battery recovers. Requesting again upgrades it.
+        if (manager.shouldStartAnalysis(mAppId) || manager.hasDeferredAnalysis(mAppId))
             manager.startAnalysis(mAppId);
 
         manager.getWorkInfoByPackageLiveData(mAppId).observe(getViewLifecycleOwner(), workInfoList -> {

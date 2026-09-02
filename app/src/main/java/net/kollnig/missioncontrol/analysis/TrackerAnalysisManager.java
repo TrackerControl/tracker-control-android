@@ -43,6 +43,10 @@ public class TrackerAnalysisManager {
     private static final String ATTEMPTED_VERSION_PREFIX = "attempted_versioncode_";
     private static final String RESULT_PREFIX = "trackers_";
     private static final String VERSION_PREFIX = "versioncode_";
+    // Set while a battery-deferred request is pending for a package, so a
+    // foreground screen can tell it must upgrade that request rather than let
+    // ExistingWorkPolicy.KEEP silently discard its own unconstrained one.
+    private static final String DEFERRED_PREFIX = "deferred_";
 
     private static TrackerAnalysisManager instance;
     private final Context mContext;
@@ -81,6 +85,18 @@ public class TrackerAnalysisManager {
     public void startAnalysis(String packageName) {
         // A foreground caller (see the 4-arg overload's javadoc) — never deferred.
         startAnalysis(packageName, -1, null, false);
+    }
+
+    /**
+     * True while a battery-deferred analysis is pending for the package, i.e. the
+     * install-broadcast path enqueued constrained work that has not run yet. A
+     * foreground screen must call {@link #startAnalysis(String)} in that case even
+     * when {@link #shouldStartAnalysis(String)} is false: the deferred enqueue
+     * already marked the version attempted, so the gate would otherwise leave the
+     * screen observing work that cannot run until the battery recovers.
+     */
+    public boolean hasDeferredAnalysis(String packageName) {
+        return getPrefs().getBoolean(DEFERRED_PREFIX + packageName, false);
     }
 
     /**
@@ -130,10 +146,23 @@ public class TrackerAnalysisManager {
 
         OneTimeWorkRequest workRequest = requestBuilder.build();
 
+        // A deferred request may already be sitting ENQUEUED behind its battery
+        // constraint. KEEP would discard a foreground request in favour of it and
+        // leave the screen watching work that cannot run, so a foreground caller
+        // replaces instead: the analysis is idempotent, and the user is waiting.
+        // The deferred path keeps KEEP so repeated install broadcasts don't restart
+        // work that is already running.
         workManager.enqueueUniqueWork(
                 getWorkName(packageName),
-                ExistingWorkPolicy.KEEP,
+                deferrable ? ExistingWorkPolicy.KEEP : ExistingWorkPolicy.REPLACE,
                 workRequest);
+
+        SharedPreferences.Editor editor = getPrefs().edit();
+        if (deferrable)
+            editor.putBoolean(DEFERRED_PREFIX + packageName, true);
+        else
+            editor.remove(DEFERRED_PREFIX + packageName);
+        editor.apply();
     }
 
     /**
@@ -171,6 +200,7 @@ public class TrackerAnalysisManager {
         getPrefs().edit()
                 .putInt(VERSION_PREFIX + packageName, versionCode)
                 .putString(RESULT_PREFIX + packageName, result)
+                .remove(DEFERRED_PREFIX + packageName)
                 .apply();
     }
 
@@ -192,6 +222,7 @@ public class TrackerAnalysisManager {
                 .remove(RESULT_PREFIX + packageName)
                 .remove(VERSION_PREFIX + packageName)
                 .remove(ATTEMPTED_VERSION_PREFIX + packageName)
+                .remove(DEFERRED_PREFIX + packageName)
                 .apply();
 
         // Analysing a package that no longer exists can only fail. Best-effort:

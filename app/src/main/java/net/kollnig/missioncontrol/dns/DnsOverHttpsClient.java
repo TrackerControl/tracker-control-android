@@ -192,6 +192,7 @@ public class DnsOverHttpsClient {
      * @return DNS wire format response bytes, or null on failure
      */
     private static final int MAX_RETRIES = 2;
+    private static final int HTTP_CLIENT_TIMEOUT = 408;
     private static final long RETRY_DELAY_MS = 200;
 
     @Nullable
@@ -242,7 +243,14 @@ public class DnsOverHttpsClient {
                 try (Response response = call.execute()) {
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
-                        if (response.code() < 500) return null; // Don't retry client errors
+                        // 408 is a transient upstream timeout, not a client error.
+                        // OkHttp used to follow it up itself, but that follow-up is
+                        // gated on retryOnConnectionFailure, which is now off, so the
+                        // explicit loop has to carry it. Screen-off policy is
+                        // unaffected: maxRetries is 0 there, so the loop still ends
+                        // after one attempt.
+                        if (response.code() < 500 && response.code() != HTTP_CLIENT_TIMEOUT)
+                            return null; // Don't retry client errors
                         reportFailedAttempt(onFailedAttempt);
                         continue;
                     }

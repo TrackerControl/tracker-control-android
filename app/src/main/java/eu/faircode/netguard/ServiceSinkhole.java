@@ -3280,6 +3280,9 @@ public class ServiceSinkhole extends VpnService {
                         net.kollnig.missioncontrol.dns.DnsProxyServer
                                 .getInstance(ServiceSinkhole.this)
                                 .onScreenStateChanged(last_interactive);
+
+                        if (last_interactive)
+                            recheckNetworkValidation();
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
                     }
@@ -5103,5 +5106,32 @@ public class ServiceSinkhole extends VpnService {
     /** True while a retry should still be withheld, i.e. less than backoffMs has elapsed since the last failure. */
     static boolean isValidationBackoffOpen(long lastFailureUptimeMs, long backoffMs, long nowUptimeMs) {
         return nowUptimeMs < lastFailureUptimeMs + backoffMs;
+    }
+
+    /**
+     * Re-runs the connectivity probe for the active network on screen-on.
+     *
+     * Nothing schedules work for a backoff window's expiry, and retries are held
+     * back while non-interactive, so a network whose probe failed would otherwise
+     * wait for another capabilities callback that Android may never emit — leaving
+     * isValidated() false indefinitely for a route that has since recovered.
+     * Screen-on is exactly when a retry is allowed again, so re-entering the
+     * callback here is the cheapest way to give the probe another chance.
+     */
+    private void recheckNetworkValidation() {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null)
+                return;
+            Network active = cm.getActiveNetwork();
+            if (active == null)
+                return;
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(active);
+            if (capabilities == null)
+                return;
+            networkMonitorCallback.onCapabilitiesChanged(active, capabilities);
+        } catch (Throwable ex) {
+            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+        }
     }
 }
