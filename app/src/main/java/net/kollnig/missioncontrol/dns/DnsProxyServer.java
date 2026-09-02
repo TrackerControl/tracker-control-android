@@ -57,6 +57,11 @@ public class DnsProxyServer {
     private DatagramSocket serverSocket;
     private ServerSocket tcpServerSocket;
     private ExecutorService executor;
+    // Tracked so stop() can wait for the listeners to actually exit, rather
+    // than just closing their sockets and returning immediately.
+    private Thread udpListenerThread;
+    private Thread tcpListenerThread;
+    private static final long LISTENER_JOIN_TIMEOUT_MS = 2000;
     private final AtomicInteger dohFailures = new AtomicInteger(0);
     // Trips after this many consecutive failed network attempts (not queries):
     // a single failing resolve burns up to three full timeout budgets, so a
@@ -119,7 +124,8 @@ public class DnsProxyServer {
             executor = Executors.newFixedThreadPool(16);
 
             // Start the main listener thread
-            new Thread(this::runServer, "DnsProxyServer").start();
+            udpListenerThread = new Thread(this::runServer, "DnsProxyServer");
+            udpListenerThread.start();
 
             // Sync the screen-state policy so a start mid-doze (e.g. a network
             // reload at night) doesn't inherit the screen-on behaviour.
@@ -133,7 +139,8 @@ public class DnsProxyServer {
                     tcpServerSocket = new ServerSocket();
                     tcpServerSocket.setReuseAddress(true);
                     tcpServerSocket.bind(new InetSocketAddress(DNS_PROXY_ADDRESS, DNS_PROXY_PORT));
-                    new Thread(this::runTcpServer, "DnsProxyServer-TCP").start();
+                    tcpListenerThread = new Thread(this::runTcpServer, "DnsProxyServer-TCP");
+                    tcpListenerThread.start();
                     Log.i(TAG, "DNS TCP proxy server started on " + DNS_PROXY_ADDRESS + ":" + DNS_PROXY_PORT);
                 } catch (IOException e) {
                     Log.e(TAG, "Failed to bind DNS TCP proxy: " + e.getMessage());
@@ -167,6 +174,16 @@ public class DnsProxyServer {
             }
         }
 
+        // Closing the sockets above unblocks each listener's receive()/accept()
+        // call, but does not guarantee it has actually returned yet. Wait for
+        // both before proceeding, otherwise an immediate start() can leave an
+        // old listener still observing the just-restored running == true
+        // alongside the new socket/executor fields.
+        joinListenerThread(udpListenerThread, "UDP");
+        udpListenerThread = null;
+        joinListenerThread(tcpListenerThread, "TCP");
+        tcpListenerThread = null;
+
         if (executor != null) {
             executor.shutdownNow();
         }
@@ -175,6 +192,26 @@ public class DnsProxyServer {
         DnsOverHttpsClient.resetInstance();
 
         Log.i(TAG, "DNS proxy server stopped");
+    }
+
+    /**
+     * Wait (bounded) for a listener thread to exit after its socket was
+     * closed. Logs rather than throwing if it does not stop in time, since
+     * stop() must still complete and release the lock.
+     */
+    private void joinListenerThread(@Nullable Thread thread, String label) {
+        if (thread == null)
+            return;
+
+        try {
+            thread.join(LISTENER_JOIN_TIMEOUT_MS);
+            if (thread.isAlive())
+                Log.w(TAG, label + " listener thread did not stop within "
+                        + LISTENER_JOIN_TIMEOUT_MS + "ms");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            Log.w(TAG, "Interrupted while waiting for " + label + " listener thread to stop");
+        }
     }
 
     /**
@@ -220,7 +257,7 @@ public class DnsProxyServer {
      * pool.
      */
     private void runServer() {
-        byte[] buffer = new byte[4096]; // Increased for EDNS0 support
+        byte[] buffer = new byte[65535]; // Max UDP payload, so a larger EDNS0 query is not silently truncated
 
         while (running.get()) {
             try {

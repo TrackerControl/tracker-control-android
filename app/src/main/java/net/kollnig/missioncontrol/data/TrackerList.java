@@ -51,6 +51,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import eu.faircode.netguard.DatabaseHelper;
+import eu.faircode.netguard.HostsBlocklistLogic;
 import eu.faircode.netguard.ServiceSinkhole;
 
 /**
@@ -184,8 +185,10 @@ public class TrackerList {
         // lowercase and qnames are stored as they appear on the wire. Without
         // normalising here, a query for Graph.Facebook.Com — whether a
         // deliberate evasion or a resolver using 0x20 case randomisation —
-        // would slip past detection and blocking.
-        hostname = hostname.toLowerCase(Locale.ROOT);
+        // would slip past detection and blocking. A trailing root-zone dot is
+        // stripped too, so a hosts entry written as "ads.example." still
+        // matches – the DNS parser never hands back a qname carrying one.
+        hostname = HostsBlocklistLogic.stripTrailingDot(hostname.toLowerCase(Locale.ROOT));
 
         TrackerSnapshot snapshot = trackerSnapshot;
         Map<String, Tracker> hostnameToTracker = snapshot.hostnameToTracker;
@@ -231,7 +234,7 @@ public class TrackerList {
      * never consults or mutates the hosts-file map.
      */
     public static Tracker findMinimalTracker(@NonNull String hostname) {
-        hostname = hostname.toLowerCase(Locale.ROOT);
+        hostname = HostsBlocklistLogic.stripTrailingDot(hostname.toLowerCase(Locale.ROOT));
         return lookupHost(trackerSnapshot.minimalHostnameToTracker, hostname);
     }
 

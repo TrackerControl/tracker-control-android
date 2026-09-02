@@ -6,13 +6,25 @@ import java.io.Reader;
 import java.util.Locale;
 import java.util.Map;
 
-final class HostsBlocklistLogic {
+public final class HostsBlocklistLogic {
     interface Logger {
         void log(String message);
     }
 
     private static final Logger NOOP_LOGGER = message -> {
     };
+
+    /**
+     * Strip a single trailing root-zone dot (as in {@code ads.example.}), so a
+     * hosts entry written in that fully-qualified form still matches the qname
+     * the DNS parser hands back, which never carries one. A bare "." is left
+     * alone rather than reduced to an empty string.
+     */
+    public static String stripTrailingDot(String hostname) {
+        int length = hostname.length();
+        return (length > 1 && hostname.charAt(length - 1) == '.')
+                ? hostname.substring(0, length - 1) : hostname;
+    }
 
     static final class State {
         private final Map<String, Boolean> mapHostsBlocked;
@@ -55,11 +67,17 @@ final class HostsBlocklistLogic {
                 line = line.trim();
                 if (line.length() > 0) {
                     String[] words = line.split("\\s+");
-                    if (words.length == 2) {
-                        count++;
-                        // Keyed lowercase to match TrackerList.findTracker(),
-                        // which normalises qnames before the hosts lookup.
-                        mapHostsBlocked.put(words[1].toLowerCase(Locale.ROOT), true);
+                    // hosts(5) allows several hostnames after the address on one
+                    // line, which merged blocklists rely on; only a bare address
+                    // with no hostname at all is invalid.
+                    if (words.length >= 2) {
+                        for (int i = 1; i < words.length; i++) {
+                            count++;
+                            // Keyed lowercase to match TrackerList.findTracker(),
+                            // which normalises qnames before the hosts lookup.
+                            mapHostsBlocked.put(
+                                    stripTrailingDot(words[i].toLowerCase(Locale.ROOT)), true);
+                        }
                     } else
                         logger.log("Invalid hosts file line: " + line);
                 }

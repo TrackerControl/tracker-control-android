@@ -22,7 +22,6 @@ package eu.faircode.netguard;
 
 import android.util.Log;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -222,15 +221,50 @@ public class VpnRoutes {
                 int prefix = parts.length > 1 ? Integer.parseInt(parts[1].trim()) : 32;
                 if (prefix < 0 || prefix > 32)
                     continue;
-                InetAddress addr = InetAddress.getByName(ip);
-                if (!(addr instanceof Inet4Address))
-                    continue;
-                allowedV4.add(new IPUtil.CIDR(ip, prefix));
+                // A hostile profile can put anything in AllowedIPs, so parse
+                // this by hand rather than calling InetAddress.getByName(ip):
+                // that resolves any entry that is not itself a numeric
+                // literal, causing a DNS lookup on the VPN setup thread for
+                // e.g. "AllowedIPs = attacker.example/32".
+                byte[] address = parseIPv4Literal(ip);
+                if (address == null)
+                    continue; // not a dotted-quad literal (e.g. a hostname)
+                allowedV4.add(new IPUtil.CIDR(InetAddress.getByAddress(address), prefix));
             } catch (Throwable ex) {
                 Log.w(TAG, "Ignoring malformed AllowedIPs entry '" + entry + "': " + ex);
             }
         }
         return allowedV4;
+    }
+
+    /**
+     * Parse a dotted-quad IPv4 literal without ever resolving a hostname –
+     * unlike {@link InetAddress#getByName(String)}, which falls back to a DNS
+     * lookup for anything that is not itself a numeric address. Four decimal
+     * octets (0-255), no leading '+' or embedded whitespace; anything else,
+     * including a hostname, returns null.
+     */
+    private static byte[] parseIPv4Literal(String ip) {
+        String[] octets = ip.split("\\.", -1);
+        if (octets.length != 4)
+            return null;
+
+        byte[] address = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            String octet = octets[i];
+            if (octet.isEmpty() || octet.length() > 3)
+                return null;
+            for (int j = 0; j < octet.length(); j++) {
+                char c = octet.charAt(j);
+                if (c < '0' || c > '9')
+                    return null;
+            }
+            int value = Integer.parseInt(octet);
+            if (value > 255)
+                return null;
+            address[i] = (byte) value;
+        }
+        return address;
     }
 
     private static long[] toInterval(String ip, int prefix) {

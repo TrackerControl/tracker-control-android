@@ -110,7 +110,8 @@ object WgConfigParser {
                 "Peer" -> when (key) {
                     "publickey" -> peerPub = requireBase64Key(value)
                     "presharedkey" -> peerPsk = requireBase64Key(value)
-                    "allowedips" -> peerAllowed += value.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                    "allowedips" -> peerAllowed += value.split(',').map { it.trim() }
+                        .filter { it.isNotEmpty() }.map { requireAllowedIp(it) }
                     "endpoint" -> peerEndpoint = value
                     "persistentkeepalive" -> peerPersistentKeepalive = parseKeepalive(value)
                     else -> throw WgConfigException("unknown Peer key: $key")
@@ -147,6 +148,53 @@ object WgConfigParser {
         if (value !in 0..65535)
             throw WgConfigException("PersistentKeepalive out of range: $s")
         return value
+    }
+
+    private val IPV4_OCTET = "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])"
+    private val IPV4_REGEX = Regex("^$IPV4_OCTET(\\.$IPV4_OCTET){3}$")
+
+    // Standard eight-branch IPv6 literal regex (no zone id, no embedded IPv4
+    // tail – neither appears in a WireGuard AllowedIPs entry).
+    private val IPV6_REGEX = Regex(
+        "^(" +
+            "([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}" +
+            "|([0-9A-Fa-f]{1,4}:){1,7}:" +
+            "|([0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}" +
+            "|([0-9A-Fa-f]{1,4}:){1,5}(:[0-9A-Fa-f]{1,4}){1,2}" +
+            "|([0-9A-Fa-f]{1,4}:){1,4}(:[0-9A-Fa-f]{1,4}){1,3}" +
+            "|([0-9A-Fa-f]{1,4}:){1,3}(:[0-9A-Fa-f]{1,4}){1,4}" +
+            "|([0-9A-Fa-f]{1,4}:){1,2}(:[0-9A-Fa-f]{1,4}){1,5}" +
+            "|[0-9A-Fa-f]{1,4}:((:[0-9A-Fa-f]{1,4}){1,6})" +
+            "|:((:[0-9A-Fa-f]{1,4}){1,7}|:)" +
+            ")$"
+    )
+
+    /**
+     * Reject an AllowedIPs entry unless it is a numeric IPv4 or IPv6 address
+     * with an optional "/prefix". The Rust bridge (wgbridge-rs's
+     * parse_uapi_config) already requires this – allowed_ip is parsed as an
+     * IpNetwork, never resolved – so a hostname here would only surface as a
+     * native startup failure; rejecting it here instead gives a clear error
+     * at config-parse time, before any of it reaches the tunnel.
+     */
+    private fun requireAllowedIp(entry: String): String {
+        val slash = entry.indexOf('/')
+        val address = if (slash >= 0) entry.substring(0, slash) else entry
+        val prefix = if (slash >= 0) entry.substring(slash + 1) else null
+
+        val isV4 = IPV4_REGEX.matches(address)
+        if (!isV4 && !IPV6_REGEX.matches(address))
+            throw WgConfigException("invalid AllowedIPs entry: $entry")
+
+        if (prefix != null) {
+            val prefixLen = prefix.toIntOrNull()
+                ?: throw WgConfigException("invalid AllowedIPs prefix: $entry")
+            val maxPrefix = if (isV4) 32 else 128
+            if (prefixLen !in 0..maxPrefix)
+                throw WgConfigException("AllowedIPs prefix out of range: $entry")
+        }
+
+        return entry
     }
 
     internal fun base64ToHex(s: String): String {

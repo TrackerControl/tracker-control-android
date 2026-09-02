@@ -209,6 +209,21 @@ public class VpnRoutesTest {
     }
 
     @Test
+    public void hostnameAllowedIpsEntryIsIgnoredButNumericEntriesStillRoute() throws Exception {
+        // A hostile profile could set AllowedIPs to a hostname to trigger a
+        // resolver lookup on the VPN setup thread; it must instead be skipped
+        // exactly as if it were not present at all.
+        List<IPUtil.CIDR> withHostname = VpnRoutes.getRoutes(
+                Arrays.asList("attacker.example/32", "192.168.60.0/24"));
+        List<IPUtil.CIDR> numericOnly = VpnRoutes.getRoutes(
+                Collections.singletonList("192.168.60.0/24"));
+
+        assertEquals(numericOnly.size(), withHostname.size());
+        assertTrue(isRouted(withHostname, "192.168.60.5"));
+        assertFalse(isRouted(withHostname, "192.168.61.5"));
+    }
+
+    @Test
     public void allowedIpsNeverReExposeReservedRanges() throws Exception {
         // A profile that lists loopback/link-local must not route them.
         List<IPUtil.CIDR> routes = VpnRoutes.getRoutes(
