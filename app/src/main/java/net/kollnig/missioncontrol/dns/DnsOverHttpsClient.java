@@ -87,7 +87,13 @@ public class DnsOverHttpsClient {
                 .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
                 .cache(getResponseCache(context))
-                .retryOnConnectionFailure(true)
+                // OkHttp's own silent retry-on-a-new-connection is independent of
+                // screen state, so a query that fails while off would still cost
+                // two connection attempts where the screen-off policy below (see
+                // maxRetries in resolve()) intends exactly one. The explicit retry
+                // loop in resolve() is the one that knows about screen state, so
+                // it alone should decide whether a failed attempt is retried.
+                .retryOnConnectionFailure(false)
                 // An endpoint given as a host name can still be a resolver on
                 // the user's own network, which Android 17 blocks us from
                 // reaching without ACCESS_LOCAL_NETWORK. OkHttp resolves it

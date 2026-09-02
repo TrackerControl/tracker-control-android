@@ -25,6 +25,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
+import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
@@ -78,14 +79,31 @@ public class TrackerAnalysisManager {
      * @param packageName The package to analyze
      */
     public void startAnalysis(String packageName) {
-        startAnalysis(packageName, -1, null);
+        // A foreground caller (see the 4-arg overload's javadoc) — never deferred.
+        startAnalysis(packageName, -1, null, false);
     }
 
     /**
      * Starts an analysis and optionally updates an install notification with the
      * result when the worker finishes.
+     * Duplicate requests for the same package are ignored while one is pending.
+     * Observe progress via {@link #getWorkInfoByPackageLiveData(String)}.
+     *
+     * @param packageName     The package to analyze
+     * @param notificationUid Notification ID to update on completion, or -1 for none
+     * @param appName         App label for the notification, or null to omit it
+     * @param deferrable      When true, the work is constrained to run only while
+     *                        the battery is not low ({@code setRequiresBatteryNotLow}).
+     *                        Set this only for a background-triggered analysis with
+     *                        no user waiting on the result — currently just the
+     *                        install-broadcast path in {@code ServiceSinkhole}.
+     *                        Never set it for a call made while a user-visible
+     *                        screen is showing a progress spinner for this work
+     *                        (see {@link #getWorkInfoByPackageLiveData(String)}):
+     *                        a deferred analysis would then appear to hang
+     *                        indefinitely whenever the battery is low.
      */
-    public void startAnalysis(String packageName, int notificationUid, @Nullable String appName) {
+    public void startAnalysis(String packageName, int notificationUid, @Nullable String appName, boolean deferrable) {
         markAnalysisAttempted(packageName);
 
         Data.Builder dataBuilder = new Data.Builder()
@@ -96,10 +114,21 @@ public class TrackerAnalysisManager {
 
         Data inputData = dataBuilder.build();
 
-        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
+        OneTimeWorkRequest.Builder requestBuilder = new OneTimeWorkRequest.Builder(TrackerAnalysisWorker.class)
                 .setInputData(inputData)
-                .addTag(packageName)
-                .build();
+                .addTag(packageName);
+
+        if (deferrable) {
+            // Background-only path: the APK unzip + dexlib2 walk is the app's most
+            // CPU-intensive work, so hold it back at low battery. Never applied to
+            // a foreground caller (see javadoc above) — that would leave a visible
+            // spinner stalled with no explanation.
+            requestBuilder.setConstraints(new Constraints.Builder()
+                    .setRequiresBatteryNotLow(true)
+                    .build());
+        }
+
+        OneTimeWorkRequest workRequest = requestBuilder.build();
 
         workManager.enqueueUniqueWork(
                 getWorkName(packageName),
