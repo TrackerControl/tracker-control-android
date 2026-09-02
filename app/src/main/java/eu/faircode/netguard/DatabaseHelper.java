@@ -484,7 +484,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         DB_NAME + " upgraded to " + oldVersion + " but required " + DB_VERSION);
 
         } catch (Throwable ex) {
-            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+            // Rethrow rather than swallow: SQLiteOpenHelper wraps onUpgrade and its own
+            // version write in an outer transaction, so propagating the failure rolls
+            // back the version as well and the migration runs again on the next open.
+            // Returning normally would leave the old schema marked as the new version.
+            Log.e(TAG, DB_NAME + " upgrade failed at version " + oldVersion + ": "
+                    + ex + "\n" + Log.getStackTraceString(ex));
+            throw ex;
         } finally {
             db.endTransaction();
         }
