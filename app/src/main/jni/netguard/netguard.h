@@ -84,10 +84,9 @@
 
 #define UID_MAX_AGE 30000 // milliseconds
 
-// Upper bound on the number of /proc/net rows cached by get_uid_sub(). Kept
-// modest because a full cache is scanned linearly (twice, worst case) per
-// uncached lookup – fine at this size, but would need a proper index rather
-// than a bigger cap if this ever needed to grow much further.
+// Upper bound on the number of /proc/net rows cached by get_uid_sub(), which
+// allocates the whole table once. Kept modest because a cache hit is a linear
+// scan – fine at this size, but a much bigger cap would want a proper index.
 #define UID_CACHE_MAX 1024
 
 #define SOCKS5_NONE 1
