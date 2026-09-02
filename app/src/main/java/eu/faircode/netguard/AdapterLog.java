@@ -48,6 +48,7 @@ import net.kollnig.missioncontrol.BuildConfig;
 import net.kollnig.missioncontrol.R;
 import net.kollnig.missioncontrol.data.TrackerList;
 
+import java.lang.ref.WeakReference;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -58,6 +59,7 @@ public class AdapterLog extends CursorAdapter {
 
     private boolean resolve;
     private boolean organization;
+    private int colId;
     private int colTime;
     private int colVersion;
     private int colProtocol;
@@ -89,6 +91,7 @@ public class AdapterLog extends CursorAdapter {
         super(context, cursor, 0);
         this.resolve = resolve;
         this.organization = organization;
+        colId = cursor.getColumnIndex("_id");
         colTime = cursor.getColumnIndex("time");
         colVersion = cursor.getColumnIndex("version");
         colProtocol = cursor.getColumnIndex("protocol");
@@ -149,6 +152,9 @@ public class AdapterLog extends CursorAdapter {
     @Override
     public void bindView(final View view, final Context context, final Cursor cursor) {
         // Get values
+        // Stable row identity: recycled views must not accept a lookup result
+        // meant for whichever row they showed when the task was started.
+        final Long rowId = cursor.getLong(colId);
         long time = cursor.getLong(colTime);
         int version = (cursor.isNull(colVersion) ? -1 : cursor.getInt(colVersion));
         int protocol = (cursor.isNull(colProtocol) ? -1 : cursor.getInt(colProtocol));
@@ -288,10 +294,16 @@ public class AdapterLog extends CursorAdapter {
         if (!we && resolve && !isKnownAddress(daddr))
             if (dname == null) {
                 tvDaddr.setText(daddr);
+                tvDaddr.setTag(rowId);
                 new AsyncTask<String, Object, String>() {
+                    // Held weakly so a destroyed activity is not kept alive by this task.
+                    private final WeakReference<TextView> viewRef = new WeakReference<>(tvDaddr);
+
                     @Override
                     protected void onPreExecute() {
-                        ViewCompat.setHasTransientState(tvDaddr, true);
+                        TextView tv = viewRef.get();
+                        if (tv != null)
+                            ViewCompat.setHasTransientState(tv, true);
                     }
 
                     @Override
@@ -305,14 +317,22 @@ public class AdapterLog extends CursorAdapter {
 
                     @Override
                     protected void onPostExecute(String name) {
-                        tvDaddr.setText(">" + name);
+                        TextView tv = viewRef.get();
+                        if (tv == null)
+                            return;
 
-                        if (TrackerList.findTracker(name) != null)
-                            tvDaddr.setTypeface(null, Typeface.BOLD);
-                        else
-                            tvDaddr.setTypeface(null, Typeface.NORMAL);
+                        if (rowId.equals(tv.getTag())) {
+                            tv.setText(">" + name);
 
-                        ViewCompat.setHasTransientState(tvDaddr, false);
+                            if (TrackerList.findTracker(name) != null)
+                                tv.setTypeface(null, Typeface.BOLD);
+                            else
+                                tv.setTypeface(null, Typeface.NORMAL);
+                        }
+                        // Either applied above, or this view was rebound to another row
+                        // that never got the chance to clear the flag itself – clear it
+                        // unconditionally so the transient-state bookkeeping stays balanced.
+                        ViewCompat.setHasTransientState(tv, false);
                     }
                 }.execute(daddr);
             } else {
@@ -329,11 +349,17 @@ public class AdapterLog extends CursorAdapter {
         // Show organization
         tvOrganization.setVisibility(View.GONE);
         if (!we && organization) {
-            if (!isKnownAddress(daddr))
+            if (!isKnownAddress(daddr)) {
+                tvOrganization.setTag(rowId);
                 new AsyncTask<String, Object, String>() {
+                    // Held weakly so a destroyed activity is not kept alive by this task.
+                    private final WeakReference<TextView> viewRef = new WeakReference<>(tvOrganization);
+
                     @Override
                     protected void onPreExecute() {
-                        ViewCompat.setHasTransientState(tvOrganization, true);
+                        TextView tv = viewRef.get();
+                        if (tv != null)
+                            ViewCompat.setHasTransientState(tv, true);
                     }
 
                     @Override
@@ -348,13 +374,21 @@ public class AdapterLog extends CursorAdapter {
 
                     @Override
                     protected void onPostExecute(String organization) {
-                        if (organization != null) {
-                            tvOrganization.setText(organization);
-                            tvOrganization.setVisibility(View.VISIBLE);
+                        TextView tv = viewRef.get();
+                        if (tv == null)
+                            return;
+
+                        if (organization != null && rowId.equals(tv.getTag())) {
+                            tv.setText(organization);
+                            tv.setVisibility(View.VISIBLE);
                         }
-                        ViewCompat.setHasTransientState(tvOrganization, false);
+                        // Either applied above, or this view was rebound to another row
+                        // that never got the chance to clear the flag itself – clear it
+                        // unconditionally so the transient-state bookkeeping stays balanced.
+                        ViewCompat.setHasTransientState(tv, false);
                     }
                 }.execute(daddr);
+            }
         }
 
         // Show extra data, but not for TLS (because we retrieve the SNI from the data field)

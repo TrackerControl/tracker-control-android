@@ -86,6 +86,12 @@ public class TrackersFragment extends Fragment {
     private boolean running = false;
     /** True while the async tracker query runs; drives the loading spinner. */
     private boolean refreshing = false;
+    /**
+     * Bumped whenever the view is (re)created or torn down, so a tracker query
+     * started against an earlier view cannot land on a fragment instance that
+     * has since been recreated (e.g. by rotation).
+     */
+    private int viewGeneration;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -119,6 +125,7 @@ public class TrackersFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_trackers, container, false);
 
         running = true;
+        viewGeneration++;
 
         Context c = v.getContext();
         trackerList = TrackerList.getInstance(c);
@@ -229,6 +236,7 @@ public class TrackersFragment extends Fragment {
      */
     public void updateTrackerList() {
         refreshing = true;
+        final int generation = viewGeneration;
         render();
         new AsyncTask<Object, Object, List<TrackerCategory>>() {
             @Override
@@ -243,6 +251,12 @@ public class TrackersFragment extends Fragment {
 
             @Override
             protected void onPostExecute(List<TrackerCategory> result) {
+                // The view was recreated or torn down since this query started
+                // (e.g. by rotation); a newer query owns the refresh indicator
+                // and the current view now, so leave both alone.
+                if (generation != viewGeneration)
+                    return;
+
                 refreshing = false;
                 if (running && screenController != null) {
                     categories = result == null ? new ArrayList<>() : new ArrayList<>(result);
@@ -675,6 +689,7 @@ public class TrackersFragment extends Fragment {
         expandedSections.clear();
         analysisWork = null;
         trackersByKey.clear();
+        viewGeneration++;
 
         super.onDestroyView();
     }
