@@ -675,6 +675,7 @@ public class Util {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestProperty("Accept-Encoding", "gzip");
             connection.setRequestMethod("GET");
+            connection.setConnectTimeout(15 * 1000);
             connection.setReadTimeout(15 * 1000);
             connection.connect();
             if ("gzip".equals(connection.getContentEncoding()))

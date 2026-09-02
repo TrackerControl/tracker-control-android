@@ -62,6 +62,11 @@ public class DnsOverHttpsClient {
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 5000;
     private static final int WRITE_TIMEOUT_MS = 5000;
+    // Whole-call ceiling (connect + write + read + a margin for retries within
+    // OkHttp itself), so an endpoint that dribbles bytes cannot hold a worker
+    // forever. Must stay at or above the sum of the three per-phase timeouts
+    // above, or it would fire before a healthy call has a chance to finish.
+    private static final int CALL_TIMEOUT_MS = 20000;
     private static final long HTTP_CACHE_MAX_BYTES = 2L * 1024L * 1024L;
     private static final int MAX_GET_URL_LENGTH = 2048;
     private static final int MAX_DOH_RESPONSE_BYTES = 65535;
@@ -85,6 +90,7 @@ public class DnsOverHttpsClient {
                 .connectTimeout(CONNECT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .readTimeout(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .writeTimeout(WRITE_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .callTimeout(CALL_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .connectionPool(new ConnectionPool(2, 30, TimeUnit.SECONDS))
                 .cache(getResponseCache(context))
                 // OkHttp's own silent retry-on-a-new-connection is independent of

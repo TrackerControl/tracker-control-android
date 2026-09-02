@@ -43,6 +43,45 @@ public class HostsBlocklistLogicTest {
         assertEquals(3, hosts.size());
     }
 
+    @Test
+    public void parseAcceptsMultipleHostnamesPerLine() throws Exception {
+        Map<String, Boolean> hosts = new HashMap<>();
+        HostsBlocklistLogic.State state = new HostsBlocklistLogic.State(hosts, 0L);
+
+        assertTrue(state.load(new StringReader(
+                "0.0.0.0 single.example\n"
+                        + "0.0.0.0 first.example second.example third.example\n"), 1L));
+
+        // The single-hostname and multi-hostname lines, plus the always-added
+        // test entry.
+        assertEquals(5, hosts.size());
+        assertTrue(hosts.containsKey("single.example"));
+        assertTrue(hosts.containsKey("first.example"));
+        assertTrue(hosts.containsKey("second.example"));
+        assertTrue(hosts.containsKey("third.example"));
+        assertTrue(hosts.containsKey("test.netguard.me"));
+    }
+
+    @Test
+    public void parseRejectsLineWithNoHostname() throws Exception {
+        Map<String, Boolean> hosts = new HashMap<>();
+        HostsBlocklistLogic.State state = new HostsBlocklistLogic.State(hosts, 0L);
+
+        assertTrue(state.load(new StringReader("0.0.0.0\n"), 1L));
+
+        // Only the always-added test entry, since the address-only line has no
+        // hostname to key on.
+        assertEquals(1, hosts.size());
+        assertTrue(hosts.containsKey("test.netguard.me"));
+    }
+
+    @Test
+    public void stripTrailingDotNormalisesFullyQualifiedHostnames() {
+        assertEquals("ads.example", HostsBlocklistLogic.stripTrailingDot("ads.example."));
+        assertEquals("ads.example", HostsBlocklistLogic.stripTrailingDot("ads.example"));
+        assertEquals(".", HostsBlocklistLogic.stripTrailingDot("."));
+    }
+
     private static final class FailingReader extends Reader {
         private final String firstLine = "1.1.1.1 first.example\n";
         private int position;

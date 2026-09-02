@@ -2424,9 +2424,32 @@ public class ServiceSinkhole extends VpnService {
      */
     private String resolveDirectDnsTarget() {
         List<String> sysDns = Util.getDefaultDNS(ServiceSinkhole.this);
-        for (String dns : sysDns)
-            if (!TextUtils.isEmpty(dns))
+
+        // Mirror the "ip6" preference gate that getDns()/collectDns() apply to
+        // the normal resolver list: only accept an IPv6 resolver when IPv6 is
+        // enabled at all. Unlike getDns(), no separate IPv6-only fallback pass
+        // is needed here – the first usable candidate, of either family, wins.
+        boolean allowIp6 = PreferenceManager.getDefaultSharedPreferences(ServiceSinkhole.this)
+                .getBoolean("ip6", true);
+
+        for (String dns : sysDns) {
+            if (TextUtils.isEmpty(dns) || !Util.isNumericAddress(dns))
+                continue;
+
+            // getDefaultDNS() already stripped any interface scope, so a
+            // link-local candidate here can never be reached from the tun –
+            // avoid handing it to a direct app. A numeric string never
+            // triggers a resolver lookup, so getByName() is safe to call.
+            InetAddress address;
+            try {
+                address = InetAddress.getByName(dns);
+            } catch (Throwable ex) {
+                continue;
+            }
+
+            if (isUsableDns(address, allowIp6))
                 return dns;
+        }
 
         Log.w(TAG, "No system DNS for direct apps; keeping their DNS in the tunnel");
         return null;

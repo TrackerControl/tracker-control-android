@@ -110,7 +110,8 @@ object WgConfigParser {
                 "Peer" -> when (key) {
                     "publickey" -> peerPub = requireBase64Key(value)
                     "presharedkey" -> peerPsk = requireBase64Key(value)
-                    "allowedips" -> peerAllowed += value.split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                    "allowedips" -> peerAllowed += value.split(',').map { it.trim() }
+                        .filter { it.isNotEmpty() }.map { requireAllowedIp(it) }
                     "endpoint" -> peerEndpoint = value
                     "persistentkeepalive" -> peerPersistentKeepalive = parseKeepalive(value)
                     else -> throw WgConfigException("unknown Peer key: $key")
@@ -147,6 +148,78 @@ object WgConfigParser {
         if (value !in 0..65535)
             throw WgConfigException("PersistentKeepalive out of range: $s")
         return value
+    }
+
+    private val IPV4_OCTET = "(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])"
+    private val IPV4_REGEX = Regex("^$IPV4_OCTET(\\.$IPV4_OCTET){3}$")
+
+    private val IPV6_GROUP = Regex("^[0-9A-Fa-f]{1,4}$")
+
+    /**
+     * Numeric IPv6 literal check that never touches a resolver: up to eight
+     * hex groups, at most one "::" compression, and optionally an IPv4
+     * dotted-quad in place of the last two groups (as in ::ffff:192.0.2.0),
+     * which the Rust IpNetwork parser also accepts. Zone ids are not part
+     * of an AllowedIPs entry and are rejected.
+     */
+    internal fun isIpv6Literal(literal: String): Boolean {
+        if (literal.count { it == ':' } < 2) return false
+        var text = literal
+        var groupsNeeded = 8
+        val lastColon = text.lastIndexOf(':')
+        if (text.indexOf('.', lastColon) >= 0) {
+            if (!IPV4_REGEX.matches(text.substring(lastColon + 1))) return false
+            text = text.substring(0, lastColon + 1)
+            groupsNeeded = 6
+            // A trailing "::" before the IPv4 tail leaves text ending in "::";
+            // a plain group leaves it ending in a single ":" that must be
+            // dropped before splitting.
+            if (!text.endsWith("::")) text = text.dropLast(1)
+        }
+        val compressed = text.indexOf("::")
+        if (compressed >= 0 && text.indexOf("::", compressed + 1) >= 0) return false
+        val groups: List<String>
+        if (compressed >= 0) {
+            val head = text.substring(0, compressed)
+            val tail = text.substring(compressed + 2)
+            if (head.startsWith(":") || head.endsWith(":")) return false
+            if (tail.startsWith(":") || tail.endsWith(":")) return false
+            groups = (if (head.isEmpty()) emptyList() else head.split(':')) +
+                (if (tail.isEmpty()) emptyList() else tail.split(':'))
+            if (groups.size >= groupsNeeded) return false
+        } else {
+            groups = text.split(':')
+            if (groups.size != groupsNeeded) return false
+        }
+        return groups.all { IPV6_GROUP.matches(it) }
+    }
+
+    /**
+     * Reject an AllowedIPs entry unless it is a numeric IPv4 or IPv6 address
+     * with an optional "/prefix". The Rust bridge (wgbridge-rs's
+     * parse_uapi_config) already requires this – allowed_ip is parsed as an
+     * IpNetwork, never resolved – so a hostname here would only surface as a
+     * native startup failure; rejecting it here instead gives a clear error
+     * at config-parse time, before any of it reaches the tunnel.
+     */
+    private fun requireAllowedIp(entry: String): String {
+        val slash = entry.indexOf('/')
+        val address = if (slash >= 0) entry.substring(0, slash) else entry
+        val prefix = if (slash >= 0) entry.substring(slash + 1) else null
+
+        val isV4 = IPV4_REGEX.matches(address)
+        if (!isV4 && !isIpv6Literal(address))
+            throw WgConfigException("invalid AllowedIPs entry: $entry")
+
+        if (prefix != null) {
+            val prefixLen = prefix.toIntOrNull()
+                ?: throw WgConfigException("invalid AllowedIPs prefix: $entry")
+            val maxPrefix = if (isV4) 32 else 128
+            if (prefixLen !in 0..maxPrefix)
+                throw WgConfigException("AllowedIPs prefix out of range: $entry")
+        }
+
+        return entry
     }
 
     internal fun base64ToHex(s: String): String {
