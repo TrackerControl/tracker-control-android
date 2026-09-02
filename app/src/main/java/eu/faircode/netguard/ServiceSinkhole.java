@@ -3714,9 +3714,7 @@ public class ServiceSinkhole extends VpnService {
                 NotificationManagerCompat.from(c).notify(uid, builder.build());
             } else {
                 // Schedule analysis for later; the worker updates this notification when done.
-                // Background/install-triggered, no user waiting on a screen, so it is
-                // safe (and battery-friendlier) to defer at low battery.
-                manager.startAnalysis(packageName, uid, appName, true);
+                manager.startAnalysis(packageName, uid, appName);
             }
         } catch (Exception e) {
             e.printStackTrace();
