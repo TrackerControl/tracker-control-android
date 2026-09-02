@@ -216,30 +216,34 @@ public class VpnKeyRotationManager {
         for (int attempt = 0; attempt < MULLVAD_PUBKEY_RETRY_LIMIT; attempt++) {
             String newPrivate = dependencies.keys.generatePrivateKey();
             String newPublic = dependencies.keys.publicKey(newPrivate);
+            // Persist before the network call, not just on IOException: a
+            // process death after Mullvad accepts the key but before this
+            // returns (or a non-JSON 2xx body, which throws JSONException
+            // rather than IOException) would otherwise leave the new key
+            // live on the device with no local record of it.
+            storePending(prefs, PROVIDER_MULLVAD, newPrivate, newPublic);
             try {
                 dependencies.mullvad.rotateDevicePubkey(account, deviceId, newPublic);
             } catch (MullvadProfileGenerator.ApiRejectedException ex) {
-                if (!ex.isPublicKeyInUse())
+                if (!ex.isPublicKeyInUse()) {
+                    // The provider definitely did not apply this key.
+                    clearPending(prefs, PROVIDER_MULLVAD);
                     throw ex;
+                }
                 if (dependencies.mullvad.deviceHasPubkey(account, deviceId, newPublic)) {
                     commitProviderKey(context, manager, dependencies, PROVIDER_MULLVAD,
                             account, newPrivate, null, currentPrivate, currentPublic,
                             newPublic, deviceId);
                     return "Mullvad rotated";
                 }
+                // Rejected and not applied under this key either – nothing
+                // pending for this attempt.
+                clearPending(prefs, PROVIDER_MULLVAD);
                 lastRejected = ex;
                 continue;
-            } catch (IOException ex) {
-                storePending(prefs, PROVIDER_MULLVAD, newPrivate, newPublic);
-                throw ex;
             }
-            try {
-                if (!dependencies.mullvad.deviceHasPubkey(account, deviceId, newPublic))
-                    throw new IOException("Mullvad key verification failed");
-            } catch (IOException ex) {
-                storePending(prefs, PROVIDER_MULLVAD, newPrivate, newPublic);
-                throw ex;
-            }
+            if (!dependencies.mullvad.deviceHasPubkey(account, deviceId, newPublic))
+                throw new IOException("Mullvad key verification failed");
 
             commitProviderKey(context, manager, dependencies, PROVIDER_MULLVAD, account,
                     newPrivate, null, currentPrivate, currentPublic, newPublic, deviceId);
@@ -277,7 +281,12 @@ public class VpnKeyRotationManager {
                 next = dependencies.ivpn.rotateSessionKey(session, pendingPrivate,
                         pendingPublic, pendingPublic);
             }
-            manager.saveIvpnSession(account, next);
+            // The pending key belongs to whichever account was active when it
+            // was stored; if that account changed underneath this run, the
+            // session below is not the newly active account's to keep.
+            if (!manager.saveIvpnSessionIfAccount(account, next))
+                return commitIvpnForInactiveAccount(prefs, manager, account, pendingPrivate,
+                        next);
             commitProviderKey(context, manager, dependencies, PROVIDER_IVPN, account,
                     pendingPrivate, addressWithCidr(next.address), currentPrivate,
                     currentPublic, pendingPublic, "");
@@ -287,22 +296,46 @@ public class VpnKeyRotationManager {
 
         String newPrivate = dependencies.keys.generatePrivateKey();
         String newPublic = dependencies.keys.publicKey(newPrivate);
+        // Persist before the network call, not just on IOException: a process
+        // death after IVPN accepts the key but before this returns would
+        // otherwise leave the new key live server-side with no local record.
+        storePending(prefs, PROVIDER_IVPN, newPrivate, newPublic);
         WgProfileManager.IvpnSession next;
         try {
             next = dependencies.ivpn.rotateSessionKey(session, newPrivate, newPublic,
                     currentPublic);
         } catch (IvpnProfileGenerator.ApiRejectedException ex) {
-            throw ex;
-        } catch (IOException ex) {
-            storePending(prefs, PROVIDER_IVPN, newPrivate, newPublic);
+            // The provider definitely did not apply this key.
+            clearPending(prefs, PROVIDER_IVPN);
             throw ex;
         }
 
-        manager.saveIvpnSession(account, next);
+        if (!manager.saveIvpnSessionIfAccount(account, next))
+            return commitIvpnForInactiveAccount(prefs, manager, account, newPrivate, next);
         commitProviderKey(context, manager, dependencies, PROVIDER_IVPN, account,
                 newPrivate, addressWithCidr(next.address), currentPrivate, currentPublic,
                 newPublic, "");
+        clearPending(prefs, PROVIDER_IVPN);
         return "IVPN rotated";
+    }
+
+    /**
+     * The user switched IVPN accounts while the provider call was in flight,
+     * and the provider has already replaced the old account's key. Its saved
+     * profiles must follow that key or they can never handshake again, but
+     * the global session store now belongs to the new account and is left
+     * alone; no reload or handshake check is run for an account that is not
+     * active.
+     */
+    private static String commitIvpnForInactiveAccount(SharedPreferences prefs,
+                                                       WgProfileManager manager,
+                                                       String account, String newPrivate,
+                                                       WgProfileManager.IvpnSession next)
+            throws Exception {
+        manager.rewriteProviderInterface(PROVIDER_IVPN, account, newPrivate,
+                addressWithCidr(next.address));
+        clearPending(prefs, PROVIDER_IVPN);
+        return "IVPN rotated: account changed, session not restored";
     }
 
     private static boolean resolveMullvadPending(Context context, WgProfileManager manager,
@@ -379,20 +412,28 @@ public class VpnKeyRotationManager {
             WgProfileManager.IvpnSession rollback =
                     dependencies.ivpn.rotateSessionKey(session, previousPrivate,
                             previousPublic, connectedPublic);
-            manager.saveIvpnSession(account, rollback);
-            manager.rewriteProviderInterface(provider, account, previousPrivate,
-                    addressWithCidr(rollback.address));
+            // If the account changed underneath this rollback, the session
+            // above belongs to an account no longer in use – do not restore
+            // its credentials over whichever account is now active.
+            if (manager.saveIvpnSessionIfAccount(account, rollback))
+                manager.rewriteProviderInterface(provider, account, previousPrivate,
+                        addressWithCidr(rollback.address));
         }
         dependencies.runtime.reload("vpn provider key rotation rollback", context);
         throw new RollbackException(label(provider) + " rolled back: missing handshake");
     }
 
     private static void storePending(SharedPreferences prefs, String provider,
-                                     String privateKey, String publicKey) {
-        prefs.edit()
+                                     String privateKey, String publicKey) throws IOException {
+        // Synchronous on purpose: this runs before the provider call, and an
+        // apply() that has not reached disk when the process dies leaves
+        // exactly the window it exists to close.
+        boolean written = prefs.edit()
                 .putString(key(provider, "pending_privkey"), privateKey)
                 .putString(key(provider, "pending_pubkey"), publicKey)
-                .apply();
+                .commit();
+        if (!written)
+            throw new IOException("could not persist pending " + provider + " key");
     }
 
     private static boolean hasPendingKey(SharedPreferences prefs, String provider) {

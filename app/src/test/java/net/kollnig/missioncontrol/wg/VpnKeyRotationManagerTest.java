@@ -2,6 +2,7 @@ package net.kollnig.missioncontrol.wg;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -143,6 +144,27 @@ public class VpnKeyRotationManagerTest {
     }
 
     @Test
+    public void mullvadNonIoFailureDuringRotateStillPersistsPendingKey()
+            throws Exception {
+        // A non-JSON 2xx body throws JSONException rather than IOException
+        // from the API layer; RuntimeException stands in for it here to
+        // confirm the pending key is stored before the call, not only in an
+        // IOException catch.
+        saveMullvadProfile(OLD_PRIVATE);
+        manager.saveMullvadDeviceId(DEVICE_ID);
+        mullvad.failRotateWithRuntimeException = true;
+        keys.queueGenerated(NEW_PRIVATE);
+
+        String result = rotate("mullvad", true);
+
+        assertTrue(result.startsWith("Mullvad failed:"));
+        assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + OLD_PRIVATE));
+        assertEquals(NEW_PRIVATE, prefs.getString("mullvad_pending_privkey", ""));
+        assertEquals(NEW_PUBLIC, prefs.getString("mullvad_pending_pubkey", ""));
+        assertEquals(0L, prefs.getLong("mullvad_key_rotated_at", 0L));
+    }
+
+    @Test
     public void mullvadPendingKeyIsCommittedWhenServerAlreadyHasIt()
             throws Exception {
         saveMullvadProfile(OLD_PRIVATE);
@@ -224,6 +246,25 @@ public class VpnKeyRotationManagerTest {
         assertEquals("172.16.10.99", manager.getIvpnSession(ACCOUNT).address);
         assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + NEW_PRIVATE));
         assertTrue(manager.getActiveProfile().config.contains("Address = 172.16.10.99/32"));
+        assertFalse(prefs.contains("ivpn_pending_privkey"));
+    }
+
+    @Test
+    public void ivpnRotationSkippedWhenAccountChangesDuringRotation()
+            throws Exception {
+        saveIvpnProfile(OLD_PRIVATE, "172.16.10.2/32");
+        keys.queueGenerated(NEW_PRIVATE);
+        ivpn.accountSwitcher = manager;
+        ivpn.switchAccountTo = "other-account";
+
+        String result = rotate("ivpn", true);
+
+        assertEquals("IVPN rotated: account changed, session not restored", result);
+        assertNull(manager.getIvpnSession("other-account"));
+        assertEquals("other-account", prefs.getString("ivpn_account", ""));
+        // IVPN already holds the new key for the old account, so its saved
+        // profiles must follow it; only the session store stays untouched.
+        assertTrue(manager.getActiveProfile().config.contains("PrivateKey = " + NEW_PRIVATE));
         assertFalse(prefs.contains("ivpn_pending_privkey"));
     }
 
@@ -316,6 +357,7 @@ public class VpnKeyRotationManagerTest {
         String devicePublicKey = OLD_PUBLIC;
         boolean rejectRotate;
         boolean failRotateWithIo;
+        boolean failRotateWithRuntimeException;
         String rejectPublicKeyInUse;
         String lastRotatedDeviceId;
         int rotateCount;
@@ -342,6 +384,8 @@ public class VpnKeyRotationManagerTest {
                 throw new MullvadProfileGenerator.ApiRejectedException("rejected");
             if (failRotateWithIo)
                 throw new IOException("network lost");
+            if (failRotateWithRuntimeException)
+                throw new RuntimeException("malformed response");
             devicePublicKey = publicKey;
         }
     }
@@ -349,6 +393,10 @@ public class VpnKeyRotationManagerTest {
     private static class FakeIvpnApi implements VpnKeyRotationManager.IvpnApi {
         String nextAddress = "172.16.10.3";
         int rotateCount;
+        // Simulates the provider accepting the new key while, concurrently,
+        // the user switches IVPN accounts before this call returns.
+        WgProfileManager accountSwitcher;
+        String switchAccountTo;
 
         @Override
         public WgProfileManager.IvpnSession rotateSessionKey(WgProfileManager.IvpnSession session,
@@ -356,6 +404,8 @@ public class VpnKeyRotationManagerTest {
                                                              String newPublicKey,
                                                              String connectedPublicKey) {
             rotateCount++;
+            if (switchAccountTo != null)
+                accountSwitcher.saveIvpnAccount(switchAccountTo);
             return new WgProfileManager.IvpnSession(session.token, newPrivateKey,
                     newPublicKey, nextAddress);
         }

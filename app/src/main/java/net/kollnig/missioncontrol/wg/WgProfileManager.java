@@ -361,6 +361,26 @@ public class WgProfileManager {
         }
     }
 
+    /**
+     * Like {@link #saveMullvadDeviceId}, but only writes if {@code expectedAccount}
+     * is still the current Mullvad account. For callers (e.g. relay failover) that
+     * resolved the device id before doing slow network I/O: without this check, a
+     * completion that lands after the user switched Mullvad accounts would
+     * silently attach the old account's device id to the new one. Returns whether
+     * the write happened.
+     */
+    public boolean saveMullvadDeviceIdIfAccount(String expectedAccount, String deviceId) {
+        if (TextUtils.isEmpty(deviceId))
+            return false;
+        String expected = expectedAccount == null ? "" : expectedAccount.trim();
+        synchronized (STORE_LOCK) {
+            if (!expected.equals(prefs.getString(PREF_MULLVAD_ACCOUNT, "")))
+                return false;
+            saveMullvadDeviceId(deviceId);
+            return true;
+        }
+    }
+
     public String getLastIvpnAccount() {
         synchronized (STORE_LOCK) {
             String saved = prefs.getString(PREF_IVPN_ACCOUNT, "");
@@ -426,6 +446,26 @@ public class WgProfileManager {
                     // (getIvpnSession), so it must never lag behind them.
                     .putString(PREF_IVPN_ACCOUNT, account)
                     .apply();
+        }
+    }
+
+    /**
+     * Like {@link #saveIvpnSession}, but only writes if {@code expectedAccount}
+     * is still the current IVPN account. For callers (key rotation, relay
+     * failover) that resolved the new session before doing slow network I/O:
+     * without this check, a completion that lands after the user switched IVPN
+     * accounts would silently restore the old account's credentials over the
+     * new one. Returns whether the write happened.
+     */
+    public boolean saveIvpnSessionIfAccount(String expectedAccount, IvpnSession session) {
+        if (session == null)
+            return false;
+        String expected = expectedAccount == null ? "" : expectedAccount.trim();
+        synchronized (STORE_LOCK) {
+            if (!expected.equals(prefs.getString(PREF_IVPN_ACCOUNT, "")))
+                return false;
+            saveIvpnSession(expected, session);
+            return true;
         }
     }
 
