@@ -1,10 +1,13 @@
 package eu.faircode.netguard;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -123,6 +126,17 @@ public class DatabaseHelperMigrationTest {
             assertEquals("203.0.113.25", cursor.getString(2));
             assertEquals(5000L, cursor.getLong(3));
         }
+    }
+
+    @Test
+    public void failedUpgradePropagatesAndLeavesVersionUnchanged() {
+        // No access table, so the version 22 step's ALTER TABLE cannot succeed.
+        database.setVersion(22);
+
+        assertThrows(SQLiteException.class, () -> helper.onUpgrade(database, 22, 23));
+
+        assertEquals(22, database.getVersion());
+        assertFalse(database.inTransaction());
     }
 
     private static void createVersion16AccessTable(SQLiteDatabase db) {
