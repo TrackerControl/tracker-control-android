@@ -330,7 +330,8 @@ public class VpnKeyRotationManager {
     private static String commitIvpnForInactiveAccount(SharedPreferences prefs,
                                                        WgProfileManager manager,
                                                        String account, String newPrivate,
-                                                       WgProfileManager.IvpnSession next) {
+                                                       WgProfileManager.IvpnSession next)
+            throws Exception {
         manager.rewriteProviderInterface(PROVIDER_IVPN, account, newPrivate,
                 addressWithCidr(next.address));
         clearPending(prefs, PROVIDER_IVPN);
