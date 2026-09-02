@@ -56,6 +56,24 @@ public class WgConfigParserTest {
         assertEquals(2, config.getPeers().get(0).getAllowedIPs().size());
     }
 
+    @Test
+    public void ipv4EmbeddedIpv6AllowedIpsIsAccepted() throws Exception {
+        WgConfig config = WgConfigParser.INSTANCE.parse(
+                configWithAllowedIps("::ffff:192.0.2.0/120, 2001:db8::1/128, ::/0"));
+
+        assertEquals(3, config.getPeers().get(0).getAllowedIPs().size());
+    }
+
+    @Test
+    public void malformedIpv6AllowedIpsIsRejected() {
+        assertThrows(WgConfigException.class,
+                () -> WgConfigParser.INSTANCE.parse(configWithAllowedIps("1:::2/64")));
+        assertThrows(WgConfigException.class,
+                () -> WgConfigParser.INSTANCE.parse(configWithAllowedIps("2001:db8::1%wlan0/64")));
+        assertThrows(WgConfigException.class,
+                () -> WgConfigParser.INSTANCE.parse(configWithAllowedIps("::ffff:999.0.2.0/120")));
+    }
+
     private static String config(String keepaliveLine) {
         return configWithAllowedIps("0.0.0.0/0", keepaliveLine);
     }
