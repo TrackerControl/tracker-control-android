@@ -10,6 +10,8 @@ public class Blocklist implements Serializable {
     public long lastModified;
     public boolean lastDownloadSuccess;
     public String lastErrorMessage;
+    public String etag;
+    public String lastModifiedHeader;
 
     public Blocklist() {
         this.uuid = UUID.randomUUID().toString();

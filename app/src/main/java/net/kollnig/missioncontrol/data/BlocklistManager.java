@@ -79,6 +79,8 @@ public class BlocklistManager {
                 item.lastModified = obj.optLong("lastModified", 0);
                 item.lastDownloadSuccess = obj.optBoolean("lastDownloadSuccess", true);
                 item.lastErrorMessage = obj.optString("lastErrorMessage", null);
+                item.etag = obj.optString("etag", null);
+                item.lastModifiedHeader = obj.optString("lastModifiedHeader", null);
                 list.add(item);
             }
         } catch (JSONException e) {
@@ -99,6 +101,8 @@ public class BlocklistManager {
                 obj.put("lastModified", item.lastModified);
                 obj.put("lastDownloadSuccess", item.lastDownloadSuccess);
                 obj.put("lastErrorMessage", item.lastErrorMessage);
+                obj.put("etag", item.etag);
+                obj.put("lastModifiedHeader", item.lastModifiedHeader);
                 jsonArray.put(obj);
             } catch (JSONException e) {
                 Log.e(TAG, "Error saving blocklist item", e);
