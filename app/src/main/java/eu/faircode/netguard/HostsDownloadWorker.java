@@ -21,10 +21,16 @@
 package eu.faircode.netguard;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -42,11 +48,33 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.zip.GZIPInputStream;
 
 public class HostsDownloadWorker extends Worker {
     private static final String TAG = "TrackerControl.Hosts";
+
+    /** Unique name of the daily auto-update work. */
+    static final String WORK_AUTO_UPDATE = "HostsUpdate";
+
+    /**
+     * Set as soon as a list's file has been replaced and cleared only once the
+     * merged hosts file has been rebuilt from it. Without it, a run killed
+     * between the two would leave a stale merged file that every later 304
+     * would then treat as current.
+     */
+    static final String PREF_MERGE_PENDING = "hosts_merge_pending";
+
+    /**
+     * Schedule version the enqueued auto-update work was last built with. Bump
+     * {@link #SCHEDULE_VERSION} whenever the constraints or the period below change,
+     * so installs that already have the work enqueued are rescheduled once with the
+     * new specification rather than keeping the old one until the user toggles the
+     * setting off and on.
+     */
+    private static final String PREF_SCHEDULE_VERSION = "hosts_auto_update_schedule_version";
+    private static final int SCHEDULE_VERSION = 1;
 
     /** Whether a single blocklist's body actually needed re-downloading. */
     enum DownloadOutcome {
@@ -72,6 +100,7 @@ public class HostsDownloadWorker extends Worker {
         Log.i(TAG, "Starting hosts download");
 
         Context context = getApplicationContext();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         BlocklistManager manager = BlocklistManager.getInstance(context);
         List<Blocklist> lists = manager.getBlocklists();
         boolean anySuccess = false;
@@ -101,6 +130,10 @@ public class HostsDownloadWorker extends Worker {
 
                 if (outcome == DownloadOutcome.UPDATED) {
                     item.lastModified = new Date().getTime();
+                    // Written durably, and before the validators that would let the
+                    // next run answer 304 for every list: the merged file is out of
+                    // date from here until the merge below succeeds.
+                    prefs.edit().putBoolean(PREF_MERGE_PENDING, true).commit();
                     anyChanged = true;
                 }
                 manager.updateBlocklist(item);
@@ -126,13 +159,12 @@ public class HostsDownloadWorker extends Worker {
 
         if (anySuccess) {
             File hostsFile = new File(context.getFilesDir(), "hosts.txt");
-            if (!anyChanged && hostsFile.exists()) {
-                // Every successful list came back unchanged and we already have a merged
-                // file, so there is nothing to re-merge and no reason to disturb live
-                // connections with a reload.
+            if (canSkipMerge(anyChanged, prefs.getBoolean(PREF_MERGE_PENDING, false), hostsFile.exists())) {
+                // Every successful list came back unchanged and the merged file is
+                // known to be built from them, so there is nothing to re-merge and no
+                // reason to disturb live connections with a reload.
                 String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
-                PreferenceManager.getDefaultSharedPreferences(context).edit()
-                        .putString("hosts_last_download", last).apply();
+                prefs.edit().putString("hosts_last_download", last).apply();
 
                 Log.i(TAG, "Hosts unchanged, skipping merge and reload");
                 return Result.success();
@@ -140,8 +172,10 @@ public class HostsDownloadWorker extends Worker {
 
             if (manager.mergeBlocklists()) {
                 String last = SimpleDateFormat.getDateTimeInstance().format(new Date().getTime());
-                PreferenceManager.getDefaultSharedPreferences(context).edit()
-                        .putString("hosts_last_download", last).apply();
+                prefs.edit()
+                        .putString("hosts_last_download", last)
+                        .putBoolean(PREF_MERGE_PENDING, false)
+                        .commit();
 
                 Log.i(TAG, "Hosts downloaded and merged successfully");
                 ServiceSinkhole.reload("hosts file download", context, false);
@@ -156,6 +190,59 @@ public class HostsDownloadWorker extends Worker {
             showNotification(context, "Hosts download failed");
             return Result.failure();
         }
+    }
+
+    /**
+     * Whether the merged hosts file can be left alone: every successful list came
+     * back unchanged, no earlier run left a replacement unmerged, and a merged file
+     * exists to leave alone in the first place.
+     */
+    static boolean canSkipMerge(boolean anyChanged, boolean mergePending, boolean mergedFileExists) {
+        return !anyChanged && !mergePending && mergedFileExists;
+    }
+
+    /**
+     * Brings an already-enqueued auto-update in line with the current schedule
+     * version, once per version. Called from application startup, since the
+     * preference listener only runs when the user changes the setting.
+     */
+    static void reconcileAutoUpdate(Context context, SharedPreferences prefs) {
+        if (prefs.getInt(PREF_SCHEDULE_VERSION, 0) >= SCHEDULE_VERSION)
+            return;
+
+        // Nothing is enqueued while the setting is off, and switching it on goes
+        // through scheduleAutoUpdate anyway, so only record the version there.
+        if (prefs.getBoolean("hosts_auto_update", false))
+            scheduleAutoUpdate(context, true);
+        else
+            prefs.edit().putInt(PREF_SCHEDULE_VERSION, SCHEDULE_VERSION).apply();
+    }
+
+    /**
+     * Enqueues or cancels the daily blocklist update to match {@code enabled}.
+     * <p>
+     * Enqueued with {@link ExistingPeriodicWorkPolicy#UPDATE} rather than
+     * {@code KEEP} so an install that switched auto-update on under an older
+     * version keeps its schedule but picks up the current constraints, instead of
+     * carrying the old ones until the user toggles the setting.
+     */
+    static void scheduleAutoUpdate(Context context, boolean enabled) {
+        WorkManager workManager = WorkManager.getInstance(context);
+        if (!enabled) {
+            workManager.cancelUniqueWork(WORK_AUTO_UPDATE);
+            return;
+        }
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
+                .build();
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(HostsDownloadWorker.class, 24, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .build();
+        workManager.enqueueUniquePeriodicWork(WORK_AUTO_UPDATE, ExistingPeriodicWorkPolicy.UPDATE, request);
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putInt(PREF_SCHEDULE_VERSION, SCHEDULE_VERSION).apply();
     }
 
     /**

@@ -67,10 +67,8 @@ import androidx.preference.ListPreference;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
-import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import net.kollnig.missioncontrol.BuildConfig;
@@ -109,7 +107,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -528,24 +525,7 @@ public class ActivitySettings extends AppCompatActivity implements SharedPrefere
             pref_hosts_auto_update.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean enabled = (Boolean) newValue;
-                    if (enabled) {
-                        Constraints constraints = new Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.CONNECTED)
-                                .setRequiresBatteryNotLow(true)
-                                .build();
-
-                        PeriodicWorkRequest saveRequest = new PeriodicWorkRequest.Builder(HostsDownloadWorker.class, 24,
-                                TimeUnit.HOURS)
-                                .setConstraints(constraints)
-                                .build();
-                        WorkManager.getInstance(ActivitySettings.this).enqueueUniquePeriodicWork(
-                                "HostsUpdate",
-                                ExistingPeriodicWorkPolicy.UPDATE,
-                                saveRequest);
-                    } else {
-                        WorkManager.getInstance(ActivitySettings.this).cancelUniqueWork("HostsUpdate");
-                    }
+                    HostsDownloadWorker.scheduleAutoUpdate(ActivitySettings.this, (Boolean) newValue);
                     return true;
                 }
             });

@@ -122,6 +122,16 @@ public class ApplicationEx extends Application {
 
         SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
         migratePreferences(prefs);
+        // An install that enabled the daily blocklist update under an older version
+        // still has it enqueued with that version's constraints, and the preference
+        // listener only runs when the user changes the setting. Guarded because this
+        // is the startup path: a WorkManager that cannot initialise should cost the
+        // reconcile, not the app.
+        try {
+            HostsDownloadWorker.reconcileAutoUpdate(this, prefs);
+        } catch (Throwable ex) {
+            Log.w(TAG, "Could not reconcile the hosts auto-update: " + ex);
+        }
         BlockingMode.enforcePlayStoreMode(this);
 
         // Keep VPN exclusions aligned with the selected blocking mode on startup.

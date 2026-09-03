@@ -133,6 +133,18 @@ public class HostsDownloadWorkerTest {
         assertNull(item.lastModifiedHeader);
     }
 
+    @Test
+    public void mergeIsSkippedOnlyWhenNothingChangedAndTheMergedFileIsCurrent() {
+        assertTrue(HostsDownloadWorker.canSkipMerge(false, false, true));
+
+        // A list was replaced in this run.
+        assertFalse(HostsDownloadWorker.canSkipMerge(true, false, true));
+        // An earlier run replaced a list but died before merging it.
+        assertFalse(HostsDownloadWorker.canSkipMerge(false, true, true));
+        // Nothing to leave alone.
+        assertFalse(HostsDownloadWorker.canSkipMerge(false, false, false));
+    }
+
     /**
      * Minimal fake so the seam can be exercised without a real network stack. Request
      * headers are captured into their own map rather than delegating to
