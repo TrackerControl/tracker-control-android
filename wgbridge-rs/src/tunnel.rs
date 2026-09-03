@@ -227,6 +227,15 @@ impl Tunnel {
 
             tokio::time::sleep(PROD_RESTORE_AFTER).await;
 
+            // Take the device lock before deciding anything. set_keepalive and
+            // set_config update the peer table while holding it, and a newer
+            // prod bumps the generation before taking it, so checking the
+            // generation and snapshotting the configured intervals under the
+            // lock leaves no window for a policy change to land between the
+            // snapshot and the write below and then be overwritten by it.
+            let guard = inner.device.lock().await;
+            let Some(device) = guard.as_ref() else { return };
+
             // A newer prod owns the interval now; let its restore run instead.
             if inner.prod_generation.load(Ordering::SeqCst) != generation {
                 return;
@@ -236,8 +245,6 @@ impl Tunnel {
                 let peers = inner.peers.lock().unwrap();
                 peers.iter().map(|p| (p.public_key, p.keepalive)).collect()
             };
-            let guard = inner.device.lock().await;
-            let Some(device) = guard.as_ref() else { return };
             let _ = device
                 .write(async |d| {
                     for (key, keepalive) in &configured {
