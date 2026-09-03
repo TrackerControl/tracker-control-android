@@ -212,6 +212,92 @@ public class WgProfileManagerTest {
         assertEquals("legacy", manager.getActiveProfile().config);
     }
 
+    @Test
+    public void importAddsEveryProfileAndActivatesTheFirstWhenNoneWasActive() throws Exception {
+        WgProfileManager.ImportResult result = manager.importProfiles(java.util.Arrays.asList(
+                new WgProfileManager.ImportEntry("us-nyc", "config-a"),
+                new WgProfileManager.ImportEntry("de-ber", "config-b")));
+
+        assertEquals(2, result.added);
+        assertEquals(0, result.updated);
+        assertEquals(2, manager.getProfiles().size());
+        assertEquals("us-nyc", manager.getActiveProfile().name);
+        assertEquals("config-a", prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void importLeavesTheActiveProfileAlone() throws Exception {
+        manager.saveProfile(null, "Existing", "existing-config");
+        String active = manager.getActiveProfileId();
+
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", "config-a")));
+
+        assertEquals(active, manager.getActiveProfileId());
+        assertEquals("existing-config", prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void reimportUpdatesTheProfileOfTheSameNameInsteadOfDuplicatingIt() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", "config-a")));
+
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("us-nyc", "config-b")));
+
+        assertEquals(0, result.added);
+        assertEquals(1, result.updated);
+        assertEquals(1, manager.getProfiles().size());
+        assertEquals("config-b", manager.getProfiles().get(0).config);
+    }
+
+    @Test
+    public void reimportOfTheActiveProfileRefreshesTheLiveConfig() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", "config-a")));
+
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", "config-b")));
+
+        assertEquals("config-b", prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void importNeverTakesOverAProviderManagedProfile() throws Exception {
+        // Mullvad and IVPN profiles are named by us and rewritten by key
+        // rotation; a file that happens to share the name must not land on one.
+        manager.saveProfile(null, "Mullvad", "mullvad-config", "mullvad", "1234");
+
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("Mullvad", "imported-config")));
+
+        assertEquals(1, result.added);
+        assertEquals(2, manager.getProfiles().size());
+        assertEquals("mullvad-config", manager.getProviderConfig("mullvad", "1234"));
+    }
+
+    @Test
+    public void importWithoutANameFallsBackToTheDefaultName() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("", "config-a")));
+
+        assertEquals(context.getString(R.string.msg_wg_profile_default_name),
+                manager.getProfiles().get(0).name);
+    }
+
+    @Test
+    public void importOfNothingUsableChangesNoState() throws Exception {
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("empty", "")));
+
+        assertEquals(0, result.total());
+        assertTrue(manager.getProfiles().isEmpty());
+        assertEquals("", manager.getActiveProfileId());
+    }
+
     private static JSONObject profile(String id, String name, String config, String provider,
                                       String account, String countryCode, String countryName) throws Exception {
         return new JSONObject()

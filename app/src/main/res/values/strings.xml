@@ -187,6 +187,7 @@
     <string name="setting_wg_profile_manage">Custom WireGuard profiles</string>
     <string name="setting_wg_profile_import">Import WireGuard config</string>
     <string name="setting_wg_profile_scan">Scan QR code</string>
+    <string name="setting_wg_profile_import_file">Import from file or archive</string>
     <string name="setting_wg_mullvad_setup">Set up Mullvad</string>
     <string name="setting_wg_proton_setup">Use a Proton VPN config</string>
     <string name="setting_wg_keepalive_when_screen_off">Keep WireGuard alive when screen is off</string>
@@ -275,6 +276,16 @@
     <string name="msg_wg_profile_scan_no_camera_permission">Camera permission is needed to scan a QR code</string>
     <string name="msg_wg_profile_scan_failed">Could not start the camera: %1$s</string>
     <string name="msg_wg_profile_scan_not_config">This QR code is not a WireGuard config: %1$s</string>
+    <string name="msg_wg_profile_import_none">No WireGuard config was found in the selected file</string>
+    <string name="msg_wg_profile_import_failed">Could not read the selected file: %1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="one">%1$d WireGuard profile imported</item>
+        <item quantity="other">%1$d WireGuard profiles imported</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="one">%1$d file skipped: not a valid WireGuard config</item>
+        <item quantity="other">%1$d files skipped: not valid WireGuard configs</item>
+    </plurals>
     <string name="msg_wg_mullvad_account">Mullvad account number</string>
     <string name="msg_wg_mullvad_recommended">Recommended location</string>
     <string name="msg_wg_mullvad_note">TrackerControl creates a Mullvad WireGuard profile. The account number is saved locally for future Mullvad profiles. Tokens are not stored, and deleting the profile here does not remove the device from Mullvad.</string>

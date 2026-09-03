@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.OpenableColumns;
+import android.database.Cursor;
 import android.content.pm.PackageManager;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -30,14 +32,19 @@ import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreen;
 import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreenCallbacks;
 import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreenController;
 import net.kollnig.missioncontrol.ui.compose.WireGuardProfilesScreenModel;
+import net.kollnig.missioncontrol.wg.WgImporter;
 import net.kollnig.missioncontrol.wg.WgProfileManager;
 import net.kollnig.missioncontrol.wg.WgConfigParser;
 import net.kollnig.missioncontrol.wg.MullvadProfileGenerator;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,6 +64,7 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
     private WgProfileManager manager;
     private WireGuardProfilesScreenController screenController;
     private ActivityResultLauncher<Intent> scanLauncher;
+    private ActivityResultLauncher<String[]> importLauncher;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -82,6 +90,12 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
                     if (result.getResultCode() != RESULT_OK || result.getData() == null)
                         return;
                     onQrScanned(result.getData().getStringExtra(ActivityScanQr.EXTRA_RESULT));
+                });
+
+        importLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenMultipleDocuments(), uris -> {
+                    if (uris != null && !uris.isEmpty())
+                        importFromFiles(uris);
                 });
 
         screenController = WireGuardProfilesScreen.install(
@@ -163,21 +177,104 @@ public class ActivityWireGuardProfiles extends AppCompatActivity {
     private void showAddProfileChoice() {
         new MaterialAlertDialogBuilder(this)
                 .setItems(new CharSequence[]{
+                        getString(R.string.setting_wg_profile_import_file),
                         getString(R.string.setting_wg_profile_import),
                         getString(R.string.setting_wg_profile_scan),
                         getString(R.string.setting_wg_mullvad_setup),
                         getString(R.string.setting_wg_proton_setup)
                 }, (dialog, which) -> {
                     if (which == 0)
-                        showProfileDialog(null);
+                        startFileImport();
                     else if (which == 1)
-                        startScan();
+                        showProfileDialog(null);
                     else if (which == 2)
+                        startScan();
+                    else if (which == 3)
                         showMullvadDialog();
                     else
                         showProtonDialog();
                 })
                 .show();
+    }
+
+    // Providers hand out one .conf per server, often twenty at a time in a
+    // zip, and pasting each one by hand is the complaint behind issue #904.
+    private void startFileImport() {
+        try {
+            // Configs carry no registered MIME type and file managers report
+            // them inconsistently, so filtering by type would hide the very
+            // files the user came to pick.
+            importLauncher.launch(new String[]{"*/*"});
+        } catch (ActivityNotFoundException ex) {
+            Toast.makeText(this, getString(R.string.msg_wg_profile_import_failed,
+                    ex.getMessage()), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void importFromFiles(List<Uri> uris) {
+        executor.execute(() -> {
+            List<WgProfileManager.ImportEntry> entries = new ArrayList<>();
+            // Shared so that picking several files whose names collide keeps
+            // every one of them.
+            Set<String> names = new HashSet<>();
+            int skipped = 0;
+            for (Uri uri : uris) {
+                String displayName = queryDisplayName(uri);
+                try (InputStream in = getContentResolver().openInputStream(uri)) {
+                    if (in == null) {
+                        skipped++;
+                        continue;
+                    }
+                    WgImporter.Result result = WgImporter.read(in, displayName, names);
+                    for (WgImporter.Entry entry : result.entries)
+                        entries.add(new WgProfileManager.ImportEntry(entry.name, entry.config));
+                    skipped += result.skipped.size();
+                } catch (IOException | SecurityException ex) {
+                    skipped++;
+                }
+            }
+
+            final int failed = skipped;
+            mainHandler.post(() -> finishImport(entries, failed));
+        });
+    }
+
+    private void finishImport(List<WgProfileManager.ImportEntry> entries, int skipped) {
+        if (isFinishing() || isDestroyed())
+            return;
+        if (entries.isEmpty()) {
+            Toast.makeText(this, R.string.msg_wg_profile_import_none, Toast.LENGTH_LONG).show();
+            return;
+        }
+        try {
+            WgProfileManager.ImportResult result = manager.importProfiles(entries);
+            applyProfiles();
+            refresh();
+            StringBuilder message = new StringBuilder(getResources().getQuantityString(
+                    R.plurals.msg_wg_profile_imported, result.total(), result.total()));
+            if (skipped > 0)
+                message.append('\n').append(getResources().getQuantityString(
+                        R.plurals.msg_wg_profile_import_skipped, skipped, skipped));
+            Toast.makeText(this, message.toString(), Toast.LENGTH_LONG).show();
+        } catch (JSONException ex) {
+            Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String queryDisplayName(Uri uri) {
+        try (Cursor cursor = getContentResolver().query(uri,
+                new String[]{OpenableColumns.DISPLAY_NAME}, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                String name = cursor.getString(0);
+                if (!TextUtils.isEmpty(name))
+                    return name;
+            }
+        } catch (Throwable ignored) {
+            // Not every provider answers OpenableColumns; the path is a fine
+            // fallback, and naming is cosmetic either way.
+        }
+        String path = uri.getLastPathSegment();
+        return path == null ? "" : path;
     }
 
     // Proton documents downloading a standard WireGuard config for third-party
