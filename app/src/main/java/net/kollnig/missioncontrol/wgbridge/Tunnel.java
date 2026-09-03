@@ -63,6 +63,16 @@ public final class Tunnel {
     }
 
     /**
+     * Sets one peer's persistent keepalive interval in seconds (0 disables
+     * it) without disturbing the session. This is how the screen-state
+     * keepalive policy is applied; {@link #setConfig} would re-serialise the
+     * whole configuration, endpoint resolution included, for a single field.
+     */
+    public synchronized void setKeepalive(String peerPublicKeyBase64, int seconds) {
+        nativeSetKeepalive(handle, peerPublicKeyBase64, seconds);
+    }
+
+    /**
      * Tears down gotatun and closes the duplicated fds. Idempotent.
      */
     public synchronized void stop() {
@@ -81,6 +91,8 @@ public final class Tunnel {
     private static native void nativeRebind(long handle);
 
     private static native void nativeUpdateEndpoint(long handle, String peerPublicKeyBase64, String endpoint);
+
+    private static native void nativeSetKeepalive(long handle, String peerPublicKeyBase64, int seconds);
 
     private static native void nativeStop(long handle);
 }

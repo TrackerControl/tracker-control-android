@@ -296,7 +296,7 @@ object WgEgress {
             val oldKeepaliveEnabled = currentInteractive || currentKeepaliveAlwaysOn
             val newKeepaliveEnabled = interactive || keepaliveAlwaysOn
             if (oldKeepaliveEnabled != newKeepaliveEnabled &&
-                !reapplyConfigOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
+                !updateKeepaliveOrError(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn))
                 return false
             // The tunnel can outlive a monitor whose initial stats read raced
             // tunnel startup (or which exited after a stale sample). Keep the
@@ -815,7 +815,7 @@ object WgEgress {
         }
 
         try {
-            reapplyConfig(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn)
+            updateKeepalive(configText!!, newKeepaliveEnabled, interactive, keepaliveAlwaysOn)
         } catch (e: Throwable) {
             Log.w(TAG, "could not update WG keepalive for screen state", e)
         }
@@ -872,21 +872,50 @@ object WgEgress {
         return wgEnabled && !configText.isNullOrEmpty() && tunnel != null
     }
 
-    private fun reapplyConfigOrError(
+    private fun updateKeepaliveOrError(
         configText: String,
         keepaliveEnabled: Boolean,
         interactive: Boolean,
         keepaliveAlwaysOn: Boolean
     ): Boolean {
         return try {
-            reapplyConfig(configText, keepaliveEnabled, interactive, keepaliveAlwaysOn)
+            updateKeepalive(configText, keepaliveEnabled, interactive, keepaliveAlwaysOn)
             true
         } catch (e: Throwable) {
             lastError = "WireGuard tunnel failed to update: ${e.message ?: e.javaClass.simpleName}"
-            Log.e(TAG, "Wgbridge.setConfig failed", e)
+            Log.e(TAG, "WG keepalive update failed", e)
             notifyStateChanged()
             false
         }
+    }
+
+    /**
+     * Applies the screen-state keepalive policy by changing only the peers'
+     * keepalive intervals. Routing this through [reapplyConfig] re-resolved
+     * every endpoint (a DNS lookup, with a bounded wait, over a tunnel that
+     * may itself be half-dead on most screen-on events after an idle period)
+     * and re-serialised the whole config for a single field. The full reapply
+     * remains the fallback if the cheap path is refused.
+     */
+    private fun updateKeepalive(
+        configText: String,
+        keepaliveEnabled: Boolean,
+        interactive: Boolean,
+        keepaliveAlwaysOn: Boolean
+    ) {
+        val t = tunnel ?: return
+        val updates = WgConfigParser.parse(configText).keepaliveUpdates(keepaliveEnabled)
+        try {
+            for ((publicKey, seconds) in updates) t.setKeepalive(publicKey, seconds)
+        } catch (e: Throwable) {
+            Log.w(TAG, "setKeepalive failed, reapplying full config", e)
+            reapplyConfig(configText, keepaliveEnabled, interactive, keepaliveAlwaysOn)
+            return
+        }
+        currentInteractive = interactive
+        currentKeepaliveAlwaysOn = keepaliveAlwaysOn
+        lastError = null
+        notifyStateChanged()
     }
 
     private fun reapplyConfig(

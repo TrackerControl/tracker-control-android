@@ -189,6 +189,7 @@ class Tunnel {
     void sendKeepalive();
     void rebind();                // re-bind + re-protect UDP sockets (roaming)
     void updateEndpoint(String peerPublicKeyBase64, String endpoint);
+    void setKeepalive(String peerPublicKeyBase64, int seconds);  // 0 disables
     void stop();
 }
 ```

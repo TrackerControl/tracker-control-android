@@ -38,6 +38,16 @@ data class WgConfig(
         }
         return sb.toString()
     }
+
+    /**
+     * Per-peer keepalive intervals to push when the screen-state policy
+     * changes: (public key, seconds), 0 meaning disabled. Peers without a
+     * configured PersistentKeepalive are left alone.
+     */
+    fun keepaliveUpdates(keepaliveEnabled: Boolean): List<Pair<String, Int>> =
+        peers.mapNotNull { peer ->
+            peer.persistentKeepalive?.let { peer.publicKey to (if (keepaliveEnabled) it else 0) }
+        }
 }
 
 data class WgPeer(

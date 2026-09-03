@@ -129,7 +129,8 @@ pub fn start_tunnel(
 
 impl Tunnel {
     /// Reapplies UAPI configuration to the running device without restarting
-    /// it (used for the screen-state keepalive toggle).
+    /// it. The screen-state keepalive toggle goes through [`Tunnel::set_keepalive`]
+    /// instead, which touches one field per peer.
     pub fn set_config(&self, uapi_config: &str) -> Result<(), String> {
         let config = parse_uapi_config(uapi_config).map_err(|e| e.to_string())?;
         let inner = Arc::clone(&self.inner);
@@ -226,6 +227,15 @@ impl Tunnel {
 
             tokio::time::sleep(PROD_RESTORE_AFTER).await;
 
+            // Take the device lock before deciding anything. set_keepalive and
+            // set_config update the peer table while holding it, and a newer
+            // prod bumps the generation before taking it, so checking the
+            // generation and snapshotting the configured intervals under the
+            // lock leaves no window for a policy change to land between the
+            // snapshot and the write below and then be overwritten by it.
+            let guard = inner.device.lock().await;
+            let Some(device) = guard.as_ref() else { return };
+
             // A newer prod owns the interval now; let its restore run instead.
             if inner.prod_generation.load(Ordering::SeqCst) != generation {
                 return;
@@ -235,8 +245,6 @@ impl Tunnel {
                 let peers = inner.peers.lock().unwrap();
                 peers.iter().map(|p| (p.public_key, p.keepalive)).collect()
             };
-            let guard = inner.device.lock().await;
-            let Some(device) = guard.as_ref() else { return };
             let _ = device
                 .write(async |d| {
                     for (key, keepalive) in &configured {
@@ -309,6 +317,44 @@ impl Tunnel {
         })
     }
 
+    /// Changes one peer's persistent keepalive interval (`None` disables it)
+    /// without disturbing its session or endpoint. This carries the
+    /// screen-state keepalive policy: reapplying the whole config for it
+    /// re-resolved every endpoint and re-serialised every peer for one field.
+    pub fn set_keepalive(
+        &self,
+        public_key: &PublicKey,
+        keepalive: Option<u16>,
+    ) -> Result<(), String> {
+        let inner = Arc::clone(&self.inner);
+        let key = public_key.clone();
+
+        self.runtime.block_on(async move {
+            let guard = inner.device.lock().await;
+            let device = guard.as_ref().ok_or("tunnel stopped")?;
+            let found = device
+                .write(async |d| d.modify_peer(&key, |p| p.set_keepalive(keepalive)).await)
+                .await
+                .map_err(|e| e.to_string())?;
+            if !found {
+                return Err("no such peer".to_owned());
+            }
+            // The prod restore reads the configured interval from here, so a
+            // prod in flight restores to the new value rather than the old one.
+            {
+                let mut peers = inner.peers.lock().unwrap();
+                if let Some(p) = peers.iter_mut().find(|p| p.public_key == key) {
+                    p.keepalive = keepalive;
+                }
+            }
+            inner.logger.verbose(&format!(
+                "peer keepalive set to {}s",
+                keepalive.unwrap_or(0)
+            ));
+            Ok(())
+        })
+    }
+
     /// Tears down gotatun and closes the duplicated fds. Idempotent.
     pub fn stop(&self) {
         let inner = Arc::clone(&self.inner);
@@ -325,5 +371,38 @@ impl Tunnel {
 impl Drop for Tunnel {
     fn drop(&mut self) {
         self.stop();
+    }
+}
+
+/// Maps the Java-side keepalive seconds (0 or negative disables) onto the
+/// interval gotatun stores, rejecting values the wire format cannot carry.
+pub fn keepalive_from_secs(secs: i32) -> Result<Option<u16>, String> {
+    if secs <= 0 {
+        return Ok(None);
+    }
+    u16::try_from(secs)
+        .map(Some)
+        .map_err(|_| format!("keepalive {secs}s exceeds 65535"))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::keepalive_from_secs;
+
+    #[test]
+    fn zero_or_negative_disables_keepalive() {
+        assert_eq!(keepalive_from_secs(0), Ok(None));
+        assert_eq!(keepalive_from_secs(-5), Ok(None));
+    }
+
+    #[test]
+    fn positive_seconds_are_kept() {
+        assert_eq!(keepalive_from_secs(25), Ok(Some(25)));
+        assert_eq!(keepalive_from_secs(65535), Ok(Some(65535)));
+    }
+
+    #[test]
+    fn out_of_range_is_rejected() {
+        assert!(keepalive_from_secs(65536).is_err());
     }
 }
