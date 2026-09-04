@@ -108,9 +108,10 @@ Full procedure — including how to skip every permission prompt — is in
 - **Use the GitHub debug build on a real device.** Before updating an existing
   `net.kollnig.missioncontrol.test` install, back up its configuration — in
   particular WireGuard profiles and the Mullvad login — and ask before handling
-  that sensitive data. Update in place with `adb install -r`; never use
-  `adb uninstall` or `pm clear` without asking first, since they erase the
-  device's real configuration.
+  that sensitive data. Store device backups in the worktree-local
+  `/.local/device-backups/` directory and keep it excluded from Git. Update in
+  place with `adb install -r`; never use `adb uninstall` or `pm clear` without
+  asking first, since they erase the device's real configuration.
 - **Announce the VPN side effect.** Enabling the VPN calls
   `VpnService.prepare()`, which revokes whatever VPN app currently holds consent
   — the maintainer's own build, or their real VPN.
