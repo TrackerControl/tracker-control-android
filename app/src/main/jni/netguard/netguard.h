@@ -568,12 +568,12 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
 int route_flow_lookup(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
-                      int *tunnel);
+                      int *tunnel, int *uid_known);
 
 void route_flow_store(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
-                      int tunnel);
+                      int tunnel, int uid_known);
 
 void route_flow_invalidate();
 

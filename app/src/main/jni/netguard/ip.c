@@ -149,21 +149,22 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
         // is authoritative even when a previous flow happened to reuse the
         // same 5-tuple, so do not consult the flow cache in that case.
         jint route_uid = uid;
+        int cached_uid_known = 0;
         if (route_uid >= 0) {
             tunnel_uid = is_tunnel_uid(route_uid);
             route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                             tunnel_uid);
-        } else if (route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
-                                     &tunnel_uid)) {
+                             tunnel_uid, 1);
+        } else if (route_flow_lookup(version, protocol,
+                                     saddr, sport, daddr, dport,
+                                     &tunnel_uid, &cached_uid_known) &&
+                   cached_uid_known) {
             // Established tunnelled flows never create an ng_session — the
             // WireGuard write below returns first — so the cache preserves
             // their first-packet answer without a per-packet UID lookup.
         } else {
-            // A cache expiry or collision is rare, but falling back to the
-            // selected-mode default would divert an already-established
-            // tunnelled flow direct and can make TCP reset. Recover the UID
-            // from the native session table first, then from the
-            // authoritative Android/procfs lookup.
+            // A cache expiry, collision, or unresolved-owner entry must retry
+            // ownership. Reusing an unresolved entry would pin the
+            // unknown-system policy and per-app route for a busy flow.
             route_uid = get_session_uid(args, version, protocol, pkt, payload);
             if (route_uid < 0)
                 route_uid = get_route_uid(args, version, protocol,
@@ -173,20 +174,17 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
             if (route_uid >= 0) {
                 tunnel_uid = is_tunnel_uid(route_uid);
                 route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                 tunnel_uid);
+                                 tunnel_uid, 1);
                 if (out_uid != NULL)
                     *out_uid = route_uid;
             } else {
-                // Unknown ownership is privacy-sensitive: keep the packet
-                // in the remote tunnel rather than fail-open to direct
-                // routing in selected mode. Cache that explicit fail-closed
-                // verdict so the rest of this flow does not repeat a Binder
-                // or procfs lookup on every packet. A later flow with the
-                // same tuple still wins because a freshly resolved UID is
-                // handled before the cache above.
+                // Unknown ownership is privacy-sensitive: keep this packet in
+                // the remote tunnel rather than fail-open to direct routing.
+                // Mark the entry unstable so the next packet retries ownership
+                // and policy.
                 tunnel_uid = 1;
                 route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                 tunnel_uid);
+                                 tunnel_uid, 0);
                 log_android(ANDROID_LOG_WARN,
                             "Route UID unavailable for v%d p%d %s/%u > %s/%u; tunnelling",
                             version, protocol, source, sport, dest, dport);
@@ -478,24 +476,27 @@ void handle_ip(const struct arguments *args,
 
     int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
 
-    // A route-cache entry for UDP is created only after is_address_allowed()
-    // accepted an earlier packet and it reached the WireGuard routing fork.
-    // Reuse that established-flow verdict before the UID and Java policy
-    // lookups. Direct UDP already gets the same shortcut from its ng_session;
-    // tunnelled UDP has no ng_session, so without this every QUIC datagram pays
-    // both cross-language calls. Policy reloads invalidate the route cache.
+    // Reuse an established-flow verdict before the UID and Java policy lookups
+    // only when its owner was resolved. An entry created under INVALID_UID is
+    // deliberately unstable: subsequent packets retry ownership, allowing the
+    // unknown-system fallback and per-app route to be corrected. Direct UDP
+    // gets the same stable shortcut from its ng_session; tunnelled UDP has no
+    // ng_session. Policy reloads invalidate the route cache.
     int cached_udp_tunnel = 0;
+    int cached_udp_uid_known = 0;
     int udp_route_cached = 0;
     int reuse_wg_udp_verdict = 0;
     if (wg_is_required && protocol == IPPROTO_UDP && !udp_session_exists) {
         udp_route_cached = route_flow_lookup(version, protocol,
                                              saddr, sport, daddr, dport,
-                                             &cached_udp_tunnel);
+                                             &cached_udp_tunnel,
+                                             &cached_udp_uid_known);
         int wants_tunnel = udp_route_cached &&
                 route_wants_tunnel(is_local_dest(version, daddr), dport == 53,
                                    cached_udp_tunnel, route_dns_direct());
         reuse_wg_udp_verdict = can_reuse_wg_udp_verdict(
-                wg_is_required, protocol, udp_route_cached, wants_tunnel);
+                wg_is_required, protocol, udp_route_cached,
+                cached_udp_uid_known, wants_tunnel);
     }
 
     // Get uid. SNI research mode deliberately lets a 443 SYN through without
@@ -730,7 +731,7 @@ void handle_ip(const struct arguments *args,
         // already resolved this (and stored it in the flow cache) for a
         // candidate 443 flow while WireGuard is required; reuse that answer
         // instead of resolving and re-storing it a second time.
-        int tunnel_uid = udp_route_cached
+        int tunnel_uid = udp_route_cached && cached_udp_uid_known
                 ? cached_udp_tunnel
                 : sni_tunnel_uid_known
                 ? sni_tunnel_uid

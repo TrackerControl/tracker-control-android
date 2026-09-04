@@ -4,8 +4,10 @@
 #include <netinet/in.h>
 
 static inline int can_reuse_wg_udp_verdict(int wg_required, int protocol,
-                                           int route_cached, int wants_tunnel) {
-    return wg_required && protocol == IPPROTO_UDP && route_cached && wants_tunnel;
+                                           int route_cached, int uid_known,
+                                           int wants_tunnel) {
+    return wg_required && protocol == IPPROTO_UDP && route_cached &&
+           uid_known && wants_tunnel;
 }
 
 #endif

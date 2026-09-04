@@ -200,6 +200,7 @@ struct route_flow_entry {
     uint8_t version;
     uint8_t protocol;
     uint8_t tunnel;
+    uint8_t uid_known;
     uint16_t sport;
     uint16_t dport;
     uint8_t saddr[16];
@@ -258,7 +259,7 @@ static int route_flow_matches(const struct route_flow_entry *e, uint32_t gen,
 int route_flow_lookup(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
-                      int *tunnel) {
+                      int *tunnel, int *uid_known) {
     uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
     struct route_flow_entry *set = route_flows[route_flow_set(
             version, protocol, saddr, sport, daddr, dport)];
@@ -270,6 +271,7 @@ int route_flow_lookup(int version, int protocol,
             continue;
         e->time = now;
         *tunnel = e->tunnel;
+        *uid_known = e->uid_known;
         return 1;
     }
     return 0;
@@ -278,14 +280,13 @@ int route_flow_lookup(int version, int protocol,
 /**
  * Remember this flow's verdict, in the first empty/stale/current-gen-oldest
  * way of its set. It is a cache, and a miss only costs the fallback path that
- * ran before it existed. Never called for a packet whose UID was unknown:
- * pinning a guessed default for the life of a flow is the failure this exists
- * to prevent.
+ * ran before it existed. uid_known distinguishes a stable per-app decision
+ * from the fail-closed tunnel route used while Android cannot resolve an owner.
  */
 void route_flow_store(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
-                      int tunnel) {
+                      int tunnel, int uid_known) {
     size_t alen = (version == 4 ? 4u : 16u);
     uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
     struct route_flow_entry *set = route_flows[route_flow_set(
@@ -318,6 +319,7 @@ void route_flow_store(int version, int protocol,
     e->version = (uint8_t) version;
     e->protocol = (uint8_t) protocol;
     e->tunnel = (uint8_t) (tunnel ? 1 : 0);
+    e->uid_known = (uint8_t) (uid_known ? 1 : 0);
     e->sport = sport;
     e->dport = dport;
     memset(e->saddr, 0, sizeof(e->saddr));
