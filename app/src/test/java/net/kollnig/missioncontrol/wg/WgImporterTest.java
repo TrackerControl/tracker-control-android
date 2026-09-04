@@ -143,6 +143,45 @@ public class WgImporterTest {
     }
 
     @Test
+    public void archiveTraversalIsBoundedByEntriesThatAreNotConfigs() throws Exception {
+        // Directories and other files are skipped rather than imported, so
+        // they must count against a cap of their own; otherwise an archive of
+        // a million empty entries is still walked from end to end.
+        String[] entries = new String[(WgImporter.MAX_SCANNED_ENTRIES + 1) * 2];
+        for (int i = 0; i < WgImporter.MAX_SCANNED_ENTRIES; i++) {
+            entries[i * 2] = "filler" + i + ".txt";
+            entries[i * 2 + 1] = "";
+        }
+        entries[WgImporter.MAX_SCANNED_ENTRIES * 2] = "server.conf";
+        entries[WgImporter.MAX_SCANNED_ENTRIES * 2 + 1] = CONFIG;
+
+        WgImporter.Result result = read(zip(entries), "servers.zip");
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void totalBytesReadFromAnArchiveAreBounded() throws Exception {
+        // Each config here is valid and under the per-entry limit, so only an
+        // aggregate limit keeps the batch from being held in memory at once.
+        StringBuilder padded = new StringBuilder(CONFIG);
+        while (padded.length() < WgImporter.MAX_ENTRY_BYTES / 2)
+            padded.append("# padding\n");
+        int count = (WgImporter.MAX_TOTAL_BYTES / padded.length()) + 10;
+
+        String[] entries = new String[count * 2];
+        for (int i = 0; i < count; i++) {
+            entries[i * 2] = "server" + i + ".conf";
+            entries[i * 2 + 1] = padded.toString();
+        }
+
+        WgImporter.Result result = read(zip(entries), "servers.zip");
+
+        assertTrue(result.entries.size() < count);
+        assertTrue(result.entries.size() > 0);
+    }
+
+    @Test
     public void archiveIsDetectedWhenThePickerGivesNoUsableName() throws Exception {
         // Some document providers report a name such as "content" or nothing
         // at all; the zip magic keeps such a pick importable.

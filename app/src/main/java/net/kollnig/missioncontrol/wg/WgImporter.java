@@ -26,10 +26,22 @@ import java.util.zip.ZipInputStream;
  * than failing as a whole.
  */
 public final class WgImporter {
-    /** Ceiling on entries read from one archive, to bound a hostile zip. */
+    /** Ceiling on configs taken from one archive, to bound a hostile zip. */
     static final int MAX_ENTRIES = 200;
+    /**
+     * Ceiling on entries walked in one archive. Directories and other files
+     * are skipped without being imported, so they must be counted separately
+     * or an archive of a million empty entries would still be walked whole.
+     */
+    static final int MAX_SCANNED_ENTRIES = 5000;
     /** Ceiling on a single config, far above any real one (they are ~1 KiB). */
-    static final int MAX_ENTRY_BYTES = 512 * 1024;
+    static final int MAX_ENTRY_BYTES = 128 * 1024;
+    /**
+     * Ceiling on everything read out of one archive. The per-entry limit alone
+     * would still let a padded archive hold megabytes of text in memory at
+     * once, all of which is then serialised into the profile store.
+     */
+    static final int MAX_TOTAL_BYTES = 2 * 1024 * 1024;
 
     private WgImporter() {
     }
@@ -100,21 +112,27 @@ public final class WgImporter {
 
         ZipInputStream zip = new ZipInputStream(in);
         ZipEntry entry;
-        int seen = 0;
-        while ((entry = zip.getNextEntry()) != null && seen < MAX_ENTRIES) {
-            String path = entry.getName();
+        int scanned = 0;
+        int taken = 0;
+        int budget = MAX_TOTAL_BYTES;
+        while ((entry = zip.getNextEntry()) != null) {
+            if (++scanned > MAX_SCANNED_ENTRIES || taken >= MAX_ENTRIES || budget <= 0)
+                break;
+
             // Only the base name is ever used, so a traversing path in a
             // hostile archive cannot escape anywhere: nothing is written out.
-            String file = baseName(path);
+            String file = baseName(entry.getName());
             if (entry.isDirectory() || !isConfigName(file))
                 continue;
-            seen++;
 
-            String text = new String(readBounded(zip, MAX_ENTRY_BYTES), StandardCharsets.UTF_8);
+            byte[] bytes = readBounded(zip, Math.min(MAX_ENTRY_BYTES, budget));
+            budget -= bytes.length;
+            String text = new String(bytes, StandardCharsets.UTF_8);
             if (!parses(text)) {
                 skipped.add(file);
                 continue;
             }
+            taken++;
             entries.add(new Entry(uniqueName(stripExtension(file), used), text));
         }
         return new Result(entries, skipped);

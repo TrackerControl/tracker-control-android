@@ -50,8 +50,10 @@ wgbridge-rs/                 Rust crate embedding gotatun (Mullvad WireGuard)
     QR code (ZXing decode on CameraX frames; nothing leaves the device).
   - `wg/WgImporter.java` — reading profiles out of a picked `.conf` or a `.zip`
     of them (Android-free; the activity supplies the stream). Bulk saving is
-    `WgProfileManager.importProfiles`, which matches an existing custom profile
-    by name so a re-import refreshes rather than duplicates.
+    `WgProfileManager.importProfiles`, which refreshes an existing custom
+    profile when the file name matches *and* the config still shares a peer
+    public key, so a re-import updates rather than duplicating — and two
+    providers' identically-named files stay separate profiles.
   - `wgbridge/` — hand-written JNI bindings to the Rust crate: `Wgbridge`,
     `Tunnel`, `Protector`, `Logger`, `DnsRecorder`. Mirror of `wgbridge-rs`.
 - **Native C packet engine** — `app/src/main/jni/netguard/`: `netguard.c`,
