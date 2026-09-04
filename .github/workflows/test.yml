@@ -86,6 +86,20 @@ jobs:
             app/src/test/native/dhcp_options_test.c app/src/main/jni/netguard/dhcp_options.c
           /tmp/dhcp_options_test
 
+      - name: Run UDP state host tests
+        run: |
+          cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
+            -o /tmp/udp_state_test \
+            app/src/test/native/udp_state_test.c
+          /tmp/udp_state_test
+
+      - name: Run WireGuard flow-cache host tests
+        run: |
+          cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
+            -o /tmp/wg_flow_cache_test \
+            app/src/test/native/wg_flow_cache_test.c
+          /tmp/wg_flow_cache_test
+
       - name: Run unit tests
         run: ./gradlew testFdroidDebugUnitTest --offline
 
