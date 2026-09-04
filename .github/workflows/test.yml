@@ -79,6 +79,13 @@ jobs:
             app/src/test/native/ip6_ext_test.c app/src/main/jni/netguard/ip6_ext.c
           /tmp/ip6_ext_test
 
+      - name: Run DHCP option host tests
+        run: |
+          cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
+            -o /tmp/dhcp_options_test \
+            app/src/test/native/dhcp_options_test.c app/src/main/jni/netguard/dhcp_options.c
+          /tmp/dhcp_options_test
+
       - name: Run unit tests
         run: ./gradlew testFdroidDebugUnitTest --offline
 

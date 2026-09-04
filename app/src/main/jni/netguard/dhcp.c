@@ -18,6 +18,7 @@
 */
 
 #include "netguard.h"
+#include "dhcp_options.h"
 
 int check_dhcp(const struct arguments *args, const struct udp_session *u,
                const uint8_t *data, const size_t datalen) {
@@ -45,12 +46,21 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
         return -1;
     }
 
-    log_android(ANDROID_LOG_WARN, "DHCP opcode", request->opcode);
+    log_android(ANDROID_LOG_WARN, "DHCP opcode %d", request->opcode);
 
     // Discover: source 0.0.0.0:68 destination 255.255.255.255:67
     // Offer: source 10.1.10.1:67 destination 255.255.255.255:68
     // Request: source 0.0.0.0:68 destination 255.255.255.255:67
     // Ack: source: 10.1.10.1 destination: 255.255.255.255
+
+    int request_type = dhcp_message_type(data + sizeof(struct dhcp_packet),
+                                         datalen - sizeof(struct dhcp_packet));
+    int reply_type = dhcp_reply_type(request_type);
+    if (request->opcode != 1 || reply_type < 0) {
+        log_android(ANDROID_LOG_WARN, "DHCP unsupported opcode %d message type %d",
+                    request->opcode, request_type);
+        return -1;
+    }
 
     if (request->opcode == 1) { // Discover/request
         struct dhcp_packet *response = ng_calloc(500, 1, "dhcp");
@@ -88,7 +98,7 @@ int check_dhcp(const struct arguments *args, const struct udp_session *u,
         int idx = 0;
         *(options + idx++) = 53; // Message type
         *(options + idx++) = 1;
-        *(options + idx++) = (uint8_t) (request->siaddr == 0 ? 2 : 5);
+        *(options + idx++) = (uint8_t) reply_type;
         /*
              1     DHCPDISCOVER
              2     DHCPOFFER
