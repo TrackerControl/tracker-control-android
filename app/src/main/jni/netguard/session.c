@@ -263,12 +263,17 @@ void *handle_events(void *a) {
                         session->protocol == IPPROTO_ICMPV6)
                         check_icmp_socket(args, &ev[i]);
                     else if (session->protocol == IPPROTO_UDP) {
-                        int count = 0;
-                        while (count < UDP_YIELD && !args->ctx->stopping &&
-                               !(ev[i].events & EPOLLERR) && (ev[i].events & EPOLLIN) &&
-                               is_readable(session->socket)) {
-                            count++;
+                        enum udp_event_action action = udp_event_action(
+                                ev[i].events, EPOLLERR | EPOLLHUP, EPOLLIN);
+                        if (action == UDP_EVENT_TERMINAL)
                             check_udp_socket(args, &ev[i]);
+                        else if (action == UDP_EVENT_READ) {
+                            int count = 0;
+                            while (count < UDP_YIELD && !args->ctx->stopping &&
+                                   is_readable(session->socket)) {
+                                count++;
+                                check_udp_socket(args, &ev[i]);
+                            }
                         }
                     } else if (session->protocol == IPPROTO_TCP)
                         check_tcp_socket(args, &ev[i], epoll_fd);

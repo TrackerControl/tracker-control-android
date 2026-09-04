@@ -20,6 +20,7 @@
 #include "netguard.h"
 #include "tls.h"
 #include "ip6_ext.h"
+#include "wg_flow_cache.h"
 #include <stdatomic.h>
 
 int max_tun_msg = 0;
@@ -67,7 +68,7 @@ static int is_local_dest(int version, const void *daddr) {
 //
 // This runs only behind a route_flow_lookup miss, so it is the second fallback
 // rather than the per-packet cost it once was. The UDP arm repeats the 5-tuple
-// match in udp.c's has_udp_session; keep the two in step.
+// match in udp.c's get_udp_session_state; keep the two in step.
 static jint get_session_uid(const struct arguments *args, int version, int protocol,
                             const uint8_t *pkt, const uint8_t *payload) {
     const struct iphdr *ip4 = (struct iphdr *) pkt;
@@ -148,21 +149,22 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
         // is authoritative even when a previous flow happened to reuse the
         // same 5-tuple, so do not consult the flow cache in that case.
         jint route_uid = uid;
+        int cached_uid_known = 0;
         if (route_uid >= 0) {
             tunnel_uid = is_tunnel_uid(route_uid);
             route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                             tunnel_uid);
-        } else if (route_flow_lookup(version, protocol, saddr, sport, daddr, dport,
-                                     &tunnel_uid)) {
+                             tunnel_uid, 1);
+        } else if (route_flow_lookup(version, protocol,
+                                     saddr, sport, daddr, dport,
+                                     &tunnel_uid, &cached_uid_known) &&
+                   cached_uid_known) {
             // Established tunnelled flows never create an ng_session — the
             // WireGuard write below returns first — so the cache preserves
             // their first-packet answer without a per-packet UID lookup.
         } else {
-            // A cache expiry or collision is rare, but falling back to the
-            // selected-mode default would divert an already-established
-            // tunnelled flow direct and can make TCP reset. Recover the UID
-            // from the native session table first, then from the
-            // authoritative Android/procfs lookup.
+            // A cache expiry, collision, or unresolved-owner entry must retry
+            // ownership. Reusing an unresolved entry would pin the
+            // unknown-system policy and per-app route for a busy flow.
             route_uid = get_session_uid(args, version, protocol, pkt, payload);
             if (route_uid < 0)
                 route_uid = get_route_uid(args, version, protocol,
@@ -172,20 +174,17 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
             if (route_uid >= 0) {
                 tunnel_uid = is_tunnel_uid(route_uid);
                 route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                 tunnel_uid);
+                                 tunnel_uid, 1);
                 if (out_uid != NULL)
                     *out_uid = route_uid;
             } else {
-                // Unknown ownership is privacy-sensitive: keep the packet
-                // in the remote tunnel rather than fail-open to direct
-                // routing in selected mode. Cache that explicit fail-closed
-                // verdict so the rest of this flow does not repeat a Binder
-                // or procfs lookup on every packet. A later flow with the
-                // same tuple still wins because a freshly resolved UID is
-                // handled before the cache above.
+                // Unknown ownership is privacy-sensitive: keep this packet in
+                // the remote tunnel rather than fail-open to direct routing.
+                // Mark the entry unstable so the next packet retries ownership
+                // and policy.
                 tunnel_uid = 1;
                 route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                                 tunnel_uid);
+                                 tunnel_uid, 0);
                 log_android(ANDROID_LOG_WARN,
                             "Route UID unavailable for v%d p%d %s/%u > %s/%u; tunnelling",
                             version, protocol, source, sport, dest, dport);
@@ -450,16 +449,54 @@ void handle_ip(const struct arguments *args,
 
     flags[flen] = 0;
 
+    // A blocked UDP session remembers the verdict so repeated datagrams do not
+    // redo the Java policy lookup. Reject it before the generic
+    // existing-session shortcut below, otherwise packet two is marked allowed
+    // and the WireGuard hijack forwards it without reaching block_udp().
+    int udp_session_state = protocol == IPPROTO_UDP
+            ? get_udp_session_state(args, pkt, payload) : -1;
+    if (udp_state_blocks_outbound(udp_session_state))
+        return;
+
+    // Reuse the same lookup throughout this packet. On UDP this is otherwise
+    // a linear session-table walk at both the UID and allow-policy gates.
+    int udp_session_exists = udp_session_state >= 0;
+
     // Limit number of sessions
     if (sessions >= maxsessions) {
         if ((protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6) ||
-            (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
+            (protocol == IPPROTO_UDP && !udp_session_exists) ||
             (protocol == IPPROTO_TCP && syn)) {
             log_android(ANDROID_LOG_ERROR,
                         "%d of max %d sessions, dropping version %d protocol %d",
                         sessions, maxsessions, protocol, version);
             return;
         }
+    }
+
+    int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
+
+    // Reuse an established-flow verdict before the UID and Java policy lookups
+    // only when its owner was resolved. An entry created under INVALID_UID is
+    // deliberately unstable: subsequent packets retry ownership, allowing the
+    // unknown-system fallback and per-app route to be corrected. Direct UDP
+    // gets the same stable shortcut from its ng_session; tunnelled UDP has no
+    // ng_session. Policy reloads invalidate the route cache.
+    int cached_udp_tunnel = 0;
+    int cached_udp_uid_known = 0;
+    int udp_route_cached = 0;
+    int reuse_wg_udp_verdict = 0;
+    if (wg_is_required && protocol == IPPROTO_UDP && !udp_session_exists) {
+        udp_route_cached = route_flow_lookup(version, protocol,
+                                             saddr, sport, daddr, dport,
+                                             &cached_udp_tunnel,
+                                             &cached_udp_uid_known);
+        int wants_tunnel = udp_route_cached &&
+                route_wants_tunnel(is_local_dest(version, daddr), dport == 53,
+                                   cached_udp_tunnel, route_dns_direct());
+        reuse_wg_udp_verdict = can_reuse_wg_udp_verdict(
+                wg_is_required, protocol, udp_route_cached,
+                cached_udp_uid_known, wants_tunnel);
     }
 
     // Get uid. SNI research mode deliberately lets a 443 SYN through without
@@ -470,7 +507,8 @@ void handle_ip(const struct arguments *args,
     jint uid = -1;
     int sni_candidate = (is_play && protocol == IPPROTO_TCP && dport == 443);
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
-        (protocol == IPPROTO_UDP && !has_udp_session(args, pkt, payload)) ||
+        (protocol == IPPROTO_UDP && !reuse_wg_udp_verdict &&
+         !udp_session_exists) ||
         (protocol == IPPROTO_TCP && syn &&
          (!sni_candidate || route_uid_relevant()))) {
             if (args->ctx->sdk <= 28) // Android 9 Pie
@@ -496,7 +534,6 @@ void handle_ip(const struct arguments *args,
     int sni_tunnel_uid = 0;
     int sni_tunnel_uid_known = 0;
     jint sni_resolved_uid = -1;
-    int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
     if (wg_is_required && sni_candidate) {
         // is_dns is 0 here by construction: this is only reached for dport
         // 443. uid is unresolved for every packet but the SYN of a per-app
@@ -537,7 +574,9 @@ void handle_ip(const struct arguments *args,
     // Check if allowed
     int allowed = 0;
     struct allowed *redirect = NULL;
-    if (protocol == IPPROTO_UDP && has_udp_session(args, pkt, payload))
+    if (reuse_wg_udp_verdict)
+        allowed = 1;
+    else if (protocol == IPPROTO_UDP && udp_session_exists)
         allowed = 1; // could be a lingering/blocked session
     else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !sni_active)) // assume existing session
                                          || (uid == 0 && dport == 53)         // assume existing session
@@ -692,7 +731,9 @@ void handle_ip(const struct arguments *args,
         // already resolved this (and stored it in the flow cache) for a
         // candidate 443 flow while WireGuard is required; reuse that answer
         // instead of resolving and re-storing it a second time.
-        int tunnel_uid = sni_tunnel_uid_known
+        int tunnel_uid = udp_route_cached && cached_udp_uid_known
+                ? cached_udp_tunnel
+                : sni_tunnel_uid_known
                 ? sni_tunnel_uid
                 : resolve_tunnel_uid(args, version, protocol,
                                      saddr, sport, daddr, dport,

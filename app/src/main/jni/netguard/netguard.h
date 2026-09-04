@@ -35,6 +35,7 @@
 
 #include "tcdns.h"
 #include "dns_frame.h" // libc-only: no JNI/session dependencies
+#include "udp_state.h"
 
 #define TAG "TrackerControl.JNI"
 
@@ -153,11 +154,6 @@ struct icmp_session {
 
     uint8_t stop;
 };
-
-#define UDP_ACTIVE 0
-#define UDP_FINISHING 1
-#define UDP_CLOSED 2
-#define UDP_BLOCKED 3
 
 struct udp_session {
     time_t time;
@@ -442,7 +438,8 @@ jboolean handle_icmp(const struct arguments *args,
                      int uid,
                      const int epoll_fd);
 
-int has_udp_session(const struct arguments *args, const uint8_t *pkt, const uint8_t *payload);
+int get_udp_session_state(const struct arguments *args,
+                          const uint8_t *pkt, const uint8_t *payload);
 
 void block_udp(const struct arguments *args,
                const uint8_t *pkt, size_t length,
@@ -571,12 +568,12 @@ int route_wants_tunnel(int local_dest, int is_dns, int tunnel_uid, int dns_direc
 int route_flow_lookup(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
-                      int *tunnel);
+                      int *tunnel, int *uid_known);
 
 void route_flow_store(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
-                      int tunnel);
+                      int tunnel, int uid_known);
 
 void route_flow_invalidate();
 

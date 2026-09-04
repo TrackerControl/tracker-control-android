@@ -86,7 +86,8 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
     struct ng_session *s = (struct ng_session *) ev->data.ptr;
 
     // Check socket error
-    if (ev->events & EPOLLERR) {
+    if (udp_event_action(ev->events, EPOLLERR | EPOLLHUP, EPOLLIN) ==
+        UDP_EVENT_TERMINAL) {
         s->udp.time = time(NULL);
 
         int serr = 0;
@@ -97,6 +98,8 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
                         errno, strerror(errno));
         else if (serr)
             log_android(ANDROID_LOG_ERROR, "UDP SO_ERROR %d: %s", serr, strerror(serr));
+        else if (ev->events & EPOLLHUP)
+            log_android(ANDROID_LOG_WARN, "UDP socket hangup");
 
         s->udp.state = UDP_FINISHING;
     } else {
@@ -150,15 +153,13 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
     }
 }
 
-int has_udp_session(const struct arguments *args, const uint8_t *pkt, const uint8_t *payload) {
+static struct ng_session *find_udp_session(const struct arguments *args,
+                                           const uint8_t *pkt, const uint8_t *payload) {
     // Get headers
     const uint8_t version = (*pkt) >> 4;
     const struct iphdr *ip4 = (struct iphdr *) pkt;
     const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
     const struct udphdr *udphdr = (struct udphdr *) payload;
-
-    if (ntohs(udphdr->dest) == 53 && !args->fwd53)
-        return 1;
 
     // Search session
     struct ng_session *cur = args->ctx->ng_session;
@@ -172,7 +173,17 @@ int has_udp_session(const struct arguments *args, const uint8_t *pkt, const uint
                              memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
         cur = cur->next;
 
-    return (cur != NULL);
+    return cur;
+}
+
+int get_udp_session_state(const struct arguments *args,
+                          const uint8_t *pkt, const uint8_t *payload) {
+    const struct udphdr *udphdr = (struct udphdr *) payload;
+    if (ntohs(udphdr->dest) == 53 && !args->fwd53)
+        return UDP_ACTIVE;
+
+    const struct ng_session *session = find_udp_session(args, pkt, payload);
+    return session == NULL ? -1 : session->udp.state;
 }
 
 void block_udp(const struct arguments *args,
