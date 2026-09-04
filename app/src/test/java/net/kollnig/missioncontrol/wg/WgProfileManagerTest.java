@@ -212,6 +212,164 @@ public class WgProfileManagerTest {
         assertEquals("legacy", manager.getActiveProfile().config);
     }
 
+    private static final String PEER_A = "A".repeat(43) + "=";
+    private static final String PEER_B = "B".repeat(42) + "A=";
+    private static final String PEER_C = "C".repeat(42) + "A=";
+
+    /** A parsable config for the given peer, with an interface key that varies. */
+    private static String config(String peerKey, String interfaceKey) {
+        return "[Interface]\n" +
+                "PrivateKey = " + interfaceKey + "\n" +
+                "Address = 10.0.0.2/32\n" +
+                "\n" +
+                "[Peer]\n" +
+                "PublicKey = " + peerKey + "\n" +
+                "AllowedIPs = 0.0.0.0/0\n";
+    }
+
+    @Test
+    public void importAddsEveryProfileAndActivatesTheFirstWhenNoneWasActive() throws Exception {
+        WgProfileManager.ImportResult result = manager.importProfiles(java.util.Arrays.asList(
+                new WgProfileManager.ImportEntry("us-nyc", config(PEER_A, PEER_A)),
+                new WgProfileManager.ImportEntry("de-ber", config(PEER_B, PEER_A))));
+
+        assertEquals(2, result.added);
+        assertEquals(0, result.updated);
+        assertEquals(2, manager.getProfiles().size());
+        assertEquals("us-nyc", manager.getActiveProfile().name);
+        assertEquals(config(PEER_A, PEER_A), prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void importLeavesTheActiveProfileAlone() throws Exception {
+        manager.saveProfile(null, "Existing", config(PEER_C, PEER_A));
+        String active = manager.getActiveProfileId();
+
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", config(PEER_A, PEER_A))));
+
+        assertEquals(active, manager.getActiveProfileId());
+        assertEquals(config(PEER_C, PEER_A), prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void reimportOfTheSameTunnelRefreshesItInsteadOfDuplicatingIt() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", config(PEER_A, PEER_A))));
+
+        // Same server, rotated interface key: what a provider re-issue looks like.
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("us-nyc", config(PEER_A, PEER_B))));
+
+        assertEquals(0, result.added);
+        assertEquals(1, result.updated);
+        assertEquals(1, manager.getProfiles().size());
+        assertEquals(config(PEER_A, PEER_B), manager.getProfiles().get(0).config);
+    }
+
+    @Test
+    public void reimportOfTheActiveProfileRefreshesTheLiveConfig() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", config(PEER_A, PEER_A))));
+
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("us-nyc", config(PEER_A, PEER_B))));
+
+        assertEquals(config(PEER_A, PEER_B), prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void aDifferentTunnelSharingAFileNameIsImportedAlongsideTheFirst() throws Exception {
+        // Two providers both shipping "wg0.conf": overwriting the first would
+        // lose a profile, and switch the tunnel if that profile were active.
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("wg0", config(PEER_A, PEER_A))));
+
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("wg0", config(PEER_B, PEER_B))));
+
+        assertEquals(1, result.added);
+        assertEquals(0, result.updated);
+        List<WgProfileManager.Profile> profiles = manager.getProfiles();
+        assertEquals(2, profiles.size());
+        assertEquals("wg0", profiles.get(0).name);
+        assertEquals("wg0 (2)", profiles.get(1).name);
+        assertEquals(config(PEER_A, PEER_A), profiles.get(0).config);
+        // The first profile was active and must have stayed on its own config.
+        assertEquals(config(PEER_A, PEER_A), prefs.getString(WgProfileManager.PREF_WG_CONFIG, ""));
+    }
+
+    @Test
+    public void theSecondProviderFileRefreshesItsOwnProfileOnReimport() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("wg0", config(PEER_A, PEER_A))));
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("wg0", config(PEER_B, PEER_B))));
+
+        // Importing the second provider's file again must refresh "wg0 (2)"
+        // rather than pile up a "wg0 (3)".
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("wg0", config(PEER_B, PEER_C))));
+
+        assertEquals(0, result.added);
+        assertEquals(1, result.updated);
+        List<WgProfileManager.Profile> profiles = manager.getProfiles();
+        assertEquals(2, profiles.size());
+        assertEquals(config(PEER_B, PEER_C), profiles.get(1).config);
+    }
+
+    @Test
+    public void aProfileWhoseStoredConfigNoLongerParsesIsNeverOverwritten() throws Exception {
+        manager.saveProfile(null, "wg0", "not a config");
+
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("wg0", config(PEER_A, PEER_A))));
+
+        assertEquals(1, result.added);
+        assertEquals(2, manager.getProfiles().size());
+        assertEquals("not a config", manager.getProfiles().get(0).config);
+    }
+
+    @Test
+    public void importNeverTakesOverAProviderManagedProfile() throws Exception {
+        // Mullvad and IVPN profiles are named by us and rewritten by key
+        // rotation; a file that happens to share the name must not land on one.
+        manager.saveProfile(null, "Mullvad", config(PEER_A, PEER_A), "mullvad", "1234");
+
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("Mullvad", config(PEER_A, PEER_B))));
+
+        assertEquals(1, result.added);
+        assertEquals(2, manager.getProfiles().size());
+        assertEquals("Mullvad (2)", manager.getProfiles().get(1).name);
+        assertEquals(config(PEER_A, PEER_A), manager.getProviderConfig("mullvad", "1234"));
+    }
+
+    @Test
+    public void importWithoutANameFallsBackToTheDefaultName() throws Exception {
+        manager.importProfiles(java.util.Collections.singletonList(
+                new WgProfileManager.ImportEntry("", config(PEER_A, PEER_A))));
+
+        assertEquals(context.getString(R.string.msg_wg_profile_default_name),
+                manager.getProfiles().get(0).name);
+    }
+
+    @Test
+    public void importOfNothingUsableChangesNoState() throws Exception {
+        WgProfileManager.ImportResult result = manager.importProfiles(
+                java.util.Collections.singletonList(
+                        new WgProfileManager.ImportEntry("empty", "")));
+
+        assertEquals(0, result.total());
+        assertTrue(manager.getProfiles().isEmpty());
+        assertEquals("", manager.getActiveProfileId());
+    }
+
     private static JSONObject profile(String id, String name, String config, String provider,
                                       String account, String countryCode, String countryName) throws Exception {
         return new JSONObject()

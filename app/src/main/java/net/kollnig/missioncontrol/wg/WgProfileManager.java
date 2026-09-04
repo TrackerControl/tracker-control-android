@@ -73,6 +73,31 @@ public class WgProfileManager {
         }
     }
 
+    /** One config to import, named after the file it came from. */
+    public static class ImportEntry {
+        public final String name;
+        public final String config;
+
+        public ImportEntry(String name, String config) {
+            this.name = name;
+            this.config = config;
+        }
+    }
+
+    public static class ImportResult {
+        public final int added;
+        public final int updated;
+
+        public ImportResult(int added, int updated) {
+            this.added = added;
+            this.updated = updated;
+        }
+
+        public int total() {
+            return added + updated;
+        }
+    }
+
     public static class MullvadCountry {
         public final String code;
         public final String name;
@@ -210,6 +235,161 @@ public class WgProfileManager {
             editor.putString(PREF_WG_CONFIG, config);
             editor.apply();
         }
+    }
+
+    /**
+     * Bulk counterpart to {@link #saveProfile}, for a file or archive import.
+     *
+     * One read-modify-write for the whole batch, so importing twenty configs
+     * costs one preference commit rather than twenty.
+     *
+     * A re-import refreshes an existing custom profile instead of duplicating
+     * it — providers hand out stable per-server file names, so importing the
+     * same archive again should not double the list. The name alone does not
+     * decide that: two providers both shipping a "wg0.conf" would otherwise
+     * see the second import overwrite the first, and switch the tunnel under
+     * the user if that profile was active. A profile is only refreshed when it
+     * also still describes the same tunnel, meaning the two configs share a
+     * peer public key; anything else is imported alongside it under a
+     * disambiguated name. Provider-managed profiles (Mullvad, IVPN) are never
+     * matched at all: their names are ours, and an imported file must not
+     * silently take one over.
+     *
+     * The active profile is left alone unless there was none, so an import
+     * cannot move the user off the tunnel they are on.
+     */
+    public ImportResult importProfiles(List<ImportEntry> entries) throws JSONException {
+        synchronized (STORE_LOCK) {
+            JSONArray profiles = readProfilesJson();
+            int added = 0;
+            int updated = 0;
+            String firstId = null;
+
+            for (ImportEntry entry : entries) {
+                if (entry == null || TextUtils.isEmpty(entry.config))
+                    continue;
+                String name = TextUtils.isEmpty(entry.name)
+                        ? context.getString(R.string.msg_wg_profile_default_name)
+                        : entry.name;
+
+                JSONObject profile = findRefreshableJsonProfile(profiles, name, entry.config);
+                if (profile == null) {
+                    profile = new JSONObject();
+                    profile.put("id", newId());
+                    profile.put("name", unusedProfileName(profiles, name));
+                    profile.put("provider", "");
+                    profile.put("account", "");
+                    profile.put("countryCode", "");
+                    profile.put("countryName", "");
+                    profiles.put(profile);
+                    added++;
+                } else {
+                    updated++;
+                }
+                profile.put("config", entry.config);
+                if (firstId == null)
+                    firstId = profile.optString("id");
+            }
+
+            if (added == 0 && updated == 0)
+                return new ImportResult(0, 0);
+
+            SharedPreferences.Editor editor = prefs.edit();
+            writeProfilesJson(editor, profiles);
+
+            String active = getActiveProfileId();
+            JSONObject activeProfile = findJsonProfile(profiles, active);
+            if (activeProfile == null) {
+                if (firstId != null) {
+                    JSONObject imported = findJsonProfile(profiles, firstId);
+                    editor.putString(PREF_WG_PROFILE, firstId);
+                    editor.putString(PREF_WG_CONFIG,
+                            imported == null ? "" : imported.optString("config", ""));
+                }
+            } else {
+                // An update may have rewritten the active profile's config.
+                editor.putString(PREF_WG_CONFIG, activeProfile.optString("config", ""));
+            }
+            editor.apply();
+            return new ImportResult(added, updated);
+        }
+    }
+
+    /**
+     * The custom profile an imported config refreshes: one carrying this file's
+     * name, and still describing the same tunnel. Returns null when the config
+     * should be imported as a new profile instead.
+     *
+     * Profiles previously disambiguated from this name ("wg0 (2)") are
+     * candidates too, or the second provider's "wg0.conf" would duplicate on
+     * every re-import rather than refreshing the profile it created.
+     */
+    private JSONObject findRefreshableJsonProfile(JSONArray profiles, String name, String config) {
+        for (int i = 0; i < profiles.length(); i++) {
+            JSONObject profile = profiles.optJSONObject(i);
+            if (profile == null)
+                continue;
+            if (!TextUtils.isEmpty(profile.optString("provider")))
+                continue;
+            String stored = profile.optString("name");
+            if (!name.equals(stored) && !stored.startsWith(name + " ("))
+                continue;
+            if (describesSameTunnel(profile.optString("config", ""), config))
+                return profile;
+        }
+        return null;
+    }
+
+    /**
+     * Whether two configs are the same tunnel, judged by a shared peer public
+     * key. A provider rotating keys replaces the interface's private key but
+     * keeps the server's public key, so this holds across a genuine refresh
+     * while still separating two unrelated providers' files. A config that no
+     * longer parses is treated as different: keeping it costs a duplicate,
+     * overwriting it costs the user their profile.
+     */
+    private static boolean describesSameTunnel(String existing, String imported) {
+        java.util.Set<String> keys = peerPublicKeys(existing);
+        if (keys.isEmpty())
+            return false;
+        for (String key : peerPublicKeys(imported))
+            if (keys.contains(key))
+                return true;
+        return false;
+    }
+
+    private static java.util.Set<String> peerPublicKeys(String config) {
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        if (TextUtils.isEmpty(config))
+            return keys;
+        try {
+            for (WgPeer peer : WgConfigParser.INSTANCE.parse(config).getPeers())
+                keys.add(peer.getPublicKey());
+        } catch (Throwable ignored) {
+            // Only ever used to decide refresh versus add; an unparsable
+            // config simply never matches.
+        }
+        return keys;
+    }
+
+    /** A name no stored profile is using, suffixed only when one already is. */
+    private String unusedProfileName(JSONArray profiles, String name) {
+        if (!isProfileNameTaken(profiles, name))
+            return name;
+        for (int i = 2; ; i++) {
+            String candidate = name + " (" + i + ")";
+            if (!isProfileNameTaken(profiles, candidate))
+                return candidate;
+        }
+    }
+
+    private boolean isProfileNameTaken(JSONArray profiles, String name) {
+        for (int i = 0; i < profiles.length(); i++) {
+            JSONObject profile = profiles.optJSONObject(i);
+            if (profile != null && name.equals(profile.optString("name")))
+                return true;
+        }
+        return false;
     }
 
     public void deleteProfile(String id) {
