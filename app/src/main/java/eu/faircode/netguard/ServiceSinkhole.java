@@ -3124,6 +3124,7 @@ public class ServiceSinkhole extends VpnService {
             boolean sawFirstRow = false;
             boolean sawTrackerEvidence = false;
             boolean sawNonTrackerEvidence = false;
+            long latestNonTrackerExpiry = -1;
             // Blocking evidence, classified against the DuckDuckGo-only map.
             // Detection above uses the full map in every mode, so the blocking
             // verdict has to be tracked separately to stay DDG-compatible.
@@ -3131,6 +3132,7 @@ public class ServiceSinkhole extends VpnService {
             boolean sawMinimalCategory = false;
             boolean sawMinimalTrackerEvidence = false;
             boolean sawNonMinimalTrackerEvidence = false;
+            long latestNonMinimalExpiry = -1;
             // Expiry of the DNS record minimalCategory was derived from,
             // tracked separately from chosenTime/chosenTtl: the DDG row that
             // supplies minimalCategory need not be the same row that
@@ -3190,8 +3192,11 @@ public class ServiceSinkhole extends VpnService {
                                 minimalChosenTime = rowTime;
                                 minimalChosenTtl = rowTtl;
                             }
-                        } else if (qname != null || aname != null)
+                        } else if (qname != null || aname != null) {
+                            latestNonMinimalExpiry = Math.max(latestNonMinimalExpiry,
+                                    TrackerEvidenceExpiry.at(rowTime, rowTtl));
                             sawNonMinimalTrackerEvidence = true;
+                        }
 
                         if (candidateTracker != null) {
                             sawTrackerEvidence = true;
@@ -3204,19 +3209,25 @@ public class ServiceSinkhole extends VpnService {
                                 chosenTime = rowTime;
                                 chosenTtl = rowTtl;
                             }
-                        } else if (qname != null || aname != null)
+                        } else if (qname != null || aname != null) {
+                            latestNonTrackerExpiry = Math.max(latestNonTrackerExpiry,
+                                    TrackerEvidenceExpiry.at(rowTime, rowTtl));
                             sawNonTrackerEvidence = true;
+                        }
                     }
                 }
             }
 
-            if (sawTrackerEvidence && sawNonTrackerEvidence && !blockAmbiguousTrackers) {
+            boolean mixedTrackerEvidence = sawTrackerEvidence && sawNonTrackerEvidence
+                    && !blockAmbiguousTrackers;
+            if (mixedTrackerEvidence) {
                 Log.d(TAG, "Allowing mixed tracker evidence for " + daddr);
                 tracker = NO_TRACKER;
             }
 
-            if (sawMinimalTrackerEvidence && sawNonMinimalTrackerEvidence
-                    && !blockAmbiguousTrackers)
+            boolean mixedMinimalEvidence = sawMinimalTrackerEvidence && sawNonMinimalTrackerEvidence
+                    && !blockAmbiguousTrackers;
+            if (mixedMinimalEvidence)
                 minimalCategory = null;
 
             // No success in finding dname or tracker?
@@ -3235,22 +3246,38 @@ public class ServiceSinkhole extends VpnService {
                 // the full DNS TTL (up to 7 days), which would keep any
                 // tracker traffic to this IP invisible and unblocked until
                 // then.
-                expiry = now + NEGATIVE_TRACKER_CACHE_TTL_MS;
+                expiry = TrackerEvidenceExpiry.at(now, NEGATIVE_TRACKER_CACHE_TTL_MS);
             } else {
                 // DNS evidence exists (tracker or confident non-tracker);
                 // expire with the record the decision was derived from, not
                 // whatever row happened to be read last.
                 expiry = (chosenTime >= 0)
-                        ? chosenTime + chosenTtl
-                        : firstTime + firstTtl;
+                        ? TrackerEvidenceExpiry.at(chosenTime, chosenTtl)
+                        : TrackerEvidenceExpiry.at(firstTime, firstTtl);
+                // An ambiguous standard-mode verdict depends on both the
+                // selected tracker row and the last fresh non-tracker row.
+                // Re-read when either side can have changed, so a benign row
+                // expiring cannot leave an allow verdict cached until the
+                // tracker's unrelated TTL expires.
+                if (mixedTrackerEvidence)
+                    expiry = Math.min(expiry, TrackerEvidenceExpiry.mixed(
+                            TrackerEvidenceExpiry.at(chosenTime, chosenTtl),
+                            latestNonTrackerExpiry));
                 // The minimal (DDG) verdict can be derived from a
                 // different row than the broader-map tracker above; expire
                 // with whichever evidence goes stale first so a blocking
                 // verdict never outlives the record it came from.
                 if (minimalCategory != null && minimalChosenTime >= 0) {
-                    long minimalExpiry = minimalChosenTime + minimalChosenTtl;
+                    long minimalExpiry = TrackerEvidenceExpiry.at(
+                            minimalChosenTime, minimalChosenTtl);
                     expiry = Math.min(expiry, minimalExpiry);
                 }
+                // A mixed Minimal/DDG verdict likewise depends on the selected
+                // DDG tracker and the last fresh non-DDG row.
+                if (mixedMinimalEvidence)
+                    expiry = Math.min(expiry, TrackerEvidenceExpiry.mixed(
+                            TrackerEvidenceExpiry.at(minimalChosenTime, minimalChosenTtl),
+                            latestNonMinimalExpiry));
             }
 
             // Save dname and tracker, but only if no concurrent
