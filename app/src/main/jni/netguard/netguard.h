@@ -163,6 +163,13 @@ struct udp_session {
     int version;
     uint16_t mss;
 
+    int resolved_version;
+    union {
+        __be32 ip4; // network notation
+        struct in6_addr ip6;
+    } resolved_addr;
+    __be16 resolved_port; // network notation
+
     uint64_t sent;
     uint64_t received;
 
@@ -495,7 +502,7 @@ void queue_tcp(const struct arguments *args,
 int open_icmp_socket(const struct arguments *args, const struct icmp_session *cur);
 
 int open_udp_socket(const struct arguments *args,
-                    const struct udp_session *cur, const struct allowed *redirect);
+                    const struct udp_session *cur);
 
 int open_tcp_socket(const struct arguments *args,
                     const struct tcp_session *cur, const struct allowed *redirect);
