@@ -78,7 +78,7 @@ jobs:
           cc $COMMON -o /tmp/tcp_half_close_test \
             app/src/test/native/tcp_half_close_test.c \
             app/src/main/jni/netguard/tcp.c \
-            -Wl,--wrap=close -Wl,--wrap=connect
+            -Wl,--wrap=close -Wl,--wrap=connect -Wl,--wrap=send
           /tmp/tcp_half_close_test
 
           cc $COMMON -o /tmp/udp_socket_test \

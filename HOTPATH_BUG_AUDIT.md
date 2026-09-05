@@ -69,9 +69,8 @@ branches:
 | #16 | **Fixed** | Secure DNS uses 16 workers and a bounded 64-request backlog; overload receives an immediate UDP `SERVFAIL` or a closed TCP socket. |
 
 All 18 findings from the original pass are fixed across the stacked branches.
-A second pass over the completed stack found findings #19–#31 below. Core
-findings #19–#29 are fixed in the next stacked pull request; advanced SOCKS5
-findings #30–#31 remain deferred.
+A second pass over the completed stack found findings #19–#31 below. All are
+fixed in the next stacked pull request.
 
 ## Detailed findings
 
@@ -563,8 +562,7 @@ can represent it.
 
 ## Repair status
 
-All original findings #1–#18 are implemented across the stacked pull requests.
-Further-pass findings #19–#31 remain open.
+All findings #1–#31 are implemented across the stacked pull requests.
 
 ## Validation performed
 
@@ -640,8 +638,8 @@ synchronous DNS callback. Production code was not changed.
 | 27 | Every DNS record rebuilds an unused Java IP-rule map synchronously | Battery, SQLite, lock contention, WireGuard hotpath | **High** | Easy–Medium | **Fixed** | Whole-tree use audit |
 | 28 | Invalid IPv4 IHL forms an out-of-bounds pointer before validation | Native safety, malformed packets | **Low–Medium** | Easy | **Fixed** | Source-proven |
 | 29 | IPv6 TCP and ICMP pass uninitialised scope/flow fields to the kernel | IPv6 connectivity, native correctness | **Medium** | Easy | **Fixed** | Source-proven |
-| 30 | SOCKS5 assumes each TCP `recv()` is one complete protocol message | TCP compatibility, proxy | **Medium** | Medium | Deferred | Source-proven |
-| 31 | SOCKS5 credentials are written to logcat | Credential exposure, privacy, logging | **Medium** | Easy | Deferred | Source-proven |
+| 30 | SOCKS5 assumes each TCP `recv()` is one complete protocol message | TCP compatibility, proxy | **Medium** | Medium | **Fixed** | Source-proven |
+| 31 | SOCKS5 credentials are written to logcat | Credential exposure, privacy, logging | **Medium** | Easy | **Fixed** | Source-proven |
 
 The strongest newly found battery candidates are #20, #24 and #27. The first
 two can cause sustained native CPU or memory pressure; #27 performs database
@@ -969,8 +967,10 @@ as the recently fixed UDP redirect path already does.
 **Fix difficulty:** Medium
 **Confidence:** High
 
-**Status: Deferred.** SOCKS5 is an advanced feature and was excluded from this
-core hotpath repair pull request.
+**Status: Fixed in this pull request.** Response reads accumulate only to the
+state-specific protocol length, including variable-length CONNECT addresses,
+so fragments are retained and coalesced application data stays unread. Request
+writes retain their offset and resume from the unsent suffix after short writes.
 
 The SOCKS5 handshake calls `recv()` once and accepts only exact sizes: two bytes
 for method/auth replies and exactly `6 + address_length` for CONNECT
@@ -991,8 +991,9 @@ same partial-write accounting used for application payload.
 **Fix difficulty:** Easy
 **Confidence:** High
 
-**Status: Deferred.** SOCKS5 is an advanced feature and was excluded from this
-core hotpath repair pull request.
+**Status: Fixed in this pull request.** Configuration logs retain only the proxy
+endpoint. Handshake logs report state and byte counts without dumping protocol
+payloads, and per-session authentication buffers are wiped after each stage.
 
 Configuring the proxy logs its username at warning level, which is the default
 native log threshold ([`netguard.c`](app/src/main/jni/netguard/netguard.c),
@@ -1012,6 +1013,9 @@ bug reports.
 - The production-backed DNS-frame, TCP half-close, UDP socket, ICMP socket and
   IPv4-header regressions passed under ASan/UBSan. TCP, UDP and ICMP are also
   wired into the native host-test CI step.
+- The TCP host suite covers one-byte SOCKS5 response fragments, variable-length
+  CONNECT replies, coalesced application data and one-byte request writes; it
+  also asserts that the configured password never reaches native logs.
 - The Rust workspace passed all 98 tests, including out-of-order payload plus
   FIN recovery.
 - The complete `testGithubDebugUnitTest` suite passed.

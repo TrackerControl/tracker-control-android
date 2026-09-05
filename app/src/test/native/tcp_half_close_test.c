@@ -18,6 +18,8 @@ static int connect_calls;
 static int last_connect_family;
 static struct sockaddr_storage last_connect_address;
 static socklen_t last_connect_length;
+static size_t send_limit;
+static int credential_logged;
 
 #define CHECK(condition, message)                                           \
     do {                                                                    \
@@ -64,7 +66,13 @@ char *hex(const u_int8_t *data, const size_t len) {
 
 void log_android(int priority, const char *format, ...) {
     (void) priority;
-    (void) format;
+    char message[1024];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(message, sizeof(message), format, args);
+    va_end(args);
+    if (*socks5_password != 0 && strstr(message, socks5_password) != NULL)
+        credential_logged = 1;
 }
 
 long long get_ms(void) {
@@ -133,6 +141,21 @@ int __wrap_connect(int socket, const struct sockaddr *address,
         memcpy(&last_connect_address, address, address_length);
     errno = EINPROGRESS;
     return -1;
+}
+
+#ifdef __linux__
+ssize_t __real_send(int socket, const void *buffer, size_t length, int flags);
+#endif
+
+ssize_t __wrap_send(int socket, const void *buffer, size_t length, int flags) {
+    size_t allowed = length;
+    if (send_limit > 0 && allowed > send_limit)
+        allowed = send_limit;
+#ifdef __linux__
+    return __real_send(socket, buffer, allowed, flags);
+#else
+    return send(socket, buffer, allowed, flags);
+#endif
 }
 
 void write_pcap_rec(const uint8_t *buffer, size_t len) {
@@ -638,6 +661,136 @@ static void test_tcp_connect_address_is_zero_initialised(void) {
         close(socket6);
 }
 
+static size_t read_exact(int socket, uint8_t *buffer, size_t length) {
+    size_t received = 0;
+    while (received < length) {
+        ssize_t bytes = recv(socket, buffer + received, length - received, 0);
+        if (bytes <= 0)
+            break;
+        received += (size_t) bytes;
+    }
+    return received;
+}
+
+static void finish_socks5_send(const struct arguments *args,
+                               struct ng_session *session) {
+    struct epoll_event event = {.events = EPOLLOUT, .data.ptr = session};
+    int attempts = 0;
+    while (session->tcp.socks5_tx_sent < session->tcp.socks5_tx_len &&
+           attempts++ < SOCKS5_MESSAGE_MAX)
+        check_tcp_socket(args, &event, -1);
+    CHECK(session->tcp.socks5_tx_sent == session->tcp.socks5_tx_len,
+          "SOCKS5 request suffix drains after short writes");
+}
+
+static void test_socks5_stream_fragmentation_and_short_writes(void) {
+    int upstream[2];
+    int tun[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, upstream) == 0,
+          "socketpair for SOCKS5 stream");
+    CHECK(pipe(tun) == 0, "pipe for SOCKS5 SYN ACK");
+    if (failures != 0)
+        return;
+
+    strcpy(socks5_addr, "127.0.0.1");
+    socks5_port = 1080;
+    strcpy(socks5_username, "alice");
+    strcpy(socks5_password, "secret");
+    credential_logged = 0;
+    send_limit = 1;
+
+    struct ng_session session;
+    struct context context;
+    struct arguments args;
+    make_session(&session, upstream[0], TCP_LISTEN);
+    session.tcp.socks5 = SOCKS5_NONE;
+    make_args(&args, &context, &session, tun[1]);
+
+    struct epoll_event event = {.events = EPOLLOUT, .data.ptr = &session};
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_HELLO &&
+                  session.tcp.socks5_tx_sent == 1,
+          "SOCKS5 hello records a one-byte short write");
+    finish_socks5_send(&args, &session);
+    uint8_t hello[4];
+    CHECK(read_exact(upstream[1], hello, sizeof(hello)) == sizeof(hello) &&
+                  memcmp(hello, (uint8_t[]) {5, 2, 0, 2}, sizeof(hello)) == 0,
+          "SOCKS5 hello is sent once without duplicated prefixes");
+
+    event.events = EPOLLIN;
+    CHECK(write(upstream[1], (uint8_t[]) {5}, 1) == 1,
+          "write first SOCKS5 method byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_HELLO && session.tcp.socks5_rx_len == 1,
+          "split SOCKS5 method response remains pending");
+    CHECK(write(upstream[1], (uint8_t[]) {2}, 1) == 1,
+          "write second SOCKS5 method byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_AUTH,
+          "split SOCKS5 method response advances to authentication");
+
+    finish_socks5_send(&args, &session);
+    size_t auth_length = 3 + strlen(socks5_username) + strlen(socks5_password);
+    uint8_t auth[SOCKS5_MESSAGE_MAX];
+    CHECK(read_exact(upstream[1], auth, auth_length) == auth_length,
+          "SOCKS5 authentication request drains after short writes");
+    CHECK(auth[0] == 1 && auth[1] == strlen(socks5_username) &&
+                  memcmp(auth + 2, socks5_username, strlen(socks5_username)) == 0,
+          "SOCKS5 authentication request retains its framing");
+    uint8_t wiped[SOCKS5_MESSAGE_MAX] = {0};
+    CHECK(memcmp(session.tcp.socks5_tx, wiped, sizeof(wiped)) == 0,
+          "sent SOCKS5 credentials are wiped before awaiting the response");
+
+    CHECK(write(upstream[1], (uint8_t[]) {1}, 1) == 1,
+          "write first SOCKS5 authentication byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_AUTH,
+          "split authentication response remains pending");
+    CHECK(write(upstream[1], (uint8_t[]) {0}, 1) == 1,
+          "write second SOCKS5 authentication byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_CONNECT,
+          "split authentication response advances to connect");
+
+    finish_socks5_send(&args, &session);
+    uint8_t connect_request[10];
+    CHECK(read_exact(upstream[1], connect_request, sizeof(connect_request)) ==
+                  sizeof(connect_request) &&
+                  memcmp(connect_request, (uint8_t[]) {5, 1, 0, 1}, 4) == 0,
+          "SOCKS5 connect request drains without duplicated prefixes");
+
+    static const uint8_t response_and_data[] = {
+            5, 0, 0, 3, 3, 'f', 'o', 'o', 0, 80, 'D', 'A', 'T', 'A'};
+    CHECK(write(upstream[1], response_and_data, sizeof(response_and_data)) ==
+                  sizeof(response_and_data),
+          "write fragmented-shape SOCKS5 connect response and upstream data");
+    check_tcp_socket(&args, &event, -1); // fixed four-byte response prefix
+    CHECK(session.tcp.socks5 == SOCKS5_CONNECT && session.tcp.socks5_rx_len == 4,
+          "SOCKS5 connect waits for a domain length byte");
+    check_tcp_socket(&args, &event, -1); // domain length
+    CHECK(session.tcp.socks5 == SOCKS5_CONNECT && session.tcp.socks5_rx_len == 5,
+          "SOCKS5 connect waits for its variable address suffix");
+    check_tcp_socket(&args, &event, -1); // domain and port
+    CHECK(session.tcp.state == TCP_SYN_RECV,
+          "complete variable-length SOCKS5 response establishes the TCP flow");
+    uint8_t pending[4];
+    CHECK(recv(upstream[0], pending, sizeof(pending), MSG_PEEK | MSG_DONTWAIT) == 4 &&
+                  memcmp(pending, "DATA", 4) == 0,
+          "SOCKS5 parsing leaves coalesced application data unread");
+    CHECK(!credential_logged, "SOCKS5 logs do not contain the password");
+
+    send_limit = 0;
+    *socks5_addr = 0;
+    socks5_port = 0;
+    *socks5_username = 0;
+    *socks5_password = 0;
+    close(upstream[0]);
+    close(upstream[1]);
+    close(tun[0]);
+    close(tun[1]);
+    clear_tcp_data(&session.tcp);
+}
+
 int main(void) {
     test_queued_fin_waits_for_gap_and_drains();
     test_upstream_eof_keeps_write_half();
@@ -648,6 +801,7 @@ int main(void) {
     test_syn_data_starts_after_remote_isn();
     test_tcp_epoll_add_failure_does_not_retain_session();
     test_tcp_connect_address_is_zero_initialised();
+    test_socks5_stream_fragmentation_and_short_writes();
 
     if (failures != 0)
         return 1;
