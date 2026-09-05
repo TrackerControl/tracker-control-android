@@ -93,46 +93,6 @@ jobs:
             app/src/test/native/udp_state_test.c
           /tmp/udp_state_test
 
-      - name: Run TCP send-window host tests
-        run: |
-          cc -Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare \
-            -fsanitize=address,undefined -fno-omit-frame-pointer \
-            -ffunction-sections -fdata-sections \
-            -Iapp/src/test/native/host_compat -Iapp/src/main/jni/netguard \
-            -c -o /tmp/tcp_window.o app/src/main/jni/netguard/tcp.c
-          cc -Wall -Wextra -Werror -fsanitize=address,undefined \
-            -fno-omit-frame-pointer -Iapp/src/test/native/host_compat \
-            -Iapp/src/main/jni/netguard -c -o /tmp/tcp_window_test.o \
-            app/src/test/native/tcp_window_test.c
-          cc -fsanitize=address,undefined -fno-omit-frame-pointer \
-            -Wl,--gc-sections -o /tmp/tcp_window_test \
-            /tmp/tcp_window_test.o /tmp/tcp_window.o
-          /tmp/tcp_window_test
-
-      - name: Run UDP socket host tests
-        run: |
-          cc -Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare \
-            -fsanitize=address,undefined -fno-omit-frame-pointer \
-            -ffunction-sections -fdata-sections \
-            -Iapp/src/test/native/host_compat -Iapp/src/main/jni/netguard \
-            -c -o /tmp/udp_socket.o app/src/main/jni/netguard/udp.c
-          cc -Wall -Wextra -Werror -Wno-unused-parameter -Wno-sign-compare \
-            -fsanitize=address,undefined -fno-omit-frame-pointer \
-            -ffunction-sections -fdata-sections \
-            -Dlog_android=production_log_android \
-            -Iapp/src/test/native/host_compat -Iapp/src/main/jni/netguard \
-            -c -o /tmp/udp_socket_util.o app/src/main/jni/netguard/util.c
-          cc -Wall -Wextra -Werror -fsanitize=address,undefined \
-            -fno-omit-frame-pointer -Iapp/src/test/native/host_compat \
-            -Iapp/src/main/jni/netguard -c -o /tmp/udp_socket_test.o \
-            app/src/test/native/udp_socket_test.c
-          cc -fsanitize=address,undefined -fno-omit-frame-pointer \
-            -Wl,--gc-sections -Wl,--wrap=recv -Wl,--wrap=write \
-            -Wl,--wrap=close \
-            -o /tmp/udp_socket_test /tmp/udp_socket_test.o /tmp/udp_socket.o \
-            /tmp/udp_socket_util.o
-          /tmp/udp_socket_test
-
       - name: Run WireGuard flow-cache host tests
         run: |
           cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \

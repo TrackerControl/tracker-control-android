@@ -503,7 +503,8 @@ Completed items #3, #7, #11, #17 and #18 are omitted from the remaining order:
   tests, the complete `DnsOverHttpsClientTest`, the five existing native host
   suites, and `assembleGithubDebug` for all four Android ABIs.
 - The new production-backed TCP-window and UDP-socket tests compile in the
-  Android toolchain and are wired into Linux CI for ASan/UBSan execution.
+  Android toolchain. Their Linux ASan/UBSan commands are ready for future CI
+  wiring.
 
 ## Limits
 
