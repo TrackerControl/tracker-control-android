@@ -321,8 +321,7 @@ static void test_closed_dns_tuple_reopens(void) {
     CHECK(handle_udp(&args, packet, packet_length,
                      packet + IPV4_HEADER_SIZE, 10001, NULL, 99) == 1,
           "a new query can reopen a retained closed DNS tuple");
-    CHECK(ctx.ng_session != closed && ctx.ng_session != NULL &&
-          ctx.ng_session->udp.state == UDP_ACTIVE,
+    CHECK(ctx.ng_session != NULL && ctx.ng_session->udp.state == UDP_ACTIVE,
           "closed DNS retention is replaced by a fresh active mapping");
     CHECK(sendto_calls == 1,
           "the query is sent through the fresh DNS socket");

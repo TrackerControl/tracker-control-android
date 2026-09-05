@@ -16,34 +16,35 @@ availability or battery impact.
 
 ## Summary
 
-| # | Bug | Categories | Severity | Fix difficulty | Evidence |
-|---:|---|---|---|---|---|
-| 1 | Default WireGuard UDP/QUIC performs UID, JNI policy and SQLite work per packet | Battery, performance, hotpath | **High** | Medium | Reproduced |
-| 2 | Blocked UDP sessions bypass the 409-session cap | Resource exhaustion, battery, availability | **High** | Medium | Reproduced |
-| 3 | A DNS refresh does not invalidate the tracker-verdict cache | Blocking correctness, privacy, stale state | **High** | Easy | Reproduced in both directions |
-| 4 | Intermediate CNAME trackers are discarded | Detection coverage, privacy, DNS | **High** | Medium–Hard | Reproduced in direct and WG paths |
-| 5 | Native DNS closes after one reply and rejects tuple reuse for 60 seconds | DNS reliability, connectivity | **High** | Medium | Reproduced |
-| 6 | Overlapping TCP retransmissions wedge the forwarding queue | TCP correctness, connectivity, battery | **High** | Hard | Reproduced |
-| 7 | Protected → No Internet does not reload VPN policy | Blocking enforcement, privacy | **High** | Easy | Source-proven |
-| 8 | Established WireGuard TCP streams survive policy reloads | Blocking enforcement, privacy, WireGuard | **High** | Hard | Source-proven |
-| 9 | A client TCP FIN is not propagated upstream | TCP correctness, compatibility | **Medium–High** | Hard | Reproduced |
-| 10 | A server TCP FIN closes both directions | TCP correctness, compatibility | **Medium–High** | Hard | Reproduced |
-| 11 | TCP send-window calculation uses 16-bit rather than 32-bit wrap arithmetic | TCP correctness, connectivity | **Medium** | Easy | Reproduced |
-| 12 | Closed TCP windows cause 100 ms polling and repeated ACK probes | Battery, CPU, radio activity | **Medium** | Medium | Reproduced |
-| 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | Reproduced |
-| 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | Source-proven |
-| 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | Reproduced |
-| 16 | The DoH proxy has an unbounded request queue | Battery, memory, availability, Secure DNS | **Medium** | Medium | Source-proven |
-| 17 | Screen-off DoH repeatedly schedules connection-pool eviction | Battery, CPU, Secure DNS | **Low–Medium** | Easy | Source-proven |
-| 18 | Zero-length UDP datagrams are treated as EOF | Protocol correctness, compatibility | **Low** | Easy | Reproduced |
+| # | Bug | Categories | Severity | Fix difficulty | Status | Evidence |
+|---:|---|---|---|---|---|---|
+| 1 | Default WireGuard UDP/QUIC performs UID, JNI policy and SQLite work per packet | Battery, performance, hotpath | **High** | Medium | **Fixed** | Reproduced |
+| 2 | Blocked UDP sessions bypass the 409-session cap | Resource exhaustion, battery, availability | **High** | Medium | **Fixed** | Reproduced |
+| 3 | A DNS refresh does not invalidate the tracker-verdict cache | Blocking correctness, privacy, stale state | **High** | Easy | **Fixed** | Reproduced in both directions |
+| 4 | Intermediate CNAME trackers are discarded | Detection coverage, privacy, DNS | **High** | Medium–Hard | **Fixed** | Reproduced in direct and WG paths |
+| 5 | Native DNS closes after one reply and rejects tuple reuse for 60 seconds | DNS reliability, connectivity | **High** | Medium | **Fixed** | Reproduced |
+| 6 | Overlapping TCP retransmissions wedge the forwarding queue | TCP correctness, connectivity, battery | **High** | Hard | **Fixed** | Reproduced |
+| 7 | Protected → No Internet does not reload VPN policy | Blocking enforcement, privacy | **High** | Easy | **Fixed** | Source-proven |
+| 8 | Established WireGuard TCP streams survive policy reloads | Blocking enforcement, privacy, WireGuard | **High** | Hard | **Fixed** | Source-proven |
+| 9 | A client TCP FIN is not propagated upstream | TCP correctness, compatibility | **Medium–High** | Hard | Open | Reproduced |
+| 10 | A server TCP FIN closes both directions | TCP correctness, compatibility | **Medium–High** | Hard | Open | Reproduced |
+| 11 | TCP send-window calculation uses 16-bit rather than 32-bit wrap arithmetic | TCP correctness, connectivity | **Medium** | Easy | **Fixed** | Reproduced |
+| 12 | Closed TCP windows cause 100 ms polling and repeated ACK probes | Battery, CPU, radio activity | **Medium** | Medium | Open | Reproduced |
+| 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | Open | Reproduced |
+| 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | Open | Source-proven |
+| 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | Open | Reproduced |
+| 16 | The DoH proxy has an unbounded request queue | Battery, memory, availability, Secure DNS | **Medium** | Medium | Open | Source-proven |
+| 17 | Screen-off DoH repeatedly schedules connection-pool eviction | Battery, CPU, Secure DNS | **Low–Medium** | Easy | **Fixed** | Source-proven |
+| 18 | Zero-length UDP datagrams are treated as EOF | Protocol correctness, compatibility | **Low** | Easy | **Fixed** | Reproduced |
 
 The strongest battery candidates are #1, #2, #6 and #12. Issues #16 and #17
 also affect battery when the advanced Secure DNS feature is enabled.
 
 ## Fix status
 
-The following easy fixes are implemented on branch
-`codex/fix-easy-hotpath` and covered by this audit's pull request:
+The easy fixes are implemented on `codex/fix-easy-hotpath`. The remaining
+high-severity fixes are implemented on `codex/fix-high-hotpath`, stacked on
+that branch:
 
 | Finding | Status | Implementation |
 |---:|---|---|
@@ -52,10 +53,15 @@ The following easy fixes are implemented on branch
 | #11 | **Fixed** | TCP send-window distance now uses unsigned 32-bit modular subtraction. |
 | #17 | **Fixed** | Screen-off DoH evicts after network-backed work, while cache hits no longer queue redundant eviction. |
 | #18 | **Fixed** | Zero-length UDP datagrams are forwarded as valid empty datagrams rather than treated as EOF. |
+| #1 | **Fixed** | The global WireGuard route now records a generation-scoped per-flow result; known owners reuse it while unresolved owners retry. |
+| #2 | **Fixed** | Retained blocked UDP entries are capped at 256 and evict only the oldest blocked entry, preserving active sessions. |
+| #4 | **Fixed** | The Rust DNS parser now follows a bounded, order-independent CNAME graph and reports every connected alias with the terminal address and conservative TTL. |
+| #5 | **Fixed** | DNS UDP mappings remain active for multiple replies, and an idle closed DNS tuple can be reopened immediately rather than being rejected for the retention period. |
+| #6 | **Fixed** | TCP queue insertion now trims forwarded prefixes, preserves first-seen bytes, fills gaps and merges overlaps with modular sequence arithmetic. |
+| #8 | **Fixed** | Established tunnelled TCP flows revalidate owner and Java policy after each native policy generation change; allowed and blocked results are cached, and a newly blocked stream receives a valid reset. |
 
-Findings #1, #2, #4–6, #8–10 and #12–16 remain open. In particular, fixing
-#7 makes the native policy reload happen, but established WireGuard TCP streams
-still require the separate revocation design described in #8.
+Findings #9, #10 and #12–16 remain open. All eight high-severity findings are
+fixed across the two stacked branches.
 
 ## Detailed findings
 
@@ -65,6 +71,10 @@ still require the separate revocation design described in #8.
 **Severity:** High
 **Fix difficulty:** Medium
 **Confidence:** High
+
+**Status: Fixed in the high-severity pull request.** The no-override path now
+stores the global route and whether its owner was resolved. The next packet
+reuses a stable tunnelled UDP verdict; an unresolved owner remains retryable.
 
 `resolve_tunnel_uid()` stores a flow only inside `route_uid_relevant()`. With
 the ordinary global WireGuard route and no per-app routing overrides, that
@@ -96,6 +106,10 @@ retaining the existing invalidation and unresolved-UID behaviour.
 **Severity:** High
 **Fix difficulty:** Medium
 **Confidence:** High
+
+**Status: Fixed in the high-severity pull request.** `UDP_BLOCKED` has its own
+256-entry cap. Insertion evicts the oldest blocked node only, so negative-cache
+churn cannot grow without bound or evict an active UDP mapping.
 
 The event loop counts only `UDP_ACTIVE` entries
 ([`session.c`](app/src/main/jni/netguard/session.c), lines 101–121), while
@@ -159,6 +173,12 @@ already protects concurrent cache publication.
 **Fix difficulty:** Medium–Hard
 **Confidence:** High
 
+**Status: Fixed in the high-severity pull request.** The shared Rust parser
+follows up to eight connected CNAME links, independent of answer order, emits
+each real alias edge against the terminal A/AAAA address, and carries the
+minimum TTL from that edge to the terminal record. Loops, disconnected aliases
+and duplicate rows are bounded or suppressed.
+
 The shared Rust parser emits only A and AAAA records and ignores CNAME records
 ([`message.rs`](wgbridge-rs/tc-dns/src/message.rs), lines 149–198). For a chain
 such as `first-party → tracker → CDN → IP`, Java receives only
@@ -186,6 +206,11 @@ loop and depth bounds and TTL handling, before associating terminal addresses.
 **Fix difficulty:** Medium
 **Confidence:** High
 
+**Status: Fixed in the high-severity pull request.** Receiving a DNS datagram
+no longer finishes the mapping, so one socket can deliver multiple outstanding
+replies. If the 15-second idle timeout has already closed it, a new query on
+the retained tuple replaces it with a fresh active mapping immediately.
+
 After any port-53 reply, `check_udp_socket()` changes the entry to
 `UDP_FINISHING` ([`udp.c`](app/src/main/jni/netguard/udp.c), lines 135–149).
 The event loop closes it and retains it as `UDP_CLOSED` for 60 seconds (lines
@@ -209,6 +234,10 @@ packets safely.
 **Severity:** High
 **Fix difficulty:** Hard
 **Confidence:** High
+
+**Status: Fixed in the high-severity pull request.** Queue insertion now
+normalises retransmissions and overlapping ranges, including sequence-number
+wrap, already-forwarded prefixes, gaps, exact buffer fits and PSH boundaries.
 
 `queue_tcp()` sorts segments by starting sequence but does not trim or merge
 overlaps ([`tcp.c`](app/src/main/jni/netguard/tcp.c), lines 1054–1112). With
@@ -253,6 +282,13 @@ reload decision. That alone does not solve issue #8.
 **Severity:** High
 **Fix difficulty:** Hard
 **Confidence:** High
+
+**Status: Fixed in the high-severity pull request.** Route and policy verdicts
+now share the generation invalidated by every `pushRoutingToNative()` during a
+native reload. The first later packet of a tunnelled stream resolves its owner
+and crosses the Java policy boundary once. A block is negatively cached and
+sends one stateless TCP reset; an unavailable owner stays fail-closed and is
+retried instead of caching an unattributed allow.
 
 Native reload deliberately leaves WireGuard running to avoid repeated
 handshakes
@@ -478,23 +514,20 @@ can represent it.
 
 ## Suggested repair order
 
-Completed items #3, #7, #11, #17 and #18 are omitted from the remaining order:
+All high-severity items are complete. The remaining order is:
 
-1. Cache the default WireGuard UDP route (#1).
-2. Bound blocked and lingering UDP entries (#2).
-3. Preserve CNAME chains (#4).
-4. Correct native DNS UDP lifetime (#5).
-5. Decide how to revoke established WireGuard TCP flows (#8).
-6. Repair TCP overlap and half-close handling together, with state-machine tests
-   (#6, #9 and #10).
-7. Add polling backoff (#12).
-8. Address the remaining WireGuard recovery, redirect and advanced DoH issues.
+1. Repair TCP half-close handling together, with state-machine tests (#9 and
+   #10).
+2. Add closed-window polling backoff (#12).
+3. Address WireGuard DNS reordering and TUN-write recovery (#13 and #14).
+4. Persist UDP redirects across the session lifetime (#15).
+5. Bound the advanced DoH request queue (#16).
 
 ## Validation performed
 
 - Two Robolectric audit classes passed three tests against the real service,
   database and tracker-list code.
-- The Rust workspace passed 79 tests across six suites.
+- The Rust workspace passed 85 tests across six suites.
 - Two additional extracted DNS/WireGuard tests passed.
 - Native DNS-frame, IPv6-extension, DHCP-option, UDP-state and WireGuard
   flow-cache suites passed under ASan/UBSan.
@@ -506,6 +539,10 @@ Completed items #3, #7, #11, #17 and #18 are omitted from the remaining order:
 - The new production-backed TCP-window and UDP-socket tests compile in the
   Android toolchain. Their Linux ASan/UBSan commands are ready for future CI
   wiring.
+- The high-severity branch passed the Rust workspace, the TCP overlap and
+  route/verdict host suites, the existing native host suites, the focused Java
+  policy tests and a full `assembleGithubDebug` build for all four Android
+  ABIs.
 
 ## Limits
 
