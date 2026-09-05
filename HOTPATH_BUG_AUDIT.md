@@ -33,7 +33,7 @@ availability or battery impact.
 | 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | **Fixed** | Reproduced |
 | 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | **Fixed** | Source-proven |
 | 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | **Fixed** | Reproduced |
-| 16 | The DoH proxy has an unbounded request queue | Battery, memory, availability, Secure DNS | **Medium** | Medium | Open | Source-proven |
+| 16 | The DoH proxy has an unbounded request queue | Battery, memory, availability, Secure DNS | **Medium** | Medium | **Fixed** | Source-proven |
 | 17 | Screen-off DoH repeatedly schedules connection-pool eviction | Battery, CPU, Secure DNS | **Low–Medium** | Easy | **Fixed** | Source-proven |
 | 18 | Zero-length UDP datagrams are treated as EOF | Protocol correctness, compatibility | **Low** | Easy | **Fixed** | Reproduced |
 
@@ -42,9 +42,9 @@ also affect battery when the advanced Secure DNS feature is enabled.
 
 ## Fix status
 
-The easy fixes are implemented on `codex/fix-easy-hotpath`. The remaining
-high-severity fixes are implemented on `codex/fix-high-hotpath`, stacked on
-that branch:
+The easy fixes are implemented on `codex/fix-easy-hotpath`. The high-severity,
+TCP, WireGuard, UDP and Secure DNS fixes are implemented in successive stacked
+branches:
 
 | Finding | Status | Implementation |
 |---:|---|---|
@@ -65,9 +65,9 @@ that branch:
 | #13 | **Fixed** | SYN-established DNS-over-TCP framing survives gaps and idle periods; bounded first-seen reassembly recovers only from sequence-valid bytes. |
 | #14 | **Fixed** | Native TUN write totals and streaks reach the watchdog, which recovers only after at least eight consecutive failures continue across five seconds of advancing samples. |
 | #15 | **Fixed** | Each admitted UDP session stores its resolved address family, address and network-order port, so every later datagram uses the same redirect. |
+| #16 | **Fixed** | Secure DNS uses 16 workers and a bounded 64-request backlog; overload receives an immediate UDP `SERVFAIL` or a closed TCP socket. |
 
-Finding #16 remains open. All eight high-severity findings and every native C,
-TCP, UDP and WireGuard finding are fixed across the stacked branches.
+All 18 findings are fixed across the stacked branches.
 
 ## Detailed findings
 
@@ -497,6 +497,11 @@ the session lifetime.
 **Fix difficulty:** Medium
 **Confidence:** High
 
+**Status: Fixed in the bounded DoH queue pull request.** The 16 workers now
+share a bounded 64-request queue. When both are full, UDP receives an immediate
+`SERVFAIL` and TCP connections are closed; overload logging is rate-limited.
+Shutdown also closes accepted TCP sockets that were still queued.
+
 The proxy creates a fixed pool of 16 worker threads, backed by an unbounded
 queue
 ([`DnsProxyServer.java`](app/src/main/java/net/kollnig/missioncontrol/dns/DnsProxyServer.java),
@@ -553,18 +558,15 @@ For `SOCK_DGRAM`, zero is a successful zero-length message rather than stream
 EOF. It should be handled as data, subject to whether the TUN packet builder
 can represent it.
 
-## Suggested repair order
+## Repair status
 
-All high-severity, native C, TCP, UDP and WireGuard items are complete. The
-remaining order is:
-
-1. Bound the advanced DoH request queue (#16).
+All findings in this audit are implemented across the stacked pull requests.
 
 ## Validation performed
 
 - Two Robolectric audit classes passed three tests against the real service,
   database and tracker-list code.
-- The Rust workspace passed 85 tests across six suites.
+- The Rust workspace passed 95 tests across six suites on the final stack.
 - Two additional extracted DNS/WireGuard tests passed.
 - Native DNS-frame, IPv6-extension, DHCP-option, UDP-state and WireGuard
   flow-cache suites passed under ASan/UBSan.
@@ -590,6 +592,13 @@ remaining order is:
 - The UDP redirect branch passed its production-backed socket suite under
   ASan/UBSan after stacking, covering repeated, unredirected, IPv4, IPv6,
   cross-family, invalid-address, original-tuple and response-tuple cases.
+- The bounded DoH queue branch passed `DnsProxyServerTest` after stacking,
+  including deterministic admission and stopped-executor rejection cases.
+- The final stacked branch passed the complete `testGithubDebugUnitTest` suite,
+  the 95-test Rust workspace, and `assembleGithubDebug`. The first integrated
+  Android build exposed an incorrect JNI array-length type; after correcting
+  it, the rerun passed and the APK contained both `libnetguard.so` and
+  `libwgbridge.so` for arm64-v8a, armeabi-v7a, x86 and x86_64.
 
 ## Limits
 
