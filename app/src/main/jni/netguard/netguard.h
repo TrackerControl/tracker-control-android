@@ -45,6 +45,7 @@
 #define EPOLL_TIMEOUT 3600 // seconds
 #define EPOLL_EVENTS 20
 #define EPOLL_MIN_CHECK 100 // milliseconds
+#define TCP_WINDOW_PROBE_MAX 5000 // milliseconds
 
 #define TUN_YIELD 10 // packets
 
@@ -198,6 +199,21 @@ struct tcp_session {
 
     uint32_t acked; // host notation
     long long last_keep_alive;
+
+    // TCP half-close state.  The native engine owns one upstream socket, but
+    // the two directions have independent lifetimes.
+    uint8_t client_fin_seen;
+    uint8_t client_fin_consumed;
+    uint8_t client_fin_acked;
+    uint8_t upstream_write_shutdown;
+    uint8_t upstream_read_eof;
+    uint8_t server_fin_sent;
+    uint8_t server_fin_acked;
+    uint32_t client_fin_seq;
+
+    // A zero receive window is probed on a deadline with exponential backoff.
+    uint32_t window_probe_delay;
+    long long window_probe_deadline;
 
     uint64_t sent;
     uint64_t received;
@@ -390,7 +406,14 @@ int check_tcp_session(const struct arguments *args,
                       struct ng_session *s,
                       int sessions, int maxsessions);
 
+// Return the number of milliseconds until the next required zero-window probe,
+// or zero when no probe is scheduled.
 int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int epoll_fd);
+
+// Testable scheduling primitive used by monitor_tcp_session.  window_open
+// resets the backoff; send_probe is set when a probe is due now.
+int tcp_window_probe_delay(struct tcp_session *cur, long long now,
+                           int window_open, int *send_probe);
 
 int get_icmp_timeout(const struct icmp_session *u, int sessions, int maxsessions);
 

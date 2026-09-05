@@ -26,10 +26,10 @@ availability or battery impact.
 | 6 | Overlapping TCP retransmissions wedge the forwarding queue | TCP correctness, connectivity, battery | **High** | Hard | **Fixed** | Reproduced |
 | 7 | Protected → No Internet does not reload VPN policy | Blocking enforcement, privacy | **High** | Easy | **Fixed** | Source-proven |
 | 8 | Established WireGuard TCP streams survive policy reloads | Blocking enforcement, privacy, WireGuard | **High** | Hard | **Fixed** | Source-proven |
-| 9 | A client TCP FIN is not propagated upstream | TCP correctness, compatibility | **Medium–High** | Hard | Open | Reproduced |
-| 10 | A server TCP FIN closes both directions | TCP correctness, compatibility | **Medium–High** | Hard | Open | Reproduced |
+| 9 | A client TCP FIN is not propagated upstream | TCP correctness, compatibility | **Medium–High** | Hard | **Fixed** | Reproduced |
+| 10 | A server TCP FIN closes both directions | TCP correctness, compatibility | **Medium–High** | Hard | **Fixed** | Reproduced |
 | 11 | TCP send-window calculation uses 16-bit rather than 32-bit wrap arithmetic | TCP correctness, connectivity | **Medium** | Easy | **Fixed** | Reproduced |
-| 12 | Closed TCP windows cause 100 ms polling and repeated ACK probes | Battery, CPU, radio activity | **Medium** | Medium | Open | Reproduced |
+| 12 | Closed TCP windows cause 100 ms polling and repeated ACK probes | Battery, CPU, radio activity | **Medium** | Medium | **Fixed** | Reproduced |
 | 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | Open | Reproduced |
 | 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | Open | Source-proven |
 | 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | Open | Reproduced |
@@ -59,9 +59,12 @@ that branch:
 | #5 | **Fixed** | DNS UDP mappings remain active for multiple replies, and an idle closed DNS tuple can be reopened immediately rather than being rejected for the retention period. |
 | #6 | **Fixed** | TCP queue insertion now trims forwarded prefixes, preserves first-seen bytes, fills gaps and merges overlaps with modular sequence arithmetic. |
 | #8 | **Fixed** | Established tunnelled TCP flows revalidate owner and Java policy after each native policy generation change; allowed and blocked results are cached, and a newly blocked stream receives a valid reset. |
+| #9 | **Fixed** | Client FINs are retained until all preceding queued bytes drain, then propagated upstream with one `shutdown(SHUT_WR)` and acknowledged idempotently. |
+| #10 | **Fixed** | Upstream EOF now closes only the read half, sends one FIN to the app, and leaves the write half available until the client also closes. |
+| #12 | **Fixed** | Zero-window probes now use deadline-based exponential backoff from 100 ms to 5 seconds while normal socket and TUN readiness still wakes immediately. |
 
-Findings #9, #10 and #12–16 remain open. All eight high-severity findings are
-fixed across the two stacked branches.
+Findings #13–16 remain open. All eight high-severity findings and the native
+TCP half-close/battery findings are fixed across the stacked branches.
 
 ## Detailed findings
 
@@ -310,6 +313,12 @@ simpler but costs a handshake and disrupts unrelated flows.
 **Fix difficulty:** Hard
 **Confidence:** High
 
+**Status: Fixed in the TCP half-close pull request.** FIN sequence state is now
+kept outside the data queue. The proxy waits for every preceding byte, removes
+speculative queued bytes beyond the FIN, calls `shutdown(SHUT_WR)` once, and
+only then advances and acknowledges the FIN. Retransmissions and simultaneous
+close are idempotent.
+
 On a client FIN, `handle_tcp()` acknowledges it and moves into
 `TCP_CLOSE_WAIT` ([`tcp.c`](app/src/main/jni/netguard/tcp.c), lines 957–965),
 but the file contains no `shutdown(socket, SHUT_WR)` call. A server waiting for
@@ -329,6 +338,11 @@ The shutdown must occur only after all queued client data has been forwarded.
 **Severity:** Medium–High
 **Fix difficulty:** Hard
 **Confidence:** High
+
+**Status: Fixed in the TCP half-close pull request.** Upstream EOF now marks
+the read half closed and sends one FIN to the app without closing the socket.
+Client data can continue to drain through the write half; the descriptor is
+closed after the independent FIN/ACK state completes or on a real error.
 
 When upstream returns EOF, the proxy sends FIN to the app and immediately
 calls `close()` on the upstream descriptor
@@ -372,6 +386,12 @@ used by `compare_u32()`.
 **Severity:** Medium
 **Fix difficulty:** Medium
 **Confidence:** High
+
+**Status: Fixed in the TCP half-close pull request.** The first zero-window
+probe remains prompt, then deadlines back off exponentially through 200, 400
+and 800 ms to a 5-second cap. An opened window resets the schedule, upstream
+EOF cancels it, and ordinary epoll readiness is never delayed by the probe
+deadline.
 
 When `get_send_window()` returns zero, `monitor_tcp_session()` requests a
 recheck and sends an ACK probe on the `EPOLL_MIN_CHECK` cadence
@@ -514,14 +534,12 @@ can represent it.
 
 ## Suggested repair order
 
-All high-severity items are complete. The remaining order is:
+All high-severity items and the TCP half-close/window items are complete. The
+remaining order is:
 
-1. Repair TCP half-close handling together, with state-machine tests (#9 and
-   #10).
-2. Add closed-window polling backoff (#12).
-3. Address WireGuard DNS reordering and TUN-write recovery (#13 and #14).
-4. Persist UDP redirects across the session lifetime (#15).
-5. Bound the advanced DoH request queue (#16).
+1. Address WireGuard DNS reordering and TUN-write recovery (#13 and #14).
+2. Persist UDP redirects across the session lifetime (#15).
+3. Bound the advanced DoH request queue (#16).
 
 ## Validation performed
 
@@ -543,6 +561,9 @@ All high-severity items are complete. The remaining order is:
   route/verdict host suites, the existing native host suites, the focused Java
   policy tests and a full `assembleGithubDebug` build for all four Android
   ABIs.
+- The TCP half-close branch passed strict host compilation, the TCP window,
+  queue and half-close suites under ASan/UBSan, and `assembleGithubDebug` for
+  all four Android ABIs.
 
 ## Limits
 

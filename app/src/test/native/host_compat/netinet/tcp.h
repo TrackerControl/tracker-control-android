@@ -55,8 +55,11 @@ struct tcphdr {
 #ifndef TCP_FIN_WAIT1
 #define TCP_FIN_WAIT1 7
 #endif
+#ifndef TCP_FIN_WAIT2
+#define TCP_FIN_WAIT2 8
+#endif
 #ifndef TCP_LAST_ACK
-#define TCP_LAST_ACK 8
+#define TCP_LAST_ACK 9
 #endif
 
 #ifndef MSG_MORE
