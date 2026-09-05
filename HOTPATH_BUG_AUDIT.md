@@ -316,7 +316,8 @@ state rather than treating EOF as complete descriptor closure.
 
 **Status: Fixed in this pull request.** The distance is now calculated with
 unsigned `uint32_t` subtraction. A production-backed host test covers both the
-wrap and non-wrap cases and is wired into CI under ASan/UBSan.
+wrap and non-wrap cases; its Linux ASan/UBSan command is ready for future CI
+wiring.
 
 `get_send_window()` uses `0x10000 + local_seq - acked` when the 32-bit sequence
 number wraps ([`tcp.c`](app/src/main/jni/netguard/tcp.c), lines 175–183).
@@ -460,8 +461,8 @@ the pool, or make the screen-off policy transition own the eviction.
 
 **Status: Fixed in this pull request.** A zero-length read now follows the
 datagram data path and emits an IP/UDP packet with an empty payload. The
-production-backed CI test covers both non-DNS and port-53 lifecycle behaviour
-under ASan/UBSan.
+production-backed host test covers both non-DNS and port-53 lifecycle
+behaviour; its Linux ASan/UBSan command is ready for future CI wiring.
 
 Datagram sockets can legitimately receive a zero-length datagram. Native
 `check_udp_socket()` interprets `recv() == 0` as EOF, forwards nothing and
