@@ -22,7 +22,10 @@ const IP_PROTO_DST_OPTS: u8 = 60;
 
 const MAX_TCP_DNS_FLOWS: usize = 64;
 const MAX_TCP_DNS_BUFFER: usize = u16::MAX as usize + 2;
-const TCP_DNS_IDLE_TIMEOUT: Duration = Duration::from_secs(60);
+const MAX_TCP_DNS_PENDING_SEGMENTS: usize = 8;
+const MAX_TCP_DNS_PENDING_BYTES: usize = 16 * 1024;
+const TCP_DNS_GAP_TIMEOUT: Duration = Duration::from_secs(5);
+const TCP_SEQ_HALF_RANGE: u32 = 0x8000_0000;
 
 struct SinkPolicy<'a>(&'a dyn DnsSink);
 
@@ -53,12 +56,28 @@ struct TcpDnsFlow {
     buffer: Vec<u8>,
     last_seen: Instant,
     framing_known: bool,
+    pending: Vec<TcpPendingSegment>,
+    pending_bytes: usize,
+}
+
+struct TcpPendingSegment {
+    seq: u32,
+    payload: Vec<u8>,
+    first_seen: Instant,
 }
 
 struct TcpRewriteContext {
     /// Complete DNS message ranges within the current TCP segment. The
     /// two-byte DNS-over-TCP length prefix is outside each range.
     frames: Vec<Range<usize>>,
+}
+
+struct ContiguousChunk {
+    bytes: Vec<u8>,
+    /// Source range in the TCP payload of the packet currently being handled.
+    /// Bytes drained from an earlier out-of-order packet have no source range
+    /// and are therefore never rewritten retroactively.
+    current_range: Option<Range<usize>>,
 }
 
 /// Stateful DNS inspector. UDP messages are handled directly; TCP messages
@@ -99,8 +118,7 @@ impl DnsInspector {
         let segment = tcp_segment(packet, tcp)?;
         let mut context = TcpRewriteContext { frames: Vec::new() };
         let now = Instant::now();
-        self.tcp_flows
-            .retain(|_, flow| now.duration_since(flow.last_seen) <= TCP_DNS_IDLE_TIMEOUT);
+        self.expire_pending(now);
 
         if segment.rst {
             self.tcp_flows.remove(&segment.key);
@@ -117,6 +135,8 @@ impl DnsInspector {
                     buffer: Vec::new(),
                     last_seen: now,
                     framing_known: true,
+                    pending: Vec::new(),
+                    pending_bytes: 0,
                 },
             );
         }
@@ -126,11 +146,7 @@ impl DnsInspector {
                 self.ensure_capacity();
             }
             let data_seq = segment.seq.wrapping_add(u32::from(segment.syn));
-            let next_seq = if let Some(next_seq) =
-                self.tcp_flows.get(&segment.key).map(|flow| flow.next_seq)
-            {
-                next_seq
-            } else {
+            if !self.tcp_flows.contains_key(&segment.key) {
                 self.tcp_flows.insert(
                     segment.key.clone(),
                     TcpDnsFlow {
@@ -141,61 +157,52 @@ impl DnsInspector {
                         buffer: Vec::new(),
                         last_seen: now,
                         framing_known: false,
+                        pending: Vec::new(),
+                        pending_bytes: 0,
                     },
                 );
-                data_seq
-            };
+            }
 
-            let already_seen = next_seq.wrapping_sub(data_seq);
-            let payload_start = if data_seq == next_seq {
-                0
-            } else if already_seen >= 0x8000_0000 {
-                // A forward gap means bytes needed to find message boundaries
-                // are missing. Drop the flow instead of parsing a mid-message
-                // payload as a new length prefix.
-                self.tcp_flows.remove(&segment.key);
-                return Some(context);
-            } else {
-                // A wholly-old or partially-overlapping retransmission: skip
-                // the bytes we've already consumed and keep the flow alive.
-                // If the retransmission lies entirely behind the frontier,
-                // this yields an empty tail, which is a harmless no-op.
-                (already_seen as usize).min(segment.payload.len())
-            };
-
-            let payload = &segment.payload[payload_start..];
             let flow = self.tcp_flows.get_mut(&segment.key).expect("flow inserted");
             flow.last_seen = now;
-            if flow.buffer.len() + payload.len() > MAX_TCP_DNS_BUFFER {
-                self.tcp_flows.remove(&segment.key);
-                return Some(context);
-            }
-            if flow.framing_known {
-                for range in complete_frame_ranges(&flow.buffer, payload) {
-                    context.frames.push(
-                        (segment.payload_offset + payload_start + range.start)
-                            ..(segment.payload_offset + payload_start + range.end),
-                    );
-                }
-            }
-
-            flow.buffer.extend_from_slice(payload);
-            flow.next_seq = flow.next_seq.wrapping_add(payload.len() as u32);
-
-            if flow.framing_known {
-                while flow.buffer.len() >= 2 {
-                    let msg_len = u16::from_be_bytes([flow.buffer[0], flow.buffer[1]]) as usize;
-                    if msg_len == 0 {
-                        flow.buffer.drain(..2);
-                        continue;
+            if is_seq_after(data_seq, flow.next_seq) {
+                queue_pending(flow, data_seq, segment.payload, now);
+            } else {
+                let payload_start = if data_seq == flow.next_seq {
+                    0
+                } else {
+                    let already_seen = flow.next_seq.wrapping_sub(data_seq);
+                    if already_seen >= TCP_SEQ_HALF_RANGE {
+                        segment.payload.len()
+                    } else {
+                        (already_seen as usize).min(segment.payload.len())
                     }
-                    if flow.buffer.len() < msg_len + 2 {
-                        break;
+                };
+                let mut chunks = Vec::new();
+                if payload_start < segment.payload.len() {
+                    if flow.buffer.len() + segment.payload.len() - payload_start
+                        <= MAX_TCP_DNS_BUFFER
+                    {
+                        chunks.push(ContiguousChunk {
+                            bytes: segment.payload[payload_start..].to_vec(),
+                            current_range: Some(
+                                (segment.payload_offset + payload_start)
+                                    ..(segment.payload_offset + segment.payload.len()),
+                            ),
+                        });
+                        flow.next_seq = flow
+                            .next_seq
+                            .wrapping_add((segment.payload.len() - payload_start) as u32);
+                    } else {
+                        // Keep the framing anchor and frontier intact. The
+                        // packet is forwarded, but a later retransmission can
+                        // still supply a bounded frame again.
+                        flow.pending.clear();
+                        flow.pending_bytes = 0;
                     }
-                    let msg = flow.buffer[2..2 + msg_len].to_vec();
-                    flow.buffer.drain(..2 + msg_len);
-                    record_dns_answers(&msg, &SinkPolicy(recorder));
                 }
+                drain_pending(flow, &mut chunks);
+                consume_contiguous(flow, chunks, recorder, &mut context);
             }
         }
 
@@ -203,6 +210,19 @@ impl DnsInspector {
             self.tcp_flows.remove(&segment.key);
         }
         Some(context)
+    }
+
+    fn expire_pending(&mut self, now: Instant) {
+        for flow in self.tcp_flows.values_mut() {
+            if flow
+                .pending
+                .iter()
+                .any(|segment| now.duration_since(segment.first_seen) >= TCP_DNS_GAP_TIMEOUT)
+            {
+                flow.pending.clear();
+                flow.pending_bytes = 0;
+            }
+        }
     }
 
     fn ensure_capacity(&mut self) {
@@ -230,32 +250,172 @@ struct TcpSegment<'a> {
     payload: &'a [u8],
 }
 
-/// Finds complete DNS frames whose prefix starts in `incoming` after any
-/// previously buffered frame has been consumed. Returning only those ranges
-/// prevents a continuation or retransmission from being parsed as a fresh
-/// DNS-over-TCP message.
-fn complete_frame_ranges(buffer: &[u8], incoming: &[u8]) -> Vec<Range<usize>> {
-    let mut combined = Vec::with_capacity(buffer.len() + incoming.len());
-    combined.extend_from_slice(buffer);
-    combined.extend_from_slice(incoming);
-    let prefix_len = buffer.len();
-    let mut cursor = 0usize;
+fn is_seq_after(seq: u32, base: u32) -> bool {
+    let distance = seq.wrapping_sub(base);
+    distance != 0 && distance < TCP_SEQ_HALF_RANGE
+}
 
-    // Consume the frame that began in the previous segment. It may complete
-    // in `incoming`; until it does, no byte in this segment is frame-aligned.
-    while cursor < prefix_len {
-        if cursor + 2 > combined.len() {
-            return Vec::new();
-        }
-        let msg_len = u16::from_be_bytes([combined[cursor], combined[cursor + 1]]) as usize;
-        let frame_len = if msg_len == 0 { 2 } else { 2 + msg_len };
-        if cursor + frame_len > combined.len() {
-            return Vec::new();
-        }
-        cursor += frame_len;
+fn seq_forward_offset(base: u32, seq: u32) -> Option<usize> {
+    let distance = seq.wrapping_sub(base);
+    (distance < TCP_SEQ_HALF_RANGE).then_some(distance as usize)
+}
+
+fn queue_pending(flow: &mut TcpDnsFlow, seq: u32, payload: &[u8], first_seen: Instant) {
+    if payload.is_empty() {
+        return;
     }
 
-    let mut ranges = Vec::new();
+    // Keep the first bytes seen for every sequence range. Any overlap with an
+    // existing segment, including conflicting bytes, is suppressed; only the
+    // uncovered pieces of this later packet are eligible for buffering.
+    let Some(incoming_start) = seq_forward_offset(flow.next_seq, seq) else {
+        return;
+    };
+    let incoming_end = incoming_start.saturating_add(payload.len());
+    let mut uncovered = vec![(incoming_start, incoming_end)];
+    for existing in &flow.pending {
+        let Some(existing_start) = seq_forward_offset(flow.next_seq, existing.seq) else {
+            continue;
+        };
+        let existing_end = existing_start.saturating_add(existing.payload.len());
+        let mut remaining = Vec::with_capacity(uncovered.len() + 1);
+        for (start, end) in uncovered {
+            if existing_end <= start || existing_start >= end {
+                remaining.push((start, end));
+                continue;
+            }
+            if start < existing_start {
+                remaining.push((start, existing_start));
+            }
+            if existing_end < end {
+                remaining.push((existing_end, end));
+            }
+        }
+        uncovered = remaining;
+        if uncovered.is_empty() {
+            break;
+        }
+    }
+
+    let pieces: Vec<(u32, Vec<u8>)> = uncovered
+        .into_iter()
+        .filter_map(|(start, end)| {
+            let start_index = start.checked_sub(incoming_start)?;
+            let end_index = end.checked_sub(incoming_start)?;
+            (start_index < end_index).then(|| {
+                (
+                    flow.next_seq.wrapping_add(start as u32),
+                    payload[start_index..end_index].to_vec(),
+                )
+            })
+        })
+        .collect();
+    let piece_bytes: usize = pieces.iter().map(|(_, bytes)| bytes.len()).sum();
+    if pieces.is_empty() {
+        return;
+    }
+    if flow.pending.len().saturating_add(pieces.len()) > MAX_TCP_DNS_PENDING_SEGMENTS
+        || flow.pending_bytes.saturating_add(piece_bytes) > MAX_TCP_DNS_PENDING_BYTES
+    {
+        // A full pending queue cannot safely describe the stream. Drop only
+        // the speculative gap data; retain the framing anchor and frontier so
+        // an exact retransmission at next_seq can recover the flow.
+        flow.pending.clear();
+        flow.pending_bytes = 0;
+        return;
+    }
+    for (piece_seq, bytes) in pieces {
+        flow.pending_bytes += bytes.len();
+        flow.pending.push(TcpPendingSegment {
+            seq: piece_seq,
+            payload: bytes,
+            first_seen,
+        });
+    }
+}
+
+fn drain_pending(flow: &mut TcpDnsFlow, chunks: &mut Vec<ContiguousChunk>) {
+    loop {
+        let mut remove_old = None;
+        let mut candidate = None;
+        for (index, pending) in flow.pending.iter().enumerate() {
+            if pending.seq == flow.next_seq {
+                candidate = Some(index);
+                break;
+            }
+            if is_seq_after(flow.next_seq, pending.seq) {
+                let overlap = flow.next_seq.wrapping_sub(pending.seq) as usize;
+                if overlap >= pending.payload.len() {
+                    remove_old = Some(index);
+                    break;
+                }
+                candidate = Some(index);
+                break;
+            }
+        }
+
+        if let Some(index) = remove_old {
+            let old = flow.pending.swap_remove(index);
+            flow.pending_bytes -= old.payload.len();
+            continue;
+        }
+        let Some(index) = candidate else { break };
+        let pending = &flow.pending[index];
+        let overlap = if is_seq_after(flow.next_seq, pending.seq) {
+            flow.next_seq.wrapping_sub(pending.seq) as usize
+        } else {
+            0
+        };
+        let bytes_len = pending.payload.len().saturating_sub(overlap);
+        let chunks_len: usize = chunks.iter().map(|chunk| chunk.bytes.len()).sum();
+        if flow.buffer.len() + chunks_len + bytes_len > MAX_TCP_DNS_BUFFER {
+            break;
+        }
+        let pending = flow.pending.swap_remove(index);
+        flow.pending_bytes -= pending.payload.len();
+        let bytes = pending.payload[overlap..].to_vec();
+        if bytes.is_empty() {
+            continue;
+        }
+        flow.next_seq = flow.next_seq.wrapping_add(bytes.len() as u32);
+        chunks.push(ContiguousChunk {
+            bytes,
+            current_range: None,
+        });
+    }
+}
+
+fn consume_contiguous(
+    flow: &mut TcpDnsFlow,
+    chunks: Vec<ContiguousChunk>,
+    recorder: &dyn DnsSink,
+    context: &mut TcpRewriteContext,
+) {
+    if chunks.is_empty() {
+        return;
+    }
+    if !flow.framing_known {
+        for chunk in chunks {
+            flow.buffer.extend_from_slice(&chunk.bytes);
+        }
+        return;
+    }
+
+    let old_len = flow.buffer.len();
+    let added_len: usize = chunks.iter().map(|chunk| chunk.bytes.len()).sum();
+    let mut combined = Vec::with_capacity(old_len + added_len);
+    combined.extend_from_slice(&flow.buffer);
+    let mut sources: Vec<Option<usize>> = vec![None; old_len];
+    for chunk in chunks {
+        if let Some(range) = &chunk.current_range {
+            sources.extend((range.start..range.end).map(Some));
+        } else {
+            sources.extend(std::iter::repeat_n(None, chunk.bytes.len()));
+        }
+        combined.extend_from_slice(&chunk.bytes);
+    }
+
+    let mut cursor = 0usize;
     while cursor + 2 <= combined.len() {
         let msg_len = u16::from_be_bytes([combined[cursor], combined[cursor + 1]]) as usize;
         if msg_len == 0 {
@@ -266,12 +426,22 @@ fn complete_frame_ranges(buffer: &[u8], incoming: &[u8]) -> Vec<Range<usize>> {
         if frame_end > combined.len() {
             break;
         }
-        if cursor >= prefix_len {
-            ranges.push((cursor - prefix_len + 2)..(frame_end - prefix_len));
+        let msg = combined[cursor + 2..frame_end].to_vec();
+        record_dns_answers(&msg, &SinkPolicy(recorder));
+
+        let source_start = sources.get(cursor).and_then(|source| *source);
+        let wholly_current = source_start.is_some()
+            && (cursor..frame_end)
+                .all(|index| sources[index] == source_start.map(|start| start + index - cursor));
+        if wholly_current {
+            if let Some(start) = source_start {
+                context.frames.push((start + 2)..(start + 2 + msg_len));
+            }
         }
         cursor = frame_end;
     }
-    ranges
+    flow.buffer.clear();
+    flow.buffer.extend_from_slice(&combined[cursor..]);
 }
 
 pub fn inspect_dns_response(packet: &[u8], recorder: &dyn DnsSink) {
@@ -1025,6 +1195,232 @@ mod tests {
     }
 
     #[test]
+    fn stateful_inspector_recovers_after_gap_retransmission() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let gap = ipv4_tcp_segment(&framed[split + 1..], 1000 + split as u32 + 1, 0x18);
+        let retransmit = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&first, &sink);
+        inspector.inspect(&gap, &sink);
+        inspector.inspect(&retransmit, &sink);
+
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn stateful_inspector_drains_out_of_order_segment() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let later = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&later, &sink);
+        assert!(sink.0.lock().unwrap().is_empty());
+        inspector.inspect(&first, &sink);
+
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn stateful_inspector_drains_partial_overlap_tail() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let existing_end = split + 8;
+        let overlap = 3;
+        let existing = ipv4_tcp_segment(&framed[split..existing_end], 1000 + split as u32, 0x18);
+        let incoming = ipv4_tcp_segment(
+            &framed[split + overlap..],
+            1000 + (split + overlap) as u32,
+            0x18,
+        );
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&existing, &sink);
+        inspector.inspect(&incoming, &sink);
+        inspector.inspect(&first, &sink);
+
+        let records = sink.0.lock().unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].2, "203.0.113.7");
+    }
+
+    #[test]
+    fn stateful_inspector_drains_partial_overlap_head() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let existing_start = split + 8;
+        let overlap = 3;
+        let existing = ipv4_tcp_segment(
+            &framed[existing_start..],
+            1000 + existing_start as u32,
+            0x18,
+        );
+        let incoming = ipv4_tcp_segment(
+            &framed[split..existing_start + overlap],
+            1000 + split as u32,
+            0x18,
+        );
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&existing, &sink);
+        inspector.inspect(&incoming, &sink);
+        inspector.inspect(&first, &sink);
+
+        let records = sink.0.lock().unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].2, "203.0.113.7");
+    }
+
+    #[test]
+    fn stateful_inspector_preserves_first_seen_bytes_on_conflicting_overlap() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let later = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let mut conflicting_bytes = framed[split..].to_vec();
+        conflicting_bytes[0] ^= 0xff;
+        let conflicting = ipv4_tcp_segment(&conflicting_bytes, 1000 + split as u32, 0x18);
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&later, &sink);
+        inspector.inspect(&conflicting, &sink);
+        inspector.inspect(&first, &sink);
+
+        let records = sink.0.lock().unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].2, "203.0.113.7");
+    }
+
+    #[test]
+    fn pending_segment_cap_does_not_destroy_framing_anchor() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+
+        for index in 0..=MAX_TCP_DNS_PENDING_SEGMENTS {
+            let payload = [index as u8];
+            let packet = ipv4_tcp_segment(&payload, 1100 + (index * 2) as u32, 0x18);
+            inspector.inspect(&packet, &sink);
+        }
+        inspector.inspect(&ipv4_tcp_segment(&framed, 1000, 0x18), &sink);
+
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+        assert!(inspector
+            .tcp_flows
+            .values()
+            .next()
+            .expect("SYN-established flow")
+            .pending
+            .is_empty());
+    }
+
+    #[test]
+    fn expired_pending_segment_allows_later_recovery() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let later = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&later, &sink);
+        for flow in inspector.tcp_flows.values_mut() {
+            for pending in &mut flow.pending {
+                pending.first_seen = Instant::now() - TCP_DNS_GAP_TIMEOUT;
+            }
+        }
+
+        inspector.inspect(&ipv4_tcp_segment(&framed, 1000, 0x18), &sink);
+
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn framing_known_flow_survives_long_idle_at_frame_boundary() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&ipv4_tcp_segment(&framed, 1000, 0x18), &sink);
+        for flow in inspector.tcp_flows.values_mut() {
+            flow.last_seen = Instant::now() - Duration::from_secs(61);
+        }
+        inspector.inspect(
+            &ipv4_tcp_segment(&framed, 1000 + framed.len() as u32, 0x18),
+            &sink,
+        );
+
+        assert_eq!(sink.0.lock().unwrap().len(), 2);
+    }
+
+    #[test]
+    fn out_of_order_frame_is_recorded_once_and_never_rewritten_retroactively() {
+        let framed = tcp_dns_framed(&svcb_response());
+        let split = framed.len() / 2;
+        let sink = BlockingCollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+        let mut syn = ipv4_tcp_segment(&[], 999, 0x12);
+        inspector.inspect_and_rewrite(&mut syn, &sink);
+        let mut later = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let later_before = later.clone();
+        assert_eq!(inspector.inspect_and_rewrite(&mut later, &sink), None);
+        assert_eq!(later, later_before);
+        let mut first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let first_before = first.clone();
+        assert_eq!(inspector.inspect_and_rewrite(&mut first, &sink), None);
+        assert_eq!(first, first_before);
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
     fn inspect_records_through_sink() {
         let msg = dns_message(&[
             dns_question("tracker.example", DNS_TYPE_A),
@@ -1048,6 +1444,23 @@ mod tests {
 
     impl DnsSink for BlockingSink {
         fn record_dns(&self, _: &str, _: &str, _: &str, _: i32) {}
+
+        fn is_domain_blocked(&self, _: &str) -> bool {
+            true
+        }
+    }
+
+    struct BlockingCollectingSink(Mutex<Vec<(String, String, String, i32)>>);
+
+    impl DnsSink for BlockingCollectingSink {
+        fn record_dns(&self, qname: &str, aname: &str, resource: &str, ttl: i32) {
+            self.0.lock().unwrap().push((
+                qname.to_owned(),
+                aname.to_owned(),
+                resource.to_owned(),
+                ttl,
+            ));
+        }
 
         fn is_domain_blocked(&self, _: &str) -> bool {
             true

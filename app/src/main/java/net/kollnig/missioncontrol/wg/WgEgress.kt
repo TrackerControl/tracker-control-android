@@ -670,7 +670,9 @@ object WgEgress {
                 it.rxBytes,
                 it.txBytes,
                 it.latestHandshakeMillis,
-                it.latestHandshakeMillis > 0 && now() - it.latestHandshakeMillis < HANDSHAKE_DEAD_AFTER_MS
+                it.latestHandshakeMillis > 0 && now() - it.latestHandshakeMillis < HANDSHAKE_DEAD_AFTER_MS,
+                it.tunWriteFailuresTotal,
+                it.tunWriteFailuresStreak
             )
         }
     } catch (e: Throwable) {
