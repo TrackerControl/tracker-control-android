@@ -82,9 +82,11 @@ public final class AppProtectionWriter {
         SharedPreferences apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         SharedPreferences trackerProtect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         SharedPreferences minimalOnlyPrefs = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        InternetBlocklist internetBlocklist = InternetBlocklist.getInstance(context);
 
         boolean applyBefore = apply.getBoolean(packageName, true);
         boolean protectBefore = BlockingMode.isTrackerProtectionEnabled(context, trackerProtect, packageName);
+        boolean internetBefore = internetBlocklist.blockedInternet(uid);
 
         apply.edit().putBoolean(packageName, applyValue).apply();
         if (applyValue)
@@ -95,13 +97,12 @@ public final class AppProtectionWriter {
         if (minimalOnlyValue != null)
             minimalOnlyPrefs.edit().putBoolean(packageName, minimalOnlyValue).apply();
 
-        InternetBlocklist.getInstance(context).apply(context, uid, internetBlocked);
+        internetBlocklist.apply(context, uid, internetBlocked);
 
         // The service reads this per-package flag through the live preferences
         // handle, so changing it alone needs no service reload.
-        boolean needsReload = applyValue != applyBefore
-                || (trackerProtectValue != null && trackerProtectValue != protectBefore);
-        if (!needsReload)
+        if (!shouldReloadAfterChange(applyValue, applyBefore, trackerProtectValue,
+                protectBefore, internetBlocked, internetBefore))
             return;
 
         AsyncTask.execute(() -> {
@@ -115,5 +116,13 @@ public final class AppProtectionWriter {
             Rule.clearCache(context);
             ServiceSinkhole.reload("app protection changed", context, false);
         });
+    }
+
+    static boolean shouldReloadAfterChange(boolean applyValue, boolean applyBefore,
+            Boolean trackerProtectValue, boolean protectBefore, Boolean internetBlocked,
+            boolean internetBefore) {
+        return applyValue != applyBefore
+                || (trackerProtectValue != null && trackerProtectValue != protectBefore)
+                || (internetBlocked != null && internetBlocked != internetBefore);
     }
 }

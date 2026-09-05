@@ -2867,16 +2867,21 @@ public class ServiceSinkhole extends VpnService {
             }
             prepareUidIPFilters(rr.QName);
 
-            if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
-                if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
-                    trackerCache.invalidate(rr.Resource);
-                    // Pure refreshes deliberately skip invalidation: the cached
-                    // entry simply expires on the earlier deadline it was stored
-                    // with and is re-read then, so a stale-put race with a
-                    // refresh is harmless. The atomic cache generation guard
-                    // remains for new mappings, where the verdict can change.
-                }
+            if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED
+                    || outcome == DatabaseHelper.DnsInsertOutcome.REFRESHED) {
+                invalidateTrackerCacheAfterDnsInsert(outcome, rr.Resource,
+                        Util.isNumericAddress(rr.Resource));
             }
+        }
+    }
+
+    static void invalidateTrackerCacheAfterDnsInsert(
+            DatabaseHelper.DnsInsertOutcome outcome, String resource,
+            boolean numericResource) {
+        if ((outcome == DatabaseHelper.DnsInsertOutcome.INSERTED
+                || outcome == DatabaseHelper.DnsInsertOutcome.REFRESHED)
+                && numericResource) { // make sure correct format
+            trackerCache.invalidate(resource);
         }
     }
 
