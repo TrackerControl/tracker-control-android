@@ -72,6 +72,29 @@ jobs:
             app/src/test/native/dns_frame_test.c app/src/main/jni/netguard/dns_frame.c
           /tmp/dns_frame_test
 
+      - name: Run native socket hotpath host tests
+        run: |
+          COMMON="-Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -fsanitize=address,undefined -fno-omit-frame-pointer -Iapp/src/test/native/host_compat -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -Iapp/src/main/jni/netguard"
+          cc $COMMON -o /tmp/tcp_half_close_test \
+            app/src/test/native/tcp_half_close_test.c \
+            app/src/main/jni/netguard/tcp.c \
+            -Wl,--wrap=close -Wl,--wrap=connect
+          /tmp/tcp_half_close_test
+
+          cc $COMMON -o /tmp/udp_socket_test \
+            app/src/test/native/udp_socket_test.c \
+            app/src/main/jni/netguard/udp.c \
+            -Wl,--wrap=close -Wl,--wrap=fcntl -Wl,--wrap=recv \
+            -Wl,--wrap=sendto -Wl,--wrap=socket -Wl,--wrap=write
+          /tmp/udp_socket_test
+
+          cc $COMMON -o /tmp/icmp_socket_test \
+            app/src/test/native/icmp_socket_test.c \
+            app/src/main/jni/netguard/icmp.c \
+            -Wl,--wrap=close -Wl,--wrap=fcntl -Wl,--wrap=sendto \
+            -Wl,--wrap=socket
+          /tmp/icmp_socket_test
+
       - name: Run IPv6 extension header walk host tests
         run: |
           cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \

@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -17,6 +18,12 @@ static ssize_t recv_result;
 static int sendto_calls;
 static int socket_calls;
 static int last_socket_domain;
+static int protect_result;
+static int epoll_result;
+static int fcntl_flags;
+static int fcntl_calls;
+static int fcntl_fail_get;
+static int fcntl_fail_set;
 static int last_sendto_family;
 static struct in_addr last_sendto_addr4;
 static struct in6_addr last_sendto_addr6;
@@ -93,7 +100,7 @@ int __wrap_close(int file_descriptor) {
 int protect_socket(const struct arguments *args, int socket) {
     (void) args;
     (void) socket;
-    return 0;
+    return protect_result;
 }
 
 int __wrap_socket(int domain, int type, int protocol) {
@@ -102,6 +109,34 @@ int __wrap_socket(int domain, int type, int protocol) {
     socket_calls++;
     last_socket_domain = domain;
     return 100 + socket_calls;
+}
+
+int __wrap_fcntl(int file_descriptor, int command, ...) {
+    (void) file_descriptor;
+    fcntl_calls++;
+    if (command == F_GETFL) {
+        if (fcntl_fail_get) {
+            errno = EBADF;
+            return -1;
+        }
+        return fcntl_flags;
+    }
+
+    if (command == F_SETFL) {
+        va_list args;
+        va_start(args, command);
+        int flags = va_arg(args, int);
+        va_end(args);
+        if (fcntl_fail_set) {
+            errno = EIO;
+            return -1;
+        }
+        fcntl_flags = flags;
+        return 0;
+    }
+
+    errno = EINVAL;
+    return -1;
 }
 
 int check_dhcp(const struct arguments *args, const struct udp_session *session,
@@ -119,7 +154,7 @@ int epoll_ctl(int epoll_fd, int operation, int descriptor,
     (void) operation;
     (void) descriptor;
     (void) event;
-    return 0;
+    return epoll_result;
 }
 
 ssize_t __wrap_sendto(int socket, const void *buffer, size_t length, int flags,
@@ -601,6 +636,67 @@ static void test_invalid_redirect_cleanup(void) {
           "an invalid redirect never reaches sendto");
 }
 
+static struct udp_session make_socket_session(void) {
+    struct udp_session session = {0};
+    session.version = 4;
+    session.resolved_version = 4;
+    session.daddr.ip4 = inet_addr("198.51.100.1");
+    return session;
+}
+
+static void test_nonblocking_socket_and_open_cleanup(void) {
+    struct arguments args = {0};
+    struct udp_session session = make_socket_session();
+
+    protect_result = 0;
+    fcntl_flags = 0x200;
+    fcntl_calls = 0;
+    fcntl_fail_get = 0;
+    fcntl_fail_set = 0;
+    close_calls = 0;
+    int socket = open_udp_socket(&args, &session);
+    CHECK(socket >= 0, "UDP socket opens when protection and nonblocking setup succeed");
+    CHECK(fcntl_calls == 2 && (fcntl_flags & O_NONBLOCK) != 0,
+          "UDP socket is configured O_NONBLOCK");
+    close(socket);
+
+    protect_result = -1;
+    close_calls = 0;
+    socket = open_udp_socket(&args, &session);
+    CHECK(socket < 0 && close_calls == 1,
+          "UDP protection failure closes the newly opened descriptor");
+
+    protect_result = 0;
+    fcntl_fail_set = 1;
+    close_calls = 0;
+    socket = open_udp_socket(&args, &session);
+    CHECK(socket < 0 && close_calls == 1,
+          "UDP nonblocking failure closes the newly opened descriptor");
+    fcntl_fail_set = 0;
+}
+
+static void test_epoll_add_failure_does_not_retain_session(void) {
+    struct context ctx = {0};
+    struct arguments args = {0};
+    args.ctx = &ctx;
+    args.fwd53 = 1;
+
+    uint8_t packet[IPV4_HEADER_SIZE + UDP_HEADER_SIZE];
+    size_t packet_length = make_udp_packet(packet, 45000, 6000);
+    protect_result = 0;
+    epoll_result = -1;
+    errno = EIO;
+    close_calls = 0;
+    sendto_calls = 0;
+
+    CHECK(send_test_packet(&ctx, packet, packet_length, NULL) == 0,
+          "UDP rejects a session when epoll admission fails");
+    CHECK(ctx.ng_session == NULL && close_calls == 1 && sendto_calls == 0,
+          "UDP epoll failure closes and frees the session before linking it");
+
+    epoll_result = 0;
+}
+
 static void test_response_original_tuple(void) {
     struct context ctx = {0};
     uint8_t packet[IPV4_HEADER_SIZE + UDP_HEADER_SIZE];
@@ -656,6 +752,8 @@ int main(void) {
     test_original_tuple_lookup();
     test_invalid_redirect_cleanup();
     test_response_original_tuple();
+    test_nonblocking_socket_and_open_cleanup();
+    test_epoll_add_failure_does_not_retain_session();
 
     if (failures != 0)
         return 1;

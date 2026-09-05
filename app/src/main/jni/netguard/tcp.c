@@ -129,6 +129,7 @@ static int mark_upstream_eof(const struct arguments *args,
         return 0;
 
     cur->upstream_read_eof = 1;
+    cur->upstream_hup_pending = 0;
     cur->window_probe_delay = 0;
     cur->window_probe_deadline = 0;
     log_android(ANDROID_LOG_WARN, "%s recv eof", session);
@@ -143,11 +144,13 @@ void clear_tcp_data(struct tcp_session *cur) {
         ng_free(p->data, __FILE__, __LINE__);
         ng_free(p, __FILE__, __LINE__);
     }
+    cur->forward = NULL;
     if (cur->tls_data != NULL) {
         ng_free(cur->tls_data, __FILE__, __LINE__);
         cur->tls_data = NULL;
         cur->tls_len = 0;
     }
+    dns_frame_reset(&cur->dns_stream);
 }
 
 int get_tcp_timeout(const struct tcp_session *t, int sessions, int maxsessions) {
@@ -211,6 +214,9 @@ int check_tcp_session(const struct arguments *args, struct ng_session *s,
 
         s->tcp.time = time(NULL);
         s->tcp.state = TCP_CLOSE;
+        // A closed tuple is retained briefly to reject late packets, but it
+        // must not retain application payload for that whole tombstone life.
+        clear_tcp_data(&s->tcp);
     }
 
     if ((s->tcp.state == TCP_CLOSING || s->tcp.state == TCP_CLOSE) &&
@@ -244,6 +250,11 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
         uint32_t send_window = get_send_window(&s->tcp);
         if (!s->tcp.upstream_read_eof && send_window > 0)
             events = events | EPOLLIN;
+        // HUP is level-triggered and is reported even when not requested. If
+        // unread bytes remain behind a closed app window, arm the descriptor
+        // once and leave it dormant until a window update adds EPOLLIN.
+        if (s->tcp.upstream_hup_pending)
+            events = events | EPOLLONESHOT;
 
         int send_probe = 0;
         probe_timeout = tcp_window_probe_delay(&s->tcp, get_ms(),
@@ -348,12 +359,14 @@ struct dns_stream_parse_ctx {
 };
 
 // Adapter matching dns_frame_parse_fn: complete frames use
-// parse_dns_response() and may shrink; partial frames use the in-place path
-// and report whether their later continuation bytes must be blanked.
+// parse_dns_response() and may shrink; first fragments use the in-place path
+// and report whether their later continuation bytes must be blanked. A
+// completed buffered split frame is parsed only to recover detection records.
 static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen,
-                                  int partial, int *blank_rest) {
+                                  enum dns_frame_parse_mode mode,
+                                  int *blank_rest) {
     struct dns_stream_parse_ctx *pctx = (struct dns_stream_parse_ctx *) ctx;
-    if (partial != 0) {
+    if (mode == DNS_FRAME_PARTIAL) {
         int blanked = 0;
         parse_dns_partial_response(pctx->args, pctx->s, data, &dlen, &blanked);
         *blank_rest = blanked;
@@ -711,6 +724,7 @@ void check_tcp_socket(const struct arguments *args,
 
                     } else {
                         // Socket read data
+                        s->tcp.upstream_hup_pending = 0;
                         log_android(ANDROID_LOG_DEBUG, "%s recv bytes %d", session, bytes);
                         s->tcp.received += bytes;
 
@@ -742,8 +756,24 @@ void check_tcp_socket(const struct arguments *args,
 
 #ifdef EPOLLRDHUP
             if ((ev->events & (EPOLLHUP | EPOLLRDHUP)) &&
-                !(ev->events & EPOLLIN) && !s->tcp.upstream_read_eof)
-                mark_upstream_eof(args, s, session);
+                !(ev->events & EPOLLIN) && !s->tcp.upstream_read_eof) {
+                uint8_t byte;
+                ssize_t pending;
+                do {
+                    pending = recv(s->socket, &byte, sizeof(byte),
+                                   MSG_PEEK | MSG_DONTWAIT);
+                } while (pending < 0 && errno == EINTR);
+                if (pending == 0 ||
+                    (pending < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))) {
+                    mark_upstream_eof(args, s, session);
+                } else if (pending > 0) {
+                    s->tcp.upstream_hup_pending = 1;
+                } else {
+                    log_android(ANDROID_LOG_ERROR, "%s HUP peek error %d: %s",
+                                session, errno, strerror(errno));
+                    write_rst(args, &s->tcp);
+                }
+            }
 #endif
         }
     }
@@ -909,6 +939,7 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.client_fin_acked = 0;
             s->tcp.upstream_write_shutdown = 0;
             s->tcp.upstream_read_eof = 0;
+            s->tcp.upstream_hup_pending = 0;
             s->tcp.server_fin_sent = 0;
             s->tcp.server_fin_acked = 0;
             s->tcp.client_fin_seq = 0;
@@ -939,7 +970,10 @@ jboolean handle_tcp(const struct arguments *args,
             if (datalen) {
                 log_android(ANDROID_LOG_WARN, "%s SYN data", packet);
                 s->tcp.forward = ng_malloc(sizeof(struct segment), "syn segment");
-                s->tcp.forward->seq = s->tcp.remote_seq;
+                // The SYN consumes the remote ISN.  The payload therefore
+                // starts at ISN+1, even though remote_seq is advanced only
+                // once the upstream connection is ready to receive it.
+                s->tcp.forward->seq = s->tcp.remote_seq + 1;
                 s->tcp.forward->len = datalen;
                 s->tcp.forward->sent = 0;
                 s->tcp.forward->psh = tcphdr->psh;
@@ -967,9 +1001,14 @@ jboolean handle_tcp(const struct arguments *args,
             memset(&s->ev, 0, sizeof(struct epoll_event));
             s->ev.events = EPOLLOUT | EPOLLERR;
             s->ev.data.ptr = s;
-            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
+            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev)) {
                 log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s",
                             errno, strerror(errno));
+                close(s->socket);
+                clear_tcp_data(&s->tcp);
+                ng_free(s, __FILE__, __LINE__);
+                return 0;
+            }
 
             s->next = args->ctx->ng_session;
             args->ctx->ng_session = s;
@@ -1427,8 +1466,8 @@ int open_tcp_socket(const struct arguments *args,
     }
 
     // Build target address
-    struct sockaddr_in addr4;
-    struct sockaddr_in6 addr6;
+    struct sockaddr_in addr4 = {0};
+    struct sockaddr_in6 addr6 = {0};
     if (redirect == NULL) {
         if (*socks5_addr && socks5_port) {
             log_android(ANDROID_LOG_WARN, "TCP%d SOCKS5 to %s/%u",

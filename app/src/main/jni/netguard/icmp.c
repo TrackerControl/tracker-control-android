@@ -219,8 +219,12 @@ jboolean handle_icmp(const struct arguments *args,
         memset(&s->ev, 0, sizeof(struct epoll_event));
         s->ev.events = EPOLLIN | EPOLLERR;
         s->ev.data.ptr = s;
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev)) {
             log_android(ANDROID_LOG_ERROR, "epoll add icmp error %d: %s", errno, strerror(errno));
+            close(s->socket);
+            ng_free(s, __FILE__, __LINE__);
+            return 0;
+        }
 
         s->next = args->ctx->ng_session;
         args->ctx->ng_session = s;
@@ -252,8 +256,8 @@ jboolean handle_icmp(const struct arguments *args,
 
     cur->icmp.time = time(NULL);
 
-    struct sockaddr_in server4;
-    struct sockaddr_in6 server6;
+    struct sockaddr_in server4 = {0};
+    struct sockaddr_in6 server6 = {0};
     if (version == 4) {
         server4.sin_family = AF_INET;
         server4.sin_addr.s_addr = (__be32) ip4->daddr;
@@ -291,8 +295,19 @@ int open_icmp_socket(const struct arguments *args, const struct icmp_session *cu
     }
 
     // Protect socket
-    if (protect_socket(args, sock) < 0)
+    if (protect_socket(args, sock) < 0) {
+        close(sock);
         return -1;
+    }
+
+    // Set non blocking so epoll handlers never stall the VPN thread.
+    int flags = fcntl(sock, F_GETFL, 0);
+    if (flags < 0 || fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+        log_android(ANDROID_LOG_ERROR, "fcntl socket O_NONBLOCK error %d: %s",
+                    errno, strerror(errno));
+        close(sock);
+        return -1;
+    }
 
     return sock;
 }

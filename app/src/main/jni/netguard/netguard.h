@@ -214,6 +214,7 @@ struct tcp_session {
     uint8_t client_fin_acked;
     uint8_t upstream_write_shutdown;
     uint8_t upstream_read_eof;
+    uint8_t upstream_hup_pending;
     uint8_t server_fin_sent;
     uint8_t server_fin_acked;
     uint32_t client_fin_seq;

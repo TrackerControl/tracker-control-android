@@ -17,9 +17,67 @@
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "dns_frame.h"
+
+static void clear_frame_buffer(struct dns_stream_state *state) {
+    free(state->frame_buffer);
+    state->frame_buffer = NULL;
+    state->frame_length = 0;
+    state->frame_received = 0;
+}
+
+void dns_frame_reset(struct dns_stream_state *state) {
+    if (state == NULL)
+        return;
+
+    free(state->frame_buffer);
+    memset(state, 0, sizeof(*state));
+}
+
+static void start_frame_buffer(struct dns_stream_state *state, size_t frame_len,
+                               const uint8_t *data, size_t bytes) {
+    clear_frame_buffer(state);
+    if (frame_len == 0)
+        return;
+
+    state->frame_buffer = malloc(frame_len);
+    if (state->frame_buffer == NULL)
+        return;
+
+    state->frame_length = (uint32_t) frame_len;
+    if (bytes > frame_len)
+        bytes = frame_len;
+    if (bytes > 0)
+        memcpy(state->frame_buffer, data, bytes);
+    state->frame_received = (uint32_t) bytes;
+}
+
+static void append_frame_buffer(struct dns_stream_state *state,
+                                const uint8_t *data, size_t bytes) {
+    if (state->frame_buffer == NULL || bytes == 0)
+        return;
+
+    size_t available = state->frame_length - state->frame_received;
+    if (bytes > available)
+        bytes = available;
+    memcpy(state->frame_buffer + state->frame_received, data, bytes);
+    state->frame_received += (uint32_t) bytes;
+}
+
+static void parse_completed_buffer(struct dns_stream_state *state,
+                                   dns_frame_parse_fn parse, void *ctx) {
+    if (state->frame_buffer != NULL &&
+        state->frame_received == state->frame_length) {
+        int blank_rest = 0;
+        (void) parse(ctx, state->frame_buffer, state->frame_length,
+                     DNS_FRAME_REPLAY,
+                     &blank_rest);
+    }
+    clear_frame_buffer(state);
+}
 
 size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
                                 struct dns_stream_state *state,
@@ -32,18 +90,21 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
     size_t end = bytes; // bytes to forward; only ever shrinks, never below cursor
 
     // 1. Continuation of a frame whose earlier bytes were already forwarded in
-    //    a previous recv(). Those bytes are neither parsed (their DNS header is
-    //    gone) nor rewritten (their prefix is already on the wire).
+    //    a previous recv(). Preserve the original bytes for a complete parse
+    //    before applying any carried blanking decision to the forwarded copy.
     if (state->frame_remaining > 0) {
         size_t remaining = end - cursor;
         size_t skip = (state->frame_remaining < remaining
                        ? (size_t) state->frame_remaining : remaining);
+        append_frame_buffer(state, buffer + cursor, skip);
         if (state->blank_remaining != 0 && skip > 0)
             memset(buffer + cursor, 0, skip);
         state->frame_remaining -= (uint32_t) skip;
         cursor += skip;
-        if (state->frame_remaining == 0)
+        if (state->frame_remaining == 0) {
             state->blank_remaining = 0;
+            parse_completed_buffer(state, parse, ctx);
+        }
         if (cursor >= end)
             return end;
     }
@@ -61,15 +122,18 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
         size_t avail = end - cursor;
         if (frame_len > avail) {
             int blank_rest = 0;
+            start_frame_buffer(state, frame_len, buffer + cursor, avail);
             if (avail > 0)
-                (void) parse(ctx, buffer + cursor, avail, 1, &blank_rest);
+                (void) parse(ctx, buffer + cursor, avail, DNS_FRAME_PARTIAL,
+                             &blank_rest);
             state->frame_remaining = (uint32_t) (frame_len - avail);
             state->blank_remaining = (uint8_t) (blank_rest != 0);
             return end;
         }
         if (frame_len > 0) {
             int blank_rest = 0;
-            (void) parse(ctx, buffer + cursor, frame_len, 1, &blank_rest); // shrink ignored
+            (void) parse(ctx, buffer + cursor, frame_len, DNS_FRAME_PARTIAL,
+                         &blank_rest); // shrink ignored
             cursor += frame_len;
         }
     }
@@ -98,10 +162,13 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
 
         if (frame_len > avail) {
             // Frame runs past this read: parse what is visible (blanking only,
-            // any shrink is ignored) and remember the overflow.
+            // any shrink is ignored), retain its original bytes for detection
+            // when complete, and remember the overflow.
             int blank_rest = 0;
+            start_frame_buffer(state, frame_len, buffer + cursor, avail);
             if (avail > 0)
-                (void) parse(ctx, buffer + cursor, avail, 1, &blank_rest);
+                (void) parse(ctx, buffer + cursor, avail, DNS_FRAME_PARTIAL,
+                             &blank_rest);
             state->frame_remaining = (uint32_t) (frame_len - avail);
             state->blank_remaining = (uint8_t) (blank_rest != 0);
             return end;
@@ -110,7 +177,8 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
         // Complete frame, prefix and payload both inside this buffer: nothing
         // here has been forwarded yet, so it may be shortened.
         int blank_rest = 0;
-        size_t new_dlen = parse(ctx, buffer + cursor, frame_len, 0, &blank_rest);
+        size_t new_dlen = parse(ctx, buffer + cursor, frame_len,
+                                DNS_FRAME_COMPLETE, &blank_rest);
         if (new_dlen > frame_len)
             new_dlen = frame_len; // defensive: a parser must never grow a frame
 

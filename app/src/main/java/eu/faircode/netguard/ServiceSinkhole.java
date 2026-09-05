@@ -108,7 +108,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -221,7 +220,6 @@ public class ServiceSinkhole extends VpnService {
     // Whether any app is routed around the tunnel, which is what makes the
     // extra per-query DNS cost worth paying.
     private boolean anyDirectRouting = false;
-    private final Map<IPKey, Map<InetAddress, IPRule>> mapUidIPFilters = new HashMap<>();
     private Map<Integer, Forward> mapForward = new HashMap<>();
     public static ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
@@ -2173,7 +2171,6 @@ public class ServiceSinkhole extends VpnService {
         // Prepare rules
         prepareUidAllowed(listAllowed, listRule);
         prepareHostsBlocked(ServiceSinkhole.this);
-        prepareUidIPFilters(null);
         prepareForwarding();
 
         int prio = Integer.parseInt(prefs.getString("loglevel", Integer.toString(Log.WARN)));
@@ -2343,7 +2340,6 @@ public class ServiceSinkhole extends VpnService {
         mapUidAllowed.clear();
         mapUidKnown.clear();
         mapHostsBlocked.clear();
-        mapUidIPFilters.clear();
         mapForward.clear();
         lock.writeLock().unlock();
     }
@@ -2550,78 +2546,6 @@ public class ServiceSinkhole extends VpnService {
         // Reload TrackerList to ensure it stays in sync with updated hosts
         TrackerList.reloadTrackerData(c);
         clearTrackerCaches();
-    }
-
-    private void prepareUidIPFilters(String dname) {
-        lock.writeLock().lock();
-        try {
-
-        if (dname == null) // reset mechanism, called from startNative()
-            mapUidIPFilters.clear();
-
-        try (Cursor cursor = DatabaseHelper.getInstance(ServiceSinkhole.this).getAccessDns(dname)) {
-            int colUid = cursor.getColumnIndex("uid");
-            int colVersion = cursor.getColumnIndex("version");
-            int colProtocol = cursor.getColumnIndex("protocol");
-            int colDAddr = cursor.getColumnIndex("daddr");
-            int colResource = cursor.getColumnIndex("resource");
-            int colDPort = cursor.getColumnIndex("dport");
-            int colBlock = cursor.getColumnIndex("block");
-            int colTime = cursor.getColumnIndex("time");
-            int colTTL = cursor.getColumnIndex("ttl");
-            while (cursor.moveToNext()) {
-                int uid = cursor.getInt(colUid);
-                int version = cursor.getInt(colVersion);
-                int protocol = cursor.getInt(colProtocol);
-                String daddr = cursor.getString(colDAddr);
-                String dresource = (cursor.isNull(colResource) ? null : cursor.getString(colResource));
-                int dport = cursor.getInt(colDPort);
-                boolean block = (cursor.getInt(colBlock) > 0);
-                long time = (cursor.isNull(colTime) ? new Date().getTime() : cursor.getLong(colTime));
-                long ttl = (cursor.isNull(colTTL) ? 7 * 24 * 3600 * 1000L : cursor.getLong(colTTL));
-
-                IPKey key = new IPKey(version, protocol, dport, uid);
-                synchronized (mapUidIPFilters) {
-                    if (!mapUidIPFilters.containsKey(key))
-                        mapUidIPFilters.put(key, new HashMap());
-
-                    try {
-                        String name = (dresource == null ? daddr : dresource);
-
-                        // Firewall operates on IP layer, so we need numeric IP
-                        if (Util.isNumericAddress(name)) {
-                            InetAddress iname = InetAddress.getByName(name);
-                            if (version == 4 && !(iname instanceof Inet4Address))
-                                continue;
-                            if (version == 6 && !(iname instanceof Inet6Address))
-                                continue;
-
-                            boolean exists = mapUidIPFilters.get(key).containsKey(iname);
-                            if (!exists || !mapUidIPFilters.get(key).get(iname).isBlocked()) {
-                                IPRule rule = new IPRule(key, name + "/" + iname, block, time, ttl);
-                                mapUidIPFilters.get(key).put(iname, rule);
-                                if (exists)
-                                    Log.w(TAG, "Address conflict " + key + " " + daddr + "/" + dresource);
-                            } else if (exists) {
-                                mapUidIPFilters.get(key).get(iname).updateExpires(time, ttl);
-                                if (dname != null && ttl > 60 * 1000L)
-                                    Log.w(TAG, "Address updated " + key + " " + daddr + "/" + dresource);
-                            } else {
-                                if (dname != null)
-                                    Log.i(TAG, "Ignored " + key + " " + daddr + "/" + dresource + "=" + block);
-                            }
-                        } else
-                            Log.w(TAG, "Address not numeric " + name);
-                    } catch (UnknownHostException ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    }
-                }
-            }
-        }
-
-        } finally {
-            lock.writeLock().unlock();
-        }
     }
 
     // mapForward is keyed by protocol and port together, not port alone: a
@@ -2865,8 +2789,6 @@ public class ServiceSinkhole extends VpnService {
             if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
                 Log.i(TAG, "New IP " + rr);
             }
-            prepareUidIPFilters(rr.QName);
-
             if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED
                     || outcome == DatabaseHelper.DnsInsertOutcome.REFRESHED) {
                 invalidateTrackerCacheAfterDnsInsert(outcome, rr.Resource,
@@ -3149,6 +3071,23 @@ public class ServiceSinkhole extends VpnService {
                 // Loop through all fresh DNS candidates for this IP and only fail closed
                 // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
                 if (lookup != null) {
+                    // The DNS parser stores every edge of a CNAME chain so an
+                    // intermediate tracker remains visible. An edge whose qname
+                    // is another edge's target is a continuation of that same
+                    // resolution, not independent benign evidence that the IP is
+                    // shared. Collect targets first so the classification pass can
+                    // distinguish chain continuations from separate roots.
+                    Set<String> cnameTargets = new HashSet<>();
+                    int qnameColumn = lookup.getColumnIndexOrThrow("qname");
+                    int anameColumn = lookup.getColumnIndexOrThrow("aname");
+                    while (lookup.moveToNext()) {
+                        String qname = lookup.getString(qnameColumn);
+                        String aname = lookup.getString(anameColumn);
+                        if (qname != null && aname != null && !qname.equals(aname))
+                            cnameTargets.add(aname);
+                    }
+                    lookup.moveToPosition(-1);
+
                     while (lookup.moveToNext()) {
                         // Get DNS expiry details for this candidate row
                         int colTime = lookup.getColumnIndex("time");
@@ -3162,8 +3101,9 @@ public class ServiceSinkhole extends VpnService {
                         }
 
                         // Check tracker
-                        String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
-                        String qname = lookup.getString(lookup.getColumnIndexOrThrow("qname"));
+                        String aname = lookup.getString(anameColumn);
+                        String qname = lookup.getString(qnameColumn);
+                        boolean cnameContinuation = qname != null && cnameTargets.contains(qname);
                         String candidateDname = qname;
                         Tracker candidateTracker = TrackerList.findTracker(qname);
 
@@ -3197,7 +3137,7 @@ public class ServiceSinkhole extends VpnService {
                                 minimalChosenTime = rowTime;
                                 minimalChosenTtl = rowTtl;
                             }
-                        } else if (qname != null || aname != null) {
+                        } else if (!cnameContinuation && (qname != null || aname != null)) {
                             latestNonMinimalExpiry = Math.max(latestNonMinimalExpiry,
                                     TrackerEvidenceExpiry.at(rowTime, rowTtl));
                             sawNonMinimalTrackerEvidence = true;
@@ -3214,7 +3154,7 @@ public class ServiceSinkhole extends VpnService {
                                 chosenTime = rowTime;
                                 chosenTtl = rowTtl;
                             }
-                        } else if (qname != null || aname != null) {
+                        } else if (!cnameContinuation && (qname != null || aname != null)) {
                             latestNonTrackerExpiry = Math.max(latestNonTrackerExpiry,
                                     TrackerEvidenceExpiry.at(rowTime, rowTtl));
                             sawNonTrackerEvidence = true;
@@ -5006,86 +4946,6 @@ public class ServiceSinkhole extends VpnService {
                     return false;
 
             return true;
-        }
-    }
-
-    private class IPKey {
-        int version;
-        int protocol;
-        int dport;
-        int uid;
-
-        public IPKey(int version, int protocol, int dport, int uid) {
-            this.version = version;
-            this.protocol = protocol;
-            // Only TCP (6) and UDP (17) have port numbers
-            this.dport = (protocol == 6 || protocol == 17 ? dport : 0);
-            this.uid = uid;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof IPKey))
-                return false;
-            IPKey other = (IPKey) obj;
-            return (this.version == other.version &&
-                    this.protocol == other.protocol &&
-                    this.dport == other.dport &&
-                    this.uid == other.uid);
-        }
-
-        @Override
-        public int hashCode() {
-            // The previous (version << 40) | (protocol << 32) shifts wrapped
-            // mod 32 and collapsed fields onto each other.
-            return Objects.hash(version, protocol, dport, uid);
-        }
-
-        @Override
-        public String toString() {
-            return "v" + version + " p" + protocol + " port=" + dport + " uid=" + uid;
-        }
-    }
-
-    private class IPRule {
-        private IPKey key;
-        private String name;
-        private boolean block;
-        private long time;
-        private long ttl;
-
-        public IPRule(IPKey key, String name, boolean block, long time, long ttl) {
-            this.key = key;
-            this.name = name;
-            this.block = block;
-            this.time = time;
-            this.ttl = ttl;
-        }
-
-        public boolean isBlocked() {
-            return this.block;
-        }
-
-        public boolean isExpired() {
-            return System.currentTimeMillis() > (this.time + this.ttl);
-        }
-
-        public void updateExpires(long time, long ttl) {
-            this.time = time;
-            this.ttl = ttl;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            IPRule other = (IPRule) obj;
-            return (this.block == other.block &&
-                    this.time == other.time &&
-                    this.ttl == other.ttl);
-        }
-
-        @Override
-        public String toString() {
-            return this.key + " " + this.name;
         }
     }
 

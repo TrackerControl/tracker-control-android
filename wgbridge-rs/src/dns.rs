@@ -53,6 +53,7 @@ struct TcpFlowKey {
 
 struct TcpDnsFlow {
     next_seq: u32,
+    fin_seq: Option<u32>,
     buffer: Vec<u8>,
     last_seen: Instant,
     framing_known: bool,
@@ -132,6 +133,7 @@ impl DnsInspector {
                 segment.key.clone(),
                 TcpDnsFlow {
                     next_seq: segment.seq.wrapping_add(1),
+                    fin_seq: None,
                     buffer: Vec::new(),
                     last_seen: now,
                     framing_known: true,
@@ -154,6 +156,7 @@ impl DnsInspector {
                         // inspector. It is intentionally not rewrite-eligible until
                         // a SYN establishes a known DNS frame boundary.
                         next_seq: data_seq,
+                        fin_seq: None,
                         buffer: Vec::new(),
                         last_seen: now,
                         framing_known: false,
@@ -184,8 +187,7 @@ impl DnsInspector {
                     let base_seq = flow.next_seq;
                     let mut uncovered = vec![(0usize, payload.len())];
                     for pending in &flow.pending {
-                        let Some(pending_start) = seq_forward_offset(base_seq, pending.seq)
-                        else {
+                        let Some(pending_start) = seq_forward_offset(base_seq, pending.seq) else {
                             continue;
                         };
                         let pending_end = pending_start.saturating_add(pending.payload.len());
@@ -209,7 +211,8 @@ impl DnsInspector {
                         if flow.next_seq != base_seq.wrapping_add(start as u32)
                             || flow.buffer.len()
                                 + chunks.iter().map(|chunk| chunk.bytes.len()).sum::<usize>()
-                                + end - start
+                                + end
+                                - start
                                 > MAX_TCP_DNS_BUFFER
                         {
                             // Keep the framing anchor and frontier intact. The
@@ -232,9 +235,25 @@ impl DnsInspector {
                 drain_pending(flow, &mut chunks);
                 consume_contiguous(flow, chunks, recorder, &mut context);
             }
+
+            if segment.fin {
+                flow.fin_seq
+                    .get_or_insert(data_seq.wrapping_add(segment.payload.len() as u32));
+            }
         }
 
-        if segment.fin {
+        if segment.fin && segment.payload.is_empty() {
+            if let Some(flow) = self.tcp_flows.get_mut(&segment.key) {
+                flow.fin_seq
+                    .get_or_insert(segment.seq.wrapping_add(u32::from(segment.syn)));
+            }
+        }
+        let fin_consumed = self.tcp_flows.get(&segment.key).is_some_and(|flow| {
+            flow.fin_seq.is_some_and(|fin_seq| {
+                flow.next_seq == fin_seq || is_seq_after(flow.next_seq, fin_seq)
+            })
+        });
+        if fin_consumed {
             self.tcp_flows.remove(&segment.key);
         }
         Some(context)
@@ -1263,6 +1282,29 @@ mod tests {
         inspector.inspect(&first, &sink);
 
         assert_eq!(sink.0.lock().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn stateful_inspector_defers_out_of_order_fin_until_gap_is_filled() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let tail_with_fin = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x19);
+        let first = ipv4_tcp_segment(&framed[..split], 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&tail_with_fin, &sink);
+        assert!(sink.0.lock().unwrap().is_empty());
+        assert_eq!(inspector.tcp_flows.len(), 1);
+
+        inspector.inspect(&first, &sink);
+        assert_eq!(sink.0.lock().unwrap().len(), 1);
+        assert!(inspector.tcp_flows.is_empty());
     }
 
     #[test]

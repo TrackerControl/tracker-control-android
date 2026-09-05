@@ -21,7 +21,7 @@
 #define DNS_FRAME_H
 
 /*
- * Bufferless cursor over a DNS-over-TCP (port 53) byte stream, extracted out
+ * Cursor over a DNS-over-TCP (port 53) byte stream, extracted out
  * of check_tcp_socket() (tcp.c) so it can be unit-tested on the host without
  * pulling in JNI/session dependencies. This header and its implementation
  * (dns_frame.c) must only depend on libc: no netguard.h, no JNI.
@@ -35,19 +35,11 @@
  *   - a lone byte that is the first half of a length prefix.
  *
  * dns_frame_process_stream() walks every frame boundary inside one recv()
- * buffer and carries enough state to stay aligned into the next call without
- * buffering stream bytes. A frame is offered to the DNS parser only in the
- * recv() where its prefix is completed. If its payload continues into later
- * reads, only the bytes visible in that first call are parsed; the parser is
- * told that the frame is partial, and a blocking result causes the visible
- * answer tail and all later continuation bytes to be zeroed in place. Policy
- * enforcement for such split frames therefore remains best-effort: once the
- * answer section is cut short, per-answer detection stops at the truncation
- * point and SVCB-triggered blanking is unavailable, leaving the domain of the
- * question as the only signal the block decision can use. That signal needs the
- * header and the whole question inside the visible bytes, so a read split
- * within the first few bytes of a response blocks nothing at all and the frame
- * passes through intact.
+ * buffer and carries alignment into the next call. A split payload is also
+ * copied into a bounded buffer (the DNS-over-TCP length field limits it to
+ * 65535 bytes). The visible first part is parsed immediately for enforcement;
+ * once the payload is complete, the copy is parsed again so answers that were
+ * beyond the first recv() still reach tracker detection.
  *
  * A blanked split frame keeps its original 2-byte length prefix, so what
  * reaches the client is a DNS message with all three counts cleared followed by
@@ -90,19 +82,35 @@ struct dns_stream_state {
     uint8_t prefix_hi;        /* stashed first byte of a length prefix split
                                  across recv()s */
     uint8_t have_prefix_hi;   /* nonzero when prefix_hi is valid */
+    uint8_t *frame_buffer;    /* original bytes of a split frame */
+    uint32_t frame_length;
+    uint32_t frame_received;
+};
+
+/* Releases any split-frame buffer and restores the all-zero initial state. */
+void dns_frame_reset(struct dns_stream_state *state);
+
+enum dns_frame_parse_mode {
+    DNS_FRAME_COMPLETE = 0,
+    DNS_FRAME_PARTIAL = 1,
+    DNS_FRAME_REPLAY = 2,
 };
 
 /*
  * Called for each DNS payload (or the visible part of one) found in the
- * buffer; stands in for parse_dns_response(). partial != 0 means the frame is
- * not wholly inside this buffer, so the callback must not shrink it. On a
- * partial call, *blank_rest is set nonzero when the callback blanked the
- * visible part and the caller must blank the frame's later continuation bytes.
+ * buffer; stands in for parse_dns_response(). mode is DNS_FRAME_COMPLETE for
+ * a complete frame, DNS_FRAME_PARTIAL for the first visible part of a split
+ * frame, and DNS_FRAME_REPLAY when replaying the completed buffered copy of a
+ * split frame for detection. Partial and replay calls must not shrink the
+ * forwarded stream. On a partial call, *blank_rest is set nonzero when the
+ * callback blanked the visible part and the caller must blank the frame's later
+ * continuation bytes.
  * Returns the possibly-shrunk payload length for a complete frame; a return
  * > dlen must be treated by the caller as "unchanged" (defensive clamp).
  */
 typedef size_t (*dns_frame_parse_fn)(void *ctx, uint8_t *data, size_t dlen,
-                                     int partial, int *blank_rest);
+                                     enum dns_frame_parse_mode mode,
+                                     int *blank_rest);
 
 /*
  * Processes one recv() buffer of a DNS-over-TCP stream in place.
