@@ -30,8 +30,8 @@ availability or battery impact.
 | 10 | A server TCP FIN closes both directions | TCP correctness, compatibility | **Medium–High** | Hard | **Fixed** | Reproduced |
 | 11 | TCP send-window calculation uses 16-bit rather than 32-bit wrap arithmetic | TCP correctness, connectivity | **Medium** | Easy | **Fixed** | Reproduced |
 | 12 | Closed TCP windows cause 100 ms polling and repeated ACK probes | Battery, CPU, radio activity | **Medium** | Medium | **Fixed** | Reproduced |
-| 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | Open | Reproduced |
-| 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | Open | Source-proven |
+| 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | **Fixed** | Reproduced |
+| 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | **Fixed** | Source-proven |
 | 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | Open | Reproduced |
 | 16 | The DoH proxy has an unbounded request queue | Battery, memory, availability, Secure DNS | **Medium** | Medium | Open | Source-proven |
 | 17 | Screen-off DoH repeatedly schedules connection-pool eviction | Battery, CPU, Secure DNS | **Low–Medium** | Easy | **Fixed** | Source-proven |
@@ -62,9 +62,12 @@ that branch:
 | #9 | **Fixed** | Client FINs are retained until all preceding queued bytes drain, then propagated upstream with one `shutdown(SHUT_WR)` and acknowledged idempotently. |
 | #10 | **Fixed** | Upstream EOF now closes only the read half, sends one FIN to the app, and leaves the write half available until the client also closes. |
 | #12 | **Fixed** | Zero-window probes now use deadline-based exponential backoff from 100 ms to 5 seconds while normal socket and TUN readiness still wakes immediately. |
+| #13 | **Fixed** | SYN-established DNS-over-TCP framing survives gaps and idle periods; bounded first-seen reassembly recovers only from sequence-valid bytes. |
+| #14 | **Fixed** | Native TUN write totals and streaks reach the watchdog, which recovers only after at least eight consecutive failures continue across five seconds of advancing samples. |
 
-Findings #13–16 remain open. All eight high-severity findings and the native
-TCP half-close/battery findings are fixed across the stacked branches.
+Findings #15 and #16 remain open. All eight high-severity findings, the native
+TCP findings, and the WireGuard DNS/recovery findings are fixed across the
+stacked branches.
 
 ## Detailed findings
 
@@ -414,6 +417,12 @@ need exponential or bounded backoff without delaying ordinary readiness events.
 **Fix difficulty:** Hard
 **Confidence:** High
 
+**Status: Fixed in the WireGuard recovery pull request.** The inspector keeps
+the SYN-established sequence and framing anchor, buffers at most eight
+segments or 16 KiB for five seconds, preserves first-seen overlap bytes, and
+drains only exact contiguous ranges. Overflow and expiry discard speculative
+segments without scanning arbitrary payload for a new DNS prefix.
+
 `DnsInspector` removes all flow state when it observes a forward sequence gap
 ([`dns.rs`](wgbridge-rs/src/dns.rs), lines 149–157). Later data recreates a
 flow with `framing_known=false`, and a later complete retransmission on the
@@ -434,6 +443,12 @@ cannot mistake arbitrary payload bytes for a DNS length prefix.
 **Severity:** Medium
 **Fix difficulty:** Medium
 **Confidence:** Medium–High
+
+**Status: Fixed in the WireGuard recovery pull request.** Rust exposes total
+and consecutive TUN write failures through the append-only JNI statistics
+array. Java remains compatible with the previous three-value array and enters
+recovery only when a streak of at least eight failures keeps advancing for five
+seconds; a full write, stale sample, restart or suspension resets qualification.
 
 Gotatun increments receive statistics when it decrypts a packet. Afterwards,
 `TunFdSend` writes that packet to the Android TUN, suppresses every write error
@@ -534,12 +549,11 @@ can represent it.
 
 ## Suggested repair order
 
-All high-severity items and the TCP half-close/window items are complete. The
-remaining order is:
+All high-severity, TCP half-close/window and WireGuard recovery items are
+complete. The remaining order is:
 
-1. Address WireGuard DNS reordering and TUN-write recovery (#13 and #14).
-2. Persist UDP redirects across the session lifetime (#15).
-3. Bound the advanced DoH request queue (#16).
+1. Persist UDP redirects across the session lifetime (#15).
+2. Bound the advanced DoH request queue (#16).
 
 ## Validation performed
 
@@ -564,6 +578,10 @@ remaining order is:
 - The TCP half-close branch passed strict host compilation, the TCP window,
   queue and half-close suites under ASan/UBSan, and `assembleGithubDebug` for
   all four Android ABIs.
+- The WireGuard recovery branch passed 95 Rust tests across six suites and the
+  focused Kotlin connectivity-checker suite. Its changed Rust files pass
+  `rustfmt`; the workspace-wide check still reports pre-existing formatting in
+  `config.rs` and `transport/udp.rs`.
 
 ## Limits
 

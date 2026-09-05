@@ -334,8 +334,10 @@ pub extern "system" fn Java_net_kollnig_missioncontrol_wgbridge_Tunnel_nativeSta
                     stats.rx_bytes,
                     stats.tx_bytes,
                     stats.latest_handshake_millis,
+                    stats.tun_write_failures_total,
+                    stats.tun_write_failures_streak,
                 ];
-                match env.new_long_array(3) {
+                match env.new_long_array(values.len()) {
                     Ok(array) => {
                         let _ = array.set_region(env, 0, &values);
                         array.into_raw()
