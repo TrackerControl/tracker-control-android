@@ -74,7 +74,7 @@ jobs:
 
       - name: Run native socket hotpath host tests
         run: |
-          COMMON="-Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -fsanitize=address,undefined -fno-omit-frame-pointer -Iapp/src/test/native/host_compat -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -Iapp/src/main/jni/netguard"
+          COMMON="-D_GNU_SOURCE -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -fsanitize=address,undefined -fno-omit-frame-pointer -Iapp/src/test/native/host_compat -I$JAVA_HOME/include -I$JAVA_HOME/include/linux -Iapp/src/main/jni/netguard"
           cc $COMMON -o /tmp/tcp_half_close_test \
             app/src/test/native/tcp_half_close_test.c \
             app/src/main/jni/netguard/tcp.c \
