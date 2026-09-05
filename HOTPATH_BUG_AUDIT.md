@@ -566,7 +566,7 @@ All findings in this audit are implemented across the stacked pull requests.
 
 - Two Robolectric audit classes passed three tests against the real service,
   database and tracker-list code.
-- The Rust workspace passed 85 tests across six suites.
+- The Rust workspace passed 95 tests across six suites on the final stack.
 - Two additional extracted DNS/WireGuard tests passed.
 - Native DNS-frame, IPv6-extension, DHCP-option, UDP-state and WireGuard
   flow-cache suites passed under ASan/UBSan.
@@ -594,6 +594,11 @@ All findings in this audit are implemented across the stacked pull requests.
   cross-family, invalid-address, original-tuple and response-tuple cases.
 - The bounded DoH queue branch passed `DnsProxyServerTest` after stacking,
   including deterministic admission and stopped-executor rejection cases.
+- The final stacked branch passed the complete `testGithubDebugUnitTest` suite,
+  the 95-test Rust workspace, and `assembleGithubDebug`. The first integrated
+  Android build exposed an incorrect JNI array-length type; after correcting
+  it, the rerun passed and the APK contained both `libnetguard.so` and
+  `libwgbridge.so` for arm64-v8a, armeabi-v7a, x86 and x86_64.
 
 ## Limits
 
