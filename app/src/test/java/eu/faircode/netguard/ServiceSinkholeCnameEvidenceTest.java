@@ -57,8 +57,11 @@ public class ServiceSinkholeCnameEvidenceTest {
         assertTrue("one connected CNAME chain keeps its tracker evidence",
                 (Boolean) block.invoke(service, IP, UID));
 
-        insert(database, "independent.audit-example.test",
-                "independent.audit-example.test");
+        // The terminal name can also be resolved independently. Its direct
+        // answer is benign shared-IP evidence, despite the same qname having
+        // appeared as a target in the chain above.
+        insert(database, "address.audit-example.test",
+                "address.audit-example.test");
         ServiceSinkhole.clearTrackerCaches();
         assertFalse("an independent benign owner still marks the IP as shared",
                 (Boolean) block.invoke(service, IP, UID));

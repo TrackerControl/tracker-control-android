@@ -3103,7 +3103,12 @@ public class ServiceSinkhole extends VpnService {
                         // Check tracker
                         String aname = lookup.getString(anameColumn);
                         String qname = lookup.getString(qnameColumn);
-                        boolean cnameContinuation = qname != null && cnameTargets.contains(qname);
+                        // A direct answer for a name remains independent
+                        // evidence even if that name was also the target of a
+                        // different CNAME chain resolving to the same IP.
+                        boolean cnameContinuation = qname != null
+                                && !qname.equals(aname)
+                                && cnameTargets.contains(qname);
                         String candidateDname = qname;
                         Tracker candidateTracker = TrackerList.findTracker(qname);
 
