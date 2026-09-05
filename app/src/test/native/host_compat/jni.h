@@ -13,6 +13,7 @@ typedef int64_t jlong;
 typedef uint8_t jboolean;
 typedef uint32_t __be32;
 typedef uint16_t __be16;
+typedef uint16_t __u16;
 
 #define JNIEXPORT
 #define JNICALL
