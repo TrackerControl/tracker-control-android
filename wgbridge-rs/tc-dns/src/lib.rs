@@ -25,9 +25,11 @@ pub enum Outcome {
     },
 }
 
-/// Records valid A and AAAA answers from a DNS response. Malformed input is
-/// ignored. A sink must not panic; this function deliberately does not catch
-/// panics because the Android release profile uses `panic = "abort"`.
+/// Records valid A and AAAA answers from a DNS response. CNAME chains are
+/// followed from the question by owner/target name; each validated link is
+/// emitted as a distinct qname/aname mapping. Malformed input is ignored. A
+/// sink must not panic; this function deliberately does not catch panics
+/// because the Android release profile uses `panic = "abort"`.
 pub fn record_answers(msg: &[u8], policy: &dyn DnsPolicy) {
     let _ = message::parse_answers_incrementally(msg, |answer| {
         policy.record_answer(&answer.qname, &answer.aname, &answer.resource, answer.ttl);

@@ -1,7 +1,9 @@
+use std::collections::{HashMap, HashSet};
 use std::net::{Ipv4Addr, Ipv6Addr};
 
 pub(crate) const DNS_TYPE_A: u16 = 1;
 pub(crate) const DNS_TYPE_AAAA: u16 = 28;
+pub(crate) const DNS_TYPE_CNAME: u16 = 5;
 pub(crate) const DNS_CLASS_IN: u16 = 1;
 pub(crate) const DNS_TYPE_SVCB: u16 = 64;
 pub(crate) const DNS_TYPE_HTTPS: u16 = 65;
@@ -9,6 +11,8 @@ pub(crate) const DNS_HEADER_LEN: usize = 12;
 const MAX_NAME_DEPTH: u32 = 8;
 const MAX_NAME_LABELS: usize = 128;
 const MAX_NAME_OCTETS: usize = 255;
+const MAX_CNAME_CHAIN_DEPTH: usize = 8;
+const MAX_CNAME_TRAVERSAL_WORK: usize = 4096;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct DnsAnswer {
@@ -16,6 +20,26 @@ pub(crate) struct DnsAnswer {
     pub(crate) aname: String,
     pub(crate) resource: String,
     pub(crate) ttl: i32,
+}
+
+#[derive(Debug, Clone)]
+enum ParsedAnswer {
+    Cname(CnameRecord),
+    Address(AddressRecord),
+}
+
+#[derive(Debug, Clone)]
+struct CnameRecord {
+    owner: String,
+    target: String,
+    ttl: i32,
+}
+
+#[derive(Debug, Clone)]
+struct AddressRecord {
+    owner: String,
+    resource: String,
+    ttl: i32,
 }
 
 #[derive(Debug)]
@@ -74,7 +98,7 @@ pub(crate) fn read_question_layout(msg: &[u8]) -> Option<QuestionLayout> {
             return None;
         }
         if question == 0 {
-            qname = Some(name);
+            qname = Some(canonicalize_name(&name));
             qtype = read_u16(msg, name_end)?;
         }
         offset = question_end;
@@ -93,7 +117,7 @@ pub(crate) fn parse_message(msg: &[u8]) -> Option<DnsMessage> {
     let mut offset = layout.answer_offset;
     let mut contains_svcb = false;
     for _ in 0..layout.ancount {
-        let (answer, answer_end, is_svcb) = parse_answer(msg, offset, &layout.qname)?;
+        let (answer, answer_end, is_svcb) = parse_answer(msg, offset)?;
         contains_svcb |= is_svcb;
         let _ = answer;
         offset = answer_end;
@@ -130,13 +154,22 @@ pub(crate) fn parse_answers_incrementally(
     }
     let mut offset = layout.answer_offset;
     let mut contains_svcb = false;
+    let mut records = Vec::new();
+    let mut complete = true;
     for _ in 0..layout.ancount {
-        let (answer, answer_end, is_svcb) = parse_answer(msg, offset, &layout.qname)?;
+        let Some((answer, answer_end, is_svcb)) = parse_answer(msg, offset) else {
+            complete = false;
+            break;
+        };
         contains_svcb |= is_svcb;
         if let Some(answer) = answer {
-            on_answer(&answer);
+            records.push(answer);
         }
         offset = answer_end;
+    }
+    emit_answers(&layout.qname, &records, &mut on_answer);
+    if !complete {
+        return None;
     }
     Some(DnsMessage {
         qname: layout.qname,
@@ -146,12 +179,9 @@ pub(crate) fn parse_answers_incrementally(
     })
 }
 
-fn parse_answer(
-    msg: &[u8],
-    offset: usize,
-    qname: &str,
-) -> Option<(Option<DnsAnswer>, usize, bool)> {
+fn parse_answer(msg: &[u8], offset: usize) -> Option<(Option<ParsedAnswer>, usize, bool)> {
     let (aname, name_end) = read_dns_name(msg, offset, 0)?;
+    let aname = canonicalize_name(&aname);
     let fixed_end = name_end.checked_add(10)?;
     if fixed_end > msg.len() {
         return None;
@@ -170,9 +200,8 @@ fn parse_answer(
         None
     } else {
         match typ {
-            DNS_TYPE_A if rdlen == 4 => Some(DnsAnswer {
-                qname: qname.to_owned(),
-                aname,
+            DNS_TYPE_A if rdlen == 4 => Some(ParsedAnswer::Address(AddressRecord {
+                owner: aname,
                 resource: Ipv4Addr::new(
                     *rdata.first()?,
                     *rdata.get(1)?,
@@ -181,21 +210,216 @@ fn parse_answer(
                 )
                 .to_string(),
                 ttl: clamp_ttl(ttl),
-            }),
+            })),
             DNS_TYPE_AAAA if rdlen == 16 => {
                 let mut ip = [0u8; 16];
                 ip.copy_from_slice(rdata);
-                Some(DnsAnswer {
-                    qname: qname.to_owned(),
-                    aname,
+                Some(ParsedAnswer::Address(AddressRecord {
+                    owner: aname,
                     resource: Ipv6Addr::from(ip).to_string(),
                     ttl: clamp_ttl(ttl),
-                })
+                }))
+            }
+            DNS_TYPE_CNAME => {
+                let Some((target, target_end)) = read_dns_name(msg, fixed_end, 0) else {
+                    return Some((None, rdata_end, is_svcb));
+                };
+                if target_end != rdata_end {
+                    return Some((None, rdata_end, is_svcb));
+                }
+                Some(ParsedAnswer::Cname(CnameRecord {
+                    owner: aname,
+                    target: canonicalize_name(&target),
+                    ttl: clamp_ttl(ttl),
+                }))
             }
             _ => None,
         }
     };
     Some((answer, rdata_end, is_svcb))
+}
+
+fn emit_answers(qname: &str, records: &[ParsedAnswer], mut on_answer: impl FnMut(&DnsAnswer)) {
+    let mut cname_links: HashMap<String, Vec<CnameRecord>> = HashMap::new();
+    let mut addresses_by_owner: HashMap<String, Vec<AddressRecord>> = HashMap::new();
+    let mut addresses = Vec::new();
+    for record in records {
+        match record {
+            ParsedAnswer::Cname(link) => {
+                cname_links
+                    .entry(link.owner.clone())
+                    .or_default()
+                    .push(link.clone());
+            }
+            ParsedAnswer::Address(address) => {
+                addresses.push(address.clone());
+                addresses_by_owner
+                    .entry(address.owner.clone())
+                    .or_default()
+                    .push(address.clone());
+            }
+        }
+    }
+
+    let mut answers = Vec::new();
+    let mut indexes = HashMap::new();
+    if cname_links.is_empty() {
+        // Keep the historic behaviour for an ordinary response: every valid
+        // address answer is attributed to the question, even if its owner is
+        // an unusual (but syntactically valid) name.
+        for address in addresses {
+            push_answer(
+                &mut answers,
+                &mut indexes,
+                qname,
+                &address.owner,
+                &address.resource,
+                address.ttl,
+            );
+        }
+    } else {
+        // Once CNAMEs are present, only a path rooted at the question can
+        // attribute an address. This keeps unrelated answer-section records
+        // from being attached to the original question.
+        let mut path = Vec::new();
+        let mut visited = HashSet::new();
+        let mut budget = MAX_CNAME_TRAVERSAL_WORK;
+        collect_chain(
+            qname,
+            0,
+            &mut path,
+            &mut visited,
+            &cname_links,
+            &addresses_by_owner,
+            &mut answers,
+            &mut indexes,
+            &mut budget,
+        );
+    }
+
+    for answer in answers {
+        on_answer(&answer);
+    }
+}
+
+fn collect_chain(
+    name: &str,
+    depth: usize,
+    path: &mut Vec<CnameRecord>,
+    visited: &mut HashSet<String>,
+    cname_links: &HashMap<String, Vec<CnameRecord>>,
+    addresses_by_owner: &HashMap<String, Vec<AddressRecord>>,
+    answers: &mut Vec<DnsAnswer>,
+    indexes: &mut HashMap<(String, String, String), usize>,
+    budget: &mut usize,
+) {
+    // A bounded depth alone does not bound work when the answer section
+    // contains repeated or branching CNAME links. Charge every visited owner
+    // and every edge/address examined so a hostile graph cannot multiply the
+    // recursive walk exponentially.
+    if *budget == 0 {
+        return;
+    }
+    *budget -= 1;
+
+    if !visited.insert(name.to_owned()) {
+        return;
+    }
+
+    // An address is terminal only when this owner has no further CNAME hop.
+    // Treating an address and an outgoing CNAME at the same owner as a
+    // terminal would make malformed loops look like validated chains.
+    if !cname_links.contains_key(name) {
+        if let Some(addresses) = addresses_by_owner.get(name) {
+            for address in addresses {
+                if *budget == 0 {
+                    break;
+                }
+                *budget -= 1;
+                if path.is_empty() {
+                    // No CNAME path means this is the historic direct
+                    // qname/aname attribution, even when another answer
+                    // carries an unrelated CNAME.
+                    push_answer(answers, indexes, name, name, &address.resource, address.ttl);
+                } else {
+                    // Each edge gets the minimum TTL over its remaining path.
+                    // The terminal owner itself is represented by the final
+                    // edge's aname, avoiding a synthetic self-row.
+                    for (index, link) in path.iter().enumerate() {
+                        let mut ttl = address.ttl;
+                        for suffix_link in path.iter().skip(index) {
+                            ttl = ttl.min(suffix_link.ttl);
+                        }
+                        push_answer(
+                            answers,
+                            indexes,
+                            &link.owner,
+                            &link.target,
+                            &address.resource,
+                            ttl,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    if depth < MAX_CNAME_CHAIN_DEPTH {
+        if let Some(links) = cname_links.get(name) {
+            for link in links {
+                if *budget == 0 {
+                    break;
+                }
+                *budget -= 1;
+                path.push(link.clone());
+                collect_chain(
+                    &link.target,
+                    depth + 1,
+                    path,
+                    visited,
+                    cname_links,
+                    addresses_by_owner,
+                    answers,
+                    indexes,
+                    budget,
+                );
+                let _ = path.pop();
+            }
+        }
+    }
+    visited.remove(name);
+}
+
+fn push_answer(
+    answers: &mut Vec<DnsAnswer>,
+    indexes: &mut HashMap<(String, String, String), usize>,
+    qname: &str,
+    aname: &str,
+    resource: &str,
+    ttl: i32,
+) {
+    if qname.is_empty() || aname.is_empty() {
+        return;
+    }
+    let key = (qname.to_owned(), aname.to_owned(), resource.to_owned());
+    if let Some(index) = indexes.get(&key).copied() {
+        if let Some(answer) = answers.get_mut(index) {
+            answer.ttl = answer.ttl.min(ttl);
+        }
+        return;
+    }
+    let index = answers.len();
+    answers.push(DnsAnswer {
+        qname: key.0.clone(),
+        aname: key.1.clone(),
+        resource: key.2.clone(),
+        ttl,
+    });
+    indexes.insert(key, index);
+}
+
+fn canonicalize_name(name: &str) -> String {
+    name.to_ascii_lowercase()
 }
 
 fn clamp_ttl(ttl: u32) -> i32 {

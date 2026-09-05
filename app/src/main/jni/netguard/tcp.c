@@ -27,6 +27,8 @@ extern char socks5_password[127 + 1];
 
 extern FILE *pcap_file;
 
+static void normalize_tcp_queue(struct tcp_session *cur);
+
 void clear_tcp_data(struct tcp_session *cur) {
     struct segment *s = cur->forward;
     while (s != NULL) {
@@ -150,9 +152,10 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
 
         // Check for outgoing data
         if (s->tcp.forward != NULL) {
+            normalize_tcp_queue(&s->tcp);
             uint32_t buffer_size = get_receive_buffer(s);
             if (s->tcp.forward->seq == s->tcp.remote_seq &&
-                s->tcp.forward->len - s->tcp.forward->sent < buffer_size)
+                s->tcp.forward->len - s->tcp.forward->sent <= buffer_size)
                 events = events | EPOLLOUT;
             else
                 recheck = 1;
@@ -495,10 +498,11 @@ void check_tcp_socket(const struct arguments *args,
             int fwd = 0;
             if (ev->events & EPOLLOUT) {
                 // Forward data
+                normalize_tcp_queue(&s->tcp);
                 uint32_t buffer_size = get_receive_buffer(s);
                 while (s->tcp.forward != NULL &&
                        s->tcp.forward->seq == s->tcp.remote_seq &&
-                       s->tcp.forward->len - s->tcp.forward->sent < buffer_size) {
+                       s->tcp.forward->len - s->tcp.forward->sent <= buffer_size) {
                     log_android(ANDROID_LOG_DEBUG, "%s fwd %u...%u sent %u",
                                 session,
                                 s->tcp.forward->seq - s->tcp.remote_start,
@@ -1047,65 +1051,192 @@ jboolean handle_tcp(const struct arguments *args,
     return 1;
 }
 
+static uint32_t tcp_segment_end(const struct segment *s) {
+    return s->seq + (uint32_t) s->len;
+}
+
+static void free_tcp_segment(struct segment *s) {
+    ng_free(s->data, __FILE__, __LINE__);
+    ng_free(s, __FILE__, __LINE__);
+}
+
+/* Remove a prefix while retaining the ownership and sent offset of a node. */
+static void trim_tcp_segment_prefix(struct segment *s, uint32_t prefix) {
+    if (prefix == 0)
+        return;
+
+    memmove(s->data, s->data + prefix, s->len - prefix);
+    s->seq += prefix;
+    s->len = (uint16_t) (s->len - prefix);
+    if (s->sent > prefix)
+        s->sent = (uint16_t) (s->sent - prefix);
+    else
+        s->sent = 0;
+}
+
+static void trim_tcp_queue_to_remote(struct tcp_session *cur) {
+    while (cur->forward != NULL && compare_u32(cur->forward->seq, cur->remote_seq) < 0) {
+        struct segment *s = cur->forward;
+        uint32_t prefix = cur->remote_seq - s->seq;
+        if (prefix >= s->len) {
+            cur->forward = s->next;
+            free_tcp_segment(s);
+        } else {
+            trim_tcp_segment_prefix(s, prefix);
+            break;
+        }
+    }
+}
+
+static int can_merge_tcp_segments(const struct segment *a, const struct segment *b) {
+    /* A PSH on a must remain a boundary: it flushes the bytes ending at a. */
+    return !a->psh && b->sent == 0 &&
+           a->len <= UINT16_MAX - b->len;
+}
+
+static void merge_tcp_segments(struct segment *a, struct segment *b) {
+    uint16_t old_len = a->len;
+    uint16_t total = (uint16_t) (a->len + b->len);
+    uint8_t *data = ng_malloc(total, "merged tcp segment");
+    memcpy(data, a->data, old_len);
+    memcpy(data + old_len, b->data, b->len);
+    ng_free(a->data, __FILE__, __LINE__);
+    a->data = data;
+    a->len = total;
+    a->psh = b->psh;
+    a->next = b->next;
+    free_tcp_segment(b);
+}
+
+/* Keep the queue sorted, non-overlapping and anchored at remote_seq. */
+static void normalize_tcp_queue(struct tcp_session *cur) {
+    trim_tcp_queue_to_remote(cur);
+
+    struct segment *a = cur->forward;
+    while (a != NULL) {
+        if (a->len == 0 || a->sent > a->len) {
+            struct segment *next = a->next;
+            if (a->len == 0) {
+                if (cur->forward == a)
+                    cur->forward = next;
+                else {
+                    struct segment *p = cur->forward;
+                    while (p->next != a)
+                        p = p->next;
+                    p->next = next;
+                }
+                free_tcp_segment(a);
+                a = next;
+                continue;
+            }
+            a->sent = a->len;
+        }
+
+        struct segment *b = a->next;
+        if (b == NULL)
+            break;
+
+        uint32_t end = tcp_segment_end(a);
+        int order = compare_u32(b->seq, end);
+        if (order < 0) {
+            uint32_t prefix = end - b->seq;
+            if (prefix >= b->len) {
+                a->next = b->next;
+                free_tcp_segment(b);
+                continue;
+            }
+            trim_tcp_segment_prefix(b, prefix);
+            continue;
+        }
+
+        if (order == 0 && can_merge_tcp_segments(a, b)) {
+            merge_tcp_segments(a, b);
+            continue;
+        }
+        a = b;
+    }
+}
+
+static void insert_tcp_segment(struct tcp_session *cur, uint32_t seq,
+                               const uint8_t *data, uint16_t datalen, int psh) {
+    if (datalen == 0)
+        return;
+
+    struct segment *n = ng_malloc(sizeof(struct segment), "tcp segment");
+    n->seq = seq;
+    n->len = datalen;
+    n->sent = 0;
+    n->psh = psh;
+    n->data = ng_malloc(datalen, "tcp segment data");
+    memcpy(n->data, data, datalen);
+
+    struct segment *p = NULL;
+    struct segment *s = cur->forward;
+    while (s != NULL && compare_u32(s->seq, seq) < 0) {
+        p = s;
+        s = s->next;
+    }
+    n->next = s;
+    if (p == NULL)
+        cur->forward = n;
+    else
+        p->next = n;
+}
+
 void queue_tcp(const struct arguments *args,
                const struct tcphdr *tcphdr,
                const char *session, struct tcp_session *cur,
                const uint8_t *data, uint16_t datalen) {
-    uint32_t seq = ntohl(tcphdr->seq);
-    if (compare_u32(seq, cur->remote_seq) < 0)
-        log_android(ANDROID_LOG_WARN, "%s already forwarded %u..%u",
-                    session,
-                    seq - cur->remote_start, seq + datalen - cur->remote_start);
-    else {
-        struct segment *p = NULL;
-        struct segment *s = cur->forward;
-        while (s != NULL && compare_u32(s->seq, seq) < 0) {
-            p = s;
-            s = s->next;
-        }
+    (void) args;
+    if (datalen == 0)
+        return;
 
-        if (s == NULL || compare_u32(s->seq, seq) > 0) {
-            log_android(ANDROID_LOG_DEBUG, "%s queuing %u...%u",
+    normalize_tcp_queue(cur);
+
+    uint32_t seq = ntohl(tcphdr->seq);
+    if (compare_u32(seq, cur->remote_seq) < 0) {
+        uint32_t prefix = cur->remote_seq - seq;
+        if (prefix >= datalen) {
+            log_android(ANDROID_LOG_WARN, "%s already forwarded %u..%u",
                         session,
                         seq - cur->remote_start, seq + datalen - cur->remote_start);
-            struct segment *n = ng_malloc(sizeof(struct segment), "tcp segment");
-            n->seq = seq;
-            n->len = datalen;
-            n->sent = 0;
-            n->psh = tcphdr->psh;
-            n->data = ng_malloc(datalen, "tcp segment");
-            memcpy(n->data, data, datalen);
-            n->next = s;
-            if (p == NULL)
-                cur->forward = n;
-            else
-                p->next = n;
-        } else if (s != NULL && s->seq == seq) {
-            if (s->len == datalen)
-                log_android(ANDROID_LOG_WARN, "%s segment already queued %u..%u",
-                            session,
-                            s->seq - cur->remote_start, s->seq + s->len - cur->remote_start);
-            else if (s->len < datalen) {
-                log_android(ANDROID_LOG_WARN, "%s segment smaller %u..%u > %u",
-                            session,
-                            s->seq - cur->remote_start, s->seq + s->len - cur->remote_start,
-                            s->seq + datalen - cur->remote_start);
-                ng_free(s->data, __FILE__, __LINE__);
-                s->len = datalen;
-                s->data = ng_malloc(datalen, "tcp segment smaller");
-                memcpy(s->data, data, datalen);
-            } else {
-                log_android(ANDROID_LOG_ERROR, "%s segment larger %u..%u < %u",
-                            session,
-                            s->seq - cur->remote_start, s->seq + s->len - cur->remote_start,
-                            s->seq + datalen - cur->remote_start);
-                ng_free(s->data, __FILE__, __LINE__);
-                s->len = datalen;
-                s->data = ng_malloc(datalen, "tcp segment larger");
-                memcpy(s->data, data, datalen);
-            }
+            return;
         }
+        data += prefix;
+        datalen = (uint16_t) (datalen - prefix);
+        seq = cur->remote_seq;
     }
+
+    uint32_t cursor = 0;
+    uint32_t end = seq + (uint32_t) datalen;
+    struct segment *s = cur->forward;
+    while (s != NULL && cursor < datalen) {
+        uint32_t s_end = tcp_segment_end(s);
+        if (compare_u32(s_end, seq) <= 0) {
+            s = s->next;
+            continue;
+        }
+        if (compare_u32(s->seq, end) >= 0)
+            break;
+
+        uint32_t covered_start = compare_u32(s->seq, seq) > 0 ? s->seq - seq : 0;
+        uint32_t covered_end = compare_u32(s_end, end) < 0 ? s_end - seq : datalen;
+        if (covered_start > cursor) {
+            uint16_t gap = (uint16_t) (covered_start - cursor);
+            insert_tcp_segment(cur, seq + cursor, data + cursor, gap,
+                               tcphdr->psh && covered_start == datalen);
+        }
+        if (covered_end > cursor)
+            cursor = covered_end;
+        s = s->next;
+    }
+
+    if (cursor < datalen) {
+        uint16_t gap = (uint16_t) (datalen - cursor);
+        insert_tcp_segment(cur, seq + cursor, data + cursor, gap, tcphdr->psh);
+    }
+
+    normalize_tcp_queue(cur);
 }
 
 int open_tcp_socket(const struct arguments *args,

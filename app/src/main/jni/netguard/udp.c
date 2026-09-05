@@ -138,11 +138,6 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
                 // Forward to tun
                 if (write_udp(args, &s->udp, buffer, (size_t) bytes) < 0)
                     s->udp.state = UDP_FINISHING;
-                else {
-                    // Prevent too many open files
-                    if (ntohs(s->udp.dest) == 53)
-                        s->udp.state = UDP_FINISHING;
-                }
             }
             ng_free(buffer, __FILE__, __LINE__);
         }
@@ -205,6 +200,33 @@ void block_udp(const struct arguments *args,
     log_android(ANDROID_LOG_INFO, "UDP blocked session from %s/%u to %s/%u",
                 source, ntohs(udphdr->source), dest, ntohs(udphdr->dest));
 
+    // UDP_BLOCKED entries are negative cache nodes, not active sockets, so
+    // they are excluded from the descriptor/session admission count. Keep a
+    // separate cap and evict the oldest blocked node only; active sessions
+    // therefore remain available even during sustained blocked-port churn.
+    int blocked = 0;
+    struct ng_session *oldest = NULL;
+    struct ng_session *oldest_prev = NULL;
+    struct ng_session *prev = NULL;
+    for (struct ng_session *cur = args->ctx->ng_session;
+         cur != NULL; cur = cur->next) {
+        if (cur->protocol == IPPROTO_UDP && cur->udp.state == UDP_BLOCKED) {
+            blocked++;
+            if (oldest == NULL || cur->udp.time <= oldest->udp.time) {
+                oldest = cur;
+                oldest_prev = prev;
+            }
+        }
+        prev = cur;
+    }
+    if (blocked >= UDP_BLOCKED_MAX && oldest != NULL) {
+        if (oldest_prev == NULL)
+            args->ctx->ng_session = oldest->next;
+        else
+            oldest_prev->next = oldest->next;
+        ng_free(oldest, __FILE__, __LINE__);
+    }
+
     // Register session
     struct ng_session *s = ng_malloc(sizeof(struct ng_session), "udp session block");
     s->protocol = IPPROTO_UDP;
@@ -244,6 +266,7 @@ jboolean handle_udp(const struct arguments *args,
     const size_t datalen = length - (data - pkt);
 
     // Search session
+    struct ng_session *prev = NULL;
     struct ng_session *cur = args->ctx->ng_session;
     while (cur != NULL &&
            !(cur->protocol == IPPROTO_UDP &&
@@ -252,8 +275,10 @@ jboolean handle_udp(const struct arguments *args,
              (version == 4 ? cur->udp.saddr.ip4 == ip4->saddr &&
                              cur->udp.daddr.ip4 == ip4->daddr
                            : memcmp(&cur->udp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
-                             memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
+                             memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0))) {
+        prev = cur;
         cur = cur->next;
+    }
 
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
@@ -266,9 +291,32 @@ jboolean handle_udp(const struct arguments *args,
     }
 
     if (cur != NULL && cur->udp.state != UDP_ACTIVE) {
-        log_android(ANDROID_LOG_INFO, "UDP ignore session from %s/%u to %s/%u state %d",
-                    source, ntohs(udphdr->source), dest, ntohs(udphdr->dest), cur->udp.state);
-        return 0;
+        if (cur->udp.state == UDP_CLOSED && ntohs(cur->udp.dest) == 53) {
+            // check_udp_session normally accounts a closed mapping before it
+            // reaches the retention period. Flush any counters still present
+            // here as well, then discard the inert tuple so a new query can
+            // open a fresh socket immediately after the 15-second DNS idle
+            // timeout. UDP_BLOCKED remains a negative-cache hit below.
+            if (cur->udp.sent || cur->udp.received) {
+                account_usage(args, cur->udp.version, IPPROTO_UDP,
+                              dest, ntohs(cur->udp.dest), cur->udp.uid,
+                              cur->udp.sent, cur->udp.received);
+                cur->udp.sent = 0;
+                cur->udp.received = 0;
+            }
+            if (prev == NULL)
+                args->ctx->ng_session = cur->next;
+            else
+                prev->next = cur->next;
+            ng_free(cur, __FILE__, __LINE__);
+            cur = NULL;
+        } else {
+            log_android(ANDROID_LOG_INFO,
+                        "UDP ignore session from %s/%u to %s/%u state %d",
+                        source, ntohs(udphdr->source), dest, ntohs(udphdr->dest),
+                        cur->udp.state);
+            return 0;
+        }
     }
 
     // Create new session if needed
