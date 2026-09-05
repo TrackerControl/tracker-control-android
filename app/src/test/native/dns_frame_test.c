@@ -17,7 +17,9 @@
  * entirely unless a recv() held exactly one complete frame, so coalesced or
  * split reads went unfiltered. The cursor now parses every complete frame in
  * a read and the initially visible bytes of a split frame, while later payload
- * continuation bytes are blanked when the partial parser reports a block.
+ * continuation bytes are blanked when the partial parser reports a block. It
+ * also replays a bounded copy once a split frame is complete, so answers beyond
+ * the first read still reach detection.
  * These tests pin down which frames get parsed, which may be shortened (only
  * those lying wholly inside the current read, since nothing in it has been
  * forwarded yet), and -- the subtler failure mode -- that the carry-over
@@ -74,6 +76,7 @@ struct parse_recorder {
     int blank_partial_on_marker;
     uint8_t blank_marker;
     size_t blank_from;
+    int record_replays;
 };
 
 static void recorder_init(struct parse_recorder *r, const uint8_t *base) {
@@ -81,10 +84,13 @@ static void recorder_init(struct parse_recorder *r, const uint8_t *base) {
     r->base = base;
 }
 
-static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen, int partial,
+static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen,
+                         enum dns_frame_parse_mode partial,
                          int *blank_rest) {
     struct parse_recorder *r = (struct parse_recorder *) ctx;
     *blank_rest = 0;
+    if (partial == DNS_FRAME_REPLAY && !r->record_replays)
+        return dlen;
     if (r->calls < MAX_CALLS) {
         r->off[r->calls] = (size_t) (data - r->base);
         r->len[r->calls] = dlen;
@@ -108,7 +114,8 @@ static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen, int partial,
  * the configured marker. This models a rule-based parser outcome without
  * depending on callback invocation order. */
 static size_t stub_parse_by_marker(void *ctx, uint8_t *data, size_t dlen,
-                                   int partial, int *blank_rest) {
+                                   enum dns_frame_parse_mode partial,
+                                   int *blank_rest) {
     struct parse_recorder *r = (struct parse_recorder *) ctx;
     (void) stub_parse(ctx, data, dlen, partial, blank_rest);
     if (r->shrink_on_marker && dlen > 0 && data[0] == r->shrink_marker)
@@ -118,7 +125,8 @@ static size_t stub_parse_by_marker(void *ctx, uint8_t *data, size_t dlen,
 
 static int state_is_clean(const struct dns_stream_state *state) {
     return state->frame_remaining == 0 && state->blank_remaining == 0 &&
-           state->have_prefix_hi == 0;
+           state->have_prefix_hi == 0 && state->frame_buffer == NULL &&
+           state->frame_length == 0 && state->frame_received == 0;
 }
 
 static size_t append_frame(uint8_t *buffer, size_t offset, size_t frame_len,
@@ -808,7 +816,7 @@ static void test_minimal_reads(void) {
         uint8_t snapshot[sizeof(buffer)];
         memcpy(snapshot, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {5, 0, 0, 0};
+        struct dns_stream_state state = {.frame_remaining = 5};
         struct parse_recorder r;
         recorder_init(&r, buffer);
         size_t out = dns_frame_process_stream(buffer, sizeof(buffer), &state,
@@ -1120,6 +1128,64 @@ static void test_exhaustive_chunking(void) {
     }
 }
 
+struct replay_recorder {
+    uint8_t expected[6];
+    size_t calls;
+    size_t first_len;
+    size_t replay_len;
+    int replay_matches;
+};
+
+static size_t record_split_replay(void *ctx, uint8_t *data, size_t dlen,
+                                  enum dns_frame_parse_mode mode,
+                                  int *blank_rest) {
+    struct replay_recorder *r = (struct replay_recorder *) ctx;
+    *blank_rest = 0;
+    r->calls++;
+    if (mode == DNS_FRAME_PARTIAL)
+        r->first_len = dlen;
+    else if (mode == DNS_FRAME_REPLAY) {
+        r->replay_len = dlen;
+        r->replay_matches =
+                dlen == sizeof(r->expected) &&
+                memcmp(data, r->expected, sizeof(r->expected)) == 0;
+    }
+    return dlen;
+}
+
+static void test_split_frame_replayed_when_complete(void) {
+    struct dns_stream_state state = {0};
+    struct replay_recorder r = {
+            .expected = {0x10, 0x11, 0x12, 0x13, 0x14, 0x15},
+    };
+    uint8_t first[] = {0x00, 0x06, 0x10, 0x11};
+    uint8_t second[] = {0x12, 0x13, 0x14, 0x15};
+
+    size_t first_out = dns_frame_process_stream(
+            first, sizeof(first), &state, record_split_replay, &r);
+    CHECK(first_out == sizeof(first), "split replay: first read unchanged");
+    CHECK(r.calls == 1 && r.first_len == 2,
+          "split replay: visible prefix parsed immediately");
+    CHECK(state.frame_buffer != NULL && state.frame_length == 6 &&
+                  state.frame_received == 2,
+          "split replay: incomplete frame retained");
+
+    size_t second_out = dns_frame_process_stream(
+            second, sizeof(second), &state, record_split_replay, &r);
+    CHECK(second_out == sizeof(second), "split replay: second read unchanged");
+    CHECK(r.calls == 2 && r.replay_len == 6 && r.replay_matches,
+          "split replay: complete original payload detected");
+    CHECK(state_is_clean(&state), "split replay: buffer released on completion");
+
+    uint8_t third[] = {0x00, 0x06, 0x20};
+    (void) dns_frame_process_stream(third, sizeof(third), &state,
+                                    record_split_replay, &r);
+    CHECK(state.frame_buffer != NULL,
+          "split replay reset: incomplete frame retained");
+    dns_frame_reset(&state);
+    CHECK(state_is_clean(&state), "split replay reset: buffer released");
+}
+
 int main(void) {
     test_single_frame_shortened();
     test_single_frame_unchanged();
@@ -1136,6 +1202,7 @@ int main(void) {
     test_frame_len_u16_boundary();
     test_multi_call_no_desync();
     test_exhaustive_chunking();
+    test_split_frame_replayed_when_complete();
 
     if (failures == 0) {
         printf("dns_frame_test: all tests passed\n");

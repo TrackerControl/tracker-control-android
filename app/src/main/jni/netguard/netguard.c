@@ -380,8 +380,8 @@ Java_eu_faircode_netguard_ServiceSinkhole_jni_1socks5(JNIEnv *env, jobject insta
         (int) sizeof(socks5_password))
         log_android(ANDROID_LOG_WARN, "SOCKS5 password truncated");
 
-    log_android(ANDROID_LOG_WARN, "SOCKS5 %s:%d user=%s",
-                socks5_addr, socks5_port, socks5_username);
+    log_android(ANDROID_LOG_WARN, "SOCKS5 %s:%d configured",
+                socks5_addr, socks5_port);
 
     (*env)->ReleaseStringUTFChars(env, addr_, addr);
     (*env)->ReleaseStringUTFChars(env, username_, username);

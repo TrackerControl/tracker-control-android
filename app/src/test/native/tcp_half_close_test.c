@@ -12,6 +12,14 @@
 #include "netguard.h"
 
 static int failures;
+static int epoll_result;
+static int close_calls;
+static int connect_calls;
+static int last_connect_family;
+static struct sockaddr_storage last_connect_address;
+static socklen_t last_connect_length;
+static size_t send_limit;
+static int credential_logged;
 
 #define CHECK(condition, message)                                           \
     do {                                                                    \
@@ -58,7 +66,30 @@ char *hex(const u_int8_t *data, const size_t len) {
 
 void log_android(int priority, const char *format, ...) {
     (void) priority;
-    (void) format;
+    char message[1024];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(message, sizeof(message), format, args);
+    va_end(args);
+    if (*socks5_password != 0 && strstr(message, socks5_password) != NULL)
+        credential_logged = 1;
+}
+
+long long get_ms(void) {
+    return 0;
+}
+
+void account_usage(const struct arguments *args, jint version, jint protocol,
+                   const char *daddr, jint dport, jint uid, jlong sent,
+                   jlong received) {
+    (void) args;
+    (void) version;
+    (void) protocol;
+    (void) daddr;
+    (void) dport;
+    (void) uid;
+    (void) sent;
+    (void) received;
 }
 
 uint16_t calc_checksum(uint16_t start, const uint8_t *buffer, size_t length) {
@@ -90,7 +121,41 @@ int epoll_ctl(int epoll_fd, int operation, int descriptor,
     (void) operation;
     (void) descriptor;
     (void) event;
+    return epoll_result;
+}
+
+int __wrap_close(int file_descriptor) {
+    (void) file_descriptor;
+    close_calls++;
     return 0;
+}
+
+int __wrap_connect(int socket, const struct sockaddr *address,
+                   socklen_t address_length) {
+    (void) socket;
+    connect_calls++;
+    last_connect_family = address->sa_family;
+    last_connect_length = address_length;
+    memset(&last_connect_address, 0, sizeof(last_connect_address));
+    if (address_length <= sizeof(last_connect_address))
+        memcpy(&last_connect_address, address, address_length);
+    errno = EINPROGRESS;
+    return -1;
+}
+
+#ifdef __linux__
+ssize_t __real_send(int socket, const void *buffer, size_t length, int flags);
+#endif
+
+ssize_t __wrap_send(int socket, const void *buffer, size_t length, int flags) {
+    size_t allowed = length;
+    if (send_limit > 0 && allowed > send_limit)
+        allowed = send_limit;
+#ifdef __linux__
+    return __real_send(socket, buffer, allowed, flags);
+#else
+    return send(socket, buffer, allowed, flags);
+#endif
 }
 
 void write_pcap_rec(const uint8_t *buffer, size_t len) {
@@ -124,6 +189,11 @@ size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
     (void) parse;
     (void) ctx;
     return bytes;
+}
+
+void dns_frame_reset(struct dns_stream_state *state) {
+    free(state->frame_buffer);
+    memset(state, 0, sizeof(*state));
 }
 
 const char *strstate(const int state) {
@@ -179,6 +249,28 @@ static size_t make_packet(uint8_t *packet, uint32_t seq, uint32_t ack,
     tcp->ack = 1;
     tcp->fin = fin;
     tcp->window = htons(window);
+    if (len > 0)
+        memcpy(packet + sizeof(*ip) + sizeof(*tcp), data, len);
+    return sizeof(*ip) + sizeof(*tcp) + len;
+}
+
+static size_t make_syn_packet(uint8_t *packet, uint32_t seq,
+                              const uint8_t *data, size_t len) {
+    struct iphdr *ip = (struct iphdr *) packet;
+    struct tcphdr *tcp = (struct tcphdr *) (packet + sizeof(*ip));
+    memset(packet, 0, sizeof(*ip) + sizeof(*tcp) + len);
+    ip->version = 4;
+    ip->ihl = sizeof(*ip) >> 2;
+    ip->protocol = IPPROTO_TCP;
+    ip->saddr = inet_addr("10.0.0.2");
+    ip->daddr = inet_addr("192.0.2.1");
+    tcp->source = htons(40000);
+    tcp->dest = htons(80);
+    tcp->seq = htonl(seq);
+    tcp->doff = sizeof(*tcp) >> 2;
+    tcp->syn = 1;
+    tcp->psh = 1;
+    tcp->window = htons(65535);
     if (len > 0)
         memcpy(packet + sizeof(*ip) + sizeof(*tcp), data, len);
     return sizeof(*ip) + sizeof(*tcp) + len;
@@ -343,6 +435,94 @@ static void test_hup_marks_only_read_half_closed(void) {
     clear_tcp_data(&session.tcp);
 }
 
+static void test_hup_waits_for_unread_data_behind_closed_window(void) {
+    int upstream[2];
+    int tun[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, upstream) == 0,
+          "socketpair for deferred HUP");
+    CHECK(pipe(tun) == 0, "pipe for deferred HUP data");
+    if (failures != 0)
+        return;
+    fcntl(tun[0], F_SETFL, O_NONBLOCK);
+
+    struct ng_session session;
+    struct context context;
+    struct arguments args;
+    make_session(&session, upstream[0], TCP_ESTABLISHED);
+    make_args(&args, &context, &session, tun[1]);
+    session.tcp.send_window = 0;
+    CHECK(write(upstream[1], "tail", 4) == 4, "peer queues data before HUP");
+    CHECK(shutdown(upstream[1], SHUT_WR) == 0, "peer closes after queued data");
+
+    struct epoll_event event = {.events = EPOLLHUP, .data.ptr = &session};
+    check_tcp_socket(&args, &event, -1);
+    CHECK(!session.tcp.upstream_read_eof && !session.tcp.server_fin_sent,
+          "HUP cannot overtake unread upstream data");
+    CHECK(session.tcp.upstream_hup_pending,
+          "unread HUP is retained until the app window opens");
+
+    monitor_tcp_session(&args, &session, -1);
+    CHECK((session.ev.events & EPOLLONESHOT) != 0 &&
+                  (session.ev.events & EPOLLIN) == 0,
+          "closed window arms HUP once without a ready-loop");
+
+    session.tcp.send_window = 65535;
+    monitor_tcp_session(&args, &session, -1);
+    CHECK((session.ev.events & (EPOLLIN | EPOLLONESHOT)) ==
+                  (EPOLLIN | EPOLLONESHOT),
+          "opening the window rearms the deferred readable socket");
+
+    event.events = EPOLLIN | EPOLLHUP;
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.received == 4 && !session.tcp.upstream_read_eof,
+          "queued bytes are delivered before EOF");
+    CHECK(!session.tcp.upstream_hup_pending,
+          "a successful read leaves ordinary readiness monitoring active");
+
+    event.events = EPOLLHUP;
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.upstream_read_eof && session.tcp.server_fin_sent,
+          "EOF is emitted only after the queued bytes are consumed");
+
+    drain_tun(tun[0]);
+    close(upstream[0]);
+    close(upstream[1]);
+    close(tun[0]);
+    close(tun[1]);
+    clear_tcp_data(&session.tcp);
+}
+
+static void test_closed_session_releases_queued_payload(void) {
+    int upstream[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, upstream) == 0,
+          "socketpair for closed-session payload");
+    if (failures != 0)
+        return;
+
+    struct ng_session session;
+    struct context context;
+    struct arguments args;
+    make_session(&session, upstream[0], TCP_CLOSING);
+    make_args(&args, &context, &session, -1);
+    session.tcp.time = time(NULL);
+    session.tcp.forward = calloc(1, sizeof(struct segment));
+    CHECK(session.tcp.forward != NULL, "allocate retained segment");
+    if (session.tcp.forward != NULL) {
+        session.tcp.forward->len = 4096;
+        session.tcp.forward->data = malloc(session.tcp.forward->len);
+        CHECK(session.tcp.forward->data != NULL, "allocate retained payload");
+    }
+
+    CHECK(check_tcp_session(&args, &session, 0, SESSION_MAX) == 0,
+          "closed tuple remains as a lightweight tombstone");
+    CHECK(session.tcp.state == TCP_CLOSE && session.socket == -1,
+          "closing transition releases the descriptor");
+    CHECK(session.tcp.forward == NULL,
+          "closing transition releases queued application payload immediately");
+
+    close(upstream[1]);
+}
+
 static void test_payload_after_fin_is_rejected(void) {
     int upstream[2];
     int tun[2];
@@ -380,11 +560,248 @@ static void test_payload_after_fin_is_rejected(void) {
     clear_tcp_data(&session.tcp);
 }
 
+static void test_syn_data_starts_after_remote_isn(void) {
+    struct context context = {0};
+    struct arguments args = {0};
+    args.ctx = &context;
+    struct allowed redirect = {0};
+    snprintf(redirect.raddr, sizeof(redirect.raddr), "%s", "192.0.2.2");
+    redirect.rport = 80;
+
+    const uint8_t syn_data[] = {'F', 'A', 'S', 'T'};
+    uint8_t packet[256];
+    size_t length = make_syn_packet(packet, 700, syn_data, sizeof(syn_data));
+    epoll_result = 0;
+    connect_calls = 0;
+    CHECK(handle_tcp(&args, packet, length, packet + sizeof(struct iphdr),
+                     1, 1, &redirect, -1) == 1,
+          "SYN with Fast Open data creates a session");
+
+    struct ng_session *session = context.ng_session;
+    CHECK(session != NULL, "SYN with Fast Open data retains its session");
+    if (session != NULL) {
+        CHECK(session->tcp.remote_seq == 700,
+              "SYN consumption remains deferred until the upstream connects");
+        CHECK(session->tcp.forward != NULL && session->tcp.forward->seq == 701,
+              "Fast Open data starts at ISN plus one");
+        CHECK(session->tcp.forward != NULL && session->tcp.forward->len == sizeof(syn_data) &&
+                      memcmp(session->tcp.forward->data, syn_data, sizeof(syn_data)) == 0,
+              "Fast Open data retains every payload byte");
+        close(session->socket);
+        clear_tcp_data(&session->tcp);
+        ng_free(session, __FILE__, __LINE__);
+        context.ng_session = NULL;
+    }
+    CHECK(connect_calls == 1, "Fast Open session initiates one upstream connect");
+}
+
+static void test_tcp_epoll_add_failure_does_not_retain_session(void) {
+    struct context context = {0};
+    struct arguments args = {0};
+    args.ctx = &context;
+    struct allowed redirect = {0};
+    snprintf(redirect.raddr, sizeof(redirect.raddr), "%s", "192.0.2.3");
+    redirect.rport = 80;
+
+    uint8_t packet[256];
+    size_t length = make_syn_packet(packet, 800, (const uint8_t *) "x", 1);
+    epoll_result = -1;
+    close_calls = 0;
+    CHECK(handle_tcp(&args, packet, length, packet + sizeof(struct iphdr),
+                     1, 1, &redirect, -1) == 0,
+          "TCP rejects a session when epoll admission fails");
+    CHECK(context.ng_session == NULL && close_calls == 1,
+          "TCP epoll failure closes and frees the session before linking it");
+    epoll_result = 0;
+}
+
+static void test_tcp_connect_address_is_zero_initialised(void) {
+    struct tcp_session session = {0};
+    session.version = 4;
+    session.daddr.ip4 = inet_addr("198.51.100.10");
+    session.dest = htons(443);
+    struct arguments args = {0};
+
+    connect_calls = 0;
+    int socket = open_tcp_socket(&args, &session, NULL);
+    CHECK(socket >= 0,
+          "TCP opener accepts a valid IPv4 session");
+    CHECK(connect_calls == 1 && last_connect_family == AF_INET,
+          "TCP opener connects with an IPv4 sockaddr");
+    if (last_connect_family == AF_INET) {
+        const struct sockaddr_in *address =
+                (const struct sockaddr_in *) &last_connect_address;
+        CHECK(address->sin_addr.s_addr == session.daddr.ip4 &&
+                      address->sin_port == session.dest,
+              "TCP opener preserves the IPv4 destination");
+        CHECK(address->sin_zero[0] == 0 && address->sin_zero[sizeof(address->sin_zero) - 1] == 0,
+              "TCP opener zero-initialises IPv4 sockaddr padding");
+    }
+    if (socket >= 0)
+        close(socket);
+
+    session.version = 6;
+    inet_pton(AF_INET6, "2001:db8::10", &session.daddr.ip6);
+    session.dest = htons(443);
+    connect_calls = 0;
+    int socket6 = open_tcp_socket(&args, &session, NULL);
+    CHECK(socket6 >= 0 && connect_calls == 1 && last_connect_family == AF_INET6,
+          "TCP opener connects with an IPv6 sockaddr");
+    if (last_connect_family == AF_INET6) {
+        const struct sockaddr_in6 *address6 =
+                (const struct sockaddr_in6 *) &last_connect_address;
+        CHECK(memcmp(&address6->sin6_addr, &session.daddr.ip6,
+                     sizeof(address6->sin6_addr)) == 0 &&
+                      address6->sin6_port == session.dest,
+              "TCP opener preserves the IPv6 destination");
+        CHECK(address6->sin6_flowinfo == 0 && address6->sin6_scope_id == 0,
+              "TCP opener zero-initialises IPv6 sockaddr fields");
+    }
+    if (socket6 >= 0)
+        close(socket6);
+}
+
+static size_t read_exact(int socket, uint8_t *buffer, size_t length) {
+    size_t received = 0;
+    while (received < length) {
+        ssize_t bytes = recv(socket, buffer + received, length - received, 0);
+        if (bytes <= 0)
+            break;
+        received += (size_t) bytes;
+    }
+    return received;
+}
+
+static void finish_socks5_send(const struct arguments *args,
+                               struct ng_session *session) {
+    struct epoll_event event = {.events = EPOLLOUT, .data.ptr = session};
+    int attempts = 0;
+    while (session->tcp.socks5_tx_sent < session->tcp.socks5_tx_len &&
+           attempts++ < SOCKS5_MESSAGE_MAX)
+        check_tcp_socket(args, &event, -1);
+    CHECK(session->tcp.socks5_tx_sent == session->tcp.socks5_tx_len,
+          "SOCKS5 request suffix drains after short writes");
+}
+
+static void test_socks5_stream_fragmentation_and_short_writes(void) {
+    int upstream[2];
+    int tun[2];
+    CHECK(socketpair(AF_UNIX, SOCK_STREAM, 0, upstream) == 0,
+          "socketpair for SOCKS5 stream");
+    CHECK(pipe(tun) == 0, "pipe for SOCKS5 SYN ACK");
+    if (failures != 0)
+        return;
+
+    strcpy(socks5_addr, "127.0.0.1");
+    socks5_port = 1080;
+    strcpy(socks5_username, "alice");
+    strcpy(socks5_password, "secret");
+    credential_logged = 0;
+    send_limit = 1;
+
+    struct ng_session session;
+    struct context context;
+    struct arguments args;
+    make_session(&session, upstream[0], TCP_LISTEN);
+    session.tcp.socks5 = SOCKS5_NONE;
+    make_args(&args, &context, &session, tun[1]);
+
+    struct epoll_event event = {.events = EPOLLOUT, .data.ptr = &session};
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_HELLO &&
+                  session.tcp.socks5_tx_sent == 1,
+          "SOCKS5 hello records a one-byte short write");
+    finish_socks5_send(&args, &session);
+    uint8_t hello[4];
+    CHECK(read_exact(upstream[1], hello, sizeof(hello)) == sizeof(hello) &&
+                  memcmp(hello, (uint8_t[]) {5, 2, 0, 2}, sizeof(hello)) == 0,
+          "SOCKS5 hello is sent once without duplicated prefixes");
+
+    event.events = EPOLLIN;
+    CHECK(write(upstream[1], (uint8_t[]) {5}, 1) == 1,
+          "write first SOCKS5 method byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_HELLO && session.tcp.socks5_rx_len == 1,
+          "split SOCKS5 method response remains pending");
+    CHECK(write(upstream[1], (uint8_t[]) {2}, 1) == 1,
+          "write second SOCKS5 method byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_AUTH,
+          "split SOCKS5 method response advances to authentication");
+
+    finish_socks5_send(&args, &session);
+    size_t auth_length = 3 + strlen(socks5_username) + strlen(socks5_password);
+    uint8_t auth[SOCKS5_MESSAGE_MAX];
+    CHECK(read_exact(upstream[1], auth, auth_length) == auth_length,
+          "SOCKS5 authentication request drains after short writes");
+    CHECK(auth[0] == 1 && auth[1] == strlen(socks5_username) &&
+                  memcmp(auth + 2, socks5_username, strlen(socks5_username)) == 0,
+          "SOCKS5 authentication request retains its framing");
+    uint8_t wiped[SOCKS5_MESSAGE_MAX] = {0};
+    CHECK(memcmp(session.tcp.socks5_tx, wiped, sizeof(wiped)) == 0,
+          "sent SOCKS5 credentials are wiped before awaiting the response");
+
+    CHECK(write(upstream[1], (uint8_t[]) {1}, 1) == 1,
+          "write first SOCKS5 authentication byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_AUTH,
+          "split authentication response remains pending");
+    CHECK(write(upstream[1], (uint8_t[]) {0}, 1) == 1,
+          "write second SOCKS5 authentication byte");
+    check_tcp_socket(&args, &event, -1);
+    CHECK(session.tcp.socks5 == SOCKS5_CONNECT,
+          "split authentication response advances to connect");
+
+    finish_socks5_send(&args, &session);
+    uint8_t connect_request[10];
+    CHECK(read_exact(upstream[1], connect_request, sizeof(connect_request)) ==
+                  sizeof(connect_request) &&
+                  memcmp(connect_request, (uint8_t[]) {5, 1, 0, 1}, 4) == 0,
+          "SOCKS5 connect request drains without duplicated prefixes");
+
+    static const uint8_t response_and_data[] = {
+            5, 0, 0, 3, 3, 'f', 'o', 'o', 0, 80, 'D', 'A', 'T', 'A'};
+    CHECK(write(upstream[1], response_and_data, sizeof(response_and_data)) ==
+                  sizeof(response_and_data),
+          "write fragmented-shape SOCKS5 connect response and upstream data");
+    check_tcp_socket(&args, &event, -1); // fixed four-byte response prefix
+    CHECK(session.tcp.socks5 == SOCKS5_CONNECT && session.tcp.socks5_rx_len == 4,
+          "SOCKS5 connect waits for a domain length byte");
+    check_tcp_socket(&args, &event, -1); // domain length
+    CHECK(session.tcp.socks5 == SOCKS5_CONNECT && session.tcp.socks5_rx_len == 5,
+          "SOCKS5 connect waits for its variable address suffix");
+    check_tcp_socket(&args, &event, -1); // domain and port
+    CHECK(session.tcp.state == TCP_SYN_RECV,
+          "complete variable-length SOCKS5 response establishes the TCP flow");
+    uint8_t pending[4];
+    CHECK(recv(upstream[0], pending, sizeof(pending), MSG_PEEK | MSG_DONTWAIT) == 4 &&
+                  memcmp(pending, "DATA", 4) == 0,
+          "SOCKS5 parsing leaves coalesced application data unread");
+    CHECK(!credential_logged, "SOCKS5 logs do not contain the password");
+
+    send_limit = 0;
+    *socks5_addr = 0;
+    socks5_port = 0;
+    *socks5_username = 0;
+    *socks5_password = 0;
+    close(upstream[0]);
+    close(upstream[1]);
+    close(tun[0]);
+    close(tun[1]);
+    clear_tcp_data(&session.tcp);
+}
+
 int main(void) {
     test_queued_fin_waits_for_gap_and_drains();
     test_upstream_eof_keeps_write_half();
     test_hup_marks_only_read_half_closed();
+    test_hup_waits_for_unread_data_behind_closed_window();
+    test_closed_session_releases_queued_payload();
     test_payload_after_fin_is_rejected();
+    test_syn_data_starts_after_remote_isn();
+    test_tcp_epoll_add_failure_does_not_retain_session();
+    test_tcp_connect_address_is_zero_initialised();
+    test_socks5_stream_fragmentation_and_short_writes();
 
     if (failures != 0)
         return 1;

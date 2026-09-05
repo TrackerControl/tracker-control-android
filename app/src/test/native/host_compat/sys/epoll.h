@@ -8,6 +8,7 @@
 #define EPOLLERR 0x008
 #define EPOLLHUP 0x010
 #define EPOLLRDHUP 0x2000
+#define EPOLLONESHOT (1u << 30)
 
 #define EPOLL_CTL_ADD 1
 #define EPOLL_CTL_DEL 2

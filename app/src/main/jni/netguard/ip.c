@@ -423,13 +423,14 @@ void handle_ip(const struct arguments *args,
             return;
         }
 
-        uint8_t ipoptlen = (uint8_t) ((ip4hdr->ihl - 5) * 4);
-        payload = (uint8_t *) (pkt + sizeof(struct iphdr) + ipoptlen);
-
-        if (ip4hdr->ihl < 5 || sizeof(struct iphdr) + ipoptlen > length) {
+        size_t ip_header_len = (size_t) ip4hdr->ihl * 4;
+        if (ip4hdr->ihl < 5 || ip_header_len > length) {
             log_android(ANDROID_LOG_WARN, "IP4 invalid header length");
             return;
         }
+
+        size_t ipoptlen = ip_header_len - sizeof(struct iphdr);
+        payload = (uint8_t *) (pkt + sizeof(struct iphdr) + ipoptlen);
 
         if (ntohs(ip4hdr->tot_len) != length) {
             log_android(ANDROID_LOG_ERROR, "Invalid length %u header length %u",

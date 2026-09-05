@@ -129,6 +129,7 @@ static int mark_upstream_eof(const struct arguments *args,
         return 0;
 
     cur->upstream_read_eof = 1;
+    cur->upstream_hup_pending = 0;
     cur->window_probe_delay = 0;
     cur->window_probe_deadline = 0;
     log_android(ANDROID_LOG_WARN, "%s recv eof", session);
@@ -143,11 +144,18 @@ void clear_tcp_data(struct tcp_session *cur) {
         ng_free(p->data, __FILE__, __LINE__);
         ng_free(p, __FILE__, __LINE__);
     }
+    cur->forward = NULL;
     if (cur->tls_data != NULL) {
         ng_free(cur->tls_data, __FILE__, __LINE__);
         cur->tls_data = NULL;
         cur->tls_len = 0;
     }
+    memset(cur->socks5_rx, 0, sizeof(cur->socks5_rx));
+    cur->socks5_rx_len = 0;
+    memset(cur->socks5_tx, 0, sizeof(cur->socks5_tx));
+    cur->socks5_tx_len = 0;
+    cur->socks5_tx_sent = 0;
+    dns_frame_reset(&cur->dns_stream);
 }
 
 int get_tcp_timeout(const struct tcp_session *t, int sessions, int maxsessions) {
@@ -211,6 +219,9 @@ int check_tcp_session(const struct arguments *args, struct ng_session *s,
 
         s->tcp.time = time(NULL);
         s->tcp.state = TCP_CLOSE;
+        // A closed tuple is retained briefly to reject late packets, but it
+        // must not retain application payload for that whole tombstone life.
+        clear_tcp_data(&s->tcp);
     }
 
     if ((s->tcp.state == TCP_CLOSING || s->tcp.state == TCP_CLOSE) &&
@@ -236,6 +247,9 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
         // Check for connected = writable
         if (s->tcp.socks5 == SOCKS5_NONE)
             events = events | EPOLLOUT;
+        else if (s->tcp.socks5_tx_len == 0 ||
+                 s->tcp.socks5_tx_sent < s->tcp.socks5_tx_len)
+            events = events | EPOLLOUT;
         else
             events = events | EPOLLIN;
     } else if (tcp_state_can_forward(&s->tcp)) {
@@ -244,6 +258,11 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
         uint32_t send_window = get_send_window(&s->tcp);
         if (!s->tcp.upstream_read_eof && send_window > 0)
             events = events | EPOLLIN;
+        // HUP is level-triggered and is reported even when not requested. If
+        // unread bytes remain behind a closed app window, arm the descriptor
+        // once and leave it dormant until a window update adds EPOLLIN.
+        if (s->tcp.upstream_hup_pending)
+            events = events | EPOLLONESHOT;
 
         int send_probe = 0;
         probe_timeout = tcp_window_probe_delay(&s->tcp, get_ms(),
@@ -348,12 +367,14 @@ struct dns_stream_parse_ctx {
 };
 
 // Adapter matching dns_frame_parse_fn: complete frames use
-// parse_dns_response() and may shrink; partial frames use the in-place path
-// and report whether their later continuation bytes must be blanked.
+// parse_dns_response() and may shrink; first fragments use the in-place path
+// and report whether their later continuation bytes must be blanked. A
+// completed buffered split frame is parsed only to recover detection records.
 static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen,
-                                  int partial, int *blank_rest) {
+                                  enum dns_frame_parse_mode mode,
+                                  int *blank_rest) {
     struct dns_stream_parse_ctx *pctx = (struct dns_stream_parse_ctx *) ctx;
-    if (partial != 0) {
+    if (mode == DNS_FRAME_PARTIAL) {
         int blanked = 0;
         parse_dns_partial_response(pctx->args, pctx->s, data, &dlen, &blanked);
         *blank_rest = blanked;
@@ -363,6 +384,144 @@ static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen,
     size_t len = dlen;
     parse_dns_response(pctx->args, pctx->s, data, &len);
     return len;
+}
+
+static void reset_socks5_exchange(struct tcp_session *tcp) {
+    memset(tcp->socks5_rx, 0, sizeof(tcp->socks5_rx));
+    tcp->socks5_rx_len = 0;
+    memset(tcp->socks5_tx, 0, sizeof(tcp->socks5_tx));
+    tcp->socks5_tx_len = 0;
+    tcp->socks5_tx_sent = 0;
+}
+
+static int prepare_socks5_request(struct tcp_session *tcp) {
+    if (tcp->socks5_tx_len > 0)
+        return 0;
+
+    if (tcp->socks5 == SOCKS5_HELLO) {
+        static const uint8_t hello[] = {5, 2, 0, 2};
+        memcpy(tcp->socks5_tx, hello, sizeof(hello));
+        tcp->socks5_tx_len = sizeof(hello);
+    } else if (tcp->socks5 == SOCKS5_AUTH) {
+        size_t ulen = strlen(socks5_username);
+        size_t plen = strlen(socks5_password);
+        size_t len = 3 + ulen + plen;
+        if (ulen > UINT8_MAX || plen > UINT8_MAX ||
+            len > sizeof(tcp->socks5_tx))
+            return -1;
+
+        tcp->socks5_tx[0] = 1;
+        tcp->socks5_tx[1] = (uint8_t) ulen;
+        memcpy(tcp->socks5_tx + 2, socks5_username, ulen);
+        tcp->socks5_tx[2 + ulen] = (uint8_t) plen;
+        memcpy(tcp->socks5_tx + 3 + ulen, socks5_password, plen);
+        tcp->socks5_tx_len = (uint16_t) len;
+    } else if (tcp->socks5 == SOCKS5_CONNECT) {
+        tcp->socks5_tx[0] = 5;
+        tcp->socks5_tx[1] = 1;
+        tcp->socks5_tx[2] = 0;
+        tcp->socks5_tx[3] = (uint8_t) (tcp->version == 4 ? 1 : 4);
+        if (tcp->version == 4) {
+            memcpy(tcp->socks5_tx + 4, &tcp->daddr.ip4, 4);
+            memcpy(tcp->socks5_tx + 8, &tcp->dest, sizeof(tcp->dest));
+            tcp->socks5_tx_len = 10;
+        } else {
+            memcpy(tcp->socks5_tx + 4, &tcp->daddr.ip6, 16);
+            memcpy(tcp->socks5_tx + 20, &tcp->dest, sizeof(tcp->dest));
+            tcp->socks5_tx_len = 22;
+        }
+    }
+
+    return 0;
+}
+
+static ssize_t get_socks5_response_length(const struct tcp_session *tcp) {
+    if (tcp->socks5 == SOCKS5_HELLO || tcp->socks5 == SOCKS5_AUTH)
+        return 2;
+    if (tcp->socks5 != SOCKS5_CONNECT)
+        return -1;
+
+    if (tcp->socks5_rx_len < 4)
+        return 4;
+    if (tcp->socks5_rx[0] != 5 || tcp->socks5_rx[2] != 0)
+        return -1;
+
+    switch (tcp->socks5_rx[3]) {
+        case 1:
+            return 10;
+        case 4:
+            return 22;
+        case 3:
+            if (tcp->socks5_rx_len < 5)
+                return 5;
+            return 7 + tcp->socks5_rx[4];
+        default:
+            return -1;
+    }
+}
+
+// Returns 1 after a complete successful response, 0 while incomplete and -1
+// for a complete or prefix-level protocol error.
+static int consume_socks5_response(struct tcp_session *tcp) {
+    ssize_t expected = get_socks5_response_length(tcp);
+    if (expected < 0)
+        return -1;
+    if (tcp->socks5_rx_len < (size_t) expected)
+        return 0;
+    if (tcp->socks5_rx_len != (size_t) expected)
+        return -1;
+
+    uint8_t next;
+    if (tcp->socks5 == SOCKS5_HELLO) {
+        if (tcp->socks5_rx[0] != 5)
+            return -1;
+        if (tcp->socks5_rx[1] == 0)
+            next = SOCKS5_CONNECT;
+        else if (tcp->socks5_rx[1] == 2)
+            next = SOCKS5_AUTH;
+        else
+            return -1;
+    } else if (tcp->socks5 == SOCKS5_AUTH) {
+        if ((tcp->socks5_rx[0] != 1 && tcp->socks5_rx[0] != 5) ||
+            tcp->socks5_rx[1] != 0)
+            return -1;
+        next = SOCKS5_CONNECT;
+    } else if (tcp->socks5 == SOCKS5_CONNECT) {
+        if (tcp->socks5_rx[1] != 0)
+            return -1;
+        next = SOCKS5_CONNECTED;
+    } else {
+        return -1;
+    }
+
+    reset_socks5_exchange(tcp);
+    tcp->socks5 = next;
+    return 1;
+}
+
+static int send_socks5_request(struct ng_session *s, const char *session) {
+    if (prepare_socks5_request(&s->tcp) < 0)
+        return -1;
+    if (s->tcp.socks5_tx_len == 0 ||
+        s->tcp.socks5_tx_sent >= s->tcp.socks5_tx_len)
+        return 0;
+
+    size_t remaining = s->tcp.socks5_tx_len - s->tcp.socks5_tx_sent;
+    ssize_t sent = send(s->socket,
+                        s->tcp.socks5_tx + s->tcp.socks5_tx_sent,
+                        remaining, MSG_NOSIGNAL);
+    if (sent > 0) {
+        s->tcp.socks5_tx_sent += (uint16_t) sent;
+        log_android(ANDROID_LOG_DEBUG, "%s sent SOCKS5 state %u bytes %u/%u",
+                    session, s->tcp.socks5, s->tcp.socks5_tx_sent,
+                    s->tcp.socks5_tx_len);
+        if (s->tcp.socks5_tx_sent == s->tcp.socks5_tx_len)
+            memset(s->tcp.socks5_tx, 0, sizeof(s->tcp.socks5_tx));
+        return 0;
+    }
+    if (sent < 0 && errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
+        return -1;
+    return 0;
 }
 
 void check_tcp_socket(const struct arguments *args,
@@ -449,143 +608,75 @@ void check_tcp_socket(const struct arguments *args,
                         s->tcp.socks5 = SOCKS5_CONNECTED;
                 }
             } else {
-                if (ev->events & EPOLLIN) {
-                    uint8_t buffer[32];
-                    ssize_t bytes = recv(s->socket, buffer, sizeof(buffer), 0);
+                if ((ev->events & EPOLLIN) &&
+                    s->tcp.socks5_tx_len > 0 &&
+                    s->tcp.socks5_tx_sent == s->tcp.socks5_tx_len) {
+                    ssize_t expected = get_socks5_response_length(&s->tcp);
+                    if (expected < 0 ||
+                        (size_t) expected > sizeof(s->tcp.socks5_rx) ||
+                        s->tcp.socks5_rx_len > (size_t) expected) {
+                        log_android(ANDROID_LOG_ERROR,
+                                    "%s invalid SOCKS5 state %u response",
+                                    session, s->tcp.socks5);
+                        s->tcp.socks5 = 0;
+                        write_rst(args, &s->tcp);
+                        expected = -1;
+                    }
+
+                    ssize_t bytes = -1;
+                    if (expected >= 0) {
+                        size_t wanted = (size_t) expected - s->tcp.socks5_rx_len;
+                        bytes = recv(s->socket,
+                                     s->tcp.socks5_rx + s->tcp.socks5_rx_len,
+                                     wanted, 0);
+                    }
                     if (bytes < 0) {
-                        log_android(ANDROID_LOG_ERROR, "%s recv SOCKS5 error %d: %s",
-                                    session, errno, strerror(errno));
+                        if (expected >= 0 && errno != EINTR && errno != EAGAIN &&
+                            errno != EWOULDBLOCK) {
+                            log_android(ANDROID_LOG_ERROR,
+                                        "%s recv SOCKS5 error %d: %s",
+                                        session, errno, strerror(errno));
+                            s->tcp.socks5 = 0;
+                            write_rst(args, &s->tcp);
+                        }
+                    } else if (bytes == 0) {
+                        log_android(ANDROID_LOG_ERROR, "%s SOCKS5 closed", session);
+                        s->tcp.socks5 = 0;
                         write_rst(args, &s->tcp);
                     } else {
-                        char *h = hex(buffer, (const size_t) bytes);
-                        log_android(ANDROID_LOG_INFO, "%s recv SOCKS5 %s", session, h);
-                        ng_free(h, __FILE__, __LINE__);
-
-                        if (s->tcp.socks5 == SOCKS5_HELLO &&
-                            bytes == 2 && buffer[0] == 5) {
-                            if (buffer[1] == 0)
-                                s->tcp.socks5 = SOCKS5_CONNECT;
-                            else if (buffer[1] == 2)
-                                s->tcp.socks5 = SOCKS5_AUTH;
-                            else {
-                                s->tcp.socks5 = 0;
-                                log_android(ANDROID_LOG_ERROR, "%s SOCKS5 auth %d not supported",
-                                            session, buffer[1]);
-                                write_rst(args, &s->tcp);
-                            }
-
-                        } else if (s->tcp.socks5 == SOCKS5_AUTH &&
-                                   bytes == 2 &&
-                                   (buffer[0] == 1 || buffer[0] == 5)) {
-                            if (buffer[1] == 0) {
-                                s->tcp.socks5 = SOCKS5_CONNECT;
-                                log_android(ANDROID_LOG_WARN, "%s SOCKS5 auth OK", session);
-                            } else {
-                                s->tcp.socks5 = 0;
-                                log_android(ANDROID_LOG_ERROR, "%s SOCKS5 auth error %d",
-                                            session, buffer[1]);
-                                write_rst(args, &s->tcp);
-                            }
-
-                        } else if (s->tcp.socks5 == SOCKS5_CONNECT &&
-                                   bytes == 6 + (s->tcp.version == 4 ? 4 : 16) &&
-                                   buffer[0] == 5) {
-                            if (buffer[1] == 0) {
-                                s->tcp.socks5 = SOCKS5_CONNECTED;
-                                log_android(ANDROID_LOG_WARN, "%s SOCKS5 connected", session);
-                            } else {
-                                s->tcp.socks5 = 0;
-                                log_android(ANDROID_LOG_ERROR, "%s SOCKS5 connect error %d",
-                                            session, buffer[1]);
-                                write_rst(args, &s->tcp);
-                                /*
-                                    0x00 = request granted
-                                    0x01 = general failure
-                                    0x02 = connection not allowed by ruleset
-                                    0x03 = network unreachable
-                                    0x04 = host unreachable
-                                    0x05 = connection refused by destination host
-                                    0x06 = TTL expired
-                                    0x07 = command not supported / protocol error
-                                    0x08 = address type not supported
-                                 */
-                            }
-
-                        } else {
+                        s->tcp.socks5_rx_len += (uint16_t) bytes;
+                        log_android(ANDROID_LOG_DEBUG,
+                                    "%s recv SOCKS5 state %u bytes %u",
+                                    session, s->tcp.socks5,
+                                    s->tcp.socks5_rx_len);
+                        int consumed = consume_socks5_response(&s->tcp);
+                        if (consumed < 0) {
+                            uint8_t status = s->tcp.socks5_rx_len > 1
+                                             ? s->tcp.socks5_rx[1] : 0xFF;
+                            log_android(ANDROID_LOG_ERROR,
+                                        "%s SOCKS5 state %u error %u",
+                                        session, s->tcp.socks5, status);
                             s->tcp.socks5 = 0;
-                            log_android(ANDROID_LOG_ERROR, "%s recv SOCKS5 state %d",
-                                        session, s->tcp.socks5);
                             write_rst(args, &s->tcp);
+                        } else if (consumed > 0) {
+                            log_android(ANDROID_LOG_INFO,
+                                        "%s SOCKS5 advanced to state %u",
+                                        session, s->tcp.socks5);
                         }
                     }
                 }
             }
 
-            if (s->tcp.socks5 == SOCKS5_HELLO) {
-                uint8_t buffer[4] = {5, 2, 0, 2};
-                char *h = hex(buffer, sizeof(buffer));
-                log_android(ANDROID_LOG_INFO, "%s sending SOCKS5 hello: %s",
-                            session, h);
-                ng_free(h, __FILE__, __LINE__);
-                ssize_t sent = send(s->socket, buffer, sizeof(buffer), MSG_NOSIGNAL);
-                if (sent < 0) {
-                    log_android(ANDROID_LOG_ERROR, "%s send SOCKS5 hello error %d: %s",
-                                session, errno, strerror(errno));
-                    write_rst(args, &s->tcp);
-                }
-
-            } else if (s->tcp.socks5 == SOCKS5_AUTH) {
-                uint8_t ulen = strlen(socks5_username);
-                uint8_t plen = strlen(socks5_password);
-                uint8_t buffer[512];
-                *(buffer + 0) = 1; // Version
-                *(buffer + 1) = ulen;
-                memcpy(buffer + 2, socks5_username, ulen);
-                *(buffer + 2 + ulen) = plen;
-                memcpy(buffer + 2 + ulen + 1, socks5_password, plen);
-
-                size_t len = 2 + ulen + 1 + plen;
-
-                char *h = hex(buffer, len);
-                log_android(ANDROID_LOG_INFO, "%s sending SOCKS5 auth: %s",
-                            session, h);
-                ng_free(h, __FILE__, __LINE__);
-                ssize_t sent = send(s->socket, buffer, len, MSG_NOSIGNAL);
-                if (sent < 0) {
+            if (s->tcp.socks5 == SOCKS5_HELLO ||
+                s->tcp.socks5 == SOCKS5_AUTH ||
+                s->tcp.socks5 == SOCKS5_CONNECT) {
+                if (send_socks5_request(s, session) < 0) {
                     log_android(ANDROID_LOG_ERROR,
-                                "%s send SOCKS5 connect error %d: %s",
-                                session, errno, strerror(errno));
+                                "%s send SOCKS5 state %u error %d: %s",
+                                session, s->tcp.socks5, errno, strerror(errno));
+                    s->tcp.socks5 = 0;
                     write_rst(args, &s->tcp);
                 }
-
-            } else if (s->tcp.socks5 == SOCKS5_CONNECT) {
-                uint8_t buffer[22];
-                *(buffer + 0) = 5; // version
-                *(buffer + 1) = 1; // TCP/IP stream connection
-                *(buffer + 2) = 0; // reserved
-                *(buffer + 3) = (uint8_t) (s->tcp.version == 4 ? 1 : 4);
-                if (s->tcp.version == 4) {
-                    memcpy(buffer + 4, &s->tcp.daddr.ip4, 4);
-                    *((__be16 *) (buffer + 4 + 4)) = s->tcp.dest;
-                } else {
-                    memcpy(buffer + 4, &s->tcp.daddr.ip6, 16);
-                    *((__be16 *) (buffer + 4 + 16)) = s->tcp.dest;
-                }
-
-                size_t len = (s->tcp.version == 4 ? 10 : 22);
-
-                char *h = hex(buffer, len);
-                log_android(ANDROID_LOG_INFO, "%s sending SOCKS5 connect: %s",
-                            session, h);
-                ng_free(h, __FILE__, __LINE__);
-                ssize_t sent = send(s->socket, buffer, len, MSG_NOSIGNAL);
-                if (sent < 0) {
-                    log_android(ANDROID_LOG_ERROR,
-                                "%s send SOCKS5 connect error %d: %s",
-                                session, errno, strerror(errno));
-                    write_rst(args, &s->tcp);
-                }
-
             } else if (s->tcp.socks5 == SOCKS5_CONNECTED) {
                 s->tcp.remote_seq++; // remote SYN
                 if (write_syn_ack(args, &s->tcp) >= 0) {
@@ -711,6 +802,7 @@ void check_tcp_socket(const struct arguments *args,
 
                     } else {
                         // Socket read data
+                        s->tcp.upstream_hup_pending = 0;
                         log_android(ANDROID_LOG_DEBUG, "%s recv bytes %d", session, bytes);
                         s->tcp.received += bytes;
 
@@ -742,8 +834,24 @@ void check_tcp_socket(const struct arguments *args,
 
 #ifdef EPOLLRDHUP
             if ((ev->events & (EPOLLHUP | EPOLLRDHUP)) &&
-                !(ev->events & EPOLLIN) && !s->tcp.upstream_read_eof)
-                mark_upstream_eof(args, s, session);
+                !(ev->events & EPOLLIN) && !s->tcp.upstream_read_eof) {
+                uint8_t byte;
+                ssize_t pending;
+                do {
+                    pending = recv(s->socket, &byte, sizeof(byte),
+                                   MSG_PEEK | MSG_DONTWAIT);
+                } while (pending < 0 && errno == EINTR);
+                if (pending == 0 ||
+                    (pending < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))) {
+                    mark_upstream_eof(args, s, session);
+                } else if (pending > 0) {
+                    s->tcp.upstream_hup_pending = 1;
+                } else {
+                    log_android(ANDROID_LOG_ERROR, "%s HUP peek error %d: %s",
+                                session, errno, strerror(errno));
+                    write_rst(args, &s->tcp);
+                }
+            }
 #endif
         }
     }
@@ -909,6 +1017,7 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.client_fin_acked = 0;
             s->tcp.upstream_write_shutdown = 0;
             s->tcp.upstream_read_eof = 0;
+            s->tcp.upstream_hup_pending = 0;
             s->tcp.server_fin_sent = 0;
             s->tcp.server_fin_acked = 0;
             s->tcp.client_fin_seq = 0;
@@ -929,6 +1038,7 @@ jboolean handle_tcp(const struct arguments *args,
             s->tcp.dest = tcphdr->dest;
             s->tcp.state = TCP_LISTEN;
             s->tcp.socks5 = SOCKS5_NONE;
+            reset_socks5_exchange(&s->tcp);
             s->tcp.forward = NULL;
             s->tcp.checkedHostname = 0;
             s->tcp.tls_data = NULL;
@@ -939,7 +1049,10 @@ jboolean handle_tcp(const struct arguments *args,
             if (datalen) {
                 log_android(ANDROID_LOG_WARN, "%s SYN data", packet);
                 s->tcp.forward = ng_malloc(sizeof(struct segment), "syn segment");
-                s->tcp.forward->seq = s->tcp.remote_seq;
+                // The SYN consumes the remote ISN.  The payload therefore
+                // starts at ISN+1, even though remote_seq is advanced only
+                // once the upstream connection is ready to receive it.
+                s->tcp.forward->seq = s->tcp.remote_seq + 1;
                 s->tcp.forward->len = datalen;
                 s->tcp.forward->sent = 0;
                 s->tcp.forward->psh = tcphdr->psh;
@@ -967,9 +1080,14 @@ jboolean handle_tcp(const struct arguments *args,
             memset(&s->ev, 0, sizeof(struct epoll_event));
             s->ev.events = EPOLLOUT | EPOLLERR;
             s->ev.data.ptr = s;
-            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
+            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev)) {
                 log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s",
                             errno, strerror(errno));
+                close(s->socket);
+                clear_tcp_data(&s->tcp);
+                ng_free(s, __FILE__, __LINE__);
+                return 0;
+            }
 
             s->next = args->ctx->ng_session;
             args->ctx->ng_session = s;
@@ -1427,8 +1545,8 @@ int open_tcp_socket(const struct arguments *args,
     }
 
     // Build target address
-    struct sockaddr_in addr4;
-    struct sockaddr_in6 addr6;
+    struct sockaddr_in addr4 = {0};
+    struct sockaddr_in6 addr6 = {0};
     if (redirect == NULL) {
         if (*socks5_addr && socks5_port) {
             log_android(ANDROID_LOG_WARN, "TCP%d SOCKS5 to %s/%u",
