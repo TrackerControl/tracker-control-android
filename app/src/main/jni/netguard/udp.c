@@ -116,12 +116,8 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
 
                 if (errno != EINTR && errno != EAGAIN)
                     s->udp.state = UDP_FINISHING;
-            } else if (bytes == 0) {
-                log_android(ANDROID_LOG_WARN, "UDP recv eof");
-                s->udp.state = UDP_FINISHING;
-
             } else {
-                // Socket read data
+                // A zero-length datagram is valid SOCK_DGRAM data, not EOF.
                 char dest[INET6_ADDRSTRLEN + 1];
                 if (s->udp.version == 4)
                     inet_ntop(AF_INET, &s->udp.daddr.ip4, dest, sizeof(dest));
@@ -133,7 +129,7 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
                 s->udp.received += bytes;
 
                 // Process DNS response
-                if (ntohs(s->udp.dest) == 53) {
+                if (ntohs(s->udp.dest) == 53 && bytes > 0) {
                     size_t dlen = (size_t) bytes;
                     parse_dns_response(args, s, buffer, &dlen);
                     bytes = (ssize_t) dlen;
