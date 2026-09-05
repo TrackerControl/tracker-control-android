@@ -113,6 +113,73 @@ static jint get_session_uid(const struct arguments *args, int version, int proto
     return -1;
 }
 
+// Tunnelled flows return from the WireGuard write before handle_tcp() creates
+// an ng_session. Direct flows do create one, and must keep their established
+// TCP shortcut even when the route cache generation changes.
+static int has_tcp_session(const struct arguments *args, int version,
+                           const uint8_t *pkt, const uint8_t *payload) {
+    const struct iphdr *ip4 = (struct iphdr *) pkt;
+    const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+    const struct tcphdr *tcphdr = (struct tcphdr *) payload;
+
+    for (const struct ng_session *cur = args->ctx->ng_session;
+         cur != NULL; cur = cur->next) {
+        if (cur->protocol != IPPROTO_TCP || cur->tcp.version != version ||
+            cur->tcp.source != tcphdr->source || cur->tcp.dest != tcphdr->dest)
+            continue;
+        if (version == 4) {
+            if (cur->tcp.saddr.ip4 == ip4->saddr && cur->tcp.daddr.ip4 == ip4->daddr)
+                return 1;
+        } else if (memcmp(&cur->tcp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
+                   memcmp(&cur->tcp.daddr.ip6, &ip6->ip6_dst, 16) == 0)
+            return 1;
+    }
+    return 0;
+}
+
+// Send a reset to the app for an established tunnelled flow whose policy was
+// changed while it was in flight. The observed packet is outbound, so
+// write_tcp()'s address/port reversal builds the reset in the opposite
+// direction. A reset carrying the observed ACK is valid for an ACK-bearing
+// segment; otherwise acknowledge the segment's sequence space.
+static void write_stateless_tcp_reset(const struct arguments *args, int version,
+                                      const uint8_t *pkt, const uint8_t *payload,
+                                      size_t length) {
+    const struct iphdr *ip4 = (struct iphdr *) pkt;
+    const struct ip6_hdr *ip6 = (struct ip6_hdr *) pkt;
+    const struct tcphdr *tcphdr = (struct tcphdr *) payload;
+    struct tcp_session rst;
+    memset(&rst, 0, sizeof(rst));
+    rst.version = version;
+    rst.source = tcphdr->source;
+    rst.dest = tcphdr->dest;
+    if (version == 4) {
+        rst.saddr.ip4 = (__be32) ip4->saddr;
+        rst.daddr.ip4 = (__be32) ip4->daddr;
+    } else {
+        memcpy(&rst.saddr.ip6, &ip6->ip6_src, 16);
+        memcpy(&rst.daddr.ip6, &ip6->ip6_dst, 16);
+    }
+
+    size_t tcp_length = length - (size_t) (payload - pkt);
+    size_t tcp_header_length = sizeof(struct tcphdr);
+    if (tcphdr->doff >= 5 && (size_t) tcphdr->doff * 4 <= tcp_length)
+        tcp_header_length = (size_t) tcphdr->doff * 4;
+    size_t datalen = tcp_length - tcp_header_length;
+
+    uint32_t reset_seq;
+    uint32_t reset_ack;
+    int reset_has_ack;
+    tcp_stateless_reset_fields(ntohl(tcphdr->seq), ntohl(tcphdr->ack_seq),
+                               (uint32_t) datalen, tcphdr->syn, tcphdr->fin,
+                               tcphdr->ack, &reset_seq, &reset_ack,
+                               &reset_has_ack);
+    rst.local_seq = reset_seq;
+    rst.remote_seq = reset_ack;
+    if (write_tcp(args, &rst, NULL, 0, 0, reset_has_ack, 0, 1) < 0)
+        log_android(ANDROID_LOG_WARN, "TCP stateless reset write failed");
+}
+
 // Re-run the authoritative UID lookup only after both the flow cache and the
 // native session table miss. This is deliberately off the hot path: established
 // UDP/TCP packets normally hit the flow cache, while a miss can be caused by a
@@ -125,6 +192,18 @@ static jint get_route_uid(const struct arguments *args, int version, int protoco
     if (args->ctx->sdk <= 28)
         return get_uid(version, protocol, saddr, sport, daddr, dport);
     return get_uid_q(args, version, protocol, source, sport, dest, dport);
+}
+
+static jint resolve_flow_owner(const struct arguments *args, int version, int protocol,
+                               const void *saddr, uint16_t sport,
+                               const void *daddr, uint16_t dport,
+                               const char *source, const char *dest,
+                               const uint8_t *pkt, const uint8_t *payload) {
+    jint route_uid = get_session_uid(args, version, protocol, pkt, payload);
+    if (route_uid < 0)
+        route_uid = get_route_uid(args, version, protocol,
+                                  saddr, sport, daddr, dport, source, dest);
+    return route_uid;
 }
 
 // Whether a flow's owning app should be routed through the tunnel. Shared by
@@ -165,11 +244,9 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
             // A cache expiry, collision, or unresolved-owner entry must retry
             // ownership. Reusing an unresolved entry would pin the
             // unknown-system policy and per-app route for a busy flow.
-            route_uid = get_session_uid(args, version, protocol, pkt, payload);
-            if (route_uid < 0)
-                route_uid = get_route_uid(args, version, protocol,
-                                          saddr, sport, daddr, dport,
-                                          source, dest);
+            route_uid = resolve_flow_owner(args, version, protocol,
+                                           saddr, sport, daddr, dport,
+                                           source, dest, pkt, payload);
 
             if (route_uid >= 0) {
                 tunnel_uid = is_tunnel_uid(route_uid);
@@ -190,8 +267,27 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
                             version, protocol, source, sport, dest, dport);
             }
         }
-    } else
+    } else {
+        // With no per-app override every UID has the same route. Still retain
+        // that stable answer per flow: tunnelled UDP has no native session to
+        // carry it into packet two, and the cache avoids resolving the UID on
+        // every datagram. If a caller needs the owner for a fresh block
+        // decision, resolve it once here without changing the global route.
         tunnel_uid = route_default_is_tunnel();
+        jint resolved_uid = -1;
+        if (out_uid != NULL && uid < 0) {
+            resolved_uid = resolve_flow_owner(args, version, protocol,
+                                              saddr, sport, daddr, dport,
+                                              source, dest, pkt, payload);
+            if (resolved_uid >= 0)
+                *out_uid = resolved_uid;
+        }
+        // uid_known is also the stable-policy bit for the UDP fast path. An
+        // unresolved owner must remain retryable even though the global route
+        // itself is independent of UID.
+        route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                         tunnel_uid, uid >= 0 || resolved_uid >= 0);
+    }
     return tunnel_uid;
 }
 
@@ -476,6 +572,88 @@ void handle_ip(const struct arguments *args,
 
     int wg_is_required = atomic_load_explicit(&wg_required, memory_order_acquire);
 
+    jint uid = -1;
+
+    // A reused TCP five-tuple starts with a fresh SYN. Do not let a verdict
+    // from the previous connection suppress this connection's policy check.
+    if (protocol == IPPROTO_TCP && syn)
+        route_flow_clear_verdict(version, protocol, saddr, sport, daddr, dport);
+
+    // Tunnelled TCP has no native session, so the usual established-TCP
+    // shortcut cannot tell whether a policy generation has changed. Keep the
+    // block verdict in the same generation-scoped cache as the route verdict.
+    // Direct TCP has an ng_session and keeps its existing state machine. Do
+    // not scan that session list until the route/verdict cache misses: the
+    // established WG fast path has no reason to look for a native session.
+    int tcp_native_session = 0;
+    int tcp_flow_policy_pending = 0;
+    int tcp_flow_cached_allowed = 0;
+    int tcp_flow_route_cached = 0;
+    int tcp_flow_tunnel = 0;
+    int tcp_flow_uid_known = 0;
+    int tcp_flow_verdict = ROUTE_FLOW_VERDICT_UNKNOWN;
+
+    if (wg_is_required && protocol == IPPROTO_TCP && !syn) {
+        tcp_flow_route_cached = route_flow_lookup(version, protocol,
+                                                   saddr, sport, daddr, dport,
+                                                   &tcp_flow_tunnel,
+                                                   &tcp_flow_uid_known);
+        // The policy verdict is needed even when a reload changes this flow
+        // from tunnelled to direct: without an ng_session, the established
+        // TCP shortcut would otherwise bypass Java and feed an unowned packet
+        // to handle_tcp(). The route decision below still preserves local and
+        // direct-DNS semantics.
+        int tcp_flow_verdict_cached = route_flow_lookup_verdict(
+                version, protocol, saddr, sport, daddr, dport,
+                &tcp_flow_verdict);
+        if (tcp_flow_verdict_cached &&
+            tcp_flow_verdict == ROUTE_FLOW_VERDICT_BLOCKED)
+                return;
+        if (tcp_flow_verdict_cached &&
+            tcp_flow_verdict == ROUTE_FLOW_VERDICT_ALLOWED) {
+            tcp_flow_cached_allowed = 1;
+        } else {
+            // Only a cache miss needs to distinguish a direct native flow
+            // from a tunnelled flow. A direct flow already has its policy and
+            // state in ng_session; a tunnelled flow needs a fresh owner and
+            // Java decision for this generation.
+            tcp_native_session = has_tcp_session(args, version, pkt, payload);
+            if (!tcp_native_session) {
+                tcp_flow_policy_pending = 1;
+                if (!tcp_flow_route_cached) {
+                    jint resolved_uid = -1;
+                    tcp_flow_tunnel = resolve_tunnel_uid(
+                            args, version, protocol, saddr, sport, daddr, dport,
+                            source, dest, pkt, payload, uid, &resolved_uid);
+                    if (resolved_uid >= 0)
+                        uid = resolved_uid;
+                }
+
+                // A route cache entry can be known-stable while its owner is
+                // not (the global route does not depend on UID). Retry
+                // ownership for a pending Java decision so an unresolved
+                // lookup never gets pinned.
+                if (uid < 0) {
+                    jint resolved_uid = resolve_flow_owner(
+                            args, version, protocol, saddr, sport, daddr, dport,
+                            source, dest, pkt, payload);
+                    if (resolved_uid >= 0)
+                        uid = resolved_uid;
+                }
+            }
+        }
+    }
+
+    if (tcp_flow_policy_pending && uid < 0) {
+        // ServiceSinkhole treats INVALID_UID as an allowed/unknown packet.
+        // Keep this flow fail-closed and leave its verdict unknown so the next
+        // packet retries ownership after Android has published the socket.
+        log_android(ANDROID_LOG_WARN,
+                    "WG TCP owner unavailable for %s/%u > %s/%u; dropping",
+                    source, sport, dest, dport);
+        return;
+    }
+
     // Reuse an established-flow verdict before the UID and Java policy lookups
     // only when its owner was resolved. An entry created under INVALID_UID is
     // deliberately unstable: subsequent packets retry ownership, allowing the
@@ -504,7 +682,6 @@ void handle_ip(const struct arguments *args,
     // block decision, but the routing fork needs the UID now: with no UID and
     // no session, the SYN falls to the global default and every later packet
     // of that flow inherits the answer from it.
-    jint uid = -1;
     int sni_candidate = (is_play && protocol == IPPROTO_TCP && dport == 443);
     if (protocol == IPPROTO_ICMP || protocol == IPPROTO_ICMPV6 ||
         (protocol == IPPROTO_UDP && !reuse_wg_udp_verdict &&
@@ -578,9 +755,11 @@ void handle_ip(const struct arguments *args,
         allowed = 1;
     else if (protocol == IPPROTO_UDP && udp_session_exists)
         allowed = 1; // could be a lingering/blocked session
-    else if (protocol == IPPROTO_TCP && ((!syn && (dport != 443 || !sni_active)) // assume existing session
+    else if (protocol == IPPROTO_TCP &&
+             (tcp_flow_cached_allowed ||
+              ((!syn && !tcp_flow_policy_pending && (dport != 443 || !sni_active)) // assume existing session
                                          || (uid == 0 && dport == 53)         // assume existing session
-                                         || (dport == 443 && syn && sni_active))) // let SYN pass by until SNI can be extracted
+                                         || (dport == 443 && syn && sni_active)))) // let SYN pass by until SNI can be extracted
         allowed = 1;
     else {
         struct ng_session *cur = NULL;
@@ -677,10 +856,12 @@ void handle_ip(const struct arguments *args,
             }
 
             // Find uid to handle in main activity
-            if (args->ctx->sdk <= 28) // Android 9 Pie.
-                uid = get_uid(version, protocol, saddr, sport, daddr, dport);
-            else
-                uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+            if (uid < 0) {
+                if (args->ctx->sdk <= 28) // Android 9 Pie.
+                    uid = get_uid(version, protocol, saddr, sport, daddr, dport);
+                else
+                    uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+            }
 
             allowed = 1;
         }
@@ -741,6 +922,14 @@ void handle_ip(const struct arguments *args,
 
         int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
                                          tunnel_uid, route_dns_direct());
+
+        // A tunnelled TCP flow has no ng_session, so retain the Java decision
+        // beside the route. This is generation-scoped and owner-scoped: an
+        // unresolved UID must retry rather than pin an answer for this tuple.
+        if (wg_is_required && protocol == IPPROTO_TCP && !tcp_native_session &&
+            uid >= 0)
+            route_flow_store_verdict(version, protocol, saddr, sport, daddr, dport,
+                                     ROUTE_FLOW_VERDICT_ALLOWED);
 
         if (wg_dest) {
             ssize_t w;
@@ -812,6 +1001,26 @@ void handle_ip(const struct arguments *args,
     } else {
         if (protocol == IPPROTO_UDP)
             block_udp(args, pkt, length, payload, uid);
+
+        // Keep a negative result for tunnelled TCP too. It prevents repeated
+        // packets (including retransmissions) from crossing JNI, while an
+        // unresolved owner remains deliberately uncached and can be retried.
+        if (wg_is_required && protocol == IPPROTO_TCP && !tcp_native_session &&
+            uid >= 0) {
+            // Cache every newly blocked established no-session flow,
+            // including one whose route changed to direct after invalidation.
+            // The policy decision must not be bypassed on the next packet, and
+            // a blocked packet must never reach the WireGuard write below.
+            if (!tcp_flow_route_cached)
+                (void) resolve_tunnel_uid(
+                        args, version, protocol, saddr, sport, daddr, dport,
+                        source, dest, pkt, payload, uid, NULL);
+            route_flow_store_verdict(version, protocol, saddr, sport, daddr, dport,
+                                     ROUTE_FLOW_VERDICT_BLOCKED);
+            if (tcp_flow_policy_pending && !syn &&
+                !((const struct tcphdr *) payload)->rst)
+                write_stateless_tcp_reset(args, version, pkt, payload, length);
+        }
 
         log_android(ANDROID_LOG_WARN, "Address v%d p%d %s/%u syn %d not allowed",
                     version, protocol, dest, dport, syn);
