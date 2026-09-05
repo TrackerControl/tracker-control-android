@@ -850,6 +850,38 @@ fn cname_chain_depth_bound_stops_before_an_unbounded_terminal() {
     assert!(policy.records.borrow().is_empty());
 }
 
+#[test]
+fn repeated_branching_cname_links_have_bounded_total_traversal() {
+    let qname = name("budget-0.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let mut answers = Vec::new();
+
+    // Repeating each edge creates an exponentially large number of paths for
+    // a depth-bounded recursive walk, despite only a few hundred wire records.
+    // The first path remains valid and must still reach the terminal address.
+    for index in 0..8 {
+        for _ in 0..32 {
+            answers.push(cname_answer(
+                &format!("budget-{index}.example"),
+                &format!("budget-{}.example", index + 1),
+                300,
+            ));
+        }
+    }
+    answers.push(named_a_answer("budget-8.example", 300, [203, 0, 113, 12]));
+    let message = response(std::slice::from_ref(&question_bytes), &answers);
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 8);
+    assert!(records.iter().all(|record| record.2 == "203.0.113.12"));
+    assert_eq!(records[0].0, "budget-0.example");
+    assert_eq!(records[0].1, "budget-1.example");
+    assert_eq!(records[7].0, "budget-7.example");
+    assert_eq!(records[7].1, "budget-8.example");
+}
+
 /// The parser only ever walks `ancount` answers; it never inspects nscount
 /// or arcount, so an EDNS(0) OPT pseudo-record in the additional section
 /// (root owner, TYPE=41, arcount=1) must not disturb answer recording. This

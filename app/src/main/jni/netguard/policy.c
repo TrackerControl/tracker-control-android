@@ -370,17 +370,24 @@ void route_flow_store_verdict(int version, int protocol,
     if (verdict != ROUTE_FLOW_VERDICT_BLOCKED && verdict != ROUTE_FLOW_VERDICT_ALLOWED)
         return;
 
-    // A policy result can be produced before the route branch (for example a
-    // blocked first TCP packet), so make sure there is a generation-scoped
-    // entry to attach it to. A missing route is represented by the conservative
-    // global tunnel value; the policy verdict itself is what this API stores.
-    route_flow_store(version, protocol, saddr, sport, daddr, dport,
-                     route_default_is_tunnel(), 0);
-
     uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
     time_t now = time(NULL);
     struct route_flow_entry *e = route_flow_find(
             version, protocol, saddr, sport, daddr, dport, gen, now);
+
+    // A policy result can be produced before the route branch (for example a
+    // blocked first TCP packet), so make sure there is a generation-scoped
+    // entry to attach it to. Only create a missing entry here: an existing
+    // route may carry a resolved per-app tunnel and uid_known decision that a
+    // policy verdict must not replace with the global default.
+    if (e == NULL) {
+        route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                         route_default_is_tunnel(), 0);
+        gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+        now = time(NULL);
+        e = route_flow_find(version, protocol, saddr, sport, daddr, dport, gen, now);
+    }
+
     if (e != NULL) {
         e->verdict = (int8_t) verdict;
         e->time = now;

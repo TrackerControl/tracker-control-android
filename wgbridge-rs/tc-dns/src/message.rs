@@ -12,6 +12,7 @@ const MAX_NAME_DEPTH: u32 = 8;
 const MAX_NAME_LABELS: usize = 128;
 const MAX_NAME_OCTETS: usize = 255;
 const MAX_CNAME_CHAIN_DEPTH: usize = 8;
+const MAX_CNAME_TRAVERSAL_WORK: usize = 4096;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct DnsAnswer {
@@ -282,6 +283,7 @@ fn emit_answers(qname: &str, records: &[ParsedAnswer], mut on_answer: impl FnMut
         // from being attached to the original question.
         let mut path = Vec::new();
         let mut visited = HashSet::new();
+        let mut budget = MAX_CNAME_TRAVERSAL_WORK;
         collect_chain(
             qname,
             0,
@@ -291,6 +293,7 @@ fn emit_answers(qname: &str, records: &[ParsedAnswer], mut on_answer: impl FnMut
             &addresses_by_owner,
             &mut answers,
             &mut indexes,
+            &mut budget,
         );
     }
 
@@ -308,7 +311,17 @@ fn collect_chain(
     addresses_by_owner: &HashMap<String, Vec<AddressRecord>>,
     answers: &mut Vec<DnsAnswer>,
     indexes: &mut HashMap<(String, String, String), usize>,
+    budget: &mut usize,
 ) {
+    // A bounded depth alone does not bound work when the answer section
+    // contains repeated or branching CNAME links. Charge every visited owner
+    // and every edge/address examined so a hostile graph cannot multiply the
+    // recursive walk exponentially.
+    if *budget == 0 {
+        return;
+    }
+    *budget -= 1;
+
     if !visited.insert(name.to_owned()) {
         return;
     }
@@ -319,6 +332,10 @@ fn collect_chain(
     if !cname_links.contains_key(name) {
         if let Some(addresses) = addresses_by_owner.get(name) {
             for address in addresses {
+                if *budget == 0 {
+                    break;
+                }
+                *budget -= 1;
                 if path.is_empty() {
                     // No CNAME path means this is the historic direct
                     // qname/aname attribution, even when another answer
@@ -350,6 +367,10 @@ fn collect_chain(
     if depth < MAX_CNAME_CHAIN_DEPTH {
         if let Some(links) = cname_links.get(name) {
             for link in links {
+                if *budget == 0 {
+                    break;
+                }
+                *budget -= 1;
                 path.push(link.clone());
                 collect_chain(
                     &link.target,
@@ -360,6 +381,7 @@ fn collect_chain(
                     addresses_by_owner,
                     answers,
                     indexes,
+                    budget,
                 );
                 let _ = path.pop();
             }

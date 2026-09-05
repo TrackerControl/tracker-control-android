@@ -19,8 +19,13 @@ static int failures;
 static const uint8_t source[4] = {192, 0, 2, 10};
 static const uint8_t destination[4] = {198, 51, 100, 10};
 
+static void store_udp_route(int tunnel, int uid_known) {
+    route_flow_store(4, IPPROTO_UDP, source, 41000, destination, 443,
+                     tunnel, uid_known);
+}
+
 static void store_route(int uid_known) {
-    route_flow_store(4, IPPROTO_UDP, source, 41000, destination, 443, 1, uid_known);
+    store_udp_route(1, uid_known);
 }
 
 static void store_tcp_route(int uid_known) {
@@ -117,6 +122,24 @@ static void test_unresolved_owner_does_not_pin_policy(void) {
           "resolved owner can be cached after an unresolved retry");
 }
 
+static void test_verdict_preserves_resolved_route_metadata(void) {
+    route_flow_invalidate();
+    store_udp_route(0, 1);
+
+    route_flow_store_verdict(4, IPPROTO_UDP, source, 41000, destination, 443,
+                             ROUTE_FLOW_VERDICT_ALLOWED);
+
+    int tunnel = 1;
+    int uid_known = 0;
+    CHECK(route_flow_lookup(4, IPPROTO_UDP, source, 41000, destination, 443,
+                            &tunnel, &uid_known),
+          "policy verdict attaches to an existing route entry");
+    CHECK(!tunnel && uid_known,
+          "policy verdict does not overwrite resolved per-app route metadata");
+    CHECK(lookup_verdict(IPPROTO_UDP, 41000) == ROUTE_FLOW_VERDICT_ALLOWED,
+          "policy verdict remains cached on the resolved route");
+}
+
 static void test_stateless_reset_sequence_shape(void) {
     uint32_t reset_seq = 0;
     uint32_t reset_ack = 0;
@@ -155,6 +178,7 @@ int main(void) {
     test_default_udp_route_is_reused();
     test_tcp_verdict_revalidation_and_negative_cache();
     test_unresolved_owner_does_not_pin_policy();
+    test_verdict_preserves_resolved_route_metadata();
     test_stateless_reset_sequence_shape();
     test_syn_clears_reused_tuple_verdict();
 
