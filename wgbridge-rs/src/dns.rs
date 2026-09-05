@@ -180,25 +180,53 @@ impl DnsInspector {
                 };
                 let mut chunks = Vec::new();
                 if payload_start < segment.payload.len() {
-                    if flow.buffer.len() + segment.payload.len() - payload_start
-                        <= MAX_TCP_DNS_BUFFER
-                    {
+                    let payload = &segment.payload[payload_start..];
+                    let base_seq = flow.next_seq;
+                    let mut uncovered = vec![(0usize, payload.len())];
+                    for pending in &flow.pending {
+                        let Some(pending_start) = seq_forward_offset(base_seq, pending.seq)
+                        else {
+                            continue;
+                        };
+                        let pending_end = pending_start.saturating_add(pending.payload.len());
+                        let mut remaining = Vec::with_capacity(uncovered.len() + 1);
+                        for (start, end) in uncovered {
+                            if pending_end <= start || pending_start >= end {
+                                remaining.push((start, end));
+                                continue;
+                            }
+                            if start < pending_start {
+                                remaining.push((start, pending_start));
+                            }
+                            if pending_end < end {
+                                remaining.push((pending_end, end));
+                            }
+                        }
+                        uncovered = remaining;
+                    }
+                    for (start, end) in uncovered {
+                        drain_pending(flow, &mut chunks);
+                        if flow.next_seq != base_seq.wrapping_add(start as u32)
+                            || flow.buffer.len()
+                                + chunks.iter().map(|chunk| chunk.bytes.len()).sum::<usize>()
+                                + end - start
+                                > MAX_TCP_DNS_BUFFER
+                        {
+                            // Keep the framing anchor and frontier intact. The
+                            // packet is forwarded, but a later retransmission can
+                            // still supply a bounded frame again.
+                            flow.pending.clear();
+                            flow.pending_bytes = 0;
+                            break;
+                        }
                         chunks.push(ContiguousChunk {
-                            bytes: segment.payload[payload_start..].to_vec(),
+                            bytes: payload[start..end].to_vec(),
                             current_range: Some(
-                                (segment.payload_offset + payload_start)
-                                    ..(segment.payload_offset + segment.payload.len()),
+                                (segment.payload_offset + payload_start + start)
+                                    ..(segment.payload_offset + payload_start + end),
                             ),
                         });
-                        flow.next_seq = flow
-                            .next_seq
-                            .wrapping_add((segment.payload.len() - payload_start) as u32);
-                    } else {
-                        // Keep the framing anchor and frontier intact. The
-                        // packet is forwarded, but a later retransmission can
-                        // still supply a bounded frame again.
-                        flow.pending.clear();
-                        flow.pending_bytes = 0;
+                        flow.next_seq = flow.next_seq.wrapping_add((end - start) as u32);
                     }
                 }
                 drain_pending(flow, &mut chunks);
@@ -1321,6 +1349,31 @@ mod tests {
         inspector.inspect(&later, &sink);
         inspector.inspect(&conflicting, &sink);
         inspector.inspect(&first, &sink);
+
+        let records = sink.0.lock().unwrap();
+        assert_eq!(records.len(), 1);
+        assert_eq!(records[0].2, "203.0.113.7");
+    }
+
+    #[test]
+    fn stateful_inspector_preserves_pending_bytes_during_gap_fill_overlap() {
+        let msg = dns_message(&[
+            dns_question("tracker.example", DNS_TYPE_A),
+            dns_answer_bytes("tracker.example", DNS_TYPE_A, 300, &[203, 0, 113, 7]),
+        ]);
+        let framed = tcp_dns_framed(&msg);
+        let split = framed.len() / 2;
+        let pending = ipv4_tcp_segment(&framed[split..], 1000 + split as u32, 0x18);
+        let mut gap_filler_bytes = framed.clone();
+        let last = gap_filler_bytes.len() - 1;
+        gap_filler_bytes[last] = 9;
+        let gap_filler = ipv4_tcp_segment(&gap_filler_bytes, 1000, 0x18);
+        let sink = CollectingSink(Mutex::new(Vec::new()));
+        let mut inspector = DnsInspector::default();
+
+        inspector.inspect(&ipv4_tcp_segment(&[], 999, 0x12), &sink);
+        inspector.inspect(&pending, &sink);
+        inspector.inspect(&gap_filler, &sink);
 
         let records = sink.0.lock().unwrap();
         assert_eq!(records.len(), 1);
