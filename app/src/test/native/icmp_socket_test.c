@@ -205,7 +205,7 @@ static size_t make_echo_packet6(uint8_t *packet) {
 }
 
 static void test_epoll_add_failure_does_not_retain_session(void) {
-    uint8_t packet[sizeof(struct iphdr) + ICMP_MINLEN];
+    _Alignas(struct iphdr) uint8_t packet[sizeof(struct iphdr) + sizeof(struct icmp)];
     size_t length = make_echo_packet(packet);
     struct context context = {0};
     struct arguments args = {0};
@@ -224,8 +224,8 @@ static void test_epoll_add_failure_does_not_retain_session(void) {
 }
 
 static void test_icmp_send_address_is_zero_initialised(void) {
-    uint8_t packet[(sizeof(struct ip6_hdr) > sizeof(struct iphdr)
-                    ? sizeof(struct ip6_hdr) : sizeof(struct iphdr)) + ICMP_MINLEN];
+    _Alignas(struct ip6_hdr) uint8_t packet[(sizeof(struct ip6_hdr) > sizeof(struct iphdr)
+                    ? sizeof(struct ip6_hdr) : sizeof(struct iphdr)) + sizeof(struct icmp)];
     size_t length = make_echo_packet(packet);
     struct context context = {0};
     struct arguments args = {0};

@@ -11,7 +11,7 @@
 static int failures;
 static int write_calls;
 static size_t written_length;
-static uint8_t written_packet[2048];
+_Alignas(struct iphdr) static uint8_t written_packet[2048];
 static int parse_calls;
 static int close_calls;
 static ssize_t recv_result;

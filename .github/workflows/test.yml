@@ -95,6 +95,28 @@ jobs:
             -Wl,--wrap=socket
           /tmp/icmp_socket_test
 
+      - name: Run remaining native policy and real epoll tests
+        run: |
+          # Prefer real Linux headers; the compatibility directory supplies
+          # only headers absent on the host (JNI and Android declarations).
+          COMMON="-D_GNU_SOURCE -O1 -g -Wall -Wextra -Wno-unused-parameter -Wno-sign-compare -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections -idirafter app/src/test/native/host_compat -Iapp/src/main/jni/netguard"
+          for TEST in tcp_queue tcp_window; do
+            cc $COMMON -o /tmp/$TEST \
+              app/src/test/native/${TEST}_test.c app/src/main/jni/netguard/tcp.c
+            /tmp/$TEST
+          done
+          cc $COMMON -o /tmp/route_flow_test \
+            app/src/test/native/route_flow_test.c app/src/main/jni/netguard/policy.c
+          /tmp/route_flow_test
+          cc $COMMON -o /tmp/ip_header_test \
+            app/src/test/native/ip_header_test.c app/src/test/native/ip_header_failfast.c \
+            app/src/main/jni/netguard/ip.c
+          /tmp/ip_header_test
+          cc $COMMON -o /tmp/tcp_epoll_test \
+            app/src/test/native/tcp_epoll_test.c app/src/main/jni/netguard/tcp.c \
+            -Wl,--wrap=close -Wl,--wrap=connect -Wl,--wrap=send
+          /tmp/tcp_epoll_test
+
       - name: Run IPv6 extension header walk host tests
         run: |
           cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
