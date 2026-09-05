@@ -258,9 +258,8 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
         // Check for outgoing data
         if (s->tcp.forward != NULL) {
             normalize_tcp_queue(&s->tcp);
-            uint32_t buffer_size = get_receive_buffer(s);
             if (s->tcp.forward->seq == s->tcp.remote_seq &&
-                s->tcp.forward->len > s->tcp.forward->sent && buffer_size > 0)
+                s->tcp.forward->len > s->tcp.forward->sent)
                 events = events | EPOLLOUT;
         }
     }
