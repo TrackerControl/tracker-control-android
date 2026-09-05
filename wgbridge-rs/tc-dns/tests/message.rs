@@ -90,6 +90,22 @@ fn a_answer(encoded_name: &[u8]) -> Vec<u8> {
     answer(encoded_name, TYPE_A, 300, &[203, 0, 113, 7])
 }
 
+fn cname_answer(owner: &str, target: &str, ttl: u32) -> Vec<u8> {
+    let owner = name(owner);
+    let target = name(target);
+    answer(&owner, TYPE_CNAME, ttl, &target)
+}
+
+fn named_a_answer(owner: &str, ttl: u32, address: [u8; 4]) -> Vec<u8> {
+    let owner = name(owner);
+    answer(&owner, TYPE_A, ttl, &address)
+}
+
+fn named_aaaa_answer(owner: &str, ttl: u32, address: [u8; 16]) -> Vec<u8> {
+    let owner = name(owner);
+    answer(&owner, TYPE_AAAA, ttl, &address)
+}
+
 /// Encodes a compression pointer to `offset` in the message.
 fn ptr(offset: usize) -> [u8; 2] {
     [0xc0 | ((offset >> 8) as u8), (offset & 0xff) as u8]
@@ -566,11 +582,12 @@ fn over_long_uncompressed_answer_owner_name_is_still_rejected() {
 /// A CDN-fronted tracker's typical response shape: qname CNAME intermediate,
 /// intermediate CNAME target, target A <ip>. Each owner name after the
 /// question is a compression pointer into the previous record's RDATA, the
-/// way real resolvers encode chains. Only the terminal A is recorded, and it
-/// carries the *original question* qname (not the intermediate CNAME names)
-/// alongside its own owner name as `aname`.
+/// way real resolvers encode chains. Every validated owner→target link is
+/// recorded against the terminal address. The first row therefore carries
+/// the *original question* qname, while each intermediate alias survives as
+/// its own qname group without a synthetic terminal self-row.
 #[test]
-fn cname_chain_records_final_a_with_question_qname_and_answer_owner_aname() {
+fn cname_chain_records_each_a_alias_with_question_qname() {
     let qname_encoded = name("chain.example");
     let question_bytes = question(&qname_encoded, TYPE_A);
     let question_end = 12 + question_bytes.len();
@@ -602,14 +619,24 @@ fn cname_chain_records_final_a_with_question_qname_and_answer_owner_aname() {
     let policy = TestPolicy::default();
     record_answers(&message, &policy);
     let records = policy.records.borrow();
-    assert_eq!(records.len(), 1, "the two CNAMEs must not be recorded");
-    assert_eq!(records[0].0, "chain.example", "qname is the question name");
+    assert_eq!(records.len(), 2);
     assert_eq!(
-        records[0].1, "cdn.example",
-        "aname is the A record's own owner"
+        records.as_slice(),
+        [
+            (
+                "chain.example".to_owned(),
+                "mid.chain.example".to_owned(),
+                "203.0.113.7".to_owned(),
+                300,
+            ),
+            (
+                "mid.chain.example".to_owned(),
+                "cdn.example".to_owned(),
+                "203.0.113.7".to_owned(),
+                300,
+            ),
+        ]
     );
-    assert_eq!(records[0].2, "203.0.113.7");
-    assert_eq!(records[0].3, 300);
     drop(records);
 
     let mut blanked = message;
@@ -628,7 +655,7 @@ fn cname_chain_records_final_a_with_question_qname_and_answer_owner_aname() {
 /// Same CNAME-chain shape as above, but the chain terminates in an AAAA
 /// record instead of A.
 #[test]
-fn cname_chain_ending_in_aaaa_records_final_answer_with_question_qname() {
+fn cname_chain_ending_in_aaaa_records_each_alias_with_question_qname() {
     let qname_encoded = name("chain6.example");
     let question_bytes = question(&qname_encoded, TYPE_AAAA);
     let question_end = 12 + question_bytes.len();
@@ -653,10 +680,24 @@ fn cname_chain_ending_in_aaaa_records_final_answer_with_question_qname() {
     let policy = TestPolicy::default();
     record_answers(&message, &policy);
     let records = policy.records.borrow();
-    assert_eq!(records.len(), 1, "the two CNAMEs must not be recorded");
-    assert_eq!(records[0].0, "chain6.example");
-    assert_eq!(records[0].1, "cdn6.example");
-    assert_eq!(records[0].2, "2001:db8::2");
+    assert_eq!(records.len(), 2);
+    assert_eq!(
+        records.as_slice(),
+        [
+            (
+                "chain6.example".to_owned(),
+                "mid.chain6.example".to_owned(),
+                "2001:db8::2".to_owned(),
+                300,
+            ),
+            (
+                "mid.chain6.example".to_owned(),
+                "cdn6.example".to_owned(),
+                "2001:db8::2".to_owned(),
+                300,
+            ),
+        ]
+    );
     drop(records);
 
     let mut blanked = message;
@@ -670,6 +711,143 @@ fn cname_chain_ending_in_aaaa_records_final_answer_with_question_qname() {
         Outcome::Blanked { new_len, qtype: TYPE_AAAA, .. } if new_len == question_end
     ));
     assert_eq!(&blanked[6..12], &[0, 0, 0, 0, 0, 0]);
+}
+
+/// CNAME links are a graph, rather than an ordered list. The intermediate
+/// name gets its own qname group, so an Android lookup grouped by qname keeps
+/// the complete chain and can still find a tracker at that name.
+#[test]
+fn cname_chain_is_order_independent_and_canonicalises_names() {
+    let qname = name("SAFE.EXAMPLE");
+    let question_bytes = question(&qname, TYPE_A);
+    let message = response(
+        std::slice::from_ref(&question_bytes),
+        &[
+            named_a_answer("FINAL.EXAMPLE", 70, [203, 0, 113, 8]),
+            cname_answer("INTERMEDIATE.TRACKER.EXAMPLE", "FINAL.EXAMPLE", 40),
+            cname_answer("SAFE.EXAMPLE", "INTERMEDIATE.TRACKER.EXAMPLE", 90),
+        ],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(
+        records.as_slice(),
+        [
+            (
+                "safe.example".to_owned(),
+                "intermediate.tracker.example".to_owned(),
+                "203.0.113.8".to_owned(),
+                40,
+            ),
+            (
+                "intermediate.tracker.example".to_owned(),
+                "final.example".to_owned(),
+                "203.0.113.8".to_owned(),
+                40,
+            ),
+        ]
+    );
+    assert!(records
+        .iter()
+        .any(|record| record.0 == "intermediate.tracker.example"));
+    assert!(!records
+        .iter()
+        .any(|record| record.0 == "final.example" && record.1 == "final.example"));
+}
+
+#[test]
+fn multiple_a_and_aaaa_records_are_deduplicated_and_keep_ttl_minima() {
+    let qname = name("alias.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let ipv6 = [0x20, 0x01, 0x0d, 0xb8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9];
+    let message = response(
+        std::slice::from_ref(&question_bytes),
+        &[
+            cname_answer("alias.example", "terminal.example", 600),
+            named_a_answer("terminal.example", 300, [203, 0, 113, 9]),
+            named_a_answer("terminal.example", 100, [203, 0, 113, 9]),
+            named_a_answer("terminal.example", 500, [198, 51, 100, 9]),
+            named_aaaa_answer("terminal.example", 60, ipv6),
+        ],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 3);
+    for resource in ["203.0.113.9", "198.51.100.9", "2001:db8::9"] {
+        let alias = records
+            .iter()
+            .find(|record| record.0 == "alias.example" && record.2 == resource)
+            .expect("alias mapping present");
+        assert_eq!(alias.1, "terminal.example");
+        let expected_ttl = match resource {
+            "203.0.113.9" => 100,
+            "198.51.100.9" => 500,
+            _ => 60,
+        };
+        assert_eq!(alias.3, expected_ttl);
+    }
+    assert!(!records
+        .iter()
+        .any(|record| record.0 == "terminal.example" && record.1 == "terminal.example"));
+}
+
+#[test]
+fn unrelated_cname_and_address_are_not_attributed_to_the_question() {
+    let qname = name("requested.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let message = response(
+        std::slice::from_ref(&question_bytes),
+        &[
+            cname_answer("unrelated.example", "unrelated.cdn.example", 300),
+            named_a_answer("unrelated.cdn.example", 300, [203, 0, 113, 10]),
+        ],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    assert!(policy.records.borrow().is_empty());
+}
+
+#[test]
+fn cname_loop_stops_without_an_address_mapping() {
+    let qname = name("loop-a.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let message = response(
+        std::slice::from_ref(&question_bytes),
+        &[
+            cname_answer("loop-a.example", "loop-b.example", 300),
+            cname_answer("loop-b.example", "loop-a.example", 300),
+            named_a_answer("loop-b.example", 300, [203, 0, 113, 13]),
+        ],
+    );
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    assert!(policy.records.borrow().is_empty());
+}
+
+#[test]
+fn cname_chain_depth_bound_stops_before_an_unbounded_terminal() {
+    let qname = name("depth-0.example");
+    let question_bytes = question(&qname, TYPE_A);
+    let mut answers = Vec::new();
+    for index in 0..10 {
+        answers.push(cname_answer(
+            &format!("depth-{index}.example"),
+            &format!("depth-{}.example", index + 1),
+            300,
+        ));
+    }
+    answers.push(named_a_answer("depth-10.example", 300, [203, 0, 113, 11]));
+    let message = response(std::slice::from_ref(&question_bytes), &answers);
+
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    assert!(policy.records.borrow().is_empty());
 }
 
 /// The parser only ever walks `ancount` answers; it never inspects nscount

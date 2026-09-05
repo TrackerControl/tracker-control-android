@@ -7,6 +7,7 @@ use wgbridge::tcdns_capi::{
 };
 
 const TYPE_A: u16 = 1;
+const TYPE_CNAME: u16 = 5;
 const TYPE_HTTPS: u16 = 65;
 const CLASS_IN: u16 = 1;
 
@@ -96,6 +97,12 @@ fn answer(name: &[u8], qtype: u16, rdata: &[u8]) -> Vec<u8> {
     result.extend_from_slice(&(rdata.len() as u16).to_be_bytes());
     result.extend_from_slice(rdata);
     result
+}
+
+fn cname_answer(owner: &str, target: &str) -> Vec<u8> {
+    let owner = question_name(owner);
+    let target = question_name(target);
+    answer(&owner, TYPE_CNAME, &target)
 }
 
 fn response(question_name: &[u8], answers: &[Vec<u8>]) -> Vec<u8> {
@@ -233,6 +240,43 @@ fn callbacks_receive_terminated_strings_and_new_length() {
         .iter()
         .all(|(name, _, _)| !name.as_bytes().contains(&0)));
     assert_eq!(capture.blanked, vec![("��a".to_owned(), TYPE_A, 0x0f)]);
+}
+
+#[test]
+fn capi_receives_each_validated_cname_link_without_terminal_self_row() {
+    let qname = question_name("alias.example");
+    let mut message = response(
+        &qname,
+        &[
+            answer(
+                &question_name("terminal.example"),
+                TYPE_A,
+                &[203, 0, 113, 12],
+            ),
+            cname_answer("alias.example", "terminal.example"),
+        ],
+    );
+    let mut capture = Capture::default();
+    let callbacks = callbacks();
+    let result = unsafe {
+        tcdns_process_response(
+            message.as_mut_ptr(),
+            message.len(),
+            &callbacks,
+            (&mut capture as *mut Capture).cast(),
+        )
+    };
+
+    assert_eq!(result, TCDNS_UNCHANGED);
+    assert_eq!(
+        capture.records,
+        vec![(
+            "alias.example".to_owned(),
+            "terminal.example".to_owned(),
+            "203.0.113.12".to_owned(),
+            300,
+        )]
+    );
 }
 
 #[test]
