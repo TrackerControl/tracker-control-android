@@ -32,7 +32,7 @@ availability or battery impact.
 | 12 | Closed TCP windows cause 100 ms polling and repeated ACK probes | Battery, CPU, radio activity | **Medium** | Medium | **Fixed** | Reproduced |
 | 13 | One WireGuard DNS-over-TCP gap permanently disables detection | Detection coverage, DNS reliability | **Medium** | Hard | **Fixed** | Reproduced |
 | 14 | WireGuard TUN write failures remain invisible to its watchdog | Recovery, connectivity, observability | **Medium** | Medium | **Fixed** | Source-proven |
-| 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | Open | Reproduced |
+| 15 | UDP redirects apply only to the first datagram | DNS routing, Secure DNS, privacy | **Medium** | Easy–Medium | **Fixed** | Reproduced |
 | 16 | The DoH proxy has an unbounded request queue | Battery, memory, availability, Secure DNS | **Medium** | Medium | Open | Source-proven |
 | 17 | Screen-off DoH repeatedly schedules connection-pool eviction | Battery, CPU, Secure DNS | **Low–Medium** | Easy | **Fixed** | Source-proven |
 | 18 | Zero-length UDP datagrams are treated as EOF | Protocol correctness, compatibility | **Low** | Easy | **Fixed** | Reproduced |
@@ -64,10 +64,10 @@ that branch:
 | #12 | **Fixed** | Zero-window probes now use deadline-based exponential backoff from 100 ms to 5 seconds while normal socket and TUN readiness still wakes immediately. |
 | #13 | **Fixed** | SYN-established DNS-over-TCP framing survives gaps and idle periods; bounded first-seen reassembly recovers only from sequence-valid bytes. |
 | #14 | **Fixed** | Native TUN write totals and streaks reach the watchdog, which recovers only after at least eight consecutive failures continue across five seconds of advancing samples. |
+| #15 | **Fixed** | Each admitted UDP session stores its resolved address family, address and network-order port, so every later datagram uses the same redirect. |
 
-Findings #15 and #16 remain open. All eight high-severity findings, the native
-TCP findings, and the WireGuard DNS/recovery findings are fixed across the
-stacked branches.
+Finding #16 remains open. All eight high-severity findings and every native C,
+TCP, UDP and WireGuard finding are fixed across the stacked branches.
 
 ## Detailed findings
 
@@ -471,6 +471,12 @@ terminate gotatun on one transient `ENOBUFS`.
 **Fix difficulty:** Easy–Medium
 **Confidence:** High
 
+**Status: Fixed in the UDP redirect pull request.** Session creation resolves
+and validates the selected endpoint once, then stores its address family,
+address and network-order port. Every datagram uses that endpoint while the
+original tuple remains the identity for lookup, response reconstruction,
+accounting and logs. IPv4, IPv6 and cross-family redirects are covered.
+
 Java supplies a redirect only while making the first policy decision. The
 native UDP session does not store it. Later packets on the same tuple reach
 `handle_udp()` with `redirect == NULL` and use the original destination
@@ -549,11 +555,10 @@ can represent it.
 
 ## Suggested repair order
 
-All high-severity, TCP half-close/window and WireGuard recovery items are
-complete. The remaining order is:
+All high-severity, native C, TCP, UDP and WireGuard items are complete. The
+remaining order is:
 
-1. Persist UDP redirects across the session lifetime (#15).
-2. Bound the advanced DoH request queue (#16).
+1. Bound the advanced DoH request queue (#16).
 
 ## Validation performed
 
@@ -582,6 +587,9 @@ complete. The remaining order is:
   focused Kotlin connectivity-checker suite. Its changed Rust files pass
   `rustfmt`; the workspace-wide check still reports pre-existing formatting in
   `config.rs` and `transport/udp.rs`.
+- The UDP redirect branch passed its production-backed socket suite under
+  ASan/UBSan after stacking, covering repeated, unredirected, IPv4, IPv6,
+  cross-family, invalid-address, original-tuple and response-tuple cases.
 
 ## Limits
 
