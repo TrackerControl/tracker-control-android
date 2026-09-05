@@ -7,6 +7,7 @@
 #define EPOLLOUT 0x004
 #define EPOLLERR 0x008
 #define EPOLLHUP 0x010
+#define EPOLLRDHUP 0x2000
 
 #define EPOLL_CTL_ADD 1
 #define EPOLL_CTL_DEL 2
@@ -22,7 +23,12 @@ struct epoll_event {
     } data;
 };
 
+int epoll_create(int size);
+
 int epoll_ctl(int epoll_fd, int operation, int descriptor,
               struct epoll_event *event);
+
+int epoll_wait(int epoll_fd, struct epoll_event *events,
+               int maxevents, int timeout);
 
 #endif
