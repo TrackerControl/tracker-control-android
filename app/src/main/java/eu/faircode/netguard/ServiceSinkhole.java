@@ -3114,8 +3114,8 @@ public class ServiceSinkhole extends VpnService {
                         }
 
                         // Check tracker
-                        String aname = lookup.getString(lookup.getColumnIndex("aname"));
-                        String qname = lookup.getString(lookup.getColumnIndex("qname"));
+                        String aname = lookup.getString(lookup.getColumnIndexOrThrow("aname"));
+                        String qname = lookup.getString(lookup.getColumnIndexOrThrow("qname"));
                         String candidateDname = qname;
                         Tracker candidateTracker = TrackerList.findTracker(qname);
 
