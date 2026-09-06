@@ -72,7 +72,7 @@
 #define UDP_TIMEOUT_53 15 // seconds
 #define UDP_TIMEOUT_ANY 300 // seconds
 #define UDP_KEEP_TIMEOUT 60 // seconds
-#define UDP_BLOCKED_MAX 256 // retained negative UDP entries, independent of active sessions
+#define UDP_BLOCKED_MAX 256 // bounded negative cache, separate from active sockets
 #define UDP_YIELD 10 // packets
 
 #define TCP_INIT_TIMEOUT 20 // seconds ~net.inet.tcp.keepinit
@@ -163,6 +163,13 @@ struct udp_session {
     jint uid;
     int version;
     uint16_t mss;
+
+    int resolved_version;
+    union {
+        __be32 ip4;
+        struct in6_addr ip6;
+    } resolved_addr;
+    __be16 resolved_port;
 
     uint64_t sent;
     uint64_t received;
@@ -438,6 +445,8 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
 void parse_dns_response(const struct arguments *args, const struct ng_session *session,
                         uint8_t *data, size_t *datalen);
 
+void record_dns_response(const struct arguments *args, uint8_t *data, size_t datalen);
+
 void parse_dns_partial_response(const struct arguments *args,
                                 const struct ng_session *session,
                                 uint8_t *data, size_t *datalen, int *blanked);
@@ -496,7 +505,7 @@ void queue_tcp(const struct arguments *args,
 int open_icmp_socket(const struct arguments *args, const struct icmp_session *cur);
 
 int open_udp_socket(const struct arguments *args,
-                    const struct udp_session *cur, const struct allowed *redirect);
+                    const struct udp_session *cur);
 
 int open_tcp_socket(const struct arguments *args,
                     const struct tcp_session *cur, const struct allowed *redirect);
