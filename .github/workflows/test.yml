@@ -8,6 +8,13 @@ on:
     branches: [ master, main ]
 
 jobs:
+  native_defensive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Run native defensive regression tests
+        run: bash app/src/test/native/run_defensive_tests.sh
+
   test:
     runs-on: ubuntu-latest
 
@@ -71,9 +78,6 @@ jobs:
             -o /tmp/dns_frame_test \
             app/src/test/native/dns_frame_test.c app/src/main/jni/netguard/dns_frame.c
           /tmp/dns_frame_test
-
-      - name: Run native defensive regression tests
-        run: bash app/src/test/native/run_defensive_tests.sh
 
       - name: Run IPv6 extension header walk host tests
         run: |
