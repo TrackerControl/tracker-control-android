@@ -582,10 +582,9 @@ fn over_long_uncompressed_answer_owner_name_is_still_rejected() {
 /// A CDN-fronted tracker's typical response shape: qname CNAME intermediate,
 /// intermediate CNAME target, target A <ip>. Each owner name after the
 /// question is a compression pointer into the previous record's RDATA, the
-/// way real resolvers encode chains. Every validated owner→target link is
-/// recorded against the terminal address. The first row therefore carries
-/// the *original question* qname, while each intermediate alias survives as
-/// its own qname group without a synthetic terminal self-row.
+/// way real resolvers encode chains. Every validated target is
+/// recorded against the terminal address under the original question qname,
+/// without inventing independent queries for intermediate aliases.
 #[test]
 fn cname_chain_records_each_a_alias_with_question_qname() {
     let qname_encoded = name("chain.example");
@@ -630,7 +629,7 @@ fn cname_chain_records_each_a_alias_with_question_qname() {
                 300,
             ),
             (
-                "mid.chain.example".to_owned(),
+                "chain.example".to_owned(),
                 "cdn.example".to_owned(),
                 "203.0.113.7".to_owned(),
                 300,
@@ -691,7 +690,7 @@ fn cname_chain_ending_in_aaaa_records_each_alias_with_question_qname() {
                 300,
             ),
             (
-                "mid.chain6.example".to_owned(),
+                "chain6.example".to_owned(),
                 "cdn6.example".to_owned(),
                 "2001:db8::2".to_owned(),
                 300,
@@ -714,8 +713,8 @@ fn cname_chain_ending_in_aaaa_records_each_alias_with_question_qname() {
 }
 
 /// CNAME links are a graph, rather than an ordered list. The intermediate
-/// name gets its own qname group, so an Android lookup grouped by qname keeps
-/// the complete chain and can still find a tracker at that name.
+/// name retains the original question, so independent queries stay distinct
+/// while the classifier can still find a tracker at any target.
 #[test]
 fn cname_chain_is_order_independent_and_canonicalises_names() {
     let qname = name("SAFE.EXAMPLE");
@@ -742,7 +741,7 @@ fn cname_chain_is_order_independent_and_canonicalises_names() {
                 40,
             ),
             (
-                "intermediate.tracker.example".to_owned(),
+                "safe.example".to_owned(),
                 "final.example".to_owned(),
                 "203.0.113.8".to_owned(),
                 40,
@@ -751,7 +750,7 @@ fn cname_chain_is_order_independent_and_canonicalises_names() {
     );
     assert!(records
         .iter()
-        .any(|record| record.0 == "intermediate.tracker.example"));
+        .any(|record| record.1 == "intermediate.tracker.example"));
     assert!(!records
         .iter()
         .any(|record| record.0 == "final.example" && record.1 == "final.example"));
@@ -878,7 +877,7 @@ fn repeated_branching_cname_links_have_bounded_total_traversal() {
     assert!(records.iter().all(|record| record.2 == "203.0.113.12"));
     assert_eq!(records[0].0, "budget-0.example");
     assert_eq!(records[0].1, "budget-1.example");
-    assert_eq!(records[7].0, "budget-7.example");
+    assert_eq!(records[7].0, "budget-0.example");
     assert_eq!(records[7].1, "budget-8.example");
 }
 
@@ -1113,4 +1112,34 @@ fn partial_response_cannot_detect_svcb_past_the_truncation_point() {
         Outcome::Unchanged
     );
     assert_eq!(message, original);
+}
+
+#[test]
+fn all_targets_keep_root_provenance_and_shortest_path_ttl() {
+    let q = question(&name("root.example"), TYPE_A);
+    let message = response(
+        &[q],
+        &[
+            cname_answer("root.example", "tracker.example", 5),
+            cname_answer("tracker.example", "edge.example", 90),
+            cname_answer("edge.example", "terminal.example", 300),
+            named_a_answer("terminal.example", 600, [203, 0, 113, 11]),
+        ],
+    );
+    let policy = TestPolicy::default();
+    record_answers(&message, &policy);
+    let records = policy.records.borrow();
+    assert_eq!(records.len(), 3);
+    assert!(records.iter().all(|r| r.0 == "root.example" && r.3 == 5));
+    assert!(records.iter().any(|r| r.1 == "tracker.example"));
+    drop(records);
+    let separate = response(
+        &[question(&name("edge.example"), TYPE_A)],
+        &[
+            cname_answer("edge.example", "terminal.example", 300),
+            named_a_answer("terminal.example", 600, [203, 0, 113, 11]),
+        ],
+    );
+    record_answers(&separate, &policy);
+    assert_eq!(policy.records.borrow().last().unwrap().0, "edge.example");
 }
