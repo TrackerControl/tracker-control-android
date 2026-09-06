@@ -44,11 +44,16 @@ public class DnsOverHttpsClientTest {
     };
 
     private MockWebServer server;
+    private final AtomicInteger idleEvictions = new AtomicInteger();
 
     @Before
     public void setUp() throws IOException {
         DnsOverHttpsClient.setScreenOff(false);
         DnsOverHttpsClient.resetInstance();
+        DnsOverHttpsClient.setEvictionExecutorForTests(command -> {
+            idleEvictions.incrementAndGet();
+            command.run();
+        });
         server = new MockWebServer();
         server.start();
     }
@@ -57,6 +62,7 @@ public class DnsOverHttpsClientTest {
     public void tearDown() throws IOException {
         DnsOverHttpsClient.setScreenOff(false);
         DnsOverHttpsClient.resetInstance();
+        DnsOverHttpsClient.setEvictionExecutorForTests(null);
         server.close();
     }
 
@@ -119,6 +125,35 @@ public class DnsOverHttpsClientTest {
         } finally {
             DnsOverHttpsClient.setScreenOff(false);
         }
+    }
+
+    @Test
+    public void resolveDoesNotEvictAfterScreenOffHttpCacheHit() {
+        server.enqueue(cacheableDnsResponse(RESPONSE));
+        DnsOverHttpsClient client = client();
+
+        assertArrayEquals(RESPONSE, client.resolve(QUERY));
+        assertEquals(1, server.getRequestCount());
+
+        DnsOverHttpsClient.setScreenOff(true);
+        int evictionsAfterScreenOff = idleEvictions.get();
+        assertArrayEquals(RESPONSE, client.resolve(QUERY));
+
+        assertEquals(evictionsAfterScreenOff, idleEvictions.get());
+        assertEquals(1, server.getRequestCount());
+    }
+
+    @Test
+    public void resolveEvictsAfterScreenOffNetworkResponse() {
+        server.enqueue(dnsResponse(200, RESPONSE));
+        DnsOverHttpsClient client = client();
+
+        DnsOverHttpsClient.setScreenOff(true);
+        int evictionsAfterScreenOff = idleEvictions.get();
+        assertArrayEquals(RESPONSE, client.resolve(QUERY));
+
+        assertEquals(evictionsAfterScreenOff + 1, idleEvictions.get());
+        assertEquals(1, server.getRequestCount());
     }
 
     @Test
@@ -385,6 +420,15 @@ public class DnsOverHttpsClientTest {
         return new MockResponse.Builder()
                 .code(status)
                 .addHeader("Content-Type", "application/dns-message")
+                .body(new Buffer().write(body))
+                .build();
+    }
+
+    private static MockResponse cacheableDnsResponse(byte[] body) {
+        return new MockResponse.Builder()
+                .code(200)
+                .addHeader("Content-Type", "application/dns-message")
+                .addHeader("Cache-Control", "max-age=60")
                 .body(new Buffer().write(body))
                 .build();
     }

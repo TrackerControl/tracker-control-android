@@ -31,8 +31,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,12 +57,15 @@ public class DnsProxyServer {
     private final AtomicBoolean running = new AtomicBoolean(false);
     private DatagramSocket serverSocket;
     private ServerSocket tcpServerSocket;
-    private ExecutorService executor;
+    private ThreadPoolExecutor executor;
     // Tracked so stop() can wait for the listeners to actually exit, rather
     // than just closing their sockets and returning immediately.
     private Thread udpListenerThread;
     private Thread tcpListenerThread;
     private static final long LISTENER_JOIN_TIMEOUT_MS = 2000;
+    private static final int REQUEST_WORKERS = 16;
+    private static final int REQUEST_QUEUE_CAPACITY = 64;
+    private final AtomicInteger overloadDrops = new AtomicInteger(0);
     private final AtomicInteger dohFailures = new AtomicInteger(0);
     // Trips after this many consecutive failed network attempts (not queries):
     // a single failing resolve burns up to three full timeout budgets, so a
@@ -120,8 +124,11 @@ public class DnsProxyServer {
             running.set(true);
 
             // Handlers block on network I/O (worst case ~15s per DoH resolve),
-            // so a pool of 4 collapsed resolution throughput under packet loss
-            executor = Executors.newFixedThreadPool(16);
+            // so a pool of 4 collapsed resolution throughput under packet loss.
+            // Bound the waiting work as well: a dead endpoint must not retain
+            // an unlimited number of DNS packets and accepted TCP sockets.
+            executor = createRequestExecutor(REQUEST_WORKERS, REQUEST_QUEUE_CAPACITY);
+            overloadDrops.set(0);
 
             // Start the main listener thread
             udpListenerThread = new Thread(this::runServer, "DnsProxyServer");
@@ -185,7 +192,11 @@ public class DnsProxyServer {
         tcpListenerThread = null;
 
         if (executor != null) {
-            executor.shutdownNow();
+            List<Runnable> pending = executor.shutdownNow();
+            for (Runnable task : pending)
+                if (task instanceof TcpConnectionTask)
+                    ((TcpConnectionTask) task).discard();
+            executor = null;
         }
 
         // Also reset the DoH client to close idle HTTPS connections
@@ -271,14 +282,52 @@ public class DnsProxyServer {
                 final InetAddress clientAddress = request.getAddress();
                 final int clientPort = request.getPort();
 
-                // Handle the query in a separate thread
-                executor.submit(() -> handleQuery(queryData, clientAddress, clientPort));
+                // Handle the query in a separate thread. Overload gets an
+                // immediate SERVFAIL instead of retaining stale work while
+                // every worker waits on the same failed DoH endpoint.
+                if (!tryExecute(executor,
+                        () -> handleQuery(queryData, clientAddress, clientPort)))
+                    rejectUdpQuery(queryData, clientAddress, clientPort);
 
             } catch (IOException e) {
                 if (running.get()) {
                     Log.e(TAG, "Error receiving DNS query: " + e.getMessage());
                 }
             }
+        }
+    }
+
+    static ThreadPoolExecutor createRequestExecutor(int workers, int queueCapacity) {
+        if (workers <= 0 || queueCapacity <= 0)
+            throw new IllegalArgumentException("workers and queueCapacity must be positive");
+        return new ThreadPoolExecutor(
+                workers, workers, 0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(queueCapacity));
+    }
+
+    static boolean tryExecute(@Nullable ThreadPoolExecutor target, Runnable task) {
+        if (target == null)
+            return false;
+        try {
+            target.execute(task);
+            return true;
+        } catch (RejectedExecutionException ignored) {
+            return false;
+        }
+    }
+
+    private void logOverload(String transport) {
+        int dropped = overloadDrops.incrementAndGet();
+        if ((dropped & 255) == 1)
+            Log.w(TAG, "DNS " + transport + " overload, rejected " + dropped + " request(s)");
+    }
+
+    private void rejectUdpQuery(byte[] queryData, InetAddress clientAddress, int clientPort) {
+        logOverload("UDP");
+        try {
+            sendServFailResponse(queryData, clientAddress, clientPort);
+        } catch (IOException e) {
+            Log.d(TAG, "Unable to send overload SERVFAIL: " + e.getMessage());
         }
     }
 
@@ -418,11 +467,35 @@ public class DnsProxyServer {
             try {
                 Socket clientSocket = tcpServerSocket.accept();
                 clientSocket.setSoTimeout(10000); // 10s timeout
-                executor.submit(() -> handleTcpConnection(clientSocket));
+                TcpConnectionTask task = new TcpConnectionTask(clientSocket);
+                if (!tryExecute(executor, task)) {
+                    logOverload("TCP");
+                    task.discard();
+                }
             } catch (IOException e) {
                 if (running.get()) {
                     Log.e(TAG, "Error accepting TCP connection: " + e.getMessage());
                 }
+            }
+        }
+    }
+
+    private final class TcpConnectionTask implements Runnable {
+        private final Socket client;
+
+        private TcpConnectionTask(Socket client) {
+            this.client = client;
+        }
+
+        @Override
+        public void run() {
+            handleTcpConnection(client);
+        }
+
+        private void discard() {
+            try {
+                client.close();
+            } catch (IOException ignored) {
             }
         }
     }
