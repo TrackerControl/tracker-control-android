@@ -243,7 +243,7 @@ fn callbacks_receive_terminated_strings_and_new_length() {
 }
 
 #[test]
-fn capi_receives_each_validated_cname_link_without_terminal_self_row() {
+fn capi_preserves_question_for_every_cname_target() {
     let qname = question_name("alias.example");
     let mut message = response(
         &qname,
@@ -253,7 +253,8 @@ fn capi_receives_each_validated_cname_link_without_terminal_self_row() {
                 TYPE_A,
                 &[203, 0, 113, 12],
             ),
-            cname_answer("alias.example", "terminal.example"),
+            cname_answer("alias.example", "tracker.example"),
+            cname_answer("tracker.example", "terminal.example"),
         ],
     );
     let mut capture = Capture::default();
@@ -270,12 +271,20 @@ fn capi_receives_each_validated_cname_link_without_terminal_self_row() {
     assert_eq!(result, TCDNS_UNCHANGED);
     assert_eq!(
         capture.records,
-        vec![(
-            "alias.example".to_owned(),
-            "terminal.example".to_owned(),
-            "203.0.113.12".to_owned(),
-            300,
-        )]
+        vec![
+            (
+                "alias.example".to_owned(),
+                "tracker.example".to_owned(),
+                "203.0.113.12".to_owned(),
+                300
+            ),
+            (
+                "alias.example".to_owned(),
+                "terminal.example".to_owned(),
+                "203.0.113.12".to_owned(),
+                300
+            ),
+        ]
     );
 }
 
