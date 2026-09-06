@@ -295,8 +295,19 @@ int open_icmp_socket(const struct arguments *args, const struct icmp_session *cu
     }
 
     // Protect socket
-    if (protect_socket(args, sock) < 0)
+    if (protect_socket(args, sock) < 0) {
+        close(sock);
         return -1;
+    }
+
+    // Set non blocking so epoll handlers never stall the VPN thread.
+    int flags = fcntl(sock, F_GETFL, 0);
+    if (flags < 0 || fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+        log_android(ANDROID_LOG_ERROR, "fcntl socket O_NONBLOCK error %d: %s",
+                    errno, strerror(errno));
+        close(sock);
+        return -1;
+    }
 
     return sock;
 }

@@ -116,12 +116,8 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
 
                 if (errno != EINTR && errno != EAGAIN)
                     s->udp.state = UDP_FINISHING;
-            } else if (bytes == 0) {
-                log_android(ANDROID_LOG_WARN, "UDP recv eof");
-                s->udp.state = UDP_FINISHING;
-
             } else {
-                // Socket read data
+                // A zero-length datagram is valid SOCK_DGRAM data, not EOF.
                 char dest[INET6_ADDRSTRLEN + 1];
                 if (s->udp.version == 4)
                     inet_ntop(AF_INET, &s->udp.daddr.ip4, dest, sizeof(dest));
@@ -133,7 +129,7 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
                 s->udp.received += bytes;
 
                 // Process DNS response
-                if (ntohs(s->udp.dest) == 53) {
+                if (ntohs(s->udp.dest) == 53 && bytes > 0) {
                     size_t dlen = (size_t) bytes;
                     parse_dns_response(args, s, buffer, &dlen);
                     bytes = (ssize_t) dlen;
@@ -142,11 +138,6 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
                 // Forward to tun
                 if (write_udp(args, &s->udp, buffer, (size_t) bytes) < 0)
                     s->udp.state = UDP_FINISHING;
-                else {
-                    // Prevent too many open files
-                    if (ntohs(s->udp.dest) == 53)
-                        s->udp.state = UDP_FINISHING;
-                }
             }
             ng_free(buffer, __FILE__, __LINE__);
         }
@@ -209,6 +200,33 @@ void block_udp(const struct arguments *args,
     log_android(ANDROID_LOG_INFO, "UDP blocked session from %s/%u to %s/%u",
                 source, ntohs(udphdr->source), dest, ntohs(udphdr->dest));
 
+    // UDP_BLOCKED entries are negative cache nodes, not active sockets, so
+    // they are excluded from the descriptor/session admission count. Keep a
+    // separate cap and evict the oldest blocked node only; active sessions
+    // therefore remain available even during sustained blocked-port churn.
+    int blocked = 0;
+    struct ng_session *oldest = NULL;
+    struct ng_session *oldest_prev = NULL;
+    struct ng_session *prev = NULL;
+    for (struct ng_session *cur = args->ctx->ng_session;
+         cur != NULL; cur = cur->next) {
+        if (cur->protocol == IPPROTO_UDP && cur->udp.state == UDP_BLOCKED) {
+            blocked++;
+            if (oldest == NULL || cur->udp.time <= oldest->udp.time) {
+                oldest = cur;
+                oldest_prev = prev;
+            }
+        }
+        prev = cur;
+    }
+    if (blocked >= UDP_BLOCKED_MAX && oldest != NULL) {
+        if (oldest_prev == NULL)
+            args->ctx->ng_session = oldest->next;
+        else
+            oldest_prev->next = oldest->next;
+        ng_free(oldest, __FILE__, __LINE__);
+    }
+
     // Register session
     struct ng_session *s = ng_malloc(sizeof(struct ng_session), "udp session block");
     s->protocol = IPPROTO_UDP;
@@ -248,6 +266,7 @@ jboolean handle_udp(const struct arguments *args,
     const size_t datalen = length - (data - pkt);
 
     // Search session
+    struct ng_session *prev = NULL;
     struct ng_session *cur = args->ctx->ng_session;
     while (cur != NULL &&
            !(cur->protocol == IPPROTO_UDP &&
@@ -256,8 +275,10 @@ jboolean handle_udp(const struct arguments *args,
              (version == 4 ? cur->udp.saddr.ip4 == ip4->saddr &&
                              cur->udp.daddr.ip4 == ip4->daddr
                            : memcmp(&cur->udp.saddr.ip6, &ip6->ip6_src, 16) == 0 &&
-                             memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0)))
+                             memcmp(&cur->udp.daddr.ip6, &ip6->ip6_dst, 16) == 0))) {
+        prev = cur;
         cur = cur->next;
+    }
 
     char source[INET6_ADDRSTRLEN + 1];
     char dest[INET6_ADDRSTRLEN + 1];
@@ -270,9 +291,32 @@ jboolean handle_udp(const struct arguments *args,
     }
 
     if (cur != NULL && cur->udp.state != UDP_ACTIVE) {
-        log_android(ANDROID_LOG_INFO, "UDP ignore session from %s/%u to %s/%u state %d",
-                    source, ntohs(udphdr->source), dest, ntohs(udphdr->dest), cur->udp.state);
-        return 0;
+        if (cur->udp.state == UDP_CLOSED && ntohs(cur->udp.dest) == 53) {
+            // check_udp_session normally accounts a closed mapping before it
+            // reaches the retention period. Flush any counters still present
+            // here as well, then discard the inert tuple so a new query can
+            // open a fresh socket immediately after the 15-second DNS idle
+            // timeout. UDP_BLOCKED remains a negative-cache hit below.
+            if (cur->udp.sent || cur->udp.received) {
+                account_usage(args, cur->udp.version, IPPROTO_UDP,
+                              dest, ntohs(cur->udp.dest), cur->udp.uid,
+                              cur->udp.sent, cur->udp.received);
+                cur->udp.sent = 0;
+                cur->udp.received = 0;
+            }
+            if (prev == NULL)
+                args->ctx->ng_session = cur->next;
+            else
+                prev->next = cur->next;
+            ng_free(cur, __FILE__, __LINE__);
+            cur = NULL;
+        } else {
+            log_android(ANDROID_LOG_INFO,
+                        "UDP ignore session from %s/%u to %s/%u state %d",
+                        source, ntohs(udphdr->source), dest, ntohs(udphdr->dest),
+                        cur->udp.state);
+            return 0;
+        }
     }
 
     // Create new session if needed
@@ -288,13 +332,6 @@ jboolean handle_udp(const struct arguments *args,
         s->udp.uid = uid;
         s->udp.version = version;
 
-        int rversion;
-        if (redirect == NULL)
-            rversion = s->udp.version;
-        else
-            rversion = (strstr(redirect->raddr, ":") == NULL ? 4 : 6);
-        s->udp.mss = (uint16_t) (rversion == 4 ? UDP4_MAXMSG : UDP6_MAXMSG);
-
         s->udp.sent = 0;
         s->udp.received = 0;
 
@@ -308,11 +345,36 @@ jboolean handle_udp(const struct arguments *args,
 
         s->udp.source = udphdr->source;
         s->udp.dest = udphdr->dest;
+
+        // Resolve the endpoint once when the tuple is admitted. The Java
+        // Allowed object is packet-scoped, so retaining or re-reading it
+        // would let later policy results change the family or destination of
+        // an already-open socket.
+        s->udp.resolved_version = version;
+        s->udp.resolved_port = udphdr->dest;
+        if (redirect == NULL) {
+            if (version == 4)
+                s->udp.resolved_addr.ip4 = (__be32) ip4->daddr;
+            else
+                memcpy(&s->udp.resolved_addr.ip6, &ip6->ip6_dst, 16);
+        } else {
+            s->udp.resolved_version = (strchr(redirect->raddr, ':') == NULL ? 4 : 6);
+            int parsed = inet_pton(s->udp.resolved_version == 4 ? AF_INET : AF_INET6,
+                                   redirect->raddr, &s->udp.resolved_addr);
+            if (parsed != 1) {
+                log_android(ANDROID_LOG_ERROR, "UDP invalid redirect address %s",
+                            redirect->raddr);
+                ng_free(s, __FILE__, __LINE__);
+                return 0;
+            }
+            s->udp.resolved_port = htons(redirect->rport);
+        }
+        s->udp.mss = (uint16_t) (s->udp.resolved_version == 4 ? UDP4_MAXMSG : UDP6_MAXMSG);
         s->udp.state = UDP_ACTIVE;
         s->next = NULL;
 
         // Open UDP socket
-        s->socket = open_udp_socket(args, &s->udp, redirect);
+        s->socket = open_udp_socket(args, &s->udp);
         if (s->socket < 0) {
             ng_free(s, __FILE__, __LINE__);
             return 0;
@@ -348,34 +410,17 @@ jboolean handle_udp(const struct arguments *args,
 
     cur->udp.time = time(NULL);
 
-    int rversion;
+    int rversion = cur->udp.resolved_version;
     struct sockaddr_in addr4 = {0};
     struct sockaddr_in6 addr6 = {0};
-    if (redirect == NULL) {
-        rversion = cur->udp.version;
-        if (cur->udp.version == 4) {
-            addr4.sin_family = AF_INET;
-            addr4.sin_addr.s_addr = (__be32) cur->udp.daddr.ip4;
-            addr4.sin_port = cur->udp.dest;
-        } else {
-            addr6.sin6_family = AF_INET6;
-            memcpy(&addr6.sin6_addr, &cur->udp.daddr.ip6, 16);
-            addr6.sin6_port = cur->udp.dest;
-        }
+    if (rversion == 4) {
+        addr4.sin_family = AF_INET;
+        addr4.sin_addr.s_addr = (__be32) cur->udp.resolved_addr.ip4;
+        addr4.sin_port = cur->udp.resolved_port;
     } else {
-        rversion = (strstr(redirect->raddr, ":") == NULL ? 4 : 6);
-        log_android(ANDROID_LOG_WARN, "UDP%d redirect to %s/%u",
-                    rversion, redirect->raddr, redirect->rport);
-
-        if (rversion == 4) {
-            addr4.sin_family = AF_INET;
-            inet_pton(AF_INET, redirect->raddr, &addr4.sin_addr);
-            addr4.sin_port = htons(redirect->rport);
-        } else {
-            addr6.sin6_family = AF_INET6;
-            inet_pton(AF_INET6, redirect->raddr, &addr6.sin6_addr);
-            addr6.sin6_port = htons(redirect->rport);
-        }
+        addr6.sin6_family = AF_INET6;
+        memcpy(&addr6.sin6_addr, &cur->udp.resolved_addr.ip6, 16);
+        addr6.sin6_port = cur->udp.resolved_port;
     }
 
     if (sendto(cur->socket, data, (socklen_t) datalen, MSG_NOSIGNAL,
@@ -394,13 +439,9 @@ jboolean handle_udp(const struct arguments *args,
 }
 
 int open_udp_socket(const struct arguments *args,
-                    const struct udp_session *cur, const struct allowed *redirect) {
+                    const struct udp_session *cur) {
     int sock;
-    int version;
-    if (redirect == NULL)
-        version = cur->version;
-    else
-        version = (strstr(redirect->raddr, ":") == NULL ? 4 : 6);
+    int version = cur->resolved_version;
 
     // Get UDP socket
     sock = socket(version == 4 ? PF_INET : PF_INET6, SOCK_DGRAM, IPPROTO_UDP);
@@ -410,8 +451,19 @@ int open_udp_socket(const struct arguments *args,
     }
 
     // Protect socket
-    if (protect_socket(args, sock) < 0)
+    if (protect_socket(args, sock) < 0) {
+        close(sock);
         return -1;
+    }
+
+    // Set non blocking so epoll handlers never stall the VPN thread.
+    int flags = fcntl(sock, F_GETFL, 0);
+    if (flags < 0 || fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0) {
+        log_android(ANDROID_LOG_ERROR, "fcntl socket O_NONBLOCK error %d: %s",
+                    errno, strerror(errno));
+        close(sock);
+        return -1;
+    }
 
     // Check for broadcast/multicast
     if (cur->version == 4) {

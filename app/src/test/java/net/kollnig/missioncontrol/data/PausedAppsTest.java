@@ -28,6 +28,7 @@ public class PausedAppsTest {
     private SharedPreferences apply;
     private SharedPreferences trackerProtect;
     private SharedPreferences minimalOnlyPrefs;
+    private InternetBlocklist internetBlocklist;
 
     @Before
     public void setUp() {
@@ -36,10 +37,12 @@ public class PausedAppsTest {
         apply = context.getSharedPreferences("apply", Context.MODE_PRIVATE);
         trackerProtect = context.getSharedPreferences("tracker_protect", Context.MODE_PRIVATE);
         minimalOnlyPrefs = context.getSharedPreferences("tracker_essential", Context.MODE_PRIVATE);
+        internetBlocklist = InternetBlocklist.getInstance(null);
         paused.edit().clear().commit();
         apply.edit().clear().commit();
         trackerProtect.edit().clear().commit();
         minimalOnlyPrefs.edit().clear().commit();
+        internetBlocklist.clear();
     }
 
     @Test
@@ -103,6 +106,55 @@ public class PausedAppsTest {
         AppProtectionWriter.applyScheduled(context, "com.example.app", 0, false);
 
         assertTrue(paused.contains("com.example.app"));
+    }
+
+    @Test
+    public void protectedToNoInternetRequestsReload() {
+        String packageName = "com.example.app";
+        int uid = 10001;
+        apply.edit().putBoolean(packageName, true).commit();
+        trackerProtect.edit().putBoolean(packageName, true).commit();
+
+        assertTrue(AppProtectionWriter.shouldReloadAfterChange(
+                true, true, null, true, Boolean.TRUE, false));
+
+        AppProtectionWriter.applyManual(context, packageName, uid,
+                AppProtectionState.of(AppProtectionState.NO_INTERNET));
+
+        assertTrue(internetBlocklist.blockedInternet(uid));
+    }
+
+    @Test
+    public void noOpInternetWriteDoesNotReloadService() {
+        String packageName = "com.example.app";
+        int uid = 10002;
+        apply.edit().putBoolean(packageName, true).commit();
+        trackerProtect.edit().putBoolean(packageName, true).commit();
+        internetBlocklist.block(context, uid);
+
+        assertFalse(AppProtectionWriter.shouldReloadAfterChange(
+                true, true, null, true, Boolean.TRUE, true));
+
+        AppProtectionWriter.applyManual(context, packageName, uid,
+                AppProtectionState.of(AppProtectionState.NO_INTERNET));
+
+        assertTrue(internetBlocklist.blockedInternet(uid));
+    }
+
+    @Test
+    public void nullInternetWriteLeavesBlockAndDoesNotReloadService() {
+        String packageName = "com.example.app";
+        int uid = 10003;
+        apply.edit().putBoolean(packageName, true).commit();
+        trackerProtect.edit().putBoolean(packageName, true).commit();
+        internetBlocklist.block(context, uid);
+
+        assertFalse(AppProtectionWriter.shouldReloadAfterChange(
+                true, true, null, true, null, true));
+
+        AppProtectionWriter.applyScheduled(context, packageName, uid, true);
+
+        assertTrue(internetBlocklist.blockedInternet(uid));
     }
 
     @Test

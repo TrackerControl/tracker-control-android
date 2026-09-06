@@ -32,6 +32,7 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -75,6 +76,7 @@ public class DnsOverHttpsClient {
         thread.setDaemon(true);
         return thread;
     });
+    private static volatile Executor evictionExecutor = SHUTDOWN_EXECUTOR;
     private static DnsOverHttpsClient instance;
     private static Cache responseCache;
     // Screen-off DoH battery policy: while the device is dozing we skip retries
@@ -164,7 +166,11 @@ public class DnsOverHttpsClient {
     }
 
     private void evictIdle() {
-        SHUTDOWN_EXECUTOR.execute(() -> client.connectionPool().evictAll());
+        evictionExecutor.execute(() -> client.connectionPool().evictAll());
+    }
+
+    static void setEvictionExecutorForTests(@Nullable Executor executor) {
+        evictionExecutor = executor == null ? SHUTDOWN_EXECUTOR : executor;
     }
 
     /**
@@ -245,8 +251,10 @@ public class DnsOverHttpsClient {
             }
 
             Call call = client.newCall(request);
+            boolean networkAttempted = false;
             try {
                 try (Response response = call.execute()) {
+                    networkAttempted = response.networkResponse() != null;
                     if (!response.isSuccessful()) {
                         Log.w(TAG, "DoH request failed with code: " + response.code());
                         // 408 is a transient upstream timeout, not a client error.
@@ -305,13 +313,14 @@ public class DnsOverHttpsClient {
                     Log.d(TAG, "DoH request canceled (client shutdown), not counted as a failure");
                     return null;
                 }
+                networkAttempted = true;
                 Log.e(TAG, "DoH request failed: " + e.getMessage());
                 reportFailedAttempt(onFailedAttempt);
             } finally {
                 // Screen off: never leave an idle keep-alive socket behind — a
-                // server-side reset during doze would wake the radio. Cache
-                // hits are unaffected (no connection is created for them).
-                if (screenOff) {
+                // server-side reset during doze would wake the radio. Cache hits
+                // are unaffected (no connection is created for them).
+                if (screenOff && networkAttempted) {
                     evictIdle();
                 }
             }

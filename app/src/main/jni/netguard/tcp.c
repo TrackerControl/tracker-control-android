@@ -36,6 +36,7 @@ void clear_tcp_data(struct tcp_session *cur) {
         ng_free(p->data, __FILE__, __LINE__);
         ng_free(p, __FILE__, __LINE__);
     }
+    cur->forward = NULL;
     if (cur->tls_data != NULL) {
         ng_free(cur->tls_data, __FILE__, __LINE__);
         cur->tls_data = NULL;
@@ -104,7 +105,7 @@ int check_tcp_session(const struct arguments *args, struct ng_session *s,
 
         s->tcp.time = time(NULL);
         s->tcp.state = TCP_CLOSE;
-        dns_frame_reset(&s->tcp.dns_stream);
+        clear_tcp_data(&s->tcp);
     }
 
     if ((s->tcp.state == TCP_CLOSING || s->tcp.state == TCP_CLOSE) &&
@@ -175,11 +176,7 @@ int monitor_tcp_session(const struct arguments *args, struct ng_session *s, int 
 }
 
 uint32_t get_send_window(const struct tcp_session *cur) {
-    uint32_t behind;
-    if (cur->acked <= cur->local_seq)
-        behind = (cur->local_seq - cur->acked);
-    else
-        behind = (0x10000 + cur->local_seq - cur->acked);
+    uint32_t behind = cur->local_seq - cur->acked;
     behind += (cur->unconfirmed + 1) * 40; // Maximum header size
 
     uint32_t total = (behind < cur->send_window ? cur->send_window - behind : 0);
