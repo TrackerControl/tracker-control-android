@@ -47,6 +47,28 @@ int main(void) {
     check_window(0x00001030, 0x00001000, 0x58, 0x10028,
                  "non-wrapped sequence distance remains unchanged");
 
+    struct tcp_session probe = {0};
+    int send_probe = 0;
+    CHECK(tcp_window_probe_delay(&probe, 1000, 0, &send_probe) == 100,
+          "zero-window probe starts with a 100 ms deadline");
+    CHECK(send_probe == 0, "initial zero-window deadline does not probe early");
+    CHECK(tcp_window_probe_delay(&probe, 1099, 0, &send_probe) == 1,
+          "zero-window probe keeps the first deadline");
+    CHECK(tcp_window_probe_delay(&probe, 1100, 0, &send_probe) == 200,
+          "zero-window probe doubles after the first probe");
+    CHECK(send_probe == 1, "zero-window probe is emitted at its deadline");
+    CHECK(tcp_window_probe_delay(&probe, 1300, 0, &send_probe) == 400,
+          "zero-window probe continues exponential backoff");
+    CHECK(send_probe == 1, "second zero-window probe is emitted at its deadline");
+    CHECK(tcp_window_probe_delay(&probe, 1301, 1, &send_probe) == 0,
+          "opening the window cancels the probe deadline");
+    CHECK(send_probe == 0, "opening the window does not emit a probe");
+    CHECK(probe.window_probe_delay == 0 && probe.window_probe_deadline == 0,
+          "opening the window resets probe state");
+    probe.upstream_read_eof = 1;
+    CHECK(tcp_window_probe_delay(&probe, 2000, 0, &send_probe) == 0,
+          "upstream EOF disables zero-window probing");
+
     if (failures != 0)
         return 1;
 

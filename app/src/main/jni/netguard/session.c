@@ -90,13 +90,16 @@ void *handle_events(void *a) {
         goto cleanup;
     }
 
-    // Loop
+    // Loop.  Keep maintenance checks on the original 100 ms cadence while
+    // keeping their wait separate from a TCP window-probe deadline.  In
+    // particular, an epoll event must not leave expiry checks parked behind a
+    // long timeout computed for an earlier session list.
     long long last_check = 0;
+    int maintenance_delay_ms = EPOLL_TIMEOUT * 1000;
     while (!args->ctx->stopping) {
         log_android(ANDROID_LOG_DEBUG, "Loop");
 
-        int recheck = 0;
-        int timeout = EPOLL_TIMEOUT;
+        int probe_timeout = -1;
 
         // Count sessions
         int isessions = 0;
@@ -113,8 +116,11 @@ void *handle_events(void *a) {
             } else if (s->protocol == IPPROTO_TCP) {
                 if (s->tcp.state != TCP_CLOSING && s->tcp.state != TCP_CLOSE)
                     tsessions++;
-                if (s->socket >= 0)
-                    recheck = recheck | monitor_tcp_session(args, s, epoll_fd);
+                if (s->socket >= 0) {
+                    int delay = monitor_tcp_session(args, s, epoll_fd);
+                    if (delay > 0 && (probe_timeout < 0 || delay < probe_timeout))
+                        probe_timeout = delay;
+                }
             }
             s = s->next;
         }
@@ -122,7 +128,8 @@ void *handle_events(void *a) {
 
         // Check sessions
         long long ms = get_ms();
-        if (ms - last_check > EPOLL_MIN_CHECK) {
+        int timeout = EPOLL_TIMEOUT;
+        if (last_check == 0 || ms - last_check >= EPOLL_MIN_CHECK) {
             last_check = ms;
 
             // jni_get_stats() (netguard.c) walks ctx->ng_session under this
@@ -159,6 +166,10 @@ void *handle_events(void *a) {
                                        get_tcp_timeout(&s->tcp, sessions, maxsessions) - now + 1;
                         if (stimeout > 0 && stimeout < timeout)
                             timeout = stimeout;
+                    } else if (s->tcp.state == TCP_CLOSE && !del) {
+                        int stimeout = s->tcp.time + TCP_KEEP_TIMEOUT - now + 1;
+                        if (stimeout > 0 && stimeout < timeout)
+                            timeout = stimeout;
                     }
                 }
 
@@ -181,19 +192,26 @@ void *handle_events(void *a) {
 
             if (pthread_mutex_unlock(&args->ctx->lock))
                 log_android(ANDROID_LOG_ERROR, "pthread_mutex_unlock failed");
+            maintenance_delay_ms = timeout > 0 ? timeout * 1000 : 0;
         } else {
-            recheck = 1;
-            log_android(ANDROID_LOG_DEBUG, "Skipped session checks");
+            long long elapsed = ms - last_check;
+            maintenance_delay_ms = elapsed < EPOLL_MIN_CHECK
+                                       ? (int) (EPOLL_MIN_CHECK - elapsed)
+                                       : 0;
         }
 
         log_android(ANDROID_LOG_DEBUG,
-                    "sessions ICMP %d UDP %d TCP %d max %d/%d timeout %d recheck %d",
-                    isessions, usessions, tsessions, sessions, maxsessions, timeout, recheck);
+                    "sessions ICMP %d UDP %d TCP %d max %d/%d timeout %d probe %d",
+                    isessions, usessions, tsessions, sessions, maxsessions, timeout,
+                    probe_timeout);
 
         // Poll
         struct epoll_event ev[EPOLL_EVENTS];
+        int wait_timeout = maintenance_delay_ms;
+        if (probe_timeout >= 0 && probe_timeout < wait_timeout)
+            wait_timeout = probe_timeout;
         int ready = epoll_wait(epoll_fd, ev, EPOLL_EVENTS,
-                               recheck ? EPOLL_MIN_CHECK : timeout * 1000);
+                               wait_timeout);
 
         if (ready < 0) {
             int error = errno;
