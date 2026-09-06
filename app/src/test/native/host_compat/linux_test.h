@@ -7,6 +7,14 @@
 #include <stdint.h>
 #include <netinet/in.h>
 #include <linux/sockios.h>
+#include <netinet/ip6.h>
+
+#ifndef IPV6_VERSION
+#define IPV6_VERSION 0x60
+#endif
+#ifndef IPV6_MAXPACKET
+#define IPV6_MAXPACKET 65535
+#endif
 
 struct ippseudo {
     struct in_addr ippseudo_src;
