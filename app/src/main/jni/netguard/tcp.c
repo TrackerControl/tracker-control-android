@@ -156,7 +156,6 @@ void clear_tcp_data(struct tcp_session *cur) {
     memset(cur->socks5_tx, 0, sizeof(cur->socks5_tx));
     cur->socks5_tx_len = 0;
     cur->socks5_tx_sent = 0;
-    dns_frame_reset(&cur->dns_stream);
 }
 
 int get_tcp_timeout(const struct tcp_session *t, int sessions, int maxsessions) {
