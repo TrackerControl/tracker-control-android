@@ -386,8 +386,12 @@ jboolean handle_udp(const struct arguments *args,
         memset(&s->ev, 0, sizeof(struct epoll_event));
         s->ev.events = EPOLLIN | EPOLLERR;
         s->ev.data.ptr = s;
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev)) {
             log_android(ANDROID_LOG_ERROR, "epoll add udp error %d: %s", errno, strerror(errno));
+            close(s->socket);
+            ng_free(s, __FILE__, __LINE__);
+            return 0;
+        }
 
         s->next = args->ctx->ng_session;
         args->ctx->ng_session = s;
