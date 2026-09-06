@@ -445,10 +445,7 @@ void check_tcp_socket(const struct arguments *args,
 
                 size_t len = 2 + ulen + 1 + plen;
 
-                char *h = hex(buffer, len);
-                log_android(ANDROID_LOG_INFO, "%s sending SOCKS5 auth: %s",
-                            session, h);
-                ng_free(h, __FILE__, __LINE__);
+                log_android(ANDROID_LOG_INFO, "%s sending SOCKS5 auth", session);
                 ssize_t sent = send(s->socket, buffer, len, MSG_NOSIGNAL);
                 if (sent < 0) {
                     log_android(ANDROID_LOG_ERROR,
@@ -864,9 +861,14 @@ jboolean handle_tcp(const struct arguments *args,
             memset(&s->ev, 0, sizeof(struct epoll_event));
             s->ev.events = EPOLLOUT | EPOLLERR;
             s->ev.data.ptr = s;
-            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev))
+            if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, s->socket, &s->ev)) {
                 log_android(ANDROID_LOG_ERROR, "epoll add tcp error %d: %s",
                             errno, strerror(errno));
+                close(s->socket);
+                clear_tcp_data(&s->tcp);
+                ng_free(s, __FILE__, __LINE__);
+                return 0;
+            }
 
             s->next = args->ctx->ng_session;
             args->ctx->ng_session = s;
@@ -1151,8 +1153,8 @@ int open_tcp_socket(const struct arguments *args,
     }
 
     // Build target address
-    struct sockaddr_in addr4;
-    struct sockaddr_in6 addr6;
+    struct sockaddr_in addr4 = {0};
+    struct sockaddr_in6 addr6 = {0};
     if (redirect == NULL) {
         if (*socks5_addr && socks5_port) {
             log_android(ANDROID_LOG_WARN, "TCP%d SOCKS5 to %s/%u",
