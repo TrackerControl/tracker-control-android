@@ -8,7 +8,9 @@ data class WgStats(
     val rxBytes: Long,
     val txBytes: Long,
     val latestHandshakeMillis: Long,
-    val hasFreshHandshake: Boolean = false
+    val hasFreshHandshake: Boolean = false,
+    val tunWriteFailuresTotal: Long = 0L,
+    val tunWriteFailuresStreak: Long = 0L
 )
 
 /** Outcome of a single connectivity poll. */
@@ -46,6 +48,12 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
 
         /** Minimum spacing between prods. */
         const val SECONDS_PER_PING_MS = 3_000L
+
+        /** Consecutive TUN writes that must fail before the failure is qualified. */
+        const val TUN_WRITE_FAILURE_STREAK_THRESHOLD = 8L
+
+        /** Qualified TUN-write failures must continue for this long. */
+        const val TUN_WRITE_FAILURE_PERSISTENCE_MS = 5_000L
     }
 
     private sealed class ConnState {
@@ -70,6 +78,9 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
     private var state: ConnState = ConnState.Connecting(0, false, 0, 0)
     private var initialProdTs: Long? = null
     private var numProds: Int = 0
+    private var tunWriteFailuresTotal = 0L
+    private var tunWriteFailureStartedAt: Long? = null
+    private var tunWriteFailuresSuspended = false
 
     /**
      * True when the most recent [tick] observed the rx counter advancing —
@@ -86,6 +97,8 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
         state = ConnState.Connecting(now, false, stats.rxBytes, stats.txBytes)
         lastTickSawRx = false
         resetProd()
+        resetTunWriteFailures(stats.tunWriteFailuresTotal)
+        tunWriteFailuresSuspended = false
     }
 
     /** One poll. [stats] == null means the tunnel was torn down underneath us. */
@@ -93,13 +106,22 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
         lastTickSawRx = false
         if (stats == null) return WgVerdict.GONE
 
+        val rxAdvanced = update(now, stats.rxBytes, stats.txBytes)
+        lastTickSawRx = rxAdvanced
+
+        // A completed handshake can coexist with a TUN fd that rejects every
+        // decrypted packet. Evaluate the write-failure evidence first so the
+        // fresh-handshake shortcut cannot hide an app-visible outage.
+        if (tunWriteFailureTimedOut(now, stats)) {
+            return WgVerdict.BROKEN
+        }
+
         if (stats.hasFreshHandshake) {
-            lastTickSawRx = update(now, stats.rxBytes, stats.txBytes)
             resetProd()
             return WgVerdict.HEALTHY
         }
 
-        if (update(now, stats.rxBytes, stats.txBytes)) {
+        if (rxAdvanced) {
             lastTickSawRx = true
             resetProd()
             return WgVerdict.HEALTHY
@@ -122,6 +144,8 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
      */
     fun onSuspended(now: Long) {
         resetProd()
+        tunWriteFailureStartedAt = null
+        tunWriteFailuresSuspended = true
         when (val s = state) {
             is ConnState.Connected -> state = s.copy(rxTimestamp = now, txTimestamp = now)
             is ConnState.Connecting -> state = s.copy(start = now)
@@ -154,6 +178,49 @@ internal class WgConnectivityChecker(private val prod: () -> Unit) {
                 rxInc
             }
         }
+    }
+
+    /**
+     * Checks only newly observed failed writes. A nonzero streak with no total
+     * counter advance is stale evidence and must not trigger recovery.
+     */
+    private fun tunWriteFailureTimedOut(now: Long, stats: WgStats): Boolean {
+        if (tunWriteFailuresSuspended) {
+            resetTunWriteFailures(stats.tunWriteFailuresTotal)
+            tunWriteFailuresSuspended = false
+            return false
+        }
+        if (stats.tunWriteFailuresStreak == 0L) {
+            resetTunWriteFailures(stats.tunWriteFailuresTotal)
+            return false
+        }
+        if (stats.tunWriteFailuresTotal < tunWriteFailuresTotal) {
+            // A tunnel restart should normally reseed the checker. Treat a
+            // counter reset defensively as a fresh baseline if one races in.
+            resetTunWriteFailures(stats.tunWriteFailuresTotal)
+            return false
+        }
+        if (stats.tunWriteFailuresTotal == tunWriteFailuresTotal) {
+            // No newly observed failed write means the previous qualification
+            // window has gone stale, even if the native streak is nonzero.
+            tunWriteFailureStartedAt = null
+            return false
+        }
+
+        tunWriteFailuresTotal = stats.tunWriteFailuresTotal
+        if (stats.tunWriteFailuresStreak < TUN_WRITE_FAILURE_STREAK_THRESHOLD) {
+            tunWriteFailureStartedAt = null
+            return false
+        }
+        val startedAt = tunWriteFailureStartedAt ?: now.also {
+            tunWriteFailureStartedAt = it
+        }
+        return now - startedAt >= TUN_WRITE_FAILURE_PERSISTENCE_MS
+    }
+
+    private fun resetTunWriteFailures(total: Long) {
+        tunWriteFailuresTotal = total
+        tunWriteFailureStartedAt = null
     }
 
     /**
@@ -565,7 +632,7 @@ internal class WgConnectivityMonitor(
                         // app without network (the hijack is fail-closed) while
                         // still prodding the radio each idle poll, so it costs
                         // battery without buying recovery.
-                        reportBroken(generation, "tunnel unresponsive after prod; reporting broken state")
+                        reportBroken(generation, "tunnel data path unresponsive; reporting broken state")
                         return
                     }
                     // Null samples are handled before checker.tick so GONE is

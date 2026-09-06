@@ -25,6 +25,8 @@ pub struct TunnelStats {
     pub rx_bytes: i64,
     pub tx_bytes: i64,
     pub latest_handshake_millis: i64,
+    pub tun_write_failures_total: i64,
+    pub tun_write_failures_streak: i64,
 }
 
 struct Inner {
@@ -38,6 +40,8 @@ struct Inner {
     /// prod interval before it ever emitted a keepalive.
     prod_generation: std::sync::atomic::AtomicU64,
     logger: Arc<dyn BridgeLogger>,
+    tun_write_failures_total: Arc<std::sync::atomic::AtomicU64>,
+    tun_write_failures_streak: Arc<std::sync::atomic::AtomicU64>,
 }
 
 pub struct Tunnel {
@@ -87,6 +91,10 @@ pub fn start_tunnel(
 
     let rx_fd = dup_fd(outbound_rx_fd).map_err(|e| format!("dup outbound fd: {e}"))?;
     let tx_fd = dup_fd(tun_write_fd).map_err(|e| format!("dup tun fd: {e}"))?;
+    let tun_write_failures_total = Arc::new(std::sync::atomic::AtomicU64::new(0));
+    let tun_write_failures_streak = Arc::new(std::sync::atomic::AtomicU64::new(0));
+    let stats_total = Arc::clone(&tun_write_failures_total);
+    let stats_streak = Arc::clone(&tun_write_failures_streak);
 
     let runtime = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(2)
@@ -99,7 +107,12 @@ pub fn start_tunnel(
     let device = runtime
         .block_on(async {
             let ip_recv = SocketpairRecv::new(rx_fd, mtu)?;
-            let ip_send = TunFdSend::new(tx_fd, dns);
+            let ip_send = TunFdSend::with_counters(
+                tx_fd,
+                dns,
+                Arc::clone(&tun_write_failures_total),
+                Arc::clone(&tun_write_failures_streak),
+            );
             gotatun::device::build()
                 .with_udp(ProtectedUdpFactory::new(protector))
                 .with_ip_pair(ip_send, ip_recv)
@@ -123,6 +136,8 @@ pub fn start_tunnel(
             peers: std::sync::Mutex::new(config.peers),
             prod_generation: std::sync::atomic::AtomicU64::new(0),
             logger,
+            tun_write_failures_total: stats_total,
+            tun_write_failures_streak: stats_streak,
         }),
     })
 }
@@ -144,8 +159,12 @@ impl Tunnel {
                 .write(async |d| {
                     d.set_private_key(config.private_key.clone()).await;
                     // Drop peers absent from the new config, then upsert the rest.
-                    let existing: Vec<PublicKey> =
-                        d.peers().await.into_iter().map(|p| p.peer.public_key).collect();
+                    let existing: Vec<PublicKey> = d
+                        .peers()
+                        .await
+                        .into_iter()
+                        .map(|p| p.peer.public_key)
+                        .collect();
                     for stale in existing.iter().filter(|k| !new_keys.contains(k)) {
                         d.remove_peer(stale).await;
                     }
@@ -180,6 +199,14 @@ impl Tunnel {
                 rx_bytes: 0,
                 tx_bytes: 0,
                 latest_handshake_millis: 0,
+                tun_write_failures_total: inner
+                    .tun_write_failures_total
+                    .load(std::sync::atomic::Ordering::Relaxed)
+                    as i64,
+                tun_write_failures_streak: inner
+                    .tun_write_failures_streak
+                    .load(std::sync::atomic::Ordering::Relaxed)
+                    as i64,
             };
             for peer in device.peers().await {
                 stats.rx_bytes += peer.stats.rx_bytes as i64;
@@ -312,7 +339,9 @@ impl Tunnel {
                     p.endpoint = Some(addr);
                 }
             }
-            inner.logger.verbose(&format!("peer endpoint updated to {addr}"));
+            inner
+                .logger
+                .verbose(&format!("peer endpoint updated to {addr}"));
             Ok(())
         })
     }

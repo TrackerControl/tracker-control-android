@@ -19,8 +19,13 @@ class WgConnectivityCheckerTest {
     private var prods = 0
     private fun newChecker() = WgConnectivityChecker { prods++ }
 
-    private fun stats(rx: Long, tx: Long, freshHandshake: Boolean = false) =
-        WgStats(rx, tx, 0L, freshHandshake)
+    private fun stats(
+        rx: Long,
+        tx: Long,
+        freshHandshake: Boolean = false,
+        tunFailuresTotal: Long = 0L,
+        tunFailuresStreak: Long = 0L
+    ) = WgStats(rx, tx, 0L, freshHandshake, tunFailuresTotal, tunFailuresStreak)
 
     // --- baseline / connecting ------------------------------------------
 
@@ -152,6 +157,55 @@ class WgConnectivityCheckerTest {
         assertEquals(0, prods)
     }
 
+    /** Existing three-counter/nativeStats snapshots default the new fields to zero. */
+    @Test
+    fun missingTunWriteCountersRemainHealthy() {
+        val c = newChecker()
+        c.seed(0, WgStats(0, 0, 0))
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, WgStats(0, 10, 0, true)))
+        assertEquals(false, c.lastTickSawRx)
+    }
+
+    /** One or intermittent failures clear on a full write and never qualify. */
+    @Test
+    fun transientTunWriteFailuresReset() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(50, 10, true, 1, 1)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(2000, stats(50, 10, true, 1, 0)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(3000, stats(50, 10, true, 2, 1)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(10_000, stats(50, 10, true, 2, 1)))
+    }
+
+    /** A stale nonzero streak without a newer total failure is ignored. */
+    @Test
+    fun staleTunWriteFailureStreakDoesNotBreak() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(50, 10, true, 8, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(20_000, stats(50, 10, true, 8, 8)))
+        // A later total increment starts a new qualification window rather
+        // than inheriting the stale one.
+        assertEquals(WgVerdict.HEALTHY, c.tick(21_000, stats(50, 10, true, 9, 9)))
+    }
+
+    /** Advancing failures break even when handshake and return traffic look healthy. */
+    @Test
+    fun sustainedTunWriteFailuresOverrideFreshHandshakeAndRx() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(100, 10, true, 8, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(2000, stats(200, 20, true, 9, 9)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(3000, stats(300, 30, true, 10, 10)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(4000, stats(400, 40, true, 11, 11)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(5000, stats(500, 50, true, 12, 12)))
+        assertEquals(WgVerdict.BROKEN, c.tick(6000, stats(600, 60, true, 13, 13)))
+        assertEquals(true, c.lastTickSawRx)
+    }
+
     /** Continuous two-way traffic never trips the watchdog. */
     @Test
     fun continuousTrafficStaysHealthy() {
@@ -263,5 +317,18 @@ class WgConnectivityCheckerTest {
         // The pre-doze elapsed time must not count toward the rx timeout.
         assertEquals(WgVerdict.HEALTHY, c.tick(wake + 1000, stats(0, 100)))
         assertEquals(0, prods)
+    }
+
+    /** Suspension clears a partial TUN-write failure window and reseeds it. */
+    @Test
+    fun suspensionResetsTunWriteFailureTracking() {
+        val c = newChecker()
+        c.seed(0, stats(0, 0))
+        assertEquals(WgVerdict.HEALTHY, c.tick(1000, stats(100, 10, true, 1, 8)))
+
+        val wake = 100_000L
+        c.onSuspended(wake)
+        assertEquals(WgVerdict.HEALTHY, c.tick(wake + 1000, stats(100, 10, true, 1, 8)))
+        assertEquals(WgVerdict.HEALTHY, c.tick(wake + 2000, stats(100, 10, true, 2, 8)))
     }
 }

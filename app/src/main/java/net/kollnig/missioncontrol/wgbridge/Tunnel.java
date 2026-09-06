@@ -27,7 +27,9 @@ public final class Tunnel {
      */
     public synchronized TunnelStats stats() {
         long[] values = nativeStats(handle);
-        return new TunnelStats(values[0], values[1], values[2]);
+        long totalFailures = values.length > 3 ? values[3] : 0L;
+        long failureStreak = values.length > 4 ? values[4] : 0L;
+        return new TunnelStats(values[0], values[1], values[2], totalFailures, failureStreak);
     }
 
     /**
