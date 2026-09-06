@@ -19,7 +19,7 @@ compile() {
     if [[ ${BUILD_ONLY:-0} != 1 ]]; then "$OUT/$name"; fi
 }
 compile tcp_defensive_test app/src/test/native/tcp_defensive_test.c \
-    app/src/main/jni/netguard/tcp.c \
+    app/src/main/jni/netguard/tcp.c app/src/main/jni/netguard/dns_frame.c \
     -Wl,--wrap=close -Wl,--wrap=connect -Wl,--wrap=send
 compile udp_defensive_test app/src/test/native/udp_defensive_test.c \
     app/src/main/jni/netguard/udp.c \
@@ -30,3 +30,12 @@ compile icmp_defensive_test app/src/test/native/icmp_defensive_test.c \
     -Wl,--wrap=close -Wl,--wrap=fcntl -Wl,--wrap=sendto -Wl,--wrap=socket
 compile ip_header_test app/src/test/native/ip_header_test.c \
     app/src/test/native/ip_header_failfast.c app/src/main/jni/netguard/ip.c
+compile tcp_window_test app/src/test/native/tcp_window_test.c \
+    app/src/main/jni/netguard/tcp.c
+compile udp_socket_test app/src/test/native/udp_socket_test.c \
+    app/src/main/jni/netguard/udp.c \
+    -Wl,--wrap=close -Wl,--wrap=fcntl -Wl,--wrap=recv \
+    -Wl,--wrap=sendto -Wl,--wrap=socket -Wl,--wrap=write
+compile icmp_socket_test app/src/test/native/icmp_socket_test.c \
+    app/src/main/jni/netguard/icmp.c \
+    -Wl,--wrap=close -Wl,--wrap=fcntl -Wl,--wrap=sendto -Wl,--wrap=socket

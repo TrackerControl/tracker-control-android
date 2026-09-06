@@ -22,6 +22,7 @@
 struct tcdns_ctx {
     const struct arguments *args;
     const struct ng_session *s;
+    int detection_only;
 };
 
 static void tcdns_record_answer(void *opaque, const char *qname, const char *aname,
@@ -32,7 +33,7 @@ static void tcdns_record_answer(void *opaque, const char *qname, const char *ana
 
 static int tcdns_is_domain_blocked(void *opaque, const char *qname) {
     const struct tcdns_ctx *ctx = (const struct tcdns_ctx *) opaque;
-    return is_domain_blocked(ctx->args, qname) != 0;
+    return !ctx->detection_only && is_domain_blocked(ctx->args, qname) != 0;
 }
 
 static uint8_t tcdns_blocked_rcode(void *opaque) {
@@ -43,6 +44,8 @@ static uint8_t tcdns_blocked_rcode(void *opaque) {
 static void tcdns_on_blanked(void *opaque, const char *qname,
                              uint16_t qtype, uint8_t rcode) {
     const struct tcdns_ctx *ctx = (const struct tcdns_ctx *) opaque;
+    if (ctx->detection_only)
+        return;
     const struct arguments *args = ctx->args;
     const struct ng_session *s = ctx->s;
 
@@ -114,4 +117,12 @@ void parse_dns_partial_response(const struct arguments *args, const struct ng_se
     size_t result = tcdns_process_partial_response(data, *datalen, &cb, &ctx);
     if (result != TCDNS_UNCHANGED)
         *blanked = 1;
+}
+
+// This is a completed private copy: recording is useful, but policy/logging
+// cannot claim to have rewritten bytes already forwarded to the client.
+void record_dns_response(const struct arguments *args, uint8_t *data, size_t datalen) {
+    struct tcdns_ctx ctx = { .args = args, .s = NULL, .detection_only = 1 };
+    tcdns_callbacks cb = TCDNS_CALLBACKS_INIT;
+    (void) tcdns_process_response(data, datalen, &cb, &ctx);
 }
