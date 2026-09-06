@@ -37,28 +37,25 @@ int get_udp_session_state(const struct arguments *args,
 }
 
 static void test_ihl_is_validated_before_payload_placement(void) {
-    /* With IHL zero, the old unsigned option-length calculation produced a
-     * payload pointer at byte 256 and let this packet reach later dispatch.
-     * A full-sized backing buffer makes that pointer look superficially valid,
-     * so the test proves the parser rejects the header itself rather than
-     * relying on an incidental short-packet check. */
-    uint8_t packet[264] = {0};
+    _Alignas(struct iphdr) uint8_t packet[64] = {0};
     struct iphdr *ip4 = (struct iphdr *) packet;
     ip4->version = 4;
-    ip4->ihl = 0;
     ip4->protocol = IPPROTO_UDP;
-    ip4->tot_len = htons(sizeof(packet));
 
     struct context context = {0};
     struct arguments args = {0};
     args.ctx = &context;
-    invalid_header_logs = 0;
-
-    handle_ip(&args, packet, sizeof(packet), -1, 1, 1);
-    CHECK(invalid_header_logs == 1,
-          "IPv4 IHL below five is rejected before computing payload placement");
-    CHECK(context.ng_session == NULL,
-          "an invalid IPv4 IHL cannot create a protocol session");
+    for (unsigned ihl = 0; ihl <= 15; ihl++) {
+        // Invalid base headers, then valid IHL values with truncated options.
+        size_t length = ihl < 5 ? sizeof(packet) : ihl * 4 - 1;
+        ip4->ihl = ihl;
+        ip4->tot_len = htons(length);
+        invalid_header_logs = 0;
+        handle_ip(&args, packet, length, -1, 1, 1);
+        CHECK(invalid_header_logs == (ihl == 5 ? 0 : 1),
+              "invalid or truncated IPv4 header is rejected before dispatch");
+        CHECK(context.ng_session == NULL, "invalid header creates no session");
+    }
 }
 
 int main(void) {
