@@ -197,6 +197,7 @@ static void run_coalesced_shrink_case(const char *label,
               label);
         expected_offset += 2 + new_lens[i];
     }
+    dns_frame_reset(&state);
 }
 
 /* A four-frame coalesced read verifies every callback pointer against the
@@ -246,6 +247,7 @@ static void test_coalesced_multiple_frames(void) {
         static const size_t new_lens[] = {1, 2, 3, 4};
         run_coalesced_shrink_case("coalesced shrink: several frames", new_lens);
     }
+    dns_frame_reset(&state);
 }
 
 /* 1. A single complete frame in the read, shortened by the parser: the
@@ -272,6 +274,7 @@ static void test_single_frame_shortened(void) {
     CHECK(out == 22, "single frame shortened: forwards 22 bytes");
     CHECK(read_prefix(buffer) == 20, "single frame shortened: prefix rewritten to 20");
     CHECK(state_is_clean(&state), "single frame shortened: no carry-over state");
+    dns_frame_reset(&state);
 }
 
 /* 2. A single complete frame the parser leaves alone: forwarded verbatim.
@@ -309,6 +312,8 @@ static void test_single_frame_unchanged(void) {
     CHECK(out2 == sizeof(buffer), "grow clamped: bytes untouched");
     CHECK(read_prefix(buffer) == frame_len, "grow clamped: prefix untouched");
     CHECK(state_is_clean(&state2), "grow clamped: no carry-over state");
+    dns_frame_reset(&state);
+    dns_frame_reset(&state2);
 }
 
 /* 3. Coalesced read: two complete frames in one recv(). Both are parsed
@@ -342,6 +347,7 @@ static void test_coalesced_read(void) {
         CHECK(out == sizeof(copy), "coalesced read: bytes untouched");
         CHECK(memcmp(copy, buffer, sizeof(buffer)) == 0, "coalesced read: buffer untouched");
         CHECK(state_is_clean(&state), "coalesced read: no carry-over state");
+        dns_frame_reset(&state);
     }
 
     /* Then: the first frame is shortened to 10 -- the second frame slides
@@ -367,6 +373,7 @@ static void test_coalesced_read(void) {
         CHECK(copy[14] == 0xDD && copy[14 + second - 1] == 0xDD,
               "coalesced shrink: second payload moved down intact");
         CHECK(state_is_clean(&state), "coalesced shrink: no carry-over state");
+        dns_frame_reset(&state);
     }
 }
 
@@ -402,6 +409,7 @@ static void test_shrink_to_zero_alignment(void) {
     CHECK(memcmp(buffer + out, original + out, bytes - out) == 0,
           "shrink to zero: bytes after output unchanged");
     CHECK(state_is_clean(&state), "shrink to zero: clean state");
+    dns_frame_reset(&state);
 }
 
 /* A payload can span three reads: the visible fragment is parsed once, the
@@ -471,6 +479,7 @@ static void test_payload_spanning_three_reads(void) {
               "three-read payload: final continuation untouched");
         CHECK(state_is_clean(&state), "three-read payload: clean state");
     }
+    dns_frame_reset(&state);
 }
 
 /* A blocked partial frame is blanked in the first read and its continuation
@@ -509,6 +518,7 @@ static void test_blocked_split_frames(void) {
               "blocked two-read: continuation blanked");
         CHECK(state.frame_remaining == 0 && state.blank_remaining == 0,
               "blocked two-read: blank continuation cleared at frame end");
+        dns_frame_reset(&state);
     }
 
     {
@@ -556,6 +566,7 @@ static void test_blocked_split_frames(void) {
               "blocked three-read: next frame parsed after exact drain");
         CHECK(state_is_clean(&state),
               "blocked three-read: blank continuation cleared at frame end");
+        dns_frame_reset(&state);
     }
 }
 
@@ -628,6 +639,7 @@ static void test_split_prefix_payload_handoff(void) {
         CHECK(out == sizeof(buffer), "split-prefix handoff: final count unchanged");
         CHECK(state_is_clean(&state), "split-prefix handoff: clean state");
     }
+    dns_frame_reset(&state);
 }
 
 /* Legal zero-length frames between real frames must forward their prefixes
@@ -655,6 +667,7 @@ static void test_zero_frames_between_real_frames(void) {
           "zero frames between: real-frame offsets and lengths");
     CHECK(out == sizeof(buffer), "zero frames between: all bytes forwarded");
     CHECK(state_is_clean(&state), "zero frames between: clean state");
+    dns_frame_reset(&state);
 }
 
 /* 4. Split frame: recv() got fewer bytes than the prefix declares. The
@@ -703,6 +716,7 @@ static void test_split_frame(void) {
           "split continuation: exactly 50 carry-over bytes skipped");
     CHECK(out2 == sizeof(next), "split continuation: all bytes forwarded");
     CHECK(state_is_clean(&state), "split continuation: state drained");
+    dns_frame_reset(&state);
 }
 
 /* 5. frame_len == 0 is a legal no-op frame: its two bytes forward as-is and
@@ -727,6 +741,7 @@ static void test_zero_frame_len(void) {
     CHECK(read_prefix(buffer) == 0, "zero frame_len: no-op frame forwarded as-is");
     CHECK(read_prefix(buffer + 2) == 3, "zero frame_len: following prefix rewritten");
     CHECK(state_is_clean(&state), "zero frame_len: no carry-over state");
+    dns_frame_reset(&state);
 }
 
 /* 6. Minimal edges: a 3-byte read holding one payload byte, complete or
@@ -750,6 +765,7 @@ static void test_minimal_reads(void) {
         CHECK(out == 2, "bytes==3 complete: shrunk to a bare prefix");
         CHECK(read_prefix(buffer) == 0, "bytes==3 complete: prefix rewritten to 0");
         CHECK(state_is_clean(&state), "bytes==3 complete: no carry-over state");
+        dns_frame_reset(&state);
     }
 
     /* Split: the prefix declares more than the single available byte. */
@@ -768,6 +784,7 @@ static void test_minimal_reads(void) {
               "bytes==3 split: parse capped to the single available byte");
         CHECK(out == sizeof(buffer), "bytes==3 split: bytes untouched");
         CHECK(state.frame_remaining == 4, "bytes==3 split: 4 payload bytes still owed");
+        dns_frame_reset(&state);
     }
 
     /* A lone byte: the high half of a length prefix. It cannot be withheld,
@@ -786,6 +803,7 @@ static void test_minimal_reads(void) {
         CHECK(state.have_prefix_hi != 0 && state.prefix_hi == 0x01,
               "lone prefix byte: stashed for the next read");
         CHECK(state.frame_remaining == 0, "lone prefix byte: no payload owed");
+        dns_frame_reset(&state);
     }
 
     /* Exactly two bytes can hold a nonzero prefix but no payload. The parser
@@ -807,6 +825,7 @@ static void test_minimal_reads(void) {
               "bytes==2 no payload: full frame length owed");
         CHECK(memcmp(buffer, snapshot, sizeof(buffer)) == 0,
               "bytes==2 no payload: buffer untouched");
+        dns_frame_reset(&state);
     }
 
     /* A one-byte continuation is similarly just consumed from the owed
@@ -826,6 +845,7 @@ static void test_minimal_reads(void) {
               "bytes==1 continuation: one owed byte consumed");
         CHECK(memcmp(buffer, snapshot, sizeof(buffer)) == 0,
               "bytes==1 continuation: buffer untouched");
+        dns_frame_reset(&state);
     }
 }
 
@@ -858,6 +878,7 @@ static void test_frame_len_u16_boundary(void) {
             CHECK(read_prefix(buffer) == 65435, "u16 boundary complete: prefix rewritten");
             CHECK(state_is_clean(&state), "u16 boundary complete: no carry-over state");
             free(buffer);
+            dns_frame_reset(&state);
         }
     }
 
@@ -883,6 +904,7 @@ static void test_frame_len_u16_boundary(void) {
         CHECK(memcmp(buffer, snapshot, sizeof(buffer)) == 0, "u16 boundary split: buffer untouched");
         CHECK(state.frame_remaining == frame_len - avail,
               "u16 boundary split: overflow remembered");
+        dns_frame_reset(&state);
     }
 }
 
@@ -993,6 +1015,7 @@ static void test_multi_call_no_desync(void) {
         CHECK(read_prefix(buffer) == 4, "read 4: prefix rewritten");
         CHECK(state_is_clean(&state), "read 4: no carry-over state");
     }
+    dns_frame_reset(&state);
 }
 
 #define CHUNKING_STREAM_BYTES 30
@@ -1104,6 +1127,7 @@ static void run_chunk_partition(const uint8_t *stream, size_t stream_bytes,
     CHECK(chunk_start == stream_bytes,
           "chunking property: all reference bytes consumed");
     CHECK(state_is_clean(&state), "chunking property: clean final state");
+    dns_frame_reset(&state);
 }
 
 /* Every two-way and three-way partition exercises prefix splits, payload
@@ -1184,6 +1208,7 @@ static void test_split_frame_replayed_when_complete(void) {
           "split replay reset: incomplete frame retained");
     dns_frame_reset(&state);
     CHECK(state_is_clean(&state), "split replay reset: buffer released");
+    dns_frame_reset(&state);
 }
 
 int main(void) {

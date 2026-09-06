@@ -72,12 +72,8 @@ jobs:
           # the C ABI the NetGuard engine calls (wgbridge-rs/tests/).
           cargo test --manifest-path wgbridge-rs/Cargo.toml --workspace --locked --offline
 
-      - name: Run DNS-over-TCP framing host tests
-        run: |
-          cc -Wall -Wextra -Werror -Iapp/src/main/jni/netguard \
-            -o /tmp/dns_frame_test \
-            app/src/test/native/dns_frame_test.c app/src/main/jni/netguard/dns_frame.c
-          /tmp/dns_frame_test
+      - name: Run DNS-over-TCP framing and detection regression tests
+        run: bash app/src/test/native/run_dns_frame_tests.sh
 
       - name: Run native socket hotpath host tests
         run: |

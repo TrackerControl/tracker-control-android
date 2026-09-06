@@ -91,8 +91,10 @@ public class StackDeviceTest {
             proxy.stop();
             for (int i=16;i<80;i++)
                 assertEquals("queued socket closed at stop",-1,clients.get(i).getInputStream().read());
+            assertTrue("old workers finish after client timeout",pool.awaitTermination(12,TimeUnit.SECONDS));
+            for (int i=0;i<16;i++)
+                assertEquals("active socket closed after worker timeout",-1,clients.get(i).getInputStream().read());
             for (Socket client : clients) client.close();
-            assertTrue("old workers finish after client close",pool.awaitTermination(3,TimeUnit.SECONDS));
             for(int i=0;i<5;i++) {
                 proxy.start();
                 Field circuit = DnsProxyServer.class.getDeclaredField("circuitOpenUntil");

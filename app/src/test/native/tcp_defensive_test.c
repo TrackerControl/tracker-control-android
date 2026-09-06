@@ -185,6 +185,10 @@ void parse_dns_partial_response(const struct arguments *args,
     *blanked = 0;
 }
 
+void record_dns_response(const struct arguments *args, uint8_t *data, size_t datalen) {
+    (void) args; (void) data; (void) datalen;
+}
+
 const char *strstate(const int state) {
     (void) state;
     return "TEST";
@@ -334,7 +338,22 @@ static void test_authentication_does_not_log_credentials(void) {
     close(pair[0]); close(pair[1]);
 }
 
+static void test_clear_tcp_data_is_idempotent(void) {
+    struct tcp_session tcp = {0};
+    tcp.forward = ng_malloc(sizeof(*tcp.forward), "test segment");
+    memset(tcp.forward, 0, sizeof(*tcp.forward));
+    tcp.forward->data = ng_malloc(8, "test payload");
+    tcp.tls_data = ng_malloc(8, "test TLS");
+    tcp.tls_len = 8;
+    clear_tcp_data(&tcp);
+    clear_tcp_data(&tcp);
+    CHECK(tcp.forward == NULL && tcp.tls_data == NULL && tcp.tls_len == 0,
+          "cleanup resets all owned data");
+    CHECK(live_allocations == 0, "repeated cleanup releases each allocation once");
+}
+
 int main(void) {
+    test_clear_tcp_data_is_idempotent();
     test_authentication_does_not_log_credentials();
     test_tcp_epoll_add_failure_does_not_retain_session();
     test_tcp_connect_address_is_zero_initialised();
