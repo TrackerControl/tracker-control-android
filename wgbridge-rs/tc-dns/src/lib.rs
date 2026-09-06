@@ -26,8 +26,8 @@ pub enum Outcome {
 }
 
 /// Records valid A and AAAA answers from a DNS response. CNAME chains are
-/// followed from the question by owner/target name; each validated link is
-/// emitted as a distinct qname/aname mapping. Malformed input is ignored. A
+/// followed from the question by owner/target name; each validated target is
+/// emitted with the original question and the minimum TTL of the complete path. Malformed input is ignored. A
 /// sink must not panic; this function deliberately does not catch panics
 /// because the Android release profile uses `panic = "abort"`.
 pub fn record_answers(msg: &[u8], policy: &dyn DnsPolicy) {

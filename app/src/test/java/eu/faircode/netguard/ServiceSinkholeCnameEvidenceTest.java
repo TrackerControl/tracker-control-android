@@ -45,8 +45,8 @@ public class ServiceSinkholeCnameEvidenceTest {
         DatabaseHelper database = DatabaseHelper.getInstance(context);
         database.clearDns();
         insert(database, "front.audit-example.test", "doubleclick.net");
-        insert(database, "doubleclick.net", "edge.audit-example.test");
-        insert(database, "edge.audit-example.test", "address.audit-example.test");
+        insert(database, "front.audit-example.test", "edge.audit-example.test");
+        insert(database, "front.audit-example.test", "address.audit-example.test");
 
         TestService service = new TestService();
         service.attach(context);
@@ -55,6 +55,16 @@ public class ServiceSinkholeCnameEvidenceTest {
         block.setAccessible(true);
         ServiceSinkhole.clearTrackerCaches();
         assertTrue("one connected CNAME chain keeps its tracker evidence",
+                (Boolean) block.invoke(service, IP, UID));
+
+        try (android.database.Cursor cursor = database.getQAName(UID, IP)) {
+            assertTrue("all chain targets survive lookup", cursor.getCount() == 3);
+            ServiceSinkhole.DnsEvidence evidence = ServiceSinkhole.DnsEvidence.read(cursor);
+            assertTrue("one question is not a shared host", evidence.questions.size() == 1);
+        }
+        insert(database, "edge.audit-example.test", "address.audit-example.test");
+        ServiceSinkhole.clearTrackerCaches();
+        assertFalse("an independently queried alias is benign evidence",
                 (Boolean) block.invoke(service, IP, UID));
 
         // The terminal name can also be resolved independently. Its direct

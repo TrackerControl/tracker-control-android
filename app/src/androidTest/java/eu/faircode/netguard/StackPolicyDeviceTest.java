@@ -66,24 +66,26 @@ public class StackPolicyDeviceTest {
                 assertTrue(TrackerList.getInstance(isolated).loadTrackers(isolated));
                 assertEquals(mode,TrackerList.getBlockingMode(isolated));
                 TrackerBlocklist.getInstance(isolated).ensureDefaults(UID,mode.equals("strict"));
+                for(String benignQuestion:new String[]{"terminal.test", "edge.test"}) {
                 for(boolean benignFirst:new boolean[]{false,true}) {
                     db.clearDns(); ServiceSinkhole.clearTrackerCaches();
                     AttachedService service=new AttachedService(); service.attach(isolated);
-                    if(benignFirst) answer(dns,service,"terminal.test","terminal.test",1);
+                    if(benignFirst) answer(dns,service,benignQuestion,"terminal.test",1);
                     answer(dns,service,"front.test","doubleclick.net",300);
-                    answer(dns,service,"doubleclick.net","edge.test",300);
-                    answer(dns,service,"edge.test","terminal.test",300);
+                    answer(dns,service,"front.test","edge.test",300);
+                    answer(dns,service,"front.test","terminal.test",300);
                     if(!benignFirst) {
                         assertTrue(mode+" connected chain blocks",(Boolean)block.invoke(service,IP,UID));
-                        answer(dns,service,"terminal.test","terminal.test",1);
+                        answer(dns,service,benignQuestion,"terminal.test",1);
                     }
                     assertEquals(mode+" shared IP, benignFirst="+benignFirst,
                             mode.equals("strict"),(Boolean)block.invoke(service,IP,UID));
                     Thread.sleep(1200);
                     assertTrue(mode+" expired benign evidence blocks",(Boolean)block.invoke(service,IP,UID));
-                    answer(dns,service,"terminal.test","terminal.test",300);
+                    answer(dns,service,benignQuestion,"terminal.test",300);
                     assertEquals(mode+" revived benign evidence updates cached verdict",
                             mode.equals("strict"),(Boolean)block.invoke(service,IP,UID));
+                }
                 }
             }
         } finally {

@@ -286,6 +286,7 @@ fn emit_answers(qname: &str, records: &[ParsedAnswer], mut on_answer: impl FnMut
         let mut budget = MAX_CNAME_TRAVERSAL_WORK;
         collect_chain(
             qname,
+            qname,
             0,
             &mut path,
             &mut visited,
@@ -303,6 +304,7 @@ fn emit_answers(qname: &str, records: &[ParsedAnswer], mut on_answer: impl FnMut
 }
 
 fn collect_chain(
+    question: &str,
     name: &str,
     depth: usize,
     path: &mut Vec<CnameRecord>,
@@ -342,18 +344,15 @@ fn collect_chain(
                     // carries an unrelated CNAME.
                     push_answer(answers, indexes, name, name, &address.resource, address.ttl);
                 } else {
-                    // Each edge gets the minimum TTL over its remaining path.
-                    // The terminal owner itself is represented by the final
-                    // edge's aname, avoiding a synthetic self-row.
-                    for (index, link) in path.iter().enumerate() {
-                        let mut ttl = address.ttl;
-                        for suffix_link in path.iter().skip(index) {
-                            ttl = ttl.min(suffix_link.ttl);
-                        }
+                    // Preserve the original question as provenance for every
+                    // target. All mappings depend on the complete path to the
+                    // address, so none may outlive its shortest-lived link.
+                    let ttl = path.iter().fold(address.ttl, |ttl, link| ttl.min(link.ttl));
+                    for link in path.iter() {
                         push_answer(
                             answers,
                             indexes,
-                            &link.owner,
+                            question,
                             &link.target,
                             &address.resource,
                             ttl,
@@ -373,6 +372,7 @@ fn collect_chain(
                 *budget -= 1;
                 path.push(link.clone());
                 collect_chain(
+                    question,
                     &link.target,
                     depth + 1,
                     path,
