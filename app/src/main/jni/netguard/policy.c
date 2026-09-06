@@ -201,6 +201,7 @@ struct route_flow_entry {
     uint8_t protocol;
     uint8_t tunnel;
     uint8_t uid_known;
+    int8_t verdict;                  // -1 unknown, 0 blocked, 1 allowed
     uint16_t sport;
     uint16_t dport;
     uint8_t saddr[16];
@@ -251,6 +252,20 @@ static int route_flow_matches(const struct route_flow_entry *e, uint32_t gen,
            now - e->time <= ROUTE_FLOW_MAX_AGE;
 }
 
+static struct route_flow_entry *route_flow_find(int version, int protocol,
+                                                const void *saddr, uint16_t sport,
+                                                const void *daddr, uint16_t dport,
+                                                uint32_t gen, time_t now) {
+    struct route_flow_entry *set = route_flows[route_flow_set(
+            version, protocol, saddr, sport, daddr, dport)];
+    for (int way = 0; way < ROUTE_FLOW_WAYS; way++) {
+        struct route_flow_entry *e = &set[way];
+        if (route_flow_matches(e, gen, version, protocol, saddr, sport, daddr, dport, now))
+            return e;
+    }
+    return NULL;
+}
+
 /**
  * The remembered verdict for this flow, if any.
  *
@@ -277,6 +292,22 @@ int route_flow_lookup(int version, int protocol,
     return 0;
 }
 
+int route_flow_lookup_verdict(int version, int protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport,
+                              int *verdict) {
+    uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+    time_t now = time(NULL);
+    struct route_flow_entry *e = route_flow_find(
+            version, protocol, saddr, sport, daddr, dport, gen, now);
+    if (e == NULL)
+        return 0;
+
+    e->time = now;
+    *verdict = e->verdict;
+    return 1;
+}
+
 /**
  * Remember this flow's verdict, in the first empty/stale/current-gen-oldest
  * way of its set. It is a cache, and a miss only costs the fallback path that
@@ -299,11 +330,13 @@ void route_flow_store(int version, int protocol,
     // to a wrong answer).
     time_t now = time(NULL);
     struct route_flow_entry *victim = NULL;
+    int8_t verdict = ROUTE_FLOW_VERDICT_UNKNOWN;
     struct route_flow_entry *oldest = &set[0];
     for (int way = 0; way < ROUTE_FLOW_WAYS; way++) {
         struct route_flow_entry *e = &set[way];
         if (route_flow_matches(e, gen, version, protocol, saddr, sport, daddr, dport, now)) {
             victim = e;
+            verdict = e->verdict;
             break;
         }
         if (victim == NULL && (e->gen != gen || now - e->time > ROUTE_FLOW_MAX_AGE))
@@ -320,6 +353,7 @@ void route_flow_store(int version, int protocol,
     e->protocol = (uint8_t) protocol;
     e->tunnel = (uint8_t) (tunnel ? 1 : 0);
     e->uid_known = (uint8_t) (uid_known ? 1 : 0);
+    e->verdict = verdict;
     e->sport = sport;
     e->dport = dport;
     memset(e->saddr, 0, sizeof(e->saddr));
@@ -327,4 +361,48 @@ void route_flow_store(int version, int protocol,
     memcpy(e->saddr, saddr, alen);
     memcpy(e->daddr, daddr, alen);
     e->time = now;
+}
+
+void route_flow_store_verdict(int version, int protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport,
+                              int verdict) {
+    if (verdict != ROUTE_FLOW_VERDICT_BLOCKED && verdict != ROUTE_FLOW_VERDICT_ALLOWED)
+        return;
+
+    uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+    time_t now = time(NULL);
+    struct route_flow_entry *e = route_flow_find(
+            version, protocol, saddr, sport, daddr, dport, gen, now);
+
+    // A policy result can be produced before the route branch (for example a
+    // blocked first TCP packet), so make sure there is a generation-scoped
+    // entry to attach it to. Only create a missing entry here: an existing
+    // route may carry a resolved per-app tunnel and uid_known decision that a
+    // policy verdict must not replace with the global default.
+    if (e == NULL) {
+        route_flow_store(version, protocol, saddr, sport, daddr, dport,
+                         route_default_is_tunnel(), 0);
+        gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+        now = time(NULL);
+        e = route_flow_find(version, protocol, saddr, sport, daddr, dport, gen, now);
+    }
+
+    if (e != NULL) {
+        e->verdict = (int8_t) verdict;
+        e->time = now;
+    }
+}
+
+void route_flow_clear_verdict(int version, int protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport) {
+    uint32_t gen = atomic_load_explicit(&route_flow_gen, memory_order_acquire);
+    time_t now = time(NULL);
+    struct route_flow_entry *e = route_flow_find(
+            version, protocol, saddr, sport, daddr, dport, gen, now);
+    if (e != NULL) {
+        e->verdict = ROUTE_FLOW_VERDICT_UNKNOWN;
+        e->time = now;
+    }
 }

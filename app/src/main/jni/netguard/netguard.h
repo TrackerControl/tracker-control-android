@@ -581,6 +581,25 @@ int route_flow_lookup(int version, int protocol,
                       const void *daddr, uint16_t dport,
                       int *tunnel, int *uid_known);
 
+// The policy verdict shares the flow cache generation with the route verdict.
+// UNKNOWN means that the flow must take the normal Java block decision.
+#define ROUTE_FLOW_VERDICT_UNKNOWN (-1)
+#define ROUTE_FLOW_VERDICT_BLOCKED 0
+#define ROUTE_FLOW_VERDICT_ALLOWED 1
+
+int route_flow_lookup_verdict(int version, int protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport,
+                              int *verdict);
+
+void route_flow_store_verdict(int version, int protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport,
+                              int verdict);
+void route_flow_clear_verdict(int version, int protocol,
+                              const void *saddr, uint16_t sport,
+                              const void *daddr, uint16_t dport);
+
 void route_flow_store(int version, int protocol,
                       const void *saddr, uint16_t sport,
                       const void *daddr, uint16_t dport,
