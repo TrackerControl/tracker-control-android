@@ -106,6 +106,17 @@ void parse_dns_response(const struct arguments *args, const struct ng_session *s
     (void) datalen;
 }
 
+void record_dns_response(const struct arguments *args, uint8_t *data, size_t datalen) {
+    (void) args;
+    (void) data;
+    (void) datalen;
+}
+
+void dns_frame_reset(struct dns_stream_state *state) {
+    free(state->frame_buffer);
+    memset(state, 0, sizeof(*state));
+}
+
 void parse_dns_partial_response(const struct arguments *args,
                                 const struct ng_session *session,
                                 uint8_t *data, size_t *datalen, int *blanked) {
