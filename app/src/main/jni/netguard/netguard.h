@@ -98,6 +98,7 @@
 #define SOCKS5_AUTH 3
 #define SOCKS5_CONNECT 4
 #define SOCKS5_CONNECTED 5
+#define SOCKS5_MESSAGE_MAX 263
 
 struct context {
     pthread_mutex_t lock;
@@ -215,6 +216,7 @@ struct tcp_session {
     uint8_t client_fin_acked;
     uint8_t upstream_write_shutdown;
     uint8_t upstream_read_eof;
+    uint8_t upstream_hup_pending;
     uint8_t server_fin_sent;
     uint8_t server_fin_acked;
     uint32_t client_fin_seq;
@@ -240,6 +242,11 @@ struct tcp_session {
 
     uint8_t state;
     uint8_t socks5;
+    uint8_t socks5_rx[SOCKS5_MESSAGE_MAX];
+    uint16_t socks5_rx_len;
+    uint8_t socks5_tx[SOCKS5_MESSAGE_MAX];
+    uint16_t socks5_tx_len;
+    uint16_t socks5_tx_sent;
     struct segment *forward;
 
     int checkedHostname;

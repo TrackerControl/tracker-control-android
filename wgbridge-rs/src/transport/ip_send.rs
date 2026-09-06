@@ -108,10 +108,28 @@ impl IpSend for TunFdSend {
 
 #[cfg(test)]
 mod tests {
-    use super::record_tun_write;
+    use super::{record_tun_write, TunFdSend};
+    use gotatun::packet::{Ip, Packet};
+    use gotatun::tun::IpSend;
+    use std::fs::OpenOptions;
+    use std::os::fd::{FromRawFd, OwnedFd};
     use std::sync::atomic::AtomicU64;
     use std::sync::atomic::Ordering;
     use std::sync::Arc;
+
+    fn minimal_ipv4_packet() -> (Packet<Ip>, [u8; 20]) {
+        let bytes = [
+            0x45, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x40, 0x01, 0xf9, 0x95, 0xc0,
+            0xa8, 0x00, 0x01, 0xc0, 0xa8, 0x00, 0x02,
+        ];
+        Packet::copy_from(bytes.as_slice())
+            .try_into_ipvx()
+            .expect("minimal IPv4 packet should pass full validation");
+        let packet = Packet::copy_from(bytes.as_slice())
+            .try_into_ip()
+            .expect("minimal IPv4 packet should parse");
+        (packet, bytes)
+    }
 
     #[test]
     fn write_counter_transition_resets_streak_after_full_write() {
@@ -123,5 +141,60 @@ mod tests {
         assert_eq!(record_tun_write(&total, &streak, true), (2, 0));
         assert_eq!(total.load(Ordering::Relaxed), 2);
         assert_eq!(streak.load(Ordering::Relaxed), 0);
+    }
+
+    #[tokio::test]
+    async fn send_forwards_full_packet_and_resets_streak() {
+        let mut fds = [0; 2];
+        assert_eq!(
+            unsafe { libc::socketpair(libc::AF_UNIX, libc::SOCK_DGRAM, 0, fds.as_mut_ptr()) },
+            0
+        );
+        let reader = unsafe { OwnedFd::from_raw_fd(fds[0]) };
+        let writer = unsafe { OwnedFd::from_raw_fd(fds[1]) };
+        let total = Arc::new(AtomicU64::new(7));
+        let streak = Arc::new(AtomicU64::new(3));
+        let mut sender = TunFdSend::with_counters(
+            writer,
+            None,
+            Arc::clone(&total),
+            Arc::clone(&streak),
+        );
+        let (packet, expected) = minimal_ipv4_packet();
+
+        assert!(sender.send(packet).await.is_ok());
+        assert_eq!(total.load(Ordering::Relaxed), 7);
+        assert_eq!(streak.load(Ordering::Relaxed), 0);
+
+        let reader = std::os::unix::net::UnixDatagram::from(reader);
+        reader.set_read_timeout(Some(std::time::Duration::from_secs(1))).unwrap();
+        let mut received = [0; 20];
+        assert_eq!(reader.recv(&mut received).unwrap(), received.len());
+        assert_eq!(received, expected);
+    }
+
+    #[tokio::test]
+    async fn send_keeps_failed_write_nonfatal_and_updates_counters() {
+        let file = OpenOptions::new()
+            .read(true)
+            .open("/dev/null")
+            .unwrap();
+        let fd: OwnedFd = file.into();
+        let total = Arc::new(AtomicU64::new(5));
+        let streak = Arc::new(AtomicU64::new(2));
+        let mut sender = TunFdSend::with_counters(
+            fd,
+            None,
+            Arc::clone(&total),
+            Arc::clone(&streak),
+        );
+
+        for _ in 0..3 {
+            let (packet, _) = minimal_ipv4_packet();
+            assert!(sender.send(packet).await.is_ok());
+        }
+
+        assert_eq!(total.load(Ordering::Relaxed), 8);
+        assert_eq!(streak.load(Ordering::Relaxed), 5);
     }
 }
