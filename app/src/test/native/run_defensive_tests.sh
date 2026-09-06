@@ -10,6 +10,7 @@ COMMON=(-D_GNU_SOURCE -O1 -g -Wall -Wextra -Wno-unused-parameter
         -Wno-sign-compare -fsanitize="${SANITIZERS:-address,undefined}"
         -fno-sanitize-recover=all -fno-omit-frame-pointer
         -ffunction-sections -fdata-sections -Wl,--gc-sections
+        -include app/src/test/native/host_compat/linux_test.h
         -idirafter app/src/test/native/host_compat -Iapp/src/main/jni/netguard)
 compile() {
     local name=$1
