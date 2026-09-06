@@ -30,6 +30,7 @@ extern FILE *pcap_file;
 static void normalize_tcp_queue(struct tcp_session *cur);
 
 void clear_tcp_data(struct tcp_session *cur) {
+    dns_frame_reset(&cur->dns_stream);
     struct segment *s = cur->forward;
     while (s != NULL) {
         struct segment *p = s;
@@ -37,6 +38,7 @@ void clear_tcp_data(struct tcp_session *cur) {
         ng_free(p->data, __FILE__, __LINE__);
         ng_free(p, __FILE__, __LINE__);
     }
+    cur->forward = NULL;
     if (cur->tls_data != NULL) {
         ng_free(cur->tls_data, __FILE__, __LINE__);
         cur->tls_data = NULL;
@@ -105,6 +107,7 @@ int check_tcp_session(const struct arguments *args, struct ng_session *s,
 
         s->tcp.time = time(NULL);
         s->tcp.state = TCP_CLOSE;
+        clear_tcp_data(&s->tcp);
     }
 
     if ((s->tcp.state == TCP_CLOSING || s->tcp.state == TCP_CLOSE) &&
@@ -248,10 +251,15 @@ struct dns_stream_parse_ctx {
 // Adapter matching dns_frame_parse_fn: complete frames use
 // parse_dns_response() and may shrink; partial frames use the in-place path
 // and report whether their later continuation bytes must be blanked.
+// Replay parses only a private copy; its result cannot rewrite forwarded bytes.
 static size_t tcp_dns_parse_frame(void *ctx, uint8_t *data, size_t dlen,
-                                  int partial, int *blank_rest) {
+                                  enum dns_frame_parse_mode mode, int *blank_rest) {
     struct dns_stream_parse_ctx *pctx = (struct dns_stream_parse_ctx *) ctx;
-    if (partial != 0) {
+    if (mode == DNS_FRAME_REPLAY) {
+        record_dns_response(pctx->args, data, dlen);
+        return dlen;
+    }
+    if (mode == DNS_FRAME_PARTIAL) {
         int blanked = 0;
         parse_dns_partial_response(pctx->args, pctx->s, data, &dlen, &blanked);
         *blank_rest = blanked;
