@@ -14,8 +14,7 @@ import org.robolectric.RuntimeEnvironment;
  * Covers getQAName's ordering: when a shared IP carries DNS evidence for
  * several qnames (see issue #655), the most recently observed qname should
  * be attributed first rather than the alphabetically-first one, and a qname
- * with several observed rows (e.g. distinct CNAME targets) should collapse
- * to its single freshest row.
+ * with several CNAME targets must retain each fresh target.
  */
 @RunWith(RobolectricTestRunner.class)
 public class DatabaseHelperDnsAttributionTest {
@@ -78,7 +77,7 @@ public class DatabaseHelperDnsAttributionTest {
     }
 
     @Test
-    public void repeatedObservationsOfSameQnameCollapseToFreshestRow() {
+    public void distinctTargetsOfSameQuestionRemainVisible() {
         DatabaseHelper dh = DatabaseHelper.getInstance(RuntimeEnvironment.getApplication());
         dh.clearDns();
 
@@ -88,7 +87,7 @@ public class DatabaseHelperDnsAttributionTest {
         dh.insertDns(rr(NOW - 1_000L, "tracker.example.com", "new-cname.example.com", ip, 3600));
 
         try (Cursor c = dh.getQAName(-1, ip)) {
-            assertEquals("duplicate rows for the same qname must collapse to one", 1, c.getCount());
+            assertEquals("distinct targets must remain visible", 2, c.getCount());
             assertTrue(c.moveToFirst());
             assertEquals("tracker.example.com", c.getString(c.getColumnIndexOrThrow("qname")));
             assertEquals("the freshest row's aname should win",

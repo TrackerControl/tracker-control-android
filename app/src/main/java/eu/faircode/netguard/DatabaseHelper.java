@@ -1281,7 +1281,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * DNS evidence for an IP, freshest qname first, one row per qname.
+     * DNS evidence for an IP, freshest observation first, one row per question/target pair.
      *
      * <p>Expired rows are always excluded. Both callers — the runtime
      * blocking decision in {@code blockKnownTracker()} and the UI
@@ -1300,26 +1300,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = readableDb;
             String escapedIp = ip.replace("'", "''");
             String aliveFilter = " AND (d.time IS NULL OR d.time + d.ttl >= " + now + ")";
-            // There is a segmented index on resource. A shared IP can carry
-            // DNS evidence for several qnames; keep only the most recently
-            // observed row per qname (dedup) and order qnames by recency, so
-            // the freshest resolution — most likely tied to the connection
-            // that's actually being made now — is attributed first instead
-            // of an alphabetically-first but possibly stale one.
-            //
-            // The dedup deliberately uses a single MAX(time) aggregate: with
-            // exactly one min/max aggregate, SQLite takes the bare columns
-            // from the row that supplied the maximum, so this is one index
-            // range scan over the IP's rows. A correlated per-row subquery
-            // here re-scans the IP's rows once per candidate row — O(n²) —
-            // and this query runs for every new connection (log() and
-            // blockKnownTracker()), where it grows with DNS history until
-            // it shows up as battery drain and heat.
+            // Preserve every fresh CNAME target under its original question.
+            // Grouping by question alone discarded intermediate tracker names.
+            // One MAX aggregate keeps this a single resource-index range scan,
+            // without a correlated subquery per candidate.
             String query = "SELECT d.qname, d.aname, d.time, d.ttl, MAX(d.time)" +
                     " FROM dns AS d" +
                     " WHERE d.resource = '" + escapedIp + "'" +
                     aliveFilter +
-                    " GROUP BY d.qname" +
+                    " GROUP BY d.qname, d.aname" +
                     " ORDER BY d.time DESC, d.ID DESC";
             return db.rawQuery(query, new String[] {});
         } finally {
