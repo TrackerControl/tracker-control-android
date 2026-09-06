@@ -17,7 +17,9 @@
  * entirely unless a recv() held exactly one complete frame, so coalesced or
  * split reads went unfiltered. The cursor now parses every complete frame in
  * a read and the initially visible bytes of a split frame, while later payload
- * continuation bytes are blanked when the partial parser reports a block.
+ * continuation bytes are blanked when the partial parser reports a block. It
+ * also replays a bounded copy once a split frame is complete, so answers beyond
+ * the first read still reach detection.
  * These tests pin down which frames get parsed, which may be shortened (only
  * those lying wholly inside the current read, since nothing in it has been
  * forwarded yet), and -- the subtler failure mode -- that the carry-over
@@ -74,6 +76,7 @@ struct parse_recorder {
     int blank_partial_on_marker;
     uint8_t blank_marker;
     size_t blank_from;
+    int record_replays;
 };
 
 static void recorder_init(struct parse_recorder *r, const uint8_t *base) {
@@ -81,10 +84,13 @@ static void recorder_init(struct parse_recorder *r, const uint8_t *base) {
     r->base = base;
 }
 
-static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen, int partial,
+static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen,
+                         enum dns_frame_parse_mode partial,
                          int *blank_rest) {
     struct parse_recorder *r = (struct parse_recorder *) ctx;
     *blank_rest = 0;
+    if (partial == DNS_FRAME_REPLAY && !r->record_replays)
+        return dlen;
     if (r->calls < MAX_CALLS) {
         r->off[r->calls] = (size_t) (data - r->base);
         r->len[r->calls] = dlen;
@@ -108,7 +114,8 @@ static size_t stub_parse(void *ctx, uint8_t *data, size_t dlen, int partial,
  * the configured marker. This models a rule-based parser outcome without
  * depending on callback invocation order. */
 static size_t stub_parse_by_marker(void *ctx, uint8_t *data, size_t dlen,
-                                   int partial, int *blank_rest) {
+                                   enum dns_frame_parse_mode partial,
+                                   int *blank_rest) {
     struct parse_recorder *r = (struct parse_recorder *) ctx;
     (void) stub_parse(ctx, data, dlen, partial, blank_rest);
     if (r->shrink_on_marker && dlen > 0 && data[0] == r->shrink_marker)
@@ -118,7 +125,8 @@ static size_t stub_parse_by_marker(void *ctx, uint8_t *data, size_t dlen,
 
 static int state_is_clean(const struct dns_stream_state *state) {
     return state->frame_remaining == 0 && state->blank_remaining == 0 &&
-           state->have_prefix_hi == 0;
+           state->have_prefix_hi == 0 && state->frame_buffer == NULL &&
+           state->frame_length == 0 && state->frame_received == 0;
 }
 
 static size_t append_frame(uint8_t *buffer, size_t offset, size_t frame_len,
@@ -189,6 +197,7 @@ static void run_coalesced_shrink_case(const char *label,
               label);
         expected_offset += 2 + new_lens[i];
     }
+    dns_frame_reset(&state);
 }
 
 /* A four-frame coalesced read verifies every callback pointer against the
@@ -238,6 +247,7 @@ static void test_coalesced_multiple_frames(void) {
         static const size_t new_lens[] = {1, 2, 3, 4};
         run_coalesced_shrink_case("coalesced shrink: several frames", new_lens);
     }
+    dns_frame_reset(&state);
 }
 
 /* 1. A single complete frame in the read, shortened by the parser: the
@@ -264,6 +274,7 @@ static void test_single_frame_shortened(void) {
     CHECK(out == 22, "single frame shortened: forwards 22 bytes");
     CHECK(read_prefix(buffer) == 20, "single frame shortened: prefix rewritten to 20");
     CHECK(state_is_clean(&state), "single frame shortened: no carry-over state");
+    dns_frame_reset(&state);
 }
 
 /* 2. A single complete frame the parser leaves alone: forwarded verbatim.
@@ -301,6 +312,8 @@ static void test_single_frame_unchanged(void) {
     CHECK(out2 == sizeof(buffer), "grow clamped: bytes untouched");
     CHECK(read_prefix(buffer) == frame_len, "grow clamped: prefix untouched");
     CHECK(state_is_clean(&state2), "grow clamped: no carry-over state");
+    dns_frame_reset(&state);
+    dns_frame_reset(&state2);
 }
 
 /* 3. Coalesced read: two complete frames in one recv(). Both are parsed
@@ -334,6 +347,7 @@ static void test_coalesced_read(void) {
         CHECK(out == sizeof(copy), "coalesced read: bytes untouched");
         CHECK(memcmp(copy, buffer, sizeof(buffer)) == 0, "coalesced read: buffer untouched");
         CHECK(state_is_clean(&state), "coalesced read: no carry-over state");
+        dns_frame_reset(&state);
     }
 
     /* Then: the first frame is shortened to 10 -- the second frame slides
@@ -359,6 +373,7 @@ static void test_coalesced_read(void) {
         CHECK(copy[14] == 0xDD && copy[14 + second - 1] == 0xDD,
               "coalesced shrink: second payload moved down intact");
         CHECK(state_is_clean(&state), "coalesced shrink: no carry-over state");
+        dns_frame_reset(&state);
     }
 }
 
@@ -394,6 +409,7 @@ static void test_shrink_to_zero_alignment(void) {
     CHECK(memcmp(buffer + out, original + out, bytes - out) == 0,
           "shrink to zero: bytes after output unchanged");
     CHECK(state_is_clean(&state), "shrink to zero: clean state");
+    dns_frame_reset(&state);
 }
 
 /* A payload can span three reads: the visible fragment is parsed once, the
@@ -463,6 +479,7 @@ static void test_payload_spanning_three_reads(void) {
               "three-read payload: final continuation untouched");
         CHECK(state_is_clean(&state), "three-read payload: clean state");
     }
+    dns_frame_reset(&state);
 }
 
 /* A blocked partial frame is blanked in the first read and its continuation
@@ -501,6 +518,7 @@ static void test_blocked_split_frames(void) {
               "blocked two-read: continuation blanked");
         CHECK(state.frame_remaining == 0 && state.blank_remaining == 0,
               "blocked two-read: blank continuation cleared at frame end");
+        dns_frame_reset(&state);
     }
 
     {
@@ -548,6 +566,7 @@ static void test_blocked_split_frames(void) {
               "blocked three-read: next frame parsed after exact drain");
         CHECK(state_is_clean(&state),
               "blocked three-read: blank continuation cleared at frame end");
+        dns_frame_reset(&state);
     }
 }
 
@@ -620,6 +639,7 @@ static void test_split_prefix_payload_handoff(void) {
         CHECK(out == sizeof(buffer), "split-prefix handoff: final count unchanged");
         CHECK(state_is_clean(&state), "split-prefix handoff: clean state");
     }
+    dns_frame_reset(&state);
 }
 
 /* Legal zero-length frames between real frames must forward their prefixes
@@ -647,6 +667,7 @@ static void test_zero_frames_between_real_frames(void) {
           "zero frames between: real-frame offsets and lengths");
     CHECK(out == sizeof(buffer), "zero frames between: all bytes forwarded");
     CHECK(state_is_clean(&state), "zero frames between: clean state");
+    dns_frame_reset(&state);
 }
 
 /* 4. Split frame: recv() got fewer bytes than the prefix declares. The
@@ -695,6 +716,7 @@ static void test_split_frame(void) {
           "split continuation: exactly 50 carry-over bytes skipped");
     CHECK(out2 == sizeof(next), "split continuation: all bytes forwarded");
     CHECK(state_is_clean(&state), "split continuation: state drained");
+    dns_frame_reset(&state);
 }
 
 /* 5. frame_len == 0 is a legal no-op frame: its two bytes forward as-is and
@@ -719,6 +741,7 @@ static void test_zero_frame_len(void) {
     CHECK(read_prefix(buffer) == 0, "zero frame_len: no-op frame forwarded as-is");
     CHECK(read_prefix(buffer + 2) == 3, "zero frame_len: following prefix rewritten");
     CHECK(state_is_clean(&state), "zero frame_len: no carry-over state");
+    dns_frame_reset(&state);
 }
 
 /* 6. Minimal edges: a 3-byte read holding one payload byte, complete or
@@ -742,6 +765,7 @@ static void test_minimal_reads(void) {
         CHECK(out == 2, "bytes==3 complete: shrunk to a bare prefix");
         CHECK(read_prefix(buffer) == 0, "bytes==3 complete: prefix rewritten to 0");
         CHECK(state_is_clean(&state), "bytes==3 complete: no carry-over state");
+        dns_frame_reset(&state);
     }
 
     /* Split: the prefix declares more than the single available byte. */
@@ -760,6 +784,7 @@ static void test_minimal_reads(void) {
               "bytes==3 split: parse capped to the single available byte");
         CHECK(out == sizeof(buffer), "bytes==3 split: bytes untouched");
         CHECK(state.frame_remaining == 4, "bytes==3 split: 4 payload bytes still owed");
+        dns_frame_reset(&state);
     }
 
     /* A lone byte: the high half of a length prefix. It cannot be withheld,
@@ -778,6 +803,7 @@ static void test_minimal_reads(void) {
         CHECK(state.have_prefix_hi != 0 && state.prefix_hi == 0x01,
               "lone prefix byte: stashed for the next read");
         CHECK(state.frame_remaining == 0, "lone prefix byte: no payload owed");
+        dns_frame_reset(&state);
     }
 
     /* Exactly two bytes can hold a nonzero prefix but no payload. The parser
@@ -799,6 +825,7 @@ static void test_minimal_reads(void) {
               "bytes==2 no payload: full frame length owed");
         CHECK(memcmp(buffer, snapshot, sizeof(buffer)) == 0,
               "bytes==2 no payload: buffer untouched");
+        dns_frame_reset(&state);
     }
 
     /* A one-byte continuation is similarly just consumed from the owed
@@ -808,7 +835,7 @@ static void test_minimal_reads(void) {
         uint8_t snapshot[sizeof(buffer)];
         memcpy(snapshot, buffer, sizeof(buffer));
 
-        struct dns_stream_state state = {5, 0, 0, 0};
+        struct dns_stream_state state = {.frame_remaining = 5};
         struct parse_recorder r;
         recorder_init(&r, buffer);
         size_t out = dns_frame_process_stream(buffer, sizeof(buffer), &state,
@@ -818,6 +845,7 @@ static void test_minimal_reads(void) {
               "bytes==1 continuation: one owed byte consumed");
         CHECK(memcmp(buffer, snapshot, sizeof(buffer)) == 0,
               "bytes==1 continuation: buffer untouched");
+        dns_frame_reset(&state);
     }
 }
 
@@ -850,6 +878,7 @@ static void test_frame_len_u16_boundary(void) {
             CHECK(read_prefix(buffer) == 65435, "u16 boundary complete: prefix rewritten");
             CHECK(state_is_clean(&state), "u16 boundary complete: no carry-over state");
             free(buffer);
+            dns_frame_reset(&state);
         }
     }
 
@@ -875,6 +904,7 @@ static void test_frame_len_u16_boundary(void) {
         CHECK(memcmp(buffer, snapshot, sizeof(buffer)) == 0, "u16 boundary split: buffer untouched");
         CHECK(state.frame_remaining == frame_len - avail,
               "u16 boundary split: overflow remembered");
+        dns_frame_reset(&state);
     }
 }
 
@@ -985,6 +1015,7 @@ static void test_multi_call_no_desync(void) {
         CHECK(read_prefix(buffer) == 4, "read 4: prefix rewritten");
         CHECK(state_is_clean(&state), "read 4: no carry-over state");
     }
+    dns_frame_reset(&state);
 }
 
 #define CHUNKING_STREAM_BYTES 30
@@ -1096,6 +1127,7 @@ static void run_chunk_partition(const uint8_t *stream, size_t stream_bytes,
     CHECK(chunk_start == stream_bytes,
           "chunking property: all reference bytes consumed");
     CHECK(state_is_clean(&state), "chunking property: clean final state");
+    dns_frame_reset(&state);
 }
 
 /* Every two-way and three-way partition exercises prefix splits, payload
@@ -1120,6 +1152,65 @@ static void test_exhaustive_chunking(void) {
     }
 }
 
+struct replay_recorder {
+    uint8_t expected[6];
+    size_t calls;
+    size_t first_len;
+    size_t replay_len;
+    int replay_matches;
+};
+
+static size_t record_split_replay(void *ctx, uint8_t *data, size_t dlen,
+                                  enum dns_frame_parse_mode mode,
+                                  int *blank_rest) {
+    struct replay_recorder *r = (struct replay_recorder *) ctx;
+    *blank_rest = 0;
+    r->calls++;
+    if (mode == DNS_FRAME_PARTIAL)
+        r->first_len = dlen;
+    else if (mode == DNS_FRAME_REPLAY) {
+        r->replay_len = dlen;
+        r->replay_matches =
+                dlen == sizeof(r->expected) &&
+                memcmp(data, r->expected, sizeof(r->expected)) == 0;
+    }
+    return dlen;
+}
+
+static void test_split_frame_replayed_when_complete(void) {
+    struct dns_stream_state state = {0};
+    struct replay_recorder r = {
+            .expected = {0x10, 0x11, 0x12, 0x13, 0x14, 0x15},
+    };
+    uint8_t first[] = {0x00, 0x06, 0x10, 0x11};
+    uint8_t second[] = {0x12, 0x13, 0x14, 0x15};
+
+    size_t first_out = dns_frame_process_stream(
+            first, sizeof(first), &state, record_split_replay, &r);
+    CHECK(first_out == sizeof(first), "split replay: first read unchanged");
+    CHECK(r.calls == 1 && r.first_len == 2,
+          "split replay: visible prefix parsed immediately");
+    CHECK(state.frame_buffer != NULL && state.frame_length == 6 &&
+                  state.frame_received == 2,
+          "split replay: incomplete frame retained");
+
+    size_t second_out = dns_frame_process_stream(
+            second, sizeof(second), &state, record_split_replay, &r);
+    CHECK(second_out == sizeof(second), "split replay: second read unchanged");
+    CHECK(r.calls == 2 && r.replay_len == 6 && r.replay_matches,
+          "split replay: complete original payload detected");
+    CHECK(state_is_clean(&state), "split replay: buffer released on completion");
+
+    uint8_t third[] = {0x00, 0x06, 0x20};
+    (void) dns_frame_process_stream(third, sizeof(third), &state,
+                                    record_split_replay, &r);
+    CHECK(state.frame_buffer != NULL,
+          "split replay reset: incomplete frame retained");
+    dns_frame_reset(&state);
+    CHECK(state_is_clean(&state), "split replay reset: buffer released");
+    dns_frame_reset(&state);
+}
+
 int main(void) {
     test_single_frame_shortened();
     test_single_frame_unchanged();
@@ -1136,6 +1227,7 @@ int main(void) {
     test_frame_len_u16_boundary();
     test_multi_call_no_desync();
     test_exhaustive_chunking();
+    test_split_frame_replayed_when_complete();
 
     if (failures == 0) {
         printf("dns_frame_test: all tests passed\n");

@@ -19,7 +19,7 @@ compile() {
     if [[ ${BUILD_ONLY:-0} != 1 ]]; then "$OUT/$name"; fi
 }
 compile tcp_defensive_test app/src/test/native/tcp_defensive_test.c \
-    app/src/main/jni/netguard/tcp.c \
+    app/src/main/jni/netguard/tcp.c app/src/main/jni/netguard/dns_frame.c \
     -Wl,--wrap=close -Wl,--wrap=connect -Wl,--wrap=send
 compile udp_defensive_test app/src/test/native/udp_defensive_test.c \
     app/src/main/jni/netguard/udp.c \

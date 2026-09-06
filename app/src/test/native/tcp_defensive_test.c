@@ -185,14 +185,8 @@ void parse_dns_partial_response(const struct arguments *args,
     *blanked = 0;
 }
 
-size_t dns_frame_process_stream(uint8_t *buffer, size_t bytes,
-                                struct dns_stream_state *state,
-                                dns_frame_parse_fn parse, void *ctx) {
-    (void) buffer;
-    (void) state;
-    (void) parse;
-    (void) ctx;
-    return bytes;
+void record_dns_response(const struct arguments *args, uint8_t *data, size_t datalen) {
+    (void) args; (void) data; (void) datalen;
 }
 
 const char *strstate(const int state) {

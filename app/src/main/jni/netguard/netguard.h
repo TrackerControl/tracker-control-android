@@ -414,6 +414,8 @@ void check_udp_socket(const struct arguments *args, const struct epoll_event *ev
 void parse_dns_response(const struct arguments *args, const struct ng_session *session,
                         uint8_t *data, size_t *datalen);
 
+void record_dns_response(const struct arguments *args, uint8_t *data, size_t datalen);
+
 void parse_dns_partial_response(const struct arguments *args,
                                 const struct ng_session *session,
                                 uint8_t *data, size_t *datalen, int *blanked);
