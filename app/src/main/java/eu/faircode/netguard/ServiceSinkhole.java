@@ -1194,9 +1194,10 @@ public class ServiceSinkhole extends VpnService {
             int uncertain = DatabaseHelper.ACCESS_UNCERTAIN_NONE;
             boolean isTracker = false;
             try (Cursor lookup = dh.getQAName(packet.uid, packet.daddr)) {
-                uncertain = (lookup != null
-                        && lookup.getCount() > 1) ? DatabaseHelper.ACCESS_UNCERTAIN_SHARED_IP
-                                : DatabaseHelper.ACCESS_UNCERTAIN_NONE;
+                DnsEvidence evidence = DnsEvidence.read(lookup);
+                uncertain = evidence.questions.size() > 1
+                        ? DatabaseHelper.ACCESS_UNCERTAIN_SHARED_IP
+                        : DatabaseHelper.ACCESS_UNCERTAIN_NONE;
 
                 // Loop until we find tracker or reach last entry
                 if (lookup != null) {
@@ -1222,7 +1223,8 @@ public class ServiceSinkhole extends VpnService {
                                     && p.first != null
                                     && !Objects.equals(foundTracker.first.name, p.first.name)) {
                                 sawDifferentTrackerEvidence = true;
-                            } else if (p.first == null) {
+                            } else if (p.first == null
+                                    && !evidence.trackerQuestions.contains(dname)) {
                                 sawNonTrackerEvidence = true;
                             }
                         }
@@ -2867,17 +2869,49 @@ public class ServiceSinkhole extends VpnService {
             }
             prepareUidIPFilters(rr.QName);
 
-            if (outcome == DatabaseHelper.DnsInsertOutcome.INSERTED) {
-                if (Util.isNumericAddress(rr.Resource)) { // make sure correct format
-                    trackerCache.invalidate(rr.Resource);
-                    // Pure refreshes deliberately skip invalidation: the cached
-                    // entry simply expires on the earlier deadline it was stored
-                    // with and is re-read then, so a stale-put race with a
-                    // refresh is harmless. The atomic cache generation guard
-                    // remains for new mappings, where the verdict can change.
-                }
-            }
+            invalidateTrackerCacheAfterDnsInsert(outcome, rr.Resource,
+                    Util.isNumericAddress(rr.Resource));
         }
+    }
+
+    static final class DnsEvidence {
+        final Set<String> questions = new HashSet<>();
+        final Set<String> trackerQuestions = new HashSet<>();
+        final Set<String> minimalTrackerQuestions = new HashSet<>();
+
+        static DnsEvidence read(Cursor cursor) {
+            DnsEvidence result = new DnsEvidence();
+            if (cursor == null)
+                return result;
+            int questionColumn = cursor.getColumnIndexOrThrow("qname");
+            int targetColumn = cursor.getColumnIndexOrThrow("aname");
+            while (cursor.moveToNext()) {
+                String question = cursor.getString(questionColumn);
+                String target = cursor.getString(targetColumn);
+                if (question == null)
+                    continue;
+                result.questions.add(question);
+                // All targets from a resolution retain its original question.
+                // A benign target within it is not an independent shared host.
+                if (TrackerList.findTracker(question) != null
+                        || (target != null && TrackerList.findTracker(target) != null))
+                    result.trackerQuestions.add(question);
+                if (TrackerList.findMinimalTracker(question) != null
+                        || (target != null && TrackerList.findMinimalTracker(target) != null))
+                    result.minimalTrackerQuestions.add(question);
+            }
+            cursor.moveToPosition(-1);
+            return result;
+        }
+    }
+
+    static void invalidateTrackerCacheAfterDnsInsert(
+            DatabaseHelper.DnsInsertOutcome outcome, String resource,
+            boolean numericResource) {
+        if ((outcome == DatabaseHelper.DnsInsertOutcome.INSERTED
+                || outcome == DatabaseHelper.DnsInsertOutcome.REFRESHED)
+                && numericResource)
+            trackerCache.invalidate(resource);
     }
 
     // Called from WireGuard bridge for passive DNS response mapping.
@@ -3144,6 +3178,7 @@ public class ServiceSinkhole extends VpnService {
                 // Loop through all fresh DNS candidates for this IP and only fail closed
                 // when ambiguous tracker blocking is enabled or the evidence is tracker-only.
                 if (lookup != null) {
+                    DnsEvidence evidence = DnsEvidence.read(lookup);
                     while (lookup.moveToNext()) {
                         // Get DNS expiry details for this candidate row
                         int colTime = lookup.getColumnIndex("time");
@@ -3192,7 +3227,8 @@ public class ServiceSinkhole extends VpnService {
                                 minimalChosenTime = rowTime;
                                 minimalChosenTtl = rowTtl;
                             }
-                        } else if (qname != null || aname != null) {
+                        } else if (!evidence.minimalTrackerQuestions.contains(qname)
+                                && (qname != null || aname != null)) {
                             latestNonMinimalExpiry = Math.max(latestNonMinimalExpiry,
                                     TrackerEvidenceExpiry.at(rowTime, rowTtl));
                             sawNonMinimalTrackerEvidence = true;
@@ -3209,7 +3245,8 @@ public class ServiceSinkhole extends VpnService {
                                 chosenTime = rowTime;
                                 chosenTtl = rowTtl;
                             }
-                        } else if (qname != null || aname != null) {
+                        } else if (!evidence.trackerQuestions.contains(qname)
+                                && (qname != null || aname != null)) {
                             latestNonTrackerExpiry = Math.max(latestNonTrackerExpiry,
                                     TrackerEvidenceExpiry.at(rowTime, rowTtl));
                             sawNonTrackerEvidence = true;
