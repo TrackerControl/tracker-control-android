@@ -68,6 +68,8 @@
 #define TCP_MSS_CLAMP 1360 // bytes
 
 #define ICMP_TIMEOUT 5 // seconds
+#define ICMP_QUOTE_SLOTS 16
+#define ICMP_QUOTE_MAXLEN 128
 
 #define UDP_TIMEOUT_53 15 // seconds
 #define UDP_TIMEOUT_ANY 300 // seconds
@@ -157,6 +159,22 @@ struct icmp_session {
     uint16_t id;
 
     uint8_t stop;
+    uint8_t quote_next;
+
+    // Original packets used to correlate ICMP error-queue messages.  The
+    // records are allocated immediately after ng_session so generic session
+    // cleanup remains sufficient and non-ICMP sessions do not grow.
+    struct icmp_quote *quotes;
+};
+
+struct icmp_quote {
+    time_t time;
+    uint16_t seq;
+    uint16_t len;
+    uint16_t ip_offset;
+    uint8_t version;
+    uint8_t valid;
+    uint8_t packet[ICMP_QUOTE_MAXLEN];
 };
 
 struct udp_session {

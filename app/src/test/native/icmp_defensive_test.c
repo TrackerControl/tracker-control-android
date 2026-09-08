@@ -21,6 +21,7 @@ static int fcntl_fail_set;
 static int socket_calls;
 static int close_calls;
 static int sendto_calls;
+static int setsockopt_fail;
 static int last_sendto_family;
 static struct sockaddr_storage last_sendto_address;
 
@@ -78,6 +79,53 @@ int __wrap_close(int file_descriptor) {
     (void) file_descriptor;
     close_calls++;
     return 0;
+}
+
+int __wrap_setsockopt(int socket, int level, int option,
+                      const void *value, socklen_t value_length) {
+    (void) socket;
+    (void) level;
+    (void) option;
+    (void) value;
+    (void) value_length;
+    if (setsockopt_fail) {
+        errno = EINVAL;
+        return -1;
+    }
+    return 0;
+}
+
+ssize_t __wrap_recvmsg(int socket, struct msghdr *message, int flags) {
+    (void) socket;
+    (void) message;
+    (void) flags;
+    errno = EAGAIN;
+    return -1;
+}
+
+int __wrap_getsockopt(int socket, int level, int option,
+                      void *value, socklen_t *value_length) {
+    (void) socket;
+    (void) level;
+    (void) option;
+    (void) value;
+    (void) value_length;
+    return 0;
+}
+
+ssize_t __wrap_recv(int socket, void *buffer, size_t length, int flags) {
+    (void) socket;
+    (void) buffer;
+    (void) length;
+    (void) flags;
+    errno = EAGAIN;
+    return -1;
+}
+
+ssize_t __wrap_write(int file_descriptor, const void *buffer, size_t length) {
+    (void) file_descriptor;
+    (void) buffer;
+    return (ssize_t) length;
 }
 
 int __wrap_fcntl(int file_descriptor, int command, ...) {
@@ -176,6 +224,7 @@ static void test_epoll_add_failure_does_not_retain_session(void) {
     args.ctx = &context;
     protect_result = 0;
     epoll_result = -1;
+    setsockopt_fail = 0;
     close_calls = 0;
     sendto_calls = 0;
 

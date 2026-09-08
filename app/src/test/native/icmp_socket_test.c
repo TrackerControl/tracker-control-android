@@ -20,7 +20,14 @@ static int fcntl_fail_set;
 static int socket_calls;
 static int close_calls;
 static int sendto_calls;
+static int setsockopt_calls;
+static int setsockopt_fail;
+static int recvmsg_calls;
 static int last_sendto_family;
+static int last_hop_limit;
+static int last_hop_option;
+static uint8_t last_send_payload[256];
+static size_t last_send_payload_length;
 static struct sockaddr_storage last_sendto_address;
 
 FILE *pcap_file;
@@ -77,6 +84,73 @@ int __wrap_close(int file_descriptor) {
     return 0;
 }
 
+int __wrap_setsockopt(int socket, int level, int option,
+                      const void *value, socklen_t value_length) {
+    (void) socket;
+    (void) level;
+    (void) option;
+    (void) value;
+    (void) value_length;
+    setsockopt_calls++;
+    if (option == IP_TTL || option == IPV6_UNICAST_HOPS) {
+        last_hop_option = option;
+        if (value_length >= sizeof(int))
+            memcpy(&last_hop_limit, value, sizeof(last_hop_limit));
+    }
+    if (setsockopt_fail) {
+        errno = EINVAL;
+        return -1;
+    }
+    return 0;
+}
+
+ssize_t __wrap_recvmsg(int socket, struct msghdr *message, int flags) {
+    (void) socket;
+    (void) message;
+    (void) flags;
+    recvmsg_calls++;
+    errno = EAGAIN;
+    return -1;
+}
+
+int __wrap_getsockopt(int socket, int level, int option,
+                      void *value, socklen_t *value_length) {
+    (void) socket;
+    (void) level;
+    (void) option;
+    (void) value;
+    (void) value_length;
+    return 0;
+}
+
+ssize_t __wrap_recv(int socket, void *buffer, size_t length, int flags) {
+    (void) socket;
+    (void) buffer;
+    (void) length;
+    (void) flags;
+    errno = EAGAIN;
+    return -1;
+}
+
+ssize_t __wrap_write(int file_descriptor, const void *buffer, size_t length) {
+    (void) file_descriptor;
+    (void) buffer;
+    return (ssize_t) length;
+}
+
+#if defined(__linux__)
+/* The existing CI command only wraps socket/close/fcntl/sendto. Interpose the
+ * additional calls too, so both that command and the focused runner use mocks. */
+int setsockopt(int socket, int level, int option,
+               const void *value, socklen_t value_length) {
+    return __wrap_setsockopt(socket, level, option, value, value_length);
+}
+
+ssize_t recvmsg(int socket, struct msghdr *message, int flags) {
+    return __wrap_recvmsg(socket, message, flags);
+}
+#endif
+
 int __wrap_fcntl(int file_descriptor, int command, ...) {
     (void) file_descriptor;
     fcntl_calls++;
@@ -118,9 +192,11 @@ ssize_t __wrap_sendto(int socket, const void *buffer, size_t length, int flags,
                       const struct sockaddr *destination,
                       socklen_t destination_length) {
     (void) socket;
-    (void) buffer;
     (void) flags;
     sendto_calls++;
+    last_send_payload_length = length < sizeof(last_send_payload)
+                               ? length : sizeof(last_send_payload);
+    memcpy(last_send_payload, buffer, last_send_payload_length);
     last_sendto_family = destination->sa_family;
     memset(&last_sendto_address, 0, sizeof(last_sendto_address));
     if (destination_length <= sizeof(last_sendto_address))
@@ -153,10 +229,14 @@ static void test_nonblocking_socket_and_open_cleanup(void) {
     fcntl_fail_get = 0;
     fcntl_fail_set = 0;
     close_calls = 0;
+    setsockopt_fail = 0;
+    setsockopt_calls = 0;
+    recvmsg_calls = 0;
     int socket = open_icmp_socket(&args, &session);
     CHECK(socket >= 0, "ICMP socket opens when protection and nonblocking setup succeed");
     CHECK(fcntl_calls == 2 && (fcntl_flags & O_NONBLOCK) != 0,
           "ICMP socket is configured O_NONBLOCK");
+    CHECK(setsockopt_calls == 1, "ICMP socket enables the error queue");
     close(socket);
 
     protect_result = -1;
@@ -172,6 +252,13 @@ static void test_nonblocking_socket_and_open_cleanup(void) {
     CHECK(socket < 0 && close_calls == 1,
           "ICMP nonblocking failure closes the newly opened descriptor");
     fcntl_fail_set = 0;
+
+    setsockopt_fail = 1;
+    close_calls = 0;
+    socket = open_icmp_socket(&args, &session);
+    CHECK(socket < 0 && close_calls == 1,
+          "ICMP error queue setup failure closes the newly opened descriptor");
+    setsockopt_fail = 0;
 }
 
 static size_t make_echo_packet(uint8_t *packet) {
@@ -232,13 +319,21 @@ static void test_icmp_send_address_is_zero_initialised(void) {
     args.ctx = &context;
     protect_result = 0;
     epoll_result = 0;
+    setsockopt_fail = 0;
     sendto_calls = 0;
+    last_hop_limit = 0;
+    last_hop_option = 0;
+    last_send_payload_length = 0;
+    uint8_t original[64];
+    memcpy(original, packet, length);
 
     CHECK(handle_icmp(&args, packet, length,
                       packet + sizeof(struct iphdr), 10001, 99) == 1,
           "ICMP echo is sent after successful session admission");
     CHECK(sendto_calls == 1 && last_sendto_family == AF_INET,
           "ICMP send uses an IPv4 sockaddr");
+    CHECK(last_hop_option == IP_TTL && last_hop_limit == 0,
+          "IPv4 send applies the requested TTL immediately before send");
     if (last_sendto_family == AF_INET) {
         const struct sockaddr_in *address =
                 (const struct sockaddr_in *) &last_sendto_address;
@@ -249,9 +344,35 @@ static void test_icmp_send_address_is_zero_initialised(void) {
               "ICMP send zero-initialises IPv4 sockaddr padding");
     }
 
+    CHECK(last_send_payload_length == length - sizeof(struct iphdr) &&
+                  memcmp(last_send_payload, packet + sizeof(struct iphdr),
+                         last_send_payload_length) == 0 &&
+                  memcmp(packet, original, length) == 0,
+          "ICMP forwarding preserves the original TUN packet");
+
+    uint8_t packet2[64];
+    size_t length2 = make_echo_packet(packet2);
+    ((struct iphdr *) packet2)->ttl = 3;
+    ((struct icmp *) (packet2 + sizeof(struct iphdr)))->icmp_id = htons(0x4321);
+    sendto_calls = 0;
+    CHECK(handle_icmp(&args, packet2, length2,
+                      packet2 + sizeof(struct iphdr), 10001, 99) == 1,
+          "a second concurrent ICMP identifier is admitted");
+    CHECK(context.ng_session != NULL && context.ng_session->next != NULL &&
+                  context.ng_session != context.ng_session->next,
+          "concurrent ICMP identifiers use separate sessions");
+    CHECK(last_hop_limit == 3, "a later probe updates the IPv4 TTL");
+
     struct ng_session *session = context.ng_session;
-    if (session != NULL)
+    if (session != NULL) {
+        context.ng_session = session->next;
         ng_free(session, __FILE__, __LINE__);
+    }
+    session = context.ng_session;
+    if (session != NULL) {
+        context.ng_session = session->next;
+        ng_free(session, __FILE__, __LINE__);
+    }
     context.ng_session = NULL;
 
     length = make_echo_packet6(packet);
@@ -262,6 +383,8 @@ static void test_icmp_send_address_is_zero_initialised(void) {
           "IPv6 ICMP echo is sent after successful session admission");
     CHECK(sendto_calls == 1 && last_sendto_family == AF_INET6,
           "ICMP send uses an IPv6 sockaddr");
+    CHECK(last_hop_option == IPV6_UNICAST_HOPS && last_hop_limit == 0,
+          "IPv6 send applies the requested hop limit immediately before send");
     if (last_sendto_family == AF_INET6) {
         const struct sockaddr_in6 *address6 =
                 (const struct sockaddr_in6 *) &last_sendto_address;
