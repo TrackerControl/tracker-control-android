@@ -637,6 +637,23 @@ void route_flow_store(int version, int protocol,
 
 void route_flow_invalidate();
 
+// Numeric owner cache for established TCP flows. This is independent of the
+// generation-scoped route/policy cache, and therefore survives policy reloads
+// and ordinary WireGuard restarts. The cache is bounded and expires idle
+// entries using CLOCK_MONOTONIC.
+int tcp_owner_lookup(int version,
+                     const void *saddr, uint16_t sport,
+                     const void *daddr, uint16_t dport,
+                     jint *uid);
+void tcp_owner_store(int version,
+                     const void *saddr, uint16_t sport,
+                     const void *daddr, uint16_t dport,
+                     jint uid);
+void tcp_owner_forget(int version,
+                      const void *saddr, uint16_t sport,
+                      const void *daddr, uint16_t dport);
+void tcp_owner_reset();
+
 jint get_uid_q(const struct arguments *args,
                jint version,
                jint protocol,

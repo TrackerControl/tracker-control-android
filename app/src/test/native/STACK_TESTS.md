@@ -37,8 +37,14 @@ not send load to an external resolver or inject faults into the user's VPN.
 route cache with synthetic TCP and UDP/443 packets. JNI ownership/policy and
 WireGuard writes are observable boundary stubs. It checks policy revalidation,
 negative verdict reuse, reused SYN tuples and unresolved-owner fail-closed
-behaviour. UDP negative-session storage is a fixture stub; this is not a live
-QUIC application test.
+behaviour, including retained numeric TCP owners across policy invalidation
+for IPv4 and IPv6. UDP negative-session storage is a fixture stub; this is not
+a live QUIC application test. The runner wraps `dlopen`/`dlsym` for a synthetic
+policy bridge, checking that cached TCP packets avoid bridge route lookups and
+that refreshed routes and deny decisions still apply to the retained owner.
+`route_flow_test.c` also exercises owner-cache
+generation independence, reset/forget, monotonic expiry, collision bounds and
+IPv6 tuple matching.
 
 `WgbridgeInstrumentedTest` also starts synthetic tunnels through the packaged
 JNI library, with no remote endpoint or saved profile. It checks the five-field

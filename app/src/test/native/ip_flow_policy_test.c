@@ -42,6 +42,44 @@ _Atomic int wg_required = 1;
 static struct context context;
 static struct arguments args;
 
+// Replace only the shared-library boundary; exercise the real C policy cache.
+static int bridge_route_calls;
+static jint bridge_override = -1;
+static int bridge_default = 1;
+
+static int bridge_abi(void) { return 1; }
+static void bridge_set(const jint *uids, int count, int default_tunnel) {
+    CHECK(count <= 1, "fixture supports one routing override");
+    bridge_override = count > 0 ? uids[0] : -1;
+    bridge_default = default_tunnel;
+}
+static void bridge_clear(void) {
+    bridge_override = -1;
+    bridge_default = 1;
+}
+static int bridge_is_tunnel(jint uid) {
+    bridge_route_calls++;
+    return uid == bridge_override ? !bridge_default : bridge_default;
+}
+static int bridge_wants(int local, int dns, int tunnel, int direct_dns) {
+    return local && !dns ? 0 : dns && !direct_dns ? 1 : tunnel;
+}
+void *__wrap_dlopen(const char *name, int flags) {
+    (void) flags;
+    CHECK(strcmp(name, "libwgbridge.so") == 0, "only the policy bridge is loaded");
+    return (void *) (uintptr_t) 1;
+}
+void *__wrap_dlsym(void *handle, const char *name) {
+    (void) handle;
+    if (strcmp(name, "tc_policy_abi_version") == 0) return (void *) bridge_abi;
+    if (strcmp(name, "tc_policy_set_route_uids") == 0) return (void *) bridge_set;
+    if (strcmp(name, "tc_policy_clear_route_uids") == 0) return (void *) bridge_clear;
+    if (strcmp(name, "tc_policy_is_tunnel_uid") == 0) return (void *) bridge_is_tunnel;
+    if (strcmp(name, "tc_policy_wants_tunnel") == 0) return (void *) bridge_wants;
+    CHECK(0, "policy bridge requests a recognised symbol");
+    return NULL;
+}
+
 void log_android(int priority, const char *format, ...) {
     (void) priority;
     (void) format;
@@ -217,6 +255,7 @@ static void reset_fakes(void) {
     configured_uid = 10042;
     policy_allowed = 1;
     route_flow_invalidate();
+    tcp_owner_reset();
 }
 
 static size_t make_tcp(uint8_t *packet, uint16_t source_port, int syn, int ack,
@@ -242,6 +281,31 @@ static size_t make_tcp(uint8_t *packet, uint16_t source_port, int syn, int ack,
     tcp->ack_seq = htonl(2000);
     if (data_length != 0)
         memcpy(packet + sizeof(struct iphdr) + sizeof(struct tcphdr), data, data_length);
+    return length;
+}
+
+static size_t make_tcp6(uint8_t *packet, uint16_t source_port, int syn, int ack,
+                        int psh, const uint8_t *data, size_t data_length) {
+    const size_t length = sizeof(struct ip6_hdr) + sizeof(struct tcphdr) + data_length;
+    memset(packet, 0, length);
+    struct ip6_hdr *ip6 = (struct ip6_hdr *) packet;
+    ip6->ip6_vfc = 0x60;
+    ip6->ip6_plen = htons((uint16_t) (sizeof(struct tcphdr) + data_length));
+    ip6->ip6_nxt = IPPROTO_TCP;
+    inet_pton(AF_INET6, "2001:db8::10", &ip6->ip6_src);
+    inet_pton(AF_INET6, "2001:db8::20", &ip6->ip6_dst);
+
+    struct tcphdr *tcp = (struct tcphdr *) (packet + sizeof(struct ip6_hdr));
+    tcp->source = htons(source_port);
+    tcp->dest = htons(443);
+    tcp->doff = 5;
+    tcp->syn = syn;
+    tcp->ack = ack;
+    tcp->psh = psh;
+    tcp->seq = htonl(1000);
+    tcp->ack_seq = htonl(2000);
+    if (data_length != 0)
+        memcpy(packet + sizeof(struct ip6_hdr) + sizeof(struct tcphdr), data, data_length);
     return length;
 }
 
@@ -292,17 +356,22 @@ static void test_tcp_revalidation_and_fresh_syn(void) {
 
     route_flow_invalidate();
     policy_allowed = 0;
+    configured_uid = 0;
     const size_t data_length = make_tcp(packet, 42000, 0, 1, 1,
                                         (const uint8_t *) "data", 4);
+    ((struct tcphdr *) (packet + sizeof(struct iphdr)))->fin = 1;
     run(packet, data_length);
-    CHECK(policy_calls == 2 && wireguard_writes == 3 && rst_writes == 1,
+    CHECK(policy_calls == 2 && uid_calls == 1 && wireguard_writes == 3 && rst_writes == 1,
           "invalidated established TCP policy blocks before WireGuard and resets once");
+    CHECK(last_policy_uid == 10042,
+          "established TCP ACK/PSH/FIN revalidation uses the retained owner when Android reports zero");
     run(packet, data_length);
     CHECK(policy_calls == 2 && wireguard_writes == 3 && rst_writes == 1,
           "repeated blocked TCP packets skip Java, WireGuard, and duplicate resets");
 
     route_flow_invalidate();
     policy_allowed = 1;
+    configured_uid = 10042;
     run(packet, data_length);
     CHECK(policy_calls == 3 && wireguard_writes == 4,
           "a later invalidation rechecks policy and forwards the established flow");
@@ -328,7 +397,9 @@ static void test_tcp_unknown_owner_fails_closed_then_recovers(void) {
           "unknown-owner regression starts from an allowed tunnelled SYN");
 
     route_flow_invalidate();
-    configured_uid = -1;
+    tcp_owner_forget(4, &((struct iphdr *) syn_packet)->saddr, 42001,
+                     &((struct iphdr *) syn_packet)->daddr, 443);
+    configured_uid = 0;
     run(packet, ack_length);
     int verdict = ROUTE_FLOW_VERDICT_UNKNOWN;
     int tunnel = 0;
@@ -352,6 +423,75 @@ static void test_tcp_unknown_owner_fails_closed_then_recovers(void) {
           "resolving the owner on the next packet permits a fresh policy decision");
 }
 
+static void test_ipv6_tcp_owner_revalidation(void) {
+    _Alignas(struct ip6_hdr) uint8_t syn_packet[256];
+    _Alignas(struct ip6_hdr) uint8_t packet[256];
+    const size_t syn_length = make_tcp6(syn_packet, 42002, 1, 0, 0, NULL, 0);
+    const size_t ack_length = make_tcp6(packet, 42002, 0, 1, 1,
+                                       (const uint8_t *) "v6", 2);
+
+    reset_fakes();
+    run(syn_packet, syn_length);
+    CHECK(policy_calls == 1 && uid_calls == 1 && wireguard_writes == 1,
+          "IPv6 TCP SYN enters the same owner and WireGuard path");
+
+    route_flow_invalidate();
+    configured_uid = 0;
+    run(packet, ack_length);
+    CHECK(policy_calls == 2 && last_policy_uid == 10042 && wireguard_writes == 2,
+          "IPv6 established TCP revalidation uses the retained owner");
+}
+
+static void test_root_and_fresh_syn_owner_rules(void) {
+    _Alignas(struct iphdr) uint8_t syn_packet[256];
+    _Alignas(struct iphdr) uint8_t packet[256];
+
+    reset_fakes();
+    configured_uid = 0;
+    const size_t root_syn_length = make_tcp(syn_packet, 42003, 1, 0, 0, NULL, 0);
+    const size_t root_ack_length = make_tcp(packet, 42003, 0, 1, 1,
+                                            (const uint8_t *) "root", 4);
+    run(syn_packet, root_syn_length);
+    route_flow_invalidate();
+    configured_uid = -1;
+    run(packet, root_ack_length);
+    CHECK(policy_calls == 2 && uid_calls == 1 && last_policy_uid == 0,
+          "root-owned SYN remains valid across policy invalidation without a UID lookup");
+
+    reset_fakes();
+    configured_uid = 10042;
+    const size_t syn_length = make_tcp(syn_packet, 42004, 1, 0, 0, NULL, 0);
+    const size_t ack_length = make_tcp(packet, 42004, 0, 1, 1,
+                                       (const uint8_t *) "new", 3);
+    run(syn_packet, syn_length);
+    configured_uid = 10043;
+    run(syn_packet, syn_length);
+    CHECK(policy_calls == 2 && last_policy_uid == 10043,
+          "fresh SYN on a reused tuple replaces the retained owner");
+    route_flow_invalidate();
+    configured_uid = -1;
+    run(packet, ack_length);
+    CHECK(policy_calls == 3 && last_policy_uid == 10043,
+          "reloaded reused tuple keeps the fresh SYN owner");
+
+    reset_fakes();
+    configured_uid = 10042;
+    const size_t stale_syn_length = make_tcp(syn_packet, 42005, 1, 0, 0, NULL, 0);
+    const size_t stale_ack_length = make_tcp(packet, 42005, 0, 1, 1,
+                                             (const uint8_t *) "stale", 5);
+    run(syn_packet, stale_syn_length);
+    configured_uid = -1;
+    run(syn_packet, stale_syn_length);
+    CHECK(policy_calls == 2 && last_policy_uid == -1,
+          "unresolved fresh SYN does not inherit the previous tuple owner");
+    route_flow_invalidate();
+    configured_uid = 0;
+    int writes_before = wireguard_writes;
+    run(packet, stale_ack_length);
+    CHECK(policy_calls == 2 && wireguard_writes == writes_before,
+          "uncached established zero owner fails closed without policy or WireGuard");
+}
+
 static void test_udp_policy_invalidation_and_negative_state(void) {
     _Alignas(struct iphdr) uint8_t packet[256];
     const uint8_t opaque[] = {0x17, 0x03, 0x03, 0x00, 0x01, 0x7f};
@@ -373,6 +513,45 @@ static void test_udp_policy_invalidation_and_negative_state(void) {
           "repeated blocked UDP packets use negative state without Java or WireGuard");
 }
 
+static void test_selected_route_fast_path(void) {
+    _Alignas(struct iphdr) uint8_t packet[256];
+    reset_fakes();
+    jint override = 10999;
+    set_route_uids(&override, 1, 1, 0);
+    bridge_route_calls = 0;
+    size_t length = make_tcp(packet, 42006, 1, 0, 0, NULL, 0);
+    run(packet, length);
+    CHECK(bridge_route_calls == 1, "SYN resolves the selected-app route once");
+
+    length = make_tcp(packet, 42006, 0, 1, 1, (const uint8_t *) "data", 4);
+    run(packet, length);
+    run(packet, length);
+    CHECK(uid_calls == 1 && bridge_route_calls == 1 && policy_calls == 1,
+          "cached TCP packets avoid both Android ownership and bridge route lookups");
+
+    // Change this app's route and block verdict together. Retaining its owner
+    // must not preserve either the old route or the old allow verdict.
+    override = 10042;
+    set_route_uids(&override, 1, 1, 0);
+    configured_uid = 0;
+    policy_allowed = 0;
+    run(packet, length);
+    CHECK(last_policy_uid == 10042 && uid_calls == 1 && bridge_route_calls > 1,
+          "policy refresh re-evaluates the retained owner's new route");
+    CHECK(policy_calls == 2 && wireguard_writes == 3 && rst_writes == 1,
+          "new deny verdict stops an established connection before forwarding");
+    int tunnel = 1, known = 0;
+    struct iphdr *ip = (struct iphdr *) packet;
+    CHECK(route_flow_lookup(4, IPPROTO_TCP, &ip->saddr, 42006, &ip->daddr, 443,
+                            &tunnel, &known) && !tunnel && known,
+          "new direct route replaces the old tunnel route after refresh");
+    int calls_before = bridge_route_calls;
+    run(packet, length);
+    CHECK(bridge_route_calls == calls_before && policy_calls == 2 && uid_calls == 1,
+          "cached denied packets also avoid repeated route and owner lookups");
+    clear_route_uids();
+}
+
 int main(void) {
     memset(&context, 0, sizeof(context));
     memset(&args, 0, sizeof(args));
@@ -386,7 +565,10 @@ int main(void) {
 
     test_tcp_revalidation_and_fresh_syn();
     test_tcp_unknown_owner_fails_closed_then_recovers();
+    test_ipv6_tcp_owner_revalidation();
+    test_root_and_fresh_syn_owner_rules();
     test_udp_policy_invalidation_and_negative_state();
+    test_selected_route_fast_path();
     if (failures != 0)
         return 1;
     puts("ip_flow_policy_test: all tests passed");

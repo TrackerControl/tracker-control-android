@@ -42,4 +42,4 @@ compile icmp_socket_test app/src/test/native/icmp_socket_test.c \
 compile ip_flow_policy_test app/src/test/native/ip_flow_policy_test.c \
     app/src/main/jni/netguard/ip.c app/src/main/jni/netguard/policy.c \
     app/src/main/jni/netguard/ip6_ext.c app/src/main/jni/netguard/tls.c \
-    -ldl -pthread
+    -Wl,--wrap=dlopen -Wl,--wrap=dlsym -ldl -pthread

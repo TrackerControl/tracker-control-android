@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "netguard.h"
 #include "wg_flow_cache.h"
@@ -18,6 +19,17 @@ static int failures;
 
 static const uint8_t source[4] = {192, 0, 2, 10};
 static const uint8_t destination[4] = {198, 51, 100, 10};
+static time_t owner_clock_seconds = 1000;
+
+// policy.c deliberately uses CLOCK_MONOTONIC for owner expiry. Keep the
+// portable CI invocation unchanged while making expiry deterministic here.
+int clock_gettime(clockid_t clock_id, struct timespec *now) {
+    if (clock_id != CLOCK_MONOTONIC)
+        return -1;
+    now->tv_sec = owner_clock_seconds;
+    now->tv_nsec = 0;
+    return 0;
+}
 
 static void store_udp_route(int tunnel, int uid_known) {
     route_flow_store(4, IPPROTO_UDP, source, 41000, destination, 443,
@@ -44,6 +56,110 @@ static int lookup_verdict(int protocol, uint16_t source_port) {
                                    destination, 443, &verdict))
         return ROUTE_FLOW_VERDICT_UNKNOWN;
     return verdict;
+}
+
+static unsigned owner_set(const uint8_t *saddr, uint16_t sport,
+                          const uint8_t *daddr, uint16_t dport) {
+    uint32_t h = 2166136261u;
+    for (size_t i = 0; i < 4; i++) {
+        h = (h ^ saddr[i]) * 16777619u;
+        h = (h ^ daddr[i]) * 16777619u;
+    }
+    h = (h ^ 4u) * 16777619u;
+    h = (h ^ IPPROTO_TCP) * 16777619u;
+    h = (h ^ (uint8_t) (sport & 0xff)) * 16777619u;
+    h = (h ^ (uint8_t) (sport >> 8)) * 16777619u;
+    h = (h ^ (uint8_t) (dport & 0xff)) * 16777619u;
+    h = (h ^ (uint8_t) (dport >> 8)) * 16777619u;
+    return h & 255u;
+}
+
+static void test_tcp_owner_cache(void) {
+    jint uid = -1;
+    owner_clock_seconds = 1000;
+    tcp_owner_reset();
+
+    tcp_owner_store(4, source, 42000, destination, 443, 10042);
+    route_flow_invalidate();
+    CHECK(tcp_owner_lookup(4, source, 42000, destination, 443, &uid) && uid == 10042,
+          "TCP owner survives route-generation invalidation");
+
+    tcp_owner_forget(4, source, 42000, destination, 443);
+    CHECK(!tcp_owner_lookup(4, source, 42000, destination, 443, &uid),
+          "TCP owner forget removes one tuple");
+
+    tcp_owner_store(4, source, 42000, destination, 443, 0);
+    CHECK(tcp_owner_lookup(4, source, 42000, destination, 443, &uid) && uid == 0,
+          "UID 0 remains a valid retained SYN owner");
+
+    owner_clock_seconds = 2000;
+    tcp_owner_reset();
+    tcp_owner_store(4, source, 42000, destination, 443, 10042);
+    owner_clock_seconds += 299;
+    CHECK(tcp_owner_lookup(4, source, 42000, destination, 443, &uid) && uid == 10042,
+          "TCP owner remains valid before the bounded monotonic idle age");
+    owner_clock_seconds = 2000;
+    tcp_owner_reset();
+    tcp_owner_store(4, source, 42000, destination, 443, 10042);
+    owner_clock_seconds += 300;
+    CHECK(!tcp_owner_lookup(4, source, 42000, destination, 443, &uid),
+          "TCP owner expires at the bounded monotonic idle age");
+
+    // Find five tuples in one set and verify the four-way bound evicts the
+    // oldest collision without disturbing unrelated sets.
+    uint16_t ports[5];
+    unsigned set = 0;
+    int found = 0;
+    for (uint32_t port = 1000; port < 65536 && found != 2; port++) {
+        unsigned candidate = owner_set(source, (uint16_t) port, destination, 443);
+        if (found == 0) {
+            set = candidate;
+            ports[0] = (uint16_t) port;
+            found = 1;
+        } else if (candidate == set) {
+            int count = 1;
+            ports[count++] = (uint16_t) port;
+            for (uint32_t next = port + 1; next < 65536 && count < 5; next++) {
+                if (owner_set(source, (uint16_t) next, destination, 443) == set)
+                    ports[count++] = (uint16_t) next;
+                port = next;
+            }
+            if (count == 5)
+                found = 2;
+        }
+    }
+    CHECK(found == 2, "test fixture finds five colliding TCP owner tuples");
+    if (found == 2) {
+        owner_clock_seconds = 3000;
+        tcp_owner_reset();
+        for (int i = 0; i < 5; i++)
+            tcp_owner_store(4, source, ports[i], destination, 443, 20000 + i);
+        CHECK(!tcp_owner_lookup(4, source, ports[0], destination, 443, &uid),
+              "fifth colliding owner evicts the oldest bounded-cache entry");
+        CHECK(tcp_owner_lookup(4, source, ports[4], destination, 443, &uid) && uid == 20004,
+              "newest colliding owner remains available");
+
+        tcp_owner_reset();
+        for (int i = 0; i < 4; i++)
+            tcp_owner_store(4, source, ports[i], destination, 443, 20000 + i);
+        tcp_owner_forget(4, source, ports[0], destination, 443);
+        owner_clock_seconds++;
+        tcp_owner_store(4, source, ports[2], destination, 443, 30002);
+        tcp_owner_store(4, source, ports[4], destination, 443, 20004);
+        CHECK(tcp_owner_lookup(4, source, ports[1], destination, 443, &uid) && uid == 20001,
+              "updating a later matching tuple does not consume an earlier empty slot");
+        CHECK(tcp_owner_lookup(4, source, ports[2], destination, 443, &uid) && uid == 30002,
+              "updating a retained owner replaces the existing tuple");
+    }
+
+    static const uint8_t source6[16] = {
+        0x20, 0x01, 0x0d, 0xb8, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1};
+    static const uint8_t destination6[16] = {
+        0x20, 0x01, 0x0d, 0xb8, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 1};
+    tcp_owner_reset();
+    tcp_owner_store(6, source6, 42000, destination6, 443, 10042);
+    CHECK(tcp_owner_lookup(6, source6, 42000, destination6, 443, &uid) && uid == 10042,
+          "IPv6 TCP owner is retained by the same bounded cache");
 }
 
 static void test_default_udp_route_is_reused(void) {
@@ -175,6 +291,7 @@ static void test_syn_clears_reused_tuple_verdict(void) {
 }
 
 int main(void) {
+    test_tcp_owner_cache();
     test_default_udp_route_is_reused();
     test_tcp_verdict_revalidation_and_negative_cache();
     test_unresolved_owner_does_not_pin_policy();

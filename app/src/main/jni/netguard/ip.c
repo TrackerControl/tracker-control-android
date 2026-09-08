@@ -198,11 +198,40 @@ static jint resolve_flow_owner(const struct arguments *args, int version, int pr
                                const void *saddr, uint16_t sport,
                                const void *daddr, uint16_t dport,
                                const char *source, const char *dest,
-                               const uint8_t *pkt, const uint8_t *payload) {
-    jint route_uid = get_session_uid(args, version, protocol, pkt, payload);
-    if (route_uid < 0)
-        route_uid = get_route_uid(args, version, protocol,
-                                  saddr, sport, daddr, dport, source, dest);
+                               const uint8_t *pkt, const uint8_t *payload,
+                               int tcp_syn) {
+    // A fresh SYN must not inherit an owner from an old native session or the
+    // retained cache: its Android lookup is authoritative for the new socket.
+    jint route_uid = (protocol == IPPROTO_TCP && tcp_syn)
+            ? -1 : get_session_uid(args, version, protocol, pkt, payload);
+
+    if (route_uid >= 0) {
+        // Native session ownership is trusted, including UID 0. Preserve the
+        // existing native-first behaviour for UDP and ICMP as well.
+        if (protocol == IPPROTO_TCP)
+            tcp_owner_store(version, saddr, sport, daddr, dport, route_uid);
+        return route_uid;
+    }
+
+    if (protocol == IPPROTO_TCP && !tcp_syn &&
+        tcp_owner_lookup(version, saddr, sport, daddr, dport, &route_uid))
+        return route_uid;
+
+    route_uid = get_route_uid(args, version, protocol,
+                              saddr, sport, daddr, dport, source, dest);
+
+    if (protocol == IPPROTO_TCP) {
+        if (tcp_syn && route_uid >= 0) {
+            tcp_owner_store(version, saddr, sport, daddr, dport, route_uid);
+        } else if (!tcp_syn && route_uid > 0) {
+            // Zero from the established-flow fallback is ambiguous while a
+            // closing socket disappears; only a positive fallback owner is
+            // safe to retain here.
+            tcp_owner_store(version, saddr, sport, daddr, dport, route_uid);
+        } else if (!tcp_syn && route_uid == 0) {
+            route_uid = -1;
+        }
+    }
     return route_uid;
 }
 
@@ -221,8 +250,13 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
                               const void *daddr, uint16_t dport,
                               const char *source, const char *dest,
                               const uint8_t *pkt, const uint8_t *payload,
-                              jint uid, jint *out_uid) {
+                              int syn, jint uid, jint *out_uid) {
     int tunnel_uid;
+    if (protocol == IPPROTO_TCP && uid > 0)
+        tcp_owner_store(version, saddr, sport, daddr, dport, uid);
+    else if (protocol == IPPROTO_TCP && syn && uid == 0)
+        tcp_owner_store(version, saddr, sport, daddr, dport, uid);
+
     if (route_uid_relevant()) {
         // A flow keeps the verdict its first packet was given. A fresh UID
         // is authoritative even when a previous flow happened to reuse the
@@ -246,7 +280,7 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
             // unknown-system policy and per-app route for a busy flow.
             route_uid = resolve_flow_owner(args, version, protocol,
                                            saddr, sport, daddr, dport,
-                                           source, dest, pkt, payload);
+                                           source, dest, pkt, payload, syn);
 
             if (route_uid >= 0) {
                 tunnel_uid = is_tunnel_uid(route_uid);
@@ -278,7 +312,7 @@ static int resolve_tunnel_uid(const struct arguments *args, int version, uint8_t
         if (out_uid != NULL && uid < 0) {
             resolved_uid = resolve_flow_owner(args, version, protocol,
                                               saddr, sport, daddr, dport,
-                                              source, dest, pkt, payload);
+                                              source, dest, pkt, payload, syn);
             if (resolved_uid >= 0)
                 *out_uid = resolved_uid;
         }
@@ -577,8 +611,21 @@ void handle_ip(const struct arguments *args,
 
     // A reused TCP five-tuple starts with a fresh SYN. Do not let a verdict
     // from the previous connection suppress this connection's policy check.
-    if (protocol == IPPROTO_TCP && syn)
+    if (protocol == IPPROTO_TCP && syn) {
+        // The new SYN must be resolved afresh, even when the tuple is reused.
+        tcp_owner_forget(version, saddr, sport, daddr, dport);
         route_flow_clear_verdict(version, protocol, saddr, sport, daddr, dport);
+    }
+
+    // A retained owner is independent of the generation-scoped route and
+    // verdict caches. Touch it on every established WireGuard TCP packet so
+    // an active flow does not age out merely because its cached policy answer
+    // is taking the fast path.
+    jint retained_tcp_uid = -1;
+    int retained_tcp_owner = 0;
+    if (wg_is_required && protocol == IPPROTO_TCP && !syn &&
+        tcp_owner_lookup(version, saddr, sport, daddr, dport, &retained_tcp_uid))
+        retained_tcp_owner = 1;
 
     // Tunnelled TCP has no native session, so the usual established-TCP
     // shortcut cannot tell whether a policy generation has changed. Keep the
@@ -621,11 +668,13 @@ void handle_ip(const struct arguments *args,
             tcp_native_session = has_tcp_session(args, version, pkt, payload);
             if (!tcp_native_session) {
                 tcp_flow_policy_pending = 1;
+                if (retained_tcp_owner)
+                    uid = retained_tcp_uid;
                 if (!tcp_flow_route_cached) {
                     jint resolved_uid = -1;
                     tcp_flow_tunnel = resolve_tunnel_uid(
                             args, version, protocol, saddr, sport, daddr, dport,
-                            source, dest, pkt, payload, uid, &resolved_uid);
+                            source, dest, pkt, payload, syn, uid, &resolved_uid);
                     if (resolved_uid >= 0)
                         uid = resolved_uid;
                 }
@@ -637,7 +686,7 @@ void handle_ip(const struct arguments *args,
                 if (uid < 0) {
                     jint resolved_uid = resolve_flow_owner(
                             args, version, protocol, saddr, sport, daddr, dport,
-                            source, dest, pkt, payload);
+                            source, dest, pkt, payload, syn);
                     if (resolved_uid >= 0)
                         uid = resolved_uid;
                 }
@@ -693,6 +742,9 @@ void handle_ip(const struct arguments *args,
                 uid = get_uid(version, protocol, saddr, sport, daddr, dport);
             else
                 uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+
+            if (protocol == IPPROTO_TCP && syn && uid >= 0)
+                tcp_owner_store(version, saddr, sport, daddr, dport, uid);
     }
 
     // SNI research mode reassembles a ClientHello on the ng_session that
@@ -722,7 +774,7 @@ void handle_ip(const struct arguments *args,
         // of resolving it a second time.
         sni_tunnel_uid = resolve_tunnel_uid(args, version, protocol,
                                             saddr, sport, daddr, dport,
-                                            source, dest, pkt, payload, uid,
+                                            source, dest, pkt, payload, syn, uid,
                                             &sni_resolved_uid);
         sni_tunnel_uid_known = 1;
         if (route_wants_tunnel(is_local_dest(version, daddr), 0,
@@ -743,6 +795,9 @@ void handle_ip(const struct arguments *args,
             uid = get_uid(version, protocol, saddr, sport, daddr, dport);
         else
             uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+
+        if (protocol == IPPROTO_TCP && (uid > 0 || (syn && uid == 0)))
+            tcp_owner_store(version, saddr, sport, daddr, dport, uid);
     }
 
     log_android(ANDROID_LOG_DEBUG,
@@ -862,6 +917,9 @@ void handle_ip(const struct arguments *args,
                     uid = get_uid(version, protocol, saddr, sport, daddr, dport);
                 else
                     uid = get_uid_q(args, version, protocol, source, sport, dest, dport);
+
+                if (protocol == IPPROTO_TCP && uid > 0)
+                    tcp_owner_store(version, saddr, sport, daddr, dport, uid);
             }
 
             allowed = 1;
@@ -919,7 +977,7 @@ void handle_ip(const struct arguments *args,
                 ? sni_tunnel_uid
                 : resolve_tunnel_uid(args, version, protocol,
                                      saddr, sport, daddr, dport,
-                                     source, dest, pkt, payload, uid, NULL);
+                                     source, dest, pkt, payload, syn, uid, NULL);
 
         int wg_dest = route_wants_tunnel(is_local_dest(version, daddr), is_dns,
                                          tunnel_uid, route_dns_direct());
@@ -1015,7 +1073,7 @@ void handle_ip(const struct arguments *args,
             if (!tcp_flow_route_cached)
                 (void) resolve_tunnel_uid(
                         args, version, protocol, saddr, sport, daddr, dport,
-                        source, dest, pkt, payload, uid, NULL);
+                        source, dest, pkt, payload, syn, uid, NULL);
             route_flow_store_verdict(version, protocol, saddr, sport, daddr, dport,
                                      ROUTE_FLOW_VERDICT_BLOCKED);
             if (tcp_flow_policy_pending && !syn &&
