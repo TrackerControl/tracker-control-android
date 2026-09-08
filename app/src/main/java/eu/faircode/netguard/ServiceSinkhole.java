@@ -3296,41 +3296,48 @@ public class ServiceSinkhole extends VpnService {
             Log.i(TAG, "Received " + intent);
             Util.logExtras(intent);
 
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-                        InteractiveStatePolicy.onScreenStateChanged(
-                                last_interactive,
-                                Util.isInteractive(ServiceSinkhole.this),
-                                new InteractiveStatePolicy.Callbacks() {
-                                    @Override
-                                    public void onWireGuardInteractiveStateChanged(boolean interactive) {
-                                        updateWireGuardInteractiveState(interactive);
-                                    }
+            try {
+                executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            last_interactive = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
+                            InteractiveStatePolicy.onScreenStateChanged(
+                                    last_interactive,
+                                    Util.isInteractive(ServiceSinkhole.this),
+                                    new InteractiveStatePolicy.Callbacks() {
+                                        @Override
+                                        public void onWireGuardInteractiveStateChanged(boolean interactive) {
+                                            updateWireGuardInteractiveState(interactive);
+                                        }
 
-                                    @Override
-                                    public void onStatsInteractiveStateChanged(boolean interactive) {
-                                        statsHandler.sendEmptyMessage(interactive ? MSG_STATS_START : MSG_STATS_STOP);
-                                    }
-                                });
+                                        @Override
+                                        public void onStatsInteractiveStateChanged(boolean interactive) {
+                                            statsHandler.sendEmptyMessage(interactive ? MSG_STATS_START : MSG_STATS_STOP);
+                                        }
+                                    });
 
-                        // Screen state gates the DoH battery policy: while the
-                        // screen is off the proxy drops retries and idle
-                        // keep-alive sockets so a server-side reset during doze
-                        // can't wake the radio.
-                        net.kollnig.missioncontrol.dns.DnsProxyServer
-                                .getInstance(ServiceSinkhole.this)
-                                .onScreenStateChanged(last_interactive);
+                            // Screen state gates the DoH battery policy: while the
+                            // screen is off the proxy drops retries and idle
+                            // keep-alive sockets so a server-side reset during doze
+                            // can't wake the radio.
+                            net.kollnig.missioncontrol.dns.DnsProxyServer
+                                    .getInstance(ServiceSinkhole.this)
+                                    .onScreenStateChanged(last_interactive);
 
-                        if (last_interactive)
-                            recheckNetworkValidation();
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                            if (last_interactive)
+                                recheckNetworkValidation();
+                        } catch (Throwable ex) {
+                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        }
                     }
-                }
-            });
+                });
+            } catch (RejectedExecutionException ex) {
+                // Service is tearing down: the receiver can already be
+                // unregistered while this broadcast is still in-flight to the
+                // main Handler, racing executor.shutdownNow() in onDestroy().
+                Log.e(TAG, ex.toString());
+            }
         }
     };
 
@@ -3580,18 +3587,26 @@ public class ServiceSinkhole extends VpnService {
             // seconds while building rules via slow PackageManager IPC. Doing this
             // work on the main thread blocks input dispatching and causes an ANR.
             final BroadcastReceiver.PendingResult result = goAsync();
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        handlePackageChanged(context, intent);
-                    } catch (Throwable ex) {
-                        Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    } finally {
-                        result.finish();
+            try {
+                executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            handlePackageChanged(context, intent);
+                        } catch (Throwable ex) {
+                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
+                        } finally {
+                            result.finish();
+                        }
                     }
-                }
-            });
+                });
+            } catch (RejectedExecutionException ex) {
+                // Service is tearing down: the receiver can already be
+                // unregistered while this broadcast is still in-flight to the
+                // main Handler, racing executor.shutdownNow() in onDestroy().
+                Log.e(TAG, ex.toString());
+                result.finish();
+            }
         }
     };
 
