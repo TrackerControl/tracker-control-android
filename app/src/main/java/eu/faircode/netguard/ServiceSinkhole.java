@@ -106,7 +106,6 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -3533,10 +3532,8 @@ public class ServiceSinkhole extends VpnService {
                                     }
                                 }
 
-                                Socket socket = null;
                                 try {
-                                    socket = network.getSocketFactory().createSocket();
-                                    socket.connect(new InetSocketAddress(host, 443), 10000);
+                                    NetworkValidationProbe.connect(network.getSocketFactory(), host);
                                     Log.i(TAG, "Validated " + network + " " + ni + " host=" + host);
                                     synchronized (mapValidated) {
                                         mapValidated.put(network, new Date().getTime());
@@ -3555,13 +3552,6 @@ public class ServiceSinkhole extends VpnService {
                                     mapValidateFailure.put(network, new long[]{
                                             SystemClock.elapsedRealtime(),
                                             nextValidationBackoffMs(previousBackoffMs)});
-                                } finally {
-                                    if (socket != null)
-                                        try {
-                                            socket.close();
-                                        } catch (IOException ex) {
-                                            Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                                        }
                                 }
                             } finally {
                                 validating.remove(network);
