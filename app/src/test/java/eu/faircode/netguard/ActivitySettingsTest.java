@@ -17,6 +17,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Xml;
 
+import androidx.preference.EditTextPreference;
+import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceScreen;
+
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Set;
@@ -34,6 +38,8 @@ import org.robolectric.RuntimeEnvironment;
 
 @RunWith(RobolectricTestRunner.class)
 public class ActivitySettingsTest {
+    private static final String DOH_ENDPOINT_KEY = "activity_settings_test_doh_endpoint";
+
     private Context context;
 
     @Before
@@ -41,6 +47,7 @@ public class ActivitySettingsTest {
         context = RuntimeEnvironment.getApplication();
         context.getSharedPreferences(TrackerBlocklist.PREF_BLOCKLIST, Context.MODE_PRIVATE)
                 .edit().clear().commit();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().remove(DOH_ENDPOINT_KEY).commit();
         TrackerBlocklist.getInstance(null).clear();
         InternetBlocklist.getInstance(null).clear();
     }
@@ -95,5 +102,72 @@ public class ActivitySettingsTest {
         String xml = writer.toString();
         assertTrue(xml, xml.contains("APPS_BLOCKLIST_PACKAGES_KEY_" + packageName));
         assertTrue(xml, xml.contains("Advertising | Example"));
+    }
+
+    @Test
+    public void dohEndpointListenerAcceptsProviderPathsQueriesAndNormalisesWhitespace() {
+        EditTextPreference preference = dohEndpointPreference("https://old.example/dns-query");
+
+        assertTrue(applyDohEndpoint(preference, "https://dns.quad9.net/dns-query"));
+        assertEquals("https://dns.quad9.net/dns-query", preference.getText());
+        assertEquals("https://dns.quad9.net/dns-query", dohPreferences().getString(DOH_ENDPOINT_KEY, null));
+
+        assertTrue(applyDohEndpoint(preference, "https://dns.example"));
+        assertEquals("https://dns.example", preference.getText());
+        assertTrue(applyDohEndpoint(preference, "https://dns.example/dns-query?ct=application/dns-message"));
+        assertEquals("https://dns.example/dns-query?ct=application/dns-message", preference.getText());
+        assertTrue(applyDohEndpoint(preference, "https://例え.テスト/dns-query"));
+        assertEquals("https://例え.テスト/dns-query", preference.getText());
+
+        assertFalse(applyDohEndpoint(preference, "  https://dns.example/dns-query  "));
+        assertEquals("https://dns.example/dns-query", preference.getText());
+        assertEquals("https://dns.example/dns-query", dohPreferences().getString(DOH_ENDPOINT_KEY, null));
+    }
+
+    @Test
+    public void dohEndpointListenerRejectsInvalidEditsAndPreservesPreviousValue() {
+        EditTextPreference preference = dohEndpointPreference("https://dns.example/dns-query");
+        String[] invalidEndpoints = {
+                "",
+                "  ",
+                "http://dns.example/dns-query",
+                "https:///dns-query",
+                "https://dns.example:invalid/dns-query",
+                "https://dns.example:65536/dns-query",
+                "https://user@dns.example/dns-query",
+                "https://user@例え.テスト/dns-query",
+                "https://dns.example/dns-query#fragment",
+                "https://dns. example/dns-query"
+        };
+
+        for (String invalidEndpoint : invalidEndpoints) {
+            assertFalse(invalidEndpoint, applyDohEndpoint(preference, invalidEndpoint));
+            assertEquals(invalidEndpoint, "https://dns.example/dns-query", preference.getText());
+            assertEquals(invalidEndpoint, "https://dns.example/dns-query",
+                    dohPreferences().getString(DOH_ENDPOINT_KEY, null));
+        }
+    }
+
+    private EditTextPreference dohEndpointPreference(String initialEndpoint) {
+        PreferenceManager manager = new PreferenceManager(context);
+        PreferenceScreen screen = manager.createPreferenceScreen(context);
+        EditTextPreference preference = new EditTextPreference(context);
+        preference.setKey(DOH_ENDPOINT_KEY);
+        screen.addPreference(preference);
+        manager.setPreferences(screen);
+        preference.setText(initialEndpoint);
+        ActivitySettings.configureDohEndpointPreference(preference);
+        return preference;
+    }
+
+    private boolean applyDohEndpoint(EditTextPreference preference, String endpoint) {
+        boolean accepted = preference.callChangeListener(endpoint);
+        if (accepted)
+            preference.setText(endpoint);
+        return accepted;
+    }
+
+    private SharedPreferences dohPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 }
