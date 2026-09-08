@@ -42,18 +42,9 @@ TrackerControl provides:
 Unlike similar solutions, TrackerControl does not intercept SSL connections, minimising privacy risks and allowing usage on unrooted devices. Only metadata about network communications is logged and shown to the user.
 
 <p align="center">
-    <img alt="Privacy timeline with blocked and allowed tracker connections" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="30%">
-    <img alt="Apps ranked by tracking companies contacted" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="30%">
-    <img alt="Remote VPN provider and country selection" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="30%">
-</p>
-<p align="center">
-    <img alt="Per-app tracker blocking controls" src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="30%">
-    <img alt="Data access and deletion requests" src="fastlane/metadata/android/en-US/images/phoneScreenshots/5.png" width="30%">
-    <img alt="Destination countries based on DNS and IP information" src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="30%">
-</p>
-
-<p align="center">
-    <img alt="Privacy Insights with weekly tracking statistics and the most pervasive trackers" src="fastlane/metadata/android/en-US/images/phoneScreenshots/7.png" width="30%">
+    <img alt="Privacy timeline with blocked and allowed tracker connections" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="25%">
+    <img alt="Per-app tracker blocking controls" src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width="25%">
+    <img alt="Destination countries based on DNS and IP information" src="fastlane/metadata/android/en-US/images/phoneScreenshots/6.png" width="25%">
 </p>
 
 ## Download / Installation
