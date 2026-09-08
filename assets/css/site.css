@@ -116,7 +116,7 @@ h3 { font-size: 1.35rem; line-height: 1.2; margin-bottom: 1rem; }
   grid-template-columns: minmax(0, 1.15fr) minmax(300px, .85fr);
 }
 .hero-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.8rem; }
-.hero__visual { position: relative; width: 100%; max-width: 460px; height: 480px; margin: 0 auto; }
+.hero__visual { position: relative; width: 100%; max-width: 460px; height: 510px; margin: 0 auto; }
 .hero__visual::before { content: ''; position: absolute; inset: 50px 0 40px; border-radius: 50%; background: var(--brand-soft); }
 .hero__visual .hero-screen { position: absolute; width: 47%; height: auto; border: 5px solid #292323; border-radius: 20px; box-shadow: 0 18px 35px #29232324; }
 .hero-screen--overview { top: 0; left: 0; transform: rotate(-4deg); }
@@ -212,7 +212,7 @@ h3 { font-size: 1.35rem; line-height: 1.2; margin-bottom: 1rem; }
   h1 { font-size: clamp(2.45rem, 13vw, 3.5rem); }
   .hero-intro { margin-bottom: 2.5rem; }
   .platform-grid, .resource-grid, .split-section { grid-template-columns: 1fr; }
-  .hero__visual { height: 390px; max-width: 350px; }
+  .hero__visual { height: 420px; max-width: 350px; }
   .home-section { margin-top: 2.8rem; padding-top: 2.6rem; }
   .platform-card__actions .button { flex: 1 1 100%; }
   .site-footer__inner { align-items: flex-start; flex-direction: column; gap: .8rem; min-height: 140px; padding-bottom: 1.4rem; padding-top: 1.4rem; }
