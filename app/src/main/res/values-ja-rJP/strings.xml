@@ -337,4 +337,471 @@
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+    <string name="app_copyright">Copyright \u00A9 2019–2022 Konrad Kollnig\n\nTrackerControl は、Marcel Bokhorst（M66B）が開発した NetGuard を基にしています。</string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">TrackerControl は iOS でも利用できます</a></string>
+    <string name="menu_app_unprotected">保護されていないアプリのみ表示</string>
+    <string name="menu_app_frozen">凍結されたアプリを表示</string>
+    <string name="menu_sort_by_latest_detected_tracker">最後に検出されたトラッカーで並べ替え</string>
+    <string name="menu_troubleshooting">トラブルシューティング</string>
+    <string name="menu_timeline">トラッカーのアクティビティ</string>
+    <string name="title_tracker_activity">トラッカーのアクティビティ</string>
+    <string name="timeline_empty">最近のトラッカーアクティビティはありません。\n\nTrackerControl を有効にすると、どのアプリがあなたを追跡しているか確認できます。</string>
+    <string name="timeline_empty_disabled_title">TrackerControl はオフです</string>
+    <string name="timeline_empty_disabled_subtitle">右上のスイッチで TrackerControl を有効にしてください。すると、アプリのトラッカーアクティビティがここに表示されます。</string>
+    <string name="timeline_empty_enabled_title">トラッカーを監視中…</string>
+    <string name="timeline_empty_enabled_subtitle">多くのアプリは使用中にのみトラッカーへ接続します。アプリを開いてから戻ると、そのトラッカーアクティビティがここに表示されます。</string>
+    <string name="timeline_empty_recording_off_title">トラッカーの記録はオフです</string>
+    <string name="timeline_empty_recording_off_subtitle">詳細設定で「新しいトラッカーを検出する」がオフになっています。トラッカーは引き続きブロックされますが、記録されないため、このタイムラインは空のままです。再びオンにすると、トラッカーアクティビティを確認できます。</string>
+    <string name="timeline_empty_recording_unavailable_title">トラッカーの記録を利用できません</string>
+    <string name="timeline_empty_recording_unavailable_subtitle">このバージョンの TrackerControl では、トラッカーアクティビティの記録を利用できません。ブロックは機能しますが、このタイムラインは空のままです。</string>
+    <string name="timeline_open_app">アプリを開く</string>
+    <string name="timeline_open_settings">設定を開く</string>
+    <string name="timeline_hint_tap_entry">アプリが動作しませんか？項目をタップして保護を調整してください。</string>
+    <string name="timeline_hint_dismiss">了解</string>
+    <string name="unidentified_app_uid">不明なアプリ（UID %1$d）</string>
+    <string name="tab_timeline">タイムライン</string>
+    <string name="tab_apps">アプリ</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="timeline_section_last_hour">過去1時間</string>
+    <string name="timeline_section_today">今日</string>
+    <string name="timeline_section_yesterday">昨日</string>
+    <string name="timeline_section_this_week">今週</string>
+    <string name="timeline_more_trackers">さらに %d 件</string>
+    <string name="timeline_tracker_blocked">ブロック済み</string>
+    <string name="timeline_tracker_allowed">許可済み</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s（%2$s）</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="feed_section_last_contact">最終接続 %s</string>
+    <plurals name="feed_show_more_companies">
+        <item quantity="other">さらに %d 社を表示</item>
+    </plurals>
+    <string name="feed_allow_company_in_app">%1$s を %2$s で許可</string>
+    <string name="feed_block_company_in_app">%1$s を %2$s でブロック</string>
+    <string name="feed_allowed_by_you">あなたが許可</string>
+    <string name="feed_allowed_shared_ip">許可済み · 共有 IP</string>
+    <string name="feed_monitored">監視中</string>
+    <string name="feed_company_expanded">展開済み</string>
+    <string name="feed_company_collapsed">折りたたみ済み</string>
+    <string name="feed_essential_explainer">アプリに必要 — %s が動作し続けるよう許可されています</string>
+    <string name="feed_essential_explainer_blocked">アプリに必要 — これらをブロックすると %s が動作しない可能性があります</string>
+    <string name="timeline_summary_mixed">%1$d 件をブロック · %2$d 件を許可</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="other">%d 件のトラッカーをブロック</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="other">%d 件のトラッカーを許可</item>
+    </plurals>
+    <string name="troubleshooting_title">トラブルシューティング</string>
+    <string name="troubleshooting_battery_title">バッテリー最適化</string>
+    <string name="troubleshooting_battery_desc">TrackerControl がバックグラウンドで動作しなくなった場合は、TrackerControl の Android のバッテリー最適化を無効にしてください。「すべてのアプリ」を選択し、TrackerControl をタップして「最適化しない」を選択してください。</string>
+    <string name="troubleshooting_battery_action">バッテリー最適化を無効にする</string>
+    <string name="troubleshooting_battery_ok">バッテリー最適化はすでに無効です。</string>
+    <string name="troubleshooting_datasaver_title">データセーバー</string>
+    <string name="troubleshooting_datasaver_desc">データセーバーがオンのとき TrackerControl が接続できない場合は、TrackerControl に無制限のデータ使用を許可してください。「バックグラウンドデータ」と「データ使用量の無制限」を有効にしてください。</string>
+    <string name="troubleshooting_datasaver_action">無制限のデータ使用を許可</string>
+    <string name="troubleshooting_datasaver_ok">データセーバーは TrackerControl を制限していません。</string>
+    <string name="troubleshooting_local_network_title">ローカルネットワークへのアクセス</string>
+    <string name="troubleshooting_local_network_desc">ローカル DNS サーバー、WireGuard ピア、プロキシには権限が必要です。</string>
+    <string name="troubleshooting_local_network_action">ローカルネットワークへのアクセスを許可</string>
+    <string name="troubleshooting_local_network_ok">ローカルネットワークへのアクセスは許可されています。</string>
+    <string name="troubleshooting_app_breakage_title">アプリが動作しなくなりました</string>
+    <string name="troubleshooting_app_breakage_desc">メイン画面でアプリをタップし、次に「保護」をタップしてください。まず「最小限のブロックのみ」を試してください。それでも問題がある場合は「トラッカーを許可」を選択してください。「TrackerControl を迂回」は最後の手段としてのみ使用してください。</string>
+    <string name="troubleshooting_categories_title">特定のトラッカーカテゴリをブロック</string>
+    <string name="troubleshooting_categories_desc">アプリをタップし、「トラッカー」タブで個々のトラッカーカテゴリ（分析、広告など）をオンまたはオフにして、アプリごとのブロックを細かく調整できます。</string>
+    <string name="troubleshooting_alwayson_title">常時接続 VPN</string>
+    <string name="troubleshooting_alwayson_desc">Android の VPN 設定で「VPN なしの接続をブロック」（ロックダウン）が有効な場合、TrackerControl は正しく動作しません。この設定を無効にしてください。</string>
+    <string name="troubleshooting_alwayson_action">VPN 設定を開く</string>
+    <string name="menu_clear_activity">記録したアクティビティを消去</string>
+    <string name="setting_options">一般</string>
+    <string name="setting_further_options">その他のオプション</string>
+    <string name="setting_tcp_mss_clamp">テザリング互換モード</string>
+    <string name="summary_tcp_mss_clamp">すべての通信を TrackerControl 経由にし、TCP セグメントサイズを制限して、テザリング接続が停止したりインターネットに接続できなくなったりする問題を修正します。ローカルネットワークへのアクセスも TrackerControl を迂回しなくなり、性能が低下する可能性があります。</string>
+    <string name="setting_advanced_options">詳細設定（上級者向け）</string>
+    <string name="setting_system">システムアプリを表示</string>
+    <string name="setting_log_logcat">研究</string>
+    <string name="setting_exclude_all_tracking">すべてのアプリを追跡対象から除外</string>
+    <string name="summary_exclude_all_tracking">すべてのアプリのトラッカー監視を無効にします。その後、個々のアプリで再び有効にできます。</string>
+    <string name="setting_include_all_tracking">すべてのアプリを追跡対象に含める</string>
+    <string name="summary_include_all_tracking">すべてのアプリのトラッカー監視を再び有効にします。</string>
+    <string name="setting_wg_enabled">WireGuard 経由で通信をトンネル</string>
+    <string name="setting_wg_config">WireGuard 設定</string>
+    <string name="setting_wg_profile">WireGuard プロファイル</string>
+    <string name="setting_wg_profile_manage">カスタム WireGuard プロファイル</string>
+    <string name="setting_wg_profile_import">WireGuard 設定をインポート</string>
+    <string name="setting_wg_profile_scan">QR コードをスキャン</string>
+    <string name="setting_wg_profile_import_file">ファイルまたはアーカイブからインポート</string>
+    <string name="setting_wg_mullvad_setup">Mullvad を設定</string>
+    <string name="setting_wg_proton_setup">Proton VPN の設定を使用</string>
+    <string name="setting_wg_keepalive_when_screen_off">画面オフ時も WireGuard を維持</string>
+    <string name="setting_wg_profile_save">プロファイルを保存</string>
+    <string name="setting_wg_profile_delete">プロファイルを削除</string>
+    <string name="accessibility_wg_profile_edit">WireGuard プロファイル %1$s を編集</string>
+    <string name="accessibility_wg_profile_delete">WireGuard プロファイル %1$s を削除</string>
+    <string name="setting_wireguard">WireGuard（プレビュー）</string>
+    <string name="setting_wg_status">ステータス</string>
+    <string name="setting_vpn_key_rotate_now">VPN プロバイダーのキーを今すぐローテーション</string>
+    <string name="setting_doh_enabled">セキュア DNS（DoH）</string>
+    <string name="summary_doh_enabled">DNS-over-HTTPS で DNS クエリを暗号化します。WireGuard が有効なときは、クエリがそのトンネルを使用するため自動的に一時停止します。</string>
+    <string name="warning_beta">ベータ機能です。期待どおりに動作しない可能性があります。</string>
+    <string name="setting_doh_endpoint">DoH エンドポイント URL</string>
+    <string name="summary_doh_endpoint">DNS-over-HTTPS クエリ用の HTTPS URL</string>
+    <string name="setting_doh_dns_fallback">DNS フォールバック</string>
+    <string name="summary_doh_dns_fallback">DoH を利用できない場合は標準（暗号化されていない）DNS を使用します。無効にすると、DoH サーバーが停止した際にアプリが動作しなくなる可能性があります。</string>
+    <string name="setting_block_dot">Android のプライベート DNS をブロック</string>
+    <string name="summary_block_dot">Android のプライベート DNS が有効だと、TC はトラッキングを検出できず、正しく動作しません。</string>
+    <string name="setting_export">設定をエクスポート</string>
+    <string name="setting_hosts_auto_update">ホストを自動更新</string>
+    <string name="summary_hosts_auto_update">バックグラウンドでホストファイルを自動更新します</string>
+    <string name="summary_system">アプリ一覧にシステムアプリを表示</string>
+    <string name="summary_wg_enabled">端末の IP を隠します。TCP と UDP の送信をトンネルします。停止中はアプリにネットワークエラーが表示されます — フェイルクローズで、直接接続へのフォールスルーはありません。トンネルがアイドル状態の間は、端末へのサーバー起点の接続が機能しない可能性があります（バッテリー節約のためキープアライブは無効です）。</string>
+    <string name="summary_wg_config">プロバイダーの [Interface] / [Peer] 設定を貼り付けます</string>
+    <string name="summary_wg_profile">保存した WireGuard 設定を選択します</string>
+    <string name="summary_wg_profile_none">保存されたプロファイルはありません</string>
+    <string name="summary_wg_profile_manage">カスタム WireGuard 設定を追加、編集、削除します</string>
+    <string name="summary_wg_keepalive_when_screen_off">画面がオフでも、WireGuard 設定で指定された間隔でキープアライブパケットを送信します。アイドル接続が切断されるネットワークで信頼性が向上しますが、バッテリー使用量が増えます。</string>
+    <string name="summary_wg_status_off">オフ</string>
+    <string name="summary_wg_status_missing_config">オフ — 設定なし</string>
+    <string name="summary_wg_status_connected">接続済み</string>
+    <string name="summary_wg_status_handshaking">ハンドシェイク中…</string>
+    <string name="summary_wg_status_blocked">ブロック中 — %s</string>
+    <string name="summary_wg_status_starting">開始中</string>
+    <string name="summary_vpn_key_rotate_now">デバッグのため Mullvad と IVPN の WireGuard キーを強制的にローテーション</string>
+    <string name="msg_vpn_key_rotation_started">VPN キーのローテーションを開始しました</string>
+    <string name="msg_wg_config_invalid">WireGuard 設定が無効です: %s</string>
+    <string name="msg_wg_profile_name">プロファイル名</string>
+    <string name="msg_wg_profile_default_name">デフォルト</string>
+    <string name="msg_wg_profile_saved">WireGuard プロファイルを保存しました</string>
+    <string name="msg_wg_profile_deleted">WireGuard プロファイルを削除しました</string>
+    <string name="msg_wg_profile_no_config">プロファイルを保存する前に WireGuard 設定を貼り付けてください</string>
+    <string name="msg_wg_profile_empty">プロファイルはまだありません</string>
+    <string name="msg_wg_profile_active">アクティブ</string>
+    <string name="msg_wg_profile_set_active">アクティブに設定</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_delete_confirm">この WireGuard プロファイルを削除しますか？</string>
+    <string name="msg_wg_profile_scan_hint">VPN プロバイダーが表示する WireGuard QR コードにカメラを向けてください。スキャンは端末上で行われます。</string>
+    <string name="msg_wg_profile_scan_no_camera">この端末にはスキャンに使用できるカメラがありません</string>
+    <string name="msg_wg_profile_scan_no_camera_permission">QR コードをスキャンするにはカメラの権限が必要です</string>
+    <string name="msg_wg_profile_scan_failed">カメラを起動できませんでした: %1$s</string>
+    <string name="msg_wg_profile_scan_not_config">この QR コードは WireGuard 設定ではありません: %1$s</string>
+    <string name="msg_wg_profile_import_none">選択したファイルに WireGuard 設定が見つかりませんでした</string>
+    <string name="msg_wg_profile_import_failed">選択したファイルを読み取れませんでした: %1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="other">%1$d 件の WireGuard プロファイルをインポートしました</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="other">有効な WireGuard 設定ではないため、%1$d 件のファイルをスキップしました</item>
+    </plurals>
+    <string name="msg_wg_mullvad_account">Mullvad アカウント番号</string>
+    <string name="msg_wg_mullvad_recommended">推奨ロケーション</string>
+    <string name="msg_wg_mullvad_note">TrackerControl は Mullvad WireGuard プロファイルを作成します。アカウント番号は、今後の Mullvad プロファイル用に端末へ保存されます。トークンは保存されず、ここでプロファイルを削除しても Mullvad から端末は削除されません。</string>
+    <string name="msg_wg_mullvad_generating">WireGuard プロファイルを作成中…</string>
+    <string name="msg_wg_mullvad_failed">Mullvad の設定に失敗しました: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">Mullvad の国を読み込めませんでした: %s</string>
+    <string name="msg_wg_proton_note">Proton が文書化しているサードパーティ設定では、ダウンロード可能な WireGuard 設定を使用します。TrackerControl は Proton の認証情報を必要とせず、設定を自動更新することもできません。\n\naccount.protonvpn.com にサインインし、「Downloads → WireGuard configuration」に移動して設定をダウンロードし、テキストエディターで開いて、その内容をここにコピーして貼り付けてください。</string>
+    <string name="msg_wg_proton_open_dashboard">Proton VPN ダッシュボードを開く</string>
+    <string name="vpn_status_connected">%s</string>
+    <string name="vpn_status_mullvad_connected">Mullvad - %s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">リレー: %s</string>
+    <string name="vpn_status_mullvad_summary">リレー: %s</string>
+    <string name="vpn_status_wireguard_connected">WireGuard 接続済み</string>
+    <string name="vpn_status_wireguard_summary">%1$s - %2$s</string>
+    <string name="vpn_status_disconnected">未接続</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_title">VPN プレビュー</string>
+    <string name="vpn_intro_body">VPN はインターネット通信を別のサーバー経由で送信します。ウェブサイトやネットワークプロバイダーから IP アドレスを隠し、接続先の国を選べるようになります。このタブは新しいため、プレビューとして扱ってください。</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_mullvad_body">プライバシーを重視した VPN プロバイダーです。月額 €5 で、メールアドレスの代わりにアカウント番号を使用します。アカウント番号を入力し、TrackerControl で国を選択してください。</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_ivpn_body">WireGuard に対応した、プライバシーを重視する VPN プロバイダーです。IVPN アカウント ID を入力し、TrackerControl で国を選択してください。</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_proton_body">Proton VPN アカウントから WireGuard 設定をダウンロードし、TrackerControl に貼り付けてください。Proton の認証情報をここに入力することはありません。</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_intro_wireguard_body">別の VPN プロバイダー、自分のサーバー、または職場から WireGuard 設定をすでに取得している場合に使用します。</string>
+    <string name="vpn_enter_mullvad_account">アカウント番号を入力</string>
+    <string name="vpn_enter_ivpn_account">アカウント ID を入力</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_settings">Mullvad の設定</string>
+    <string name="vpn_settings_title">Mullvad の設定</string>
+    <string name="vpn_ivpn_settings">IVPN の設定</string>
+    <string name="vpn_ivpn_settings_title">IVPN の設定</string>
+    <string name="vpn_account_number">アカウント: %s</string>
+    <string name="vpn_account_not_set">アカウント: 未設定</string>
+    <string name="vpn_account_show">表示</string>
+    <string name="vpn_account_hide">非表示</string>
+    <string name="vpn_account_change">変更</string>
+    <string name="vpn_account_done">完了</string>
+    <string name="vpn_account_cancel">キャンセル</string>
+    <string name="vpn_mullvad_intro">Mullvad アカウント番号を入力してください。端末に保存されます。</string>
+    <string name="vpn_mullvad_account_note">このアカウントは Mullvad の国別接続に使用されます。</string>
+    <string name="vpn_get_mullvad_account">Mullvad アカウントを取得</string>
+    <string name="vpn_get_ivpn_account">IVPN アカウントを取得</string>
+    <string name="vpn_account_hint">Mullvad アカウント番号</string>
+    <string name="vpn_ivpn_intro">IVPN アカウント ID を入力してください。端末に保存されます。</string>
+    <string name="vpn_ivpn_captcha_intro">WireGuard セッションを作成する前に、IVPN は CAPTCHA による確認を必要とします。</string>
+    <string name="vpn_ivpn_account_hint">IVPN アカウント ID</string>
+    <string name="vpn_ivpn_captcha_hint">CAPTCHA の文字列</string>
+    <string name="vpn_account_save">保存</string>
+    <string name="vpn_account_saved">アカウントを保存しました</string>
+    <string name="vpn_no_wireguard_profiles">カスタム WireGuard プロファイルはまだありません</string>
+    <string name="vpn_import_wireguard_profile">WireGuard プロファイルをインポート</string>
+    <string name="vpn_manage_wireguard_profiles">WireGuard プロファイルを管理</string>
+    <string name="vpn_country_load_failed">%1$s の国を読み込めませんでした: %2$s</string>
+    <string name="vpn_country_load_failed_short">国を読み込めませんでした</string>
+    <string name="vpn_choose_country_first">まず国を選択してください</string>
+    <string name="vpn_choose_profile_first">まず WireGuard プロファイルを選択してください</string>
+    <string name="vpn_setup_required">まず Mullvad を設定するか、WireGuard プロファイルをインポートしてください</string>
+    <string name="vpn_loading_countries">国を読み込み中...</string>
+    <string name="vpn_generating">WireGuard プロファイルを作成中...</string>
+    <string name="vpn_generation_failed">VPN の設定に失敗しました: %s</string>
+    <string name="vpn_retry">再試行</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="msg_wg_blocked_title">WireGuard トンネルを利用できません</string>
+    <string name="msg_wg_blocked">WireGuard が開始されるか、WireGuard 設定を無効にするまで、インターネットアクセスはブロックされます。</string>
+    <string name="msg_wg_blocked_detail">WireGuard が開始されるか、WireGuard 設定を無効にするまで、インターネットアクセスはブロックされます。%s</string>
+    <string name="msg_wg_identity_renewed_title">VPN 端末を再登録しました</string>
+    <string name="msg_wg_identity_renewed">%1$s はこの端末を認識しなくなったため、TrackerControl は新しい端末として登録し、この端末の %1$s プロファイルを更新しました。</string>
+    <string name="msg_wg_provider_rejected">%1$s はこの端末の設定を拒否しました: %2$s</string>
+    <string name="msg_wg_recovery_failed">WireGuard が応答しなくなりました。TrackerControl は再接続を試みています。WireGuard が復旧するまで、インターネットアクセスはブロックされたままになる可能性があります。</string>
+    <string name="summary_log_logcat">研究モード: 識別されたトラッカーを ADB に記録し、ホスト名の検出精度を高めるため SNI 抽出を有効にします。adb logcat でタグ \'TC-Log\' を使用してログを取得してください。</string>
+    <string name="msg_started">トラッカーを検索中...</string>
+    <string name="msg_no_file_manager">ファイルを選択するファイルマネージャーが見つかりません。</string>
+    <string name="msg_no_browser">リンクを開くブラウザーアプリが見つかりません。</string>
+    <string name="msg_native_fd_recovery_exhausted">VPN でファイルディスクリプターが繰り返し不足しました。自動再起動をすべて試しても失敗したため、保護を停止しました。</string>
+    <string name="msg_native_fd_error">VPN のファイルディスクリプターが不足しました。使用していないアプリを閉じるか端末を再起動してから、保護を再開してください。</string>
+    <string name="msg_vpn_replacement_recovery_exhausted">TrackerControl は VPN を再確立できませんでした。通信はブロックされています。</string>
+    <string name="msg_doh_unreachable">アクティブなインターネット接続があるにもかかわらず、セキュア DNS（DoH）に接続できません。これが繰り返し発生する場合は、ネットワーク設定で無効にすることを検討してください。</string>
+    <string name="msg_doze">一貫した結果を得るには、TrackerControl の Android バッテリー最適化を無効にしてください。\n\n次のダイアログで上部の「すべてのアプリ」を選択し、一覧から TrackerControl をタップして「最適化しない」を選択・確認してください。</string>
+    <string name="msg_clear_activity">このアプリについて記録されたアクティビティを削除します。このアプリのトラッカーごとのブロック／許可設定は保持されます。</string>
+    <string name="msg_downloading">ダウンロード中…</string>
+    <string name="title_version">バージョン %1$d</string>
+    <string name="msg_always_on_lockdown">TrackerControl を使用するには、Android の VPN 設定で「VPN なしの接続をブロック」をオフにしてください</string>
+    <string name="msg_private_dns">Android のネットワーク設定で「プライベート DNS」をオフにしてください。TrackerControl は設定に独自のセキュア DNS 機能を提供しています。</string>
+    <string name="toggle_block_internet_description">%1$s のインターネットアクセスをブロック</string>
+    <string name="toggle_allow_internet_description">%1$s のインターネットアクセスを許可</string>
+    <string name="toggle_no_internet_description">%1$s はインターネットアクセスを持っていません</string>
+    <string name="toggle_internet_unavailable_description">%1$s のインターネットアクセス制御を利用できません</string>
+    <string name="toggle_block_category_description">カテゴリ %1$s のトラッカーをブロック</string>
+    <string name="widget_toggle_enable_description">トラッカーのブロックを有効にする</string>
+    <string name="widget_toggle_disable_description">トラッカーのブロックを無効にする</string>
+    <string name="accessibility_stat_description">%1$s、%2$s</string>
+    <string name="accessibility_tracker_blocking_enabled">トラッカーのブロックは有効です</string>
+    <string name="accessibility_tracker_blocking_disabled">トラッカーのブロックは無効です</string>
+    <string name="tab_actions">データの権利</string>
+    <string name="body_request_data"><![CDATA[関係各位：\n
+\n
+\n
+Android アプリ %1$s（ID: %2$s）のデータ管理者である貴社に対し、私に関する個人データを処理しているか確認するようお願いします。\n
+処理している場合は、EU 一般データ保護規則（GDPR）第15条に定められた以下を含むすべての必要な情報を提供してください：\n
+\n
+• 私の個人データのコピー；\n
+• 処理の目的；\n
+• 関係する個人データのカテゴリー；\n
+• 私の個人データを開示する受領者と、提供する保護措置；\n
+• 個人データを保存する期間、またはその期間を決定する基準；\n
+• 私の個人データの入手元に関する情報；および\n
+• プロファイリングを含む自動化された意思決定の有無、および存在する場合は：\n
+    - 意思決定プロセスに関わるロジック；\n
+    - 私にとっての重要性と予想される結果；\n
+    - 誤り、偏見、差別を防ぐために講じた措置；および\n
+    - 私が自分の見解を表明し、決定に異議を申し立てる方法の説明。\n
+\n
+この請求は、貴社による私の個人データのあらゆる処理に関するものであり、貴社に代わって個人データを処理する処理者による処理も含みます。\n
+\n
+回答はメールで安全な方法により提供してください。請求を受領してから1か月以内に回答を受け取れることを期待しています。\n
+\n
+敬具、\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[関係各位：\n
+\n
+\n
+EU 一般データ保護規則（GDPR）第17条に定められた消去権を行使します。Android アプリ %1$s（ID: %2$s）のデータ管理者である貴社に対し、私について処理している以下の個人データを不当に遅滞なく消去するようお願いします：\n
+• すべてのデータ。\n
+\n
+削除を請求する理由は、個人データの処理に対する同意を撤回した、または撤回するためです。この請求は、貴社による私の個人データのあらゆる処理に関するものであり、貴社に代わって個人データを処理する処理者による処理も含みます。\n
+\n
+回答はメールで安全な方法により提供してください。請求を受領してから1か月以内に回答を受け取れることを期待しています。\n
+\n
+敬具、\n\n]]></string>
+    <string name="launch_app_failed">このアプリを起動できません</string>
+    <string name="countries_map_highlighted">追跡先を強調表示: %1$s</string>
+    <string name="countries_map_none">強調表示された追跡先はありません。</string>
+    <string name="tracker_consent">同意の管理</string>
+    <string name="setting_block_ambiguous_trackers">不明確なトラッカーをブロック</string>
+    <string name="summary_block_ambiguous_trackers">IP にトラッカーと非トラッカーの両方のホスト名の証拠がある場合もブロックします。アプリの不具合を減らすには無効にしてください。</string>
+    <string name="setting_sni_enabled">SNI 抽出（研究）</string>
+    <string name="summary_sni_enabled">TLS 接続からホスト名を抽出して、トラッカー検出の精度を高めます。警告: これはあなたの IP アドレスをトラッカーサーバー（またはリモートルーティングが有効な場合は VPN プロバイダーの IP）に漏らします。研究目的でのみ有効にしてください。</string>
+    <string name="setting_blocking_mode">ブロックモード</string>
+    <string name="summary_blocking_mode_minimal">最小: 安全にブロックできる DuckDuckGo リストの確認済みトラッカーのみをブロックします。ブラウザーは VPN 経由のままですが、トラッカー保護はデフォルトでオフです。互換性が確認されたアプリは除外されます。アプリの不具合は限定的です。</string>
+    <string name="summary_blocking_mode_standard">標準: 複数のリスト（X-Ray、Disconnect、DuckDuckGo）にある既知のトラッカーをすべてブロックします。不可欠なサービスは許可されます。アプリが動作しなくなった場合は、保護設定を調整してください（アプリメニューのトラブルシューティングを参照）。</string>
+    <string name="summary_blocking_mode_strict">厳格: 不可欠なサービスや共有 IP の不明確なドメインを含む、既知のトラッカーをすべてブロックします。多くのアプリでは、より制限の少ない保護設定が必要になります（アプリメニューのトラブルシューティングを参照）。</string>
+    <string name="summary_sni_wg_note">注意: SNI 抽出はリモート VPN 経由でルーティングされた通信には適用されません。</string>
+    <string name="blocking_mode_minimal">最小</string>
+    <string name="blocking_mode_standard">標準</string>
+    <string name="blocking_mode_strict">厳格</string>
+    <string name="onboarding_blockingmode_title">ブロックモードを選択</string>
+    <string name="onboarding_blockingmode_desc">TrackerControl がトラッカーを処理する方法を選択してください。ブロックモードによって積極性の異なるレベルでトラッカーを停止します。研究モードではブロックをオフにし、測定のみを目的に SNI 抽出を有効にします。後から設定で変更できます。</string>
+    <string name="onboarding_blockingmode_minimal_label">最小（新規ユーザーに推奨）</string>
+    <string name="onboarding_blockingmode_minimal_desc">安全にブロックできる確認済みトラッカーのみをブロックします。アプリの不具合は限定的です。ほとんどのユーザーに適しています。</string>
+    <string name="onboarding_blockingmode_standard_label">標準</string>
+    <string name="onboarding_blockingmode_standard_desc">複数のリストにある既知のトラッカーをすべてブロックします。一部のアプリでは、より制限の少ない保護設定が必要になる場合があります。</string>
+    <string name="onboarding_blockingmode_strict_label">厳格</string>
+    <string name="onboarding_blockingmode_strict_desc">不可欠なサービスや不明確なドメインを含め、すべてをブロックします。アプリの不具合が大きくなり、多くのアプリでより制限の少ない保護設定が必要になります。</string>
+    <string name="onboarding_blockingmode_research_label">研究</string>
+    <string name="onboarding_blockingmode_research_desc">トラッカーをブロックしません。通信を ADB に記録し、ホスト名の検出精度を高めるため SNI 抽出を有効にします。研究専用です。あなたの IP アドレスがトラッカーサーバーに漏れます。</string>
+    <string name="app_state_heading">ブロックモード</string>
+    <string name="app_state_title_minimal">最小ブロック</string>
+    <string name="app_state_title_standard">標準ブロック</string>
+    <string name="app_state_title_strict">厳格なブロック</string>
+    <string name="app_state_subtitle_misbehaving">アプリが正常に動作しませんか？ここで最小ブロックに切り替えてください。</string>
+    <string name="app_state_essential_only">最小ブロックのみ</string>
+    <string name="app_state_essential_only_explanation">最小モードでブロックされる確認済みトラッカーのみをブロックします。他のトラッカーは記録されますが、許可されます。標準ブロックでアプリが動作しない場合に使用してください。</string>
+    <string name="protection_title">保護</string>
+    <string name="protection_route_heading">リモート VPN</string>
+    <string name="protection_app_not_working">アプリが動作しませんか？ここをタップ</string>
+    <plurals name="protection_paused_resumes">
+        <item quantity="other">一時停止中 — %d 分後に再開</item>
+    </plurals>
+    <string name="protection_resume">今すぐ再開</string>
+    <string name="protection_pause_shared_uid">Android ユーザー ID を共有しているため、このアプリを一時停止すると %1$s も一時停止します。</string>
+    <string name="protection_pause_lockdown_warning">Android のロックダウンが有効です。このアプリを一時停止すると、保護が再開するまで接続がブロックされます。</string>
+    <string name="protection_lockdown_note">Android はここでロックダウンの状態を公開していません。「VPN なしの接続をブロック」が有効な場合、一時停止したアプリはネットワークアクセスを失う可能性があります。</string>
+    <string name="protection_blocked_last_24h">過去24時間にブロック</string>
+    <string name="protection_no_blocked_trackers">最近ブロックされたものはありません — おそらく TrackerControl ではありません。</string>
+    <string name="protection_recording_unavailable">「新しいトラッカーを検出する」がオフのため、トラッカーの記録を利用できません。</string>
+    <string name="protection_temporary">一時的（停止中）</string>
+    <string name="bypass_vpn_error">「アプリが TrackerControl を迂回している間は、インターネットをブロックできません。」</string>
+    <string name="category_unblocked_warning">このカテゴリでは許可されています — 個々の会社を変更するにはカテゴリをブロックしてください。</string>
+    <string name="analyzing_classes">クラスを分析中…</string>
+    <string name="analyzing_classes_progress">クラスを分析中… %d%%</string>
+    <string name="analysis_already_running">分析はすでに進行中です</string>
+    <string name="trackers_static_disclaimer">注意: トラッカーライブラリコードが検出されたことは、それが実際に使用されていることを意味しません。一部のアプリではこれらのライブラリが削除または無効化されている可能性がありますが、痕跡は検出されることがあります。</string>
+    <string name="analyze_tracker_libraries">トラッカーライブラリを分析</string>
+    <string name="update_analysis">分析を更新</string>
+    <string name="analysis_outdated_version">\n\n注意: 分析対象は以前のアプリバージョンです。統合されたトラッキングライブラリが変更されている可能性があります。</string>
+    <string name="libraries_title">トラッカーライブラリ</string>
+    <string name="libraries_row_heading">トラッカーライブラリ</string>
+    <string name="libraries_none_found">アプリコードにトラッカーライブラリが見つかりません</string>
+    <string name="libraries_not_analysed">まだ分析されていません</string>
+    <string name="libraries_analysing">アプリコードを分析中\u2026</string>
+    <string name="libraries_analysis_failed">分析に失敗しました \u2014 タップして再試行</string>
+    <string name="libraries_outdated_suffix">%1$s（以前のアプリバージョン）</string>
+    <string name="detected_tracker_libraries_heading">アプリコードで検出</string>
+    <string name="tracker_libraries_source">Exodus Privacy のトラッカーデータに基づくウェブサイト</string>
+    <string name="open_tracker_website">%1$s のウェブサイトを開く</string>
+    <plurals name="libraries_found">
+        <item quantity="other">アプリコードに %d 件のトラッカーライブラリが見つかりました</item>
+    </plurals>
+    <string name="analysis_queued">分析をキューに追加しました…</string>
+    <string name="allowed_shared_ip">許可済み — 共有 IP。ブロックするには厳格モードを有効にしてください</string>
+    <string name="tracker_monitored_minimal">監視中 — 最小モードではブロックされません</string>
+    <string name="browsers_not_supported">ブラウザーを検出 ⚠️</string>
+    <string name="browsers_not_supported_explanation">これはブラウザーアプリのようです。\n\nブラウザーのトラッカー保護は、ページやリクエスト単位でトラッカーをブロックできるブラウザー内で最も効果を発揮します。TrackerControl はブラウザーの通信を VPN／WireGuard トンネル経由に保ちますが、アプリレベルのトラッカーのブロックはデフォルトでオフであり、有効にするとサイトが正常に動作しなくなる可能性があります。</string>
+    <string name="msg_notifications">タップして通知権限を付与します（エラーメッセージなど）</string>
+    <string name="msg_local_network">タップしてローカルネットワークへのアクセスを許可してください。Android はこれを「付近のデバイス」として確認します。Android 17 ではデフォルトでブロックされるため、自分の DNS サーバー、セキュア DNS リゾルバー、WireGuard ピア、プロキシに到達できません。</string>
+    <string name="msg_local_network_title">ローカルネットワークへのアクセスが必要です</string>
+    <string name="msg_local_network_notify">TrackerControl は自分の DNS サーバー、セキュア DNS リゾルバー、WireGuard ピア、プロキシに到達できないため、名前解決に失敗する可能性があります。Android 17 ではこのための権限が必要で、Android はこれを「付近のデバイス」として確認します。タップして TrackerControl を開き、許可してください。</string>
+    <string name="msg_private_dns_title">プライベート DNS が名前解決をブロックしています</string>
+    <string name="msg_private_dns_notify">Android の「プライベート DNS」は %1$s に設定されています。TrackerControl はトラッカーを検出するため暗号化 DNS をブロックします。このモードでは Android は通常の DNS にフォールバックしないため、何も読み込まれません。タップしてプライベート DNS を「自動」または「オフ」に設定してください — TrackerControl は設定に独自のセキュア DNS を提供しています。</string>
+    <string name="msg_private_dns_unknown_resolver">カスタムリゾルバー</string>
+    <string name="msg_private_dns_row">何も読み込まれません: Android の「プライベート DNS」は特定のリゾルバーに設定されており、TrackerControl はトラッカーを検出するため暗号化 DNS をブロックします。タップしてプライベート DNS を「自動」または「オフ」に設定してください — TrackerControl は設定に独自のセキュア DNS を提供しています。</string>
+    <string name="msg_private_dns_bypass_title">プライベート DNS がトラッカー検出を迂回しています</string>
+    <string name="msg_private_dns_bypass_notify">トラッカー検出はオフです: DNS は %1$s に暗号化されるため、アプリの接続を分析できません</string>
+    <string name="msg_private_dns_bypass_allowed_notify">一部のアプリが暗号化 DNS を使用しています。これらのトラッカーへの接続は TrackerControl から見えません。</string>
+    <string name="setting_monitor_system">システムアプリを監視</string>
+    <string name="summary_monitor_system">システムアプリ（Play サービス、キャリアサービスなど）を VPN 経由にしてトラッカーを検出・ブロックし、アプリ一覧に表示します。\n\nデフォルトではオフです。システムアプリを除外すると、バックグラウンド通信で VPN が起動されなくなるため、バッテリーに優しくなります。これをオンにすると、Android の VPN 設定にある「VPN なしの接続をブロック」と競合するため、後者は無効にする必要があります。</string>
+    <string name="title_next">次へ</string>
+    <string name="title_skip">スキップ</string>
+    <string name="title_previous">前へ</string>
+    <string name="title_finish">始める</string>
+    <string name="onboarding_welcome_title">プライバシーを自分で管理</string>
+    <string name="onboarding_welcome_desc">TrackerControl は、コミュニティが運営する研究プロジェクトで、次のことを可能にします:\n\n• <b>監視</b>: モバイルアプリによる隠れたデータ収集をリアルタイムで監視します。\n• <b>ブロック</b>: <b>2,000,000 個の分析済みアプリ</b>のデータベースを使ってトラッカーと広告をブロックします。\n• <b>特定</b>: データを受け取る宛先の会社と国を特定します。\n\nすべての分析は<b>端末上でローカルに</b>行われ、通信があなたの管理を離れることはありません。</string>
+    <string name="onboarding_vpn_title">保護を有効にする</string>
+    <string name="onboarding_vpn_desc">TrackerControl は Android のローカル VPN インターフェースを使用してインターネット通信を分析します。\n\n<b>重要:</b> 外部 VPN サーバーは関与しません。あなたのデータを見ることもありません。</string>
+    <string name="onboarding_vpn_action">端末上の VPN を有効にする</string>
+    <string name="onboarding_vpn_sure">ローカル VPN がないと TrackerControl は通信をフィルタリングできません。有効にせず続行してもよいですか？</string>
+    <string name="onboarding_vpn_blocked_title">別の VPN がアクティブです</string>
+    <string name="onboarding_vpn_blocked_desc">別のアプリが<b>常時接続 VPN</b>に設定されているため、Android は TrackerControl のローカル VPN の起動を阻止しました。VPN 設定を開き、他の VPN の常時接続を無効にしてから、もう一度試してください。</string>
+    <string name="onboarding_vpn_blocked_action">VPN 設定を開く</string>
+    <string name="onboarding_battery_title">中断を防ぐ</string>
+    <string name="onboarding_battery_desc">Android はバッテリーを節約するため、バックグラウンドアプリを停止することがあります。トラッカーに対する保護を継続するには、TrackerControl の最適化を無効にしてください。</string>
+    <string name="onboarding_battery_action">最適化を無効にする</string>
+    <string name="onboarding_battery_sure">バッテリー最適化を無効にしないと、TrackerControl は Android によっていつでも停止される可能性があります。続行してもよいですか？</string>
+    <string name="onboarding_notify_title">最新情報を受け取る</string>
+    <string name="onboarding_notify_desc">通知を許可すると、リアルタイムの更新を確認し、ステータスバーから直接保護を制御できます。</string>
+    <string name="onboarding_notify_action">通知を許可</string>
+    <string name="onboarding_notify_sure">通知権限がないと、リアルタイムの更新を確認したり、ステータスバーから保護を制御したりできません。本当によろしいですか？</string>
+    <string name="onboarding_timeline_title">タイムラインが埋まる様子を見る</string>
+    <string name="onboarding_timeline_desc">TrackerControl はタイムラインから開始します。最初は空の場合があります。アプリは通常、使用中にのみトラッカーへ接続するためです。\n\n設定を完了したら、いくつかのアプリを開いてから TrackerControl に戻り、検出・ブロックされたトラッカーアクティビティを確認してください。</string>
+    <string name="onboarding_network_title">無制限のネットワーク</string>
+    <string name="onboarding_network_desc">データセーバーの設定により、TrackerControl がバックグラウンドで正常に動作しない場合があります。最も信頼性の高い保護のため、無制限のアクセスを許可してください。</string>
+    <string name="onboarding_network_action">無制限のアクセスを許可</string>
+    <string name="onboarding_network_sure">バックグラウンドデータが制限されていると、TrackerControl が機能しない可能性があります。無制限のアクセスを許可せずに続行してもよいですか？</string>
+    <string name="onboarding_lockdown_title">VPN ロックダウン設定</string>
+    <string name="onboarding_lockdown_desc">Android には「VPN なしの接続をブロック」という設定があり、TrackerControl の準備が整う前にアプリが接続するのを防ぎます。\n\n有効にすると、アプリの読み込みに失敗する可能性があります。最適な使用感のため、この設定は<b>無効</b>にしておくことをおすすめします。</string>
+    <string name="onboarding_lockdown_action">VPN 設定を開く</string>
+    <string name="onboarding_lockdown_sure">ロックダウンを有効にして続行すると、接続の問題が発生する可能性があります。本当によろしいですか？</string>
+    <string name="onboarding_dns_title">セキュア DNS（ベータ機能。期待どおりに動作しない可能性があります）</string>
+    <string name="onboarding_dns_desc">DNS 通信を DNS-over-HTTPS（DoH）で暗号化し、ISP からプライバシーを保護します。\n\nこれにより「DNS ハイジャック」を防ぎ、ネットワークプロバイダーから閲覧習慣を守ります。</string>
+    <string name="onboarding_dns_action">セキュア DNS を有効にする</string>
+    <string name="onboarding_dns_action_disable">セキュア DNS を無効にする</string>
+    <string name="onboarding_blocking_title">トラッカーをブロック</string>
+    <string name="onboarding_blocking_desc">アプリに広がるトラッキングを明らかにし、ブロックします。\n\n• <b>ブロックリスト</b>: Firefox Disconnect と、<b>2,000,000 個のアプリ</b>に対する独自分析を組み合わせます。\n• <b>GDPR</b>: <b>ワンクリックのデータ消去請求</b>で権利を行使します。\n• <b>透明性</b>: データを収集する会社と国を正確に明らかにします。</string>
+    <string name="onboarding_blocking_action">ブロックを有効にする</string>
+    <string name="onboarding_blocking_action_disable">ブロックを無効にする</string>
+    <string name="onboarding_blocking_sure">トラッカーのブロックは TrackerControl の中核機能です。無効にしてもよいですか？</string>
+    <string name="onboarding_action_enabled">有効</string>
+    <string name="onboarding_action_disabled">無効</string>
+    <string name="onboarding_action_granted">許可済み</string>
+    <string name="onboarding_action_optimized">最適化済み</string>
+    <string name="onboarding_action_unrestricted">無制限</string>
+    <string name="menu_insights">インサイト</string>
+    <string name="insights_title">あなたのプライバシーインサイト</string>
+    <string name="insights_subtitle_7days">過去7日間</string>
+    <string name="insights_tracking_attempts">接続されたトラッカーホスト</string>
+    <string name="insights_blocked">ブロック済み</string>
+    <string name="insights_allowed">許可済み</string>
+    <string name="insights_tracker_companies">トラッキング会社</string>
+    <string name="insights_apps_with_trackers">トラッカーを含むアプリ</string>
+    <string name="insights_top_tracking_apps">最も問題のあるアプリ</string>
+    <string name="insights_top_companies">最も活発なトラッキング会社</string>
+    <string name="insights_pervasive_trackers">最も広範なトラッカー</string>
+    <string name="insights_top_domains">上位のトラッカードメイン</string>
+    <string name="insights_domain_alias_separator">" または "</string>
+    <string name="insights_in_apps">%d 個のアプリ内</string>
+    <plurals name="insights_apps_count">
+        <item quantity="other">%d 個のアプリ内</item>
+    </plurals>
+    <string name="insights_no_data">トラッキングデータはまだありません。アプリを使って、もう一度確認してください！</string>
+    <string name="insights_shocking_fact">今週、アプリは %1$d 社のトラッキング会社に、%2$d 個のトラッカーホストを通じて接続しました！</string>
+    <string name="insights_shocking_fact_playstore">今週、アプリは %1$d 社のトラッキング会社に接続しました！</string>
+    <string name="insights_share">友達と共有</string>
+    <string name="insights_share_trackers_blocked">ブロックされたトラッカーホスト</string>
+    <string name="insights_share_trackers_detected">検出されたトラッカーホスト</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">今週、TrackerControl を使って %1$d 個のトラッカーホストを %2$d 社の会社からブロックしました！プライバシーを取り戻しましょう: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">今週、TrackerControl を使って %1$d 個のトラッカーホストを %2$d 社の会社から検出しました！プライバシーを取り戻しましょう: https://trackercontrol.org</string>
+    <string name="insights_see_more">もっと見る →</string>
+    <string name="insights_view_timeline">最近のトラッカーアクティビティを表示</string>
+    <string name="title_blocklists">追加のホストファイル</string>
+    <string name="summary_manage_blocklists">これらはフォールバック専用です。TrackerControl には、トラッキングの背後にある会社についてインサイトを提供する独自のホストリストが含まれています。</string>
+    <string name="title_add_blocklist">ホストファイルを追加</string>
+    <string name="title_delete_blocklist">ホストファイルを削除</string>
+    <string name="msg_delete_blocklist_confirm">このホストファイルを削除してもよいですか？</string>
+    <string name="msg_invalid_url">無効な URL</string>
+    <string name="msg_apply_blocklists_failed">ホストファイルの適用に失敗しました</string>
+    <string name="msg_last_update">最終更新: %s</string>
+    <string name="switch_tracker_control_description">トラッカーのブロック</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">ブロックリストを削除</string>
+    <string name="blocklist_enable_description">ブロックリスト %s を有効化</string>
+    <string name="log_connection_allowed">許可済み</string>
+    <string name="log_connection_blocked">ブロック済み</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="log_connection_other">その他のネットワーク</string>
+    <string name="log_screen_on">画面オン</string>
+    <string name="log_app_icon">アプリアイコン</string>
 </resources>

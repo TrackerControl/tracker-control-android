@@ -342,4 +342,480 @@
     <!-- Joins the alternative domain names of one tracker, e.g. "example.com or example.net". Keep the surrounding spaces. -->
     <!-- What's New onboarding slide (not translated) -->
     <!-- Accessibility labels -->
+    <string name="app_copyright">Πνευματικά δικαιώματα \u00A9 2019–2022 Konrad Kollnig\n\nΤο TrackerControl βασίζεται στο NetGuard, που αναπτύχθηκε από τον Marcel Bokhorst (M66B).</string>
+    <string name="app_ios"><a href="https://ios.trackercontrol.org">Το TrackerControl είναι επίσης διαθέσιμο για iOS</a></string>
+    <string name="menu_app_unprotected">Εμφάνιση μόνο μη προστατευμένων εφαρμογών</string>
+    <string name="menu_app_frozen">Εμφάνιση παγωμένων εφαρμογών</string>
+    <string name="menu_sort_by_latest_detected_tracker">Ταξινόμηση κατά τον πιο πρόσφατα εντοπισμένο ιχνηλάτη</string>
+    <string name="menu_troubleshooting">Αντιμετώπιση προβλημάτων</string>
+    <string name="menu_timeline">Δραστηριότητα ιχνηλατών</string>
+    <string name="title_tracker_activity">Δραστηριότητα ιχνηλατών</string>
+    <string name="timeline_empty">Δεν υπάρχει πρόσφατη δραστηριότητα ιχνηλατών.\n\nΕνεργοποιήστε το TrackerControl για να δείτε ποιες εφαρμογές σας παρακολουθούν.</string>
+    <string name="timeline_empty_disabled_title">Το TrackerControl είναι απενεργοποιημένο</string>
+    <string name="timeline_empty_disabled_subtitle">Ενεργοποιήστε το TrackerControl από τον διακόπτη επάνω δεξιά. Η δραστηριότητα ιχνηλατών από τις εφαρμογές σας θα εμφανιστεί εδώ.</string>
+    <string name="timeline_empty_enabled_title">Αναζήτηση ιχνηλατών…</string>
+    <string name="timeline_empty_enabled_subtitle">Οι περισσότερες εφαρμογές επικοινωνούν με ιχνηλάτες μόνο όσο τις χρησιμοποιείτε. Ανοίξτε μια εφαρμογή και επιστρέψτε — η δραστηριότητα ιχνηλατών της θα εμφανιστεί εδώ.</string>
+    <string name="timeline_empty_recording_off_title">Η καταγραφή ιχνηλατών είναι απενεργοποιημένη</string>
+    <string name="timeline_empty_recording_off_subtitle">Η επιλογή «Αναζήτηση νέων ιχνηλατών» είναι απενεργοποιημένη στις Προηγμένες ρυθμίσεις. Οι ιχνηλάτες εξακολουθούν να αποκλείονται, αλλά δεν καταγράφονται πλέον, οπότε αυτό το χρονολόγιο παραμένει κενό. Ενεργοποιήστε την ξανά για να δείτε τη δραστηριότητα ιχνηλατών.</string>
+    <string name="timeline_empty_recording_unavailable_title">Η καταγραφή ιχνηλατών δεν είναι διαθέσιμη</string>
+    <string name="timeline_empty_recording_unavailable_subtitle">Αυτή η έκδοση του TrackerControl δεν παρέχει καταγραφή δραστηριότητας ιχνηλατών. Ο αποκλεισμός λειτουργεί, αλλά αυτό το χρονολόγιο θα παραμείνει κενό.</string>
+    <string name="timeline_open_app">Άνοιγμα εφαρμογής</string>
+    <string name="timeline_open_settings">Άνοιγμα ρυθμίσεων</string>
+    <string name="timeline_hint_tap_entry">Δεν λειτουργεί μια εφαρμογή; Πατήστε την καταχώρισή της για να προσαρμόσετε την προστασία της.</string>
+    <string name="timeline_hint_dismiss">Εντάξει</string>
+    <string name="unidentified_app_uid">Άγνωστη εφαρμογή (UID %1$d)</string>
+    <string name="tab_timeline">Χρονολόγιο</string>
+    <string name="tab_apps">Εφαρμογές</string>
+    <string name="tab_vpn">VPN</string>
+    <string name="timeline_section_last_hour">Τελευταία ώρα</string>
+    <string name="timeline_section_today">Σήμερα</string>
+    <string name="timeline_section_yesterday">Χθες</string>
+    <string name="timeline_section_this_week">Αυτή την εβδομάδα</string>
+    <string name="timeline_more_trackers">+%d ακόμη</string>
+    <string name="timeline_tracker_blocked">Αποκλεισμένος</string>
+    <string name="timeline_tracker_allowed">Επιτρεπόμενος</string>
+    <string name="insights_overview_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="insights_overview_status_share">%1$s (%2$s)</string>
+    <string name="timeline_insights_status">%1$s %2$s · %3$s %4$s</string>
+    <string name="feed_section_last_contact">τελευταία επαφή %s</string>
+    <plurals name="feed_show_more_companies">
+        <item quantity="one">Εμφάνιση %d ακόμη εταιρείας</item>
+        <item quantity="other">Εμφάνιση %d ακόμη εταιρειών</item>
+    </plurals>
+    <string name="feed_allow_company_in_app">Να επιτρέπεται η %1$s στην %2$s</string>
+    <string name="feed_block_company_in_app">Αποκλεισμός της %1$s στην %2$s</string>
+    <string name="feed_allowed_by_you">Επιτρέπεται από εσάς</string>
+    <string name="feed_allowed_shared_ip">Επιτρέπεται · κοινόχρηστη IP</string>
+    <string name="feed_monitored">Υπό παρακολούθηση</string>
+    <string name="feed_company_expanded">Αναπτυγμένο</string>
+    <string name="feed_company_collapsed">Συμπτυγμένο</string>
+    <string name="feed_essential_explainer">Απαιτείται από εφαρμογές — επιτρέπεται για να συνεχίσει να λειτουργεί το %s</string>
+    <string name="feed_essential_explainer_blocked">Απαιτείται από εφαρμογές — ο αποκλεισμός αυτών μπορεί να προκαλέσει δυσλειτουργία στο %s</string>
+    <string name="timeline_summary_mixed">%1$d αποκλεισμένοι · %2$d επιτρεπόμενοι</string>
+    <plurals name="timeline_trackers_blocked">
+        <item quantity="one">%d ιχνηλάτης αποκλείστηκε</item>
+        <item quantity="other">%d ιχνηλάτες αποκλείστηκαν</item>
+    </plurals>
+    <plurals name="timeline_trackers_allowed">
+        <item quantity="one">%d ιχνηλάτης επιτράπηκε</item>
+        <item quantity="other">%d ιχνηλάτες επιτράπηκαν</item>
+    </plurals>
+    <string name="troubleshooting_title">Αντιμετώπιση προβλημάτων</string>
+    <string name="troubleshooting_battery_title">Βελτιστοποίηση μπαταρίας</string>
+    <string name="troubleshooting_battery_desc">Αν το TrackerControl σταματά να λειτουργεί στο παρασκήνιο, απενεργοποιήστε τη βελτιστοποίηση μπαταρίας του Android για το TrackerControl. Επιλέξτε «Όλες οι εφαρμογές», πατήστε TrackerControl και επιλέξτε «Να μην γίνεται βελτιστοποίηση».</string>
+    <string name="troubleshooting_battery_action">Απενεργοποίηση βελτιστοποίησης μπαταρίας</string>
+    <string name="troubleshooting_battery_ok">Η βελτιστοποίηση μπαταρίας είναι ήδη απενεργοποιημένη.</string>
+    <string name="troubleshooting_datasaver_title">Εξοικονόμηση δεδομένων</string>
+    <string name="troubleshooting_datasaver_desc">Αν το TrackerControl δεν μπορεί να συνδεθεί όταν είναι ενεργή η Εξοικονόμηση δεδομένων, επιτρέψτε απεριόριστη χρήση δεδομένων για το TrackerControl. Ενεργοποιήστε τα «Δεδομένα παρασκηνίου» και την «Απεριόριστη χρήση δεδομένων».</string>
+    <string name="troubleshooting_datasaver_action">Να επιτρέπεται απεριόριστη χρήση δεδομένων</string>
+    <string name="troubleshooting_datasaver_ok">Η εξοικονόμηση δεδομένων δεν περιορίζει το TrackerControl.</string>
+    <string name="troubleshooting_local_network_title">Πρόσβαση στο τοπικό δίκτυο</string>
+    <string name="troubleshooting_local_network_desc">Απαιτείται άδεια για τοπικούς διακομιστές DNS, ομότιμους WireGuard και διαμεσολαβητές.</string>
+    <string name="troubleshooting_local_network_action">Να επιτρέπεται η πρόσβαση στο τοπικό δίκτυο</string>
+    <string name="troubleshooting_local_network_ok">Η πρόσβαση στο τοπικό δίκτυο επιτρέπεται.</string>
+    <string name="troubleshooting_app_breakage_title">Μια εφαρμογή σταμάτησε να λειτουργεί</string>
+    <string name="troubleshooting_app_breakage_desc">Πατήστε την εφαρμογή στην κύρια λίστα και έπειτα πατήστε Προστασία. Δοκιμάστε πρώτα «Μόνο ελάχιστος αποκλεισμός». Αν η εφαρμογή εξακολουθεί να έχει προβλήματα, επιλέξτε «Να επιτρέπονται οι ιχνηλάτες». Χρησιμοποιήστε την «Παράκαμψη TrackerControl» μόνο ως έσχατη λύση.</string>
+    <string name="troubleshooting_categories_title">Αποκλεισμός συγκεκριμένων κατηγοριών ιχνηλατών</string>
+    <string name="troubleshooting_categories_desc">Μπορείτε να ρυθμίσετε λεπτομερώς τον αποκλεισμό για κάθε εφαρμογή πατώντας την και ενεργοποιώντας ή απενεργοποιώντας μεμονωμένες κατηγορίες ιχνηλατών (π.χ. Analytics, διαφημίσεις) στην καρτέλα Ιχνηλάτες.</string>
+    <string name="troubleshooting_alwayson_title">VPN πάντα ενεργό</string>
+    <string name="troubleshooting_alwayson_desc">Αν η επιλογή «Αποκλεισμός συνδέσεων χωρίς VPN» (κλείδωμα) είναι ενεργή στις ρυθμίσεις VPN του Android, το TrackerControl δεν μπορεί να λειτουργήσει σωστά. Απενεργοποιήστε αυτή την επιλογή.</string>
+    <string name="troubleshooting_alwayson_action">Άνοιγμα ρυθμίσεων VPN</string>
+    <string name="menu_clear_activity">Εκκαθάριση καταγεγραμμένης δραστηριότητας</string>
+    <string name="setting_options">Γενικά</string>
+    <string name="setting_further_options">Περαιτέρω επιλογές</string>
+    <string name="setting_tcp_mss_clamp">Λειτουργία συμβατότητας tethering</string>
+    <string name="summary_tcp_mss_clamp">Δρομολογεί όλη την κυκλοφορία μέσω του TrackerControl και περιορίζει το μέγεθος των τμημάτων TCP, ώστε να διορθώνει συνδέσεις tethering που σταματούν ή δεν έχουν πρόσβαση στο διαδίκτυο. Η πρόσβαση στο τοπικό δίκτυο δεν παρακάμπτει πλέον το TrackerControl και η απόδοση μπορεί να μειωθεί.</string>
+    <string name="setting_advanced_options">Προηγμένες επιλογές (για ειδικούς)</string>
+    <string name="setting_system">Εμφάνιση εφαρμογών συστήματος</string>
+    <string name="setting_log_logcat">Έρευνα</string>
+    <string name="setting_exclude_all_tracking">Εξαίρεση όλων των εφαρμογών από την παρακολούθηση</string>
+    <string name="summary_exclude_all_tracking">Απενεργοποιεί την παρακολούθηση ιχνηλατών για όλες τις εφαρμογές. Έπειτα μπορείτε να την ενεργοποιήσετε ξανά για μεμονωμένες εφαρμογές.</string>
+    <string name="setting_include_all_tracking">Συμπερίληψη όλων των εφαρμογών στην παρακολούθηση</string>
+    <string name="summary_include_all_tracking">Ενεργοποιεί ξανά την παρακολούθηση ιχνηλατών για όλες τις εφαρμογές.</string>
+    <string name="setting_wg_enabled">Δρομολόγηση κυκλοφορίας μέσω WireGuard</string>
+    <string name="setting_wg_config">Ρύθμιση WireGuard</string>
+    <string name="setting_wg_profile">Προφίλ WireGuard</string>
+    <string name="setting_wg_profile_manage">Προσαρμοσμένα προφίλ WireGuard</string>
+    <string name="setting_wg_profile_import">Εισαγωγή ρύθμισης WireGuard</string>
+    <string name="setting_wg_profile_scan">Σάρωση κωδικού QR</string>
+    <string name="setting_wg_profile_import_file">Εισαγωγή από αρχείο ή αρχείο συμπίεσης</string>
+    <string name="setting_wg_mullvad_setup">Ρύθμιση Mullvad</string>
+    <string name="setting_wg_proton_setup">Χρήση ρύθμισης Proton VPN</string>
+    <string name="setting_wg_keepalive_when_screen_off">Διατήρηση του WireGuard ενεργού όταν η οθόνη είναι απενεργοποιημένη</string>
+    <string name="setting_wg_profile_save">Αποθήκευση προφίλ</string>
+    <string name="setting_wg_profile_delete">Διαγραφή προφίλ</string>
+    <string name="accessibility_wg_profile_edit">Επεξεργασία προφίλ WireGuard %1$s</string>
+    <string name="accessibility_wg_profile_delete">Διαγραφή προφίλ WireGuard %1$s</string>
+    <string name="setting_wireguard">WireGuard (προεπισκόπηση)</string>
+    <string name="setting_wg_status">Κατάσταση</string>
+    <string name="setting_vpn_key_rotate_now">Άμεση περιστροφή κλειδιών παρόχου VPN</string>
+    <string name="setting_doh_enabled">Ασφαλές DNS (DoH)</string>
+    <string name="summary_doh_enabled">Κρυπτογράφηση ερωτημάτων DNS με DNS-over-HTTPS. Διακόπτεται αυτόματα όταν είναι ενεργό το WireGuard, επειδή τα ερωτήματα χρησιμοποιούν αντί γι’ αυτό τη σήραγγα WireGuard.</string>
+    <string name="warning_beta">Δυνατότητα beta. Ενδέχεται να μην λειτουργεί όπως αναμένεται.</string>
+    <string name="setting_doh_endpoint">URL τελικού σημείου DoH</string>
+    <string name="summary_doh_endpoint">URL HTTPS για ερωτήματα DNS-over-HTTPS</string>
+    <string name="setting_doh_dns_fallback">Εναλλακτική λύση DNS</string>
+    <string name="summary_doh_dns_fallback">Χρήση τυπικού (μη κρυπτογραφημένου) DNS όταν το DoH δεν είναι διαθέσιμο. Η απενεργοποίηση μπορεί να προκαλέσει δυσλειτουργία στις εφαρμογές αν ο διακομιστής DoH δεν λειτουργεί.</string>
+    <string name="setting_block_dot">Αποκλεισμός του Ιδιωτικού DNS του Android</string>
+    <string name="summary_block_dot">Όταν είναι ενεργό το Ιδιωτικό DNS του Android, το TC δεν μπορεί να εντοπίσει καμία παρακολούθηση και δεν λειτουργεί σωστά.</string>
+    <string name="setting_export">Εξαγωγή ρυθμίσεων</string>
+    <string name="setting_hosts_auto_update">Αυτόματη ενημέρωση hosts</string>
+    <string name="summary_hosts_auto_update">Αυτόματη ενημέρωση του αρχείου hosts στο παρασκήνιο</string>
+    <string name="summary_system">Εμφάνιση εφαρμογών συστήματος στη λίστα εφαρμογών</string>
+    <string name="summary_wg_enabled">Αποκρύπτει την IP της συσκευής. Δρομολογεί την εξερχόμενη κίνηση TCP και UDP μέσω σήραγγας. Οι εφαρμογές θα βλέπουν σφάλματα δικτύου κατά τις διακοπές — ασφαλής αποτυχία, χωρίς επιστροφή σε άμεση σύνδεση. Οι συνδέσεις που ξεκινούν από διακομιστή προς το τηλέφωνο μπορεί να μη λειτουργούν όσο η σήραγγα είναι αδρανής (η διατήρηση σύνδεσης είναι απενεργοποιημένη για εξοικονόμηση μπαταρίας).</string>
+    <string name="summary_wg_config">Επικολλήστε μια ρύθμιση [Interface] / [Peer] από τον πάροχό σας</string>
+    <string name="summary_wg_profile">Επιλέξτε μια αποθηκευμένη ρύθμιση WireGuard</string>
+    <string name="summary_wg_profile_none">Δεν υπάρχουν αποθηκευμένα προφίλ</string>
+    <string name="summary_wg_profile_manage">Προσθήκη, επεξεργασία ή διαγραφή προσαρμοσμένων ρυθμίσεων WireGuard</string>
+    <string name="summary_wg_keepalive_when_screen_off">Στέλνει πακέτα διατήρησης σύνδεσης στο διάστημα που έχει οριστεί στη ρύθμιση WireGuard, ακόμη και όταν η οθόνη είναι απενεργοποιημένη. Βελτιώνει την αξιοπιστία σε δίκτυα όπου οι αδρανείς συνδέσεις διακόπτονται, αλλά αυξάνει την κατανάλωση μπαταρίας.</string>
+    <string name="summary_wg_status_off">Ανενεργό</string>
+    <string name="summary_wg_status_missing_config">Ανενεργό — δεν έχει οριστεί ρύθμιση</string>
+    <string name="summary_wg_status_connected">Συνδεδεμένο</string>
+    <string name="summary_wg_status_handshaking">Χειραψία…</string>
+    <string name="summary_wg_status_blocked">Αποκλεισμένο — %s</string>
+    <string name="summary_wg_status_starting">Εκκίνηση</string>
+    <string name="summary_vpn_key_rotate_now">Εξαναγκασμός περιστροφής κλειδιών WireGuard των Mullvad και IVPN για αποσφαλμάτωση</string>
+    <string name="msg_vpn_key_rotation_started">Η περιστροφή κλειδιών VPN ξεκίνησε</string>
+    <string name="msg_wg_config_invalid">Μη έγκυρη ρύθμιση WireGuard: %s</string>
+    <string name="msg_wg_profile_name">Όνομα προφίλ</string>
+    <string name="msg_wg_profile_default_name">Προεπιλογή</string>
+    <string name="msg_wg_profile_saved">Το προφίλ WireGuard αποθηκεύτηκε</string>
+    <string name="msg_wg_profile_deleted">Το προφίλ WireGuard διαγράφηκε</string>
+    <string name="msg_wg_profile_no_config">Επικολλήστε μια ρύθμιση WireGuard πριν αποθηκεύσετε ένα προφίλ</string>
+    <string name="msg_wg_profile_empty">Δεν υπάρχουν ακόμη προφίλ</string>
+    <string name="msg_wg_profile_active">Ενεργό</string>
+    <string name="msg_wg_profile_set_active">Ορισμός ως ενεργού</string>
+    <string name="msg_wg_profile_config_hint">[Interface]\nPrivateKey = ...\nAddress = ...\n\n[Peer]\nPublicKey = ...\nAllowedIPs = 0.0.0.0/0, ::/0\nEndpoint = ...</string>
+    <string name="msg_wg_profile_delete_confirm">Να διαγραφεί αυτό το προφίλ WireGuard;</string>
+    <string name="msg_wg_profile_scan_hint">Στρέψτε την κάμερα στον κωδικό QR του WireGuard που εμφανίζει ο πάροχος VPN σας. Η σάρωση γίνεται στη συσκευή σας.</string>
+    <string name="msg_wg_profile_scan_no_camera">Αυτή η συσκευή δεν διαθέτει κάμερα για σάρωση</string>
+    <string name="msg_wg_profile_scan_no_camera_permission">Απαιτείται άδεια κάμερας για τη σάρωση κωδικού QR</string>
+    <string name="msg_wg_profile_scan_failed">Δεν ήταν δυνατή η εκκίνηση της κάμερας: %1$s</string>
+    <string name="msg_wg_profile_scan_not_config">Αυτός ο κωδικός QR δεν είναι ρύθμιση WireGuard: %1$s</string>
+    <string name="msg_wg_profile_import_none">Δεν βρέθηκε ρύθμιση WireGuard στο επιλεγμένο αρχείο</string>
+    <string name="msg_wg_profile_import_failed">Δεν ήταν δυνατή η ανάγνωση του επιλεγμένου αρχείου: %1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="one">Έγινε εισαγωγή %1$d προφίλ WireGuard</item>
+        <item quantity="other">Έγινε εισαγωγή %1$d προφίλ WireGuard</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="one">Παραλείφθηκε %1$d αρχείο: δεν είναι έγκυρη ρύθμιση WireGuard</item>
+        <item quantity="other">Παραλείφθηκαν %1$d αρχεία: δεν είναι έγκυρες ρυθμίσεις WireGuard</item>
+    </plurals>
+    <string name="msg_wg_mullvad_account">Αριθμός λογαριασμού Mullvad</string>
+    <string name="msg_wg_mullvad_recommended">Προτεινόμενη τοποθεσία</string>
+    <string name="msg_wg_mullvad_note">Το TrackerControl δημιουργεί ένα προφίλ Mullvad WireGuard. Ο αριθμός λογαριασμού αποθηκεύεται τοπικά για μελλοντικά προφίλ Mullvad. Δεν αποθηκεύονται διακριτικά και η διαγραφή του προφίλ εδώ δεν αφαιρεί τη συσκευή από το Mullvad.</string>
+    <string name="msg_wg_mullvad_generating">Δημιουργία προφίλ WireGuard…</string>
+    <string name="msg_wg_mullvad_failed">Η ρύθμιση Mullvad απέτυχε: %s</string>
+    <string name="msg_wg_mullvad_countries_failed">Δεν ήταν δυνατή η φόρτωση των χωρών του Mullvad: %s</string>
+    <string name="msg_wg_proton_note">Η τεκμηριωμένη ρύθμιση τρίτου μέρους του Proton χρησιμοποιεί ρυθμίσεις WireGuard με δυνατότητα λήψης. Το TrackerControl δεν χρειάζεται τα διαπιστευτήρια Proton και δεν μπορεί να ανανεώσει αυτόματα τη ρύθμιση.\n\nΣυνδεθείτε στο account.protonvpn.com, μεταβείτε στις Λήψεις → Ρύθμιση WireGuard, κατεβάστε μια ρύθμιση, ανοίξτε την σε πρόγραμμα επεξεργασίας κειμένου και έπειτα αντιγράψτε και επικολλήστε εδώ τα περιεχόμενά της.</string>
+    <string name="msg_wg_proton_open_dashboard">Άνοιγμα πίνακα ελέγχου Proton VPN</string>
+    <string name="vpn_status_connected">%s</string>
+    <string name="vpn_status_mullvad_connected">Mullvad — %s</string>
+    <string name="vpn_status_mullvad">Mullvad</string>
+    <string name="vpn_status_relay">Αναμεταδότης: %s</string>
+    <string name="vpn_status_mullvad_summary">Αναμεταδότης: %s</string>
+    <string name="vpn_status_wireguard_connected">Το WireGuard συνδέθηκε</string>
+    <string name="vpn_status_wireguard_summary">%1$s — %2$s</string>
+    <string name="vpn_status_disconnected">Δεν είναι συνδεδεμένο</string>
+    <string name="vpn_provider_mullvad">Mullvad VPN</string>
+    <string name="vpn_provider_ivpn">IVPN</string>
+    <string name="vpn_intro_title">Προεπισκόπηση VPN</string>
+    <string name="vpn_intro_body">Ένα VPN στέλνει την κίνηση στο διαδίκτυο μέσω άλλου διακομιστή. Αυτό μπορεί να αποκρύψει τη διεύθυνση IP σας από τους ιστοτόπους και τον πάροχο του δικτύου σας και σας επιτρέπει να επιλέξετε χώρα για τη σύνδεσή σας. Αυτή η καρτέλα είναι νέα, επομένως θεωρήστε την προεπισκόπηση.</string>
+    <string name="vpn_intro_mullvad_title">Mullvad</string>
+    <string name="vpn_intro_mullvad_body">Πάροχος VPN με έμφαση στην ιδιωτικότητα. Κοστίζει 5 € τον μήνα και χρησιμοποιεί αριθμούς λογαριασμού αντί για διευθύνσεις email. Εισαγάγετε έναν αριθμό λογαριασμού και έπειτα επιλέξτε χώρα στο TrackerControl.</string>
+    <string name="vpn_intro_ivpn_title">IVPN</string>
+    <string name="vpn_intro_ivpn_body">Πάροχος VPN με έμφαση στην ιδιωτικότητα και υποστήριξη WireGuard. Εισαγάγετε ένα αναγνωριστικό λογαριασμού IVPN και έπειτα επιλέξτε χώρα στο TrackerControl.</string>
+    <string name="vpn_intro_proton_title">Proton VPN</string>
+    <string name="vpn_intro_proton_body">Κατεβάστε μια ρύθμιση WireGuard από τον λογαριασμό Proton VPN σας και επικολλήστε την στο TrackerControl. Τα διαπιστευτήρια Proton δεν εισάγονται ποτέ εδώ.</string>
+    <string name="vpn_intro_wireguard_title">WireGuard</string>
+    <string name="vpn_intro_wireguard_body">Χρησιμοποιήστε το αν έχετε ήδη ρύθμιση WireGuard από άλλον πάροχο VPN, από δικό σας διακομιστή ή από τον χώρο εργασίας σας.</string>
+    <string name="vpn_enter_mullvad_account">Εισαγωγή αριθμού λογαριασμού</string>
+    <string name="vpn_enter_ivpn_account">Εισαγωγή αναγνωριστικού λογαριασμού</string>
+    <string name="vpn_mode_mullvad">Mullvad</string>
+    <string name="vpn_mode_ivpn">IVPN</string>
+    <string name="vpn_mode_wireguard">WireGuard</string>
+    <string name="vpn_settings">Ρυθμίσεις Mullvad</string>
+    <string name="vpn_settings_title">Ρυθμίσεις Mullvad</string>
+    <string name="vpn_ivpn_settings">Ρυθμίσεις IVPN</string>
+    <string name="vpn_ivpn_settings_title">Ρυθμίσεις IVPN</string>
+    <string name="vpn_account_number">Λογαριασμός: %s</string>
+    <string name="vpn_account_not_set">Λογαριασμός: δεν έχει οριστεί</string>
+    <string name="vpn_account_show">Εμφάνιση</string>
+    <string name="vpn_account_hide">Απόκρυψη</string>
+    <string name="vpn_account_change">Αλλαγή</string>
+    <string name="vpn_account_done">Ολοκληρώθηκε</string>
+    <string name="vpn_account_cancel">Ακύρωση</string>
+    <string name="vpn_mullvad_intro">Εισαγάγετε τον αριθμό λογαριασμού Mullvad. Αποθηκεύεται σε αυτή τη συσκευή.</string>
+    <string name="vpn_mullvad_account_note">Αυτός ο λογαριασμός χρησιμοποιείται για συνδέσεις Mullvad ανά χώρα.</string>
+    <string name="vpn_get_mullvad_account">Λήψη λογαριασμού Mullvad</string>
+    <string name="vpn_get_ivpn_account">Λήψη λογαριασμού IVPN</string>
+    <string name="vpn_account_hint">Αριθμός λογαριασμού Mullvad</string>
+    <string name="vpn_ivpn_intro">Εισαγάγετε το αναγνωριστικό λογαριασμού IVPN. Αποθηκεύεται σε αυτή τη συσκευή.</string>
+    <string name="vpn_ivpn_captcha_intro">Το IVPN χρειάζεται επαλήθευση CAPTCHA πριν δημιουργήσει μια συνεδρία WireGuard.</string>
+    <string name="vpn_ivpn_account_hint">Αναγνωριστικό λογαριασμού IVPN</string>
+    <string name="vpn_ivpn_captcha_hint">Κείμενο CAPTCHA</string>
+    <string name="vpn_account_save">Αποθήκευση</string>
+    <string name="vpn_account_saved">Ο λογαριασμός αποθηκεύτηκε</string>
+    <string name="vpn_no_wireguard_profiles">Δεν υπάρχουν ακόμη προσαρμοσμένα προφίλ WireGuard</string>
+    <string name="vpn_import_wireguard_profile">Εισαγωγή προφίλ WireGuard</string>
+    <string name="vpn_manage_wireguard_profiles">Διαχείριση προφίλ WireGuard</string>
+    <string name="vpn_country_load_failed">Δεν ήταν δυνατή η φόρτωση των χωρών του %1$s: %2$s</string>
+    <string name="vpn_country_load_failed_short">Δεν ήταν δυνατή η φόρτωση των χωρών</string>
+    <string name="vpn_choose_country_first">Επιλέξτε πρώτα μια χώρα</string>
+    <string name="vpn_choose_profile_first">Επιλέξτε πρώτα ένα προφίλ WireGuard</string>
+    <string name="vpn_setup_required">Ρυθμίστε πρώτα το Mullvad ή εισαγάγετε ένα προφίλ WireGuard</string>
+    <string name="vpn_loading_countries">Φόρτωση χωρών...</string>
+    <string name="vpn_generating">Δημιουργία προφίλ WireGuard...</string>
+    <string name="vpn_generation_failed">Η ρύθμιση VPN απέτυχε: %s</string>
+    <string name="vpn_retry">Επανάληψη</string>
+    <string name="vpn_country_selected">OK</string>
+    <string name="msg_wg_blocked_title">Η σήραγγα WireGuard δεν είναι διαθέσιμη</string>
+    <string name="msg_wg_blocked">Η πρόσβαση στο διαδίκτυο αποκλείεται μέχρι να ξεκινήσει το WireGuard ή να απενεργοποιηθεί η ρύθμιση WireGuard.</string>
+    <string name="msg_wg_blocked_detail">Η πρόσβαση στο διαδίκτυο αποκλείεται μέχρι να ξεκινήσει το WireGuard ή να απενεργοποιηθεί η ρύθμιση WireGuard. %s</string>
+    <string name="msg_wg_identity_renewed_title">Η συσκευή VPN καταχωρίστηκε ξανά</string>
+    <string name="msg_wg_identity_renewed">Το %1$s δεν αναγνώριζε πλέον αυτή τη συσκευή, επομένως το TrackerControl την καταχώρισε ξανά και ενημέρωσε τα προφίλ %1$s σε αυτή τη συσκευή.</string>
+    <string name="msg_wg_provider_rejected">Το %1$s αρνήθηκε να ρυθμίσει αυτή τη συσκευή: %2$s</string>
+    <string name="msg_wg_recovery_failed">Το WireGuard σταμάτησε να ανταποκρίνεται. Το TrackerControl προσπαθεί να επανασυνδεθεί και η πρόσβαση στο διαδίκτυο μπορεί να παραμείνει αποκλεισμένη μέχρι να αποκατασταθεί το WireGuard.</string>
+    <string name="summary_log_logcat">Λειτουργία έρευνας: οι εντοπισμένοι ιχνηλάτες καταγράφονται στο ADB και η εξαγωγή SNI είναι ενεργοποιημένη για καλύτερο εντοπισμό ονομάτων κεντρικών υπολογιστών. Ανακτήστε τα αρχεία καταγραφής με adb logcat χρησιμοποιώντας την ετικέτα \'TC-Log\'.</string>
+    <string name="msg_started">Αναζήτηση ιχνηλατών...</string>
+    <string name="msg_no_file_manager">Δεν βρέθηκε διαχειριστής αρχείων για την επιλογή αρχείου.</string>
+    <string name="msg_no_browser">Δεν βρέθηκε εφαρμογή περιήγησης για το άνοιγμα του συνδέσμου.</string>
+    <string name="msg_native_fd_recovery_exhausted">Το VPN εξάντλησε επανειλημμένα τους περιγραφείς αρχείων. Η προστασία σταμάτησε αφού απέτυχαν όλες οι προσπάθειες αυτόματης επανεκκίνησης.</string>
+    <string name="msg_native_fd_error">Το VPN εξάντλησε τους περιγραφείς αρχείων. Κλείστε εφαρμογές που δεν χρησιμοποιείτε ή επανεκκινήστε τη συσκευή σας και έπειτα επανεκκινήστε την προστασία.</string>
+    <string name="msg_vpn_replacement_recovery_exhausted">Το TrackerControl δεν μπόρεσε να αποκαταστήσει το VPN. Η κυκλοφορία αποκλείεται.</string>
+    <string name="msg_doh_unreachable">Δεν είναι δυνατή η πρόσβαση στο Ασφαλές DNS (DoH), παρότι έχετε ενεργή σύνδεση στο διαδίκτυο. Αν αυτό συμβαίνει επανειλημμένα, εξετάστε το ενδεχόμενο να το απενεργοποιήσετε στις ρυθμίσεις Δικτύου.</string>
+    <string name="msg_doze">Για συνεπή αποτελέσματα, οι βελτιστοποιήσεις μπαταρίας του Android θα πρέπει να απενεργοποιηθούν για το TrackerControl.
+\n\nΣτον επόμενο διάλογο, επιλέξτε «Όλες οι εφαρμογές» στην κορυφή, πατήστε TrackerControl στη λίστα και επιλέξτε και επιβεβαιώστε «Να μην γίνεται βελτιστοποίηση».</string>
+    <string name="msg_clear_activity">Αυτό αφαιρεί την καταγεγραμμένη δραστηριότητα για αυτή την εφαρμογή. Οι ρυθμίσεις αποκλεισμού/επιτρεπόμενης πρόσβασης ανά ιχνηλάτη διατηρούνται.</string>
+    <string name="msg_downloading">Λήψη…</string>
+    <string name="title_version">Έκδοση %1$d</string>
+    <string name="msg_always_on_lockdown">Απενεργοποιήστε την επιλογή «Αποκλεισμός συνδέσεων χωρίς VPN» στις ρυθμίσεις VPN του Android για να χρησιμοποιήσετε το TrackerControl</string>
+    <string name="msg_private_dns">Απενεργοποιήστε το «Ιδιωτικό DNS» στις ρυθμίσεις δικτύου του Android. Το TrackerControl παρέχει τη δική του λειτουργία Ασφαλούς DNS στις Ρυθμίσεις.</string>
+    <string name="toggle_block_internet_description">Αποκλεισμός πρόσβασης στο διαδίκτυο για την %1$s</string>
+    <string name="toggle_allow_internet_description">Να επιτρέπεται η πρόσβαση στο διαδίκτυο για την %1$s</string>
+    <string name="toggle_no_internet_description">Η %1$s δεν έχει πρόσβαση στο διαδίκτυο</string>
+    <string name="toggle_internet_unavailable_description">Ο έλεγχος πρόσβασης στο διαδίκτυο δεν είναι διαθέσιμος για την %1$s</string>
+    <string name="toggle_block_category_description">Αποκλεισμός ιχνηλατών για την κατηγορία %1$s</string>
+    <string name="widget_toggle_enable_description">Ενεργοποίηση αποκλεισμού ιχνηλατών</string>
+    <string name="widget_toggle_disable_description">Απενεργοποίηση αποκλεισμού ιχνηλατών</string>
+    <string name="accessibility_stat_description">%1$s, %2$s</string>
+    <string name="accessibility_tracker_blocking_enabled">Ο αποκλεισμός ιχνηλατών είναι ενεργοποιημένος</string>
+    <string name="accessibility_tracker_blocking_disabled">Ο αποκλεισμός ιχνηλατών είναι απενεργοποιημένος</string>
+    <string name="tab_actions">Δικαιώματα δεδομένων</string>
+    <string name="launch_app_failed">Δεν είναι δυνατή η εκκίνηση αυτής της εφαρμογής</string>
+    <string name="countries_map_highlighted">Επισημασμένοι προορισμοί παρακολούθησης: %1$s</string>
+    <string name="countries_map_none">Δεν υπάρχουν επισημασμένοι προορισμοί παρακολούθησης.</string>
+    <string name="body_request_data"><![CDATA[Αξιότιμοι/ες:\n
+\n
+\n
+Σας ζητώ, ως υπεύθυνο επεξεργασίας δεδομένων της εφαρμογής Android %1$s (ID: %2$s), να επιβεβαιώσετε αν επεξεργάζεται προσωπικά δεδομένα που με αφορούν.\n
+Αν ναι, παρακαλώ να μου παράσχετε όλες τις απαιτούμενες πληροφορίες που προβλέπονται στο άρθρο 15 του Γενικού Κανονισμού για την Προστασία Δεδομένων της ΕΕ (GDPR), συμπεριλαμβανομένων των εξής:\n
+\n
+• αντίγραφο των προσωπικών δεδομένων μου·\n
+• τους σκοπούς της επεξεργασίας·\n
+• τις κατηγορίες των σχετικών προσωπικών δεδομένων·\n
+• τους αποδέκτες στους οποίους γνωστοποιείτε τα προσωπικά δεδομένα μου και τις εγγυήσεις που παρέχετε·\n
+• την περίοδο διατήρησης των προσωπικών δεδομένων μου ή τα κριτήρια που χρησιμοποιούνται για τον καθορισμό αυτής της περιόδου·\n
+• πληροφορίες σχετικά με την πηγή των προσωπικών δεδομένων μου· και\n
+• την ύπαρξη αυτοματοποιημένης λήψης αποφάσεων (συμπεριλαμβανομένης της κατάρτισης προφίλ) και, εάν υπάρχει:\n
+    - τη λογική που περιλαμβάνει η διαδικασία λήψης αποφάσεων·\n
+    - τη σημασία και τις προβλεπόμενες συνέπειες για εμένα·\n
+    - τα μέτρα που έχετε λάβει για την αποτροπή σφαλμάτων, μεροληψίας και διακρίσεων· και\n
+    - εξήγηση του τρόπου με τον οποίο μπορώ να εκφράσω την άποψή μου και να αμφισβητήσω μια απόφαση.\n
+\n
+Το αίτημα αφορά κάθε επεξεργασία των προσωπικών δεδομένων μου από εσάς, συμπεριλαμβανομένων τυχόν εκτελούντων την επεξεργασία που επεξεργάζονται προσωπικά δεδομένα για λογαριασμό σας.\n
+\n
+Παρακαλώ να μου αποστείλετε την απάντησή σας με ασφαλή μέσα μέσω email. Αναμένω να λάβω απάντηση εντός ενός μήνα από την παραλαβή του αιτήματός μου.\n
+\n
+Με εκτίμηση,\n\n]]></string>
+    <string name="body_delete_data"><![CDATA[Αξιότιμοι/ες:\n
+\n
+\n
+Επικαλούμαι το δικαίωμά μου στη διαγραφή, όπως ορίζεται στο άρθρο 17 του Γενικού Κανονισμού για την Προστασία Δεδομένων της ΕΕ (GDPR). Σας ζητώ, ως υπεύθυνο επεξεργασίας δεδομένων της εφαρμογής Android %1$s (ID: %2$s), να διαγράψετε χωρίς αδικαιολόγητη καθυστέρηση τα ακόλουθα προσωπικά δεδομένα που επεξεργάζεστε και με αφορούν:\n
+• Όλα τα δεδομένα.\n
+\n
+Ο λόγος του αιτήματος διαγραφής μου είναι ότι ανακαλώ ή έχω ανακαλέσει τη συγκατάθεσή μου για την επεξεργασία των προσωπικών δεδομένων. Το αίτημα αφορά κάθε επεξεργασία των προσωπικών δεδομένων μου από εσάς, συμπεριλαμβανομένων τυχόν εκτελούντων την επεξεργασία που επεξεργάζονται προσωπικά δεδομένα για λογαριασμό σας.\n
+\n
+Παρακαλώ να μου αποστείλετε την απάντησή σας με ασφαλή μέσα μέσω email. Αναμένω να λάβω απάντηση εντός ενός μήνα από την παραλαβή του αιτήματός μου.\n
+\n
+Με εκτίμηση,\n\n]]></string>
+    <string name="tracker_consent">Διαχείριση συγκατάθεσης</string>
+    <string name="setting_block_ambiguous_trackers">Αποκλεισμός αμφίβολων ιχνηλατών</string>
+    <string name="summary_block_ambiguous_trackers">Όταν μια IP έχει ενδείξεις τόσο από ιχνηλάτη όσο και από μη ιχνηλάτη, να εξακολουθεί να αποκλείεται. Απενεργοποιήστε το για να μειώσετε τις δυσλειτουργίες εφαρμογών.</string>
+    <string name="setting_sni_enabled">Εξαγωγή SNI (έρευνα)</string>
+    <string name="summary_sni_enabled">Εξάγει ονόματα κεντρικών υπολογιστών από συνδέσεις TLS για ακριβέστερο εντοπισμό ιχνηλατών. Προειδοποίηση: αυτό διαρρέει τη διεύθυνση IP σας στους διακομιστές ιχνηλατών (ή, αν είναι ενεργή η απομακρυσμένη δρομολόγηση, τη διεύθυνση IP του παρόχου VPN). Ενεργοποιήστε το μόνο για έρευνα.</string>
+    <string name="setting_blocking_mode">Λειτουργία αποκλεισμού</string>
+    <string name="summary_blocking_mode_minimal">Ελάχιστη: Αποκλείει μόνο ιχνηλάτες από τη λίστα DuckDuckGo που είναι ασφαλείς για αποκλεισμό. Τα προγράμματα περιήγησης εξακολουθούν να δρομολογούνται μέσω του VPN, αλλά η προστασία από ιχνηλάτες είναι απενεργοποιημένη από προεπιλογή. Εξαιρούνται γνωστές ασύμβατες εφαρμογές. Περιορισμένες δυσλειτουργίες εφαρμογών.</string>
+    <string name="summary_blocking_mode_standard">Τυπική: Αποκλείει όλους τους γνωστούς ιχνηλάτες από πολλές λίστες (X-Ray, Disconnect, DuckDuckGo). Οι απαραίτητες υπηρεσίες επιτρέπονται. Αν μια εφαρμογή σταματήσει να λειτουργεί, προσαρμόστε τη ρύθμιση Προστασία (δείτε την Αντιμετώπιση προβλημάτων στο μενού της εφαρμογής).</string>
+    <string name="summary_blocking_mode_strict">Αυστηρή: Αποκλείει όλους τους γνωστούς ιχνηλάτες, συμπεριλαμβανομένων των απαραίτητων υπηρεσιών και των αμφίβολων τομέων με κοινόχρηστη IP. Πολλές εφαρμογές θα χρειαστούν λιγότερο περιοριστική ρύθμιση Προστασία (δείτε την Αντιμετώπιση προβλημάτων στο μενού της εφαρμογής).</string>
+    <string name="summary_sni_wg_note">Σημείωση: Η εξαγωγή SNI δεν εφαρμόζεται στην κυκλοφορία που δρομολογείται μέσω του απομακρυσμένου VPN.</string>
+    <string name="blocking_mode_minimal">Ελάχιστη</string>
+    <string name="blocking_mode_standard">Τυπική</string>
+    <string name="blocking_mode_strict">Αυστηρή</string>
+    <string name="onboarding_blockingmode_title">Επιλέξτε λειτουργία αποκλεισμού</string>
+    <string name="onboarding_blockingmode_desc">Επιλέξτε πώς θα χειρίζεται το TrackerControl τους ιχνηλάτες. Οι λειτουργίες αποκλεισμού σταματούν τους ιχνηλάτες με διαφορετικά επίπεδα αυστηρότητας· η λειτουργία Έρευνας διατηρεί τον αποκλεισμό απενεργοποιημένο και ενεργοποιεί την εξαγωγή SNI μόνο για μετρήσεις. Μπορείτε να το αλλάξετε αργότερα στις Ρυθμίσεις.</string>
+    <string name="onboarding_blockingmode_minimal_label">Ελάχιστη (συνιστάται για νέους χρήστες)</string>
+    <string name="onboarding_blockingmode_minimal_desc">Αποκλείει μόνο επιβεβαιωμένους ιχνηλάτες που είναι ασφαλείς για αποκλεισμό. Περιορισμένες δυσλειτουργίες εφαρμογών. Καλή επιλογή για τους περισσότερους χρήστες.</string>
+    <string name="onboarding_blockingmode_standard_label">Τυπική</string>
+    <string name="onboarding_blockingmode_standard_desc">Αποκλείει όλους τους γνωστούς ιχνηλάτες από πολλές λίστες. Ορισμένες εφαρμογές μπορεί να χρειάζονται λιγότερο περιοριστική ρύθμιση Προστασία.</string>
+    <string name="onboarding_blockingmode_strict_label">Αυστηρή</string>
+    <string name="onboarding_blockingmode_strict_desc">Αποκλείει τα πάντα, συμπεριλαμβανομένων των απαραίτητων υπηρεσιών και των αμφίβολων τομέων. Σημαντικές δυσλειτουργίες εφαρμογών — πολλές εφαρμογές θα χρειαστούν λιγότερο περιοριστική ρύθμιση Προστασία.</string>
+    <string name="onboarding_blockingmode_research_label">Έρευνα</string>
+    <string name="onboarding_blockingmode_research_desc">Χωρίς αποκλεισμό ιχνηλατών. Καταγράφει τις μεταδόσεις στο ADB και ενεργοποιεί την εξαγωγή SNI για καλύτερο εντοπισμό ονομάτων κεντρικών υπολογιστών. Μόνο για έρευνα: αυτό διαρρέει τη διεύθυνση IP σας στους διακομιστές ιχνηλατών.</string>
+    <string name="app_state_heading">Λειτουργία αποκλεισμού</string>
+    <string name="app_state_title_minimal">Ελάχιστος αποκλεισμός</string>
+    <string name="app_state_title_standard">Τυπικός αποκλεισμός</string>
+    <string name="app_state_title_strict">Αυστηρός αποκλεισμός</string>
+    <string name="app_state_subtitle_misbehaving">Δεν λειτουργεί σωστά η εφαρμογή; Επιλέξτε εδώ Ελάχιστος αποκλεισμός.</string>
+    <string name="app_state_essential_only">Μόνο ελάχιστος αποκλεισμός</string>
+    <string name="app_state_essential_only_explanation">Αποκλείει μόνο τους επιβεβαιωμένους ιχνηλάτες που αποκλείει η λειτουργία Ελάχιστη. Οι άλλοι ιχνηλάτες εξακολουθούν να καταγράφονται, αλλά επιτρέπονται. Χρησιμοποιήστε το αν ο τυπικός αποκλεισμός προκαλεί δυσλειτουργία στην εφαρμογή.</string>
+    <string name="protection_title">Προστασία</string>
+    <string name="protection_route_heading">Απομακρυσμένο VPN</string>
+    <string name="protection_app_not_working">Δεν λειτουργεί η εφαρμογή; Πατήστε εδώ</string>
+    <plurals name="protection_paused_resumes">
+        <item quantity="one">Σε παύση — συνεχίζεται σε %d λεπτό</item>
+        <item quantity="other">Σε παύση — συνεχίζεται σε %d λεπτά</item>
+    </plurals>
+    <string name="protection_resume">Συνέχιση τώρα</string>
+    <string name="protection_pause_shared_uid">Η παύση αυτής της εφαρμογής θέτει επίσης σε παύση την %1$s, επειδή μοιράζονται ένα Android user ID.</string>
+    <string name="protection_pause_lockdown_warning">Το κλείδωμα του Android είναι ενεργό. Η παύση αυτής της εφαρμογής θα αποκλείσει τις συνδέσεις της μέχρι να συνεχιστεί η προστασία.</string>
+    <string name="protection_lockdown_note">Το Android δεν παρέχει εδώ την κατάσταση κλειδώματος. Αν είναι ενεργή η επιλογή «Αποκλεισμός συνδέσεων χωρίς VPN», μια εφαρμογή σε παύση μπορεί να χάσει την πρόσβαση στο δίκτυο.</string>
+    <string name="protection_blocked_last_24h">Αποκλεισμένοι τις τελευταίες 24 ώρες</string>
+    <string name="protection_no_blocked_trackers">Δεν αποκλείστηκε κάτι πρόσφατα — πιθανότατα όχι από το TrackerControl.</string>
+    <string name="protection_recording_unavailable">Η καταγραφή ιχνηλατών δεν είναι διαθέσιμη επειδή η επιλογή «Αναζήτηση νέων ιχνηλατών» είναι απενεργοποιημένη.</string>
+    <string name="protection_temporary">Προσωρινό, σε παύση</string>
+    <string name="bypass_vpn_error">«Δεν είναι δυνατός ο αποκλεισμός του Διαδικτύου όσο η εφαρμογή παρακάμπτει το TrackerControl.»</string>
+    <string name="category_unblocked_warning">Επιτρέπεται με αυτή την κατηγορία — αποκλείστε την κατηγορία για να αλλάξετε μεμονωμένες εταιρείες.</string>
+    <string name="analyzing_classes">Ανάλυση κλάσεων…</string>
+    <string name="analyzing_classes_progress">Ανάλυση κλάσεων… %d%%</string>
+    <string name="analysis_already_running">Η ανάλυση βρίσκεται ήδη σε εξέλιξη</string>
+    <string name="trackers_static_disclaimer">Σημείωση: Ο εντοπισμός κώδικα βιβλιοθήκης ιχνηλατών δεν σημαίνει ότι χρησιμοποιείται ενεργά. Ορισμένες εφαρμογές μπορεί να έχουν αφαιρέσει ή απενεργοποιήσει αυτές τις βιβλιοθήκες, αλλά τα ίχνη τους μπορούν ακόμη να εντοπιστούν.</string>
+    <string name="analyze_tracker_libraries">Ανάλυση βιβλιοθηκών ιχνηλατών</string>
+    <string name="update_analysis">Ενημέρωση ανάλυσης</string>
+    <string name="analysis_outdated_version">\n\nΣημείωση: Η ανάλυση αφορά προηγούμενη έκδοση της εφαρμογής. Ενδέχεται να έχουν αλλάξει οι ενσωματωμένες βιβλιοθήκες παρακολούθησης.</string>
+    <string name="libraries_title">Βιβλιοθήκες ιχνηλατών</string>
+    <string name="libraries_row_heading">Βιβλιοθήκες ιχνηλατών</string>
+    <string name="libraries_none_found">Δεν βρέθηκαν βιβλιοθήκες ιχνηλατών στον κώδικα της εφαρμογής</string>
+    <string name="libraries_not_analysed">Δεν έχει αναλυθεί ακόμη</string>
+    <string name="libraries_analysing">Ανάλυση κώδικα εφαρμογής\u2026</string>
+    <string name="libraries_analysis_failed">Η ανάλυση απέτυχε \u2014 πατήστε για επανάληψη</string>
+    <string name="libraries_outdated_suffix">%1$s (προηγούμενη έκδοση εφαρμογής)</string>
+    <string name="detected_tracker_libraries_heading">Εντοπίστηκε στον κώδικα της εφαρμογής</string>
+    <string name="tracker_libraries_source">Ιστότοποι από δεδομένα ιχνηλατών του Exodus Privacy</string>
+    <string name="open_tracker_website">Άνοιγμα ιστοτόπου %1$s</string>
+    <plurals name="libraries_found">
+        <item quantity="one">Βρέθηκε %d βιβλιοθήκη ιχνηλατών στον κώδικα της εφαρμογής</item>
+        <item quantity="other">Βρέθηκαν %d βιβλιοθήκες ιχνηλατών στον κώδικα της εφαρμογής</item>
+    </plurals>
+    <string name="analysis_queued">Η ανάλυση μπήκε σε ουρά…</string>
+    <string name="allowed_shared_ip">Επιτρέπεται — κοινόχρηστη IP· ενεργοποιήστε την Αυστηρή λειτουργία για αποκλεισμό</string>
+    <string name="tracker_monitored_minimal">Παρακολουθείται — δεν αποκλείεται στην Ελάχιστη λειτουργία</string>
+    <string name="browsers_not_supported">Εντοπίστηκε πρόγραμμα περιήγησης ⚠️</string>
+    <string name="browsers_not_supported_explanation">Αυτό φαίνεται να είναι εφαρμογή προγράμματος περιήγησης.\n\nΗ προστασία από παρακολούθηση προγραμμάτων περιήγησης λειτουργεί καλύτερα μέσα στο πρόγραμμα περιήγησης, όπου οι ιχνηλάτες μπορούν να αποκλείονται σε επίπεδο σελίδας και αιτήματος. Το TrackerControl διατηρεί την κυκλοφορία του προγράμματος περιήγησης δρομολογημένη μέσω της σήραγγας VPN/WireGuard, αλλά ο αποκλεισμός ιχνηλατών σε επίπεδο εφαρμογής είναι απενεργοποιημένος από προεπιλογή και μπορεί να προκαλέσει δυσλειτουργίες ιστοτόπων αν ενεργοποιηθεί.</string>
+    <string name="msg_notifications">Πατήστε για να παραχωρήσετε άδειες ειδοποιήσεων (για μηνύματα σφάλματος κ.λπ.)</string>
+    <string name="msg_local_network">Πατήστε για να επιτρέψετε την πρόσβαση στο τοπικό δίκτυο, την οποία το Android ζητά ως «κοντινές συσκευές». Το Android 17 την αποκλείει από προεπιλογή, επομένως δεν είναι δυνατή η πρόσβαση στον δικό σας διακομιστή DNS, στον επιλυτή Ασφαλούς DNS, στον ομότιμο WireGuard ή στον διαμεσολαβητή.</string>
+    <string name="msg_local_network_title">Απαιτείται πρόσβαση στο τοπικό δίκτυο</string>
+    <string name="msg_local_network_notify">Το TrackerControl δεν μπορεί να προσεγγίσει τον δικό σας διακομιστή DNS, τον επιλυτή Ασφαλούς DNS, τον ομότιμο WireGuard ή τον διαμεσολαβητή, επομένως η επίλυση ονομάτων μπορεί να αποτύχει. Το Android 17 απαιτεί άδεια για αυτό, την οποία το Android ζητά ως «κοντινές συσκευές». Πατήστε για να ανοίξετε το TrackerControl και να την επιτρέψετε.</string>
+    <string name="msg_private_dns_title">Το Ιδιωτικό DNS αποκλείει την επίλυση ονομάτων</string>
+    <string name="msg_private_dns_notify">Το «Ιδιωτικό DNS» του Android έχει οριστεί σε %1$s και το TrackerControl αποκλείει το κρυπτογραφημένο DNS ώστε να μπορεί να εντοπίζει ιχνηλάτες. Σε αυτή τη λειτουργία το Android δεν επιστρέφει στο κανονικό DNS, επομένως δεν θα φορτωθεί τίποτα. Πατήστε για να ορίσετε το Ιδιωτικό DNS σε «Αυτόματο» ή «Ανενεργό» — το TrackerControl προσφέρει το δικό του Ασφαλές DNS στις Ρυθμίσεις.</string>
+    <string name="msg_private_dns_unknown_resolver">έναν προσαρμοσμένο επιλυτή</string>
+    <string name="msg_private_dns_row">Δεν θα φορτωθεί τίποτα: το «Ιδιωτικό DNS» του Android έχει οριστεί σε συγκεκριμένο επιλυτή και το TrackerControl αποκλείει το κρυπτογραφημένο DNS ώστε να μπορεί να εντοπίζει ιχνηλάτες. Πατήστε για να ορίσετε το Ιδιωτικό DNS σε «Αυτόματο» ή «Ανενεργό» — το TrackerControl προσφέρει το δικό του Ασφαλές DNS στις Ρυθμίσεις.</string>
+    <string name="msg_private_dns_bypass_title">Το Ιδιωτικό DNS παρακάμπτει τον εντοπισμό ιχνηλατών</string>
+    <string name="msg_private_dns_bypass_notify">Ο εντοπισμός ιχνηλατών είναι απενεργοποιημένος: το DNS είναι κρυπτογραφημένο στο %1$s, επομένως οι συνδέσεις των εφαρμογών δεν μπορούν να αναλυθούν</string>
+    <string name="msg_private_dns_bypass_allowed_notify">Ορισμένες εφαρμογές χρησιμοποιούν κρυπτογραφημένο DNS· οι επαφές τους με ιχνηλάτες δεν είναι ορατές στο TrackerControl.</string>
+    <string name="setting_monitor_system">Παρακολούθηση εφαρμογών συστήματος</string>
+    <string name="summary_monitor_system">Δρομολογεί τις εφαρμογές συστήματος (Υπηρεσίες Play, υπηρεσίες παρόχου κ.λπ.) μέσω του VPN, ώστε οι ιχνηλάτες τους να εντοπίζονται και να αποκλείονται, και τις εμφανίζει στη λίστα εφαρμογών.\n\nΑπενεργοποιημένο από προεπιλογή: η εξαίρεση των εφαρμογών συστήματος είναι πιο φιλική προς την μπαταρία, επειδή η κυκλοφορία τους στο παρασκήνιο δεν αφυπνίζει πλέον το VPN. Η ενεργοποίηση αυτής της επιλογής έρχεται σε σύγκρουση με την επιλογή «Αποκλεισμός συνδέσεων χωρίς VPN» στις ρυθμίσεις VPN του Android, η οποία πρέπει να είναι ΑΠΕΝΕΡΓΟΠΟΙΗΜΕΝΗ.</string>
+    <string name="title_next">Επόμενο</string>
+    <string name="title_skip">Παράλειψη</string>
+    <string name="title_previous">Προηγούμενο</string>
+    <string name="title_finish">Έναρξη</string>
+    <string name="onboarding_welcome_title">Ανακτήστε τον έλεγχο της ιδιωτικότητάς σας</string>
+    <string name="onboarding_welcome_desc">Το TrackerControl είναι ένα ερευνητικό έργο της κοινότητας που σας δίνει τη δυνατότητα να:\n\n• <b>Παρακολουθείτε</b> την κρυφή συλλογή δεδομένων από εφαρμογές κινητών σε πραγματικό χρόνο.\n• <b>Αποκλείετε</b> ιχνηλάτες και διαφημίσεις χρησιμοποιώντας τη βάση δεδομένων μας με <b>2.000.000 αναλυμένες εφαρμογές</b>.\n• <b>Εντοπίζετε</b> τις εταιρείες προορισμού και τις χώρες που λαμβάνουν τα δεδομένα σας.\n\nΌλη η ανάλυση γίνεται <b>τοπικά στη συσκευή σας</b> – η κυκλοφορία σας δεν φεύγει ποτέ από τον έλεγχό σας.</string>
+    <string name="onboarding_vpn_title">Ενεργοποίηση προστασίας</string>
+    <string name="onboarding_vpn_desc">Το TrackerControl χρησιμοποιεί την τοπική διεπαφή VPN του Android για την ανάλυση της κίνησης στο διαδίκτυο.\n\n<b>Σημαντικό:</b> Δεν χρησιμοποιείται εξωτερικός διακομιστής VPN. Δεν βλέπουμε τα δεδομένα σας.</string>
+    <string name="onboarding_vpn_action">Ενεργοποίηση VPN στη συσκευή</string>
+    <string name="onboarding_vpn_sure">Το TrackerControl δεν μπορεί να φιλτράρει καμία κυκλοφορία χωρίς τοπικό VPN. Είστε βέβαιοι ότι θέλετε να συνεχίσετε χωρίς να το ενεργοποιήσετε;</string>
+    <string name="onboarding_vpn_blocked_title">Ένα άλλο VPN είναι ενεργό</string>
+    <string name="onboarding_vpn_blocked_desc">Το Android εμπόδισε το TrackerControl να ξεκινήσει το τοπικό VPN επειδή μια άλλη εφαρμογή έχει οριστεί ως <b>VPN πάντα ενεργό</b>. Ανοίξτε τις ρυθμίσεις VPN και απενεργοποιήστε το VPN πάντα ενεργό για το άλλο VPN και έπειτα δοκιμάστε ξανά.</string>
+    <string name="onboarding_vpn_blocked_action">Άνοιγμα ρυθμίσεων VPN</string>
+    <string name="onboarding_battery_title">Αποτροπή διακοπών</string>
+    <string name="onboarding_battery_desc">Το Android μπορεί να τερματίζει εφαρμογές στο παρασκήνιο για εξοικονόμηση μπαταρίας. Για συνεχή προστασία από ιχνηλάτες, απενεργοποιήστε τις βελτιστοποιήσεις για το TrackerControl.</string>
+    <string name="onboarding_battery_action">Απενεργοποίηση βελτιστοποίησης</string>
+    <string name="onboarding_battery_sure">Χωρίς την απενεργοποίηση των βελτιστοποιήσεων μπαταρίας, το TrackerControl μπορεί να σταματήσει από το Android οποιαδήποτε στιγμή. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;</string>
+    <string name="onboarding_notify_title">Μείνετε ενημερωμένοι</string>
+    <string name="onboarding_notify_desc">Επιτρέψτε τις ειδοποιήσεις για να βλέπετε ενημερώσεις σε πραγματικό χρόνο και να ελέγχετε την προστασία απευθείας από τη γραμμή κατάστασης.</string>
+    <string name="onboarding_notify_action">Να επιτρέπονται οι ειδοποιήσεις</string>
+    <string name="onboarding_notify_sure">Χωρίς άδειες ειδοποιήσεων, δεν θα μπορείτε να βλέπετε ενημερώσεις σε πραγματικό χρόνο ή να ελέγχετε την προστασία από τη γραμμή κατάστασης. Είστε βέβαιοι;</string>
+    <string name="onboarding_timeline_title">Παρακολουθήστε το χρονολόγιο να γεμίζει</string>
+    <string name="onboarding_timeline_desc">Το TrackerControl ξεκινά στο Χρονολόγιο. Στην αρχή μπορεί να είναι κενό: οι εφαρμογές συνήθως επικοινωνούν με ιχνηλάτες μόνο όσο τις χρησιμοποιείτε.\n\nΑφού ολοκληρώσετε τη ρύθμιση, ανοίξτε μερικές εφαρμογές και επιστρέψτε στο TrackerControl για να δείτε τη δραστηριότητα παρακολούθησης που εντοπίστηκε και αποκλείστηκε.</string>
+    <string name="onboarding_network_title">Απεριόριστο δίκτυο</string>
+    <string name="onboarding_network_desc">Οι επιλογές εξοικονόμησης δεδομένων μπορούν να εμποδίσουν τη σωστή λειτουργία του TrackerControl στο παρασκήνιο. Παραχωρήστε απεριόριστη πρόσβαση για την πιο αξιόπιστη προστασία.</string>
+    <string name="onboarding_network_action">Παραχώρηση απεριόριστης πρόσβασης</string>
+    <string name="onboarding_network_sure">Τα περιορισμένα δεδομένα παρασκηνίου μπορούν να προκαλέσουν αποτυχία του TrackerControl. Είστε βέβαιοι ότι θέλετε να συνεχίσετε χωρίς να παραχωρήσετε απεριόριστη πρόσβαση;</string>
+    <string name="onboarding_lockdown_title">Ρύθμιση κλειδώματος VPN</string>
+    <string name="onboarding_lockdown_desc">Το Android διαθέτει μια ρύθμιση με όνομα \"Αποκλεισμός συνδέσεων χωρίς VPN\" που εμποδίζει τις εφαρμογές να συνδεθούν πριν το TrackerControl είναι έτοιμο.\n\nΑν ενεργοποιηθεί, μπορεί να προκαλέσει αποτυχία φόρτωσης των εφαρμογών. Συνιστούμε να διατηρείτε αυτή τη ρύθμιση <b>απενεργοποιημένη</b> για την καλύτερη εμπειρία.</string>
+    <string name="onboarding_lockdown_action">Άνοιγμα ρυθμίσεων VPN</string>
+    <string name="onboarding_lockdown_sure">Η συνέχιση με ενεργοποιημένο το κλείδωμα μπορεί να προκαλέσει προβλήματα συνδεσιμότητας. Είστε βέβαιοι;</string>
+    <string name="onboarding_dns_title">Ασφαλές DNS (δυνατότητα beta· ενδέχεται να μην λειτουργεί όπως αναμένεται)</string>
+    <string name="onboarding_dns_desc">Προστατέψτε την ιδιωτικότητά σας από τον πάροχο διαδικτύου κρυπτογραφώντας την κίνηση DNS με DNS-over-HTTPS (DoH).\n\nΑυτό αποτρέπει την «παραβίαση DNS» και διατηρεί ιδιωτικές τις συνήθειες περιήγησής σας από τον πάροχο του δικτύου σας.</string>
+    <string name="onboarding_dns_action">Ενεργοποίηση Ασφαλούς DNS</string>
+    <string name="onboarding_dns_action_disable">Απενεργοποίηση Ασφαλούς DNS</string>
+    <string name="onboarding_blocking_title">Αποκλεισμός ιχνηλατών</string>
+    <string name="onboarding_blocking_desc">Αποκαλύψτε και αποκλείστε την εκτεταμένη παρακολούθηση στις εφαρμογές σας.\n\n• <b>Λίστες αποκλεισμού</b>: Συνδυάζει το Firefox Disconnect με τη μοναδική μας ανάλυση <b>2.000.000 εφαρμογών</b>.\n• <b>GDPR</b>: Ασκείτε τα δικαιώματά σας με <b>αιτήματα διαγραφής δεδομένων με ένα κλικ</b>.\n• <b>Διαφάνεια</b>: Ανακαλύψτε ακριβώς ποιες εταιρείες και χώρες συλλέγουν τα δεδομένα σας.</string>
+    <string name="onboarding_blocking_action">Ενεργοποίηση αποκλεισμού</string>
+    <string name="onboarding_blocking_action_disable">Απενεργοποίηση αποκλεισμού</string>
+    <string name="onboarding_blocking_sure">Ο αποκλεισμός ιχνηλατών είναι βασική δυνατότητα του TrackerControl. Είστε βέβαιοι ότι θέλετε να τον απενεργοποιήσετε;</string>
+    <string name="onboarding_action_enabled">Ενεργοποιήθηκε</string>
+    <string name="onboarding_action_disabled">Απενεργοποιήθηκε</string>
+    <string name="onboarding_action_granted">Παραχωρήθηκε</string>
+    <string name="onboarding_action_optimized">Βελτιστοποιήθηκε</string>
+    <string name="onboarding_action_unrestricted">Απεριόριστη πρόσβαση</string>
+    <string name="menu_insights">Στατιστικά</string>
+    <string name="insights_title">Στατιστικά ιδιωτικότητας</string>
+    <string name="insights_subtitle_7days">Τελευταίες 7 ημέρες</string>
+    <string name="insights_tracking_attempts">Κεντρικοί υπολογιστές ιχνηλατών με τους οποίους έγινε επικοινωνία</string>
+    <string name="insights_blocked">Αποκλεισμένοι</string>
+    <string name="insights_allowed">Επιτρεπόμενοι</string>
+    <string name="insights_tracker_companies">Εταιρείες παρακολούθησης</string>
+    <string name="insights_apps_with_trackers">Εφαρμογές με ιχνηλάτες</string>
+    <string name="insights_top_tracking_apps">Εφαρμογές με τη μεγαλύτερη δραστηριότητα παρακολούθησης</string>
+    <string name="insights_top_companies">Οι πιο ενεργές εταιρείες παρακολούθησης</string>
+    <string name="insights_pervasive_trackers">Οι πιο διαδεδομένοι ιχνηλάτες</string>
+    <string name="insights_top_domains">Κορυφαίοι τομείς ιχνηλατών</string>
+    <string name="insights_domain_alias_separator">« ή »</string>
+    <string name="insights_in_apps">σε %d εφαρμογές</string>
+    <plurals name="insights_apps_count">
+        <item quantity="one">σε %d εφαρμογή</item>
+        <item quantity="other">σε %d εφαρμογές</item>
+    </plurals>
+    <string name="insights_no_data">Δεν υπάρχουν ακόμη δεδομένα παρακολούθησης. Χρησιμοποιήστε τις εφαρμογές σας και ελέγξτε ξανά!</string>
+    <string name="insights_shocking_fact">Οι εφαρμογές σας επικοινώνησαν με %1$d εταιρείες παρακολούθησης μέσω %2$d κεντρικών υπολογιστών ιχνηλατών αυτή την εβδομάδα!</string>
+    <string name="insights_shocking_fact_playstore">Οι εφαρμογές σας επικοινώνησαν με %1$d εταιρείες παρακολούθησης αυτή την εβδομάδα!</string>
+    <string name="insights_share">Κοινοποίηση σε φίλους</string>
+    <string name="insights_share_trackers_blocked">Αποκλεισμένοι κεντρικοί υπολογιστές ιχνηλατών</string>
+    <string name="insights_share_trackers_detected">Εντοπισμένοι κεντρικοί υπολογιστές ιχνηλατών</string>
+    <string name="insights_share_url">TrackerControl.org</string>
+    <string name="insights_share_message">Απέκλεισα %1$d κεντρικούς υπολογιστές ιχνηλατών από %2$d εταιρείες αυτή την εβδομάδα χρησιμοποιώντας το TrackerControl! Ανακτήστε την ιδιωτικότητά σας: https://trackercontrol.org</string>
+    <string name="insights_share_message_playstore">Εντόπισα %1$d κεντρικούς υπολογιστές ιχνηλατών από %2$d εταιρείες αυτή την εβδομάδα χρησιμοποιώντας το TrackerControl! Ανακτήστε την ιδιωτικότητά σας: https://trackercontrol.org</string>
+    <string name="insights_see_more">Δείτε περισσότερα →</string>
+    <string name="insights_view_timeline">Προβολή πρόσφατης δραστηριότητας ιχνηλατών</string>
+    <string name="title_blocklists">Πρόσθετα αρχεία hosts</string>
+    <string name="summary_manage_blocklists">Αυτά προορίζονται μόνο ως εφεδρική λύση. Το TrackerControl περιλαμβάνει τις δικές του λίστες hosts, οι οποίες παρέχουν πληροφορίες για τις εταιρείες πίσω από την παρακολούθηση.</string>
+    <string name="title_add_blocklist">Προσθήκη αρχείου hosts</string>
+    <string name="title_delete_blocklist">Διαγραφή αρχείου hosts</string>
+    <string name="msg_delete_blocklist_confirm">Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το αρχείο hosts;</string>
+    <string name="msg_invalid_url">Μη έγκυρο URL</string>
+    <string name="msg_apply_blocklists_failed">Η εφαρμογή των αρχείων hosts απέτυχε</string>
+    <string name="msg_last_update">Τελευταία ενημέρωση: %s</string>
+    <string name="switch_tracker_control_description">Αποκλεισμός ιχνηλατών</string>
+    <string name="vpn_enabled_switch_description">VPN</string>
+    <string name="blocklist_delete_description">Διαγραφή λίστας αποκλεισμού</string>
+    <string name="blocklist_enable_description">Ενεργοποίηση λίστας αποκλεισμού %s</string>
+    <string name="log_connection_allowed">Επιτρεπόμενη</string>
+    <string name="log_connection_blocked">Αποκλεισμένη</string>
+    <string name="log_connection_wifi">Wi-Fi</string>
+    <string name="log_connection_other">Άλλο δίκτυο</string>
+    <string name="log_screen_on">Η οθόνη είναι ενεργή</string>
+    <string name="log_app_icon">Εικονίδιο εφαρμογής</string>
 </resources>

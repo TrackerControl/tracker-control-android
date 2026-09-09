@@ -797,4 +797,13 @@
     <string name="log_connection_other">其他网络</string>
     <string name="log_screen_on">屏幕开启</string>
     <string name="log_app_icon">应用图标</string>
+    <string name="setting_wg_profile_import_file">从文件或存档导入</string>
+    <string name="msg_wg_profile_import_none">所选文件中未找到 WireGuard 配置</string>
+    <string name="msg_wg_profile_import_failed">无法读取所选文件：%1$s</string>
+    <plurals name="msg_wg_profile_imported">
+        <item quantity="other">已导入 %1$d 个 WireGuard 配置文件</item>
+    </plurals>
+    <plurals name="msg_wg_profile_import_skipped">
+        <item quantity="other">已跳过 %1$d 个文件：不是有效的 WireGuard 配置</item>
+    </plurals>
 </resources>
