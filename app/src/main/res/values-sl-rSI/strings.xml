@@ -199,7 +199,6 @@
     <string name="setting_doh_endpoint">URL končne točke DoH</string>
     <string name="summary_doh_endpoint">URL HTTPS za poizvedbe DNS preko HTTPS-a</string>
     <string name="setting_doh_dns_fallback">Zasilni DNS</string>
-    <string name="summary_doh_dns_fallback">Ko DoH ni na voljo, uporabi običajni (nešifrirani) DNS.  Če to onemogočite, lahko pokvarite delovanje programov, če strežnik DoH ni na voljo.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokiraj Androidov zasebni DNS</string>
     <string name="summary_block_dot">Če je Androidova možnost \"Zasebni DNS\" omogočena, TC ne more zaznati sledenja in ne deluje pravilno.</string>

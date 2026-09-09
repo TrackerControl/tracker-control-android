@@ -115,7 +115,6 @@
     <string name="setting_doh_enabled">DNS seguro (DoH)</string>
     <string name="warning_beta">Recurso beta. Pode não funcionar como esperado.</string>
     <string name="setting_doh_dns_fallback">DNS fallback</string>
-    <string name="summary_doh_dns_fallback">Usar DNS padrão (não criptografado) quando DoH não estiver disponível. Desativar pode quebrar aplicativos se o servidor DoH estiver desligado.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Bloquear DNS privado do Android</string>
     <string name="summary_block_dot">Com o DNS privado do Android ativado, o TC não consegue detectar nenhum rastreador e não funciona corretamente.</string>

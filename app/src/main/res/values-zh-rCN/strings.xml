@@ -186,7 +186,6 @@
     <string name="setting_doh_endpoint">DoH 端点 URL</string>
     <string name="summary_doh_endpoint">DNS-over-HTTPS 查询的 HTTPS URL</string>
     <string name="setting_doh_dns_fallback">DNS 回退</string>
-    <string name="summary_doh_dns_fallback">当DoH不可用时，使用标准 (未加密) DNS。如果DoH服务器出现故障，禁用此选项可能会让应用无法联网。</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">阻止Android的私人DNS</string>
     <string name="summary_block_dot">启用Android的私人DNS后，TC 无法检测到任何跟踪，无法正常工作。</string>

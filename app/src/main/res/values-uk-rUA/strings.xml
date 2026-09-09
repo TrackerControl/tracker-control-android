@@ -141,7 +141,6 @@
     <string name="setting_doh_endpoint">URL-адреса кінцевої точки DoH</string>
     <string name="summary_doh_endpoint">URL-адреса HTTPS для запитів DNS через HTTPS</string>
     <string name="setting_doh_dns_fallback">Резервний DNS</string>
-    <string name="summary_doh_dns_fallback">Використовуйте стандартний (незашифрований) DNS, коли DoH недоступний. Вимкнення може призвести до збою програм, якщо сервер DoH не працює.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Блокування приватного DNS Android</string>
     <string name="summary_block_dot">Якщо увімкнено приватний DNS Android, TC не може виявити жодного відстеження і не працює належним чином.</string>

@@ -120,7 +120,6 @@
     <string name="setting_doh_endpoint">DoH Endpoint URL</string>
     <string name="summary_doh_endpoint">HTTPS URL для DNS-over-HTTPS запросов</string>
     <string name="setting_doh_dns_fallback">Резервный DNS</string>
-    <string name="summary_doh_dns_fallback">Использовать стандартный (незашифрованный) DNS, когда DoH недоступен. Отключение может привести к поломке приложений, если сервер DoH недоступен.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Заблокировать приватный DNS Android</string>
     <string name="summary_block_dot">При включенном приватном DNS, TC не может обнаружить отслеживание и работает неправильно.</string>

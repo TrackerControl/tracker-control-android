@@ -139,7 +139,6 @@
     <string name="setting_doh_endpoint">DoH Eindpunt URL</string>
     <string name="summary_doh_endpoint">HTTPS URL voor DNS-over-HTTPS zoekopdrachten</string>
     <string name="setting_doh_dns_fallback">DNS terugval</string>
-    <string name="summary_doh_dns_fallback">Gebruik standaard (onversleuteld) DNS als DoH niet beschikbaar is. Uitschakelen kan apps onbruikbaar maken als de DoH-server offline is.</string>
     <!-- Block DNS-over-TLS (DoT) -->
     <string name="setting_block_dot">Blokkeer Android\'s Privé-DNS</string>
     <string name="summary_block_dot">Als Android\'s Privé-DNS ingeschakeld is, kan TC geen tracking detecteren en werkt het niet goed.</string>
