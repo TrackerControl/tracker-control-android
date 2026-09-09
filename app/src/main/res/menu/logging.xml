@@ -5,7 +5,7 @@
         android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/menu_search"
         netguard:actionViewClass="androidx.appcompat.widget.SearchView"
-        netguard:showAsAction="always|collapseActionView" />
+        netguard:showAsAction="ifRoom|collapseActionView" />
 
     <item
         android:id="@+id/menu_filter"

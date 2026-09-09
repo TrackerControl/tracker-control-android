@@ -1,5 +1,6 @@
-<!-- Layout for the individual entries for apps in the main screen -->
+<!-- Layout for the individual entries for apps in the main screen. The row ripple is the click/focus surface. -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
@@ -7,6 +8,7 @@
     android:focusable="true"
     android:paddingStart="?listPreferredItemPaddingLeft"
     android:paddingEnd="?listPreferredItemPaddingRight"
+    tools:ignore="Overdraw"
     android:minHeight="72dp">
 
     <ImageView
