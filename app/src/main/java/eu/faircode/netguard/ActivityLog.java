@@ -63,6 +63,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class ActivityLog extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "TrackerControl.Log";
@@ -508,7 +509,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
     private String getUidForName(String query) {
         if (query != null && query.length() > 0) {
             for (Rule rule : Rule.getRules(true, ActivityLog.this))
-                if (rule.name != null && rule.name.toLowerCase().contains(query.toLowerCase())) {
+                if (rule.name != null && rule.name.toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT))) {
                     String newQuery = Integer.toString(rule.uid);
                     Log.i(TAG, "Search " + query + " found " + rule.name + " new " + newQuery);
                     return newQuery;
@@ -523,7 +524,7 @@ public class ActivityLog extends AppCompatActivity implements SharedPreferences.
         intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/octet-stream");
-        intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".pcap");
+        intent.putExtra(Intent.EXTRA_TITLE, "netguard_" + new SimpleDateFormat("yyyyMMdd", Locale.ROOT).format(new Date().getTime()) + ".pcap");
         return intent;
     }
 

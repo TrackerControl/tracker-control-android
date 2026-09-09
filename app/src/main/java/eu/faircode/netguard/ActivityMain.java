@@ -852,7 +852,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 Uri target = data.getData();
                 if (data.hasExtra("org.openintents.extra.DIR_PATH"))
                     target = Uri.parse(target + "/trackercontrol_log_"
-                            + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                            + new SimpleDateFormat("yyyyMMdd", Locale.ROOT).format(new Date().getTime()) + ".csv");
                 Log.i(TAG, "Writing URI=" + target);
 
                 try (OutputStream out = getContentResolver().openOutputStream(target)) {
@@ -1314,7 +1314,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_TITLE,
-                "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".csv");
+                "trackercontrol_log_" + new SimpleDateFormat("yyyyMMdd", Locale.ROOT).format(new Date().getTime()) + ".csv");
         return intent;
     }
 
@@ -1610,7 +1610,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
 
         // Show version
         tvVersionName.setText(Util.getSelfVersionName(this));
-        tvVersionCode.setText(Integer.toString(Util.getSelfVersionCode(this)));
+        tvVersionCode.setText(String.format(Locale.ROOT, "%d", Util.getSelfVersionCode(this)));
 
         // Handle license
         tvEula.setMovementMethod(LinkMovementMethod.getInstance());

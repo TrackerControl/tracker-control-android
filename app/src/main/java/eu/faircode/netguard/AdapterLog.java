@@ -53,6 +53,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class AdapterLog extends CursorAdapter {
     private static String TAG = "TrackerControl.Log";
@@ -189,7 +190,7 @@ public class AdapterLog extends CursorAdapter {
         ImageView ivInteractive = view.findViewById(R.id.ivInteractive);
 
         // Show time
-        tvTime.setText(new SimpleDateFormat("HH:mm:ss").format(time));
+        tvTime.setText(new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(time));
 
         // Show blocked/allowed status as a clear text label (not just the tinted icon)
         if (allowed < 0)
@@ -287,7 +288,7 @@ public class AdapterLog extends CursorAdapter {
         else if (uid == 9999)
             tvUid.setText("-"); // nobody
         else
-            tvUid.setText(Integer.toString(uid));
+            tvUid.setText(String.format(Locale.ROOT, "%d", uid));
 
         // Show source address
         tvSAddr.setText(getKnownAddress(saddr));
@@ -323,7 +324,7 @@ public class AdapterLog extends CursorAdapter {
                             return;
 
                         if (tv.getTag() == bindToken) {
-                            tv.setText(">" + name);
+                            tv.setText(String.format(Locale.ROOT, ">%s", name));
 
                             if (TrackerList.findTracker(name) != null)
                                 tv.setTypeface(null, Typeface.BOLD);

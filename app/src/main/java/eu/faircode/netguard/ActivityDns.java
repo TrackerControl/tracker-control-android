@@ -165,7 +165,7 @@ public class ActivityDns extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*"); // text/xml
-        intent.putExtra(Intent.EXTRA_TITLE, "netguard_dns_" + new SimpleDateFormat("yyyyMMdd").format(new Date().getTime()) + ".xml");
+        intent.putExtra(Intent.EXTRA_TITLE, "netguard_dns_" + new SimpleDateFormat("yyyyMMdd", Locale.ROOT).format(new Date().getTime()) + ".xml");
         return intent;
     }
 
